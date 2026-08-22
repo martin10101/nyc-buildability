@@ -33,12 +33,25 @@ allowed_models = ["<owner-chosen-codex-model>", "<owner-chosen-codex-fallback>"]
 # permitted.
 allowed_models = ["<owner-chosen-claude-model>"]
 
-[model_chain]
-# The FIXED orchestrator-role model preference chain (D-004-R751..R758), in
-# order. An orchestrator-role session whose current model's account quota is
-# exhausted walks THIS list, first-available-wins, and availability is decided by
-# an ACTUAL LAUNCH PROBE of the exact id - never by reading a model picker or
-# menu, which can hide a model that is still usable by explicit string.
+[approved_models]
+# THE OWNER-APPROVED MODEL LIST (D-004-R751..R758, D-023-R013), in the owner's
+# order. This is the ONLY place a model id becomes selectable.
+#
+# THERE IS NO DEFAULT. Omitting this section (and the legacy [model_chain]
+# spelling below) approves NOTHING: the supervisor then has an EMPTY chain and
+# every model-selection act - a rotation, a quota chain step, a turnover
+# successor, an authenticated model change - stops safely with a typed refusal
+# telling you to populate this file. It never falls back to a built-in list,
+# because a built-in list is exactly the unapproved selection D-023-R013
+# prohibits.
+#
+# Being listed here is NECESSARY BUT NOT SUFFICIENT. Before a model is used it
+# must also pass an ACTUAL LAUNCH PROBE of the exact id, and the successful probe
+# is recorded durably with the provider CLI version, this config's identity, and
+# the probe time. A model with no recorded successful probe for the CURRENT
+# config and CLI is not selectable. Availability is never decided by reading a
+# model picker or menu, which can hide a model that is still usable by explicit
+# string.
 #
 # Nothing here is a judgement call: the supervisor never chooses a model, it
 # walks this list. An id that is not listed is NEVER selectable no matter what a
@@ -47,9 +60,17 @@ allowed_models = ["<owner-chosen-claude-model>"]
 # notifies the owner rather than continuing on a substitute.
 #
 # Owner-editable only, and only through the S13.1 controller-update process; this
-# section is manifest-covered like every other part of this file. Omitting the
-# whole section accepts the same default order.
-orchestrator_preference = ["claude-fable-5", "claude-opus-4-8", "claude-opus-4-7"]
+# section is manifest-covered like every other part of this file.
+models = ["<owner-approved-primary>", "<owner-approved-successor>"]
+
+# LEGACY SPELLING of the same list, still read verbatim so an existing
+# controller config keeps working. Use [approved_models] models above for new
+# configs. Naming BOTH with different contents is refused rather than resolved by
+# a precedence rule, because guessing which one the owner meant is guessing which
+# models are approved.
+#
+# [model_chain]
+# orchestrator_preference = ["<owner-approved-primary>", "<owner-approved-successor>"]
 
 [limits]
 # Fail-closed circuit breakers (S13.8, S7). Every value is a positive integer

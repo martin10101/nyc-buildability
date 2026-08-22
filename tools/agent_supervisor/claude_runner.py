@@ -907,7 +907,12 @@ class RunResult:
     argv: tuple[str, ...]
     returncode: int
     duration_seconds: float
+    #: The PROVIDER's own session identity, lifted verbatim off the stream. It is
+    #: the only id `--resume` accepts; the supervisor cannot mint one.
     session_id: str = ""
+    #: M0-T080: non-empty when the stream reported two DIFFERENT session ids. An
+    #: ambiguous identity never authorizes a resume (`session_continuity`).
+    session_id_conflict: str = ""
     events: int = 0
     stats: StreamStats = dataclasses.field(default_factory=StreamStats)
     permission_decisions: tuple[PermissionDecision, ...] = ()
@@ -1030,6 +1035,42 @@ class ClaudeRunner:
         clone.config = dataclasses.replace(self.config, model=model, expected_model=model)
         return clone
 
+    def with_resume(self, provider_session_id: str) -> "ClaudeRunner":
+        """A NEW runner whose next launch really is `--resume <provider id>`.
+
+        M0-T080 (qualifying evidence: reproduced defect). `RunnerConfig` has
+        carried `resume_session_id` since Phase 1 and `build_argv` has known how
+        to emit `--resume <session-id>` since then, but no production code ever
+        assigned it - so a rotation that recorded "resumed" launched a fresh,
+        unresumed session. This is the missing actuation, shaped exactly like
+        `with_model` so a resume, like a model switch, has to reach the launch
+        before anything records that it happened.
+
+        The id is used VERBATIM and must be a real provider session id. Passing
+        a supervisor-minted rotation record key here is the confusion this whole
+        change removes, so an id carrying the internal prefix is refused
+        outright. `build_argv` still refuses to emit `--resume` at all until
+        `resume_capability_verified` records that the capability was
+        behaviourally probed on this exact binary (S8.2).
+        """
+        if (not isinstance(provider_session_id, str) or not provider_session_id
+                or provider_session_id != provider_session_id.strip()):
+            raise RunnerError(
+                "bad_resume_rebind",
+                f"a resume rebind needs the exact provider session id to resume, got "
+                f"{provider_session_id!r}; the id is passed through to --resume verbatim "
+                f"and is never repaired or looked up")
+        if provider_session_id.startswith("sup-"):
+            raise RunnerError(
+                "internal_key_as_session_id",
+                f"{provider_session_id!r} is a SUPERVISOR-INTERNAL rotation record key, not "
+                f"a provider session identity; only an id the provider itself issued may be "
+                f"resumed (S8.2)")
+        clone = copy.copy(self)
+        clone.config = dataclasses.replace(self.config,
+                                           resume_session_id=provider_session_id)
+        return clone
+
     def run_unit(
         self,
         prompt: str,
@@ -1064,6 +1105,7 @@ class ClaudeRunner:
         events: list[dict[str, Any]] = []
         stderr_chunks: list[str] = []
         session_id = ""
+        session_id_conflict = ""
         timed_out = threading.Event()
         cancelled = threading.Event()
         tree_terminated = False
@@ -1144,9 +1186,25 @@ class ClaudeRunner:
                 for event in parser.feed(chunk):
                     events.append(event)
                     kind = event.get("type")
-                    if kind == "system" and event.get("subtype") == "init":
-                        session_id = str(event.get("session_id", "")) or session_id
-                    elif kind == "control_request":
+                    # M0-T080: the PROVIDER session identity, off the stream. It
+                    # was previously read only from the `system`/`init` event, so
+                    # a stream that opened without one (notably a RESUMED
+                    # session, where the CLI stamps the id on the ordinary events
+                    # instead) yielded an empty id and made the session
+                    # unresumable afterwards. Every event is now inspected,
+                    # FIRST-WINS, and a stream that reports two different ids is
+                    # recorded as a conflict rather than silently taking the last
+                    # one - an ambiguous session identity must never authorize a
+                    # `--resume`.
+                    reported = str(event.get("session_id", "") or "")
+                    if reported:
+                        if not session_id:
+                            session_id = reported
+                        elif reported != session_id and not session_id_conflict:
+                            session_id_conflict = (
+                                f"the stream reported session {session_id!r} and then "
+                                f"{reported!r}; the identity is ambiguous")
+                    if kind == "control_request":
                         # stdin is still open here: control traffic flows
                         # mid-turn, before the turn's terminal result event.
                         decision = self._answer_control_request(event, handler, write)
@@ -1256,6 +1314,7 @@ class ClaudeRunner:
             returncode=process.returncode if process.returncode is not None else -1,
             duration_seconds=duration,
             session_id=session_id,
+            session_id_conflict=session_id_conflict,
             events=len(events),
             stats=parser.stats,
             permission_decisions=tuple(decisions),

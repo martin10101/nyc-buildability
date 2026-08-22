@@ -96,8 +96,15 @@ from .codex_reviewer import (
     ReviewError,
     build_argv as build_codex_argv,
 )
+from .approved_models import (
+    APPROVED_MODELS_KEY,
+    APPROVED_MODELS_SECTION,
+    ApprovedModels,
+    ModelRouter,
+    ProbeLedger,
+    probe_report,
+)
 from .config import (
-    DEFAULT_ORCHESTRATOR_MODEL_CHAIN,
     ConfigError,
     Limits,
     load_controller_config,
@@ -250,6 +257,8 @@ from .models import sha256_hex
 from .worker_turnover import WorkerTurnoverIntegration
 from .model_turnover import TurnoverEvidence, classify_exhaustion
 from .turnover_controller import (
+    ALLOWED_SUCCESSOR_EFFORT,
+    ApprovedSuccessor,
     TurnoverContext,
     TurnoverController,
     TurnoverLayer,
@@ -273,9 +282,10 @@ from .rotation import (
     decide_pre_dispatch,
     export_handoff_payload,
     may_interrupt_in_flight,
-    new_session_id,
+    new_rotation_record_key,
     rotation_pending,
 )
+from .session_continuity import recorded_provider_session
 from .state_machine import (
     INITIAL_STATE,
     IllegalTransitionError,
@@ -543,6 +553,7 @@ def _check_config(config_path: str | None, selection_path: str | None) -> list[C
                 f"codex allowlist {list(config.codex_allowed_models)}; claude allowlist "
                 f"{list(config.claude_allowed_models)}; default_mode "
                 f"{config.default_mode!r}; no effort key present"))
+            checks.append(_check_approved_models(config))
         except ConfigError as exc:
             checks.append(Check("controller_config", False, str(exc)))
 
@@ -563,6 +574,63 @@ def _check_config(config_path: str | None, selection_path: str | None) -> list[C
         except ConfigError as exc:
             checks.append(Check("model_selection", False, str(exc)))
     return checks
+
+
+def _check_approved_models(config: Any) -> Check:
+    """Report the owner-approved model list truthfully, empty included (M0-T080).
+
+    An empty list is reported as a PASSING check with an explicit consequence,
+    not as a config error: approving nothing is a legitimate state of the file,
+    and what it costs is stated here rather than discovered when a rotation stops.
+    """
+    approved = config.approved_models
+    if not approved.entries:
+        return Check(
+            "approved_models", True,
+            f"the controller config approves NO models ([{APPROVED_MODELS_SECTION}] "
+            f"{APPROVED_MODELS_KEY} is absent or empty). There is deliberately no built-in "
+            f"default list (D-023-R013), so every model-selection act - a rotation, a quota "
+            f"chain step, a turnover successor, an authenticated model change - will stop "
+            f"safely with a typed refusal until the owner populates protected config")
+    return Check(
+        "approved_models", True,
+        f"owner-approved models, in order: {list(approved.entries)} (source "
+        f"{approved.source}). Being listed is necessary and NOT sufficient: each id must "
+        f"also carry a recorded successful exact-id LIVE LAUNCH PROBE for this config "
+        f"identity ({config.digest()[:16]}...) and this provider CLI before it is "
+        f"selectable")
+
+
+def _claude_cli_identity(executable: str) -> str:
+    """The provider CLI identity a probe record is bound to, or "" when unknown.
+
+    Never a PATH search (S13.4 forbids following a discovered path): with no
+    executable named the identity is UNKNOWN, which makes every recorded probe
+    fail the identity match and therefore makes nothing selectable - the
+    fail-closed direction.
+    """
+    if not executable:
+        return ""
+    try:
+        return str(executable_identity(executable, name="claude").digest)
+    except Exception:
+        return ""
+
+
+def _check_probe_evidence(journal: Any, config: Any, cli_version: str) -> Check:
+    """Disclose which approved models have a recorded successful launch probe."""
+    ledger = ProbeLedger(journal, config_identity=config.digest(),
+                         cli_version=cli_version)
+    records = probe_report(ledger)
+    usable = [r["model_id"] for r in records
+              if r["ok"] and r["config_identity"] == config.digest()
+              and r["cli_version"] == cli_version]
+    return Check(
+        "model_launch_probes", True,
+        f"recorded probes: {records or '(none)'}. Selectable under THIS config identity "
+        f"and CLI version: {usable or '(none)'}. A probe recorded under a different "
+        f"controller config or a different provider CLI proves nothing about this one and "
+        f"is ignored; a model with no recorded successful probe is not selectable")
 
 
 def _check_protocol_roundtrip() -> Check:
@@ -738,10 +806,13 @@ def _check_model_chain_disclosure() -> Check:
     status = "VERIFIED" if QUOTA_EXHAUSTION_SIGNAL_VERIFIED else "UNVERIFIED"
     return Check(
         "model_chain_availability", True,
-        f"orchestrator-role model selection walks the fixed [model_chain] preference chain "
-        f"(default {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}) and decides availability ONLY by "
+        f"orchestrator-role model selection walks the OWNER-APPROVED list from the immutable "
+        f"controller config ([{APPROVED_MODELS_SECTION}] {APPROVED_MODELS_KEY}, or the legacy "
+        f"[model_chain] orchestrator_preference spelling) and decides availability ONLY by "
         f"an actual launch probe of the exact id - no model picker or menu is read, and an id "
-        f"outside the chain is never selectable. Live-CLI account-quota signal status: "
+        f"outside the approved list is never selectable. There is NO built-in default list: "
+        f"an unpopulated config approves nothing and every model-selection act stops safely "
+        f"(D-023-R013). Live-CLI account-quota signal status: "
         f"{status}. The exact stderr/exit code the installed CLI emits on account-quota "
         f"exhaustion has not been captured from a live exhaustion, so the probe never infers "
         f"that reason: an unclassified failure stays 'unknown', which is not quota exhaustion "
@@ -1355,6 +1426,19 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         checks.append(_check_journal(runtime))
         checks.append(_check_audit(runtime))
     checks.extend(_check_config(args.config, args.model_selection))
+    # M0-T080: which approved models actually have a recorded successful launch
+    # probe for THIS config identity. Needs both the config and the durable
+    # journal, so it is assembled here rather than inside `_check_config`.
+    if runtime is not None and runtime_check.ok and args.config:
+        try:
+            probe_config = load_controller_config(args.config)
+        except ConfigError:
+            probe_config = None
+        if probe_config is not None:
+            with DurableJournal(runtime / DB_FILENAME) as probe_journal:
+                checks.append(_check_probe_evidence(
+                    probe_journal, probe_config,
+                    _claude_cli_identity(getattr(args, "claude_executable", "") or "")))
 
     ok = all(check.ok for check in checks)
     acl_posture = _controller_config_acl_posture(args.config)
@@ -2286,12 +2370,17 @@ def cmd_export_handoff(args: argparse.Namespace) -> int:
         verification = HandoffVerification(
             True, str(stored.get("verified_by_model", "")), "primary", "handoff_verified",
             "stored verified handoff", handoff.digest())
+        # M0-T080: the payload carries the SUPERVISOR-INTERNAL rotation record
+        # key, not a "new session id". The supervisor cannot mint a provider
+        # session identity, and the successor's own id does not exist until the
+        # provider issues it, so the recorded provider session is reported
+        # separately and honestly - as the OUTGOING one.
         payload = export_handoff_payload(
             handoff, verification,
-            new_session=new_session_id(str(journal.get_state("claude_session_identity", {})
-                                           .get("claude_session_id", "")
-                                           if isinstance(journal.get_state(
-                                               "claude_session_identity"), dict) else "")))
+            rotation_record_key=new_rotation_record_key())
+        recorded = recorded_provider_session(journal)
+        payload["outgoing_provider_session_id"] = (
+            recorded.session_id if recorded is not None else "")
         payload["archived_sessions"] = list(ledger.archived_sessions())
         payload["rotation_pending"] = rotation_pending(journal)
     except RotationError as exc:
@@ -2302,7 +2391,9 @@ def cmd_export_handoff(args: argparse.Namespace) -> int:
     _emit(args, {"command": "export-handoff", **payload},
           [f"handoff digest : {payload['handoff_digest']}",
            f"verified by    : {payload['verified_by_model']}",
-           f"new session id : {payload['new_session_id']}",
+           f"rotation key   : {payload['rotation_record_key']} "
+           f"(supervisor-internal; NOT a provider session id)",
+           f"outgoing sess  : {payload['outgoing_provider_session_id'] or '(none recorded)'}",
            f"next action    : {payload['exact_next_authorized_action']}",
            f"first response : {payload['required_first_response']}"])
     return 0
@@ -2440,178 +2531,35 @@ def containment_precondition() -> tuple[bool, str, str]:
 
 
 # --------------------------------------------------------------------------
-# R595 / M0-T056: owner-authorized turnover ACTUATION channels (worker +
-# orchestrator layers). Both REUSE the accepted M0-T054 controller + adapters
-# UNCHANGED; the successor is always the frozen opus-4-8/xhigh pin. Every launch
-# is fail-closed, single-instance, dedup-exactly-once, audit-linked, and gated on
-# the C1 job-object containment precondition.
+# R595 / M0-T056 turnover actuation channels. The ASSEMBLY moved to
+# `turnover_wiring.py` in M0-T080 (modularity: `cli.py` is a grandfathered
+# oversized file and may not grow materially). `run_orchestrator_watchdog` is
+# re-exported so `cli.run_orchestrator_watchdog` is unchanged for every caller.
 # --------------------------------------------------------------------------
 
+from .turnover_wiring import (  # noqa: E402 - facade re-export
+    approved_model_router,
+    approved_successor_resolver,
+    bind_containment_precondition as _bind_turnover_containment,
+    bind_controller_version as _bind_turnover_controller_version,
+    build_worker_actuation_channel,
+    child_survivor_predicate,
+    orchestrator_exhaustion_event_id,
+    run_orchestrator_watchdog,
+    turnover_continuation_lock,
+)
 
-def _turnover_continuation_lock(checkout: pathlib.Path, runtime_base: str | None
-                                ) -> SingleInstanceLock:
-    """A continuation lock in a DISTINCT `turnover/` runtime subdir.
+_bind_turnover_controller_version(CONTROLLER_VERSION)
+_bind_turnover_containment(containment_precondition)
 
-    It must NOT share the supervisor's own `supervisor.lock` file: that file is
-    already held by the running supervisor (or, for the watchdog, by the dead
-    orchestrator's checkout), and releasing it from the controller's finally block
-    would drop the main single-instance lock. A separate directory gives the
-    turnover attempt its own lock file, so it serializes turnover launches across
-    processes without ever touching the S7 single-instance lock.
-    """
-    turnover_runtime = runtime_dir_for(checkout, base=runtime_base) / "turnover"
-    return SingleInstanceLock(
-        turnover_runtime, checkout_key=checkout_key(checkout),
-        controller_version=CONTROLLER_VERSION)
-
-
-def _child_survivor_predicate(journal: DurableJournal):
-    """A `SurvivorPredicate` wired to M0-T053 production child accounting.
-
-    A surviving recorded worker child blocks a redispatch (the no-duplicate-workers
-    invariant, R347 / AS-4). Unreadable child state fails CLOSED to "survivor
-    present" so an unprovable state never permits a second launch.
-    """
-    def _survivor(_context: TurnoverContext) -> bool:
-        try:
-            accounts = account_for_children(journal)
-        except Exception:
-            return True
-        return any(getattr(account, "surviving", False) for account in accounts)
-    return _survivor
-
-
-def _build_worker_actuation_channel(
-    *, args: argparse.Namespace, journal: DurableJournal, audit: AuditLog,
-    checkout: pathlib.Path, claude_executable: str, max_turns: int,
-    unit_timeout: float,
-) -> tuple[TurnoverController | None, dict[str, Any]]:
-    """Assemble the owner-authorized WORKER-layer actuation channel.
-
-    Returns ``(controller, report)``. The controller is None - keeping the seam
-    RECORD-INTENT-ONLY and byte-identical to the pre-activation path - UNLESS the
-    owner passed ``--authorize-turnover-actuation`` AND the C1 job-object
-    containment gate passes. The real M0-T054 adapters are used UNCHANGED.
-    """
-    if not getattr(args, "authorize_turnover_actuation", False):
-        return None, {
-            "authorized": False, "wired": False,
-            "reason": "owner did not pass --authorize-turnover-actuation; the worker "
-                      "turnover seam stays record-intent-only (byte-identical to the "
-                      "pre-activation path)"}
-    contained, kind, detail = containment_precondition()
-    if not contained:
-        return None, {
-            "authorized": True, "wired": False, "containment_ok": False,
-            "containment_kind": kind,
-            "reason": f"C1 job-object containment gate REFUSES actuation: {detail}"}
-    launcher = SupervisorLauncher(
-        command_runner=make_subprocess_command_runner(
-            new_successor_id=lambda: f"opus-worker-{os.urandom(8).hex()}"),
-        targets=SuccessorLaunchTargets(
-            checkout=str(checkout), claude_executable=claude_executable,
-            max_turns=max_turns, unit_timeout_seconds=unit_timeout))
-    controller = TurnoverController(
-        launcher=launcher,
-        lock=SingleInstanceContinuationLock(
-            _turnover_continuation_lock(checkout, args.runtime_base)),
-        audit=HashChainedAuditSink(audit),
-        identity=SupervisorIdentity(),
-        survivor_detected=_child_survivor_predicate(journal))
-    return controller, {
-        "authorized": True, "wired": True, "containment_ok": True,
-        "containment_kind": kind,
-        "reason": "worker-layer actuation channel wired (M0-T054 adapters + survivor "
-                  "detector); a confirmed FABLE_EXHAUSTED verdict redispatches the same "
-                  "bounded unit on claude-opus-4-8 exactly once through the controller"}
-
-
-def _orchestrator_exhaustion_event_id(signal_text: str, checkout: str) -> str:
-    """A deterministic exhaustion-event id for the SAME orchestrator hard stop.
-
-    Stable in ``(signal_text, checkout)`` so a second watchdog invocation on the
-    SAME captured exhaustion presents the SAME event id; the controller's durable
-    dedup then suppresses a second successor (exactly-once across process
-    restarts).
-    """
-    digest = sha256_hex(f"orchestrator-exhaustion:{checkout}:{signal_text}".encode("utf-8"))
-    return f"orchestrator-exhaustion:{digest[:40]}"
-
-
-def run_orchestrator_watchdog(
-    *, signal_text: str, journal: DurableJournal, audit: AuditLog,
-    checkout: str, orchestrator_argv_prefix: tuple[str, ...],
-    command_runner, handoff_reference: str = "", safe_checkpoint_id: str = "",
-    current_model: str = "claude-fable-5", task_id: str = "",
-    containment_check=None,
-) -> dict[str, Any]:
-    """The ORCHESTRATOR-layer watchdog decision (AS-1), independent of argparse.
-
-    Runs OUTSIDE the Claude session (invoked by the OS scheduler on the
-    orchestrator's terminal output). It CLASSIFIES the captured signal with the
-    frozen M0-T054 detector, and ONLY on a grounded FABLE_EXHAUSTED verdict, and
-    ONLY when the C1 containment gate passes, drives the frozen TurnoverController
-    (layer=ORCHESTRATOR) to launch EXACTLY ONE opus-4-8 successor that loads the
-    durable handoff + safe checkpoint. NOT_EXHAUSTED / AMBIGUOUS_FAIL_CLOSED and an
-    unreadable signal REFUSE and record the reason; they never launch. The
-    ``command_runner`` is injected so tests never spawn a process.
-    """
-    containment_check = containment_check or containment_precondition
-    evidence = TurnoverEvidence(
-        stdout=str(signal_text or ""), exit_code=-1, model_id=current_model)
-    verdict = classify_exhaustion(evidence)
-    payload: dict[str, Any] = {
-        "command": "orchestrator-watchdog", "layer": "orchestrator",
-        "classification": verdict.classification.value, "reason": verdict.reason,
-        "launched": False, "actuated": False, "successor_id": "", "event_id": "",
-        "audit_record_id": "", "successor_model_id": "",
-    }
-    if not verdict.should_turn_over:
-        # FAIL-CLOSED: not a grounded exhaustion. Record the refusal; never launch.
-        record_id = audit.append(
-            "orchestrator_watchdog_no_turnover",
-            detail={"classification": verdict.classification.value,
-                    "reason": verdict.reason}).digest
-        payload.update({"refused": True, "audit_record_id": record_id,
-                        "note": "no grounded Fable exhaustion; fail closed, no successor "
-                                "launched"})
-        return payload
-    contained, kind, detail = containment_check()
-    payload["containment_kind"] = kind
-    if not contained:
-        record_id = audit.append(
-            "orchestrator_watchdog_containment_refused", policy_result="REFUSED",
-            detail={"containment_kind": kind, "required": CONTAINMENT_JOB_OBJECT,
-                    "reason": detail}).digest
-        payload.update({"refused": True, "audit_record_id": record_id,
-                        "note": f"C1 job-object containment gate REFUSES actuation: {detail}"})
-        return payload
-    controller = TurnoverController(
-        launcher=SupervisorLauncher(
-            command_runner=command_runner,
-            targets=SuccessorLaunchTargets(
-                checkout=checkout,
-                orchestrator_argv_prefix=tuple(orchestrator_argv_prefix))),
-        lock=SingleInstanceContinuationLock(
-            _turnover_continuation_lock(pathlib.Path(checkout), None)),
-        audit=HashChainedAuditSink(audit),
-        identity=SupervisorIdentity(),
-        survivor_detected=_child_survivor_predicate(journal))
-    event_id = _orchestrator_exhaustion_event_id(signal_text, checkout)
-    context = TurnoverContext(
-        task_id=task_id, event_id=event_id,
-        failed_fable_execution_id=event_id,
-        safe_checkpoint_id=safe_checkpoint_id,
-        handoff_reference=handoff_reference or event_id,
-        layer=TurnoverLayer.ORCHESTRATOR)
-    outcome = controller.execute(verdict, context)
-    payload.update({
-        "launched": outcome.turned_over, "actuated": outcome.turned_over,
-        "successor_id": outcome.successor_id, "event_id": outcome.event_id,
-        "audit_record_id": outcome.audit_record_id,
-        "successor_model_id": outcome.model_id, "status": outcome.status.value,
-        "reason": outcome.reason})
-    return payload
+#: The pre-split private names, preserved so every existing caller and test
+#: keeps its exact import surface (facade-preserving split).
+_build_worker_actuation_channel = build_worker_actuation_channel
+_turnover_continuation_lock = turnover_continuation_lock
+_child_survivor_predicate = child_survivor_predicate
+_orchestrator_exhaustion_event_id = orchestrator_exhaustion_event_id
+_approved_model_router = approved_model_router
+_approved_successor_resolver = approved_successor_resolver
 
 
 def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
@@ -2653,14 +2601,30 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
                         Handoff.from_dict(stored["handoff"]).digest())
             except RotationError:
                 handoff_reference = ""
+        # M0-T080 (D-023-R013): the model is SUPPLIED or READ from the run's own
+        # record - never a literal. The previous hard-coded Fable fallback
+        # let a watchdog attribute an exhaustion to a model the run may never
+        # have been on, which is the attribution the classifier decides on.
+        recorded_session = recorded_provider_session(journal)
+        current_model = (getattr(args, "current_model", "") or ""
+                         or (recorded_session.model_id if recorded_session else ""))
+        controller_config = None
+        if getattr(args, "config", ""):
+            try:
+                controller_config = load_controller_config(args.config)
+            except ConfigError as exc:
+                print(f"controller config unreadable ({exc}); refusing to actuate "
+                      f"(fail-closed).", file=sys.stderr)
+                return 1
         payload = run_orchestrator_watchdog(
             signal_text=signal_text, journal=journal, audit=audit, checkout=checkout,
             orchestrator_argv_prefix=prefix,
             command_runner=make_subprocess_command_runner(
-                new_successor_id=lambda: f"opus-orchestrator-{os.urandom(8).hex()}"),
+                new_successor_id=lambda: f"successor-{os.urandom(8).hex()}"),
             handoff_reference=handoff_reference,
             safe_checkpoint_id=getattr(args, "safe_checkpoint_id", "") or "",
-            current_model=getattr(args, "current_model", "") or "claude-fable-5",
+            current_model=current_model,
+            config=controller_config,
             task_id=str(journal.get_state("task_id", "") or ""))
     finally:
         journal.close()
@@ -2816,10 +2780,16 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # M0-T056 (R595): assemble the owner-authorized WORKER-layer actuation channel.
     # Absent the flag (or on a non-job_object host) this returns None and the seam
     # is byte-identical to the pre-activation record-intent-only path.
-    worker_controller, _worker_actuation_report = _build_worker_actuation_channel(
+    worker_controller, _worker_actuation_report = build_worker_actuation_channel(
         args=args, journal=journal, audit=audit, checkout=checkout,
         claude_executable=args.claude_executable, max_turns=args.max_turns,
-        unit_timeout=args.unit_timeout)
+        unit_timeout=args.unit_timeout,
+        # M0-T080: the successor comes from THIS config's owner-approved list,
+        # proved by a probe recorded under THIS config identity and THIS provider
+        # CLI identity - a probe taken against a different binary proves nothing
+        # about this one.
+        config=config,
+        cli_version=str(runner.executable_identity().get("digest", "")))
     worker_turnover_integration = WorkerTurnoverIntegration(controller=worker_controller)
 
     loop = SupervisedLoop(
@@ -2870,6 +2840,12 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # across a crash-resume, so a restarted run cannot earn back model calls,
         # external writes, or restarts it has already spent.
         run_budget=budget_ledger,
+        # M0-T080: the review model the S11.3 handoff verification is checked
+        # against (S3.3 reserves it to review_model or deterministic
+        # verification). No live verifier is wired on this SHADOW-ONLY build, so
+        # the supervisor verifies DETERMINISTICALLY and records that it did.
+        review_model=str(getattr(selection.codex, "primary", "") or ""),
+        advisory_model=str(getattr(selection.codex, "advisory_model", "") or ""),
         approval_gate=(lambda digest, _prompt: digest in approved))
     return loop.run(args.prompt).to_dict()
 
@@ -3255,9 +3231,10 @@ def build_parser() -> argparse.ArgumentParser:
                             "the worker default. Set to 'orchestrator' ONLY for the "
                             "orchestrator (main) session: when the pinned Fable-5 model's "
                             "quota is exhausted at a rotation seam, an orchestrator-role "
-                            "session walks the FIXED [model_chain] preference chain from the "
-                            "immutable config (default claude-fable-5 -> claude-opus-4-8 -> "
-                            "claude-opus-4-7), decides availability by an ACTUAL LAUNCH "
+                            "session walks the OWNER-APPROVED model list from the immutable "
+                            "config (there is NO built-in default list; an unpopulated "
+                            "config approves nothing and the run stops safely), decides "
+                            "availability by an ACTUAL LAUNCH "
                             "PROBE of each exact id (never by reading a model picker), and "
                             "relaunches EXPLICITLY on the first entry that really launches - "
                             "recorded as a first-class model_substitution event - returning "
@@ -3303,7 +3280,8 @@ def build_parser() -> argparse.ArgumentParser:
              "WORKER-layer Fable->opus-4-8 turnover. Without it (default) a confirmed "
              "exhaustion is record-intent-only, byte-identical to the pre-activation "
              "path. With it AND a job_object-contained host, a confirmed FABLE_EXHAUSTED "
-             "verdict redispatches the SAME bounded unit on claude-opus-4-8 exactly once "
+             "verdict redispatches the SAME bounded unit exactly once on the next "
+             "OWNER-APPROVED, live-probed model "
              "through the M0-T054 controller. Never a mode default; never read from the "
              "protected controller config. Weakens no other hold")
     start.set_defaults(func=cmd_start)
@@ -3313,7 +3291,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="M0-T056 (R595): independently-live watchdog that runs OUTSIDE the Claude "
              "session (OS scheduler). It classifies the orchestrator's captured terminal "
              "output and, on a grounded Fable quota hard stop, auto-launches exactly one "
-             "claude-opus-4-8 successor loading the durable handoff + safe checkpoint")
+             "successor - the next OWNER-APPROVED, live-probed model from the immutable "
+             "config - loading the durable handoff + safe checkpoint")
     add_common(watchdog)
     watchdog.add_argument(
         "--exhaustion-signal", required=True,
@@ -3333,8 +3312,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="the safe checkpoint id the successor resumes from")
     watchdog.add_argument(
         "--current-model", default=None,
-        help="the model the just-exhausted orchestrator ran on (default claude-fable-5), "
-             "used only to attribute the exhaustion signal")
+        help="the model the just-exhausted orchestrator ran on, used to attribute the "
+             "exhaustion signal. NO DEFAULT: when omitted it is read from the run's own "
+             "recorded provider session, and when that is unknown the watchdog REFUSES "
+             "rather than assuming a model id (D-023-R013)")
+    watchdog.add_argument(
+        "--config", default=None,
+        help="path to the immutable controller config that names the owner-approved model "
+             "list the successor is chosen from. Without it nothing is approved and a "
+             "grounded exhaustion stops safely instead of launching")
     watchdog.set_defaults(func=cmd_orchestrator_watchdog)
 
     pending = sub.add_parser("pending-approvals",

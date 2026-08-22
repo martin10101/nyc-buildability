@@ -41,9 +41,11 @@ from tools.agent_supervisor.loop import (  # noqa: E402
 from tools.agent_supervisor.resume_scheduler import EMERGENCY_STOP_KEY  # noqa: E402
 from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 from tools.test_agent_supervisor_loop import (  # noqa: E402
+    HEAD_SHA,
     FakeRunner,
     FakeReviewer,
     LoopTestBase,
+    checkpoint as make_checkpoint,
     decision as make_decision,
     outcome,
     run_result,
@@ -347,6 +349,11 @@ class CrossProcessResumeTests(unittest.TestCase):
                                  max_cycles=max_cycles, owner_touch_budget=4),
             journal=journal, audit=audit, machine=machine, authority=authority,
             runner=runner, reviewer=reviewer, run_id=self.run_id,
+            # M0-T080: a rotation now builds the FULL S11.3 handoff, which must
+            # name the authoritative HEAD. A seam that cannot name one refuses on
+            # `sha_ambiguous` rather than rotating into an unknown state, so the
+            # fixture states the HEAD a real run always knows.
+            head_sha="b" * 40,
             approval_gate=approval_gate)
 
     def run_cli(self, *args: str) -> tuple[int, str, str]:
@@ -410,8 +417,23 @@ class CrossProcessResumeTests(unittest.TestCase):
         j3.set_state(rot.ROTATION_PENDING_KEY, True)
         complete = outcome(make_decision(decision="COMPLETE", next_claude_prompt="",
                                          evidence_refs=[{"path": "report.md"}]))
+        # M0-T080: the session that comes up after the seam rotation is a
+        # RE-ORIENTED successor, so its first answer is the S11.3 READY checkpoint
+        # reporting the task/branch/worktree/HEAD it was commanded onto - which
+        # the READY gate and the post-launch identity check now verify.
+        successor = run_result(
+            session_id="sess-successor",
+            checkpoint=make_checkpoint(
+                status="READY", checkpoint_id="cp-successor",
+                claude_session_id="sess-successor",
+                starting_sha=HEAD_SHA, current_sha=HEAD_SHA,
+                worktree=str(self.repo),
+                summary="re-oriented from the verified handoff; nothing changed",
+                proposed_next_action="await the forwarded unit"))
+        # The seam fires BEFORE this process runs any unit, so the very first
+        # unit loop3 dispatches is the re-oriented successor's.
         loop3 = self._build_loop(
-            j3, runner=FakeRunner(run_result(), run_result()),
+            j3, runner=FakeRunner(successor),
             reviewer=FakeReviewer(complete), approval_gate=lambda _d, _p: True,
             max_cycles=2)
         run = loop3.run("ignored - the approved prompt is read from the journal")

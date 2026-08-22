@@ -19,23 +19,53 @@ safety properties:
 * **S11.3 safe rotation protocol** (`assert_safe_to_rotate`, `Handoff`,
   `verify_handoff`, `RotationLedger`) - the unsafe-moment refusal list, the
   structured handoff schema, review_model-only verification, durable storage
-  with a digest, a brand-new session id, and a mandatory `READY` checkpoint.
+  with a digest, and a mandatory `READY` checkpoint.
 
 Two things this module refuses by construction:
 
 * it never emits or automates an interactive `/clear` (S11.3: a new explicitly
   identified session is the required behaviour), and
 * it never accepts `advisory_model` for handoff verification (S3.3).
+
+TWO IDENTITIES, NEVER CONFLATED (M0-T080). A completed rotation carries two
+different things and they are named differently everywhere:
+
+* the **provider session identity** - the id the Claude CLI itself reports on
+  its stream and the only id `--resume` accepts. The supervisor cannot mint one.
+* the **rotation record key** - a supervisor-internal bookkeeping id
+  (`new_rotation_record_key`, `sup-rot-<uuid4>`) that names one row in this
+  ledger. It is NOT a session identity of any kind and must never be written to
+  a field, argv, prompt, or record where a provider session id belongs.
+
+The pre-M0-T080 tree minted `sup-<uuid4>` from a function called
+`new_session_id` and the loop stored it as "the new session id", which is
+exactly the confusion this split removes.
 """
 from __future__ import annotations
 
 import dataclasses
-import re
 import uuid
 from typing import Any, Mapping, Sequence
 
 from .models import digest_of, to_utc_iso
-from .policy import ASK, NOTIFY, assert_advisory_allowed
+from .policy import ASK, NOTIFY
+# The S11.3 handoff SCHEMA lives in `handoff.py` (M0-T080 split) and is
+# re-exported here so every existing `rotation.<name>` import keeps working
+# unchanged (`docs/CODE_MODULARITY_POLICY.md` §6, facade-preserving split).
+from .handoff import (  # noqa: F401 - re-exported facade
+    HANDOFF_FIELDS,
+    HANDOFF_MAY_BE_EMPTY,
+    HANDOFF_VERIFICATION_PURPOSE,
+    Handoff,
+    HandoffVerification,
+    RotationError,
+    assert_no_clear_automation,
+    assert_review_model_used,
+    export_handoff_payload,
+    validate_handoff,
+    verify_handoff,
+)
+
 
 # --------------------------------------------------------------------------
 # Job size classification (S11.1)
@@ -51,15 +81,6 @@ JOB_SIZES: tuple[str, ...] = (SMALL, MEDIUM, LARGE, UNKNOWN)
 #: Strictness ordering for job size. Combining evidence takes the MAX, so an
 #: unknown feature can only ever make the estimate more conservative.
 JOB_SIZE_ORDER: dict[str, int] = {SMALL: 0, MEDIUM: 1, LARGE: 2, UNKNOWN: 3}
-
-
-class RotationError(Exception):
-    """A rotation rule was violated. Always fails closed."""
-
-    def __init__(self, code: str, message: str) -> None:
-        super().__init__(f"{code}: {message}")
-        self.code = code
-        self.message = message
 
 
 @dataclasses.dataclass(frozen=True)
@@ -619,209 +640,6 @@ def assert_safe_to_rotate(state: RotationSafetyState) -> None:
             + ". S11.3 permits rotation only at a quiet, unambiguous checkpoint")
 
 
-#: The S11.3 handoff schema, verbatim in order. Every field is REQUIRED; an
-#: empty required field is an invalid handoff, not a tolerable omission.
-HANDOFF_FIELDS: tuple[str, ...] = (
-    "task_and_stage",
-    "authoritative_shas",
-    "branch",
-    "worktree",
-    "completed_work",
-    "changed_files",
-    "tests_and_ci",
-    "pull_request_state",
-    "reviews_and_findings",
-    "open_blockers",
-    "owner_gates",
-    "forbidden_scope",
-    "exact_next_action",
-    "evidence_digests",
-)
-
-#: Fields that may legitimately be an empty COLLECTION (there may genuinely be no
-#: blockers). They must still be present, and must still be the right type.
-HANDOFF_MAY_BE_EMPTY: frozenset[str] = frozenset({
-    "changed_files", "open_blockers", "reviews_and_findings", "owner_gates",
-    "evidence_digests", "tests_and_ci",
-})
-
-#: S11.3: "Do not automate an interactive `/clear`."
-_CLEAR_AUTOMATION = re.compile(r"(?<![\w/])/clear\b", re.IGNORECASE)
-
-
-def assert_no_clear_automation(text: str, *, where: str) -> None:
-    """Refuse any handoff or next-action text that automates `/clear` (S11.3)."""
-    if _CLEAR_AUTOMATION.search(text or ""):
-        raise RotationError(
-            "clear_automation_forbidden",
-            f"{where} tries to automate an interactive `/clear`; S11.3 requires a brand-new "
-            f"explicitly identified session instead")
-
-
-@dataclasses.dataclass(frozen=True)
-class Handoff:
-    """The structured handoff (S11.3 schema). Untrusted content, strict shape."""
-
-    task_and_stage: str
-    authoritative_shas: dict[str, str]
-    branch: str
-    worktree: str
-    completed_work: str
-    changed_files: tuple[str, ...]
-    tests_and_ci: dict[str, Any]
-    pull_request_state: str
-    reviews_and_findings: tuple[str, ...]
-    open_blockers: tuple[str, ...]
-    owner_gates: tuple[str, ...]
-    forbidden_scope: tuple[str, ...]
-    exact_next_action: str
-    evidence_digests: dict[str, str]
-
-    def to_dict(self) -> dict[str, Any]:
-        data = dataclasses.asdict(self)
-        for key, value in list(data.items()):
-            if isinstance(value, tuple):
-                data[key] = list(value)
-        return data
-
-    def digest(self) -> str:
-        return digest_of(self.to_dict())
-
-    @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "Handoff":
-        if not isinstance(data, Mapping):
-            raise RotationError("not_a_mapping", "a handoff must be a mapping")
-        unknown = sorted(set(data) - set(HANDOFF_FIELDS))
-        if unknown:
-            raise RotationError("unknown_handoff_fields",
-                                f"handoff carries unknown fields: {unknown}")
-        missing = sorted(set(HANDOFF_FIELDS) - set(data))
-        if missing:
-            raise RotationError("incomplete_handoff",
-                               f"handoff is missing required fields: {missing}")
-        return cls(
-            task_and_stage=str(data["task_and_stage"]),
-            authoritative_shas=dict(data["authoritative_shas"] or {}),
-            branch=str(data["branch"]),
-            worktree=str(data["worktree"]),
-            completed_work=str(data["completed_work"]),
-            changed_files=tuple(data["changed_files"] or ()),
-            tests_and_ci=dict(data["tests_and_ci"] or {}),
-            pull_request_state=str(data["pull_request_state"]),
-            reviews_and_findings=tuple(data["reviews_and_findings"] or ()),
-            open_blockers=tuple(data["open_blockers"] or ()),
-            owner_gates=tuple(data["owner_gates"] or ()),
-            forbidden_scope=tuple(data["forbidden_scope"] or ()),
-            exact_next_action=str(data["exact_next_action"]),
-            evidence_digests=dict(data["evidence_digests"] or {}),
-        )
-
-
-def validate_handoff(handoff: Handoff) -> None:
-    """Reject an incomplete or unusable handoff (S11.3, S15 'invalid handoff')."""
-    for name in HANDOFF_FIELDS:
-        value = getattr(handoff, name)
-        if name in HANDOFF_MAY_BE_EMPTY:
-            continue
-        if isinstance(value, str) and not value.strip():
-            raise RotationError("incomplete_handoff",
-                                f"handoff field {name!r} is empty; a rotation may not proceed "
-                                f"on a handoff that omits it")
-        if isinstance(value, (dict, tuple)) and not value:
-            raise RotationError("incomplete_handoff",
-                                f"handoff field {name!r} is empty; a rotation may not proceed "
-                                f"on a handoff that omits it")
-    if "HEAD" not in handoff.authoritative_shas:
-        raise RotationError("incomplete_handoff",
-                            "authoritative_shas must name at least HEAD")
-    assert_no_clear_automation(handoff.exact_next_action, where="handoff.exact_next_action")
-    assert_no_clear_automation(handoff.completed_work, where="handoff.completed_work")
-
-
-@dataclasses.dataclass(frozen=True)
-class HandoffVerification:
-    """The reviewer's verdict on a handoff, plus the model that produced it."""
-
-    verified: bool
-    model_used: str
-    role: str
-    reason_code: str
-    reason: str
-    handoff_digest: str = ""
-    findings: tuple[str, ...] = ()
-
-
-HANDOFF_VERIFICATION_PURPOSE = "handoff_verification"
-
-
-def assert_review_model_used(*, role: str, model_used: str,
-                             review_model: str, advisory_model: str = "") -> None:
-    """S11.3/S3.3: handoff verification uses review_model, never advisory_model."""
-    if role != "primary":
-        raise RotationError(
-            "advisory_model_forbidden",
-            f"handoff verification ran in role {role!r}; S3.3 reserves final handoff "
-            f"verification before autonomous continuation to review_model or deterministic "
-            f"verification")
-    if advisory_model and model_used == advisory_model and model_used != review_model:
-        raise RotationError(
-            "advisory_model_forbidden",
-            f"handoff verification used the advisory model {model_used!r}; S3.3 forbids the "
-            f"cheaper model for this purpose")
-    if review_model and model_used != review_model:
-        raise RotationError(
-            "unexpected_verifier_model",
-            f"handoff verification reported model {model_used!r} but the configured "
-            f"review_model is {review_model!r}; the mismatch is never accepted silently")
-    # Belt and braces: the policy engine's own refusal for this purpose.
-    try:
-        assert_advisory_allowed(HANDOFF_VERIFICATION_PURPOSE)
-    except Exception:
-        return  # Expected: the purpose is on the forbidden list. Nothing to do.
-    raise RotationError(
-        "advisory_purpose_not_protected",
-        "handoff_verification is no longer on the advisory-forbidden list; refusing to "
-        "verify a handoff under a weakened policy")
-
-
-def verify_handoff(
-    handoff: Handoff,
-    *,
-    reviewer_verdict: Mapping[str, Any],
-    review_model: str,
-    advisory_model: str = "",
-    role: str = "primary",
-) -> HandoffVerification:
-    """Turn a fresh read-only reviewer's verdict into a durable verification.
-
-    The supervisor - not the reviewer - decides what the verdict means, and the
-    model identity is checked against the configured `review_model` before the
-    verdict is honoured at all.
-    """
-    validate_handoff(handoff)
-    model_used = str(reviewer_verdict.get("model_used", ""))
-    assert_review_model_used(role=role, model_used=model_used,
-                             review_model=review_model, advisory_model=advisory_model)
-
-    reviewed_digest = str(reviewer_verdict.get("handoff_digest", ""))
-    if reviewed_digest != handoff.digest():
-        return HandoffVerification(
-            False, model_used, role, "digest_mismatch",
-            f"the reviewer verified a handoff whose digest ({reviewed_digest[:16]}...) is not "
-            f"the one being rotated ({handoff.digest()[:16]}...)",
-            handoff.digest())
-
-    findings = tuple(str(f) for f in reviewer_verdict.get("findings", ()) or ())
-    if not bool(reviewer_verdict.get("verified", False)) or findings:
-        return HandoffVerification(
-            False, model_used, role, "handoff_rejected",
-            "the reviewer did not verify the handoff against live evidence",
-            handoff.digest(), findings)
-    return HandoffVerification(
-        True, model_used, role, "handoff_verified",
-        f"{model_used} verified the handoff against live evidence", handoff.digest())
-
-
 # --------------------------------------------------------------------------
 # The rotation ledger (durable storage, new session, READY gate)
 # --------------------------------------------------------------------------
@@ -830,11 +648,25 @@ HANDOFF_KEY = "verified_handoff"
 SESSION_ARCHIVE_KEY = "archived_sessions"
 
 
-def new_session_id(previous: str = "") -> str:
-    """A brand-new session id (S11.3). Never reuses or derives from the old one."""
-    candidate = f"sup-{uuid.uuid4().hex}"
+def new_rotation_record_key(previous: str = "") -> str:
+    """A fresh SUPERVISOR-INTERNAL key naming one row in the rotation ledger.
+
+    This is bookkeeping, NOT an identity any provider knows. The supervisor
+    cannot mint a provider session id - only the Claude CLI can, and it reports
+    it on its stream (`claude_runner.RunResult.session_id`). The `sup-rot-`
+    prefix and this function's name exist so the value can never be mistaken for
+    one: it is never passed to `--resume`, never written to
+    `RunnerConfig.resume_session_id`, and never stored in a
+    `provider_session_id` field.
+
+    Until M0-T080 this function was called `new_session_id`, returned
+    `sup-<uuid4>`, and the loop stored its result where the new session's
+    identity belonged - so a "completed rotation" recorded an id no provider had
+    ever issued while the successor actually launched unresumed.
+    """
+    candidate = f"sup-rot-{uuid.uuid4().hex}"
     if previous and candidate == previous:  # pragma: no cover - uuid4 collision
-        return new_session_id(previous)
+        return new_rotation_record_key(previous)
     return candidate
 
 
@@ -890,7 +722,13 @@ class RotationLedger:
 
     def assert_ready_checkpoint(self, checkpoint: Any, *, expected_session_id: str,
                                 previous_session_id: str = "") -> None:
-        """The new session must return a structured READY checkpoint before any change."""
+        """The new session must return a structured READY checkpoint before any change.
+
+        Both ids here are PROVIDER session identities - `claude_session_id` is
+        the id the worker itself reports, so comparing it to a supervisor-minted
+        bookkeeping key could never match. `turnover_seam.SeamTurnover` is the
+        production caller and only ever passes provider ids.
+        """
         status = getattr(checkpoint, "status", None)
         session = getattr(checkpoint, "claude_session_id", "")
         if status != "READY":
@@ -909,21 +747,79 @@ class RotationLedger:
                 "the 'new' session id equals the archived one; rotation requires a brand-new "
                 "explicitly identified session")
 
-    def complete_rotation(self, *, old_session_id: str, new_session_id_value: str,
-                          handoff_digest: str) -> dict[str, Any]:
-        """Archive, clear rotation_pending, and record the NOTIFY event (S11.3)."""
-        if new_session_id_value == old_session_id:
-            raise RotationError("session_not_rotated",
-                                "a completed rotation must carry a brand-new session id")
-        self.archive_session(old_session_id, reason="rotation_complete")
+    def complete_rotation(self, *, previous_provider_session_id: str,
+                          rotation_record_key: str,
+                          handoff_digest: str,
+                          continuity_mode: str,
+                          provider_session_id: str = "",
+                          provider_session_none_reason: str = "") -> dict[str, Any]:
+        """Record the rotation with BOTH identities, and archive when appropriate.
+
+        `continuity_mode` (`session_continuity.RESUME` / `REORIENTATION`) decides
+        what actually happened to the session:
+
+        * **reorientation** - the outgoing provider session is ARCHIVED (S11.3:
+          never resumed afterwards) and `provider_session_id` is EMPTY, because
+          the successor's own id does not exist until it reports one. The record
+          must then name why resume was impossible, so a reader can never read
+          the blank as "it resumed and we lost the id".
+        * **resume** - the successor continues the SAME provider session, so that
+          session is deliberately NOT archived (archiving it would make the very
+          resume being recorded illegal), and `provider_session_id` names it.
+
+        `rotation_record_key` is supervisor-internal bookkeeping and is required
+        to differ from the outgoing provider session id, so the two identities
+        can never be silently the same value.
+        """
+        if continuity_mode not in ("resume", "reorientation"):
+            raise RotationError(
+                "unknown_continuity_mode",
+                f"{continuity_mode!r} is not a continuity mode; a completed rotation states "
+                f"whether the successor really resumed the provider session or was "
+                f"explicitly re-oriented into a new one")
+        if not rotation_record_key:
+            raise RotationError("no_rotation_record_key",
+                                "a completed rotation needs its supervisor-internal record key")
+        if rotation_record_key == previous_provider_session_id:
+            raise RotationError(
+                "identity_conflated",
+                "the supervisor-internal rotation record key equals the outgoing PROVIDER "
+                "session id; the two identities are different kinds of thing and may never "
+                "hold the same value")
+        if continuity_mode == "resume":
+            if not provider_session_id:
+                raise RotationError(
+                    "resume_without_provider_session",
+                    "a rotation recorded as a resume must name the exact provider session "
+                    "id the successor launch resumes; a resume with no id is a fresh "
+                    "unresumed session wearing a resume label")
+            self.assert_not_archived(provider_session_id)
+        else:
+            if not provider_session_none_reason:
+                raise RotationError(
+                    "reorientation_without_reason",
+                    "a rotation recorded as a reorientation must name why resume was "
+                    "impossible; an unexplained blank session id is indistinguishable from "
+                    "a lost one")
+            if provider_session_id:
+                raise RotationError(
+                    "reorientation_with_provider_session",
+                    "a reorientation starts a session the provider has not identified yet, "
+                    "so it may not claim a provider session id in advance")
+            self.archive_session(previous_provider_session_id,
+                                 reason="rotation_complete")
         clear_rotation_pending(self.journal)
         record = {
-            "old_session_id": old_session_id,
-            "new_session_id": new_session_id_value,
+            "previous_provider_session_id": previous_provider_session_id,
+            "rotation_record_key": rotation_record_key,
+            "continuity_mode": continuity_mode,
+            "provider_session_id": provider_session_id,
+            "provider_session_none_reason": provider_session_none_reason,
             "handoff_digest": handoff_digest,
             "completed_at_utc": to_utc_iso(),
             "tier": NOTIFY,
-            "note": "a completed rotation is a NOTIFY event (S11.3)",
+            "note": "a completed rotation is a NOTIFY event (S11.3). rotation_record_key is "
+                    "SUPERVISOR-INTERNAL bookkeeping and is never a provider session id",
         }
         self.journal.set_state("last_rotation", record)
         self._audit("rotation_complete", record)
@@ -938,20 +834,3 @@ def rotation_tier(decision: RotationDecision) -> str:
     """A completed rotation is NOTIFY; a rotation that cannot proceed is ASK."""
     return NOTIFY if decision.rotate else ASK if decision.reason_code == "blocked" else NOTIFY
 
-
-def export_handoff_payload(handoff: Handoff, verification: HandoffVerification,
-                           *, new_session: str,
-                           evidence: Sequence[str] = ()) -> dict[str, Any]:
-    """The bundle a fresh session receives (S11.3): handoff, packet refs, next action."""
-    validate_handoff(handoff)
-    assert_no_clear_automation(handoff.exact_next_action, where="exported next action")
-    return {
-        "new_session_id": new_session,
-        "handoff": handoff.to_dict(),
-        "handoff_digest": handoff.digest(),
-        "verified_by_model": verification.model_used,
-        "exact_next_authorized_action": handoff.exact_next_action,
-        "evidence_refs": list(evidence),
-        "required_first_response": "a structured READY checkpoint; no change before it",
-        "exported_at_utc": to_utc_iso(),
-    }

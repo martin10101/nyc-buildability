@@ -62,12 +62,15 @@ from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
 from . import rotation
+from . import session_continuity as sc
+from . import loop_turnover as lt
+from . import turnover_seam as ts
 from .audit_log import AuditChainError
 from . import loop_breakers as lb
 from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
 from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
-from .config import DEFAULT_ORCHESTRATOR_MODEL_CHAIN, ModelChain
+from .config import ModelChain
 from .durable_state import JournalError
 from .errors import LoopError
 from .evidence import STOP_FOR_OWNER, build_packet
@@ -204,9 +207,13 @@ CYCLE_ENTRY_STATES: frozenset[str] = frozenset({PREFLIGHT, START_CLAUDE, CLAUDE_
 # where no unit is in flight - and nothing else: separate triggers, separate
 # reason codes, separate records.
 
-#: The fail-closed default chain, defined once in config.py and re-exported here
-#: for callers that build a loop without a controller config.
-DEFAULT_MODEL_CHAIN: tuple[str, ...] = DEFAULT_ORCHESTRATOR_MODEL_CHAIN
+#: M0-T080 / D-023-R013: EMPTY, and deliberately so. This name used to re-export
+#: `config.DEFAULT_ORCHESTRATOR_MODEL_CHAIN`, three model ids the owner had never
+#: approved, which any loop built without a controller config silently inherited.
+#: A loop with no configured chain now has NOTHING to select from, and every
+#: selection act against it stops safely
+#: (`approved_models.ApprovedModels.assert_populated`).
+DEFAULT_MODEL_CHAIN: tuple[str, ...] = ()
 
 # `QUOTA_EXHAUSTED_REASON` is imported from claude_runner and re-exported here: it
 # is the ONE availability reason_code that authorizes a chain step, and the probe
@@ -493,6 +500,10 @@ class SeamRotation:
     #: D-004 am.26 / D-007 am.11: True when this seam relaunched on the substitute
     #: model (quota exhaustion), and True on the return event when it rotated back.
     substituted: bool = False
+    #: M0-T080: the FULL persisted handoff, formatted as the successor's first
+    #: prompt. Non-empty exactly when the turnover was an explicit REORIENTATION;
+    #: empty on a real `--resume`, where the successor already has the context.
+    reorientation_prompt: str = ""
 
 
 @dataclasses.dataclass(frozen=True)
@@ -878,6 +889,10 @@ class SupervisedLoop:
         resource_sampler: Any = None,
         worker_turnover: Any = None,
         run_budget: Any = None,
+        handoff_verifier: Any = None,
+        review_model: str = "",
+        advisory_model: str = "",
+        resume_max_age_seconds: float | None = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -913,7 +928,24 @@ class SupervisedLoop:
         self._head_sha = head_sha
         self._origin_main_sha = origin_main_sha
         self._executable_identity = dict(executable_identity or {})
-        self._current_session_id = ""
+        # M0-T080: TWO identities, deliberately separate attributes.
+        #
+        # `_provider_session_id` is the id the PROVIDER issued and reported on its
+        # stream. It is the only thing `--resume` accepts, it is restored from
+        # durable state so a crash-resume does not forget which session did the
+        # work, and it is what the broker binds a request to.
+        #
+        # `_rotation_record_key` is SUPERVISOR-INTERNAL bookkeeping naming the
+        # last rotation ledger row. Before this task one attribute held both
+        # meanings: the loop read a real provider id off the stream and then
+        # OVERWROTE it with an invented `sup-<uuid4>` at every rotation, so the
+        # recorded "new session id" named a session no provider had ever issued
+        # and the successor launched unresumed.
+        recorded_session = sc.recorded_provider_session(journal)
+        self._provider_session_id = (recorded_session.session_id
+                                     if recorded_session is not None else "")
+        self._rotation_record_key = ""
+        self._resume_max_age_seconds = resume_max_age_seconds
         # D-004 am.26 / D-007 am.11 / am.12: the model the CURRENT session runs
         # on. It is the pinned model unless an orchestrator-role switch is active,
         # in which case it is the chain entry that switch selected. The durable
@@ -946,6 +978,11 @@ class SupervisedLoop:
         #: The last valid checkpoint id this run received - the safe checkpoint a
         #: turnover redispatch resumes the SAME bounded unit from.
         self._last_checkpoint_id = ""
+        #: M0-T080: the last VALID checkpoint object. The S11.3 handoff is built
+        #: from it (completed work, changed files, tests, blockers, owner gates,
+        #: and the SHA the worker finished on), so the handoff describes the real
+        #: unit instead of the six-field snapshot the seams used to write.
+        self._last_checkpoint: Any = None
         # M0-T079 (D-023 item 1): the durable owner-controlled run budget
         # (`run_budget.RunBudgetLedger`). Default None keeps every existing caller
         # and test unchanged - with no ledger there is no timer, which is also
@@ -958,6 +995,20 @@ class SupervisedLoop:
         #: breaker. Distinct from `_last_checkpoint_id`, which is the safe
         #: checkpoint a turnover resumes from and is updated in the same place.
         self._previous_checkpoint_id = ""
+        # M0-T080: the FULL S11.3 turnover path all three rotation seams take -
+        # safe-seam check, handoff build, verify, durable persist, READY gate,
+        # post-launch identity check. `handoff_verifier` is the live review-model
+        # seam; with none injected the supervisor verifies DETERMINISTICALLY by
+        # re-deriving every field from its own durable facts and records that it
+        # did (S3.3 permits review_model OR deterministic verification), so the
+        # handoff is never simply asserted.
+        self._seam = ts.SeamTurnover(
+            journal=journal, audit=audit, run_id=run_id,
+            verifier=handoff_verifier, review_model=review_model,
+            advisory_model=advisory_model)
+        #: What the last completed turnover commanded the successor to be. The
+        #: post-launch check compares the successor's own report against it.
+        self._successor_expectation: ts.SuccessorExpectation | None = None
 
     # -- guards -------------------------------------------------------------
 
@@ -1078,7 +1129,7 @@ class SupervisedLoop:
             authority=self.authority,
             head_sha=self._head_sha,
             origin_main_sha=self._origin_main_sha,
-            session_id_getter=lambda: self._current_session_id,
+            session_id_getter=lambda: self._provider_session_id,
             executable_identity_data=self._executable_identity)
 
     # -- seam-only rotation (D-004-R739, R743..R745) ------------------------
@@ -1222,7 +1273,7 @@ class SupervisedLoop:
             "branch": self.authority.branch,
             "worktree": self.authority.worktree,
             "reason_code": reason_code,
-            "outgoing_session_id": self._current_session_id,
+            "outgoing_provider_session_id": self._provider_session_id,
             "pinned_model": self.pinned_model,
             "cycle": cycle,
             "refreshed_at_utc": to_utc_iso(),
@@ -1236,15 +1287,48 @@ class SupervisedLoop:
                               detail={"cycle": cycle, "reason_code": reason_code})
         return digest
 
+    # -- M0-T080: the FULL S11.3 turnover every seam takes -------------------
+    #
+    # WHICH facts this run can state about the work, and WHERE in the cycle the
+    # post-rotation gates apply, live in `loop_turnover.py` - they change for
+    # entirely different reasons than the S7 wiring this module owns. These are
+    # the thin delegating methods; the mechanics are documented there.
+
+    def _seam_facts(self, *, reason_code: str, cycle: int) -> ts.SeamFacts:
+        return lt.seam_facts(self, reason_code=reason_code, cycle=cycle)
+
+    def _full_turnover(self, *, cycle: int, reason_code: str,
+                       successor_model: str) -> ts.SeamTurnoverResult:
+        return lt.full_turnover(self, cycle=cycle, reason_code=reason_code,
+                                successor_model=successor_model)
+
+    def _turnover_refused(self, *, cycle: int, reason_code: str,
+                          error: "ts.SeamTurnoverError") -> "SeamRotation":
+        return lt.turnover_refused(self, cycle=cycle, reason_code=reason_code,
+                                   error=error)
+
+    def _post_rotation_gates(self, checkpoint: Any, run_result: Any, *, cycle: int,
+                             touches: list[OwnerTouch]) -> tuple[str, str] | None:
+        return lt.post_rotation_gates(self, checkpoint, run_result, cycle=cycle,
+                                      touches=touches)
+
+    def _resume_capability_verified(self) -> bool:
+        return lt.resume_capability_verified(self)
+
+    def _actuate_resume(self, provider_session_id: str) -> None:
+        lt.actuate_resume(self, provider_session_id)
+
     def _rotate_at_seam(self, *, cycle: int) -> "SeamRotation":
         """Rotate the session BEFORE dispatching the next unit (B and C share this).
 
         The single rotation code path for both a detected model downgrade (B) and
         a context-threshold crossing (C). Structurally seam-only: only run() calls
         it, always between cycles, and it asserts nothing is in flight by requiring
-        the durable rotation_pending flag. Order: refresh handoff -> strict pinned-
-        model check -> rotate via rotation.py (archive old, mint new, complete) or
-        PAUSE+notify when the pinned model is unavailable.
+        the durable rotation_pending flag. Order: refresh the D-004 SESSION_HANDOFF
+        snapshot -> strict pinned-model check -> the FULL S11.3 turnover
+        (`_full_turnover`: safe seam, handoff build + verify, durable persist,
+        rotation record with both identities, armed READY gate) -> or PAUSE+notify
+        when the pinned model is unavailable.
         """
         pending = self.rotation_pending()
         substitution = self._active_substitution()
@@ -1294,28 +1378,28 @@ class SupervisedLoop:
                         and availability.reason_code == QUOTA_EXHAUSTED_REASON):
                     return self._switch_at_seam(
                         cycle=cycle, reason_code=reason_code,
-                        handoff_digest=handoff_digest, exhausted_model=gated_model,
-                        substitution=substitution)
+                        exhausted_model=gated_model, substitution=substitution)
                 return self._pause_model_unavailable(
                     cycle=cycle, reason_code=reason_code, model=gated_model,
                     handoff_digest=handoff_digest)
 
-        # Rotate via rotation.py: archive the outgoing session, clear the pending
-        # flag, mint a brand-new session id, record the NOTIFY event. The relaunch
-        # continues on the CURRENT model - the pin normally, or the substitute
-        # while a substitution is active and the pin is still unavailable.
-        old_session = self._current_session_id
-        new_session = rotation.new_session_id(old_session)
-        ledger = rotation.RotationLedger(self.journal, audit=self.audit)
-        record = ledger.complete_rotation(
-            old_session_id=old_session, new_session_id_value=new_session,
-            handoff_digest=handoff_digest)
-        self._current_session_id = new_session
+        # M0-T080: the FULL S11.3 turnover, replacing the direct
+        # `complete_rotation` call this seam used to make. Safe-seam check, S11.3
+        # handoff build + verification, durable persistence of the VERIFIED
+        # handoff, the rotation record carrying BOTH identities, and the armed
+        # READY gate all happen inside `_full_turnover`.
+        old_session = self._provider_session_id
+        successor_model = self._current_model or self.pinned_model
+        try:
+            turnover = self._full_turnover(cycle=cycle, reason_code=reason_code,
+                                           successor_model=successor_model)
+        except ts.SeamTurnoverError as exc:
+            return self._turnover_refused(cycle=cycle, reason_code=reason_code, error=exc)
         self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
         relaunch = {
             "cycle": cycle, "reason_code": reason_code,
-            "old_session_id": old_session, "new_session_id": new_session,
-            "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
+            **turnover.to_dict(),
+            "pinned_model": self.pinned_model,
             "model": self._current_model,
             "tier": NOTIFY, "recorded_at_utc": to_utc_iso(),
         }
@@ -1323,16 +1407,21 @@ class SupervisedLoop:
         if self.audit is not None:
             self.audit.append(
                 "supervisor_rotation_relaunch", run_id=self.run_id,
-                policy_result=reason_code, output_digest=handoff_digest,
+                policy_result=reason_code, output_digest=turnover.handoff_digest,
                 detail={**relaunch,
-                        "note": "relaunch continues on the CURRENT model in a brand-new "
-                                "session; a completed rotation is a NOTIFY event (S11.3)"})
+                        "note": "relaunch continues on the CURRENT model; the successor "
+                                "either RESUMES the recorded provider session or is "
+                                "explicitly re-oriented from the full verified handoff, and "
+                                "the record says which. A completed rotation is a NOTIFY "
+                                "event (S11.3)"})
         model_label = self._current_model or self.pinned_model or "the configured model"
         return SeamRotation(relaunched=True, paused=False, stopped="",
                             substituted=substitution is not None,
-                            reason=(f"rotated {reason_code}: archived {old_session!r}, "
-                                    f"relaunching on {model_label} in {new_session!r}"),
-                            reason_code=reason_code, record=relaunch)
+                            reason=(f"rotated {reason_code}: outgoing provider session "
+                                    f"{old_session or '(none recorded)'!r}, relaunching on "
+                                    f"{model_label} by {turnover.continuity.mode}"),
+                            reason_code=reason_code, record=relaunch,
+                            reorientation_prompt=turnover.reorientation_prompt)
 
     def _pause_model_unavailable(self, *, cycle: int, reason_code: str, model: str,
                                  handoff_digest: str) -> "SeamRotation":
@@ -1383,8 +1472,7 @@ class SupervisedLoop:
                     f"on a substitute"),
             reason_code=reason_code, touch=touch)
 
-    def _switch_at_seam(self, *, cycle: int, reason_code: str, handoff_digest: str,
-                        exhausted_model: str,
+    def _switch_at_seam(self, *, cycle: int, reason_code: str, exhausted_model: str,
                         substitution: Mapping[str, Any] | None = None) -> "SeamRotation":
         """Walk the configured chain and relaunch on the first entry that LAUNCHES.
 
@@ -1418,13 +1506,16 @@ class SupervisedLoop:
 
         # ACTUATION FIRST: the next unit must really launch on `selected`.
         self._actuate_model(selected)
-        old_session = self._current_session_id
-        new_session = rotation.new_session_id(old_session)
-        ledger = rotation.RotationLedger(self.journal, audit=self.audit)
-        ledger.complete_rotation(
-            old_session_id=old_session, new_session_id_value=new_session,
-            handoff_digest=handoff_digest)
-        self._current_session_id = new_session
+        old_session = self._provider_session_id
+        # M0-T080: the FULL S11.3 turnover, not a direct `complete_rotation`. A
+        # chain switch is by definition CROSS-MODEL, so the continuity decision
+        # here can only ever be an explicit reorientation - and it is recorded as
+        # one, with `cross_model` named as the reason resume was impossible.
+        try:
+            turnover = self._full_turnover(cycle=cycle, reason_code=reason_code,
+                                           successor_model=selected)
+        except ts.SeamTurnoverError as exc:
+            return self._turnover_refused(cycle=cycle, reason_code=reason_code, error=exc)
         self._current_model = selected
         self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
         record = {
@@ -1439,9 +1530,7 @@ class SupervisedLoop:
             "reason_code": QUOTA_EXHAUSTED_REASON,
             "rotation_reason": reason_code,
             "cycle": cycle,
-            "old_session_id": old_session,
-            "new_session_id": new_session,
-            "handoff_digest": handoff_digest,
+            **turnover.to_dict(),
             "started_at_utc": to_utc_iso(),
         }
         if substitution is not None:
@@ -1450,8 +1539,8 @@ class SupervisedLoop:
         self.journal.set_state(self._substitution_key(), record)
         relaunch = {
             "cycle": cycle, "reason_code": reason_code,
-            "old_session_id": old_session, "new_session_id": new_session,
-            "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
+            **turnover.to_dict(),
+            "pinned_model": self.pinned_model,
             "model": selected, "substitute_model": selected,
             "launched_model": self.launched_model(),
             "chain": list(self.model_chain.entries), "chain_attempts": attempts,
@@ -1463,7 +1552,8 @@ class SupervisedLoop:
         if self.audit is not None:
             self.audit.append(
                 "model_substitution", run_id=self.run_id,
-                policy_result=QUOTA_EXHAUSTED_REASON, output_digest=handoff_digest,
+                policy_result=QUOTA_EXHAUSTED_REASON,
+                output_digest=turnover.handoff_digest,
                 detail={**record,
                         "note": "orchestrator-role continuity: this model's quota is "
                                 "exhausted at this seam, so the session relaunches EXPLICITLY "
@@ -1477,69 +1567,18 @@ class SupervisedLoop:
         return SeamRotation(
             relaunched=True, paused=False, stopped="", substituted=True,
             reason=(f"model {exhausted_model!r} quota exhausted; the orchestrator-role "
-                    f"session relaunched on chain entry {selected!r} in {new_session!r}"),
-            reason_code=reason_code, record=relaunch)
+                    f"session relaunched on chain entry {selected!r} by "
+                    f"{turnover.continuity.mode} (outgoing provider session "
+                    f"{old_session or '(none recorded)'!r})"),
+            reason_code=reason_code, record=relaunch,
+            reorientation_prompt=turnover.reorientation_prompt)
 
     def _stop_chain_exhausted(self, *, cycle: int, reason_code: str,
                               exhausted_model: str,
                               attempts: Sequence[Mapping[str, Any]]) -> "SeamRotation":
-        """No chain entry launched: STOP, refresh the handoff, notify (D-004-R755).
-
-        The end of the chain is a full stop, never a fallback. Nothing outside the
-        chain is tried, no substitute is chosen, and the run does not continue: the
-        handoff is refreshed under this reason code, the owner is notified through
-        the existing pause/ask surface, and the seam reports the stop.
-        """
-        handoff_digest = self._refresh_session_handoff(cycle=cycle,
-                                                       reason_code=CHAIN_EXHAUSTED_STOP)
-        self.machine.transition(
-            PAUSED_RECOVERY, "unsafe_condition",
-            detail={"cycle": cycle, "reason": CHAIN_EXHAUSTED_STOP,
-                    "pinned_model": self.pinned_model,
-                    "exhausted_model": exhausted_model,
-                    "chain": list(self.model_chain.entries),
-                    "rotation_reason": reason_code})
-        touch = self._touch(
-            TOUCH_SYNCHRONOUS_STOP, reason_code=CHAIN_EXHAUSTED_STOP,
-            reason=(f"no entry in the configured model chain "
-                    f"{list(self.model_chain.entries)} actually launched after "
-                    f"{exhausted_model!r} was exhausted; the session stops rather than "
-                    f"continuing on an unlisted or substitute model (D-004-R755)"),
-            cycle=cycle, basis="D-004 model chain / D-007 am.12")
-        ask_id = f"model_chain_exhausted/{self.run_id}/{cycle}"
-        try:
-            self.journal.queue_ask(QueuedAsk(
-                ask_id=ask_id, run_id=self.run_id, task_id=self.config.task_id,
-                question=(f"No model in the configured chain "
-                          f"{list(self.model_chain.entries)} could be launched after "
-                          f"{exhausted_model!r} was exhausted. The session has stopped and "
-                          f"will not continue on any other model; how should it proceed?"),
-                request_digest=handoff_digest, created_at_utc=to_utc_iso(),
-                classification="security"))
-        except Exception:
-            # A duplicate ask id means the same stop is already queued.
-            pass
-        if self.audit is not None:
-            self.audit.append(
-                CHAIN_EXHAUSTED_STOP, run_id=self.run_id,
-                decision="deny", policy_result=CHAIN_EXHAUSTED_STOP,
-                output_digest=handoff_digest,
-                detail={"cycle": cycle, "pinned_model": self.pinned_model,
-                        "exhausted_model": exhausted_model,
-                        "chain": list(self.model_chain.entries),
-                        "chain_attempts": [dict(a) for a in attempts],
-                        "launched_model": self.launched_model(),
-                        "reason_code": reason_code, "ask_id": ask_id,
-                        "handoff_digest": handoff_digest,
-                        "note": "every chain entry was tried by an actual launch attempt and "
-                                "none came up; the supervisor NEVER continues on an unlisted "
-                                "or substitute model (D-004-R754/R755)"})
-        return SeamRotation(
-            relaunched=False, paused=True, stopped=CHAIN_EXHAUSTED_STOP,
-            reason=(f"no entry in the configured model chain launched after "
-                    f"{exhausted_model!r} was exhausted; the session stopped and the owner "
-                    f"was notified"),
-            reason_code=CHAIN_EXHAUSTED_STOP, touch=touch)
+        return lt.stop_chain_exhausted(self, cycle=cycle, reason_code=reason_code,
+                                       exhausted_model=exhausted_model,
+                                       attempts=attempts)
 
     def _return_to_pinned(self, *, cycle: int,
                           substitution: Mapping[str, Any]) -> "SeamRotation":
@@ -1554,26 +1593,30 @@ class SupervisedLoop:
         """
         left_behind = self._current_model or str(
             substitution.get("substitute_model", "") or "")
-        handoff_digest = self._refresh_session_handoff(
+        self._refresh_session_handoff(
             cycle=cycle, reason_code="model_substitution_ended")
-        old_session = self._current_session_id
-        new_session = rotation.new_session_id(old_session)
+        old_session = self._provider_session_id
         self._actuate_model(self.pinned_model)
-        ledger = rotation.RotationLedger(self.journal, audit=self.audit)
-        ledger.complete_rotation(
-            old_session_id=old_session, new_session_id_value=new_session,
-            handoff_digest=handoff_digest)
-        self._current_session_id = new_session
+        # M0-T080: the FULL S11.3 turnover, not a direct `complete_rotation`.
+        # Returning to the pin is also cross-model, so this too is an explicit,
+        # recorded reorientation rather than a rotation that merely claimed one.
+        try:
+            turnover = self._full_turnover(cycle=cycle,
+                                           reason_code="model_substitution_ended",
+                                           successor_model=self.pinned_model)
+        except ts.SeamTurnoverError as exc:
+            return self._turnover_refused(cycle=cycle,
+                                          reason_code="model_substitution_ended", error=exc)
         self._current_model = self.pinned_model
         self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
         ended = {**dict(substitution), "active": False,
                  "ended_cycle": cycle, "ended_at_utc": to_utc_iso(),
-                 "return_new_session_id": new_session}
+                 "return_rotation_record_key": turnover.rotation_record_key}
         self.journal.set_state(self._substitution_key(), ended)
         relaunch = {
             "cycle": cycle, "reason_code": "model_substitution_ended",
-            "old_session_id": old_session, "new_session_id": new_session,
-            "handoff_digest": handoff_digest, "pinned_model": self.pinned_model,
+            **turnover.to_dict(),
+            "pinned_model": self.pinned_model,
             "model": self.pinned_model, "restored_from_substitute": left_behind,
             "launched_model": self.launched_model(),
             "tier": NOTIFY, "recorded_at_utc": to_utc_iso(),
@@ -1582,18 +1625,21 @@ class SupervisedLoop:
         if self.audit is not None:
             self.audit.append(
                 "model_substitution_ended", run_id=self.run_id,
-                policy_result="pinned_model_available", output_digest=handoff_digest,
+                policy_result="pinned_model_available",
+                output_digest=turnover.handoff_digest,
                 detail={**relaunch, "substitute_model": left_behind,
                         "note": "the pinned model is available again at this seam; the "
-                                "orchestrator-role session returns to it in a brand-new "
-                                "session, with the runner rebound to the pin before this "
-                                "record was written. Never silent (D-004 am.26 / D-007 "
-                                "am.11)"})
+                                "orchestrator-role session returns to it, with the runner "
+                                "rebound to the pin before this record was written and the "
+                                "successor re-oriented from the full verified handoff. "
+                                "Never silent (D-004 am.26 / D-007 am.11)"})
         return SeamRotation(
             relaunched=True, paused=False, stopped="", substituted=False,
             reason=(f"pinned model {self.pinned_model!r} available again; returned from "
-                    f"substitute {left_behind!r} in {new_session!r}"),
-            reason_code="model_substitution_ended", record=relaunch)
+                    f"substitute {left_behind!r} by {turnover.continuity.mode} (outgoing "
+                    f"provider session {old_session or '(none recorded)'!r})"),
+            reason_code="model_substitution_ended", record=relaunch,
+            reorientation_prompt=turnover.reorientation_prompt)
 
     # -- the cycle ----------------------------------------------------------
 
@@ -1729,9 +1775,32 @@ class SupervisedLoop:
         self.provider_calls += 1
         run_result = self.runner.run_unit(
             prompt, permission_handler=self._permission_handler())
+        # M0-T080: capture the PROVIDER's own session identity at unit
+        # completion and persist it, so a later rotation can really resume the
+        # session that did the work instead of minting one. A stream that
+        # reported two different ids is AMBIGUOUS: the id is dropped rather than
+        # recorded, because an ambiguous identity must never authorize a
+        # `--resume` (S8.2 - unattended work resumes only the exact recorded
+        # session).
         session_id = str(getattr(run_result, "session_id", "") or "")
-        if session_id:
-            self._current_session_id = session_id
+        session_conflict = str(getattr(run_result, "session_id_conflict", "") or "")
+        if session_id and not session_conflict:
+            self._provider_session_id = session_id
+            sc.record_provider_session(
+                self.journal, session_id=session_id,
+                model_id=self._current_model or self.pinned_model,
+                run_id=self.run_id, cycle=cycle)
+        elif session_conflict:
+            self._provider_session_id = ""
+            sc.clear_provider_session(self.journal)
+            notify.append("provider_session_ambiguous")
+            if self.audit is not None:
+                self.audit.append(
+                    "provider_session_ambiguous", run_id=self.run_id,
+                    policy_result="session_identity_ambiguous",
+                    detail={"cycle": cycle, "conflict": session_conflict,
+                            "note": "the recorded provider session id was DROPPED; an "
+                                    "ambiguous identity can never be resumed"})
         if self.machine.current_state == START_CLAUDE:
             self.machine.transition(
                 CLAUDE_RUNNING, "claude_process_started",
@@ -1921,6 +1990,9 @@ class SupervisedLoop:
         self._previous_checkpoint_id = checkpoint.checkpoint_id
         # M0-T054: remember the safe checkpoint a later turnover would resume from.
         self._last_checkpoint_id = checkpoint.checkpoint_id
+        # M0-T080: and the checkpoint itself, which is what the S11.3 handoff is
+        # built from at the next seam.
+        self._last_checkpoint = checkpoint
         if self.breakers is not None:
             # V1.1 correction B-4: the per-checkpoint review counter measures
             # reviews of THIS checkpoint, so it resets when a new checkpoint is
@@ -1937,6 +2009,26 @@ class SupervisedLoop:
         result.context_tokens = int(getattr(run_result, "context_tokens", 0) or 0)
         self._flag_rotation_if_needed(run_result, cycle=cycle)
         result.rotation_pending = self.rotation_pending()
+
+        # --- M0-T080: the post-rotation gates --------------------------------
+        # Placed here, after the checkpoint is valid and BEFORE any evidence is
+        # collected, any review is requested, or anything is forwarded - so a
+        # successor that did not re-orient, or is not the session that was
+        # commanded, cannot act on the work at all.
+        #
+        # (1) The S11.3 READY gate: a re-oriented session returns a structured
+        #     READY checkpoint BEFORE any change. Armed by the turnover, cleared
+        #     only by a checkpoint that satisfies it.
+        # (2) Post-launch identity: the successor must report the task, branch,
+        #     HEAD, and MODEL that were commanded. A model mismatch here is a
+        #     fail-closed stop, not a note.
+        gate_stop = self._post_rotation_gates(checkpoint, run_result, cycle=cycle,
+                                              touches=touches)
+        if gate_stop is not None:
+            code, reason = gate_stop
+            self.machine.transition(PAUSED_RECOVERY, "checkpoint_unsafe",
+                                    detail={"cycle": cycle, "reason": code})
+            return stop(code, reason, PAUSED_RECOVERY)
 
         # --- COLLECT_EVIDENCE ------------------------------------------------
         self.machine.transition(COLLECT_EVIDENCE, "checkpoint_validated",
@@ -2706,6 +2798,7 @@ class SupervisedLoop:
                         forwarded_message_ids=tuple(self._forwarded),
                         provider_calls=self.provider_calls,
                         rotations=tuple(self._rotations))
+                prompt = lt.with_reorientation(seam, prompt)
             start_index = next_index
         for index in range(start_index, self.config.max_cycles + 1):
             # M0-T079: the budget gate, at the seam BEFORE a unit is dispatched.
@@ -2781,9 +2874,15 @@ class SupervisedLoop:
                             basis="S13.8 hard threshold (restart_attempts): a run that "
                                   "keeps restarting sessions is not making progress")
                         break
-                # Relaunched: the next cycle dispatches the SAME forwarded prompt on
-                # the fresh session id - on the pinned model, or on the substitute
-                # model while an orchestrator-role substitution is active.
+                # M0-T080: a REORIENTATION successor is a session that knows
+                # nothing, so the next unit receives the FULL persisted handoff
+                # ahead of the forwarded prompt. A real `--resume` successor
+                # already has the context and gets the forwarded prompt unchanged.
+                prompt = lt.with_reorientation(seam, prompt)
+                # Relaunched: the next cycle dispatches the forwarded prompt - on
+                # the pinned model, or on the substitute model while an
+                # orchestrator-role substitution is active - either resuming the
+                # recorded provider session or in an explicitly re-oriented one.
         else:
             stopped = "max_cycles_reached"
         if self.run_budget is not None and stopped != "budget_exhausted":

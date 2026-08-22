@@ -29,9 +29,16 @@ returns a synthetic result, and the lock/audit adapters run against temp dirs.
 
 The governing rule is FAIL-CLOSED (AD-025, restated by the supervisor-freeze
 lane): every adapter, on any ambiguity or unreadable durable state, refuses the
-action that could double-launch. The successor model is HARD-CODED to
-`claude-opus-4-8` at `xhigh` effort (the R289 fallback target - D-010
-source-028); a caller-supplied model is NEVER trusted or forwarded.
+action that could double-launch.
+
+M0-T080 (D-023-R013): the successor model is no longer hard-coded here. The
+launcher builds the invocation from `LaunchRequest.model_id`, which
+`TurnoverController` fills in from the OWNER-APPROVED, live-probed chain
+(`approved_models.py`) and from nowhere else. That is a narrowing, not a
+widening: the id still cannot come from caller-supplied data - the caller's
+`requested_model` is validated against the resolved approved successor and
+refused on any difference before the launcher is reached - and a request that
+names no model at all is refused here rather than defaulted.
 """
 from __future__ import annotations
 
@@ -46,7 +53,6 @@ from .models import sha256_hex, to_utc_iso
 from .process import assert_argv_safe, minimal_env
 from .turnover_controller import (
     ALLOWED_SUCCESSOR_EFFORT,
-    ALLOWED_SUCCESSOR_MODEL_ID,
     LaunchRequest,
     LaunchResult,
     TurnoverLayer,
@@ -225,8 +231,10 @@ class SuccessorLaunchTargets:
     """The FIXED, non-model parts of a successor invocation for one checkout.
 
     These describe WHERE and WITH WHICH executables a successor is launched. The
-    model and effort are NEVER taken from here or from a caller - they are always
-    the hard-coded `ALLOWED_SUCCESSOR_MODEL_ID` / `ALLOWED_SUCCESSOR_EFFORT`.
+    model is NEVER taken from here or from a caller - it arrives on the
+    `LaunchRequest` from the owner-approved, live-probed selection; the effort is
+    the frozen `ALLOWED_SUCCESSOR_EFFORT`, which protected config structurally
+    cannot carry (D-004-R159).
     `orchestrator_argv_prefix` is the argv head for an orchestrator/handoff
     launch (e.g. the supervisor `start` entry); the worker layer instead uses the
     confirmed Claude worker argv from `claude_runner.build_argv`.
@@ -286,17 +294,19 @@ CommandRunner = Callable[[SuccessorInvocation], CommandRunResult]
 
 
 class SupervisorLauncher:
-    """`Launcher` that builds a model-PINNED successor invocation and runs it
+    """`Launcher` that builds the approved-model successor invocation and runs it
     through an INJECTED command-runner.
 
-    Model discipline is unconditional: the invocation is ALWAYS pinned to
-    `claude-opus-4-8` at `xhigh` effort, taken from the frozen constants, and the
-    `LaunchRequest.model_id` a caller supplied is NEVER read into the argv or the
-    result. For the WORKER layer the argv is the confirmed Claude worker argv
-    from `claude_runner.build_argv` (which emits `--model claude-opus-4-8` and is
-    itself argv-safe-checked). For the ORCHESTRATOR layer the argv is the
-    injected orchestrator prefix plus real `start` flags (`--checkout`,
-    `--session-role orchestrator`, `--expected-worker-model claude-opus-4-8`).
+    Model discipline is unconditional: the invocation is launched on
+    `LaunchRequest.model_id` - the id `TurnoverController` resolved from the
+    OWNER-APPROVED, live-probed chain and validated against any caller
+    preference - at `ALLOWED_SUCCESSOR_EFFORT`. A request naming NO model is
+    refused; there is nothing to default to. For the WORKER layer the argv is the
+    confirmed Claude worker argv from `claude_runner.build_argv` (which emits
+    `--model <approved id>` and is itself argv-safe-checked). For the
+    ORCHESTRATOR layer the argv is the injected orchestrator prefix plus real
+    `start` flags (`--checkout`, `--session-role orchestrator`,
+    `--expected-worker-model <approved id>`).
 
     Effort is carried as invocation METADATA and an env hint, NEVER as a CLI
     flag: `process.assert_argv_safe` hard-denies every `--effort` form
@@ -315,20 +325,21 @@ class SupervisorLauncher:
         self._targets = targets
 
     def launch(self, request: LaunchRequest) -> LaunchResult:
+        model_id = str(getattr(request, "model_id", "") or "")
         try:
             invocation = self._build_invocation(request)
-        except Exception as exc:  # argv-safety refusal or a missing target
+        except Exception as exc:  # argv-safety refusal, no model, missing target
             return LaunchResult(
                 available=False,
-                model_id=ALLOWED_SUCCESSOR_MODEL_ID,
-                detail=f"could not build a safe opus-4.8 successor invocation: {exc}")
+                model_id=model_id,
+                detail=f"could not build a safe successor invocation: {exc}")
 
         try:
             outcome = self._command_runner(invocation)
         except Exception as exc:  # a real launcher that raised: fail closed
             return LaunchResult(
                 available=False,
-                model_id=ALLOWED_SUCCESSOR_MODEL_ID,
+                model_id=model_id,
                 detail=f"the successor command-runner raised ({exc}); failing closed with "
                        f"no claimed launch")
 
@@ -336,52 +347,58 @@ class SupervisorLauncher:
             detail = getattr(outcome, "detail", "") or "runner reported the successor did not start"
             return LaunchResult(
                 available=False,
-                model_id=ALLOWED_SUCCESSOR_MODEL_ID,
-                detail=f"opus-4.8 successor not started ({detail})")
+                model_id=model_id,
+                detail=f"{model_id} successor not started ({detail})")
 
         reported_model = getattr(outcome, "model_id", "") or ""
-        if reported_model and reported_model != ALLOWED_SUCCESSOR_MODEL_ID:
+        if reported_model and reported_model != model_id:
             return LaunchResult(
                 available=False,
-                model_id=ALLOWED_SUCCESSOR_MODEL_ID,
-                detail=f"runner started {reported_model!r}, not the pinned "
-                       f"{ALLOWED_SUCCESSOR_MODEL_ID!r}; failing closed")
+                model_id=model_id,
+                detail=f"runner started {reported_model!r}, not the approved "
+                       f"{model_id!r}; failing closed")
 
         successor_id = getattr(outcome, "successor_id", "") or ""
         if not successor_id:
             return LaunchResult(
                 available=False,
-                model_id=ALLOWED_SUCCESSOR_MODEL_ID,
+                model_id=model_id,
                 detail="runner reported a start with no successor id; failing closed")
 
         return LaunchResult(
             available=True,
             successor_id=successor_id,
-            model_id=ALLOWED_SUCCESSOR_MODEL_ID,
-            detail=(f"launched a {ALLOWED_SUCCESSOR_MODEL_ID}/{ALLOWED_SUCCESSOR_EFFORT} "
+            model_id=model_id,
+            detail=(f"launched a {model_id}/{invocation.effort} "
                     f"{invocation.layer} successor {successor_id!r}"))
 
     # -- argv / invocation building -----------------------------------------
 
     def _build_invocation(self, request: LaunchRequest) -> SuccessorInvocation:
         layer = request.layer
+        model_id = str(getattr(request, "model_id", "") or "")
+        if not model_id or model_id != model_id.strip():
+            raise ValueError(
+                f"the launch request names no usable successor model ({model_id!r}); there "
+                f"is deliberately no default model to fall back to (D-023-R013)")
+        effort = str(getattr(request, "effort", "") or ALLOWED_SUCCESSOR_EFFORT)
         if layer is TurnoverLayer.WORKER:
-            argv = tuple(self._worker_argv())
+            argv = tuple(self._worker_argv(model_id))
         else:
-            argv = tuple(self._orchestrator_argv())
+            argv = tuple(self._orchestrator_argv(model_id))
         env = minimal_env({
             # Effort and role ride as env/metadata, never as a hard-denied CLI
             # flag. They are applied out of band by the launch mechanism.
-            "SUPERVISOR_SUCCESSOR_EFFORT": ALLOWED_SUCCESSOR_EFFORT,
+            "SUPERVISOR_SUCCESSOR_EFFORT": effort,
             "SUPERVISOR_SESSION_ROLE": layer.value,
         })
         return SuccessorInvocation(
             layer=layer.value,
             argv=argv,
             env=env,
-            model_id=ALLOWED_SUCCESSOR_MODEL_ID,
-            effort=ALLOWED_SUCCESSOR_EFFORT,
-            expected_worker_model=ALLOWED_SUCCESSOR_MODEL_ID,
+            model_id=model_id,
+            effort=effort,
+            expected_worker_model=model_id,
             task_id=request.task_id,
             event_id=request.event_id,
             handoff_reference=request.handoff_reference,
@@ -389,15 +406,15 @@ class SupervisorLauncher:
             failed_fable_execution_id=request.failed_fable_execution_id,
         )
 
-    def _worker_argv(self) -> list[str]:
-        """The confirmed Claude worker argv, pinned to opus-4.8.
+    def _worker_argv(self, model_id: str) -> list[str]:
+        """The confirmed Claude worker argv, on the approved successor model.
 
         Reuses the frozen `claude_runner.build_argv` (read-only) so the redispatch
         is the SAME bounded-unit invocation the supervisor already trusts, with
-        `--model claude-opus-4-8` and `expected_model` moved to the same id so
+        `--model <approved id>` and `expected_model` moved to the same id so
         stream verification checks exactly what is launched. The safe-checkpoint /
         handoff resume rides as invocation metadata rather than `--resume`, whose
-        capability this increment does not re-probe.
+        capability this launcher does not probe.
         """
         if not self._targets.claude_executable:
             raise ValueError("no claude executable configured for a worker redispatch")
@@ -406,19 +423,18 @@ class SupervisorLauncher:
             max_turns=self._targets.max_turns,
             timeout_seconds=self._targets.unit_timeout_seconds,
             cwd=self._targets.checkout,
-            model=ALLOWED_SUCCESSOR_MODEL_ID,
-            expected_model=ALLOWED_SUCCESSOR_MODEL_ID,
+            model=model_id,
+            expected_model=model_id,
         )
         return build_argv(config)
 
-    def _orchestrator_argv(self) -> list[str]:
+    def _orchestrator_argv(self, model_id: str) -> list[str]:
         """The orchestrator/handoff launch argv, using only real `start` flags.
 
-        The orchestrator model is chosen from the immutable model_chain (which
-        lists `claude-opus-4-8`); the opus pin is expressed via
-        `--expected-worker-model claude-opus-4-8` and the invocation metadata,
-        not a synthesized flag. `assert_argv_safe` refuses any bypass/effort
-        token that could slip into the prefix.
+        The orchestrator model came out of the owner-approved list; it is
+        expressed via `--expected-worker-model <approved id>` and the invocation
+        metadata, not a synthesized flag. `assert_argv_safe` refuses any
+        bypass/effort token that could slip into the prefix.
         """
         if not self._targets.orchestrator_argv_prefix:
             raise ValueError("no orchestrator argv prefix configured for a handoff launch")
@@ -426,7 +442,7 @@ class SupervisorLauncher:
             *self._targets.orchestrator_argv_prefix,
             "--checkout", self._targets.checkout,
             "--session-role", "orchestrator",
-            "--expected-worker-model", ALLOWED_SUCCESSOR_MODEL_ID,
+            "--expected-worker-model", model_id,
         ]
         return assert_argv_safe(argv)
 
@@ -463,7 +479,7 @@ def make_subprocess_command_runner(
         return CommandRunResult(
             started=True,
             successor_id=new_successor_id(),
-            model_id=ALLOWED_SUCCESSOR_MODEL_ID,
+            model_id=invocation.model_id,
             available=True,
             detail="successor process started")
 
