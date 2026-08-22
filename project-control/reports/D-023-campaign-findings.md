@@ -60,6 +60,21 @@ issued to producer; awaiting corrected identity + full re-review (G5 must clear 
   "(D-023-R021)"; R021 applies to D-023-BOOTSTRAP and M0-T085, not M0-T079 — the disclaimer practice
   is correct (serves R023), only the row number is wrong. Producer text preserved; fix at M0-T085.
 
+## M0-T080 correction round (issued as one set; tracked to closure at re-review)
+
+G5 FAIL at reviewed identity 8546a2e8. Consolidated correction U1-U15 in
+`M0-T080-consolidated-correction.md`. Must-fix U1 (post-launch identity gate fails open on omitted
+fields; G5 M1 = G3 I-2, independently found by both reviewers). Important U2-U11 (fail-open family +
+evidence-honesty + the watchdog probe-ledger activation-blocker U8). Minors U12-U15. Status: issued
+to producer; awaiting corrected identity + full re-review (G5 must clear U1 + confirm the fail-open
+family closed).
+
+- **Owner-decision item bundled to the checkpoint (D-023-R034):** initial-run model-pin governance.
+  A run's FIRST model is admitted by `[claude] allowed_models` with no probe; every later selection
+  is held to `[approved_models]` + probe. G4 ruled this is NOT an R013 violation (the initial pin is
+  not a turnover/fallback/substitution). Owner decision: should the initial pin ALSO require the
+  approved list + a live probe? Not decided unilaterally under freeze.
+
 ## Observations queued for M0-T085 settlement (not defects)
 
 - O-001 (T078 DCV): handoff §6.4's fourth bullet (task-packet fields / gate assertions making
