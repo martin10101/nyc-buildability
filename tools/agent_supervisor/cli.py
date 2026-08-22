@@ -99,10 +99,8 @@ from .codex_reviewer import (
 from .approved_models import (
     APPROVED_MODELS_KEY,
     APPROVED_MODELS_SECTION,
-    ApprovedModels,
-    ModelRouter,
-    ProbeLedger,
-    probe_report,
+    approved_models_disclosure,
+    probe_evidence_disclosure,
 )
 from .config import (
     ConfigError,
@@ -256,19 +254,7 @@ from .retention import RetentionPolicy, file_sha256
 from .models import sha256_hex
 from .worker_turnover import WorkerTurnoverIntegration
 from .model_turnover import TurnoverEvidence, classify_exhaustion
-from .turnover_controller import (
-    ALLOWED_SUCCESSOR_EFFORT,
-    ApprovedSuccessor,
-    TurnoverContext,
-    TurnoverController,
-    TurnoverLayer,
-)
 from .turnover_adapters import (
-    HashChainedAuditSink,
-    SingleInstanceContinuationLock,
-    SuccessorLaunchTargets,
-    SupervisorIdentity,
-    SupervisorLauncher,
     make_subprocess_command_runner,
 )
 from .rotation import (
@@ -576,31 +562,6 @@ def _check_config(config_path: str | None, selection_path: str | None) -> list[C
     return checks
 
 
-def _check_approved_models(config: Any) -> Check:
-    """Report the owner-approved model list truthfully, empty included (M0-T080).
-
-    An empty list is reported as a PASSING check with an explicit consequence,
-    not as a config error: approving nothing is a legitimate state of the file,
-    and what it costs is stated here rather than discovered when a rotation stops.
-    """
-    approved = config.approved_models
-    if not approved.entries:
-        return Check(
-            "approved_models", True,
-            f"the controller config approves NO models ([{APPROVED_MODELS_SECTION}] "
-            f"{APPROVED_MODELS_KEY} is absent or empty). There is deliberately no built-in "
-            f"default list (D-023-R013), so every model-selection act - a rotation, a quota "
-            f"chain step, a turnover successor, an authenticated model change - will stop "
-            f"safely with a typed refusal until the owner populates protected config")
-    return Check(
-        "approved_models", True,
-        f"owner-approved models, in order: {list(approved.entries)} (source "
-        f"{approved.source}). Being listed is necessary and NOT sufficient: each id must "
-        f"also carry a recorded successful exact-id LIVE LAUNCH PROBE for this config "
-        f"identity ({config.digest()[:16]}...) and this provider CLI before it is "
-        f"selectable")
-
-
 def _claude_cli_identity(executable: str) -> str:
     """The provider CLI identity a probe record is bound to, or "" when unknown.
 
@@ -617,20 +578,14 @@ def _claude_cli_identity(executable: str) -> str:
         return ""
 
 
+def _check_approved_models(config: Any) -> Check:
+    """Report the owner-approved model list truthfully, empty included (M0-T080)."""
+    return Check(*approved_models_disclosure(config))
+
+
 def _check_probe_evidence(journal: Any, config: Any, cli_version: str) -> Check:
     """Disclose which approved models have a recorded successful launch probe."""
-    ledger = ProbeLedger(journal, config_identity=config.digest(),
-                         cli_version=cli_version)
-    records = probe_report(ledger)
-    usable = [r["model_id"] for r in records
-              if r["ok"] and r["config_identity"] == config.digest()
-              and r["cli_version"] == cli_version]
-    return Check(
-        "model_launch_probes", True,
-        f"recorded probes: {records or '(none)'}. Selectable under THIS config identity "
-        f"and CLI version: {usable or '(none)'}. A probe recorded under a different "
-        f"controller config or a different provider CLI proves nothing about this one and "
-        f"is ignored; a model with no recorded successful probe is not selectable")
+    return Check(*probe_evidence_disclosure(journal, config, cli_version))
 
 
 def _check_protocol_roundtrip() -> Check:
@@ -2567,8 +2522,8 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
 
     The OS scheduler (Windows Task Scheduler; see the M0-T056 runbook) invokes this
     on the orchestrator's captured terminal output. It reuses the frozen M0-T054
-    detection + controller + adapters to auto-launch exactly one opus-4-8 successor
-    on a grounded orchestrator quota hard stop.
+    detection + controller + adapters to auto-launch exactly one successor - the next
+    OWNER-APPROVED, live-probed model - on a grounded orchestrator quota hard stop.
     """
     signal_path = getattr(args, "exhaustion_signal", "") or ""
     if not signal_path:
@@ -2625,6 +2580,15 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
             safe_checkpoint_id=getattr(args, "safe_checkpoint_id", "") or "",
             current_model=current_model,
             config=controller_config,
+            # M0-T080 correction U8: the SAME CLI-identity source `start` uses
+            # (`_claude_cli_identity` over the named executable). The watchdog used
+            # to key its ProbeLedger on the empty string while `start` keyed on the
+            # real executable digest, so once the owner wires a real probe, a probe
+            # recorded by `start` could NEVER satisfy the watchdog's identity match
+            # and the R595 orchestrator turnover would refuse forever. The two
+            # paths now share one probe identity.
+            cli_version=_claude_cli_identity(
+                getattr(args, "claude_executable", "") or ""),
             task_id=str(journal.get_state("task_id", "") or ""))
     finally:
         journal.close()
@@ -2831,7 +2795,8 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # D-010 source-028): the WORKER-layer Fable->Opus turnover seam. M0-T056
         # (R595) supplies the owner-authorized actuation channel above: with
         # --authorize-turnover-actuation AND job_object containment the controller
-        # is real (a confirmed exhaustion redispatches opus-4-8 exactly once);
+        # is real (a confirmed exhaustion redispatches the next owner-approved,
+        # live-probed model exactly once);
         # without it worker_controller is None and the seam is record-intent-only,
         # byte-identical to the pre-activation path. Every non-exhaustion path is
         # unchanged either way.
@@ -3034,6 +2999,19 @@ def cmd_start(args: argparse.Namespace) -> int:
                     else refusals.STALE_STATE,
                     reason_code=code, message=message,
                     detail={"mode": args.mode, "source": "run_budget"})
+            except ConfigError as exc:
+                # M0-T080 correction U11: `_run_loop` loads and cross-validates the
+                # controller config, so every ConfigError it can raise - including
+                # M0-T080's new `approved_models_conflict` - used to reach the
+                # operator as a raw traceback at exit 1. That is the same defect
+                # T079-C5 fixed for the budget: a refusal is a report, not a crash.
+                code = getattr(exc, "code", "config_rejected")
+                message = getattr(exc, "message", str(exc))
+                payload["stopped_because"] = f"{code}: {message}"
+                refusal = refusals.refusal(
+                    refusals.UNSAFE, reason_code=code, message=message,
+                    detail={"mode": args.mode, "source": "controller_config",
+                            "path": getattr(exc, "path", "") or ""})
             else:
                 # D1 (G3 R-2): "the loop was built" is not "a unit ran".
                 payload["dispatched"] = run_dispatched(run)
@@ -3277,7 +3255,8 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument(
         "--authorize-turnover-actuation", action="store_true",
         help="M0-T056 (R595): the owner's EXPLICIT per-run authorization to ACTUATE a "
-             "WORKER-layer Fable->opus-4-8 turnover. Without it (default) a confirmed "
+             "WORKER-layer turnover onto the next OWNER-APPROVED, live-probed model. "
+             "Without it (default) a confirmed "
              "exhaustion is record-intent-only, byte-identical to the pre-activation "
              "path. With it AND a job_object-contained host, a confirmed FABLE_EXHAUSTED "
              "verdict redispatches the SAME bounded unit exactly once on the next "
@@ -3321,6 +3300,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="path to the immutable controller config that names the owner-approved model "
              "list the successor is chosen from. Without it nothing is approved and a "
              "grounded exhaustion stops safely instead of launching")
+    watchdog.add_argument(
+        "--claude-executable", default=None,
+        help="explicit path to the canonical Claude executable, used ONLY to compute the "
+             "provider-CLI identity a launch probe is recorded against. It must be the same "
+             "executable `start` was given: probes are keyed on that identity, so a "
+             "different (or missing) one makes every probe `start` recorded unusable here "
+             "and a grounded exhaustion stops safely instead of launching. Never a PATH "
+             "search (S13.4)")
     watchdog.set_defaults(func=cmd_orchestrator_watchdog)
 
     pending = sub.add_parser("pending-approvals",

@@ -72,7 +72,9 @@ def containment_precondition() -> tuple[bool, str, str]:
 # --------------------------------------------------------------------------
 # R595 / M0-T056: owner-authorized turnover ACTUATION channels (worker +
 # orchestrator layers). Both REUSE the accepted M0-T054 controller + adapters
-# UNCHANGED; the successor is always the frozen opus-4-8/xhigh pin. Every launch
+# UNCHANGED; the successor MODEL comes from the owner-approved, live-probed list
+# (M0-T080 - it is no longer a frozen opus pin), at the frozen xhigh effort that
+# protected config structurally cannot carry (D-004-R159). Every launch
 # is fail-closed, single-instance, dedup-exactly-once, audit-linked, and gated on
 # the C1 job-object containment precondition.
 # --------------------------------------------------------------------------
@@ -234,7 +236,8 @@ def run_orchestrator_watchdog(
     orchestrator's terminal output). It CLASSIFIES the captured signal with the
     frozen M0-T054 detector, and ONLY on a grounded FABLE_EXHAUSTED verdict, and
     ONLY when the C1 containment gate passes, drives the frozen TurnoverController
-    (layer=ORCHESTRATOR) to launch EXACTLY ONE opus-4-8 successor that loads the
+    (layer=ORCHESTRATOR) to launch EXACTLY ONE successor - the next OWNER-APPROVED,
+    live-probed model - that loads the
     durable handoff + safe checkpoint. NOT_EXHAUSTED / AMBIGUOUS_FAIL_CLOSED and an
     unreadable signal REFUSE and record the reason; they never launch. The
     ``command_runner`` is injected so tests never spawn a process.

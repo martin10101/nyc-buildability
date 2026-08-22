@@ -720,32 +720,15 @@ class RotationLedger:
                 f"session {session_id!r} was archived by a rotation and may never be resumed; "
                 f"a rotation always continues in a brand-new session id (S11.3)")
 
-    def assert_ready_checkpoint(self, checkpoint: Any, *, expected_session_id: str,
-                                previous_session_id: str = "") -> None:
-        """The new session must return a structured READY checkpoint before any change.
-
-        Both ids here are PROVIDER session identities - `claude_session_id` is
-        the id the worker itself reports, so comparing it to a supervisor-minted
-        bookkeeping key could never match. `turnover_seam.SeamTurnover` is the
-        production caller and only ever passes provider ids.
-        """
-        status = getattr(checkpoint, "status", None)
-        session = getattr(checkpoint, "claude_session_id", "")
-        if status != "READY":
-            raise RotationError(
-                "ready_checkpoint_required",
-                f"the re-oriented session reported status {status!r}; S11.3 requires a "
-                f"structured READY checkpoint after re-orientation BEFORE any change")
-        if session != expected_session_id:
-            raise RotationError(
-                "wrong_session_ready",
-                f"the READY checkpoint came from session {session!r}, not the new session "
-                f"{expected_session_id!r}")
-        if previous_session_id and session == previous_session_id:
-            raise RotationError(
-                "session_not_rotated",
-                "the 'new' session id equals the archived one; rotation requires a brand-new "
-                "explicitly identified session")
+    # THE S11.3 READY GATE LIVES IN `turnover_seam.SeamTurnover.require_ready`.
+    #
+    # `RotationLedger.assert_ready_checkpoint` used to sit here and was REMOVED by
+    # the M0-T080 correction (U4). It had zero production callers, its docstring
+    # falsely named `turnover_seam.SeamTurnover` as one, and it disagreed with the
+    # live gate: it demanded `claude_session_id == expected_session_id`, which is
+    # unsatisfiable on a reorientation because the successor's provider session id
+    # does not exist until the successor reports it. Two gates that disagree are
+    # worse than one, so the dead one is gone rather than kept as a decoy.
 
     def complete_rotation(self, *, previous_provider_session_id: str,
                           rotation_record_key: str,

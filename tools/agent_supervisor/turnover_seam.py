@@ -53,7 +53,23 @@ READY_GATE_KEY = "rotation_ready_gate"
 #: reserves final handoff verification to "review_model or deterministic
 #: verification"; this names which of the two happened, so a reader can never
 #: mistake a deterministic check for a reviewed one.
-DETERMINISTIC_VERIFIER = "deterministic:supervisor-rederivation"
+#:
+#: M0-T080 correction U3: the two labels are DISTINCT because the two checks are.
+#: `…-consistency` compares the handoff to the in-memory facts it was built from -
+#: a real check of the authority-bearing fields, but not an independent one.
+#: `…-independent-rederivation` is recorded ONLY when a `FactSource` re-read the
+#: values from the world. Neither label is a model name, and neither may be read
+#: as a review that did not happen.
+DETERMINISTIC_VERIFIER = "deterministic:supervisor-consistency"
+DETERMINISTIC_INDEPENDENT_VERIFIER = "deterministic:supervisor-independent-rederivation"
+
+#: The (a)-arm seam for S11.3 verification: re-derive the authority-bearing facts
+#: from the WORLD - `git rev-parse`, the branch, the task packet on disk - and
+#: return them keyed `task_and_stage` / `branch` / `worktree` / `exact_next_action`
+#: / `head_sha`. Injected, so this module performs no I/O of its own. Production
+#: does not wire one today (see the M0-T080 producer report §3.3 for why); when it
+#: is wired, its values are authoritative and a divergence refuses the rotation.
+FactSource = Callable[[], Mapping[str, str]]
 
 
 class SeamTurnoverError(Exception):
@@ -213,40 +229,77 @@ def build_handoff(facts: SeamFacts) -> rotation.Handoff:
 HandoffVerifier = Callable[[rotation.Handoff], Mapping[str, Any]]
 
 
-def deterministic_verdict(handoff: rotation.Handoff, facts: SeamFacts) -> dict[str, Any]:
-    """Re-derive every load-bearing handoff field from the supervisor's own facts.
+def deterministic_verdict(handoff: rotation.Handoff, facts: SeamFacts,
+                          *, independent: Mapping[str, str] | None = None
+                          ) -> dict[str, Any]:
+    """Check the handoff's AUTHORITY-BEARING fields against a source of truth.
 
-    This is the "deterministic verification" arm S3.3 permits alongside
-    review_model. It is a real check, not a rubber stamp: each field is compared
-    against the value the supervisor independently holds, and ANY divergence is
-    returned as a finding, which `rotation.verify_handoff` turns into a refusal.
+    WHAT THIS IS, EXACTLY (M0-T080 correction U3 - the previous docstring said
+    "re-derive every load-bearing field", which overstated it):
+
+    * `rotation.verify_handoff` calls `validate_handoff` first, so COMPLETENESS
+      over all fourteen S11.3 fields is already enforced before this runs.
+    * This adds VALUE CONSISTENCY for the six fields whose authority the
+      SUPERVISOR owns - task/stage, branch, worktree, HEAD, exact next action,
+      and the structural prohibitions. It would catch a handoff that had taken
+      any of them from worker-supplied checkpoint text instead of from the task
+      authority.
+    * It does NOT re-derive the eight remaining fields (completed work, changed
+      files, tests/CI, PR state, reviews, blockers, owner gates, evidence
+      digests). Those originate in the worker's checkpoint and the supervisor
+      holds no second copy to compare them against, so checking them here would
+      compare a value to itself.
+
+    `independent` is the (a)-arm: an injected re-derivation of the same six
+    values read from the WORLD (git, the packet on disk) rather than from the
+    in-memory `facts` the handoff was built from. When supplied it is
+    authoritative and a divergence is a finding, so the verification can genuinely
+    refuse. When absent, the comparison is against `facts` - which the handoff was
+    built from - and the returned `scope` says so rather than implying otherwise.
     """
     findings: list[str] = []
-    expected = {
+    source: Mapping[str, str] = independent if independent is not None else {
         "task_and_stage": f"{facts.task_id} @ {facts.stage}",
         "branch": facts.branch,
         "worktree": facts.worktree,
         "exact_next_action": facts.exact_next_action,
+        "head_sha": facts.head_sha,
     }
-    for field_name, value in expected.items():
+    origin = "independent re-derivation" if independent is not None \
+        else "the supervisor's own in-memory record"
+    for field_name in ("task_and_stage", "branch", "worktree", "exact_next_action"):
+        if field_name not in source:
+            continue
         actual = getattr(handoff, field_name)
-        if actual != value:
+        if actual != source[field_name]:
             findings.append(
-                f"{field_name} says {actual!r} but the supervisor's own record says {value!r}")
-    if handoff.authoritative_shas.get("HEAD") != facts.head_sha:
+                f"{field_name} says {actual!r} but {origin} says {source[field_name]!r}")
+    if "head_sha" in source and handoff.authoritative_shas.get("HEAD") != source["head_sha"]:
         findings.append(
             f"authoritative_shas.HEAD says "
-            f"{handoff.authoritative_shas.get('HEAD')!r} but the supervisor recorded "
-            f"{facts.head_sha!r}")
+            f"{handoff.authoritative_shas.get('HEAD')!r} but {origin} says "
+            f"{source['head_sha']!r}")
     missing = [entry for entry in STRUCTURAL_FORBIDDEN_SCOPE
                if entry not in handoff.forbidden_scope]
     if missing:
         findings.append(f"forbidden_scope dropped the structural prohibitions {missing}")
     return {
-        "model_used": DETERMINISTIC_VERIFIER,
+        "model_used": (DETERMINISTIC_INDEPENDENT_VERIFIER if independent is not None
+                       else DETERMINISTIC_VERIFIER),
         "handoff_digest": handoff.digest(),
         "verified": not findings,
         "findings": tuple(findings),
+        # The record states its own scope, so no reader has to infer it.
+        "scope": {
+            "completeness": "all 14 S11.3 fields, via rotation.validate_handoff",
+            "value_checked": ["task_and_stage", "branch", "worktree",
+                              "exact_next_action", "authoritative_shas.HEAD",
+                              "forbidden_scope"],
+            "value_source": origin,
+            "not_re_derived": ["completed_work", "changed_files", "tests_and_ci",
+                               "pull_request_state", "reviews_and_findings",
+                               "open_blockers", "owner_gates", "evidence_digests"],
+        },
     }
 
 
@@ -257,18 +310,34 @@ def verify(
     verifier: HandoffVerifier | None = None,
     review_model: str = "",
     advisory_model: str = "",
+    fact_source: FactSource | None = None,
 ) -> rotation.HandoffVerification:
     """Verify the handoff, through the review model when one is wired.
 
     With a `verifier` injected the verdict comes from it and
     `rotation.verify_handoff` checks the reporting model against the configured
     `review_model` (and refuses the advisory model outright). With no verifier,
-    the supervisor verifies deterministically and RECORDS that it did - the
-    `model_used` is `DETERMINISTIC_VERIFIER`, never a model name, so the durable
-    record can never suggest a review that did not happen.
+    the supervisor verifies deterministically and RECORDS exactly which check it
+    ran (`deterministic_verdict`), never a model name, so the durable record can
+    never suggest a review that did not happen.
+
+    A `fact_source` that RAISES is a refusal, not a downgrade to the weaker
+    check: a re-derivation the supervisor asked for and could not get is exactly
+    the ambiguity S11.3 refuses to rotate through.
     """
     if verifier is None:
-        verdict = deterministic_verdict(handoff, facts)
+        independent: Mapping[str, str] | None = None
+        if fact_source is not None:
+            try:
+                independent = dict(fact_source() or {})
+            except Exception as exc:
+                raise SeamTurnoverError(
+                    "handoff_fact_source_failed",
+                    f"the independent fact source raised ({exc}); a verification that was "
+                    f"asked for an independent re-derivation and could not get one refuses "
+                    f"rather than silently falling back to the weaker consistency check"
+                ) from exc
+        verdict = deterministic_verdict(handoff, facts, independent=independent)
         return rotation.verify_handoff(handoff, reviewer_verdict=verdict,
                                        review_model="", advisory_model="")
     try:
@@ -347,6 +416,7 @@ class SeamTurnover:
         verifier: HandoffVerifier | None = None,
         review_model: str = "",
         advisory_model: str = "",
+        fact_source: FactSource | None = None,
     ) -> None:
         self.journal = journal
         self.audit = audit
@@ -354,6 +424,9 @@ class SeamTurnover:
         self._verifier = verifier
         self.review_model = review_model
         self.advisory_model = advisory_model
+        # M0-T080 correction U3: the independent-re-derivation seam. Absent by
+        # default; when wired it is authoritative and can refuse the rotation.
+        self._fact_source = fact_source
         self.ledger = rotation.RotationLedger(journal, audit=audit)
 
     # -- the gate key --------------------------------------------------------
@@ -390,6 +463,14 @@ class SeamTurnover:
         BEFORE any change". The archived-session check is what makes the gate
         meaningful on a reorientation: a READY that came from the session the
         rotation just archived proves the rotation did not happen.
+
+        ABSENT IS A MISMATCH (M0-T080 correction U1). Every comparison here used
+        to be guarded `if expected and observed …`, and `ClaudeCheckpoint.validate`
+        only checks `status` and `usage` - so a well-formed but UNTRUSTED
+        checkpoint reporting an EMPTY `claude_session_id` satisfied the gate, and
+        the just-archived session could clear it by saying nothing. A checkpoint
+        that clears this gate must NAME the session it came from; the supervisor
+        wrote its expectation down first, so silence can never satisfy it.
         """
         gate = self.armed_gate()
         if gate is None:
@@ -404,9 +485,19 @@ class SeamTurnover:
                 f"any change, so nothing is forwarded from this cycle",
                 {"expected_status": "READY", "observed_status": status,
                  "handoff_digest": gate.get("handoff_digest", "")})
+        if not session:
+            raise SeamTurnoverError(
+                "ready_without_session_id",
+                "the READY checkpoint after the rotation names NO provider session "
+                "(claude_session_id is empty), so there is nothing to check it against. An "
+                "unidentified session can never satisfy the gate: it is exactly how the "
+                "archived session, or a session on the wrong work, would pass by saying "
+                "nothing",
+                {"handoff_digest": gate.get("handoff_digest", ""),
+                 "continuity_mode": gate.get("continuity_mode", "")})
         if gate.get("continuity_mode") == session_continuity.REORIENTATION:
             archived = self.ledger.archived_sessions()
-            if session and session in archived:
+            if session in archived:
                 raise SeamTurnoverError(
                     "ready_from_archived_session",
                     f"the READY checkpoint came from session {session!r}, which this "
@@ -415,14 +506,27 @@ class SeamTurnover:
                     {"session": session, "archived": list(archived)})
         elif gate.get("continuity_mode") == session_continuity.RESUME:
             expected = str(gate.get("provider_session_id", "") or "")
-            if expected and session and session != expected:
+            if not expected:
+                # Unreachable through `execute` (a RESUME decision cannot be
+                # constructed without an id, and `complete_rotation` refuses one
+                # too) - so if it IS reached, the durable gate disagrees with
+                # every upstream invariant and is not something to shrug at.
+                # Written as a refusal rather than a skipped comparison so this
+                # branch can never become the next fail-open hole.
+                raise SeamTurnoverError(
+                    "resume_gate_without_session",
+                    "the armed gate says this rotation was a RESUME but records no provider "
+                    "session to resume, so there is nothing to check the successor against; "
+                    "refusing rather than passing an unverifiable gate",
+                    {"observed": session, "gate": dict(gate)})
+            if session != expected:
                 raise SeamTurnoverError(
                     "resumed_wrong_session",
                     f"the rotation commanded a RESUME of provider session {expected!r} but "
                     f"the READY checkpoint came from {session!r}; a resume that landed in a "
                     f"different session is not a resume",
                     {"expected": expected, "observed": session})
-        self.clear_ready_gate(satisfied_by=session or "(no session id reported)")
+        self.clear_ready_gate(satisfied_by=session)
         self._audit("rotation_ready_gate_satisfied",
                     {"session": session, "handoff_digest": gate.get("handoff_digest", "")})
 
@@ -432,31 +536,47 @@ class SeamTurnover:
         """Prove the successor is on the commanded task, branch, HEAD, and model.
 
         Returns `(ok, reason, detail)`. A mismatch is never repaired here: the
-        caller fails closed and stops. The MODEL comparison is the one the
-        directive singles out - what the successor reports it is running is
-        compared to the id that was commanded, and a difference stops the run
-        rather than being absorbed as a downgrade note.
+        caller fails closed and stops.
+
+        ABSENT IS A MISMATCH (M0-T080 correction U1). Every axis used to be
+        guarded `if expected and observed …`, and `ClaudeCheckpoint.validate`
+        checks only `status` and `usage` - so a well-formed but UNTRUSTED
+        checkpoint could satisfy this gate on ALL FOUR identity axes by leaving
+        them blank, which is precisely how a successor on the wrong task, branch,
+        worktree, or SHA passed. Where the supervisor WROTE DOWN an expectation,
+        an empty report is now a mismatch: the successor has to say who it is.
+
+        The MODEL axis keeps the `observed_models` guard deliberately, and is the
+        one exception: it is independently backstopped by the D-004-R739
+        per-event `expected_model` stream check in `claude_runner.inspect_stream`,
+        which sets `RunResult.model_mismatch` from the provider's own events
+        rather than from anything the checkpoint claims. A stream that reported no
+        model at all is caught there, not here; duplicating it here would fail a
+        cycle whose `run_result` this caller did not supply.
         """
         gate = expectation.to_dict() if expectation is not None else (self.armed_gate() or {})
         if not gate:
             return True, "no successor expectation was recorded for this cycle", {}
         mismatches: list[str] = []
+        # (expectation key, checkpoint field, label used in the finding).
         checks = (
-            ("task_id", str(getattr(checkpoint, "task_id", "") or "")),
-            ("branch", str(getattr(checkpoint, "branch", "") or "")),
-            ("worktree", str(getattr(checkpoint, "worktree", "") or "")),
+            ("task_id", "task_id", "task_id"),
+            ("branch", "branch", "branch"),
+            ("worktree", "worktree", "worktree"),
+            ("head_sha", "starting_sha", "starting_sha"),
         )
-        for field_name, observed in checks:
-            expected = str(gate.get(field_name, "") or "")
-            if expected and observed and observed != expected:
+        for gate_key, field_name, label in checks:
+            expected = str(gate.get(gate_key, "") or "")
+            if not expected:
+                continue  # nothing was commanded on this axis
+            observed = str(getattr(checkpoint, field_name, "") or "")
+            if not observed:
                 mismatches.append(
-                    f"{field_name}: commanded {expected!r}, successor reported {observed!r}")
-        expected_head = str(gate.get("head_sha", "") or "")
-        observed_head = str(getattr(checkpoint, "starting_sha", "") or "")
-        if expected_head and observed_head and observed_head != expected_head:
-            mismatches.append(
-                f"starting_sha: the successor started from {observed_head!r}, not the "
-                f"HEAD {expected_head!r} the handoff pinned")
+                    f"{label}: commanded {expected!r}, successor reported NOTHING; an "
+                    f"omitted identity field is a mismatch, never a pass")
+            elif observed != expected:
+                mismatches.append(
+                    f"{label}: commanded {expected!r}, successor reported {observed!r}")
         expected_model = str(gate.get("model_id", "") or "")
         observed_models = tuple(str(m) for m in
                                 (getattr(run_result, "observed_models", ()) or ()))
@@ -485,18 +605,31 @@ class SeamTurnover:
         successor_model: str,
         evidence: Sequence[str] = (),
     ) -> SeamTurnoverResult:
-        """Safe-seam -> handoff -> verify -> persist -> rotate -> arm READY.
+        """Safe-seam -> handoff -> verify -> persist -> arm READY -> rotate.
 
         Ordered so nothing durable is written until the moment has been proved
         safe and the handoff has been proved complete AND verified: a refusal
         anywhere above leaves the run exactly where it was, with the rotation
         still pending, rather than half-rotated.
+
+        Two ordering details are deliberate, both fail-closed (M0-T080
+        corrections U12 and U14/G3-M-7):
+
+        * `store_verified_handoff` runs BEFORE `assert_not_archived`. The stored
+          handoff is the successor's ONLY orientation material, so persisting it
+          costs nothing if the resume is then refused (the rotation does not
+          complete, and the next attempt overwrites the record), whereas the
+          reverse order risks refusing with the handoff unsaved.
+        * `arm_ready_gate` runs BEFORE `complete_rotation`. These are two separate
+          durable writes; a crash between them must not leave a completed rotation
+          whose successor is ungated. See the comment at the call site.
         """
         assert_safe_seam(safety_state)
         handoff = build_handoff(facts)
         verification = verify(handoff, facts, verifier=self._verifier,
                               review_model=self.review_model,
-                              advisory_model=self.advisory_model)
+                              advisory_model=self.advisory_model,
+                              fact_source=self._fact_source)
         if not verification.verified:
             raise SeamTurnoverError(
                 "handoff_unverified",
@@ -513,6 +646,21 @@ class SeamTurnover:
             self.ledger.assert_not_archived(continuity.provider_session_id)
 
         record_key = rotation.new_rotation_record_key(previous_provider_session_id)
+        expectation = SuccessorExpectation(
+            task_id=facts.task_id, branch=facts.branch, worktree=facts.worktree,
+            head_sha=facts.head_sha, model_id=successor_model,
+            continuity_mode=continuity.mode,
+            provider_session_id=continuity.provider_session_id,
+            rotation_record_key=record_key)
+        # M0-T080 correction U12: ARM THE GATE FIRST. These are two separate
+        # durable writes and a crash can land between them. In the previous order
+        # (complete, then arm) that crash left a COMPLETED rotation with NO armed
+        # gate, so the restarted run bypassed both the READY gate and the
+        # post-launch identity check - the one fail-OPEN window in this change.
+        # Reversed, the same crash leaves an ARMED GATE and no completed rotation:
+        # the rotation is still pending, and the next checkpoint must satisfy the
+        # gate before anything is forwarded. The window now fails CLOSED.
+        self.arm_ready_gate(expectation, handoff_digest=handoff.digest())
         record = self.ledger.complete_rotation(
             previous_provider_session_id=previous_provider_session_id,
             rotation_record_key=record_key,
@@ -521,13 +669,6 @@ class SeamTurnover:
             provider_session_id=continuity.provider_session_id,
             provider_session_none_reason=continuity.none_reason,
         )
-        expectation = SuccessorExpectation(
-            task_id=facts.task_id, branch=facts.branch, worktree=facts.worktree,
-            head_sha=facts.head_sha, model_id=successor_model,
-            continuity_mode=continuity.mode,
-            provider_session_id=continuity.provider_session_id,
-            rotation_record_key=record_key)
-        self.arm_ready_gate(expectation, handoff_digest=handoff.digest())
 
         prompt = ""
         if not continuity.resumed:

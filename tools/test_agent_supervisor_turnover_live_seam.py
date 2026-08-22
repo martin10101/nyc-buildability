@@ -335,6 +335,55 @@ class ContinuityDecisionTests(unittest.TestCase):
                     rotation_reason=reason, resume_capability_verified=True)
                 self.assertIn(sc.CONTEXT_SHEDDING_ROTATION, decision.none_reasons)
 
+    def test_an_unknown_recorded_model_can_never_resume(self) -> None:
+        # M0-T080 correction U2 (G3 I-3). CROSS_MODEL used to require BOTH ids to
+        # be non-empty, so a recorded session whose model was unknown ("") plus a
+        # KNOWN different successor produced a clean `resume` with no reasons at
+        # all - maximum ignorance read as "no objection". CLAUDE.md principle 3:
+        # unknown is an impossibility, not a pass.
+        decision = sc.decide_continuity(
+            recorded=self._recorded(model_id=""), successor_model=APPROVED_B,
+            rotation_reason="session_relaunch", resume_capability_verified=True)
+        self.assertFalse(decision.resumed)
+        self.assertIn(sc.CROSS_MODEL, decision.none_reasons)
+
+    def test_an_unknown_successor_model_can_never_resume(self) -> None:
+        # The mirror case: the session's model is known but the successor's is not.
+        decision = sc.decide_continuity(
+            recorded=self._recorded(model_id=PIN), successor_model="",
+            rotation_reason="session_relaunch", resume_capability_verified=True)
+        self.assertFalse(decision.resumed)
+        self.assertIn(sc.CROSS_MODEL, decision.none_reasons)
+
+    def test_both_models_unknown_can_never_resume(self) -> None:
+        decision = sc.decide_continuity(
+            recorded=self._recorded(model_id=""), successor_model="",
+            rotation_reason="session_relaunch", resume_capability_verified=True)
+        self.assertFalse(decision.resumed)
+        self.assertIn(sc.CROSS_MODEL, decision.none_reasons)
+
+    def test_a_made_up_primary_none_reason_is_refused(self) -> None:
+        # M0-T080 correction U14 (G3 M-2): only the tuple was validated, so the
+        # PRIMARY reason - the one every record and message quotes - could be
+        # anything at all.
+        with self.assertRaises(sc.ContinuityError) as raised:
+            sc.ContinuityDecision(mode=sc.REORIENTATION, none_reason="looked_fine")
+        self.assertEqual(raised.exception.code, "unknown_none_reason")
+
+    def test_a_session_recorded_by_another_run_is_not_this_runs_session(self) -> None:
+        # M0-T080 correction U14 (G4 F6): the record is keyed per CHECKOUT, so
+        # run B could read run A's leftover session - and then archive it, or
+        # offer it to a --resume.
+        journal = MemoryJournal()
+        sc.record_provider_session(journal, session_id="prov-1", model_id=PIN,
+                                   run_id="run-A")
+        self.assertIsNone(sc.recorded_provider_session(journal, run_id="run-B"))
+        self.assertEqual(
+            sc.recorded_provider_session(journal, run_id="run-A").session_id, "prov-1")
+        # Unscoped reads still see it: the standalone watchdog runs after the
+        # orchestrator process is gone and legitimately wants the last session.
+        self.assertEqual(sc.recorded_provider_session(journal).session_id, "prov-1")
+
     def test_an_unprobed_resume_capability_can_never_resume(self) -> None:
         decision = sc.decide_continuity(
             recorded=self._recorded(), successor_model=PIN,
@@ -452,6 +501,67 @@ class SeamTurnoverTests(unittest.TestCase):
         # And the good one passes, so the check is not simply always-fail.
         self.assertTrue(ts.deterministic_verdict(handoff, facts)["verified"])
 
+    def test_an_independent_fact_source_can_actually_refuse_the_rotation(self) -> None:
+        # M0-T080 correction U3 (a-arm). Without an independent source the
+        # deterministic verdict compares the handoff to the same `facts` it was
+        # built from and cannot diverge. With one wired, the WORLD is
+        # authoritative and a divergence refuses.
+        seam = ts.SeamTurnover(
+            journal=MemoryJournal(), run_id="run-1",
+            fact_source=lambda: {"branch": "task/somewhere-else",
+                                 "head_sha": "a" * 40})
+        with self.assertRaises(ts.SeamTurnoverError) as raised:
+            seam.execute(facts=good_facts(), safety_state=self._safe(),
+                         continuity=reorientation_decision(),
+                         previous_provider_session_id="prov-1",
+                         successor_model=APPROVED_B)
+        self.assertEqual(raised.exception.code, "handoff_unverified")
+        self.assertTrue(any("branch" in f for f in raised.exception.detail["findings"]))
+        self.assertIsNone(seam.ledger.stored_handoff())
+
+    def test_an_agreeing_independent_source_is_recorded_as_the_stronger_check(self) -> None:
+        facts = good_facts()
+        seam = ts.SeamTurnover(
+            journal=MemoryJournal(), run_id="run-1",
+            fact_source=lambda: {"task_and_stage": f"{facts.task_id} @ {facts.stage}",
+                                 "branch": facts.branch, "worktree": facts.worktree,
+                                 "exact_next_action": facts.exact_next_action,
+                                 "head_sha": facts.head_sha})
+        result = seam.execute(facts=facts, safety_state=self._safe(),
+                              continuity=reorientation_decision(),
+                              previous_provider_session_id="prov-1",
+                              successor_model=APPROVED_B)
+        self.assertEqual(result.verification.model_used,
+                         ts.DETERMINISTIC_INDEPENDENT_VERIFIER)
+        self.assertNotEqual(ts.DETERMINISTIC_INDEPENDENT_VERIFIER,
+                            ts.DETERMINISTIC_VERIFIER,
+                            "the two checks must be labelled differently")
+
+    def test_a_fact_source_that_raises_refuses_instead_of_downgrading(self) -> None:
+        def exploding():
+            raise RuntimeError("git is unavailable")
+
+        seam = ts.SeamTurnover(journal=MemoryJournal(), run_id="run-1",
+                               fact_source=exploding)
+        with self.assertRaises(ts.SeamTurnoverError) as raised:
+            seam.execute(facts=good_facts(), safety_state=self._safe(),
+                         continuity=reorientation_decision(),
+                         previous_provider_session_id="prov-1",
+                         successor_model=APPROVED_B)
+        self.assertEqual(raised.exception.code, "handoff_fact_source_failed")
+
+    def test_the_verdict_states_its_own_scope_rather_than_implying_more(self) -> None:
+        # M0-T080 correction U3 (b-arm): the record must not let a reader infer
+        # 14-field independent re-derivation from a 6-field consistency check.
+        verdict = ts.deterministic_verdict(ts.build_handoff(good_facts()), good_facts())
+        self.assertEqual(verdict["model_used"], ts.DETERMINISTIC_VERIFIER)
+        self.assertIn("consistency", verdict["model_used"])
+        scope = verdict["scope"]
+        self.assertIn("in-memory", scope["value_source"])
+        self.assertEqual(len(scope["not_re_derived"]), 8)
+        self.assertIn("completed_work", scope["not_re_derived"])
+        self.assertIn("14", scope["completeness"])
+
     def test_an_unverified_handoff_is_never_carried_into_a_successor(self) -> None:
         seam = ts.SeamTurnover(journal=MemoryJournal(), run_id="run-1",
                                verifier=lambda h: {"model_used": "reviewer-x",
@@ -501,6 +611,45 @@ class SeamTurnoverTests(unittest.TestCase):
         self.assertEqual(result.reorientation_prompt, "",
                          "a resumed successor already has the context")
 
+    def test_a_crash_between_the_two_durable_writes_fails_closed(self) -> None:
+        # M0-T080 correction U12 (G4 F7 / G5 N2) - the one fail-OPEN window.
+        # `arm_ready_gate` and `complete_rotation` are two separate durable
+        # writes. In the OLD order (complete, then arm) a crash between them left
+        # a COMPLETED rotation with NO armed gate, so the restarted run bypassed
+        # both the READY gate and the identity check. Reversed, the same crash
+        # leaves an ARMED GATE and no completed rotation: the rotation is still
+        # pending and the next checkpoint must satisfy the gate.
+        journal = MemoryJournal()
+        seam = ts.SeamTurnover(journal=journal, run_id="run-1")
+        rot.observe_mid_unit(journal, reason_code="context_threshold")
+
+        crashed: list[str] = []
+        original = seam.ledger.complete_rotation
+
+        def crash_after_arming(**kwargs):
+            crashed.append("complete_rotation was reached")
+            raise RuntimeError("power loss between the two durable writes")
+
+        seam.ledger.complete_rotation = crash_after_arming  # type: ignore[assignment]
+        with self.assertRaises(RuntimeError):
+            seam.execute(facts=good_facts(), safety_state=self._safe(),
+                         continuity=reorientation_decision(),
+                         previous_provider_session_id="prov-1",
+                         successor_model=APPROVED_B)
+        self.assertEqual(crashed, ["complete_rotation was reached"],
+                         "the gate must be armed BEFORE the rotation is completed")
+
+        # What the restarted run finds: an ARMED gate, no completed rotation, and
+        # the rotation still pending. Nothing is forwarded until READY.
+        seam.ledger.complete_rotation = original  # type: ignore[assignment]
+        self.assertIsNotNone(seam.armed_gate())
+        self.assertIsNone(journal.get_state("last_rotation"))
+        self.assertTrue(rot.rotation_pending(journal))
+        with self.assertRaises(ts.SeamTurnoverError) as raised:
+            seam.require_ready(make_checkpoint(status="UNIT_COMPLETE",
+                                               claude_session_id="prov-1"))
+        self.assertEqual(raised.exception.code, "rotation_ready_required")
+
     def test_an_archived_session_can_never_be_resumed_by_a_later_rotation(self) -> None:
         self.seam.ledger.archive_session("prov-1", reason="an earlier rotation")
         with self.assertRaises(rot.RotationError) as raised:
@@ -544,6 +693,46 @@ class SeamTurnoverTests(unittest.TestCase):
             self.seam.require_ready(elsewhere)
         self.assertEqual(raised.exception.code, "resumed_wrong_session")
 
+    def test_a_ready_naming_no_session_can_never_clear_the_gate(self) -> None:
+        # M0-T080 correction U1 (G5 must-fix). `ClaudeCheckpoint.validate` checks
+        # only `status` and `usage`, so this checkpoint is WELL-FORMED and still
+        # names no session. The gate used to guard its archived-session and
+        # resumed-session comparisons with `if session and …`, so a blank
+        # `claude_session_id` skipped both and CLEARED the gate - which is exactly
+        # how the just-archived session, or a session doing the wrong work, passed
+        # by saying nothing.
+        self.seam.execute(facts=good_facts(), safety_state=self._safe(),
+                          continuity=reorientation_decision(),
+                          previous_provider_session_id="prov-1",
+                          successor_model=APPROVED_B)
+        anonymous = make_checkpoint(status="READY", claude_session_id="")
+        anonymous.validate()  # a well-formed checkpoint, not a malformed one
+        with self.assertRaises(ts.SeamTurnoverError) as raised:
+            self.seam.require_ready(anonymous)
+        self.assertEqual(raised.exception.code, "ready_without_session_id")
+        self.assertIsNotNone(self.seam.armed_gate(), "the gate must stay armed")
+
+    def test_a_blank_session_cannot_smuggle_the_archived_one_past_the_gate(self) -> None:
+        # The same defect from the attacker's side: the archived session reports
+        # READY with its id omitted. Before U1 that satisfied the gate.
+        self.seam.execute(facts=good_facts(), safety_state=self._safe(),
+                          continuity=reorientation_decision(),
+                          previous_provider_session_id="prov-1",
+                          successor_model=APPROVED_B)
+        self.assertIn("prov-1", self.seam.ledger.archived_sessions())
+        with self.assertRaises(ts.SeamTurnoverError):
+            self.seam.require_ready(make_checkpoint(status="READY",
+                                                    claude_session_id=""))
+
+    def test_a_blank_resume_session_cannot_satisfy_the_resume_gate(self) -> None:
+        self.seam.execute(facts=good_facts(reason_code="session_relaunch"),
+                          safety_state=self._safe(), continuity=resume_decision(),
+                          previous_provider_session_id="prov-1", successor_model=PIN)
+        with self.assertRaises(ts.SeamTurnoverError) as raised:
+            self.seam.require_ready(make_checkpoint(status="READY",
+                                                    claude_session_id=""))
+        self.assertEqual(raised.exception.code, "ready_without_session_id")
+
     def test_no_armed_gate_means_an_ordinary_cycle_is_untouched(self) -> None:
         self.seam.require_ready(make_checkpoint(status="UNIT_COMPLETE"))
 
@@ -567,6 +756,58 @@ class SeamTurnoverTests(unittest.TestCase):
         for field in ("task_id", "branch", "worktree", "starting_sha", "model"):
             self.assertTrue(any(field in m for m in detail["mismatches"]),
                             f"{field} mismatch not reported: {detail['mismatches']}")
+
+    def test_an_omitted_identity_field_is_a_mismatch_not_a_pass(self) -> None:
+        # M0-T080 correction U1 (G5 must-fix). Every axis used to be guarded
+        # `if expected and observed …`, so a successor could satisfy ALL FOUR
+        # identity checks by reporting BLANKS - and `ClaudeCheckpoint.validate`
+        # permits that, since it checks only status and usage. The suite was
+        # structurally blind to this: it only ever tested populated-but-wrong.
+        result = self.seam.execute(
+            facts=good_facts(), safety_state=self._safe(),
+            continuity=reorientation_decision(),
+            previous_provider_session_id="prov-1", successor_model=APPROVED_B)
+        blank = make_checkpoint(task_id="", branch="", worktree="", starting_sha="")
+        blank.validate()  # well-formed, and says nothing about who it is
+        ok, reason, detail = self.seam.verify_post_launch(
+            checkpoint=blank, run_result=run_result(observed_models=(APPROVED_B,)),
+            expectation=result.expectation)
+        self.assertFalse(ok, "a successor that names nothing must not pass")
+        for field in ("task_id", "branch", "worktree", "starting_sha"):
+            self.assertTrue(
+                any(field in m and "NOTHING" in m for m in detail["mismatches"]),
+                f"{field} omission not reported as a mismatch: {detail['mismatches']}")
+
+    def test_each_identity_axis_fails_closed_on_its_own_omission(self) -> None:
+        # One blank field is enough; they need not accumulate.
+        result = self.seam.execute(
+            facts=good_facts(), safety_state=self._safe(),
+            continuity=reorientation_decision(),
+            previous_provider_session_id="prov-1", successor_model=APPROVED_B)
+        good = dict(task_id="M0-T080", branch="task/M0-T080", worktree="/repo/wt",
+                    starting_sha="a" * 40)
+        for blanked in good:
+            with self.subTest(field=blanked):
+                fields = {**good, blanked: ""}
+                ok, _reason, detail = self.seam.verify_post_launch(
+                    checkpoint=make_checkpoint(**fields),
+                    run_result=run_result(observed_models=(APPROVED_B,)),
+                    expectation=result.expectation)
+                self.assertFalse(ok)
+                self.assertEqual(len(detail["mismatches"]), 1, detail["mismatches"])
+                self.assertIn("NOTHING", detail["mismatches"][0])
+
+    def test_an_axis_the_supervisor_never_commanded_is_not_invented(self) -> None:
+        # Fail-closed is not fail-noisy: where the supervisor wrote down NO
+        # expectation there is nothing to mismatch against, so a blank is fine.
+        expectation = ts.SuccessorExpectation(
+            task_id="M0-T080", branch="", worktree="", head_sha="",
+            model_id="", continuity_mode=sc.REORIENTATION)
+        ok, _reason, detail = self.seam.verify_post_launch(
+            checkpoint=make_checkpoint(task_id="M0-T080", branch="", worktree="",
+                                       starting_sha=""),
+            run_result=run_result(), expectation=expectation)
+        self.assertTrue(ok, detail)
 
 
 # --------------------------------------------------------------------------
@@ -635,6 +876,43 @@ class ApprovedModelRoutingTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, am.MODEL_PROBE_FAILED)
         self.assertEqual(router.ledger.recorded(APPROVED_A).reason_code, "probe_error")
 
+    def test_an_unparseable_probe_result_is_never_read_as_availability(self) -> None:
+        # M0-T080 correction U5 (G5 I1). This used to coerce with
+        # `ok=bool(outcome)`, so ANY truthy value the router could not parse was
+        # recorded as a SUCCESSFUL launch probe and made the model selectable.
+        # Latent while no probe seam is wired; live the moment the owner wires one.
+        for junk in (True, "available", {"ok": True}, 1, ["yes"]):
+            with self.subTest(returned=type(junk).__name__):
+                self.journal = MemoryJournal()
+                router = self._router(probe=lambda _m, value=junk: value)
+                with self.assertRaises(am.ModelRoutingError) as raised:
+                    router.select(APPROVED_A)
+                self.assertEqual(raised.exception.code, am.MODEL_PROBE_FAILED)
+                record = router.ledger.recorded(APPROVED_A)
+                self.assertFalse(record.ok, "an unparseable result is not availability")
+                self.assertEqual(record.reason_code, "probe_shape")
+
+    def test_an_exhaustion_message_never_claims_a_probe_that_did_not_happen(self) -> None:
+        # M0-T080 correction U7 (G4 F1): measured-claims discipline on a refusal
+        # message. The sentence used to assert "Every candidate was tried by an
+        # actual launch probe" even when NOTHING was probed.
+        unprobed = am.ModelRouter(
+            approved=am.ApprovedModels(entries=(APPROVED_A, APPROVED_B)),
+            ledger=am.ProbeLedger(MemoryJournal(), config_identity="c", cli_version="v"),
+            probe=None)
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            unprobed.next_after(APPROVED_A)
+        self.assertIn("NOTHING was probed", raised.exception.message)
+        self.assertNotIn("were tried by an actual launch probe and none came up",
+                         raised.exception.message)
+        # And when they really were probed, it says so.
+        self.journal = MemoryJournal()
+        probed = self._router(probe=probe_none_ok)
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            probed.next_after(APPROVED_A)
+        self.assertIn("were tried by an actual launch probe", raised.exception.message)
+        self.assertNotIn("NOTHING was probed", raised.exception.message)
+
     def test_a_successful_probe_is_recorded_with_identity_and_time(self) -> None:
         router = self._router()
         selected = router.select(APPROVED_A)
@@ -662,6 +940,49 @@ class ApprovedModelRoutingTests(unittest.TestCase):
                 with self.assertRaises(am.ModelRoutingError) as raised:
                     router.select(APPROVED_A)
                 self.assertEqual(raised.exception.code, am.PROBE_SEAM_MISSING)
+
+    def test_start_and_the_watchdog_share_one_probe_identity(self) -> None:
+        """M0-T080 correction U8 (G4 F2) - a latent R595 activation-blocker.
+
+        `start` keyed its ProbeLedger on the real
+        `runner.executable_identity()["digest"]`; the watchdog keyed on
+        `cli_version=""` because it had no `--claude-executable` and never passed
+        one. Once the owner wires a real probe, a probe recorded by `start` could
+        NEVER satisfy the watchdog's identity match, so the orchestrator turnover
+        would answer `no_approved_successor` forever. Fail-closed today, which is
+        why it was invisible - and why it had to be fixed before activation.
+        """
+        from tools.agent_supervisor import cli
+
+        journal = MemoryJournal()
+        config = FakeApprovedConfig()
+        start_identity = cli._claude_cli_identity(sys.executable)
+        self.assertTrue(start_identity, "a named executable must yield an identity")
+
+        # A probe recorded the way `start` records one.
+        am.ProbeLedger(journal, config_identity=config.digest(),
+                       cli_version=start_identity).record(
+            APPROVED_B, am.ProbeOutcome(ok=True, cli_version=start_identity))
+
+        # The watchdog, given the SAME executable, finds it and can select.
+        from tools.agent_supervisor import turnover_wiring as tw
+        shared = tw.approved_model_router(journal, config=config, probe=None,
+                                          cli_version=start_identity)
+        self.assertEqual(shared.next_after(APPROVED_A).model_id, APPROVED_B)
+
+        # The pre-correction behaviour - an empty cli_version - cannot use it.
+        blind = tw.approved_model_router(journal, config=config, probe=None,
+                                         cli_version="")
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            blind.next_after(APPROVED_A)
+        self.assertEqual(raised.exception.code, am.APPROVED_CHAIN_EXHAUSTED)
+
+        # And the flag that carries the identity really exists on the subcommand.
+        parser = cli.build_parser()
+        args = parser.parse_args(
+            ["orchestrator-watchdog", "--exhaustion-signal", "x",
+             "--claude-executable", sys.executable])
+        self.assertEqual(args.claude_executable, sys.executable)
 
     def test_an_unreadable_probe_record_reads_as_no_probe(self) -> None:
         journal = MemoryJournal()
@@ -798,6 +1119,40 @@ class ApprovedSuccessorControllerTests(unittest.TestCase):
         self.assertIs(result.status, TurnoverStatus.NO_APPROVED_SUCCESSOR)
         self.assertEqual(launcher.requests, [])
         self.assertFalse(audit.actioned, "a safe stop never consumes the dedup key")
+
+    def test_a_no_approved_successor_safe_stop_leaves_a_durable_audit_row(self) -> None:
+        # M0-T080 correction U6 (G5 I2). This branch used to append NOTHING. The
+        # watchdog runs standalone under the OS scheduler, where the returned JSON
+        # is nobody's audit trail, and every OTHER watchdog refusal is hash-chain
+        # audited - so the one refusal meaning "the owner has approved nothing"
+        # was the one that vanished.
+        controller, launcher, audit = self._controller(self._resolver(entries=()))
+        result = controller.execute(self._verdict(), self._context())
+        self.assertIs(result.status, TurnoverStatus.NO_APPROVED_SUCCESSOR)
+        self.assertEqual(launcher.requests, [])
+        rows = [r for r in audit.records
+                if r.get("kind") == "turnover_no_approved_successor"]
+        self.assertEqual(len(rows), 1, audit.records)
+        self.assertEqual(rows[0]["event_id"], "evt-1")
+        self.assertEqual(rows[0]["current_model"], APPROVED_A)
+        self.assertIn(am.APPROVED_MODELS_EMPTY, rows[0]["detail"])
+        self.assertTrue(result.audit_record_id, "the row's id is surfaced on the outcome")
+        self.assertFalse(audit.actioned, "a safe stop never consumes the dedup key")
+
+    def test_an_unwritable_audit_never_turns_a_safe_stop_into_a_crash(self) -> None:
+        class _DamagedAudit(self._Audit):
+            def append(self, record):
+                raise RuntimeError("the hash chain is forked")
+
+        launcher = self._Launcher()
+        controller = TurnoverController(
+            launcher=launcher, lock=self._Lock(), audit=_DamagedAudit(),
+            identity=self._Identity(), survivor_detected=lambda _c: False,
+            successor=self._resolver(entries=()))
+        result = controller.execute(self._verdict(), self._context())
+        self.assertIs(result.status, TurnoverStatus.NO_APPROVED_SUCCESSOR)
+        self.assertIn("unaudited", result.audit_record_id)
+        self.assertEqual(launcher.requests, [])
 
     def test_an_exhausted_approved_chain_is_a_safe_stop(self) -> None:
         controller, launcher, _ = self._controller(self._resolver(probe=probe_none_ok))
@@ -1090,7 +1445,11 @@ class LoopLiveSeamTests(LoopTestBase):
         loop = self.build(mode="supervised", runner=runner, max_cycles=2,
                           pinned_model=PIN)
         loop._last_checkpoint = make_checkpoint(current_sha=HEAD_SHA)
-        sc.record_provider_session(self.journal, session_id="prov-1", model_id=PIN)
+        # The run_id matters: since M0-T080 correction U14 the continuity read is
+        # SCOPED to this run, so a session recorded under another run reads as
+        # absent (and would reorient rather than resume).
+        sc.record_provider_session(self.journal, session_id="prov-1", model_id=PIN,
+                                   run_id=self.run_id)
         loop._provider_session_id = "prov-1"
         with self.assertRaises(lp.LoopError) as raised:
             loop._full_turnover(cycle=2, reason_code="session_relaunch",

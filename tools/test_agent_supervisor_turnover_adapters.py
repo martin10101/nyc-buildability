@@ -264,8 +264,10 @@ class LauncherAdapterTests(unittest.TestCase):
         # That constant is gone: the model discipline MOVED UP a layer, where it
         # is stronger. `TurnoverController` now resolves the successor from the
         # OWNER-APPROVED, live-probed list and refuses any caller preference that
-        # differs (see `test_a_caller_model_never_reaches_the_launcher` below and
-        # the INVALID_MODEL_REFUSED tests in the controller module), so what
+        # differs (see `ApprovedSuccessorControllerTests::test_a_caller_requesting_
+        # a_different_model_is_refused_before_the_lock` in
+        # test_agent_supervisor_turnover_live_seam.py, and the INVALID_MODEL_REFUSED
+        # tests in the controller module), so what
         # reaches the launcher is already the approved id. The launcher's own duty
         # is to launch EXACTLY that id and to refuse a request that names none -
         # it has nothing to fall back to.
@@ -290,6 +292,34 @@ class LauncherAdapterTests(unittest.TestCase):
         # Effort rides as invocation metadata / env, not as a CLI flag.
         self.assertEqual(invocation.env.get("SUPERVISOR_SUCCESSOR_EFFORT"),
                          ALLOWED_SUCCESSOR_EFFORT)
+
+    def test_a_caller_supplied_effort_is_ignored_by_the_launcher(self) -> None:
+        # M0-T080 correction U9, restoring the adversarial half of the removed
+        # "never a caller model OR effort" test. The MODEL legitimately comes from
+        # the request now (the controller resolved it from the owner-approved
+        # list), but the EFFORT still cannot: D-004-R159 forbids protected config
+        # from carrying an effort key at all, so no owner-approved source exists
+        # for a caller to have consulted. An intermediate M0-T080 version made the
+        # launcher read `request.effort or ALLOWED_SUCCESSOR_EFFORT`, silently
+        # turning a launcher-level pin into a caller-supplied value.
+        for smuggled in ("low", "medium", "high", "none"):
+            with self.subTest(effort=smuggled):
+                runner = RecordingRunner()
+                launcher = SupervisorLauncher(command_runner=runner,
+                                              targets=_worker_targets())
+                result = launcher.launch(_request(TurnoverLayer.WORKER,
+                                                  model_id=APPROVED_SUCCESSOR,
+                                                  effort=smuggled))
+                self.assertTrue(result.available)
+                invocation = runner.invocations[0]
+                self.assertEqual(invocation.effort, ALLOWED_SUCCESSOR_EFFORT)
+                self.assertEqual(invocation.env.get("SUPERVISOR_SUCCESSOR_EFFORT"),
+                                 ALLOWED_SUCCESSOR_EFFORT)
+                # And it never reaches the argv in any form (R159 hard-deny).
+                self.assertNotIn(smuggled, invocation.argv)
+                self.assertFalse(any(t.startswith("--effort")
+                                     or t.startswith("--reasoning-effort")
+                                     for t in invocation.argv))
 
     def test_a_request_naming_no_model_is_refused_with_nothing_launched(self) -> None:
         # The replacement for "never a caller model": there is no default to fall

@@ -941,7 +941,7 @@ class SupervisedLoop:
         # OVERWROTE it with an invented `sup-<uuid4>` at every rotation, so the
         # recorded "new session id" named a session no provider had ever issued
         # and the successor launched unresumed.
-        recorded_session = sc.recorded_provider_session(journal)
+        recorded_session = sc.recorded_provider_session(journal, run_id=run_id)
         self._provider_session_id = (recorded_session.session_id
                                      if recorded_session is not None else "")
         self._rotation_record_key = ""
@@ -1395,6 +1395,18 @@ class SupervisedLoop:
                                            successor_model=successor_model)
         except ts.SeamTurnoverError as exc:
             return self._turnover_refused(cycle=cycle, reason_code=reason_code, error=exc)
+        except LoopError as exc:
+            # M0-T080 correction U14 (G3 N1). `_full_turnover` can raise a
+            # LoopError AFTER the rotation is durably recorded - the actuation
+            # step does, when the runner cannot be rebound to resume
+            # (`resume_actuation_unavailable`). Letting it escape left a durable
+            # record of a resume that never reached a launch. It is refused
+            # through the same fail-closed path as every other seam gate, so the
+            # owner is told and the run pauses instead of continuing on a
+            # continuity it does not have.
+            return self._turnover_refused(
+                cycle=cycle, reason_code=reason_code,
+                error=ts.SeamTurnoverError(exc.code, exc.message))
         self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
         relaunch = {
             "cycle": cycle, "reason_code": reason_code,

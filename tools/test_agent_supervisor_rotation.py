@@ -556,34 +556,21 @@ class RotationLedgerTests(JournalTestBase):
                          "the old name must be gone, not aliased: an alias would let a "
                          "caller keep minting a fake session identity")
 
-    def test_ready_checkpoint_is_required(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="new-1", status="IN_PROGRESS", summary="working",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="continue")
-        with self.assertRaises(rot.RotationError) as raised:
-            self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1")
-        self.assertEqual(raised.exception.code, "ready_checkpoint_required")
-
-    def test_ready_checkpoint_must_come_from_the_new_session(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="old-1", status="READY", summary="re-oriented",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="continue")
-        with self.assertRaises(rot.RotationError) as raised:
-            self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1")
-        self.assertEqual(raised.exception.code, "wrong_session_ready")
-
-    def test_a_valid_ready_checkpoint_is_accepted(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="new-1", status="READY", summary="re-oriented",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="implement recovery.py")
-        self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1",
-                                            previous_session_id="old-1")
+    def test_there_is_exactly_one_ready_gate_and_it_is_the_live_one(self) -> None:
+        # M0-T080 correction U4. `RotationLedger.assert_ready_checkpoint` used to
+        # live here with three tests of its own, but it had ZERO production
+        # callers, its docstring falsely claimed `turnover_seam.SeamTurnover` as
+        # one, and it DISAGREED with the live gate: it demanded
+        # `claude_session_id == expected_session_id`, unsatisfiable on a
+        # reorientation because the successor's provider id does not exist until
+        # the successor reports it. Two gates that disagree are worse than one.
+        # The dead duplicate is gone; the live gate is covered by
+        # `test_agent_supervisor_turnover_live_seam.py::SeamTurnoverTests`.
+        self.assertFalse(hasattr(self.ledger, "assert_ready_checkpoint"),
+                         "the dead duplicate READY gate must not come back as a decoy")
+        from tools.agent_supervisor import turnover_seam as ts
+        self.assertTrue(callable(getattr(ts.SeamTurnover, "require_ready", None)),
+                        "the live READY gate is SeamTurnover.require_ready")
 
     def test_an_archived_session_is_never_resumed(self) -> None:
         self.ledger.archive_session("old-1", reason="rotation")
