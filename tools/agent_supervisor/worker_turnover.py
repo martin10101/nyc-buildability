@@ -16,8 +16,9 @@ the MINIMAL, GATED glue that lets the WORKER-layer turnover actually fire from t
 assembled loop: at the ONE seam where the loop is about to treat a missing/failed
 worker result as a terminal `no_valid_checkpoint` stop, it first CLASSIFIES the
 result for a grounded Fable exhaustion and, when confirmed AND the mode authorizes
-an automatic redispatch, redispatches the SAME bounded unit on claude-opus-4-8
-EXACTLY ONCE through the controller.
+an automatic redispatch, redispatches the SAME bounded unit EXACTLY ONCE through
+the controller, on the next OWNER-APPROVED, live-probed model (M0-T080; the
+successor was a hard-coded opus id until then).
 
 This module is strictly ADDITIVE (supervisor-freeze §1): it is a NEW file that
 only COMPOSES the already-committed turnover stack; it edits no frozen module and

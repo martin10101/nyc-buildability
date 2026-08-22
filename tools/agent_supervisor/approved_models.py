@@ -38,7 +38,7 @@ controller, not something this module or its tests perform or claim.
 from __future__ import annotations
 
 import dataclasses
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Mapping, Sequence
 
 from .models import to_utc_iso
 from .refusals import HALTED, UNSAFE, Refusal, refusal
@@ -322,6 +322,35 @@ class SelectedModel:
         }
 
 
+def _attempts_sentence(attempts: Sequence[Mapping[str, Any]]) -> str:
+    """Say what actually happened to each candidate, not what usually happens.
+
+    M0-T080 correction U7 (measured-claims discipline, applied to a refusal
+    message). The chain-exhaustion message used to assert "Every candidate was
+    tried by an actual launch probe" unconditionally - including when every
+    attempt failed with `model_probe_seam_missing`, i.e. when NOTHING was probed
+    at all. A refusal that overstates its own evidence is the same defect as a
+    report that does, so the sentence is derived from the recorded reason codes.
+    """
+    if not attempts:
+        return ("There was no candidate after it to try: the approved list has no later "
+                "entry.")
+    probed = [a for a in attempts if a.get("reason_code") != PROBE_SEAM_MISSING]
+    unprobed = [a for a in attempts if a.get("reason_code") == PROBE_SEAM_MISSING]
+    if not probed:
+        return (f"NOTHING was probed: all {len(unprobed)} candidate(s) "
+                f"{[a.get('model') for a in unprobed]} have no recorded successful launch "
+                f"probe for this config identity and no live probe seam is wired, so their "
+                f"availability is UNKNOWN rather than refuted.")
+    if not unprobed:
+        return (f"All {len(probed)} candidate(s) {[a.get('model') for a in probed]} were "
+                f"tried by an actual launch probe and none came up.")
+    return (f"{len(probed)} candidate(s) {[a.get('model') for a in probed]} were tried by an "
+            f"actual launch probe and did not come up; {len(unprobed)} "
+            f"{[a.get('model') for a in unprobed]} were never probed at all (no seam wired, "
+            f"availability UNKNOWN).")
+
+
 class ModelRouter:
     """Selects a model from the owner-approved list, proved by a live probe.
 
@@ -371,9 +400,17 @@ class ModelRouter:
             outcome = ProbeOutcome(ok=False, reason_code="probe_error",
                                    detail=f"the live launch probe raised: {exc}")
         if not isinstance(outcome, ProbeOutcome):
+            # M0-T080 correction U5: this used to coerce with `ok=bool(outcome)`,
+            # so a probe seam returning any truthy value the router could not
+            # parse - a string, a dict, a bare True - was RECORDED as a successful
+            # launch probe and made the model selectable. An unreadable result
+            # proves nothing (this module's own stated rule), so it is ok=False.
+            # Latent while no probe seam is wired; live the moment the owner wires
+            # a real one.
             outcome = ProbeOutcome(
-                ok=bool(outcome), reason_code="probe_shape",
-                detail="the probe seam returned a non-ProbeOutcome value")
+                ok=False, reason_code="probe_shape",
+                detail=f"the probe seam returned {type(outcome).__name__}, not a "
+                       f"ProbeOutcome; an unparseable probe result is not availability")
         record = self.ledger.record(model_id, outcome)
         if not record.ok:
             raise ModelRoutingError(
@@ -422,8 +459,8 @@ class ModelRouter:
             APPROVED_CHAIN_EXHAUSTED,
             f"no entry in the owner-approved model list {list(self.approved.entries)} came "
             f"up after {model_id!r}; the run STOPS rather than continuing on an unlisted or "
-            f"substitute model (D-023-R013). Every candidate was tried by an actual launch "
-            f"probe, and exhaustion of the approved chain is a safe stop, not a fallback",
+            f"substitute model (D-023-R013). {_attempts_sentence(attempts)} Exhaustion of "
+            f"the approved chain is a safe stop, not a fallback",
             {"exhausted_model": model_id, "approved": list(self.approved.entries),
              "attempts": attempts})
 
@@ -432,4 +469,64 @@ def probe_report(ledger: ProbeLedger) -> list[dict[str, Any]]:
     """The recorded probe evidence, as data (`doctor` prints it)."""
     return [record.to_dict() for record in sorted(
         ledger.all_records(), key=lambda item: item.model_id)]
+
+
+# --------------------------------------------------------------------------
+# Self-description, for `doctor`
+#
+# The disclosure TEXT lives here rather than in `cli.py` because it describes
+# what THIS module's list and ledger do and do not govern - so it changes when
+# this module's rules change, not when the CLI's presentation does. `cli.py`
+# wraps the returned triples in its own `Check` type.
+# --------------------------------------------------------------------------
+
+
+def approved_models_disclosure(config: Any) -> tuple[str, bool, str]:
+    """`(check name, ok, detail)` for the owner-approved list, empty included.
+
+    An empty list is reported as a PASSING check with an explicit consequence,
+    not as a config error: approving nothing is a legitimate state of the file,
+    and what it costs is stated here rather than discovered when a rotation stops.
+    """
+    approved = config.approved_models
+    if not approved.entries:
+        return ("approved_models", True,
+                f"the controller config approves NO models ([{APPROVED_MODELS_SECTION}] "
+                f"{APPROVED_MODELS_KEY} is absent or empty). There is deliberately no "
+                f"built-in default list (D-023-R013), so every model-selection act - a "
+                f"rotation, a quota chain step, a turnover successor, an authenticated "
+                f"model change - will stop safely with a typed refusal until the owner "
+                f"populates protected config")
+    return ("approved_models", True,
+            f"owner-approved models, in order: {list(approved.entries)} (source "
+            f"{approved.source}). Being listed is necessary and NOT sufficient: an id "
+            f"selected through ModelRouter (the turnover successor) must also carry a "
+            f"recorded successful exact-id LIVE LAUNCH PROBE for this config identity "
+            f"({config.digest()[:16]}...) and this provider CLI. TWO PATHS ARE GOVERNED "
+            f"DIFFERENTLY and this check does not cover them: (1) the run's INITIAL model "
+            f"pin comes from [claude] allowed_models via model_selection.toml and is "
+            f"admitted WITHOUT a launch probe; (2) the orchestrator quota-chain switch "
+            f"(loop._switch_at_seam) probes each candidate by an actual launch at the seam "
+            f"but neither consults nor writes the probe ledger, so its probes leave no "
+            f"record here. Only those two bypass the ledger; nothing bypasses the list")
+
+
+def probe_evidence_disclosure(journal: Any, config: Any,
+                              cli_version: str) -> tuple[str, bool, str]:
+    """`(check name, ok, detail)` for which approved models are actually probed."""
+    ledger = ProbeLedger(journal, config_identity=config.digest(),
+                         cli_version=cli_version)
+    records = probe_report(ledger)
+    usable = [r["model_id"] for r in records
+              if r["ok"] and r["config_identity"] == config.digest()
+              and r["cli_version"] == cli_version]
+    return ("model_launch_probes", True,
+            f"recorded probes: {records or '(none)'}. Selectable under THIS config "
+            f"identity and CLI version: {usable or '(none)'}. A probe recorded under a "
+            f"different controller config or a different provider CLI proves nothing about "
+            f"this one and is ignored; a model with no recorded successful probe is not "
+            f"selectable BY THE ROUTER. This ledger is written and read only by "
+            f"ModelRouter: the initial model pin never consults it, and the orchestrator "
+            f"quota-chain switch probes by actual launch at the seam WITHOUT recording "
+            f"here, so an empty ledger does not mean no model was ever launch-probed")
 

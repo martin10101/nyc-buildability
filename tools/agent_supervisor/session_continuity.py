@@ -163,12 +163,25 @@ def record_provider_session(
     return record
 
 
-def recorded_provider_session(journal: Any) -> ProviderSession | None:
-    """The last recorded provider session, or None. Unreadable state reads None."""
+def recorded_provider_session(journal: Any, *, run_id: str = "") -> ProviderSession | None:
+    """The last recorded provider session, or None. Unreadable state reads None.
+
+    M0-T080 correction U14 (G4 F6): the record is keyed per CHECKOUT, not per run,
+    so run B could read run A's leftover session - and then ARCHIVE it on B's
+    first rotation, or offer it to a `--resume`. Passing `run_id` scopes the read:
+    a record from a different run reads as absent, which is the honest answer
+    (this run has not recorded a session yet) and is fail-closed for continuity.
+    Callers that legitimately want the last session whoever owned it - the
+    standalone watchdog, which runs after the orchestrator process is gone -
+    omit `run_id` and get the previous behaviour.
+    """
     try:
-        return ProviderSession.from_dict(journal.get_state(PROVIDER_SESSION_KEY, None))
+        recorded = ProviderSession.from_dict(journal.get_state(PROVIDER_SESSION_KEY, None))
     except Exception:  # pragma: no cover - a journal that cannot be read
         return None
+    if recorded is None or not run_id:
+        return recorded
+    return recorded if recorded.run_id == run_id else None
 
 
 def clear_provider_session(journal: Any) -> None:
@@ -210,11 +223,16 @@ class ContinuityDecision:
                 "reorientation_without_reason",
                 "a reorientation must name WHY resume was impossible; an unexplained "
                 "reorientation is indistinguishable from silently starting over")
-        unknown = [r for r in self.none_reasons if r not in NONE_REASONS]
+        # M0-T080 correction U14 (G3 M-2): the PRIMARY reason is validated too.
+        # Only the tuple was checked, so a decision could carry a made-up
+        # `none_reason` as long as `none_reasons` was empty or well-formed - and
+        # the primary is the one every record and message quotes.
+        unknown = [r for r in (*self.none_reasons, self.none_reason)
+                   if r and r not in NONE_REASONS]
         if unknown:
             raise ContinuityError(
                 "unknown_none_reason",
-                f"{unknown} are not among the closed impossibility reasons "
+                f"{sorted(set(unknown))} are not among the closed impossibility reasons "
                 f"{list(NONE_REASONS)}")
 
     @property
@@ -259,7 +277,14 @@ def decide_continuity(
     if recorded is None or not recorded.session_id:
         reasons.append(NO_RECORDED_SESSION)
     else:
-        if successor_model and session_model and successor_model != session_model:
+        # M0-T080 correction U2. This used to require BOTH ids to be non-empty
+        # before it would call a rotation cross-model, so a recorded session whose
+        # `model_id` was unknown ("") plus a KNOWN different successor produced a
+        # clean `resume` with no reasons at all - the loudest possible case read as
+        # "no objection". A resume needs POSITIVE proof that the successor runs the
+        # same model the recorded session ran; an empty value on either side is not
+        # that proof, and CLAUDE.md principle 3 forbids guessing it.
+        if not successor_model or not session_model or successor_model != session_model:
             reasons.append(CROSS_MODEL)
         if rotation_reason in CONTEXT_SHEDDING_REASONS:
             reasons.append(CONTEXT_SHEDDING_ROTATION)

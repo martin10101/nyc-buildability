@@ -45,13 +45,27 @@ allowed_models = ["<owner-chosen-claude-model>"]
 # because a built-in list is exactly the unapproved selection D-023-R013
 # prohibits.
 #
-# Being listed here is NECESSARY BUT NOT SUFFICIENT. Before a model is used it
-# must also pass an ACTUAL LAUNCH PROBE of the exact id, and the successful probe
-# is recorded durably with the provider CLI version, this config's identity, and
-# the probe time. A model with no recorded successful probe for the CURRENT
-# config and CLI is not selectable. Availability is never decided by reading a
-# model picker or menu, which can hide a model that is still usable by explicit
-# string.
+# Being listed here is NECESSARY BUT NOT SUFFICIENT for a model selected through
+# the router (the turnover successor): it must also pass an ACTUAL LAUNCH PROBE of
+# the exact id, and the successful probe is recorded durably with the provider CLI
+# version, this config's identity, and the probe time. A model with no recorded
+# successful probe for the CURRENT config and CLI is not selectable by that path.
+# Availability is never decided by reading a model picker or menu, which can hide
+# a model that is still usable by explicit string.
+#
+# TWO PATHS ARE GOVERNED DIFFERENTLY, and neither writes the probe ledger:
+#
+#   1. The run's INITIAL model pin comes from [claude] allowed_models below via
+#      model_selection.toml, and is admitted WITHOUT a launch probe. It is not a
+#      turnover, a fallback, or a substitution - it is the model the owner
+#      launched the run on. Whether it should ALSO require this list plus a probe
+#      is an open owner decision; do not assume this section covers it.
+#   2. The orchestrator quota-chain switch probes each candidate by an ACTUAL
+#      LAUNCH at the rotation seam, but reads and writes nothing here, so those
+#      probes leave no record in the ledger `doctor` reports.
+#
+# Both paths are still confined to owner-authored lists; only the ledger is
+# bypassed.
 #
 # Nothing here is a judgement call: the supervisor never chooses a model, it
 # walks this list. An id that is not listed is NEVER selectable no matter what a

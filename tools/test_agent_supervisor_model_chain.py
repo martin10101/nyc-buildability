@@ -666,6 +666,51 @@ class CrashResumeTests(ChainTestBase):
         finally:
             journal.close()
 
+    def test_a_config_conflict_is_a_typed_refusal_not_a_traceback(self) -> None:
+        """M0-T080 correction U11 (G4 F5).
+
+        `_run_loop` loads and cross-validates the controller config, and it sits
+        OUTSIDE the typed-refusal except guard, so every ConfigError it can raise
+        - including M0-T080's new `approved_models_conflict` - reached the
+        operator as a raw traceback at exit 1. That is the same defect T079-C5
+        fixed for the budget: a refusal is a report, not a crash.
+        """
+        import contextlib as _contextlib
+        import io
+
+        from tools.agent_supervisor.manifest import generate_manifest, write_manifest
+
+        # The two spellings of the owner-approved list, naming DIFFERENT lists.
+        conflicted = self.tmp / "conflicted.toml"
+        conflicted.write_text(
+            CONFIG_TOML
+            + f'\n[approved_models]\nmodels = ["{SECOND_FALLBACK}"]\n',
+            encoding="utf-8")
+        manifest = write_manifest(
+            generate_manifest(cli.PACKAGE_ROOT,
+                              extra_files=(("config.toml", conflicted),)),
+            self.tmp / "conflicted_manifest.json")
+
+        argv = ["start", "--mode", "supervised",
+                "--claude-executable", sys.executable,
+                "--codex-executable", sys.executable,
+                "--task-packet", str(self.packet),
+                "--config", str(conflicted),
+                "--manifest", str(manifest),
+                "--model-selection", str(self.selection_path),
+                "--run-id", "run-conflict", "--max-cycles", "1",
+                "--unit-timeout", "60",
+                "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with _contextlib.redirect_stdout(stdout), _contextlib.redirect_stderr(stderr):
+            code = cli.main(list(argv))
+
+        combined = stdout.getvalue() + stderr.getvalue()
+        self.assertNotIn("Traceback", combined, "a refusal is a report, not a crash")
+        self.assertNotEqual(code, 0, "a refused config must not exit success")
+        self.assertIn("approved_models_conflict", combined)
+
     def test_effective_model_is_read_from_the_durable_record(self) -> None:
         self.assertEqual(lp.effective_model(self.journal, self.run_id, PIN), PIN)
         self.journal.set_state(f"model_substitution/{self.run_id}",

@@ -381,7 +381,15 @@ class SupervisorLauncher:
             raise ValueError(
                 f"the launch request names no usable successor model ({model_id!r}); there "
                 f"is deliberately no default model to fall back to (D-023-R013)")
-        effort = str(getattr(request, "effort", "") or ALLOWED_SUCCESSOR_EFFORT)
+        # M0-T080 correction U9: the effort is PINNED here, not passed through.
+        # An intermediate version read `request.effort or ALLOWED_SUCCESSOR_EFFORT`,
+        # which quietly turned a launcher-level pin into a caller-supplied value
+        # and dropped the adversarial case that proved it. The model legitimately
+        # comes from the request (it is resolved from the owner-approved list);
+        # the EFFORT cannot, because D-004-R159 forbids protected config from
+        # carrying one, so there is no owner-approved source for a caller to have
+        # consulted. Whatever the request says, the launch uses the frozen value.
+        effort = ALLOWED_SUCCESSOR_EFFORT
         if layer is TurnoverLayer.WORKER:
             argv = tuple(self._worker_argv(model_id))
         else:

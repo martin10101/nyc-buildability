@@ -359,11 +359,22 @@ class TurnoverController:
             # An empty approved list, no successful probe, or a spent chain. A
             # SAFE STOP: no launch, no substitute, and the dedup is untouched so
             # a later attempt is still possible once the owner has acted.
+            #
+            # M0-T080 correction U6: this branch used to leave NO durable trace.
+            # `run_orchestrator_watchdog` runs standalone under the OS scheduler,
+            # where the returned JSON is nobody's audit trail, and every OTHER
+            # watchdog refusal (no_turnover, containment_refused, no_current_model)
+            # is hash-chain audited. "The approved list was empty / nothing probed
+            # / the chain was spent" is exactly the refusal an operator needs to
+            # find later, so it gets a row too.
+            audit_id = self._safe_append(
+                self._no_successor_record(context, str(exc)))
             return self._no_launch(
                 context, TurnoverStatus.NO_APPROVED_SUCCESSOR,
                 f"no owner-approved, live-probed successor is available ({exc}); stopping "
                 f"safely with no launch. The supervisor never substitutes a model the owner "
-                f"did not approve (D-023-R013)")
+                f"did not approve (D-023-R013)",
+                audit_record_id=audit_id)
         if context.requested_model and context.requested_model != successor.model_id:
             return self._no_launch(
                 context, TurnoverStatus.INVALID_MODEL_REFUSED,
@@ -523,3 +534,26 @@ class TurnoverController:
         record = self._base_record(context, "turnover_safe_stop")
         record["detail"] = detail
         return record
+
+    def _no_successor_record(self, context: TurnoverContext, detail: str) -> dict[str, Any]:
+        record = self._base_record(context, "turnover_no_approved_successor")
+        record.update({
+            "detail": detail,
+            "current_model": context.current_model,
+            "note": "no owner-approved, live-probed successor was available; nothing was "
+                    "launched, no substitute was chosen, and the dedup key was NOT consumed "
+                    "so a later attempt remains possible once the owner acts",
+        })
+        return record
+
+    def _safe_append(self, record: Mapping[str, Any]) -> str:
+        """Append an audit row without letting the audit turn a safe stop into a crash.
+
+        The sink refuses to append to a damaged hash chain (by design). A refusal
+        that cannot be written down is still a refusal, so the stop is reported
+        either way and the missing row is surfaced in its place.
+        """
+        try:
+            return self._audit.append(record)
+        except Exception as exc:  # pragma: no cover - damaged/unwritable chain
+            return f"(unaudited: {exc})"

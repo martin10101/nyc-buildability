@@ -88,7 +88,9 @@ def full_turnover(loop: Any, *, cycle: int, reason_code: str,
         head_sha=facts.head_sha, branch=facts.branch,
         worktree=facts.worktree, task_stage=facts.stage)
     continuity = sc.decide_continuity(
-        recorded=sc.recorded_provider_session(loop.journal),
+        # U14/G4-F6: scoped to THIS run, so run B never resumes or archives
+        # a session run A left behind in the same checkout.
+        recorded=sc.recorded_provider_session(loop.journal, run_id=loop.run_id),
         successor_model=successor_model,
         rotation_reason=reason_code,
         resume_capability_verified=resume_capability_verified(loop),

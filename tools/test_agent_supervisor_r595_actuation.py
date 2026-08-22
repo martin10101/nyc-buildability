@@ -393,10 +393,30 @@ class WorkerActuationChannelBuildTests(unittest.TestCase):
 
 
 class NoOtherHoldMovedTests(unittest.TestCase):
-    def test_successor_model_is_hard_pinned_opus_4_8(self) -> None:
-        # The successor is never caller-selectable; the pin is the frozen constant.
-        self.assertEqual(APPROVED_SUCCESSOR, "claude-opus-4-8")
-        self.assertEqual(ALLOWED_SUCCESSOR_EFFORT, "xhigh")
+    def test_the_successor_is_never_caller_selectable(self) -> None:
+        # M0-T080 correction U10. This test previously asserted
+        # `APPROVED_SUCCESSOR == "claude-opus-4-8"` - a constant DEFINED IN THIS
+        # FILE against its own literal, which cannot fail whatever production
+        # does - while its name claimed to guard a production invariant. The real
+        # invariant after M0-T080 is that the successor is not caller-selectable:
+        # the model comes from the owner-approved list (never a module constant,
+        # which is now gone), and the effort is the frozen R159-governed value the
+        # launcher pins regardless of what a caller asks for.
+        from tools.agent_supervisor import turnover_controller as tc
+        self.assertFalse(hasattr(tc, "ALLOWED_SUCCESSOR_MODEL_ID"),
+                         "the code-default successor model must stay removed")
+        self.assertEqual(tc.ALLOWED_SUCCESSOR_EFFORT, "xhigh",
+                         "the R159-governed effort is a PRODUCTION constant; asserting a "
+                         "test-local copy against its own literal proves nothing")
+        # The context carries no default model either, so a caller that names
+        # nothing cannot be silently given one.
+        self.assertEqual(tc.TurnoverContext.__dataclass_fields__["requested_model"].default,
+                         "")
+        self.assertEqual(tc.TurnoverContext.__dataclass_fields__["requested_effort"].default,
+                         "")
+        # The launcher-level effort pin itself is proved against a real launch in
+        # test_agent_supervisor_turnover_adapters.py (where the launcher fixtures
+        # live): `test_a_caller_supplied_effort_is_ignored_by_the_launcher`.
 
     def test_actuation_requires_explicit_owner_flag_not_a_mode(self) -> None:
         # No runnable mode, by itself, authorizes actuation: only the explicit
