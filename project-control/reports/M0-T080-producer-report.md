@@ -59,6 +59,8 @@ Three consequences, each confirmed by a repository-wide search of the pre-change
 
 So a production rotation never checked whether the moment was safe, never built nine of the fourteen required handoff fields, never verified a handoff, never stored a verified one, never gated on READY, and never checked afterwards that the successor was on the expected task, branch, HEAD, or model.
 
+**One correction to this table (review U4).** Five of these six surfaces were given a production caller. `assert_ready_checkpoint` was **not**, and the first submission's claim that it was "fixed" was wrong. The live READY gate is a NEW implementation (`turnover_seam.SeamTurnover.require_ready`) with different — and correct — semantics: `assert_ready_checkpoint` demanded `claude_session_id == expected_session_id`, which is unsatisfiable on a reorientation because the successor's provider session id does not exist until the successor reports it. It stayed dead, disagreed with the live gate, and its new docstring falsely named `SeamTurnover` as its caller. It has been **REMOVED** (`rotation.py:723-741`, replaced by a comment recording why), along with the three tests that only exercised it; a guard test now asserts the duplicate cannot return.
+
 ### 1.3 A reproduced defect — model ids decided in SOURCE, not in owner config
 
 Three sites chose models from literals rather than from owner-approved protected configuration:
@@ -115,7 +117,8 @@ New test module: `tools/test_agent_supervisor_turnover_live_seam.py` (67 tests).
 | `turnover_seam.py:75/106` | `safety_state_from_run` / `assert_safe_seam` — pending effects, open asks, and an unknown SHA / worktree / stage are all unsafe moments. The judgement is delegated to `rotation.assert_safe_to_rotate`. |
 | `turnover_seam.py:127/168` | `SeamFacts` + `build_handoff` — the full fourteen-field S11.3 handoff, built from the task authority, the recorded HEAD, and the last VALID checkpoint. |
 | `turnover_seam.py:160` | `STRUCTURAL_FORBIDDEN_SCOPE` — the prohibitions true of every unit, so `forbidden_scope` is never empty just because a packet listed no paths. |
-| `turnover_seam.py:216/253` | `deterministic_verdict` / `verify` — a live review-model verifier when one is wired; otherwise the supervisor RE-DERIVES every load-bearing field and records `model_used = DETERMINISTIC_VERIFIER` (S3.3 permits review_model **or** deterministic verification). |
+| `turnover_seam.py:216/305` | `deterministic_verdict` / `verify` — a live review-model verifier when one is wired; otherwise a **completeness + authority-consistency** gate (see §3.3 — corrected per review U3; it is NOT 14-field independent re-derivation). `model_used` distinguishes the two deterministic arms: `deterministic:supervisor-consistency` and, when a `FactSource` is wired, `deterministic:supervisor-independent-rederivation`. |
+| `turnover_seam.py:66-72/313-341` | `FactSource` — the injected independent re-derivation seam (U3 arm (a)). When wired its values are authoritative and a divergence REFUSES the rotation; a source that raises refuses rather than silently downgrading to the weaker check. |
 | `turnover_seam.py:338-...` | `SeamTurnover.execute` — safe seam → handoff → verify → **persist** → rotate → arm READY, in that order, so a refusal leaves the run exactly where it was. |
 | `turnover_seam.py:...` | `require_ready` — status must be READY; a READY from the ARCHIVED session, or from a session other than the one a resume commanded, is refused. |
 | `turnover_seam.py:...` | `verify_post_launch` — compares the successor's reported task, branch, worktree, starting SHA, and **model** to a `SuccessorExpectation` written down BEFORE it ran. |
@@ -139,7 +142,7 @@ New test module: `tools/test_agent_supervisor_turnover_live_seam.py` (67 tests).
 | `approved_models.py:184-201` | `ProbeOutcome` + `LiveLaunchProbe`, the injected exact-id live launch probe seam. |
 | `approved_models.py:205-306` | `ProbeRecord` / `ProbeLedger` — durable, bound to config identity AND CLI version; a probe from another config or CLI reads as NO probe. |
 | `approved_models.py:327-431` | `ModelRouter.select` / `next_after` — LISTED, then PROBED, in that order. No probe seam ⇒ `model_probe_seam_missing`. Chain spent ⇒ `approved_chain_exhausted`. |
-| `approved_models.py:66-75` | Reason code → refusal outcome: empty list and spent chain ⇒ `halted` (exit 10); unlisted/unprobed/failed probe ⇒ `unsafe` (exit 11). |
+| `approved_models.py:64-72` | Reason code → refusal outcome: empty list and spent chain ⇒ `halted`; unlisted / unprobed / failed probe ⇒ `unsafe`. The 10 and 11 those outcomes carry are `Refusal.exit_code` PROPERTIES (`refusals.EXIT_CODES`); no CLI surface returns them for these refusals today - `orchestrator-watchdog` reports the safe stop in its payload and returns 0, and the `start` path maps its own outcome. Corrected per M0-T080 review U15. |
 | `turnover_controller.py:68-110` | `ALLOWED_SUCCESSOR_MODEL_ID` **removed**. `ApprovedSuccessor` + the injected, REQUIRED `SuccessorResolver` replace it. `ALLOWED_SUCCESSOR_EFFORT` is kept and documented (see §3.4). |
 | `turnover_controller.py` | New `TurnoverStatus.NO_APPROVED_SUCCESSOR` — a safe stop that launches nothing and does NOT consume the dedup key. |
 | `turnover_adapters.py` | The launcher builds from `LaunchRequest.model_id`; a request naming no model is refused, since there is nothing to default to. |
@@ -148,6 +151,13 @@ New test module: `tools/test_agent_supervisor_turnover_live_seam.py` (67 tests).
 | `cli.py` `--config` on `orchestrator-watchdog` | Names the config whose approved list the successor is chosen from. |
 | `model_change_ipc.py:502-528` | The IPC's Gate 3 gains an independent approved-list check for the `claude` provider. Gate 1 (process ancestry) is untouched and still runs FIRST. |
 | `cli.py` doctor | `approved_models` and `model_launch_probes` checks report the list and the probe evidence as data. |
+
+**What the approved list does NOT govern (G5 I4 / G4 §3 — documented per the review's owner-decision item).** Two paths reach a model without consulting the probe ledger, and neither is misrepresented as covered:
+
+1. **The run's INITIAL model pin.** It is admitted by `[claude] allowed_models` via `model_selection.toml`, with **no launch-probe requirement**. G4 ruled this is *not* an R013 violation — the initial pin is neither a turnover, a fallback, nor a substitution; it is the model the owner launched the run on, from an owner-authored list. Every LATER selection is held to `[approved_models]` + a recorded probe.
+2. **The orchestrator quota-chain switch** (`loop._switch_at_seam`) probes each candidate by an ACTUAL LAUNCH at the seam, but neither reads nor writes `ProbeLedger`, so those probes leave no record in what `doctor` reports.
+
+Both are confined to owner-authored lists; only the ledger is bypassed. This is now stated in three places a reader will actually hit: the `approved_models` and `model_launch_probes` doctor checks (`approved_models.py:484-538`) and `config.example.toml`'s `[approved_models]` comment. **The open question — should the initial pin ALSO require the approved list plus a probe? — is an OWNER DECISION and is deliberately left open here**; it is bundled into the single final owner checkpoint (D-023-R034), and the directive verifier rules on whether R013 reaches the pin. **No pin admission logic was changed by this correction round.**
 
 ### 2.5 Deliverable 4 — the stale note
 
@@ -169,9 +179,21 @@ The directive permits the invented UUID to survive "ONLY as a supervisor-interna
 
 The resume path is nevertheless real, wired, and proved end to end: `decide_continuity` returns it, `SeamTurnover.execute` records it without archiving, `loop_turnover.actuate_resume` rebinds the runner, and `build_argv` emits `--resume <provider id>`. The loop-level test drives the real `_full_turnover` with reason `session_relaunch` — a same-model, non-shedding reason. **No trigger in the assembled loop produces that reason today.** I did not add one: inventing a rotation trigger to make a path fire would be a speculative supervisor feature (supervisor-freeze §1). Flagged in §8 as a judgment call.
 
-### 3.3 Deterministic verification, and why it is not a rubber stamp
+### 3.3 What the deterministic verification actually proves (corrected — review U3)
 
-Making `verify_handoff` mandatory needed a verifier that exists on a SHADOW-ONLY build with no live reviewer wired. S3.3 already reserves this purpose to "review_model **or deterministic verification**", so the second arm is the one taken: the supervisor re-derives task/stage, branch, worktree, HEAD, next action, and the structural prohibitions from its OWN durable facts and returns any divergence as a finding, which `rotation.verify_handoff` turns into a refusal. `model_used` is recorded as `deterministic:supervisor-rederivation`, never a model name, so no record can suggest a review that did not happen. A test tampers with one field and asserts the verifier catches it, and asserts the untampered handoff passes — so it is neither always-pass nor always-fail.
+**The first submission overstated this, and the correction is the honest scope.** The original text said the supervisor "re-derives every load-bearing field". It does not, and it could not have: `execute` builds the handoff FROM `facts` and then verified it against that same object, so no production divergence was reachable, and only 6 of the 14 fields were compared at all. G3 I-1 / G5 I3 / G4 F3 were right.
+
+**What it is now, stated exactly** (and stated in the verdict record itself, under `scope`, so no reader has to infer it):
+
+1. **Completeness** over all fourteen S11.3 fields — enforced by `rotation.validate_handoff`, which `verify_handoff` calls first. That part was always real.
+2. **Authority-consistency** for the six fields the SUPERVISOR owns: task/stage, branch, worktree, exact next action, `authoritative_shas.HEAD`, and the structural prohibitions. This catches a handoff that took any of them from worker-supplied checkpoint text instead of from the task authority.
+3. **Not re-derived at all:** the other eight fields (completed work, changed files, tests/CI, PR state, reviews, blockers, owner gates, evidence digests). Those originate in the worker's checkpoint and the supervisor holds no second copy, so comparing them here would compare a value to itself. Claiming otherwise was the defect.
+
+**Which arm was taken, and why.** Both, honestly labelled. Arm (a) — the independent re-derivation — is IMPLEMENTED as the injected `FactSource` seam: when wired, values re-read from the world are authoritative, a divergence refuses the rotation, and the record says `deterministic:supervisor-independent-rederivation`. A source that raises is a refusal, not a downgrade. Three tests prove it can actually refuse, that an agreeing source is labelled as the stronger check, and that a raising source stops the rotation.
+
+Production does **not** wire one, and that is arm (b) with the reason the correction asked for: the only genuinely independent source is repository I/O — `git rev-parse`, the packet on disk — executed INSIDE the rotation seam. Adding subprocess git to a seam that currently performs none is new behaviour with its own failure modes (a git that is slow, absent, or answering about the wrong worktree would newly be able to block a rotation), and the freeze lane authorises defect repair, not that. So the seam exists, is required when wired, and the label and the `scope` block say precisely what ran. `verified_by_model` can no longer imply an independent check: `deterministic:supervisor-consistency` says on its face that it is not one.
+
+A test tampers with one field and asserts the verifier catches it, and asserts the untampered handoff passes — so neither arm is always-pass or always-fail.
 
 ### 3.4 Why `ALLOWED_SUCCESSOR_EFFORT` stays a constant
 
@@ -191,11 +213,11 @@ The approved list IS the Claude session/model chain. Requiring a Codex model cha
 
 | File | Baseline | Limit | After pass 1 | Final |
 |---|---:|---:|---:|---:|
-| `cli.py` | 2685 | 2953 | 3101 | **2902** |
-| `loop.py` | 1899 | 2088 | 2290 | **2067** |
-| `rotation.py` | 746 | 820 | 834 | **648** |
+| `cli.py` | 2685 | 2953 | 3101 | **2898** |
+| `loop.py` | 1899 | 2088 | 2290 | **2080** |
+| `rotation.py` | 746 | 820 | 834 | **623** |
 
-Rather than request an owner exception, the growth was **extracted** into the four focused modules in §2.1 (`loop_turnover.py`, `turnover_wiring.py`, `handoff.py`, plus the three genuinely new domain modules). Every split preserves the public import surface: `rotation.Handoff`, `rotation.verify_handoff`, `rotation.RotationError` and friends are re-exported facades; `cli.run_orchestrator_watchdog` and the pre-split private helper names (`cli._build_worker_actuation_channel` and peers) are preserved as aliases. `python tools/modularity_check.py --check` → **`selected 272 files; failures 0; warnings 5`**, all five warnings pre-existing.
+Rather than request an owner exception, the growth was **extracted** into the four focused modules in §2.1 (`loop_turnover.py`, `turnover_wiring.py`, `handoff.py`, plus the three genuinely new domain modules). Every split preserves the public import surface: `rotation.Handoff`, `rotation.verify_handoff`, `rotation.RotationError` and friends are re-exported facades; `cli.run_orchestrator_watchdog` and the pre-split private helper names (`cli._build_worker_actuation_channel` and peers) are preserved as aliases. `python tools/modularity_check.py --check` → **`selected 280 files; failures 0; warnings 5`**, all five warnings pre-existing.
 
 Note for the reviewer: `modularity_check` selects via `git ls-files`, so the six **untracked** new modules are not yet in its census. Each was measured directly (§2.1); the largest, `turnover_seam.py` at 452, is under the 600 warn line.
 
@@ -229,8 +251,8 @@ Per `docs/ACCEPTANCE_SCENARIO_STANDARD.md`. Execution method for all: `python -m
 | **AS-18** *(READY gate — impostor)* | S11.3 / S15 | armed gate, reorientation | READY from the ARCHIVED session | `ready_from_archived_session` | A READY from the session the rotation replaced proves the rotation did not happen | `…::SeamTurnoverTests::test_a_ready_from_the_archived_session_never_satisfies_the_gate` |
 | **AS-19** *(regression — ordinary cycle)* | D-007 S11.3 | no armed gate | `require_ready(UNIT_COMPLETE)` | passes | A run that never rotated is untouched | `…::SeamTurnoverTests::test_no_armed_gate_means_an_ordinary_cycle_is_untouched` |
 | **AS-20** *(post-launch verification)* | D-023 item 2 | armed expectation | matching successor, then a wrong one | matching ⇒ ok; wrong ⇒ mismatches naming task_id, branch, worktree, starting_sha AND **model** | The successor must be the session that was commanded | `…::SeamTurnoverTests::test_post_launch_verification_names_every_mismatch` |
-| **AS-21** *(empty approved list — the §1.3 defect)* | D-023-R013 | no approved models | `select` and `next_after` | `approved_models_empty`, refusal outcome `halted`, exit 10, message says "populate" | An unpopulated config approves NOTHING and stops safely | `…::ApprovedModelRoutingTests::test_an_empty_approved_list_stops_safely_with_a_typed_refusal` |
-| **AS-22** *(unlisted id)* | D-023-R013 | probe says the id is available | `select(UNAPPROVED)` | `model_not_approved`, outcome `unsafe` | Availability never overrides approval | `…::ApprovedModelRoutingTests::test_an_unlisted_id_is_never_selectable_however_available` |
+| **AS-21** *(empty approved list — the §1.3 defect)* | D-023-R013 | no approved models | `select` and `next_after` | `approved_models_empty`, refusal outcome `halted`, `Refusal.exit_code` 10, message says "populate" | An unpopulated config approves NOTHING and stops safely | `…::ApprovedModelRoutingTests::test_an_empty_approved_list_stops_safely_with_a_typed_refusal` |
+| **AS-22** *(unlisted id)* | D-023-R013 | probe says the id is available | `select(UNAPPROVED)` | `model_not_approved`, outcome `unsafe` (`Refusal.exit_code` 11) | Availability never overrides approval | `…::ApprovedModelRoutingTests::test_an_unlisted_id_is_never_selectable_however_available` |
 | **AS-23** *(no aliasing)* | D-004-R754 | approved list of one | case/whitespace/punctuation near-misses | none match; the exact id does | Ids are used verbatim | `…::ApprovedModelRoutingTests::test_membership_is_exact_with_no_aliasing_or_trimming` |
 | **AS-24** *(unprobed model)* | D-023-R013 | listed, no probe seam | `select` | `model_probe_seam_missing` | Being listed is necessary and NOT sufficient | `…::ApprovedModelRoutingTests::test_a_listed_model_with_no_probe_seam_is_not_selectable` |
 | **AS-25** *(probe failure / probe raises)* | D-004-R752 | probe returns not-ok / raises | `select` | `model_probe_failed`; the failure is RECORDED with its reason | A probe that could not prove availability proves nothing | `…::ApprovedModelRoutingTests` (2) |
@@ -272,28 +294,28 @@ $ python -m pytest tools/ -k agent_supervisor -q
 ### 5.2 After the change
 
 ```
-$ python -m pytest tools/ -k agent_supervisor -q
+$ python -m pytest tools/ -k agent_supervisor -q          # first submission
 1783 passed, 2 skipped, 555 deselected in 259.07s
-```
 
-```
-$ python -m unittest tools.test_agent_supervisor_<all 42 modules>
-Ran 1785 tests in 225.968s
-OK (skipped=2)
+$ python -m pytest tools/ -k agent_supervisor -q          # reviewed identity 8546a2e8
+1833 passed, 2 skipped, 555 deselected in 148.16s
+
+$ python -m pytest tools/ -k agent_supervisor -q          # after corrections U1-U15
+1854 passed, 2 skipped, 555 deselected in 142.18s
 ```
 
 ```
 $ python -m pytest tools/test_agent_supervisor_turnover_live_seam.py -q
-67 passed in 2.96s
+88 passed in 1.95s
 ```
 
-**Exact counts: 1783 passed / 0 failed / 2 skipped (pytest); 1785 run / 0 failures / 2 skipped (unittest).** Delta from baseline: **+76 tests, 0 regressions.** The two skips are the pre-existing platform-conditional skips, unchanged. The floor in `M0-T039-supervisor-freeze.md` (≥ 1165 tests, 0 failures) is exceeded. (`python -m unittest discover -s tools` does NOT work here — `tools/` is not an importable package — so the modules are named explicitly, as in the M0-T079 report.)
+**Exact counts after the correction round: 1854 passed / 0 failed / 2 skipped.** Delta from the reviewed identity: **+21 net** (+24 new correction tests, −3 tests deleted with the dead `assert_ready_checkpoint` gate they covered, see U4). Delta from the pre-task baseline: **+147.** The two skips are the pre-existing platform-conditional skips, unchanged. The floor in `M0-T039-supervisor-freeze.md` (≥ 1165 tests, 0 failures) is exceeded. (`python -m unittest discover -s tools` does NOT work here — `tools/` is not an importable package — so the modules are named explicitly, as in the M0-T079 report.)
 
 ### 5.3 Modularity
 
 ```
 $ python tools/modularity_check.py --check
-selected 272 files; failures 0; warnings 5
+selected 280 files; failures 0; warnings 5
 ```
 
 All five warnings are pre-existing (`symbol_ceiling` on `apps/web/src/lib/surveyReview/types.ts`, `services/api/app/connectors/mappluto_geometry_arcgis.py`, `cli.py`, `policy.py`; `review_signal` on `tools/context_benchmark.py`).
@@ -405,3 +427,70 @@ The supervisor-freeze rule forbids weakening any existing check. The amendments 
 - **`tools/model_routing.py` and `docs/MODEL_ROUTING_POLICY.md`** — read as context, unmodified. That router is the ORCHESTRATOR's complexity-based routing and is a different decision class from the supervisor's approved-chain selection; the policy doc explicitly says supervisor-side integration is its own qualifying-evidence task.
 - **`docs/MODEL_ROUTING_POLICY.md` update for `[approved_models]`** — not made. The doc describes `tools/model_routing.py`, not the supervisor config, and editing it would widen scope; flagged here for whichever task owns the doc.
 - **A measured 10-hour canary, or any live-provider claim** — not attempted, and none is made (D-023-R023).
+
+---
+
+## 10. Correction round U1-U15 (applied after G3 PASS / G4 PASS / G5 FAIL at `8546a2e8`)
+
+One consolidated round per D-023-R016/R017. The through-line the reviewers named — a **fail-open family**, where an identity or continuity check SKIPS when a value is absent instead of treating absent as a mismatch — is closed at every site they found and at two they did not (the `require_ready` blank-session path and the both-models-unknown continuity case).
+
+| U | Where | What changed |
+|---|---|---|
+| **U1** *(must-fix)* | `turnover_seam.py:459-517` (`require_ready`), `:520-580` (`verify_post_launch`) | An ABSENT identity field the supervisor has an expectation for is now a MISMATCH. `require_ready` refuses `ready_without_session_id` when the READY names no `claude_session_id`; the four unbacked axes (task_id, branch, worktree, starting_sha) report "successor reported NOTHING". The model axis keeps its guard and is documented as backstopped by the R739 per-event stream check. |
+| **U2** | `session_continuity.py:278-289` | CROSS_MODEL no longer requires both ids non-empty: an unknown model on EITHER side forbids a resume (principle 3). |
+| **U3** | `turnover_seam.py:51-72` (labels + `FactSource`), `:232-305` (`deterministic_verdict`), `:308-360` (`verify`) | `FactSource` independent-re-derivation seam added (arm a); the verdict states its own `scope`; the two deterministic labels are now distinct. Report §2.3/§3.3 corrected — see §3.3 for which arm was taken and why. |
+| **U4** | `rotation.py:723-731` → removed (replaced by the comment now at `rotation.py:723`) | The dead duplicate READY gate is GONE, with its false docstring; report §1.2 corrected; a guard test asserts it cannot return. |
+| **U5** | `approved_models.py:402-413` | A non-`ProbeOutcome` probe return is `ok=False`, not `ok=bool(outcome)`. |
+| **U6** | `turnover_controller.py:356-380` (call site), `:538-563` (`_no_successor_record` / `_safe_append`) | `NO_APPROVED_SUCCESSOR` writes a `turnover_no_approved_successor` audit row; an unwritable chain degrades to `(unaudited: …)` rather than turning a safe stop into a crash. |
+| **U7** | `approved_models.py:325-351` (`_attempts_sentence`), `:447-455` (the refusal) | The chain-exhaustion message is derived from the attempts' reason codes: "NOTHING was probed" vs "tried by an actual launch probe". |
+| **U8** | `cli.py:2597-2607` (the identity), `:3308-3316` (`--claude-executable`) | `orchestrator-watchdog` gains `--claude-executable` and passes `_claude_cli_identity(...)` — the same probe identity `start` uses. |
+| **U9** | `turnover_adapters.py:384-392` | The launcher-level effort pin is restored (`effort = ALLOWED_SUCCESSOR_EFFORT`, never the request's), with the adversarial test reinstated. |
+| **U10** | `test_agent_supervisor_r595_actuation.py:395-416` | The self-referential assertion is replaced by assertions against real production values. |
+| **U11** | `cli.py:3016-3029` | `ConfigError` from `_run_loop` is a typed refusal, not a traceback. |
+| **U12** | `turnover_seam.py:634-660` | `arm_ready_gate` now runs BEFORE `complete_rotation`, so the crash window between the two durable writes fails CLOSED (armed gate, rotation still pending) instead of OPEN. |
+| **U13** | `turnover_wiring.py:74-77/:239-241`, `cli.py:2569-2571/:2861-2863/:3288-3290`, `worker_turnover.py:19-21` | All six stale "pinned opus-4-8" claims corrected, including the self-contradicting `--authorize-turnover-actuation` help text. |
+| **U14** | `session_continuity.py:228-238` (primary reason), `:166-184` (per-run scope); `loop.py:1398-1409`; `loop_turnover.py:91-94`; `approved_models.py:484-538` (doctor wording); `config.example.toml`; `turnover_seam.py:611-630` (ordering docstring); `test_..._turnover_adapters.py:267-270` | Primary `none_reason` validated; the provider-session read scoped per run; `LoopError` caught at the seam; doctor + example-config probe wording made accurate; the store-before-assert and arm-before-complete orderings documented; the dangling test-name reference fixed. |
+| **U15** | this report | Figures corrected to the reviewed identity and re-measured after the round; the exit-10/11 claims relabelled as `Refusal` properties. |
+
+**Nothing deferred.** All fifteen are applied.
+
+### 10.1 Tests added or restored in this round
+
+`tools/test_agent_supervisor_turnover_live_seam.py` (+21, now 88):
+`test_a_ready_naming_no_session_can_never_clear_the_gate`,
+`test_a_blank_session_cannot_smuggle_the_archived_one_past_the_gate`,
+`test_a_blank_resume_session_cannot_satisfy_the_resume_gate`,
+`test_an_omitted_identity_field_is_a_mismatch_not_a_pass`,
+`test_each_identity_axis_fails_closed_on_its_own_omission`,
+`test_an_axis_the_supervisor_never_commanded_is_not_invented` (U1);
+`test_an_unknown_recorded_model_can_never_resume`,
+`test_an_unknown_successor_model_can_never_resume`,
+`test_both_models_unknown_can_never_resume` (U2);
+`test_an_independent_fact_source_can_actually_refuse_the_rotation`,
+`test_an_agreeing_independent_source_is_recorded_as_the_stronger_check`,
+`test_a_fact_source_that_raises_refuses_instead_of_downgrading`,
+`test_the_verdict_states_its_own_scope_rather_than_implying_more` (U3);
+`test_an_unparseable_probe_result_is_never_read_as_availability` (U5);
+`test_a_no_approved_successor_safe_stop_leaves_a_durable_audit_row`,
+`test_an_unwritable_audit_never_turns_a_safe_stop_into_a_crash` (U6);
+`test_an_exhaustion_message_never_claims_a_probe_that_did_not_happen` (U7);
+`test_start_and_the_watchdog_share_one_probe_identity` (U8);
+`test_a_crash_between_the_two_durable_writes_fails_closed` (U12);
+`test_a_made_up_primary_none_reason_is_refused`,
+`test_a_session_recorded_by_another_run_is_not_this_runs_session` (U14).
+
+`tools/test_agent_supervisor_turnover_adapters.py`:
+`test_a_caller_supplied_effort_is_ignored_by_the_launcher` (U9, restored).
+
+`tools/test_agent_supervisor_model_chain.py`:
+`test_a_config_conflict_is_a_typed_refusal_not_a_traceback` (U11).
+
+`tools/test_agent_supervisor_rotation.py`:
+`test_there_is_exactly_one_ready_gate_and_it_is_the_live_one` (U4, replacing the three tests deleted with the dead gate).
+
+`tools/test_agent_supervisor_r595_actuation.py`:
+`test_the_successor_is_never_caller_selectable` (U10, replacing the self-referential `test_successor_model_is_hard_pinned_opus_4_8`).
+
+### 10.2 Modularity after the round
+
+`cli.py` reached 2952 against its 2953 limit while applying U8/U11 — one SLOC of headroom, which is not headroom. The two model-routing doctor disclosures were therefore **extracted** into `approved_models.py` as `approved_models_disclosure` / `probe_evidence_disclosure` (the text describes what THAT module's list and ledger govern, so it changes when those rules change, not when the CLI's presentation does); `cli.py` keeps two-line `Check(*…)` wrappers. Fifteen imports in `cli.py` that the earlier `turnover_wiring.py` extraction had orphaned were also dropped (each verified unused in the file and unreferenced as `cli.<name>` anywhere in the suite). Final: `cli.py` **2898** (limit 2953, 55 free), `loop.py` **2080** (limit 2088), `rotation.py` **623** (limit 820). `python tools/modularity_check.py --check` → `selected 280 files; failures 0; warnings 5`, all pre-existing.
