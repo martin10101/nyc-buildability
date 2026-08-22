@@ -87,12 +87,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-21T18:06:51.283656+00:00",
-  "updated_at": "2026-08-22T00:43:53.382059+00:00",
+  "updated_at": "2026-08-22T00:44:24.336881+00:00",
   "directive_refs": [
     {
       "directive_id": "D-023",
@@ -101,5 +101,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-21T18:06:51.283656+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t080"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t080",
+  "progress_log": [
+    {
+      "at": "2026-08-22T00:44:24.336881+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "G5 FAIL at 8546a2e8: must-fix U1 (post-launch identity gate fails open on omitted fields; G5 M1 = G3 I-2) + important U2-U11 + minors U12-U15. ONE consolidated correction in M0-T080-consolidated-correction.md (fail-open family + evidence honesty + watchdog probe-ledger activation-blocker). Initial-pin governance bundled to owner checkpoint. Re-freeze + full G5 re-pass + focused G3 + full-tree G4 before re-gate; no acceptance while must-fix open."
+    }
+  ]
 }
