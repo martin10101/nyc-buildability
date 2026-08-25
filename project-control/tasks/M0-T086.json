@@ -1,140 +1,142 @@
 {
- "task_id": "M0-T086",
- "title": "D-024 A1: live baseline, installed-capability probes, deterministic fixtures",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Reconcile the live workstation repository (linked worktrees, dirty/unpushed state, remotes; imported-snapshot findings labeled historical until done); map current components and safely reusable behavior (D-007 Codex bridge, D-010 supervisor, D-023 bounded mode/reliability/turnover) into a reuse register and compact baseline (implemented+verified / present-but-unproven / missing / conflicting); probe the installed claude and codex CLI capabilities (subagentStatusLine, UserPromptExpansion, exact UserPromptSubmit block/display/context-erasure behavior, status-line fields, hook events, strict MCP configuration equivalents) against local help and official primary docs (source section 21), never inferring support from repository references; record probe results as deterministic fixtures distinguishing supported/unsupported/nullable/unknown; add deterministic fixtures for current state, event formats, and failure cases BEFORE any control-behavior change. Amend .claude/rules/supervisor-freeze.md transparently under D-024 authority so a cited D-024 requirement ID is recognized qualifying evidence for supervisor tasks (source section 1 freeze clause); this task itself only adds fixtures/probe tooling and changes no supervisor control behavior. Supervisor-freeze qualifying evidence: D-024-R099 (Phase A capability fixtures) and the section-1 freeze clause; cite in commit messages.",
- "business_reason": "D-024 owner directive 2026-08-24 Phase A: no control-behavior change may precede capability fixtures; live probes are required because absence from a repository snapshot is not proof of absence (D-024-R001).",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
- ],
- "outputs": [
-  "project-control/reports/M0-T086-capability-baseline.md (compact baseline: implemented/unproven/missing/conflicting + workstation reconciliation record)",
-  "project-control/reports/M0-T086-reuse-register.md (component map + reuse decisions)",
-  "tools/agent_supervisor/fixtures/* capability-probe fixture pack (supported/unsupported/nullable/unknown per installed version)",
-  "tools/agent_supervisor/capability_probe.py + tools/test_agent_supervisor_capability_probe.py",
-  ".claude/rules/supervisor-freeze.md amendment recognizing cited D-024 requirement IDs as qualifying evidence"
- ],
- "dependencies": [],
- "allowed_paths": [
-  "tools/agent_supervisor/fixtures",
-  "tools/agent_supervisor/capability_probe.py",
-  "tools/test_agent_supervisor_capability_probe.py",
-  ".claude/rules/supervisor-freeze.md",
-  "project-control/reports/M0-T086-capability-baseline.md",
-  "project-control/reports/M0-T086-reuse-register.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "requirement": "D-024-R099 (probe before control-behavior change)",
-   "preconditions": "claude+codex on PATH",
-   "input": "python -m tools.agent_supervisor.capability_probe --out <tmp>",
-   "expected": "exit 0; JSON with schema capability_probe/v1; every probe status in {supported,absent,unknown}; interactive-only facts unknown",
-   "invariants": "read-only allowlist; failures degrade to unknown never guessed",
-   "execution": "tools/test_agent_supervisor_capability_probe.py::test_live_fixture_shape + live reprobe tests",
-   "evidence": "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json",
-   "cleanup": "none (tmp file removed)"
-  },
-  {
-   "id": "AS-2",
-   "requirement": "D-024-R124/R001 (verify section-21 capabilities; supported/unsupported/nullable/unknown)",
-   "preconditions": "fixtures committed",
-   "input": "capability_matrix_v1.json",
-   "expected": ">=15 entries; statuses+confidence within declared vocabularies; every entry has evidence; measured-live claims match the live probe",
-   "invariants": "docs-derived facts labelled official-docs, never presented as measured",
-   "execution": "pytest test_matrix_* tests",
-   "evidence": "fixtures/capability_matrix_v1.json + test run",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-3",
-   "requirement": "D-024-R099/R009 (live-workstation reconciliation)",
-   "preconditions": "none",
-   "input": "git worktree list; git for-each-ref upstream tracking; git -C <primary> status",
-   "expected": "reconciliation record enumerating worktrees, divergent branches with explanations, dirty primary checkout untouched, PR #241 hold restated",
-   "invariants": "snapshot findings labelled historical; no write to any other worktree",
-   "execution": "manual comparison by reviewer against live git",
-   "evidence": "project-control/reports/M0-T086-capability-baseline.md section 1",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-4",
-   "requirement": "D-024-R125-R128 boundary (absent tool)",
-   "preconditions": "none",
-   "input": "cp._run([\"definitely-not-installed-binary-xyz\",\"--version\"])",
-   "expected": "status absent, no exit_code, no fabricated success",
-   "invariants": "unknown/absent never becomes zero/success",
-   "execution": "pytest test_absent_binary_classifies_absent_not_success",
-   "evidence": "test run output",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-5",
-   "requirement": "D-024 section 1 freeze clause (qualifying-evidence amendment)",
-   "preconditions": "supervisor-freeze rule loaded",
-   "input": ".claude/rules/supervisor-freeze.md",
-   "expected": "rule recognizes cited D-024-R### ids as qualifying evidence; defect-only lane, gates, R595 prerequisite unchanged",
-   "invariants": "amendment transparent, cites D-024 section-1 authority, changes nothing else",
-   "execution": "reviewer reads the rule diff",
-   "evidence": ".claude/rules/supervisor-freeze.md amendment block",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-6",
-   "requirement": "D-024-R100 precondition (no control-behavior change before fixtures)",
-   "preconditions": "this task complete",
-   "input": "git diff of the task commit",
-   "expected": "only fixtures, probe module + its test, freeze-rule amendment, reports, task/ledger records changed; no supervisor control-flow module modified",
-   "invariants": "suite baseline re-established (freeze section 4)",
-   "execution": "reviewer inspects commit --stat; full supervisor pytest glob",
-   "invariant_note": "suite result recorded in G2",
-   "evidence": "commit diff + suite run record",
-   "cleanup": "none"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "claimed",
- "progress_percent": 10,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-25T18:24:22+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "task_id": "M0-T086",
+  "title": "D-024 A1: live baseline, installed-capability probes, deterministic fixtures",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Reconcile the live workstation repository (linked worktrees, dirty/unpushed state, remotes; imported-snapshot findings labeled historical until done); map current components and safely reusable behavior (D-007 Codex bridge, D-010 supervisor, D-023 bounded mode/reliability/turnover) into a reuse register and compact baseline (implemented+verified / present-but-unproven / missing / conflicting); probe the installed claude and codex CLI capabilities (subagentStatusLine, UserPromptExpansion, exact UserPromptSubmit block/display/context-erasure behavior, status-line fields, hook events, strict MCP configuration equivalents) against local help and official primary docs (source section 21), never inferring support from repository references; record probe results as deterministic fixtures distinguishing supported/unsupported/nullable/unknown; add deterministic fixtures for current state, event formats, and failure cases BEFORE any control-behavior change. Amend .claude/rules/supervisor-freeze.md transparently under D-024 authority so a cited D-024 requirement ID is recognized qualifying evidence for supervisor tasks (source section 1 freeze clause); this task itself only adds fixtures/probe tooling and changes no supervisor control behavior. Supervisor-freeze qualifying evidence: D-024-R099 (Phase A capability fixtures) and the section-1 freeze clause; cite in commit messages.",
+  "business_reason": "D-024 owner directive 2026-08-24 Phase A: no control-behavior change may precede capability fixtures; live probes are required because absence from a repository snapshot is not proof of absence (D-024-R001).",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T086-capability-baseline.md (compact baseline: implemented/unproven/missing/conflicting + workstation reconciliation record)",
+    "project-control/reports/M0-T086-reuse-register.md (component map + reuse decisions)",
+    "tools/agent_supervisor/fixtures/* capability-probe fixture pack (supported/unsupported/nullable/unknown per installed version)",
+    "tools/agent_supervisor/capability_probe.py + tools/test_agent_supervisor_capability_probe.py",
+    ".claude/rules/supervisor-freeze.md amendment recognizing cited D-024 requirement IDs as qualifying evidence"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/fixtures",
+    "tools/agent_supervisor/capability_probe.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    ".claude/rules/supervisor-freeze.md",
+    "project-control/reports/M0-T086-capability-baseline.md",
+    "project-control/reports/M0-T086-reuse-register.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "requirement": "D-024-R099 (probe before control-behavior change)",
+      "preconditions": "claude+codex on PATH",
+      "input": "python -m tools.agent_supervisor.capability_probe --out <tmp>",
+      "expected": "exit 0; JSON with schema capability_probe/v1; every probe status in {supported,absent,unknown}; interactive-only facts unknown",
+      "invariants": "read-only allowlist; failures degrade to unknown never guessed",
+      "execution": "tools/test_agent_supervisor_capability_probe.py::test_live_fixture_shape + live reprobe tests",
+      "evidence": "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json",
+      "cleanup": "none (tmp file removed)"
+    },
+    {
+      "id": "AS-2",
+      "requirement": "D-024-R124/R001 (verify section-21 capabilities; supported/unsupported/nullable/unknown)",
+      "preconditions": "fixtures committed",
+      "input": "capability_matrix_v1.json",
+      "expected": ">=15 entries; statuses+confidence within declared vocabularies; every entry has evidence; measured-live claims match the live probe",
+      "invariants": "docs-derived facts labelled official-docs, never presented as measured",
+      "execution": "pytest test_matrix_* tests",
+      "evidence": "fixtures/capability_matrix_v1.json + test run",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-3",
+      "requirement": "D-024-R099/R009 (live-workstation reconciliation)",
+      "preconditions": "none",
+      "input": "git worktree list; git for-each-ref upstream tracking; git -C <primary> status",
+      "expected": "reconciliation record enumerating worktrees, divergent branches with explanations, dirty primary checkout untouched, PR #241 hold restated",
+      "invariants": "snapshot findings labelled historical; no write to any other worktree",
+      "execution": "manual comparison by reviewer against live git",
+      "evidence": "project-control/reports/M0-T086-capability-baseline.md section 1",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-4",
+      "requirement": "D-024-R125-R128 boundary (absent tool)",
+      "preconditions": "none",
+      "input": "cp._run([\"definitely-not-installed-binary-xyz\",\"--version\"])",
+      "expected": "status absent, no exit_code, no fabricated success",
+      "invariants": "unknown/absent never becomes zero/success",
+      "execution": "pytest test_absent_binary_classifies_absent_not_success",
+      "evidence": "test run output",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-5",
+      "requirement": "D-024 section 1 freeze clause (qualifying-evidence amendment)",
+      "preconditions": "supervisor-freeze rule loaded",
+      "input": ".claude/rules/supervisor-freeze.md",
+      "expected": "rule recognizes cited D-024-R### ids as qualifying evidence; defect-only lane, gates, R595 prerequisite unchanged",
+      "invariants": "amendment transparent, cites D-024 section-1 authority, changes nothing else",
+      "execution": "reviewer reads the rule diff",
+      "evidence": ".claude/rules/supervisor-freeze.md amendment block",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-6",
+      "requirement": "D-024-R100 precondition (no control-behavior change before fixtures)",
+      "preconditions": "this task complete",
+      "input": "git diff of the task commit",
+      "expected": "only fixtures, probe module + its test, freeze-rule amendment, reports, task/ledger records changed; no supervisor control-flow module modified",
+      "invariants": "suite baseline re-established (freeze section 4)",
+      "execution": "reviewer inspects commit --stat; full supervisor pytest glob",
+      "invariant_note": "suite result recorded in G2",
+      "evidence": "commit diff + suite run record",
+      "cleanup": "none"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-25T19:12:04.263892+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-25T19:12:04.261874+00:00"
 }
