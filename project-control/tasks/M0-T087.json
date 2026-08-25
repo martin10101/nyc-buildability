@@ -10,7 +10,7 @@
   "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
  ],
  "outputs": [
-  "durable campaign/continuity records under the supervisor's durable-state area",
+  "project-control/campaigns/D-024-fable-codex-loop.json (durable campaign-continuity record; orchestrator-authored control-plane state - placement decision documented in the producer report, reconciled per G4 observation)",
   "tools/test_agent_supervisor_bootstrap_continuity.py (deterministic continuity tests)",
   "project-control/reports/M0-T087-bootstrap-continuity.md (turnover proof: successor continued without owner re-prompt)"
  ],
@@ -118,12 +118,12 @@
   "security-reviewer",
   "directive-compliance-verifier"
  ],
- "status": "claimed",
- "progress_percent": 10,
+ "status": "awaiting_gate",
+ "progress_percent": 85,
  "risks": [],
  "blockers": [],
  "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-25T19:23:29+00:00",
+ "updated_at": "2026-08-25T19:48:50+00:00",
  "directive_refs": [
   {
    "directive_id": "D-024",

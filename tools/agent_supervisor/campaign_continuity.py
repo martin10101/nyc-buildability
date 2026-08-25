@@ -13,14 +13,29 @@ the load-bearing field - the exact next bounded action.
 
 Design rules:
 
-* **Fail closed.** A missing, malformed, schema-mismatched, or vocabulary-
-  violating record raises :class:`CampaignRecordError`; callers must treat that
-  as "orientation unavailable - reconcile manually", never as an empty campaign.
-* **Exact-once advance.** Every mutation carries a monotonic ``sequence``; a
-  writer must present the sequence it read. Two successors racing from the same
-  snapshot cannot both win (the loser gets a :class:`SequenceConflict`).
-* **Atomic writes.** tmp-file + ``os.replace`` in the record's directory, LF
-  bytes, so a crash mid-write never leaves a torn record.
+* **Fail closed.** A missing, malformed, schema-mismatched, vocabulary-
+  violating, wrong-typed, empty-string, control-character-bearing, or
+  unknown-field record raises :class:`CampaignRecordError`; callers must treat
+  that as "orientation unavailable - reconcile manually", never as an empty
+  campaign. String fields are echoed to terminals by ``--status``, so C0/C1
+  control characters (terminal-escape injection) are rejected at validation.
+* **Sequence-guarded advance (scope stated precisely).** Every mutation carries
+  a monotonic ``sequence``; a writer must present the sequence it read.
+  :func:`advance` is OPTIMISTIC STALE-READ DETECTION under the campaign's
+  serialized single-writer model (Bootstrap Gate 0 + the one-controller-lease
+  design mean exactly one orchestrator session writes at a time): a writer
+  whose read was overtaken by a completed write gets :class:`SequenceConflict`.
+  It is NOT a cross-process lock - two OS processes interleaving load() before
+  either write could both pass the check (last-writer-wins). True cross-process
+  exact-once belongs to the external controller lease (Phase D, ``locking.py``
+  integration); do not build multi-writer flows on this module alone.
+  :func:`advance` is the ONLY sanctioned mutation of an existing record;
+  :func:`atomic_write` is the low-level primitive (it validates shape but does
+  not check monotonicity, so calling it directly can roll a record back).
+* **Atomic writes.** unique tmp-file + ``os.replace`` in the record's
+  directory, LF bytes, so a crash mid-write never leaves a torn record and
+  concurrent writers never share a tmp path; the tmp file is removed on
+  failure.
 * **The record is orientation, not authority.** The project-control ledger,
   git, and the captured directive remain the source of truth (D-024 section 1);
   the record points at them and is re-verifiable against them.
@@ -62,7 +77,26 @@ class CampaignRecordError(ValueError):
 
 
 class SequenceConflict(CampaignRecordError):
-    """A writer presented a stale sequence; exactly one racer may advance."""
+    """A writer presented a stale sequence (its read was overtaken).
+
+    Serialized-writer guarantee only: under concurrent OS processes this is
+    best-effort detection, not mutual exclusion (see the module docstring).
+    """
+
+
+_STRING_FIELDS = ("campaign_id", "directive_id", "control_branch",
+                  "ledger_lineage_base", "authority", "updated_at")
+
+
+def _check_text(value: object, label: str) -> str:
+    """A non-empty str free of C0/C1 control characters (terminal-safe)."""
+    if not isinstance(value, str) or not value.strip():
+        raise CampaignRecordError(f"{label} must be a non-empty string")
+    if any(ord(ch) < 0x20 or 0x7F <= ord(ch) <= 0x9F for ch in value):
+        raise CampaignRecordError(
+            f"{label} contains control characters (terminal-escape "
+            f"injection rejected; fail closed)")
+    return value
 
 
 @dataclass
@@ -108,16 +142,25 @@ def validate(data: object) -> CampaignRecord:
     missing = [k for k in REQUIRED_FIELDS if k not in data]
     if missing:
         raise CampaignRecordError(f"campaign record missing fields: {missing}")
+    unknown = sorted(set(data) - set(REQUIRED_FIELDS))
+    if unknown:
+        raise CampaignRecordError(
+            f"campaign record carries unknown fields {unknown} (fail closed; "
+            f"schema evolution requires a new schema version)")
     if data["schema"] != SCHEMA:
         raise CampaignRecordError(
             f"unsupported schema {data['schema']!r} (expected {SCHEMA})")
     if data["state"] not in STATES:
         raise CampaignRecordError(
             f"state {data['state']!r} not in {STATES} (fail closed)")
+    for key in _STRING_FIELDS:
+        _check_text(data[key], key)
     na = data["next_action"]
     if not isinstance(na, dict) or any(not na.get(k) for k in NEXT_ACTION_FIELDS):
         raise CampaignRecordError(
             f"next_action must carry non-empty {NEXT_ACTION_FIELDS}")
+    for k in NEXT_ACTION_FIELDS:
+        _check_text(na[k], f"next_action.{k}")
     fz = data["frozen"]
     if not isinstance(fz, dict) or any(not fz.get(k) for k in FROZEN_FIELDS):
         raise CampaignRecordError(f"frozen must carry non-empty {FROZEN_FIELDS}")
@@ -125,10 +168,14 @@ def validate(data: object) -> CampaignRecord:
     if not (isinstance(sha, str) and len(sha) == 40
             and all(c in "0123456789abcdef" for c in sha)):
         raise CampaignRecordError("frozen.head_sha must be a 40-hex sha")
-    if not isinstance(data["sequence"], int) or data["sequence"] < 0:
-        raise CampaignRecordError("sequence must be a non-negative integer")
+    if (isinstance(data["sequence"], bool) or not isinstance(data["sequence"], int)
+            or data["sequence"] < 0):
+        raise CampaignRecordError(
+            "sequence must be a non-negative integer (bool rejected)")
     if not isinstance(data["restrictions"], list):
         raise CampaignRecordError("restrictions must be a list")
+    for i, item in enumerate(data["restrictions"]):
+        _check_text(item, f"restrictions[{i}]")
     return CampaignRecord(
         campaign_id=data["campaign_id"], directive_id=data["directive_id"],
         state=data["state"], control_branch=data["control_branch"],
@@ -153,23 +200,40 @@ def load(path: Path) -> CampaignRecord:
 
 
 def atomic_write(path: Path, record: CampaignRecord) -> None:
-    """Write the record atomically (tmp + os.replace), LF bytes."""
+    """LOW-LEVEL primitive: write the record atomically (unique tmp +
+    ``os.replace``), LF bytes. Validates shape but does NOT check sequence
+    monotonicity - calling this directly on an existing record can roll it
+    back. :func:`advance` is the only sanctioned mutation of an existing
+    record; use this only to create/initialize one or from within advance().
+    """
     validate(record.to_dict())  # never persist an invalid record
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = (json.dumps(record.to_dict(), indent=1, ensure_ascii=False)
                + "\n").encode("utf-8")
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_bytes(payload)
-    os.replace(tmp, path)
+    tmp = path.with_suffix(f"{path.suffix}.{os.getpid()}-{os.urandom(4).hex()}.tmp")
+    try:
+        tmp.write_bytes(payload)
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():  # crash/failure between write and replace
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
 
 
 def advance(path: Path, expected_sequence: int, *, next_action: dict,
             head_sha: str, state: str = "active",
             restrictions: list | None = None) -> CampaignRecord:
-    """Exact-once mutation: refuses unless ``expected_sequence`` matches disk.
+    """Sequence-guarded mutation: refuses unless ``expected_sequence`` matches
+    the record on disk at read time.
 
-    Returns the NEW persisted record. A racer that read the same snapshot and
-    lost gets :class:`SequenceConflict` and must re-read and re-decide.
+    Returns the NEW persisted record. A writer whose read was overtaken by a
+    completed write gets :class:`SequenceConflict` and must re-read and
+    re-decide. SCOPE: optimistic stale-read detection under the campaign's
+    serialized single-writer model - NOT a cross-process lock (see the module
+    docstring); cross-process exact-once belongs to the external controller
+    lease (Phase D).
     """
     current = load(path)
     if current.sequence != expected_sequence:

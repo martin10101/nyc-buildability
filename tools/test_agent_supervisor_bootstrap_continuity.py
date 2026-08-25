@@ -50,16 +50,39 @@ def test_validate_good_record_roundtrip():
     {"state": "running"},                      # not in vocabulary
     {"sequence": -1},
     {"sequence": "3"},
+    {"sequence": 3.0},                         # float rejected (pinned)
+    {"sequence": True},                        # bool-as-int rejected (pinned)
     {"restrictions": "never merge"},           # not a list
     {"next_action": {"task_id": "", "description": "x"}},
     {"next_action": {"task_id": "M0-T088"}},   # missing description
     {"frozen": {"head_sha": "abc", "recorded_at": "t"}},   # not 40-hex
     {"frozen": {"head_sha": SHA_A.upper(), "recorded_at": "t"}},  # uppercase
     {"frozen": {"recorded_at": "t"}},
+    # G3-F1: load-bearing string fields must be non-empty str
+    {"campaign_id": ""},
+    {"campaign_id": 7},
+    {"control_branch": None},
+    {"authority": "   "},
+    {"ledger_lineage_base": 123},
+    {"updated_at": ""},
+    # G5-1: control/ANSI characters rejected everywhere strings are echoed
+    {"campaign_id": "D-024-\x1b[8mhidden"},
+    {"authority": "ok\rREADY TO RESUME (spoof)"},
+    {"restrictions": ["fine", "bad\x07bell"]},
+    {"next_action": {"task_id": "M0-T088", "description": "x\x1b[2Jy"}},
+    # F5/G4: unknown top-level fields fail closed
+    {"surprise_key": 1},
 ])
 def test_validate_rejects_defects(mutation):
     with pytest.raises(cc.CampaignRecordError):
         cc.validate(good_record(**mutation))
+
+
+def test_status_output_never_carries_control_chars():
+    """Everything --status echoes passed _check_text, so the rendered
+    orientation is terminal-safe by construction."""
+    text = cc.orientation_summary(cc.validate(good_record()))
+    assert not any(ord(ch) < 0x20 for ch in text.replace("\n", ""))
 
 
 @pytest.mark.parametrize("drop", list(cc.REQUIRED_FIELDS))
@@ -92,7 +115,28 @@ def test_atomic_write_lf_and_roundtrip(tmp_path):
     raw = path.read_bytes()
     assert b"\r" not in raw
     assert cc.load(path).to_dict() == rec.to_dict()
-    assert not path.with_suffix(".json.tmp").exists()
+    assert not list(tmp_path.glob("*.tmp"))  # unique tmp cleaned up
+
+
+def test_crash_between_tmp_write_and_replace_preserves_prior(tmp_path,
+                                                             monkeypatch):
+    """G3-F3 fault injection: os.replace fails -> prior record intact,
+    no tmp leftover (finally-cleanup), no torn file."""
+    path = tmp_path / "c.json"
+    prior = cc.validate(good_record(sequence=3))
+    cc.atomic_write(path, prior)
+    before = path.read_bytes()
+
+    def boom(_src, _dst):
+        raise OSError("simulated crash before replace")
+    monkeypatch.setattr(cc.os, "replace", boom)
+    nxt = cc.validate(good_record(sequence=4))
+    with pytest.raises(OSError):
+        cc.atomic_write(path, nxt)
+    monkeypatch.undo()
+    assert path.read_bytes() == before          # prior record untouched
+    assert not list(tmp_path.glob("*.tmp"))     # tmp removed on failure
+    assert cc.load(path).sequence == 3
 
 
 def test_atomic_write_refuses_invalid_record(tmp_path):
