@@ -1,131 +1,133 @@
 {
- "task_id": "M0-T098",
- "title": "D-026: hybrid global/project /session-handoff (personal skill + repo profile + slimmed fallback)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Implement D-026 exactly: global personal skill at C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (disable-model-invocation, no fork/sub-agent/broad tools, $ARGUMENTS reason + dry-run) performing live-git root detection and loading <repo-root>/.claude/session-handoff-profile.md with identity verification, repo-root-relative resolution, established-convention fallback, HANDOFF BLOCKED on ambiguity, and no non-git writes without owner confirmation; create the NYC profile (stable routing only, no hard-coded worktree paths); slim the project skill into a profile-following fallback preserving all D-025 safe-landing behavior; run the section-5 test matrix without disturbing implementation work; deliver the section-'After implementation' report.",
- "business_reason": "D-026 owner directive 2026-08-25: correct personal-over-project skill precedence makes a global skill mandatory for safe multi-repo use.",
- "inputs": [
-  "project-control/directives/D-026-global-session-handoff/source-001.md",
-  ".claude/skills/session-handoff/SKILL.md (D-025 deliverable, becomes fallback)"
- ],
- "outputs": [
-  "C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (global personal skill; outside repo, evidenced in the report)",
-  ".claude/session-handoff-profile.md (project routing profile, repo-root-relative)",
-  ".claude/skills/session-handoff/SKILL.md (slimmed profile-following fallback)",
-  "project-control/reports/M0-T098-global-session-handoff.md (test evidence + owner report content)"
- ],
- "dependencies": [],
- "allowed_paths": [
-  ".claude/skills/session-handoff",
-  ".claude/session-handoff-profile.md",
-  "project-control/reports/M0-T098-global-session-handoff.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-024-fable-codex-loop",
-  "services",
-  "supabase",
-  "tools/agent_supervisor",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "requirement": "D-026-R005/R006/R021",
-   "preconditions": "both SKILL.md files exist",
-   "input": "frontmatter parse + key comparison",
-   "expected": "exactly the 4 required keys on both; disable-model-invocation true; no context:/agent:/allowed-tools",
-   "invariants": "user-invoked only; inline",
-   "execution": "python structural check (terminal)",
-   "evidence": "M0-T098 report Test-evidence bullet 1",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-2",
-   "requirement": "D-026-R011/R012/R022",
-   "preconditions": "ctl24 worktree",
-   "input": "dry-run step R live",
-   "expected": "root=ctl24 detected dynamically; profile found+identity verified; destination = ctl24 docs/SESSION_HANDOFF.md; zero state changes",
-   "invariants": "read-only",
-   "execution": "live run 2026-08-25 (terminal)",
-   "evidence": "report bullet 2",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-3",
-   "requirement": "D-026-R013/R022",
-   "preconditions": "multiple worktrees",
-   "input": "git -C ctl23 rev-parse --show-toplevel",
-   "expected": "ctl23 resolves to its OWN root; destination always <show-toplevel>-relative; successor command prints the live root",
-   "invariants": "no cross-worktree write path",
-   "execution": "live run",
-   "evidence": "report bullet 3",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-4",
-   "requirement": "D-026-R014/R015/R023",
-   "preconditions": "disposable temp git repo, no project-control",
-   "input": "procedure fallback",
-   "expected": "no profile -> convention search -> no unambiguous destination -> HANDOFF BLOCKED, zero writes; with existing HANDOFF.md -> that file selected, nothing invented",
-   "invariants": "no project-control assumption",
-   "execution": "temp-repo exercises (terminal)",
-   "evidence": "report bullets 4-5",
-   "cleanup": "temp dirs in scratchpad"
-  },
-  {
-   "id": "AS-5",
-   "requirement": "D-026-R016/R024 + R012/R013",
-   "preconditions": "non-git dir; mismatched profile",
-   "input": "step R in non-git dir; planted wrong-identity profile",
-   "expected": "fatal not-a-git-repo -> BLOCKED, write nothing; identity mismatch -> profile NOT followed, BLOCKED with exact mismatch",
-   "invariants": "fail closed",
-   "execution": "temp exercises (terminal)",
-   "evidence": "report bullets 6-7",
-   "cleanup": "temp dirs"
-  },
-  {
-   "id": "AS-6",
-   "requirement": "D-026-R017/R018/R025",
-   "preconditions": "repo-tracked project skill",
-   "input": "byte comparison global vs project",
-   "expected": "project copy NOT deleted; frontmatter byte-identical; procedure body from section R onward byte-identical; both reference the same profile",
-   "invariants": "zero drift by construction",
-   "execution": "python comparison (terminal)",
-   "evidence": "report What-was-built item 3",
-   "cleanup": "none"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "claimed",
- "progress_percent": 10,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-25T20:40:00+00:00",
- "updated_at": "2026-08-25T20:44:35+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-026",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-25T20:40:00+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "task_id": "M0-T098",
+  "title": "D-026: hybrid global/project /session-handoff (personal skill + repo profile + slimmed fallback)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement D-026 exactly: global personal skill at C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (disable-model-invocation, no fork/sub-agent/broad tools, $ARGUMENTS reason + dry-run) performing live-git root detection and loading <repo-root>/.claude/session-handoff-profile.md with identity verification, repo-root-relative resolution, established-convention fallback, HANDOFF BLOCKED on ambiguity, and no non-git writes without owner confirmation; create the NYC profile (stable routing only, no hard-coded worktree paths); slim the project skill into a profile-following fallback preserving all D-025 safe-landing behavior; run the section-5 test matrix without disturbing implementation work; deliver the section-'After implementation' report.",
+  "business_reason": "D-026 owner directive 2026-08-25: correct personal-over-project skill precedence makes a global skill mandatory for safe multi-repo use.",
+  "inputs": [
+    "project-control/directives/D-026-global-session-handoff/source-001.md",
+    ".claude/skills/session-handoff/SKILL.md (D-025 deliverable, becomes fallback)"
+  ],
+  "outputs": [
+    "C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (global personal skill; outside repo, evidenced in the report)",
+    ".claude/session-handoff-profile.md (project routing profile, repo-root-relative)",
+    ".claude/skills/session-handoff/SKILL.md (slimmed profile-following fallback)",
+    "project-control/reports/M0-T098-global-session-handoff.md (test evidence + owner report content)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/skills/session-handoff",
+    ".claude/session-handoff-profile.md",
+    "project-control/reports/M0-T098-global-session-handoff.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-024-fable-codex-loop",
+    "services",
+    "supabase",
+    "tools/agent_supervisor",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "requirement": "D-026-R005/R006/R021",
+      "preconditions": "both SKILL.md files exist",
+      "input": "frontmatter parse + key comparison",
+      "expected": "exactly the 4 required keys on both; disable-model-invocation true; no context:/agent:/allowed-tools",
+      "invariants": "user-invoked only; inline",
+      "execution": "python structural check (terminal)",
+      "evidence": "M0-T098 report Test-evidence bullet 1",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-2",
+      "requirement": "D-026-R011/R012/R022",
+      "preconditions": "ctl24 worktree",
+      "input": "dry-run step R live",
+      "expected": "root=ctl24 detected dynamically; profile found+identity verified; destination = ctl24 docs/SESSION_HANDOFF.md; zero state changes",
+      "invariants": "read-only",
+      "execution": "live run 2026-08-25 (terminal)",
+      "evidence": "report bullet 2",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-3",
+      "requirement": "D-026-R013/R022",
+      "preconditions": "multiple worktrees",
+      "input": "git -C ctl23 rev-parse --show-toplevel",
+      "expected": "ctl23 resolves to its OWN root; destination always <show-toplevel>-relative; successor command prints the live root",
+      "invariants": "no cross-worktree write path",
+      "execution": "live run",
+      "evidence": "report bullet 3",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-4",
+      "requirement": "D-026-R014/R015/R023",
+      "preconditions": "disposable temp git repo, no project-control",
+      "input": "procedure fallback",
+      "expected": "no profile -> convention search -> no unambiguous destination -> HANDOFF BLOCKED, zero writes; with existing HANDOFF.md -> that file selected, nothing invented",
+      "invariants": "no project-control assumption",
+      "execution": "temp-repo exercises (terminal)",
+      "evidence": "report bullets 4-5",
+      "cleanup": "temp dirs in scratchpad"
+    },
+    {
+      "id": "AS-5",
+      "requirement": "D-026-R016/R024 + R012/R013",
+      "preconditions": "non-git dir; mismatched profile",
+      "input": "step R in non-git dir; planted wrong-identity profile",
+      "expected": "fatal not-a-git-repo -> BLOCKED, write nothing; identity mismatch -> profile NOT followed, BLOCKED with exact mismatch",
+      "invariants": "fail closed",
+      "execution": "temp exercises (terminal)",
+      "evidence": "report bullets 6-7",
+      "cleanup": "temp dirs"
+    },
+    {
+      "id": "AS-6",
+      "requirement": "D-026-R017/R018/R025",
+      "preconditions": "repo-tracked project skill",
+      "input": "byte comparison global vs project",
+      "expected": "project copy NOT deleted; frontmatter byte-identical; procedure body from section R onward byte-identical; both reference the same profile",
+      "invariants": "zero drift by construction",
+      "execution": "python comparison (terminal)",
+      "evidence": "report What-was-built item 3",
+      "cleanup": "none"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-25T20:40:00+00:00",
+  "updated_at": "2026-08-25T20:55:15.785174+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-026",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-25T20:40:00+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-25T20:55:15.785174+00:00"
 }
