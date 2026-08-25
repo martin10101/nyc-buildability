@@ -371,7 +371,21 @@
     "M0-T097"
    ],
    "manifest": "D-025-session-handoff-skill/manifest.json"
+  },
+  {
+   "directive_id": "D-026",
+   "slug": "global-session-handoff",
+   "title": "Hybrid global/project /session-handoff: personal skill at ~/.claude/skills/session-handoff/SKILL.md (personal OVERRIDES project per official docs) doing live-git root detection and deliberately loading <repo-root>/.claude/session-handoff-profile.md (identity-verified, repo-root-relative routing), with a generic established-convention fallback, HANDOFF BLOCKED on ambiguity, and no writes outside a git repo without owner confirmation; the existing project skill is slimmed into a profile-following repository fallback (never deleted, no drift); all D-025 safe-landing behavior preserved; tested via structural checks, ctl24 dry-run, disposable-repo generic fallback, and non-git fail-safe; minimum governance record; no D-024 directive modification; no real handoff unless the owner invokes without dry-run.",
+   "status": "active",
+   "issued_at": "2026-08-25",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T098"
+   ],
+   "manifest": "D-026-global-session-handoff/manifest.json"
   }
  ],
- "updated_at": "2026-08-25T17:43:42+00:00"
+ "updated_at": "2026-08-25T20:40:00+00:00"
 }
