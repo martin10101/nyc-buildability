@@ -6,7 +6,19 @@ the remote: **origin/main may have advanced, so do not trust any SHA here as sti
 file is orientation only. Rules/gates/workflow routes live in `CLAUDE.md`. Old blocks via
 `git log -p docs/SESSION_HANDOFF.md`. Keep CURRENT-ONLY: the `context-budget` CI check fails > ~4000 tok.
 
-## Handoff (D-024/D-025 session 1 — updated after M0-T086 acceptance)
+## Handoff (D-024/D-025 session 1 — updated after M0-T087 acceptance)
+
+**M0-T087 ACCEPTED** (bootstrap-continuity slice): two-round review — wave at `96bb98a` (G4 PASS,
+G5 PASS, DCV 33/33 PASS, G3 PASS-with-blocking F1/F2) → one consolidated correction round at
+`0d7fa80` (strict string validation, control-char rejection, precisely-scoped exactly-once claims,
+unique tmp + fault-injection, unknown-field/bool fail-closed) → all four delta attestations PASS →
+accepted (suite 1920/2/0). The **campaign record** `project-control/campaigns/D-024-fable-codex-loop.json`
+is live at **seq 1, NEXT = M0-T088** (B1 telemetry core + the carried hardening bundle); read it via
+`python -m tools.agent_supervisor.campaign_continuity --status`. The successor-orientation proof
+passed (fresh campaign-ignorant context → READY TO RESUME). Cross-process exact-once + second
+discovery link (cli/hook) are Phase D/F deliverables by design.
+
+## Prior block (M0-T086 acceptance)
 
 **Since the block below was generated:** M0-T097 was ACCEPTED (G2/G3 PASS, DCV 34/34 at `daabf2c`;
 checkpoint `CP-D025-M0-T097`; pushed `41113f5`) and **M0-T086 was ACCEPTED** (reviewed identity

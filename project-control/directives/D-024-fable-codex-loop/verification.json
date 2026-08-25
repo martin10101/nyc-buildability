@@ -422,241 +422,341 @@
     "D-024-R127",
     "D-024-R128"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db",
+   "verified_at": "2026-08-25T19:56:42+00:00",
    "requirements": [
     {
      "id": "D-024-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Gate 0 satisfied this session; record built from live repo state (--status matches committed file); no worker-facing quota"
+     ],
+     "note": "live-state; no violation",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "one-prompt continuity share delivered (E2E proof + persisted record); transport/restart/golden-run readiness bind M0-T092/T096"
+     ],
+     "note": "share only; no golden-run claim",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "unit implemented+tested (50 tests at delta) + independent 4-way review; no completion claim"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "additive orientation module; all mutations by Fable producer"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "record exists with claimed content (validated via cc.load); SESSION_HANDOFF canonical pointer wired; parent-064484b state contained the exact discrepancy the successor resolved"
+     ],
+     "note": "checkable substrate reproduced",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no owner question; autonomous run to submission"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "PR #241 untouched; hold embedded as record restriction surfaced by --status"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R013",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "stdlib-only; no version-sensitive surface added; M0-T086 fixtures authoritative"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R017",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "both commits (96bb98a, 0d7fa80) cite D-024-R099 in the message header; packet cites it; freeze amendment in force"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R018",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "reuse decision documented (session_continuity = provider-session resume, different boundary); no duplicate machinery"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "producer stayed within allowed_paths for its files; control-plane files by orchestrator per ADR-005"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no Codex invocation"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R022",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no Codex mutation possible/performed"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R024",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no bridge/transport change; owned by M0-T092/T096"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no dispatch on any Codex decision"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no activation/deploy/protected write; owner-gate restriction embedded in record"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R039",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no telemetry impl; record stores no usage numbers"
+     ],
+     "note": "Phase B owns",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R040",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "stdlib-only; no package/lock change at either identity"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R045",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "quota grep: only the prohibition restriction line + 'ration'-in-'integration' false positives"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R079",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no graph file touched at either identity"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R080",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "record encodes ledger+git-win discipline; staleness() reconcile-first warning tested"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R082",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no graph change -> nothing to regress"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R084",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no interception work; Phase F owns"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R098",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "healthy-session reuse T086->T087; seams by workload"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R099",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "persist+validate+exercise all reproduced: record (seq 0, next M0-T087, frozen 064484b) loads clean; 35->50 fail-closed tests; E2E successor proof substrate verified; correction round strengthened fail-closed behavior"
+     ],
+     "note": "Phase A item 7 share fully delivered",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R107",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "probe-fixture share unchanged; atomic-write interruption discipline now fault-injection tested"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R113",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no graph change at either identity"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R120",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no activation; owner-gate restriction in record; bounded-mode files untouched"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R124",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no new section-21 capability consumed; M0-T086 matrix authoritative"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R125",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Gate 0 satisfied + surfaced as record restriction"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R126",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no MCP config touched; MCP-clean restriction embedded and surfaced"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R127",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "fail-closed mechanically embodied (--status exit 1 paths tested); strengthened by the correction round"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     },
     {
      "id": "D-024-R128",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "adoption-after-independent-Gate0 crossing in audit_log; linear history, no rewrite/discard"
+     ],
+     "note": "",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "5c0a5625f7f08e31ae89e3dcb17338a897d8c0a8e87a4c7cad29f558d20dd4c4"
   },
   {
    "task_id": "M0-T088",
@@ -3647,5 +3747,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-25T19:12:02+00:00"
+ "updated_at": "2026-08-25T19:56:42+00:00"
 }

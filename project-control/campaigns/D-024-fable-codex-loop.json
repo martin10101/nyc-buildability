@@ -14,13 +14,13 @@
   "no worker-facing token quotas/countdowns ever (D-024-R045)"
  ],
  "next_action": {
-  "task_id": "M0-T087",
-  "description": "finish the M0-T087 review chain (G2 -> submit -> independent G3/G4/G5 + DCV at the frozen reviewed identity -> accept), then advance this record to M0-T088 (B1 telemetry core + carried hardening bundle)"
+  "task_id": "M0-T088",
+  "description": "claim and produce D-024 B1 (telemetry core + primary-session ingestion) PLUS the carried hardening bundle from the M0-T086/M0-T087 gate rounds (word-boundary flag matching, _run failure-branch tests, generic matrix==live cross-check, probe_meta home-prefix redaction); then G2 -> submit -> independent G3/G4/G5+DCV -> accept -> advance this record to M0-T089"
  },
  "frozen": {
-  "head_sha": "064484b5343179db05d38173560117f1591d8d12",
-  "recorded_at": "2026-08-25T19:19:04+00:00"
+  "head_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db",
+  "recorded_at": "2026-08-25T19:58:22+00:00"
  },
- "sequence": 0,
- "updated_at": "2026-08-25T19:19:04+00:00"
+ "sequence": 1,
+ "updated_at": "2026-08-25T19:58:22+00:00"
 }

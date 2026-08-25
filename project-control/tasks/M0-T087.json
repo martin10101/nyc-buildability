@@ -1,136 +1,147 @@
 {
- "task_id": "M0-T087",
- "title": "D-024 A2: bootstrap-continuity slice (campaign survives primary-session turnover)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Prove the bootstrap continuity path before the longest implementation units (source section 15-A item 7): persist the D-024 campaign identity, next bounded action, frozen git identity, and durable handoff so successor primary sessions continue from the captured directive without the owner re-pasting any prompt. Reuse the existing accepted supervisor/successor machinery (loop_turnover, handoff, durable_state; M0-T080 session/model turnover; M0-T052 start-reentry; M0-T054 watchdog) in supervised implementation mode if safe and authorized; otherwise implement and validate the smallest safe bootstrap-continuity slice. End-to-end proof: at least one real primary-session turnover of this implementation campaign continues from durable artifacts alone (also satisfies the section-16.9 campaign-turnover test). Supervisor-freeze qualifying evidence: D-024-R099 Phase A item 7 (explicit directive requirement).",
- "business_reason": "D-024 sections 1, 3, 7, 15-A: one-prompt implementation continuity is a readiness requirement; successor sessions must not require owner re-prompting.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
- ],
- "outputs": [
-  "project-control/campaigns/D-024-fable-codex-loop.json (durable campaign-continuity record; orchestrator-authored control-plane state - placement decision documented in the producer report, reconciled per G4 observation)",
-  "tools/test_agent_supervisor_bootstrap_continuity.py (deterministic continuity tests)",
-  "project-control/reports/M0-T087-bootstrap-continuity.md (turnover proof: successor continued without owner re-prompt)"
- ],
- "dependencies": [
-  "M0-T086"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_bootstrap_continuity.py",
-  "project-control/reports/M0-T087-bootstrap-continuity.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "requirement": "D-024-R099 (durable continuity; fail closed)",
-   "preconditions": "none",
-   "input": "malformed/missing/vocabulary-violating campaign records",
-   "expected": "CampaignRecordError raised; orientation never silently empty; --status exit 1 with fail-closed message",
-   "invariants": "no guessed defaults",
-   "execution": "pytest test_validate_rejects_* + test_load_missing_* + test_main_status_no_record/invalid",
-   "evidence": "test run output",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-2",
-   "requirement": "D-024 s3 exact-once succession (record level)",
-   "preconditions": "record at sequence N",
-   "input": "two writers advance from the same read snapshot",
-   "expected": "exactly one wins; loser gets SequenceConflict; disk shows winner only, sequence N+1",
-   "invariants": "no lost update, no double advance",
-   "execution": "pytest test_two_racers_exactly_one_wins + test_advance_stale_sequence_refused",
-   "evidence": "test run output",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-3",
-   "requirement": "D-024 s7 durable handoff artifacts",
-   "preconditions": "none",
-   "input": "atomic_write of valid + invalid records",
-   "expected": "LF bytes, tmp+os.replace, no torn record, invalid records refuse to persist",
-   "invariants": "crash mid-write leaves prior record intact",
-   "execution": "pytest test_atomic_write_*",
-   "evidence": "test run output",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-4",
-   "requirement": "D-024 s14 on-demand authoritative status",
-   "preconditions": "live record present",
-   "input": "python -m tools.agent_supervisor.campaign_continuity --status",
-   "expected": "orientation summary with campaign, NEXT action, restrictions; exit 0",
-   "invariants": "read-only; no model call",
-   "execution": "live run + pytest test_main_status_valid_record",
-   "evidence": "terminal output + test run",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-5",
-   "requirement": "D-024-R007/R099 (successor continues without owner re-prompt)",
-   "preconditions": "campaign record + ledger + handoff committed-or-on-disk",
-   "input": "fresh isolated context, campaign-ignorant prompt (worktree path + start-of-session routine only)",
-   "expected": "reports correct campaign, authority digest, exact next action incl. in-flight state, frozen identity == live HEAD, restrictions, READY TO RESUME",
-   "invariants": "zero campaign identifiers in the prompt; read-only",
-   "execution": "live successor-orientation agent run 2026-08-25",
-   "evidence": "project-control/reports/M0-T087-bootstrap-continuity.md (proof section) + session record",
-   "cleanup": "none"
-  },
-  {
-   "id": "AS-6",
-   "requirement": "D-024 s1 (ledger+git win over prose)",
-   "preconditions": "prose/ledger discrepancy exists (handoff said claim, ledger says claimed)",
-   "input": "same successor run",
-   "expected": "successor resolves the discrepancy in the ledger favor citing the precedence rule; staleness() flags frozen-vs-HEAD mismatches",
-   "invariants": "record never treated as authority",
-   "execution": "live successor run + pytest test_staleness_detection",
-   "evidence": "proof section + test run",
-   "cleanup": "none"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "awaiting_gate",
- "progress_percent": 85,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-25T19:48:50+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "task_id": "M0-T087",
+  "title": "D-024 A2: bootstrap-continuity slice (campaign survives primary-session turnover)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Prove the bootstrap continuity path before the longest implementation units (source section 15-A item 7): persist the D-024 campaign identity, next bounded action, frozen git identity, and durable handoff so successor primary sessions continue from the captured directive without the owner re-pasting any prompt. Reuse the existing accepted supervisor/successor machinery (loop_turnover, handoff, durable_state; M0-T080 session/model turnover; M0-T052 start-reentry; M0-T054 watchdog) in supervised implementation mode if safe and authorized; otherwise implement and validate the smallest safe bootstrap-continuity slice. End-to-end proof: at least one real primary-session turnover of this implementation campaign continues from durable artifacts alone (also satisfies the section-16.9 campaign-turnover test). Supervisor-freeze qualifying evidence: D-024-R099 Phase A item 7 (explicit directive requirement).",
+  "business_reason": "D-024 sections 1, 3, 7, 15-A: one-prompt implementation continuity is a readiness requirement; successor sessions must not require owner re-prompting.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "project-control/campaigns/D-024-fable-codex-loop.json (durable campaign-continuity record; orchestrator-authored control-plane state - placement decision documented in the producer report, reconciled per G4 observation)",
+    "tools/test_agent_supervisor_bootstrap_continuity.py (deterministic continuity tests)",
+    "project-control/reports/M0-T087-bootstrap-continuity.md (turnover proof: successor continued without owner re-prompt)"
+  ],
+  "dependencies": [
+    "M0-T086"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_bootstrap_continuity.py",
+    "project-control/reports/M0-T087-bootstrap-continuity.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "requirement": "D-024-R099 (durable continuity; fail closed)",
+      "preconditions": "none",
+      "input": "malformed/missing/vocabulary-violating campaign records",
+      "expected": "CampaignRecordError raised; orientation never silently empty; --status exit 1 with fail-closed message",
+      "invariants": "no guessed defaults",
+      "execution": "pytest test_validate_rejects_* + test_load_missing_* + test_main_status_no_record/invalid",
+      "evidence": "test run output",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-2",
+      "requirement": "D-024 s3 exact-once succession (record level)",
+      "preconditions": "record at sequence N",
+      "input": "two writers advance from the same read snapshot",
+      "expected": "exactly one wins; loser gets SequenceConflict; disk shows winner only, sequence N+1",
+      "invariants": "no lost update, no double advance",
+      "execution": "pytest test_two_racers_exactly_one_wins + test_advance_stale_sequence_refused",
+      "evidence": "test run output",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-3",
+      "requirement": "D-024 s7 durable handoff artifacts",
+      "preconditions": "none",
+      "input": "atomic_write of valid + invalid records",
+      "expected": "LF bytes, tmp+os.replace, no torn record, invalid records refuse to persist",
+      "invariants": "crash mid-write leaves prior record intact",
+      "execution": "pytest test_atomic_write_*",
+      "evidence": "test run output",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-4",
+      "requirement": "D-024 s14 on-demand authoritative status",
+      "preconditions": "live record present",
+      "input": "python -m tools.agent_supervisor.campaign_continuity --status",
+      "expected": "orientation summary with campaign, NEXT action, restrictions; exit 0",
+      "invariants": "read-only; no model call",
+      "execution": "live run + pytest test_main_status_valid_record",
+      "evidence": "terminal output + test run",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-5",
+      "requirement": "D-024-R007/R099 (successor continues without owner re-prompt)",
+      "preconditions": "campaign record + ledger + handoff committed-or-on-disk",
+      "input": "fresh isolated context, campaign-ignorant prompt (worktree path + start-of-session routine only)",
+      "expected": "reports correct campaign, authority digest, exact next action incl. in-flight state, frozen identity == live HEAD, restrictions, READY TO RESUME",
+      "invariants": "zero campaign identifiers in the prompt; read-only",
+      "execution": "live successor-orientation agent run 2026-08-25",
+      "evidence": "project-control/reports/M0-T087-bootstrap-continuity.md (proof section) + session record",
+      "cleanup": "none"
+    },
+    {
+      "id": "AS-6",
+      "requirement": "D-024 s1 (ledger+git win over prose)",
+      "preconditions": "prose/ledger discrepancy exists (handoff said claim, ledger says claimed)",
+      "input": "same successor run",
+      "expected": "successor resolves the discrepancy in the ledger favor citing the precedence rule; staleness() flags frozen-vs-HEAD mismatches",
+      "invariants": "record never treated as authority",
+      "execution": "live successor run + pytest test_staleness_detection",
+      "evidence": "proof section + test run",
+      "cleanup": "none"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-25T19:58:05.431199+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-25T19:50:04.741185+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "rework",
+      "message": "G3 blocking findings F1/F2 -> consolidated correction round applied at 0d7fa80 (strict validation, control-char rejection, scoped exactly-once claims, unique tmp, fault-injection + pinning tests); re-submitting at the corrected identity"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-25T19:58:05.431199+00:00"
 }

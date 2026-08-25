@@ -34,3 +34,16 @@ Producer: orchestrator. Date: 2026-08-25. Reviewed identity = the task checkpoin
 
 Result: PASS — ready for independent G3/G4/G5 + DCV at the frozen checkpoint identity.
 Supervisor-freeze qualifying evidence: **D-024-R099** (cited here, in the packet, and in the commit).
+
+## Addendum — corrected identity 0d7fa80 (post-correction-round)
+
+- Consolidated correction round applied (G3-F1/F2 blocking + G5-1/G5-2 + F3/F4/F5/G4 items);
+  details in the producer report's Correction-round section.
+- `pytest tools/test_agent_supervisor_bootstrap_continuity.py -q` → **50 passed**.
+- Full supervisor suite (freeze §4 duty) at 0d7fa80 → **1920 passed, 2 skipped, 0 failed**
+  (= 1870 baseline + 50 continuity tests; ≥1165/0 re-established).
+- ruff clean; live campaign record validates unchanged under the stricter rules; --status exit 0.
+- Delta attestations: G3 PASS (all five findings cleared/re-scoped), G4 PASS-holds,
+  G5 PASS-clean, DCV PASS (33/33 hold, zero changed rows).
+
+Result: PASS at 0d7fa80.

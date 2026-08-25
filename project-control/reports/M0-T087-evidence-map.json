@@ -7,7 +7,7 @@
    "one-prompt implementation continuity share DELIVERED: project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution); remaining readiness items (Codex transport fail-closed, restart recovery, golden run) owed by M0-T092/M0-T096 per binding"
   ],
   "D-024-R003": [
-   "second campaign unit implemented + tested (35 tests; suite 1905/2/0) and submitted to independent G3/G4/G5+DCV; no completion claim"
+   "second campaign unit implemented + tested (50 tests; suite 1905/2/0) and submitted to independent G3/G4/G5+DCV; no completion claim"
   ],
   "D-024-R004": [
    "no role-semantics change; additive orientation module only"
@@ -73,7 +73,8 @@
    "healthy-session reuse continued (T086->T087 same session); record advance happens at seams chosen by workload, not per-task fresh sessions"
   ],
   "D-024-R099": [
-   "Phase A item 7 share DELIVERED: bootstrap continuity path proven before the longest implementation units - campaign/next-action/frozen-identity/handoff persisted (project-control/campaigns/D-024-fable-codex-loop.json), validated fail-closed (tools/agent_supervisor/campaign_continuity.py, 35 tests), and exercised end-to-end (project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution))"
+   "Phase A item 7 share DELIVERED: bootstrap continuity path proven before the longest implementation units - campaign/next-action/frozen-identity/handoff persisted (project-control/campaigns/D-024-fable-codex-loop.json), validated fail-closed (tools/agent_supervisor/campaign_continuity.py, 50 tests), and exercised end-to-end (project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution))",
+   "correction round 0d7fa80 (consolidated G3-F1/F2 blocking + G5-1/G5-2 + F3/F4/F5/G4): strict string validation, control-char rejection, scoped exactly-once claims, unique tmp + fault-injection test; 50 tests pass; report Correction-round section"
   ],
   "D-024-R107": [
    "16.1 share unchanged from M0-T086 (probe fixtures); no telemetry bullets claimed; atomic-write-interruption discipline tested at the record level (tools/test_agent_supervisor_bootstrap_continuity.py)"
