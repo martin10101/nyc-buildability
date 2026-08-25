@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D026-M0-T098",
+  "timestamp": "2026-08-25T20:57:25.545571+00:00",
+  "commit": "73d5fbf",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "D-026 accepted: hybrid global/project /session-handoff (global personal skill + identity-verified repo profile + zero-drift fallback) at reviewed 722d494; G3 + DCV 27/27 PASS; D-024 campaign untouched, record NEXT still M0-T088.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-25T20:57:25.582496+00:00"
+}
