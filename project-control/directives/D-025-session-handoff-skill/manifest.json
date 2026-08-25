@@ -1,0 +1,105 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-025",
+ "version": 1,
+ "slug": "session-handoff-skill",
+ "title": "Permanent /session-handoff operator skill: owner-only inline project skill at .claude/skills/session-handoff/SKILL.md that safely lands the active main session (stop new work, reconcile sub-agents and external effects), saves only actually-completed work under existing policy, REPLACES canonical docs/SESSION_HANDOFF.md with the 18-item living handoff, validates it against live Git and the ledger, prints HANDOFF READY/BLOCKED with the exact clean-start command and a COPY-INTO-THE-NEW-SESSION successor prompt, and supports a no-side-effect dry-run; reuses the existing ledger/supervisor/handoff machinery (no second competing handoff system); bounded utility only - no D-024 directive rewrite, no continuous-loop implementation in this task.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-25",
+ "captured_at": "2026-08-25T17:43:42+00:00",
+ "created_at": "2026-08-25T17:43:42+00:00",
+ "updated_at": "2026-08-25T17:45:56+00:00",
+ "channel": "owner_terminal_prompt_mid_turn",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-25T17:43:42+00:00",
+   "content_digest_sha256": "9b5635328d6343390c876be21b251ec58506584302c963ecd0286e0b529e9b1c"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T097"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "bounded-utility",
+  "allowed": "one small operator-utility task (M0-T097): create .claude/skills/session-handoff/SKILL.md, exercise it safely (dry-run + one real landing of the current session), and the smallest valid control records",
+  "excluded": "modifying/rewriting the D-024 directive or its capture; beginning any D-024 continuous-loop implementation unit under this task; a second competing handoff system; broad allowed-tools; context:fork; sub-agent/background execution; model invocation of the command",
+  "task_ids": [
+   "M0-T097"
+  ],
+  "task_types": [
+   "governance"
+  ]
+ },
+ "applicability_note": "Prohibition/sequencing rows also bind the NON-LEDGER sentinel D-025-BOOTSTRAP (session governance during capture); all rows bind ledger task M0-T097 and are verified at its DCV. The verbatim source-001.md governs on any wording question.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner mid-turn terminal message 2026-08-25 ordering the utility; explicitly scopes it as small/bounded and forbids starting the larger continuous-loop implementation under this task."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py (claim --directive-refs; accept blocking on verification)",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-025-R001",
+  "D-025-R002",
+  "D-025-R003",
+  "D-025-R004",
+  "D-025-R005",
+  "D-025-R006",
+  "D-025-R007",
+  "D-025-R008",
+  "D-025-R009",
+  "D-025-R010",
+  "D-025-R011",
+  "D-025-R012",
+  "D-025-R013",
+  "D-025-R014",
+  "D-025-R015",
+  "D-025-R016",
+  "D-025-R017",
+  "D-025-R018",
+  "D-025-R019",
+  "D-025-R020",
+  "D-025-R021",
+  "D-025-R022",
+  "D-025-R023",
+  "D-025-R024",
+  "D-025-R025",
+  "D-025-R026",
+  "D-025-R027",
+  "D-025-R028",
+  "D-025-R029",
+  "D-025-R030",
+  "D-025-R031",
+  "D-025-R032",
+  "D-025-R033",
+  "D-025-R034"
+ ],
+ "requirements_id_digest_sha256": "fd904ed11cddae4ea9d93bed3b760be10a7f57546b5b7da3f3665e4cb9dc7faf",
+ "requirements_content_digest_sha256": "ce6303e4467e615538f8061fd6f3ac02c0db1e393cbdec1b0911b3ccde28eff6",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-25T17:43:42+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 9b5635328d6343390c876be21b251ec58506584302c963ecd0286e0b529e9b1c, 6307 bytes) from the owner's mid-turn terminal message 2026-08-25; decomposed into 34 requirements; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9; work carried on control/D-024-fable-codex-loop after the D-024 capture checkpoint 0d9f6b1 (single ledger lineage). D-025 is a bounded operator utility alongside the D-024 campaign; it changes nothing in the D-024 capture and defers all continuous-loop implementation to the D-024 tasks."
+  }
+ ]
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-24T12:33:20+00:00",
+ "updated_at": "2026-08-25T17:45:56+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -56,7 +56,23 @@
  "scope": {
   "kind": "coordinated-campaign",
   "allowed": "one coordinated dependency-ordered implementation campaign (D-024-BOOTSTRAP + M0-T086..M0-T093, Phases A-H): tools/agent_supervisor/** extensions (with per-task AD-093 qualifying-evidence citation of D-024 requirement IDs), passive telemetry sidecars/journals, bounded subagent contract schemas, controller state machine and epoch leases, guardrail-refusal bridge policy, operator CLI + feature-detected /loop-* interception, root-cause repair gate integration, tests/fixtures/canaries, and the activation package - reusing accepted machinery (D-007 bridge, D-010 supervisor, D-023 bounded mode/reliability standard/turnover work) rather than duplicating it",
-  "excluded": "merging PR #241 or any pre-existing PR without separate owner authorization; protected-branch writes; production deployment; credential changes; email/remote notification configuration; installing/admitting the Agent SDK or any dependency merely for this directive; activating continuous mode before the owner activation checkpoint"
+  "excluded": "merging PR #241 or any pre-existing PR without separate owner authorization; protected-branch writes; production deployment; credential changes; email/remote notification configuration; installing/admitting the Agent SDK or any dependency merely for this directive; activating continuous mode before the owner activation checkpoint",
+  "task_ids": [
+   "M0-T086",
+   "M0-T087",
+   "M0-T088",
+   "M0-T089",
+   "M0-T090",
+   "M0-T091",
+   "M0-T092",
+   "M0-T093",
+   "M0-T094",
+   "M0-T095",
+   "M0-T096"
+  ],
+  "task_types": [
+   "governance"
+  ]
  },
  "applicability_note": "Session-governance and reconciliation rows bind the NON-LEDGER sentinel D-024-BOOTSTRAP (D-016..D-023 precedent) and are verified at directive verification; phase rows bind their phase task(s) and are re-verified at M0-T096 (Phase H) where the row also lists it. Campaign re-sized 2026-08-24 under the directive's own workload-first rules (source-001.md section 5.5 / section 15 seam guidance): Phase A split into M0-T086 (capability baseline, probes, deterministic fixtures) and M0-T087 (bootstrap-continuity slice, first supervisor-touching task, carries the supervisor-freeze qualifying-evidence amendment); Phase B split into M0-T088 (telemetry core + primary-session ingestion) and M0-T089 (subagent telemetry breadth + shadow status); Phase C split into M0-T090 (bounded contracts + structural sizing) and M0-T091 (runtime supervision enforcement); Phases D-H remain single cohesive extension units (M0-T092..M0-T096) because they extend existing accepted machinery (D-007 bridge, D-010 supervisor, D-023 bounded mode/turnover). The verbatim source-001.md governs on any wording question; requirement rows are faithful restatements with source anchors, not replacements.",
  "owner_approval": {
@@ -214,6 +230,11 @@
    "at": "2026-08-24T12:33:20+00:00",
    "actor": "orchestrator",
    "event": "Capture correction before first commit (owner directive 2026-08-24, session resumed after truncated terminal handoff): source-001.md replaced with the owner's authoritative v4 file (sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537, 85855 bytes, 982 lines); the prior capture had copied a v3 snapshot (sha256 e8375769994e9c2b9e699afe42434214690d4db93f8a05a10f0ef10d1822d96e, 82249 bytes) that predated the owner's final edit adding the Bootstrap Gate 0 section, gate-first Phase A sequencing, three section-16.3 Gate-0 recovery tests, one section-19 completion criterion, handoff item 13 (clean-session launch command/root/MCP list), and three section-21 references. Requirement rows R001, R099, R109, R122, R123 updated to the v4 wording; rows R125-R128 appended for the Bootstrap Gate 0 section; no committed identity existed, so no append-only source rule was violated. Provisional one-task-per-phase campaign (8 tasks) re-sized to 11 workload-first tasks M0-T086..M0-T096 per the directive's own sizing rules; requirement applicability and the verification skeleton remapped accordingly. Bootstrap Gate 0 passed by this session before any repository mutation: primary cwd C:/Users/MLFLL/Downloads/nyc-zoning/ctl24, branch control/D-024-fable-codex-loop at 7649acf (D-023 tip, single ledger lineage), /mcp reports no MCP servers configured."
+  },
+  {
+   "at": "2026-08-25T17:45:56+00:00",
+   "actor": "orchestrator",
+   "event": "schema-conformance correction: added scope.task_ids (M0-T086..M0-T096) and scope.task_types [governance] so the s19/D-001-R118 claim guard (covers_governance) recognizes the campaign tasks, matching D-023 manifest precedent; discovered when the first M0-T097 claim under the same guard failed closed. No source, requirement, or digest change."
   }
  ]
 }

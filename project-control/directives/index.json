@@ -357,7 +357,21 @@
     "M0-T096"
    ],
    "manifest": "D-024-fable-codex-loop/manifest.json"
+  },
+  {
+   "directive_id": "D-025",
+   "slug": "session-handoff-skill",
+   "title": "Permanent /session-handoff operator skill: owner-only inline project skill at .claude/skills/session-handoff/SKILL.md that safely lands the active main session (stop new work, reconcile sub-agents and external effects), saves only actually-completed work under existing policy, REPLACES canonical docs/SESSION_HANDOFF.md with the 18-item living handoff, validates it against live Git and the ledger, prints HANDOFF READY/BLOCKED with the exact clean-start command and a COPY-INTO-THE-NEW-SESSION successor prompt, and supports a no-side-effect dry-run; reuses the existing ledger/supervisor/handoff machinery (no second competing handoff system); bounded utility only - no D-024 directive rewrite, no continuous-loop implementation in this task.",
+   "status": "active",
+   "issued_at": "2026-08-25",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T097"
+   ],
+   "manifest": "D-025-session-handoff-skill/manifest.json"
   }
  ],
- "updated_at": "2026-08-24T12:33:20+00:00"
+ "updated_at": "2026-08-25T17:43:42+00:00"
 }

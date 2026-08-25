@@ -1,0 +1,62 @@
+{
+  "task_id": "M0-T097",
+  "title": "D-025: /session-handoff owner-only operator skill (safe main-session landing + successor prompt)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Create .claude/skills/session-handoff/SKILL.md exactly per D-025: owner-only (disable-model-invocation: true), inline main-session execution (no context:fork, no sub-agent/background execution, no broad allowed-tools), $ARGUMENTS as optional reason, 'dry-run' argument for a strictly read-only preview; land/save/replace/validate sequence reusing the existing project-control ledger, supervisor handoff machinery, Git state, and canonical docs/SESSION_HANDOFF.md (REPLACE, 18 required items, no secrets/transcripts); HANDOFF READY/BLOCKED contract with exact clean-start command and COPY INTO THE NEW SESSION successor prompt. Test dry-run and one real landing safely; verify skill registration structurally (model invocation disabled by design) and report the verification method truthfully.",
+  "business_reason": "D-025 owner directive 2026-08-25: durable, safe manual session turnover for the owner without a second competing handoff system.",
+  "inputs": [
+    "project-control/directives/D-025-session-handoff-skill/source-001.md (verbatim owner directive)",
+    "docs/SESSION_HANDOFF.md (canonical living handoff, current-only convention)"
+  ],
+  "outputs": [
+    ".claude/skills/session-handoff/SKILL.md",
+    "project-control/reports/M0-T097-session-handoff-skill.md (test evidence: dry-run + real landing + registration verification method)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/skills/session-handoff",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T097-session-handoff-skill.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-024-fable-codex-loop",
+    "services",
+    "supabase",
+    "tools/agent_supervisor",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-25T17:43:42+00:00",
+  "updated_at": "2026-08-25T17:45:57.084199+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-025",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-25T17:43:42+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}
