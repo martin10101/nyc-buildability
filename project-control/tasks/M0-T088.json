@@ -1,0 +1,69 @@
+{
+ "task_id": "M0-T088",
+ "title": "D-024 B1: telemetry core + primary-session ingestion (shadow mode)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Implement the passive telemetry foundation: typed telemetry records with source/confidence labels (provider-exact, sdk-task-cumulative, subagent-status-live, sdk-cumulative, status-live, transcript-derived, estimated, unknown; missing usage is unknown, never zero), atomic sidecar/journal writes, redaction, bounds, rotation; primary-session status-line JSON ingestion (nullable fields at startup/after compaction) and main-loop structured provider usage ingestion (per-step vs cumulative kept distinct, message-ID dedup) with zero model-context injection - no additionalContext, no routine prompts, no worker-visible counters. Current live context occupancy and cumulative spend remain separate categories. Actuation stays off (shadow). Supervisor-freeze qualifying evidence: D-024-R100 (Phase B).",
+ "business_reason": "D-024 sections 5, 5.1-5.3, 15-B: out-of-band event-driven measurement is the prerequisite for every later supervision decision; prompts-as-telemetry are prohibited.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+ ],
+ "outputs": [
+  "telemetry record/journal modules under tools/agent_supervisor with source/confidence labels, redaction, bounds, rotation",
+  "primary status-line + main-loop usage ingestion (feature-detected, nullable-safe)",
+  "tools/test_agent_supervisor_telemetry_core.py (section 16.1 core cases incl. atomic-write interruption, rotation, redaction, unknown-not-zero)",
+  "project-control/reports/M0-T088-telemetry-core.md"
+ ],
+ "dependencies": [
+  "M0-T087"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_telemetry_core.py",
+  "project-control/reports/M0-T088-telemetry-core.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "services",
+  "supabase",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-24T12:35:22+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+}

@@ -1,0 +1,4982 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-024",
+ "version": 1,
+ "requirement_count": 128,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-24T12:33:20+00:00",
+ "requirements": [
+  {
+   "id": "D-024-R001",
+   "text": "Workload-first revision governs: numeric token telemetry is private controller evidence, never a quota/countdown in a worker's assignment; it supersedes any earlier wording of this directive interpretable otherwise. Live capability probes and live-workstation reconciliation are required; absence from an older imported repository snapshot is not proof that a task, branch, installed feature, or local change does not exist. A correct repository-root launch and proven MCP-clean session are a hard pre-write gate; reaching the repository through an added working directory is not equivalent.",
+   "source_ref": "source-001.md#revision-note",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R002",
+   "text": "Readiness additionally requires one-prompt implementation continuity, fail-closed Codex transport and outage handling, controller and host restart recovery, and a two-unit golden end-to-end run from the exact owner start command without human continuation.",
+   "source_ref": "source-001.md#revision-note",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R003",
+   "text": "Implement, test, independently review, and prepare for owner activation a durable continuous agent loop: Fable 5/Claude Code does the engineering work; Fable's bounded subagents do scoped research/implementation/review; Codex is an external read-only supervisor and independent reviewer (observes, checks evidence, controls sequencing/session turnover, supplies the next bounded job, never a second producer); the owner can start with one simple command, see status, ask Codex from the Claude Code terminal, pause/resume, gracefully stop, or emergency-stop; the campaign may run without a time limit while every epoch, task, assignment, investigation, write lease, external effect, review, and model session stays bounded and recoverable; the existing graph/context-intelligence system keeps working and is extended only where necessary, never replaced/bypassed/flattened/degraded.",
+   "source_ref": "source-001.md#owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R004",
+   "text": "Describing Codex as main/lead/controlling means control-plane leadership only (evidence review, next-unit choice, continuation/correction/turnover control); Codex does not write product code; Fable remains the producer.",
+   "source_ref": "source-001.md#owner-directive-p2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R005",
+   "text": "This is an implementation assignment, not a speculative design memo: first reconcile the directive with the live repository and current authority; then implement through small controlled tasks; run deterministic and live canary tests; obtain required independent reviews against frozen identities; correct consolidated findings; leave the system genuinely startable with one command. Do not claim completion merely because code exists.",
+   "source_ref": "source-001.md#owner-directive-p3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R006",
+   "text": "Do not spend the initial session merely reviewing, scoring, or rewriting this directive: capture it, reconcile it, create the durable implementation campaign, and begin executing Phase A in the same session.",
+   "source_ref": "source-001.md#owner-directive-p4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R007",
+   "text": "The owner's single initial prompt and this captured directive remain sufficient authority and context for successor implementation sessions; never require the owner to paste the directive again after ordinary context or session turnover.",
+   "source_ref": "source-001.md#owner-directive-p4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R008",
+   "text": "Do not ask the owner routine implementation questions answerable from the repository, tests, current directives, or safest compatible default. Stop only for a real authorization boundary, an irreconcilable owner-policy conflict, unavailable credentials required for an explicitly authorized test, or evidence that continuing would be unsafe.",
+   "source_ref": "source-001.md#owner-directive-p5",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R009",
+   "text": "Reconcile reality before changing anything: do not assume any historical task, branch, PR, acceptance statement, or prior conversation is current; determine the live status of M0-T078, M0-T079, PR #221, and PR #241 rather than treating prior reports as truth; a remote snapshot cannot establish absence of later local/unpushed/dirty/linked-worktree work; label snapshot conclusions with their exact scope until the actual workstation repository is reconciled.",
+   "source_ref": "source-001.md#s1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R010",
+   "text": "Never merge PR #241, or any other pre-existing PR, without separate owner authorization that clearly covers that merge.",
+   "source_ref": "source-001.md#s1",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R011",
+   "text": "At the beginning: confirm repository root, current branch, clean/dirty status, linked worktrees, remotes, and applicable repository instructions (CLAUDE.md, AGENTS.md, project-control directives, architecture decisions, task ledgers); read current autonomy, review, security, recovery, context-packet, graph, GitHub, and Windows portability rules; treat the strictest compatible rule as binding.",
+   "source_ref": "source-001.md#s1-items1-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R012",
+   "text": "Inspect the current implementation of the Fable producer loop, Codex review path, task graph, context graph, checkpoint/handoff system, fallback handling, process supervision, GitHub effect journal, and CLI/operator controls before proposing edits.",
+   "source_ref": "source-001.md#s1-item3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R013",
+   "text": "Check installed claude and codex versions and local help; verify every hook, event, status-line field, streaming feature, command behavior, and CLI flag used by the design against the installed versions and official primary documentation; feature-detect where versions can differ.",
+   "source_ref": "source-001.md#s1-item4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R014",
+   "text": "Fetch and inspect remote state using non-destructive commands; reconcile open branches, commits, PRs, checks, and ambiguous prior pushes before creating a new write path.",
+   "source_ref": "source-001.md#s1-item5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R015",
+   "text": "Capture this directive durably using the repository's directive-compliance mechanism; preserve its full meaning; create a requirement-to-test traceability register; assign collision-free task/directive identifiers according to current project conventions.",
+   "source_ref": "source-001.md#s1-item6",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R016",
+   "text": "Record a compact baseline: what is already implemented and verified, what is present but unproven, what is missing, what conflicts with this directive, and what work can be reused safely.",
+   "source_ref": "source-001.md#s1-item7",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R017",
+   "text": "Supervisor-freeze compliance: every task touching tools/agent_supervisor/** must cite this directive's captured requirement ID as AD-093 qualifying evidence in its task packet and commit message; if the live freeze wording does not recognize that evidence, amend or supersede the rule transparently under this directive's authority before making supervisor changes; never silently bypass it.",
+   "source_ref": "source-001.md#s1-p-freeze",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R018",
+   "text": "The live repository is the source of truth: if existing architecture already satisfies a requirement, prove it and avoid duplicate machinery; if an older implementation conflicts with this directive, resolve the conflict explicitly and retain an audit trail.",
+   "source_ref": "source-001.md#s1-p-truth",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R019",
+   "text": "Treat the owner's observed roughly 860,000-token manual subagent run as a required runaway-work test scenario and sizing warning — not as evidence that the Codex-supervised loop already failed; determine current implementation status independently.",
+   "source_ref": "source-001.md#s1-p-860k",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R020",
+   "text": "Fable producer authority: may inspect, plan, edit, test, create bounded checkpoints, delegate bounded assignments, commit, push permitted task branches, and open/update permitted PRs under the repository's existing authority rules; Fable owns implementation and remediation.",
+   "source_ref": "source-001.md#s2-fable",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R021",
+   "text": "Codex allowed actions are limited to: reading repository/durable state/diffs/checks/logs/task graph/context packets/telemetry summaries/GitHub evidence; assessing unit completeness and evidence sufficiency; identifying defects or missing proof; selecting or recommending the next eligible task from the existing authorized task graph; approving or denying a bounded scope extension; requesting one consolidated correction round; deciding continue/land/rotate/bridge/pause/block; creating a read-only review result and next-job instruction in the designated external control channel.",
+   "source_ref": "source-001.md#s2-codex-may",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R022",
+   "text": "Codex must not: edit source or control files; stage, commit, push, merge, rebase, force-update, or resolve conflicts; run a mutating migration or production action; approve its own work; silently broaden owner authority; automatically accept arbitrary terminal prompts or permission requests; or become an alternate producer when Fable is blocked.",
+   "source_ref": "source-001.md#s2-codex-mustnot",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R023",
+   "text": "Enforce the Codex role boundary mechanically where possible — read-only worktrees/mounts, command allowlists, denied mutation tools, separate credentials, and tests — not prose alone.",
+   "source_ref": "source-001.md#s2-mechanical",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R024",
+   "text": "Reuse the repository's accepted Codex bridge unless live evidence proves it cannot satisfy this directive; make its invocation contract executable and version-probed: for a CLI-backed path use the installed equivalents of non-interactive structured event output, an explicit read-only sandbox, a non-interactive fail-closed approval policy, a bounded evidence packet, a validated decision schema, captured thread/session identity, timeouts, cancellation, and deterministic exit handling; an approved SDK-backed path must provide equivalent controls.",
+   "source_ref": "source-001.md#s2-bridge",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R025",
+   "text": "A missing, malformed, unparseable, timed-out, or identity-mismatched Codex decision is never permission to dispatch or accept work.",
+   "source_ref": "source-001.md#s2-bridge",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R026",
+   "text": "The owner retains final authority over activation, production deployment, protected-branch merging, credential scope, broadening autonomy, and any action excluded by current project policy; a durable owner pause, stop, or emergency-stop instruction always wins over queued or recovered work.",
+   "source_ref": "source-001.md#s2-owner",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R027",
+   "text": "The owner-facing start action must not require a duration; once activated the campaign continues until an explicit completion condition, no eligible authorized work, owner pause/stop, or a genuine block.",
+   "source_ref": "source-001.md#s3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R028",
+   "text": "Implement continuity as a renewable sequence of bounded epochs, not one immortal conversation or unlimited child process: one durable campaign identity; one active controller lease at a time; one current bounded task/unit at a time per write domain; bounded model sessions; bounded subagent contracts; checkpoint and review at safe seams; exact-once succession; crash recovery from durable state; no busy loop when there is no eligible work.",
+   "source_ref": "source-001.md#s3-epochs",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R029",
+   "text": "The state machine (use or extend the existing one) must distinguish at least: stopped/inactive; starting-reconciling; orienting; selecting/dispatching; producer running; landing; awaiting/reconciling child work; reviewing; correcting; checkpointing; primary-session rotation; temporary lower-model bridge; paused; graceful stopping; emergency stopped; recovery/reconciliation; blocked; idle because no eligible authorized task exists.",
+   "source_ref": "source-001.md#s3-states",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R030",
+   "text": "All material state transitions are journaled durably and idempotently; a restart must not create two controllers, two successors, duplicate pushes, duplicate PR comments, or overlapping write agents.",
+   "source_ref": "source-001.md#s3-journal",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R031",
+   "text": "Treat three interruption classes separately: model/session turnover (bounded handoff and exact-once successor); controller-process crash (watchdog or approved launcher restarts the controller and reconciles durable state); host shutdown/reboot (after activation, a user-level least-privilege OS-appropriate auto-resume mechanism restarts the same campaign without duplicates, preferring the repository's existing approved startup/scheduler mechanism on Windows and requiring no administrator rights unless policy explicitly requires them).",
+   "source_ref": "source-001.md#s3-interruptions",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R032",
+   "text": "If higher-precedence policy forbids automatic host-start registration, the same one-command start must still resume the exact campaign after reboot, and the system must report that limitation as an activation blocker rather than claiming fully unattended persistence.",
+   "source_ref": "source-001.md#s3-interruptions",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R033",
+   "text": "Handle provider and supervisor unavailability explicitly: transient Codex transport/model/network/rate-limit failure enters bounded backoff with jitter and durable retry state, never busy-loops, and never dispatches new producer work without supervision; the current atomic producer operation may land only under pre-authorized deterministic rules, after which the campaign holds until Codex returns; authentication, billing, revoked access, incompatible versions, repeated malformed decisions, or exhausted retry policy enter blocked and preserve a complete handoff; successful recovery resumes the same campaign exactly once.",
+   "source_ref": "source-001.md#s3-outage",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R034",
+   "text": "Integrate with the repository's existing command surface (no parallel CLI unless no suitable surface exists); expose a canonical no-duration one-command start plus: status; current task and why selected; recent completed checkpoints; active model/session and fallback state; active subagents and their bounded contracts; token/context health and measurement confidence; pause; resume; graceful stop after next safe checkpoint; emergency stop; a way to ask the external Codex supervisor a question.",
+   "source_ref": "source-001.md#s4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R035",
+   "text": "Support the literal owner intent 'Start the agent loop' as a documented natural-language command recognized by the existing operator interface or an unambiguous alias to the canonical command; at handoff print the exact command the owner should use.",
+   "source_ref": "source-001.md#s4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R036",
+   "text": "Start must be idempotent (if running, report the active campaign rather than spawning a duplicate); resume honors the same rule; stop and emergency stop must be durable before acknowledging success.",
+   "source_ref": "source-001.md#s4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R037",
+   "text": "The supervisor must not repeatedly type /context, ask Fable to report usage, or inject periodic usage prompts; those interrupt work, consume context, distort measurement, and can create the problem being monitored.",
+   "source_ref": "source-001.md#s5",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R038",
+   "text": "Build an out-of-band, event-driven measurement pipeline distinguishing: (1) current live context occupancy; (2) cumulative tokens spent during a task/session/subagent run including compacted-away work; (3) estimated future cost to finish the bounded unit (a planning estimate). Never label one as another.",
+   "source_ref": "source-001.md#s5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R039",
+   "text": "Use the strongest available evidence source per runtime path, in the documented order: Agent SDK background-task progress events (supervisor telemetry only, never copied into the worker prompt); Claude Code subagentStatusLine feed (fast extraction, atomic bounded external sidecar, feature-detected fields, tokenSamples trend-only until fixtures establish semantics); primary status-line JSON (nullable fields, live-context fields never presented as lifetime spend); structured provider/SDK usage with message-ID dedup and correct scope across resumed/streaming turns; lifecycle hooks writing external state only; version-probed read-only transcript parsing that fails to unknown; a conservative, testable, labeled derived estimate.",
+   "source_ref": "source-001.md#s5.1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R040",
+   "text": "The Agent SDK is optional, not required: do not install, admit, or upgrade it merely to implement this directive; use it only when already approved and present, or after separate owner-authorized dependency admission under the live dependency-security policy; lack of a repository reference to a platform feed proves only that it is not yet configured — determine support with installed-version probes and official documentation.",
+   "source_ref": "source-001.md#s5.1-sdk",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R041",
+   "text": "For Codex's own review calls, consume structured response-completion usage/telemetry if available and rotate review sessions independently; a fresh Codex review receives a bounded evidence packet rather than inheriting an ever-growing conversation.",
+   "source_ref": "source-001.md#s5.1-codex",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R042",
+   "text": "Every displayed or policy-relevant usage number carries a source/confidence label (provider-exact, sdk-task-cumulative, subagent-status-live, sdk-cumulative, status-live, transcript-derived, estimated, unknown); missing usage is unknown, never zero; unknown triggers a conservative planning policy, not unlimited continuation.",
+   "source_ref": "source-001.md#s5.2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R043",
+   "text": "Do not treat a subagent final result's totalTokens or final-request usage as the whole subagent run unless the installed API explicitly guarantees that meaning (current Agent SDK behavior may describe only the final API request); test this caveat with fixtures and preserve true cumulative tracking separately.",
+   "source_ref": "source-001.md#s5.2-cumulative",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R044",
+   "text": "Normal monitoring is passive and adds no text to the Fable conversation and no continuous corrective messages to subagents: write compact external records on actual runtime events; aggregate outside the model context; wake the controller only on state threshold, no-progress rule, owner command, task boundary, error, or safe-seam changes; inject a model-visible instruction only when a real decision is required; the telemetry journal is bounded, rotated, redacted, and compactable, storing summaries and references — no full prompts, transcripts, secrets, or repeated repository content.",
+   "source_ref": "source-001.md#s5.3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R045",
+   "text": "Do not place numeric token limits, token targets, context percentages, countdown language, or conserve-tokens pressure in any worker-facing assignment; the subagent solves one cohesive job and honestly reports confusion, blockers, or scope expansion; the outside controller watches the measurements; the worker does not need the telemetry unless a single landing instruction becomes necessary.",
+   "source_ref": "source-001.md#s5.3-worker",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R046",
+   "text": "Make continuation decisions via a health score or explicit rule set considering at least: current context occupancy; cumulative tokens; number/size of compactions; elapsed wall time; model turns; tool-call batches; verified progress since last checkpoint; repeated failed hypotheses/test failures; contradictions or reopened evidence or forgotten constraints; scope drift and newly discovered work; pending child/background tasks; pending or ambiguous external effects; estimated remaining unit size; model tier and measurement confidence. Verified progress differentiates equal token spend; low usage does not justify endless low-value investigation; cumulative tokens are a risk indicator, not the sole overload definition.",
+   "source_ref": "source-001.md#s5.4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R047",
+   "text": "Workload-first supervision has two separate layers: (1) assignment planning before spawn — use the task graph, code graph, acceptance criteria, dependency boundaries, estimated files/symbols/tests, uncertainty, and historical telemetry to choose one cohesive unit large enough to justify startup cost and small enough for one clear objective, one ownership boundary, and a natural end-to-end proof; (2) invisible runtime health supervision — the controller watches occupancy, task tokens, compactions, time, tool use, retries, progress, and drift without including any of it in the subagent's instructions.",
+   "source_ref": "source-001.md#s5.5-layers",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R048",
+   "text": "Classify proposed work structurally rather than predicting exact token totals: main-session work (quick targeted changes, frequent back-and-forth, phases sharing substantial context — no fresh subagent for one small edit); cohesive subagent unit (preferred: self-contained ownership from investigation through implementation/test or evidence through bounded report); oversized/cross-boundary work (split at natural graph/ownership/test seams before dispatch); unknown work (cheapest bounded sizing/reconnaissance step first).",
+   "source_ref": "source-001.md#s5.5-classes",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R049",
+   "text": "Use historical observations to improve future sizing (initial packet size, repeated required documents, startup tokens/time, files reopened, graph retrieval breadth, implementation/test effort, compactions, outcome); optimize the combined cost of startup plus productive work; do not minimize or maximize subagent count blindly.",
+   "source_ref": "source-001.md#s5.5-history",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R050",
+   "text": "Maintain private, configurable health bands rather than worker-visible quotas: Normal (no action, no message); Observe (Codex checks progress/remaining scope from external evidence; worker uninterrupted); Prepare-to-land (controller-level prevention of new scope, children, and unrelated investigation; wait for next natural checkpoint); Land (one short course-correction through the supported parent/subagent messaging path — finish the current atomic step, save and test what is coherent, return the bounded handoff; no token arithmetic asked of the worker); Emergency stop (platform task-stop only for unresponsive/unsafe process, imminent provider/platform hard limit, owner emergency stop, or inability to reach a safe seam; quarantine and reconcile partial state afterward).",
+   "source_ref": "source-001.md#s5.5-bands",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R051",
+   "text": "Do not use SDK/CLI maxTurns, maxBudgetUsd, or equivalent hard caps as the normal way to size or land a subagent; if current repository policy requires a platform-level ceiling, set it far outside the normal workload/landing range as a catastrophic failsafe, keep it private from workers, and test partial-state recovery when it fires.",
+   "source_ref": "source-001.md#s5.5-caps",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R052",
+   "text": "Calibrate private bands per resolved model and installed runtime using live context percentage, official task-progress token data, compaction behavior, and observed quality; the owner's degradation observations (Fable-class in the several-hundred-thousand-token region; lower tiers earlier) are conservative warning evidence, not vendor capacity claims or automatic kill numbers; keep the controller comfortably below verified degradation regions but do not interrupt a productive cohesive unit solely because a cumulative counter crossed a round number.",
+   "source_ref": "source-001.md#s5.5-calibrate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R053",
+   "text": "If the model says it is losing the thread, needs a handoff, or cannot reconcile prior facts, treat that as an immediate quality signal even at low counters; if counters are high but the current atomic unit is nearly complete and evidence remains coherent, let it reach the safe seam; record the decision for later calibration.",
+   "source_ref": "source-001.md#s5.5-signals",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R054",
+   "text": "When landing begins: start no new investigation, task, or subagent; finish only the smallest safe atomic unit already underway; reconcile children and external effects; run the minimum checkpoint proof; write a durable handoff; rotate; if no safe seam can be reached, quarantine/reconcile rather than pretending completion.",
+   "source_ref": "source-001.md#s5.5-landing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R055",
+   "text": "Before every spawn create two linked records. Worker-facing assignment: unique assignment and parent task IDs; exact question or change; why it is necessary; read-only/review-only/write role; permitted files/directories/tools; prohibited areas and external effects; expected deliverable and return schema; concrete good-enough acceptance criteria; required tests/evidence; natural intermediate checkpoints; instructions to report blockers/loss of coherence/material scope discovery honestly; whether checkpoint/commit is allowed; extension-request protocol; unrelated-discovery instructions; handoff requirements. Controller-only supervision envelope: structural size class and cohesion rationale; graph neighborhood, expected files/symbols/tests, ownership/write lease; measured or estimated startup overhead and context-packet reuse plan; resolved model and context size; telemetry sources and confidence; private health bands and platform emergency ceiling; no-progress, repeated-attempt, and scope-drift detectors; natural landing opportunities; extension decision criteria; evidence Codex should inspect on health change.",
+   "source_ref": "source-001.md#s6-records",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R056",
+   "text": "Never paste the supervision envelope's numeric counters or thresholds into the worker prompt; it is controller policy, not part of the engineering problem.",
+   "source_ref": "source-001.md#s6-records",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R057",
+   "text": "Goldilocks sizing: do not spawn when the work is so small that startup/context rereading likely costs more than the main session or resuming a suitable existing subagent; do not spawn work combining several independent outcomes or write boundaries; prefer one meaningful cohesive ownership unit completable, testable, and summarizable without repeated parent coordination.",
+   "source_ref": "source-001.md#s6-goldilocks",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R058",
+   "text": "Account for documented subagent startup behavior (isolated context; receives task message, CLAUDE.md hierarchy, agent prompt/skills, git snapshot — not the parent's conversation): when follow-up work is the same coherent assignment and the prior subagent remains healthy, resume the same resumable subagent; do not resume an overloaded or confused context merely to save startup cost; use a fork only when inheriting parent context and prompt-cache reuse are genuinely beneficial and the parent context is clean; do not fork a bloated parent by default.",
+   "source_ref": "source-001.md#s6-startup",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R059",
+   "text": "Use the primary Fable session for cross-cutting architecture, frequent decisions, final integration, and synthesis; route self-contained exploration, test-log processing, focused implementation, or independent review to the least-capable configured model that has demonstrated it can satisfy that assignment (including 4.8/lower-tier subagents where appropriate); model cost alone never justifies assigning a smaller-context model a job that will not fit coherently.",
+   "source_ref": "source-001.md#s6-routing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R060",
+   "text": "Retain the existing producer concurrency cap of no more than three producers at once (fewer by default); additional agents are sequential or read-only reviewers; never permit overlapping write leases over the same files, subsystem, migration, branch, or shared mutable resource; parallelism only when independence is demonstrated.",
+   "source_ref": "source-001.md#s6-concurrency",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R061",
+   "text": "Prefer subagents for verbose self-contained work whose transcript should stay out of the primary context; prefer the main conversation for short work requiring frequent shared decisions; subagents return a bounded evidence summary, artifact references, and unresolved questions — not an entire transcript.",
+   "source_ref": "source-001.md#s6-transcripts",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R062",
+   "text": "A subagent may correct its own prior mistake within the same cohesive scope; the controller watches repeated-attempt and no-progress signals without telling the worker to ration itself; a correction changing the architectural boundary, expected work size, permissions, or acceptance criteria requires the extension gate; 'I found another problem' is not an unlimited renewal.",
+   "source_ref": "source-001.md#s6-selfcorrect",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R063",
+   "text": "Extension gate: at a contract boundary, materially larger discovery, or desired long investigation, the subagent returns or emits: what it has proven; what remains uncertain; why the extra work blocks the current acceptance criterion; the least costly next experiment; the additional scope, likely evidence sources, and natural completion point; whether resuming this context or a new bounded unit is more coherent; consequences of stopping now; a durable partial checkpoint if it changed anything. The read-only Codex supervisor approves or denies only that bounded extension; default to deferring discoveries into the task graph/backlog unless they block correctness, security, data integrity, or the current acceptance criterion.",
+   "source_ref": "source-001.md#s6.1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R064",
+   "text": "Define progress by durable evidence (narrowed hypothesis, reproduced failure, passing/failing regression test, reviewed design decision, bounded diff, completed graph node, reconciled external effect, verified checkpoint); text volume and tool activity alone are not progress; detect repeated commands, repeated hypotheses, cycling test failures, unbounded searches, and successive summaries with no new evidence; trigger landing/extension review when no-progress thresholds are crossed regardless of tokens used.",
+   "source_ref": "source-001.md#s6.2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R065",
+   "text": "Parent/child turnover: when the primary session rotates, existing subagents finish only their already-bounded cohesive assignments while external evidence shows healthy contexts — no new children, no broadened scope; a child reaching its own landing condition receives one landing instruction and returns a durable partial handoff; a new primary session may orient read-only while old children drain but must not take a conflicting write lease or dispatch new writes until child work, commits, test processes, and external effects are reconciled; preserve exact-once ownership.",
+   "source_ref": "source-001.md#s6.3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R066",
+   "text": "A safe seam exists only when: the current tool/write batch is atomic or complete; the worktree and task lease have known ownership; in-flight tests/checks are recorded and complete or explicitly transferable; there is no unanswered permission request; every external effect is confirmed, not attempted, or durably marked ambiguous for reconciliation; child and background processes are known and reconciled; changed files, diffs, test evidence, decisions, risks, and remaining work are durably recorded; the next session can orient from durable artifacts without the entire transcript; no secret or untrusted output is copied into a new prompt. Never choose a seam by where prose looks complete.",
+   "source_ref": "source-001.md#s7-seam",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R067",
+   "text": "Each handoff contains the smallest complete packet: campaign/epoch/task/assignment IDs; authority and explicit prohibitions; frozen git identity (branch, base, head SHA, tree/diff identity, dirty-state description); current task goal and acceptance criteria; verified facts and evidence references; changes made and tests run; unresolved defects/questions; active or reconciled children; external-effect journal status; token/context health with source/confidence; exact recommended next bounded action; reasons the seam is safe. Do not silently truncate required evidence — use on-demand references or stop and report insufficiency.",
+   "source_ref": "source-001.md#s7-handoff",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R068",
+   "text": "Treat a Fable 5 guardrail refusal as a model-routing event only when it matches a narrowly recognized, tested response and the underlying owner-authorized task remains legitimate; never confuse it with a real security defect, a failed test, a permission denial, a credential/repository-policy boundary, an unknown approval prompt, or a genuinely prohibited request.",
+   "source_ref": "source-001.md#s8-classify",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R069",
+   "text": "Codex may automatically choose only the exact allowlisted model-continuation option that the installed Claude Code interface presents after a recognized Fable 5 guardrail refusal; Codex must never automatically click or answer arbitrary approvals, shell permissions, credential prompts, destructive confirmations, merges, or deployment prompts.",
+   "source_ref": "source-001.md#s8-actuation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R070",
+   "text": "Bridge sequence: (1) classify and journal the recognized refusal without unnecessary sensitive content, preserving task identity and exact authorization/acceptance criteria; (2) if the interface offers only continue-with-4.8 or stop, permit 4.8 as a temporary continuity bridge; (3) the bridge may finish the smallest current atomic operation, collect results of already-running bounded subagents, run necessary checkpoint validation, and create a durable handoff — it must not begin a new task/investigation, create subagents, broaden scope, or consume the campaign; (4) retire the bridge at the first safe seam and start a fresh Fable 5 session from durable verified artifacts.",
+   "source_ref": "source-001.md#s8-sequence",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R071",
+   "text": "Re-present the same legitimate task in clearer, neutral, context-complete language preserving exact purpose, authorization, constraints, and acceptance criteria; allow at most two fresh Fable 5 re-entry attempts for the same refused request, counted durably across restarts; no infinite Fable/4.8 ping-pong.",
+   "source_ref": "source-001.md#s8-reentry",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R072",
+   "text": "If both fresh Fable 5 attempts receive the same recognized refusal, an already-configured lower-tier model may continue that same bounded task under its stricter controller-only health profile and workload-fit rules; this never authorizes a different task, broader scope, new credentials, arbitrary permissions, or a protected action; if a live higher-precedence policy forbids even that narrow fallback, enter blocked, cite the exact conflict, and ask the owner to reconcile it; return to Fable 5 at the next safe seam for subsequent work unless explicit policy says otherwise.",
+   "source_ref": "source-001.md#s8-lowertier",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R073",
+   "text": "Clearer language means resolving ambiguity, stating the authorized defensive/development purpose, narrowing scope, and removing accidental trigger words that do not change meaning; it must never mean hiding prohibited intent, euphemisms to deceive a safety system, encoding or fragmenting a request to evade review, deleting a material constraint, or escalating authority; add tests proving semantic preservation and the two-attempt cap.",
+   "source_ref": "source-001.md#s8-language",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R074",
+   "text": "Review useful work produced by 4.8 exactly as any other producer output; do not assume correctness merely because it completed.",
+   "source_ref": "source-001.md#s8-review",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R075",
+   "text": "The guardrail-refusal bridge is distinct from quota or rate-limit exhaustion and authorizes automatic continuation only for the exact recognized guardrail-refusal choice; it does not supersede any live detect-and-hold policy for quota exhaustion (including D-007 amendment 12 / R603-R608 if authoritative); keep triggers, counters, state transitions, and tests distinct and record the precise supersession scope in the captured directive.",
+   "source_ref": "source-001.md#s8-quota",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R076",
+   "text": "Adopt a root-cause, replace-not-layer repair gate (not authorizing broad rewrites or deleting unrelated working code): for every defect task — reproduce the defect or establish a falsifiable failure condition; identify the root cause and smallest owning architectural boundary; characterize the correct behavior to preserve; add or identify a regression test failing for the defect for the right reason; explicitly choose direct repair (sound structure) or bounded replacement/refactor (wrong/duplicated/unsound path); implement one authoritative path; remove the obsolete implementation, dead callers, redundant wrappers, duplicate fallbacks, stale flags, and misleading tests/docs within the bounded component; run regression/integration/graph/compatibility tests appropriate to the boundary; prove via search/graph evidence that the obsolete path is no longer reachable.",
+   "source_ref": "source-001.md#s9-gate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R077",
+   "text": "A temporary dual path is allowed only when migration or compatibility genuinely requires it, and must have: a written reason; an owner/task identity; a measurable removal condition; telemetry showing which path is used; an explicit removal task and deadline/milestone; and tests preventing it from becoming the permanent default accidentally.",
+   "source_ref": "source-001.md#s9-dualpath",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R078",
+   "text": "At every Codex review checkpoint answer: root cause; whether old defective logic was removed rather than covered; whether there is now one authoritative path; which test proves the defect and would fail if the fix were removed; whether the change introduced a wrapper/fallback/flag/branch and why it is not patch stacking; when and how any temporarily retained old behavior will be removed. Codex rejects an unjustified new if/retry/wrapper/compatibility adapter/fallback around a known-bad path, and does not demand a broad rewrite when a direct root-cause fix is sufficient.",
+   "source_ref": "source-001.md#s9-review",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R079",
+   "text": "The existing graph system is a required subsystem: before editing it or an integration boundary, capture its current contracts, fingerprints, deterministic outputs, performance envelope, and tests; use it to select relevant tasks/dependencies, identify code neighborhoods/ownership, build the smallest complete context packet, retrieve deeper evidence on demand, keep verbose subagent work out of the primary context, and record newly discovered work without silently expanding the current assignment.",
+   "source_ref": "source-001.md#s10-preserve",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R080",
+   "text": "The graph is an index and planning aid, not final authority; owner directives, the durable task/lease ledger, git identity, CI evidence, and explicit policy remain authoritative; detect and report stale graph data rather than acting on it as fact.",
+   "source_ref": "source-001.md#s10-authority",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R081",
+   "text": "Retain the existing adaptive packet tiers and their current limits unless live repository rules supersede them; never omit required security, legal/authority, acceptance, primary-source, or identity evidence to fit a packet; use bounded excerpts, summaries with provenance, and on-demand references; no full-repository dump and no full-transcript dump.",
+   "source_ref": "source-001.md#s10-packets",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R082",
+   "text": "Add regression tests proving this work does not change graph results, task ordering, packet sufficiency, deterministic identities, or stale-data behavior except where a documented, reviewed requirement intentionally changes them.",
+   "source_ref": "source-001.md#s10-tests",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R083",
+   "text": "Implement project-level, user-invoked operator commands on supported installed versions — /loop-status, /loop-tasks, /loop-ask <question>, /loop-pause [reason], /loop-resume, /loop-stop, /loop-emergency-stop — marked user-only/non-model-invokable (locally supported equivalent of disable-model-invocation: true); do not implement them as ordinary prompt-based custom commands; /btw is not a substitute (it talks to Claude, not the external Codex supervisor).",
+   "source_ref": "source-001.md#s11-commands",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R084",
+   "text": "Feature-detect the interception path on the installed version: prefer a narrowly matched UserPromptExpansion hook where its required behavior is supported; otherwise test whether the installed UserPromptSubmit hook can exact-match the literal /loop-* input, return decision block, erase the prompt from model context, and display the bounded result via its user-visible reason; use whichever live-tested pre-model path satisfies the complete zero-context contract; the hook intercepts only these exact command names, invokes the local operator bridge with safe argument/stdin handling, and consumes the command before it becomes a Fable prompt; no routine telemetry via additionalContext.",
+   "source_ref": "source-001.md#s11-interception",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R085",
+   "text": "/loop-status and /loop-tasks normally read durable state directly with no model call; /loop-ask sends the question to the external read-only Codex supervisor with only a bounded current-state/evidence packet, grants no mutation tools, and returns a concise terminal answer; if the answer cannot complete within a short configured window, return a durable request ID retrievable later without blocking the producer indefinitely.",
+   "source_ref": "source-001.md#s11-behavior",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R086",
+   "text": "Pause/stop commands update durable control state before acknowledging; the producer observes them through the external controller, not a conversational prompt; emergency stop cancels dispatch, prevents lease renewal, terminates safely terminable children, marks ambiguous effects for reconciliation, and requires explicit resume/recovery.",
+   "source_ref": "source-001.md#s11-control",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R087",
+   "text": "Secure the bridge: exact command matching (not substring); no shell interpolation of the owner's question; bounded input/output sizes; safe UTF-8 and metacharacter handling; repository-root and campaign identity validation; local authorization appropriate to the environment; timeouts and cancellation; redaction of secrets and untrusted terminal control sequences; read-only Codex tools; no arbitrary command execution; no background duplicate requests after a timeout; auditable but privacy-bounded request metadata.",
+   "source_ref": "source-001.md#s11-security",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R088",
+   "text": "Test and prove the intercepted command and its answer do not enter the Fable transcript or increase its conversational context; if the installed Claude Code version cannot provide the required pre-model interception/display behavior, do not fake it — provide a clearly documented second-terminal path using the existing supervisor CLI's status operation plus a new ask operation implemented by this directive (inspect the live CLI rather than assuming ask exists); keep the hook feature-detected, report the version requirement, and select the final supported path by actual installed-version tests.",
+   "source_ref": "source-001.md#s11-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R089",
+   "text": "Test the commands while Claude is idle and while a producer response is active; they must not cancel or corrupt active work; if the installed CLI queues custom slash input until the active response ends, document that fact and make the second-terminal status/ask/pause/stop controls the immediate path; do not advertise queued behavior as real-time control.",
+   "source_ref": "source-001.md#s11-active",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R090",
+   "text": "The loop may automatically publish permitted progress but Fable — not Codex — performs repository mutations, reusing the current branch/worktree/PR policy. At minimum: never write directly to a protected/default branch; never force-push unless existing explicit owner policy authorizes the exact case; use collision-free task branches/worktrees with known base/head identities; keep writers isolated; run required local checks before commit/push; journal every external intent before attempting it and record the confirmed result afterward; on crash/timeout reconcile remote state before retrying; make comments, pushes, PR creation/updates, and successor launch idempotent; never expose credentials in prompts, logs, diffs, process arguments, status output, or Codex review packets; never allow untrusted repository text to broaden permissions; never merge or deploy merely because a check passed; retain the owner's activation and protected-action gates.",
+   "source_ref": "source-001.md#s12-rules",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R091",
+   "text": "Each pushed checkpoint maps to a bounded accepted task with enough evidence to review; do not accumulate one giant diff; do not drip-feed reviewers one finding at a time — complete the bounded implementation, freeze its identity, gather independent reviews, consolidate all findings, run one coordinated correction round, freeze a new identity, and re-review.",
+   "source_ref": "source-001.md#s12-batching",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R092",
+   "text": "Every model call receives the smallest complete packet for its role: exact bounded task and acceptance criteria; applicable authority and prohibitions; frozen identity/evidence references; graph-selected relevant files and symbols; known decisions and current risks; requested return schema. No full historical conversations, complete subagent transcripts, whole logs, or unrelated repository files; preserve provenance and allow on-demand reads; explicitly mark omitted material and why; if packet sufficiency cannot be proven, stop rather than silently remove a required constraint.",
+   "source_ref": "source-001.md#s13-packet",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R093",
+   "text": "Review packets are independently reconstructed from durable evidence, not copied from the producer's self-assessment; Codex sees the producer summary as a claim to verify, not as truth.",
+   "source_ref": "source-001.md#s13-review",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R094",
+   "text": "Maintain a bounded durable status record sufficient to answer, without waking Fable: campaign ID and state; whether start/pause/stop/emergency-stop is active; controller lease owner and expiry; current epoch and primary model/session; current task, bounded unit, branch/worktree, and frozen git identity; why the task is eligible and selected; active subagents with roles, scopes, structural size classes, private health state, progress, and child state; live context occupancy and cumulative usage with source/confidence; compaction count and last compact boundary; elapsed time, turns/tool batches, last durable progress, and no-progress state; fallback/re-entry count and current model tier; tests/checks running or complete; pending/confirmed/ambiguous external effects; latest review result; last checkpoint and next safe seam; next intended bounded action; blockers and owner action if any.",
+   "source_ref": "source-001.md#s14-record",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R095",
+   "text": "Keep terminal status concise and human-readable by default with a verbose/JSON diagnostics option; do not spam the owner or the model; update on meaningful transitions; make on-demand status authoritative.",
+   "source_ref": "source-001.md#s14-terminal",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R096",
+   "text": "Design milestone/status events behind a small notification-sink interface so an owner-authorized email or other remote notifier can be added later without changing controller logic; terminal/on-demand reporting is the required implementation now; do not configure or send email in this scope without a separate recipient and credential authorization.",
+   "source_ref": "source-001.md#s14-sink",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R097",
+   "text": "Translate this directive into collision-free tasks under the repository's current task system, adapting names to the live architecture while preserving the phase dependencies; do not combine phases into an unreviewable giant change; do not create a new framework when the current architecture can be extended cleanly.",
+   "source_ref": "source-001.md#s15-tasks",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R098",
+   "text": "A task, session, and subagent assignment are different boundaries — do not make every task ID require a fresh model session; choose seams from workload cohesion, verified health, write-lease safety, and handoff quality; resume a healthy context when it avoids repeated repository read-in and keeps one coherent assignment together; rotate when the context is unhealthy, confused, materially out of scope, at a safe seam, or required by policy; do not restrict healthy-context reuse to a single phase or create avoidable startup churn.",
+   "source_ref": "source-001.md#s15-seams",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R099",
+   "text": "Phase A: capture the directive and create the requirement-to-test matrix; pass Bootstrap Gate 0 from the session's actual primary working directory, then reconcile the actual workstation repository, linked worktrees, local/dirty/unpushed state, and remote state (imported-snapshot findings labeled historical until then); map current components and reusable behavior including the supervisor-freeze rule and qualifying-evidence path; verify installed CLI/SDK/hook capabilities and platform constraints — probe subagentStatusLine, UserPromptExpansion, and exact UserPromptSubmit blocking/display/context-erasure behavior rather than inferring support; record capability-probe results as deterministic fixtures (supported/unsupported/nullable/unknown) before changing control behavior; add deterministic fixtures for current state, event formats, and failure cases; prove the bootstrap continuity path before the longest implementation units — use the existing accepted supervisor/successor machinery in supervised implementation mode if safe and authorized, otherwise implement and validate the smallest safe bootstrap-continuity slice first, persisting campaign, next action, frozen identity, and handoff so successor sessions continue from this one directive without owner re-prompting.",
+   "source_ref": "source-001.md#s15-A",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R100",
+   "text": "Phase B (passive observability in shadow mode): typed telemetry records, source/confidence labels, atomic sidecar/journal writes, redaction, bounds, rotation; primary status-line ingestion without model-context injection; subagentStatusLine ingestion for task identity/status/model/token count/samples/context-window size on supported versions; Agent SDK task-started/progress/notification ingestion where supported; lifecycle-hook ingestion and subagent identity tracking; main-loop SDK/provider usage ingestion where supported; conservative subagent transcript derivation only as feature-detected fallback; read-only status exposed with actuation off; measurements compared against manual diagnostics in tests/canaries, not continuous production prompts.",
+   "source_ref": "source-001.md#s15-B",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T088",
+     "M0-T089"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T088",
+     "M0-T089"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R101",
+   "text": "Phase C (workload sizing and bounded subagent contracts): separate worker-facing assignment and controller-only supervision-envelope schemas; the main-session/cohesive-subagent/oversized/unknown structural classifier using the existing graph and evidence; startup/read-in overhead measurement teaching the scheduler when to keep work in the main session, resume a healthy existing subagent, or spawn; enforcement of scope, write leases, concurrency cap, invisible health bands, no-progress rules, and extension requests; graph-based sizing and context-packet construction; sparse landing direction, emergency task stop, and durable child handoffs.",
+   "source_ref": "source-001.md#s15-C",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R102",
+   "text": "Phase D (controller, seams, exact-once succession): implement/extend the durable state machine and renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence; safe-seam detection and handoff validation; exact-once primary-session rotation and crash reconciliation; prevention of overlapping write successors while allowing bounded read-only orientation.",
+   "source_ref": "source-001.md#s15-D",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R103",
+   "text": "Phase E (guardrail fallback policy): exact refusal classification and allowlisted model-continuation actuation; mechanically restricted 4.8 bridge; first-safe-seam return to fresh Fable 5; semantic-preserving re-presentation and durable two-attempt cap; lower-tier continuation or blocked behavior according to current owner policy.",
+   "source_ref": "source-001.md#s15-E",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R104",
+   "text": "Phase F (operator channel): canonical start/status/control/ask CLI operations; feature-detected pre-model slash interception for the Claude Code terminal; proof of zero Fable-context pollution for intercepted commands; secure synchronous and durable asynchronous Codex-question handling.",
+   "source_ref": "source-001.md#s15-F",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R105",
+   "text": "Phase G (repair-quality gate and GitHub integration): root-cause/replace-not-layer review evidence and compatibility-exception tracking; integration into Codex review and task acceptance; confirmation that automatic checkpoint/branch/PR updates comply with effect journaling and current authority.",
+   "source_ref": "source-001.md#s15-G",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R106",
+   "text": "Phase H (integrated canaries, independent review, activation package): fault-injected deterministic suites; shadow mode against real sessions; a disposable bounded canary with subagents and forced rotations/fallback simulations; crash/restart and ambiguous-effect recovery; a real but low-risk repository task end to end; all independent reviews against frozen identities; consolidated findings, one correction, re-review of the corrected frozen identity; continuous mode default-off until the required owner activation checkpoint unless a current explicit owner directive already authorizes activation. Phase H is incomplete without the section-18 golden end-to-end readiness run; isolated passing tests are not a substitute for observing the complete control loop across consecutive units.",
+   "source_ref": "source-001.md#s15-H",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R107",
+   "text": "Implement the full section 16.1 telemetry and context test matrix (installed-capability probe fixtures; SDK-absent skip without side-effect install; status payload completeness and null/missing fields; counters and rate-limit fields; multi-task subagentStatusLine payloads; older-version tolerance; refresh cancellation/overlap safety; SDK task lifecycle events; fragmented/duplicated/delayed/reordered/unknown events; atomic-write interruption; journal rotation and retention; redaction; per-step vs cumulative usage; final-totalTokens caveat; transcript-derived counts with compact-boundary preTokens; multiple compactions and resumption; counter reset not appearing fresh; unknown-not-zero; occupancy vs cumulative separation; /context comparison as opt-in diagnostic only; no telemetry additionalContext or routine prompts; worker assignments free of numeric quotas/countdowns; Codex review usage and context rotation), using fakes and accelerated counters; bounded real canaries supplement but never replace deterministic tests.",
+   "source_ref": "source-001.md#s16.1",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R108",
+   "text": "Implement the full section 16.2 subagent contract and supervision test matrix (vague/oversized rejection or split; tiny work stays in main session; healthy-resume over second startup; overloaded context not resumed; fork only when beneficial; cohesive unit not fragmented; cross-boundary split; unknown work gets reconnaissance first; startup metrics measured for calibration; lower-tier only when context and capability fit; more than three producers rejected; overlapping lease denial; independent read-only agents; scope drift produces extension request; unrelated discoveries become backlog; blocking discovery requests least costly extension; Codex approves/denies without editing; repeated-search/hypothesis/failure no-progress handling; no worker-visible countdown; forty-minute-equivalent low-value investigation landed or denied in accelerated time; high-usage coherent near-complete work reaches its seam; low-usage speculation triggers review; observe/prepare-to-land/land behaviors; TaskStop reserved for emergencies; hard ceilings not routine sizing with catastrophic-ceiling recovery proof; child completion during parent landing; child landing handoff; child API failure explicit; nested children cannot evade caps/leases/policy; parent rotation without overlapping writers; verbose transcript stays out of primary context; sparse durable in-authority course correction).",
+   "source_ref": "source-001.md#s16.2",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T090",
+     "M0-T091",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R109",
+   "text": "Implement the full section 16.3 safe-seam, state-machine, and recovery test matrix (normal completion seam; landing after health change; emergency boundary with bounded grace; pending test/permission/subagent prevent false seams; confirmed/failed/ambiguous external effects; crash at every effect-journal window; restart reconciles rather than duplicates; controller lease race with exactly one winner; successor launch race with exactly one active; stale process/lease recovery; pause during running/landing/review/recovery; graceful stop at next seam; emergency stop wins over queued resume/dispatch; restart preserves stop intent; no-eligible-work bounded idle; Codex CLI/SDK preflight proving transport, authentication presence without credential exposure, structured event/decision format, read-only enforcement, timeout/cancellation, and exact thread/session identity; Codex cannot mutate even when prompted or asked by untrusted repository text; missing/malformed/schema-invalid/timed-out/identity-mismatched Codex output fails closed and dispatches nothing; transient failure bounded durable backoff resuming exactly once; hard auth/billing/access/retry-exhaustion failure enters blocked with usable handoff; controller-process death detected and recovered without duplicates; activated host-restart relaunches or truthfully blocks and resumes the same campaign without duplicate effects; a session launched outside the intended worktree fails Bootstrap Gate 0 even when the repository is reachable through an added working directory or absolute path and performs no repository mutation; a session with an attached user-level or host-provided MCP connector fails closed unless the live effective policy proves that connector is denied or explicitly allowlisted, the mere existence of project default-deny files being insufficient; a correctly rooted session with exactly the approved MCP set passes the gate, records the effective evidence, and can safely adopt rather than overwrite pre-existing uncommitted bootstrap work).",
+   "source_ref": "source-001.md#s16.3",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T092",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T092",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R110",
+   "text": "Implement the full section 16.4 Fable refusal and 4.8 bridge test matrix (exact recognized refusal; quota exhaustion follows its separate live detect-and-hold policy and cannot enter the bridge; unrecognized-similar output does not actuate; real security test failure not classified as refusal; unknown approval prompt never auto-approved; exact allowlisted continue-with-4.8 selectable; bridge cannot start new task/investigation/subagent; existing bounded subagents finish and reconcile; bridge lands at first valid seam; good bridge output still reviewed; defective bridge output rejected; fresh Fable 5 receives complete bounded handoff; re-presented request preserves purpose/authority/prohibitions/criteria; first re-entry success; two refusals trigger configured lower-tier/blocked behavior; attempt count survives restart; no ping-pong or duplicate primary; subsequent task returns to Fable 5 at next seam).",
+   "source_ref": "source-001.md#s16.4",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T093",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T093",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R111",
+   "text": "Implement the full section 16.5 slash/operator channel test matrix (UserPromptExpansion interception where supported; UserPromptSubmit exact-match/block/user-visible-output/prompt-erasure/no-context-insertion; similar ordinary text not intercepted; /loop-status without model call; /loop-ask reaches read-only Codex not Fable; question and answer absent from transcript/context; context usage unchanged within measurable noise; empty/large/Unicode/quoted/multiline/metacharacter-rich questions safe; shell metacharacters cannot execute; terminal-control characters escaped; timeout creates at most one durable request with no zombie duplicate; concurrent asks get distinct IDs and bounded answers; no mutation via ask; pause/stop durable before confirmation; hook failure fails closed pointing to second-terminal CLI; unsupported version selects documented fallback instead of claiming zero-context; active-response behavior tested with queued behavior distinguished from immediate second-terminal control; Windows and Unix path/process/quoting).",
+   "source_ref": "source-001.md#s16.5",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T094",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T094",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R112",
+   "text": "Implement the full section 16.6 root-cause replacement test matrix (wrapper-around-defective-path rejected; direct root-cause repair accepted without forced rewrite; bounded replacement removes old reachable logic; search/graph test catches stale callers and duplicate fallbacks; regression test fails if fix removed; compatibility exception requires owner, removal condition, telemetry, and removal task; expired compatibility path blocks acceptance; unrelated working code preserved).",
+   "source_ref": "source-001.md#s16.6",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R113",
+   "text": "Implement the full section 16.7 graph/context regression test matrix (fingerprints and deterministic order stable absent intentional change; correct neighborhood/dependency selection; stale graph data detected and not authoritative; smallest complete packet tier; required authority/security/acceptance evidence cannot be silently truncated; on-demand retrieval after compact handoff; no default full transcript/repository copying; new discoveries enter the task graph without expanding the active contract).",
+   "source_ref": "source-001.md#s16.7",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R114",
+   "text": "Implement the full section 16.8 GitHub and external-effect test matrix (correct branch/base/head identity; protected/default-branch writes rejected; overlapping worktree writer rejected; commit/push after required checks; remote-success/local-timeout reconciled on restart; duplicate PR/comment/update idempotent; frozen diff identity change invalidates prior review; no credentials anywhere; Codex cannot stage/commit/push/merge; pre-existing PRs not merged without explicit authority; expected-open/deliberately-unmerged/stale PRs classified separately with no snapshot silently closing/merging/redefining live status; failed checks block per policy; a supervisor-freeze fixture rejects an uncited tools/agent_supervisor change and accepts only a task carrying this directive's qualifying requirement evidence).",
+   "source_ref": "source-001.md#s16.8",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R115",
+   "text": "Implement the full section 16.9 long-run and usability test matrix (multiple renewable epochs with forced rotations; mixed Fable/4.8 sequence; multiple bounded subagents without parent flooding; mixed main-session/healthy-resume/fresh-spawn sequence proving startup overhead considered; extended pause and clean resume; owner status/ask while producer running; crash/restart during overnight-equivalent accelerated campaign; bounded real soak/canary under the current reliability standard; idempotent no-duration one-command start; status clarity; stop leaving coherent resumable checkpoint; the implementation campaign itself crossing at least one primary-session turnover from the captured directive without owner re-prompting; a golden run of two consecutive bounded units from one start action — Codex selects, Fable produces, tests/checkpoints run, Codex reviews the frozen result, state advances, Codex selects the next unit without owner steering — crossing at least one safe primary-session rotation and one injected controller restart, then continuing without duplicated work, lost children, or conflicting writers).",
+   "source_ref": "source-001.md#s16.9",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R116",
+   "text": "Independent review gates: no agent both produces and certifies the same change; obtain independent coverage for implementation correctness and tests; security boundaries, prompt/untrusted-input handling, credential isolation, and automatic-approval restrictions; control-plane state machine, leases, exact-once succession, crash recovery, and external-effect reconciliation; token/context accounting and subagent supervision; directive completeness and requirement-to-test traceability; graph/context-system preservation; Windows and Unix behavior; operator usability and truthful status reporting. All reviewers examine the same frozen branch/head/tree or patch identity; findings are consolidated before remediation; one coordinated correction round through Fable; corrected identity frozen; affected tests rerun; final re-review obtained; a later identity change invalidates acceptance appropriately.",
+   "source_ref": "source-001.md#s17",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R117",
+   "text": "Codex review output is structured and bounded: verdict, frozen identity, evidence checked, findings by severity, missing proof, patch-stacking answers, authority concerns, and exact next action; Codex does not fix its own findings.",
+   "source_ref": "source-001.md#s17-output",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R118",
+   "text": "Keep dangerous or autonomous actuation default-off while building, using current feature-flag/configuration and owner-activation conventions; progress through: deterministic simulation; read-only shadow telemetry; supervised local canary with fake GitHub/external effects; disposable bounded real-session canary; crash/restart and forced-fallback canary; one low-risk real repository task on a non-protected task branch; the two-unit golden end-to-end readiness run (at least one unit a low-risk real repository task; another may be a disposable integration unit if the authorized graph has only one suitable real canary) exercising Codex selection, Fable production, bounded subagent work, tests, checkpoint/commit, permitted branch push, frozen-identity Codex review, correction or acceptance, safe primary-session turnover, exact next-unit selection, status/ask, pause/resume, and injected controller recovery; an OS-appropriate restart/resume canary or equivalent launcher proof for the activated workstation configuration; the repository's required bounded soak/reliability proof; independent final review; the owner activation checkpoint.",
+   "source_ref": "source-001.md#s18-ladder",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R119",
+   "text": "Do not burn a huge live token budget merely to reach private health bands; use accelerated deterministic counters for boundary tests; the real canary validates integration and behavior, not simulating 800,000 tokens by waste.",
+   "source_ref": "source-001.md#s18-economy",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R120",
+   "text": "After activation, overall operation may be continuous but the internal bounded rules remain mandatory: there is no unlimited-subagent, unlimited-session, ignore-hard-stop, or keep-trying-until-something-works mode.",
+   "source_ref": "source-001.md#s18-bounded",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R121",
+   "text": "The golden run must begin through the exact command that will be handed to the owner; except for deliberately exercising the owner controls, no human message may select the next task, tell Fable to continue, repair state, restart a model session, approve an unknown prompt, or move the campaign between its two units; if human rescue is needed, fix the system and repeat the golden run from a clean, frozen identity.",
+   "source_ref": "source-001.md#s18-golden",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R122",
+   "text": "Do not report this directive complete until every applicable section-19 completion criterion is true and evidenced, including: live-repository reconciliation with reuse over duplication; capture and implementation sessions passing Bootstrap Gate 0 from their actual primary worktree roots with the effective MCP server set proven clean before repository mutation; mechanically enforced role boundaries; version-probed structured read-only schema-validated identity-bound fail-closed Codex transport; documented no-duration one-command start; idempotent start over bounded renewable epochs; durable status/pause/resume/graceful-stop/emergency-stop; zero-context /loop-status and /loop-ask on supported versions with truthful fallback; passive measurement with explicit source/confidence and no false cumulative interpretation; subagentStatusLine and SDK ingestion where supported; occupancy/cumulative separation; workload sizing as primary prevention with joint multi-signal landing control; bounded assignments with separate supervision envelopes and extension gates; no worker-facing token quotas/countdowns; a scheduler avoiding micro-churn and mega-assignments that measures startup overhead and resumes healthy subagents; producer concurrency at most three with overlapping writers prevented; turnover reconciling children and effects; narrowly allowlisted 4.8 bridge with first-safe-seam return, semantic preservation, and a two-attempt cap; unknown permissions never auto-approved; root-cause repair preventing patch stacking; functional regression-tested graph system; Fable-only GitHub progress under current rules; exact-once crash recovery with stop intent surviving restart; the campaign surviving primary-session turnover from the one captured directive without owner re-prompting; the exact owner start command passing the two-unit golden run without human continuation; controller recovery and the activated host-restart/auto-resume path proven without duplicate work (or the loop truthfully reported not fully unattended); bounded-backoff recovery from transient failures with safe stops on hard failures; passing deterministic tests, platform tests, canaries, and required soak proof; independent reviewers accepting one frozen corrected identity; no secret exposure or unauthorized merge/deploy; continuous activation remaining behind the owner gate until explicit activation.",
+   "source_ref": "source-001.md#s19",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R123",
+   "text": "When implementation and all authorized validation are complete, return one concise owner-facing handoff containing: (1) what was implemented in plain language; (2) what was reused from the prior system; (3) the exact one-line command for 'Start the agent loop'; (4) the exact status, ask-Codex, pause, resume, graceful-stop, and emergency-stop commands; (5) whether the installed version supports true pre-model slash interception; (6) the workload-sizing rules and private Fable 5/lower-tier context-health policy now active, including confirmation that workers do not receive token countdowns; (7) how an oversized or drifting subagent is stopped or extended; (8) how the 4.8 bridge and two Fable re-entry attempts work; (9) how root-cause replacement is enforced; (10) the branch, head SHA, frozen diff/tree identity, PR/check links, and test evidence; (11) independent review verdicts and the identity they reviewed; (12) golden-run evidence showing two consecutive units, autonomous next-unit selection, session turnover, controller recovery, and the exact command used; (13) the exact proven clean-session launch command, primary worktree root, and effective MCP server list; (14) the activated workstation's host-restart behavior and any remaining owner activation step or genuine blocker. Do not bury the commands; do not call the loop ready if commands are placeholders, the zero-context claim is untested, subagent cumulative usage is guessed but presented as exact, a reviewer inspected a different identity, the golden run needed human continuation, host recovery is merely assumed, or activation still depends on undocumented manual repair.",
+   "source_ref": "source-001.md#s20",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R124",
+   "text": "Verify every section-21 capability reference against installed versions using official primary documentation and local CLI help; if a capability differs in the installed version, feature-detect it, test the actual behavior, retain the safety property, and document the supported fallback; never silently substitute an ordinary model prompt for a promised out-of-band control.",
+   "source_ref": "source-001.md#s21",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T086",
+     "M0-T087"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R125",
+   "text": "Bootstrap Gate 0 (launch root): before creating or editing any repository file, committing, pushing, claiming a task, or starting implementation, prove that the Claude Code process itself was launched with its primary current working directory at the intended repository/worktree root; access through /add-dir, an additional working directory, an absolute path, or a worktree created after session launch does not satisfy this gate, because project instructions, settings, hooks, session identity, and MCP scope can depend on the launch directory.",
+   "source_ref": "source-001.md#bootstrap-gate-0",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R126",
+   "text": "Bootstrap Gate 0 (MCP-clean): enumerate the MCP servers/connectors actually attached to the live session and prove that the repository's current default-deny policy governs every relevant source, including user-level, project-level, plugin-provided, managed, and host-provided connectors; the presence of a project policy file is not proof that an already attached user-level connector is denied; verify the installed-version behavior through local help, configuration inspection, /mcp or its supported equivalent, and a non-mutating probe; where the repository's approved launch design uses the installed equivalents of --strict-mcp-config and an explicit MCP configuration, verify that the resulting live server list is exactly the allowlisted set.",
+   "source_ref": "source-001.md#bootstrap-gate-0",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R127",
+   "text": "If either the primary-root check or MCP-clean check fails or remains unknown: do not treat 'the control plane is usable' as a pass; do not use any ambient MCP connector; do not create/edit repository files, claim tasks, commit, push, or continue implementation; perform only bounded read-only diagnosis and produce a terminal-visible handoff containing the actual launch directory, intended worktree root, dirty/uncommitted paths already present, installed-version-supported clean launch command, and exact verification steps; stop at the safe seam and require a fresh session launched correctly at the intended root.",
+   "source_ref": "source-001.md#bootstrap-gate-0",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R128",
+   "text": "A fresh session must independently pass Bootstrap Gate 0 before adopting uncommitted work from a failed-start session; never rewrite history or discard that work merely to obtain a clean status.",
+   "source_ref": "source-001.md#bootstrap-gate-0",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-24"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M0-T086",
+     "M0-T087",
+     "M0-T088",
+     "M0-T089",
+     "M0-T090",
+     "M0-T091",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

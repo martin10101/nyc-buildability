@@ -1,0 +1,68 @@
+{
+ "task_id": "M0-T093",
+ "title": "D-024 E: guardrail-refusal classification + bounded 4.8 bridge",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Implement the section-8 policy: exact recognized Fable 5 guardrail-refusal classification (never confused with security test failures, permission denials, credential boundaries, unknown prompts, genuine prohibited requests, or quota/rate-limit exhaustion - which keeps its separate live detect-and-hold policy, D-007 am.12/R603-R608 if authoritative); allowlisted-only automatic continuation choice; mechanically restricted 4.8 bridge (finish smallest atomic operation, collect bounded children, checkpoint, durable handoff; no new tasks/investigations/subagents/scope); first-safe-seam retirement to fresh Fable 5; semantic-preserving re-presentation (clarify, never evade or de-authorize) with tests proving semantic preservation; durable two-attempt re-entry cap surviving restart; configured lower-tier continuation or blocked per live policy; bridge output reviewed like any producer output. Supervisor-freeze qualifying evidence: D-024-R103 (Phase E).",
+ "business_reason": "D-024 sections 8, 15-E, 16.4: refusal handling must be narrow, tested, durable, and never a safety-evasion or infinite ping-pong path.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+ ],
+ "outputs": [
+  "refusal classifier + bridge restrictions + re-entry counter under tools/agent_supervisor",
+  "tools/test_agent_supervisor_guardrail_bridge.py (section 16.4 matrix incl. quota-vs-refusal separation, semantic preservation, restart-surviving attempt count)",
+  "project-control/reports/M0-T093-guardrail-bridge.md"
+ ],
+ "dependencies": [
+  "M0-T092"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_guardrail_bridge.py",
+  "project-control/reports/M0-T093-guardrail-bridge.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "services",
+  "supabase",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-24T12:35:22+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+}

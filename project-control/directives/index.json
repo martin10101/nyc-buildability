@@ -333,7 +333,31 @@
     "M0-T085"
    ],
    "manifest": "D-023-bounded-autonomy-campaign/manifest.json"
+  },
+  {
+   "directive_id": "D-024",
+   "slug": "fable-codex-loop",
+   "title": "Fable-Codex continuous agent loop: implement, test, independently review, and prepare for owner activation a durable continuous agent loop in which Fable 5/Claude Code is the sole producer, bounded subagents do scoped work under workload-first supervision without worker-visible token quotas, Codex is an external read-only supervisor/reviewer with a version-probed fail-closed transport, the owner has a no-duration one-command start plus durable status/ask/pause/resume/graceful-stop/emergency-stop controls and zero-context /loop-* terminal commands, continuity is a renewable sequence of bounded epochs with exact-once succession and crash/host-restart recovery, a narrowly allowlisted 4.8 guardrail bridge with a durable two-attempt cap, root-cause replace-not-layer repair gating, preserved graph/context intelligence, Fable-only GitHub effects under existing authority, and activation held behind the owner gate until a two-unit golden end-to-end readiness run from the exact owner start command passes without human continuation (revision 2026-08-24, workload-first subagent supervision).",
+   "status": "active",
+   "issued_at": "2026-08-24",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T086",
+    "M0-T087",
+    "M0-T088",
+    "M0-T089",
+    "M0-T090",
+    "M0-T091",
+    "M0-T092",
+    "M0-T093",
+    "M0-T094",
+    "M0-T095",
+    "M0-T096"
+   ],
+   "manifest": "D-024-fable-codex-loop/manifest.json"
   }
  ],
- "updated_at": "2026-08-19T18:30:00+00:00"
+ "updated_at": "2026-08-24T12:33:20+00:00"
 }

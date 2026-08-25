@@ -1,0 +1,68 @@
+{
+ "task_id": "M0-T089",
+ "title": "D-024 B2: subagent telemetry breadth + read-only shadow status",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Extend passive observability to subagents: subagentStatusLine ingestion (task ID/status/description/model/context-window/token count/token samples as trend only; feature-detect absent fields; fast atomic sidecar update), Agent SDK task-started/progress/notification ingestion ONLY where the SDK is already approved and present (never installed for this directive; clean fallback otherwise), lifecycle-hook ingestion and subagent identity tracking, version-probed read-only transcript derivation as feature-detected fallback (fail to unknown, tolerate fragmentation/duplicates/compaction boundaries; final-result totalTokens never assumed cumulative); expose read-only status with actuation off; compare measurements against manual diagnostics in tests/canaries only. Supervisor-freeze qualifying evidence: D-024-R100.",
+ "business_reason": "D-024 sections 5.1-5.2, 15-B items 3-9: subagent supervision requires passive per-task usage evidence with honest confidence labels.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+ ],
+ "outputs": [
+  "subagentStatusLine/SDK/hook/transcript ingestion modules (feature-detected)",
+  "tools/test_agent_supervisor_subagent_telemetry.py (section 16.1 subagent cases incl. multi-task payloads, missing fields, no-cumulative-assumption proof)",
+  "project-control/reports/M0-T089-subagent-telemetry.md (shadow comparison vs manual diagnostics)"
+ ],
+ "dependencies": [
+  "M0-T088"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_subagent_telemetry.py",
+  "project-control/reports/M0-T089-subagent-telemetry.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "services",
+  "supabase",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-24T12:35:22+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+}

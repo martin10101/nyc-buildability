@@ -1,0 +1,68 @@
+{
+ "task_id": "M0-T092",
+ "title": "D-024 D: controller state machine, safe seams, exact-once succession, outage handling",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Extend the existing durable state machine to the full section-3 state set with renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence (owner stop intent survives restart and wins over queued/recovered work); safe-seam detection and handoff validation per section 7 (atomic batches, known lease ownership, recorded checks, no unanswered permission, external effects confirmed/not-attempted/ambiguous-marked, children reconciled, smallest-complete handoff packet, no silent truncation); exact-once primary-session rotation and controller-crash reconciliation (lease races have exactly one winner; watchdog restart without duplicates; bounded read-only orientation for new sessions while children drain); host-restart auto-resume via the repository's approved user-level startup mechanism or truthful activation-blocker reporting; Codex transport preflight (version-probed, structured, read-only, schema-validated, identity-bound, fail-closed - missing/malformed/timed-out/mismatched decisions dispatch nothing) with bounded-backoff durable retry for transient failures and blocked-with-handoff for auth/billing/compatibility failures; no-eligible-work bounded idle. Supervisor-freeze qualifying evidence: D-024-R102 (Phase D).",
+ "business_reason": "D-024 sections 2, 3, 7, 15-D, 16.3: continuity must be a renewable sequence of bounded epochs with exact-once succession, never an immortal process.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+ ],
+ "outputs": [
+  "state-machine/lease/seam/succession/backoff extensions under tools/agent_supervisor",
+  "tools/test_agent_supervisor_controller_succession.py (section 16.3 matrix incl. Gate-0 recovery cases, crash windows, lease races, stop-intent persistence)",
+  "project-control/reports/M0-T092-controller-succession.md"
+ ],
+ "dependencies": [
+  "M0-T091"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_controller_succession.py",
+  "project-control/reports/M0-T092-controller-succession.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "services",
+  "supabase",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-24T12:35:22+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+}
