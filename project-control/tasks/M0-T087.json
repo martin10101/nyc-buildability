@@ -36,7 +36,74 @@
   "tools/project_control.py",
   "tools/validate_directive_compliance.py"
  ],
- "acceptance_scenarios": [],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "requirement": "D-024-R099 (durable continuity; fail closed)",
+   "preconditions": "none",
+   "input": "malformed/missing/vocabulary-violating campaign records",
+   "expected": "CampaignRecordError raised; orientation never silently empty; --status exit 1 with fail-closed message",
+   "invariants": "no guessed defaults",
+   "execution": "pytest test_validate_rejects_* + test_load_missing_* + test_main_status_no_record/invalid",
+   "evidence": "test run output",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-2",
+   "requirement": "D-024 s3 exact-once succession (record level)",
+   "preconditions": "record at sequence N",
+   "input": "two writers advance from the same read snapshot",
+   "expected": "exactly one wins; loser gets SequenceConflict; disk shows winner only, sequence N+1",
+   "invariants": "no lost update, no double advance",
+   "execution": "pytest test_two_racers_exactly_one_wins + test_advance_stale_sequence_refused",
+   "evidence": "test run output",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-3",
+   "requirement": "D-024 s7 durable handoff artifacts",
+   "preconditions": "none",
+   "input": "atomic_write of valid + invalid records",
+   "expected": "LF bytes, tmp+os.replace, no torn record, invalid records refuse to persist",
+   "invariants": "crash mid-write leaves prior record intact",
+   "execution": "pytest test_atomic_write_*",
+   "evidence": "test run output",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-4",
+   "requirement": "D-024 s14 on-demand authoritative status",
+   "preconditions": "live record present",
+   "input": "python -m tools.agent_supervisor.campaign_continuity --status",
+   "expected": "orientation summary with campaign, NEXT action, restrictions; exit 0",
+   "invariants": "read-only; no model call",
+   "execution": "live run + pytest test_main_status_valid_record",
+   "evidence": "terminal output + test run",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-5",
+   "requirement": "D-024-R007/R099 (successor continues without owner re-prompt)",
+   "preconditions": "campaign record + ledger + handoff committed-or-on-disk",
+   "input": "fresh isolated context, campaign-ignorant prompt (worktree path + start-of-session routine only)",
+   "expected": "reports correct campaign, authority digest, exact next action incl. in-flight state, frozen identity == live HEAD, restrictions, READY TO RESUME",
+   "invariants": "zero campaign identifiers in the prompt; read-only",
+   "execution": "live successor-orientation agent run 2026-08-25",
+   "evidence": "project-control/reports/M0-T087-bootstrap-continuity.md (proof section) + session record",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-6",
+   "requirement": "D-024 s1 (ledger+git win over prose)",
+   "preconditions": "prose/ledger discrepancy exists (handoff said claim, ledger says claimed)",
+   "input": "same successor run",
+   "expected": "successor resolves the discrepancy in the ledger favor citing the precedence rule; staleness() flags frozen-vs-HEAD mismatches",
+   "invariants": "record never treated as authority",
+   "execution": "live successor run + pytest test_staleness_detection",
+   "evidence": "proof section + test run",
+   "cleanup": "none"
+  }
+ ],
  "required_gates": [
   "G0",
   "G2",
@@ -44,19 +111,19 @@
   "G4",
   "G5"
  ],
- "producer_agent": null,
+ "producer_agent": "orchestrator",
  "reviewer_agents": [
   "code-reviewer",
   "qa-engineer",
   "security-reviewer",
   "directive-compliance-verifier"
  ],
- "status": "backlog",
- "progress_percent": 0,
+ "status": "claimed",
+ "progress_percent": 10,
  "risks": [],
  "blockers": [],
  "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-25T19:23:29+00:00",
  "directive_refs": [
   {
    "directive_id": "D-024",
@@ -64,5 +131,6 @@
   }
  ],
  "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }

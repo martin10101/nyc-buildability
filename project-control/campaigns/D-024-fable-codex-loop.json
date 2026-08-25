@@ -1,0 +1,26 @@
+{
+ "schema": "campaign_continuity/v1",
+ "campaign_id": "D-024-fable-codex-loop",
+ "directive_id": "D-024",
+ "state": "active",
+ "control_branch": "control/D-024-fable-codex-loop",
+ "ledger_lineage_base": "7649acfc95583287688a503fc5949cd04c9f6b60",
+ "authority": "project-control/directives/D-024-fable-codex-loop/source-001.md (owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537); ledger + git win over any prose",
+ "restrictions": [
+  "NEVER merge PR #241 or any pre-existing PR without separate owner authorization",
+  "continuous-mode activation stays behind the owner gate (D-024 s18); R595 prerequisite unchanged",
+  "Bootstrap Gate 0 before any write in every session (D-024-R125..R128): primary cwd must BE this worktree root; /mcp must prove empty/allowlisted",
+  "supervisor changes require a cited D-024-R### qualifying-evidence id in packet + commit (freeze rule)",
+  "no worker-facing token quotas/countdowns ever (D-024-R045)"
+ ],
+ "next_action": {
+  "task_id": "M0-T087",
+  "description": "finish the M0-T087 review chain (G2 -> submit -> independent G3/G4/G5 + DCV at the frozen reviewed identity -> accept), then advance this record to M0-T088 (B1 telemetry core + carried hardening bundle)"
+ },
+ "frozen": {
+  "head_sha": "064484b5343179db05d38173560117f1591d8d12",
+  "recorded_at": "2026-08-25T19:19:04+00:00"
+ },
+ "sequence": 0,
+ "updated_at": "2026-08-25T19:19:04+00:00"
+}

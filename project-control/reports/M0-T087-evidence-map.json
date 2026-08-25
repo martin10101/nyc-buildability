@@ -1,0 +1,103 @@
+{
+ "requirements": {
+  "D-024-R001": [
+   "tools/agent_supervisor/campaign_continuity.py + live record: continuity built from live repository state; no snapshot inference; no worker-facing quota anywhere (grep in G2)"
+  ],
+  "D-024-R002": [
+   "one-prompt implementation continuity share DELIVERED: project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution); remaining readiness items (Codex transport fail-closed, restart recovery, golden run) owed by M0-T092/M0-T096 per binding"
+  ],
+  "D-024-R003": [
+   "second campaign unit implemented + tested (35 tests; suite 1905/2/0) and submitted to independent G3/G4/G5+DCV; no completion claim"
+  ],
+  "D-024-R004": [
+   "no role-semantics change; additive orientation module only"
+  ],
+  "D-024-R007": [
+   "CORE DELIVERABLE: project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution); campaign record carries authority + exact next action so successor sessions continue from the captured directive without owner re-prompting"
+  ],
+  "D-024-R008": [
+   "zero owner questions during this task (terminal record)"
+  ],
+  "D-024-R010": [
+   "PR #241 untouched; the hold is now ALSO a machine-validated campaign-record restriction (project-control/campaigns/D-024-fable-codex-loop.json) surfaced to every successor"
+  ],
+  "D-024-R013": [
+   "no new CLI/hook capability consumed; slice uses stdlib only; capability fixtures from M0-T086 remain authoritative"
+  ],
+  "D-024-R017": [
+   "packet + G0 + G2 + commit message cite D-024-R099; freeze rule D-024 recognition in force at base commit"
+  ],
+  "D-024-R018": [
+   "reuse decision recorded in project-control/reports/M0-T087-bootstrap-continuity.md: session_continuity.py solves provider-session resume (different boundary), so no duplication; existing handoff/ledger machinery reused as the record's substrate"
+  ],
+  "D-024-R020": [
+   "all mutations by the Fable producer session (git author)"
+  ],
+  "D-024-R021": [
+   "no Codex invocation this task"
+  ],
+  "D-024-R022": [
+   "no Codex mutation possible or performed"
+  ],
+  "D-024-R024": [
+   "no bridge change; transport reuse plan unchanged"
+  ],
+  "D-024-R025": [
+   "no dispatch on any Codex decision this task"
+  ],
+  "D-024-R026": [
+   "no activation/deploy/protected write/credential/broadening; owner-gate restriction embedded in the campaign record"
+  ],
+  "D-024-R039": [
+   "no telemetry implementation this task (Phase B owns); record stores no usage numbers"
+  ],
+  "D-024-R040": [
+   "stdlib only; no package/lockfile change; suite installs nothing"
+  ],
+  "D-024-R045": [
+   "no worker-facing assignment exists; deliverables contain no quota/countdown language (G2 grep)"
+  ],
+  "D-024-R079": [
+   "no graph file changed (git diff)"
+  ],
+  "D-024-R080": [
+   "the record ITSELF encodes graph-adjacent discipline: authority field states ledger+git win over any prose; staleness() forces reconcile-first"
+  ],
+  "D-024-R082": [
+   "no graph change -> results/ordering/identities unchanged by construction"
+  ],
+  "D-024-R084": [
+   "no interception work this task (Phase F owns)"
+  ],
+  "D-024-R098": [
+   "healthy-session reuse continued (T086->T087 same session); record advance happens at seams chosen by workload, not per-task fresh sessions"
+  ],
+  "D-024-R099": [
+   "Phase A item 7 share DELIVERED: bootstrap continuity path proven before the longest implementation units - campaign/next-action/frozen-identity/handoff persisted (project-control/campaigns/D-024-fable-codex-loop.json), validated fail-closed (tools/agent_supervisor/campaign_continuity.py, 35 tests), and exercised end-to-end (project-control/reports/M0-T087-bootstrap-continuity.md (E2E proof section: fresh campaign-ignorant context oriented from durable artifacts alone, READY TO RESUME, ledger-wins discrepancy resolution))"
+  ],
+  "D-024-R107": [
+   "16.1 share unchanged from M0-T086 (probe fixtures); no telemetry bullets claimed; atomic-write-interruption discipline tested at the record level (tools/test_agent_supervisor_bootstrap_continuity.py)"
+  ],
+  "D-024-R113": [
+   "no graph change at this identity"
+  ],
+  "D-024-R120": [
+   "no activation; bounded rules untouched"
+  ],
+  "D-024-R124": [
+   "no new section-21 capability consumed; M0-T086 matrix remains authoritative"
+  ],
+  "D-024-R125": [
+   "Gate 0 remained satisfied this session (unchanged cwd/branch; recorded); successor proof puts Gate 0 FIRST in its resume plan - the record restriction surfaces it to every successor"
+  ],
+  "D-024-R126": [
+   "MCP-clean state unchanged (no MCP config touched); restriction embedded in campaign record"
+  ],
+  "D-024-R127": [
+   "no gate failure occurred; fail-closed behavior now mechanically embodied: missing/invalid record -> exit 1 'orientation unavailable' (tests)"
+  ],
+  "D-024-R128": [
+   "adoption rule honored historically (audit_log) and now surfaced as a record restriction; no history rewrite/discard occurred"
+  ]
+ }
+}
