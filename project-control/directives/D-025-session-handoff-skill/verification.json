@@ -45,249 +45,355 @@
     "D-025-R033",
     "D-025-R034"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757",
+   "verified_at": "2026-08-25T18:10:41+00:00",
    "requirements": [
     {
      "id": "D-025-R001",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      ".claude/skills/session-handoff/SKILL.md:1-6 exists at daabf2c",
+      "git branch -r --contains daabf2c => origin/control/D-024-fable-codex-loop (pushed)"
+     ],
+     "note": "Permanent reusable project skill /session-handoff created.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git show --stat daabf2c -- D-024 source-001.md/requirements.json/verification.json => empty (untouched)",
+      "D-024 manifest.json diff at daabf2c: only scope.task_ids/task_types + append-only audit_log entry; validator EXIT=0"
+     ],
+     "note": "D-024 directive substance not modified/rewritten; manifest scope-binding advisory adjudicated non-blocking (orchestrator control-plane duty, disclosed).",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "state.json active_tasks has no M0-T08x; tasks/M0-T086..M0-T096.json status=backlog",
+      "git show --stat daabf2c -- tools/ apps/ services/ packages/ supabase/ => empty"
+     ],
+     "note": "No continuous-loop implementation unit started.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git show daabf2c:.claude/skills/session-handoff/SKILL.md exists"
+     ],
+     "note": "Exact required path.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R005",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:2-5 all four fields exact; description matches source-001.md verbatim; committed blob == worktree"
+     ],
+     "note": "Frontmatter exact.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R006",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:1-6 frontmatter has exactly 4 keys; no context: key"
+     ],
+     "note": "No context: fork.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:1-6 no agent/subagent/background key; body forbids delegating to sub-agent/fork/background"
+     ],
+     "note": "No sub-agent/background execution.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:1-6 no allowed-tools key"
+     ],
+     "note": "No broad allowed-tools grant.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R009",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:10-15 runs inline in main conversation with live task/plan/sub-agent/tool state"
+     ],
+     "note": "Inline main-session execution.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:5 disable-model-invocation: true"
+     ],
+     "note": "Owner-only per source rule 5.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R011",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:17-18 $ARGUMENTS = optional reason, recorded verbatim; dry-run literal branches"
+     ],
+     "note": "$ARGUMENTS handled.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R012",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md:12-15 one handoff system (ledger, git, supervisor durable machinery, canonical SESSION_HANDOFF); A.2 uses python -m tools.agent_supervisor status|export-handoff"
+     ],
+     "note": "Reuse only; no second system.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R013",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "project-control/tasks/M0-T097.json: single governance task, gates G0/G2/G3, 3 allowed_paths; no D-024 rewrite"
+     ],
+     "note": "Smallest valid record.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R014",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md A.1: immediately stop new work + new sub-agents; no new implementation unit"
+     ],
+     "note": "Seq A stop-new-work.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R015",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md A.2: root/worktree/branch/HEAD/directive/campaign/task/lease identification"
+     ],
+     "note": "Seq A identity.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R016",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md A.3: healthy agent finishes; no kill of productive agent; stops recorded"
+     ],
+     "note": "Seq A sub-agents.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R017",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md A.4-A.5: reconcile results; enumerate in-flight; ambiguity blocks readiness"
+     ],
+     "note": "Seq A reconcile/ambiguity.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R018",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md B.1: only actually-completed work; never round up"
+     ],
+     "note": "Seq B truthful ledger.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R019",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md B.2: minimum validation; exact commands+outcomes recorded"
+     ],
+     "note": "Seq B validation.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md B.3: Tier A policy-gated commit/push; never force-commit broken/unverified"
+     ],
+     "note": "Seq B commit policy.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md B.3: uncommitted preserved untouched + recorded per file"
+     ],
+     "note": "Seq B uncommitted.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R022",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md A.1 sentence 2 covers the whole procedure incl. Seq B"
+     ],
+     "note": "No new unit while landing.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md C header: REPLACE, current-only; docs/SESSION_HANDOFF.md replaced (108-line change) at daabf2c"
+     ],
+     "note": "Seq C REPLACE.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R024",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md C items 1-18 map 1:1 to source items; docs/SESSION_HANDOFF.md:11-67 contains all 18 populated items"
+     ],
+     "note": "18 items in contract and artifact.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md C closing: exclude secrets/credentials/tokens/enormous logs/transcript"
+     ],
+     "note": "Seq C exclusions.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md D: all six validation checks"
+     ],
+     "note": "Seq D validation.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R027",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md D: exact HANDOFF BLOCKED + explain; never instruct clearing the session"
+     ],
+     "note": "BLOCKED contract.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R028",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md E: exact HANDOFF READY + 4 print items incl. clean-start command with approved MCP posture"
+     ],
+     "note": "READY contract.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R029",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md F: all nine successor instructions present"
+     ],
+     "note": "Successor prompt.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R030",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md DRY-RUN block: strictly read-only, no edit/commit/push/agent-stop/ledger change; DRY-RUN ONLY footer"
+     ],
+     "note": "Dry-run safe.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R031",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Real op reproduced durably: SESSION_HANDOFF.md real-operation artifact + commit daabf2c pushed + validator EXIT=0 re-run by verifier; dry-run safety verified from skill text"
+     ],
+     "note": "Both tests verified.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R032",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ls .claude/skills/*/SKILL.md => 13 files, session-handoff same shape as 12 working skills; structural verification permitted by R032 given disable-model-invocation"
+     ],
+     "note": "Registration verified structurally; listing owner-observable.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R033",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "daabf2c is origin tip; validator EXIT=0; independent review = this DCV + G3 at frozen daabf2c"
+     ],
+     "note": "Normal review process.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     },
     {
      "id": "D-025-R034",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Producer report What-was-built/How-tested + this 34-row matrix; final owner-facing terminal delivery at task close"
+     ],
+     "note": "Completion-report substance durable.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "daabf2c789b23e86c0e5d905fda97677a2ab2757"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "fc73b6a960d3e41e5b1d8e1c4dd9de33aafaaa41d43c4eb7f95496a99e5ef6cc"
   }
  ],
- "updated_at": "2026-08-25T17:43:42+00:00"
+ "updated_at": "2026-08-25T18:10:41+00:00"
 }
