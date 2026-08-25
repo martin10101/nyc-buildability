@@ -31,6 +31,15 @@ A new supervisor task requires at least one of:
 - inability to complete an authorized product task;
 - or a requirement explicitly listed in this directive.
 
+**D-024 recognition (amendment 2026-08-25, task M0-T086):** a requirement explicitly listed in
+owner directive **D-024** (the captured Fable–Codex continuous-agent-loop directive,
+`project-control/directives/D-024-fable-codex-loop/`) is equally qualifying evidence. Cite the
+specific captured `D-024-R###` requirement ID in **both** the task packet and the commit message,
+exactly as §3 requires. Authorized by D-024 §1 ("every task that touches that area must cite this
+directive's captured requirement ID as qualifying evidence … amend or supersede the rule
+transparently under this directive's authority"); this amendment changes nothing else — the
+defect-only lane, gates, R595 prerequisite, and suite-baseline duty below stand unchanged.
+
 ## 3. Evidence-citation duty
 
 Every new supervisor task must cite the qualifying evidence (from §2) that authorizes it in

@@ -39,7 +39,75 @@
   "tools/project_control.py",
   "tools/validate_directive_compliance.py"
  ],
- "acceptance_scenarios": [],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "requirement": "D-024-R099 (probe before control-behavior change)",
+   "preconditions": "claude+codex on PATH",
+   "input": "python -m tools.agent_supervisor.capability_probe --out <tmp>",
+   "expected": "exit 0; JSON with schema capability_probe/v1; every probe status in {supported,absent,unknown}; interactive-only facts unknown",
+   "invariants": "read-only allowlist; failures degrade to unknown never guessed",
+   "execution": "tools/test_agent_supervisor_capability_probe.py::test_live_fixture_shape + live reprobe tests",
+   "evidence": "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json",
+   "cleanup": "none (tmp file removed)"
+  },
+  {
+   "id": "AS-2",
+   "requirement": "D-024-R124/R001 (verify section-21 capabilities; supported/unsupported/nullable/unknown)",
+   "preconditions": "fixtures committed",
+   "input": "capability_matrix_v1.json",
+   "expected": ">=15 entries; statuses+confidence within declared vocabularies; every entry has evidence; measured-live claims match the live probe",
+   "invariants": "docs-derived facts labelled official-docs, never presented as measured",
+   "execution": "pytest test_matrix_* tests",
+   "evidence": "fixtures/capability_matrix_v1.json + test run",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-3",
+   "requirement": "D-024-R099/R009 (live-workstation reconciliation)",
+   "preconditions": "none",
+   "input": "git worktree list; git for-each-ref upstream tracking; git -C <primary> status",
+   "expected": "reconciliation record enumerating worktrees, divergent branches with explanations, dirty primary checkout untouched, PR #241 hold restated",
+   "invariants": "snapshot findings labelled historical; no write to any other worktree",
+   "execution": "manual comparison by reviewer against live git",
+   "evidence": "project-control/reports/M0-T086-capability-baseline.md section 1",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-4",
+   "requirement": "D-024-R125-R128 boundary (absent tool)",
+   "preconditions": "none",
+   "input": "cp._run([\"definitely-not-installed-binary-xyz\",\"--version\"])",
+   "expected": "status absent, no exit_code, no fabricated success",
+   "invariants": "unknown/absent never becomes zero/success",
+   "execution": "pytest test_absent_binary_classifies_absent_not_success",
+   "evidence": "test run output",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-5",
+   "requirement": "D-024 section 1 freeze clause (qualifying-evidence amendment)",
+   "preconditions": "supervisor-freeze rule loaded",
+   "input": ".claude/rules/supervisor-freeze.md",
+   "expected": "rule recognizes cited D-024-R### ids as qualifying evidence; defect-only lane, gates, R595 prerequisite unchanged",
+   "invariants": "amendment transparent, cites D-024 section-1 authority, changes nothing else",
+   "execution": "reviewer reads the rule diff",
+   "evidence": ".claude/rules/supervisor-freeze.md amendment block",
+   "cleanup": "none"
+  },
+  {
+   "id": "AS-6",
+   "requirement": "D-024-R100 precondition (no control-behavior change before fixtures)",
+   "preconditions": "this task complete",
+   "input": "git diff of the task commit",
+   "expected": "only fixtures, probe module + its test, freeze-rule amendment, reports, task/ledger records changed; no supervisor control-flow module modified",
+   "invariants": "suite baseline re-established (freeze section 4)",
+   "execution": "reviewer inspects commit --stat; full supervisor pytest glob",
+   "invariant_note": "suite result recorded in G2",
+   "evidence": "commit diff + suite run record",
+   "cleanup": "none"
+  }
+ ],
  "required_gates": [
   "G0",
   "G2",
@@ -47,19 +115,19 @@
   "G4",
   "G5"
  ],
- "producer_agent": null,
+ "producer_agent": "orchestrator",
  "reviewer_agents": [
   "code-reviewer",
   "qa-engineer",
   "security-reviewer",
   "directive-compliance-verifier"
  ],
- "status": "backlog",
- "progress_percent": 0,
+ "status": "claimed",
+ "progress_percent": 10,
  "risks": [],
  "blockers": [],
  "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-25T18:24:22+00:00",
  "directive_refs": [
   {
    "directive_id": "D-024",
@@ -67,5 +135,6 @@
   }
  ],
  "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+ "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+ "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }

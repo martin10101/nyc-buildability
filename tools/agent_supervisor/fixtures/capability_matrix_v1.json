@@ -1,0 +1,44 @@
+{
+ "schema": "capability_matrix/v1",
+ "directive": "D-024",
+ "task": "M0-T086",
+ "recorded": "2026-08-25",
+ "installed": {
+  "claude_code": "2.1.220",
+  "codex_cli": "0.146.0",
+  "python_local": "3.11.9",
+  "python_ci": "3.12",
+  "os": "Windows 11 Home 10.0.26200",
+  "claude_binary_note": "dual install: C:/Users/MLFLL/.local/bin/claude.EXE resolves FIRST on PATH; npm shim at AppData/Roaming/npm/claude(.cmd) second. Launch designs must not assume which one 'claude' resolves to without checking PATH order.",
+  "codex_binary_note": "npm shim install (codex/.cmd/.ps1 -> node codex.js); Windows CreateProcess needs the PATHEXT-resolved .cmd path or a shell - bare 'codex' fails from CreateProcess-style spawns (measured; capability_probe.py executes the resolved path for this reason)."
+ },
+ "status_vocabulary": ["supported", "supported-documented", "not-detected-in-help", "absent", "absent-by-policy", "nullable", "unknown"],
+ "confidence_vocabulary": ["measured-live", "official-docs", "session-evidence", "policy"],
+ "capabilities": [
+  {"id": "claude.strict_mcp_config_flag", "status": "supported", "confidence": "measured-live", "evidence": "capability_probe_live_2026-08-25.json claude_flags['--strict-mcp-config']", "note": "Gate 0 / clean-launch design can use --strict-mcp-config + --mcp-config on 2.1.220."},
+  {"id": "claude.mcp_config_flag", "status": "supported", "confidence": "measured-live", "evidence": "capability_probe_live_2026-08-25.json"},
+  {"id": "claude.worktree_flag", "status": "supported", "confidence": "measured-live", "evidence": "capability_probe_live_2026-08-25.json"},
+  {"id": "claude.print_mode_output_format", "status": "supported", "confidence": "measured-live", "evidence": "--print and --output-format detected in claude --help"},
+  {"id": "claude.session_mcp_state", "status": "supported", "confidence": "session-evidence", "evidence": "/mcp in the capture session: 'No MCP servers configured' (D-024 manifest audit_log entry, 0d9f6b1)", "note": "default-deny effective in the live session; per-session re-proof required by D-024-R126."},
+  {"id": "claude.hooks.UserPromptExpansion", "status": "supported-documented", "confidence": "official-docs", "evidence": "code.claude.com/docs/en/hooks (fetched 2026-08-25): event exists; fires when a user-typed command expands into a prompt, BEFORE it reaches Claude; can block the expansion; matcher filters on command name", "note": "preferred /loop-* interception path (D-024 s11). Live behavioral fixture = Phase F deliverable."},
+  {"id": "claude.hooks.UserPromptSubmit_block_erase", "status": "supported-documented", "confidence": "official-docs", "evidence": "docs/en/hooks: exit code 2 or hookSpecificOutput.permissionDecision='block' blocks prompt processing AND ERASES THE PROMPT; permissionDecisionReason shown to user; stdout may add context (UserPromptSubmit is a stdout-visible event); additionalContext injectable; UserPromptSubmit hook timeout lowered to 30s", "note": "satisfies the D-024 s11 fallback contract on paper; zero-context claim still requires the live proof (16.5)."},
+  {"id": "claude.hooks.event_set_2_1_220", "status": "supported-documented", "confidence": "official-docs", "evidence": "docs/en/hooks 31 events incl. SessionStart, Setup, UserPromptSubmit, UserPromptExpansion, PreToolUse, PermissionRequest, PermissionDenied, PostToolUse, PostToolUseFailure, PostToolBatch, Notification, MessageDisplay, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, Stop, StopFailure, TeammateIdle, InstructionsLoaded, ConfigChange, CwdChanged, DirectoryAdded, FileChanged, WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult, SessionEnd", "note": "covers every lifecycle point D-024 s5.1 item 5 needs (session start/end, subagent start/stop, task creation/completion, post-tool batches, pre/post compaction, stop/failure, file changes, permission events)."},
+  {"id": "claude.hooks.version_gates", "status": "supported", "confidence": "official-docs", "evidence": "docs version notes: matcher hyphen exact-match >=2.1.195; comma separators >=2.1.191; prompt_id >=2.1.196; exit-code schema validation >=2.1.214 - installed 2.1.220 satisfies all"},
+  {"id": "claude.statusline.primary_payload", "status": "supported-documented", "confidence": "official-docs", "evidence": "docs/en/statusline full schema: cwd, session_id, session_name?, prompt_id?, transcript_path, model{id,display_name}, workspace{...}, version, cost{total_cost_usd,total_duration_ms,total_api_duration_ms,...}, context_window{total_input_tokens,total_output_tokens,context_window_size,used_percentage,remaining_percentage,current_usage{input_tokens,output_tokens,cache_creation_input_tokens,cache_read_input_tokens}}, exceeds_200k_tokens, fast_mode, effort?, thinking, rate_limits?{five_hour,seven_day}, vim?, agent?, pr?, worktree?", "note": "describes the LIVE context from the most recent API response - never lifetime cumulative spend (D-024 s5.1 item 3)."},
+  {"id": "claude.statusline.nullable_fields", "status": "nullable", "confidence": "official-docs", "evidence": "docs: current_usage null before first API call and again after /compact until repopulated; used_percentage/remaining_percentage may be null early; total_* are 0 before first response; rate_limits only for subscribers after first response, each window independently absent; used_percentage = input-only formula (input + cache_creation + cache_read, no output)"},
+  {"id": "claude.subagentStatusLine", "status": "supported-documented", "confidence": "official-docs", "evidence": "docs/en/statusline: subagentStatusLine setting renders per-subagent rows; command runs once per refresh tick, receives ALL visible subagent rows as one JSON object (base hook fields + columns + tasks[]); each task: id, name, type, status, description, label, startTime, model, effort, contextWindowSize, tokenCount, tokenSamples, cwd", "note": "model + contextWindowSize require >=2.1.205 (installed 2.1.220 OK) and are OMITTED until the task's model resolves - matches D-024 s5.1 item 2 feature-detect requirement. tokenSamples = trend-only until fixture-tested (D-024)."},
+  {"id": "claude.dual_install_resolution", "status": "supported", "confidence": "measured-live", "evidence": "probe_meta.claude_binaries: .local/bin/claude.EXE first, npm shim second", "note": "sizing/launch machinery must pin the executable path explicitly."},
+  {"id": "codex.exec_noninteractive", "status": "supported", "confidence": "measured-live", "evidence": "codex_flags: 'exec' subcommand present (codex exec --help exit 0)"},
+  {"id": "codex.sandbox_flag", "status": "supported", "confidence": "measured-live", "evidence": "codex_flags['--sandbox']", "note": "read-only sandbox for the reviewer transport (D-024 s2)."},
+  {"id": "codex.json_event_output", "status": "supported", "confidence": "measured-live", "evidence": "codex_flags['--json']"},
+  {"id": "codex.output_schema", "status": "supported", "confidence": "measured-live", "evidence": "codex_flags['--output-schema']", "note": "validated decision schema path (D-024 s2)."},
+  {"id": "codex.resume_thread", "status": "supported", "confidence": "measured-live", "evidence": "codex_flags['resume']", "note": "session/thread identity + resume controls."},
+  {"id": "agent_sdk.python", "status": "absent-by-policy", "confidence": "policy", "evidence": "not installed/admitted; D-024 s5.1: do not install/admit the SDK merely for this directive; dependency admission requires the owner-authorized process under docs/DEPENDENCY_SECURITY_POLICY.md", "note": "telemetry uses statusline/hook/transcript paths; SDK ingestion stays feature-detected-off (16.1: unadmitted SDK cleanly skips)."},
+  {"id": "hooks.live_behavior_fixtures", "status": "unknown", "confidence": "measured-live", "evidence": "capability_probe_live_2026-08-25.json interactive_only_capabilities: UserPromptSubmit erase semantics, UserPromptExpansion interception, statusline/subagentStatusLine payload shapes all require a live interactive harness", "note": "docs-documented above; live confirmation is a Phase B/F deliverable. The probe refuses to guess (fail to unknown)."}
+ ],
+ "primary_sources": [
+  "https://code.claude.com/docs/en/hooks (fetched 2026-08-25)",
+  "https://code.claude.com/docs/en/statusline (fetched 2026-08-25)",
+  "local: claude --version/--help; codex --version/--help; codex exec --help (capability_probe_live_2026-08-25.json)"
+ ]
+}
