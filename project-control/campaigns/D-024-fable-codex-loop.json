@@ -14,13 +14,13 @@
   "no worker-facing token quotas/countdowns ever (D-024-R045)"
  ],
  "next_action": {
-  "task_id": "M0-T088",
-  "description": "claim and produce D-024 B1 (telemetry core + primary-session ingestion) PLUS the carried hardening bundle from the M0-T086/M0-T087 gate rounds (word-boundary flag matching, _run failure-branch tests, generic matrix==live cross-check, probe_meta home-prefix redaction); then G2 -> submit -> independent G3/G4/G5+DCV -> accept -> advance this record to M0-T089"
+  "task_id": "M0-T089",
+  "description": "claim and produce D-024 B2 (subagent telemetry breadth + read-only shadow status: subagentStatusLine ingestion, SDK-event ingestion only-if-present, lifecycle-hook ingestion, transcript-derived fallback) PLUS the carried findings bundle from the M0-T088 gate round (G5-S2: [HOME]-mask capability_matrix_v1.json binary notes + cross-fixture home-prefix assertion; G4-Adv2: wholesale withholding of prompt-like non-scalar values BEFORE transcript/message ingestion lands; G4-Adv1: per-step absent-field 0-vs-unknown decision + test vs real provider payloads; G3-minor: per-step cumulative_* measurement-name clarity; test-helper _derive_live_status determinism nit); then G2 -> submit -> independent G3/G4/G5+DCV -> accept -> advance this record to M0-T090"
  },
  "frozen": {
-  "head_sha": "0d7fa80bb3781d1fddc2ab66f8c51aca559206db",
-  "recorded_at": "2026-08-25T19:58:22+00:00"
+  "head_sha": "316cd8eb84036576969267209d012aeb057624d7",
+  "recorded_at": "2026-08-26T01:20:36+00:00"
  },
- "sequence": 1,
- "updated_at": "2026-08-25T19:58:22+00:00"
+ "sequence": 2,
+ "updated_at": "2026-08-26T01:20:36+00:00"
 }
