@@ -1,0 +1,17 @@
+{
+ "task_id": "M0-T101",
+ "directives": ["D-020", "D-027"],
+ "producer": "orchestrator",
+ "frozen_content_commit": "4e894af",
+ "note": "evaluate_task_refs: cited D-020:ALL;D-027:ALL resolve to an EMPTY applicable set for this task (every requirement row of both directives binds its original task ids / sentinels under conjunction semantics). The map below records the defect-repair evidence against the cited directives' substance for the DCV's empty-set task rows.",
+ "requirements": {
+  "D-020:substance": [
+   "no MCP rule weakened: deny lists, empty allowlist, disabled mcpjson names, hooks, permissions checks byte-identical; diff adds one strict shape helper + one KNOWN_KEY_SHAPES entry (git show 4e894af)",
+   "fail-closed posture preserved and extended: unknown statusLine variants (type/command/extra key) all fail p9; 4 new mutation-style tests prove it; live --check EXIT=0 at the committed settings"
+  ],
+  "D-027:substance": [
+   "repairs the validator break caused by the owner-authorized statusLine wiring via the validator's own designed extension path (docstring lines 39-50); exact command pin equals the D-027-authorized wiring string; absence stays valid (activation owner-optional)",
+   "accepted M0-T100 identity untouched; repair runs as its own bounded reviewed task (post-acceptance-discovery rule)"
+  ]
+ }
+}
