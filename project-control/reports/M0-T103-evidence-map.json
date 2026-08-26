@@ -1,0 +1,94 @@
+{
+ "requirements": {
+  "D-024-R140": [
+   "project-control/reports/M0-T103-version-upgrade.md (roles preserved: orchestrator produced, independent reviewers verify; owner-only npm-uninstall left to owner)"
+  ],
+  "D-024-R145": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 1-2 (official updater only, after pre-update capture + clean pushed tree + no-disruption determination)"
+  ],
+  "D-024-R146": [
+   "project-control/reports/M0-T103-version-upgrade.md section 9 (no bypass flags, no MCP, no SDK, no dependency change, no PR)"
+  ],
+  "D-024-R147": [
+   "project-control/reports/M0-T103-version-upgrade.md section 1 (execution-time official-stable confirmation via the accepted M0-T102 snapshot)"
+  ],
+  "D-024-R148": [
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-26_m0t103_post_update.json (live post-update probe 2.1.246)",
+   "project-control/reports/M0-T103-version-upgrade.md sections 1/3 (pre/post identity, both versions live-proven)"
+  ],
+  "D-024-R149": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 4-5 (installed-version fixtures + real canaries per adopted surface; drift tooth RED then re-baselined)",
+   "tools/test_agent_supervisor_capability_probe.py"
+  ],
+  "D-024-R152": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (goal live fixtures remain unit E; no premature adoption claimed)"
+  ],
+  "D-024-R153": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 3/6 (daemon auto-restart onto 2.1.246 observed live; no second process-management system activated)"
+  ],
+  "D-024-R154": [
+   "project-control/reports/M0-T103-version-upgrade.md section 4 (agents --json observed from outside any Fable context; no worker-facing quotas anywhere)"
+  ],
+  "D-024-R155": [
+   "project-control/reports/M0-T103-version-upgrade.md section 4 canary 3 (PreToolUse hook chain executed on 2.1.246 without error)"
+  ],
+  "D-024-R156": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (worktree live canaries remain unit C; no adoption claimed)"
+  ],
+  "D-024-R157": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (no workflow adoption; unchanged plan)"
+  ],
+  "D-024-R158": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (skills surface untouched; unit G)"
+  ],
+  "D-024-R159": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (UserPromptExpansion fixtures remain unit G; honest pending)"
+  ],
+  "D-024-R160": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 3/6 (session identity semantics observed: running processes keep binary; no resume misuse)"
+  ],
+  "D-024-R161": [
+   "project-control/reports/M0-T103-version-upgrade.md (no native review claimed as gate substitute; independent G3/G4/G5+DCV follow)"
+  ],
+  "D-024-R162": [
+   "project-control/reports/M0-T103-version-upgrade.md section 8 (statusLine integration retained untouched; live 2.1.246 payload re-proof scheduled next fresh session - disclosed limitation)"
+  ],
+  "D-024-R163": [
+   "project-control/reports/M0-T103-version-upgrade.md section 9 (no messaging/Remote Control enabled)"
+  ],
+  "D-024-R166": [
+   "project-control/reports/M0-T103-version-upgrade.md section 9 (no top-level-loop mechanism adopted)"
+  ],
+  "D-024-R167": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 1-3 (all six pre/post steps recorded: version, executable identity+sha256, commands/help, settings, fixtures, official-stable confirmation, clean pushed tree, disruption determination, official updater, post identity)"
+  ],
+  "D-024-R168": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 3-7 (old-binary process recognized -> disposable child canaries on new binary; Gate 0 + MCP default-deny + settings validation + hooks + accepted fixtures re-run; drift RED recorded not silenced; supported rollback path; no runtime activation on version success)"
+  ],
+  "D-024-R171": [
+   "project-control/reports/M0-T103-version-upgrade.md (unit B content complete: pre+post deterministic masked probes, upgrade record)",
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-26_m0t103_post_update.json"
+  ],
+  "D-024-R180": [
+   "project-control/reports/M0-T103-version-upgrade.md section 5 (re-baseline replaced the stale tooth target; historical fixtures retained; no layered duplicate)"
+  ],
+  "D-024-R181": [
+   "project-control/reports/M0-T103-version-upgrade.md section 5 (pre-update fixtures retained untouched; 0 deletions)"
+  ],
+  "D-024-R182": [
+   "project-control/reports/M0-T103-version-upgrade.md section 4 (deterministic probes + bounded real low-risk canaries; 3 child launches total, no token burn)"
+  ],
+  "D-024-R183": [
+   "project-control/reports/M0-T103-version-upgrade.md section 4 (Windows-native + exact installed-version behavior; MCP default-deny effective on 2.1.246; hook execution proven)"
+  ],
+  "D-024-R184": [
+   "project-control/reports/M0-T103-version-upgrade.md sections 4/6 (no polling into any producer context; no quotas; session integrity observed and honestly recorded)"
+  ],
+  "D-024-R185": [
+   "project-control/reports/M0-T103-version-upgrade.md section 4 item 4 (existing accepted suites green on upgraded machine: 18+228 passed, 0 failed)"
+  ],
+  "D-024-R188": [
+   "project-control/reports/M0-T103-version-upgrade.md (single cohesive writer task; campaign record kept current; commit/push/validate at the seam)"
+  ]
+ }
+}

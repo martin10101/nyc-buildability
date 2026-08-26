@@ -4,7 +4,10 @@ Deterministic; no network. Live CLI re-probes are feature-detected and cleanly
 skipped when the executable is absent (D-024 16.1: an absent tool skips its
 path; the suite must not install anything as a side effect).
 
-Supervisor-freeze qualifying evidence: D-024-R099.
+Supervisor-freeze qualifying evidence: D-024-R099; re-baselined for the M0-T103
+official-updater upgrade under D-024-R148/R149/R168 (amendment 3): the live drift
+tooth now points at the post-update fixture (installed 2.1.246); the 2026-08-25 and
+2026-08-26 pre-update fixtures remain the frozen 2.1.220 historical record.
 """
 from __future__ import annotations
 
@@ -17,7 +20,10 @@ import pytest
 from tools.agent_supervisor import capability_probe as cp
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
+# Pre-update historical record (claude 2.1.220): shape/masking invariants only.
 LIVE_FIXTURE = FIXTURES / "capability_probe_live_2026-08-25.json"
+# Post-update record (claude 2.1.246, M0-T103): the live drift tooth targets THIS.
+POST_FIXTURE = FIXTURES / "capability_probe_live_2026-08-26_m0t103_post_update.json"
 MATRIX = FIXTURES / "capability_matrix_v1.json"
 
 
@@ -159,12 +165,38 @@ def test_matrix_unknowns_are_explicit_not_missing(matrix):
 
 @pytest.mark.skipif(shutil.which("claude") is None,
                     reason="claude CLI not installed on this runner")
-def test_live_reprobe_claude_version_matches_fixture(live):
+@pytest.fixture(scope="module")
+def post() -> dict:
+    return json.loads(POST_FIXTURE.read_text(encoding="utf-8"))
+
+
+def test_live_reprobe_claude_version_matches_fixture(post):
     rec = cp._run(["claude", "--version"])
     assert rec["status"] == "supported"
-    assert rec["first_line"] == live["body"]["probes"]["claude_version"]["first_line"], (
-        "installed claude version drifted from the committed fixture; re-run "
+    assert rec["first_line"] == post["body"]["probes"]["claude_version"]["first_line"], (
+        "installed claude version drifted from the committed post-update fixture; re-run "
         "python -m tools.agent_supervisor.capability_probe and re-review")
+
+
+def test_upgrade_pair_records_expected_versions(live, post):
+    """M0-T103 dual-version invariant (D-024-R167/R168): the pre-update fixture
+    freezes 2.1.220 and the post-update fixture freezes 2.1.246; codex is
+    unchanged across the upgrade. RED if either side is regenerated wrongly."""
+    assert live["body"]["probes"]["claude_version"]["first_line"] == "2.1.220 (Claude Code)"
+    assert post["body"]["probes"]["claude_version"]["first_line"] == "2.1.246 (Claude Code)"
+    assert (live["body"]["probes"]["codex_version"]["first_line"]
+            == post["body"]["probes"]["codex_version"]["first_line"]
+            == "codex-cli 0.146.0")
+
+
+def test_post_update_fixture_masked_and_shaped(post):
+    """The post-update fixture obeys the same masking/shape contract as the
+    pre-update record (no volatile identity; [HOME]-masked binary paths)."""
+    body = json.dumps(post["body"], sort_keys=True)
+    assert "MLFLL" not in body
+    assert "claude_version" in post["body"]["probes"]
+    for rec in post["probe_meta"].get("claude_binaries", []):
+        assert rec.startswith("[HOME]"), rec
 
 
 @pytest.mark.skipif(shutil.which("codex") is None,
