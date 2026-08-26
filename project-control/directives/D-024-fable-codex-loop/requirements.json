@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 138,
+ "requirement_count": 191,
  "producer": "orchestrator",
- "updated_at": "2026-08-26T02:30:00+00:00",
+ "updated_at": "2026-08-26T21:27:57+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -5337,6 +5337,1809 @@
    "status_reason": "captured 2026-08-26; awaiting M0-T099",
    "evidence_paths": [],
    "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R139",
+   "text": "HOLD: do not claim M0-T092 or any later existing implementation task until this instruction has been durably captured, reconciled, independently verified, and converted into a dependency-ordered re-baseline campaign.",
+   "source_ref": "source-003-amendment.md#preamble",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "claim",
+     "dispatch"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "capture commit + validator EXIT=0 + independent capture verification + converted campaign (packets/sequence) before any M0-T092..M0-T096 claim",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R140",
+   "text": "Preserve these roles exactly: (1) Fable 5 inside Claude Code is the producer that performs engineering work; (2) Codex is the external read-only supervisor, reviewer, sequencer, and loop manager - not the primary coding producer; (3) the repository ledger, frozen Git identities, requirement records, and accepted verification evidence are durable authority; (4) the owner remains final authority for activation, security-sensitive changes, dependency admission, protected GitHub effects, and any explicitly owner-gated action.",
+   "source_ref": "source-003-amendment.md#role-separation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R141",
+   "text": "Reconcile before writing, from durable repository evidence rather than prompt assumptions: verify live repository root/branch/HEAD/origin/worktree state/MCP-clean status; read CLAUDE.md, docs/SESSION_HANDOFF.md, applicable project-control rules, the D-024 directive + amendments + requirements + verification records + campaign-continuity record + all accepted or active D-024 task packets; run 'python tools/project_control.py status' and 'python -m tools.agent_supervisor.campaign_continuity --status'; confirm M0-T091 is accepted, pushed, clean, and at a safe seam (else stop and report BLOCKED, never overlap it); detect any later task already claimed or started and never duplicate completed or active work; verify no conflicting writer lease, agent worktree, shell, or uncommitted repository state exists.",
+   "source_ref": "source-003-amendment.md#first-reconcile-before-writing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R142",
+   "text": "Report the reconciled identity and READY TO CAPTURE or BLOCKED before proceeding to capture or any write.",
+   "source_ref": "source-003-amendment.md#first-reconcile-before-writing",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R143",
+   "text": "Re-baseline the unimplemented portion of D-024 so supported native Claude Code functionality is reused instead of building duplicate machinery (Claude Code has added native functionality that overlaps materially with portions of the original D-024 plan).",
+   "source_ref": "source-003-amendment.md#owner-instruction",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R144",
+   "text": "Capture constraints: do not discard accepted work; do not rewrite the original directive source; capture this instruction through the repository's normal owner-directive amendment process; assign collision-free requirement and task identities; update the requirement-to-test mapping; preserve full traceability.",
+   "source_ref": "source-003-amendment.md#owner-instruction",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R145",
+   "text": "This amendment AUTHORIZES: an evidence-based capability re-baseline; controlled testing of the current stable Claude Code release; updating the user-level Claude Code binary through its official updater ONLY after the pre-update state is durably captured, the worktree is clean, and no unrelated Claude sessions would be disrupted; surgical changes to unstarted D-024 tasks; replacement of redundant custom runtime machinery only after its native replacement passes deterministic AND real canaries; use of native Claude Code functionality where verified; creation of a temporarily feature-detected adapter and rollback path during supervised rollout.",
+   "source_ref": "source-003-amendment.md#amendment-authorizes",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R146",
+   "text": "This amendment DOES NOT authorize: continuous-mode activation; admission of the Claude Agent SDK; enabling new MCP servers or channels; merging or modifying protected or held PRs; silent model substitution outside the existing approved policy; bypassing owner gates; dangerous permission-bypass flags; unbounded fan-out; replacing the repository ledger with Claude session state or messages.",
+   "source_ref": "source-003-amendment.md#amendment-does-not-authorize",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R147",
+   "text": "Review the latest official documentation at execution time (not cached recollection) at: code.claude.com/docs/en/ changelog, agent-view, goal, hooks, cli-reference, skills, worktrees, workflows, sub-agents, sessions, cross-session-messaging, plugins-reference, statusline, commands, checkpointing, remote-control (full URLs in the verbatim source).",
+   "source_ref": "source-003-amendment.md#official-documentation-baseline",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "durable official-document snapshot with fetch dates + URLs",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R148",
+   "text": "Treat the previously recorded installed version 2.1.220 AND the docs-listed 2.1.246 (reviewed 2026-08-26) as historical evidence only; re-probe the live binary and the current official release at execution time.",
+   "source_ref": "source-003-amendment.md#official-documentation-baseline",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "live 'claude --version' probe output + current official stable version with retrieval evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R149",
+   "text": "Never assume a documented feature exists or behaves correctly on the installed Windows version. Every adopted feature requires an installed-version fixture and a real canary.",
+   "source_ref": "source-003-amendment.md#official-documentation-baseline",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "installed-version fixture + real canary per adopted feature",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R150",
+   "text": "Create a durable matrix mapping EVERY remaining D-024 requirement and task to exactly one decision: NATIVE REPLACEMENT (native provides the behavior; remove or do not build the duplicate), NATIVE WRAPPED (native supplies the runtime primitive; D-024 adds durable state, policy, verification, or recovery), CUSTOM REQUIRED (no sufficient native capability), OPTIONAL ENHANCEMENT (useful but not required for loop activation), or REJECTED OR DEFERRED (inappropriate, experimental, unsafe, or contrary to project policy).",
+   "source_ref": "source-003-amendment.md#required-capability-matrix",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R151",
+   "text": "For every matrix decision record: official documentation source; minimum version; installed probe result; confidence level; exact D-024 requirements affected; what existing code is reused; what new code remains necessary; failure behavior and fallback; unit, fixture, integration, adversarial, and real-canary evidence; removal or deprecation plan for anything made redundant.",
+   "source_ref": "source-003-amendment.md#required-capability-matrix",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R152",
+   "text": "/goal: use only as the inner continuation mechanism for one bounded Fable assignment with a measurable completion condition; never one goal for the entire software campaign; verify condition-met, impossible, no-progress, background-work check-in, transient-error, unrecoverable-error, resume, and context-pressure behavior.",
+   "source_ref": "source-003-amendment.md#native-capabilities-1-goal",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R153",
+   "text": "Native background sessions: evaluate 'claude --bg', '/background', Agent View, 'claude agents --json', attach, logs, stop, respawn, and daemon status/recovery. If proven, make the native background session the preferred Fable producer host; Codex still controls sequencing, review, acceptance, and durable campaign state. Agent View is research-preview: keep a feature-detected fallback until supervised canaries prove it reliable. Never run two active process-management systems simultaneously.",
+   "source_ref": "source-003-amendment.md#native-capabilities-2-background-sessions",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R154",
+   "text": "Structured passive observation: evaluate 'claude agents --json', '--output-format stream-json', '--forward-subagent-text', '--include-hook-events', deterministic session IDs and names, and the existing statusLine/subagentStatusLine feeds. Codex must observe these feeds OUTSIDE Fable's context; never ask Fable for routine token or status reports; never place token quotas or context numbers in worker assignments.",
+   "source_ref": "source-003-amendment.md#native-capabilities-3-passive-observation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R155",
+   "text": "Hooks as the event bus: probe and fixture at least SessionStart/SessionEnd, UserPromptExpansion, UserPromptSubmit, SubagentStart/SubagentStop, TaskCreated/TaskCompleted, Stop/StopFailure, PreCompact/PostCompact, PostToolBatch, Notification, WorktreeCreate/WorktreeRemove, ConfigChange. Use hooks to record events, enforce completion gates, classify typed failures, and detect safe seams; avoid transcript polling when a structured native event exists. Hooks must remain fast, deterministic, sanitized, bounded, and fail closed where security or authority requires it.",
+   "source_ref": "source-003-amendment.md#native-capabilities-4-hooks",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R156",
+   "text": "Native worktree isolation: evaluate background-session worktrees, '--worktree', 'isolation: worktree', WorktreeCreate, WorktreeRemove, and '.worktreeinclude'. Reuse native physical isolation where proven; RETAIN the project's logical writer leases, frozen-identity review, branch policy, cleanup verification, and protection against semantically overlapping work.",
+   "source_ref": "source-003-amendment.md#native-capabilities-5-worktrees",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R157",
+   "text": "Dynamic workflows: evaluate ONLY for bounded internal fan-out (independent read-only reviews, test matrices, codebase audits, repetitive migrations, cross-checking findings); use their progress/token visibility and shared prompt cache when beneficial; never as the durable top-level campaign controller; no large automatic fan-outs; require a small-slice canary before larger usage.",
+   "source_ref": "source-003-amendment.md#native-capabilities-6-dynamic-workflows",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R158",
+   "text": "Skills and slash commands: custom commands are now skills - reuse that surface. Implement thin owner controls over the existing supervisor, subject to capability proof: /loop-start, /loop-status, /loop-ask, /loop-pause, /loop-resume, /loop-stop, /loop-emergency-stop, /session-handoff. Use owner-only invocation controls such as 'disable-model-invocation: true' wherever appropriate.",
+   "source_ref": "source-003-amendment.md#native-capabilities-7-skills-commands",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R159",
+   "text": "Test UserPromptExpansion as the preferred pre-model interception path: a status or control command must call the external supervisor directly, display its result, and avoid adding the full command procedure or status payload to Fable's context. If true pre-model interception cannot be proven, retain an honest second-terminal fallback. Do not collide with Claude Code's built-in /loop.",
+   "source_ref": "source-003-amendment.md#native-capabilities-7-skills-commands",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R160",
+   "text": "Native session management: evaluate named sessions, deterministic session IDs, resume, fork, branch, clear, compact, and native background-session respawn. Native resume is NOT a replacement for safe-seam fresh-context turnover; a large or confused conversation must not be resumed merely because it is technically resumable. Keep the durable handoff concise and replace its current-state sections instead of allowing endless growth; historical facts belong in the ledger, reports, and Git history.",
+   "source_ref": "source-003-amendment.md#native-capabilities-8-session-management",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R161",
+   "text": "Native reviews: evaluate /code-review, /security-review, /simplify, /verify, and other relevant bundled skills as evidence-generating tools. They may SUPPLEMENT but never replace independent Codex acceptance, directive-compliance verification, frozen-identity review, or project-specific gates. Use /simplify specifically to support the replace-not-layer repair rule: identify obsolete implementations and remove proven-bad or superseded code before introducing the replacement.",
+   "source_ref": "source-003-amendment.md#native-capabilities-9-reviews",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R162",
+   "text": "Context safeguards: retain the accepted statusLine telemetry integration. Evaluate /autocompact only as an emergency buffer - not a substitute for safe-seam turnover or a durable handoff. Use native prompt-cache behavior where verified (especially workflow sibling-cache sharing and subagent cache settings); do not assume provider-specific cache behavior without live evidence.",
+   "source_ref": "source-003-amendment.md#native-capabilities-10-context-safeguards",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R163",
+   "text": "Cross-session messaging and Remote Control: treat cross-session messages as advisory notifications only - not durable authority, never a ledger replacement. Remote Control may be offered as an optional owner monitoring surface only after its security and MCP implications are reviewed; it must not be required for loop correctness.",
+   "source_ref": "source-003-amendment.md#native-capabilities-11-messaging-remote-control",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R164",
+   "text": "Preserve custom D-024 control for: Codex's independent review and next-task decision; durable campaign sequencing; requirement traceability; frozen Git identities; exact-once GitHub and other external effects; pending approvals and owner gates; safe-seam context turnover; detection of overlapping scopes and writer leases; project graph and bounded context packs; recovery from ambiguous external effects; refusal classification and the approved Fable-to-lower-model seam policy; quota-exhaustion detect-and-hold policy; security controls and MCP default-deny; root-cause repair and replace-not-layer enforcement.",
+   "source_ref": "source-003-amendment.md#capabilities-that-must-remain-custom",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R165",
+   "text": "Claude Code fallbackModel only covers supported availability or overload cases; it must not silently replace the custom guardrail-refusal and quota policies.",
+   "source_ref": "source-003-amendment.md#capabilities-that-must-remain-custom",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T093"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R166",
+   "text": "Do not adopt as campaign authority (top-level loop): /loop, /batch, Agent Teams, Claude Agent SDK, MCP channels, /autofix-pr, automatic cross-session messaging, raw session resume, auto-compaction, or checkpointing alone. They may be separately evaluated for narrow optional uses, but none replaces Codex, the ledger, Git, or owner gates.",
+   "source_ref": "source-003-amendment.md#do-not-use-as-top-level-loop",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R167",
+   "text": "Upgrade procedure (pre-update): record the current Claude Code version, executable identity, supported commands, relevant help output, settings, and capability fixtures; confirm the current official stable version from Anthropic's official documentation; ensure the repository is clean and the capture commit pushed; determine whether any unrelated Claude Code session would be disrupted; use ONLY Claude Code's official updater (no third-party build, SDK, or wrapper); record the post-update binary identity and version.",
+   "source_ref": "source-003-amendment.md#version-and-upgrade-procedure",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R168",
+   "text": "Upgrade procedure (post-update): recognize the already-running process may remain on the old binary and launch disposable child canaries using the new binary; re-run Bootstrap Gate 0, MCP default-deny, settings validation, statusLine, skills, hooks, and existing accepted test fixtures; on regression do not work around it silently - record it and use the supported rollback or fallback path, stopping for the owner if no supported safe rollback exists; never activate the new runtime backend merely because the version command succeeded.",
+   "source_ref": "source-003-amendment.md#version-and-upgrade-procedure",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R169",
+   "text": "Do not perform this as one enormous coding task: one owner prompt may start the campaign, but it must be decomposed into cohesive, independently reviewable, dependency-ordered units (at minimum A-J), adjusted to real component boundaries after mapping.",
+   "source_ref": "source-003-amendment.md#implementation-campaign",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R170",
+   "text": "Unit A: directive amendment, baseline reconciliation, official-document snapshot, and requirement-to-capability matrix.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-a",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R171",
+   "text": "Unit B: installed-version and upgraded-version deterministic capability probes with masked fixtures.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-b",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T103"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T103"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R172",
+   "text": "Unit C - native runtime adapter: feature detection; named and deterministic session identity; native background dispatch; 'claude agents --json' status ingestion; attach/logs/stop/respawn support; existing controller fallback; exactly one selected runtime backend per session.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-c",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R173",
+   "text": "Unit D - native event integration: hook records; stream-JSON subagent events; deduplication; redaction; atomic persistence; restart-safe replay; unknown and version-drift handling.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-d",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R174",
+   "text": "Unit E - bounded /goal integration: one cohesive task at a time; safe completion condition; no-progress handling; background-agent check-ins; no worker-visible token pressure.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-e",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R175",
+   "text": "Unit F - safe-seam session succession: allow healthy bounded subagents to finish; stop or quarantine stale work; commit and push accepted evidence; generate a bounded replacement handoff; start a genuinely fresh Fable session; recover without duplicate work after interruption.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-f",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T092"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T092"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R176",
+   "text": "Unit G: thin slash-command/operator interface using skills and UserPromptExpansion.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-g",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T094"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T094"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R177",
+   "text": "Unit H: remaining refusal bridge, root-cause repair gate, exact-once GitHub effects, and graph-regression requirements that native Claude Code does not replace.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-h",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T093",
+     "M0-T095"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T093",
+     "M0-T095"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R178",
+   "text": "Unit I: shadow-mode, supervised-mode, crash/restart, and golden-run activation campaign.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-i",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R179",
+   "text": "Unit J: after the local loop passes its golden run, prepare a separate portability plan for a generic Claude Code plugin containing reusable skills, agents, hooks, and adapters; keep NYC-specific graph, ledger, security policy, profiles, and product rules in this repository; portability work must not block the local loop's activation.",
+   "source_ref": "source-003-amendment.md#implementation-campaign-unit-j",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R180",
+   "text": "Replace-not-layer rule: never merely bolt a native path beside a redundant custom implementation and leave both indefinitely. For every replaced component: prove the native behavior; identify the exact old responsibility; introduce one bounded adapter if necessary; run old-versus-new parity and failure tests; select only one active backend; remove or clearly deprecate unreachable redundant code in a SEPARATE reviewed change; preserve rollback only for the supervised rollout period; record when the fallback can be removed.",
+   "source_ref": "source-003-amendment.md#replace-not-layer-rule",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R181",
+   "text": "Never delete accepted code solely because official documentation claims an equivalent feature exists.",
+   "source_ref": "source-003-amendment.md#replace-not-layer-rule",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R182",
+   "text": "Mandatory testing method: use deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, and real low-risk canaries; do not burn hundreds of thousands of tokens merely to prove a threshold.",
+   "source_ref": "source-003-amendment.md#mandatory-testing",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R183",
+   "text": "Required proof (platform + native runtime): Windows-native behavior; exact installed-version behavior; strict MCP default-deny remains effective; statusLine and telemetry do not leak user paths, secrets, masked session data, or credentials; native background dispatch, status, completion, blocked-input, failure, stop, and respawn; supervisor restart with no duplicate producer; unexpected producer-process exit; worktree creation, isolation, retention, and cleanup; /goal met, impossible, stalled, interrupted, resumed, and background-work behavior; hook firing order and blocking semantics; UserPromptExpansion zero-model-context proof or truthful fallback; subagent start, progress, completion, stale work, and natural landing.",
+   "source_ref": "source-003-amendment.md#mandatory-testing",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R184",
+   "text": "Required proof (worker protection + concurrency + succession): no routine polling messages inserted into Fable context; no token quotas exposed in worker assignments; concurrent independent work and overlapping-scope rejection; session rotation at a safe seam; handoff boundedness and successor reconstruction from durable state alone; refusal and quota triggers remain distinct.",
+   "source_ref": "source-003-amendment.md#mandatory-testing",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R185",
+   "text": "Required proof (external effects + recovery + review): GitHub effects idempotent and exactly once; crash between local commit and push; crash after push but before local acknowledgment; stale ledger and stale handoff reconciliation; graph and context-pack regression coverage; existing project suite remains green; independent security, QA, control-plane, and directive-compliance review at the same frozen identity; mutation tests demonstrating that important gates fail when deliberately broken.",
+   "source_ref": "source-003-amendment.md#mandatory-testing",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R186",
+   "text": "Golden run: before activation, perform one low-risk real campaign task proving the complete sequence - Codex reads the durable campaign; selects one bounded task; launches a named Fable producer through the selected native runtime backend; Fable works toward a bounded goal; subagents are structurally sized and passively observed; context and health are monitored without interrupting workers; work lands at a safe seam; tests and independent reviews run; Codex accepts/revises/rotates/holds/rejects on evidence; Git and GitHub effects occur exactly once; a fresh successor reconstructs state without conversation-only knowledge; the campaign advances to the correct next task; pause/status/ask/resume/stop/emergency-stop behave correctly; a simulated crash recovers without duplicated work; no protected owner gate is crossed.",
+   "source_ref": "source-003-amendment.md#golden-run",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102",
+     "M0-T096"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R187",
+   "text": "Continuous mode remains disabled after the golden run until the owner explicitly authorizes activation.",
+   "source_ref": "source-003-amendment.md#golden-run",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R188",
+   "text": "Campaign execution rules (after the amendment and task campaign are accepted): work through the dependency-ordered tasks automatically; claim only one cohesive writer task at a time unless independent worktrees and non-overlapping scopes are proven; keep the campaign-continuity record and requirement verification current; use fresh producer contexts by default; let healthy bounded reviewers and subagents finish naturally at turnover; do not allow any single agent to expand its assignment indefinitely; do not place arbitrary token ceilings in worker prompts; at each accepted checkpoint commit, push, validate, and advance durable NEXT state.",
+   "source_ref": "source-003-amendment.md#campaign-execution-and-tracking",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102",
+     "M0-T103",
+     "M0-T092",
+     "M0-T093",
+     "M0-T094",
+     "M0-T095",
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R189",
+   "text": "If context turnover is needed before automatic succession is ready, use /session-handoff, stop cleanly, and give the owner the exact successor command and prompt. Continue without waiting for the owner between ordinary accepted tasks; stop only for an actual owner gate, unsafe ambiguity, unsupported version transition, dependency admission, protected external effect, or contradiction that cannot be resolved from durable evidence.",
+   "source_ref": "source-003-amendment.md#campaign-execution-and-tracking",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R190",
+   "text": "Initial deliverable before changing runtime implementation: return a concise owner report containing (1) reconciled repository and campaign identity; (2) current and target Claude Code versions; (3) the completed native-reuse matrix; (4) which unstarted D-024 tasks change; (5) which accepted components remain untouched; (6) what native features replace custom work; (7) what remains custom; (8) the revised task sequence; (9) upgrade and rollback plan; (10) test and golden-run plan; (11) any true owner decision required.",
+   "source_ref": "source-003-amendment.md#initial-deliverable-before-implementation",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R191",
+   "text": "After recording and independently validating that report and amendment, proceed with the campaign unless an explicit owner gate is reached.",
+   "source_ref": "source-003-amendment.md#initial-deliverable-before-implementation",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-BOOTSTRAP",
+     "M0-T102"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T102"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
+   "evidence_paths": [],
+   "amendment_sequence": 3
   }
  ]
 }

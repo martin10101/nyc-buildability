@@ -10,7 +10,7 @@
  "issued_at": "2026-08-26",
  "captured_at": "2026-08-26T21:09:42+00:00",
  "created_at": "2026-08-26T21:09:42+00:00",
- "updated_at": "2026-08-26T21:09:42+00:00",
+ "updated_at": "2026-08-26T21:31:19+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -25,14 +25,18 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
+ "affected_tasks": [
+  "M0-T102"
+ ],
  "affected_prs": [],
  "affected_branches": [
   "control/D-024-fable-codex-loop"
  ],
  "scope": {
   "kind": "session-conduct",
-  "task_ids": [],
+  "task_ids": [
+   "M0-T102"
+  ],
   "task_types": [],
   "allowed": "produce the session handoff now; the successor performs the capability re-baseline as a bounded gated ledger task, then continues the D-024 campaign chain (M0-T092 onward) under standing authorizations",
   "excluded": "claiming M0-T092 or any later D-024 task before the re-baseline task is accepted; untracked re-baseline work; any owner-only action"
@@ -63,6 +67,11 @@
    "at": "2026-08-26T21:09:42+00:00",
    "actor": "orchestrator",
    "event": "captured source-001.md verbatim (sha256 764d20103b96d8197d680afc9a3410f3cd33189e80c7442353b8b66da7ec44e0, 2002 bytes); decomposed into 3 conduct requirements (handoff now; successor capability re-baseline before M0-T092+; D-029 hold conversion) bound to sentinel D-030-BOOTSTRAP; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9. Received at the D-029 M0-T091 SEAM READY hold (HEAD b2e3b2c, tree clean); this is the owner instruction D-029-R006 awaited."
+  },
+  {
+   "at": "2026-08-26T21:31:19+00:00",
+   "by": "orchestrator",
+   "note": "M0-T102 (D-024 amendment-3 unit A) recorded as the D-030 'bounded gated ledger task (new M0-T1xx id)'; cites D-030:ALL; discharges D-030 at its acceptance. No requirement rows changed."
   }
  ]
 }

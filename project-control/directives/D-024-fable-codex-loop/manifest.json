@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-26T02:30:00+00:00",
+ "updated_at": "2026-08-26T21:27:57+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -28,10 +28,19 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-26T02:30:00+00:00",
    "content_digest_sha256": "45f7726e5fb3b690d06ba539baa7b066dd3df485da58062daec955af30cb078c"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-26T21:27:57+00:00",
+   "content_digest_sha256": "2e326390fa7a9107cb02ca5bf725b64a34bc77c4f4ba22a17bed827bee739d4d"
   }
  ],
  "amendments": [
-  "source-002-amendment.md"
+  "source-002-amendment.md",
+  "source-003-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -46,7 +55,9 @@
   "M0-T093",
   "M0-T094",
   "M0-T095",
-  "M0-T096"
+  "M0-T096",
+  "M0-T102",
+  "M0-T103"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -61,7 +72,9 @@
   "task/M0-T093-d024-guardrail-bridge",
   "task/M0-T094-d024-operator-channel",
   "task/M0-T095-d024-repair-gate-github",
-  "task/M0-T096-d024-canaries-golden-run"
+  "task/M0-T096-d024-canaries-golden-run",
+  "task/M0-T102-d024-capability-rebaseline",
+  "task/M0-T103-d024-version-probes"
  ],
  "scope": {
   "kind": "coordinated-campaign",
@@ -78,7 +91,9 @@
    "M0-T093",
    "M0-T094",
    "M0-T095",
-   "M0-T096"
+   "M0-T096",
+   "M0-T102",
+   "M0-T103"
   ],
   "task_types": [
    "governance"
@@ -234,10 +249,63 @@
   "D-024-R135",
   "D-024-R136",
   "D-024-R137",
-  "D-024-R138"
+  "D-024-R138",
+  "D-024-R139",
+  "D-024-R140",
+  "D-024-R141",
+  "D-024-R142",
+  "D-024-R143",
+  "D-024-R144",
+  "D-024-R145",
+  "D-024-R146",
+  "D-024-R147",
+  "D-024-R148",
+  "D-024-R149",
+  "D-024-R150",
+  "D-024-R151",
+  "D-024-R152",
+  "D-024-R153",
+  "D-024-R154",
+  "D-024-R155",
+  "D-024-R156",
+  "D-024-R157",
+  "D-024-R158",
+  "D-024-R159",
+  "D-024-R160",
+  "D-024-R161",
+  "D-024-R162",
+  "D-024-R163",
+  "D-024-R164",
+  "D-024-R165",
+  "D-024-R166",
+  "D-024-R167",
+  "D-024-R168",
+  "D-024-R169",
+  "D-024-R170",
+  "D-024-R171",
+  "D-024-R172",
+  "D-024-R173",
+  "D-024-R174",
+  "D-024-R175",
+  "D-024-R176",
+  "D-024-R177",
+  "D-024-R178",
+  "D-024-R179",
+  "D-024-R180",
+  "D-024-R181",
+  "D-024-R182",
+  "D-024-R183",
+  "D-024-R184",
+  "D-024-R185",
+  "D-024-R186",
+  "D-024-R187",
+  "D-024-R188",
+  "D-024-R189",
+  "D-024-R190",
+  "D-024-R191"
  ],
- "requirements_id_digest_sha256": "3536cb557e4394fed0158c070e029d6023f1ea104ca2e2d86f41cf0ccb09d9dd",
- "requirements_content_digest_sha256": "04ba7be1f38c62c5551370fa7a434a548c922cc5b7054ceb30073d43bdc2d1a7",
+ "requirements_id_digest_sha256": "dd5e670a039a40b617d9f594837abbc3872fcf16e4e68de3793ef08e95d9101c",
+ "requirements_content_digest_sha256": "a2264aa83b5517b6d7ac9b504f187bcf21d2129f6e47ad2ba99288d3c300e440",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -260,6 +328,11 @@
    "at": "2026-08-26T02:30:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 2 captured verbatim (owner message 2026-08-26, session channel): official statusline docs adopted as primary capability evidence (fetch-verified at capture; annex in source-002); ten atomic requirements D-024-R129..R138 appended, bound to new bounded task M0-T099 (statusLine handler + real installed-version fixture). Accepted M0-T088 immutable, not reopened (amendment's own item 1: no restart/rebuild); M0-T089 (subagentStatusLine ingestion) unaffected - no new ids bind to it (deadlock-avoidance: never bind new requirement ids onto an already-gated task). Digests recomputed under this recorded amendment."
+  },
+  {
+   "at": "2026-08-26T21:27:57+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 3 captured verbatim (owner prompt 2026-08-26, session session_01HfptKuEs3RDxaxsSHJjc7t): native Claude Code capability re-baseline campaign for the unimplemented portion of D-024. 53 atomic requirements D-024-R139..R191 appended (roles, reconcile-first, authorizations/prohibitions, official-docs baseline, 5-decision capability matrix, 11 native capability evaluations, must-remain-custom, not-top-level-loop, upgrade procedure, campaign units A-J, replace-not-layer, mandatory testing, golden run, execution rules, initial owner deliverable). New bounded tasks M0-T102 (unit A; also cites D-030:ALL and discharges the D-030 re-baseline at its acceptance) and M0-T103 (unit B) added to scope; unit C-J task ids are assigned at campaign conversion (M0-T102 output) and the affected rows restamped then, each with its own audit_log entry. Unstarted M0-T092..M0-T096 remain amendable per R145; accepted M0-T086..M0-T091 and M0-T097..M0-T101 immutable, no new ids bound to any already-gated task. Base identity at capture: HEAD 05d03a0 == origin tip, tree clean, claude --version 2.1.220 live-probed. Digests recomputed under this recorded amendment."
   }
  ]
 }
