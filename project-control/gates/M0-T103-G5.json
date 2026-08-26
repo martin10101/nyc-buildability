@@ -5,8 +5,17 @@
   "role": "independent_review",
   "result": "PASS",
   "report_file": "project-control/reports/M0-T103-G5-security.md",
-  "reviewed_at": "2026-08-26T22:54:19.830852+00:00",
-  "content_manifest_sha256": "6092f93e753609605e1c204d84bb64991ee52ef5872349c85f6b2f56138fc95e",
-  "reviewed_sha": "6eb65b95c74a390d9b2c3bd64aee4e23747d34c7",
-  "updated_at": "2026-08-26T22:54:20.339222+00:00"
+  "reviewed_at": "2026-08-26T22:59:43.106739+00:00",
+  "content_manifest_sha256": "0b04e3b14e09f0395590714f53f98acd3bb3e622908c02086a64ae1532d489a0",
+  "reviewed_sha": "96d86234a97a6cb18b31a8a06b5827f33b8478c5",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T103-G5-security.md",
+      "reviewed_at": "2026-08-26T22:54:19.830852+00:00"
+    }
+  ],
+  "updated_at": "2026-08-26T22:59:43.624896+00:00"
 }
