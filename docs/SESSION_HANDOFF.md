@@ -9,8 +9,10 @@ as still-current.** This file is orientation only; rules/gates live in `CLAUDE.m
 ## Handoff — M0-T100/T101/T090 accepted; campaign seq 6; D-028 sleep seam
 
 1. **Generated:** 2026-08-26 UTC · Fable 5 orchestrator, `session_01HfptKuEs3RDxaxsSHJjc7t` ·
-   reason: owner directive **D-028** (sleep instruction: hold + handoff near the ~650k
-   main-agent context seam). Landed EARLY at a clean post-acceptance seam (~500k ctx) per
+   reason: owner invoked `/session-handoff` (no reason argument) at the clean post-acceptance
+   seam, confirming the standing owner directive **D-028** (sleep instruction: hold + handoff
+   near the ~650k main-agent context seam) · via the GLOBAL personal skill (profile identity
+   verified: origin + markers). Landed EARLY at a clean post-acceptance seam (~500k ctx) per
    D-024 s5.5's own landing rule: the next unit (M0-T091, a large runtime-supervision unit)
    could not reach its natural seam before the 650k hold, and landing starts no new task.
    Zero active sub-agents (all seven reviewers this session completed and reconciled); zero
