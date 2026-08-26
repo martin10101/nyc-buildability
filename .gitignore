@@ -84,3 +84,6 @@ OWNER_DIRECTIVE_DRAFT_dispatch-efficiency-and-graph-wiring.md
 # Transient SQLite journal artifacts from supervisor runtime runs (not evidence)
 *.sqlite3-wal
 *.sqlite3-shm
+
+# D-027 (M0-T100): runtime statusLine telemetry sidecar/journal (M0-T099 report section 4) — never committed
+.claude/telemetry/
