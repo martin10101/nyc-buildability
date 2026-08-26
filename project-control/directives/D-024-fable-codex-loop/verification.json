@@ -1609,332 +1609,381 @@
     "D-024-R127",
     "D-024-R128"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "68d6f026494fdd166e39c750a8005b291939a3f9",
+   "verified_at": "2026-08-26T09:05:00+00:00",
    "requirements": [
     {
      "id": "D-024-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No readiness/activation claim anywhere; unit is pre-spawn planning records only. `subagent_contracts.py` docstring + report §1 \"supervisor stays SHADOW-ONLY (R595 untouched)\"."
+     ],
+     "note": "conduct; one-prompt continuity/transport/restart/golden-run owed to M0-T092/T096, not claimed."
     },
     {
      "id": "D-024-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Phase C1 schemas/classifier/sizing delivered shadow-only; no `loop.py`/`cli.py` edit in frozen diff (7-file diff = 5 modules+test+report). Graph subsystem not replaced."
+     ],
+     "note": "conduct/impl; loop architecture untouched."
     },
     {
      "id": "D-024-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No Codex file in diff; all product code authored by Fable/orchestrator producer. `envelope.evidence_inspection_plan` names what Codex *inspects*, grants no write."
+     ],
+     "note": "conduct; Codex control-plane-only intact."
     },
     {
      "id": "D-024-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`M0-T090-G0-readiness.md`: produced from campaign NEXT + captured directive; no owner re-prompt."
+     ],
+     "note": "conduct."
     },
     {
      "id": "D-024-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No owner-question artifact in packet/reports; D-028 sleep instruction honored."
+     ],
+     "note": "conduct."
     },
     {
      "id": "D-024-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`git log --merges 8bb829c..HEAD` empty; no \"241\"/merge in campaign commits; branch `control/D-024-fable-codex-loop`."
+     ],
+     "note": "conduct; PR #241 untouched."
     },
     {
      "id": "D-024-R017",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`D-024-R101` cited in packet objective (`tasks/M0-T090.json`), **every** one of the 5 module docstrings (closing line \"Supervisor-freeze qualifying evidence: D-024-R101.\"), and commit `e8b21d1` header + body."
+     ],
+     "note": "impl/conduct; freeze §3 satisfied."
     },
     {
      "id": "D-024-R018",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Report §4 records distinct-axis (rotation SMALL/MEDIUM/LARGE not overloaded) + reuse of `context_pack_budget` tiers + telemetry records; no duplicate machinery."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Frozen diff confined to the 3 allowed_paths scope areas; commits on control branch only."
+     ],
+     "note": "conduct."
     },
     {
      "id": "D-024-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No Codex action surface changed; envelope `telemetry_sources` restricted to closed Phase-B read-only set (`TELEMETRY_SOURCES`, validated)."
+     ],
+     "note": "conduct/no-violation."
     },
     {
      "id": "D-024-R022",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No path grants Codex mutation; all new records are controller-side frozen dataclasses."
+     ],
+     "note": "conduct/no-violation."
     },
     {
      "id": "D-024-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Mechanical (not prose) enforcement delivered at contract level: `ROLES` vocabulary (read_only/review_only/write), `assert_grantable` refuses overlapping write scopes/resources + producer cap, `validate_pair` refuses lease-without-write."
+     ],
+     "note": "impl (contract-level share); Codex-transport-specific mechanical enforcement (read-only worktree/allowlists) owed to M0-T092/T096 — nothing here weakens it."
     },
     {
      "id": "D-024-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No dispatch/accept path added; `SpawnDecision.to_dict` records only — nothing acts on a decision."
+     ],
+     "note": "conduct/no-violation."
     },
     {
      "id": "D-024-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No activation/actuation; grep of 5 modules shows no subprocess/Popen/spawn/actuate; R595 restated."
+     ],
+     "note": "conduct; owner authority preserved."
     },
     {
      "id": "D-024-R042",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`validate_envelope` checks `telemetry_confidence` ∈ `CONFIDENCE_LABELS` (closed vocab); `StartupObservation.to_record` labels measurements `estimated`/`Measurement.unknown` for `None` (unknown never zero); `test_envelope_validation_fail_closed`, `test_unmeasured_startup_values_stay_unknown_never_zero`."
+     ],
+     "note": "impl (label share)."
     },
     {
      "id": "D-024-R045",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`assert_worker_text_clean` runs over `worker_text_fields()` (**every** string + tuple-item field) AND re-scans the rendered prompt (\"rendered_prompt\"); 10 fail-closed pattern classes. Tests: `test_worker_prompt_contains_no_quota_language` (INDEPENDENT scan, line 262–278, not the guard's own table), `test_quota_language_rejected_fail_closed` (8 phrasings incl. \"About 3.5k tokens should suffice\"), `test_quota_guard_covers_every_worker_field`."
+     ],
+     "note": "impl; positive primary evidence + rendered-prompt re-scan confirmed."
     },
     {
      "id": "D-024-R046",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Contract scaffolding present: `HealthBands` (occupancy ladder) + `DetectorPolicy` (no_progress_window, repeated_attempt_limit, scope_drift) as envelope fields."
+     ],
+     "note": "deferred-share; the full runtime health-score evaluation against telemetry owed to M0-T091/T092 — report §1 scopes runtime enforcement as deferred (verified honest)."
     },
     {
      "id": "D-024-R047",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Two linked records realized as `WorkerAssignment` (planning layer) + `SupervisionEnvelope` (invisible supervision layer); `validate_pair` links + separates them; `test_pair_ids_must_link`."
+     ],
+     "note": "impl; layer-2 runtime watching deferred (honest)."
     },
     {
      "id": "D-024-R048",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`workload_classifier.py`: `WORK_CLASSES` closed 4-tuple, deterministic rule precedence, conservative unknown (`no_objective_features`, `cohesion_unproven` → unknown-recon-first). Tests for all four classes + `test_cohesion_unproven_is_never_optimistic`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R049",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`StartupObservation` fields: packet_bytes, repeated_documents, startup_tokens/seconds, files_reopened, time_to_first_evidence, outcome; median calibration over KNOWN values; `test_startup_observation_measures_the_calibration_inputs`, `test_calibration_uses_known_values_only_and_filters`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R050",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`HealthBands` PRIVATE + configurable (`from_controller_config` fail-closed on unknown keys) + ordering invariant; leak guard bans band names AND numeric thresholds from worker text; `test_bands_from_config_fail_closed`, `test_envelope_numbers_never_leak_into_worker_text`."
+     ],
+     "note": "impl (band-definition share); runtime Land/Emergency behaviors deferred (honest)."
     },
     {
      "id": "D-024-R051",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Grep of 5 modules: no `maxTurns`/`maxBudget`/`max_turns`/`max_budget` used as a cap — the only `max...spend` token is the R045 *rejection* pattern that bans such phrasing from worker text. `emergency_ceiling_note` is a private envelope field."
+     ],
+     "note": "impl; catastrophic-ceiling *recovery test* deferred with runtime units (report §1 honest)."
     },
     {
      "id": "D-024-R052",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`OverheadLedger.calibration(size_class=, resolved_model=)` filters per resolved model + size class; `HealthBands` configurable per policy table. `test_calibration_uses_known_values_only_and_filters` proves per-model filter."
+     ],
+     "note": "impl (calibration-mechanism share); live-runtime calibration deferred (honest)."
     },
     {
      "id": "D-024-R053",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`ExistingSubagentHealth.overloaded_or_confused` blocks resume regardless of counters; `decide_spawn` → `unhealthy_not_resumed`; `test_overloaded_subagent_never_resumed_to_save_startup`."
+     ],
+     "note": "impl; directly implemented at decision level."
     },
     {
      "id": "D-024-R055",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "**Every s6 bullet has a field.** WorkerAssignment covers all 15 worker-facing items (IDs, exact_change, necessity, role, permitted_paths+tools, prohibited_areas+external_effects, deliverable_schema, acceptance_criteria, required_evidence, checkpoints, blocker_reporting, checkpoint_commit_allowed, extension_protocol, unrelated_discovery, handoff_requirements). SupervisionEnvelope covers all 10 controller items (size_class+cohesion_rationale, graph_files/symbols/tests+write_lease_paths/lease_resources, startup_overhead_note+packet_reuse_plan, resolved_model+model_context_window, telemetry_sources+confidence, health_bands+emergency_ceiling_note, detectors, landing_opportunities, extension_criteria, evidence_inspection_plan). `validate_pair`; `test_envelope_validation_fail_closed`."
+     ],
+     "note": "impl; field-by-field cross-check against source-001 §6 bullets completed — no missing field."
     },
     {
      "id": "D-024-R056",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`assert_no_envelope_leak`: bans HEALTH_BAND_NAMES[1:], `HealthBands.numeric_strings()` (repr, `:g`, percent forms), model window, both detector counters; re-run on every `render_worker_prompt`; `test_envelope_numbers_never_leak_into_worker_text` (band name, window, `0.7` occupancy)."
+     ],
+     "note": "impl; both leak forms + rendered-prompt re-scan confirmed."
     },
     {
      "id": "D-024-R057",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`decide_spawn` Goldilocks precedence: split-first (oversized) / recon-first (unknown) / stay-main (micro-churn) / resume-existing (healthy same-assignment) / fork (clean+beneficial) / spawn-new. `test_fork_only_when_clean_and_beneficial`, `test_tiny_targeted_work_stays_in_main_session`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R058",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`startup_overhead` measures reload cost; `spawn_decision` resume-healthy vs never-resume-overloaded + fork-only-clean-beneficial (`ParentContextState`); `test_followup_resumes_healthy_subagent`, `test_fork_only_when_clean_and_beneficial`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R059",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Classifier keeps `requires_frequent_parent_decisions`/`phases_share_substantial_context` in main; `model_fit` routes lower tier only with window ≥ target×headroom AND demonstrated capability, conservative on unknowns; `test_lower_tier_model_needs_window_and_demonstrated_capability` (all 4 branches)."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R060",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`PRODUCER_CAP = 3`; `assert_grantable` refuses 4th writer; read-only agents pass at any count; nested children flow through the same check; `test_producer_cap_rejects_fourth_writer`."
+     ],
+     "note": "impl; cap = refusal ceiling, not target."
     },
     {
      "id": "D-024-R061",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Classifier `requires_frequent_parent_decisions` → main-session; cohesive-subagent for self-contained; `deliverable_schema`/`return schema` bounds returned summary."
+     ],
+     "note": "impl (classifier/design share); verbose-transcript-out-of-context runtime behavior deferred (honest)."
     },
     {
      "id": "D-024-R062",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`DetectorPolicy.repeated_attempt_limit` controller-side (never in worker text); `DEFAULT_EXTENSION_PROTOCOL` authorizes in-scope self-correction and gates boundary changes."
+     ],
+     "note": "deferred-share; runtime repeated-attempt detection owed to later units (honest)."
     },
     {
      "id": "D-024-R063",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`DEFAULT_EXTENSION_PROTOCOL` carries the s6.1 return list (proven / uncertain / why-blocks-acceptance / least-costly-next / additional-scope+natural-completion-point / resume-vs-new / consequences / durable-partial-checkpoint); envelope `extension_criteria` for controller side. `test_rendered_prompt_carries_required_duties`."
+     ],
+     "note": "impl. **Advisory (non-blocking):** the default worker text compresses s6.1's \"additional scope, **likely evidence sources**, and natural completion point\" to \"additional scope and its natural completion point\" — the explicit *likely-evidence-sources* clause is absent from the overridable default (7 of 8 sub-items verbatim). Field is present and overridable; Codex approve/deny runtime gate deferred. Recommend a follow-up unit add the clause. Does not weaken the guard."
     },
     {
      "id": "D-024-R064",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`DetectorPolicy` docstring pins progress = durable evidence; `no_progress_window_minutes` counts absence of NEW durable evidence, not text volume/tool activity."
+     ],
+     "note": "deferred-share; runtime no-progress trigger owed to later units (honest)."
     },
     {
      "id": "D-024-R079",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Graph subsystem NOT edited; `neighborhood_from_view` adapts `repo_views` dict shape by value; no graph/index import in the package (leaf preserved); report §4."
+     ],
+     "note": "impl/no-violation."
     },
     {
      "id": "D-024-R080",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`WorkloadFeatures.graph_stale` → unknown-recon-first; `tier_signals` raises `stale_graph`; `neighborhood_from_view` fails closed on malformed views; `test_stale_graph_is_reported_never_used`, `test_malformed_view_fails_closed`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R081",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Tiers REUSED via **lazy** `from tools import context_pack_budget` in `_budget()`; `select_tier` called, no copied table; `tools/context_pack_budget.py` NOT in frozen diff and byte-unchanged HEAD-vs-parent (verified). `test_tier_selection_reuses_the_accepted_tiers_exactly`, `test_medium_without_justification_stays_withheld`."
+     ],
+     "note": "impl; constants untouched confirmed."
     },
     {
      "id": "D-024-R092",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`PACKET_CATEGORIES` matches the s13 six-category list exactly; `packet_plan` records role-scoped smallest-complete set, mandatory justified omissions, STOP on unprovable sufficiency (empty/truncated neighborhood); `test_packet_plan_marks_omissions_or_stops`, `test_unprovable_sufficiency_stops_instead_of_dropping_constraints`."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R098",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`assignment_id` distinct from `parent_task_id` in both records; classifier chooses seams from ownership/proof boundaries, not task-id counting."
+     ],
+     "note": "impl/no-violation."
     },
     {
      "id": "D-024-R101",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Phase C items 1 (schemas), 2 (classifier), 3 (startup measurement + goldilocks/resume/fork), 5 (graph sizing + packet plans) delivered; item 4 contract-level guards (cap/lease/no-quota) delivered."
+     ],
+     "note": "deferred-share; runtime enforcement + item 6 (landing direction, emergency stop, child handoffs) owed to remaining Phase C/D units — report §1 explicitly and honestly defers; nothing here forecloses them."
     },
     {
      "id": "D-024-R108",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "s16.2 SIZING subset (15 rows) mapped to named tests in report §2 and reproduced in the test file (vague/oversized/tiny/resume/overloaded/fork/cohesive/split/unknown/stale/startup-metrics/lower-tier/producer-cap/lease-overlap/nested-children-no-evade + independent no-quota proof)."
+     ],
+     "note": "harness/deferred-share; runtime rows (landing behaviors, TaskStop-for-emergency, catastrophic-ceiling recovery proof, child turnover, 40-min investigation) honestly owed to later Phase C/D units per report §1–§2 (verified — not falsely claimed)."
     },
     {
      "id": "D-024-R120",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Bounded rules as refusal guards (cap, leases, vague-assignment rejection, quota rejection) activation cannot bypass; no unlimited-subagent surface; no actuation."
+     ],
+     "note": "impl."
     },
     {
      "id": "D-024-R125",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "`M0-T090-G0-readiness.md`: Gate-0 primary-root verified this session (cwd = worktree root, branch `control/D-024-fable-codex-loop`), recorded before any write."
+     ],
+     "note": "conduct."
     },
     {
      "id": "D-024-R126",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "G0-readiness: MCP roster empty; project default-deny; recorded."
+     ],
+     "note": "conduct."
     },
     {
      "id": "D-024-R127",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No Gate-0 failure occurred; no write under a failed/unknown gate; fail-closed restated for successors."
+     ],
+     "note": "conduct/no-violation."
     },
     {
      "id": "D-024-R128",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Single session, clean lineage from handoff HEAD `8bb829c`; no failed-start adoption; no history rewrite."
+     ],
+     "note": "conduct/no-violation."
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "3e726a0fcc3ea574337d8e2166d3710322586806232fc52506372362f820baba",
+   "frozen_content_commit": "e8b21d1",
+   "note": "46/46 PASS recorded verbatim-in-substance from the independent DCV return (full report: project-control/reports/M0-T090-DCV.md); one non-blocking R063 advisory (default extension text lacks the likely-evidence-sources clause) carried to the runtime unit."
   },
   {
    "task_id": "M0-T091",
