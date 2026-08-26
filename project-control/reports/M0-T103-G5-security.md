@@ -83,3 +83,33 @@ Report files of record (absolute paths):
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\reports\M0-T103-G2-self-check.md`
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\agent_supervisor\fixtures\capability_probe_live_2026-08-26_m0t103_post_update.json`
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\test_agent_supervisor_capability_probe.py`
+
+---
+
+# M0-T103 G5 delta attestation (VERBATIM save; same reviewer, context intact)
+
+Requested via SendMessage after the correction commit `a4cfdaa`. Saved verbatim below.
+
+---
+
+Verified. Rendering the delta attestation.
+
+---
+
+**G5-DELTA: PASS**
+
+Delta reviewed: `git diff e0a867b..a4cfdaa` — two substantive-content files (the rest of the 10 changed files are control-plane gate/ledger records: G2/G3/G5 gate JSONs, the G3 code-review save, my prior G5 report saved verbatim, resubmit report-json, state, task). New identity `a4cfdaa` confirmed frozen through HEAD `d832c4c` (`a4cfdaa..d832c4c` advances only report-json/state/task; the test, fixture, and report are byte-frozen). The post-update fixture is unchanged in the delta, so my prior leak-scan of it still holds.
+
+**(a) No new leak/secret/bypass/MCP surface — CONFIRMED.**
+- `.claude/settings.json`, `.claude/hooks`, `.mcp.json` untouched (`git diff --name-only e0a867b..a4cfdaa` on those paths is empty). No `mcpServers` block, no `.mcp.json`, no bypass flag anywhere in the delta except inside my own G5 report text being saved verbatim (review-record prose, not config).
+- Report delta = one "Correction round" paragraph in section 5 documenting the G3 fix; scan for `MLFLL`/`session_...`/`777b09da`/`C:\Users`/`ghp_`/`sk-`/`Bearer` on its added lines is empty — no new identifiers.
+- Test delta introduces only leak-detection *pattern literals* (`MLFLL`, `:\Users\`, `:/Users/`, `\Users\MLFLL`) used as assertion needles — these are guards, not leaks. Fixture unchanged.
+
+**(b) Generalized masking tooth is equal-or-stronger — CONFIRMED.** `test_post_update_fixture_masked_and_shaped` changed from `assert "MLFLL" not in json.dumps(post["body"])` to a loop over four fragments asserted absent from `json.dumps(post)` (the WHOLE fixture):
+- **Scope broadened:** whole-fixture vs `body`-only — and critically the old check did not even cover `probe_meta` where the binary paths live; the new scan does.
+- **Patterns broadened:** drive-rooted/`Users`-directory fragments from ANY account (`:\Users\`, `:/Users/`), plus the specific and bare `MLFLL` — vs the old single literal. The JSON-escaping is handled correctly (the doubled-backslash needle matches `C:\Users\` as `json.dumps` serializes it).
+- **New non-vacuity guard:** `assert binaries` (claude_binaries non-empty) closes a vacuous-pass hole in the retained `[HOME]`-prefix loop.
+- It is a strict superset: any input the old tooth failed (`MLFLL` in body) the new tooth also fails (`MLFLL` in whole). No regression, unambiguously stronger.
+- The paired `skipif` relocation (from the `post` fixture — where pytest ignores marks — onto the live test itself) additionally fixes a real test-integrity defect: the live `claude --version` re-probe was running unguarded on claude-absent CI runners. Dual-context re-run recorded (claude-present 18 passed; claude-absent 16 passed + 2 clean SKIPs). This is a correctness improvement, not a security change.
+
+**(c) G5 PASS carries to the new identity — CONFIRMED.** The correction is test-hardening plus a documentation paragraph, with no deliverable-behavior change to the fixture or report content that my seven-precondition review depended on. No config/secret/bypass/MCP surface added; fixture unchanged; masking enforcement strengthened. My `G5: PASS` for M0-T103, its two LOW advisories (owner-uninstall the broken npm `@anthropic-ai/claude-code` shim; scrub session-ids incl. the `777b09da` class into the M0-T102 repo-wide hygiene task), and all unit-C (M0-T104) security preconditions carry unchanged to identity `a4cfdaa` / HEAD `d832c4c`.
