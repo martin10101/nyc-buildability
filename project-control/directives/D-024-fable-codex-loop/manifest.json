@@ -31,12 +31,7 @@
   }
  ],
  "amendments": [
-  {
-   "sequence": 2,
-   "file": "source-002-amendment.md",
-   "recorded_at": "2026-08-26T02:30:00+00:00",
-   "summary": "Official statusline capability evidence (URL + version gates) + primary statusLine handler requirements R129-R138; bound to new bounded task M0-T099; accepted M0-T088 not reopened; subagentStatusLine implementation routed to M0-T089 (in review) and live canary to the campaign canary task."
-  }
+  "source-002-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
