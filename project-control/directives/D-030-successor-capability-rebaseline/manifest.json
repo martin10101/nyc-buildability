@@ -1,0 +1,68 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-030",
+ "version": 1,
+ "slug": "successor-capability-rebaseline",
+ "title": "Owner instruction 2026-08-26 (via /session-handoff reason): owner-requested turnover after M0-T091; the successor must perform the native Claude Code capability re-baseline (M0-T086 pattern: live capability_probe + capability_matrix_v1.json re-verified against installed versions, as a bounded gated ledger task) BEFORE claiming M0-T092 or any later D-024 task. Discharges the D-029 wait state and converts the D-029 hold into this re-baseline prerequisite. Session-conduct directive bound to the non-ledger sentinel D-030-BOOTSTRAP.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-26",
+ "captured_at": "2026-08-26T21:09:42+00:00",
+ "created_at": "2026-08-26T21:09:42+00:00",
+ "updated_at": "2026-08-26T21:09:42+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-26T21:09:42+00:00",
+   "content_digest_sha256": "764d20103b96d8197d680afc9a3410f3cd33189e80c7442353b8b66da7ec44e0"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "produce the session handoff now; the successor performs the capability re-baseline as a bounded gated ledger task, then continues the D-024 campaign chain (M0-T092 onward) under standing authorizations",
+  "excluded": "claiming M0-T092 or any later D-024 task before the re-baseline task is accepted; untracked re-baseline work; any owner-only action"
+ },
+ "applicability_note": "Conduct-only: all rows bind the NON-LEDGER sentinel D-030-BOOTSTRAP; R001 is discharged by this session's handoff, R002/R003 verified at the successor's re-baseline task DCV. The verbatim source-001.md governs on any wording question; the interpretation note records the hold-conversion reading (D-029-R006 discharged; D-029-R002 converts into the R002 prerequisite; no further owner release required after the accepted re-baseline).",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner /session-handoff invocation 2026-08-26 with the turnover + re-baseline reason argument."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-030-R001",
+  "D-030-R002",
+  "D-030-R003"
+ ],
+ "requirements_id_digest_sha256": "8cfa7a08f8cf199b9f7fe55fdc1338934c537709650d9c1d0c906f4dbf3beb39",
+ "requirements_content_digest_sha256": "1560c74d4fd73f8d323f71ef4ec18bdd740804be98619d835b753851a1a4c54d",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-26T21:09:42+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 764d20103b96d8197d680afc9a3410f3cd33189e80c7442353b8b66da7ec44e0, 2002 bytes); decomposed into 3 conduct requirements (handoff now; successor capability re-baseline before M0-T092+; D-029 hold conversion) bound to sentinel D-030-BOOTSTRAP; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9. Received at the D-029 M0-T091 SEAM READY hold (HEAD b2e3b2c, tree clean); this is the owner instruction D-029-R006 awaited."
+  }
+ ]
+}

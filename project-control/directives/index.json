@@ -423,7 +423,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-029-m0t091-seam-hold/manifest.json"
+  },
+  {
+   "directive_id": "D-030",
+   "slug": "successor-capability-rebaseline",
+   "title": "Owner instruction 2026-08-26 (/session-handoff reason): turnover after M0-T091; successor must perform the native Claude Code capability re-baseline (M0-T086 pattern, bounded gated ledger task) BEFORE claiming M0-T092 or any later D-024 task; discharges the D-029 wait state and converts the D-029 hold into this prerequisite. Conduct-only (sentinel D-030-BOOTSTRAP).",
+   "status": "active",
+   "issued_at": "2026-08-26",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-030-successor-capability-rebaseline/manifest.json"
   }
  ],
- "updated_at": "2026-08-26T20:28:54+00:00"
+ "updated_at": "2026-08-26T21:09:42+00:00"
 }
