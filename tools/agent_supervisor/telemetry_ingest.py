@@ -31,14 +31,19 @@ from collections import OrderedDict
 from typing import Any
 
 from .models import to_utc_iso
-from .telemetry_records import Measurement, TelemetryRecord
+from .telemetry_records import CONFIDENCE_LABELS, Measurement, TelemetryRecord
 
-#: Anthropic-style usage payload fields consumed per step, in canonical order.
+#: Anthropic-style usage payload fields consumed per step:
+#: (payload_field, per-step measurement name, running-sum measurement name).
+#: Distinct name families (M0-T088 G3 carried fix): a provider_usage_step
+#: record reports step_*; only snapshot() reports cumulative_*.
 _STEP_USAGE_FIELDS = (
-    ("input_tokens", "cumulative_input_tokens"),
-    ("output_tokens", "cumulative_output_tokens"),
-    ("cache_creation_input_tokens", "cumulative_cache_creation_tokens"),
-    ("cache_read_input_tokens", "cumulative_cache_read_tokens"),
+    ("input_tokens", "step_input_tokens", "cumulative_input_tokens"),
+    ("output_tokens", "step_output_tokens", "cumulative_output_tokens"),
+    ("cache_creation_input_tokens", "step_cache_creation_tokens",
+     "cumulative_cache_creation_tokens"),
+    ("cache_read_input_tokens", "step_cache_read_tokens",
+     "cumulative_cache_read_tokens"),
 )
 
 #: Reported-cumulative fields (result/per-query totals from the platform).
@@ -166,13 +171,19 @@ class UsageAccumulator:
     """
 
     def __init__(self, *, session_id: str = "",
-                 max_seen_ids: int = 4096) -> None:
+                 max_seen_ids: int = 4096,
+                 step_label: str = "provider-exact") -> None:
         if max_seen_ids < 1:
             raise ValueError("max_seen_ids must be >= 1")
+        if step_label not in CONFIDENCE_LABELS or step_label == "unknown":
+            raise ValueError(f"step_label must be a real confidence label, "
+                             f"got {step_label!r}")
         self.session_id = session_id
+        self.step_label = step_label
         self._max_seen_ids = max_seen_ids
         self._seen_ids: OrderedDict[str, None] = OrderedDict()
         self._step_totals: dict[str, int | float] = {}
+        self._observed_fields: set[str] = set()
         self._steps_ingested = 0
         self._duplicates_ignored = 0
         self._unidentified_steps = 0
@@ -210,7 +221,7 @@ class UsageAccumulator:
                 record_type="provider_usage_step", timestamp_utc=now,
                 session_id=self.session_id,
                 measurements={
-                    "cumulative_input_tokens": Measurement.unknown(
+                    "step_input_tokens": Measurement.unknown(
                         "cumulative", "step usage missing or not an object"),
                 },
                 attributes={"message_id": message_id
@@ -218,17 +229,19 @@ class UsageAccumulator:
 
         step_measurements: dict[str, Measurement] = {}
         any_known = False
-        for field, name in _STEP_USAGE_FIELDS:
+        for field, step_name, sum_name in _STEP_USAGE_FIELDS:
             clean = _clean_count(usage.get(field))
             if clean is None:
-                step_measurements[name] = Measurement.unknown(
+                step_measurements[step_name] = Measurement.unknown(
                     "cumulative", f"{field} absent or malformed in step usage")
             else:
                 any_known = True
-                step_measurements[name] = Measurement(
-                    value=clean, label="provider-exact", category="cumulative",
+                step_measurements[step_name] = Measurement(
+                    value=clean, label=self.step_label, category="cumulative",
                     detail="single step, not a running total")
-                self._step_totals[name] = self._step_totals.get(name, 0) + clean
+                self._step_totals[sum_name] = (
+                    self._step_totals.get(sum_name, 0) + clean)
+                self._observed_fields.add(sum_name)
         if any_known:
             self._steps_ingested += 1
         else:
@@ -281,14 +294,19 @@ class UsageAccumulator:
         measurements: dict[str, Measurement] = {}
         incomplete = (" (lower bound: some steps had unknown usage)"
                       if self._malformed_steps else "")
-        for _field, name in _STEP_USAGE_FIELDS:
-            if self._steps_ingested == 0:
-                measurements[name] = Measurement.unknown(
-                    "cumulative", "no provider usage observed yet")
+        for _field, _step_name, sum_name in _STEP_USAGE_FIELDS:
+            if sum_name not in self._observed_fields:
+                # M0-T088 G4-Adv1 carried fix: a field NEVER present in any
+                # ingested step is unknown, not zero - only observed
+                # contributions may claim an exact sum.
+                measurements[sum_name] = Measurement.unknown(
+                    "cumulative",
+                    "no provider usage observed yet" if self._steps_ingested == 0
+                    else "field never present in any observed step usage")
             else:
-                measurements[name] = Measurement(
-                    value=self._step_totals.get(name, 0),
-                    label="provider-exact", category="cumulative",
+                measurements[sum_name] = Measurement(
+                    value=self._step_totals.get(sum_name, 0),
+                    label=self.step_label, category="cumulative",
                     detail="sum of deduplicated per-step usage" + incomplete)
         for _field, name in _REPORTED_FIELDS:
             high = self._reported_high_water.get(name)

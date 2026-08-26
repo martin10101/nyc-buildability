@@ -23,6 +23,7 @@ Supervisor-freeze qualifying evidence: D-024-R100.
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from typing import Any, Iterable
 
@@ -78,6 +79,22 @@ def _digest_marker(original: str, kind: str) -> str:
 def withhold_prompt(text: str) -> str:
     """Replace prompt-like text with a verifiable reference, never the content."""
     return _digest_marker(text, "PROMPT-WITHHELD")
+
+
+def withhold_prompt_value(value: Any) -> str:
+    """Withhold ANY prompt-like value - scalar or nested structure - wholesale.
+
+    M0-T088 G4-Adv2 carried fix: a prompt-like key holding a LIST or DICT of
+    message strings (a conversation, a transcript slice) must not survive as
+    per-string excerpts; the whole subtree collapses to one digest reference
+    over its canonical JSON (D-024 s5.3/R044: summaries and references, never
+    prompt content).
+    """
+    if isinstance(value, str):
+        return withhold_prompt(value)
+    canonical = json.dumps(value, sort_keys=True, ensure_ascii=False,
+                           default=repr)
+    return _digest_marker(canonical, "PROMPT-WITHHELD")
 
 
 def bound_text(text: str, max_chars: int = MAX_TEXT_CHARS) -> str:
@@ -149,9 +166,10 @@ def sanitize_structure(
                         out[key] = "[REDACTED:sensitive_key]"
                         count += 1
                         labels.add("sensitive_key")
-                elif (isinstance(key, str) and isinstance(value, str)
-                        and value and PROMPT_KEY_PATTERN.search(key)):
-                    out[key] = withhold_prompt(value)
+                elif (isinstance(key, str) and PROMPT_KEY_PATTERN.search(key)
+                        and value not in (None, "", [], {}, ())):
+                    # scalar OR nested list/dict: withheld wholesale (G4-Adv2)
+                    out[key] = withhold_prompt_value(value)
                     count += 1
                     labels.add("prompt_withheld")
                 else:

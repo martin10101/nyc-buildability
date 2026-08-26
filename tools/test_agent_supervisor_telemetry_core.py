@@ -212,8 +212,11 @@ def test_step_sums_and_per_step_record_stay_distinct():
     acc.ingest_step("msg-2", _step(50, 10), now_utc_iso=NOW)
     assert step is not None
     assert step.record_type == "provider_usage_step"
-    assert step.measurements["cumulative_input_tokens"].value == 100
-    assert step.measurements["cumulative_input_tokens"].label == "provider-exact"
+    # per-step records use the step_* name family (M0-T088 G3 carried fix):
+    # a single step's delta never borrows the cumulative_* names
+    assert step.measurements["step_input_tokens"].value == 100
+    assert step.measurements["step_input_tokens"].label == "provider-exact"
+    assert "cumulative_input_tokens" not in step.measurements
     snap = acc.snapshot(now_utc_iso=NOW)
     assert snap.measurements["cumulative_input_tokens"].value == 150
     assert snap.measurements["cumulative_output_tokens"].value == 30
@@ -266,7 +269,7 @@ def test_malformed_step_usage_is_unknown_and_counted():
     acc = ti.UsageAccumulator()
     rec = acc.ingest_step("m1", "not-a-dict", now_utc_iso=NOW)
     assert rec is not None
-    assert rec.measurements["cumulative_input_tokens"].is_unknown
+    assert rec.measurements["step_input_tokens"].is_unknown
     acc.ingest_step("m2", _step(10, 1), now_utc_iso=NOW)
     snap = acc.snapshot(now_utc_iso=NOW)
     assert snap.attributes["malformed_steps"] == 1
@@ -650,7 +653,9 @@ def _derive_live_status(cap_id: str, live: dict) -> str:
         return simple[cap_id]()
     if cap_id == "claude.print_mode_output_format":
         statuses = {claude_flags["--print"], claude_flags["--output-format"]}
-        return "supported" if statuses == {"supported"} else statuses.pop()
+        # deterministic on a mixed set (M0-T088 G3 nit): sorted, not pop()
+        return ("supported" if statuses == {"supported"}
+                else sorted(statuses - {"supported"})[0])
     if cap_id == "claude.dual_install_resolution":
         return ("supported"
                 if len(live["probe_meta"]["claude_binaries"]) >= 2 else "unknown")

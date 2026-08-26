@@ -72,6 +72,30 @@ MEASUREMENT_CATEGORY: dict[str, str] = {
     "reported_cumulative_input_tokens": "cumulative",
     "reported_cumulative_output_tokens": "cumulative",
     "reported_cumulative_total_tokens": "cumulative",
+    # single-step provider usage on provider_usage_step records (M0-T088 G3
+    # carried fix: a per-step delta never borrows the cumulative_* names)
+    "step_input_tokens": "cumulative",
+    "step_output_tokens": "cumulative",
+    "step_cache_creation_tokens": "cumulative",
+    "step_cache_read_tokens": "cumulative",
+    # subagent status feed (docs pair tokenCount with contextWindowSize -> the
+    # task's live context, not lifetime spend; M0-T089)
+    "subagent_token_count": "occupancy",
+    "subagent_context_window_tokens": "occupancy",
+    # Agent SDK task feed (task-progress totals are per-task cumulative;
+    # final_request_* describe ONLY the final API request - R043)
+    "sdk_task_total_tokens": "cumulative",
+    "sdk_task_tool_uses": "cumulative",
+    "sdk_task_duration_ms": "cumulative",
+    "final_request_input_tokens": "cumulative",
+    "final_request_output_tokens": "cumulative",
+    # transcript-derived fallback sums and compaction facts
+    "transcript_input_tokens": "cumulative",
+    "transcript_output_tokens": "cumulative",
+    "transcript_cache_creation_tokens": "cumulative",
+    "transcript_cache_read_tokens": "cumulative",
+    "compaction_count": "cumulative",
+    "compaction_pre_tokens_total": "cumulative",
     # planning estimates (facts about the future do not exist)
     "estimated_remaining_tokens": "estimate",
     "estimated_total_tokens": "estimate",
