@@ -221,7 +221,10 @@ class ResolverTests(unittest.TestCase):
     def test_applicability_conjunction_binds_only_target_task(self):
         # A different M0 task must NOT be considered to carry D-001's requirements,
         # because applicability.task_ids pins them to M0-T023 (conjunction semantics).
-        other = {"task_id": "M0-T099", "task_type": "backend", "milestone_id": "M0",
+        # The synthetic id must never collide with a REAL ledger task: the original
+        # literal "M0-T099" went stale when D-024 amendment 2 bound real rows to
+        # that id (found 2026-08-26 during M0-T099).
+        other = {"task_id": "M0-T9099", "task_type": "backend", "milestone_id": "M0",
                  "allowed_paths": [], "directive_refs": []}
         applicable, unresolved = self.reg.derive_applicable(other)
         self.assertEqual(applicable, set())
