@@ -5553,213 +5553,336 @@
     "D-024-R185",
     "D-024-R188"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7",
+   "verified_at": "2026-08-26T23:18:10+00:00",
    "requirements": [
     {
      "id": "D-024-R140",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "producer=orchestrator/Fable; independent G3/G4/G5+DCV verify",
+      "diff c6a495f..HEAD: no activation/deploy/credential/protected write",
+      "npm-uninstall left to owner (report s2)"
+     ],
+     "note": "Producer/reviewer roles and owner-final-authority boundary preserved.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R145",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s1 pre-update capture + clean pushed tree (c6a495f==origin, porcelain empty)",
+      "s1 no-disruption determination",
+      "s2 official updater only"
+     ],
+     "note": "Upgrade performed under exactly the authorized preconditions.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R146",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s9: no bypass flags (canaries --strict-mcp-config only), no MCP/SDK/dep/PR",
+      "no forbidden path in diff; 0 merges in range",
+      "model resolved claude-fable-5 = existing approved policy"
+     ],
+     "note": "No prohibited authorization exercised.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R147",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s1 official stable 2.1.246 (M0-T102 changelog snapshot)",
+      "live claude update confirmed current release = 2.1.246"
+     ],
+     "note": "Execution-time official baseline confirmed.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R148",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "re-ran live: claude --version=2.1.246, native sha256 9f07f1ec..., size 250948768",
+      "fixture pins 2.1.220(pre)/2.1.246(post) as historical",
+      "live updater confirmed current release"
+     ],
+     "note": "Live binary + current release re-probed at execution time, matching fixture.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R149",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "post-update installed-version fixture (2.1.246, masked)",
+      "real canaries: probe + model + hook-chain (report s4)",
+      "guard fixed: reproduced 18 present / 16+2 absent"
+     ],
+     "note": "Installed-version fixture + real canary present for the probed surface.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R152",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8: /goal live fixtures remain unit E",
+      "no /goal adoption in diff"
+     ],
+     "note": "No premature adoption; honest deferral.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R153",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s3/s6 daemon auto-restart onto 2.1.246 observed",
+      "no second process-management system activated (shadow-only)"
+     ],
+     "note": "Native background observed, not prematurely adopted.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R154",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s4 agents --json observed outside Fable context",
+      "no worker-facing token quotas in any deliverable/diff"
+     ],
+     "note": "Passive-observation boundary honored.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R155",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s4 canary3 PreToolUse hook-chain ran on 2.1.246 (G3/G4-verified; not re-run per -p prohibition)",
+      "readonly-guard PreToolUse chain independently live in my own session"
+     ],
+     "note": "Hooks fire/guard proven; deeper hook matrix honestly deferred to unit D.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R156",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8 worktree canaries remain unit C",
+      "existing writer-lease isolation retained"
+     ],
+     "note": "Native worktree eval deferred; logical isolation retained.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R157",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8: no workflow adoption; unchanged plan"
+     ],
+     "note": "No dynamic-workflow adoption.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R158",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8 skills surface untouched (unit G)"
+     ],
+     "note": "No skills/command adoption.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R159",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8 UserPromptExpansion fixtures remain unit G"
+     ],
+     "note": "Honest pending; no collision with built-in /loop claimed.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R160",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s3/s6 running processes keep binary; no resume misuse"
+     ],
+     "note": "Session semantics observed; safe-seam turnover preserved.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R161",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "independent G3/G4/G5+DCV at frozen identity a4cfdaa",
+      "no native review claimed as gate substitute"
+     ],
+     "note": "Native reviews not substituted for independent acceptance.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R162",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s8 accepted statusLine telemetry integration RETAINED; handler tests green",
+      "live 2.1.246 statusLine payload deferred to next fresh interactive session (M0-T091 pattern)"
+     ],
+     "note": "Retention obligation met; live-payload is an honest bounded deferral with a concrete discharge path.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R163",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s9 no messaging/Remote Control enabled",
+      "doctor lists Remote Control but task did not enable/require it"
+     ],
+     "note": "Not adopted; loop correctness independent of it.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R166",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s9 no top-level-loop mechanism adopted",
+      "diff adopts none of /loop,/batch,SDK,MCP,resume,autocompact as authority"
+     ],
+     "note": "Campaign authority remains Codex/ledger/git/owner gates.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R167",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s1-3 all 6 steps: 2.1.220 sha af5bf1f1 -> 2.1.246 sha 9f07f1ec",
+      "clean+pushed c6a495f==origin; disruption determination; s2 official updater only",
+      "post identity live-verified: doctor native 2.1.246 commit 1ba9d2211ae1"
+     ],
+     "note": "Full pre/post procedure recorded; post-state independently live-verified.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R168",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "disposable child canaries on new binary; Gate0/MCP-deny/hooks + accepted suites re-run",
+      "BLOCKING-1 harness regression RECORDED (report s5) + fixed; rollback claude install 2.1.220 documented",
+      "no runtime backend activated (shadow-only)"
+     ],
+     "note": "Post-update checklist met; regression recorded not silenced; statusLine/skills live behaviors honestly deferred.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R171",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "pre fixtures (2.1.220) + post fixture (2.1.246) both present + masked",
+      "dual-version pair test pins both; post-fixture no-leak verified independently"
+     ],
+     "note": "Unit B installed+upgraded masked probes delivered.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R180",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "test diff: drift tooth repointed to post fixture (single active target), not layered",
+      "pre-update fixtures retained for shape/history; rollback preserved for rollout (report s7)"
+     ],
+     "note": "Replace-not-layer honored with one active backend + recorded rollback window.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R181",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "3 fixtures present incl. both pre-update (0 deletions)",
+      "report s5: nothing deleted"
+     ],
+     "note": "No accepted code deleted on a docs-equivalence claim.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R182",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "deterministic probe fixtures + 3 bounded real canaries (report s4)",
+      "suite ~3s; no token-burn threshold test"
+     ],
+     "note": "Testing method matches the mandate.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R183",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "fixture leak-scan clean (no MLFLL/Users/secret); generalized masking tooth (whole-fixture, drive-rooted/Users) G4-killed 5 mutants",
+      "win32-x64 + exact 2.1.246 confirmed; strict MCP default-deny effective (canary2)"
+     ],
+     "note": "Platform+installed-version+MCP+no-leak proofs delivered; bg/goal/UPE/subagent behaviors deferred to units C-G.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R184",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report s4/s6 no routine polling into Fable ctx; no token quotas",
+      "session integrity observed and honestly recorded"
+     ],
+     "note": "Worker-protection slice met; full concurrency/rotation matrix owed to later units.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R185",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "suite green on upgraded machine: reproduced 18 present / 16 passed +2 skips absent; producer 228 passed",
+      "independent G3/G4/G5+DCV at same frozen identity a4cfdaa (control-plane-only to HEAD)",
+      "G4 5 mutant kills on masking tooth; drift tooth fired RED on real upgrade then re-baselined"
+     ],
+     "note": "Suite-green + same-identity independent review + mutation teeth satisfied; no GitHub external effect performed this task.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     },
     {
      "id": "D-024-R188",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "single cohesive writer task (unit B) after accepted M0-T102",
+      "verification rows + campaign record current; validator EXIT=0",
+      "no token ceilings in prompts"
+     ],
+     "note": "Campaign execution rules honored.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "91c30fa6dcde267c692e3e89a6476f0f32d515e7"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "0b04e3b14e09f0395590714f53f98acd3bb3e622908c02086a64ae1532d489a0",
+   "verification_note": "DCV round 1 BLOCKED fail-closed on mid-review identity supersession (e0a867b reworked to a4cfdaa after G3 round-1 FAIL); round 2 verified all 29 rows at a4cfdaa; interval a4cfdaa..91c30fa is control-plane-only with material identity 0b04e3b1 recomputed identical; row stamped at accept-time HEAD per D-004-R630 and the verifier's own recommendation. Full history: M0-T103-DCV.md."
   },
   {
    "task_id": "M0-T104",
@@ -5898,5 +6021,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-26T22:33:01+00:00"
+ "updated_at": "2026-08-26T23:18:10+00:00"
 }
