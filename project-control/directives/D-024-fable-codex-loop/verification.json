@@ -3993,81 +3993,128 @@
     "D-024-R137",
     "D-024-R138"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84",
+   "verified_at": "2026-08-26T05:55:00Z",
    "requirements": [
     {
      "id": "D-024-R129",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "telemetry_statusline.py:4-8 docstring cites 'PRIMARY capability evidence, D-024-R129' + URL https://code.claude.com/docs/en/statusline + verbatim no-token note",
+      "fixtures/statusline_live_2026-08-26.json doc_url==URL; installed_version_proof {claude_version_output:'2.1.220 (Claude Code)', payload_version_field:'2.1.220', cross_reference capability_probe_live_2026-08-25.json}; both payloads version=='2.1.220'",
+      "version gates restated (>=2.1.205 / >=2.1.214 / installed 2.1.220) in fixture + source-002 annex; pytest test_live_fixture_installed_version_proof PASSED"
+     ],
+     "note": "Official doc adopted as PRIMARY evidence in module docstring + fixture; installed 2.1.220 proven; annex captures field names/nullability/version gates verbatim.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R130",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git show --stat 00f2519: telemetry_records/journal/ingest/status NOT in the content diff",
+      "telemetry_statusline.py imports and composes accepted M0-T088 surfaces (ingest_status_line, TelemetrySidecar, TelemetryJournal, Measurement/TelemetryRecord)",
+      "only foundation edits are the carried M0-T089 hardening items - no architecture rebuild"
+     ],
+     "note": "New module composes the accepted core; no restart/rebuild of records/sanitization/sidecar/journal.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R131",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "fixtures/statusline_live_2026-08-26.json: two RAW live payloads (startup: current_usage null, percentages null, no rate_limits, total_* 0; post-response: real usage, used_percentage 4, five_hour/seven_day used_percentage+resets_at); capture_method + masking declared inline",
+      "test constant LIVE_FIXTURE points at THIS committed file; loaded by the handler pack (23 tests green); authenticity corroborated by real-capture float artifacts (28.999999999999996, 0.7828519999999999)",
+      "negative result recorded: claude -p does NOT invoke statusLine (TUI-only); capture via live interactive 2.1.220 TUI in an isolated scratch project"
+     ],
+     "note": "Real installed-version capture proven before acceptance; not a docs-derived synthetic.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R132",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "handle_status_line persists the sanitized record FIRST (sidecar.update) then derives the row from the SAME record",
+      "tests PASSED: test_handler_writes_sanitized_sidecar_and_returns_row (returned==persisted), test_one_feed_read_back_by_shadow_status (read_only_status reads identical snapshot), test_main_reads_stdin_writes_row_and_sidecar"
+     ],
+     "note": "One feed: a single ingested record drives both sidecar and human row; no competing configurations.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R133",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "_context_segment uses ONLY occupancy measurements; _session_segment uses ONLY cost.* cumulative measurements",
+      "test_row_axes_never_borrow_each_other PASSED (distinctive numbers cannot cross segments); category typing asserted (occupancy vs cumulative)"
+     ],
+     "note": "Live context occupancy and cumulative usage kept separate in record and row.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R134",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "_rate_limit_segment renders rate_limits.five_hour/seven_day used_percentage as its OWN 5h/7d segment; wholly-absent block renders 'limits ?' never 0",
+      "assert not any(name.startswith('rate_') for name in measurements) - rate limits never become a context measurement; test_row_rate_limit_windows_independently_absent PASSED"
+     ],
+     "note": "Rate-limit pressure is a distinct axis, never merged with context-window percentages; windows independently absent.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R135",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "module docstring carries the verbatim official note 'The status line runs locally and does not consume API tokens.'",
+      "structural proofs PASSED: AST no-injection (no additionalContext/hookSpecificOutput outside docstrings) + no-network/process imports (socket/http/urllib/requests/httpx/subprocess/asyncio forbidden)",
+      "stdout is the sole emission; only file I/O is the sanitize-first sidecar/journal (G5 traced the call path)"
+     ],
+     "note": "No model messages, no API tokens: official doc note + structural/behavioral proof over the handler.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R136",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "test_live_startup_payload_documented_nullability PASSED against the REAL startup payload: null current_usage/percentages -> unknown; total_* 0 -> value 0 (reported zero stays zero); absent rate_limits -> no attribute",
+      "degrade paths PASSED: garbage stdin -> 'ctx ?' + exit 0; non-dict payload -> all-unknown record still refreshes the feed; _fmt_pct(None) -> '?' never 0"
+     ],
+     "note": "Documented nullability handled safely; absent becomes unknown, legitimate zero stays zero, degrade never crash/invent.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R137",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git show 00f2519 -- telemetry_subagent.py: ONLY the G3 nit#4 detail-string parameterization; NO canary, NO subagentStatusLine ingestion added",
+      "subagentStatusLine ingestion remains the accepted M0-T089 deliverable; live canary remains routed to the campaign canary task; producer report section 2 restates the routing"
+     ],
+     "note": "Bounded primary-statusLine work did not expand into subagent ingestion; routing preserved.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     },
     {
      "id": "D-024-R138",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "doc URL https://code.claude.com/docs/en/statusline recorded in fixture doc_url, module docstring, and producer report sections 2-3",
+      "installed-version proof recorded: fixture installed_version_proof (claude --version output '2.1.220 (Claude Code)' + payload version fields + cross-reference capability_probe_live_2026-08-25.json)",
+      "these verification rows cite both the URL and the installed-version proof (claude --version == 2.1.220, live capability fixture) per the requirement"
+     ],
+     "note": "URL + installed-version proof present in the verification evidence and cited in the verifier rows.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "fe1f9aac4492b33d3cf393d513b758d2ac172f84"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "d6e90bfcc49b9061f4c7ed8ce60c6079ad1fe196bb7b243f4c9f69b0ae80fae2",
+   "note": "Independent DCV reproduced all 10 applicable amendment-2 requirements at frozen content commit 00f2519f2eb2cf0b1afb6789b6b0afe17b1aac05; material identity d6e90bfcc49b... stamped identically by the CLI at G2 and G4 (review-wave control commits add reports only; git diff --stat frozen..HEAD -- tools/ empty). Verbatim DCV return: project-control/reports/M0-T099-DCV.md. Official capability reference per owner amendment 2: https://code.claude.com/docs/en/statusline + installed-version proof claude --version == 2.1.220 (fixtures/statusline_live_2026-08-26.json installed_version_proof, cross-ref capability_probe_live_2026-08-25.json)."
   }
  ],
- "updated_at": "2026-08-26T02:10:00Z"
+ "updated_at": "2026-08-26T05:55:00Z"
 }
