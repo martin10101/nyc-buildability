@@ -53,9 +53,20 @@ _EXCERPT_CHARS = 128
 #: replacement keeps the path's tail useful while dropping the identifying
 #: prefix. Both slash directions are matched on every platform (paths cross
 #: machines inside evidence records).
+#: Separators match one-or-more slashes so JSON-escaped forms (``C:\\Users``)
+#: mask too, symmetrically with the cross-fixture leak-scan regex in the test
+#: pack (M0-T089 G4-A2 carried fix).
 _HOME_PREFIXES = re.compile(
-    r"(?i)(?:[A-Z]:[\\/]Users[\\/]|/(?:home|Users)/)[^\\/\s\"',;:\]\[]+"
+    r"(?i)(?:[A-Z]:[\\/]+Users[\\/]+|[\\/]+(?:home|Users)[\\/]+)[^\\/\s\"',;:\]\[]+"
 )
+#: Claude Code encodes a project cwd into its projects-directory name by
+#: replacing separators with dashes (``C--Users-<name>-...``): a live
+#: ``transcript_path`` therefore leaks the username in dash form even after
+#: the slash-shaped prefix is masked (found while committing the M0-T099 real
+#: statusline fixture). Best-effort like the prefix mask: the segment after
+#: ``Users-`` is consumed; a username containing dashes masks only its first
+#: segment.
+_HOME_DASH_PREFIXES = re.compile(r"(?i)\b[A-Z]--Users-[^-\\/\s\"',;:\]\[]+")
 _HOME_MASK = "[HOME]"
 
 
@@ -67,8 +78,11 @@ def strip_terminal_escapes(text: str) -> tuple[str, int]:
 def redact_user_paths(text: str) -> tuple[str, int]:
     """Mask home-directory prefixes: ``C:\\Users\\name`` / ``/home/name`` ->
     ``[HOME]`` (drive-letter case-insensitive; the username segment is
-    consumed by the mask)."""
-    return _HOME_PREFIXES.subn(_HOME_MASK, text)
+    consumed by the mask). Also masks the dash-encoded projects-directory
+    form ``C--Users-name`` that appears inside transcript paths."""
+    out, count = _HOME_PREFIXES.subn(_HOME_MASK, text)
+    out, dash_count = _HOME_DASH_PREFIXES.subn(_HOME_MASK, out)
+    return out, count + dash_count
 
 
 def _digest_marker(original: str, kind: str) -> str:
@@ -144,10 +158,36 @@ def sanitize_structure(
     Key-driven rules run first (they see the ORIGINAL value): sensitive keys
     are masked exactly as `redaction.redact_structure` masks them; prompt-like
     keys become digest references. Everything else gets the string pipeline.
+
+    Dict KEYS are sanitized too (M0-T089 G5-N1 carried fix): a data-derived
+    key (e.g. a transcript line ``type`` echoed as a counter key) gets the
+    same string pipeline as values, so a maliciously shaped key can never
+    place unsanitized text in a stored document. Pattern checks (sensitive /
+    prompt-like) always run against the ORIGINAL key name; if two keys
+    sanitize to the same text, the later one keeps a short digest suffix of
+    its original so no entry is silently dropped.
     """
     literals = tuple(extra_literals or ())
     count = 0
     labels: set[str] = set()
+
+    def clean_key(key: Any, out: dict[Any, Any]) -> Any:
+        nonlocal count, labels
+        if not isinstance(key, str):
+            return key
+        result = sanitize_text(key, literals)
+        stored = result.value
+        if stored != key:
+            count += result.count or 1
+            labels.update(result.labels)
+            labels.add("sanitized_key")
+        if stored in out:  # collision (either side sanitized): keep both
+            digest = hashlib.sha256(
+                key.encode("utf-8", "replace")).hexdigest()[:8]
+            stored = f"{stored}#{digest}"
+            count += 1
+            labels.add("sanitized_key")
+        return stored
 
     def walk(node: Any) -> Any:
         nonlocal count, labels
@@ -159,21 +199,22 @@ def sanitize_structure(
         if isinstance(node, dict):
             out: dict[Any, Any] = {}
             for key, value in node.items():
+                stored_key = clean_key(key, out)
                 if isinstance(key, str) and SENSITIVE_KEY_PATTERN.search(key):
                     if value in (None, "", [], {}):
-                        out[key] = value
+                        out[stored_key] = value
                     else:
-                        out[key] = "[REDACTED:sensitive_key]"
+                        out[stored_key] = "[REDACTED:sensitive_key]"
                         count += 1
                         labels.add("sensitive_key")
                 elif (isinstance(key, str) and PROMPT_KEY_PATTERN.search(key)
                         and value not in (None, "", [], {}, ())):
                     # scalar OR nested list/dict: withheld wholesale (G4-Adv2)
-                    out[key] = withhold_prompt_value(value)
+                    out[stored_key] = withhold_prompt_value(value)
                     count += 1
                     labels.add("prompt_withheld")
                 else:
-                    out[key] = walk(value)
+                    out[stored_key] = walk(value)
             return out
         if isinstance(node, list):
             return [walk(item) for item in node]

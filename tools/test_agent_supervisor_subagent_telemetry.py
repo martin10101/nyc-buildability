@@ -202,6 +202,60 @@ def test_sdk_out_of_order_completion_tolerated():
     assert late.measurements["sdk_task_total_tokens"].value == 400
 
 
+def test_sdk_fully_duplicated_event_counts_one_duplicate():
+    """M0-T089 G3 minor#2 carried fix (red/green): duplicates/regressions
+    count EVENTS, not fields — a fully repeated 3-field progress event is ONE
+    duplicate (the old per-field counting reported 3)."""
+    tracker = ts.SdkTaskTracker()
+    tracker.ingest_event({"type": "task_progress", "task_id": "t1",
+                          "total_tokens": 700, "tool_uses": 2,
+                          "duration_ms": 1000}, now_utc_iso=NOW)
+    rec = tracker.ingest_event({"type": "task_progress", "task_id": "t1",
+                                "total_tokens": 700, "tool_uses": 2,
+                                "duration_ms": 1000}, now_utc_iso=NOW)
+    assert rec.attributes["duplicates"] == 1
+    regressed = tracker.ingest_event(
+        {"type": "task_progress", "task_id": "t1", "total_tokens": 10,
+         "tool_uses": 1, "duration_ms": 5}, now_utc_iso=NOW)
+    assert regressed.attributes["regressions"] == 1
+
+
+def test_sdk_tracker_bounded_eviction_prefers_completed():
+    """M0-T089 G5-M1 carried fix (red/green): the per-task dict is bounded;
+    a completed entry evicts before any active one, and evictions count."""
+    tracker = ts.SdkTaskTracker(max_tasks=2)
+    tracker.ingest_event({"type": "task_progress", "task_id": "t1",
+                          "total_tokens": 100}, now_utc_iso=NOW)
+    tracker.ingest_event({"type": "task_progress", "task_id": "t2",
+                          "total_tokens": 200}, now_utc_iso=NOW)
+    tracker.ingest_event({"type": "task_completed", "task_id": "t1"},
+                         now_utc_iso=NOW)
+    tracker.ingest_event({"type": "task_progress", "task_id": "t3",
+                          "total_tokens": 300}, now_utc_iso=NOW)
+    assert tracker.high_water("t1") == {}  # completed t1 evicted first
+    assert tracker.high_water("t2")["sdk_task_total_tokens"] == 200
+    assert tracker.high_water("t3")["sdk_task_total_tokens"] == 300
+    assert tracker.evicted_tasks == 1
+    tracker.ingest_event({"type": "task_progress", "task_id": "t4",
+                          "total_tokens": 400}, now_utc_iso=NOW)
+    assert tracker.evicted_tasks == 2  # no completed left: oldest (t2) went
+    assert tracker.high_water("t2") == {}
+    assert tracker.high_water("t4")["sdk_task_total_tokens"] == 400
+
+
+def test_sdk_final_request_detail_directs_name_based_selection():
+    """M0-T089 G3 nit#3 carried fix: the final_request detail warns a reader
+    off label-based filtering (sdk-cumulative is the nearest fixed label)."""
+    tracker = ts.SdkTaskTracker()
+    done = tracker.ingest_event(
+        {"type": "task_completed", "task_id": "t1",
+         "usage": {"input_tokens": 10, "output_tokens": 5}}, now_utc_iso=NOW)
+    detail = done.measurements["final_request_input_tokens"].detail
+    assert "never by label" in detail
+    assert done.measurements["final_request_input_tokens"].label == \
+        "sdk-cumulative"
+
+
 def test_sdk_malformed_and_unknown_events_fail_to_unknown():
     tracker = ts.SdkTaskTracker()
     bad = tracker.ingest_event("nonsense", now_utc_iso=NOW)
@@ -303,7 +357,11 @@ def test_transcript_derivation_sums_and_labels():
     assert m["transcript_input_tokens"].value == 3000
     assert m["transcript_output_tokens"].value == 120
     assert m["transcript_input_tokens"].label == "transcript-derived"
-    assert "lower bound" not in m["transcript_input_tokens"].detail or True
+    # M0-T089 G3 nit#5 carried fix: the old `... or True` here was dead and
+    # checked the wrong string — the transcript detail ALWAYS declares itself
+    # a conservative lower bound, never a provider statement; assert that.
+    assert "conservative lower bound" in m["transcript_input_tokens"].detail
+    assert "not a provider statement" in m["transcript_input_tokens"].detail
     assert rec.attributes["unknown_line_types"] == {"user": 1}
     assert rec.attributes["runtime_version"] == "2.1.220"
 
@@ -361,6 +419,72 @@ def test_transcript_malformed_compact_metadata_fails_to_unknown():
     rec = ttr.derive_from_transcript_lines(lines, now_utc_iso=NOW)
     assert rec.measurements["compaction_count"].value == 1
     assert rec.measurements["compaction_pre_tokens_total"].is_unknown
+
+
+def test_transcript_compaction_details_bounded_totals_exact():
+    """M0-T089 G5-M2 carried fix (red/green): the retained compaction detail
+    list is capped while the COUNT and preTokens SUM stay exact, and the
+    truncation is counted, never silent."""
+    lines = [_compact_line(10, 5) for _ in range(ttr.MAX_COMPACTION_DETAILS + 44)]
+    rec = ttr.derive_from_transcript_lines(lines, now_utc_iso=NOW)
+    total = ttr.MAX_COMPACTION_DETAILS + 44
+    assert rec.measurements["compaction_count"].value == total
+    assert rec.measurements["compaction_pre_tokens_total"].value == 10 * total
+    assert len(rec.attributes["compactions"]) == ttr.MAX_COMPACTION_DETAILS
+    assert rec.attributes["compactions_truncated"] == 44
+
+
+def test_transcript_unknown_type_keys_bounded_counts_preserved():
+    """G5-M2: distinct unknown-type KEYS are capped; overflow lands in one
+    counted bucket so no observation disappears."""
+    lines = [json.dumps({"type": f"weird_{n}", "sessionId": "s"})
+             for n in range(ttr.MAX_UNKNOWN_TYPE_KEYS + 6)]
+    rec = ttr.derive_from_transcript_lines(lines, now_utc_iso=NOW)
+    unknown = rec.attributes["unknown_line_types"]
+    assert len(unknown) == ttr.MAX_UNKNOWN_TYPE_KEYS + 1
+    assert unknown["<other>"] == 6
+    assert sum(unknown.values()) == ttr.MAX_UNKNOWN_TYPE_KEYS + 6
+
+
+def test_transcript_session_ids_bounded_overflow_counted():
+    """G5-M2: the distinct-session-id list is capped; beyond it, events with
+    unrecognized ids are counted (a lower bound, never a silent drop)."""
+    lines = [json.dumps({"type": "user", "sessionId": f"sess-{n}"})
+             for n in range(ttr.MAX_SESSION_IDS + 6)]
+    rec = ttr.derive_from_transcript_lines(lines, now_utc_iso=NOW)
+    assert rec.attributes["session_ids_seen"] == ttr.MAX_SESSION_IDS
+    assert rec.attributes["session_id_overflow_events"] == 6
+    assert rec.attributes["resumed_session"] is True
+
+
+def test_transcript_post_tokens_and_trigger_narrowed():
+    """M0-T089 G5-N2 carried fix (red/green): postTokens narrows exactly like
+    preTokens (bool/negative/non-numeric -> None) and trigger stores only
+    strings — malformed shapes can no longer ride along raw."""
+    bad = json.dumps({"type": "system", "subtype": "compact_boundary",
+                      "sessionId": "s",
+                      "compactMetadata": {"preTokens": 100, "postTokens": "weird",
+                                          "trigger": 123}})
+    good = json.dumps({"type": "system", "subtype": "compact_boundary",
+                       "sessionId": "s",
+                       "compactMetadata": {"preTokens": 200, "postTokens": 50,
+                                           "trigger": "auto"}})
+    rec = ttr.derive_from_transcript_lines([bad, good], now_utc_iso=NOW)
+    first, second = rec.attributes["compactions"]
+    assert first["post_tokens"] is None and first["trigger"] is None
+    assert second["post_tokens"] == 50 and second["trigger"] == "auto"
+
+
+def test_subagent_window_detail_not_paired_with_itself():
+    """M0-T089 G3 nit#4 carried fix: the contextWindowSize measurement calls
+    itself the denominator of the live view; only tokenCount claims the
+    documented pairing."""
+    records = tsub.ingest_subagent_status(_multi_task_payload(),
+                                          now_utc_iso=NOW)
+    m = records[0].measurements
+    assert "pairing" in m["subagent_token_count"].detail
+    assert "denominator" in m["subagent_context_window_tokens"].detail
+    assert "pairing" not in m["subagent_context_window_tokens"].detail
 
 
 # ---------- read-only shadow status (actuation off) -------------------------

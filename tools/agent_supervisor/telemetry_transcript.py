@@ -40,6 +40,23 @@ _SUM_TO_TRANSCRIPT = (
     ("cumulative_cache_read_tokens", "transcript_cache_read_tokens"),
 )
 
+#: Accumulator bounds (M0-T089 G5-M2 carried fix): an adversarially shaped
+#: transcript with millions of boundary/unknown-type lines can no longer grow
+#: the per-derivation state without bound. Totals stay EXACT (they are counted
+#: incrementally); only the retained detail entries are capped, and every cap
+#: crossing is counted, never silent.
+MAX_COMPACTION_DETAILS = 256
+MAX_SESSION_IDS = 64
+MAX_UNKNOWN_TYPE_KEYS = 64
+_UNKNOWN_TYPE_OVERFLOW_KEY = "<other>"
+
+
+def _narrow_count(value: Any) -> int | float | None:
+    """A usable non-negative number or None (bools are not token counts)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return value if value >= 0 else None
+
 
 def derive_from_transcript_lines(lines: Iterable[str], *,
                                  runtime_version: str = "",
@@ -56,7 +73,12 @@ def derive_from_transcript_lines(lines: Iterable[str], *,
     torn = 0
     unknown_types: dict[str, int] = {}
     compactions: list[dict[str, Any]] = []
+    compaction_total = 0
+    compactions_truncated = 0
+    pre_tokens_sum: int | float = 0
+    pre_tokens_seen = 0
     session_ids: list[str] = []
+    session_id_overflow_events = 0
 
     for raw in lines:
         line = raw.strip()
@@ -72,7 +94,12 @@ def derive_from_transcript_lines(lines: Iterable[str], *,
             continue
         sid = obj.get("sessionId")
         if isinstance(sid, str) and sid and sid not in session_ids:
-            session_ids.append(sid)
+            if len(session_ids) < MAX_SESSION_IDS:
+                session_ids.append(sid)
+            else:
+                # beyond the cap dropped ids cannot be re-distinguished, so
+                # this counts EVENTS (a lower bound of at least one more id)
+                session_id_overflow_events += 1
         ltype = obj.get("type")
         if ltype == "assistant":
             message = obj.get("message")
@@ -84,16 +111,29 @@ def derive_from_transcript_lines(lines: Iterable[str], *,
         elif ltype == "system" and obj.get("subtype") == "compact_boundary":
             meta = obj.get("compactMetadata")
             meta = meta if isinstance(meta, dict) else {}
-            pre = meta.get("preTokens")
-            compactions.append({
-                "pre_tokens": pre if isinstance(pre, (int, float))
-                and not isinstance(pre, bool) and pre >= 0 else None,
-                "post_tokens": meta.get("postTokens"),
-                "trigger": meta.get("trigger"),
-            })
+            compaction_total += 1
+            pre = _narrow_count(meta.get("preTokens"))
+            if pre is not None:
+                pre_tokens_sum += pre
+                pre_tokens_seen += 1
+            trigger = meta.get("trigger")
+            if len(compactions) < MAX_COMPACTION_DETAILS:
+                compactions.append({
+                    "pre_tokens": pre,
+                    # M0-T089 G5-N2 carried fix: postTokens narrowed exactly
+                    # like preTokens; trigger stored only as a string
+                    "post_tokens": _narrow_count(meta.get("postTokens")),
+                    "trigger": trigger if isinstance(trigger, str) else None,
+                })
+            else:
+                compactions_truncated += 1
         else:
             key = str(ltype)
-            unknown_types[key] = unknown_types.get(key, 0) + 1
+            if key in unknown_types or len(unknown_types) < MAX_UNKNOWN_TYPE_KEYS:
+                unknown_types[key] = unknown_types.get(key, 0) + 1
+            else:
+                unknown_types[_UNKNOWN_TYPE_OVERFLOW_KEY] = (
+                    unknown_types.get(_UNKNOWN_TYPE_OVERFLOW_KEY, 0) + 1)
 
     snap = acc.snapshot(now_utc_iso=now)
     measurements: dict[str, Measurement] = {}
@@ -109,18 +149,16 @@ def derive_from_transcript_lines(lines: Iterable[str], *,
                 detail="derived from deduplicated assistant-message usage; a "
                        "conservative lower bound, not a provider statement")
 
-    pre_values = [c["pre_tokens"] for c in compactions
-                  if c["pre_tokens"] is not None]
     measurements["compaction_count"] = Measurement(
-        value=len(compactions), label="transcript-derived",
+        value=compaction_total, label="transcript-derived",
         category="cumulative", detail="compact_boundary lines observed")
     measurements["compaction_pre_tokens_total"] = (
         Measurement.unknown(
             "cumulative",
-            "no compaction observed" if not compactions
+            "no compaction observed" if not compaction_total
             else "compact boundaries present but preTokens missing/malformed")
-        if not pre_values else
-        Measurement(value=sum(pre_values), label="transcript-derived",
+        if not pre_tokens_seen else
+        Measurement(value=pre_tokens_sum, label="transcript-derived",
                     category="cumulative",
                     detail="sum of compactMetadata.preTokens at boundaries - "
                            "context spent before each compaction"))
@@ -134,7 +172,9 @@ def derive_from_transcript_lines(lines: Iterable[str], *,
             "torn_or_malformed_lines": torn,
             "unknown_line_types": unknown_types,
             "session_ids_seen": len(session_ids),
+            "session_id_overflow_events": session_id_overflow_events,
             "resumed_session": len(session_ids) > 1,
             "duplicates_ignored": acc.duplicates_ignored,
             "compactions": compactions,
+            "compactions_truncated": compactions_truncated,
         })

@@ -55,11 +55,44 @@ def _clean(value: Any) -> int | float | None:
     return value
 
 
-class SdkTaskTracker:
-    """Per-task cumulative tracking over SDK progress/notification events."""
+#: Per-task state entries kept at once (M0-T089 G5-M1 carried fix: the
+#: tracker is bounded like SubagentRegistry — an event stream with unbounded
+#: distinct task_ids can never grow memory without bound).
+DEFAULT_MAX_TASKS = 512
 
-    def __init__(self) -> None:
+
+class SdkTaskTracker:
+    """Per-task cumulative tracking over SDK progress/notification events.
+
+    Bounded: at most ``max_tasks`` per-task entries are retained; when a new
+    task would exceed the bound, a COMPLETED entry is evicted first (oldest
+    first), else the oldest entry — active tasks survive as long as possible
+    and evictions are counted, never silent.
+    """
+
+    def __init__(self, *, max_tasks: int = DEFAULT_MAX_TASKS) -> None:
+        if max_tasks < 1:
+            raise ValueError("max_tasks must be >= 1")
         self._tasks: dict[str, dict[str, Any]] = {}
+        self._max_tasks = max_tasks
+        self._evicted_tasks = 0
+
+    @property
+    def evicted_tasks(self) -> int:
+        return self._evicted_tasks
+
+    def _evict(self, keep: str) -> None:
+        """Drop one entry (never ``keep``): completed-first, oldest-first."""
+        for tid, state in self._tasks.items():
+            if tid != keep and state.get("completed"):
+                del self._tasks[tid]
+                self._evicted_tasks += 1
+                return
+        for tid in self._tasks:
+            if tid != keep:
+                del self._tasks[tid]
+                self._evicted_tasks += 1
+                return
 
     def ingest_event(self, event: Any, *,
                      now_utc_iso: str | None = None) -> TelemetryRecord:
@@ -77,11 +110,18 @@ class SdkTaskTracker:
         state = self._tasks.setdefault(task_id, {
             "high_water": {}, "regressions": 0, "duplicates": 0,
             "completed": False})
+        if len(self._tasks) > self._max_tasks:
+            self._evict(task_id)
 
         measurements: dict[str, Measurement] = {}
         attributes: dict[str, Any] = {"event_type": etype or "<missing>"}
 
         if etype == "task_progress":
+            # duplicates/regressions count EVENTS, not fields (M0-T089 G3
+            # minor#2 carried fix): a fully repeated 3-field progress event is
+            # ONE duplicate; an event may count as both when mixed.
+            event_duplicate = False
+            event_regression = False
             for field, name in (("total_tokens", "sdk_task_total_tokens"),
                                 ("tool_uses", "sdk_task_tool_uses"),
                                 ("duration_ms", "sdk_task_duration_ms")):
@@ -92,10 +132,10 @@ class SdkTaskTracker:
                     continue
                 previous = state["high_water"].get(name)
                 if previous is not None and clean == previous:
-                    state["duplicates"] += 1
+                    event_duplicate = True
                 elif previous is not None and clean < previous:
                     # a lower total is a reset/regression, never "fresh"
-                    state["regressions"] += 1
+                    event_regression = True
                     clean = previous
                 else:
                     state["high_water"][name] = clean
@@ -104,6 +144,10 @@ class SdkTaskTracker:
                     label="sdk-task-cumulative", category="cumulative",
                     detail="per-task cumulative from SDK progress feed "
                            "(high-water; regressions never lower it)")
+            if event_duplicate:
+                state["duplicates"] += 1
+            if event_regression:
+                state["regressions"] += 1
             for key in ("description", "last_tool_name"):
                 if event.get(key) is not None:
                     attributes[key] = event[key]
@@ -123,7 +167,12 @@ class SdkTaskTracker:
                                     category="cumulative",
                                     detail="FINAL API request only - never "
                                            "assumed to describe the whole "
-                                           "subagent run (D-024 R043)"))
+                                           "subagent run (D-024 R043); "
+                                           "sdk-cumulative is the nearest "
+                                           "fixed s5.2 label - select "
+                                           "final-request scope by the "
+                                           "final_request_* name, never by "
+                                           "label (M0-T089 G3 nit#3)"))
             # cumulative truth stays with the progress high-water, out of
             # order or not:
             high = state["high_water"].get("sdk_task_total_tokens")

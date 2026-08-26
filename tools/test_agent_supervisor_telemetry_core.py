@@ -442,6 +442,54 @@ def test_home_prefix_redaction_windows_and_posix():
         assert n == 1 and masked == "[HOME]" + tail, masked
 
 
+def test_home_prefix_json_escaped_double_separator_masked():
+    """M0-T089 G4-A2 carried fix (red/green): separators match one-or-more
+    slashes, so the JSON-escaped form masks too — symmetric with the
+    cross-fixture leak-scan regex."""
+    masked, n = td.redact_user_paths(r"C:\\Users\\somebody\\AppData\\x")
+    assert "somebody" not in masked
+    assert masked.startswith("[HOME]")
+    assert n == 1
+
+
+def test_home_prefix_dash_encoded_projects_dir_masked():
+    """The Claude projects-dir encoding (``C--Users-name-...``) leaks the
+    username in dash form inside transcript paths (found while committing the
+    M0-T099 real statusline fixture) — masked as the same class."""
+    raw = (r"C:\Users\somebody\.claude\projects"
+           r"\C--Users-somebody-Downloads-proj\abc.jsonl")
+    masked, n = td.redact_user_paths(raw)
+    assert "somebody" not in masked
+    assert n == 2
+    assert masked == r"[HOME]\.claude\projects\[HOME]-Downloads-proj\abc.jsonl"
+
+
+def test_sanitize_structure_sanitizes_data_derived_keys():
+    """M0-T089 G5-N1 carried fix (red/green): dict KEYS get the string
+    pipeline too, so a maliciously shaped key (escape sequences, home paths)
+    can never place unsanitized text in a stored document."""
+    result = td.sanitize_structure({
+        "\x1b[31mweird\x1b[0m": 1,
+        r"C:\Users\bob\counter": 2,
+        "plain": 3})
+    out = result.value
+    assert all("\x1b" not in k for k in out)
+    assert not any("bob" in k for k in out)
+    assert out["plain"] == 3
+    assert set(out.values()) == {1, 2, 3}  # no entry silently dropped
+    assert result.count >= 2
+    assert "sanitized_key" in result.labels
+
+
+def test_sanitize_structure_key_collision_keeps_both_entries():
+    """Two keys that sanitize to the same text both survive (digest suffix)."""
+    result = td.sanitize_structure({
+        "\x1b[31mkey\x1b[0m": "first", "key": "second"})
+    out = result.value
+    assert len(out) == 2
+    assert sorted(out.values()) == ["first", "second"]
+
+
 def test_sanitize_text_credentials_and_assignment_secrets():
     result = td.sanitize_text(
         "key sk-ant-abc123456789012345 then API_KEY=hunter2-value done")

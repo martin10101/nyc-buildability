@@ -39,16 +39,15 @@ _ROW_ATTRIBUTES = ("name", "type", "status", "description", "label",
                    "startTime", "model", "effort", "cwd")
 
 
-def _count_measurement(value: Any, name_detail: str) -> Measurement:
+def _count_measurement(value: Any, name_detail: str,
+                       detail: str) -> Measurement:
     if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
         return Measurement.unknown(
             "occupancy",
             f"{name_detail} absent or malformed (normal before model "
             f"resolution and on versions older than 2.1.205)")
     return Measurement(value=value, label="subagent-status-live",
-                       category="occupancy",
-                       detail="documented pairing with contextWindowSize: the "
-                              "task's live context view, not lifetime spend")
+                       category="occupancy", detail=detail)
 
 
 def ingest_subagent_status(payload: Any, *,
@@ -99,9 +98,15 @@ def ingest_subagent_status(payload: Any, *,
             task_id=task_id if isinstance(task_id, str) else "",
             measurements={
                 "subagent_token_count": _count_measurement(
-                    row.get("tokenCount"), "tokenCount"),
+                    row.get("tokenCount"), "tokenCount",
+                    "documented pairing with contextWindowSize: the task's "
+                    "live context view, not lifetime spend"),
+                # M0-T089 G3 nit#4 carried fix: the window is the denominator
+                # of the live view, not "paired with itself"
                 "subagent_context_window_tokens": _count_measurement(
-                    row.get("contextWindowSize"), "contextWindowSize"),
+                    row.get("contextWindowSize"), "contextWindowSize",
+                    "the task's context-window size - denominator of the "
+                    "live view, not lifetime spend"),
             },
             attributes=attributes))
     if not records:
