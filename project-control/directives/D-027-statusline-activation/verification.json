@@ -1,7 +1,7 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-027",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows.",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Rows below recorded VERBATIM-in-substance from the independent directive-compliance-verifier return (full report: project-control/reports/M0-T100-DCV.md); reviewed_sha stamped at live HEAD per the accept-time freshness rule (content identity verified unchanged since frozen a0b945e - control-plane-only commits).",
  "producer": "orchestrator",
  "task_verifications": [
   {
@@ -24,22 +24,123 @@
     "D-027-R012",
     "D-027-R013"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_manifest_sha256": "3089df1386eb5cdaafc3a35416b1521b7c67e14b13a388cdb48babcf7c4ea0cd",
+   "reviewed_sha": "035b6641be25a6fdbd426bf27d895a0a53c8d804",
+   "frozen_content_commit": "a0b945ec6b6e90843d72fd891ab7524bc2f781d6",
+   "verified_at": "2026-08-26T06:12:00+00:00",
    "requirements": [
-    {"id": "D-027-R001", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R002", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R003", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R004", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R005", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R006", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R007", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R008", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R009", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R010", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R011", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R012", "state": "pending", "evidence": [], "note": ""},
-    {"id": "D-027-R013", "state": "pending", "evidence": [], "note": ""}
+    {
+     "id": "D-027-R001",
+     "state": "PASS",
+     "evidence": [
+      "git show a0b945e -- .gitignore (+.claude/telemetry/ line 89) and -- .claude/settings.json (+statusLine block, command python -m tools.agent_supervisor.telemetry_statusline --journal .claude/telemetry/statusline_journal.jsonl)",
+      "M0-T099-statusline-handler.md section 4 wording matched exactly incl. the documented --journal option; diff = 4+3 added lines, nothing else"
+     ],
+     "note": "exact match, no deviation"
+    },
+    {
+     "id": "D-027-R002",
+     "state": "PASS",
+     "evidence": [
+      "git diff 8bb829c..HEAD --name-only: zero T099 paths; git ls-files: all 16 M0-T099 artifacts present and unchanged",
+      "accepted material identity d6e90bfc / frozen content 00f2519 untouched"
+     ],
+     "note": ""
+    },
+    {
+     "id": "D-027-R003",
+     "state": "PASS",
+     "evidence": [
+      "tasks/M0-T100.json bounded governance task, directive_refs D-027:ALL, regime 1.0",
+      "lifecycle d01e9b2 (capture+G0+claim) -> G2 PASS -> submit awaiting_gate; validator EXIT=0 reproduced by the verifier"
+     ],
+     "note": ""
+    },
+    {
+     "id": "D-027-R004",
+     "state": "PASS",
+     "evidence": [
+      "telemetry_statusline.py: ingest -> sidecar.update -> journal.append -> format row; imports telemetry_ingest/journal/records only; no socket/http/subprocess/actuation",
+      "git diff 8bb829c..HEAD: tools/agent_supervisor/** absent (handler untouched)"
+     ],
+     "note": "no surface can stop agents/rotate sessions/change models"
+    },
+    {
+     "id": "D-027-R005",
+     "state": "PASS",
+     "evidence": [
+      "verifier reproduced sha256 of C:/Users/MLFLL/.claude/settings.json = 32c6fb008a95c33793d76efeed781511cf5d824dbb4fbd8af2911c9ccdc6afa7 (matches report section 5); mtime 04:29:57.924Z predates first task write ~05:48Z",
+      "global statusLine still powershell statusline.ps1; grep telemetry_statusline in global = 0; project wiring exists only in repo settings"
+     ],
+     "note": "project-over-user precedence in-repo only; global fallback intact (verifier reproduced the digest itself via the additional working dir)"
+    },
+    {
+     "id": "D-027-R006",
+     "state": "PASS",
+     "evidence": [
+      "live .claude/telemetry/ sidecar + 75-record journal, gitignored (.gitignore:89) and untracked; session_id 4333c462-... = the running session; values advanced between reads (cost 14.22->15.37, duration 1006122->1126165 ms) proving a live ticking feed",
+      "human row reproduced in-process from the committed REAL fixture = 'Fable 5 xhigh | ctx 4% of 1.0M | sess $0.78 1m | 5h 29% 7d 33% | v2.1.220' exactly as report section 3; handle_status_line writes sidecar before returning the row (one feed)"
+     ],
+     "note": "temp-sidecar demo blocked by the read-only guard; fully compensated by live artifacts + in-process reproduction + code structure"
+    },
+    {
+     "id": "D-027-R007",
+     "state": "PASS",
+     "evidence": [
+      "scans over live sidecar + full 75-record journal: 0 hits for MLFLL / Users / drive prefixes / dash-encoded home / ghp_ / sk- / Bearer; [HOME] mask 228 occurrences (slash + dash forms); redaction_count 3",
+      "retained session/transcript UUIDs explicitly dispositioned in report section 4 (local-only monitoring key, gitignored, never committed) - explicit, not silent; G5 security review independently judged the disposition sound"
+     ],
+     "note": ""
+    },
+    {
+     "id": "D-027-R008",
+     "state": "PASS",
+     "evidence": [
+      "recorded: task + G0/G2 gate records (G5 PASS added at 035b664); tested: 23/23 handler pack + wired-command exit 0 + validator EXIT=0 (reproduced); committed d01e9b2/a0b945e/8749fae; pushed: HEAD == origin"
+     ],
+     "note": "verified pre-acceptance at awaiting_gate (expected state); acceptance is the orchestrator act that follows this verification"
+    },
+    {
+     "id": "D-027-R009",
+     "state": "PASS",
+     "evidence": [
+      "content commit touches 3 files; control commits touch project-control/ only; no worktree remove / branch -D anywhere; the three pack-repo worktrees are outside this repo and untouched"
+     ],
+     "note": "pass by absence"
+    },
+    {
+     "id": "D-027-R010",
+     "state": "PASS",
+     "evidence": [
+      "settings diff added only the statusLine block; hooks unchanged; no supervisor/continuous-mode surface in the diff; handler has no actuation; R595 / D-024 section 18 owner gate untouched"
+     ],
+     "note": ""
+    },
+    {
+     "id": "D-027-R011",
+     "state": "PASS",
+     "evidence": [
+      "tasks/M0-T090.json: backlog, producer null, progress 0, updated_at 2026-08-24 (pre-D-027, unchanged); M0-T100 awaiting_gate -> M0-T090 correctly not yet claimed",
+      "D-024 campaign record absent from git diff 8bb829c..HEAD (NEXT remains M0-T090)"
+     ],
+     "note": "sequencing verified pre-accept; the continuation itself occurs post-accept per the requirement"
+    },
+    {
+     "id": "D-027-R012",
+     "state": "PASS",
+     "evidence": [
+      "git show --stat a0b945e: content commit touches exactly the packet allowed_paths; no forbidden path in the content commit; no accepted work re-implemented"
+     ],
+     "note": ""
+    },
+    {
+     "id": "D-027-R013",
+     "state": "PASS",
+     "evidence": [
+      "nothing accepted/merged/dispatched/deployed/installed/purchased/closed at verification time; no PR #241 interaction in any commit/diff; no credentials/payment/production/legal action; verification skeleton was all-pending (producer did not self-attest)"
+     ],
+     "note": "conduct pass by absence; producer-verifier separation confirmed"
+    }
    ]
   }
  ]
