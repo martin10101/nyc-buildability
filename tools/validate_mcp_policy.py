@@ -146,6 +146,27 @@ def _is_hooks_shape(v: object) -> bool:
     return True
 
 
+#: The ONLY statusLine command the checked-in settings may carry: the exact
+#: passive telemetry handler the owner authorized (D-027, M0-T100; wiring per
+#: the accepted M0-T099 report section 4). The statusLine command executes on
+#: every TUI refresh tick, so a swapped or mistyped command is an execution
+#: vector — anything but this exact string fails closed (M0-T101; the same
+#: exact-identifier discipline as DENIED_SERVER_NAMES and the hook commands).
+EXPECTED_STATUSLINE_COMMAND = (
+    "python -m tools.agent_supervisor.telemetry_statusline "
+    "--journal .claude/telemetry/statusline_journal.jsonl")
+
+
+def _is_statusline_shape(v: object) -> bool:
+    """statusLine: exactly {"type": "command", "command": <the audited
+    command>}. Extra keys, another type, or a different command fail closed;
+    ABSENCE of the whole key remains valid (activation is owner-optional)."""
+    return (isinstance(v, dict)
+            and set(v) == {"type", "command"}
+            and v.get("type") == "command"
+            and v.get("command") == EXPECTED_STATUSLINE_COMMAND)
+
+
 #: Known permission sub-keys and their required shapes (p9).
 PERMISSION_KEY_SHAPES = {
     "deny": (_is_str_list, "list of rule strings"),
@@ -172,6 +193,9 @@ KNOWN_KEY_SHAPES = {
     "permissions": (lambda v: isinstance(v, dict), "object"),
     "env": (_is_str_dict, "object of string values"),
     "hooks": (_is_hooks_shape, "hooks registration structure"),
+    "statusLine": (_is_statusline_shape,
+                   "exactly {type: 'command', command: <the audited D-027 "
+                   "telemetry handler command>}"),
 }
 
 
