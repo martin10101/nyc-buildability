@@ -9,7 +9,10 @@ as still-current.** This file is orientation only; rules/gates live in `CLAUDE.m
 ## Handoff — M0-T099 accepted, campaign advanced
 
 1. **Generated:** 2026-08-26 UTC · Fable 5 orchestrator, `session_01HfptKuEs3RDxaxsSHJjc7t` ·
-   reason: task-completion seam after M0-T099 acceptance.
+   reason: owner invoked `/session-handoff` (no reason argument) at the clean post-acceptance
+   seam · via the GLOBAL personal skill (profile identity verified: origin + markers). Zero
+   active sub-agents at generation (all four M0-T099 reviewers completed and reconciled); zero
+   uncommitted files; zero unpushed commits.
 2. **Identity (live at generation):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop`; acceptance commit `f85ed5b` (+ this seam commit on top),
    pushed. Working tree clean at seam.
@@ -64,3 +67,13 @@ as still-current.** This file is orientation only; rules/gates live in `CLAUDE.m
     reviewer FAIL/BLOCKED (consolidated correction round, re-freeze, delta re-review); anything
     needing owner authority (credentials, payment, production, legal, PR #241, activation, live
     settings.json wiring, pack-repo worktree purge).
+15. **Successor prompt:** *"Work from durable repository evidence only. Verify root =
+    C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch control/D-024-fable-codex-loop, HEAD, and
+    /mcp empty before any change. Read CLAUDE.md, docs/SESSION_HANDOFF.md,
+    .claude/session-handoff-profile.md, and the §12 files. Run: python tools/project_control.py
+    status and python -m tools.agent_supervisor.campaign_continuity --status. Reconcile against
+    live git + the ledger (they win over prose). Detect stale/duplicated/completed work. Report
+    READY TO RESUME or BLOCKED. If ready, continue from the campaign record's NEXT action —
+    claim M0-T090 (C1 bounded subagent contracts + structural workload sizing, with the carried
+    M0-T099 advisory bundle) — without repeating completed work or broadening scope; stop for
+    anything requiring owner approval."*
