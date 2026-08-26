@@ -13,7 +13,9 @@ as still-current.** This file is orientation only; rules/gates live in `CLAUDE.m
    skill, the four in-flight M0-T103 reviewers finished naturally and were fully reconciled
    (rounds 1+2 saved verbatim, gates recorded) before this handoff; zero active sub-agents.
 2. **Identity (live at generation):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop`, seam commit `b4f13f4` == origin tip, tree clean. **The
+   `control/D-024-fable-codex-loop`, seam commit `b4f13f4` (checkpoint CP-D024-M0-T103); this
+   handoff + the state.json checkpoint pointer are the only changes after it, committed+pushed;
+   tree clean at generation end. **The
    machine's claude binary is now 2.1.246** (this session's own process ran 2.1.220; a fresh
    session runs 2.1.246 natively).
 3. **This session:** (a) captured the owner's native-capability re-baseline instruction as
