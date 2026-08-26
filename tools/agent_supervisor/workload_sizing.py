@@ -39,6 +39,19 @@ PACKET_CATEGORIES: tuple[str, ...] = (
     "return_schema",
 )
 
+#: s13 categories that are NEVER omittable for any role (G4 ADV-1, M0-T090
+#: carried correction): a model call without its exact bounded task and
+#: acceptance criteria, its authority and prohibitions, or its requested
+#: return schema cannot be correct, so no justification can omit them. The
+#: remaining categories stay justified-omittable per role
+#: (``graph_selected_files_symbols`` additionally carries its own
+#: source-sufficiency stop).
+NON_OMITTABLE_CATEGORIES: tuple[str, ...] = (
+    "bounded_task_and_acceptance",
+    "authority_and_prohibitions",
+    "return_schema",
+)
+
 
 class SizingError(ValueError):
     """Typed error for sizing/packet planning (code + message)."""
@@ -223,6 +236,12 @@ def packet_plan(*, assignment_id: str, role: str,
             raise SizingError(
                 "unknown_category",
                 f"omission names unknown packet category {category!r}")
+        if category in NON_OMITTABLE_CATEGORIES:
+            raise SizingError(
+                "non_omittable_category",
+                f"packet category {category!r} is mandatory for every role "
+                f"and can never be omitted, with or without justification "
+                f"(s13; G4 ADV-1 carried correction)")
         if not why.strip():
             raise SizingError(
                 "unjustified_omission",

@@ -20,8 +20,10 @@ Before every spawn the controller creates TWO LINKED RECORDS (D-024 s6):
 
 Records are frozen, digest-bound, and recorded before acting (the
 ``loop.ShadowPlan`` precedent). This module defines and validates contracts;
-runtime enforcement (live band evaluation, no-progress handling, landing)
-belongs to later Phase C/D units.
+runtime enforcement lives in the M0-T091 runtime units (``lease_runtime`` for
+serialized grants, ``runtime_health`` for live band evaluation,
+``runtime_detectors``/``extension_gate``/``child_handoff`` for no-progress,
+extension, landing, and turnover handling).
 
 Supervisor-freeze qualifying evidence: D-024-R101.
 """
@@ -30,6 +32,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import posixpath
 import re
 from collections.abc import Mapping
 from typing import Any
@@ -74,10 +77,10 @@ DEFAULT_EXTENSION_PROTOCOL = (
     "or want to pursue a long investigation: stop and return what you have "
     "proven, what remains uncertain, why the extra work blocks the current "
     "acceptance criterion, the least costly next experiment, the additional "
-    "scope and its natural completion point, whether resuming this context "
-    "or a new bounded unit would be more coherent, the consequences of "
-    "stopping now, and a durable partial checkpoint if you changed anything. "
-    "Do not silently expand scope.")
+    "scope with its likely evidence sources and its natural completion "
+    "point, whether resuming this context or a new bounded unit would be "
+    "more coherent, the consequences of stopping now, and a durable partial "
+    "checkpoint if you changed anything. Do not silently expand scope.")
 DEFAULT_UNRELATED_DISCOVERY = (
     "Record unrelated discoveries as backlog notes in your return; do not "
     "investigate or fix them within this assignment.")
@@ -102,6 +105,18 @@ _QUOTA_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = tuple(
         ("numeric_tokens", r"\b\d[\d,_.]*\s*(?:k|m)?\s*tokens?\b"),
         ("percent_of_window",
          r"\b\d{1,3}\s*%\s*(?:of\s+)?(?:your\s+)?(?:context|budget|window|capacity)\b"),
+        # G3 MAJOR-2 / G5 M1 (M0-T090 carried correction): a numeric
+        # percentage in worker text is quota pressure regardless of spacing
+        # ("70 %") or spelling ("70 percent") and regardless of the noun that
+        # follows; broad by design - the caller rewrites legitimate wording.
+        ("percent_numeric", r"\b\d[\d,_.]*\s*(?:%|percent(?:age)?s?\b)"),
+        # G3 MAJOR-2 / MINOR-3 (carried): conserve-synonym pressure - a
+        # save/spare/economize/frugal verb aimed at tokens/context/budget is
+        # the same prohibited rationing instruction as "conserve tokens".
+        ("conserve_synonym",
+         r"\b(?:conserve|conserving|save|saving|spare|sparing|economical|"
+         r"economiz\w*|frugal\w*)\b[^.\n]{0,60}?"
+         r"\b(?:tokens?|context|budget|window|capacity)\b"),
         ("max_turns_spend", r"\bmax(?:imum)?\s+(?:turns?|spend|budget)\b"),
     ))
 
@@ -159,16 +174,39 @@ class WorkerAssignment:
     handoff_requirements: str = DEFAULT_HANDOFF_REQUIREMENTS
 
     def worker_text_fields(self) -> tuple[tuple[str, str], ...]:
-        """Every string that can reach the worker, for the no-quota guard."""
+        """Every string that can reach the worker, for the no-quota guard.
+
+        Fails CLOSED on any field type it cannot scan (G5 N1, M0-T090
+        carried correction): a future worker-facing field added as a dict,
+        list, or nested record must force an explicit scanning decision here
+        instead of silently escaping the guard. ``bool`` is the one
+        explicitly non-text type (``checkpoint_commit_allowed``).
+        """
         pairs: list[tuple[str, str]] = []
         for f in dataclasses.fields(self):
             value = getattr(self, f.name)
+            if isinstance(value, bool):
+                continue
             if isinstance(value, str):
                 pairs.append((f.name, value))
-            elif isinstance(value, tuple):
-                pairs.extend((f"{f.name}[{i}]", item)
-                             for i, item in enumerate(value)
-                             if isinstance(item, str))
+                continue
+            if isinstance(value, tuple):
+                for i, item in enumerate(value):
+                    if not isinstance(item, str):
+                        raise ContractError(
+                            "unscannable_field",
+                            f"worker-facing field {f.name}[{i}] holds "
+                            f"{type(item).__name__!r}, which the no-quota "
+                            f"guard cannot scan; only strings may reach a "
+                            f"worker (D-024-R045, fail closed)")
+                    pairs.append((f"{f.name}[{i}]", item))
+                continue
+            raise ContractError(
+                "unscannable_field",
+                f"worker-facing field {f.name!r} holds "
+                f"{type(value).__name__!r}, which the no-quota guard cannot "
+                f"scan; only strings, tuples of strings, and bool flags are "
+                f"permitted in the assignment (D-024-R045, fail closed)")
         return tuple(pairs)
 
     def to_dict(self) -> dict[str, Any]:
@@ -276,13 +314,21 @@ class HealthBands:
         return cls(**{k: v for k, v in section.items()})
 
     def numeric_strings(self) -> tuple[str, ...]:
-        """String forms of every threshold, for the leak guard."""
+        """String forms of every threshold, for the leak guard.
+
+        Includes the spaced ("70 %") and spelled ("70 percent") percent
+        forms (G3 MINOR-3 / G5 M1, M0-T090 carried correction) so a
+        threshold cannot leak merely by reformatting.
+        """
         out: list[str] = []
         for f in dataclasses.fields(self):
             value = float(getattr(self, f.name))
+            percent = round(value * 100)
             out.append(repr(value))
             out.append(f"{value:g}")
-            out.append(f"{round(value * 100)}%")
+            out.append(f"{percent}%")
+            out.append(f"{percent} %")
+            out.append(f"{percent} percent")
         return tuple(dict.fromkeys(out))
 
     def to_dict(self) -> dict[str, Any]:
@@ -390,6 +436,8 @@ def validate_envelope(envelope: SupervisionEnvelope) -> None:
             "bad_confidence",
             f"telemetry_confidence {envelope.telemetry_confidence!r} is not "
             f"in the closed confidence vocabulary")
+    if envelope.write_lease_paths:
+        _normalized_lease(envelope.write_lease_paths)
 
 
 def validate_pair(assignment: WorkerAssignment,
@@ -413,8 +461,47 @@ def validate_pair(assignment: WorkerAssignment,
             "a read-only/review-only assignment must not hold a write lease")
 
 
+#: Absolute lease forms: POSIX root, UNC/backslash root, or a drive letter.
+_ABSOLUTE_LEASE = re.compile(r"^(?:[/\\]|[a-z]:[/\\]?)", re.IGNORECASE)
+
+
+def _normalize_lease_path(path: str) -> str:
+    """Canonicalize ONE lease path, failing closed on unusable forms
+    (G3 MINOR-4 + G5 M3, M0-T090 carried corrections).
+
+    Leases are repository-relative by definition: absolute paths and
+    traversal segments are rejected outright (never silently normalized into
+    something grantable), dot-segments are normalized so ``./pkg`` and
+    ``pkg/./sub`` cannot dodge overlap detection, and a path that normalizes
+    to the repository root (``/``, ``.``, empty) is refused - a root write
+    lease would previously normalize to the empty string and overlap nothing.
+    """
+    if not path or not path.strip():
+        raise ContractError(
+            "bad_lease_path", "lease path must be a non-empty string")
+    raw = path.strip()
+    if _ABSOLUTE_LEASE.match(raw):
+        raise ContractError(
+            "bad_lease_path",
+            f"lease path {path!r} is absolute; write leases are "
+            f"repository-relative (D-024 s6)")
+    converted = raw.replace("\\", "/")
+    if any(segment == ".." for segment in converted.split("/")):
+        raise ContractError(
+            "bad_lease_path",
+            f"lease path {path!r} contains a traversal segment; leases "
+            f"never escape the repository")
+    normalized = posixpath.normpath(converted).strip("/").lower()
+    if normalized in ("", "."):
+        raise ContractError(
+            "bad_lease_path",
+            f"lease path {path!r} normalizes to the repository root; a "
+            f"root write lease is never granted")
+    return normalized
+
+
 def _normalized_lease(paths: tuple[str, ...]) -> tuple[str, ...]:
-    return tuple(p.replace("\\", "/").strip("/").lower() for p in paths)
+    return tuple(_normalize_lease_path(p) for p in paths)
 
 
 def _scopes_overlap(a: tuple[str, ...], b: tuple[str, ...]) -> str | None:
@@ -432,6 +519,16 @@ def assert_grantable(envelopes: tuple[SupervisionEnvelope, ...],
     ``envelopes`` are the ACTIVE write-holding envelopes (including any held
     by nested children — children pass through this same check, so nesting
     cannot evade the cap or the leases; D-024 s16.2).
+
+    SNAPSHOT, NOT A LOCK (G5 M4, M0-T090 carried correction): this function
+    validates ONE candidate against a caller-supplied snapshot of the active
+    set; two candidates validated against the same snapshot can both pass
+    and then overlap. The runtime therefore never calls this concurrently
+    against a shared snapshot — ``lease_runtime.LeaseLedger`` serializes
+    grants and folds each granted envelope into the active set before the
+    next candidate is checked. Any future runtime consumer must go through
+    that ledger (or an equivalent serialized fold), never through bare
+    snapshot validation.
     """
     active_writers = [e for e in envelopes if e.write_lease_paths]
     if candidate.write_lease_paths:
@@ -541,16 +638,32 @@ def render_worker_prompt(assignment: WorkerAssignment,
     return prompt
 
 
+#: Band-vocabulary leak patterns (G3 MAJOR-1 / G5 M2, M0-T090 carried
+#: correction): match the qualified vocabulary tokens and band-context
+#: phrases on WORD BOUNDARIES. Bare "observe"/"land" substrings are common
+#: English ("landing", "island", "England", "observe the failing test") and
+#: are no longer treated as leaks unless they appear in band context.
+_BAND_LEAK_PATTERNS: tuple[re.Pattern[str], ...] = tuple(
+    re.compile(p, re.IGNORECASE) for p in (
+        r"\bprepare[\s_-]+to[\s_-]+land\b",
+        r"\bemergency[\s_-]+stop\b",
+        r"\b(?:health\s+)?bands?\s+(?:normal|observe|prepare|land|emergency)\w*",
+        r"\b(?:normal|observe|prepare|land|emergency)[\s_-]+bands?\b",
+    ))
+
+
 def assert_no_envelope_leak(prompt: str,
                             envelope: SupervisionEnvelope) -> None:
     """The envelope is controller policy: none of its band names, threshold
     values, window numbers, or detector counters may appear in worker text."""
-    lowered = prompt.lower()
-    for band in HEALTH_BAND_NAMES[1:]:  # "normal" alone is common English
-        if band in lowered:
+    for pattern in _BAND_LEAK_PATTERNS:
+        match = pattern.search(prompt)
+        if match:
             raise ContractError(
                 "envelope_leak",
-                f"worker prompt contains the private band name {band!r}")
+                f"worker prompt contains the private band vocabulary "
+                f"({match.group(0)!r}); band names never reach a worker "
+                f"(D-024 s6)")
     leak_values: list[str] = list(envelope.health_bands.numeric_strings())
     if envelope.model_context_window is not None:
         leak_values.append(str(envelope.model_context_window))

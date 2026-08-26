@@ -50,6 +50,16 @@ class WorkloadError(ValueError):
         self.message = message
 
 
+#: G3 MINOR-5 (M0-T090 carried correction): the size-class vocabulary is
+#: owned here, but two error surfaces report an invalid class and their code
+#: strings are pinned by the accepted M0-T090 test pack — WorkloadError
+#: ``bad_declared_class`` (this module and ``startup_overhead``) and
+#: ContractError ``bad_size_class`` (``subagent_contracts.validate_envelope``).
+#: Both codes are registered in this single closed set so a caller can treat
+#: "invalid size class" as ONE condition regardless of which surface raised it.
+SIZE_CLASS_ERROR_CODES: tuple[str, ...] = ("bad_declared_class", "bad_size_class")
+
+
 @dataclasses.dataclass(frozen=True)
 class WorkloadThresholds:
     """Owner-policy thresholds for structural classification. Configurable;
