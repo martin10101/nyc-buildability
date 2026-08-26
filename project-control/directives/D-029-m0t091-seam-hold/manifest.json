@@ -1,0 +1,76 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-029",
+ "version": 1,
+ "slug": "m0t091-seam-hold",
+ "title": "Owner hold 2026-08-26: finish/review/accept/checkpoint/commit/push M0-T091 exactly as scoped; do not claim or begin M0-T092 or any later campaign task; let healthy agents and validation shells finish naturally; verify the clean seam (tree/origin/agents/ledger); report 'M0-T091 SEAM READY' with the frozen accepted commit, checkpoint, test totals, campaign NEXT, and background-process status; then wait for owner instruction. Session-conduct directive bound to the non-ledger sentinel D-029-BOOTSTRAP.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-26",
+ "captured_at": "2026-08-26T20:28:54+00:00",
+ "created_at": "2026-08-26T20:28:54+00:00",
+ "updated_at": "2026-08-26T20:28:54+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-26T20:28:54+00:00",
+   "content_digest_sha256": "a6a09ea59b8b1742ce55848571a5f9418d2ed7b30df54f70a5758d55d1b57528"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "complete the in-flight M0-T091 through its normal lifecycle (report, G2, submit, independent G3/G4/G5+DCV, accept, checkpoint, commit, push) including the mechanical campaign-record advance; verify and report the seam",
+  "excluded": "claiming or beginning M0-T092 or any later campaign task; any new implementation work after the seam report; killing healthy productive agents or running validation shells"
+ },
+ "applicability_note": "Conduct-only: all rows bind the NON-LEDGER sentinel D-029-BOOTSTRAP and are verified at the M0-T091 seam DCV / next session-seam DCV; no ledger task is created and M0-T091's cited applicable set (D-024:ALL) is unchanged. The verbatim source-001.md governs on any wording question; the interpretation note records that the required independent review wave is part of 'finish, review, accept' and that the campaign-record advance is mechanical, not a claim of M0-T092. This later instruction narrows D-028's unattended-continuation authorization: after the seam report, WAIT.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner mid-turn terminal message 2026-08-26 ordering the M0-T091 completion-and-hold seam."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-029-R001",
+  "D-029-R002",
+  "D-029-R003",
+  "D-029-R004",
+  "D-029-R005",
+  "D-029-R006"
+ ],
+ "requirements_id_digest_sha256": "9196ed5eaf570fec57adf78c5ba4318c2bdf728a6f7e9d3cd07c8167b583eebb",
+ "requirements_content_digest_sha256": "d785713d51c940ae098a5d60c5d5710c3c24ccfe12a7867995990db8d2232730",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-26T20:28:54+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 a6a09ea59b8b1742ce55848571a5f9418d2ed7b30df54f70a5758d55d1b57528, 2351 bytes); decomposed into 6 conduct requirements (finish M0-T091 as scoped; hold on M0-T092+; agents finish naturally; seam verification; exact seam report; wait for owner) bound to sentinel D-029-BOOTSTRAP; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9. Received mid-M0-T091 (composite baseline complete 2707/3/0; before producer report/G2/submit)."
+  },
+  {
+   "at": "2026-08-26T20:45:00+00:00",
+   "actor": "orchestrator",
+   "event": "pre-commit capture correction after first validator run (EXIT=1): classifications normalized to the c1 vocabulary (R005 return_report->return, R006 owner_decision->decision); affected_tasks emptied to match the conduct-only sentinel pattern (D-028 precedent; the c14 rule requires a task_verification row for any in-regime affected task, and D-029 binds NO acceptance row onto M0-T091 - its acceptance set stays D-024:ALL). Source and requirement IDs unchanged; requirements_content_digest updated. Validator re-run EXIT recorded in M0-T091-G2-self-check.md."
+  }
+ ]
+}

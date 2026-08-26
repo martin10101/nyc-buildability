@@ -411,7 +411,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-028-sleep-handoff-650k/manifest.json"
+  },
+  {
+   "directive_id": "D-029",
+   "slug": "m0t091-seam-hold",
+   "title": "Owner hold 2026-08-26: finish/review/accept/checkpoint/commit/push M0-T091 exactly as scoped; HOLD on claiming or beginning M0-T092 or any later campaign task; healthy agents/validation shells finish naturally; verify the clean seam (tree/origin/agents/ledger); report 'M0-T091 SEAM READY' (frozen accepted commit, checkpoint, test totals, campaign NEXT, background-process status); then WAIT for owner instruction. Conduct-only (sentinel D-029-BOOTSTRAP); narrows D-028's unattended continuation after the seam.",
+   "status": "active",
+   "issued_at": "2026-08-26",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-029-m0t091-seam-hold/manifest.json"
   }
  ],
- "updated_at": "2026-08-25T20:40:00+00:00"
+ "updated_at": "2026-08-26T20:28:54+00:00"
 }
