@@ -1,69 +1,70 @@
 {
- "task_id": "M0-T091",
- "title": "D-024 C2: invisible runtime supervision (health bands, no-progress, extension gate, landing)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Enforce controller-side supervision without worker-visible counters: scope and write-lease enforcement, retained producer concurrency cap (max three, fewer by default, nested children cannot evade it), private configurable health bands (normal/observe/prepare-to-land/land/emergency) calibrated per resolved model, durable-evidence progress definition with repeated-command/hypothesis/test-failure no-progress detectors, scope-drift detection, the section 6.1 extension gate (Codex approves/denies bounded extensions; discoveries default to backlog), sparse landing direction (one concise message at land; platform TaskStop reserved for emergencies; no maxTurns/budget caps as routine sizing, catastrophic ceiling far outside normal range with partial-state recovery tested), durable child handoffs, and parent/child turnover draining rules. Supervisor-freeze qualifying evidence: D-024-R101 (Phase C).",
- "business_reason": "D-024 sections 5.4-5.5, 6.1-6.3, 15-C items 4-6: supervision must watch measurements externally and never make the worker ration its own reasoning.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
- ],
- "outputs": [
-  "health-band/no-progress/extension-gate/landing enforcement under tools/agent_supervisor (accelerated-counter testable)",
-  "tools/test_agent_supervisor_runtime_supervision.py (section 16.2 supervision cases incl. forty-minute-equivalent landing, high-usage-near-seam completion, observe-produces-no-message)",
-  "project-control/reports/M0-T091-runtime-supervision.md"
- ],
- "dependencies": [
-  "M0-T089",
-  "M0-T090"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_runtime_supervision.py",
-  "project-control/reports/M0-T091-runtime-supervision.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-24T12:35:22+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+  "task_id": "M0-T091",
+  "title": "D-024 C2: invisible runtime supervision (health bands, no-progress, extension gate, landing)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Enforce controller-side supervision without worker-visible counters: scope and write-lease enforcement, retained producer concurrency cap (max three, fewer by default, nested children cannot evade it), private configurable health bands (normal/observe/prepare-to-land/land/emergency) calibrated per resolved model, durable-evidence progress definition with repeated-command/hypothesis/test-failure no-progress detectors, scope-drift detection, the section 6.1 extension gate (Codex approves/denies bounded extensions; discoveries default to backlog), sparse landing direction (one concise message at land; platform TaskStop reserved for emergencies; no maxTurns/budget caps as routine sizing, catastrophic ceiling far outside normal range with partial-state recovery tested), durable child handoffs, and parent/child turnover draining rules. Supervisor-freeze qualifying evidence: D-024-R101 (Phase C).",
+  "business_reason": "D-024 sections 5.4-5.5, 6.1-6.3, 15-C items 4-6: supervision must watch measurements externally and never make the worker ration its own reasoning.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "health-band/no-progress/extension-gate/landing enforcement under tools/agent_supervisor (accelerated-counter testable)",
+    "tools/test_agent_supervisor_runtime_supervision.py (section 16.2 supervision cases incl. forty-minute-equivalent landing, high-usage-near-seam completion, observe-produces-no-message)",
+    "project-control/reports/M0-T091-runtime-supervision.md"
+  ],
+  "dependencies": [
+    "M0-T089",
+    "M0-T090"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_runtime_supervision.py",
+    "project-control/reports/M0-T091-runtime-supervision.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-26T19:18:19.056637+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "ctl24"
 }
