@@ -1,0 +1,61 @@
+{
+ "task_id": "M0-T099",
+ "title": "D-024 B1-follow-up: project statusLine handler + real installed-version fixture (amendment 2)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Owner amendment 2 (source-002-amendment.md, D-024-R129..R138): build the project status-line handler that BOTH writes the sanitized telemetry sidecar AND prints a compact human-readable status row (one feed for Codex monitoring and owner visibility; no competing configurations), reusing the accepted M0-T088 records/sanitization/sidecar/journal - no restart or rebuild of the telemetry architecture. Prove primary statusLine ingestion with a REAL installed-version fixture (live 2.1.220 capture, not docs-derived synthetic alone) before acceptance. Keep live context occupancy separate from cumulative usage; keep five-hour/seven-day rate-limit pressure (rate_limits.*.used_percentage/resets_at) separate from context pressure; handle absent/null fields safely per documented nullability; confirm the handler adds no model messages and consumes no API tokens (official doc note + structural proof). Live wiring into .claude/settings.json is an owner-visible step documented in the report, not performed by this task. Record the official documentation URL (https://code.claude.com/docs/en/statusline) and installed-version proof in the verification evidence. subagentStatusLine implementation stays routed to M0-T089; its live canary stays routed to the campaign canary task (D-024-R137). Supervisor-freeze qualifying evidence: D-024-R100 + D-024-R131/R132 (requirements explicitly listed in owner directive D-024 amendment 2).",
+ "business_reason": "Owner directive 2026-08-26 (amendment 2): one authoritative telemetry feed for owner + Codex visibility, proven against the real installed version",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [
+  "M0-T088"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_statusline_handler.py",
+  "project-control/reports/M0-T099-statusline-handler.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "services",
+  "supabase",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-26T01:55:16.305804+00:00",
+ "updated_at": "2026-08-26T01:55:16.532301+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-26T01:55:16.305804+00:00"
+}

@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 128,
+ "requirement_count": 138,
  "producer": "orchestrator",
- "updated_at": "2026-08-24T12:33:20+00:00",
+ "updated_at": "2026-08-26T02:30:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -4977,6 +4977,366 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 1
+  },
+  {
+   "id": "D-024-R129",
+   "text": "Adopt the official Claude Code status-line documentation (https://code.claude.com/docs/en/statusline, fetched 2026-08-26) as PRIMARY capability evidence for statusLine and subagentStatusLine, including the documented version gates (tokenCount/contextWindowSize require >= 2.1.205; effort requires >= 2.1.214; installed 2.1.220 qualifies) and the documented field names and nullability semantics captured verbatim in the source-002 annex.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "official URL + installed-version proof recorded in verification evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R130",
+   "text": "Continue the existing bounded telemetry work; do NOT restart or rebuild the telemetry architecture. The statusLine handler work reuses the accepted M0-T088 records, sanitization, sidecar, and journal.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R131",
+   "text": "Prove primary statusLine ingestion with a REAL installed-version fixture (captured from the live installed Claude Code, not a docs-derived synthetic alone) before acceptance of the bounded statusLine-handler task.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "real installed-version status payload fixture exercised by tests",
+   "required_evidence": "committed fixture + test run at frozen identity",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R132",
+   "text": "The project status-line handler must BOTH write the sanitized telemetry sidecar AND print a compact human-readable status row, so Codex monitoring and owner visibility use one feed rather than competing configurations.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R133",
+   "text": "The handler keeps live context occupancy separate from cumulative usage (no cross-labelling; occupancy fields never presented as lifetime spend).",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R134",
+   "text": "Keep five-hour/seven-day rate-limit pressure separate from context pressure: rate_limits.five_hour/seven_day (used_percentage, resets_at) are a distinct pressure axis, never merged into or confused with context-window percentages.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R135",
+   "text": "Confirm with evidence that the status-line process adds no model messages and consumes no API tokens (official doc note: 'The status line runs locally and does not consume API tokens' + structural/behavioral proof over the handler).",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "no-injection structural proof + official doc citation",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R136",
+   "text": "Handle absent/null fields safely per the documented nullability: current_usage null at startup and after /compact; used/remaining percentages null early; rate_limits only for subscribers after the first response with each window independently absent; total_* legitimately 0 before the first response (reported zero stays zero; absent becomes unknown).",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R137",
+   "text": "Do not expand the primary-statusLine bounded work into sub-agent ingestion belonging to the next campaign task; durably route the official subagentStatusLine implementation and its LIVE CANARY to the correct bounded task(s), reusing M0-T088's records, sanitization, sidecar, and journal. Routing record: subagentStatusLine ingestion delivered in M0-T089 (frozen b7be085, under independent review at capture); the live canary belongs to the Phase B/F live-fixture canary task on the campaign plan.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-024-R138",
+   "text": "Record the official documentation URL (https://code.claude.com/docs/en/statusline) and the installed-version proof (claude --version = 2.1.220, live capability fixture) in the verification evidence of the statusLine-handler task.",
+   "source_ref": "source-002-amendment.md#verbatim-owner-text",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T099"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [
+     "create",
+     "dispatch",
+     "accept"
+    ],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "verification rows cite the URL + version proof",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T099"
+    ]
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26; awaiting M0-T099",
+   "evidence_paths": [],
+   "amendment_sequence": 2
   }
  ]
 }
