@@ -14,13 +14,13 @@
   "no worker-facing token quotas/countdowns ever (D-024-R045)"
  ],
  "next_action": {
-  "task_id": "M0-T090",
-  "description": "claim and produce M0-T090 (D-024 C1 per its packet: bounded subagent contracts - worker-facing assignment schema with NO numeric token quota/countdown/conserve-tokens pressure ever (R045), plus controller-only supervision envelope with structural size class, telemetry sources, private health bands) following the packet objective; then G2 -> submit -> independent G3/G4/G5+DCV at the frozen identity -> accept -> advance this record. Carried advisory inputs from the M0-T099 gate round, applied where a task touches the relevant modules: G3-M1 (isolate completed-first eviction order with a newer-completed vs older-active test in telemetry_sdk), G5-NIT-1 (add the dash-encoded home mask to the cross-fixture class scan), G5-NIT-2 (dash-username first-segment masking limitation - documented best-effort), G5-MIN-1 standing guidance for the Phase B/F live-canary task (neutralize account-usage numbers/epochs and session/prompt UUIDs in any FUTURE public real-capture fixture). Also outstanding (owner-visible, classifier-denied for this session): purge leftover pack-repo agent worktrees agent-a97cd976cfb4344f0, agent-ac83580dbc0f69fce, and NEW agent-a1e58fd626f4ec1e6 (M0-T099 G4 reviewer; qa-engineer agent memory inside) - exact commands in M0-T099-statusline-handler.md section 8; never merge agent worktree branches. Owner-visible statusLine wiring steps stay documented-only in that same report section 4 (gitignore .claude/telemetry/ + settings.json statusLine command)."
+  "task_id": "M0-T091",
+  "description": "claim and produce M0-T091 (D-024 C2 per its packet: invisible runtime supervision - health-band evaluation against live telemetry, no-progress/repeated-attempt/scope-drift detection, extension-gate runtime, sparse landing direction, emergency task stop, durable child handoffs; workers never see counters, R045/R050 unchanged) following the packet objective; then G2 -> submit -> independent G3/G4/G5+DCV at the frozen identity -> accept -> advance this record. CARRIED PRE-ACTIVATION CORRECTION BUNDLE from the M0-T090 gate round (apply in this unit, which owns the runtime graduation of these guards): G3 MAJOR-1 (envelope-leak guard must word-boundary/vocabulary-token match - bare 'observe'/'land' substrings false-positive on landing/island/England-class words), G3 MAJOR-2 + MINOR-3 + G5 M1 (quota/leak guards must cover space-separated percent '70 %', spelled 'percent', and conserve-synonym pressure: save/economical/frugal), G3 MINOR-4 (root '/' lease normalizes to empty and dodges overlap), G3 MINOR-5 (size-class error-code consistency), G5 M3 (lease paths: normalize dot-segments, reject absolute/traversal), G5 M4 (document+implement assert_grantable snapshot-vs-lock: runtime must serialize grants and fold each grant into the active set), G5 N1 (worker_text_fields fail closed on unscannable field types), G4 ADV-1 (non-omittable s13 packet categories), DCV R063 advisory (add the 'likely evidence sources' clause to DEFAULT_EXTENSION_PROTOCOL). Also outstanding owner-visible (classifier-denied this session): purge FOUR leftover pack-repo agent worktrees agent-a97cd976cfb4344f0, agent-ac83580dbc0f69fce, agent-a1e58fd626f4ec1e6, and NEW agent-a2c40102cc6592d8e (M0-T090 G4 reviewer) - commands in M0-T099-statusline-handler.md section 8 pattern; never merge agent worktree branches. NOTE: statusLine telemetry now LIVE in passive shadow mode (D-027/M0-T100 accepted; M0-T101 pinned the command in the MCP-policy validator)."
  },
  "frozen": {
-  "head_sha": "f85ed5b61008d232bf93ad5026d79838e8efaf2b",
-  "recorded_at": "2026-08-26T05:39:10+00:00"
+  "head_sha": "2fba87fb96fb01949a8918d0760665d6940ccbe6",
+  "recorded_at": "2026-08-26T08:02:51+00:00"
  },
- "sequence": 4,
- "updated_at": "2026-08-26T05:39:10+00:00"
+ "sequence": 6,
+ "updated_at": "2026-08-26T08:02:51+00:00"
 }
