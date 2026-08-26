@@ -1,71 +1,81 @@
 {
- "task_id": "M0-T102",
- "title": "D-024 Amendment 3 unit A: native capability re-baseline, official-docs snapshot, native-reuse matrix, campaign conversion (discharges D-030)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Re-run the M0-T086 capability baseline natively (python -m tools.agent_supervisor.capability_probe, live installed-version probe of claude/codex; D-030 discharge); snapshot the 16 official Claude Code doc pages listed in D-024 source-003-amendment.md at execution time; re-verify tools/agent_supervisor/fixtures/capability_matrix_v1.json against the installed versions and current docs, recording deltas; produce the durable requirement-to-capability matrix mapping EVERY remaining D-024 requirement and task to NATIVE REPLACEMENT / NATIVE WRAPPED / CUSTOM REQUIRED / OPTIONAL ENHANCEMENT / REJECTED OR DEFERRED with the ten per-decision record fields (D-024-R150/R151); propose the converted dependency-ordered campaign (surgical changes to unstarted M0-T092..M0-T096 + new unit C-J task packets with collision-free ids); produce the 11-item initial owner report (D-024-R190). Supervisor-freeze qualifying evidence: D-024-R001 (live capability probes required) + D-024-R148 (re-probe live binary; recorded 2.1.220 and docs-listed 2.1.246 are historical only). No runtime implementation changes in this task.",
- "business_reason": "Owner amendment 2026-08-26 (D-024 source-003): re-baseline the unimplemented portion of D-024 to reuse supported native Claude Code functionality instead of building duplicate machinery; D-030 requires this bounded gated ledger task before any M0-T092+ claim.",
- "inputs": [],
- "outputs": [
-  "project-control/reports/M0-T102-capability-rebaseline.md (matrix + reconciliation + 11-item initial owner report)",
-  "project-control/reports/M0-T102-native-reuse-matrix.json (durable machine-readable matrix, D-024-R150/R151)",
-  "project-control/reports/M0-T102-docs-snapshot/ (16 official doc pages, fetch-dated)",
-  "tools/agent_supervisor/fixtures/ refreshed live capability probe fixture(s) + capability_matrix_v1.json delta record",
-  "converted campaign proposal: surgical M0-T092..M0-T096 packet changes + unit C-J packet drafts (applied by the orchestrator after acceptance)"
- ],
- "dependencies": [
-  "M0-T091"
- ],
- "allowed_paths": [
-  "project-control/reports/M0-T102-capability-rebaseline.md",
-  "project-control/reports/M0-T102-native-reuse-matrix.json",
-  "project-control/reports/M0-T102-docs-snapshot",
-  "tools/agent_supervisor/fixtures"
- ],
- "forbidden_paths": [
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-26T21:28:18.016839+00:00",
- "updated_at": "2026-08-26T21:28:18.165745+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  },
-  {
-   "directive_id": "D-030",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-26T21:28:18.016839+00:00"
+  "task_id": "M0-T102",
+  "title": "D-024 Amendment 3 unit A: native capability re-baseline, official-docs snapshot, native-reuse matrix, campaign conversion (discharges D-030)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Re-run the M0-T086 capability baseline natively (python -m tools.agent_supervisor.capability_probe, live installed-version probe of claude/codex; D-030 discharge); snapshot the 16 official Claude Code doc pages listed in D-024 source-003-amendment.md at execution time; re-verify tools/agent_supervisor/fixtures/capability_matrix_v1.json against the installed versions and current docs, recording deltas; produce the durable requirement-to-capability matrix mapping EVERY remaining D-024 requirement and task to NATIVE REPLACEMENT / NATIVE WRAPPED / CUSTOM REQUIRED / OPTIONAL ENHANCEMENT / REJECTED OR DEFERRED with the ten per-decision record fields (D-024-R150/R151); propose the converted dependency-ordered campaign (surgical changes to unstarted M0-T092..M0-T096 + new unit C-J task packets with collision-free ids); produce the 11-item initial owner report (D-024-R190). Supervisor-freeze qualifying evidence: D-024-R001 (live capability probes required) + D-024-R148 (re-probe live binary; recorded 2.1.220 and docs-listed 2.1.246 are historical only). No runtime implementation changes in this task.",
+  "business_reason": "Owner amendment 2026-08-26 (D-024 source-003): re-baseline the unimplemented portion of D-024 to reuse supported native Claude Code functionality instead of building duplicate machinery; D-030 requires this bounded gated ledger task before any M0-T092+ claim.",
+  "inputs": [],
+  "outputs": [
+    "project-control/reports/M0-T102-capability-rebaseline.md (matrix + reconciliation + 11-item initial owner report)",
+    "project-control/reports/M0-T102-native-reuse-matrix.json (durable machine-readable matrix, D-024-R150/R151)",
+    "project-control/reports/M0-T102-docs-snapshot/ (16 official doc pages, fetch-dated)",
+    "tools/agent_supervisor/fixtures/ refreshed live capability probe fixture(s) + capability_matrix_v1.json delta record",
+    "converted campaign proposal: surgical M0-T092..M0-T096 packet changes + unit C-J packet drafts (applied by the orchestrator after acceptance)"
+  ],
+  "dependencies": [
+    "M0-T091"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T102-capability-rebaseline.md",
+    "project-control/reports/M0-T102-native-reuse-matrix.json",
+    "project-control/reports/M0-T102-docs-snapshot",
+    "tools/agent_supervisor/fixtures"
+  ],
+  "forbidden_paths": [
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 50,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T21:28:18.016839+00:00",
+  "updated_at": "2026-08-26T22:05:53.434040+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-030",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T21:28:18.016839+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-26T22:05:53.434040+00:00",
+      "agent": "orchestrator",
+      "percent": 50,
+      "status": "in_progress",
+      "message": "Docs snapshot complete 16/16 (target official version 2.1.246; installed 2.1.220 probed unchanged); independent capture verification PASS (all 6 checks, 0 blocking, 2 advisories) saved verbatim to M0-T102-capture-verification.md. Remaining: native-reuse matrix + capability_matrix_v1 delta + campaign conversion proposal + 11-item owner report. Findings: readonly_agent_guard misses PowerShell writes (two agents used it, disclosed; files reviewed+ratified); general-purpose spawns cannot Write (use roster producers)."
+    }
+  ]
 }
