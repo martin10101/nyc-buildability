@@ -1,0 +1,23 @@
+{
+  "task_id": "M0-T099",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T099-statusline-handler.md",
+  "submitted_at": "2026-08-26T05:06:43.910157+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T099-evidence-map.json",
+  "content_manifest_sha256": "d6e90bfcc49b9061f4c7ed8ce60c6079ad1fe196bb7b243f4c9f69b0ae80fae2",
+  "reviewed_sha": "00f2519f2eb2cf0b1afb6789b6b0afe17b1aac05",
+  "applicable_requirements": [
+    "D-024-R129",
+    "D-024-R130",
+    "D-024-R131",
+    "D-024-R132",
+    "D-024-R133",
+    "D-024-R134",
+    "D-024-R135",
+    "D-024-R136",
+    "D-024-R137",
+    "D-024-R138"
+  ],
+  "updated_at": "2026-08-26T05:06:44.645868+00:00"
+}
