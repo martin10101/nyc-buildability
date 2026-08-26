@@ -1,0 +1,155 @@
+{
+ "requirements": {
+  "D-024-R140": [
+   "M0-T102-capability-rebaseline.md sections 1/5/7 (roles preserved; producer=Fable orchestrator, verifier independent; owner gates untouched)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R140] -> area 'authority-and-process' decision CUSTOM_REQUIRED; docs: D-024 source-001 sections 0/1/13/18/19/20; amendment-3 role separation"
+  ],
+  "D-024-R143": [
+   "M0-T102-native-reuse-matrix.json (31 NATIVE_WRAPPED rows = reuse instead of duplicate machinery)",
+   "M0-T102-capability-rebaseline.md section 6",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R143] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R144": [
+   "source-003-amendment.md (append-only capture, collision-free R139..R191 + M0-T102/M0-T103)",
+   "M0-T102-capture-verification.md (PASS)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R144] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R145": [
+   "M0-T102-capability-rebaseline.md sections 2/9 (re-baseline + controlled testing under the authorization; upgrade deferred to M0-T103 with pre-update capture)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R145] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R146": [
+   "no prohibited action taken: no activation, no SDK, no MCP servers (/mcp empty), no PR merge, no model substitution, no bypass flags, no fan-out beyond 5 bounded agents, ledger remains authority (git log 0cc1c62..HEAD)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R146] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R147": [
+   "M0-T102-docs-snapshot/ 16/16 pages fetch-dated 2026-08-26",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R147] -> area 'official-updater-upgrade' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+  ],
+  "D-024-R148": [
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-26.json (installed 2.1.220 live)",
+   "M0-T102-docs-snapshot/changelog.md (official stable 2.1.246)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R148] -> area 'official-updater-upgrade' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+  ],
+  "D-024-R149": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R149] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R150": [
+   "M0-T102-native-reuse-matrix.json (147 requirement IDs mapped to the 5 decisions; coverage machine-asserted)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R150] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R151": [
+   "M0-T102-native-reuse-matrix.json areas[] (10 record fields per decision area)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R151] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R152": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R152] -> area 'goal-bounded-continuation' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/goal.md (code.claude.com/docs/en/goal)"
+  ],
+  "D-024-R153": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R153] -> area 'background-session-host' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/agent-view.md"
+  ],
+  "D-024-R154": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R154] -> area 'structured-passive-observation' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+  ],
+  "D-024-R155": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R155] -> area 'hooks-event-bus' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/hooks.md"
+  ],
+  "D-024-R156": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R156] -> area 'worktree-isolation' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/worktrees.md"
+  ],
+  "D-024-R157": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R157] -> area 'dynamic-workflows' decision OPTIONAL_ENHANCEMENT; docs: project-control/reports/M0-T102-docs-snapshot/workflows.md"
+  ],
+  "D-024-R158": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R158] -> area 'skills-operator-surface' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/skills.md"
+  ],
+  "D-024-R159": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R159] -> area 'userpromptexpansion-interception' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/hooks.md"
+  ],
+  "D-024-R160": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R160] -> area 'session-identity-succession' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/sessions.md"
+  ],
+  "D-024-R161": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R161] -> area 'native-reviews' decision OPTIONAL_ENHANCEMENT; docs: project-control/reports/M0-T102-docs-snapshot/commands.md"
+  ],
+  "D-024-R162": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R162] -> area 'context-safeguards' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/statusline.md"
+  ],
+  "D-024-R163": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R163] -> area 'messaging-and-remote-control' decision REJECTED_OR_DEFERRED; docs: project-control/reports/M0-T102-docs-snapshot/cross-session-messaging.md"
+  ],
+  "D-024-R164": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R164] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R165": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R165] -> area 'fallback-model' decision REJECTED_OR_DEFERRED; docs: project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+  ],
+  "D-024-R166": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R166] -> area 'top-level-loop-prohibitions' decision REJECTED_OR_DEFERRED; docs: project-control/reports/M0-T102-docs-snapshot/commands.md"
+  ],
+  "D-024-R169": [
+   "M0-T102-capability-rebaseline.md section 8 (dependency-ordered units A-J -> task sequence)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R169] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R170": [
+   "this task's four outputs = unit A content (amendment reconciliation, docs snapshot, matrix, conversion proposal)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R170] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R172": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R172] -> area 'background-session-host' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/agent-view.md"
+  ],
+  "D-024-R173": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R173] -> area 'hooks-event-bus' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/hooks.md"
+  ],
+  "D-024-R174": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R174] -> area 'goal-bounded-continuation' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/goal.md (code.claude.com/docs/en/goal)"
+  ],
+  "D-024-R175": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R175] -> area 'session-identity-succession' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/sessions.md"
+  ],
+  "D-024-R176": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R176] -> area 'skills-operator-surface' decision NATIVE_WRAPPED; docs: project-control/reports/M0-T102-docs-snapshot/skills.md"
+  ],
+  "D-024-R177": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R177] -> area 'authority-and-process' decision CUSTOM_REQUIRED; docs: D-024 source-001 sections 0/1/13/18/19/20; amendment-3 role separation"
+  ],
+  "D-024-R178": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R178] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R179": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R179] -> area 'portability-plugin' decision OPTIONAL_ENHANCEMENT; docs: project-control/reports/M0-T102-docs-snapshot/plugins-reference.md"
+  ],
+  "D-024-R180": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R180] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R181": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R181] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R182": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R182] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R183": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R183] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R184": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R184] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R185": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R185] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R186": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R186] -> area 'test-harnesses-canaries' decision CUSTOM_REQUIRED; docs: D-024 source-001 section 16; amendment-3 mandatory testing"
+  ],
+  "D-024-R188": [
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R188] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R190": [
+   "M0-T102-capability-rebaseline.md sections 1-11 (the 11-item owner report)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R190] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ],
+  "D-024-R191": [
+   "M0-T102-capture-verification.md (amendment independently validated); campaign continues without owner wait (report section 11: no owner decision required)",
+   "M0-T102-native-reuse-matrix.json requirement_index[D-024-R191] -> area 'governance-amendment-process' decision CUSTOM_REQUIRED; docs: amendment-3 (source-003) capture/process sections"
+  ]
+ }
+}
