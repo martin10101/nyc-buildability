@@ -57,12 +57,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-26T01:24:03.897023+00:00",
+  "updated_at": "2026-08-26T01:35:30.833447+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
