@@ -2038,332 +2038,456 @@
     "D-024-R127",
     "D-024-R128"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+   "verified_at": "2026-08-26T21:20:00+00:00",
    "requirements": [
     {
      "id": "D-024-R002",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "content commit within allowed paths; no transport/loop/spawn surface; composite green (2707/3/0 arithmetic + reproduced slices)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R003",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no loop.py/cli.py edit in ee564dd; runtime modules import no graph/index"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R004",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "extension_gate.ExtensionDecision has no apply surface; test_extension_decision_is_a_record_not_a_code_edit PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "no-violation"
     },
     {
      "id": "D-024-R007",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "D-029 captured verbatim (marker-delimited), not paraphrased"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R008",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no owner questions; D-029 finish-and-hold honored (review wave is the honored finish/review/accept)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R010",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git branch --contains ee564dd = control branch only; main=d8b3899 untouched; no merge commits in range"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "prohibition"
     },
     {
      "id": "D-024-R017",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "D-024-R101 in packet objective + all 8 touched module docstrings + commit ee564dd message"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct/freeze"
     },
     {
      "id": "D-024-R018",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "runtime modules reuse C1 schemas (SupervisionEnvelope, HealthBands, assert_grantable) + telemetry_records; report section 4 false-friend check"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "reuse"
     },
     {
      "id": "D-024-R020",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ee564dd scope = allowed paths only; control-branch commits only"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R021",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "TelemetrySnapshot.source validated vs closed TELEMETRY_SOURCES; no Codex action surface added"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "no-violation"
     },
     {
      "id": "D-024-R022",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "all outputs are frozen records/refusals; no mutation surface"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "no-violation"
     },
     {
      "id": "D-024-R023",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "LeaseLedger.grant serializes + folds active set; assert_write_within_scope raises scope_violation; test_scope_enforcement_fails_closed + ledger tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "runtime enforcement DISCHARGED"
     },
     {
      "id": "D-024-R025",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no dispatch/accept path; decide_extension/evaluate_band return records"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "no-violation"
     },
     {
      "id": "D-024-R026",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "R595/activation untouched; shadow-only; report section 1"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "no-violation"
     },
     {
      "id": "D-024-R042",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "TelemetrySnapshot.__post_init__ validates source/confidence closed vocabs, unknown=None; test_snapshot_validation_fail_closed PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R045",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "_QUOTA_PATTERNS adds percent_numeric + conserve_synonym; worker_text_fields raises unscannable_field; test_quota_guard_catches_paraphrased_pressure x6, test_worker_text_fields_fail_closed_on_unscannable_types, test_landing_direction_passes_both_guards PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R046",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "evaluate_band occupancy->band; AssignmentMonitor no-progress/repeated/scope-drift; findings force requires_review; band + detector tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "runtime bands DISCHARGED"
     },
     {
      "id": "D-024-R047",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "only worker-visible output is guard-proven LANDING_DIRECTION_TEXT; measurements never in worker text"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R048",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "workload_classifier.SIZE_CLASS_ERROR_CODES=('bad_declared_class','bad_size_class'); test_size_class_error_codes_registered_consistently PASS; C1 53/53"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R049",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "startup_overhead.py not in ee564dd file list (untouched)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R050",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "bands_for_model per-model fail-closed; numeric_strings adds 70%/70 %/70 percent; test_bands_calibrated_per_resolved_model_fail_closed + leak-guard tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R051",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "validate_platform_caps raises routine_cap; CatastrophicCeiling requires >=5x; ceiling_fired -> PartialStateRecovery (false_completion impossible); 3 ceiling tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "catastrophic-ceiling recovery test DISCHARGED"
     },
     {
      "id": "D-024-R052",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "bands_for_model(config, resolved_model); BandEvaluation.reasons / ExtensionDecision.reasons recorded for calibration"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "live calibration surface DISCHARGED"
     },
     {
      "id": "D-024-R053",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "evaluate_band promotes to LAND on model_reports_losing_thread at any level; test_model_losing_thread_is_immediate_quality_signal PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R055",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DEFAULT_EXTENSION_PROTOCOL carries 'likely evidence sources ... natural completion point'; C1 pack 53/53 (no field regression); test_extension_protocol_carries_likely_evidence_sources PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R056",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "_BAND_LEAK_PATTERNS word-boundary vocab/context (not substring); numeric leak set extended; leak-guard test trio PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "leak-guard graduation DISCHARGED"
     },
     {
      "id": "D-024-R057",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "spawn_decision.py untouched; SupervisionState.scope_held + TurnoverCoordinator.may_spawn_children; test_prepare_to_land_holds_scope_without_worker_message PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R058",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "startup-overhead measurement untouched; shadow-only resumes nothing"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R059",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no model-routing change; bands_for_model conservative per-model"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R060",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "LeaseLedger.grant -> assert_grantable vs live active set; nested via parent_assignment_id fold; test_nested_children_cannot_evade_producer_cap_or_leases + test_read_only_agents_do_not_consume_the_producer_cap PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R061",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ChildHandoff.bounded_summary capped MAX_SUMMARY_CHARS=4000 (transcript_not_summary); test_verbose_child_transcript_stays_out_of_primary_context PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "bounded-summary construction DISCHARGED"
     },
     {
      "id": "D-024-R062",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "AssignmentMonitor counts command/hypothesis signatures + cycling failures vs repeated_attempt_limit; findings carry no worker surface; test_repeated_corrections_get_outside_decision_without_countdown PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "runtime repeated-attempt DISCHARGED"
     },
     {
      "id": "D-024-R063",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ExtensionRequest requires all s6.1 items incl. likely_evidence_sources; decide_extension deny->backlog default; extension tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "extension-gate runtime + M0-T090 likely-evidence advisory DISCHARGED"
     },
     {
      "id": "D-024-R064",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "only DURABLE_EVIDENCE_KINDS reset the window; test_text_volume_and_tool_activity_are_not_progress + speculation/reset tests PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "runtime no-progress DISCHARGED"
     },
     {
      "id": "D-024-R079",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "modules import only sibling C1 + telemetry_records; no graph/index import"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R080",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "_band_from_occupancy(None) -> OBSERVE; test_unknown_occupancy_is_conservative_never_normal PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R081",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "workload_sizing additive NON_OMITTABLE_CATEGORIES; existing omission/sufficiency tests green"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R092",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "packet_plan raises non_omittable_category for the 3 mandatory categories; test_mandatory_packet_categories_cannot_be_omitted PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R098",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "LeaseGrant.parent_assignment_id, ChildHandoff.parent_task_id, unlinked_records refusals; ledger exactness test PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R101",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Phase C item 4 (lease enforcement, cap, bands, no-progress, extension) + item 6 (sparse landing, TaskStop reserved, child handoffs + turnover draining) present in code + tests; C1 report section 1 deferral discharged"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "Phase C 4+6 DISCHARGED"
     },
     {
      "id": "D-024-R108",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "s16.2 rows executable: forty-minute accelerated landing, high-usage-near-seam, observe-no-message, TaskStop reservation, ceiling + child-turnover rows; 54/54 PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "s16.2 supervision rows DISCHARGED"
     },
     {
      "id": "D-024-R120",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "refusal guards routine_cap, non_omittable_category, transcript_not_summary, unbounded_approval, children_not_drained, scope_violation present + tested"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
     },
     {
      "id": "D-024-R125",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M0-T091-G0-readiness.md records primary cwd=worktree root, branch, HEAD 1d8d53f=origin tip, clean tree, MCP-empty (committed 6968ed5)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R126",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "G0-readiness records empty MCP roster (no mcp__* tools)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R127",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "no Gate-0 failure; no fallback root"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     },
     {
      "id": "D-024-R128",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "clean lineage 1d8d53f -> 6968ed5 -> 9e47c27 -> ee564dd -> ...; no failed-start adoption"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "note": "conduct"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "2880691790763d42346117f2a094b9ceb3cb6bdba12a5d97c2816ef6a9eefe1d",
+   "frozen_content_commit": "ee564dd",
+   "note": "46/46 PASS recorded verbatim-in-substance from the independent DCV return (full report: project-control/reports/M0-T091-DCV.md; DCV states all requirements SATISFIED, recorded as PASS per registry vocabulary; 0 VIOLATED/BLOCKED/UNVERIFIABLE). All 10 M0-T090 deferred-share discharges verified real (R023/R046/R051/R052/R061/R062/R063/R064/R101 items 4+6/R108). Material identity reproduced EXACT at G2 and at moving HEAD; deliverable blobs byte-identical ee564dd..HEAD; 4 non-blocking advisories in the report."
   },
   {
    "task_id": "M0-T092",
@@ -4165,5 +4289,5 @@
    "note": "Independent DCV reproduced all 10 applicable amendment-2 requirements at frozen content commit 00f2519f2eb2cf0b1afb6789b6b0afe17b1aac05; material identity d6e90bfcc49b... stamped identically by the CLI at G2 and G4 (review-wave control commits add reports only; git diff --stat frozen..HEAD -- tools/ empty). Verbatim DCV return: project-control/reports/M0-T099-DCV.md. Official capability reference per owner amendment 2: https://code.claude.com/docs/en/statusline + installed-version proof claude --version == 2.1.220 (fixtures/statusline_live_2026-08-26.json installed_version_proof, cross-ref capability_probe_live_2026-08-25.json)."
   }
  ],
- "updated_at": "2026-08-26T05:55:00Z"
+ "updated_at": "2026-08-26T21:20:00+00:00"
 }
