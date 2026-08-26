@@ -142,6 +142,19 @@
      "note": "conduct pass by absence; producer-verifier separation confirmed"
     }
    ]
+  },
+  {
+   "task_id": "M0-T101",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "reviewed_manifest_sha256": "4bab48e1e2a870dc1df85f0f948bf728ce2414dc6985333c8eb9aa9c0b2e51bc",
+   "reviewed_sha": "e8b21d1b12025c9171b18995e1f03c3276c52be9",
+   "frozen_content_commit": "4e894af779679a61cc34d96e9dd1a0f5f88396af",
+   "verified_at": "2026-08-26T07:40:00+00:00",
+   "requirements": [],
+   "directive_id": "D-027",
+   "note": "empty applicable set reproduced by the independent verifier (all D-027 rows bind M0-T100/sentinel). Substance independently confirmed: EXPECTED_STATUSLINE_COMMAND byte-equal to the D-027-authorized wiring in .claude/settings.json and the M0-T100 report; absence-of-key stays valid (owner-optional activation); accepted M0-T100/M0-T099 artifacts untouched. Full report: project-control/reports/M0-T101-DCV.md."
   }
  ]
 }
