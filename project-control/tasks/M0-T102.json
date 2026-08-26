@@ -50,12 +50,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T21:28:18.016839+00:00",
-  "updated_at": "2026-08-26T22:26:58.516273+00:00",
+  "updated_at": "2026-08-26T22:29:52.737924+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -77,5 +77,7 @@
       "status": "in_progress",
       "message": "Docs snapshot complete 16/16 (target official version 2.1.246; installed 2.1.220 probed unchanged); independent capture verification PASS (all 6 checks, 0 blocking, 2 advisories) saved verbatim to M0-T102-capture-verification.md. Remaining: native-reuse matrix + capability_matrix_v1 delta + campaign conversion proposal + 11-item owner report. Findings: readonly_agent_guard misses PowerShell writes (two agents used it, disclosed; files reviewed+ratified); general-purpose spawns cannot Write (use roster producers)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-26T22:29:52.737924+00:00"
 }

@@ -10,10 +10,12 @@
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
    "applicable_requirement_ids": [],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "requirements": []
+   "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32",
+   "verified_at": "2026-08-26T22:28:18+00:00",
+   "requirements": [],
+   "reviewed_manifest_sha256": "4ec1f5cb15b46b01a6c7c9e48d61c84215b1f4e2d8a18e626274e3a60a716e57",
+   "verification_note": "Empty applicable set is correct (D-030 rows bind D-030-BOOTSTRAP). D-030 discharge substance verified by DCV 4/4: probe rerun, capability_matrix_v1 re-verified (no contradicted claim), deltas recorded, bounded gated ledger task; see M0-T102-DCV.md d030 block."
   }
  ],
- "updated_at": "2026-08-26T21:31:19+00:00"
+ "updated_at": "2026-08-26T22:28:18+00:00"
 }

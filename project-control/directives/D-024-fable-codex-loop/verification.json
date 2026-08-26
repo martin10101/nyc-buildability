@@ -5028,325 +5028,494 @@
     "D-024-R190",
     "D-024-R191"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32",
+   "verified_at": "2026-08-26T22:28:18+00:00",
    "requirements": [
     {
      "id": "D-024-R140",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "capability-rebaseline.md §1/§5/§7: producer=Fable, Codex read-only supervisor, ledger authority, owner final",
+      "matrix requirement_index[R140]=authority-and-process/CUSTOM_REQUIRED"
+     ],
+     "note": "Roles preserved; unit-A duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R143",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "native-reuse-matrix.json 147 IDs mapped; coverage machine-verified == resolver union",
+      "report §3/§6 native-reuse over duplicate machinery"
+     ],
+     "note": "Re-baseline produced; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R144",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "source-003-amendment.md append-only, collision-free R139-R191 + M0-T102/T103",
+      "capture-verification.md PASS (digest 2e326390 exact, 0 gaps/inventions)"
+     ],
+     "note": "Captured via normal amendment process; traceability preserved.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R145",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §2/§9: installed still 2.1.220, binary upgrade deferred to M0-T103 with pre-update capture",
+      "no premature update in diff 05d03a0..HEAD"
+     ],
+     "note": "Authorization exercised within bounds; upgrade correctly deferred.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R146",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "diff 05d03a0..b69600f: only project-control/ + fixtures touched; 0 file deletions; no SDK/MCP/dep/PR-merge/model-sub",
+      "report §11: PR #241 never merged, continuous-mode owner-gated"
+     ],
+     "note": "No prohibited action taken.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R147",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "docs-snapshot/ 16/16 files; each header carries Source URL + Fetch date 2026-08-26 + R147 ref (goal/changelog/hooks/worktrees/cross-session-messaging verified)"
+     ],
+     "note": "Durable dated+URL snapshot of the 16 pages.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R148",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "capability_probe_live_2026-08-26.json: live claude 2.1.220 (output_sha256 74fd5c25), codex 0.146.0",
+      "docs-snapshot/changelog.md: official stable 2.1.246 (2026-08-25)"
+     ],
+     "note": "Live re-probe + current official recorded; historical treated as historical.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R149",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "matrix installed_probe fields record 2.1.220 gating (e.g. /goal check-ins 2.1.234+ absent)",
+      "report §10: installed-version fixture + real canary required per adopted feature; live fixtures flagged pending"
+     ],
+     "note": "Unit-A duty: fixture+canary requirement honored in plan; no unproven adoption.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R150",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index 147 keys == resolver union for M0-T092..T096/T102/T103 + R141/R142/R189 (machine-verified equal)",
+      "each key maps to exactly one valid area+decision (0 bad); dist 110 CUSTOM/31 WRAPPED/3 OPT/3 REJ"
+     ],
+     "note": "Every remaining req mapped to exactly one decision; coverage machine-asserted.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R151",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "matrix areas[] each have 10 record fields: docs,min_version,installed_probe,confidence,affected,reuse,new_code,failure_fallback,evidence_plan,removal_plan",
+      "spot-checked goal/test-harnesses/messaging areas: all substantive, non-placeholder"
+     ],
+     "note": "10 per-decision record fields present and populated.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R152",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R152]=goal-bounded-continuation/NATIVE_WRAPPED; docs goal.md",
+      "area: one bounded assignment, 4 clearing classes, never one goal for campaign"
+     ],
+     "note": "Unit-A evaluation duty discharged; re-verified at unit E.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R153",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R153]=background-session-host/NATIVE_WRAPPED; docs agent-view.md",
+      "report §3: research-preview → feature-detected fallback; never two process systems"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R154",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R154]=structured-passive-observation/NATIVE_WRAPPED; docs cli-reference.md",
+      "area: Codex observes feeds outside Fable context; no token quotas in assignments"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R155",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R155]=hooks-event-bus/NATIVE_WRAPPED; docs hooks.md",
+      "report §3: all 17 required hook events exist in 31-event set"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R156",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R156]=worktree-isolation/NATIVE_WRAPPED; docs worktrees.md",
+      "report §3: physical isolation native; logical leases/frozen-identity/branch policy RETAINED"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R157",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R157]=dynamic-workflows/OPTIONAL_ENHANCEMENT; docs workflows.md",
+      "matrix: bounded fan-out only, never top-level controller, small-slice canary first"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R158",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R158]=skills-operator-surface/NATIVE_WRAPPED; docs skills.md",
+      "report §3: disable-model-invocation:true confirmed; /loop-* thin controls"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R159",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R159]=userpromptexpansion-interception/NATIVE_WRAPPED; docs hooks.md",
+      "report §3: zero-model-context proof needs live fixture else honest 2nd-terminal fallback; must not collide with built-in /loop"
+     ],
+     "note": "Unit-A evaluation duty discharged with honest caveat.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R160",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R160]=session-identity-succession/NATIVE_WRAPPED; docs sessions.md",
+      "report §3: native resume NOT a seam substitute; --session-id must be UUID"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R161",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R161]=native-reviews/OPTIONAL_ENHANCEMENT; docs commands.md",
+      "matrix: supplements never replaces independent Codex/DCV/gates; /simplify for replace-not-layer"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R162",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R162]=context-safeguards/NATIVE_WRAPPED; docs statusline.md",
+      "report §5: statusLine telemetry RETAINED per R162; /autocompact emergency-only"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R163",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R163]=messaging-and-remote-control/REJECTED_OR_DEFERRED; docs cross-session-messaging.md/remote-control.md",
+      "area: delivery not guaranteed=advisory-only; RC needs security review, not required for correctness"
+     ],
+     "note": "Unit-A evaluation duty discharged.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R164",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "matrix 110 CUSTOM_REQUIRED rows incl authority/governance areas",
+      "report §7 enumerates the full must-remain-custom set (Codex review, sequencing, traceability, frozen identities, exact-once effects, owner gates, MCP default-deny, replace-not-layer)"
+     ],
+     "note": "Custom-control set preserved.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R165",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R165]=fallback-model/REJECTED_OR_DEFERRED",
+      "no runtime change adopted fallbackModel as refusal/quota policy in diff range"
+     ],
+     "note": "No violation; decision recorded.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R166",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R166]=top-level-loop-prohibitions/REJECTED_OR_DEFERRED",
+      "no /loop,/batch,Agent Teams,SDK,MCP adopted as campaign authority in diff range"
+     ],
+     "note": "No violation; prohibition upheld.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R169",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §8 dependency-ordered sequence A(M0-T102)→B(T103)→C(T104)→D(T105)→E(T106)→F(T092)→G(T094)→H1(T093)→H2(T095)→I(T096)→J(T107)",
+      "matrix requirement_index[R169]=governance/CUSTOM_REQUIRED"
+     ],
+     "note": "Decomposed into ≥A-J independently reviewable units.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R170",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M0-T102 = unit A: amendment reconciliation (§1), docs snapshot (16/16), matrix (147), conversion proposal (§4/§8)",
+      "task title/objective in M0-T102.json"
+     ],
+     "note": "Unit A deliverables present.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R172",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R172]=background-session-host/NATIVE_WRAPPED; report §4/§8 unit C=M0-T104 (native runtime adapter)"
+     ],
+     "note": "Unit-C definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R173",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R173]=hooks-event-bus/NATIVE_WRAPPED; report §8 unit D=M0-T105 (native event integration)"
+     ],
+     "note": "Unit-D definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R174",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R174]=goal-bounded-continuation/NATIVE_WRAPPED; report §8 unit E=M0-T106 (bounded /goal)"
+     ],
+     "note": "Unit-E definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R175",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R175]=session-identity-succession/NATIVE_WRAPPED; report §4 unit F=M0-T092 (seams/succession, re-scoped)"
+     ],
+     "note": "Unit-F definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R176",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R176]=skills-operator-surface/NATIVE_WRAPPED; report §4/§8 unit G=M0-T094 (skills+UserPromptExpansion)"
+     ],
+     "note": "Unit-G definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R177",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R177]=authority-and-process/CUSTOM_REQUIRED; report §4 unit H=M0-T093/T095 (refusal bridge, repair gate, exact-once GitHub, graph regression)"
+     ],
+     "note": "Unit-H definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R178",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R178]=test-harnesses-canaries/CUSTOM_REQUIRED; report §8 unit I=M0-T096 (shadow/supervised/crash/golden-run)"
+     ],
+     "note": "Unit-I definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R179",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "requirement_index[R179]=portability-plugin/OPTIONAL_ENHANCEMENT; report §8 unit J=M0-T107 (portability plan, post-golden-run, non-blocking)"
+     ],
+     "note": "Unit-J definition/mapping present; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R180",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "matrix removal_plan fields per replaced area cite R180 (prove native→adapter→parity→one backend→separate reviewed removal)",
+      "no runtime replacement performed in diff range (no layering violation)"
+     ],
+     "note": "Replace-not-layer rule embedded in plan; no violation yet.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R181",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git diff 05d03a0..b69600f: 0 file deletions (name-status D=none)",
+      "report §5: 'Nothing is deleted on documentation claims alone (R181)'"
+     ],
+     "note": "No accepted code deleted.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R182",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §10: deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, real low-risk canaries; no token-burning",
+      "matrix evidence_plan fields"
+     ],
+     "note": "Testing method (harness) specified; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R183",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §10 allocates 26 required proofs (R183-R185) across units B-I via matrix evidence_plan per area (Windows-native, MCP default-deny, statusline leak-freedom, bg dispatch lifecycle, /goal 6 behaviors, hook order)"
+     ],
+     "note": "Platform/native proof plan allocated; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R184",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §10: no polling into Fable context, no worker token quotas, overlap rejection, seam rotation, handoff boundedness+successor reconstruction, refusal-vs-quota distinctness"
+     ],
+     "note": "Worker-protection/succession proof plan allocated; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R185",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §10: GitHub exact-once + both crash windows, stale ledger/handoff reconciliation, graph regression, suite green (2707/3/0), independent sec/QA/control/DCV at frozen identity, mutation teeth"
+     ],
+     "note": "External-effects/recovery/review proof plan allocated; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R186",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §10: golden run at M0-T096 executes the amendment's 15-step sequence from the exact owner start command",
+      "matrix requirement_index[R186]=test-harnesses/CUSTOM_REQUIRED"
+     ],
+     "note": "Golden-run plan present; unit-A duty (executed at M0-T096).",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R188",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "report §8: one cohesive writer task at a time; M0-T092..T096 claims HELD until conversion accepted (R139); campaign-continuity/verification kept current",
+      "requirement_index[R188]=governance/CUSTOM_REQUIRED"
+     ],
+     "note": "Campaign execution rules honored; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R190",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "capability-rebaseline.md §1-§11 present: (1)identity (2)versions 2.1.220→2.1.246 (3)matrix (4)tasks-changed (5)untouched-accepted (6)native-replaces (7)remains-custom (8)sequence (9)upgrade/rollback (10)test/golden-run (11)owner-decisions=None"
+     ],
+     "note": "All 11 owner-report items present.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
     {
      "id": "D-024-R191",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "capture-verification.md: report+amendment independently validated PASS",
+      "report §11: 'None to proceed', no owner gate reached; campaign continues"
+     ],
+     "note": "Independently validated; sequencing honored; unit-A duty.",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "4ec1f5cb15b46b01a6c7c9e48d61c84215b1f4e2d8a18e626274e3a60a716e57",
+   "verification_note": "DCV reviewed at b69600f; interval b69600f..7a7bbc9 is control-plane-only (gate records + verbatim review saves); material identity 4ec1f5cb live-recomputed identical by the verifier and at accept; row stamped at accept-time HEAD per D-004-R630."
   },
   {
    "task_id": "M0-T103",
@@ -5593,5 +5762,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-26T21:31:19+00:00"
+ "updated_at": "2026-08-26T22:28:18+00:00"
 }
