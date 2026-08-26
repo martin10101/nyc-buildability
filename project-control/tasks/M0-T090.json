@@ -1,69 +1,70 @@
 {
- "task_id": "M0-T090",
- "title": "D-024 C1: bounded subagent contracts + structural workload sizing",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Implement the two linked pre-spawn records: worker-facing assignment schema (IDs, exact change, role, permitted/prohibited areas, deliverable/return schema, acceptance criteria, checkpoints, honest-blocker reporting, extension protocol, handoff duties - never any numeric token quota, percentage, countdown, or conserve-tokens pressure) and controller-only supervision envelope (structural size class, graph neighborhood/ownership/write lease, startup overhead, resolved model/context, telemetry sources, private health bands, detectors, landing opportunities, extension criteria); the structural classifier (main-session / cohesive-subagent / oversized-split-at-seams / unknown-recon-first) using the existing graph and evidence; startup/read-in overhead measurement feeding sizing calibration; graph-based sizing and smallest-complete context-packet construction preserving existing packet tiers. Goldilocks rule: no micro-spawn churn, no mega-assignments, resume healthy subagents, fork only when parent context is clean and inheritance helps. Supervisor-freeze qualifying evidence: D-024-R101 (Phase C).",
- "business_reason": "D-024 sections 5.5, 6, 13, 15-C: workload-first packaging is the primary prevention mechanism; worker-visible quotas are prohibited.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
- ],
- "outputs": [
-  "assignment + supervision-envelope schemas and structural classifier under tools/agent_supervisor",
-  "startup-overhead measurement + graph-based sizing/packet integration",
-  "tools/test_agent_supervisor_bounded_contracts.py (section 16.2 sizing cases incl. no-quota-in-worker-prompt proof)",
-  "project-control/reports/M0-T090-bounded-contracts.md"
- ],
- "dependencies": [
-  "M0-T088"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_bounded_contracts.py",
-  "project-control/reports/M0-T090-bounded-contracts.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-24T12:35:22+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+  "task_id": "M0-T090",
+  "title": "D-024 C1: bounded subagent contracts + structural workload sizing",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the two linked pre-spawn records: worker-facing assignment schema (IDs, exact change, role, permitted/prohibited areas, deliverable/return schema, acceptance criteria, checkpoints, honest-blocker reporting, extension protocol, handoff duties - never any numeric token quota, percentage, countdown, or conserve-tokens pressure) and controller-only supervision envelope (structural size class, graph neighborhood/ownership/write lease, startup overhead, resolved model/context, telemetry sources, private health bands, detectors, landing opportunities, extension criteria); the structural classifier (main-session / cohesive-subagent / oversized-split-at-seams / unknown-recon-first) using the existing graph and evidence; startup/read-in overhead measurement feeding sizing calibration; graph-based sizing and smallest-complete context-packet construction preserving existing packet tiers. Goldilocks rule: no micro-spawn churn, no mega-assignments, resume healthy subagents, fork only when parent context is clean and inheritance helps. Supervisor-freeze qualifying evidence: D-024-R101 (Phase C).",
+  "business_reason": "D-024 sections 5.5, 6, 13, 15-C: workload-first packaging is the primary prevention mechanism; worker-visible quotas are prohibited.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "assignment + supervision-envelope schemas and structural classifier under tools/agent_supervisor",
+    "startup-overhead measurement + graph-based sizing/packet integration",
+    "tools/test_agent_supervisor_bounded_contracts.py (section 16.2 sizing cases incl. no-quota-in-worker-prompt proof)",
+    "project-control/reports/M0-T090-bounded-contracts.md"
+  ],
+  "dependencies": [
+    "M0-T088"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_bounded_contracts.py",
+    "project-control/reports/M0-T090-bounded-contracts.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-26T06:17:09.508929+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }
