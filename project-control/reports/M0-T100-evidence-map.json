@@ -1,0 +1,55 @@
+{
+ "task_id": "M0-T100",
+ "directive_id": "D-027",
+ "producer": "orchestrator",
+ "frozen_content_commit": "a0b945e",
+ "requirements": {
+  "D-027-R001": [
+   "commit a0b945e: .gitignore '+.claude/telemetry/' rule + .claude/settings.json statusLine block exactly per M0-T099 report section 4 (command 'python -m tools.agent_supervisor.telemetry_statusline --journal .claude/telemetry/statusline_journal.jsonl', the section-4-documented journal option)",
+   "project-control/reports/M0-T100-statusline-activation.md section 1 (diff = 4+3 added lines, nothing else touched)"
+  ],
+  "D-027-R002": [
+   "git diff at a0b945e touches only .gitignore, .claude/settings.json, and the NEW M0-T100 report; zero changes to M0-T099 packet/report/gates/checkpoint; frozen content 00f2519 and material identity d6e90bfc unreferenced by any write",
+   "project-control/reports/M0-T100-statusline-activation.md section 1"
+  ],
+  "D-027-R003": [
+   "bounded ledger task M0-T100 (project-control/tasks/M0-T100.json) created, G0 PASS, claimed with refs D-027:ALL; validator EXIT=0 at capture (commit d01e9b2); accepted M0-T099 task not modified"
+  ],
+  "D-027-R004": [
+   "wired command is the accepted passive handler (parses stdin, writes sanitized sidecar/journal, prints one row, exit 0; no network, no prompts, no actuation surface); tools/agent_supervisor untouched; R595/D-024 s18 unchanged",
+   "project-control/reports/M0-T100-statusline-activation.md section 2"
+  ],
+  "D-027-R005": [
+   "global ~/.claude/settings.json read-only: sha256 32c6fb008a95c33793d76efeed781511cf5d824dbb4fbd8af2911c9ccdc6afa7, mtime 2026-08-26T04:29:57Z predates first task write (~05:48Z); personal statusline.ps1 + subagentStatusLine intact; project statusLine key exists only in this repo (official project-over-user precedence, in-repo only)",
+   "project-control/reports/M0-T100-statusline-activation.md section 5"
+  ],
+  "D-027-R006": [
+   "LIVE: running session TUI invoked the wired command within ~30s of the edit; .claude/telemetry/statusline_sidecar.json + 33-record journal written 05:52:20-05:54:22Z with THIS session's real state (session_id 4333c462-..., Fable 5, ctx 14-15% of 1.0M, sess $9.64->$10.12, 5h 5-6%/7d 35%, v2.1.220), still ticking",
+   "single-invocation proof: exact wired command + REAL captured payload -> stdout row 'Fable 5 xhigh | ctx 4% of 1.0M | sess $0.78 1m | 5h 29% 7d 33% | v2.1.220' AND matching sidecar record from the same feed, exit 0",
+   "project-control/reports/M0-T100-statusline-activation.md section 3"
+  ],
+  "D-027-R007": [
+   "scans over full live sidecar + full 33-record journal: 0 hits for MLFLL / Users / drive prefix / dash-encoded home / ghp_ / sk- / Bearer; home prefixes masked to [HOME] in slash and dash forms; sidecar redaction_count 3",
+   "explicit disposition: session/transcript UUIDs retained by design as the local-only monitoring key, gitignored, never committed (activation report section 4)"
+  ],
+  "D-027-R008": [
+   "recorded: G0 PASS + claim (d01e9b2); tested: 23/23 handler pack + wired-command exit 0 + validator EXIT=0; committed: d01e9b2 + a0b945e (gitleaks clean); pushed: after gate wave per control-plane sequence",
+   "project-control/reports/M0-T100-G2-self-check.md"
+  ],
+  "D-027-R009": [
+   "no purge command executed; the three external pack-repo agent worktrees untouched (activation report section 7)"
+  ],
+  "D-027-R010": [
+   "no continuous-loop or supervisor activation surface touched; wiring is display + sanitized sidecar only; R595 prerequisite and D-024 s18 owner gate unchanged (activation report sections 2 and 7)"
+  ],
+  "D-027-R011": [
+   "sequencing honored: M0-T090 claim deferred until M0-T100 acceptance is recorded and pushed; campaign record untouched (NEXT still M0-T090 with the carried advisory bundle); activation report section 8"
+  ],
+  "D-027-R012": [
+   "scope = two wiring files + activation report + minimal control records; no accepted work repeated, no re-implementation, no broadened paths (activation report section 7)"
+  ],
+  "D-027-R013": [
+   "no owner-only boundary crossed: no credentials/payment/production/legal action, PR #241 untouched, no purge, no activation; conduct attested in activation report section 7"
+  ]
+ }
+}
