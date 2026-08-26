@@ -1,0 +1,66 @@
+{
+ "task_id": "M0-T104",
+ "title": "D-024 Amendment 3 unit C: native runtime adapter (feature detection, background-session dispatch, agents --json ingestion, exactly one active backend)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Build the bounded native-runtime adapter per D-024-R172/R153 and the accepted M0-T102 matrix (background-session-host, structured-passive-observation, worktree-isolation areas): feature detection; named + deterministic session identity (--name; --session-id valid UUID); native background dispatch (claude --bg / --agent); claude agents --json status ingestion for Codex-side passive observation OUTSIDE Fable context; attach/logs/stop/respawn + daemon-status handling incl. supervisor-restart semantics (R032); existing controller dispatch as the feature-detected fallback; exactly ONE selected runtime backend per session, never two process-management systems. G5 unit-C security preconditions: no inbound port; no auto Remote Control; deterministic names carry no hostname/secret; masked fixtures. Worktree baseRef pinned to 'head' or explicit reset (default-branch hazard). Real low-risk canaries on the upgraded 2.1.246 binary; replace-not-layer R180 (parity + failure tests before any custom host path is deprecated in a separate reviewed change). Probe fixtures stamp the consuming task id (G3 ADV-1). Supervisor-freeze qualifying evidence: D-024-R153 + D-024-R172.",
+ "business_reason": "Amendment 3 (source-003): reuse the proven native background-session host as producer host with durable custom control retained; adapter is the single bounded seam (R145/R180).",
+ "inputs": [],
+ "outputs": [
+  "native runtime adapter modules under tools/agent_supervisor (feature detection, dispatch, agents --json ingestion, attach/logs/stop/respawn, one-backend selection)",
+  "tools/test_agent_supervisor_native_adapter.py (dispatch/status/completion/blocked-input/failure/stop/respawn, supervisor-restart no-duplicate, unexpected exit, fallback selection)",
+  "masked installed-version fixtures (task-id-stamped, G3 ADV-1) under tools/agent_supervisor/fixtures",
+  "project-control/reports/M0-T104-native-adapter.md"
+ ],
+ "dependencies": [
+  "M0-T103"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_native_adapter.py",
+  "project-control/reports/M0-T104-native-adapter.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "services",
+  "supabase",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-26T22:31:33.996052+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-26T22:31:33.996052+00:00"
+}

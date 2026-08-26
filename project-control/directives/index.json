@@ -356,7 +356,11 @@
     "M0-T095",
     "M0-T096",
     "M0-T102",
-    "M0-T103"
+    "M0-T103",
+    "M0-T104",
+    "M0-T105",
+    "M0-T106",
+    "M0-T107"
    ],
    "manifest": "D-024-fable-codex-loop/manifest.json"
   },
@@ -439,5 +443,5 @@
    "manifest": "D-030-successor-capability-rebaseline/manifest.json"
   }
  ],
- "updated_at": "2026-08-26T21:27:57+00:00"
+ "updated_at": "2026-08-26T22:33:01+00:00"
 }

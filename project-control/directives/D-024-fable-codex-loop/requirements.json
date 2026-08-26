@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 191,
  "producer": "orchestrator",
- "updated_at": "2026-08-26T21:27:57+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -5796,7 +5796,8 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T106"
     ],
     "task_types": [],
     "milestones": [],
@@ -5813,11 +5814,12 @@
    "maps_to": {
     "tasks": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T106"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T106",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -5830,7 +5832,8 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104"
     ],
     "task_types": [],
     "milestones": [],
@@ -5847,11 +5850,12 @@
    "maps_to": {
     "tasks": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T104",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -5864,7 +5868,9 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104",
+     "M0-T105"
     ],
     "task_types": [],
     "milestones": [],
@@ -5881,11 +5887,13 @@
    "maps_to": {
     "tasks": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104",
+     "M0-T105"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T104, M0-T105",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -5898,7 +5906,8 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T105"
     ],
     "task_types": [],
     "milestones": [],
@@ -5915,11 +5924,12 @@
    "maps_to": {
     "tasks": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T105"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T105",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -5932,7 +5942,8 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104"
     ],
     "task_types": [],
     "milestones": [],
@@ -5949,11 +5960,12 @@
    "maps_to": {
     "tasks": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T104"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T104",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -6138,7 +6150,8 @@
    "applicability": {
     "task_ids": [
      "M0-T102",
-     "M0-T103"
+     "M0-T103",
+     "M0-T106"
     ],
     "task_types": [],
     "milestones": [],
@@ -6154,11 +6167,12 @@
    "status": "pending",
    "maps_to": {
     "tasks": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T106"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T106",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -6469,7 +6483,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T104"
     ],
     "task_types": [],
     "milestones": [],
@@ -6485,11 +6500,12 @@
    "status": "pending",
    "maps_to": {
     "tasks": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T104"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T104",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -6501,7 +6517,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T105"
     ],
     "task_types": [],
     "milestones": [],
@@ -6517,11 +6534,12 @@
    "status": "pending",
    "maps_to": {
     "tasks": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T105"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T105",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -6533,7 +6551,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T106"
     ],
     "task_types": [],
     "milestones": [],
@@ -6549,11 +6568,12 @@
    "status": "pending",
    "maps_to": {
     "tasks": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T106"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T106",
    "evidence_paths": [],
    "amendment_sequence": 3
   },
@@ -6703,7 +6723,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T107"
     ],
     "task_types": [],
     "milestones": [],
@@ -6719,11 +6740,12 @@
    "status": "pending",
    "maps_to": {
     "tasks": [
-     "M0-T102"
+     "M0-T102",
+     "M0-T107"
     ]
    },
    "reviewed_sha": null,
-   "status_reason": "unit task id assigned at campaign conversion (M0-T102 output); applicability restamped to the new unit task at packet creation with a manifest audit_log entry",
+   "status_reason": "restamped 2026-08-26 at campaign conversion (M0-T102 accepted): unit task id(s) assigned M0-T107",
    "evidence_paths": [],
    "amendment_sequence": 3
   },

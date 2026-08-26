@@ -3,11 +3,11 @@
  "title": "D-024 D: controller state machine, safe seams, exact-once succession, outage handling",
  "task_type": "governance",
  "milestone_id": "M0",
- "objective": "Extend the existing durable state machine to the full section-3 state set with renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence (owner stop intent survives restart and wins over queued/recovered work); safe-seam detection and handoff validation per section 7 (atomic batches, known lease ownership, recorded checks, no unanswered permission, external effects confirmed/not-attempted/ambiguous-marked, children reconciled, smallest-complete handoff packet, no silent truncation); exact-once primary-session rotation and controller-crash reconciliation (lease races have exactly one winner; watchdog restart without duplicates; bounded read-only orientation for new sessions while children drain); host-restart auto-resume via the repository's approved user-level startup mechanism or truthful activation-blocker reporting; Codex transport preflight (version-probed, structured, read-only, schema-validated, identity-bound, fail-closed - missing/malformed/timed-out/mismatched decisions dispatch nothing) with bounded-backoff durable retry for transient failures and blocked-with-handoff for auth/billing/compatibility failures; no-eligible-work bounded idle. Supervisor-freeze qualifying evidence: D-024-R102 (Phase D).",
+ "objective": "Extend the existing durable state machine to the full section-3 state set with renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence (owner stop intent survives restart and wins over queued/recovered work); safe-seam detection and handoff validation per section 7 (atomic batches, known lease ownership, recorded checks, no unanswered permission, external effects confirmed/not-attempted/ambiguous-marked, children reconciled, smallest-complete handoff packet, no silent truncation); exact-once primary-session rotation and controller-crash reconciliation (lease races have exactly one winner; watchdog restart without duplicates; bounded read-only orientation for new sessions while children drain); host-restart auto-resume via the repository's approved user-level startup mechanism or truthful activation-blocker reporting; Codex transport preflight (version-probed, structured, read-only, schema-validated, identity-bound, fail-closed - missing/malformed/timed-out/mismatched decisions dispatch nothing) with bounded-backoff durable retry for transient failures and blocked-with-handoff for auth/billing/compatibility failures; no-eligible-work bounded idle. Supervisor-freeze qualifying evidence: D-024-R102 (Phase D). (Amendment 3 conversion, M0-T102 accepted: consume the unit-C native runtime adapter as the feature-detected producer host - exactly one active backend; native session identity/naming per unit C; hook/event feeds per unit D; /goal per unit E for inner continuation; native resume is NEVER a safe-seam substitute (R160); worktree baseRef pinned 'head'/explicit reset and the G5 unit-F security preconditions apply; M0-T091 carried advisory bundle (G5 L1-L5, G3 NIT-1/2, G4 ADV-1) folds in here where these guards are touched.)",
  "business_reason": "D-024 sections 2, 3, 7, 15-D, 16.3: continuity must be a renewable sequence of bounded epochs with exact-once succession, never an immortal process.",
  "inputs": [
   "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R191)"
  ],
  "outputs": [
   "state-machine/lease/seam/succession/backoff extensions under tools/agent_supervisor",
@@ -15,7 +15,11 @@
   "project-control/reports/M0-T092-controller-succession.md"
  ],
  "dependencies": [
-  "M0-T091"
+  "M0-T091",
+  "M0-T103",
+  "M0-T104",
+  "M0-T105",
+  "M0-T106"
  ],
  "allowed_paths": [
   "tools/agent_supervisor",
@@ -56,7 +60,7 @@
  "risks": [],
  "blockers": [],
  "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-24T12:35:22+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
  "directive_refs": [
   {
    "directive_id": "D-024",

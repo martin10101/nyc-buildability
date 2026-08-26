@@ -1,0 +1,66 @@
+{
+ "task_id": "M0-T106",
+ "title": "D-024 Amendment 3 unit E: bounded /goal integration (one cohesive assignment, safe completion condition, check-in ingestion)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Integrate /goal as the inner continuation mechanism per D-024-R152/R174 and the M0-T102 matrix (goal-bounded-continuation, context-safeguards areas): generate a measurable completion condition from the task packet for ONE bounded Fable assignment (never one goal for the entire campaign); handle condition-met, impossible, no-progress (goal stays set), the four unrecoverable clearing classes, resume (counters reset), and context-pressure behavior; ingest background-work check-ins (>=2.1.234/2.1.236; idle cap 2.1.246) into the journal; no worker-visible token pressure in goal conditions or prompts (R045); /autocompact configured as EMERGENCY buffer only, never a seam substitute; live behavioral fixtures + a real low-risk canary on 2.1.246 (the goal contract is NOT available on 2.1.220). Health bands remain private controller evidence. Supervisor-freeze qualifying evidence: D-024-R152 + D-024-R174.",
+ "business_reason": "Amendment 3: /goal replaces a custom inner prompter as the per-assignment continuation primitive, wrapped by durable custom policy.",
+ "inputs": [],
+ "outputs": [
+  "/goal integration modules under tools/agent_supervisor (condition generator, verdict/check-in ingestion, clearing-class handling)",
+  "tools/test_agent_supervisor_goal_integration.py (met/impossible/no-progress/interrupted/resumed/background-work; four clearing classes; no token pressure)",
+  "masked live fixtures on 2.1.246 under tools/agent_supervisor/fixtures",
+  "project-control/reports/M0-T106-goal-integration.md"
+ ],
+ "dependencies": [
+  "M0-T105"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  "tools/test_agent_supervisor_goal_integration.py",
+  "project-control/reports/M0-T106-goal-integration.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/hooks",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "services",
+  "supabase",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-26T22:31:57.243152+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-26T22:31:57.243152+00:00"
+}

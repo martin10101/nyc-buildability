@@ -1,0 +1,67 @@
+{
+ "task_id": "M0-T105",
+ "title": "D-024 Amendment 3 unit D: native event integration (hook records, stream-JSON subagent events, dedup, redaction, replay)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Integrate the native hook event bus per D-024-R173/R155 and the M0-T102 matrix (hooks-event-bus, structured-passive-observation areas): probe + fixture the required events (SessionStart/End, UserPromptExpansion, UserPromptSubmit, SubagentStart/Stop, TaskCreated/Completed, Stop/StopFailure, PreCompact/PostCompact, PostToolBatch, Notification, WorktreeCreate/Remove, ConfigChange) on the installed version; durable hook records + stream-JSON subagent event ingestion (--forward-subagent-text >=2.1.211/2.1.219) with deduplication, redaction (no user paths/secrets/masked session data), atomic persistence, restart-safe replay, and unknown-event/version-drift handling; avoid transcript polling where a structured event exists; hooks stay fast, deterministic, sanitized, bounded, and fail closed where security or authority requires (R155). G5 unit-D preconditions: command hooks preferred over HTTP hooks (any HTTP hook constrained by allowedHttpHookUrls/httpHookAllowedEnvVars, no committed tokens); prompt-injection posture keeps the repo sanitizer primary. Any .claude/settings.json hook registration is a separate reviewed change, not silent. Supervisor-freeze qualifying evidence: D-024-R155 + D-024-R173.",
+ "business_reason": "Amendment 3: hooks as the event bus replace transcript polling; native events feed seam detection, completion gates, and typed failure classification.",
+ "inputs": [],
+ "outputs": [
+  "hook/event integration modules under tools/agent_supervisor (recorders, stream-JSON ingestion, dedup, redaction, atomic persistence, replay, drift handling)",
+  "hook scripts under .claude/hooks (event recorders only; any .claude/settings.json registration is a SEPARATE reviewed change)",
+  "tools/test_agent_supervisor_event_bus.py (firing order, blocking semantics, dedup, redaction, replay, unknown-event)",
+  "masked per-event fixtures under tools/agent_supervisor/fixtures",
+  "project-control/reports/M0-T105-event-integration.md"
+ ],
+ "dependencies": [
+  "M0-T104"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor",
+  ".claude/hooks",
+  "tools/test_agent_supervisor_event_bus.py",
+  "project-control/reports/M0-T105-event-integration.md"
+ ],
+ "forbidden_paths": [
+  ".claude/ORCHESTRATION_POLICY.md",
+  ".claude/settings.json",
+  "apps",
+  "packages",
+  "services",
+  "supabase",
+  "project-control/directives/D-001-owner-directive-compliance-system",
+  "project-control/tasks",
+  "tools/directive_registry.py",
+  "tools/project_control.py",
+  "tools/validate_directive_compliance.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-26T22:31:34.634037+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-26T22:31:34.634037+00:00"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-26T21:27:57+00:00",
+ "updated_at": "2026-08-26T22:33:01+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -57,7 +57,11 @@
   "M0-T095",
   "M0-T096",
   "M0-T102",
-  "M0-T103"
+  "M0-T103",
+  "M0-T104",
+  "M0-T105",
+  "M0-T106",
+  "M0-T107"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -74,7 +78,11 @@
   "task/M0-T095-d024-repair-gate-github",
   "task/M0-T096-d024-canaries-golden-run",
   "task/M0-T102-d024-capability-rebaseline",
-  "task/M0-T103-d024-version-probes"
+  "task/M0-T103-d024-version-probes",
+  "task/M0-T104-d024-native-adapter",
+  "task/M0-T105-d024-event-integration",
+  "task/M0-T106-d024-goal-integration",
+  "task/M0-T107-d024-portability-plan"
  ],
  "scope": {
   "kind": "coordinated-campaign",
@@ -93,7 +101,11 @@
    "M0-T095",
    "M0-T096",
    "M0-T102",
-   "M0-T103"
+   "M0-T103",
+   "M0-T104",
+   "M0-T105",
+   "M0-T106",
+   "M0-T107"
   ],
   "task_types": [
    "governance"
@@ -305,7 +317,7 @@
   "D-024-R191"
  ],
  "requirements_id_digest_sha256": "dd5e670a039a40b617d9f594837abbc3872fcf16e4e68de3793ef08e95d9101c",
- "requirements_content_digest_sha256": "a2264aa83b5517b6d7ac9b504f187bcf21d2129f6e47ad2ba99288d3c300e440",
+ "requirements_content_digest_sha256": "9787492310ae252cbb57ccd722b0a3e441a0f8ccb8e1f453453040d7ecfde56b",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -333,6 +345,11 @@
    "at": "2026-08-26T21:27:57+00:00",
    "by": "orchestrator",
    "note": "Amendment 3 captured verbatim (owner prompt 2026-08-26, session session_01HfptKuEs3RDxaxsSHJjc7t): native Claude Code capability re-baseline campaign for the unimplemented portion of D-024. 53 atomic requirements D-024-R139..R191 appended (roles, reconcile-first, authorizations/prohibitions, official-docs baseline, 5-decision capability matrix, 11 native capability evaluations, must-remain-custom, not-top-level-loop, upgrade procedure, campaign units A-J, replace-not-layer, mandatory testing, golden run, execution rules, initial owner deliverable). New bounded tasks M0-T102 (unit A; also cites D-030:ALL and discharges the D-030 re-baseline at its acceptance) and M0-T103 (unit B) added to scope; unit C-J task ids are assigned at campaign conversion (M0-T102 output) and the affected rows restamped then, each with its own audit_log entry. Unstarted M0-T092..M0-T096 remain amendable per R145; accepted M0-T086..M0-T091 and M0-T097..M0-T101 immutable, no new ids bound to any already-gated task. Base identity at capture: HEAD 05d03a0 == origin tip, tree clean, claude --version 2.1.220 live-probed. Digests recomputed under this recorded amendment."
+  },
+  {
+   "at": "2026-08-26T22:33:01+00:00",
+   "by": "orchestrator",
+   "note": "Campaign conversion applied after M0-T102 acceptance (amendment-3 R145 surgical authorization; conversion proposal = accepted M0-T102 report sections 4/8): new unit packets M0-T104 (C native adapter), M0-T105 (D event integration), M0-T106 (E bounded /goal), M0-T107 (J portability plan, post-golden-run) added to scope; M0-T108 (readonly-guard PowerShell fix, G5 M0-T102 MEDIUM advisory) created as a standalone governance task citing D-024:ALL (not amendment scope). Surgical edits to unstarted packets: M0-T092 gains deps M0-T103..M0-T106 + unit-F consumption note; M0-T094 skills+UserPromptExpansion note; M0-T096 15-step golden run + explicit graph-regression binding (G3 ADV-3) + R187 hold note. Requirement applicability restamped append-only (R152/R153/R154/R155/R156/R162/R172/R173/R174/R179 gain their unit task ids; no id removed/renumbered; no accepted task touched). The D-024-R139 hold precondition (captured + reconciled + independently verified + converted) is COMPLETE as of this entry; M0-T092..T096 claims now follow the accepted sequence B->C->D->E->F->G->H->I. Digests recomputed."
   }
  ]
 }
