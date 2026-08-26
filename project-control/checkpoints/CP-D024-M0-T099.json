@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D024-M0-T099",
+  "timestamp": "2026-08-26T05:39:10.731458+00:00",
+  "commit": "f85ed5b61008d232bf93ad5026d79838e8efaf2b",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T099 accepted (statusLine handler + real 2.1.220 fixture + carried hardening; gates G0/G2/G3/G4/G5 PASS; DCV 10/10 R129-R138 at material identity d6e90bfc, frozen 00f2519); campaign advanced seq 4, NEXT=M0-T090 (C1 bounded subagent contracts) with carried M0-T099 advisory bundle",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-26T05:39:10.778427+00:00"
+}
