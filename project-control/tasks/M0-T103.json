@@ -1,66 +1,66 @@
 {
- "task_id": "M0-T103",
- "title": "D-024 Amendment 3 unit B: installed/upgraded-version deterministic capability probes + official-updater upgrade with rollback",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Record the pre-update state durably (current Claude Code version, executable identity, supported commands, relevant help output, settings, capability fixtures); confirm the current official stable version from official documentation; verify clean pushed worktree and that no unrelated Claude Code session would be disrupted; update the user-level binary through the OFFICIAL updater only (no third-party build, SDK, or wrapper); record post-update binary identity/version; launch disposable child canaries on the new binary (the running process may remain on the old binary); re-run Bootstrap Gate 0, MCP default-deny, settings validation, statusLine, skills, hooks, and existing accepted test fixtures; produce masked deterministic capability-probe fixtures for BOTH installed and upgraded versions; on regression record it and use the supported rollback/fallback path, stopping for the owner if no supported safe rollback exists; never activate a new runtime backend merely because the version command succeeded (D-024-R167/R168). Supervisor-freeze qualifying evidence: D-024-R001 + D-024-R149 (installed-version fixture + real canary per adopted feature).",
- "business_reason": "Owner amendment 2026-08-26 (D-024 source-003): every adopted native feature requires an installed-version fixture and a real canary; the upgrade is authorized only under the recorded pre/post procedure with rollback.",
- "inputs": [],
- "outputs": [
-  "project-control/reports/M0-T103-version-upgrade.md (pre/post-update record, canary results, rollback plan)",
-  "tools/agent_supervisor/fixtures/ masked deterministic probe fixtures for installed AND upgraded versions",
-  "regression record + supported rollback/fallback evidence if any regression appears",
-  "tools/test_agent_supervisor_capability_probe.py re-baselined: live drift tooth repointed to the post-update fixture + dual-version (pre 2.1.220 / post 2.1.246) invariant test (the tooth fired RED on the upgrade exactly as designed; re-baseline is this task's deliverable)"
- ],
- "dependencies": [
-  "M0-T102"
- ],
- "allowed_paths": [
-  "project-control/reports/M0-T103-version-upgrade.md",
-  "tools/agent_supervisor/fixtures",
-  "tools/test_agent_supervisor_capability_probe.py"
- ],
- "forbidden_paths": [
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "claimed",
- "progress_percent": 10,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-26T21:28:29.900541+00:00",
- "updated_at": "2026-08-26T22:42:51+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-26T21:28:29.900541+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "task_id": "M0-T103",
+  "title": "D-024 Amendment 3 unit B: installed/upgraded-version deterministic capability probes + official-updater upgrade with rollback",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Record the pre-update state durably (current Claude Code version, executable identity, supported commands, relevant help output, settings, capability fixtures); confirm the current official stable version from official documentation; verify clean pushed worktree and that no unrelated Claude Code session would be disrupted; update the user-level binary through the OFFICIAL updater only (no third-party build, SDK, or wrapper); record post-update binary identity/version; launch disposable child canaries on the new binary (the running process may remain on the old binary); re-run Bootstrap Gate 0, MCP default-deny, settings validation, statusLine, skills, hooks, and existing accepted test fixtures; produce masked deterministic capability-probe fixtures for BOTH installed and upgraded versions; on regression record it and use the supported rollback/fallback path, stopping for the owner if no supported safe rollback exists; never activate a new runtime backend merely because the version command succeeded (D-024-R167/R168). Supervisor-freeze qualifying evidence: D-024-R001 + D-024-R149 (installed-version fixture + real canary per adopted feature).",
+  "business_reason": "Owner amendment 2026-08-26 (D-024 source-003): every adopted native feature requires an installed-version fixture and a real canary; the upgrade is authorized only under the recorded pre/post procedure with rollback.",
+  "inputs": [],
+  "outputs": [
+    "project-control/reports/M0-T103-version-upgrade.md (pre/post-update record, canary results, rollback plan)",
+    "tools/agent_supervisor/fixtures/ masked deterministic probe fixtures for installed AND upgraded versions",
+    "regression record + supported rollback/fallback evidence if any regression appears",
+    "tools/test_agent_supervisor_capability_probe.py re-baselined: live drift tooth repointed to the post-update fixture + dual-version (pre 2.1.220 / post 2.1.246) invariant test (the tooth fired RED on the upgrade exactly as designed; re-baseline is this task's deliverable)"
+  ],
+  "dependencies": [
+    "M0-T102"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T103-version-upgrade.md",
+    "tools/agent_supervisor/fixtures",
+    "tools/test_agent_supervisor_capability_probe.py"
+  ],
+  "forbidden_paths": [
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T21:28:29.900541+00:00",
+  "updated_at": "2026-08-26T22:46:10.415699+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T21:28:29.900541+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }
