@@ -1,0 +1,66 @@
+{
+  "task_id": "M0-T100",
+  "title": "D-027: passive statusLine wiring activation (M0-T099 report section-4 owner step)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Activate the accepted M0-T099 project statusLine handler exactly per report section 4: add .claude/telemetry/ to .gitignore and the statusLine command 'python -m tools.agent_supervisor.telemetry_statusline' (with the documented --journal option) to the project .claude/settings.json. Passive shadow/read-only only: display + sanitized sidecar; no agent stops, session rotation, model changes, or any supervisory action; continuous Codex loop stays owner-gated (R595/D-024 s18 unchanged). Keep M0-T099's frozen accepted identity unchanged. Verify project-only statusLine precedence with the owner's global personal fallback intact; prove with a real live check that the human row and the sanitized sidecar come from the same feed; confirm no personal paths, usernames, session identifiers, or credentials are written unmasked; record/test/commit/push under project-control. Do not purge the three external leftover agent worktrees. Owner authorization: D-027 (source-001.md).",
+  "business_reason": "D-027 owner authorization 2026-08-26: activate owner step (1) from the accepted M0-T099 report as a separate validated bounded task.",
+  "inputs": [
+    "project-control/directives/D-027-statusline-activation/source-001.md (verbatim owner authorization, sha256 c9c203d63cd42548bf8aaa6a4eb2f69b84c8aab33c0d8ee4fba590aed2ef9a9a)",
+    "project-control/directives/D-027-statusline-activation/requirements.json (D-027-R001..R013)",
+    "project-control/reports/M0-T099-statusline-handler.md section 4 (exact wiring wording)"
+  ],
+  "outputs": [
+    ".gitignore telemetry-ignore line (.claude/telemetry/)",
+    ".claude/settings.json statusLine block per M0-T099 report section 4",
+    "project-control/reports/M0-T100-statusline-activation.md (live two-output proof + precedence check + masking scan)"
+  ],
+  "dependencies": [
+    "M0-T099"
+  ],
+  "allowed_paths": [
+    ".claude/settings.json",
+    ".gitignore",
+    "project-control/reports/M0-T100-statusline-activation.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    "apps",
+    "packages",
+    "project-control/directives/D-024-fable-codex-loop",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/agent_supervisor",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T05:50:49.738153+00:00",
+  "updated_at": "2026-08-26T05:51:48.857292+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-027",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T05:50:49.738153+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}

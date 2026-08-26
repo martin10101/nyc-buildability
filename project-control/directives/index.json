@@ -385,6 +385,20 @@
     "M0-T098"
    ],
    "manifest": "D-026-global-session-handoff/manifest.json"
+  },
+  {
+   "directive_id": "D-027",
+   "slug": "statusline-activation",
+   "title": "Owner-authorized activation of the accepted M0-T099 project statusLine handler: wire exactly per report section 4 (gitignore .claude/telemetry/ + project .claude/settings.json statusLine command) in passive shadow/read-only mode only; separate bounded activation task (M0-T100) keeping the accepted M0-T099 identity unchanged; verify project-only precedence with the owner's global personal statusLine fallback intact; prove both outputs (human row + sanitized sidecar) from one feed with a real live check; confirm nothing sensitive written unmasked; record/test/commit/push under project-control; no worktree purge; no continuous-Codex-loop activation; then continue to campaign NEXT (M0-T090 with carried advisories).",
+   "status": "active",
+   "issued_at": "2026-08-26",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M0-T100"
+   ],
+   "manifest": "D-027-statusline-activation/manifest.json"
   }
  ],
  "updated_at": "2026-08-25T20:40:00+00:00"

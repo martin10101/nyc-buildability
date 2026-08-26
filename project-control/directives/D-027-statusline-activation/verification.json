@@ -1,0 +1,46 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-027",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows.",
+ "producer": "orchestrator",
+ "task_verifications": [
+  {
+   "task_id": "M0-T100",
+   "directive_id": "D-027",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-027-R001",
+    "D-027-R002",
+    "D-027-R003",
+    "D-027-R004",
+    "D-027-R005",
+    "D-027-R006",
+    "D-027-R007",
+    "D-027-R008",
+    "D-027-R009",
+    "D-027-R010",
+    "D-027-R011",
+    "D-027-R012",
+    "D-027-R013"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {"id": "D-027-R001", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R002", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R003", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R004", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R005", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R006", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R007", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R008", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R009", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R010", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R011", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R012", "state": "pending", "evidence": [], "note": ""},
+    {"id": "D-027-R013", "state": "pending", "evidence": [], "note": ""}
+   ]
+  }
+ ]
+}
