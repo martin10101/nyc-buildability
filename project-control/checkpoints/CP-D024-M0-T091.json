@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D024-M0-T091",
+  "timestamp": "2026-08-26T21:03:52.355666+00:00",
+  "commit": "4de29c2c82d6039a7ccb59d31f0259c8b819a025",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T091 accepted (D-024 C2 invisible runtime supervision): 5 runtime modules + 54-test pack at frozen ee564dd, material identity 28806917; G3/G4/G5 PASS (G4 6/6 mutation teeth) + DCV 46/46; full M0-T090 correction bundle applied+verified; composite baseline 2707/3/0; advisory carry-list G5 L1-L5, G3 NIT-1/2, G4 ADV-1; D-029 owner seam-hold captured and in force (no M0-T092 claim)",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-26T21:03:52.387499+00:00"
+}
