@@ -73,15 +73,15 @@
  },
  "probe_meta": {
   "claude_binaries": [
-   "C:\\Users\\MLFLL\\.local\\bin\\claude.EXE",
-   "C:\\Users\\MLFLL\\AppData\\Roaming\\npm\\claude",
-   "C:\\Users\\MLFLL\\AppData\\Roaming\\npm\\claude.cmd"
+   "[HOME]\\.local\\bin\\claude.EXE",
+   "[HOME]\\AppData\\Roaming\\npm\\claude",
+   "[HOME]\\AppData\\Roaming\\npm\\claude.cmd"
   ],
   "codex_binaries": [
-   "C:\\Users\\MLFLL\\AppData\\Roaming\\npm\\codex.CMD",
-   "C:\\Users\\MLFLL\\AppData\\Roaming\\npm\\codex"
+   "[HOME]\\AppData\\Roaming\\npm\\codex.CMD",
+   "[HOME]\\AppData\\Roaming\\npm\\codex"
   ],
-  "generated_at": "2026-08-25T18:20:07+00:00",
+  "generated_at": "2026-08-26T00:48:28+00:00",
   "platform": "win32"
  }
 }

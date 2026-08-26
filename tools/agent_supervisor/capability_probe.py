@@ -34,10 +34,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
+
+from .telemetry_redaction import redact_probe_meta
 
 PROBE_TIMEOUT_S = 30
 
@@ -112,10 +115,20 @@ def _run(argv: list[str]) -> dict:
 
 
 def classify_flags(help_text: str, tokens: list[str]) -> dict:
-    """Deterministic token-presence classification over a help text."""
+    """Deterministic token-presence classification over a help text.
+
+    Matching is word-boundary/token-split (M0-T088 hardening; M0-T086 G4-F1):
+    a token counts as present only when it is not embedded in a longer
+    flag/word - ``--print`` no longer matches inside ``--print-format`` and a
+    bare ``exec`` no longer matches inside ``execute``. Word characters and
+    ``-`` both terminate a token, so hyphenated long flags stay atomic.
+    """
     result = {}
     for tok in sorted(tokens):
-        result[tok] = "supported" if tok in help_text else "not-detected-in-help"
+        pattern = re.compile(
+            r"(?<![\w-])" + re.escape(tok) + r"(?![\w-])")
+        result[tok] = ("supported" if pattern.search(help_text)
+                       else "not-detected-in-help")
     return result
 
 
@@ -182,7 +195,10 @@ def build_record() -> dict:
         "codex_binaries": resolve_binaries("codex"),
         "platform": sys.platform,
     }
-    return {"body": body, "probe_meta": meta}
+    # G5-S1 (M0-T086 gate round): the repository is PUBLIC - probe_meta passes
+    # through the Phase B redaction subsystem so resolved install paths lose
+    # their home-directory prefix before any fixture/journal write.
+    return {"body": body, "probe_meta": redact_probe_meta(meta)}
 
 
 def main(argv: list[str] | None = None) -> int:
