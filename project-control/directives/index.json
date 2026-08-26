@@ -399,6 +399,18 @@
     "M0-T100"
    ],
    "manifest": "D-027-statusline-activation/manifest.json"
+  },
+  {
+   "directive_id": "D-028",
+   "slug": "sleep-handoff-650k",
+   "title": "Owner sleep instruction 2026-08-26: continue only authorized campaign work unattended; at ~650k main-agent context tokens (plus/minus 50k; alert 600k, never past ~700k without the handoff) hold at a clean seam and produce the session handoff with ~50k headroom. Conduct-only (sentinel D-028-BOOTSTRAP); D-010 R113-R114 not amended.",
+   "status": "active",
+   "issued_at": "2026-08-26",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-028-sleep-handoff-650k/manifest.json"
   }
  ],
  "updated_at": "2026-08-25T20:40:00+00:00"

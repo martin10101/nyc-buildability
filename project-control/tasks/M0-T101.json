@@ -1,0 +1,70 @@
+{
+  "task_id": "M0-T101",
+  "title": "D-027 follow-up: admit the statusLine key into the MCP-policy validator shape table (post-acceptance discovery)",
+  "task_type": "defect_repair",
+  "milestone_id": "M0",
+  "objective": "Post-acceptance discovery from accepted M0-T100: tools/validate_mcp_policy.py (D-020) fails closed on the new project settings key statusLine (error p9), breaking 5 tests in tools/test_mcp_policy.py and the full-suite baseline. Per the validator's own designed extension path ('extend KNOWN_KEY_SHAPES in the same reviewed change that adds a key'), add a strict statusLine shape: object with exactly type='command' and the exact D-027-authorized command string 'python -m tools.agent_supervisor.telemetry_statusline --journal .claude/telemetry/statusline_journal.jsonl'; any other shape, extra key, or different command fails closed. Add red/green tests (wrong type, different command, extra key, absent-key-still-valid). No MCP rule weakened; accepted M0-T100 artifacts untouched; the repair restores the same-reviewed-change discipline the wiring change missed.",
+  "business_reason": "Fail-closed D-020 validator + suite baseline restoration; prerequisite for the M0-T090 supervisor-freeze baseline duty.",
+  "inputs": [
+    "tools/validate_mcp_policy.py p9 error output (unknown settings key 'statusLine')",
+    "project-control/directives/D-027-statusline-activation/source-001.md (the wiring authorization)",
+    "project-control/reports/M0-T100-statusline-activation.md section 1 (the exact committed statusLine block)"
+  ],
+  "outputs": [
+    "KNOWN_KEY_SHAPES statusLine entry (strict, exact-command pin) in tools/validate_mcp_policy.py",
+    "red/green statusLine shape tests in tools/test_mcp_policy.py",
+    "project-control/reports/M0-T101-mcp-policy-statusline-shape.md"
+  ],
+  "dependencies": [
+    "M0-T100"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T101-mcp-policy-statusline-shape.md",
+    "tools/test_mcp_policy.py",
+    "tools/validate_mcp_policy.py"
+  ],
+  "forbidden_paths": [
+    ".claude/hooks",
+    ".claude/settings.json",
+    ".gitignore",
+    "apps",
+    "packages",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/agent_supervisor",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T06:55:00.156611+00:00",
+  "updated_at": "2026-08-26T06:55:32.672438+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-020",
+      "requirement_ids": "ALL"
+    },
+    {
+      "directive_id": "D-027",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T06:55:00.156611+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}

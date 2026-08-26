@@ -1,0 +1,88 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-028",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-26T06:55:00+00:00",
+ "requirements": [
+  {
+   "id": "D-028-R001",
+   "text": "While the owner sleeps, continue only already-authorized campaign work (D-024 seq NEXT chain and its follow-ups); start nothing requiring owner authority.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-028-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "session conduct: only campaign-chain tasks progressed",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-028-R002",
+   "text": "When the main agent's context usage reaches approximately 650,000 tokens (tolerance plus/minus 50,000; alert from 600,000, never past ~700,000 without the handoff), hold at a clean seam: no new task claims or agent dispatches beyond the seam.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-028-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "live statusLine sidecar occupancy monitoring (context_total_input_tokens of the 1M window)",
+   "required_evidence": "handoff generated before ~700k main-agent context tokens",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-028-R003",
+   "text": "At that seam, produce the session handoff (docs/SESSION_HANDOFF.md current-only conventions, committed and pushed), reserving headroom (~50k) for the handoff process itself.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-028-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": ["D-028-R002"],
+   "required_harness": "",
+   "required_evidence": "refreshed docs/SESSION_HANDOFF.md committed and pushed at the seam",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": ["docs/SESSION_HANDOFF.md"], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
