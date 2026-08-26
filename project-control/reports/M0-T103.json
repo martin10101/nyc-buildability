@@ -2,11 +2,11 @@
   "task_id": "M0-T103",
   "producer_agent": "orchestrator",
   "report_file": "project-control/reports/M0-T103-version-upgrade.md",
-  "submitted_at": "2026-08-26T22:46:09.873470+00:00",
+  "submitted_at": "2026-08-26T22:55:46.961898+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T103-evidence-map.json",
-  "content_manifest_sha256": "6092f93e753609605e1c204d84bb64991ee52ef5872349c85f6b2f56138fc95e",
-  "reviewed_sha": "e0a867bc889ce00056adc60bafd8d85a6ac1e306",
+  "content_manifest_sha256": "0b04e3b14e09f0395590714f53f98acd3bb3e622908c02086a64ae1532d489a0",
+  "reviewed_sha": "a4cfdaa49188e546173fd32b467dcf643bec5fc4",
   "applicable_requirements": [
     "D-024-R140",
     "D-024-R145",
@@ -38,5 +38,5 @@
     "D-024-R185",
     "D-024-R188"
   ],
-  "updated_at": "2026-08-26T22:46:10.406169+00:00"
+  "updated_at": "2026-08-26T22:55:47.646207+00:00"
 }
