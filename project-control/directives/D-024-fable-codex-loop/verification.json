@@ -2038,7 +2038,7 @@
     "D-024-R127",
     "D-024-R128"
    ],
-   "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+   "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
    "verified_at": "2026-08-26T21:20:00+00:00",
    "requirements": [
     {
@@ -2048,7 +2048,7 @@
       "content commit within allowed paths; no transport/loop/spawn surface; composite green (2707/3/0 arithmetic + reproduced slices)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2058,7 +2058,7 @@
       "no loop.py/cli.py edit in ee564dd; runtime modules import no graph/index"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2068,7 +2068,7 @@
       "extension_gate.ExtensionDecision has no apply surface; test_extension_decision_is_a_record_not_a_code_edit PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "no-violation"
     },
     {
@@ -2078,7 +2078,7 @@
       "D-029 captured verbatim (marker-delimited), not paraphrased"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2088,7 +2088,7 @@
       "no owner questions; D-029 finish-and-hold honored (review wave is the honored finish/review/accept)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2098,7 +2098,7 @@
       "git branch --contains ee564dd = control branch only; main=d8b3899 untouched; no merge commits in range"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "prohibition"
     },
     {
@@ -2108,7 +2108,7 @@
       "D-024-R101 in packet objective + all 8 touched module docstrings + commit ee564dd message"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct/freeze"
     },
     {
@@ -2118,7 +2118,7 @@
       "runtime modules reuse C1 schemas (SupervisionEnvelope, HealthBands, assert_grantable) + telemetry_records; report section 4 false-friend check"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "reuse"
     },
     {
@@ -2128,7 +2128,7 @@
       "ee564dd scope = allowed paths only; control-branch commits only"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2138,7 +2138,7 @@
       "TelemetrySnapshot.source validated vs closed TELEMETRY_SOURCES; no Codex action surface added"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "no-violation"
     },
     {
@@ -2148,7 +2148,7 @@
       "all outputs are frozen records/refusals; no mutation surface"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "no-violation"
     },
     {
@@ -2158,7 +2158,7 @@
       "LeaseLedger.grant serializes + folds active set; assert_write_within_scope raises scope_violation; test_scope_enforcement_fails_closed + ledger tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "runtime enforcement DISCHARGED"
     },
     {
@@ -2168,7 +2168,7 @@
       "no dispatch/accept path; decide_extension/evaluate_band return records"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "no-violation"
     },
     {
@@ -2178,7 +2178,7 @@
       "R595/activation untouched; shadow-only; report section 1"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "no-violation"
     },
     {
@@ -2188,7 +2188,7 @@
       "TelemetrySnapshot.__post_init__ validates source/confidence closed vocabs, unknown=None; test_snapshot_validation_fail_closed PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R045",
@@ -2197,7 +2197,7 @@
       "_QUOTA_PATTERNS adds percent_numeric + conserve_synonym; worker_text_fields raises unscannable_field; test_quota_guard_catches_paraphrased_pressure x6, test_worker_text_fields_fail_closed_on_unscannable_types, test_landing_direction_passes_both_guards PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R046",
@@ -2206,7 +2206,7 @@
       "evaluate_band occupancy->band; AssignmentMonitor no-progress/repeated/scope-drift; findings force requires_review; band + detector tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "runtime bands DISCHARGED"
     },
     {
@@ -2216,7 +2216,7 @@
       "only worker-visible output is guard-proven LANDING_DIRECTION_TEXT; measurements never in worker text"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R048",
@@ -2225,7 +2225,7 @@
       "workload_classifier.SIZE_CLASS_ERROR_CODES=('bad_declared_class','bad_size_class'); test_size_class_error_codes_registered_consistently PASS; C1 53/53"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R049",
@@ -2234,7 +2234,7 @@
       "startup_overhead.py not in ee564dd file list (untouched)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R050",
@@ -2243,7 +2243,7 @@
       "bands_for_model per-model fail-closed; numeric_strings adds 70%/70 %/70 percent; test_bands_calibrated_per_resolved_model_fail_closed + leak-guard tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R051",
@@ -2252,7 +2252,7 @@
       "validate_platform_caps raises routine_cap; CatastrophicCeiling requires >=5x; ceiling_fired -> PartialStateRecovery (false_completion impossible); 3 ceiling tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "catastrophic-ceiling recovery test DISCHARGED"
     },
     {
@@ -2262,7 +2262,7 @@
       "bands_for_model(config, resolved_model); BandEvaluation.reasons / ExtensionDecision.reasons recorded for calibration"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "live calibration surface DISCHARGED"
     },
     {
@@ -2272,7 +2272,7 @@
       "evaluate_band promotes to LAND on model_reports_losing_thread at any level; test_model_losing_thread_is_immediate_quality_signal PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R055",
@@ -2281,7 +2281,7 @@
       "DEFAULT_EXTENSION_PROTOCOL carries 'likely evidence sources ... natural completion point'; C1 pack 53/53 (no field regression); test_extension_protocol_carries_likely_evidence_sources PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R056",
@@ -2290,7 +2290,7 @@
       "_BAND_LEAK_PATTERNS word-boundary vocab/context (not substring); numeric leak set extended; leak-guard test trio PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "leak-guard graduation DISCHARGED"
     },
     {
@@ -2300,7 +2300,7 @@
       "spawn_decision.py untouched; SupervisionState.scope_held + TurnoverCoordinator.may_spawn_children; test_prepare_to_land_holds_scope_without_worker_message PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R058",
@@ -2309,7 +2309,7 @@
       "startup-overhead measurement untouched; shadow-only resumes nothing"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R059",
@@ -2318,7 +2318,7 @@
       "no model-routing change; bands_for_model conservative per-model"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2328,7 +2328,7 @@
       "LeaseLedger.grant -> assert_grantable vs live active set; nested via parent_assignment_id fold; test_nested_children_cannot_evade_producer_cap_or_leases + test_read_only_agents_do_not_consume_the_producer_cap PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R061",
@@ -2337,7 +2337,7 @@
       "ChildHandoff.bounded_summary capped MAX_SUMMARY_CHARS=4000 (transcript_not_summary); test_verbose_child_transcript_stays_out_of_primary_context PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "bounded-summary construction DISCHARGED"
     },
     {
@@ -2347,7 +2347,7 @@
       "AssignmentMonitor counts command/hypothesis signatures + cycling failures vs repeated_attempt_limit; findings carry no worker surface; test_repeated_corrections_get_outside_decision_without_countdown PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "runtime repeated-attempt DISCHARGED"
     },
     {
@@ -2357,7 +2357,7 @@
       "ExtensionRequest requires all s6.1 items incl. likely_evidence_sources; decide_extension deny->backlog default; extension tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "extension-gate runtime + M0-T090 likely-evidence advisory DISCHARGED"
     },
     {
@@ -2367,7 +2367,7 @@
       "only DURABLE_EVIDENCE_KINDS reset the window; test_text_volume_and_tool_activity_are_not_progress + speculation/reset tests PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "runtime no-progress DISCHARGED"
     },
     {
@@ -2377,7 +2377,7 @@
       "modules import only sibling C1 + telemetry_records; no graph/index import"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R080",
@@ -2386,7 +2386,7 @@
       "_band_from_occupancy(None) -> OBSERVE; test_unknown_occupancy_is_conservative_never_normal PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R081",
@@ -2395,7 +2395,7 @@
       "workload_sizing additive NON_OMITTABLE_CATEGORIES; existing omission/sufficiency tests green"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R092",
@@ -2404,7 +2404,7 @@
       "packet_plan raises non_omittable_category for the 3 mandatory categories; test_mandatory_packet_categories_cannot_be_omitted PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R098",
@@ -2413,7 +2413,7 @@
       "LeaseGrant.parent_assignment_id, ChildHandoff.parent_task_id, unlinked_records refusals; ledger exactness test PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R101",
@@ -2422,7 +2422,7 @@
       "Phase C item 4 (lease enforcement, cap, bands, no-progress, extension) + item 6 (sparse landing, TaskStop reserved, child handoffs + turnover draining) present in code + tests; C1 report section 1 deferral discharged"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "Phase C 4+6 DISCHARGED"
     },
     {
@@ -2432,7 +2432,7 @@
       "s16.2 rows executable: forty-minute accelerated landing, high-usage-near-seam, observe-no-message, TaskStop reservation, ceiling + child-turnover rows; 54/54 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "s16.2 supervision rows DISCHARGED"
     },
     {
@@ -2442,7 +2442,7 @@
       "refusal guards routine_cap, non_omittable_category, transcript_not_summary, unbounded_approval, children_not_drained, scope_violation present + tested"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe"
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2"
     },
     {
      "id": "D-024-R125",
@@ -2451,7 +2451,7 @@
       "M0-T091-G0-readiness.md records primary cwd=worktree root, branch, HEAD 1d8d53f=origin tip, clean tree, MCP-empty (committed 6968ed5)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2461,7 +2461,7 @@
       "G0-readiness records empty MCP roster (no mcp__* tools)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2471,7 +2471,7 @@
       "no Gate-0 failure; no fallback root"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     },
     {
@@ -2481,13 +2481,13 @@
       "clean lineage 1d8d53f -> 6968ed5 -> 9e47c27 -> ee564dd -> ...; no failed-start adoption"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "b4f7e409ac35c92fe3b3ee497f152063217da2fe",
+     "reviewed_sha": "e011f618e2bd2cf1802d7dae82156c3adfb0c3f2",
      "note": "conduct"
     }
    ],
    "reviewed_manifest_sha256": "2880691790763d42346117f2a094b9ceb3cb6bdba12a5d97c2816ef6a9eefe1d",
    "frozen_content_commit": "ee564dd",
-   "note": "46/46 PASS recorded verbatim-in-substance from the independent DCV return (full report: project-control/reports/M0-T091-DCV.md; DCV states all requirements SATISFIED, recorded as PASS per registry vocabulary; 0 VIOLATED/BLOCKED/UNVERIFIABLE). All 10 M0-T090 deferred-share discharges verified real (R023/R046/R051/R052/R061/R062/R063/R064/R101 items 4+6/R108). Material identity reproduced EXACT at G2 and at moving HEAD; deliverable blobs byte-identical ee564dd..HEAD; 4 non-blocking advisories in the report."
+   "note": "46/46 PASS recorded verbatim-in-substance from the independent DCV return (full report: project-control/reports/M0-T091-DCV.md; DCV states all requirements SATISFIED, recorded as PASS per registry vocabulary; 0 VIOLATED/BLOCKED/UNVERIFIABLE). All 10 M0-T090 deferred-share discharges verified real (R023/R046/R051/R052/R061/R062/R063/R064/R101 items 4+6/R108). Material identity reproduced EXACT at G2 and at moving HEAD; deliverable blobs byte-identical ee564dd..HEAD; 4 non-blocking advisories in the report. Stamp note: DCV reviewed at dispatch HEAD b4f7e40 and re-confirmed blob identity through 60485fd; reviewed_sha stamped at accept-time HEAD per the registry freshness rule - every intervening commit is control-plane only and the material identity 2880691790763d42... is identical at both points (reproduced by the DCV)."
   },
   {
    "task_id": "M0-T092",
