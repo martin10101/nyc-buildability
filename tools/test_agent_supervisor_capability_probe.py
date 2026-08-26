@@ -163,13 +163,13 @@ def test_matrix_unknowns_are_explicit_not_missing(matrix):
 
 # ---------- live re-probe (feature-detected; skips cleanly when absent) ----------
 
-@pytest.mark.skipif(shutil.which("claude") is None,
-                    reason="claude CLI not installed on this runner")
 @pytest.fixture(scope="module")
 def post() -> dict:
     return json.loads(POST_FIXTURE.read_text(encoding="utf-8"))
 
 
+@pytest.mark.skipif(shutil.which("claude") is None,
+                    reason="claude CLI not installed on this runner")
 def test_live_reprobe_claude_version_matches_fixture(post):
     rec = cp._run(["claude", "--version"])
     assert rec["status"] == "supported"
@@ -191,11 +191,16 @@ def test_upgrade_pair_records_expected_versions(live, post):
 
 def test_post_update_fixture_masked_and_shaped(post):
     """The post-update fixture obeys the same masking/shape contract as the
-    pre-update record (no volatile identity; [HOME]-masked binary paths)."""
-    body = json.dumps(post["body"], sort_keys=True)
-    assert "MLFLL" not in body
+    pre-update record (no volatile identity; [HOME]-masked binary paths).
+    General leak guards (G3 M0-T103 ADVISORY-2): no drive-rooted user path or
+    Users-directory fragment anywhere, not just the current account name."""
+    whole = json.dumps(post, sort_keys=True)
+    for leak in (":\\\\Users\\\\", ":/Users/", "\\\\Users\\\\MLFLL", "MLFLL"):
+        assert leak not in whole, f"unmasked path fragment {leak!r} in fixture"
     assert "claude_version" in post["body"]["probes"]
-    for rec in post["probe_meta"].get("claude_binaries", []):
+    binaries = post["probe_meta"].get("claude_binaries", [])
+    assert binaries, "probe_meta.claude_binaries missing"
+    for rec in binaries:
         assert rec.startswith("[HOME]"), rec
 
 

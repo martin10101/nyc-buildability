@@ -74,6 +74,14 @@ freezes 2.1.246, codex unchanged) and the post-fixture masking/shape contract. T
 and 2026-08-26 pre-update fixtures are retained untouched as the historical 2.1.220 record
 (R181: nothing deleted).
 
+**Correction round (G3 round-1 BLOCKING-1):** the first re-baseline commit accidentally left the
+pre-existing `skipif` decorator above the newly inserted `post` fixture (a no-op — pytest ignores
+marks on fixtures), un-guarding the live claude re-probe on claude-absent runners (the CI
+supervisor-bridge job). Fixed: the guard now decorates the live test itself (mirroring the codex
+sibling), and the masking tooth was generalized per G3 ADVISORY-2 (drive-rooted/`Users` path
+fragments, non-empty binaries list). Verified BOTH contexts: claude-present 18 passed, 0
+warnings; claude-absent (stripped PATH) 16 passed + 2 clean SKIPs at the guard lines.
+
 ## 6. Session integrity after the update (honest observation)
 
 Post-update `claude agents --json` lists 5 sessions: this one (busy, old binary), three other
