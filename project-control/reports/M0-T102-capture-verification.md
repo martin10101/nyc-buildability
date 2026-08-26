@@ -110,6 +110,21 @@ Programmatic scan of all 53 rows: union of `applicability.task_ids` = `{D-024-BO
 
 **Verdict: CAPTURE VERIFICATION: PASS.** All six checks pass on reproduced primary evidence (verbatim source, `requirements.json`, `manifest.json`, `verification.json`, the directive resolver, D-030 records, and `validate_directive_compliance.py --check` EXIT=0). No missing, weakened, invented, or improperly-combined requirement was found; no new requirement binds any accepted/gated task; registry digests, locks, counts, and placeholder verification rows are internally consistent; and the D-030 linkage is correctly wired. Only two ADVISORY notes, neither blocking.
 
+---
+
+## Verifier addendum (same agent, later follow-up; saved verbatim)
+
+The chained background run of all three test scripts has now completed with exit code 0, confirming the supplementary evidence for Check 5:
+
+- `tools/test_directive_compliance.py` — **Ran 120 tests → OK** (includes the S11/S12/C14 fail-closed and digest-mismatch guards)
+- `tools/test_project_control.py` — **OK**, "all 23 project-control test groups passed"
+- `tools/test_directive_reminder.py` — **Ran 12 tests → OK**
+- 0 FAIL/ERROR lines across all three.
+
+This upgrades the ADVISORY note under Check 5 (previously "suite in progress") to a completed clean result. It does not change any check verdict. My verdict stands unchanged: **CAPTURE VERIFICATION: PASS** (all six checks; no BLOCKING findings; the two ADVISORY notes as recorded above).
+
+---
+
 Relevant absolute paths:
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\directives\D-024-fable-codex-loop\source-003-amendment.md`
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\directives\D-024-fable-codex-loop\requirements.json`
