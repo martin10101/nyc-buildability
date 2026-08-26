@@ -105,3 +105,70 @@ Move the `@pytest.mark.skipif(shutil.which("claude") is None, …)` guard back o
 The upgrade record is thorough and honest, the post-update binary identity independently verifies to the byte and hash, fixtures are well-masked and schema-valid, historical fixtures are retained, and the honesty/limitations disclosures hold up. However, the test re-baseline — the task's primary code deliverable — ships a test that fails on any runner without the `claude` binary, which is the CI `supervisor-bridge` job's exact environment. That breaks "existing project suite remains green" (D-024-R185) and the module's stated skip-when-absent invariant (D-024-R149 quality), with a reproducible failure. This must be corrected and re-gated.
 
 **Verdict: G3: FAIL**
+
+---
+
+# M0-T103 G3 delta re-review — round 2 (VERBATIM save; same reviewer, context intact)
+
+Requested by the orchestrator via SendMessage after the correction commit `a4cfdaa` (new identity,
+manifest `0b04e3b1…`; HEAD `d832c4c`). Saved verbatim below.
+
+---
+
+The fixture is unchanged (empty diff), so the round-1 binary-identity verification still holds. HEAD confirms `d832c4c`. Here is my delta gate report.
+
+---
+
+**G3-DELTA: PASS**
+
+# Gate Report (G3 delta re-review, round 2)
+
+- Gate ID: G3 (delta)
+- Task ID: M0-T103
+- Reviewer: code-reviewer (independent; read-only)
+- Producer: orchestrator (Fable 5)
+- Prior reviewed identity: `e0a867b` (round 1 -> FAIL, BLOCKING-1)
+- New deliverable identity: `a4cfdaa` (content_manifest_sha256 `0b04e3b1…`); current HEAD `d832c4c`
+- Result: **PASS**
+
+## (a) Diff scope — CONFIRMED (with precise accounting)
+
+`git diff --stat e0a867b..a4cfdaa`: the two **deliverable-content** files are exactly as claimed — `tools/test_agent_supervisor_capability_probe.py` (+17/-…) and `project-control/reports/M0-T103-version-upgrade.md` (+8, section 5 only). The remaining entries are expected orchestrator **control-plane records**, not producer source: `gates/M0-T103-G2.json`, `-G3.json`, `-G5.json`, `reports/M0-T103-G3-code-review.md`, `-G5-security.md`, `M0-T103.json`, `state.json`, `tasks/M0-T103.json`. No product/hook/settings/dependency files touched. The post-update fixture `capability_probe_live_2026-08-26_m0t103_post_update.json` is **unchanged** (`git diff --name-only … -- tools/agent_supervisor/fixtures/` returns empty), so my round-1 byte/hash verification of the 2.1.246 binary identity still holds.
+
+## (b) Guard placement + warning — CONFIRMED
+
+The test-file diff shows the `@pytest.mark.skipif(shutil.which("claude") is None, …)` decorator moved **off** the `post` fixture (now undecorated) and **onto** `test_live_reprobe_claude_version_matches_fixture`, mirroring the sibling `test_live_reprobe_codex_version_matches_fixture`. The claude-present run output is now `18 passed in 2.02s` with **no warning line** — the round-1 `PytestRemovedIn9Warning: Marks applied to fixtures have no effect` is gone.
+
+## (c) Claude-absent scenario — REPRODUCED, expected result
+
+`PATH="<python only>" python -m pytest tools/test_agent_supervisor_capability_probe.py -rs -q`:
+```
+.............s..s.
+SKIPPED [1] …capability_probe.py:171: claude CLI not installed on this runner
+SKIPPED [1] …capability_probe.py:207: codex CLI not installed on this runner
+16 passed, 2 skipped in 0.09s
+```
+The live claude re-probe now **SKIPS cleanly** at the guard line (171) — no `assert 'absent' == 'supported'` failure — exactly the `16 passed + 2 skipped` you predicted (codex also skips under the stripped PATH). This is the CI `supervisor-bridge` condition (windows-latest, no claude/codex), so that job will now be green.
+
+## (d) Claude-present run — CONFIRMED
+
+`python -m pytest tools/test_agent_supervisor_capability_probe.py -q` -> `18 passed` (0 warnings). The two new deterministic tests (`test_upgrade_pair_records_expected_versions`, `test_post_update_fixture_masked_and_shaped`) and the repointed drift tooth all execute and pass.
+
+## (e) ADVISORY-2 — ADDRESSED (adequately)
+
+`test_post_update_fixture_masked_and_shaped` now scans the **whole** fixture json (`json.dumps(post, …)`, including `probe_meta` where paths live) and asserts absence of account-agnostic leak fragments plus the prior specifics:
+- `":\\Users\\\\"` -> matches a drive-rooted Windows `…:\Users\…` path as it appears (backslashes doubled) in `json.dumps` output — catches any account name, not just the current one;
+- `":/Users/"` -> forward-slash drive-rooted form;
+- `"\\Users\\MLFLL"` and `"MLFLL"` -> retained specific catches (additive, harmless).
+
+It also adds `assert binaries, "probe_meta.claude_binaries missing"` before the `[HOME]`-prefix loop, removing the prior `.get(..., [])` vacuity so the masking check can never pass trivially. This is a genuine generalization over the round-1 username-literal check and is falsifiable (a leaked `C:\Users\<anyone>` path would fail on the drive-rooted patterns regardless of account). ADVISORY-2 resolved.
+
+## (f) BLOCKING-1 — CLOSED
+
+Root cause (skipif decorating a fixture, a pytest no-op) is fixed; the live claude test is guarded directly and skips cleanly when the binary is absent. Reproduced in both verification contexts (claude-present 18 passed / claude-absent 16 passed + 2 skipped). The report §5 "Correction round" paragraph accurately records the defect and the dual-context verification, with no contradiction elsewhere. D-024-R185 ("existing project suite remains green") and D-024-R149 (drift tooth quality) are now satisfied.
+
+## Reviewer conclusion
+
+The required rework is applied correctly and minimally: the guard is on the live test (matching the codex sibling), the fixture-mark warning is eliminated, the masking tooth is generalized per ADVISORY-2 without becoming vacuous, and the report honestly documents the correction. No new issues introduced; scope is confined to the two deliverable files plus expected control-plane records. Round-1 BLOCKING-1 is closed and both round-1 advisories are addressed (ADVISORY-2 fixed in code; ADVISORY-1 statusLine/skills deferral remains an honestly-disclosed, tracked open item for the successor session/unit G, unchanged and non-blocking for G3).
+
+**G3-DELTA: PASS**
