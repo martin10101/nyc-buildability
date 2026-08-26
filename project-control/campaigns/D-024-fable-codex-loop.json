@@ -14,13 +14,13 @@
   "no worker-facing token quotas/countdowns ever (D-024-R045)"
  ],
  "next_action": {
-  "task_id": "M0-T089",
-  "description": "claim and produce D-024 B2 (subagent telemetry breadth + read-only shadow status: subagentStatusLine ingestion, SDK-event ingestion only-if-present, lifecycle-hook ingestion, transcript-derived fallback) PLUS the carried findings bundle from the M0-T088 gate round (G5-S2: [HOME]-mask capability_matrix_v1.json binary notes + cross-fixture home-prefix assertion; G4-Adv2: wholesale withholding of prompt-like non-scalar values BEFORE transcript/message ingestion lands; G4-Adv1: per-step absent-field 0-vs-unknown decision + test vs real provider payloads; G3-minor: per-step cumulative_* measurement-name clarity; test-helper _derive_live_status determinism nit); then G2 -> submit -> independent G3/G4/G5+DCV -> accept -> advance this record to M0-T090"
+  "task_id": "M0-T099",
+  "description": "claim and produce M0-T099 (owner amendment 2, D-024-R129..R138: project statusLine handler writing the sanitized sidecar AND printing a compact human row - one feed; REAL installed-version fixture proof before acceptance; occupancy vs cumulative and rate-limit vs context pressure kept separate; nullable-safe; no-model-message/no-API-token proof; doc URL + 2.1.220 proof in verification evidence; live settings.json wiring stays an owner-visible step documented in the report) PLUS the carried hardening inputs from the M0-T089 gate round (G5: SdkTaskTracker cardinality bound, transcript accumulator bounds, data-derived dict-key sanitization, postTokens/trigger narrowing; G3: per-field duplicate counters, final_request label clarity, detail-string nit, dead-assertion nit; G4: hermetic-subset guard note, mask/test regex symmetry) where they touch handler-adjacent modules; then G2 -> submit -> independent G3/G4/G5+DCV -> accept -> advance this record (return to the planned B3 sequence at M0-T090). Also outstanding: purge the harness-flagged qa-engineer agent-memory guard-notes file in the leftover agent worktrees; never merge agent worktree branches."
  },
  "frozen": {
-  "head_sha": "316cd8eb84036576969267209d012aeb057624d7",
-  "recorded_at": "2026-08-26T01:20:36+00:00"
+  "head_sha": "d9960d11177250fcf0158ee8143a2041192bbb2e",
+  "recorded_at": "2026-08-26T02:15:43+00:00"
  },
- "sequence": 2,
- "updated_at": "2026-08-26T01:20:36+00:00"
+ "sequence": 3,
+ "updated_at": "2026-08-26T02:15:43+00:00"
 }
