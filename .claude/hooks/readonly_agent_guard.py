@@ -1,7 +1,7 @@
 """PreToolUse guard enforcing OPERATIONAL read-only for spawned agents.
 
 Wired in tracked `.claude/settings.json` as a PreToolUse hook on
-`Bash|Write|Edit|MultiEdit|NotebookEdit`. Observed payload reality (M0-T028
+`Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit`. Observed payload reality (M0-T028
 primary evidence, project-control/reports/M0-T028-TEAMMATE-PAYLOAD-EVIDENCE.md):
 the lead/main session carries NO agent identity key at all (no `agent_type`,
 `agentType`, or `agent_id`); an UNNAMED spawn carries its `.claude/agents/`
@@ -30,17 +30,38 @@ Enforcement (2.1.x PreToolUse blocking contract):
   -> DENY. Git mutations are matched both by the regex AND by a quoting-aware
   shlex/argv pass (`_git_argv_mutates`), so a quoted or backslash-escaped
   `-C <path>` containing spaces cannot hide the sub-command from the guard.
+- PowerShell commands (M0-T108, G5 M0-T102 MEDIUM: the harness exposes a
+  PowerShell tool on Windows that previously reached the filesystem with no
+  deny): the SAME text passes run on a backtick-normalized command (PowerShell
+  escapes with a backtick, which could otherwise split a git verb), PLUS a
+  PowerShell-specific mutation denylist (`_PS_MUTATING`: write cmdlets and
+  their aliases, `[IO.File]::Write*`-class .NET calls, `-OutFile`, mutating
+  web methods, registry/task/ACL writers, `Add-Type`, nested/encoded shells,
+  and the dynamic call operator `& $var`), and a PowerShell redirect rule that
+  allows only `$null` targets and stream merges (`2>&1`).
+- Redirect detection is QUOTE-AWARE (M0-T108 false-positive fix): a `>` inside
+  a quoted string (`python -c "1 if x>0 else 2"`, `grep 'a->b'`) is literal
+  text in every real shell and no longer denies; an UNQUOTED redirect to a
+  real path still does.
+- Best-effort scripting-write pass (both shells): command text that invokes an
+  inline-write idiom (`open(..., 'w'|'a'|'x'|'+')`, `.write_text/.write_bytes`,
+  `os.remove/rename/makedirs/...`, `shutil.*`, `fs.write*`) is DENIED even
+  though quoted. Mode-less/`'r'` opens stay allowed (pure reads).
 - Read-only git inspection, gh reads, and test execution -> ALLOW (silent).
 Deny is emitted as exit 0 with hookSpecificOutput.permissionDecision == "deny".
 An unparseable / non-object payload fails CLOSED (deny) — real harness payloads are
 always valid JSON objects, so this never affects the main session in practice while
 guaranteeing a malformed event can never slip a mutation through.
 
-This does NOT sandbox a scripting-language file write (e.g. `python -c` opening a
-file for writing) — that is inseparable from allowing test execution. The residual
-is covered by (a) the removed Write/Edit tools and (b) the orchestrator-only
-integration model: only the lead commits/pushes/merges, so a reviewer's local
-scratch never reaches a branch, a PR, or the ledger. See
+Documented residuals (honest, unchanged in kind): a scripting-language write
+composed dynamically at runtime (string-built mode, exec of assembled source)
+is not statically resolvable — the pass above catches the direct idioms only;
+a PowerShell verb assembled by string concatenation is likewise dynamic, but
+its execution vectors (`Invoke-Expression`/`iex`, `& $var`, encoded commands,
+nested shells) are themselves denied. The remaining residual is covered by
+(a) the removed Write/Edit tools and (b) the orchestrator-only integration
+model: only the lead commits/pushes/merges, so a reviewer's local scratch
+never reaches a branch, a PR, or the ledger. See
 `.claude/ORCHESTRATION_POLICY.md`.
 """
 import json
@@ -62,6 +83,10 @@ READ_ONLY_AGENTS = frozenset(
 )
 
 WRITE_TOOLS = frozenset({"Write", "Edit", "MultiEdit", "NotebookEdit"})
+
+# Shell tools whose command text is scanned by the mutation passes. The matcher
+# in .claude/settings.json must list every one of these (M0-T108).
+SHELL_TOOLS = frozenset({"Bash", "PowerShell"})
 
 
 def _known_roster_agents():
@@ -129,11 +154,76 @@ _MUTATING = re.compile(
     """
 )
 
-# A redirection writing to a real path. Allows only /dev/null|/dev/stderr|/dev/stdout
-# and fd duplications (`>&2`, `2>&1`). A leading fd digit (1>, 2>, 9>, or none) still
-# counts as a file write unless the target is one of those — so `1>out.txt` is DENIED
-# while `2>/dev/null` and `2>&1` are allowed.
-_REDIRECT = re.compile(r">>?\s*(?!\s*(?:/dev/(?:null|stderr|stdout)\b|&))")
+# Redirect targets that never write a repo file. Bash: /dev/null|stderr|stdout
+# and fd duplications (`>&2`, `2>&1`). PowerShell: `$null` and stream merges
+# (`2>&1`, `*>&1`). A leading fd/stream digit (1>, 2>, *>, or none) still counts
+# as a file write unless the target is one of those — so `1>out.txt` is DENIED
+# while `2>/dev/null`, `2>&1`, and `> $null` are allowed. Detection itself is
+# quote-aware (`_unquoted_redirect`), replacing the former raw-text _REDIRECT
+# regex that denied literal `>` inside quoted strings (M0-T108 false-positive
+# fix: `python -c "1 if x>0 else 2"` is a pure read).
+_BASH_REDIRECT_TARGET_OK = re.compile(r"^(?:&|/dev/(?:null|stderr|stdout)\b)")
+_PS_REDIRECT_TARGET_OK = re.compile(r"(?i)^(?:&\d|\$null\b)")
+
+# PowerShell-specific mutation surface (M0-T108; G5 M0-T102 MEDIUM). Matched on
+# the backtick-normalized command text, ADDITIVE to the shell-agnostic
+# _MUTATING pass (which already catches `git add`, `gh pr create`, `rm`, `mv`,
+# `cp`, `tee`, `npm install`, ... appearing in PowerShell command text).
+# Same quoted-text posture as _MUTATING: a mutating token inside a quoted
+# string still denies (fail closed).
+_PS_MUTATING = re.compile(
+    r"""(?ix)
+    (?:^|[\s;&|({`])
+    (?:
+        (?:Set|Add|Clear)-Content\b
+      | Out-File\b
+      | (?:New|Remove|Move|Copy|Rename|Set)-Item(?:Property)?\b
+      | Tee-Object\b
+      | Export-(?:Csv|Clixml|FormatData|PSSession|ModuleMember)\b
+      | (?:Compress|Expand)-Archive\b
+      | Set-(?:Acl|ExecutionPolicy)\b
+      | Add-Type\b
+      | Start-Process\b
+      | Invoke-(?:Expression|Item)\b
+      | iex\b
+      | Invoke-(?:WebRequest|RestMethod)\b[^;|]*?(?:-OutFile\b|-Method\s+(?:POST|PUT|PATCH|DELETE)\b)
+      | New-Object\s+(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\b
+      | \[(?:System\.)?IO\.(?:File|Directory)\]::
+            (?!Exists|ReadAll|ReadLines|OpenRead|OpenText|GetAttributes|
+               GetLastWrite|GetCreationTime|GetFiles|GetDirectories|
+               GetFileSystemEntries)\w+
+      | \[(?:System\.)?IO\.Path\]::GetTempFileName\b
+      | reg\s+(?:add|delete|import|copy|restore|load|unload)\b
+      | schtasks\b[^;|]*/(?:create|delete|change|run|end)\b
+      | icacls\b[^;|]*/(?:grant|deny|remove|reset|setowner)\b
+      | (?:powershell|pwsh|cmd)(?:\.exe)?\s   # nested shell: laundering vector
+      | (?:sc|ni|ri|rd|del|erase|md|cpi|rni|ren|move|copy)\s  # write aliases
+      | &\s*\$                                # call operator on a variable
+    )
+    """
+)
+# A `-OutFile` anywhere (outside the Invoke-* form above) writes a file.
+_PS_OUTFILE = re.compile(r"(?i)(?:^|\s)-OutFile\b")
+# powershell/pwsh encoded command: base64-hidden payload; never needed read-only.
+_PS_ENCODED = re.compile(r"(?i)(?:^|\s)-e(?:c|nc\w*)\b")
+
+# Best-effort inline scripting-write idioms (both shells; M0-T108 objective iii).
+# Deliberately mode-gated: `open(f)` / `open(f,'r')` / `open(f,'rb')` are pure
+# reads and stay ALLOWED (the observed M0-T102 reviewer false-positive class);
+# any `w`/`a`/`x`/`+` in a positional mode string denies.
+_SCRIPT_WRITE = re.compile(
+    r"""(?ix)
+    (?:
+        \bopen\s*\([^()]*,\s*['\"][^'\"]*[wax+][^'\"]*['\"]
+      | \.write_(?:text|bytes)\s*\(
+      | \bos\.(?:remove|unlink|rename|replace|makedirs|mkdir|rmdir|removedirs|
+                truncate|chmod|chown)\b
+      | \bshutil\.(?:copy\w*|move|rmtree|make_archive)\b
+      | \.unlink\s*\(
+      | \bfs\.(?:write|append|unlink|rm|mkdir|rename|copy)\w*\s*\(
+    )
+    """
+)
 
 # --- Quoting- and separator-aware git-mutation detection (additive) --------
 # The _MUTATING regex consumes a `-C <path>` / `-c <cfg>` argument with `\S+`,
@@ -320,6 +410,110 @@ def _git_argv_mutates(cmd):
     return False
 
 
+def _ps_normalize(cmd):
+    """Resolve PowerShell backtick escapes so a mutating verb cannot hide
+    behind them (`git pu`+backtick+`sh` executes `git push`). Backtick+newline
+    is a line continuation (both dropped, plus any CR/LF run); backtick+char
+    resolves to the char. Single-quoted spans are literal in PowerShell, so
+    backticks inside them are preserved. Backslash is NOT an escape character
+    in PowerShell (it is the path separator) and is left untouched."""
+    out = []
+    in_single = False
+    i, n = 0, len(cmd)
+    while i < n:
+        c = cmd[i]
+        if in_single:
+            out.append(c)
+            if c == "'":
+                in_single = False
+            i += 1
+            continue
+        if c == "'":
+            in_single = True
+            out.append(c)
+            i += 1
+            continue
+        if c == "`" and i + 1 < n:
+            nxt = cmd[i + 1]
+            if nxt in "\r\n":
+                i += 2
+                while i < n and cmd[i] in "\r\n":
+                    i += 1
+                continue
+            out.append(nxt)
+            i += 2
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def _unquoted_redirect(cmd, powershell=False):
+    """True if the command contains an UNQUOTED `>`/`>>` whose target is a real
+    path (not /dev/null|stderr|stdout / fd-dup for Bash; not $null / stream
+    merge for PowerShell). Quote-aware replacement for the former raw-text
+    _REDIRECT regex (M0-T108): a `>` inside a quoted string is literal text in
+    every real shell and must not deny a pure read. For Bash, a backslash
+    escapes the next character outside single quotes (an escaped `\\>` is
+    literal); for PowerShell the caller passes backtick-normalized text and
+    backslash is a path character."""
+    target_ok = _PS_REDIRECT_TARGET_OK if powershell else _BASH_REDIRECT_TARGET_OK
+    quote = None
+    i, n = 0, len(cmd)
+    while i < n:
+        c = cmd[i]
+        if quote is not None:
+            if not powershell and c == "\\" and quote == '"' and i + 1 < n:
+                i += 2
+                continue
+            if c == quote:
+                quote = None
+            i += 1
+            continue
+        if c in ("'", '"'):
+            quote = c
+            i += 1
+            continue
+        if not powershell and c == "\\" and i + 1 < n:
+            i += 2
+            continue
+        if c == "<":
+            # heredoc/herestring/process-substitution reads: `<`, `<<`, `<<<`
+            i += 1
+            continue
+        if c == ">":
+            j = i + 1
+            if j < n and cmd[j] == ">":
+                j += 1
+            while j < n and cmd[j] in " \t":
+                j += 1
+            if not target_ok.match(cmd[j:]):
+                return True
+            i = j if j > i else i + 1
+            continue
+        i += 1
+    return False
+
+
+def _shell_command_mutates(cmd, powershell=False):
+    """The full mutation decision for one shell command (M0-T108). The
+    shell-agnostic _MUTATING regex and the quoting-aware git argv pass run for
+    BOTH shells; PowerShell additionally normalizes backticks first and runs
+    its own denylist; both shells run the quote-aware redirect scan and the
+    best-effort inline scripting-write pass."""
+    if powershell:
+        cmd = _ps_normalize(cmd)
+        if (_PS_MUTATING.search(cmd) or _PS_OUTFILE.search(cmd)
+                or _PS_ENCODED.search(cmd)):
+            return True
+    return bool(
+        _MUTATING.search(cmd)
+        or _unquoted_redirect(cmd, powershell=powershell)
+        or _git_argv_mutates(cmd)
+        or _SCRIPT_WRITE.search(cmd)
+    )
+
+
 def _deny(reason):
     sys.stdout.write(
         json.dumps(
@@ -365,13 +559,14 @@ def _main():
     if tool in WRITE_TOOLS:
         _deny(f"'{who}' is operationally read-only and may not use {tool}.")
         return 0
-    if tool == "Bash":
+    if tool in SHELL_TOOLS:
         cmd = (payload.get("tool_input") or {}).get("command") or ""
-        if _MUTATING.search(cmd) or _REDIRECT.search(cmd) or _git_argv_mutates(cmd):
+        if _shell_command_mutates(cmd, powershell=(tool == "PowerShell")):
             _deny(
                 f"'{who}' is operationally read-only: repository/GitHub/control-plane "
-                "mutation and shell file-writes are blocked. Read-only git inspection, "
-                "gh reads, and test execution are allowed; return findings via SendMessage."
+                "mutation and shell file-writes are blocked (Bash and PowerShell). "
+                "Read-only git inspection, gh reads, and test execution are allowed; "
+                "return findings via SendMessage."
             )
             return 0
     return 0

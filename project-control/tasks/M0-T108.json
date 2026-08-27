@@ -1,63 +1,64 @@
 {
- "task_id": "M0-T108",
- "title": "Control-plane security fix: close the readonly_agent_guard PowerShell/scripting write gap (G5 M0-T102 MEDIUM advisory)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Close the confirmed enforcement gap in .claude/hooks/readonly_agent_guard.py (G5 M0-T102 finding): (i) extend the PreToolUse matcher in .claude/settings.json to cover every write-capable shell tool the harness exposes on Windows (PowerShell, not only Bash); (ii) add a PowerShell mutation/redirection denylist mirroring the Bash pass (Set-Content, Out-File, Add-Content, New-Item, Move-Item, Remove-Item, Tee-Object, [IO.File]::Write*, redirection operators, git via PowerShell) with the same fail-closed-on-unparseable envelope; (iii) treat the scripting-language class generally (python -c file writes share the failure mode - document the residual honestly if not fully closable); (iv) regression tests analogous to the existing Bash tests, RED-on-mutant. Also reduce read-only false positives observed by M0-T102 reviewers (python -c pure reads containing open( were transiently denied). Land BEFORE any unit C-I reviewer dispatch into a write-capable working tree (G5 recommendation).",
- "business_reason": "G5 M0-T102: a reviewer agent could mutate the working tree through PowerShell despite the read-only guard; machine enforcement must replace the procedural stopgap.",
- "inputs": [],
- "outputs": [
-  ".claude/hooks/readonly_agent_guard.py (PowerShell/scripting write interception, fail-closed envelope, reduced read-only false positives)",
-  ".claude/settings.json (PreToolUse matcher extension - reviewed config change)",
-  "regression tests for the guard (RED-on-mutant) alongside the existing guard tests",
-  "project-control/reports/M0-T108-guard-powershell-fix.md"
- ],
- "dependencies": [],
- "allowed_paths": [
-  ".claude/hooks",
-  ".claude/settings.json",
-  "tools/test_readonly_agent_guard_powershell.py",
-  "project-control/reports/M0-T108-guard-powershell-fix.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-26T22:31:58.338868+00:00",
- "updated_at": "2026-08-26T22:33:01+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-26T22:31:58.340873+00:00"
+  "task_id": "M0-T108",
+  "title": "Control-plane security fix: close the readonly_agent_guard PowerShell/scripting write gap (G5 M0-T102 MEDIUM advisory)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the confirmed enforcement gap in .claude/hooks/readonly_agent_guard.py (G5 M0-T102 finding): (i) extend the PreToolUse matcher in .claude/settings.json to cover every write-capable shell tool the harness exposes on Windows (PowerShell, not only Bash); (ii) add a PowerShell mutation/redirection denylist mirroring the Bash pass (Set-Content, Out-File, Add-Content, New-Item, Move-Item, Remove-Item, Tee-Object, [IO.File]::Write*, redirection operators, git via PowerShell) with the same fail-closed-on-unparseable envelope; (iii) treat the scripting-language class generally (python -c file writes share the failure mode - document the residual honestly if not fully closable); (iv) regression tests analogous to the existing Bash tests, RED-on-mutant. Also reduce read-only false positives observed by M0-T102 reviewers (python -c pure reads containing open( were transiently denied). Land BEFORE any unit C-I reviewer dispatch into a write-capable working tree (G5 recommendation).",
+  "business_reason": "G5 M0-T102: a reviewer agent could mutate the working tree through PowerShell despite the read-only guard; machine enforcement must replace the procedural stopgap.",
+  "inputs": [],
+  "outputs": [
+    ".claude/hooks/readonly_agent_guard.py (PowerShell/scripting write interception, fail-closed envelope, reduced read-only false positives)",
+    ".claude/settings.json (PreToolUse matcher extension - reviewed config change)",
+    "regression tests for the guard (RED-on-mutant) alongside the existing guard tests",
+    "project-control/reports/M0-T108-guard-powershell-fix.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/hooks",
+    ".claude/settings.json",
+    "tools/test_readonly_agent_guard_powershell.py",
+    "project-control/reports/M0-T108-guard-powershell-fix.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T22:31:58.338868+00:00",
+  "updated_at": "2026-08-27T01:44:58.351638+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T22:31:58.340873+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }
