@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 191,
+ "requirement_count": 199,
  "producer": "orchestrator",
- "updated_at": "2026-08-26T22:33:01+00:00",
+ "updated_at": "2026-08-27T00:05:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -7162,6 +7162,246 @@
    "status_reason": "captured 2026-08-26; awaiting re-baseline campaign",
    "evidence_paths": [],
    "amendment_sequence": 3
+  },
+  {
+   "id": "D-024-R192",
+   "text": "Reissue the same bounded 2.1.246 statusLine canary (the campaign seq-11 M0-T103 R162 deferral discharge: live statusLine/subagentStatusLine payload fixture + no-leak re-proof + explicit permission-mode proof), with the child launch hardened per D-024-R193..D-024-R199; the launch may proceed only through the D-024-R197 owner-approval gate.",
+   "source_ref": "source-004-amendment.md#preamble",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R193",
+   "text": "The canary child launch must include --strict-mcp-config so the child session has zero MCP servers (no --mcp-config supplied).",
+   "source_ref": "source-004-amendment.md#item-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R194",
+   "text": "Restrict the canary child's model-visible built-in tools to Agent only, using the exact syntax supported by the installed 2.1.246 binary (verified against `claude --help`: --tools \"Agent\").",
+   "source_ref": "source-004-amendment.md#item-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R195",
+   "text": "Before launch, verify the scratch settings file exists, is a regular file, and contains only the intended canary/statusLine configuration (statusLine, subagentStatusLine, and the UserPromptSubmit tee hook pointing exclusively at the three scratch tee scripts); record the verification (including a content hash) in the discharge evidence.",
+   "source_ref": "source-004-amendment.md#item-3",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R196",
+   "text": "The canary procedure must not read or modify repository files: the child runs with cwd outside the repository (isolated scratch project) and loads no repository settings, hooks, or CLAUDE.md; orchestrator-side canary steps touch only the scratch directory and the read-only process/git checks that D-024-R199 itself mandates.",
+   "source_ref": "source-004-amendment.md#item-4",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R197",
+   "text": "Show the owner the revised exact launch command (and any required interactive step, e.g. the folder-trust dialog handling) for approval BEFORE launching; do not launch without explicit owner approval of that exact command.",
+   "source_ref": "source-004-amendment.md#item-5",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R198",
+   "text": "After the payload capture completes, terminate the launched canary PID and all of its descendant processes.",
+   "source_ref": "source-004-amendment.md#item-6",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R199",
+   "text": "Prove, with recorded evidence: zero remaining canary agents or shells after termination (claude agents --json + process checks), Git remains clean (git status), and all artifacts created by the canary run are confined to the authorized temporary scratch directory.",
+   "source_ref": "source-004-amendment.md#item-7",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
+   "evidence_paths": [],
+   "amendment_sequence": 4
   }
  ]
 }

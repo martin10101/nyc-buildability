@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-26T22:33:01+00:00",
+ "updated_at": "2026-08-27T00:05:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -36,11 +36,20 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-26T21:27:57+00:00",
    "content_digest_sha256": "2e326390fa7a9107cb02ca5bf725b64a34bc77c4f4ba22a17bed827bee739d4d"
+  },
+  {
+   "file": "source-004-amendment.md",
+   "kind": "amendment",
+   "sequence": 4,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-26T23:55:00+00:00",
+   "content_digest_sha256": "5c20e0e5a2ab3ce6dfa8eb0b07df1a857053bf220e4623c8459b5a8896f4548e"
   }
  ],
  "amendments": [
   "source-002-amendment.md",
-  "source-003-amendment.md"
+  "source-003-amendment.md",
+  "source-004-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -314,10 +323,18 @@
   "D-024-R188",
   "D-024-R189",
   "D-024-R190",
-  "D-024-R191"
+  "D-024-R191",
+  "D-024-R192",
+  "D-024-R193",
+  "D-024-R194",
+  "D-024-R195",
+  "D-024-R196",
+  "D-024-R197",
+  "D-024-R198",
+  "D-024-R199"
  ],
- "requirements_id_digest_sha256": "dd5e670a039a40b617d9f594837abbc3872fcf16e4e68de3793ef08e95d9101c",
- "requirements_content_digest_sha256": "9787492310ae252cbb57ccd722b0a3e441a0f8ccb8e1f453453040d7ecfde56b",
+ "requirements_id_digest_sha256": "28989a3215f5cdd3f92fc15a25437be9b7f4e1372024c0185da07a7a0a832354",
+ "requirements_content_digest_sha256": "2836c65db59938cca337d69974917000722f9983d7ce2763be1e074a793f3656",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -350,6 +367,16 @@
    "at": "2026-08-26T22:33:01+00:00",
    "by": "orchestrator",
    "note": "Campaign conversion applied after M0-T102 acceptance (amendment-3 R145 surgical authorization; conversion proposal = accepted M0-T102 report sections 4/8): new unit packets M0-T104 (C native adapter), M0-T105 (D event integration), M0-T106 (E bounded /goal), M0-T107 (J portability plan, post-golden-run) added to scope; M0-T108 (readonly-guard PowerShell fix, G5 M0-T102 MEDIUM advisory) created as a standalone governance task citing D-024:ALL (not amendment scope). Surgical edits to unstarted packets: M0-T092 gains deps M0-T103..M0-T106 + unit-F consumption note; M0-T094 skills+UserPromptExpansion note; M0-T096 15-step golden run + explicit graph-regression binding (G3 ADV-3) + R187 hold note. Requirement applicability restamped append-only (R152/R153/R154/R155/R156/R162/R172/R173/R174/R179 gain their unit task ids; no id removed/renumbered; no accepted task touched). The D-024-R139 hold precondition (captured + reconciled + independently verified + converted) is COMPLETE as of this entry; M0-T092..T096 claims now follow the accepted sequence B->C->D->E->F->G->H->I. Digests recomputed."
+  },
+  {
+   "at": "2026-08-26T23:55:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 4 captured (owner tool-rejection steering instruction, 2026-08-26): hardened statusLine-canary launch for the seq-11 M0-T103 R162 deferral discharge. New requirement IDs D-024-R192..D-024-R199 (strict-mcp-config child; --tools Agent restriction; scratch-settings pre-verification; no repo reads/writes in the canary procedure; exact-command owner approval BEFORE launch; post-capture PID+descendant termination; zero-residue + git-clean + scratch-confinement proof). Applicability intentionally task-empty (orchestrator procedure, not a ledger task); no accepted or gated task rebound. Digests recomputed; ids appended to locked baseline."
+  },
+  {
+   "at": "2026-08-27T00:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 4 pre-commit correction: R192..R199 applicability.task_ids set to the sentinel D-024-R162-DISCHARGE (was []). The validator's c6 fail-closed pass correctly flagged the empty lists as an applies-to-everything wildcard hitting all 56 in-regime tasks; the recorded inert-row sentinel convention (D-029-BOOTSTRAP/D-012-VALIDATION precedent) scopes the rows to the orchestrator canary procedure only. Nothing had been committed at the broken state; digests recomputed."
   }
  ]
 }
