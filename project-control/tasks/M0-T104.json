@@ -50,12 +50,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 80,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:33.996052+00:00",
-  "updated_at": "2026-08-27T09:08:43.655764+00:00",
+  "updated_at": "2026-08-27T09:30:04.261295+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -107,6 +107,15 @@
       "percent": 80,
       "status": "awaiting_gate",
       "message": "Consolidated correction round applied in-task (G3/G4/G5 round-1 all PASS; converged MEDIUM = child-env fail-open default). Fixes: F2 child-env strip now unavoidable (base_env defaults to os.environ, dispatch always strips) + F3 comprehensive recursive row masking + F1 agent/tools charset validation + F4 reconcile refuses unavailable feed (renamed needs_controller_review) + G4 ADV-2 verb check= surface + G3 ADV-3/4 doc fixes. Re-freeze: adapter 60 + probe 19 = 77 passed; 11/11 mutants killed; ruff clean; modularity 0 failures; guard packs untouched ALL CHECKS PASSED; no other module imports the new modules (2204/2/0 baseline intact); fixtures re-masked leak-clean. Next: commit re-frozen deliverable, delta re-review G3/G4/G5, then DCV + accept."
+    },
+    {
+      "at": "2026-08-27T09:29:43.687766+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "rework",
+      "message": "Re-stamp cycle: correction-round content moved identity to 44ce19b3 (f610aab). All gates re-recorded PASS at HEAD (G3/G4/G5 delta re-reviews + G0/G2); DCV verification.json stamped with reviewed_manifest_sha256=44ce19b3, reviewed_sha=HEAD, all 4 reqs PASS. Resubmitting at new content identity for acceptance."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-27T09:30:04.255698+00:00"
 }

@@ -1616,7 +1616,7 @@
      "id": "D-024-R002",
      "state": "PASS",
      "evidence": [
-      "No readiness/activation claim anywhere; unit is pre-spawn planning records only. `subagent_contracts.py` docstring + report §1 \"supervisor stays SHADOW-ONLY (R595 untouched)\"."
+      "No readiness/activation claim anywhere; unit is pre-spawn planning records only. `subagent_contracts.py` docstring + report \u00c2\u00a71 \"supervisor stays SHADOW-ONLY (R595 untouched)\"."
      ],
      "note": "conduct; one-prompt continuity/transport/restart/golden-run owed to M0-T092/T096, not claimed."
     },
@@ -1666,13 +1666,13 @@
      "evidence": [
       "`D-024-R101` cited in packet objective (`tasks/M0-T090.json`), **every** one of the 5 module docstrings (closing line \"Supervisor-freeze qualifying evidence: D-024-R101.\"), and commit `e8b21d1` header + body."
      ],
-     "note": "impl/conduct; freeze §3 satisfied."
+     "note": "impl/conduct; freeze \u00c2\u00a73 satisfied."
     },
     {
      "id": "D-024-R018",
      "state": "PASS",
      "evidence": [
-      "Report §4 records distinct-axis (rotation SMALL/MEDIUM/LARGE not overloaded) + reuse of `context_pack_budget` tiers + telemetry records; no duplicate machinery."
+      "Report \u00c2\u00a74 records distinct-axis (rotation SMALL/MEDIUM/LARGE not overloaded) + reuse of `context_pack_budget` tiers + telemetry records; no duplicate machinery."
      ],
      "note": "impl."
     },
@@ -1706,13 +1706,13 @@
      "evidence": [
       "Mechanical (not prose) enforcement delivered at contract level: `ROLES` vocabulary (read_only/review_only/write), `assert_grantable` refuses overlapping write scopes/resources + producer cap, `validate_pair` refuses lease-without-write."
      ],
-     "note": "impl (contract-level share); Codex-transport-specific mechanical enforcement (read-only worktree/allowlists) owed to M0-T092/T096 — nothing here weakens it."
+     "note": "impl (contract-level share); Codex-transport-specific mechanical enforcement (read-only worktree/allowlists) owed to M0-T092/T096 \u00e2\u20ac\u201d nothing here weakens it."
     },
     {
      "id": "D-024-R025",
      "state": "PASS",
      "evidence": [
-      "No dispatch/accept path added; `SpawnDecision.to_dict` records only — nothing acts on a decision."
+      "No dispatch/accept path added; `SpawnDecision.to_dict` records only \u00e2\u20ac\u201d nothing acts on a decision."
      ],
      "note": "conduct/no-violation."
     },
@@ -1728,7 +1728,7 @@
      "id": "D-024-R042",
      "state": "PASS",
      "evidence": [
-      "`validate_envelope` checks `telemetry_confidence` ∈ `CONFIDENCE_LABELS` (closed vocab); `StartupObservation.to_record` labels measurements `estimated`/`Measurement.unknown` for `None` (unknown never zero); `test_envelope_validation_fail_closed`, `test_unmeasured_startup_values_stay_unknown_never_zero`."
+      "`validate_envelope` checks `telemetry_confidence` \u00e2\u02c6\u02c6 `CONFIDENCE_LABELS` (closed vocab); `StartupObservation.to_record` labels measurements `estimated`/`Measurement.unknown` for `None` (unknown never zero); `test_envelope_validation_fail_closed`, `test_unmeasured_startup_values_stay_unknown_never_zero`."
      ],
      "note": "impl (label share)."
     },
@@ -1736,7 +1736,7 @@
      "id": "D-024-R045",
      "state": "PASS",
      "evidence": [
-      "`assert_worker_text_clean` runs over `worker_text_fields()` (**every** string + tuple-item field) AND re-scans the rendered prompt (\"rendered_prompt\"); 10 fail-closed pattern classes. Tests: `test_worker_prompt_contains_no_quota_language` (INDEPENDENT scan, line 262–278, not the guard's own table), `test_quota_language_rejected_fail_closed` (8 phrasings incl. \"About 3.5k tokens should suffice\"), `test_quota_guard_covers_every_worker_field`."
+      "`assert_worker_text_clean` runs over `worker_text_fields()` (**every** string + tuple-item field) AND re-scans the rendered prompt (\"rendered_prompt\"); 10 fail-closed pattern classes. Tests: `test_worker_prompt_contains_no_quota_language` (INDEPENDENT scan, line 262\u00e2\u20ac\u201c278, not the guard's own table), `test_quota_language_rejected_fail_closed` (8 phrasings incl. \"About 3.5k tokens should suffice\"), `test_quota_guard_covers_every_worker_field`."
      ],
      "note": "impl; positive primary evidence + rendered-prompt re-scan confirmed."
     },
@@ -1746,7 +1746,7 @@
      "evidence": [
       "Contract scaffolding present: `HealthBands` (occupancy ladder) + `DetectorPolicy` (no_progress_window, repeated_attempt_limit, scope_drift) as envelope fields."
      ],
-     "note": "deferred-share; the full runtime health-score evaluation against telemetry owed to M0-T091/T092 — report §1 scopes runtime enforcement as deferred (verified honest)."
+     "note": "deferred-share; the full runtime health-score evaluation against telemetry owed to M0-T091/T092 \u00e2\u20ac\u201d report \u00c2\u00a71 scopes runtime enforcement as deferred (verified honest)."
     },
     {
      "id": "D-024-R047",
@@ -1760,7 +1760,7 @@
      "id": "D-024-R048",
      "state": "PASS",
      "evidence": [
-      "`workload_classifier.py`: `WORK_CLASSES` closed 4-tuple, deterministic rule precedence, conservative unknown (`no_objective_features`, `cohesion_unproven` → unknown-recon-first). Tests for all four classes + `test_cohesion_unproven_is_never_optimistic`."
+      "`workload_classifier.py`: `WORK_CLASSES` closed 4-tuple, deterministic rule precedence, conservative unknown (`no_objective_features`, `cohesion_unproven` \u00e2\u2020\u2019 unknown-recon-first). Tests for all four classes + `test_cohesion_unproven_is_never_optimistic`."
      ],
      "note": "impl."
     },
@@ -1784,9 +1784,9 @@
      "id": "D-024-R051",
      "state": "PASS",
      "evidence": [
-      "Grep of 5 modules: no `maxTurns`/`maxBudget`/`max_turns`/`max_budget` used as a cap — the only `max...spend` token is the R045 *rejection* pattern that bans such phrasing from worker text. `emergency_ceiling_note` is a private envelope field."
+      "Grep of 5 modules: no `maxTurns`/`maxBudget`/`max_turns`/`max_budget` used as a cap \u00e2\u20ac\u201d the only `max...spend` token is the R045 *rejection* pattern that bans such phrasing from worker text. `emergency_ceiling_note` is a private envelope field."
      ],
-     "note": "impl; catastrophic-ceiling *recovery test* deferred with runtime units (report §1 honest)."
+     "note": "impl; catastrophic-ceiling *recovery test* deferred with runtime units (report \u00c2\u00a71 honest)."
     },
     {
      "id": "D-024-R052",
@@ -1800,7 +1800,7 @@
      "id": "D-024-R053",
      "state": "PASS",
      "evidence": [
-      "`ExistingSubagentHealth.overloaded_or_confused` blocks resume regardless of counters; `decide_spawn` → `unhealthy_not_resumed`; `test_overloaded_subagent_never_resumed_to_save_startup`."
+      "`ExistingSubagentHealth.overloaded_or_confused` blocks resume regardless of counters; `decide_spawn` \u00e2\u2020\u2019 `unhealthy_not_resumed`; `test_overloaded_subagent_never_resumed_to_save_startup`."
      ],
      "note": "impl; directly implemented at decision level."
     },
@@ -1810,7 +1810,7 @@
      "evidence": [
       "**Every s6 bullet has a field.** WorkerAssignment covers all 15 worker-facing items (IDs, exact_change, necessity, role, permitted_paths+tools, prohibited_areas+external_effects, deliverable_schema, acceptance_criteria, required_evidence, checkpoints, blocker_reporting, checkpoint_commit_allowed, extension_protocol, unrelated_discovery, handoff_requirements). SupervisionEnvelope covers all 10 controller items (size_class+cohesion_rationale, graph_files/symbols/tests+write_lease_paths/lease_resources, startup_overhead_note+packet_reuse_plan, resolved_model+model_context_window, telemetry_sources+confidence, health_bands+emergency_ceiling_note, detectors, landing_opportunities, extension_criteria, evidence_inspection_plan). `validate_pair`; `test_envelope_validation_fail_closed`."
      ],
-     "note": "impl; field-by-field cross-check against source-001 §6 bullets completed — no missing field."
+     "note": "impl; field-by-field cross-check against source-001 \u00c2\u00a76 bullets completed \u00e2\u20ac\u201d no missing field."
     },
     {
      "id": "D-024-R056",
@@ -1840,7 +1840,7 @@
      "id": "D-024-R059",
      "state": "PASS",
      "evidence": [
-      "Classifier keeps `requires_frequent_parent_decisions`/`phases_share_substantial_context` in main; `model_fit` routes lower tier only with window ≥ target×headroom AND demonstrated capability, conservative on unknowns; `test_lower_tier_model_needs_window_and_demonstrated_capability` (all 4 branches)."
+      "Classifier keeps `requires_frequent_parent_decisions`/`phases_share_substantial_context` in main; `model_fit` routes lower tier only with window \u00e2\u2030\u00a5 target\u00c3\u2014headroom AND demonstrated capability, conservative on unknowns; `test_lower_tier_model_needs_window_and_demonstrated_capability` (all 4 branches)."
      ],
      "note": "impl."
     },
@@ -1856,7 +1856,7 @@
      "id": "D-024-R061",
      "state": "PASS",
      "evidence": [
-      "Classifier `requires_frequent_parent_decisions` → main-session; cohesive-subagent for self-contained; `deliverable_schema`/`return schema` bounds returned summary."
+      "Classifier `requires_frequent_parent_decisions` \u00e2\u2020\u2019 main-session; cohesive-subagent for self-contained; `deliverable_schema`/`return schema` bounds returned summary."
      ],
      "note": "impl (classifier/design share); verbose-transcript-out-of-context runtime behavior deferred (honest)."
     },
@@ -1874,7 +1874,7 @@
      "evidence": [
       "`DEFAULT_EXTENSION_PROTOCOL` carries the s6.1 return list (proven / uncertain / why-blocks-acceptance / least-costly-next / additional-scope+natural-completion-point / resume-vs-new / consequences / durable-partial-checkpoint); envelope `extension_criteria` for controller side. `test_rendered_prompt_carries_required_duties`."
      ],
-     "note": "impl. **Advisory (non-blocking):** the default worker text compresses s6.1's \"additional scope, **likely evidence sources**, and natural completion point\" to \"additional scope and its natural completion point\" — the explicit *likely-evidence-sources* clause is absent from the overridable default (7 of 8 sub-items verbatim). Field is present and overridable; Codex approve/deny runtime gate deferred. Recommend a follow-up unit add the clause. Does not weaken the guard."
+     "note": "impl. **Advisory (non-blocking):** the default worker text compresses s6.1's \"additional scope, **likely evidence sources**, and natural completion point\" to \"additional scope and its natural completion point\" \u00e2\u20ac\u201d the explicit *likely-evidence-sources* clause is absent from the overridable default (7 of 8 sub-items verbatim). Field is present and overridable; Codex approve/deny runtime gate deferred. Recommend a follow-up unit add the clause. Does not weaken the guard."
     },
     {
      "id": "D-024-R064",
@@ -1888,7 +1888,7 @@
      "id": "D-024-R079",
      "state": "PASS",
      "evidence": [
-      "Graph subsystem NOT edited; `neighborhood_from_view` adapts `repo_views` dict shape by value; no graph/index import in the package (leaf preserved); report §4."
+      "Graph subsystem NOT edited; `neighborhood_from_view` adapts `repo_views` dict shape by value; no graph/index import in the package (leaf preserved); report \u00c2\u00a74."
      ],
      "note": "impl/no-violation."
     },
@@ -1896,7 +1896,7 @@
      "id": "D-024-R080",
      "state": "PASS",
      "evidence": [
-      "`WorkloadFeatures.graph_stale` → unknown-recon-first; `tier_signals` raises `stale_graph`; `neighborhood_from_view` fails closed on malformed views; `test_stale_graph_is_reported_never_used`, `test_malformed_view_fails_closed`."
+      "`WorkloadFeatures.graph_stale` \u00e2\u2020\u2019 unknown-recon-first; `tier_signals` raises `stale_graph`; `neighborhood_from_view` fails closed on malformed views; `test_stale_graph_is_reported_never_used`, `test_malformed_view_fails_closed`."
      ],
      "note": "impl."
     },
@@ -1930,15 +1930,15 @@
      "evidence": [
       "Phase C items 1 (schemas), 2 (classifier), 3 (startup measurement + goldilocks/resume/fork), 5 (graph sizing + packet plans) delivered; item 4 contract-level guards (cap/lease/no-quota) delivered."
      ],
-     "note": "deferred-share; runtime enforcement + item 6 (landing direction, emergency stop, child handoffs) owed to remaining Phase C/D units — report §1 explicitly and honestly defers; nothing here forecloses them."
+     "note": "deferred-share; runtime enforcement + item 6 (landing direction, emergency stop, child handoffs) owed to remaining Phase C/D units \u00e2\u20ac\u201d report \u00c2\u00a71 explicitly and honestly defers; nothing here forecloses them."
     },
     {
      "id": "D-024-R108",
      "state": "PASS",
      "evidence": [
-      "s16.2 SIZING subset (15 rows) mapped to named tests in report §2 and reproduced in the test file (vague/oversized/tiny/resume/overloaded/fork/cohesive/split/unknown/stale/startup-metrics/lower-tier/producer-cap/lease-overlap/nested-children-no-evade + independent no-quota proof)."
+      "s16.2 SIZING subset (15 rows) mapped to named tests in report \u00c2\u00a72 and reproduced in the test file (vague/oversized/tiny/resume/overloaded/fork/cohesive/split/unknown/stale/startup-metrics/lower-tier/producer-cap/lease-overlap/nested-children-no-evade + independent no-quota proof)."
      ],
-     "note": "harness/deferred-share; runtime rows (landing behaviors, TaskStop-for-emergency, catastrophic-ceiling recovery proof, child turnover, 40-min investigation) honestly owed to later Phase C/D units per report §1–§2 (verified — not falsely claimed)."
+     "note": "harness/deferred-share; runtime rows (landing behaviors, TaskStop-for-emergency, catastrophic-ceiling recovery proof, child turnover, 40-min investigation) honestly owed to later Phase C/D units per report \u00c2\u00a71\u00e2\u20ac\u201c\u00c2\u00a72 (verified \u00e2\u20ac\u201d not falsely claimed)."
     },
     {
      "id": "D-024-R120",
@@ -5035,7 +5035,7 @@
      "id": "D-024-R140",
      "state": "PASS",
      "evidence": [
-      "capability-rebaseline.md §1/§5/§7: producer=Fable, Codex read-only supervisor, ledger authority, owner final",
+      "capability-rebaseline.md \u00c2\u00a71/\u00c2\u00a75/\u00c2\u00a77: producer=Fable, Codex read-only supervisor, ledger authority, owner final",
       "matrix requirement_index[R140]=authority-and-process/CUSTOM_REQUIRED"
      ],
      "note": "Roles preserved; unit-A duty discharged.",
@@ -5047,7 +5047,7 @@
      "state": "PASS",
      "evidence": [
       "native-reuse-matrix.json 147 IDs mapped; coverage machine-verified == resolver union",
-      "report §3/§6 native-reuse over duplicate machinery"
+      "report \u00c2\u00a73/\u00c2\u00a76 native-reuse over duplicate machinery"
      ],
      "note": "Re-baseline produced; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5068,7 +5068,7 @@
      "id": "D-024-R145",
      "state": "PASS",
      "evidence": [
-      "report §2/§9: installed still 2.1.220, binary upgrade deferred to M0-T103 with pre-update capture",
+      "report \u00c2\u00a72/\u00c2\u00a79: installed still 2.1.220, binary upgrade deferred to M0-T103 with pre-update capture",
       "no premature update in diff 05d03a0..HEAD"
      ],
      "note": "Authorization exercised within bounds; upgrade correctly deferred.",
@@ -5080,7 +5080,7 @@
      "state": "PASS",
      "evidence": [
       "diff 05d03a0..b69600f: only project-control/ + fixtures touched; 0 file deletions; no SDK/MCP/dep/PR-merge/model-sub",
-      "report §11: PR #241 never merged, continuous-mode owner-gated"
+      "report \u00c2\u00a711: PR #241 never merged, continuous-mode owner-gated"
      ],
      "note": "No prohibited action taken.",
      "verified_by": "directive-compliance-verifier",
@@ -5112,7 +5112,7 @@
      "state": "PASS",
      "evidence": [
       "matrix installed_probe fields record 2.1.220 gating (e.g. /goal check-ins 2.1.234+ absent)",
-      "report §10: installed-version fixture + real canary required per adopted feature; live fixtures flagged pending"
+      "report \u00c2\u00a710: installed-version fixture + real canary required per adopted feature; live fixtures flagged pending"
      ],
      "note": "Unit-A duty: fixture+canary requirement honored in plan; no unproven adoption.",
      "verified_by": "directive-compliance-verifier",
@@ -5156,7 +5156,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R153]=background-session-host/NATIVE_WRAPPED; docs agent-view.md",
-      "report §3: research-preview → feature-detected fallback; never two process systems"
+      "report \u00c2\u00a73: research-preview \u00e2\u2020\u2019 feature-detected fallback; never two process systems"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5178,7 +5178,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R155]=hooks-event-bus/NATIVE_WRAPPED; docs hooks.md",
-      "report §3: all 17 required hook events exist in 31-event set"
+      "report \u00c2\u00a73: all 17 required hook events exist in 31-event set"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5189,7 +5189,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R156]=worktree-isolation/NATIVE_WRAPPED; docs worktrees.md",
-      "report §3: physical isolation native; logical leases/frozen-identity/branch policy RETAINED"
+      "report \u00c2\u00a73: physical isolation native; logical leases/frozen-identity/branch policy RETAINED"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5211,7 +5211,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R158]=skills-operator-surface/NATIVE_WRAPPED; docs skills.md",
-      "report §3: disable-model-invocation:true confirmed; /loop-* thin controls"
+      "report \u00c2\u00a73: disable-model-invocation:true confirmed; /loop-* thin controls"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5222,7 +5222,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R159]=userpromptexpansion-interception/NATIVE_WRAPPED; docs hooks.md",
-      "report §3: zero-model-context proof needs live fixture else honest 2nd-terminal fallback; must not collide with built-in /loop"
+      "report \u00c2\u00a73: zero-model-context proof needs live fixture else honest 2nd-terminal fallback; must not collide with built-in /loop"
      ],
      "note": "Unit-A evaluation duty discharged with honest caveat.",
      "verified_by": "directive-compliance-verifier",
@@ -5233,7 +5233,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R160]=session-identity-succession/NATIVE_WRAPPED; docs sessions.md",
-      "report §3: native resume NOT a seam substitute; --session-id must be UUID"
+      "report \u00c2\u00a73: native resume NOT a seam substitute; --session-id must be UUID"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5255,7 +5255,7 @@
      "state": "PASS",
      "evidence": [
       "requirement_index[R162]=context-safeguards/NATIVE_WRAPPED; docs statusline.md",
-      "report §5: statusLine telemetry RETAINED per R162; /autocompact emergency-only"
+      "report \u00c2\u00a75: statusLine telemetry RETAINED per R162; /autocompact emergency-only"
      ],
      "note": "Unit-A evaluation duty discharged.",
      "verified_by": "directive-compliance-verifier",
@@ -5277,7 +5277,7 @@
      "state": "PASS",
      "evidence": [
       "matrix 110 CUSTOM_REQUIRED rows incl authority/governance areas",
-      "report §7 enumerates the full must-remain-custom set (Codex review, sequencing, traceability, frozen identities, exact-once effects, owner gates, MCP default-deny, replace-not-layer)"
+      "report \u00c2\u00a77 enumerates the full must-remain-custom set (Codex review, sequencing, traceability, frozen identities, exact-once effects, owner gates, MCP default-deny, replace-not-layer)"
      ],
      "note": "Custom-control set preserved.",
      "verified_by": "directive-compliance-verifier",
@@ -5309,10 +5309,10 @@
      "id": "D-024-R169",
      "state": "PASS",
      "evidence": [
-      "report §8 dependency-ordered sequence A(M0-T102)→B(T103)→C(T104)→D(T105)→E(T106)→F(T092)→G(T094)→H1(T093)→H2(T095)→I(T096)→J(T107)",
+      "report \u00c2\u00a78 dependency-ordered sequence A(M0-T102)\u00e2\u2020\u2019B(T103)\u00e2\u2020\u2019C(T104)\u00e2\u2020\u2019D(T105)\u00e2\u2020\u2019E(T106)\u00e2\u2020\u2019F(T092)\u00e2\u2020\u2019G(T094)\u00e2\u2020\u2019H1(T093)\u00e2\u2020\u2019H2(T095)\u00e2\u2020\u2019I(T096)\u00e2\u2020\u2019J(T107)",
       "matrix requirement_index[R169]=governance/CUSTOM_REQUIRED"
      ],
-     "note": "Decomposed into ≥A-J independently reviewable units.",
+     "note": "Decomposed into \u00e2\u2030\u00a5A-J independently reviewable units.",
      "verified_by": "directive-compliance-verifier",
      "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
     },
@@ -5320,7 +5320,7 @@
      "id": "D-024-R170",
      "state": "PASS",
      "evidence": [
-      "M0-T102 = unit A: amendment reconciliation (§1), docs snapshot (16/16), matrix (147), conversion proposal (§4/§8)",
+      "M0-T102 = unit A: amendment reconciliation (\u00c2\u00a71), docs snapshot (16/16), matrix (147), conversion proposal (\u00c2\u00a74/\u00c2\u00a78)",
       "task title/objective in M0-T102.json"
      ],
      "note": "Unit A deliverables present.",
@@ -5331,7 +5331,7 @@
      "id": "D-024-R172",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R172]=background-session-host/NATIVE_WRAPPED; report §4/§8 unit C=M0-T104 (native runtime adapter)"
+      "requirement_index[R172]=background-session-host/NATIVE_WRAPPED; report \u00c2\u00a74/\u00c2\u00a78 unit C=M0-T104 (native runtime adapter)"
      ],
      "note": "Unit-C definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5341,7 +5341,7 @@
      "id": "D-024-R173",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R173]=hooks-event-bus/NATIVE_WRAPPED; report §8 unit D=M0-T105 (native event integration)"
+      "requirement_index[R173]=hooks-event-bus/NATIVE_WRAPPED; report \u00c2\u00a78 unit D=M0-T105 (native event integration)"
      ],
      "note": "Unit-D definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5351,7 +5351,7 @@
      "id": "D-024-R174",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R174]=goal-bounded-continuation/NATIVE_WRAPPED; report §8 unit E=M0-T106 (bounded /goal)"
+      "requirement_index[R174]=goal-bounded-continuation/NATIVE_WRAPPED; report \u00c2\u00a78 unit E=M0-T106 (bounded /goal)"
      ],
      "note": "Unit-E definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5361,7 +5361,7 @@
      "id": "D-024-R175",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R175]=session-identity-succession/NATIVE_WRAPPED; report §4 unit F=M0-T092 (seams/succession, re-scoped)"
+      "requirement_index[R175]=session-identity-succession/NATIVE_WRAPPED; report \u00c2\u00a74 unit F=M0-T092 (seams/succession, re-scoped)"
      ],
      "note": "Unit-F definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5371,7 +5371,7 @@
      "id": "D-024-R176",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R176]=skills-operator-surface/NATIVE_WRAPPED; report §4/§8 unit G=M0-T094 (skills+UserPromptExpansion)"
+      "requirement_index[R176]=skills-operator-surface/NATIVE_WRAPPED; report \u00c2\u00a74/\u00c2\u00a78 unit G=M0-T094 (skills+UserPromptExpansion)"
      ],
      "note": "Unit-G definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5381,7 +5381,7 @@
      "id": "D-024-R177",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R177]=authority-and-process/CUSTOM_REQUIRED; report §4 unit H=M0-T093/T095 (refusal bridge, repair gate, exact-once GitHub, graph regression)"
+      "requirement_index[R177]=authority-and-process/CUSTOM_REQUIRED; report \u00c2\u00a74 unit H=M0-T093/T095 (refusal bridge, repair gate, exact-once GitHub, graph regression)"
      ],
      "note": "Unit-H definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5391,7 +5391,7 @@
      "id": "D-024-R178",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R178]=test-harnesses-canaries/CUSTOM_REQUIRED; report §8 unit I=M0-T096 (shadow/supervised/crash/golden-run)"
+      "requirement_index[R178]=test-harnesses-canaries/CUSTOM_REQUIRED; report \u00c2\u00a78 unit I=M0-T096 (shadow/supervised/crash/golden-run)"
      ],
      "note": "Unit-I definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5401,7 +5401,7 @@
      "id": "D-024-R179",
      "state": "PASS",
      "evidence": [
-      "requirement_index[R179]=portability-plugin/OPTIONAL_ENHANCEMENT; report §8 unit J=M0-T107 (portability plan, post-golden-run, non-blocking)"
+      "requirement_index[R179]=portability-plugin/OPTIONAL_ENHANCEMENT; report \u00c2\u00a78 unit J=M0-T107 (portability plan, post-golden-run, non-blocking)"
      ],
      "note": "Unit-J definition/mapping present; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5411,7 +5411,7 @@
      "id": "D-024-R180",
      "state": "PASS",
      "evidence": [
-      "matrix removal_plan fields per replaced area cite R180 (prove native→adapter→parity→one backend→separate reviewed removal)",
+      "matrix removal_plan fields per replaced area cite R180 (prove native\u00e2\u2020\u2019adapter\u00e2\u2020\u2019parity\u00e2\u2020\u2019one backend\u00e2\u2020\u2019separate reviewed removal)",
       "no runtime replacement performed in diff range (no layering violation)"
      ],
      "note": "Replace-not-layer rule embedded in plan; no violation yet.",
@@ -5423,7 +5423,7 @@
      "state": "PASS",
      "evidence": [
       "git diff 05d03a0..b69600f: 0 file deletions (name-status D=none)",
-      "report §5: 'Nothing is deleted on documentation claims alone (R181)'"
+      "report \u00c2\u00a75: 'Nothing is deleted on documentation claims alone (R181)'"
      ],
      "note": "No accepted code deleted.",
      "verified_by": "directive-compliance-verifier",
@@ -5433,7 +5433,7 @@
      "id": "D-024-R182",
      "state": "PASS",
      "evidence": [
-      "report §10: deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, real low-risk canaries; no token-burning",
+      "report \u00c2\u00a710: deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, real low-risk canaries; no token-burning",
       "matrix evidence_plan fields"
      ],
      "note": "Testing method (harness) specified; unit-A duty.",
@@ -5444,7 +5444,7 @@
      "id": "D-024-R183",
      "state": "PASS",
      "evidence": [
-      "report §10 allocates 26 required proofs (R183-R185) across units B-I via matrix evidence_plan per area (Windows-native, MCP default-deny, statusline leak-freedom, bg dispatch lifecycle, /goal 6 behaviors, hook order)"
+      "report \u00c2\u00a710 allocates 26 required proofs (R183-R185) across units B-I via matrix evidence_plan per area (Windows-native, MCP default-deny, statusline leak-freedom, bg dispatch lifecycle, /goal 6 behaviors, hook order)"
      ],
      "note": "Platform/native proof plan allocated; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5454,7 +5454,7 @@
      "id": "D-024-R184",
      "state": "PASS",
      "evidence": [
-      "report §10: no polling into Fable context, no worker token quotas, overlap rejection, seam rotation, handoff boundedness+successor reconstruction, refusal-vs-quota distinctness"
+      "report \u00c2\u00a710: no polling into Fable context, no worker token quotas, overlap rejection, seam rotation, handoff boundedness+successor reconstruction, refusal-vs-quota distinctness"
      ],
      "note": "Worker-protection/succession proof plan allocated; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5464,7 +5464,7 @@
      "id": "D-024-R185",
      "state": "PASS",
      "evidence": [
-      "report §10: GitHub exact-once + both crash windows, stale ledger/handoff reconciliation, graph regression, suite green (2707/3/0), independent sec/QA/control/DCV at frozen identity, mutation teeth"
+      "report \u00c2\u00a710: GitHub exact-once + both crash windows, stale ledger/handoff reconciliation, graph regression, suite green (2707/3/0), independent sec/QA/control/DCV at frozen identity, mutation teeth"
      ],
      "note": "External-effects/recovery/review proof plan allocated; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5474,7 +5474,7 @@
      "id": "D-024-R186",
      "state": "PASS",
      "evidence": [
-      "report §10: golden run at M0-T096 executes the amendment's 15-step sequence from the exact owner start command",
+      "report \u00c2\u00a710: golden run at M0-T096 executes the amendment's 15-step sequence from the exact owner start command",
       "matrix requirement_index[R186]=test-harnesses/CUSTOM_REQUIRED"
      ],
      "note": "Golden-run plan present; unit-A duty (executed at M0-T096).",
@@ -5485,7 +5485,7 @@
      "id": "D-024-R188",
      "state": "PASS",
      "evidence": [
-      "report §8: one cohesive writer task at a time; M0-T092..T096 claims HELD until conversion accepted (R139); campaign-continuity/verification kept current",
+      "report \u00c2\u00a78: one cohesive writer task at a time; M0-T092..T096 claims HELD until conversion accepted (R139); campaign-continuity/verification kept current",
       "requirement_index[R188]=governance/CUSTOM_REQUIRED"
      ],
      "note": "Campaign execution rules honored; unit-A duty.",
@@ -5496,7 +5496,7 @@
      "id": "D-024-R190",
      "state": "PASS",
      "evidence": [
-      "capability-rebaseline.md §1-§11 present: (1)identity (2)versions 2.1.220→2.1.246 (3)matrix (4)tasks-changed (5)untouched-accepted (6)native-replaces (7)remains-custom (8)sequence (9)upgrade/rollback (10)test/golden-run (11)owner-decisions=None"
+      "capability-rebaseline.md \u00c2\u00a71-\u00c2\u00a711 present: (1)identity (2)versions 2.1.220\u00e2\u2020\u20192.1.246 (3)matrix (4)tasks-changed (5)untouched-accepted (6)native-replaces (7)remains-custom (8)sequence (9)upgrade/rollback (10)test/golden-run (11)owner-decisions=None"
      ],
      "note": "All 11 owner-report items present.",
      "verified_by": "directive-compliance-verifier",
@@ -5507,7 +5507,7 @@
      "state": "PASS",
      "evidence": [
       "capture-verification.md: report+amendment independently validated PASS",
-      "report §11: 'None to proceed', no owner gate reached; campaign continues"
+      "report \u00c2\u00a711: 'None to proceed', no owner gate reached; campaign continues"
      ],
      "note": "Independently validated; sequencing honored; unit-A duty.",
      "verified_by": "directive-compliance-verifier",
@@ -5895,38 +5895,67 @@
     "D-024-R156",
     "D-024-R172"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "594276021605dd4c7cfb5f9de7ba4f2c5f2378b4",
+   "verified_at": "2026-08-27T09:30:00+00:00",
    "requirements": [
     {
      "id": "D-024-R153",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "runtime_backend.py select_runtime_backend: native chosen ONLY with prefer_native opt-in AND background_gaps()==[]; every gap incl 'unknown' falls back to controller (fail closed)",
+      "runtime_backend.py RuntimeSession.activate raises backend_already_active on 2nd activation -> never two process-management systems; test_second_backend_activation_refused PASS",
+      "native_runtime.detect_native_capabilities (measured-at-use, never cached) + daemon_status + reconcile_after_restart (R032, no duplicate/silent re-run); tests observe_unavailable/restart_no_duplicate/reconcile_refuses_unavailable_feed PASS",
+      "fixtures/agents_listing_all_2026-08-27_m0t104.json canary rows a1 stopped / a2 done prove live native dispatch on the preferred host",
+      "docstrings scope Codex to sequencing/review/acceptance/durable state; forbidden_paths (project_control.py, directive_registry.py, tasks) confirm adapter cannot assume control authority"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "594276021605dd4c7cfb5f9de7ba4f2c5f2378b4",
+     "note": "Native evaluated and selected as preferred producer host WITH feature-detected controller fallback retained; one-backend invariant enforced by construction+test; no overreach."
     },
     {
      "id": "D-024-R154",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "native_runtime AGENTS_STATUS_ARGV=(claude,agents,--json)+parse_agents_json -> typed records from the daemon feed; observe() polls that feed NOT the worker LLM",
+      "closed classification vocabulary; UNKNOWN first-class never coerced (test_unknown_status_stays_unknown_never_guessed PASS)",
+      "no token-quota/context-number field in DispatchSpec; build_background_argv injects only prompt + optional worktree preamble",
+      "live test_live_agents_json_parses PASS; agents_listing fixture is the captured structured feed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "594276021605dd4c7cfb5f9de7ba4f2c5f2378b4",
+     "note": "Structured passive observation via agents --json consumed programmatically; worker never asked for routine token/status; no quotas/context numbers in assignments."
     },
     {
      "id": "D-024-R156",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "native_runtime WorktreeSpec mandates base==head or full 40-hex SHA (default-branch hazard); test_worktree_base_must_be_pinned PASS",
+      "build_background_argv refuses 'head' on CLI path and injects reset preamble with git rev-parse --show-toplevel primary-checkout guard + git reset --hard <sha>; head_refused/sha_pins tests PASS",
+      "git ls-tree main: both modules are NEW additions; no pre-existing lease/frozen-identity/branch-policy/cleanup/overlap code removed; forbidden_paths block project_control.py/directive_registry.py -> retention holds by construction"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "594276021605dd4c7cfb5f9de7ba4f2c5f2378b4",
+     "note": "Native worktree isolation evaluated and physical isolation reused with mandatory pinned base + guarded reset; all existing logical controls RETAINED (nothing removed)."
     },
     {
      "id": "D-024-R172",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "feature detection: detect_native_capabilities; native_runtime_detection fixture shows all 9 flags + 5 verbs supported @2.1.247",
+      "named+deterministic identity: derive_session_identity (uuid5, closed lowercase charset); test_identity_deterministic_and_valid_uuid PASS",
+      "native background dispatch: build_background_argv + NativeBackgroundBackend.dispatch (child-env strip unavoidable); test_dispatch_default_backend_still_strips_child_env PASS",
+      "agents --json ingestion: parse_agents_json/observe",
+      "attach/logs/stop/respawn: build_verb_argv + wrappers; test_stop_logs_respawn_attach_argv + test_verb_check_surfaces_daemon_failure PASS",
+      "existing controller fallback: ControllerBackend (injected existing dispatch)+select_runtime_backend; test_controller_backend_delegates_to_existing_dispatch PASS",
+      "exactly ONE backend/session: RuntimeSession; test_second_backend_activation_refused PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "594276021605dd4c7cfb5f9de7ba4f2c5f2378b4",
+     "note": "All seven unit-C composition elements present and independently exercised; 77/77 tests incl 2 live rows on 2.1.247."
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "44ce19b372e49768a326427b45743d32000f2fec7d77401683c8555f2a4ea38f",
+   "verification_note": "Delta re-review round: all four applicable requirements PASS at re-frozen deliverable f610aab (content identity 44ce19b3...); verified_by directive-compliance-verifier independent of orchestrator producer; G3/G4/G5 delta all PASS; 77/77 tests, 2209-test freeze suite green."
   },
   {
    "task_id": "M0-T105",
@@ -6033,5 +6062,5 @@
    "note": "M0-T108 D-024 applicable set = EMPTY, independently verified (resolver + raw-JSON re-matcher + all-28-directive selective-citation cross-check); the 28 D-004/D-007 rows whose paths intersect .claude/hooks/settings.json are all excluded by non-empty task_ids naming other tasks. Evidence: project-control/reports/M0-T108-DCV.md."
   }
  ],
- "updated_at": "2026-08-27T00:30:00+00:00"
+ "updated_at": "2026-08-27T09:30:00+00:00"
 }
