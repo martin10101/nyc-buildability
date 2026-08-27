@@ -47,11 +47,11 @@
     "directive-compliance-verifier"
   ],
   "status": "rework",
-  "progress_percent": 85,
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:58.338868+00:00",
-  "updated_at": "2026-08-27T02:13:48.906602+00:00",
+  "updated_at": "2026-08-27T02:22:16.450522+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -60,5 +60,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-26T22:31:58.340873+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-27T02:22:16.450522+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 60,
+      "status": "rework",
+      "message": "Consolidated correction round (G3 FAIL + G5 C1-C4 blocking + G4 HIGH advisory). Confirmed-real bypasses to fix: [D1/C1/A2] PS write aliases ac/clc/mi/epcsv/sp/rp + mkdir; [D2] .NET ::new() writer constructors (StreamWriter/FileStream/BinaryWriter); [C2] COM (New-Object -ComObject) + CIM/WMI Win32_Process.Create; [D3] nested-shell (powershell/pwsh/cmd) laundering made shell-agnostic (Bash path too); [C3/A4] remove redundant _PS_ENCODED (fixes -Encoding read false-positive; encoded cmd already denied by nested-shell); [A3] ${null} redirect target; [A1] PS call-operator quoted-literal unwrap in _ps_normalize (Bash-side 'gh' quoted-literal is PRE-EXISTING in shared _MUTATING core -> documented residual + follow-up, not broadened to avoid grep-read FPs); [D4] read command text defensively from all tool_input string values so an unconfirmed PowerShell field name cannot fail open; [C4] honest residual docstring. Plus RED-on-mutant rows for each new tooth."
+    }
+  ]
 }
