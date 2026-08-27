@@ -4,9 +4,18 @@
   "reviewer": "qa-engineer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M0-T108-G4-qa-review.md",
-  "reviewed_at": "2026-08-27T02:19:01.517109+00:00",
-  "content_manifest_sha256": "fdff8e5861036f84cfdf432a0555e8c81db31bf7d04e1be18d0096b30a0cab5b",
-  "reviewed_sha": "26e0eb58b05859d0c5600d7a796a7381948768f0",
-  "updated_at": "2026-08-27T02:19:03.445676+00:00"
+  "report_file": "project-control/reports/M0-T108-G4-qa-review-delta.md",
+  "reviewed_at": "2026-08-27T02:54:04.370507+00:00",
+  "content_manifest_sha256": "b0fdcd45396dfdd91dd606e9a56b4404e373a8c6d6047266b0fe4a73e7f77437",
+  "reviewed_sha": "36f97209935cef8be6e74754e7121365d4189d29",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T108-G4-qa-review.md",
+      "reviewed_at": "2026-08-27T02:19:01.517109+00:00"
+    }
+  ],
+  "updated_at": "2026-08-27T02:54:04.826617+00:00"
 }
