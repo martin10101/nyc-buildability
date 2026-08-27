@@ -298,6 +298,36 @@ for cmd in ["Set-CimInstance -Query x", "New-CimInstance X", "Remove-CimInstance
     check(f"A1 CIM/WMI deny: {cmd[:34]}", "DENY", ps(ROLE, cmd))
 check("A1 Get-CimInstance read allow", "ALLOW", ps(ROLE, "Get-CimInstance Win32_Process"))
 
+print("== Round-4 (G5 NF1/NF2, G3 D-R3-1, G4 ADV-1/ADV-2) ==")
+# NF1 — COM shortest abbreviations + reflection
+for cmd in ["New-Object -C Scripting.FileSystemObject", "New-Object -Co Scripting.FileSystemObject",
+            "New-Object -Com Scripting.FileSystemObject", "New-Object -ComObject Scripting.FileSystemObject",
+            "$f=New-Object -C Scripting.FileSystemObject; $f.CreateTextFile('x')",
+            "[activator]::CreateInstance([type]::GetTypeFromProgID('Scripting.FileSystemObject'))",
+            "[System.Activator]::CreateInstance($t)"]:
+    check(f"NF1 COM deny: {cmd[:34]}", "DENY", ps(ROLE, cmd))
+# non-COM New-Object stays allowed (no -c param)
+check("NF1 non-COM New-Object allow", "ALLOW", ps(ROLE, "New-Object System.Collections.ArrayList"))
+# NF2 — assignment-fronted encoded / nested shell
+for cmd in ["$z=powershell -enc SQBFAFgA", "$z=powershell -e SQBFAFgA", "$z=powershell -en SQBFAFgA",
+            "$z = powershell -e SQBFAFgA", "$z=pwsh -e SQBFAFgA", "$z=cmd /c whoami"]:
+    check(f"NF2 assign-shell deny: {cmd[:30]}", "DENY", ps(ROLE, cmd))
+# F2 spawn/first-token still deny
+for cmd in ["start powershell -enc SQBFAFgA", "saps cmd /c whoami", "start notepad",
+            "powershell -enc SQBFAFgA", "pwsh -c Set-Content"]:
+    check(f"F2 spawn deny: {cmd[:30]}", "DENY", ps(ROLE, cmd))
+# D-R3-1 + ADV-2 — reads mentioning powershell/pwsh as DATA now ALLOW
+for cmd in ["Select-String -Encoding utf8 -Pattern powershell -Path notes.md",
+            "Get-Content -Encoding UTF8 powershell-notes.md",
+            "Get-Content -Encoding UTF8 README.md"]:
+    check(f"D-R3-1 read allow: {cmd[:34]}", "ALLOW", ps(ROLE, cmd))
+check("D-R3-1 pipe read allow", "ALLOW", ps(ROLE, "Get-Content -Encoding utf8 notes.md | Select-String pwsh"))
+# ADV-1 — 'start'/'saps' as DATA now ALLOW
+check("ADV-1 start-as-data allow (PS)", "ALLOW", ps(ROLE, "Select-String -Pattern start tools/x.py"))
+check("ADV-1 start-as-data allow (Bash)", "ALLOW", bash(ROLE, "git log --grep start feature"))
+# assignment read stays allowed
+check("assignment read allow", "ALLOW", ps(ROLE, "$x = Get-Content README.md"))
+
 print("== Identity pass-through unchanged ==")
 check("lead (no identity) + PS Set-Content -> allow", "ALLOW",
       ps(None, "Set-Content x.txt hi"))
@@ -361,7 +391,7 @@ MUTANTS = {
         ps(ROLE, '[IO.StreamWriter]::new("x.txt")'),
     ),
     "mutant drops COM tooth -> New-Object -ComObject would slip": (
-        SRC.replace(r"| New-Object\s+-Com\w*\b", ""),
+        SRC.replace(r"| New-Object\s+-c\w*\b", ""),
         ps(ROLE, "New-Object -ComObject Scripting.FileSystemObject"),
     ),
     "mutant drops CIM/WMI tooth -> Invoke-CimMethod would slip": (
@@ -373,18 +403,27 @@ MUTANTS = {
             "ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm", "spps|rbp|swmi|icm"),
         ps(ROLE, "ac x.txt hi"),
     ),
-    "mutant keeps only -ComObject (no prefix) -> New-Object -Com would slip (F1)": (
-        SRC.replace(r"| New-Object\s+-Com\w*\b", r"| New-Object\s+-ComObject\b"),
-        ps(ROLE, "New-Object -Com Scripting.FileSystemObject"),
+    "mutant raises COM floor to -Com -> New-Object -C would slip (NF1)": (
+        # -ComObject is New-Object's only C-param, so the floor must be -c\w*;
+        # a -Com\w* floor misses the shorter valid abbreviations -C / -Co.
+        SRC.replace(r"| New-Object\s+-c\w*\b", r"| New-Object\s+-Com\w*\b"),
+        ps(ROLE, "New-Object -C Scripting.FileSystemObject"),
     ),
-    "mutant drops start/saps spawn aliases -> start powershell -enc would slip (F2)": (
-        # remove start|saps from the alias branch AND the scoped encoded pass, so
-        # `start powershell -enc` reaches neither -> proves both F2 teeth.
-        SRC.replace("start|saps)\\s  # write/spawn cmdlet aliases", "spps)\\s  # (mutated)")
-           .replace(
-               "        if _PS_ENCODED_CMD.search(cmd) and _PS_HAS_SHELL.search(cmd):\n"
-               "            return True\n", ""),
-        ps(ROLE, "start powershell -enc SQBFAFgA"),
+    "mutant drops Activator/reflection COM tooth -> [activator]::CreateInstance would slip (NF1)": (
+        SRC.replace(r"| \[(?:System\.)?Activator\]::CreateInstance\b", "")
+           .replace(r"| GetTypeFromProgID\b", ""),
+        ps(ROLE, "[activator]::CreateInstance($t)"),
+    ),
+    "mutant drops spawn-alias -> start notepad would slip (ADV-1/F2)": (
+        SRC.replace("or _SPAWN_ALIAS.match(tok)", ""),
+        ps(ROLE, "start notepad"),
+    ),
+    "mutant drops assignment-RHS command token -> $z=powershell -enc would slip (NF2)": (
+        SRC.replace(
+            "        tok = _effective_command_token(words)\n",
+            "        tok = (words[0].rsplit('/', 1)[-1].rsplit(chr(92), 1)[-1]\n"
+            "               if words else None)\n"),
+        ps(ROLE, "$z=powershell -enc SQBFAFgA"),
     ),
     "mutant drops defensive field extraction -> write in 'script' field would slip": (
         SRC.replace(

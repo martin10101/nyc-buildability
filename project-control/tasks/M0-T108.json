@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 88,
+  "status": "in_progress",
+  "progress_percent": 92,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:58.338868+00:00",
-  "updated_at": "2026-08-27T03:40:30.476502+00:00",
+  "updated_at": "2026-08-27T03:47:31.506931+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -96,6 +96,13 @@
       "percent": 88,
       "status": "rework",
       "message": "Round-3 re-review complete: G3 FAIL (D-R3-1 -Encoding+shell-word FP), G4 PASS (+ADV-3 fail-open COM -c/-co), G5 FAIL (NF1 COM -C/-Co + [activator]::CreateInstance reflection = arbitrary write; NF2 $z=powershell -enc/-e assignment-fronted encoded shell). All findings converge on command-position-aware detection. ROUND-4 (owner-authorized 'yes do it'): (1) COM tooth New-Object -c\\w* + deny GetTypeFromProgID/[activator]::CreateInstance; (2) command-position shell/spawn detection with assignment-RHS ($x=powershell) - fixes D-R3-1 FP AND NF2; remove _PS_ENCODED_CMD/_PS_HAS_SHELL; (3) start/saps as command-position _SPAWN_ALIAS (fixes ADV-1); (4) docstring honesty. +RED-on-mutant rows."
+    },
+    {
+      "at": "2026-08-27T03:47:31.506931+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Round-4 applied (owner-authorized): NF1 COM floor -c\\w* + Activator/GetTypeFromProgID reflection; NF2 command-position nested-shell via _effective_command_token (assignment-RHS $x=powershell) - removed fragile _PS_ENCODED_CMD/_PS_HAS_SHELL; D-R3-1/ADV-2 -Encoding+shell-word reads now ALLOW; ADV-1 start/saps moved to command-position _SPAWN_ALIAS; docstring honesty. PS pack 187/187 (15 mutants), Bash 136/136, ruff clean, modularity 0 failures. Re-freezing for round-4 re-review."
     }
   ]
 }

@@ -53,15 +53,27 @@ An unparseable / non-object payload fails CLOSED (deny) — real harness payload
 always valid JSON objects, so this never affects the main session in practice while
 guaranteeing a malformed event can never slip a mutation through.
 
-Documented residuals (honest — M0-T108 G5 C4). The static denylist is broad but
-not exhaustive; these forms are known-uncovered and are covered instead by the
-compensating controls (a) and (b) below:
+Documented residuals (honest — M0-T108 G5 C4/round-4). The static denylist is
+broad but not exhaustive; these forms are known-uncovered and are covered
+instead by the compensating controls (a) and (b) below:
 - A scripting-language write composed DYNAMICALLY at runtime (string-built mode,
   exec of assembled source) is not statically resolvable — the scripting pass
   catches the direct idioms only. A PowerShell verb assembled by string
   concatenation is likewise dynamic; its common execution vectors
-  (`Invoke-Expression`/`iex`, `& $var`, nested shells `powershell`/`pwsh`/`cmd`)
-  ARE denied, but an arbitrary dynamic assembly is not guaranteed to be.
+  (`Invoke-Expression`/`iex`, `& $var`) ARE denied, but an arbitrary dynamic
+  assembly is not guaranteed to be.
+- A nested Windows shell (`powershell`/`pwsh`/`cmd`, incl. `-enc` encoded
+  payloads) and the Start-Process aliases (`start`/`saps`) are denied in
+  COMMAND/SPAWN position — a segment's first token OR the RHS of a leading
+  `$var =` assignment (round-4 NF2). The word as pure DATA (a `-Pattern`/filename
+  argument) is intentionally NOT denied. A shell invoked through a form neither
+  first-token nor simple-assignment (e.g. a deeply nested expansion) is a
+  residual. `bash`/`sh`/`wsl` self-launch from the Bash tool is a separate
+  pre-existing residual (see `_launches_nested_shell`).
+- COM instantiation is denied via `New-Object -c…` (the `-ComObject` parameter
+  down to its shortest unambiguous abbreviation `-c`, round-4 NF1) and via the
+  reflection path (`[Activator]::CreateInstance`, `GetTypeFromProgID`). A COM
+  object built through some other reflection chain is a residual.
 - A mutating command reached by a call operator on a QUOTED literal is unwrapped
   on the PowerShell path (`& 'Set-Content'`), but the analogous Bash-tool form
   (`'gh' pr create`, a mutating verb whose only preceding char is a quote) is a
@@ -184,15 +196,26 @@ _BASH_REDIRECT_TARGET_OK = re.compile(r"^(?:&|/dev/(?:null|stderr|stdout)\b)")
 # stream merges (`&1`, `&2`).
 _PS_REDIRECT_TARGET_OK = re.compile(r"(?i)^(?:&\d|\$null\b|\$\{null\})")
 
-# Nested-shell laundering vector (M0-T108 D3): a governed reviewer must not
-# spawn another shell to perform a write. Applied to BOTH shells (a Bash-tool
-# `powershell -Command "Set-Content x"` was the common open vector). Matched
-# command-initial only (segment start, via _split_command_segments), so a
-# read command that merely mentions the word (`echo cmd`, `grep pwsh`) is not
-# denied. `-e`/`-enc…` encoded commands are covered here (they execute only
-# via one of these shells) — so no separate `-Encoding`-colliding flag rule is
-# needed (C3: the former _PS_ENCODED denied legitimate `-Encoding` reads).
+# Nested-shell / process-spawn laundering vector (M0-T108 D3/F2/NF2): a governed
+# reviewer must not spawn another shell or process to perform a write. Detected
+# by COMMAND/SPAWN POSITION only (a segment's first token, or the RHS of a
+# leading `$var =` / `$var=` assignment) via _launches_nested_shell — so the
+# word as pure DATA (a `-Pattern` value, a filename, a `--grep` argument) is NOT
+# denied. This position-awareness (round-4) removes the former
+# `_PS_ENCODED_CMD`/`_PS_HAS_SHELL` "shell word anywhere" pair, which both
+# false-positived `-Encoding` reads mentioning `powershell`/`pwsh` as data
+# (G3 round-3 D-R3-1 / G4 ADV-2) AND missed the assignment-fronted
+# `$z=powershell -enc` encoded child-shell (G5 round-3 NF2). An
+# `-enc`/`-encodedcommand` payload needs one of these shells to run, and every
+# invocation position of the shell is covered here, so no separate encoded-flag
+# rule is needed.
 _NESTED_SHELL = re.compile(r"(?i)^(?:powershell|pwsh|cmd)(?:\.exe)?$")
+# Start-Process short aliases (`start`, `saps`) — the only built-in aliases of
+# Start-Process. Denied ONLY in command/spawn position (round-4 ADV-1): a
+# `start`/`saps` that INVOKES a process DENIes, but the word "start" as data
+# (`git log --grep start`, `Select-String -Pattern start`) ALLOWs. The full
+# cmdlet `Start-Process` stays in `_PS_MUTATING` (distinctive name).
+_SPAWN_ALIAS = re.compile(r"(?i)^(?:start|saps)$")
 
 # PowerShell-specific mutation surface (M0-T108; G5 M0-T102 MEDIUM). Matched on
 # the backtick-normalized command text (with call-operator-quoted literals
@@ -223,7 +246,9 @@ _PS_MUTATING = re.compile(
       | Invoke-(?:WebRequest|RestMethod)\b[^;|]*?(?:-OutFile\b|-Method\s+(?:POST|PUT|PATCH|DELETE)\b)
       | Invoke-(?:Cim|Wmi)Method\b          # any CIM/WMI method invocation (reads use Get-CimInstance)
       | (?:Set|New|Remove)-CimInstance\b
-      | New-Object\s+-Com\w*\b              # -Com/-ComO/-ComObj/-ComObject (PS prefix abbreviation)
+      | New-Object\s+-c\w*\b                # -c/-co/-com…/-comobject (ONLY C-param of New-Object; NF1)
+      | \[(?:System\.)?Activator\]::CreateInstance\b   # COM/type instantiation via reflection (NF1)
+      | GetTypeFromProgID\b                 # [type]::GetTypeFromProgID('Scripting.FileSystemObject') (NF1)
       | New-Object\s+(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\b
       | \[(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\]::new\b
       | \[(?:System\.)?IO\.(?:File|Directory)\]::
@@ -235,24 +260,13 @@ _PS_MUTATING = re.compile(
       | schtasks\b[^;|]*/(?:create|delete|change|run|end)\b
       | icacls\b[^;|]*/(?:grant|deny|remove|reset|setowner)\b
       | (?:sc|ni|ri|rd|del|erase|md|mkdir|cpi|rni|ren|move|copy|
-           ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm|
-           start|saps)\s  # write/spawn cmdlet aliases (start/saps = Start-Process)
+           ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm)\s  # write cmdlet aliases
       | &\s*\$                                # call operator on a variable
     )
     """
 )
 # A `-OutFile` anywhere (outside the Invoke-* form above) writes a file.
 _PS_OUTFILE = re.compile(r"(?i)(?:^|\s)-OutFile\b")
-# Encoded-command execution (M0-T108 round-3 F2). The former _PS_ENCODED matched
-# `-enc`/`-encodedcommand` UNCONDITIONALLY and collided with `-Encoding` reads
-# (G5 C3). This scoped form fires ONLY when a `powershell`/`pwsh` token is also
-# present in the command — an encoded payload is meaningless without the shell
-# that runs it — so `Get-Content -Encoding UTF8 f` (no shell token) stays ALLOW
-# while `start powershell -enc <b64>` (shell present, but NOT first-token so the
-# nested-shell pass misses it) DENIes. `\b-e(?:c|nc\w*)` matches -ec/-enc/
-# -encodedcommand; `-Encoding` is excluded because it needs the shell token.
-_PS_ENCODED_CMD = re.compile(r"(?i)(?:^|\s)-e(?:c|nc\w*)\b")
-_PS_HAS_SHELL = re.compile(r"(?i)(?:^|[\s;&|({`'\"])(?:powershell|pwsh)(?:\.exe)?\b")
 
 # Best-effort inline scripting-write idioms (both shells; M0-T108 objective iii).
 # Deliberately mode-gated: `open(f)` / `open(f,'r')` / `open(f,'rb')` are pure
@@ -563,38 +577,61 @@ def _unquoted_redirect(cmd, powershell=False):
     return False
 
 
+def _effective_command_token(words):
+    """The COMMAND token of a segment, skipping a leading `$var =` / `$var=`
+    PowerShell assignment so an assignment-fronted invocation is seen in command
+    position (M0-T108 NF2: `$z = powershell -enc …` invokes powershell). Returns
+    the base name (path stripped) or None.
+
+    Forms handled: `powershell …` -> powershell; `$x = powershell …` (tokens
+    `$x`,`=`,`powershell`) -> powershell; `$x=powershell …` (one token) ->
+    powershell; `$x= powershell` / `$x =powershell` -> powershell. A normal read
+    (`$x = Get-Content`) yields `Get-Content` -> not a shell -> allowed."""
+    if not words:
+        return None
+    w0 = words[0]
+    tok = w0
+    if w0.startswith("$") and "=" in w0:
+        rhs = w0.split("=", 1)[1]
+        tok = rhs if rhs else (words[1] if len(words) > 1 else "")
+    elif w0.startswith("$") and len(words) >= 3 and words[1] == "=":
+        tok = words[2]
+    elif w0.startswith("$") and len(words) >= 2 and words[1].startswith("="):
+        # `$x =powershell` -> second token is `=powershell`
+        tok = words[1].split("=", 1)[1] or (words[2] if len(words) > 2 else "")
+    if not tok:
+        return None
+    return tok.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+
+
 def _launches_nested_shell(cmd):
-    """True if any command segment's FIRST token is a nested Windows shell —
-    exactly `powershell`, `pwsh`, or `cmd` (see `_NESTED_SHELL`) — a laundering
-    vector by which a governed reviewer could spawn a second shell to perform a
-    write (M0-T108 D3, applied to BOTH shells). Command-initial only, via the
-    same segment splitter the git argv pass uses, so a read that merely mentions
-    the word (`echo cmd`, `grep pwsh file`) is not denied.
+    """True if any command segment INVOKES a nested Windows shell (`powershell`,
+    `pwsh`, `cmd` — see `_NESTED_SHELL`) or a Start-Process alias (`start`,
+    `saps` — see `_SPAWN_ALIAS`) in COMMAND/SPAWN POSITION: the segment's first
+    token, OR the RHS of a leading `$var =` assignment (`_effective_command_token`).
+    A laundering vector by which a governed reviewer could spawn a second
+    shell/process to perform a write (M0-T108 D3/F2/NF2, applied to BOTH shells).
+    Position-aware, so the word as pure DATA (`echo cmd`, `grep pwsh file`,
+    `git log --grep start`, `Select-String -Pattern powershell`) is NOT denied.
 
-    Scope note (M0-T108 G3-A1 / docstring parity): `bash`/`sh`/`wsl` are
-    deliberately NOT in this set. Including `sh` would collide with the
-    backtick-split fragment of `git pu`+backtick+`sh` (breaking the
-    backtick-normalization regression proof), and the Bash-tool self-launch of
-    another POSIX shell (`sh -c '…'`) is a pre-existing residual covered by the
-    orchestrator-only integration model (see the module docstring's compensating
-    control (b)); it is recommended for a follow-up hardening pass, not closed
-    here. Start-Process aliases (`start`/`saps`) fronting a shell are covered
-    separately by the `_PS_MUTATING` spawn-alias branch on the PowerShell path.
-
-    A leading assignment or wrapper that puts the shell as a non-first word is
-    covered by the shell-agnostic passes when it carries a mutating sub-command."""
+    Scope note (docstring parity): `bash`/`sh`/`wsl` are deliberately NOT in
+    `_NESTED_SHELL` — including `sh` would collide with the backtick-split
+    fragment of `git pu`+backtick+`sh` (breaking the backtick-normalization
+    regression proof), and the Bash-tool self-launch of another POSIX shell
+    (`sh -c '…'`) is a pre-existing residual covered by the orchestrator-only
+    integration model (module docstring compensating control (b)); recommended
+    for a follow-up hardening pass, not closed here."""
     for seg in _split_command_segments(cmd):
         try:
             words = [w for w in shlex.split(seg, posix=True) if w.strip()]
         except ValueError:
-            # Unbalanced quoting in a segment that names a nested shell: fail closed.
-            if re.search(r"(?i)(?:^|[\s;&|({`'\"])(?:powershell|pwsh|cmd)(?:\.exe)?\b", seg):
+            # Unbalanced quoting in a segment that names a nested shell / spawn
+            # alias in command-ish position: fail closed.
+            if re.search(r"(?i)(?:^|[\s;&|({`'\"=])(?:powershell|pwsh|cmd|start|saps)(?:\.exe)?\b", seg):
                 return True
             continue
-        if not words:
-            continue
-        first = words[0].rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
-        if _NESTED_SHELL.match(first):
+        tok = _effective_command_token(words)
+        if tok and (_NESTED_SHELL.match(tok) or _SPAWN_ALIAS.match(tok)):
             return True
     return False
 
@@ -602,19 +639,19 @@ def _launches_nested_shell(cmd):
 def _shell_command_mutates(cmd, powershell=False):
     """The full mutation decision for one shell command (M0-T108). The
     shell-agnostic _MUTATING regex, the quoting-aware git argv pass, the
-    nested-shell laundering pass, the quote-aware redirect scan, and the
-    best-effort inline scripting-write pass run for BOTH shells; PowerShell
+    command-position nested-shell/spawn pass, the quote-aware redirect scan, and
+    the best-effort inline scripting-write pass run for BOTH shells; PowerShell
     additionally normalizes backticks + unwraps call-operator-quoted literals
     first and runs its own cmdlet/.NET/COM/CIM denylist."""
     if powershell:
         cmd = _ps_normalize(cmd)
         if _PS_MUTATING.search(cmd) or _PS_OUTFILE.search(cmd):
             return True
-        # Scoped encoded-command: an -enc payload together with a powershell/pwsh
-        # token (F2). Catches `start powershell -enc <b64>` that the first-token
-        # nested-shell pass misses, without denying `-Encoding` reads (no shell).
-        if _PS_ENCODED_CMD.search(cmd) and _PS_HAS_SHELL.search(cmd):
-            return True
+    # The command-position nested-shell/spawn pass (_launches_nested_shell) now
+    # covers every shell-invocation position — segment-first AND assignment-RHS —
+    # so an encoded (`-enc`) child shell is denied wherever the shell is invoked,
+    # with no `-Encoding`-colliding flag rule needed (round-4 replaces the former
+    # scoped _PS_ENCODED_CMD/_PS_HAS_SHELL pair).
     return bool(
         _MUTATING.search(cmd)
         or _unquoted_redirect(cmd, powershell=powershell)

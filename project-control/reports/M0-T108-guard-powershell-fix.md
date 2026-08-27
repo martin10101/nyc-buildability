@@ -143,6 +143,31 @@ below the modularity WARN threshold — the checker reports 0 failures and does 
 the growth is additional denylist rules within the guard's single responsibility, no
 responsibility mixing).
 
+## 5b. Round-4 correction (G5 round-3 NF1/NF2; G3 round-3 D-R3-1; G4 ADV-1)
+
+Round-3 delta review: G4 PASS, but **G3 FAIL** (D-R3-1) and **G5 FAIL** (NF1/NF2). All three
+findings shared one root cause — regexes matched tokens as **data** anywhere rather than in
+**command/spawn position**. Round-4 fixes that root cause; all closed with RED-on-mutant proofs:
+
+| Finding | Fix | Proof |
+|---|---|---|
+| **G5 NF1 (MEDIUM, fail-open)** — COM `New-Object -C`/`-Co` bind to `-ComObject` (its only C-param) and bypassed the `-Com\w*` floor → arbitrary file write; also `[activator]::CreateInstance([type]::GetTypeFromProgID(...))` reflection | COM floor lowered to `New-Object\s+-c\w*\b` (covers `-c`/`-co`/`-com…`); added `[Activator]::CreateInstance` + `GetTypeFromProgID` reflection denials | 7 DENY + non-COM `New-Object System.Collections.ArrayList` ALLOW; NF1-floor + activator mutants |
+| **G5 NF2 (MEDIUM, fail-open)** — `$z=powershell -enc/-e` (assignment-fronted) spawned an ungoverned encoded child shell that both first-token nested-shell and the scoped encoded pass missed | `_launches_nested_shell` now checks the **effective command token** (`_effective_command_token` skips a leading `$var =` / `$var=` assignment); the fragile `_PS_ENCODED_CMD`/`_PS_HAS_SHELL` pair is REMOVED | 6 DENY (`$z=powershell -enc/-e/-en`, spaced, pwsh, cmd); assignment-RHS mutant |
+| **G3 D-R3-1 + G4 ADV-2 (blocking FP)** — the removed scoped encoded pass false-positived `-Encoding` reads that mentioned `powershell`/`pwsh` as DATA | fixed by the same removal + command-position model: a shell word as an argument value is no longer a shell invocation | 4 ALLOW (`Select-String -Encoding … -Pattern powershell`, pipe read, filename, plain) |
+| **G4 ADV-1 (fail-safe over-block)** — `start`/`saps` in the `_PS_MUTATING` alias list denied the word "start" as data | `start`/`saps` moved out of the alias list into a command-position `_SPAWN_ALIAS` checked by `_launches_nested_shell` | 2 ALLOW (`Select-String -Pattern start`, `git log --grep start`); spawn-alias mutant |
+| **G5 item (c) — docstring honesty** | module docstring residuals rewritten: nested-shell/spawn detection is command-position (first-token OR assignment-RHS); COM covered down to `-c` + reflection; bash/sh/wsl self-launch a named residual | docstring |
+
+**Command-position model (round-4 core):** `_launches_nested_shell` denies `powershell`/`pwsh`/
+`cmd` and `start`/`saps` when they are a segment's first token OR the RHS of a leading `$var =`
+assignment — closing the assignment-fronted encoded-shell vector (NF2) while allowing the shell
+word as pure argument data (D-R3-1/ADV-1/ADV-2 false positives fixed). This removed the fragile
+`-enc`/`-Encoding` prefix collision entirely.
+
+**Post-correction evidence (round 4):** PS pack **187/187** (**15** RED-on-mutant, all
+load-bearing — incl. NF1 COM-floor, NF1 activator/reflection, NF2 assignment-RHS, spawn-alias);
+Bash pack **136/136 unchanged**; ruff clean; guard 756 raw lines (SLOC below the modularity WARN
+threshold — checker reports 0 failures, guard not flagged).
+
 ## 6. Scope
 
 Only the four packet paths changed. `.claude/settings.json` change is the single matcher line.
