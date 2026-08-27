@@ -5967,31 +5967,57 @@
     "D-024-R155",
     "D-024-R173"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+   "verified_at": "2026-08-27T16:49:53+00:00",
    "requirements": [
     {
      "id": "D-024-R154",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "tools/agent_supervisor/event_stream.py is passive parse-to-TelemetryRecord only - no model message, prompt composition, or sidecar write in the full 234-line module",
+      "test_s3_statusline_sidecar_stays_primary passes: 'TelemetrySidecar' not in source and ingestion creates only hook_events.jsonl",
+      "R042 labels verified in _step_measurements/_result_measurements (provider-exact/sdk-cumulative, absent -> Measurement.unknown); test_s3_usage_carries_source_confidence_labels passes",
+      "R043 caveat coded in _result_measurements.caveat and asserted ('R043' in final.detail)",
+      "forwarded text stored as text_chars+text_sha256 only; test_s3_forwarded_text_is_reference_never_content passes",
+      "38/38 event-bus tests pass at frozen bfdf4ef"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     },
     {
      "id": "D-024-R155",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "hook_event_payloads_v1.json fixtures exactly the 17 required event types; test_s1_every_required_event_ingests_one_record passes",
+      "hook_event_catalog_2_1_247.json = 31 events, official-docs, drift NONE; test_s8_recorded_drift_matches_computed_drift passes",
+      "live C1 fixture 9 records/7 event types, all UUID-masked; test_c1_live_fixture_masked_and_replayable passes",
+      "recorder exits 0 + stdout-silent + fail-closed; test_s9_* pass",
+      "command hook not HTTP + no self-registration; test_s11_recorder_is_command_hook_only passes and grep -c supervisor_event_recorder .claude/settings.json == 0, settings.json untouched 44a4c6c..HEAD",
+      "no committed tokens / masked fixtures; test_s11_recorder_embeds_no_tokens + test_s11_fixtures_are_masked pass"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     },
     {
      "id": "D-024-R173",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "hook records + stream events ingested (test_s1_*, test_s3_stream_events_become_typed_records)",
+      "dedup via idempotency_key + bounded _seen (test_s2_*, test_s3_stream_key_content_digest_fallback)",
+      "redaction via reused journal + recursive _mask_uuids (test_s4_durable_record_sanitized, test_s4_nested_uuid_masked_at_any_depth)",
+      "atomic persistence + torn-line skip counted (test_s5_torn_final_line_never_a_record)",
+      "restart-safe replay, no double-count, pure reading (test_s6_restart_rebuilds_state_without_double_count, test_s6_replay_is_pure_reading)",
+      "unknown-event (test_s7) + version-drift (event_drift.py, test_s8_*) handled; all in the 38/38 pass at frozen identity"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3",
+   "verification_note": "Independent DCV pass 2026-08-27 (producer=orchestrator, verifier=directive-compliance-verifier) at deliverable bfdf4ef / manifest 4bd0e182 / recorded HEAD 487a020. Applicable set re-derived via evaluate_task_refs (ok=True, missing=[]). Selective-citation cross-check CLEAN across all 28 active directives (D-004/D-007 path scopes excluded by their task_ids conjunction). Frozen-identity discipline verified (deliverable byte-stable since bfdf4ef; guards/native adapter/settings untouched 44a4c6c..HEAD). Verbatim report: project-control/reports/M0-T105-DCV.md"
   },
   {
    "task_id": "M0-T106",
@@ -6062,5 +6088,5 @@
    "note": "M0-T108 D-024 applicable set = EMPTY, independently verified (resolver + raw-JSON re-matcher + all-28-directive selective-citation cross-check); the 28 D-004/D-007 rows whose paths intersect .claude/hooks/settings.json are all excluded by non-empty task_ids naming other tasks. Evidence: project-control/reports/M0-T108-DCV.md."
   }
  ],
- "updated_at": "2026-08-27T09:30:00+00:00"
+ "updated_at": "2026-08-27T16:49:53+00:00"
 }
