@@ -1,72 +1,82 @@
 {
- "task_id": "M0-T092",
- "title": "D-024 D: controller state machine, safe seams, exact-once succession, outage handling",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Extend the existing durable state machine to the full section-3 state set with renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence (owner stop intent survives restart and wins over queued/recovered work); safe-seam detection and handoff validation per section 7 (atomic batches, known lease ownership, recorded checks, no unanswered permission, external effects confirmed/not-attempted/ambiguous-marked, children reconciled, smallest-complete handoff packet, no silent truncation); exact-once primary-session rotation and controller-crash reconciliation (lease races have exactly one winner; watchdog restart without duplicates; bounded read-only orientation for new sessions while children drain); host-restart auto-resume via the repository's approved user-level startup mechanism or truthful activation-blocker reporting; Codex transport preflight (version-probed, structured, read-only, schema-validated, identity-bound, fail-closed - missing/malformed/timed-out/mismatched decisions dispatch nothing) with bounded-backoff durable retry for transient failures and blocked-with-handoff for auth/billing/compatibility failures; no-eligible-work bounded idle. Supervisor-freeze qualifying evidence: D-024-R102 (Phase D). (Amendment 3 conversion, M0-T102 accepted: consume the unit-C native runtime adapter as the feature-detected producer host - exactly one active backend; native session identity/naming per unit C; hook/event feeds per unit D; /goal per unit E for inner continuation; native resume is NEVER a safe-seam substitute (R160); worktree baseRef pinned 'head'/explicit reset and the G5 unit-F security preconditions apply; M0-T091 carried advisory bundle (G5 L1-L5, G3 NIT-1/2, G4 ADV-1) folds in here where these guards are touched.)",
- "business_reason": "D-024 sections 2, 3, 7, 15-D, 16.3: continuity must be a renewable sequence of bounded epochs with exact-once succession, never an immortal process.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R191)"
- ],
- "outputs": [
-  "state-machine/lease/seam/succession/backoff extensions under tools/agent_supervisor",
-  "tools/test_agent_supervisor_controller_succession.py (section 16.3 matrix incl. Gate-0 recovery cases, crash windows, lease races, stop-intent persistence)",
-  "project-control/reports/M0-T092-controller-succession.md"
- ],
- "dependencies": [
-  "M0-T091",
-  "M0-T103",
-  "M0-T104",
-  "M0-T105",
-  "M0-T106"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_controller_succession.py",
-  "project-control/reports/M0-T092-controller-succession.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-26T22:33:01+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+  "task_id": "M0-T092",
+  "title": "D-024 D: controller state machine, safe seams, exact-once succession, outage handling",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Extend the existing durable state machine to the full section-3 state set with renewable epoch leases; pause/resume/graceful-stop/emergency-stop precedence (owner stop intent survives restart and wins over queued/recovered work); safe-seam detection and handoff validation per section 7 (atomic batches, known lease ownership, recorded checks, no unanswered permission, external effects confirmed/not-attempted/ambiguous-marked, children reconciled, smallest-complete handoff packet, no silent truncation); exact-once primary-session rotation and controller-crash reconciliation (lease races have exactly one winner; watchdog restart without duplicates; bounded read-only orientation for new sessions while children drain); host-restart auto-resume via the repository's approved user-level startup mechanism or truthful activation-blocker reporting; Codex transport preflight (version-probed, structured, read-only, schema-validated, identity-bound, fail-closed - missing/malformed/timed-out/mismatched decisions dispatch nothing) with bounded-backoff durable retry for transient failures and blocked-with-handoff for auth/billing/compatibility failures; no-eligible-work bounded idle. Supervisor-freeze qualifying evidence: D-024-R102 (Phase D). (Amendment 3 conversion, M0-T102 accepted: consume the unit-C native runtime adapter as the feature-detected producer host - exactly one active backend; native session identity/naming per unit C; hook/event feeds per unit D; /goal per unit E for inner continuation; native resume is NEVER a safe-seam substitute (R160); worktree baseRef pinned 'head'/explicit reset and the G5 unit-F security preconditions apply; M0-T091 carried advisory bundle (G5 L1-L5, G3 NIT-1/2, G4 ADV-1) folds in here where these guards are touched.)",
+  "business_reason": "D-024 sections 2, 3, 7, 15-D, 16.3: continuity must be a renewable sequence of bounded epochs with exact-once succession, never an immortal process.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R191)"
+  ],
+  "outputs": [
+    "state-machine/lease/seam/succession/backoff extensions under tools/agent_supervisor",
+    "tools/test_agent_supervisor_controller_succession.py (section 16.3 matrix incl. Gate-0 recovery cases, crash windows, lease races, stop-intent persistence)",
+    "project-control/reports/M0-T092-controller-succession.md"
+  ],
+  "dependencies": [
+    "M0-T091",
+    "M0-T103",
+    "M0-T104",
+    "M0-T105",
+    "M0-T106"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_controller_succession.py",
+    "project-control/reports/M0-T092-controller-succession.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 15,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-27T18:47:05.874562+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-27T18:47:05.874562+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Unit F STAGED to the claim+G0+scenario-pack seam under D-031 (session ~750k handoff; occupancy ~59% at claim). Applicable set 65 requirements (R002/R028-R033 section-3 states, R067 handoff packet, R102 Phase-D freeze, R160 native-resume-not-a-seam, R180 one-backend, R024/R025 preflight, R032 host-restart, R033 outage, R125-R128 Gate-0, R042/R045). Reuse boundary mapped (report section 0): unit F is prove-and-extend over 9 accepted modules (state_machine 23 states already present; durable_state/lease_runtime/recovery/turnover_controller/session_continuity/preflight/start_gate/handoff REUSED) + unit C/D/E consumption. Scenario pack S1-S15 + owner-gated C1 succession canary recorded (report section 1). NO implementation this session - largest remaining unit cannot reach a clean submitted seam in remaining budget; successor implements from the frozen pack with fresh context (same pattern as this session's own M0-T105 handoff). Supervisor-freeze qualifying evidence: D-024-R102."
+    }
+  ]
 }
