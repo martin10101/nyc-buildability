@@ -126,6 +126,11 @@ DISPATCH_FLAG_TOKENS: tuple[str, ...] = (
 BACKGROUND_VERBS: tuple[str, ...] = ("agents", "attach", "logs", "stop", "respawn")
 
 #: Minimum surface for the native backend to be selectable at all.
+#: NOTE (G3 ADV-3): ``--session-id`` is required-in-help but deliberately
+#: NEVER emitted by build_background_argv — ``--bg`` manages the session id
+#: and ignores the flag (measured 2.1.247). Its presence here is a
+#: conservative readiness gate: a future CLI dropping it from help signals a
+#: surface change and falls the selection back to the proven controller.
 REQUIRED_BACKGROUND_FLAGS: tuple[str, ...] = ("--bg", "--name", "--session-id")
 REQUIRED_BACKGROUND_VERBS: tuple[str, ...] = BACKGROUND_VERBS
 
@@ -372,6 +377,12 @@ FORBIDDEN_DISPATCH_FLAGS: tuple[str, ...] = (
     "--teleport", "--cloud", "--chrome", "--environment", "--tmux",
 )
 
+#: Closed value charsets for the free argv fields (G5 F1). An agent is a
+#: roster identifier; tools is empty or a comma/space list of built-in tool
+#: names. Neither may begin with '-' (no flag-shaped values).
+_AGENT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+_TOOLS_RE = re.compile(r"|[A-Za-z][A-Za-z0-9,\s()*_-]*")
+
 
 @dataclasses.dataclass(frozen=True)
 class DispatchSpec:
@@ -392,12 +403,26 @@ class DispatchSpec:
         if not self.prompt.strip():
             raise NativeRuntimeError("empty_prompt",
                                      "a dispatch needs a non-empty prompt")
+        # G5 F1: agent and tools are free-value argv fields; validate them so
+        # a caller cannot inject a flag-shaped value (defence in depth beyond
+        # the argv-position + `--` fence + post-build denylist). agent is a
+        # roster identifier; tools is a comma/space list of built-in tool
+        # names (or "" to disable all) — neither may begin with '-'.
+        if self.agent is not None and not _AGENT_RE.fullmatch(self.agent):
+            raise NativeRuntimeError(
+                "invalid_agent", f"agent {self.agent!r} must match "
+                f"{_AGENT_RE.pattern}")
+        if self.tools is not None and not _TOOLS_RE.fullmatch(self.tools):
+            raise NativeRuntimeError(
+                "invalid_tools", f"tools {self.tools!r} must be empty or a "
+                f"comma/space list of built-in tool names (no leading '-')")
 
 
 def build_background_argv(spec: DispatchSpec) -> tuple[str, ...]:
     """The exact ``claude --bg`` argv for one dispatch. Deterministic; the
-    permission mode is validated; forbidden flags are structurally
-    impossible (and re-checked before return).
+    permission mode is validated; forbidden and permission-bypass flags are
+    refused at construction and re-checked before return (a defence-in-depth
+    denylist, not a total proof — see the value validation on DispatchSpec).
 
     Two canary-measured constraints (2.1.247, C1): ``--session-id`` is NOT
     emitted (``--bg`` manages the session id and ignores the flag — the
@@ -488,13 +513,18 @@ class NativeSessionStatus:
 
 
 def _classify_row(status: str, state: str, pid: int | None) -> str:
-    """Closed mapping over LITERALS MEASURED on 2.1.247 (C1 canaries +
-    live listings): status in {waiting, busy, idle, ''}; state in
-    {failed, blocked, done, stopped, completed, ''}. ``state`` outranks
-    ``status`` — the parked-session conflict row (status=waiting +
-    state=failed) is a failure to investigate, and idle means done or
-    needs-input depending on state. Unmeasured combinations stay
-    ``unknown``; the controller decides."""
+    """Closed mapping with ``state`` outranking ``status``.
+
+    LITERALS MEASURED on 2.1.247 (C1 canaries + live listings): status in
+    {waiting, busy, idle, ''}; state in {failed, blocked, done, stopped, ''}.
+    The parked-session conflict row (status=waiting + state=failed)
+    classifies FAILED (investigate before input); idle means done or
+    needs-input depending on state. A few additional synonyms not observed
+    here (status completed/done/finished/running/working; state completed)
+    are accepted defensively — each maps to its semantically-obvious class
+    and none can flip a live/blocked session into a safe-to-ignore state.
+    Every UNMEASURED combination stays ``unknown``; the controller decides
+    (reconcile parks unknown with blocked-input, never re-dispatch)."""
     if state == "failed":
         return CLASS_FAILED
     if state == "stopped":
@@ -580,19 +610,36 @@ _UUID_RE = re.compile(
     r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 
 
+def _mask_uuids(text: str) -> str:
+    return _UUID_RE.sub(lambda m: m.group(0)[:8] + "-[MASKED]", text)
+
+
+def _mask_value(value: object) -> object:
+    """Recursively mask any string value: home-path redaction + UUID
+    truncation. Non-strings pass through; containers recurse."""
+    if isinstance(value, str):
+        redacted, _ = redact_user_paths(value)
+        return _mask_uuids(redacted)
+    if isinstance(value, dict):
+        return {k: _mask_value(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_mask_value(v) for v in value]
+    return value
+
+
 def mask_session_row(row: dict) -> dict:
-    """Mask one raw agents-row for a committed fixture (public repo): home
-    prefixes leave ``cwd``, UUID-shaped path segments are truncated (session
-    scratch dirs embed session ids), and session UUIDs keep only their
-    first 8 chars."""
-    masked = dict(row)
-    if isinstance(masked.get("cwd"), str):
-        cwd, _ = redact_user_paths(masked["cwd"])
-        masked["cwd"] = _UUID_RE.sub(lambda m: m.group(0)[:8] + "-[MASKED]",
-                                     cwd)
+    """Mask one raw agents-row for a committed fixture (public repo).
+
+    G5 F3: a COMPREHENSIVE pass over EVERY string value (home-path
+    redaction + UUID truncation), not a three-field allowlist — a home path
+    or session UUID in ``name``/``waitingFor``/any future field is masked
+    too. ``sessionId``/``id`` additionally collapse to their first 8 chars so
+    a short (non-UUID-shaped) id still loses its tail."""
+    masked = {k: _mask_value(v) for k, v in row.items()}
     for key in ("sessionId", "id"):
         value = masked.get(key)
-        if isinstance(value, str) and len(value) > 8:
+        if isinstance(value, str) and "-[MASKED]" not in value \
+                and len(value) > 8:
             masked[key] = value[:8] + "-[MASKED]"
     return masked
 

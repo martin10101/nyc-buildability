@@ -27,6 +27,7 @@ Supervisor-freeze qualifying evidence: D-024-R153, D-024-R172.
 from __future__ import annotations
 
 import dataclasses
+import os
 from collections.abc import Callable, Mapping, Sequence
 
 from .native_runtime import (
@@ -139,14 +140,22 @@ class NativeBackgroundBackend:
     def __init__(self, run: RunCommand | None = None,
                  base_env: Mapping[str, str] | None = None) -> None:
         self._run = run or run_command
-        self._base_env = base_env
+        # A base env of None means "use the live process environment" — it
+        # does NOT mean "inherit raw". Either way dispatch() strips it, so a
+        # caller cannot silently opt out of the child-env strip (G5 F2 / G3
+        # finding #1: the strip must be unavoidable, never fail open).
+        self._base_env: Mapping[str, str] = \
+            os.environ if base_env is None else base_env
 
     def dispatch(self, spec: DispatchSpec) -> CommandResult:
-        """Dispatch one background session with an EXPLICIT child
-        environment (inherited session markers stripped — transcript
-        suppression hazard, R162-discharge section 4.3)."""
-        env = child_environment(self._base_env) if self._base_env is not None \
-            else None
+        """Dispatch one background session with an EXPLICIT child environment.
+
+        The child env is ALWAYS ``child_environment(base_env)`` — every
+        inherited ``CLAUDECODE``/``CLAUDE_CODE_*`` session marker is stripped
+        (transcript-suppression hazard, R162-discharge section 4.3). There is
+        no path that inherits the raw parent environment: the default base is
+        the live process env and it is stripped like any other."""
+        env = child_environment(self._base_env)
         return self._run(build_background_argv(spec), env=env, cwd=spec.cwd)
 
     def observe(self, *, include_completed: bool = False
@@ -169,16 +178,37 @@ class NativeBackgroundBackend:
             return DaemonStatus(False, f"{exc.code}: {exc.message}")
         return DaemonStatus(True, "agents --json listing succeeded")
 
-    def logs(self, session_ref: str) -> CommandResult:
-        return self._run(build_verb_argv("logs", session_ref))
+    def _run_verb(self, verb: str, argv: Sequence[str],
+                  check: bool) -> CommandResult:
+        """Execute one verb argv. G4 ADV-2: with ``check=True`` a
+        daemon-rejected command (non-success status) raises a typed error
+        instead of returning a silently-failed result — the command-exec
+        error surface that a wiring unit needs. ``check=False`` preserves the
+        raw result for callers that inspect it themselves (e.g. a stop of an
+        already-gone session)."""
+        result = self._run(tuple(argv))
+        if check and result.status != STATUS_SUPPORTED:
+            raise NativeRuntimeError(
+                f"{verb}_failed",
+                f"claude {verb} did not succeed: {result.status} "
+                f"exit={result.exit_code} {result.stderr!r:.120}")
+        return result
 
-    def stop(self, session_ref: str) -> CommandResult:
-        return self._run(build_verb_argv("stop", session_ref))
+    def logs(self, session_ref: str, *, check: bool = False) -> CommandResult:
+        return self._run_verb("logs", build_verb_argv("logs", session_ref),
+                              check)
+
+    def stop(self, session_ref: str, *, check: bool = False) -> CommandResult:
+        return self._run_verb("stop", build_verb_argv("stop", session_ref),
+                              check)
 
     def respawn(self, session_ref: str | None = None, *,
-                all_sessions: bool = False) -> CommandResult:
-        return self._run(build_verb_argv("respawn", session_ref,
-                                         all_sessions=all_sessions))
+                all_sessions: bool = False, check: bool = False
+                ) -> CommandResult:
+        return self._run_verb(
+            "respawn",
+            build_verb_argv("respawn", session_ref, all_sessions=all_sessions),
+            check)
 
     def attach_argv(self, session_ref: str) -> tuple[str, ...]:
         """Attach is interactive (returns a live terminal); the adapter only
@@ -215,17 +245,25 @@ class RestartReconciliation:
     unexpected_exit: tuple[NativeSessionIdentity, ...]
 
     @property
-    def safe_to_dispatch(self) -> tuple[NativeSessionIdentity, ...]:
-        """Identities a restarted supervisor may act on WITHOUT duplicating
-        work: none of the observed ones — only ``unexpected_exit`` items,
-        and those only after a controller decision (never silently)."""
+    def needs_controller_review(self) -> tuple[NativeSessionIdentity, ...]:
+        """Identities the restarted supervisor may NOT act on automatically:
+        the ``unexpected_exit`` set is surfaced for a controller decision and
+        is NEVER re-dispatched silently. Named to say what it is — a review
+        queue, not an auto-dispatch list (G5 F4). Observed identities
+        (running/blocked/completed/stopped/failed) are excluded by
+        construction — the no-duplicate core."""
         return self.unexpected_exit
+
+    #: Back-compat alias; the name over-suggested auto-dispatch (G5 F4).
+    safe_to_dispatch = needs_controller_review
 
 
 def reconcile_after_restart(
         expected: Sequence[NativeSessionIdentity],
         observed_active: Sequence[NativeSessionStatus],
         observed_completed: Sequence[NativeSessionStatus] = (),
+        *,
+        feed_available: bool = True,
 ) -> RestartReconciliation:
     """Map durable dispatch records onto the live listing.
 
@@ -233,7 +271,20 @@ def reconcile_after_restart(
     name) and is NEVER re-dispatched; one found only among completed
     sessions is done; one absent everywhere is an ``unexpected-exit``
     finding for the controller.
+
+    G5 F4: the caller MUST pass ``feed_available=False`` if the
+    ``agents --json`` poll failed (``observe`` raised ``agents_feed_
+    unavailable``). Reconciling an empty listing that actually means
+    "feed down" would bucket every expected identity as unexpected-exit →
+    mass duplicate-dispatch. This function refuses that: an unavailable feed
+    fails closed with a typed error, never a silent all-missing verdict.
     """
+    if not feed_available:
+        raise NativeRuntimeError(
+            "reconcile_feed_unavailable",
+            "cannot reconcile against an unavailable agents feed: an empty "
+            "listing would be indistinguishable from 'nothing running' and "
+            "risk mass duplicate dispatch (R032/R153 fail-closed)")
     buckets: dict[str, list[NativeSessionIdentity]] = {
         CLASS_RUNNING: [], CLASS_BLOCKED_INPUT: [], CLASS_COMPLETED: [],
         CLASS_STOPPED: [], CLASS_FAILED: [], "missing": []}

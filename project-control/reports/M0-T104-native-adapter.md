@@ -136,6 +136,37 @@ no permission flags; deterministic names `d024-m0-t104-canary-a1/-a2`.
   (S2–S5), attach/logs/stop/respawn (S6–S7, live), controller fallback (S10), exactly one backend
   (S11).
 
+## 7. Consolidated correction round (G3/G4/G5 round-1 findings applied in-task)
+
+All three independent reviewers returned PASS; the three converged on ONE MEDIUM (child-env
+fail-open default). Applied at re-freeze:
+
+| Finding | Sev | Fix | Test tooth |
+|---|---|---|---|
+| G5 F2 = G3 #1 (child-env fail-open default) | MEDIUM | `NativeBackgroundBackend` now defaults `base_env` to `os.environ` and `dispatch` ALWAYS strips — no path inherits the raw parent env; docstring corrected | `test_dispatch_default_backend_still_strips_child_env` + 2 mutants (default-strip removed; base_env=None fails open) |
+| G5 F3 (masking field-allowlist) | MEDIUM/LOW | `mask_session_row` → comprehensive recursive pass over EVERY string value (home + UUID) via `_mask_value`; committed leak test extended with UUID + `/home/` needles across name/waitingFor | `test_mask_session_row_comprehensive_all_fields` + mutant |
+| G5 F1 (unvalidated agent/tools values) | LOW | `DispatchSpec.__post_init__` validates `agent`/`tools` against closed charsets (no leading `-`); docstring softened from "structurally impossible" | `test_agent_tools_value_charsets`, `test_forbidden_flags_cannot_be_smuggled_via_values` + 2 mutants |
+| G5 F4 (reconcile empty-feed hazard + naming) | ADVISORY | `reconcile_after_restart` refuses `feed_available=False` (typed error); property renamed `needs_controller_review` (back-compat `safe_to_dispatch` alias kept) | `test_reconcile_refuses_unavailable_feed` + mutant |
+| G4 ADV-2 (command-exec error surface) | ADVISORY | `logs`/`stop`/`respawn` gain `check=` → typed `<verb>_failed` on daemon rejection (default False preserves raw result) | `test_verb_check_surfaces_daemon_failure` + mutant |
+| G3 ADV-3 (`--session-id` required-but-never-emitted) | ADVISORY | inline comment at `REQUIRED_BACKGROUND_FLAGS` explaining the conservative readiness gate | (doc) |
+| G3 ADV-4 (classifier inventory vs report) | ADVISORY | `_classify_row` docstring aligned to the measured set + labels the defensive synonyms | (doc) |
+
+Accepted/deferred: **G5 F5** (soft worktree preamble — inherent to R156, trusted orchestrator
+caller; SHA charset-validated) accepted residual; **G5 F6** (unmasked reprs in local-only error
+strings) noted, not committed to any fixture; **G3 ADV-2 / ADV-5** (module-split candidate;
+structured seven-answer packet block) — process notes, non-blocking, natural follow-ups when the
+seam is wired. **G4 ADV-1** (post-stop absence deterministic tooth) covered by the live C1 canary
++ `find_by_identity` unit tests as disclosed.
+
+Re-freeze verification: adapter pack **60 passed**, probe pack **19 passed** (77 total);
+**11/11 mutants killed** (4 core + F2×2 + F1×2 + F3 + F4 + ADV-2), suite GREEN after restoration;
+ruff scoped clean; modularity 0 failures (neither new module flagged; native_runtime.py 661 pl /
+~490 SLOC, runtime_backend.py 321 pl); guard packs byte-untouched + ALL CHECKS PASSED; no other
+supervisor module imports the new modules (freeze baseline 2204/2/0 unaffected); fixtures
+re-masked and leak-clean. Delta re-review of G3/G4/G5 to follow at the re-frozen identity.
+
+## 8. Boundary statements
+
 Boundary statements: **R180** — nothing removed or deprecated here; the custom host remains the
 default (`prefer_native` must be explicitly set, and no caller sets it in this change); parity +
 failure tests against the custom host and any deprecation belong to a SEPARATE reviewed change

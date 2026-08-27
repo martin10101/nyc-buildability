@@ -201,6 +201,25 @@ def test_dispatch_runs_with_stripped_child_env_and_cwd():
     assert kwargs["cwd"] == "X:/scratch"  # daemon sessions bind to their cwd
 
 
+def test_dispatch_default_backend_still_strips_child_env(monkeypatch):
+    """G5 F2 / G3 #1: a default-constructed backend (no base_env) must STILL
+    strip session markers — the strip is unavoidable, never fail-open to a
+    raw-inherited environment."""
+    monkeypatch.setenv("CLAUDECODE", "1")
+    monkeypatch.setenv("CLAUDE_CODE_SESSION_ID", "parent-session")
+    monkeypatch.setenv("CLAUDE_CODE_ENTRYPOINT", "cli")
+    monkeypatch.setenv("PATH", "/usr/bin")
+    spec = nr.DispatchSpec(identity=IDENTITY, prompt="p")
+    run = recording_runner({nr.build_background_argv(spec): ok("dispatched")})
+    rb.NativeBackgroundBackend(run).dispatch(spec)  # NO base_env
+    (_, kwargs), = run.calls
+    env = kwargs["env"]
+    assert env is not None
+    assert "CLAUDECODE" not in env
+    assert not any(k.startswith("CLAUDE_CODE_") for k in env)
+    assert env.get("PATH") == "/usr/bin"  # non-marker keys preserved
+
+
 def test_empty_prompt_refused():
     with pytest.raises(nr.NativeRuntimeError) as err:
         nr.DispatchSpec(identity=IDENTITY, prompt="   ")
@@ -210,11 +229,31 @@ def test_empty_prompt_refused():
 # ---------- S18: no bypass / remote-control surface ----------
 
 def test_forbidden_flags_cannot_be_smuggled_via_values():
-    spec = nr.DispatchSpec(identity=IDENTITY, prompt="p",
-                           tools="--teleport")
+    # G5 F1: a flag-shaped value is now rejected at DispatchSpec construction
+    # (defence in depth, before the post-build denylist even runs).
     with pytest.raises(nr.NativeRuntimeError) as err:
-        nr.build_background_argv(spec)
-    assert err.value.code == "forbidden_flag"
+        nr.DispatchSpec(identity=IDENTITY, prompt="p", tools="--teleport")
+    assert err.value.code == "invalid_tools"
+    with pytest.raises(nr.NativeRuntimeError) as err:
+        nr.DispatchSpec(identity=IDENTITY, prompt="p", agent="--cloud=x")
+    assert err.value.code == "invalid_agent"
+
+
+def test_agent_tools_value_charsets():
+    """G5 F1: agent/tools accept legitimate values, reject flag-shaped ones."""
+    spec = nr.DispatchSpec(identity=IDENTITY, prompt="p",
+                           agent="backend-engineer",
+                           tools="Bash,Edit,Read")
+    assert nr.build_background_argv(spec)  # constructs
+    assert nr.DispatchSpec(identity=IDENTITY, prompt="p", tools="")  # disable-all
+    for bad_tools in ("-x", "--cloud", " --tmux"):
+        with pytest.raises(nr.NativeRuntimeError) as err:
+            nr.DispatchSpec(identity=IDENTITY, prompt="p", tools=bad_tools)
+        assert err.value.code == "invalid_tools"
+    for bad_agent in ("-a", "--agent", "has space", "a/b"):
+        with pytest.raises(nr.NativeRuntimeError) as err:
+            nr.DispatchSpec(identity=IDENTITY, prompt="p", agent=bad_agent)
+        assert err.value.code == "invalid_agent"
 
 
 def test_bypass_mode_never_reaches_argv():
@@ -402,6 +441,27 @@ def test_stop_logs_respawn_attach_argv():
     assert run.calls[-1][0] == ("claude", "respawn", "--all")
 
 
+def test_verb_check_surfaces_daemon_failure():
+    """G4 ADV-2: with check=True a daemon-rejected command raises a typed
+    error instead of returning a silently-failed result; check=False (default)
+    preserves the raw result for callers that inspect it (e.g. stop of a
+    gone session)."""
+    fail = nr.CommandResult(nr.STATUS_UNKNOWN, 1, "", "no such session")
+    run = recording_runner({("claude", "stop", "gone"): fail,
+                            ("claude", "logs", "gone"): fail,
+                            ("claude", "respawn", "gone"): fail})
+    backend = rb.NativeBackgroundBackend(run)
+    # default: raw result, no raise
+    assert backend.stop("gone").status == nr.STATUS_UNKNOWN
+    # check=True: typed error per verb
+    for verb, call in (("stop", lambda: backend.stop("gone", check=True)),
+                       ("logs", lambda: backend.logs("gone", check=True)),
+                       ("respawn", lambda: backend.respawn("gone", check=True))):
+        with pytest.raises(nr.NativeRuntimeError) as err:
+            call()
+        assert err.value.code == f"{verb}_failed"
+
+
 def test_verb_argv_validation():
     with pytest.raises(nr.NativeRuntimeError) as err:
         nr.build_verb_argv("logs", None)
@@ -488,8 +548,18 @@ def test_restart_no_duplicate_and_unexpected_exit():
     assert rec.running == (running_id,)
     assert rec.completed == (done_id,)
     assert rec.unexpected_exit == (gone_id,)
-    assert rec.safe_to_dispatch == (gone_id,)  # ONLY after controller review
-    assert running_id not in rec.safe_to_dispatch  # the no-duplicate core
+    # renamed property (G5 F4) says what it is; back-compat alias preserved
+    assert rec.needs_controller_review == (gone_id,)
+    assert rec.safe_to_dispatch == (gone_id,)
+    assert running_id not in rec.needs_controller_review  # no-duplicate core
+
+
+def test_reconcile_refuses_unavailable_feed():
+    """G5 F4: reconciling against a down feed would read as all-missing and
+    risk mass duplicate dispatch — it must fail closed."""
+    with pytest.raises(nr.NativeRuntimeError) as err:
+        rb.reconcile_after_restart([IDENTITY], [], feed_available=False)
+    assert err.value.code == "reconcile_feed_unavailable"
 
 
 def test_restart_blocked_and_failed_surface():
@@ -546,6 +616,26 @@ def test_mask_session_row():
     # UUID-shaped path segments (session scratch dirs) are truncated too
     assert "aaaabbbb-[MASKED]" in masked["cwd"]
     assert "aaaabbbb-0000" not in masked["cwd"]
+
+
+def test_mask_session_row_comprehensive_all_fields():
+    """G5 F3: masking is a comprehensive pass over EVERY string value, not a
+    3-field allowlist — a UUID or home path in name/waitingFor/future fields
+    is masked too."""
+    masked = nr.mask_session_row({
+        "sessionId": "abcd1234-0000-4000-8000-000000000000",
+        "name": "run cccc1234-0000-4000-8000-000000000000",
+        "waitingFor": "prompt at C:\\Users\\SomeOne\\proj",
+        "futureField": "/home/someone/leak deded234-0000-4000-8000-000000000000",
+    })
+    whole = json.dumps(masked)
+    # no full UUID survives anywhere
+    import re as _re
+    assert not _re.search(
+        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", whole)
+    assert "cccc1234-[MASKED]" in masked["name"]
+    assert "Users\\SomeOne" not in masked["waitingFor"]
+    assert "/home/someone" not in masked["futureField"]
 
 
 def test_build_agents_fixture_masks_and_drops_volatile():
