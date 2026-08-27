@@ -8,10 +8,11 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 ## Handoff — seq 18: M0-T092 (unit F) ACCEPTED; M0-T094 (unit G) STAGED at 15%; NEXT = implement unit G
 
-1. **Generated:** 2026-08-28T00:00Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (successor session under the standard D-010 R113/R114 ~400k rotate-at-seam ceiling; landed at
-   the clean staged seam, mirroring seq 16→17). **Sub-agents in flight:** none (3 gate reviewers +
-   their delta re-attestations + DCV + the pip-admission G5 all landed and reconciled).
+1. **Generated:** 2026-08-28T00:00Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`.
+   **Turnover reason (verbatim):** owner invoked `/session-handoff` with no stated reason —
+   landed at the clean staged seam under the standard D-010 R113/R114 rotate-at-seam ceiling,
+   mirroring seq 16→17. **Sub-agents in flight:** none (3 gate reviewers + their delta
+   re-attestations + DCV + the pip-admission G5 all landed and reconciled).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **18**; tree clean at handoff commit; == origin
    after the final push). Installed CLI **2.1.248** (auto-updated mid-session from 2.1.247 — the
