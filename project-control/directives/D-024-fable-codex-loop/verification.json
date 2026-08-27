@@ -5967,7 +5967,7 @@
     "D-024-R155",
     "D-024-R173"
    ],
-   "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+   "reviewed_sha": "ceeb9b9c2a0d147ee7e9ce60d57ef716ea65bb29",
    "verified_at": "2026-08-27T16:49:53+00:00",
    "requirements": [
     {
@@ -5982,7 +5982,7 @@
       "38/38 event-bus tests pass at frozen bfdf4ef"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_sha": "ceeb9b9c2a0d147ee7e9ce60d57ef716ea65bb29",
      "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     },
     {
@@ -5997,7 +5997,7 @@
       "no committed tokens / masked fixtures; test_s11_recorder_embeds_no_tokens + test_s11_fixtures_are_masked pass"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_sha": "ceeb9b9c2a0d147ee7e9ce60d57ef716ea65bb29",
      "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     },
     {
@@ -6012,12 +6012,12 @@
       "unknown-event (test_s7) + version-drift (event_drift.py, test_s8_*) handled; all in the 38/38 pass at frozen identity"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "487a020dd57bb6ac481d9fe98117f5fdf409b42e",
+     "reviewed_sha": "ceeb9b9c2a0d147ee7e9ce60d57ef716ea65bb29",
      "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3"
     }
    ],
    "reviewed_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3",
-   "verification_note": "Independent DCV pass 2026-08-27 (producer=orchestrator, verifier=directive-compliance-verifier) at deliverable bfdf4ef / manifest 4bd0e182 / recorded HEAD 487a020. Applicable set re-derived via evaluate_task_refs (ok=True, missing=[]). Selective-citation cross-check CLEAN across all 28 active directives (D-004/D-007 path scopes excluded by their task_ids conjunction). Frozen-identity discipline verified (deliverable byte-stable since bfdf4ef; guards/native adapter/settings untouched 44a4c6c..HEAD). Verbatim report: project-control/reports/M0-T105-DCV.md"
+   "verification_note": "Independent DCV pass 2026-08-27 (producer=orchestrator, verifier=directive-compliance-verifier) at deliverable bfdf4ef / manifest 4bd0e182 / verified at HEAD 487a020; reviewed_sha restamped to accept-time HEAD ceeb9b9 (control-plane commits only in between; material identity 4bd0e182 unchanged). Applicable set re-derived via evaluate_task_refs (ok=True, missing=[]). Selective-citation cross-check CLEAN across all 28 active directives (D-004/D-007 path scopes excluded by their task_ids conjunction). Frozen-identity discipline verified (deliverable byte-stable since bfdf4ef; guards/native adapter/settings untouched 44a4c6c..HEAD). Verbatim report: project-control/reports/M0-T105-DCV.md"
   },
   {
    "task_id": "M0-T106",

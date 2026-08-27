@@ -50,12 +50,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:34.634037+00:00",
-  "updated_at": "2026-08-27T16:42:30.778796+00:00",
+  "updated_at": "2026-08-27T16:54:19.639732+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -101,5 +101,7 @@
       "status": "awaiting_gate",
       "message": "Delta round complete: G3/G4/G5 ALL PASS at re-frozen bfdf4ef / manifest 4bd0e182 (gates re-recorded at 0398b0c reports). G4-M1 independently reproduced closed; converged nested-UUID structurally closed; C1 discharged owner-launched with 9-record measured-live fixture + tooth; final confirmation freeze suite 2686/3/0 at the frozen identity (reconciles G4 +5/+6 advisory: the 2685 run predated the C1 tooth). Residual non-blocking set recorded in report 3a + delta reports (G3-A1/A2, G5-ADV-1/2/3, G4-A1, gitleaksignore line-fragility). Independent DCV pass over R154/R155/R173 dispatched at HEAD 487a020; accept follows DCV PASS."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-27T16:54:19.639732+00:00"
 }
