@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 206,
+ "requirement_count": 219,
  "producer": "orchestrator",
- "updated_at": "2026-08-27T01:20:00+00:00",
+ "updated_at": "2026-08-27T02:05:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -7184,13 +7184,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7214,13 +7217,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7244,13 +7250,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7274,13 +7283,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7304,13 +7316,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7334,13 +7349,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7364,13 +7382,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7394,13 +7415,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 4
   },
   {
@@ -7424,13 +7448,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7454,13 +7481,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7484,13 +7514,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7514,13 +7547,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7544,13 +7580,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7574,13 +7613,16 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
   },
   {
@@ -7604,14 +7646,446 @@
    "required_evidence": "",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
+   "status": "implemented",
    "maps_to": {
     "tasks": []
    },
    "reviewed_sha": null,
    "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
-   "evidence_paths": [],
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
    "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R207",
+   "text": "Record the owner-observed round-2 behavioral canary PASS: exactly one Haiku subagent launched, completed naturally, and the main session returned exactly CANARY-DONE.",
+   "source_ref": "source-006-amendment.md#behavioral-pass",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R208",
+   "text": "Label every fixture, report, capability conclusion, digest, and installed-version record with the actual observed 2.1.247 identity (round-2 payloads); the slcap246 directory name is historical only; never mislabel round-2 evidence as 2.1.246.",
+   "source_ref": "source-006-amendment.md#version-labeling",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R209",
+   "text": "Capture and validate the genuine primary statusLine and subagentStatusLine payloads (shape-validated against the official statusline documentation snapshot).",
+   "source_ref": "source-006-amendment.md#item-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R210",
+   "text": "Preserve the round-1 failed-transport evidence separately from the round-2 capture.",
+   "source_ref": "source-006-amendment.md#item-2",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R211",
+   "text": "Record the inherited CHILD_SESSION transcript-saving warning honestly (canaries inherited CLAUDE_CODE_CHILD_SESSION=1 from the orchestrator shell; transcript files verifiably absent); never treat a missing transcript as fixture evidence.",
+   "source_ref": "source-006-amendment.md#item-3",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R212",
+   "text": "Terminate the round-2 canary PID and every descendant.",
+   "source_ref": "source-006-amendment.md#item-4",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R213",
+   "text": "Prove zero remaining canary processes, agents, tasks, or shells.",
+   "source_ref": "source-006-amendment.md#item-5",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R214",
+   "text": "Verify all canary artifacts remain confined to the authorized scratch directory.",
+   "source_ref": "source-006-amendment.md#item-6",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R215",
+   "text": "Scan and mask the saved fixtures according to policy ([HOME] masking, session-id role tokens, opaque-id masking; recorded no-leak scan over the final bytes).",
+   "source_ref": "source-006-amendment.md#item-7",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R216",
+   "text": "Verify Git is clean except for the deliberately prepared fixture/report/registry changes.",
+   "source_ref": "source-006-amendment.md#item-8",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R217",
+   "text": "Run the applicable tests and the full registry validator before commit.",
+   "source_ref": "source-006-amendment.md#item-9",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R218",
+   "text": "Commit and push only after the frozen evidence passes tests and validation.",
+   "source_ref": "source-006-amendment.md#item-10",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R219",
+   "text": "Report final PASS, PARTIAL, or FAIL with the frozen commit id and the exact remaining campaign NEXT action.",
+   "source_ref": "source-006-amendment.md#item-11",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 6): bounded-landing checklist for the seq-11 statusLine-canary discharge; sentinel applicability (orchestrator procedure, not a ledger task)",
+   "evidence_paths": [
+    "tools/agent_supervisor/fixtures/statusline_live_2026-08-27_2_1_247_r162_discharge.json",
+    "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
+   ],
+   "amendment_sequence": 6
   }
  ]
 }

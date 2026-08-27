@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-27T01:20:00+00:00",
+ "updated_at": "2026-08-27T02:05:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -52,13 +52,22 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-27T01:20:00+00:00",
    "content_digest_sha256": "479d8c81efb0bd8960cc0b53c851808d24146b8b326b4331a189e281afb5d42c"
+  },
+  {
+   "file": "source-006-amendment.md",
+   "kind": "amendment",
+   "sequence": 6,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-27T01:45:00+00:00",
+   "content_digest_sha256": "2b1043ddd526a7db335f7adb35c996491979e5133f450e0fc7660d28e518ac84"
   }
  ],
  "amendments": [
   "source-002-amendment.md",
   "source-003-amendment.md",
   "source-004-amendment.md",
-  "source-005-amendment.md"
+  "source-005-amendment.md",
+  "source-006-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -347,10 +356,23 @@
   "D-024-R203",
   "D-024-R204",
   "D-024-R205",
-  "D-024-R206"
+  "D-024-R206",
+  "D-024-R207",
+  "D-024-R208",
+  "D-024-R209",
+  "D-024-R210",
+  "D-024-R211",
+  "D-024-R212",
+  "D-024-R213",
+  "D-024-R214",
+  "D-024-R215",
+  "D-024-R216",
+  "D-024-R217",
+  "D-024-R218",
+  "D-024-R219"
  ],
- "requirements_id_digest_sha256": "2429995497f7fe0d406e0272aa98c1da9f361b90893e41b759952bb1d0cc21d5",
- "requirements_content_digest_sha256": "255e2987ad73259fd7b889047a8a8d01ea9babee9e029f2840a413df9de40f95",
+ "requirements_id_digest_sha256": "087b4c6967f9c075dedac02c621755f5a8069e4576316f2e7100658697988272",
+ "requirements_content_digest_sha256": "468181bcdcf31c4420471eddc6621e054e9d7ab30a9e737210bdf1a07d0429b2",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -398,6 +420,16 @@
    "at": "2026-08-27T01:20:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 5 captured (owner mid-turn instruction, 2026-08-27): round-1 canary classified FAILED TRANSPORT (prompt truncated at first embedded double quote; hook-captured received-prompt preserved in scratch; 7 statusLine payloads all version 2.1.246; permission_mode auto, not bypass; no subagent spawned). New requirement IDs D-024-R200..R206: immediate PID+descendant termination (executed; PID already exited, 0 descendants), failed-transport recording duty, residue/git proofs, corrected relaunch with quote-free single validated CLI argument, Amendment-4 hardening preserved, exact-command owner approval before relaunch, prohibition on asking the owner to type the task manually. Sentinel applicability; LF bytes; digests recomputed."
+  },
+  {
+   "at": "2026-08-27T01:45:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 6 captured (owner mid-turn instruction, 2026-08-27): round-2 behavioral canary PASS recorded (one Haiku subagent, natural completion, exact CANARY-DONE); version-drift labeling rule (observed 2.1.247 identity on all round-2 evidence; slcap246 name historical only); 11-item bounded-landing checklist as D-024-R209..R219 incl. honest CHILD_SESSION transcript-warning recording (canaries inherited CLAUDE_CODE_CHILD_SESSION=1 from the orchestrator shell; transcripts verifiably absent), commit-after-evidence-passes gate, and final PASS/PARTIAL/FAIL report duty. Sentinel applicability; LF bytes; digests recomputed."
+  },
+  {
+   "at": "2026-08-27T02:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Seq-11 statusLine-canary discharge landed: procedure rows D-024-R192..R219 marked implemented by the producer (orchestrator) with evidence = masked 2.1.247-labeled fixture + discharge report (independent PASS verification remains owed to the directive-compliance-verifier lane per producer!=verifier). Observed identity 2.1.247 (auto-update from 2.1.246 mid-procedure; drift tooth fired RED as designed; re-probe owed to the next capability task). Digests recomputed."
   }
  ]
 }
