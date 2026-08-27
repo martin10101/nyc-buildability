@@ -8,6 +8,10 @@ Supervisor-freeze qualifying evidence: D-024-R099; re-baselined for the M0-T103
 official-updater upgrade under D-024-R148/R149/R168 (amendment 3): the live drift
 tooth now points at the post-update fixture (installed 2.1.246); the 2026-08-25 and
 2026-08-26 pre-update fixtures remain the frozen 2.1.220 historical record.
+Re-baselined again for M0-T104 (unit C; D-024-R153/R172): the machine auto-updated
+2.1.246 -> 2.1.247 during the seq-12 R162 discharge, so both live drift teeth now
+point at the 2026-08-27 m0t104 fixture (installed 2.1.247); the 2.1.220 and 2.1.246
+fixtures stay frozen as the historical upgrade pair.
 """
 from __future__ import annotations
 
@@ -22,8 +26,10 @@ from tools.agent_supervisor import capability_probe as cp
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
 # Pre-update historical record (claude 2.1.220): shape/masking invariants only.
 LIVE_FIXTURE = FIXTURES / "capability_probe_live_2026-08-25.json"
-# Post-update record (claude 2.1.246, M0-T103): the live drift tooth targets THIS.
+# M0-T103 post-update record (claude 2.1.246): frozen historical upgrade pair.
 POST_FIXTURE = FIXTURES / "capability_probe_live_2026-08-26_m0t103_post_update.json"
+# Current record (claude 2.1.247, M0-T104): the live drift teeth target THIS.
+CURRENT_FIXTURE = FIXTURES / "capability_probe_live_2026-08-27_m0t104.json"
 MATRIX = FIXTURES / "capability_matrix_v1.json"
 
 
@@ -168,13 +174,18 @@ def post() -> dict:
     return json.loads(POST_FIXTURE.read_text(encoding="utf-8"))
 
 
+@pytest.fixture(scope="module")
+def current() -> dict:
+    return json.loads(CURRENT_FIXTURE.read_text(encoding="utf-8"))
+
+
 @pytest.mark.skipif(shutil.which("claude") is None,
                     reason="claude CLI not installed on this runner")
-def test_live_reprobe_claude_version_matches_fixture(post):
+def test_live_reprobe_claude_version_matches_fixture(current):
     rec = cp._run(["claude", "--version"])
     assert rec["status"] == "supported"
-    assert rec["first_line"] == post["body"]["probes"]["claude_version"]["first_line"], (
-        "installed claude version drifted from the committed post-update fixture; re-run "
+    assert rec["first_line"] == current["body"]["probes"]["claude_version"]["first_line"], (
+        "installed claude version drifted from the committed current fixture; re-run "
         "python -m tools.agent_supervisor.capability_probe and re-review")
 
 
@@ -206,10 +217,30 @@ def test_post_update_fixture_masked_and_shaped(post):
 
 @pytest.mark.skipif(shutil.which("codex") is None,
                     reason="codex CLI not installed on this runner")
-def test_live_reprobe_codex_version_matches_fixture(live):
+def test_live_reprobe_codex_version_matches_fixture(current):
     rec = cp._run(["codex", "--version"])
     assert rec["status"] == "supported"
-    assert rec["first_line"] == live["body"]["probes"]["codex_version"]["first_line"]
+    assert rec["first_line"] == current["body"]["probes"]["codex_version"]["first_line"]
+
+
+def test_current_fixture_records_2_1_247_masked_and_shaped(current, post):
+    """M0-T104 re-baseline invariant (D-024-R153/R172): the current fixture
+    freezes the 2.1.247 auto-update observed during the seq-12 R162 discharge;
+    codex is unchanged across it. Same masking/shape contract as its
+    predecessors; filename carries the consuming task id (G3 ADV-1)."""
+    assert (current["body"]["probes"]["claude_version"]["first_line"]
+            == "2.1.247 (Claude Code)")
+    assert (current["body"]["probes"]["codex_version"]["first_line"]
+            == post["body"]["probes"]["codex_version"]["first_line"]
+            == "codex-cli 0.146.0")
+    assert "m0t104" in CURRENT_FIXTURE.name
+    whole = json.dumps(current, sort_keys=True)
+    for leak in (":\\\\Users\\\\", ":/Users/", "\\\\Users\\\\MLFLL", "MLFLL"):
+        assert leak not in whole, f"unmasked path fragment {leak!r} in fixture"
+    binaries = current["probe_meta"].get("claude_binaries", [])
+    assert binaries, "probe_meta.claude_binaries missing"
+    for rec in binaries:
+        assert rec.startswith("[HOME]"), rec
 
 
 def test_build_record_is_deterministic_when_tools_absent_or_present():
