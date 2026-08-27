@@ -1,0 +1,36 @@
+{
+  "task_id": "M0-T105",
+  "directive_refs": [{"directive_id": "D-024", "requirement_ids": "ALL"}],
+  "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs at the frozen head resolves the applicable set for this packet's allowed_paths to exactly D-024-R154, D-024-R155, D-024-R173 (ok=true, missing=[]). The C1 live per-event capture strengthens R155 evidence but is owner-gated (R192/R197 exact-command); the deterministic core below satisfies the requirement scope without it, mirroring how the deterministic capability_probe preceded its live canaries.",
+  "requirements": {
+    "D-024-R154": [
+      "tools/agent_supervisor/event_stream.py",
+      "tools/agent_supervisor/event_bus.py",
+      "tools/agent_supervisor/fixtures/stream_json_subagent_events_v1.json",
+      "tools/test_agent_supervisor_event_bus.py",
+      "project-control/reports/M0-T105-event-integration.md"
+    ],
+    "D-024-R155": [
+      "tools/agent_supervisor/event_bus.py",
+      "tools/agent_supervisor/event_drift.py",
+      ".claude/hooks/supervisor_event_recorder.py",
+      "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_247.json",
+      "tools/agent_supervisor/fixtures/hook_event_payloads_v1.json",
+      "tools/test_agent_supervisor_event_bus.py",
+      "project-control/reports/M0-T105-event-integration.md"
+    ],
+    "D-024-R173": [
+      "tools/agent_supervisor/event_bus.py",
+      "tools/agent_supervisor/event_stream.py",
+      "tools/agent_supervisor/event_drift.py",
+      "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_247.json",
+      "tools/test_agent_supervisor_event_bus.py",
+      "project-control/reports/M0-T105-event-integration.md"
+    ]
+  },
+  "task_evidence": [
+    "project-control/reports/M0-T105-event-integration.md",
+    "project-control/reports/M0-T105-G2-self-check.md",
+    "project-control/reports/M0-T105-evidence-map.json"
+  ]
+}

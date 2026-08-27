@@ -1,0 +1,39 @@
+{
+  "schema": "stream_json_subagent_events/v1",
+  "directive": "D-024",
+  "task": "M0-T105",
+  "recorded": "2026-08-27",
+  "confidence": "session-evidence",
+  "source": "event shapes mirror the claude_runner.py measured stream-json handling (system/init + assistant + result carriers from the Phase 0/1 stdio probes and shadow pilots); a --forward-subagent-text specific event type awaits the owner-gated C1 live capture and would ingest as known_type:false until then",
+  "masking": "session ids -> [SESSION-D-FIXTURE]; no real paths, prompts, or usage from any live session",
+  "lines": [
+    {
+      "note": "session init: model identity carrier",
+      "event": {"type": "system", "subtype": "init", "session_id": "[SESSION-D-FIXTURE]", "model": "claude-fable-5", "uuid": "evt-0001"}
+    },
+    {
+      "note": "subagent-attributed assistant step with per-step usage (parent_tool_use_id is the subagent attribution key)",
+      "event": {"type": "assistant", "session_id": "[SESSION-D-FIXTURE]", "uuid": "evt-0002", "parent_tool_use_id": "toolu_dfixture01", "message": {"id": "msg_dfixture01", "model": "claude-haiku-4-5-20251001", "content": [{"type": "text", "text": "forwarded subagent text: stored only as a digest reference"}], "usage": {"input_tokens": 120, "output_tokens": 45, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 800}}}
+    },
+    {
+      "note": "duplicate delivery of evt-0002 (same uuid): dedup proof line",
+      "event": {"type": "assistant", "session_id": "[SESSION-D-FIXTURE]", "uuid": "evt-0002", "parent_tool_use_id": "toolu_dfixture01", "message": {"id": "msg_dfixture01", "model": "claude-haiku-4-5-20251001", "content": [{"type": "text", "text": "forwarded subagent text: stored only as a digest reference"}], "usage": {"input_tokens": 120, "output_tokens": 45, "cache_creation_input_tokens": 0, "cache_read_input_tokens": 800}}}
+    },
+    {
+      "note": "assistant step with NO usage object: every step_* measurement must ingest as unknown, never zero (R042)",
+      "event": {"type": "assistant", "session_id": "[SESSION-D-FIXTURE]", "uuid": "evt-0003", "parent_tool_use_id": "toolu_dfixture01", "message": {"id": "msg_dfixture02", "content": [{"type": "text", "text": "step without usage"}]}}
+    },
+    {
+      "note": "terminal result with usage: final_request_* semantics only (R043 caveat), never the whole run",
+      "event": {"type": "result", "session_id": "[SESSION-D-FIXTURE]", "uuid": "evt-0004", "is_error": false, "num_turns": 3, "result": "CANARY-STYLE result text: digested, never stored verbatim", "usage": {"input_tokens": 950, "output_tokens": 210, "total_tokens": 1160}}
+    },
+    {
+      "note": "unknown future event type: recorded honestly (known_type false), never dropped or guessed",
+      "event": {"type": "subagent_heartbeat_v9", "session_id": "[SESSION-D-FIXTURE]", "uuid": "evt-0005"}
+    }
+  ],
+  "malformed_lines": [
+    "{\"type\": \"assistant\", \"uuid\": \"evt-trunc",
+    "plain text noise line, not JSON"
+  ]
+}

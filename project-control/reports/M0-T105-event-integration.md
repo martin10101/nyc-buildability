@@ -55,6 +55,49 @@ WITHOUT the owner — exactly as the deterministic `capability_probe` preceded i
 strengthens the evidence but does not gate the deterministic seam. This is surfaced per the
 escalation boundary (a live-canary launch is owner-exact-command, not routine dispatch).
 
-## 3. Evidence (populated during implementation)
+## 2a. C1 canary — PREPARED, validated deterministically, awaiting owner exact-command approval
 
-(pending — deterministic core next)
+Mirrors the accepted R162 discharge procedure verbatim (isolated scratch project outside the
+repo, `--strict-mcp-config`, `--tools Agent`, no permission flags, zero-quote prompt,
+explicitly-controlled child env per the M0-T104 child-env lesson). The scratch project's OWN
+`.claude/settings.json` registers command hooks for all 17 pack events, each wiring to
+`.claude/hooks/supervisor_event_recorder.py` with `NYCB_EVENT_STORE_PATH` pointed INTO the
+scratch directory (repo untouched; recorder→store path already proven by S9 subprocess tests).
+Cleanup = stop-if-lingering + `claude agents --json` zero-canary check + scratch delete; the
+repo is unchanged by the launch, so rollback is deletion. Masked fixtures commit only after the
+M0-T103-style final-bytes leak scan. The exact launch command is queued for the owner (R192/R197).
+
+## 3. Evidence (deterministic core S1–S11)
+
+Deliverables (all new; no accepted file modified — `readonly_agent_guard.py`, guard packs,
+`native_runtime.py`/`runtime_backend.py` (R180 fallback boundary), and the telemetry modules are
+untouched; reuse is by import only):
+
+| File | Lines | Role |
+|---|---|---|
+| `tools/agent_supervisor/event_bus.py` | 284 | durable bus: dedup idempotency key, ordering (`bus_sequence`), restart-safe replay, raw-UUID digest masking; persists via the REUSED `TelemetryJournal` (sanitize-first/atomic/bounded/rotated) |
+| `tools/agent_supervisor/event_stream.py` | 234 | stream-JSON subagent-event ingestion → typed records; `step_*` provider-exact, `final_request_*` sdk-cumulative with the R043 caveat; text as digest reference; typed `StreamEventError`; no sidecar surface (R154) |
+| `tools/agent_supervisor/event_drift.py` | 106 | catalog drift: `catalog_drift()` + schema-checked fixture loader |
+| `.claude/hooks/supervisor_event_recorder.py` | 77 | thin command-hook recorder: stdin→bus, fail-closed exit 0, stdout-silent, bounded, NOT registered (settings.json is a separate reviewed change) |
+| `fixtures/hook_event_catalog_2_1_247.json` | — | 2.1.247 catalog @ official-docs confidence (code.claude.com/docs/en/hooks fetched 2026-08-27; same method as the 2.1.220 capture); recorded drift vs 2.1.220 = NONE (31 events identical) |
+| `fixtures/hook_event_payloads_v1.json` | — | masked per-event payloads for all 17 pack events; UserPromptSubmit is measured-live (masked copy of the R162 capture); the rest documentation-confidence, honestly labelled per payload |
+| `fixtures/stream_json_subagent_events_v1.json` | — | masked stream-json lines (session-evidence confidence; shapes mirror `claude_runner` measured handling) incl. dedup-duplicate, usage-absent, and unknown-type lines |
+| `tools/test_agent_supervisor_event_bus.py` | 463 | 32 tests mapping S1–S11 (IDs in test names) |
+
+Self-check results (producer, local 3.11.9):
+
+- **32/32** `tools/test_agent_supervisor_event_bus.py` (S1–S11 all covered; the one live row —
+  the S8 version drift tooth — passes against the installed 2.1.247 and skips when claude absent).
+- **Mutation self-check 9/9 KILLED**: dedup-check-removed, uuid-mask-identity,
+  remember-before-append, sequence-rollback-removed, step-label-swap, text-stored-verbatim,
+  drift-sets-swapped, recorder-prints-to-stdout, replay-seen-ignored.
+- **ruff 0.13.0 clean** on every new file; whole-tree ruff shows only pre-existing findings in
+  files this task does not touch (`project-control/reports/M0-T054-protected-config/doctor_proof.py`,
+  `tools/agent_supervisor/cli.py` — pre-existing at bc77972).
+- **modularity_check --check**: no new warnings (largest new file 284 lines, far under warn 600).
+- **Supervisor freeze suite**: `python -m pytest tools/ -q --ignore=tools/test_directive_compliance.py`
+  at the frozen deliverable — **2,680 passed, 3 skipped, 0 failed** (598.8s); the excluded pack's
+  subject ran standalone (`validate_directive_compliance.py --check` EXIT=0; CI runs the pack).
+- Drift-tooth honesty note: the S8 live tooth compares `claude --version` to the fixture's
+  recorded version (the M0-T104 model) — catalog content itself is documentation-confidence until
+  the C1 measured-live upgrade; the deterministic S8 rows pin fixture↔code reconciliation.

@@ -51,11 +51,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 55,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:34.634037+00:00",
-  "updated_at": "2026-08-27T09:36:37.701357+00:00",
+  "updated_at": "2026-08-27T15:28:14.673950+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -79,6 +79,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Scenario pack recorded (S1-S11 deterministic + C1 owner-gated live canary). Reuse boundary mapped: telemetry_hooks.ingest_hook_event + KNOWN_HOOK_EVENTS + SubagentRegistry (M0-T089) + telemetry_journal atomic writes + telemetry_redaction.sanitize_structure are REUSED; unit D adds the durable event bus (dedup idempotency key + restart-safe replay + ordering), stream-JSON subagent-event ingestion, 2.1.247 event-set drift tooth, and .claude/hooks recorder scripts. C1 live per-event capture is owner-exact-command (R192/R197, like the R162 discharge) - deterministic core built without it. Next: event-bus module + tests."
+    },
+    {
+      "at": "2026-08-27T15:28:14.670252+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 55,
+      "status": "in_progress",
+      "message": "Unit D deterministic core implemented: event_bus.py (dedup idempotency key + bus_sequence ordering + restart-safe replay + raw-UUID digest masking over REUSED TelemetryJournal), event_stream.py (stream-JSON subagent ingestion, R042 labels, R043 final_request caveat, typed StreamEventError, no sidecar surface), event_drift.py (+ hook_event_catalog_2_1_247.json at official-docs confidence: 31 events, drift vs 2.1.220 = NONE), .claude/hooks/supervisor_event_recorder.py (fail-closed stdout-silent command hook, NOT registered), masked per-event + stream fixtures, 32-test pack S1-S11 (32/32), mutation self-check 9/9 killed, ruff clean, modularity clean. Full freeze suite running at frozen state. C1 live canary prepared and validated deterministically - queued for owner exact-command approval (R192/R197). readonly_agent_guard.py and accepted M0-T104 adapter untouched."
     }
   ]
 }
