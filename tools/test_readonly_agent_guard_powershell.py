@@ -219,6 +219,63 @@ check("bash pure read open(f,'r') ALLOWED", "ALLOW",
 check("bash read json.load ALLOWED", "ALLOW",
       bash(ROLE, "python -c \"import json; print(json.load(open('f'))['k'])\""))
 
+print("== Correction round (G3 D1/D2/D3, G5 C1/C2/C3, G4 A1/A2/A3, D4) ==")
+# D1/C1/A2 — write-cmdlet aliases now denied
+for cmd in ["ac x.txt hi", "clc x.txt", "mi a.txt b.txt", "epcsv -Path r.csv -InputObject foo",
+            "sp -Path HKCU:Soft -Name v -Value 1", "rp -Path x -Name y", "mkdir newdir"]:
+    check(f"C1 alias deny: {cmd[:30]}", "DENY", ps(ROLE, cmd))
+# D2 — .NET ::new() writer constructors
+check("D2 StreamWriter::new deny", "DENY", ps(ROLE, '[System.IO.StreamWriter]::new("C:/x.txt")'))
+check("D2 FileStream::new deny", "DENY", ps(ROLE, '[IO.FileStream]::new("x",2)'))
+check("D2 BinaryWriter::new deny", "DENY", ps(ROLE, '[IO.BinaryWriter]::new($s)'))
+# C2 — COM + CIM/WMI
+check("C2 COM FileSystemObject deny", "DENY",
+      ps(ROLE, "$f=New-Object -ComObject Scripting.FileSystemObject; $f.CreateTextFile('x')"))
+check("C2 COM Shell.Application deny", "DENY",
+      ps(ROLE, "$s=New-Object -ComObject Shell.Application; $s.ShellExecute('cmd')"))
+check("C2 CIM Win32_Process Create deny", "DENY",
+      ps(ROLE, "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine='calc'}"))
+check("C2 WMI Win32_Process Create deny", "DENY",
+      ps(ROLE, "Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList 'calc'"))
+# D3 — nested-shell laundering via the BASH tool (symmetric)
+check("D3 bash>powershell -Command deny", "DENY", bash(ROLE, "powershell -Command Set-Content x 1"))
+check("D3 bash>pwsh -c deny", "DENY", bash(ROLE, "pwsh -c Set-Content"))
+check("D3 bash>cmd /c deny", "DENY", bash(ROLE, "cmd /c echo hi"))
+check("D3 ps>powershell -enc deny", "DENY", ps(ROLE, "powershell -enc SQBFAFgA"))
+# A1 — call-operator / dot-source quoted literal
+check("A1 & 'Set-Content' deny", "DENY", ps(ROLE, "& 'Set-Content' x.txt 1"))
+check("A1 &'Remove-Item' deny", "DENY", ps(ROLE, "&'Remove-Item' x.txt"))
+check('A1 & "Out-File" deny', "DENY", ps(ROLE, '& "Out-File" -FilePath x'))
+check("A1 . 'Set-Content' deny", "DENY", ps(ROLE, ". 'Set-Content' x 1"))
+check("A1 & 'gh' pr create deny", "DENY", ps(ROLE, "& 'gh' pr create --title x"))
+check("A1 & 'git' push deny", "DENY", ps(ROLE, "& 'git' push origin main"))
+# C3 — the -Encoding read false-positive is fixed (was denied by former _PS_ENCODED)
+check("C3 Get-Content -Encoding allow", "ALLOW", ps(ROLE, "Get-Content -Encoding UTF8 README.md"))
+check("C3 Import-Csv -Encoding allow", "ALLOW", ps(ROLE, "Import-Csv -Encoding UTF8 rows.csv"))
+check("C3 Select-String -Encoding allow", "ALLOW",
+      ps(ROLE, "Select-String -Encoding utf8 -Path x.py -Pattern TODO"))
+# A3 — ${null} redirect discard
+check("A3 > ${null} allow", "ALLOW", ps(ROLE, "gci > ${null}"))
+# nested-shell precision: the word mentioned in a read is not a nested shell
+check("nested precision: echo cmd allow", "ALLOW", bash(ROLE, "echo cmd foo"))
+check("nested precision: grep pwsh allow", "ALLOW", bash(ROLE, "grep pwsh tools/x.py"))
+check("nested precision: & 'git' log read allow", "ALLOW", ps(ROLE, "& 'git' log --oneline -5"))
+check("nested precision: & 'Get-Content' read allow", "ALLOW", ps(ROLE, "& 'Get-Content' README.md"))
+# D4 — write hidden in a non-'command' tool_input field still caught (defensive extraction);
+# malformed tool_input still fails closed.
+check("D4 write in 'script' field deny", "DENY",
+      {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
+       "tool_input": {"script": "Set-Content x.txt hi"}})
+check("D4 pure read in 'script' field allow", "ALLOW",
+      {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
+       "tool_input": {"script": "Get-Content README.md"}})
+check("D4 malformed tool_input (string) fails closed", "DENY",
+      {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
+       "tool_input": "Set-Content x 1"})
+check("D4 command as int fails closed", "DENY",
+      {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
+       "tool_input": {"command": 123}})
+
 print("== Identity pass-through unchanged ==")
 check("lead (no identity) + PS Set-Content -> allow", "ALLOW",
       ps(None, "Set-Content x.txt hi"))
@@ -262,6 +319,50 @@ MUTANTS = {
     "mutant drops backtick normalization -> hidden git verb would slip": (
         SRC.replace("cmd = _ps_normalize(cmd)", "pass"),
         ps(ROLE, f"git pu{BACKTICK}sh"),
+    ),
+    "mutant drops nested-shell pass -> bash>powershell would slip": (
+        SRC.replace("or _launches_nested_shell(cmd)", ""),
+        bash(ROLE, "powershell -Command Set-Content x 1"),
+    ),
+    "mutant drops call-operator unwrap -> & 'gh' pr create would slip": (
+        # gh lives in the shared _MUTATING core whose leading class excludes
+        # quotes, so ONLY the call-operator unwrap makes `& 'gh'` reachable.
+        SRC.replace(
+            'return _PS_CALL_QUOTED.sub(lambda m: " " + m.group(2), normalized)',
+            "return normalized"),
+        ps(ROLE, "& 'gh' pr create --title x"),
+    ),
+    "mutant drops ::new() constructor tooth -> StreamWriter::new would slip": (
+        SRC.replace(
+            r"| \[(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\]::new\b",
+            ""),
+        ps(ROLE, '[IO.StreamWriter]::new("x.txt")'),
+    ),
+    "mutant drops ComObject tooth -> New-Object -ComObject would slip": (
+        SRC.replace(r"| New-Object\s+-ComObject\b", ""),
+        ps(ROLE, "New-Object -ComObject Scripting.FileSystemObject"),
+    ),
+    "mutant drops CIM/WMI tooth -> Win32_Process Create would slip": (
+        SRC.replace(
+            r"| Invoke-(?:Cim|Wmi)Method\b[^;|]*?(?:Win32_Process\b|-MethodName\s+Create\b|-Name\s+Create\b|Create\b)",
+            ""),
+        ps(ROLE, "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine='c'}"),
+    ),
+    "mutant drops alias 'ac' -> Add-Content alias would slip": (
+        SRC.replace(
+            "ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm", "spps|rbp|swmi|icm"),
+        ps(ROLE, "ac x.txt hi"),
+    ),
+    "mutant drops defensive field extraction -> write in 'script' field would slip": (
+        SRC.replace(
+            "    for key, value in tool_input.items():\n"
+            "        if key == \"command\":\n"
+            "            continue\n"
+            "        if isinstance(value, str):\n"
+            "            parts.append(value)\n",
+            ""),
+        {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
+         "tool_input": {"script": "Set-Content x.txt hi"}},
     ),
 }
 with tempfile.TemporaryDirectory() as td:

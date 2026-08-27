@@ -77,7 +77,44 @@ class) are explicitly asserted ALLOWED.
 - Machine enforcement replaces the procedural stopgap immediately on merge: reviewer spawns in
   this checkout now hit the extended guard (M0-T108's own reviewers run under it).
 
-## 5. Scope
+## 5. Correction round (G3 FAIL → addressed; G5 C1–C4; G4 A1–A3)
+
+Round-1 independent review found real, reproducible write bypasses. All are now closed and proven
+by new RED-on-mutant rows (each mutant ALLOWs what the corrected guard DENIEs):
+
+| Finding | Fix | Proof |
+|---|---|---|
+| G3 D1 / G5 C1 / G4 A2 — write-cmdlet aliases `ac`/`clc`/`mi`/`epcsv`/`sp`/`rp`/`mkdir` bypass | added to the `_PS_MUTATING` alias set (+`spps`/`rbp`/`swmi`/`icm`) | 7 DENY assertions + `ac` mutant |
+| G3 D2 — `.NET` `::new()` writer constructors bypass | added `[IO.(StreamWriter\|FileStream\|BinaryWriter)]::new` branch | 3 DENY assertions + `::new` mutant |
+| G5 C2 — COM `New-Object -ComObject` + CIM/WMI `Win32_Process.Create` bypass | added `New-Object -ComObject` and `Invoke-(Cim\|Wmi)Method … Create` branches | 4 DENY assertions + ComObject + CIM/WMI mutants |
+| G3 D3 — nested-shell laundering (`powershell -Command` via the **Bash** tool) | extracted `_launches_nested_shell` (segment-first-token) applied to BOTH shells | 4 DENY assertions + nested-shell mutant |
+| G4 A1 — call-operator/dot-source quoted literal (`& 'Set-Content'`, `& 'gh'`) bypass | `_ps_normalize` unwraps `[&.] 'literal'` → bare invocation before the denylists | 6 DENY assertions + call-operator mutant |
+| G5 C3 — NEW false-positive: `-Encoding` reads denied by `_PS_ENCODED` | removed `_PS_ENCODED` entirely (encoded commands already denied by the nested-shell pass) | 3 ALLOW assertions |
+| G4 A3 — `> ${null}` false-positive | `_PS_REDIRECT_TARGET_OK` accepts the `${null}` brace form | 1 ALLOW assertion |
+| G3 D4 / G5 minor — PowerShell `tool_input` field name unevidenced (fail-open risk) | `_shell_command_text` scans `command` PLUS every other string leaf in `tool_input`; malformed `tool_input` fails closed explicitly | 3 assertions (write-in-`script` DENY, read-in-`script` ALLOW, malformed DENY) + defensive-extraction mutant |
+| G5 C4 — residual docstring overstated coverage | rewrote the module docstring's residual paragraph to enumerate exactly what is uncovered (dynamic assembly; the Bash-side quoted call-operator for `gh`/cmdlets as a pre-existing residual; the non-exhaustive alias table; env/clipboard/dot-source out-of-model side effects) | docstring |
+
+**Nested-shell precision:** `_launches_nested_shell` matches only `powershell`/`pwsh`/`cmd` as a
+**segment-first token**, so a read that merely mentions the word (`echo cmd`, `grep pwsh file`) is
+allowed — asserted. The set is intentionally `powershell|pwsh|cmd` (the named Windows laundering
+vectors); `sh`/`bash` are not included (avoids colliding with the backtick-split fragment of
+`git pu`+backtick+`sh`, and keeps the backtick-normalization mutant load-bearing).
+
+**Deliberately-retained residuals (honest, G5 C4):** the Bash-tool `'gh' pr create` quoted-literal
+(pre-existing in the shared `_MUTATING` core; not closed by broadening the Bash leading class,
+which would deny reads like `grep 'git push' file` — recommended as a follow-up hardening task);
+the non-exhaustive PowerShell alias table; dynamically-assembled writes; and non-repo-write side
+effects (`[Environment]::SetEnvironmentVariable`, `Set-Clipboard`, dot-sourcing a pre-existing
+script). One accepted false-positive of the standard quoted-text posture remains
+(`Write-Output 'the Set-Content cmdlet'` denies), identical in kind to the existing Bash
+`_MUTATING` behavior (fail-closed).
+
+**Post-correction evidence:** PS pack **138/138** (was 95; +8 RED-on-mutant, now 8 load-bearing
+mutants); Bash pack **136/136 unchanged**; ruff clean; guard 706 raw lines (SLOC below the
+modularity WARN threshold — the checker reports 0 failures and does not flag this file; the growth
+is additional denylist rules within the guard's single responsibility, no responsibility mixing).
+
+## 6. Scope
 
 Only the four packet paths changed. `.claude/settings.json` change is the single matcher line.
 No supervisor runtime, dependency, workflow, or policy file touched.

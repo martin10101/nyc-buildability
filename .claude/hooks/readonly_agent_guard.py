@@ -53,15 +53,32 @@ An unparseable / non-object payload fails CLOSED (deny) — real harness payload
 always valid JSON objects, so this never affects the main session in practice while
 guaranteeing a malformed event can never slip a mutation through.
 
-Documented residuals (honest, unchanged in kind): a scripting-language write
-composed dynamically at runtime (string-built mode, exec of assembled source)
-is not statically resolvable — the pass above catches the direct idioms only;
-a PowerShell verb assembled by string concatenation is likewise dynamic, but
-its execution vectors (`Invoke-Expression`/`iex`, `& $var`, encoded commands,
-nested shells) are themselves denied. The remaining residual is covered by
-(a) the removed Write/Edit tools and (b) the orchestrator-only integration
-model: only the lead commits/pushes/merges, so a reviewer's local scratch
-never reaches a branch, a PR, or the ledger. See
+Documented residuals (honest — M0-T108 G5 C4). The static denylist is broad but
+not exhaustive; these forms are known-uncovered and are covered instead by the
+compensating controls (a) and (b) below:
+- A scripting-language write composed DYNAMICALLY at runtime (string-built mode,
+  exec of assembled source) is not statically resolvable — the scripting pass
+  catches the direct idioms only. A PowerShell verb assembled by string
+  concatenation is likewise dynamic; its common execution vectors
+  (`Invoke-Expression`/`iex`, `& $var`, nested shells `powershell`/`pwsh`/`cmd`)
+  ARE denied, but an arbitrary dynamic assembly is not guaranteed to be.
+- A mutating command reached by a call operator on a QUOTED literal is unwrapped
+  on the PowerShell path (`& 'Set-Content'`), but the analogous Bash-tool form
+  (`'gh' pr create`, a mutating verb whose only preceding char is a quote) is a
+  PRE-EXISTING residual of the shared `_MUTATING` core; the Bash leading-class is
+  intentionally not broadened to quotes because that would deny reads such as
+  `grep 'git push' file`. Tracked for a follow-up hardening pass.
+- PowerShell write-cmdlet ALIASES are denied for the common set (canonical names
+  + `sc/ni/ri/rd/del/erase/md/mkdir/cpi/rni/ren/move/copy/ac/clc/mi/epcsv/sp/rp/
+  spps/rbp/swmi/icm`); the full PowerShell alias table is larger and not
+  exhaustively enumerated.
+- Non-repo-write side effects out of this guard's threat model:
+  `[Environment]::SetEnvironmentVariable(...,'Machine'/'User')`, `Set-Clipboard`,
+  and dot-sourcing a PRE-EXISTING script (a reviewer cannot create one under
+  this guard).
+The remaining residual is covered by (a) the removed Write/Edit tools and
+(b) the orchestrator-only integration model: only the lead commits/pushes/merges,
+so a reviewer's local scratch never reaches a branch, a PR, or the ledger. See
 `.claude/ORCHESTRATION_POLICY.md`.
 """
 import json
@@ -163,17 +180,34 @@ _MUTATING = re.compile(
 # regex that denied literal `>` inside quoted strings (M0-T108 false-positive
 # fix: `python -c "1 if x>0 else 2"` is a pure read).
 _BASH_REDIRECT_TARGET_OK = re.compile(r"^(?:&|/dev/(?:null|stderr|stdout)\b)")
-_PS_REDIRECT_TARGET_OK = re.compile(r"(?i)^(?:&\d|\$null\b)")
+# PowerShell discard targets: `$null` and its `${null}` brace form (A3), plus
+# stream merges (`&1`, `&2`).
+_PS_REDIRECT_TARGET_OK = re.compile(r"(?i)^(?:&\d|\$null\b|\$\{null\})")
+
+# Nested-shell laundering vector (M0-T108 D3): a governed reviewer must not
+# spawn another shell to perform a write. Applied to BOTH shells (a Bash-tool
+# `powershell -Command "Set-Content x"` was the common open vector). Matched
+# command-initial only (segment start, via _split_command_segments), so a
+# read command that merely mentions the word (`echo cmd`, `grep pwsh`) is not
+# denied. `-e`/`-enc…` encoded commands are covered here (they execute only
+# via one of these shells) — so no separate `-Encoding`-colliding flag rule is
+# needed (C3: the former _PS_ENCODED denied legitimate `-Encoding` reads).
+_NESTED_SHELL = re.compile(r"(?i)^(?:powershell|pwsh|cmd)(?:\.exe)?$")
 
 # PowerShell-specific mutation surface (M0-T108; G5 M0-T102 MEDIUM). Matched on
-# the backtick-normalized command text, ADDITIVE to the shell-agnostic
-# _MUTATING pass (which already catches `git add`, `gh pr create`, `rm`, `mv`,
-# `cp`, `tee`, `npm install`, ... appearing in PowerShell command text).
-# Same quoted-text posture as _MUTATING: a mutating token inside a quoted
-# string still denies (fail closed).
+# the backtick-normalized command text (with call-operator-quoted literals
+# unwrapped by _ps_normalize), ADDITIVE to the shell-agnostic _MUTATING pass
+# (which already catches `git add`, `gh pr create`, `rm`, `mv`, `cp`, `tee`,
+# `npm install`, ... appearing in PowerShell command text).
+# QUOTED-TEXT POSTURE (honest, C4): a mutating token INSIDE a quoted string
+# still matches here (fail closed) EXCEPT that a mutating command name whose
+# only preceding character is a quote and which is not reached via a call
+# operator is a documented residual of the shared _MUTATING core (see the
+# module docstring); _ps_normalize unwraps the call-operator form (`& 'X'`)
+# so that vector is closed on the PowerShell path.
 _PS_MUTATING = re.compile(
     r"""(?ix)
-    (?:^|[\s;&|({`])
+    (?:^|[\s;&|({`=])
     (?:
         (?:Set|Add|Clear)-Content\b
       | Out-File\b
@@ -187,7 +221,10 @@ _PS_MUTATING = re.compile(
       | Invoke-(?:Expression|Item)\b
       | iex\b
       | Invoke-(?:WebRequest|RestMethod)\b[^;|]*?(?:-OutFile\b|-Method\s+(?:POST|PUT|PATCH|DELETE)\b)
+      | Invoke-(?:Cim|Wmi)Method\b[^;|]*?(?:Win32_Process\b|-MethodName\s+Create\b|-Name\s+Create\b|Create\b)
+      | New-Object\s+-ComObject\b
       | New-Object\s+(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\b
+      | \[(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\]::new\b
       | \[(?:System\.)?IO\.(?:File|Directory)\]::
             (?!Exists|ReadAll|ReadLines|OpenRead|OpenText|GetAttributes|
                GetLastWrite|GetCreationTime|GetFiles|GetDirectories|
@@ -196,16 +233,14 @@ _PS_MUTATING = re.compile(
       | reg\s+(?:add|delete|import|copy|restore|load|unload)\b
       | schtasks\b[^;|]*/(?:create|delete|change|run|end)\b
       | icacls\b[^;|]*/(?:grant|deny|remove|reset|setowner)\b
-      | (?:powershell|pwsh|cmd)(?:\.exe)?\s   # nested shell: laundering vector
-      | (?:sc|ni|ri|rd|del|erase|md|cpi|rni|ren|move|copy)\s  # write aliases
+      | (?:sc|ni|ri|rd|del|erase|md|mkdir|cpi|rni|ren|move|copy|
+           ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm)\s  # write cmdlet aliases
       | &\s*\$                                # call operator on a variable
     )
     """
 )
 # A `-OutFile` anywhere (outside the Invoke-* form above) writes a file.
 _PS_OUTFILE = re.compile(r"(?i)(?:^|\s)-OutFile\b")
-# powershell/pwsh encoded command: base64-hidden payload; never needed read-only.
-_PS_ENCODED = re.compile(r"(?i)(?:^|\s)-e(?:c|nc\w*)\b")
 
 # Best-effort inline scripting-write idioms (both shells; M0-T108 objective iii).
 # Deliberately mode-gated: `open(f)` / `open(f,'r')` / `open(f,'rb')` are pure
@@ -410,13 +445,31 @@ def _git_argv_mutates(cmd):
     return False
 
 
+# Call-operator / dot-source invocation of a QUOTED LITERAL command name
+# (`& 'Set-Content' x`, `. "Remove-Item" y`, `&'gh' pr create`). The shared
+# _MUTATING / _PS_MUTATING leading-delimiter classes exclude the quote that
+# precedes the command name, so these adjacency forms slipped past (G4 A1).
+# _ps_normalize unwraps them to the bare invocation (` Set-Content x`) so the
+# denylists match. Scoped to PowerShell (this normalize runs only there); the
+# analogous Bash-tool `'gh' pr create` remains a documented pre-existing
+# residual of the shared _MUTATING core (see the module docstring) — the
+# leading class is deliberately NOT broadened to include quotes there, which
+# would deny reads like `grep 'git push' file`.
+_PS_CALL_QUOTED = re.compile(r"""(?ix) (?<![\w'"]) [&.] \s* (['"]) ([^'"]+) \1""")
+
+
 def _ps_normalize(cmd):
     """Resolve PowerShell backtick escapes so a mutating verb cannot hide
     behind them (`git pu`+backtick+`sh` executes `git push`). Backtick+newline
     is a line continuation (both dropped, plus any CR/LF run); backtick+char
     resolves to the char. Single-quoted spans are literal in PowerShell, so
     backticks inside them are preserved. Backslash is NOT an escape character
-    in PowerShell (it is the path separator) and is left untouched."""
+    in PowerShell (it is the path separator) and is left untouched.
+
+    Then unwrap call-operator/dot-source quoted-literal invocations
+    (`& 'Set-Content' x` -> ` Set-Content x`) so an adjacent-quote command name
+    reaches the denylists (G4 A1). The replacement keeps a leading space so the
+    unwrapped verb still sits behind a delimiter for the leading-class regexes."""
     out = []
     in_single = False
     i, n = 0, len(cmd)
@@ -445,7 +498,10 @@ def _ps_normalize(cmd):
             continue
         out.append(c)
         i += 1
-    return "".join(out)
+    normalized = "".join(out)
+    # Unwrap `& 'Cmd' args` / `. "Cmd" args` -> ` Cmd args` (leading space keeps
+    # the verb behind a delimiter for the leading-class denylists).
+    return _PS_CALL_QUOTED.sub(lambda m: " " + m.group(2), normalized)
 
 
 def _unquoted_redirect(cmd, powershell=False):
@@ -495,23 +551,75 @@ def _unquoted_redirect(cmd, powershell=False):
     return False
 
 
+def _launches_nested_shell(cmd):
+    """True if any command segment's FIRST token is a nested shell
+    (powershell/pwsh/cmd/bash/sh/wsl) — a laundering vector by which a governed
+    reviewer could spawn a second shell to perform a write (M0-T108 D3, applied
+    to BOTH shells). Command-initial only, via the same segment splitter the
+    git argv pass uses, so a read that merely mentions the word (`echo cmd`,
+    `grep pwsh file`) is not denied. A leading assignment or wrapper
+    (`VAR=v powershell`, `env powershell`) still exposes the shell token as a
+    non-first word — handled by tokenizing and scanning each token position
+    against a trailing invocation flag is unnecessary here because the
+    dangerous forms all put the shell first; wrappers are covered by the
+    shell-agnostic passes when they carry a mutating sub-command."""
+    for seg in _split_command_segments(cmd):
+        try:
+            words = [w for w in shlex.split(seg, posix=True) if w.strip()]
+        except ValueError:
+            # Unbalanced quoting in a segment that names a nested shell: fail closed.
+            if re.search(r"(?i)(?:^|[\s;&|({`'\"])(?:powershell|pwsh|cmd)(?:\.exe)?\b", seg):
+                return True
+            continue
+        if not words:
+            continue
+        first = words[0].rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+        if _NESTED_SHELL.match(first):
+            return True
+    return False
+
+
 def _shell_command_mutates(cmd, powershell=False):
     """The full mutation decision for one shell command (M0-T108). The
-    shell-agnostic _MUTATING regex and the quoting-aware git argv pass run for
-    BOTH shells; PowerShell additionally normalizes backticks first and runs
-    its own denylist; both shells run the quote-aware redirect scan and the
-    best-effort inline scripting-write pass."""
+    shell-agnostic _MUTATING regex, the quoting-aware git argv pass, the
+    nested-shell laundering pass, the quote-aware redirect scan, and the
+    best-effort inline scripting-write pass run for BOTH shells; PowerShell
+    additionally normalizes backticks + unwraps call-operator-quoted literals
+    first and runs its own cmdlet/.NET/COM/CIM denylist."""
     if powershell:
         cmd = _ps_normalize(cmd)
-        if (_PS_MUTATING.search(cmd) or _PS_OUTFILE.search(cmd)
-                or _PS_ENCODED.search(cmd)):
+        if _PS_MUTATING.search(cmd) or _PS_OUTFILE.search(cmd):
             return True
     return bool(
         _MUTATING.search(cmd)
         or _unquoted_redirect(cmd, powershell=powershell)
         or _git_argv_mutates(cmd)
+        or _launches_nested_shell(cmd)
         or _SCRIPT_WRITE.search(cmd)
     )
+
+
+def _shell_command_text(tool_input):
+    """Extract the command text to scan for a shell tool. The Bash tool's field
+    is `command` (M0-T028 captured evidence). The PowerShell tool's field name
+    is not documented by any captured PreToolUse payload (G3 D4 / G5 minor), so
+    rather than assume it and risk failing OPEN, scan `command` PLUS every other
+    string leaf in tool_input (concatenated). A read command's extra fields add
+    only benign text; a write hidden in a differently-named field is still
+    caught. Non-dict tool_input yields '' (the WRITE_TOOLS branch already denied
+    the file-mutation tools; a shell tool with a non-dict input then scans '')."""
+    if not isinstance(tool_input, dict):
+        return ""
+    parts = []
+    primary = tool_input.get("command")
+    if isinstance(primary, str):
+        parts.append(primary)
+    for key, value in tool_input.items():
+        if key == "command":
+            continue
+        if isinstance(value, str):
+            parts.append(value)
+    return "\n".join(parts)
 
 
 def _deny(reason):
@@ -560,7 +668,16 @@ def _main():
         _deny(f"'{who}' is operationally read-only and may not use {tool}.")
         return 0
     if tool in SHELL_TOOLS:
-        cmd = (payload.get("tool_input") or {}).get("command") or ""
+        tin = payload.get("tool_input")
+        # Malformed shell tool_input fails CLOSED (preserves the prior
+        # crash-then-fail-closed behavior now that extraction is defensive):
+        # a non-dict tool_input, or a `command` present but not a string.
+        if not isinstance(tin, dict) or (
+            "command" in tin and not isinstance(tin["command"], str)
+        ):
+            _deny("read-only guard: malformed shell tool_input (fail-closed)")
+            return 0
+        cmd = _shell_command_text(tin)
         if _shell_command_mutates(cmd, powershell=(tool == "PowerShell")):
             _deny(
                 f"'{who}' is operationally read-only: repository/GitHub/control-plane "

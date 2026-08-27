@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 60,
+  "status": "in_progress",
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:58.338868+00:00",
-  "updated_at": "2026-08-27T02:22:16.450522+00:00",
+  "updated_at": "2026-08-27T02:38:53.577410+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -68,6 +68,13 @@
       "percent": 60,
       "status": "rework",
       "message": "Consolidated correction round (G3 FAIL + G5 C1-C4 blocking + G4 HIGH advisory). Confirmed-real bypasses to fix: [D1/C1/A2] PS write aliases ac/clc/mi/epcsv/sp/rp + mkdir; [D2] .NET ::new() writer constructors (StreamWriter/FileStream/BinaryWriter); [C2] COM (New-Object -ComObject) + CIM/WMI Win32_Process.Create; [D3] nested-shell (powershell/pwsh/cmd) laundering made shell-agnostic (Bash path too); [C3/A4] remove redundant _PS_ENCODED (fixes -Encoding read false-positive; encoded cmd already denied by nested-shell); [A3] ${null} redirect target; [A1] PS call-operator quoted-literal unwrap in _ps_normalize (Bash-side 'gh' quoted-literal is PRE-EXISTING in shared _MUTATING core -> documented residual + follow-up, not broadened to avoid grep-read FPs); [D4] read command text defensively from all tool_input string values so an unconfirmed PowerShell field name cannot fail open; [C4] honest residual docstring. Plus RED-on-mutant rows for each new tooth."
+    },
+    {
+      "at": "2026-08-27T02:38:53.577410+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Correction round applied: all G3 D1-D4 + G5 C1-C4 + G4 A1-A3 addressed and proven RED-on-mutant (PS pack 138/138, 8 mutants; Bash pack 136/136 unchanged; ruff clean). Deliverable re-frozen for delta re-review."
     }
   ]
 }
