@@ -54,12 +54,12 @@ Composition order cannot bypass the guard: the validator sees the concatenated f
 ### 2. Prompt-injection posture — PASS
 Classification is pure pattern-matching: `str.startswith`, `in`, and pre-compiled `re` searches. No `eval`/`exec`/`format`-into-command/`subprocess` anywhere (grep confirmed empty). Verdict/reason excerpts are bounded to **160 chars** (`excerpt = stripped[:160]`) at classification time. Everything persisted flows `publish_typed -> _store -> _mask_uuids -> TelemetryJournal.append -> _to_sanitized_dict -> sanitize_structure` (sanitize-first).
 
-**Probe (the requested one):** a `/goal status` payload with `last_reason="failed: api_key=sk-ABCDEF... AKIAIOSFODNN7EXAMPLE"` and `condition=r"C:\Users\MLFLL\secrets\prod.env and /home/martin/id_rsa"` persisted via `ingest_goal_status -> publish_typed`. Durable-store bytes:
+**Probe (the requested one):** a `/goal status` payload with `last_reason="failed: api_key=sk-ABCDEF... AKIAIOSFODNN7EXAMPLE"` and `condition=r"C:\Users\MLFLL\secrets\prod.env and /home/martin/id_rsa"` persisted via `ingest_goal_status -> publish_typed`. Durable-store bytes: <!-- secretscan:allow reviewer adversarial demo value; AWS documented example key AKIAIOSFODNN7EXAMPLE, fake/elided, gate-report evidence -->
 ```
 "condition": "look at [HOME]\\secrets\\prod.env and [HOME]/id_rsa",
 "last_reason": "failed: [REDACTED:assigned_secret] and token [REDACTED:aws_access_key]"
 ```
-On-disk leak checks: `sk-ABCDEF...` False, `AKIAIOSFODNN7EXAMPLE` False, `/home/martin` False, `MLFLL` False, `Users` False. Secrets and home paths are redacted before touching disk. `reason_excerpt` (GoalClearing) is never itself persisted by these modules; if a caller later journals it, the same sanitize pass applies.
+On-disk leak checks: `sk-ABCDEF...` False, `AKIAIOSFODNN7EXAMPLE` False, `/home/martin` False, `MLFLL` False, `Users` False. Secrets and home paths are redacted before touching disk. `reason_excerpt` (GoalClearing) is never itself persisted by these modules; if a caller later journals it, the same sanitize pass applies. <!-- secretscan:allow reviewer adversarial demo value; AWS documented example key AKIAIOSFODNN7EXAMPLE, fake/elided, gate-report evidence -->
 
 ### 3. publish_typed invariants on the accepted bus — PASS
 `publish_typed` computes its own namespaced dedup key (`f"typed:{record_type}"` prefix, avoiding collision with hook/stream keys) then delegates to the shared `_store`, so it inherits every invariant:
