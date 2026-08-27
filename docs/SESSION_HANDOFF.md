@@ -8,10 +8,15 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 ## Handoff — seq 16: M0-T106 (unit E) ACCEPTED; M0-T092 (unit F) STAGED at 15%; NEXT = implement unit F
 
-1. **Generated:** 2026-08-27 UTC · Fable 5 orchestrator, `session_01HfptKuEs3RDxaxsSHJjc7t`.
+1. **Generated:** 2026-08-27T21:21Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`.
+   **Turnover reason (verbatim):** "ok lets do season handoff not include the model fallback that
+   was saprt from the program". (The model-switch tracker built this session was a standalone
+   global `~/.claude` add-on, NOT ctl24 repo work — deliberately excluded here per that reason;
+   ctl24 state is unchanged since the seq-16 landing.)
    **Sub-agents in flight:** none (all unit-E/F reviewers + DCV landed and reconciled).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop`, HEAD `7ea88aa` (campaign seq **16**). Machine claude 2.1.247.
+   `control/D-024-fable-codex-loop`, HEAD `62d60c5` (campaign seq **16**; == origin, tree clean).
+   Machine claude 2.1.247.
    This session ran under owner directive **D-031** (session-scoped extension to ~750k context
    then handoff; D-010 R113/R114 ~400k ceiling unchanged for every other session). Handoff
    performed at ~61% occupancy — the last CLEAN seam before the ceiling (see §9).
