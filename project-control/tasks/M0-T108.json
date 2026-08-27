@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:58.338868+00:00",
-  "updated_at": "2026-08-27T03:01:49.106440+00:00",
+  "updated_at": "2026-08-27T03:07:45.836300+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -82,6 +82,13 @@
       "percent": 85,
       "status": "rework",
       "message": "G5 delta FAIL: 2 confirmed material bypasses on the correction delta. F1 (MEDIUM): New-Object -Com/-ComO/-ComObj prefix abbreviation reopens COM file-write (regex only matched -ComObject\\b). F2 (MEDIUM): start/saps (Start-Process aliases) fronting powershell/pwsh/cmd -enc = ungoverned encoded child shell; DENY->ALLOW regression from removing _PS_ENCODED wholesale. G3 delta PASS + G4 delta PASS hold (additive teeth, no regression to their scope). Round-3 fixes: F1 -Com\\w*; F2 add start/saps spawn-deny + scoped encoded-check (fires after powershell/pwsh token anywhere in segment); A1 broaden CIM/WMI (Set/New/Remove-CimInstance, Win32_Service Change); G3-A1 fix _launches_nested_shell docstring to match code (powershell/pwsh/cmd) + note bash/sh/wsl residual; G3-A2 report bookkeeping (mutant count, 707 lines); +RED-on-mutant rows for F1/F2."
+    },
+    {
+      "at": "2026-08-27T03:07:45.836300+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Round-3 fixes applied: F1 COM -Com\\w* prefix; F2 start/saps spawn-deny + scoped _PS_ENCODED_CMD (fires only with a powershell/pwsh token, no -Encoding collision); A1 all Invoke-Cim/WmiMethod + Set/New/Remove-CimInstance denied (Get-CimInstance read allowed); G3-A1 docstring parity; G3-A2 bookkeeping. PS pack 159/159 (13 mutants), Bash 136/136, ruff clean. Re-freezing for round-3 re-review."
     }
   ]
 }

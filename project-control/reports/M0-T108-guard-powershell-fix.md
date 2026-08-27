@@ -64,18 +64,22 @@ class) are explicitly asserted ALLOWED.
 - The full pre-existing Bash pack passes byte-for-byte unmodified: **136/136** — no existing
   denial removed, no existing allow removed.
 
-## 4. Evidence
+## 4. Evidence (final, post round-3 — supersedes the round-1 numbers; see §5/§5a for the history)
 
-- `python tools/test_readonly_agent_guard.py` → 136 PASS, `ALL CHECKS PASSED`.
-- `python tools/test_readonly_agent_guard_powershell.py` → 95 PASS, `ALL CHECKS PASSED`,
-  including **4 RED-on-mutant proofs** (PowerShell branch removed → `Set-Content` slips;
-  redirect scan removed → `> out.txt` slips; scripting pass removed → `open('f','w')` slips;
-  backtick normalization removed → hidden `git push` slips — each mutant ALLOWs what the real
-  guard DENIES).
-- `ruff check` on both changed Python files: clean. `modularity_check --check`: guard at 589
-  SLOC (below the 600 warn threshold); no new warnings.
+- `python tools/test_readonly_agent_guard.py` → **136 PASS**, `ALL CHECKS PASSED` (byte-unchanged
+  from base — no existing denial/allow removed).
+- `python tools/test_readonly_agent_guard_powershell.py` → **159 PASS**, `ALL CHECKS PASSED`,
+  including **13 RED-on-mutant proofs** (each mutant ALLOWs what the real guard DENIES; the pack's
+  `mutated_src == SRC` no-op guard fails any dead mutation): PowerShell branch, redirect scan,
+  scripting-write pass, backtick normalization, nested-shell pass, call-operator unwrap, `::new()`
+  constructors, COM, CIM/WMI, alias `ac`, defensive field extraction, COM-prefix (F1), and
+  start/saps+encoded (F2).
+- `ruff check` on both changed Python files: clean. `modularity_check --check`: **0 failures**;
+  the guard file is **not** among the warnings (its SLOC is below the 600 warn threshold — the
+  731 raw lines include a ~130-line docstring/comments); no new warnings.
 - Machine enforcement replaces the procedural stopgap immediately on merge: reviewer spawns in
-  this checkout now hit the extended guard (M0-T108's own reviewers run under it).
+  this checkout now hit the extended guard (M0-T108's own three review rounds ran under it —
+  each reviewer's own write/redirect attempts were denied mid-review, a live positive control).
 
 ## 5. Correction round (G3 FAIL → addressed; G5 C1–C4; G4 A1–A3)
 
@@ -109,10 +113,35 @@ script). One accepted false-positive of the standard quoted-text posture remains
 (`Write-Output 'the Set-Content cmdlet'` denies), identical in kind to the existing Bash
 `_MUTATING` behavior (fail-closed).
 
-**Post-correction evidence:** PS pack **138/138** (was 95; +8 RED-on-mutant, now 8 load-bearing
-mutants); Bash pack **136/136 unchanged**; ruff clean; guard 706 raw lines (SLOC below the
-modularity WARN threshold — the checker reports 0 failures and does not flag this file; the growth
-is additional denylist rules within the guard's single responsibility, no responsibility mixing).
+## 5a. Round-3 correction (G5 delta FAIL F1/F2; A1; G3 delta A1/A2)
+
+Round-2 delta review: G3 PASS, G4 PASS, **G5 FAIL** — the G5 security delta found two confirmed
+material bypasses the round-2 delta itself shipped. Both closed:
+
+| Finding | Fix | Proof |
+|---|---|---|
+| **G5 F1 (MEDIUM)** — COM `New-Object -Com`/`-ComO`/`-ComObj` (PowerShell parameter-prefix abbreviation of `-ComObject`) bypassed the `-ComObject\b` match → arbitrary file write via FSO | broadened to `New-Object\s+-Com\w*\b` | 5 DENY assertions + repointed COM mutant |
+| **G5 F2 (MEDIUM)** — `start`/`saps` (Start-Process aliases) fronting `powershell`/`pwsh`/`cmd` (with `-enc`) spawned an ungoverned child shell; a DENY→ALLOW regression from removing `_PS_ENCODED` wholesale | added `start`/`saps` to the `_PS_MUTATING` spawn-alias branch, **and** re-added a SCOPED encoded-command check (`_PS_ENCODED_CMD` + `_PS_HAS_SHELL`) that fires only when an `-enc`/`-encodedcommand` flag co-occurs with a `powershell`/`pwsh` token — so `start powershell -enc <b64>` DENIes while `Get-Content -Encoding UTF8 f` (no shell token) stays ALLOW | 6 DENY + 2 no-FP ALLOW assertions + start/saps mutant |
+| **G5 A1 (advisory→closed)** — CIM/WMI mutators beyond `Win32_Process.Create` | deny all `Invoke-CimMethod`/`Invoke-WmiMethod` and `Set`/`New`/`Remove-CimInstance`; read `Get-CimInstance` stays allowed | 5 DENY + 1 ALLOW assertions + repointed CIM mutant |
+| **G3 A1 (advisory→closed)** — `_launches_nested_shell` docstring over-listed `bash/sh/wsl` (code matches only `powershell/pwsh/cmd`) | docstring rewritten to state the exact set and record `bash/sh/wsl`/`sh -c` as an explicit follow-up residual (why `sh` is excluded — the backtick-split collision) | docstring |
+| **G3 A2 (advisory→closed)** — report mutant-count/line bookkeeping | corrected here (see below) | this report |
+
+**Deliberately-retained residuals (honest):** the Bash-tool `'gh' pr create` quoted-literal
+(pre-existing in the shared `_MUTATING` core); the Bash-tool self-launch of another POSIX shell
+(`sh -c '…'` / `bash -c '…'` / `wsl …`) — covered by the orchestrator-only integration model and
+recommended for a follow-up hardening pass; the string-assembled dynamic verb
+(`& ('Set-Con'+'tent')`); a command nested in a `tool_input` sub-object (no known harness uses
+this shape); and non-repo-write side effects (`[Environment]::SetEnvironmentVariable`,
+`Set-Clipboard`, dot-sourcing a pre-existing script). One accepted false-positive of the standard
+quoted-text posture remains (`Write-Output 'the Set-Content cmdlet'` denies), identical in kind to
+the existing Bash `_MUTATING` behavior (fail-closed).
+
+**Post-correction evidence (round 3):** PS pack **159/159** (**13** RED-on-mutant, all
+load-bearing — the 4 original + 9 correction-round teeth incl. F1 COM-prefix and F2
+start/saps+encoded); Bash pack **136/136 unchanged**; ruff clean; guard **731 raw lines** (SLOC
+below the modularity WARN threshold — the checker reports 0 failures and does not flag this file;
+the growth is additional denylist rules within the guard's single responsibility, no
+responsibility mixing).
 
 ## 6. Scope
 

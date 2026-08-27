@@ -221,8 +221,9 @@ _PS_MUTATING = re.compile(
       | Invoke-(?:Expression|Item)\b
       | iex\b
       | Invoke-(?:WebRequest|RestMethod)\b[^;|]*?(?:-OutFile\b|-Method\s+(?:POST|PUT|PATCH|DELETE)\b)
-      | Invoke-(?:Cim|Wmi)Method\b[^;|]*?(?:Win32_Process\b|-MethodName\s+Create\b|-Name\s+Create\b|Create\b)
-      | New-Object\s+-ComObject\b
+      | Invoke-(?:Cim|Wmi)Method\b          # any CIM/WMI method invocation (reads use Get-CimInstance)
+      | (?:Set|New|Remove)-CimInstance\b
+      | New-Object\s+-Com\w*\b              # -Com/-ComO/-ComObj/-ComObject (PS prefix abbreviation)
       | New-Object\s+(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\b
       | \[(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\]::new\b
       | \[(?:System\.)?IO\.(?:File|Directory)\]::
@@ -234,13 +235,24 @@ _PS_MUTATING = re.compile(
       | schtasks\b[^;|]*/(?:create|delete|change|run|end)\b
       | icacls\b[^;|]*/(?:grant|deny|remove|reset|setowner)\b
       | (?:sc|ni|ri|rd|del|erase|md|mkdir|cpi|rni|ren|move|copy|
-           ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm)\s  # write cmdlet aliases
+           ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm|
+           start|saps)\s  # write/spawn cmdlet aliases (start/saps = Start-Process)
       | &\s*\$                                # call operator on a variable
     )
     """
 )
 # A `-OutFile` anywhere (outside the Invoke-* form above) writes a file.
 _PS_OUTFILE = re.compile(r"(?i)(?:^|\s)-OutFile\b")
+# Encoded-command execution (M0-T108 round-3 F2). The former _PS_ENCODED matched
+# `-enc`/`-encodedcommand` UNCONDITIONALLY and collided with `-Encoding` reads
+# (G5 C3). This scoped form fires ONLY when a `powershell`/`pwsh` token is also
+# present in the command — an encoded payload is meaningless without the shell
+# that runs it — so `Get-Content -Encoding UTF8 f` (no shell token) stays ALLOW
+# while `start powershell -enc <b64>` (shell present, but NOT first-token so the
+# nested-shell pass misses it) DENIes. `\b-e(?:c|nc\w*)` matches -ec/-enc/
+# -encodedcommand; `-Encoding` is excluded because it needs the shell token.
+_PS_ENCODED_CMD = re.compile(r"(?i)(?:^|\s)-e(?:c|nc\w*)\b")
+_PS_HAS_SHELL = re.compile(r"(?i)(?:^|[\s;&|({`'\"])(?:powershell|pwsh)(?:\.exe)?\b")
 
 # Best-effort inline scripting-write idioms (both shells; M0-T108 objective iii).
 # Deliberately mode-gated: `open(f)` / `open(f,'r')` / `open(f,'rb')` are pure
@@ -552,17 +564,25 @@ def _unquoted_redirect(cmd, powershell=False):
 
 
 def _launches_nested_shell(cmd):
-    """True if any command segment's FIRST token is a nested shell
-    (powershell/pwsh/cmd/bash/sh/wsl) — a laundering vector by which a governed
-    reviewer could spawn a second shell to perform a write (M0-T108 D3, applied
-    to BOTH shells). Command-initial only, via the same segment splitter the
-    git argv pass uses, so a read that merely mentions the word (`echo cmd`,
-    `grep pwsh file`) is not denied. A leading assignment or wrapper
-    (`VAR=v powershell`, `env powershell`) still exposes the shell token as a
-    non-first word — handled by tokenizing and scanning each token position
-    against a trailing invocation flag is unnecessary here because the
-    dangerous forms all put the shell first; wrappers are covered by the
-    shell-agnostic passes when they carry a mutating sub-command."""
+    """True if any command segment's FIRST token is a nested Windows shell —
+    exactly `powershell`, `pwsh`, or `cmd` (see `_NESTED_SHELL`) — a laundering
+    vector by which a governed reviewer could spawn a second shell to perform a
+    write (M0-T108 D3, applied to BOTH shells). Command-initial only, via the
+    same segment splitter the git argv pass uses, so a read that merely mentions
+    the word (`echo cmd`, `grep pwsh file`) is not denied.
+
+    Scope note (M0-T108 G3-A1 / docstring parity): `bash`/`sh`/`wsl` are
+    deliberately NOT in this set. Including `sh` would collide with the
+    backtick-split fragment of `git pu`+backtick+`sh` (breaking the
+    backtick-normalization regression proof), and the Bash-tool self-launch of
+    another POSIX shell (`sh -c '…'`) is a pre-existing residual covered by the
+    orchestrator-only integration model (see the module docstring's compensating
+    control (b)); it is recommended for a follow-up hardening pass, not closed
+    here. Start-Process aliases (`start`/`saps`) fronting a shell are covered
+    separately by the `_PS_MUTATING` spawn-alias branch on the PowerShell path.
+
+    A leading assignment or wrapper that puts the shell as a non-first word is
+    covered by the shell-agnostic passes when it carries a mutating sub-command."""
     for seg in _split_command_segments(cmd):
         try:
             words = [w for w in shlex.split(seg, posix=True) if w.strip()]
@@ -589,6 +609,11 @@ def _shell_command_mutates(cmd, powershell=False):
     if powershell:
         cmd = _ps_normalize(cmd)
         if _PS_MUTATING.search(cmd) or _PS_OUTFILE.search(cmd):
+            return True
+        # Scoped encoded-command: an -enc payload together with a powershell/pwsh
+        # token (F2). Catches `start powershell -enc <b64>` that the first-token
+        # nested-shell pass misses, without denying `-Encoding` reads (no shell).
+        if _PS_ENCODED_CMD.search(cmd) and _PS_HAS_SHELL.search(cmd):
             return True
     return bool(
         _MUTATING.search(cmd)

@@ -276,6 +276,28 @@ check("D4 command as int fails closed", "DENY",
       {"hook_event_name": "PreToolUse", "tool_name": "PowerShell", "agent_type": ROLE,
        "tool_input": {"command": 123}})
 
+print("== Round-3 (G5 delta F1/F2, A1 CIM/WMI) ==")
+# F1 — COM parameter-prefix abbreviation
+for cmd in ["New-Object -Com Scripting.FileSystemObject", "New-Object -ComO X",
+            "New-Object -ComObj X", "New-Object -ComObject Scripting.FileSystemObject",
+            "$f=New-Object -Com Scripting.FileSystemObject; $f.CreateTextFile('x')"]:
+    check(f"F1 COM prefix deny: {cmd[:34]}", "DENY", ps(ROLE, cmd))
+# F2 — Start-Process aliases + scoped encoded-command
+for cmd in ["start powershell -enc SQBFAFgA", "saps powershell -enc SQBFAFgA",
+            "start pwsh -encodedcommand SQBFAFgA", "saps cmd /c whoami",
+            "start notepad", "saps foo.exe"]:
+    check(f"F2 spawn/enc deny: {cmd[:34]}", "DENY", ps(ROLE, cmd))
+# F2 must NOT reintroduce the C3 -Encoding false positive (no shell token present)
+check("F2 no-FP: Get-Content -Encoding allow", "ALLOW", ps(ROLE, "Get-Content -Encoding UTF8 README.md"))
+check("F2 no-FP: Select-String -Encoding allow", "ALLOW",
+      ps(ROLE, "Select-String -Encoding utf8 -Path x -Pattern y"))
+# A1 — CIM/WMI mutators; Get-CimInstance read stays allowed
+for cmd in ["Set-CimInstance -Query x", "New-CimInstance X", "Remove-CimInstance X",
+            "Invoke-CimMethod -ClassName Win32_Service -MethodName Change",
+            "Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList calc"]:
+    check(f"A1 CIM/WMI deny: {cmd[:34]}", "DENY", ps(ROLE, cmd))
+check("A1 Get-CimInstance read allow", "ALLOW", ps(ROLE, "Get-CimInstance Win32_Process"))
+
 print("== Identity pass-through unchanged ==")
 check("lead (no identity) + PS Set-Content -> allow", "ALLOW",
       ps(None, "Set-Content x.txt hi"))
@@ -338,20 +360,31 @@ MUTANTS = {
             ""),
         ps(ROLE, '[IO.StreamWriter]::new("x.txt")'),
     ),
-    "mutant drops ComObject tooth -> New-Object -ComObject would slip": (
-        SRC.replace(r"| New-Object\s+-ComObject\b", ""),
+    "mutant drops COM tooth -> New-Object -ComObject would slip": (
+        SRC.replace(r"| New-Object\s+-Com\w*\b", ""),
         ps(ROLE, "New-Object -ComObject Scripting.FileSystemObject"),
     ),
-    "mutant drops CIM/WMI tooth -> Win32_Process Create would slip": (
-        SRC.replace(
-            r"| Invoke-(?:Cim|Wmi)Method\b[^;|]*?(?:Win32_Process\b|-MethodName\s+Create\b|-Name\s+Create\b|Create\b)",
-            ""),
+    "mutant drops CIM/WMI tooth -> Invoke-CimMethod would slip": (
+        SRC.replace(r"| Invoke-(?:Cim|Wmi)Method\b", ""),
         ps(ROLE, "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine='c'}"),
     ),
     "mutant drops alias 'ac' -> Add-Content alias would slip": (
         SRC.replace(
             "ac|clc|mi|epcsv|sp|rp|spps|rbp|swmi|icm", "spps|rbp|swmi|icm"),
         ps(ROLE, "ac x.txt hi"),
+    ),
+    "mutant keeps only -ComObject (no prefix) -> New-Object -Com would slip (F1)": (
+        SRC.replace(r"| New-Object\s+-Com\w*\b", r"| New-Object\s+-ComObject\b"),
+        ps(ROLE, "New-Object -Com Scripting.FileSystemObject"),
+    ),
+    "mutant drops start/saps spawn aliases -> start powershell -enc would slip (F2)": (
+        # remove start|saps from the alias branch AND the scoped encoded pass, so
+        # `start powershell -enc` reaches neither -> proves both F2 teeth.
+        SRC.replace("start|saps)\\s  # write/spawn cmdlet aliases", "spps)\\s  # (mutated)")
+           .replace(
+               "        if _PS_ENCODED_CMD.search(cmd) and _PS_HAS_SHELL.search(cmd):\n"
+               "            return True\n", ""),
+        ps(ROLE, "start powershell -enc SQBFAFgA"),
     ),
     "mutant drops defensive field extraction -> write in 'script' field would slip": (
         SRC.replace(
