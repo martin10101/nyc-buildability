@@ -284,6 +284,25 @@ class DurableEventBus:
             return None
         return self.publish_stream_event(event, now_utc_iso=now_utc_iso)
 
+    def publish_typed(self, record: TelemetryRecord) -> TelemetryRecord | None:
+        """Record one already-typed TelemetryRecord, dedup-keyed on its
+        content (record_type + identity + canonical attribute digest).
+
+        Additive unit-E consumption seam (M0-T106; D-024-R174): goal
+        check-in/status records produced by other modules persist through
+        the SAME durable store, dedup, and replay semantics as hook and
+        stream records — no second persistence path. Existing publish paths
+        are unchanged.
+        """
+        key = idempotency_key(
+            f"typed:{record.record_type}",
+            {"session_id": record.session_id, "task_id": record.task_id,
+             "attributes": dict(record.attributes)})
+        if key in self._seen:
+            self.duplicates_ignored += 1
+            return None
+        return self._store(record, key)
+
     def replay(self, *, include_rotated: bool = True) -> ReplayResult:
         """Fresh pure rebuild from disk (state inspection; no side effects)."""
         return replay_store(

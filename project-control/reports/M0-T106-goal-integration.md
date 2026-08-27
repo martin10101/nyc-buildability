@@ -59,6 +59,39 @@ Like the unit-C/D canaries, the LIVE goal run needs an owner-approved exact laun
 evidence (measured-live verdict/check-in shapes) and upgrades the semantics fixture, exactly as
 the unit-D C1 did for hook payloads.
 
-## 3. Evidence (populated during implementation)
+## 3. Evidence (deterministic core S1–S11)
 
-(pending — deterministic core next)
+Deliverables (new files + ONE additive method on the just-accepted unit-D bus; no other accepted
+file modified; `.claude/hooks` is forbidden to this task and untouched):
+
+| File | Lines | Role |
+|---|---|---|
+| `tools/agent_supervisor/goal_contract.py` | 153 | bounded condition contract: one-task binding, end state + stated check + constraints + explicit turn bound, ≤4,000 chars, campaign-scale tripwires, R045 via the REUSED `assert_worker_text_clean`; shared version helpers + documented version-gate constants |
+| `tools/agent_supervisor/goal_outcomes.py` | 240 | verdict normalization (3 documented verdicts + honest unknown); clearing classification (documented warning frame → four unrecoverable classes incl. the host-managed-credentials stays-active nuance; transient-stays-active; user-clear; no-goal; unknown); STRUCTURAL no-progress pause (goal stays set — the stall warning text is undocumented, so nothing parses it); resume semantics (all-routes ≥2.1.239, counter reset, achieved/cleared never restored); `/autocompact` policy (context-overflow clearing = turnover seam trigger); `/goal` status ingestion with R042 labels (spend detail: baseline resets on resume — never whole-session) |
+| `tools/agent_supervisor/goal_checkins.py` | 170 | check-in schedule math (30-min default first interval, doubling capped at 4×, `CLAUDE_CODE_GOAL_CHECKIN_MINUTES` scaling, 0=off, malformed env fails visible); version gates (≥2.1.234 / ≥2.1.236 / cap 3 ≥2.1.246, unknown-version honest); check-in ingestion → `goal_checkin` records persisted via the REUSED unit-D bus |
+| `tools/agent_supervisor/event_bus.py` (+19) | 311 | ADDITIVE `publish_typed(record)`: dedup-keyed publish for typed records from other modules — same store/dedup/replay semantics, no second persistence path; existing publish paths byte-unchanged |
+| `fixtures/goal_semantics_2_1_247.json` | — | goal contract facts @ official-docs confidence (build-time re-fetch of code.claude.com/docs/en/goal, 2026-08-27) reconciled against the accepted M0-T102 snapshot: **drift = NONE**; the S11 tooth pins fixture↔code on every constant (verdicts, classes, warning frame, cadence, gates, caps, ceiling) |
+| `tools/test_agent_supervisor_goal_integration.py` | 346 | 31 tests mapping S1–S11 (IDs in test names) |
+
+Self-check results (producer, local 3.11.9; installed claude 2.1.247):
+
+- **31/31** goal pack + **38/38** unit-D event-bus pack (69 combined — the `publish_typed` addition
+  regresses nothing).
+- **Mutation self-check 9/9 KILLED**: turn-bound-guard-removed, foreign-task-guard-removed,
+  campaign-guard-removed, R045-validator-removed, host-managed-nuance-removed,
+  transient-check-removed, backoff-cap-removed, seam-trigger-any-unrecoverable,
+  publish-typed-dedup-removed.
+- **ruff 0.13.0 clean** on all five changed Python files; `modularity_check --check` 0 failures
+  (largest new file 240 lines).
+- **Guard packs** `ALL CHECKS PASSED` ×2; `.claude/hooks/` diff empty (forbidden path respected).
+- **No-leak scan** over every new path: CLEAN except the precedented benign class (the leak-needle
+  assertion string inside the test pack itself).
+- **S11 drift check executed at build time**: live page vs M0-T102 snapshot — no substantive drift;
+  recorded in the fixture with the reconciliation note.
+- **Freeze-suite evidence**: targeted regression slice **278 passed / 0 failed** + whole-tree
+  collection **2,720 tests, zero errors**; the local full-suite runs were externally stopped
+  twice mid-run (zero failures at the stops) and were not relaunched against the operator
+  signal — full-suite proof rests on CI at the pushed head plus reviewer re-runs (disclosed in
+  the G2 self-check; M0-T105 G4-accepted reasoning for a new-files-plus-additive change).
+- Context discipline (D-031): occupancy measured at the claim seam ≈45%; measured again at submit
+  (recorded in the progress log); handoff due at ~750k per D-031-R002.

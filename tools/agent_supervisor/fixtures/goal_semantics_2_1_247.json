@@ -1,0 +1,78 @@
+{
+  "schema": "goal_semantics/v1",
+  "directive": "D-024",
+  "task": "M0-T106",
+  "recorded": "2026-08-27",
+  "claude_version_installed": "2.1.247 (Claude Code)",
+  "confidence": "official-docs",
+  "source": "code.claude.com/docs/en/goal re-fetched at build time 2026-08-27 and reconciled against the accepted M0-T102 snapshot (project-control/reports/M0-T102-docs-snapshot/goal.md, fetched 2026-08-26)",
+  "drift_vs_m0_t102_snapshot": {
+    "differences": [],
+    "note": "no substantive drift: verdicts, warning frame, four clearing classes and the host-managed-credentials nuance, transient-stays-active, no-progress goal-stays-set, resume counter-reset semantics, check-in cadence/env/caps, 4000-char ceiling, trust/availability rules, and non-interactive behavior all identical"
+  },
+  "verdicts": ["not_yet_met", "met", "impossible"],
+  "verdict_semantics": {
+    "not_yet_met": "Claude keeps working; the reason is guidance for the next turn",
+    "met": "goal cleared; achieved entry recorded in the transcript",
+    "impossible": "goal cleared; failed entry + reason recorded; no user clear needed"
+  },
+  "unrecoverable_clearing": {
+    "warning_prefix": "Goal cleared after an unrecoverable error",
+    "warning_suffix": "Run /goal again to continue",
+    "classes": {
+      "auth_failure": "authentication failure when Claude Code manages its own credentials; when a HOST manages them (desktop app, VS Code extension, cloud session) the goal STAYS ACTIVE because the host restores access",
+      "credit_exhausted": "an exhausted credit balance",
+      "context_overflow": "a context overflow that auto-compaction couldn't clear",
+      "model_unavailable": "a model that isn't available"
+    },
+    "transient_stays_active": "after any other failure, including rate limits and overloaded servers, the goal stays active"
+  },
+  "no_progress": "no tool use for several turns in a row -> Claude Code stops the loop, prints a warning, returns control WITH THE GOAL STILL SET; evaluation resumes after the next prompt (exact warning text undocumented - classification must be structural, never text-guessed)",
+  "clear_shapes": {
+    "user_clear_prefix": "Goal cleared:",
+    "no_goal": "No goal set",
+    "aliases": ["clear", "stop", "off", "reset", "none", "cancel"],
+    "slash_clear_also_clears": true
+  },
+  "resume": {
+    "all_routes_min_version": "2.1.239",
+    "before_that": "restored on every route EXCEPT the claude --resume picker",
+    "counters_reset": ["turn_count", "timer", "token_spend_baseline"],
+    "not_restored": ["achieved", "cleared"]
+  },
+  "checkins": {
+    "min_version": "2.1.234",
+    "idle_min_version": "2.1.236",
+    "idle_cap_min_version": "2.1.246",
+    "idle_cap": 3,
+    "first_interval_minutes_default": 30,
+    "backoff": "doubles after the first check-in, capped at four times the first interval (default: 1h after the first, then every 2h)",
+    "env_var": "CLAUDE_CODE_GOAL_CHECKIN_MINUTES",
+    "env_zero_disables": true,
+    "delivery_kinds": ["turn_end", "idle"],
+    "non_interactive_delivery": "turn_end only (e.g. -p sessions)",
+    "background_defers_evaluation": "evaluation skipped while a subagent or background shell runs; evaluated at the next turn that ends with no background work"
+  },
+  "condition": {
+    "max_chars": 4000,
+    "effective_shape": ["one measurable end state", "a stated check", "constraints that matter"],
+    "bound_clause_example": "or stop after 20 turns",
+    "one_goal_per_session": true,
+    "new_goal_replaces_active": true
+  },
+  "status_fields": ["condition", "duration", "turns_evaluated", "token_spend", "last_reason"],
+  "availability": {
+    "trust_rule": "same workspace trust rule as hooks in settings files (evaluator is part of the hooks system)",
+    "disabled_when": ["disableAllHooks true after settings precedence", "allowManagedHooksOnly in managed settings"],
+    "tells_you_why": true,
+    "not_on_2_1_220_baseline": true
+  },
+  "non_interactive": "claude -p \"/goal <condition>\" runs the loop to completion; add --output-format stream-json --verbose to see messages; Ctrl+C interrupts",
+  "evaluator": {
+    "default_model": "Haiku (small fast model)",
+    "env_var": "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+    "env_var_warning": "read everywhere the small fast model is used, not only /goal",
+    "no_tools": "judges only what the worker surfaced in the conversation"
+  },
+  "upgrade_path": "measured-live verdict/check-in captures are the owner-gated C1 canary (R192/R197); this record is documentation-confidence until then, exactly as the unit-D catalog fixture was"
+}
