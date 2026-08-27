@@ -4,9 +4,18 @@
   "reviewer": "code-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M0-T106-G3-code-review.md",
-  "reviewed_at": "2026-08-27T18:00:30.001008+00:00",
-  "content_manifest_sha256": "d2c25b7edd07054ce352d975a28dea36c9c49d2986cfbc68fa8bac1dc31bf225",
-  "reviewed_sha": "ff2e2a808ed04fa94e0fb58caae88e0a0c33d8a3",
-  "updated_at": "2026-08-27T18:00:30.627935+00:00"
+  "report_file": "project-control/reports/M0-T106-G3-code-review-delta.md",
+  "reviewed_at": "2026-08-27T18:27:49.143377+00:00",
+  "content_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293",
+  "reviewed_sha": "6cc9cf258fec4390c09478d99611281bac9a9581",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T106-G3-code-review.md",
+      "reviewed_at": "2026-08-27T18:00:30.001008+00:00"
+    }
+  ],
+  "updated_at": "2026-08-27T18:27:49.866588+00:00"
 }
