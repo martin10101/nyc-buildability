@@ -441,7 +441,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-030-successor-capability-rebaseline/manifest.json"
+  },
+  {
+   "directive_id": "D-031",
+   "slug": "session-rotation-extension-750k",
+   "title": "Owner directive 2026-08-27: continue working in the CURRENT session until context occupancy reaches approximately 750k of the 1M window, then perform the session handoff. Session-scoped extension of the D-010 R113/R114 ~400k rotate-at-seam ceiling for session_01HfptKuEs3RDxaxsSHJjc7t only; D-010 unchanged for every other session; all gates/holds/restrictions unchanged. Conduct-only (sentinel D-031-BOOTSTRAP).",
+   "status": "active",
+   "issued_at": "2026-08-27",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-031-session-rotation-extension-750k/manifest.json"
   }
  ],
- "updated_at": "2026-08-26T22:33:01+00:00"
+ "updated_at": "2026-08-27T17:06:11+00:00"
 }
