@@ -1,0 +1,17 @@
+{
+  "task_id": "M0-T104",
+  "producer_agent": "fable-orchestrator-session",
+  "report_file": "project-control/reports/M0-T104-native-adapter.md",
+  "submitted_at": "2026-08-27T08:40:15.943004+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T104-evidence-map.json",
+  "content_manifest_sha256": "fccd518bc6e4f50936bb7ad349881d6d397959d394501da74c5784f9dec144d1",
+  "reviewed_sha": "ac305aec57a3e3db2eeaa0cdb5067f4ea0faef2e",
+  "applicable_requirements": [
+    "D-024-R153",
+    "D-024-R154",
+    "D-024-R156",
+    "D-024-R172"
+  ],
+  "updated_at": "2026-08-27T08:40:18.005682+00:00"
+}

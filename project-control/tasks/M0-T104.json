@@ -51,11 +51,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:33.996052+00:00",
-  "updated_at": "2026-08-27T08:40:18.025256+00:00",
+  "updated_at": "2026-08-27T08:51:51.624858+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -93,6 +93,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Implementation + live canaries complete. Modules native_runtime.py (614 pl) + runtime_backend.py (270 pl); adapter pack 53/53; probe pack 19/19 (drift tooth GREEN at 2.1.247); ALL 50 supervisor test files 2204 passed/2 skipped/0 failed (freeze baseline >=1165 re-established); non-supervisor 439 passed/1 skipped (test_directive_compliance.py impractical locally at 28-directive scale - validator standalone EXIT=0 at this identity; CI covers); guard packs ALL CHECKS PASSED x2 untouched; 8/8 mutants killed; ruff scoped clean (whole-tree 67 = baseline); modularity 0 failures; leak scan clean. Canary-measured: --bg ignores --session-id (name is dispatch key); variadic --tools swallows prompt (fixed with -- separator; CANARY-C-DONE verified); UTF-8/cp1252 probe crash fixed; status/state literal inventory encoded fail-closed. Next: deliverable commit, G2, submit, reviewer wave."
+    },
+    {
+      "at": "2026-08-27T08:51:51.624858+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "awaiting_gate",
+      "message": "G5 round-1 PASS with required corrections (verbatim report saved). Per .claude/rules/project-control.md gate-verdict semantics the corrections are BLOCKING for acceptance: F2 MEDIUM (NativeBackgroundBackend default base_env=None skips the child-env strip - make strip unavoidable + test), F3 MEDIUM/LOW (mask_session_row field-allowlist -> comprehensive all-string-value pass + UUID//home/ needles in committed leak test), F1 LOW (charset-validate agent/tools values; soften structurally-impossible docstring), F4 ADVISORY (reconcile must refuse a known-unavailable feed / rename safe_to_dispatch). F5 accepted residual (soft worktree preamble, trusted caller); F6 optional. Consolidated correction round will be applied IN-TASK after G3/G4 land (M0-T108 worked example), then re-freeze + delta re-reviews. No file edits until G3/G4 finish their runs at ac305ae."
     }
   ]
 }
