@@ -25,35 +25,40 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    (b) **Claimed + built M0-T108** (readonly_agent_guard PowerShell/scripting write-gap fix, G5
    M0-T102 MEDIUM).
 4. **M0-T108 state:** `awaiting_gate`, claimed by `fable-orchestrator-session`, worktree = primary
-   checkout. **Round-3 deliverable identity `e1f6d4c`** (HEAD `608609c` = control-plane records
-   only after it). Gate history: G0 PASS, G2 PASS. Round-2 (at `f0bdf7a`): **G3 PASS, G4 PASS,
-   G5 FAIL** (F1 COM `-Com` prefix abbreviation → file write; F2 `start`/`saps`-fronted encoded
-   shell → DENY→ALLOW regression). Round-3 (at `e1f6d4c`) closed F1 (`-Com\w*`), F2 (`start`/`saps`
-   spawn-deny + scoped `_PS_ENCODED_CMD` requiring a co-occurring powershell/pwsh token, no
-   `-Encoding` collision), advisory A1 (all `Invoke-Cim/WmiMethod` + `Set/New/Remove-CimInstance`
-   denied, `Get-CimInstance` read allowed), and G3 doc/bookkeeping advisories.
+   checkout. **Round-3 deliverable identity `e1f6d4c`** (HEAD moved on: control-plane records +
+   this handoff after it — re-derive live). Gate history: G0 PASS, G2 PASS. Round-2 (`f0bdf7a`):
+   G3 PASS, G4 PASS, **G5 FAIL** (F1 COM `-Com` prefix → file write; F2 `start`/`saps`-fronted
+   encoded shell → DENY→ALLOW regression). Round-3 (`e1f6d4c`) closed F1 (`-Com\w*`), F2, A1 — but
+   **G3 round-3 = FAIL (recorded)**: new defect **D-R3-1** — the F2 scoped encoded-check
+   (`_PS_ENCODED_CMD` matches `-Encoding` since `-enc` is its prefix; `_PS_HAS_SHELL` matches the
+   word `powershell`/`pwsh` anywhere as DATA) newly DENIes pure `-Encoding` reads that mention
+   `powershell`/`pwsh` (e.g. `Select-String -Encoding utf8 -Pattern powershell`) — a narrowed
+   re-open of the previously-blocking C3 FP. **Fails safe** (over-blocks a read, opens NO write);
+   F1/F2/A1 security teeth all correct; verified at `e1f6d4c`. **G4 + G5 round-3 STILL IN FLIGHT.**
 5. **M0-T108 evidence (round 3):** PS pack **159/159** (13 RED-on-mutant, all load-bearing); Bash
    pack **136/136 byte-unchanged**; ruff clean; `modularity_check --check` 0 failures (guard 731
-   raw lines, not flagged). Only the four packet paths changed (guard, `.claude/settings.json`
-   matcher line, PS test pack, report).
-6. **Exact next action:** collect the three round-3 verdicts (§7). Save each **verbatim** to
-   `project-control/reports/M0-T108-G{3,4,5}-*-round3.md`, record the gate via
-   `project_control.py gate --sha <live HEAD>`. **If all PASS:** run the directive-compliance
-   verification (DCV) — M0-T108's applicable D-024 set is **EMPTY** (`evaluate_task_refs` ok=true,
-   `D-024:ALL` resolves empty; still needs the explicit empty-set task row in `verification.json`);
-   then `accept` (needs all required gates PASS + reviewed_sha == live HEAD), `checkpoint`, and
-   **advance the campaign to seq 13** (`campaign_continuity.advance(expected_sequence=12, …)`).
-   **If any FAIL:** consolidated correction round → re-freeze → re-review (the worked example is
-   this session's M0-T108 rounds 1→2→3). **DO NOT dispatch any unit C–I reviewer/producer until
+   raw lines, not flagged). Only the four packet paths changed.
+6. **Exact next action (ROUND-4 needed — D-R3-1 is blocking):** (a) collect the G4 + G5 round-3
+   verdicts (§7), save verbatim, record gates; fold any further round-3 findings into round-4.
+   (b) **Round-4 correction to fix D-R3-1:** gate the scoped encoded-command check so the
+   `powershell`/`pwsh` token must be in COMMAND/SPAWN position (segment-first, or immediately after
+   `start`/`saps`/`Start-Process`/`&`), NOT merely present as argument data — do NOT try to split
+   `-enc` from `-Encoding` by prefix (impossible). Add a RED regression row: `-Encoding` +
+   `powershell`/`pwsh` as data → ALLOW; `start powershell -enc` → still DENY. Re-freeze; round-4
+   re-review (G3 must flip to PASS; delta-attest G4/G5). (c) **If all four gates then PASS:** run
+   DCV — M0-T108's applicable D-024 set is **EMPTY** (`evaluate_task_refs` ok=true, `D-024:ALL`
+   resolves empty; still write the explicit empty-set row in `verification.json`); `accept`
+   (all required gates PASS + reviewed_sha == live HEAD), `checkpoint`, **advance campaign to
+   seq 13** (`advance(expected_sequence=12, …)`). **DO NOT dispatch any unit C–I work until
    M0-T108 is ACCEPTED** (owner instruction + G5 M0-T102 precondition).
-7. **In-flight sub-agents (round-3 re-review at `e1f6d4c`; healthy, bounded, mutually blind):**
-   `code-reviewer` G3, `qa-engineer` G4, `security-reviewer` G5. **These are THIS session's
-   background agents — if the session is replaced they die and their verdicts are lost.**
-   Resume-or-replace: if this session continues, the orchestrator finalizes on their return; **if
-   replaced, the successor RE-DISPATCHES all three round-3 reviews at `e1f6d4c`** (prompts mirror
-   the round-2 delta re-reviews: verify F1/F2/A1 closed, no regression, 13 mutants load-bearing;
-   G3/G4 confirm PASS holds; independent, do not share conclusions). Do not accept until all three
-   round-3 gates are PASS at one frozen identity.
+7. **Sub-agents (round-3 re-review at `e1f6d4c`; healthy, bounded, mutually blind):**
+   `code-reviewer` G3 — **LANDED FAIL, recorded** (D-R3-1). `qa-engineer` G4 + `security-reviewer`
+   G5 — **STILL IN FLIGHT** (this session's background agents; if the session is replaced they die
+   and their verdicts are lost). Resume-or-replace: if this session continues, the orchestrator
+   reconciles them on return; **if replaced, the successor need NOT re-run G3 (its FAIL is
+   recorded) but MUST collect-or-re-dispatch G4 + G5 round-3 at `e1f6d4c`** (independent, do not
+   share conclusions). Because D-R3-1 already forces round-4, G4/G5 round-3 verdicts are additive
+   input to round-4, not gating on their own.
 8. **After M0-T108 accepted (campaign NEXT, seq 13):** M0-T104 (unit C native runtime adapter) →
    T105 → T106 → T092 → T094 → T093 → T095 → T096 (golden run; R187 hold after) → T107. Carry the
    R162-discharge unit-C preconditions: explicit child-env control for background dispatch
