@@ -2,11 +2,11 @@
   "task_id": "M0-T108",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T108-guard-powershell-fix.md",
-  "submitted_at": "2026-08-27T03:07:58.628780+00:00",
+  "submitted_at": "2026-08-27T03:48:01.428128+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T108-evidence-map.json",
-  "content_manifest_sha256": "811272de3298573a51ed73a17432362d07d9c5f67fc16383b89d1872146dbf8a",
-  "reviewed_sha": "e1f6d4ceff878b220a0258c1179678f502f906cc",
+  "content_manifest_sha256": "90376158eda8b6fc4bec8943dc702d09f896deda7345ce3358885b5c9b7ff972",
+  "reviewed_sha": "b6db45712bf3a996059c5565f3a4abe79a1f07e9",
   "applicable_requirements": [],
-  "updated_at": "2026-08-27T03:07:59.185273+00:00"
+  "updated_at": "2026-08-27T03:48:01.997680+00:00"
 }
