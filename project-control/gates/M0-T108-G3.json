@@ -3,11 +3,11 @@
   "gate_id": "G3",
   "reviewer": "code-reviewer",
   "role": "independent_review",
-  "result": "PASS",
-  "report_file": "project-control/reports/M0-T108-G3-code-review-delta.md",
-  "reviewed_at": "2026-08-27T03:00:42.135552+00:00",
-  "content_manifest_sha256": "b0fdcd45396dfdd91dd606e9a56b4404e373a8c6d6047266b0fe4a73e7f77437",
-  "reviewed_sha": "67dea4d0870eeb7eba3789be17acdf9c66e11ceb",
+  "result": "FAIL",
+  "report_file": "project-control/reports/M0-T108-G3-code-review-round3.md",
+  "reviewed_at": "2026-08-27T03:21:02.892736+00:00",
+  "content_manifest_sha256": "811272de3298573a51ed73a17432362d07d9c5f67fc16383b89d1872146dbf8a",
+  "reviewed_sha": "70632c12e1f1063e2290bc2c3931e975d3b23450",
   "history": [
     {
       "reviewer": "code-reviewer",
@@ -15,7 +15,14 @@
       "result": "FAIL",
       "report_file": "project-control/reports/M0-T108-G3-code-review.md",
       "reviewed_at": "2026-08-27T02:13:47.015548+00:00"
+    },
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T108-G3-code-review-delta.md",
+      "reviewed_at": "2026-08-27T03:00:42.135552+00:00"
     }
   ],
-  "updated_at": "2026-08-27T03:00:42.567296+00:00"
+  "updated_at": "2026-08-27T03:21:03.336284+00:00"
 }
