@@ -25,7 +25,7 @@ from tools.agent_supervisor.telemetry_hooks import KNOWN_HOOK_EVENTS
 from tools.agent_supervisor.telemetry_journal import TelemetryJournal
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
-CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_247.json"
+CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_248.json"
 PAYLOADS_FIXTURE = FIXTURES / "hook_event_payloads_v1.json"
 STREAM_FIXTURE = FIXTURES / "stream_json_subagent_events_v1.json"
 RECORDER = Path(__file__).parents[1] / ".claude" / "hooks" / "supervisor_event_recorder.py"
@@ -290,9 +290,12 @@ def test_s7_unknown_event_recorded_honestly(tmp_path):
 # ---------- S8 version drift ----------------------------------------------
 
 def test_s8_catalog_fixture_valid_and_masked():
+    # M0-T092 re-capture: installed CLI auto-updated 2.1.247 -> 2.1.248 during
+    # unit F; docs re-fetched, event set identical (the 2_1_247 catalog stays
+    # committed as history).
     data = ed.load_catalog_fixture()
-    assert data["task"] == "M0-T105"
-    assert data["claude_version"] == "2.1.247 (Claude Code)"
+    assert data["task"] == "M0-T092"
+    assert data["claude_version"] == "2.1.248 (Claude Code)"
     assert data["confidence"] == "official-docs"
     whole = CATALOG_FIXTURE.read_text(encoding="utf-8")
     assert "Users" not in whole and "MLFLL" not in whole
@@ -304,7 +307,7 @@ def test_s8_recorded_drift_matches_computed_drift():
     recorded = data["drift_vs_2_1_220"]
     assert list(drift.added) == recorded["added"]
     assert list(drift.removed) == recorded["removed"]
-    assert not drift.has_drift  # 2.1.247 catalog identical at 31 events
+    assert not drift.has_drift  # 2.1.248 catalog identical at 31 events
     assert drift.describe() == "no drift"
 
 

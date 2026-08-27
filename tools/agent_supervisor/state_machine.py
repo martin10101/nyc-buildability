@@ -61,6 +61,15 @@ COMPLETE = "COMPLETE"
 EMERGENCY_STOPPED = "EMERGENCY_STOPPED"
 HALTED = "HALTED"
 
+# D-024 section-3 additions (M0-T092, cited per state; supervisor-freeze
+# qualifying evidence D-024-R102). Each is a distinction R029 requires that no
+# existing state or durable-flag composite could honestly express — see the
+# M0-T092 report §4 for the full 18-distinction mapping proof.
+GRACEFUL_STOPPING = "GRACEFUL_STOPPING"      # R029 "graceful stopping"
+AWAIT_CHILDREN = "AWAIT_CHILDREN"            # R029 "awaiting/reconciling child work"
+CODEX_OUTAGE_BACKOFF = "CODEX_OUTAGE_BACKOFF"  # R033 transient-outage backoff
+NO_ELIGIBLE_WORK = "NO_ELIGIBLE_WORK"        # R029/R033 bounded idle
+
 STATES: tuple[str, ...] = (
     IDLE, RECOVER_BOOT, PREFLIGHT, START_CLAUDE, CLAUDE_RUNNING,
     ROTATION_PENDING, CHECKPOINT_RECEIVED, COLLECT_EVIDENCE, CODEX_REVIEW,
@@ -68,6 +77,7 @@ STATES: tuple[str, ...] = (
     PAUSED_RECOVERY, RECONCILE_EXTERNAL_EFFECT, USAGE_LIMIT_WAIT,
     SCHEDULED_RESUME, PREPARE_ROTATION, VERIFY_HANDOFF, START_FRESH_SESSION,
     COMPLETE, EMERGENCY_STOPPED, HALTED,
+    GRACEFUL_STOPPING, AWAIT_CHILDREN, CODEX_OUTAGE_BACKOFF, NO_ELIGIBLE_WORK,
 )
 
 #: States in which the supervisor performs NO provider work and NO side effects
@@ -262,6 +272,64 @@ TRANSITIONS: tuple[Transition, ...] = (
        "Escalation from a pause to a full stop."),
     _t(PAUSED_RECOVERY, HALTED, "owner_halt",
        "The owner halted rather than resuming."),
+
+    # --- D-024 unit F additions (M0-T092; D-024-R102) ------------------------
+    # Graceful stop (R026/R027/R029): a durable owner graceful-stop intent
+    # (stop_intent.GRACEFUL_STOP_KEY) lets the unit ALREADY UNDERWAY reach its
+    # seam, lands it, and then stops — it never dispatches queued work.
+    _t(CHECKPOINT_RECEIVED, GRACEFUL_STOPPING, "graceful_stop_intent_set",
+       "A durable owner graceful stop is set and the in-flight unit reached its "
+       "checkpoint: land it and stop; queued work is never dispatched (R026/R029)."),
+    _t(RECOVER_BOOT, GRACEFUL_STOPPING, "recovery_finds_graceful_stop",
+       "Recovery found a durable graceful-stop intent: the stop SURVIVES the restart "
+       "and WINS over queued and recovered work (R026); land what is durable, then stop."),
+    _t(GRACEFUL_STOPPING, IDLE, "graceful_stop_landed",
+       "The landing finished: children reconciled, external effects settled, the "
+       "durable handoff written. The run closes to stopped/inactive (R029)."),
+    _t(GRACEFUL_STOPPING, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Escalation while landing: emergency outranks graceful (R027 precedence)."),
+    _t(GRACEFUL_STOPPING, PAUSED_RECOVERY, "unsafe_condition",
+       "A synchronous-stop condition fired during the graceful landing."),
+
+    # Child drain (R029 'awaiting/reconciling child work'; s6.3/R065): rotation
+    # waits while bounded children finish; no new children, no broadened scope.
+    _t(PREPARE_ROTATION, AWAIT_CHILDREN, "children_still_draining",
+       "Bounded children are still finishing their already-bounded assignments; the "
+       "rotation waits and dispatches nothing new (s6.3, R065)."),
+    _t(AWAIT_CHILDREN, PREPARE_ROTATION, "children_reconciled",
+       "Every child returned a durable handoff and external effects are reconciled; "
+       "the rotation proceeds (s6.3)."),
+    _t(AWAIT_CHILDREN, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop interrupts the drain; child trees terminated, evidence kept."),
+    _t(AWAIT_CHILDREN, PAUSED_RECOVERY, "unsafe_condition",
+       "A synchronous-stop condition fired while children drained."),
+
+    # Transient supervisor outage (R033): bounded backoff with jitter and a
+    # DURABLE retry state (outage_policy.RETRY_KEY) — never a tight loop, never
+    # unlimited, and never new producer work without supervision.
+    _t(CODEX_REVIEW, CODEX_OUTAGE_BACKOFF, "codex_transient_failure",
+       "A transient transport/model/network failure: enter bounded backoff with "
+       "jitter and durable retry state; dispatch nothing new (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, CODEX_REVIEW, "outage_retry_due",
+       "The durable retry deadline arrived: one bounded retry attempt (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, WAIT_FOR_OWNER, "outage_blocked_with_handoff",
+       "Auth, billing, revoked access, incompatibility, or the bounded attempts are "
+       "exhausted: blocked-with-handoff for the owner, never a further retry (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop suppresses any pending retry."),
+
+    # Bounded idle (R029 'idle because no eligible authorized task exists';
+    # R028 'no busy loop when there is no eligible work'; R033 bounded idle).
+    _t(POLICY_CHECK, NO_ELIGIBLE_WORK, "no_eligible_authorized_work",
+       "No eligible authorized task exists: dwell until a durable bounded deadline "
+       "(outage_policy.IDLE_KEY); never a busy loop (R028/R033)."),
+    _t(NO_ELIGIBLE_WORK, PREFLIGHT, "idle_recheck_due",
+       "The bounded idle deadline arrived: revalidate through PREFLIGHT (the legal "
+       "cycle-entry state, V1.1 B-2 precedent) before contacting anyone."),
+    _t(NO_ELIGIBLE_WORK, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop while idle."),
+    _t(NO_ELIGIBLE_WORK, HALTED, "owner_halt",
+       "The owner halted the run while it was idle."),
 
     # --- exits ---------------------------------------------------------------
     _t(COMPLETE, IDLE, "run_closed",

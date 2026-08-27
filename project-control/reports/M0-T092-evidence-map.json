@@ -1,0 +1,375 @@
+{
+ "task_id": "M0-T092",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 65 requirement ids (the section-3/7/15-D/16.3 Phase-D set). The owner-gated C1 live succession canary (R192/R197 exact-command pattern, discharged live at M0-T103 for unit C) is prepared and queued, NOT executed; the deterministic core satisfies the applicable rows without it, with the live-platform share of R183 carried by the accepted unit C/D/E fixtures. Detail per row: report section 5.",
+ "task_evidence": [
+  "project-control/reports/M0-T092-controller-succession.md",
+  "project-control/reports/M0-T092-evidence-map.json",
+  "tools/test_agent_supervisor_controller_succession.py"
+ ],
+ "generated_at": "2026-08-27T22:02:06+00:00",
+ "requirements": {
+  "D-024-R002": [
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: this unit's readiness share: fail-closed transport/outage handling + controller/host restart recovery (S5/S8/S9/S10/S11); the two-unit golden run is owed by M0-T096, not claimed here"
+  ],
+  "D-024-R003": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: controller-side modules only; Fable stays producer, Codex path read-only and untouched"
+  ],
+  "D-024-R004": [
+   "tools/agent_supervisor/outage_policy.py",
+   "CLAIM: campaign holds when the supervisor is away: permissions_during never dispatches new producer work"
+  ],
+  "D-024-R007": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "CLAIM: successor implemented the unit from the frozen pack + ledger + campaign record alone; no owner re-prompt"
+  ],
+  "D-024-R008": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: zero routine owner questions; the one owner-gated item (C1 canary) queued, not asked"
+  ],
+  "D-024-R010": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: no PR merged; PR #241 untouched; restriction carried in the campaign record"
+  ],
+  "D-024-R017": [
+   "project-control/tasks/M0-T092.json",
+   "CLAIM: packet + deliverable commit cite D-024-R102 (supervisor-freeze qualifying evidence)"
+  ],
+  "D-024-R018": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: report sections 4.1/4.2 prove-first tables: 14 distinctions mapped to existing states, reuse proven per scenario, gaps cited before extension"
+  ],
+  "D-024-R020": [
+   "project-control/tasks/M0-T092.json",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: producer work inside allowed_paths; scope amendment recorded in the progress log before the phase1 edit"
+  ],
+  "D-024-R021": [
+   "tools/agent_supervisor/codex_reviewer.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: Codex allowed-actions boundary unchanged; S10 exercises the read-only decision seam"
+  ],
+  "D-024-R022": [
+   "tools/agent_supervisor/codex_reviewer.py",
+   "CLAIM: no Codex mutation path added; FORBIDDEN_REVIEWER_FLAGS + read-only argv untouched"
+  ],
+  "D-024-R023": [
+   "tools/agent_supervisor/codex_reviewer.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: mechanical enforcement unchanged (forbidden flags, strict validation); proven by S10 tests, not prose"
+  ],
+  "D-024-R024": [
+   "tools/agent_supervisor/codex_reviewer.py",
+   "tools/agent_supervisor/protocol.py",
+   "tools/agent_supervisor/capability_probe.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: validate_decision strict shape + identity binding; CapabilityManifest.differences names version drift; S10 (4 tests)"
+  ],
+  "D-024-R025": [
+   "tools/agent_supervisor/codex_reviewer.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: missing/malformed/unparseable/mismatched decisions raise ReviewError and dispatch nothing; S10"
+  ],
+  "D-024-R026": [
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/recovery.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: every durable owner intent wins over queued/recovered work; owner-only clears; S4 (6 tests)"
+  ],
+  "D-024-R027": [
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: emergency-graceful-pause precedence; no-duration start: continuation ends only at completion/no-eligible-work/stop/block; S4/S1/S11"
+  ],
+  "D-024-R028": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/durable_state.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: renewable bounded epochs, one lease key, exact-once succession, no fork; S2 (5 tests) + S7 (3)"
+  ],
+  "D-024-R029": [
+   "tools/agent_supervisor/state_machine.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "tools/test_agent_supervisor_phase1.py",
+   "CLAIM: 18-distinction map (report section 4.1); 4 additive states + 17 documented transitions; S1 (5 tests); phase1 count 23 to 27"
+  ],
+  "D-024-R030": [
+   "tools/agent_supervisor/durable_state.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: idempotent journaled transitions + single-txn CAS; replayed succession refused; duplicate action ids refused; S3/S7"
+  ],
+  "D-024-R031": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/turnover_seam.py",
+   "tools/agent_supervisor/recovery.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: three interruption classes handled separately with distinct durable keys; same-epoch crash resume; read-only orientation; S5 (5 tests)"
+  ],
+  "D-024-R032": [
+   "tools/agent_supervisor/resume_scheduler.py",
+   "tools/agent_supervisor/runtime_backend.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: autostart plan/verify (drift reported, never accepted) + truthful activation blockers naming the one-command start; S9 (3 tests)"
+  ],
+  "D-024-R033": [
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: closed transient/blocking vocabulary (unknown is BLOCKING), bounded jittered backoff, durable retry state, blocked-with-handoff, bounded idle; S11 (8 tests)"
+  ],
+  "D-024-R036": [
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/locking.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: stops durable before acknowledgment (journal write returns first); start idempotency via single-instance lock (existing); S4"
+  ],
+  "D-024-R042": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/telemetry_records.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: succession usage stored only as a labelled Measurement; no usage means no invented number; S15 (3 tests)"
+  ],
+  "D-024-R045": [
+   "tools/agent_supervisor/subagent_contracts.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: no quota/countdown text composed for workers; assert_worker_text_clean proven over landing + adversarial texts; S14"
+  ],
+  "D-024-R046": [
+   "tools/agent_supervisor/rotation.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: existing decide_pre_dispatch/SessionSignals health rules reused, not duplicated (report section 4.2)"
+  ],
+  "D-024-R050": [
+   "tools/agent_supervisor/child_handoff.py",
+   "tools/agent_supervisor/runtime_health.py",
+   "CLAIM: private health bands untouched; the one landing instruction is land_child (once, then None)"
+  ],
+  "D-024-R051": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "CLAIM: no maxTurns/maxBudget platform cap added; bounds are controller-side and never worker-visible"
+  ],
+  "D-024-R053": [
+   "tools/agent_supervisor/session_continuity.py",
+   "tools/agent_supervisor/rotation.py",
+   "CLAIM: instruction_adherence_loss is a shedding reason (immediate signal); rotation_pending lets a near-complete unit reach its seam"
+  ],
+  "D-024-R054": [
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/child_handoff.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: landing: finish only what is underway (graceful only), no new children once landing; S4/S6"
+  ],
+  "D-024-R060": [
+   "tools/agent_supervisor/lease_runtime.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: producer cap + overlap refusal preserved (existing ledger); controller-level single-writer added above it; S7"
+  ],
+  "D-024-R064": [
+   "tools/agent_supervisor/durable_state.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: progress = durable evidence: journaled transitions/effects, succession log, retry/idle records survive reopen; S3/S5/S11"
+  ],
+  "D-024-R065": [
+   "tools/agent_supervisor/child_handoff.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: drain rules preserved + AWAIT_CHILDREN dwell + may_dispatch_writes gating; S5/S6"
+  ],
+  "D-024-R066": [
+   "tools/agent_supervisor/rotation.py",
+   "tools/agent_supervisor/turnover_seam.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: 10 existing section-7 seam conditions + new children_unreconciled condition; every refusal named; S6"
+  ],
+  "D-024-R067": [
+   "tools/agent_supervisor/handoff.py",
+   "tools/agent_supervisor/child_handoff.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: 14-field smallest-complete packet, empties + /clear refused, bounded child summaries (no silent truncation); S6 (3 tests)"
+  ],
+  "D-024-R079": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: no graph-subsystem edit in the diff; module inputs are the journal + injected facts"
+  ],
+  "D-024-R080": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: graph remains advisory; nothing here consumes graph data as fact"
+  ],
+  "D-024-R093": [
+   "tools/agent_supervisor/review_packet.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: review packets remain independently reconstructed; this unit's gates run against the frozen SHA, not the producer summary"
+  ],
+  "D-024-R094": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/campaign_continuity.py",
+   "CLAIM: durable status answers without waking Fable: campaign/state, stop flags, lease owner+epoch+expiry, retry/idle holds, succession history"
+  ],
+  "D-024-R096": [
+   "tools/agent_supervisor/notifications.py",
+   "tools/agent_supervisor/audit_log.py",
+   "CLAIM: notification-sink boundary untouched; new events go to the hash-chained audit log (terminal/on-demand)"
+  ],
+  "D-024-R098": [
+   "tools/agent_supervisor/session_continuity.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: healthy same-model resume permitted, shedding rotations reoriented; no forced per-task fresh session; S13"
+  ],
+  "D-024-R102": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/stop_intent.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/durable_state.py",
+   "tools/agent_supervisor/rotation.py",
+   "tools/agent_supervisor/turnover_seam.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: Phase D delivered: state machine extension, renewable epoch lease, seam validation, exact-once succession, crash reconciliation, read-only orientation"
+  ],
+  "D-024-R109": [
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: the full section-16.3 matrix: 15 scenario classes incl. Gate-0 recovery, crash windows, lease races, stop-intent persistence"
+  ],
+  "D-024-R120": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/outage_policy.py",
+   "CLAIM: bounds are structural: ttl positive, max_attempts required, MAX_IDLE_SECONDS ceiling, bounded succession log; no unlimited mode exists"
+  ],
+  "D-024-R125": [
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: primary-cwd identity via canonical_checkout_path; added-dir access never equivalent; S12"
+  ],
+  "D-024-R126": [
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: MCP enumeration unknown fails closed; attachments must be empty or exactly allowlisted; S12"
+  ],
+  "D-024-R127": [
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: failure means read-only diagnosis only, with launch dir, intended root, dirty paths in the diagnosis payload; S12"
+  ],
+  "D-024-R128": [
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: adoption of uncommitted work requires the fresh session's own pass; never rewrite history or discard; S12"
+  ],
+  "D-024-R139": [
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "project-control/tasks/M0-T092.json",
+   "CLAIM: hold discharged before claim: conversion complete (M0-T102 accepted, campaign seq 10); T092 claimed only after T103-T106 all accepted"
+  ],
+  "D-024-R140": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "tools/agent_supervisor/campaign_continuity.py",
+   "CLAIM: roles preserved; ledger/git remain durable authority (campaign record is orientation, not authority)"
+  ],
+  "D-024-R143": [
+   "tools/agent_supervisor/runtime_backend.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: consumes unit-C one-backend selection, unit-D feeds, unit-E /goal instead of duplicating; S13"
+  ],
+  "D-024-R145": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: within the amendment's authorization: surgical change to an unstarted converted task; no binary update, no protected-PR touch"
+  ],
+  "D-024-R146": [
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: prohibitions honored: no activation, no SDK, no new MCP (Gate-0 enforces MCP-clean), no merges, no substitution, no bypass flags, no unbounded fan-out, ledger intact"
+  ],
+  "D-024-R149": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: deterministic core uses no new installed-CLI feature; live-canary duty (C1) owner-gated and queued; 2.1.247 fixtures untouched"
+  ],
+  "D-024-R160": [
+   "tools/agent_supervisor/session_continuity.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: native resume never a seam substitute: shedding rotations force reorientation even when resume is verified; S13 (3 tests)"
+  ],
+  "D-024-R164": [
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/agent_supervisor/turnover_seam.py",
+   "tools/agent_supervisor/external_effects.py",
+   "CLAIM: custom control preserved and strengthened for the R164 list: sequencing, exact-once effects, seams, leases, recovery"
+  ],
+  "D-024-R166": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "tools/agent_supervisor/state_machine.py",
+   "CLAIM: no native feature adopted as campaign authority; the durable state machine + ledger remain the top-level loop"
+  ],
+  "D-024-R175": [
+   "tools/agent_supervisor/child_handoff.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/epoch_lease.py",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: unit-F behavior set: children finish, stale work quarantined, evidence committed, bounded replacement handoff, fresh session, no duplicate recovery"
+  ],
+  "D-024-R180": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: replace-not-layer: each new module fills a section-4.2-proven gap; no parallel duplicate left; one active backend proven (S13)"
+  ],
+  "D-024-R181": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: nothing deleted; the diff is additive (git diff --stat: modified files insertions-only + new files)"
+  ],
+  "D-024-R182": [
+   "tools/test_agent_supervisor_controller_succession.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: deterministic fixtures, injected clocks/rng, simulated failures; 13/13 targeted mutants killed; no live-provider token burn"
+  ],
+  "D-024-R183": [
+   "tools/test_agent_supervisor_controller_succession.py",
+   "tools/agent_supervisor/bootstrap_gate.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: deterministic share: restart-no-duplicate (S5/S8), MCP default-deny evaluation (S12); live share carried by accepted unit C/D/E fixtures + queued owner-gated C1"
+  ],
+  "D-024-R184": [
+   "tools/test_agent_supervisor_controller_succession.py",
+   "CLAIM: no worker quotas (S14), overlap rejection + single-writer (S7), safe-seam rotation (S6), successor reconstruction from durable state (S5/S8), refusal vs quota domains disjoint"
+  ],
+  "D-024-R185": [
+   "tools/test_agent_supervisor_controller_succession.py",
+   "project-control/reports/M0-T092-controller-succession.md",
+   "CLAIM: effects exactly-once + crash windows (S3/S8), stale-record reconciliation (staleness + UNSAFE drift), suite green (section 4.4), independent gates + DCV at the frozen identity, mutation demonstration"
+  ],
+  "D-024-R188": [
+   "project-control/reports/M0-T092-controller-succession.md",
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "CLAIM: one writer task at a time, campaign record advanced at accept, fresh producer context, reviewers finish at the frozen identity"
+  ]
+ }
+}

@@ -394,6 +394,42 @@ class DurableJournal:
             for row in self.conn.execute("SELECT key, value FROM state_kv ORDER BY key")
         }
 
+    def compare_and_swap_state(self, key: str, expected: Any, value: Any) -> bool:
+        """Write ``key`` only if its stored value equals ``expected``, atomically.
+
+        The single-winner primitive for the unit-F renewable epoch lease
+        (M0-T092; D-024 R028/R030): the read, the comparison, and the write all
+        happen inside ONE ``BEGIN IMMEDIATE`` transaction, so two contenders —
+        even in different processes sharing this journal file — can never both
+        pass the comparison. ``expected is None`` means "the key must not exist
+        yet"; a stored JSON ``null`` does NOT match it (absence only — a
+        cleared-but-present record is a fact, not an absence). Returns True
+        when this caller's write won, False when the stored state did not match
+        (the other contender won); the loser decides, never guesses.
+        """
+        payload = canonical_json(value).decode("utf-8")
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            row = self.conn.execute("SELECT value FROM state_kv WHERE key = ?",
+                                    (key,)).fetchone()
+            if expected is None:
+                matched = row is None
+            else:
+                matched = row is not None and json.loads(row["value"]) == expected
+            if not matched:
+                self.conn.execute("ROLLBACK")
+                return False
+            self.conn.execute(
+                "INSERT INTO state_kv(key, value, updated_at_utc) VALUES(?, ?, ?) "
+                "ON CONFLICT(key) DO UPDATE SET value = excluded.value, "
+                "updated_at_utc = excluded.updated_at_utc",
+                (key, payload, to_utc_iso()))
+            self.conn.execute("COMMIT")
+            return True
+        except Exception:
+            self.conn.execute("ROLLBACK")
+            raise
+
     # -- transitions ---------------------------------------------------------
 
     def next_transition_sequence(self) -> int:

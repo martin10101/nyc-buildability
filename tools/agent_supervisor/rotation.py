@@ -600,6 +600,12 @@ class RotationSafetyState:
     sha_ambiguous: bool = False
     worktree_ambiguous: bool = False
     task_stage_ambiguous: bool = False
+    # M0-T092 (D-024 R066/R102, additive with a safe default): "child and
+    # background processes are known and reconciled" is a section-7 seam
+    # condition in its own right; before unit F only the EFFECT half
+    # (unaccounted_background_actions) was representable here, so a seam with
+    # undrained children could not be refused on that ground.
+    children_unreconciled: int = 0
 
 
 #: The unsafe-moment refusal list, in the order S11.3 states it.
@@ -614,6 +620,7 @@ UNSAFE_MOMENT_CHECKS: tuple[tuple[str, str], ...] = (
     ("sha_ambiguous", "the authoritative SHA is ambiguous"),
     ("worktree_ambiguous", "the worktree identity is ambiguous"),
     ("task_stage_ambiguous", "the task stage is ambiguous"),
+    ("children_unreconciled", "child work is not reconciled (D-024 s7/R066)"),
 )
 
 

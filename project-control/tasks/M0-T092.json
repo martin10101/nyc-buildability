@@ -24,6 +24,10 @@
   "allowed_paths": [
     "tools/agent_supervisor",
     "tools/test_agent_supervisor_controller_succession.py",
+    "tools/test_agent_supervisor_phase1.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_event_bus.py",
+    "tools/test_agent_supervisor_native_adapter.py",
     "project-control/reports/M0-T092-controller-succession.md"
   ],
   "forbidden_paths": [
@@ -56,11 +60,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 15,
+  "progress_percent": 65,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-27T18:47:05.874562+00:00",
+  "updated_at": "2026-08-27T23:09:57.823093+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -77,6 +81,20 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit F STAGED to the claim+G0+scenario-pack seam under D-031 (session ~750k handoff; occupancy ~59% at claim). Applicable set 65 requirements (R002/R028-R033 section-3 states, R067 handoff packet, R102 Phase-D freeze, R160 native-resume-not-a-seam, R180 one-backend, R024/R025 preflight, R032 host-restart, R033 outage, R125-R128 Gate-0, R042/R045). Reuse boundary mapped (report section 0): unit F is prove-and-extend over 9 accepted modules (state_machine 23 states already present; durable_state/lease_runtime/recovery/turnover_controller/session_continuity/preflight/start_gate/handoff REUSED) + unit C/D/E consumption. Scenario pack S1-S15 + owner-gated C1 succession canary recorded (report section 1). NO implementation this session - largest remaining unit cannot reach a clean submitted seam in remaining budget; successor implements from the frozen pack with fresh context (same pattern as this session's own M0-T105 handoff). Supervisor-freeze qualifying evidence: D-024-R102."
+    },
+    {
+      "at": "2026-08-27T21:49:35.713472+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 55,
+      "status": "in_progress",
+      "message": "Unit F implementation landed (orchestrator act; supervisor-freeze evidence D-024-R102). Prove-and-extend per R018: 4 NEW modules (epoch_lease exact-once renewable epoch lease R028/R030/R031; stop_intent graceful-stop + precedence R026/R027; outage_policy backoff/blocked/bounded-idle R033; bootstrap_gate deterministic Gate-0 R125-R128), additive state_machine extension (4 states GRACEFUL_STOPPING/AWAIT_CHILDREN/CODEX_OUTAGE_BACKOFF/NO_ELIGIBLE_WORK + 17 documented transitions, R029), ONE additive DurableJournal.compare_and_swap_state CAS primitive (R030), additive RotationSafetyState.children_unreconciled seam input (R066). Section-16.3 matrix tools/test_agent_supervisor_controller_succession.py 68/68 PASS. SCOPE AMENDMENT (orchestrator): allowed_paths += tools/test_agent_supervisor_phase1.py - its structural assertion len(STATES)==23 is part of the frozen suite baseline and must move to 27 with the cited R029 additive states; no other existing test hardcodes the count (verified by grep). Full-suite freeze baseline re-establishment running."
+    },
+    {
+      "at": "2026-08-27T23:09:57.823093+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 65,
+      "status": "in_progress",
+      "message": "Drift increment (qualifying evidence: reproduced provider CLI drift per supervisor-freeze section 2, + D-024-R149/R102): the installed Claude CLI auto-updated 2.1.247 -> 2.1.248 mid-unit, firing all three live drift teeth (capability_probe reprobe, event_bus catalog tooth, native_adapter detection tooth) in the full-suite run (3 failed / 2911 passed / 3 skipped). Re-captures executed per each tooth's prescribed remedy: capability probe re-run (every probed flag/verb classification IDENTICAL; only version string + help-text hash changed; [HOME]-masked), native detection re-run (diff = claude_version + task fields only; background_host_ready still true), hooks docs re-fetched (31-event set verified identical name-for-name). New fixtures capability_probe_live_2026-08-27_m0t092_2_1_248.json / native_runtime_detection_2026-08-27_m0t092.json / hook_event_catalog_2_1_248.json; historical 2.1.247 fixtures stay committed. SCOPE AMENDMENT 2 (orchestrator): allowed_paths += test_agent_supervisor_{capability_probe,event_bus,native_adapter}.py (current-fixture pointers + current-shape assertions only; historical teeth untouched). Affected files re-run 265/265 PASS; final full-suite baseline re-run in progress."
     }
   ]
 }

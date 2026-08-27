@@ -425,7 +425,11 @@ class StateMachineTests(TempCase):
             "COMPLETE", "EMERGENCY_STOPPED", "HALTED",
         ):
             self.assertIn(name, sm.STATES)
-        self.assertEqual(len(sm.STATES), 23)
+        # 23 D-007 S7 states + the four D-024 section-3 additions
+        # (GRACEFUL_STOPPING, AWAIT_CHILDREN, CODEX_OUTAGE_BACKOFF,
+        # NO_ELIGIBLE_WORK) — M0-T092, R029/R033; the additions are covered in
+        # tools/test_agent_supervisor_controller_succession.py.
+        self.assertEqual(len(sm.STATES), 27)
 
     def test_every_transition_has_a_documented_trigger(self) -> None:
         for transition in sm.TRANSITIONS:

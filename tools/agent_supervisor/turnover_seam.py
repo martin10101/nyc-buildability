@@ -97,6 +97,7 @@ def safety_state_from_run(
     branch: str = "",
     worktree: str = "",
     task_stage: str = "",
+    unreconciled_children: Sequence[str] = (),
 ) -> rotation.RotationSafetyState:
     """Build the S11.3 safety state from facts the loop actually holds.
 
@@ -104,6 +105,10 @@ def safety_state_from_run(
     from an optimistic default. An unnamed HEAD, branch, worktree, or task stage
     is `*_ambiguous=True`, because "the supervisor cannot say what the SHA is" is
     exactly the condition S11.3 refuses to rotate through.
+
+    ``unreconciled_children`` (M0-T092, D-024 s7/R066): the ids
+    ``child_handoff.TurnoverCoordinator.unreconciled_children`` reports; any
+    entry refuses the seam — child work must be reconciled before a rotation.
     """
     return rotation.RotationSafetyState(
         command_running=bool(unit_in_flight),
@@ -116,6 +121,7 @@ def safety_state_from_run(
         sha_ambiguous=not bool(head_sha),
         worktree_ambiguous=not bool(worktree) or not bool(branch),
         task_stage_ambiguous=not bool(task_stage),
+        children_unreconciled=len(tuple(unreconciled_children)),
     )
 
 

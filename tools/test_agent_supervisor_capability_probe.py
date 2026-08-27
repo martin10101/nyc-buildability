@@ -12,6 +12,10 @@ Re-baselined again for M0-T104 (unit C; D-024-R153/R172): the machine auto-updat
 2.1.246 -> 2.1.247 during the seq-12 R162 discharge, so both live drift teeth now
 point at the 2026-08-27 m0t104 fixture (installed 2.1.247); the 2.1.220 and 2.1.246
 fixtures stay frozen as the historical upgrade pair.
+Re-baselined again for M0-T092 (unit F; D-024-R149/R102): the machine auto-updated
+2.1.247 -> 2.1.248 during unit F's verification, so the live teeth now point at the
+2026-08-27 m0t092 fixture (installed 2.1.248; every probed flag/verb classification
+identical to 2.1.247); the m0t104 fixture stays committed as history.
 """
 from __future__ import annotations
 
@@ -28,8 +32,8 @@ FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
 LIVE_FIXTURE = FIXTURES / "capability_probe_live_2026-08-25.json"
 # M0-T103 post-update record (claude 2.1.246): frozen historical upgrade pair.
 POST_FIXTURE = FIXTURES / "capability_probe_live_2026-08-26_m0t103_post_update.json"
-# Current record (claude 2.1.247, M0-T104): the live drift teeth target THIS.
-CURRENT_FIXTURE = FIXTURES / "capability_probe_live_2026-08-27_m0t104.json"
+# Current record (claude 2.1.248, M0-T092): the live drift teeth target THIS.
+CURRENT_FIXTURE = FIXTURES / "capability_probe_live_2026-08-27_m0t092_2_1_248.json"
 MATRIX = FIXTURES / "capability_matrix_v1.json"
 
 
@@ -223,17 +227,19 @@ def test_live_reprobe_codex_version_matches_fixture(current):
     assert rec["first_line"] == current["body"]["probes"]["codex_version"]["first_line"]
 
 
-def test_current_fixture_records_2_1_247_masked_and_shaped(current, post):
-    """M0-T104 re-baseline invariant (D-024-R153/R172): the current fixture
-    freezes the 2.1.247 auto-update observed during the seq-12 R162 discharge;
-    codex is unchanged across it. Same masking/shape contract as its
-    predecessors; filename carries the consuming task id (G3 ADV-1)."""
+def test_current_fixture_records_2_1_248_masked_and_shaped(current, post):
+    """M0-T092 re-baseline invariant (D-024-R149/R102, following the M0-T104
+    R153/R172 pattern): the current fixture freezes the 2.1.248 auto-update
+    observed during unit F's verification; codex is unchanged across it. Same
+    masking/shape contract as its predecessors; filename carries the consuming
+    task id (G3 ADV-1). The m0t104 (2.1.247) fixture stays committed as
+    history."""
     assert (current["body"]["probes"]["claude_version"]["first_line"]
-            == "2.1.247 (Claude Code)")
+            == "2.1.248 (Claude Code)")
     assert (current["body"]["probes"]["codex_version"]["first_line"]
             == post["body"]["probes"]["codex_version"]["first_line"]
             == "codex-cli 0.146.0")
-    assert "m0t104" in CURRENT_FIXTURE.name
+    assert "m0t092" in CURRENT_FIXTURE.name
     whole = json.dumps(current, sort_keys=True)
     for leak in (":\\\\Users\\\\", ":/Users/", "\\\\Users\\\\MLFLL", "MLFLL"):
         assert leak not in whole, f"unmasked path fragment {leak!r} in fixture"

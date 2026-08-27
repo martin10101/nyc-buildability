@@ -34,8 +34,10 @@ from typing import Any, Iterable
 from .telemetry_hooks import KNOWN_HOOK_EVENTS
 
 CATALOG_SCHEMA = "hook_event_catalog/v1"
+# M0-T092 (D-024-R173/R102): re-pointed 2_1_247 -> 2_1_248 after the installed
+# CLI auto-updated during unit F; docs re-fetched, event set identical at 31.
 CATALOG_FIXTURE_PATH = (pathlib.Path(__file__).resolve().parent / "fixtures"
-                        / "hook_event_catalog_2_1_247.json")
+                        / "hook_event_catalog_2_1_248.json")
 
 
 class CatalogFixtureError(ValueError):
