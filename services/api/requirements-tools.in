@@ -43,9 +43,17 @@
 #   uv 0.11.28          lock generator / resolver (12.79d, advisory-free).
 #                       0.11.29 (wired before this task) was only 4.98d old ->
 #                       failed the 7-day gate, so it is downgraded to 0.11.28.
-#   pip 26.1.2          package installer, pinned so no unpinned
-#                       `pip install --upgrade pip` remains (50.03d, clean).
-#                       Fixes the un-pinned-pip CI gap; supersedes 25.x.
+#   pip 26.2            package installer, pinned so no unpinned
+#                       `pip install --upgrade pip` remains. Bumped 2026-08-27
+#                       (dedicated commit): PYSEC-2026-3721 was published
+#                       against 26.1.2 and turned the blocking pip-audit CI
+#                       gate red; 26.2 is the fix version (published
+#                       2026-07-29T21:57:54Z per live PyPI = 29.06d at
+#                       admission >= the 604800s gate; OSV query for
+#                       pip 26.2 returns zero advisories; sha256 whl
+#                       931c3036... / sdist 2d8542af... verified against the
+#                       registry). 26.2.1 exists but is newer than needed;
+#                       the oldest advisory-free fix version is admitted.
 #   setuptools 83.0.0   build backend (pyproject build-system requires
 #                       setuptools>=69); replaces the dynamically resolved
 #                       build tooling (16.11d, clean).
@@ -65,7 +73,7 @@
 #                       hash-locked here instead of pip/pipx-resolved (39.83d,
 #                       clean).
 uv==0.11.28
-pip==26.1.2
+pip==26.2
 setuptools==83.0.0
 wheel==0.46.2
 pytest==9.0.3
