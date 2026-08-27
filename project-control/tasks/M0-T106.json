@@ -49,12 +49,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.243152+00:00",
-  "updated_at": "2026-08-27T18:29:08.663053+00:00",
+  "updated_at": "2026-08-27T18:41:58.321900+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -93,5 +93,7 @@
       "status": "awaiting_gate",
       "message": "Delta round complete: G3/G4/G5 ALL PASS at re-frozen 5e60a0d / manifest 4d31dba2 (gates re-recorded at 0d1b196 delta reports). G3-C1 (publish_typed measurements false-dedup) and G4-M1 (check-in silent collapse) both genuinely closed and independently reproduced (mutants killed; F3 round-tripped through the real journal). G5-ADV-1/2 closed. Safety: neutralized a guard-evasion note a qa-engineer spawn wrote to its transient pack-repo worktree memory (not ctl24; verdict corroborated by G3/G5 independently). Independent DCV over R152/R162/R174 dispatched at HEAD 0d1b196; accept follows DCV PASS. Session under D-031 (~750k handoff target); occupancy ~62% at this seam."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-27T18:41:58.321900+00:00"
 }

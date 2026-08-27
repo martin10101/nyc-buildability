@@ -6029,7 +6029,7 @@
     "D-024-R162",
     "D-024-R174"
    ],
-   "reviewed_sha": "0d1b19607db2dd2b0ec1900938b42e9cd88fe794",
+   "reviewed_sha": "37e4d77a29f1c569d988a4aa9469a8fb2afc1616",
    "verified_at": "2026-08-27T18:39:05+00:00",
    "requirements": [
     {
@@ -6043,7 +6043,7 @@
       "goal integration 38 passed + event-bus 38 passed reproduced from checkout after git diff --stat 5e60a0d 0d1b196 empty for all six deliverable paths; source-003-amendment.md line 131 matches requirement text verbatim"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "0d1b19607db2dd2b0ec1900938b42e9cd88fe794",
+     "reviewed_sha": "37e4d77a29f1c569d988a4aa9469a8fb2afc1616",
      "reviewed_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293"
     },
     {
@@ -6056,7 +6056,7 @@
       "no provider-specific cache behavior assumed anywhere in the three new modules (no cache logic added); source-003-amendment.md lines 221-224 matches requirement text"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "0d1b19607db2dd2b0ec1900938b42e9cd88fe794",
+     "reviewed_sha": "37e4d77a29f1c569d988a4aa9469a8fb2afc1616",
      "reviewed_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293"
     },
     {
@@ -6071,12 +6071,12 @@
       "goal-status spend named goal_spend_tokens (F3) so the durable store keeps it READABLE not over-redacted; test_s9_spend_survives_durable_store_readable asserts no [REDACTED] in the stored value; source-003-amendment.md lines 314-320 matches unit-E bullets"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "0d1b19607db2dd2b0ec1900938b42e9cd88fe794",
+     "reviewed_sha": "37e4d77a29f1c569d988a4aa9469a8fb2afc1616",
      "reviewed_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293"
     }
    ],
    "reviewed_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293",
-   "verification_note": "Independent DCV pass 2026-08-27 (producer=orchestrator, verifier=directive-compliance-verifier) at deliverable 5e60a0d / manifest 4d31dba2 / recorded HEAD 0d1b196. Applicable set re-derived via evaluate_task_refs (ok=True, missing=[]). Selective-citation cross-check CLEAN across 28 active directives (D-004/D-007 path scopes excluded by their task_ids conjunction; 28 non-D024 requirements intersect the paths, all excluded_by_conjunction, none a wildcard). Frozen-identity discipline verified (deliverable byte-stable since 5e60a0d; guards/native-adapter/settings untouched c3f3768^..0d1b196; event_bus.py change is the ONE additive publish_typed method). validator EXIT=0. Verbatim report: project-control/reports/M0-T106-DCV.md"
+   "verification_note": "Independent DCV pass 2026-08-27 (producer=orchestrator, verifier=directive-compliance-verifier) at deliverable 5e60a0d / manifest 4d31dba2 / verified at HEAD 0d1b196; reviewed_sha restamped to accept-time HEAD 37e4d77 (control-plane commits only in between; material identity 4d31dba2 unchanged). Applicable set re-derived via evaluate_task_refs (ok=True, missing=[]). Selective-citation cross-check CLEAN across 28 active directives (D-004/D-007 path scopes excluded by their task_ids conjunction; 28 non-D024 requirements intersect the paths, all excluded_by_conjunction, none a wildcard). Frozen-identity discipline verified (deliverable byte-stable since 5e60a0d; guards/native-adapter/settings untouched c3f3768^..0d1b196; event_bus.py change is the ONE additive publish_typed method). validator EXIT=0. Verbatim report: project-control/reports/M0-T106-DCV.md"
   },
   {
    "task_id": "M0-T107",
