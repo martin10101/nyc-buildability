@@ -2,15 +2,15 @@
   "task_id": "M0-T105",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T105-event-integration.md",
-  "submitted_at": "2026-08-27T15:43:02.093329+00:00",
+  "submitted_at": "2026-08-27T16:29:09.794467+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T105-evidence-map.json",
-  "content_manifest_sha256": "5f32cf98b438380aefead9281e0ec3416def08735518084d8f5709124e812b17",
-  "reviewed_sha": "50abb346fc8637a374b1e5bae056d19d2792a827",
+  "content_manifest_sha256": "4bd0e18256d538b254a24a931b341c4b57b2851db15879dbcb4f86e336fe15d3",
+  "reviewed_sha": "bfdf4ef5e4682d64a7e1c8f0a330b86fc04d1963",
   "applicable_requirements": [
     "D-024-R154",
     "D-024-R155",
     "D-024-R173"
   ],
-  "updated_at": "2026-08-27T15:43:02.711330+00:00"
+  "updated_at": "2026-08-27T16:29:10.578400+00:00"
 }
