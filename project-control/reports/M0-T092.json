@@ -2,11 +2,11 @@
   "task_id": "M0-T092",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T092-controller-succession.md",
-  "submitted_at": "2026-08-27T23:13:11.157280+00:00",
+  "submitted_at": "2026-08-27T23:31:34.174514+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T092-evidence-map.json",
-  "content_manifest_sha256": "6b73576e7b561b02f079914880b4f16601579e24f0aa561c50b71d31816a536a",
-  "reviewed_sha": "b940c906154c2845f6c4596c6a705c9c9bc3a496",
+  "content_manifest_sha256": "f345e04107217b78e8e91fd2b0c268ebbc30de2be686d0c52243ff60854704f6",
+  "reviewed_sha": "b4e4e98d0aff34d1ad2ba8d718c760a553b3454d",
   "applicable_requirements": [
     "D-024-R002",
     "D-024-R003",
@@ -74,5 +74,5 @@
     "D-024-R185",
     "D-024-R188"
   ],
-  "updated_at": "2026-08-27T23:13:12.405949+00:00"
+  "updated_at": "2026-08-27T23:31:35.423664+00:00"
 }
