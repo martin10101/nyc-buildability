@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-27T00:05:00+00:00",
+ "updated_at": "2026-08-27T01:20:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -44,12 +44,21 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-26T23:55:00+00:00",
    "content_digest_sha256": "5c20e0e5a2ab3ce6dfa8eb0b07df1a857053bf220e4623c8459b5a8896f4548e"
+  },
+  {
+   "file": "source-005-amendment.md",
+   "kind": "amendment",
+   "sequence": 5,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-27T01:20:00+00:00",
+   "content_digest_sha256": "479d8c81efb0bd8960cc0b53c851808d24146b8b326b4331a189e281afb5d42c"
   }
  ],
  "amendments": [
   "source-002-amendment.md",
   "source-003-amendment.md",
-  "source-004-amendment.md"
+  "source-004-amendment.md",
+  "source-005-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -331,10 +340,17 @@
   "D-024-R196",
   "D-024-R197",
   "D-024-R198",
-  "D-024-R199"
+  "D-024-R199",
+  "D-024-R200",
+  "D-024-R201",
+  "D-024-R202",
+  "D-024-R203",
+  "D-024-R204",
+  "D-024-R205",
+  "D-024-R206"
  ],
- "requirements_id_digest_sha256": "28989a3215f5cdd3f92fc15a25437be9b7f4e1372024c0185da07a7a0a832354",
- "requirements_content_digest_sha256": "2836c65db59938cca337d69974917000722f9983d7ce2763be1e074a793f3656",
+ "requirements_id_digest_sha256": "2429995497f7fe0d406e0272aa98c1da9f361b90893e41b759952bb1d0cc21d5",
+ "requirements_content_digest_sha256": "255e2987ad73259fd7b889047a8a8d01ea9babee9e029f2840a413df9de40f95",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -377,6 +393,11 @@
    "at": "2026-08-27T00:05:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 4 pre-commit correction: R192..R199 applicability.task_ids set to the sentinel D-024-R162-DISCHARGE (was []). The validator's c6 fail-closed pass correctly flagged the empty lists as an applies-to-everything wildcard hitting all 56 in-regime tasks; the recorded inert-row sentinel convention (D-029-BOOTSTRAP/D-012-VALIDATION precedent) scopes the rows to the orchestrator canary procedure only. Nothing had been committed at the broken state; digests recomputed."
+  },
+  {
+   "at": "2026-08-27T01:20:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 5 captured (owner mid-turn instruction, 2026-08-27): round-1 canary classified FAILED TRANSPORT (prompt truncated at first embedded double quote; hook-captured received-prompt preserved in scratch; 7 statusLine payloads all version 2.1.246; permission_mode auto, not bypass; no subagent spawned). New requirement IDs D-024-R200..R206: immediate PID+descendant termination (executed; PID already exited, 0 descendants), failed-transport recording duty, residue/git proofs, corrected relaunch with quote-free single validated CLI argument, Amendment-4 hardening preserved, exact-command owner approval before relaunch, prohibition on asking the owner to type the task manually. Sentinel applicability; LF bytes; digests recomputed."
   }
  ]
 }

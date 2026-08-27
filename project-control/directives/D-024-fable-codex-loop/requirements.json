@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 199,
+ "requirement_count": 206,
  "producer": "orchestrator",
- "updated_at": "2026-08-27T00:05:00+00:00",
+ "updated_at": "2026-08-27T01:20:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -7402,6 +7402,216 @@
    "status_reason": "captured 2026-08-26 (Amendment 4): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (recorded inert-row convention, cf. D-029-BOOTSTRAP/D-012-VALIDATION) so no ledger task gains applicability; enforced pre-launch by the D-024-R197 approval gate",
    "evidence_paths": [],
    "amendment_sequence": 4
+  },
+  {
+   "id": "D-024-R200",
+   "text": "Terminate the failed round-1 canary PID and all of its descendants immediately upon the owner's instruction (PID 9488; found already exited with zero descendants at execution).",
+   "source_ref": "source-005-amendment.md#terminate",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R201",
+   "text": "Record the round-1 canary as a FAILED TRANSPORT canary (argument truncation at the first embedded double quote; received-prompt evidence preserved), never as a capability failure of the 2.1.246 binary or its statusLine/subagent surfaces.",
+   "source_ref": "source-005-amendment.md#record-transport",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R202",
+   "text": "Prove with recorded evidence: the round-1 PID is gone, no canary agent or shell remains, Git is clean, and no repository files changed during the round-1 canary procedure.",
+   "source_ref": "source-005-amendment.md#prove-residue",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R203",
+   "text": "The corrected relaunch must use a shorter prompt containing no embedded quotation marks, passed as one validated CLI argument (transport-validated end-to-end before launch).",
+   "source_ref": "source-005-amendment.md#corrected-relaunch",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R204",
+   "text": "The corrected relaunch preserves all Amendment 4 hardening: --strict-mcp-config, the Agent-only built-in tool restriction, the isolated slcap246 scratch workspace as cwd, and every cleanup/proof requirement (D-024-R193..R199).",
+   "source_ref": "source-005-amendment.md#preserve-hardening",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R205",
+   "text": "Show the owner the complete revised launch command BEFORE launching it; do not launch without explicit owner approval of that exact command.",
+   "source_ref": "source-005-amendment.md#show-command",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
+  },
+  {
+   "id": "D-024-R206",
+   "text": "Do not ask the owner to type the missing task manually inside the canary session; the corrected transport must deliver the full prompt itself.",
+   "source_ref": "source-005-amendment.md#no-manual-typing",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-024-R162-DISCHARGE"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-27"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "captured 2026-08-27 (Amendment 5): binds the orchestrator's seq-11 statusLine-canary discharge procedure via sentinel task id D-024-R162-DISCHARGE (inert-row convention); round-2 relaunch gated on owner approval of the exact command (D-024-R205)",
+   "evidence_paths": [],
+   "amendment_sequence": 5
   }
  ]
 }
