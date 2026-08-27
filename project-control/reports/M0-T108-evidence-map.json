@@ -1,0 +1,13 @@
+{
+ "task_id": "M0-T108",
+ "directive_refs": [{"directive_id": "D-024", "requirement_ids": "ALL"}],
+ "applicable_requirement_note": "evaluate_task_refs at claim identity 24aa061 and at freeze identity 4e238b5: ok=true, applicable set EMPTY across all 28 active directives (no requirement row binds M0-T108 by task id, type, milestone, or path; the D-024 R192..R219 procedure rows bind the sentinel D-024-R162-DISCHARGE, not this task). Cited refs D-024:ALL therefore resolve to an empty applicable subset; this map records that resolution explicitly per the empty-set convention.",
+ "evidence": {},
+ "task_evidence": [
+  "project-control/reports/M0-T108-guard-powershell-fix.md",
+  "project-control/reports/M0-T108-G2-self-check.md",
+  ".claude/hooks/readonly_agent_guard.py",
+  ".claude/settings.json",
+  "tools/test_readonly_agent_guard_powershell.py"
+ ]
+}
