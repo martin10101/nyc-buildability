@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:58.338868+00:00",
-  "updated_at": "2026-08-27T04:18:34.612017+00:00",
+  "updated_at": "2026-08-27T04:55:21.512070+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -104,5 +104,7 @@
       "status": "in_progress",
       "message": "Round-4 applied (owner-authorized): NF1 COM floor -c\\w* + Activator/GetTypeFromProgID reflection; NF2 command-position nested-shell via _effective_command_token (assignment-RHS $x=powershell) - removed fragile _PS_ENCODED_CMD/_PS_HAS_SHELL; D-R3-1/ADV-2 -Encoding+shell-word reads now ALLOW; ADV-1 start/saps moved to command-position _SPAWN_ALIAS; docstring honesty. PS pack 187/187 (15 mutants), Bash 136/136, ruff clean, modularity 0 failures. Re-freezing for round-4 re-review."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-27T04:55:21.512070+00:00"
 }

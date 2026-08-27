@@ -6019,7 +6019,19 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "task_id": "M0-T108",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "4014ee7a29b6c91f11af4cdb72633758df1ddbcd",
+   "verified_at": "2026-08-27T00:30:00+00:00",
+   "requirements": [],
+   "reviewed_manifest_sha256": "90376158eda8b6fc4bec8943dc702d09f896deda7345ce3358885b5c9b7ff972",
+   "note": "M0-T108 D-024 applicable set = EMPTY, independently verified (resolver + raw-JSON re-matcher + all-28-directive selective-citation cross-check); the 28 D-004/D-007 rows whose paths intersect .claude/hooks/settings.json are all excluded by non-empty task_ids naming other tasks. Evidence: project-control/reports/M0-T108-DCV.md."
   }
  ],
- "updated_at": "2026-08-26T23:18:10+00:00"
+ "updated_at": "2026-08-27T00:30:00+00:00"
 }

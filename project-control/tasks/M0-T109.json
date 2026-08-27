@@ -1,0 +1,64 @@
+{
+  "task_id": "M0-T109",
+  "title": "readonly-guard follow-up hardening: close chained-assignment encoded-shell residual + reachable COM-reflection tooth (M0-T108 G5 ADV-R4-1/ADV-R4-2, G4 ADV-4)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the documented residuals from M0-T108 round-4 review (all fail-safe/documented, none reopened at accept): (i) ADV-R4-1 (MEDIUM, G5) - chained-assignment encoded/nested shell: '$a=$b=powershell -enc <b64>' ALLOWs because _effective_command_token strips only ONE leading $var= layer; loop the assignment strip while the RHS still begins with $...= so multi-layer assignment-fronted shell invocations DENY; name 'chained assignment' explicitly in the docstring. (ii) ADV-4 (G4) - the GetTypeFromProgID tooth is unreachable behind '::' (leading-delimiter class excludes ':'); either anchor it as ::GetTypeFromProgID / add ':' so the belt-and-suspenders fires, or remove it as redundant with the reachable [Activator]::CreateInstance tooth (the actual reflection-COM write path is already denied); make the co-removed mutant honest. (iii) ADV-R4-2 (LOW, G5) - document [Type]::GetTypeFromCLSID and &(gcm powershell)/&(get-command ...) as open-ended reflection/command-lookup residuals a bounded static denylist cannot exhaust (covered by orchestrator-only integration). Add RED-on-mutant + no-FP regression rows; keep Bash pack byte-unchanged; -Encoding/powershell-as-data reads stay ALLOW; all M0-T108 denials preserved.",
+  "business_reason": "M0-T108 G5 round-4 explicitly recommended ADV-R4-1 as a trivially-closable fast-follow; ADV-4/ADV-R4-2 are QA/security-flagged guard-hardening. Non-blocking for M0-T108 (accepted) but improve the security guard.",
+  "inputs": [],
+  "outputs": [
+    ".claude/hooks/readonly_agent_guard.py (chained-assignment strip loop; GetTypeFromProgID tooth reachable-or-removed; docstring residual honesty)",
+    "tools/test_readonly_agent_guard_powershell.py (RED-on-mutant + no-FP regression rows for the residuals)",
+    "project-control/reports/M0-T109-guard-hardening.md"
+  ],
+  "dependencies": [
+    "M0-T108"
+  ],
+  "allowed_paths": [
+    ".claude/hooks",
+    "tools/test_readonly_agent_guard_powershell.py",
+    "project-control/reports/M0-T109-guard-hardening.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-27T04:55:47.085753+00:00",
+  "updated_at": "2026-08-27T04:55:47.322897+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-27T04:55:47.085753+00:00"
+}
