@@ -1,0 +1,47 @@
+{
+ "task_id": "M0-T104",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "applicable_requirement_note": "evaluate_task_refs at claim identity d90045c (and re-run after the recorded allowed_paths widening): ok=true, applicable set = D-024-R153, D-024-R154, D-024-R156, D-024-R172; cited refs D-024:ALL cover it (4/4, missing 0). Requirement texts and the per-requirement evidence walk are in project-control/reports/M0-T104-native-adapter.md section 6.",
+ "requirements": {
+  "D-024-R153": [
+   "tools/agent_supervisor/native_runtime.py",
+   "tools/agent_supervisor/runtime_backend.py",
+   "tools/test_agent_supervisor_native_adapter.py",
+   "tools/agent_supervisor/fixtures/native_runtime_detection_2026-08-27_m0t104.json",
+   "project-control/reports/M0-T104-native-adapter.md"
+  ],
+  "D-024-R154": [
+   "tools/agent_supervisor/native_runtime.py",
+   "tools/agent_supervisor/fixtures/agents_listing_2026-08-27_m0t104.json",
+   "tools/agent_supervisor/fixtures/agents_listing_all_2026-08-27_m0t104.json",
+   "tools/test_agent_supervisor_native_adapter.py",
+   "project-control/reports/M0-T104-native-adapter.md"
+  ],
+  "D-024-R156": [
+   "tools/agent_supervisor/native_runtime.py",
+   "tools/test_agent_supervisor_native_adapter.py",
+   "project-control/reports/M0-T104-native-adapter.md"
+  ],
+  "D-024-R172": [
+   "tools/agent_supervisor/native_runtime.py",
+   "tools/agent_supervisor/runtime_backend.py",
+   "tools/test_agent_supervisor_native_adapter.py",
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-27_m0t104.json",
+   "tools/agent_supervisor/fixtures/native_runtime_detection_2026-08-27_m0t104.json",
+   "tools/agent_supervisor/fixtures/agents_listing_2026-08-27_m0t104.json",
+   "tools/agent_supervisor/fixtures/agents_listing_all_2026-08-27_m0t104.json",
+   "tools/test_agent_supervisor_capability_probe.py",
+   "project-control/reports/M0-T104-native-adapter.md"
+  ]
+ },
+ "task_evidence": [
+  "project-control/reports/M0-T104-native-adapter.md",
+  "project-control/reports/M0-T104-G2-self-check.md",
+  "project-control/reports/M0-T104-G0-readiness.md"
+ ]
+}
