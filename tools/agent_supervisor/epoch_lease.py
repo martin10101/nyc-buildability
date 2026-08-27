@@ -350,12 +350,15 @@ def may_orient_read_only(outcome: BootLeaseOutcome) -> bool:
 def may_dispatch_writes(
     outcome: BootLeaseOutcome, *,
     unreconciled_children: Sequence[str] = (),
-    external_effects_reconciled: bool = True,
+    external_effects_reconciled: bool,
 ) -> bool:
     """Write authority needs an OWNED LIVE epoch AND full reconciliation:
     no undrained children, no unreconciled external effects (s6.3, R031).
     Mirrors ``child_handoff.TurnoverCoordinator.successor_may_dispatch_writes``
-    at the controller-lease level."""
+    at the controller-lease level — including its refusal to default
+    ``external_effects_reconciled``: the caller must state the reconciliation
+    fact explicitly (M0-T092 correction F2, G3 LOW-2; a permissive default
+    here would be the one fail-open door in the succession path)."""
     if outcome.status != OWN_LEASE_LIVE:
         return False
     if tuple(unreconciled_children):

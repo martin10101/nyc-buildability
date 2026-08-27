@@ -249,6 +249,44 @@ class S2RenewableEpochLease(JournalCase):
                                    renew_by_epoch_seconds=0.0,
                                    acquired_at_utc="")
 
+    def test_expiry_boundary_is_strictly_after_the_deadline(self) -> None:
+        # M0-T092 correction F3 (G4 LOW-1): pin the boundary semantic. The
+        # renew-by instant itself is still owned (expired means now is
+        # STRICTLY past renew_by); one tick later the lease is expired.
+        lease = epoch_lease.acquire_first(self.journal, campaign_id="d024",
+                                          owner_run_id="run-a", now=100.0,
+                                          ttl_seconds=50.0)
+        self.assertFalse(lease.expired(now=150.0))
+        self.assertTrue(lease.live(now=150.0))
+        self.assertTrue(lease.expired(now=150.000001))
+        renewed = epoch_lease.renew(self.journal, owner_run_id="run-a",
+                                    now=150.0)
+        self.assertEqual(renewed.renew_by_epoch_seconds, 200.0)
+
+    def test_release_is_idempotent(self) -> None:
+        # M0-T092 correction F3 (G4 LOW-2): releasing twice is a no-op.
+        epoch_lease.acquire_first(self.journal, campaign_id="d024",
+                                  owner_run_id="run-a", now=0.0,
+                                  ttl_seconds=10.0)
+        first = epoch_lease.release(self.journal, owner_run_id="run-a")
+        second = epoch_lease.release(self.journal, owner_run_id="run-a")
+        self.assertTrue(first.released and second.released)
+        self.assertEqual(first, second)
+
+    def test_epoch_one_is_taken_at_most_once_even_after_release(self) -> None:
+        # M0-T092 correction F4 (G4 ADVISORY-3): a released (or expired)
+        # record still refuses acquire_first — later epochs go through
+        # succeed() so the sequence stays gapless.
+        epoch_lease.acquire_first(self.journal, campaign_id="d024",
+                                  owner_run_id="run-a", now=0.0,
+                                  ttl_seconds=10.0)
+        epoch_lease.release(self.journal, owner_run_id="run-a")
+        with self.assertRaises(epoch_lease.LeaseError) as ctx:
+            epoch_lease.acquire_first(self.journal, campaign_id="d024",
+                                      owner_run_id="run-b", now=20.0,
+                                      ttl_seconds=10.0)
+        self.assertEqual(ctx.exception.code, "lease_exists")
+
 
 # ---------------------------------------------------------------------------
 # S3 — idempotent journaled transitions (R030)
@@ -396,7 +434,27 @@ class S5ThreeInterruptionClasses(JournalCase):
                                                 now=10.0)
         self.assertEqual(outcome.status, epoch_lease.OTHER_LEASE_LIVE)
         self.assertTrue(epoch_lease.may_orient_read_only(outcome))
-        self.assertFalse(epoch_lease.may_dispatch_writes(outcome))
+        self.assertFalse(epoch_lease.may_dispatch_writes(
+            outcome, external_effects_reconciled=True))
+
+    def test_write_authority_needs_full_reconciliation(self) -> None:
+        # M0-T092 correction F2/F3 (G3 LOW-2, G4 LOW-3): an owned live epoch
+        # alone is not write authority — undrained children or unreconciled
+        # external effects refuse, and the effects fact has NO default.
+        epoch_lease.acquire_first(self.journal, campaign_id="d024",
+                                  owner_run_id="run-a", now=0.0,
+                                  ttl_seconds=100.0)
+        outcome = epoch_lease.reconcile_on_boot(self.journal, run_id="run-a",
+                                                now=10.0)
+        self.assertTrue(epoch_lease.may_dispatch_writes(
+            outcome, external_effects_reconciled=True))
+        self.assertFalse(epoch_lease.may_dispatch_writes(
+            outcome, unreconciled_children=("child-1",),
+            external_effects_reconciled=True))
+        self.assertFalse(epoch_lease.may_dispatch_writes(
+            outcome, external_effects_reconciled=False))
+        with self.assertRaises(TypeError):
+            epoch_lease.may_dispatch_writes(outcome)  # type: ignore[call-arg]
 
     def test_class_3_outage_is_explicit_backoff_or_blocked_never_a_successor(self) -> None:
         state = outage_policy.record_transient_failure(
@@ -753,6 +811,24 @@ class S11OutageBackoffVsBlocked(JournalCase):
             "something entirely novel"), ("unrecognized", outage_policy.BLOCKING))
         self.assertEqual(outage_policy.classify_cause("made_up_cause"),
                          outage_policy.BLOCKING)
+
+    def test_mixed_reason_text_resolves_toward_blocking(self) -> None:
+        # M0-T092 correction F1 (G3 LOW-1 / G5 LOW-1): a blocking token
+        # anywhere in the reason outranks every transient token — auth,
+        # billing, and revoked-access failures never enter the retry loop
+        # merely because the message also mentions a transport symptom.
+        for reason, cause in (
+            ("Authentication error: connection refused by auth endpoint (401)",
+             "auth"),
+            ("authentication failed: connection reset", "auth"),
+            ("billing problem, request timed out", "billing"),
+            ("revoked access after timeout", "revoked_access"),
+            ("unsupported version detected over a flaky network",
+             "incompatibility"),
+        ):
+            with self.subTest(reason=reason):
+                self.assertEqual(outage_policy.classify_reason_text(reason),
+                                 (cause, outage_policy.BLOCKING))
 
     def test_backoff_grows_to_the_cap_with_bounded_jitter(self) -> None:
         policy = self.policy()

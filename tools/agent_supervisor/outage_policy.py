@@ -52,11 +52,23 @@ BLOCKING_CAUSES: tuple[str, ...] = (
     "auth", "billing", "revoked_access", "incompatibility",
 )
 
-#: Keyword map for classifying a bounded provider-failure reason string
-#: (``codex_reviewer.provider_failure_reason`` output). First match wins;
-#: matching is a convenience — a caller that KNOWS the cause passes it
-#: directly to :func:`classify_cause` and never sniffs text.
-_REASON_KEYWORDS: tuple[tuple[str, str], ...] = (
+#: Keyword maps for classifying a bounded provider-failure reason string
+#: (``codex_reviewer.provider_failure_reason`` output). BLOCKING keywords are
+#: scanned FIRST (M0-T092 correction F1, G3/G5 LOW-1): a mixed reason like
+#: "authentication failed: connection reset" must classify BLOCKING — R033
+#: never grants auth/billing/revoked/incompatibility a retry loop, so
+#: ambiguity resolves toward the hold, matching the module's own
+#: unknown-fails-closed stance. Matching is a convenience — a caller that
+#: KNOWS the cause passes it directly to :func:`classify_cause` and never
+#: sniffs text.
+_BLOCKING_KEYWORDS: tuple[tuple[str, str], ...] = (
+    ("unauthorized", "auth"), ("401", "auth"), ("403", "auth"),
+    ("credential", "auth"), ("api key", "auth"), ("authentication", "auth"),
+    ("billing", "billing"), ("payment", "billing"),
+    ("revoked", "revoked_access"),
+    ("incompatib", "incompatibility"), ("unsupported version", "incompatibility"),
+)
+_TRANSIENT_KEYWORDS: tuple[tuple[str, str], ...] = (
     ("rate limit", "rate_limit"), ("429", "rate_limit"),
     ("timed out", "timeout"), ("timeout", "timeout"),
     ("connection", "network"), ("network", "network"), ("dns", "network"),
@@ -64,11 +76,9 @@ _REASON_KEYWORDS: tuple[tuple[str, str], ...] = (
     ("overloaded", "provider_overload"), ("529", "provider_overload"),
     ("500", "server_error"), ("502", "server_error"), ("503", "server_error"),
     ("server error", "server_error"),
-    ("unauthorized", "auth"), ("401", "auth"), ("403", "auth"),
-    ("credential", "auth"), ("api key", "auth"), ("authentication", "auth"),
-    ("billing", "billing"), ("payment", "billing"),
-    ("revoked", "revoked_access"),
-    ("incompatib", "incompatibility"), ("unsupported version", "incompatibility"),
+)
+_REASON_KEYWORDS: tuple[tuple[str, str], ...] = (
+    *_BLOCKING_KEYWORDS, *_TRANSIENT_KEYWORDS,
 )
 
 #: Bounded idle ceiling (R033 "bounded idle"). An idle longer than this is not

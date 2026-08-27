@@ -176,6 +176,30 @@ here; it remains carried on the M0-T109 guard-hardening backlog.
 Owner-gated C1 succession canary: NOT executed (R192/R197 exact-command approval required);
 the deterministic core above is built and verified without it (§2).
 
+**Consolidated correction round (post round-1 gates; all three gates were PASS with LOW
+findings, fixes applied by orchestrator election, per the M0-T104/T105/T106 pattern):**
+- **F1 (G3 LOW-1 / G5 LOW-1, convergent):** `outage_policy` reason-text classification now
+  scans BLOCKING keywords FIRST — a blocking token anywhere outranks every transient token,
+  so mixed strings like "authentication failed: connection reset" classify BLOCKING and
+  never enter the retry loop (R033's letter). Collision tests added (5 phrasings).
+- **F2 (G3 LOW-2):** `epoch_lease.may_dispatch_writes` makes `external_effects_reconciled`
+  keyword-REQUIRED (no default), matching the mirrored
+  `child_handoff.successor_may_dispatch_writes` contract; omission is now a `TypeError`.
+- **F3 (G4 LOW-1/2/3):** matrix additions — `expired()` boundary pinned (the renew-by
+  instant is still owned; strictly-after expires), double-`release()` idempotency, and
+  full `may_dispatch_writes` reconciliation gating (children / effects / required-arg).
+- **F4 (G4 ADVISORY-3):** `acquire_first` refusal on a released record now directly tested
+  (epoch 1 at most once; later epochs only through `succeed`).
+Matrix after the round: **75/75 PASS**; two new targeted mutants (blocking-first order
+reverted; effects check dropped) both KILLED — **15/15 mutants total**.
+Residuals carried (non-blocking, recorded): G5 ADVISORY-2 (journal reason-string
+re-redaction boundary note) and ADVISORY-3 (diagnosis terminal-escaping note) — both
+live-wiring-time hardening for the R595 activation path; G3 ADVISORY-1 (succession-log
+append non-atomic; authoritative records unaffected — accepted design); G3/G4 ADVISORY-2
+(composed suite baseline; CI at the frozen identity is the whole-suite confirmation);
+G4 ADVISORY-1 (the two R029 composite distinctions are documentation-backed; hard-testing
+the REVISE/bridge journal reads belongs to the loop-wiring units).
+
 **Provider CLI drift increment (qualifying evidence: reproduced drift, supervisor-freeze §2;
 R149/R102).** The installed Claude CLI auto-updated **2.1.247 → 2.1.248** during unit F's
 verification, firing all three live drift teeth exactly as designed (capability-probe reprobe,
