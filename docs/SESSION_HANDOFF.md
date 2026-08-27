@@ -34,31 +34,44 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    word `powershell`/`pwsh` anywhere as DATA) newly DENIes pure `-Encoding` reads that mention
    `powershell`/`pwsh` (e.g. `Select-String -Encoding utf8 -Pattern powershell`) — a narrowed
    re-open of the previously-blocking C3 FP. **Fails safe** (over-blocks a read, opens NO write);
-   F1/F2/A1 security teeth all correct; verified at `e1f6d4c`. **G4 + G5 round-3 STILL IN FLIGHT.**
+   F1/F2/A1 security teeth all correct; verified at `e1f6d4c`. **G4 round-3 = PASS (recorded)** but
+   flags **ADV-3 (fail-OPEN, round-4 blocking):** the F1 COM tooth `New-Object -Com\w*` misses the
+   shorter valid abbreviations `-c`/`-co` (PowerShell binds them to `-ComObject` — no other
+   New-Object param starts with "c"), so `New-Object -c Scripting.FileSystemObject` → ALLOW = the
+   same COM file-write bypass class as the round-2 G5 F1 (verified at `e1f6d4c`; pre-existing since
+   round-2, strictly narrowed by round-3). G4 also flags fail-safe over-blocks ADV-1 (`start`/`saps`
+   alias denies the word "start" as data, e.g. `git log --grep start`) and ADV-2 (= D-R3-1 root
+   cause). **G5 round-3 STILL IN FLIGHT.**
 5. **M0-T108 evidence (round 3):** PS pack **159/159** (13 RED-on-mutant, all load-bearing); Bash
    pack **136/136 byte-unchanged**; ruff clean; `modularity_check --check` 0 failures (guard 731
    raw lines, not flagged). Only the four packet paths changed.
-6. **Exact next action (ROUND-4 needed — D-R3-1 is blocking):** (a) collect the G4 + G5 round-3
-   verdicts (§7), save verbatim, record gates; fold any further round-3 findings into round-4.
-   (b) **Round-4 correction to fix D-R3-1:** gate the scoped encoded-command check so the
-   `powershell`/`pwsh` token must be in COMMAND/SPAWN position (segment-first, or immediately after
-   `start`/`saps`/`Start-Process`/`&`), NOT merely present as argument data — do NOT try to split
-   `-enc` from `-Encoding` by prefix (impossible). Add a RED regression row: `-Encoding` +
-   `powershell`/`pwsh` as data → ALLOW; `start powershell -enc` → still DENY. Re-freeze; round-4
-   re-review (G3 must flip to PASS; delta-attest G4/G5). (c) **If all four gates then PASS:** run
-   DCV — M0-T108's applicable D-024 set is **EMPTY** (`evaluate_task_refs` ok=true, `D-024:ALL`
-   resolves empty; still write the explicit empty-set row in `verification.json`); `accept`
-   (all required gates PASS + reviewed_sha == live HEAD), `checkpoint`, **advance campaign to
-   seq 13** (`advance(expected_sequence=12, …)`). **DO NOT dispatch any unit C–I work until
-   M0-T108 is ACCEPTED** (owner instruction + G5 M0-T102 precondition).
-7. **Sub-agents (round-3 re-review at `e1f6d4c`; healthy, bounded, mutually blind):**
-   `code-reviewer` G3 — **LANDED FAIL, recorded** (D-R3-1). `qa-engineer` G4 + `security-reviewer`
-   G5 — **STILL IN FLIGHT** (this session's background agents; if the session is replaced they die
-   and their verdicts are lost). Resume-or-replace: if this session continues, the orchestrator
-   reconciles them on return; **if replaced, the successor need NOT re-run G3 (its FAIL is
-   recorded) but MUST collect-or-re-dispatch G4 + G5 round-3 at `e1f6d4c`** (independent, do not
-   share conclusions). Because D-R3-1 already forces round-4, G4/G5 round-3 verdicts are additive
-   input to round-4, not gating on their own.
+6. **Exact next action (ROUND-4 required):** (a) collect the G5 round-3 verdict (§7), save
+   verbatim, record the gate; fold any further findings into round-4. (b) **Round-4 correction —
+   three fixes, all one root cause (match tokens in COMMAND/SPAWN position, not as data):**
+   (i) **ADV-3 fail-OPEN (highest priority):** broaden the COM tooth `New-Object\s+-Com\w*\b` →
+   `New-Object\s+-c\w*\b` so `-c`/`-co`/`-com…` all DENY (no other New-Object param starts with
+   "c"). (ii) **D-R3-1 + ADV-2:** gate the scoped encoded-command check so the `powershell`/`pwsh`
+   token is in COMMAND/SPAWN position (segment-first, or right after `start`/`saps`/`Start-Process`/
+   `&`), NOT merely argument data — do NOT try to split `-enc` from `-Encoding` by prefix
+   (impossible). (iii) **ADV-1:** anchor the `start`/`saps` spawn-alias denial to command-initial
+   position (mirror `_launches_nested_shell`) so the word "start" as data (`git log --grep start`)
+   ALLOWs. Add RED-on-mutant + no-FP rows: `New-Object -c FSO` DENY; `Select-String -Encoding utf8
+   -Pattern powershell` ALLOW; `git log --grep start` ALLOW; while `New-Object -Com…` DENY,
+   `start powershell -enc` DENY, `saps cmd /c` DENY all hold. Re-freeze; round-4 re-review (G3 + G5
+   must flip to PASS; delta-attest G4). (c) **If all four gates then PASS:** run DCV — M0-T108's
+   applicable D-024 set is **EMPTY** (`evaluate_task_refs` ok=true, `D-024:ALL` resolves empty;
+   still write the explicit empty-set row in `verification.json`); `accept` (all required gates
+   PASS + reviewed_sha == live HEAD), `checkpoint`, **advance campaign to seq 13**
+   (`advance(expected_sequence=12, …)`). **DO NOT dispatch any unit C–I work until M0-T108 is
+   ACCEPTED** (owner instruction + G5 M0-T102 precondition).
+7. **Sub-agents (round-3 re-review at `e1f6d4c`; healthy, mutually blind):** `code-reviewer` G3 —
+   **LANDED FAIL, recorded** (D-R3-1). `qa-engineer` G4 — **LANDED PASS, recorded** (flags ADV-3
+   fail-open + ADV-1/ADV-2 fail-safe). `security-reviewer` G5 — **STILL IN FLIGHT** (this session's
+   background agent; if the session is replaced it dies and its verdict is lost). Resume-or-replace:
+   if this session continues, the orchestrator reconciles G5 on return; **if replaced, the successor
+   need NOT re-run G3/G4 (recorded) but MUST collect-or-re-dispatch G5 round-3 at `e1f6d4c`.**
+   Because D-R3-1 + ADV-3 already force round-4, the G5 verdict is additive input, not independently
+   gating — proceed to round-4 with the §6 plan regardless of G5's exact wording.
 8. **After M0-T108 accepted (campaign NEXT, seq 13):** M0-T104 (unit C native runtime adapter) →
    T105 → T106 → T092 → T094 → T093 → T095 → T096 (golden run; R187 hold after) → T107. Carry the
    R162-discharge unit-C preconditions: explicit child-env control for background dispatch
