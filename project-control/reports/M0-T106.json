@@ -2,15 +2,15 @@
   "task_id": "M0-T106",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T106-goal-integration.md",
-  "submitted_at": "2026-08-27T17:25:24.867704+00:00",
+  "submitted_at": "2026-08-27T18:04:55.318988+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T106-evidence-map.json",
-  "content_manifest_sha256": "d2c25b7edd07054ce352d975a28dea36c9c49d2986cfbc68fa8bac1dc31bf225",
-  "reviewed_sha": "c3f376882690a0460222f26612e03fcbf02608bd",
+  "content_manifest_sha256": "4d31dba2e03f0644c72725010235f95d68fb034cb82c78c8f3b560d6aa123293",
+  "reviewed_sha": "5e60a0d39dfe4c6eaa479924e4291285f9e15f00",
   "applicable_requirements": [
     "D-024-R152",
     "D-024-R162",
     "D-024-R174"
   ],
-  "updated_at": "2026-08-27T17:25:25.472910+00:00"
+  "updated_at": "2026-08-27T18:04:55.940408+00:00"
 }
