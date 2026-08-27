@@ -52,7 +52,12 @@ _LEDGER_TASK_RE = re.compile(r"\bM\d+-T\d+\b")
 _CAMPAIGN_SCALE_RE = re.compile(
     r"(?i)\b(entire|whole)\s+(campaign|project|backlog|milestone)\b"
     r"|\bevery\s+(remaining\s+)?task\b"
-    r"|\ball\s+(remaining\s+)?(tasks|milestones|units)\b")
+    r"|\ball\s+(remaining\s+)?(tasks|milestones|units)\b"
+    # round-1 G4-L1 widening: the proven-slip verb phrasings; deliberately
+    # fail-closed-biased (a rare false refusal beats a campaign-wide goal)
+    r"|\b(finish|complete|wrap\s+up|deliver)\s+(the\s+|this\s+)?"
+    r"(milestone|backlog|project|campaign|remaining\s+work)\b"
+    r"|\bthe\s+rest\s+of\s+the\s+(backlog|project|campaign|milestone)\b")
 
 _TURN_BOUND_RE = re.compile(r"(?i)\bstop\s+after\s+\d+\s+(turns?|minutes?|hours?)\b")
 

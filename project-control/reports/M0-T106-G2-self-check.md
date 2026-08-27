@@ -54,6 +54,21 @@ fixture↔code pinned on every constant ✓ (S11); health bands remain private c
 (nothing here surfaces them to a worker); no transcript polling added ✓ (passive
 classification/ingestion only).
 
+## 3a. Correction-round delta (round-1 G3-C1 + G4-M1 blocking; re-frozen identity)
+
+Applied F1–F7 (main report §3a): F1 measurements digested into the `publish_typed` dedup key
+(G3-C1) + both-persist regression; F2 check-in discriminator caller contract, fail-visible on a
+missing `sequence` (G4-M1) + persist/replay/refusal tests; F3 `goal_spend_tokens` rename
+(G5-ADV-1) + durable READABLE read-back test; F4 `IdleCapVerdict(cap, known)` (G3-A2/G4-A1);
+F5 campaign-tripwire widening with the four proven-slip phrasings (G4-L1); F6 constraint-poison +
+excerpt-bound coverage (G4-L2); F7 `MAX_SCHEDULE_COUNT=64` cap (G5-ADV-2); fixture pre-2.1.239
+completeness note (G4-A3). Delta evidence at the re-frozen identity: **38/38** goal pack +
+**38/38** unit-D pack (76 combined); mutation total **12/12 KILLED** (adds
+measurements-dropped-from-key, sequence-guard-removed, tripwire-widening-reverted); ruff clean;
+line counts now 158 / 245 / 206 / 317 (+25 vs accepted unit D) / 432. Independent full-suite
+evidence from round 1 stands: G3 ran the 2,278-test supervisor surface green; G4 ran the full
+`tools/` suite (2,830 passed; 5 failures = their export's git-absence artifacts, none in scope).
+
 ## 4. Known limitations (disclosed for review)
 
 1. The goal-semantics fixture is documentation-confidence (official-docs). The C1 live goal

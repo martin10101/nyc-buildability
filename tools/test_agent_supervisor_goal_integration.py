@@ -61,7 +61,12 @@ def test_s1_one_task_only():
 def test_s1_campaign_scale_refused():
     for phrase in ("the entire campaign is delivered",
                    "every remaining task is accepted",
-                   "all remaining tasks pass their gates"):
+                   "all remaining tasks pass their gates",
+                   # the four G4 round-1 proven-slip phrasings (F5 widening)
+                   "finish the milestone",
+                   "the rest of the backlog is empty",
+                   "wrap up the project",
+                   "complete the remaining work"):
         with pytest.raises(gk.GoalContractError):
             good_condition(end_state=phrase)
 
@@ -101,6 +106,13 @@ def test_s2_clean_condition_passes_r045():
     # the validator runs on every construction; a clean condition constructs
     cond = good_condition()
     assert "token" not in cond.text.lower()
+
+
+def test_s2_token_pressure_via_constraint_fails_closed():
+    """G4 round-1 L2 coverage: the poison vector through a CONSTRAINT — the
+    validator sees the full composed text, so the constraint path bites."""
+    with pytest.raises(Exception):
+        good_condition(constraints=("finish within 5000 tokens remaining",))
 
 
 # ---------- S3 verdict ingestion -------------------------------------------
@@ -150,6 +162,13 @@ def test_s4_transient_stays_active():
         clearing = go.classify_goal_message(text)
         assert clearing.cleared is False
         assert clearing.clazz == "transient_error_active"
+
+
+def test_s3_reason_excerpt_bounded_160():
+    """G4 round-1 L2 coverage: the excerpt cap actually bites."""
+    long_reason = f"{PREFIX}: " + ("x" * 5000) + f" {SUFFIX}"
+    clearing = go.classify_goal_message(long_reason)
+    assert len(clearing.reason_excerpt) <= 160
 
 
 def test_s4_user_clear_and_no_goal_and_unknown():
@@ -233,10 +252,20 @@ def test_s7_version_gates_honest():
     assert not old.enabled and old.source == "unavailable-version"
     unparseable = gc.checkin_schedule(installed_version="unknown")
     assert not unparseable.enabled
-    assert gc.idle_checkin_cap("2.1.247") == 3
-    assert gc.idle_checkin_cap("2.1.240") is None   # documented: uncapped
-    assert gc.idle_checkin_cap("2.1.235") == 0      # idle unavailable
-    assert gc.idle_checkin_cap("garbled") is None   # unknown, never invented
+    assert gc.idle_checkin_cap("2.1.247") == gc.IdleCapVerdict(cap=3, known=True)
+    assert gc.idle_checkin_cap("2.1.240") == gc.IdleCapVerdict(cap=None, known=True)
+    assert gc.idle_checkin_cap("2.1.235") == gc.IdleCapVerdict(cap=0, known=True)
+    # G3-A2/G4-A1 fix: ignorance is now DISTINGUISHABLE from uncapped
+    assert gc.idle_checkin_cap("garbled") == gc.IdleCapVerdict(cap=None, known=False)
+
+
+def test_s7_schedule_count_bounded():
+    """G5 round-1 ADV-2: the projection length is capped, fail visible."""
+    ok = gc.checkin_schedule(installed_version="2.1.247", count=gc.MAX_SCHEDULE_COUNT)
+    assert len(ok.due_offsets_minutes) == gc.MAX_SCHEDULE_COUNT
+    with pytest.raises(gc.GoalCheckinError):
+        gc.checkin_schedule(installed_version="2.1.247",
+                            count=gc.MAX_SCHEDULE_COUNT + 1)
 
 
 # ---------- S8 check-in ingestion (durable, dedup-keyed) --------------------
@@ -266,6 +295,63 @@ def test_s8_unknown_kind_recorded_honestly(tmp_path):
     assert malformed.attributes["payload_error"] == "str"
 
 
+def test_s8_distinct_sequences_both_persist(tmp_path):
+    """G4 round-1 M1 regression: two genuinely-distinct check-ins (only the
+    sequence differs) BOTH persist; a byte-identical re-delivery dedups."""
+    bus = eb.DurableEventBus(tmp_path / "store.jsonl")
+    base = {"kind": "idle", "running_tasks": 2,
+            "session_id": "[SESSION-E-FIXTURE]", "goal_active": True}
+    first = gc.record_checkin(bus, dict(base, sequence=1))
+    second = gc.record_checkin(bus, dict(base, sequence=2))
+    replay = gc.record_checkin(bus, dict(base, sequence=2))
+    assert first is not None and second is not None
+    assert replay is None and bus.duplicates_ignored == 1
+    assert len(bus.replay().stored_records) == 2
+
+
+def test_s8_missing_discriminator_fails_visible(tmp_path):
+    """G4 round-1 M1 caller contract: no sequence -> typed refusal, never a
+    silent collapse."""
+    bus = eb.DurableEventBus(tmp_path / "store.jsonl")
+    with pytest.raises(gc.GoalCheckinError):
+        gc.record_checkin(bus, {"kind": "idle", "running_tasks": 2})
+    with pytest.raises(gc.GoalCheckinError):
+        gc.record_checkin(bus, "not a mapping")
+    assert bus.replay().stored_records == ()
+
+
+def test_s8_status_snapshots_differing_only_in_measurements_both_persist(tmp_path):
+    """G3 round-1 C1 regression: the publish_typed key now digests
+    measurements, so two /goal status snapshots that advance only their
+    numbers are DISTINCT records; an identical snapshot still dedups."""
+    bus = eb.DurableEventBus(tmp_path / "store.jsonl")
+    now = "2026-08-27T17:00:00+00:00"
+    snap1 = go.ingest_goal_status({"active": True, "turns_evaluated": 3,
+                                   "token_spend": 1000}, task_id="M0-T106",
+                                  now_utc_iso=now)
+    snap2 = go.ingest_goal_status({"active": True, "turns_evaluated": 9,
+                                   "token_spend": 5000}, task_id="M0-T106",
+                                  now_utc_iso=now)
+    assert bus.publish_typed(snap1) is not None
+    assert bus.publish_typed(snap2) is not None  # NOT a false-dedup
+    assert bus.publish_typed(snap2) is None      # true duplicate collapses
+    assert len(bus.replay().stored_records) == 2
+
+
+def test_s9_spend_survives_durable_store_readable(tmp_path):
+    """G5 round-1 ADV-1 regression: goal_spend_tokens (the pattern-safe
+    name) survives the sanitize-first journal READABLE — never over-redacted
+    to [REDACTED:sensitive_key]."""
+    bus = eb.DurableEventBus(tmp_path / "store.jsonl")
+    record = go.ingest_goal_status({"active": True, "turns_evaluated": 4,
+                                    "token_spend": 12345}, task_id="M0-T106")
+    assert bus.publish_typed(record) is not None
+    stored = bus.replay().stored_records[0]
+    spend = stored["measurements"]["goal_spend_tokens"]
+    assert spend["value"] == 12345
+    assert "[REDACTED" not in json.dumps(spend)
+
+
 # ---------- S9 goal-status telemetry (R042) ---------------------------------
 
 def test_s9_status_numbers_labelled():
@@ -274,7 +360,7 @@ def test_s9_status_numbers_labelled():
          "duration": "12m", "last_reason": "tests still failing"},
         task_id="M0-T106")
     turns = record.measurements["goal_turns_evaluated"]
-    spend = record.measurements["goal_token_spend"]
+    spend = record.measurements["goal_spend_tokens"]
     assert turns.value == 7 and turns.label == "status-live"
     assert spend.value == 51234 and spend.label == "status-live"
     assert "RESETS on resume" in spend.detail  # never whole-session claim
@@ -283,7 +369,7 @@ def test_s9_status_numbers_labelled():
 def test_s9_absent_numbers_unknown_never_zero():
     record = go.ingest_goal_status({"active": True})
     assert record.measurements["goal_turns_evaluated"].is_unknown
-    assert record.measurements["goal_token_spend"].is_unknown
+    assert record.measurements["goal_spend_tokens"].is_unknown
     malformed = go.ingest_goal_status(None)
     assert malformed.measurements["goal_turns_evaluated"].is_unknown
     for bad in (True, -3, "many"):

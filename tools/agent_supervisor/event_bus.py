@@ -286,7 +286,11 @@ class DurableEventBus:
 
     def publish_typed(self, record: TelemetryRecord) -> TelemetryRecord | None:
         """Record one already-typed TelemetryRecord, dedup-keyed on its
-        content (record_type + identity + canonical attribute digest).
+        content (record_type + identity + canonical attribute AND
+        measurement digest — round-1 G3-C1 fix: two status snapshots that
+        advance only their measurements are DISTINCT records, never a
+        false-dedup; ingestion timestamps stay excluded so a true replay of
+        the same observation still collapses).
 
         Additive unit-E consumption seam (M0-T106; D-024-R174): goal
         check-in/status records produced by other modules persist through
@@ -297,7 +301,9 @@ class DurableEventBus:
         key = idempotency_key(
             f"typed:{record.record_type}",
             {"session_id": record.session_id, "task_id": record.task_id,
-             "attributes": dict(record.attributes)})
+             "attributes": dict(record.attributes),
+             "measurements": {name: m.to_dict() for name, m
+                              in record.measurements.items()}})
         if key in self._seen:
             self.duplicates_ignored += 1
             return None

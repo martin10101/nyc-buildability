@@ -39,6 +39,10 @@ IDLE_CHECKIN_CAP = 3
 #: Environment variable that replaces the first interval and scales the rest.
 CHECKIN_ENV_VAR = "CLAUDE_CODE_GOAL_CHECKIN_MINUTES"
 
+#: Defense-in-depth bound on schedule length (a controller never needs more
+#: than a few dozen projected check-ins; G5 round-1 ADV-2).
+MAX_SCHEDULE_COUNT = 64
+
 
 class GoalCheckinError(ValueError):
     """Check-in configuration/observation violated the contract (fail visible)."""
@@ -93,6 +97,10 @@ def checkin_schedule(*, installed_version: str, env_value: str | None = None,
     """
     if count < 0:
         raise GoalCheckinError("count must be >= 0")
+    if count > MAX_SCHEDULE_COUNT:
+        raise GoalCheckinError(
+            f"count {count} exceeds the schedule bound {MAX_SCHEDULE_COUNT} "
+            f"(defense-in-depth cap - G5 round-1 ADV-2)")
     available = version_at_least(installed_version, CHECKINS_MIN_VERSION)
     if available is not True:
         return CheckinSchedule(enabled=False, first_interval_minutes=0,
@@ -114,19 +122,33 @@ def checkin_schedule(*, installed_version: str, env_value: str | None = None,
                            due_offsets_minutes=tuple(offsets), source=source)
 
 
-def idle_checkin_cap(installed_version: str) -> int | None:
-    """Idle check-ins per goal between prompts: 3 at >= 2.1.246; uncapped
-    (None) at >= 2.1.236; 0 below 2.1.236 (idle delivery unavailable);
-    None-with-unknown when the version cannot be parsed."""
+@dataclasses.dataclass(frozen=True)
+class IdleCapVerdict:
+    """Idle-check-in cap with an EXPLICIT known/unknown axis (round-1
+    G3-A2/G4-A1 fix: ``cap=None`` previously meant BOTH "uncapped, known"
+    and "version unknown" — a caller could mistake ignorance for no-cap).
+
+    ``cap`` is meaningful only when ``known`` is True: 3 at >= 2.1.246;
+    None = documented-uncapped (2.1.236 .. 2.1.245); 0 = idle delivery
+    unavailable (< 2.1.236). ``known=False`` means the installed version
+    could not be parsed — nothing is asserted.
+    """
+
+    cap: int | None
+    known: bool
+
+
+def idle_checkin_cap(installed_version: str) -> IdleCapVerdict:
+    """Idle check-ins per goal between prompts, with honest unknown."""
     at_cap = version_at_least(installed_version, IDLE_CHECKIN_CAP_MIN_VERSION)
     if at_cap is True:
-        return IDLE_CHECKIN_CAP
+        return IdleCapVerdict(cap=IDLE_CHECKIN_CAP, known=True)
     has_idle = version_at_least(installed_version, IDLE_CHECKINS_MIN_VERSION)
     if has_idle is True:
-        return None  # documented: uncapped before 2.1.246
+        return IdleCapVerdict(cap=None, known=True)  # documented: uncapped
     if has_idle is False:
-        return 0
-    return None  # unparseable version: unknown, never invented
+        return IdleCapVerdict(cap=0, known=True)
+    return IdleCapVerdict(cap=None, known=False)  # unparseable: unknown
 
 
 #: Documented delivery kinds for a due check-in.
@@ -163,8 +185,22 @@ def ingest_checkin(payload: Any, *, task_id: str = "",
 
 def record_checkin(bus: DurableEventBus, payload: Any, *, task_id: str = "",
                    now_utc_iso: str | None = None) -> TelemetryRecord | None:
-    """Ingest one check-in and persist it via the REUSED unit-D durable bus
-    (dedup-keyed on the record content; duplicate delivery is a counted
-    no-op). Returns the stored record, or None on a duplicate."""
+    """Ingest one check-in and persist it via the REUSED unit-D durable bus.
+
+    CALLER CONTRACT (round-1 G4-M1 fix): the observation MUST carry a stable
+    per-delivery discriminator — ``sequence`` (int or str) that is identical
+    across replays of the SAME delivery but distinct across deliveries.
+    Without one, two genuinely-distinct check-ins with identical fields
+    would silently collapse in dedup (an undercount that would defeat the
+    idle-cap-of-3 corroboration); a missing discriminator therefore FAILS
+    VISIBLE here instead of losing data. Dedup is content-keyed: a
+    byte-identical re-delivery of the same sequence is a counted no-op.
+    """
+    if not isinstance(payload, Mapping) or payload.get("sequence") is None:
+        raise GoalCheckinError(
+            "check-in observation must carry a per-delivery 'sequence' "
+            "discriminator (stable across replays, distinct across "
+            "deliveries); refusing to persist without one - a silent "
+            "collapse would undercount check-ins (G4-M1, fail visible)")
     record = ingest_checkin(payload, task_id=task_id, now_utc_iso=now_utc_iso)
     return bus.publish_typed(record)

@@ -223,7 +223,12 @@ def ingest_goal_status(payload: Any, *, task_id: str = "",
             if _count(payload.get("turns_evaluated")) is not None
             else Measurement.unknown(
                 "cumulative", "absent before the first evaluation")),
-        "goal_token_spend": (
+        # named goal_spend_tokens, NOT goal_token_spend: a delimited "_token_"
+        # segment matches the journal's SENSITIVE_KEY_PATTERN and would be
+        # over-redacted to [REDACTED:sensitive_key] on the durable store,
+        # blinding the R042 read-back (round-1 G5-ADV-1 fix; the "_tokens"
+        # suffix is the pattern-safe family the existing names use)
+        "goal_spend_tokens": (
             Measurement(value=_count(payload.get("token_spend")),
                         label="status-live", category="cumulative",
                         detail=spend_detail)

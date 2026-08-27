@@ -51,7 +51,8 @@
     "env_zero_disables": true,
     "delivery_kinds": ["turn_end", "idle"],
     "non_interactive_delivery": "turn_end only (e.g. -p sessions)",
-    "background_defers_evaluation": "evaluation skipped while a subagent or background shell runs; evaluated at the next turn that ends with no background work"
+    "background_defers_evaluation": "evaluation skipped while a subagent or background shell runs; evaluated at the next turn that ends with no background work",
+    "pre_2_1_239_note": "before 2.1.239 only idle check-ins backed off; a turn-end check-in recurred at the first interval (snapshot line 143) - not modeled here, outside the 2.1.246+ operational range (G4 round-1 A3 completeness note)"
   },
   "condition": {
     "max_chars": 4000,

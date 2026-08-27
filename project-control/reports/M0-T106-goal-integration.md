@@ -95,3 +95,41 @@ Self-check results (producer, local 3.11.9; installed claude 2.1.247):
   the G2 self-check; M0-T105 G4-accepted reasoning for a new-files-plus-additive change).
 - Context discipline (D-031): occupancy measured at the claim seam ≈45%; measured again at submit
   (recorded in the progress log); handoff due at ~750k per D-031-R002.
+
+## 3a. Round-1 correction round (G3-C1 + G4-M1 blocking + advisory closures)
+
+Round-1 verdicts: G5 PASS (3 advisories), G3 PASS with **C1 MEDIUM blocking** (publish_typed key
+omitted measurements → status-snapshot false-dedup, reproduced), G4 PASS with **M1 MEDIUM
+blocking** (distinct check-ins without a discriminator silently collapse, reproduced).
+Consolidated corrections applied in-task (M0-T104/T105 precedent):
+
+- **F1 (G3-C1 + G3-A5):** `publish_typed` key now digests `measurements` alongside attributes —
+  two status snapshots differing only in numbers are distinct; identical snapshots still dedup;
+  no-op for check-ins (empty measurements). Regression test
+  `test_s8_status_snapshots_differing_only_in_measurements_both_persist`; mutant
+  measurements-dropped-from-key KILLED.
+- **F2 (G4-M1 + G3-A3):** documented caller contract — a check-in observation MUST carry a
+  per-delivery `sequence` discriminator; `record_checkin` FAILS VISIBLE (typed) without one
+  instead of silently collapsing. Tests: distinct sequences both persist + replay dedups +
+  missing discriminator raises; mutant sequence-guard-removed KILLED.
+- **F3 (G5-ADV-1):** measurement renamed `goal_token_spend` → `goal_spend_tokens` (the delimited
+  `_token_` segment matched the journal's sensitive-key pattern and over-redacted the value on
+  disk; the `_tokens` suffix is the pattern-safe family). Durable read-back test proves the
+  value survives READABLE.
+- **F4 (G3-A2 / G4-A1):** `idle_checkin_cap` now returns `IdleCapVerdict(cap, known)` — ignorance
+  is distinguishable from documented-uncapped.
+- **F5 (G4-L1):** campaign tripwire widened with the four proven-slip phrasings (finish/complete/
+  wrap-up/deliver + milestone/backlog/project/campaign/remaining-work; rest-of-the forms); all
+  four now refused in tests; mutant widening-reverted KILLED.
+- **F6 (G4-L2):** coverage adds — R045 poison via a CONSTRAINT; the 160-char `reason_excerpt`
+  bound asserted.
+- **F7 (G5-ADV-2):** `checkin_schedule` count capped at `MAX_SCHEDULE_COUNT=64`, fail visible.
+- Fixture completeness note added (G4-A3: the pre-2.1.239 turn-end-recurrence fact, not modeled —
+  outside the 2.1.246+ operational range).
+
+Post-correction state: **38/38** goal pack + **38/38** unit-D pack (76 combined); mutation total
+**12/12 KILLED** (9 round-1 + EM1/EM2/EM3); line counts goal_contract 158 / goal_outcomes 245 /
+goal_checkins 206 / event_bus 317 / tests 432; ruff clean. Residual non-blocking (disclosed):
+G4-A2 marker-order future-fragility (documented phrasings all correct); G4-A4 `int("1_0")`
+underscore-separator cosmetic + the "whole-tree = tools/ subtree" label nuance; G3-A4 tripwire
+false-positive bias (fail-closed by design, now wider per F5).
