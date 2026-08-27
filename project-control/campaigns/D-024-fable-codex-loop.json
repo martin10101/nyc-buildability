@@ -16,13 +16,14 @@
   "Amendment 3 (D-024-R139): capture+verification+conversion COMPLETE (M0-T102 accepted; conversion applied seq 10) - M0-T092..T096 claims now follow the accepted dependency sequence only (T092 requires accepted M0-T103..M0-T106)"
  ],
  "next_action": {
-  "task_id": "M0-T104",
-  "description": "M0-T108 ACCEPTED (readonly-guard PowerShell/scripting write-gap fix; G5 M0-T102 MEDIUM closed) at deliverable b6db457 after 4 independent review rounds; all required gates PASS; D-024 applicable set EMPTY (independent DCV PASS: resolver + raw-JSON re-matcher + all-28-directive selective-citation cross-check; verification row at identity 90376158/sha 4014ee7); validator EXIT=0; accepted commit faa46e3. Follow-up M0-T109 created (guard hardening: G5 ADV-R4-1 chained-assignment encoded-shell residual = loop the $var= assignment strip; G4 ADV-4 GetTypeFromProgID tooth unreachable behind :: = make reachable or remove; G5 ADV-R4-2 document GetTypeFromCLSID/&(gcm) residuals). NEXT: M0-T104 (unit C native runtime adapter) -> M0-T105 (D) -> M0-T106 (E) -> M0-T092 (F) -> M0-T094 (G) -> M0-T093 (H1) -> M0-T095 (H2) -> M0-T096 (I golden run; R187 hold after) -> M0-T107 (J). Unit C carries the R162-discharge preconditions: explicit child-env control for background dispatch (CLAUDE_CODE_CHILD_SESSION inheritance); installed-version measured-at-use (2.1.247 capability re-probe + drift-tooth re-baseline owed to unit C; machine auto-updated 2.1.246->2.1.247); permission-mode vocabulary accepts 'auto'. M0-T109 is a non-blocking parallel follow-up (may be sequenced anytime; does not gate unit C). NO unit C-I dispatch was blocked by M0-T108 anymore (accepted). CARRIED: never merge PR #241; continuous-mode owner-gated; Amendment-3 prohibitions; repo-hygiene task recommendation. OWNER-VISIBLE (non-blocking): broken npm shim; parked session 777b09da; FIVE stale pack-repo worktrees purge."
+  "task_id": "M0-T105",
+  "description": "M0-T104 ACCEPTED (native runtime adapter; commit 44a4c6c; deliverable f610aab / content identity 44ce19b3) after 2 review rounds: round-1 G3/G4/G5 all PASS-with-corrections converging on the child-env fail-open MEDIUM; correction round F1-F4 + G4 ADV-2; round-2 delta re-reviews ALL PASS; independent DCV PASS on R153/R154/R156/R172 (selective-citation cross-check clean across 28 directives). 77/77 adapter+probe; 2209-test freeze baseline; 11/11 mutants; guard packs untouched; live canaries C1/C2 (CANARY-C-DONE). NEXT: M0-T105 (unit D native event integration: hook records + stream-JSON subagent events) -> M0-T106 (E bounded /goal) -> M0-T092 (F) -> M0-T094 (G) -> M0-T093 (H1) -> M0-T095 (H2) -> M0-T096 (I golden run; R187 hold after) -> M0-T107 (J). Unit-D carries forward: source/confidence labels on every usage number (R042), whole-run vs final-request accounting (R043), no-routine-polling-into-Fable-context, statusLine sidecar stays primary if the stream feed is absent/malformed (R154). Carried follow-ups: M0-T109 guard-hardening (now also folds G5 R2 _TOOLS_RE colon-style specifier widen-under-review) is non-blocking parallel. M0-T104 residuals (G3 ADV-2 serialization-group extraction; G4 R1 post-stop absence tooth) close when the seam is wired in unit F-H.",
+  "restrictions_note": "unchanged"
  },
  "frozen": {
-  "head_sha": "faa46e3bde7ebd293dc36be4d967976f72eff09b",
-  "recorded_at": "2026-08-27T04:58:54+00:00"
+  "head_sha": "44a4c6c91dcd82db434b5ae63167d9d9b1c27f71",
+  "recorded_at": "2026-08-27T09:31:26+00:00"
  },
- "sequence": 13,
- "updated_at": "2026-08-27T04:58:54+00:00"
+ "sequence": 14,
+ "updated_at": "2026-08-27T09:31:26+00:00"
 }
