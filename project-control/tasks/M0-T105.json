@@ -50,12 +50,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:34.634037+00:00",
-  "updated_at": "2026-08-27T15:44:28.750404+00:00",
+  "updated_at": "2026-08-27T16:09:08.436585+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -86,6 +86,13 @@
       "percent": 55,
       "status": "in_progress",
       "message": "Unit D deterministic core implemented: event_bus.py (dedup idempotency key + bus_sequence ordering + restart-safe replay + raw-UUID digest masking over REUSED TelemetryJournal), event_stream.py (stream-JSON subagent ingestion, R042 labels, R043 final_request caveat, typed StreamEventError, no sidecar surface), event_drift.py (+ hook_event_catalog_2_1_247.json at official-docs confidence: 31 events, drift vs 2.1.220 = NONE), .claude/hooks/supervisor_event_recorder.py (fail-closed stdout-silent command hook, NOT registered), masked per-event + stream fixtures, 32-test pack S1-S11 (32/32), mutation self-check 9/9 killed, ruff clean, modularity clean. Full freeze suite running at frozen state. C1 live canary prepared and validated deterministically - queued for owner exact-command approval (R192/R197). readonly_agent_guard.py and accepted M0-T104 adapter untouched."
+    },
+    {
+      "at": "2026-08-27T16:09:08.436585+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "rework",
+      "message": "Round-1 reviews complete: G3 PASS (5 advisories, none blocking), G5 PASS (LOW-1 + 3 advisories, none blocking), G4 PASS with M1 MEDIUM BLOCKING acceptance (recorder reads stdin via Windows cp1252, not UTF-8: non-ASCII payloads mojibake or silently dropped - violates the carried M0-T104 UTF-8 lesson). Consolidated correction round per the M0-T104 precedent: F1 = M1 fix (stdin bytes read + utf-8 decode, byte-level cap) + non-ASCII S9 regression test; F2 = recursive UUID masking in event_bus (closes converged G4-L2 / G5-LOW-1 / G3-A4) + nested test; F3 = dedup-window disclosure (G4-L1/G3-A3): inline warm_rotated comment + report Known Limitations; F4 = S5 wording correction (G4-L3: journal path is append+torn-line-skip, temp-rename is the sidecar); F5 = cheap coverage (G3-A5/G4-A2: oversized-stdin test, content-digest-fallback key test, bus-level registry eviction test). Then rework->resubmit re-stamp + delta re-reviews (same reviewers via SendMessage). Residual non-blocking: G3-A1 extraction candidate, G3-A2 cross-process ordering note, G5-ADV-1/2/3, G4-A1 timing assertion."
     }
   ]
 }

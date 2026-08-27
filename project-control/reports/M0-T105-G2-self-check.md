@@ -47,6 +47,19 @@ settings.json registration (separate reviewed change), never blocks/injects/mess
 added anywhere ✓ (module has no transcript reader); hooks-stay-fast: recorder skips replay-warm
 (`warm_rotated=False`) and fsync (statusline-precedent), bounded stdin ✓.
 
+## 3a. Correction-round delta (round-1 G4-M1 blocking + converged LOW items; re-frozen identity)
+
+Applied F1–F5 (main report §3a): F1 recorder UTF-8 bytes-stdin fix (G4-M1, blocking) + non-ASCII
+round-trip test; F2 recursive UUID masking (G4-L2/G5-LOW-1/G3-A4) + nested test; F3 dedup-window
+disclosure (inline + report); F4 S5 wording correction; F5 coverage adds (oversized stdin,
+content-digest fallback dedup, bus-level registry bound). C1 then DISCHARGED owner-launched
+(§2a) and its measured-live fixture + tooth committed. Delta evidence at the re-frozen identity:
+**38/38** pack; **11/11** mutants (adds decode-reverts-to-locale + mask-not-recursive);
+freeze suite post-F1–F5 **2,685 passed / 3 skipped / 0 failed** (650.8s) with a final
+confirmation run accompanying the delta re-review; ruff + modularity clean; line counts now
+bus 292 / stream 234 / drift 106 / recorder 87 / tests 560. The dedup-window and cross-process
+`bus_sequence` disclosures are now also MEASURED facts in the C1 fixture.
+
 ## 4. Known limitations (disclosed for review)
 
 1. `test_directive_compliance.py` not run locally (cannot complete in a local window at the

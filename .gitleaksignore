@@ -1,0 +1,18 @@
+# Audited gitleaks false positives (fingerprint format file:rule:line).
+# M0-T105 C1 measured-live fixture: the flagged 64-hex values are the event
+# bus's content-addressed "idempotency_key" dedup digests of ALREADY-SANITIZED
+# hook payloads (sha256 of event identity + sanitized content) — deterministic
+# hashes, not credentials. The fixture is frozen review evidence; the field
+# name must mirror the real durable-store bytes, so the generic-api-key rule
+# ("key"-named field + high-entropy hex) is a structural false positive here.
+# Audited by the orchestrator 2026-08-27 under M0-T105 (G5 round-1 leak scan
+# CLEAN on this content class; see project-control/reports/M0-T105-G5-security.md).
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:17
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:18
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:19
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:20
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:21
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:22
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:23
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:24
+tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:25

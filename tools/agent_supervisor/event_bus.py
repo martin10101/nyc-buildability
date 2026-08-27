@@ -66,10 +66,20 @@ def mask_session_value(value: str) -> str:
     return f"[SESSION sha256={digest}]"
 
 
-def _mask_if_uuid(value: Any) -> Any:
-    if isinstance(value, str) and _UUID_RE.match(value):
-        return mask_session_value(value)
-    return value
+def _mask_uuids(node: Any) -> Any:
+    """Recursively digest-mask every UUID-shaped string (values AND dict
+    keys) so no raw UUID reaches the durable store at any nesting depth —
+    the round-1 converged finding (G4-L2 / G5-LOW-1 / G3-A4): the top-level
+    mask alone let a UUID inside a list/dict attribute value slip through."""
+    if isinstance(node, str):
+        return mask_session_value(node) if _UUID_RE.match(node) else node
+    if isinstance(node, dict):
+        return {_mask_uuids(key) if isinstance(key, str) else key:
+                _mask_uuids(value) for key, value in node.items()}
+    if isinstance(node, (list, tuple)):
+        masked = [_mask_uuids(item) for item in node]
+        return masked if isinstance(node, list) else tuple(masked)
+    return node
 
 
 def idempotency_key(event_name: Any, payload: Any) -> str:
@@ -216,15 +226,13 @@ class DurableEventBus:
         loss behind a remembered key.
         """
         self._sequence += 1
-        attributes = dict(record.attributes)
-        for name, value in list(attributes.items()):
-            attributes[name] = _mask_if_uuid(value)
+        attributes = _mask_uuids(dict(record.attributes))
         attributes["idempotency_key"] = key
         attributes["bus_sequence"] = self._sequence
         stored_record = dataclasses.replace(
             record,
-            session_id=_mask_if_uuid(record.session_id),
-            task_id=_mask_if_uuid(record.task_id),
+            session_id=_mask_uuids(record.session_id),
+            task_id=_mask_uuids(record.task_id),
             attributes=attributes)
         try:
             self._journal.append(stored_record)

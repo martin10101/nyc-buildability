@@ -49,10 +49,15 @@ def _store_path():
 
 
 def _main():
-    raw = sys.stdin.read(MAX_STDIN_BYTES + 1)
-    if len(raw) > MAX_STDIN_BYTES:
+    # BYTES first, then an explicit UTF-8 decode: Claude Code emits hook
+    # payloads as UTF-8, while sys.stdin.read() would use the Windows locale
+    # (cp1252) and mojibake or drop non-ASCII events — the measured M0-T104
+    # lesson (G4 round-1 M1 fix). utf-8-sig tolerates a BOM; "replace" keeps
+    # a damaged byte visible instead of losing the whole event.
+    raw_bytes = sys.stdin.buffer.read(MAX_STDIN_BYTES + 1)
+    if len(raw_bytes) > MAX_STDIN_BYTES:
         return 0  # oversized payload: record nothing (fail closed)
-    payload = json.loads(raw)
+    payload = json.loads(raw_bytes.decode("utf-8-sig", "replace"))
     if not isinstance(payload, dict):
         return 0
     event_name = payload.get("hook_event_name")
@@ -64,6 +69,11 @@ def _main():
     # fsync off: recorders run on live lifecycle events and must stay fast;
     # the journal read path tolerates (skips + counts) a torn final line by
     # design -- same stance as the accepted statusLine refresh path.
+    # warm_rotated off: only the ACTIVE journal generation warms the dedup
+    # set, so a duplicate delivered after a rotation boundary is re-recorded
+    # (the safe direction -- never data loss, never false-dedup) and later
+    # surfaced by replay as store_duplicates; the trade buys bounded
+    # per-invocation latency (G3-A3/G4-L1 round-1 disclosure).
     bus = DurableEventBus(_store_path(), fsync=False, warm_rotated=False)
     bus.publish(event_name, payload)
     return 0

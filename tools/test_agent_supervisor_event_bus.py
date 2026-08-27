@@ -206,6 +206,21 @@ def test_s4_session_mask_stable_for_correlation():
     assert once == again and SESSION_UUID not in once
 
 
+def test_s4_nested_uuid_masked_at_any_depth(tmp_path):
+    """G4-L2 / G5-LOW-1 / G3-A4 converged round-1 fix: a UUID nested inside
+    a list/dict attribute value (or used as a dict key) must not reach the
+    durable store raw."""
+    bus = make_bus(tmp_path)
+    payload = {"hook_event_name": "SubagentStart",
+               "session_id": SESSION_UUID,
+               "agent_id": {"inner": SESSION_UUID, SESSION_UUID: "as-key"},
+               "model": ["primary", SESSION_UUID]}
+    assert bus.publish("SubagentStart", payload) is not None
+    stored = json.dumps(bus.replay().stored_records)
+    assert SESSION_UUID not in stored
+    assert stored.count("[SESSION sha256=") >= 4  # value, nested, key, list
+
+
 # ---------- S5 atomic persistence -----------------------------------------
 
 def test_s5_torn_final_line_never_a_record(tmp_path):
@@ -375,7 +390,63 @@ def test_s9_recorder_never_guesses_event_name(tmp_path):
     assert not store.exists()
 
 
+def test_s9_recorder_non_ascii_payload_fidelity(tmp_path):
+    """G4 round-1 M1 regression: a UTF-8 payload with an emoji and an
+    accented path (whose UTF-8 bytes are undefined in cp1252) must be
+    recorded with fidelity — never mojibake, never silently dropped."""
+    store = tmp_path / "store.jsonl"
+    payload = {"hook_event_name": "SubagentStart",
+               "session_id": "[SESSION-D-FIXTURE]",
+               "agent_type": "reviewer \U0001F680",
+               "cwd": "C:\\Users\\x\\projects\\\u00CDsafj\u00F6r\u00F0ur"}
+    result = run_recorder(tmp_path, json.dumps(payload, ensure_ascii=False),
+                          store=store)
+    assert result.returncode == 0 and result.stdout == ""
+    stored = TelemetryJournal(store).read_all()
+    assert len(stored.records) == 1  # not dropped
+    attrs = stored.records[0]["attributes"]
+    assert attrs["agent_type"] == "reviewer \U0001F680"  # no mojibake
+    assert attrs["cwd"].endswith("\u00CDsafj\u00F6r\u00F0ur")
+    assert attrs["cwd"].startswith("[HOME]")  # sanitization still ran
+
+
+def test_s9_recorder_oversized_stdin_fails_closed(tmp_path):
+    """G3 round-1 A5: the oversized-stdin branch, exercised for real."""
+    store = tmp_path / "store.jsonl"
+    padding = "x" * 1_100_000
+    payload = json.dumps({"hook_event_name": "Notification", "pad": padding})
+    result = run_recorder(tmp_path, payload, store=store)
+    assert result.returncode == 0 and result.stdout == ""
+    assert not store.exists()  # over the byte cap: nothing recorded
+
+
 # ---------- S10 bounded store ----------------------------------------------
+
+def test_s10_registry_bounded_at_bus_level(tmp_path):
+    """G4 round-1 A2: the registry bound proven through the bus itself,
+    not only via the reused telemetry pack."""
+    bus = make_bus(tmp_path, registry_max_entries=2)
+    for n in range(5):
+        bus.publish("SubagentStart",
+                    {"hook_event_name": "SubagentStart",
+                     "session_id": "[SESSION-D-FIXTURE]",
+                     "agent_id": f"agent-{n}"})
+    assert len(bus.registry) <= 2  # oldest evicted, never unbounded
+
+
+def test_s3_stream_key_content_digest_fallback(tmp_path):
+    """G3 round-1 A5: events with no uuid/message.id dedup by canonical
+    content digest — identical re-delivery collapses, distinct events do not."""
+    bare = {"type": "system", "subtype": "init", "session_id": "[SESSION-D-FIXTURE]"}
+    other = dict(bare, subtype="warmup")
+    assert es.stream_idempotency_key(bare) == es.stream_idempotency_key(dict(bare))
+    assert es.stream_idempotency_key(bare) != es.stream_idempotency_key(other)
+    bus = make_bus(tmp_path)
+    assert bus.publish_stream_event(bare) is not None
+    assert bus.publish_stream_event(dict(bare)) is None  # dedup, no id needed
+    assert bus.publish_stream_event(other) is not None
+    assert len(bus.replay().stored_records) == 2
+
 
 def test_s10_seen_keys_bounded(tmp_path):
     bus = make_bus(tmp_path, max_seen_keys=8)
@@ -453,6 +524,32 @@ def test_s11_fixtures_are_masked():
         whole = fixture.read_text(encoding="utf-8")
         for leak in (":\\\\Users\\\\", ":/Users/", "MLFLL"):
             assert leak not in whole, f"{fixture.name}: {leak!r}"
+
+
+def test_c1_live_fixture_masked_and_replayable():
+    """C1 (discharged): the owner-launched 2.1.247 live capture is masked,
+    parses as telemetry records, and freezes the measured facts — including
+    the cross-process bus_sequence collision observed live (G3-A2)."""
+    from tools.agent_supervisor.telemetry_records import TelemetryRecord
+    fixture_path = FIXTURES / "hook_events_live_2026-08-27_m0t105_c1.json"
+    data = json.loads(fixture_path.read_text(encoding="utf-8"))
+    assert data["task"] == "M0-T105"
+    assert data["confidence"] == "measured-live"
+    assert data["claude_version"] == "2.1.247 (Claude Code)"
+    whole = fixture_path.read_text(encoding="utf-8")
+    for leak in (":\\\\Users\\\\", ":/Users/", "MLFLL"):
+        assert leak not in whole, f"unmasked fragment {leak!r}"
+    records = [TelemetryRecord.from_dict(r) for r in data["records"]]
+    assert len(records) == 9
+    events = [r.attributes["event"] for r in records]
+    for required in ("SessionStart", "UserPromptSubmit", "SubagentStart",
+                     "SubagentStop", "PostToolBatch", "Stop", "SessionEnd"):
+        assert required in events, required
+    assert all(r.attributes["known"] is True for r in records)
+    assert all(r.session_id.startswith("[SESSION sha256=") for r in records)
+    assert "TaskCreated" not in events  # measured: Agent spawn ≠ TaskCreated
+    sequences = [r.attributes["bus_sequence"] for r in records]
+    assert sequences.count(3) == 2  # live cross-process collision, preserved
 
 
 def test_s11_unit_d_does_not_touch_guards():
