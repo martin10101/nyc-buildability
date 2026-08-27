@@ -16,14 +16,14 @@
   "Amendment 3 (D-024-R139): capture+verification+conversion COMPLETE (M0-T102 accepted; conversion applied seq 10) - M0-T092..T096 claims now follow the accepted dependency sequence only (T092 requires accepted M0-T103..M0-T106)"
  ],
  "next_action": {
-  "task_id": "M0-T105",
-  "description": "M0-T104 ACCEPTED (native runtime adapter; commit 44a4c6c; deliverable f610aab / content identity 44ce19b3) after 2 review rounds: round-1 G3/G4/G5 all PASS-with-corrections converging on the child-env fail-open MEDIUM; correction round F1-F4 + G4 ADV-2; round-2 delta re-reviews ALL PASS; independent DCV PASS on R153/R154/R156/R172 (selective-citation cross-check clean across 28 directives). 77/77 adapter+probe; 2209-test freeze baseline; 11/11 mutants; guard packs untouched; live canaries C1/C2 (CANARY-C-DONE). NEXT: M0-T105 (unit D native event integration: hook records + stream-JSON subagent events) -> M0-T106 (E bounded /goal) -> M0-T092 (F) -> M0-T094 (G) -> M0-T093 (H1) -> M0-T095 (H2) -> M0-T096 (I golden run; R187 hold after) -> M0-T107 (J). Unit-D carries forward: source/confidence labels on every usage number (R042), whole-run vs final-request accounting (R043), no-routine-polling-into-Fable-context, statusLine sidecar stays primary if the stream feed is absent/malformed (R154). Carried follow-ups: M0-T109 guard-hardening (now also folds G5 R2 _TOOLS_RE colon-style specifier widen-under-review) is non-blocking parallel. M0-T104 residuals (G3 ADV-2 serialization-group extraction; G4 R1 post-stop absence tooth) close when the seam is wired in unit F-H.",
-  "restrictions_note": "unchanged"
+  "task_id": "M0-T106",
+  "description": "M0-T105 ACCEPTED (unit D native event integration; accept commit 8bc13fa; deliverable bfdf4ef / content identity 4bd0e182) after 2 review rounds: round-1 G3/G5 PASS advisories-only + G4 PASS with M1 MEDIUM (recorder cp1252 stdin) blocking; correction round F1-F5; round-2 delta re-reviews ALL PASS; independent DCV PASS on R154/R155/R173 (selective-citation cross-check clean across 28 directives). C1 live canary DISCHARGED owner-launched (9-record measured-live fixture on 2.1.247; measured: Agent-tool spawn fires SubagentStart/Stop NOT TaskCreated/TaskCompleted; live cross-process bus_sequence collision preserved; SessionEnd reason=other). 38/38 pack; 2686/3/0 freeze suite; 11/11 mutants; guards + M0-T104 adapter byte-untouched. NEXT: M0-T106 (unit E bounded /goal) -> M0-T092 (F) -> M0-T094 (G) -> M0-T093 (H1) -> M0-T095 (H2) -> M0-T096 (I golden run; R187 hold after) -> M0-T107 (J). Unit-E carries forward: R042 source/confidence labels, R043 whole-run vs final-request, R045 no worker-facing quotas, R154 sidecar-primary. Carried follow-ups: M0-T109 guard-hardening non-blocking parallel (also folds G5 R2 _TOOLS_RE widen). M0-T105 residuals (all non-blocking): G3-A1 _event_usage extraction candidate if a third stream consumer appears; G3-A2 cross-process ordering note (disclosed + C1-measured); G5-ADV-1 NYCB_EVENT_STORE_PATH trust boundary; G5-ADV-2 per-event replay cost (tune max_bytes if hook latency observed); G5-ADV-3 silent-loss trade; G4-A1 timing design-assertion; gitleaksignore line-fragility on the frozen fixture. M0-T104 residuals unchanged (G3 ADV-2 serialization-group extraction; G4 R1 post-stop absence tooth) close when the seam is wired in unit F-H. Hook REGISTRATION of the recorder in .claude/settings.json remains a SEPARATE reviewed change.",
+  "restrictions_note": "unchanged (PR #241 hold; continuous-mode owner gate; Amendment 3 prohibitions; Bootstrap Gate 0; freeze-rule citation duty; R045)"
  },
  "frozen": {
-  "head_sha": "44a4c6c91dcd82db434b5ae63167d9d9b1c27f71",
-  "recorded_at": "2026-08-27T09:31:26+00:00"
+  "head_sha": "8bc13fadfd3518a31c6d0b0acfc3c0114a92a80c",
+  "recorded_at": "2026-08-27T16:55:16+00:00"
  },
- "sequence": 14,
- "updated_at": "2026-08-27T09:31:26+00:00"
+ "sequence": 15,
+ "updated_at": "2026-08-27T16:55:16+00:00"
 }
