@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-27T02:05:00+00:00",
+ "updated_at": "2026-08-28T07:40:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -60,6 +60,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-27T01:45:00+00:00",
    "content_digest_sha256": "2b1043ddd526a7db335f7adb35c996491979e5133f450e0fc7660d28e518ac84"
+  },
+  {
+   "file": "source-007-amendment.md",
+   "kind": "amendment",
+   "sequence": 7,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-28T07:40:00+00:00",
+   "content_digest_sha256": "f0d16c4280546c79a328268146c6976b61871726aa560a8c7177b2e9edf2028e"
   }
  ],
  "amendments": [
@@ -67,7 +75,8 @@
   "source-003-amendment.md",
   "source-004-amendment.md",
   "source-005-amendment.md",
-  "source-006-amendment.md"
+  "source-006-amendment.md",
+  "source-007-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -369,10 +378,21 @@
   "D-024-R216",
   "D-024-R217",
   "D-024-R218",
-  "D-024-R219"
+  "D-024-R219",
+  "D-024-R220",
+  "D-024-R221",
+  "D-024-R222",
+  "D-024-R223",
+  "D-024-R224",
+  "D-024-R225",
+  "D-024-R226",
+  "D-024-R227",
+  "D-024-R228",
+  "D-024-R229",
+  "D-024-R230"
  ],
- "requirements_id_digest_sha256": "087b4c6967f9c075dedac02c621755f5a8069e4576316f2e7100658697988272",
- "requirements_content_digest_sha256": "468181bcdcf31c4420471eddc6621e054e9d7ab30a9e737210bdf1a07d0429b2",
+ "requirements_id_digest_sha256": "8628a405fced2109994e26a0739764496f79f39881078b3bff4ff8b0c9a80fd8",
+ "requirements_content_digest_sha256": "34af83d3e7c9946e53b6e3436d56b393b09786e360d24658f2ca373f1364dab8",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -430,6 +450,11 @@
    "at": "2026-08-27T02:05:00+00:00",
    "by": "orchestrator",
    "note": "Seq-11 statusLine-canary discharge landed: procedure rows D-024-R192..R219 marked implemented by the producer (orchestrator) with evidence = masked 2.1.247-labeled fixture + discharge report (independent PASS verification remains owed to the directive-compliance-verifier lane per producer!=verifier). Observed identity 2.1.247 (auto-update from 2.1.246 mid-procedure; drift tooth fired RED as designed; re-probe owed to the next capability task). Digests recomputed."
+  },
+  {
+   "at": "2026-08-28T07:40:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 7 captured (owner mid-turn instruction 2026-08-28, verbatim in source-007-amendment.md): two-lane golden-run evidence split - injected/deterministic proof proceeds now inside M0-T096 (already authorized by R186/R182/R106); natural-event observation deferred as pending_live_observation with a passive watcher deliverable and feature-specific gating (4.8 bridge stays shadow-only fail-safe per the accepted H1 double-gate). New rows D-024-R220..R230 appended (bound to M0-T096/M0-T107 only - the in-flight M0-T095 gate cycle's 46-row applicable set is deliberately unchanged). Digests recomputed."
   }
  ]
 }

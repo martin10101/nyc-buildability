@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 219,
+ "requirement_count": 230,
  "producer": "orchestrator",
- "updated_at": "2026-08-27T02:05:00+00:00",
+ "updated_at": "2026-08-28T07:40:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -8086,6 +8086,347 @@
     "project-control/reports/M0-T103-R162-discharge-2.1.247.md"
    ],
    "amendment_sequence": 6
+  },
+  {
+   "id": "D-024-R220",
+   "text": "Do not block M0-T096, the golden-run work, or all otherwise-provable readiness work while waiting for a naturally occurring Fable 5 quota, refusal, availability, or model-turnover event.",
+   "source_ref": "source-007-amendment.md#no-block",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R221",
+   "text": "Never deliberately consume or waste the owner's remaining Fable 5 allowance merely to provoke a natural quota/refusal/availability/model-turnover event.",
+   "source_ref": "source-007-amendment.md#no-provoke",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R222",
+   "text": "Lane 1 (deterministic/injected golden-run proof): execute everything safely testable now - run the real two-unit autonomous golden sequence; force a controlled safe-seam primary-session rotation; inject bounded refusal, quota, fallback, controller-restart, ambiguous-effect and recovery scenarios; prove exact-once succession, no duplicate work, no lost pending action, and correct stop/hold behavior. (Implements WITHIN the existing M0-T096 scope per R186/R182/R106 - the amendment's reconciliation note.)",
+   "source_ref": "source-007-amendment.md#lane-1",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R223",
+   "text": "Never misrepresent an injected event as a naturally observed event; every fixture, record, and report labels injected/simulated evidence as injected and live-observed evidence as live.",
+   "source_ref": "source-007-amendment.md#lane-1-labeling",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R224",
+   "text": "Record the genuine Fable 5 refusal/quota/model-turnover live canary as pending_live_observation until it naturally occurs; never fabricate, force, or prematurely mark the natural live canary PASS.",
+   "source_ref": "source-007-amendment.md#lane-2-status",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R225",
+   "text": "Reuse the existing passive sanitized telemetry wherever it is sufficient for natural-event observation, rather than building new capture machinery.",
+   "source_ref": "source-007-amendment.md#lane-2-reuse",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R226",
+   "text": "Provide a durable, bounded detection and evidence-capture path that notices the natural event during a future running session without prompting or polluting the producer's context, capturing: the observed event type, the applicable installed-version shape, the classification decision, the selected response, and the sanitized outcome.",
+   "source_ref": "source-007-amendment.md#lane-2-watcher",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R227",
+   "text": "Compare the live-observed behavior with the deterministic/injected proof and graduate only the specific feature whose live precondition has been satisfied.",
+   "source_ref": "source-007-amendment.md#lane-2-graduation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R228",
+   "text": "Feature-specific gating: a missing natural model-turnover observation must not silently weaken any safety gate and must not unnecessarily block unrelated autonomous-loop capabilities; if the automatic 4.8 bridge cannot safely graduate without measured-live evidence, keep only that bridge shadow-only with fail-safe temporary behavior and a clear durable status; continue the remaining campaign and golden-run evidence that is independently provable.",
+   "source_ref": "source-007-amendment.md#feature-specific-gating",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096",
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R229",
+   "text": "Before changing the task plan: capture this direction durably, reconcile it against D-024, M0-T093, M0-T096, R187/R192/R197/R595 and the live campaign ledger, and determine whether the existing directive already authorizes the two-lane split; if yes, cite the exact requirements and implement within the existing task scope; if not, capture an owner amendment and update the requirement/task mapping before implementation.",
+   "source_ref": "source-007-amendment.md#plan-change-determination",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "Discharged at capture 2026-08-28: this amendment records the verbatim direction and the reconciliation determination (lane 1 already authorized by R186/R182/R106 within M0-T096; new requirements R220-R230 captured and bound before any implementation). Independent verification owed to the DCV lane.",
+   "evidence_paths": [
+    "project-control/directives/D-024-fable-codex-loop/source-007-amendment.md",
+    "project-control/reports/D-024-amendment-7-owner-report.md"
+   ],
+   "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R230",
+   "text": "Report back to the owner: what can be fully proven today; what remains pending natural observation; whether any pending live observation blocks the general loop or only one feature; how the passive watcher operates and when it can observe events; and the exact behavior if the natural event happens before its feature graduates.",
+   "source_ref": "source-007-amendment.md#report-back",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T096"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "implemented",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "Initial durable report delivered at capture (report file below) and restated in-session 2026-08-28; the watcher-operation answer will be refreshed with M0-T096's delivered watcher evidence. Independent verification owed to the DCV lane.",
+   "evidence_paths": [
+    "project-control/reports/D-024-amendment-7-owner-report.md"
+   ],
+   "amendment_sequence": 7
   }
  ]
 }
