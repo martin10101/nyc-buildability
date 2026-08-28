@@ -1,0 +1,377 @@
+{
+ "task_id": "M0-T096",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 83 requirement ids (ok=true, missing=[], invalid=[], unresolved=[]; re-resolved live this session), including the Amendment-7 rows R220-R230. Every golden-run/fault proof is LANE-1 INJECTED (R222/R223): fake provider executables, disposable checkouts, scratch runtimes; no live provider call, no natural-event waiting or provocation (R220/R221). Natural-event evidence stays pending_live_observation (R224) with the delivered watcher (live_observation.py). Detail per row: the golden-run evidence report sections 0-4 and the activation package.",
+ "task_evidence": [
+  "project-control/reports/M0-T096-golden-run-evidence.md",
+  "project-control/reports/M0-T096-activation-package.md",
+  "project-control/reports/M0-T096-evidence-map.json",
+  "tools/test_agent_supervisor_golden_run.py",
+  "tools/agent_supervisor/golden_run.py",
+  "tools/agent_supervisor/live_observation.py"
+ ],
+ "generated_at": "2026-08-28T18:21:18.913712+00:00",
+ "requirements": {
+  "D-024-R002": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_injected_controller_restart_continues_without_duplicate_work",
+   "CLAIM: DISCHARGED here - the two-unit golden run from the exact owner command with no human continuation, crossing one safe rotation + one injected controller restart; host-restart = truthful limitation (activation package item 14); outage handling cited (succession S5)"
+  ],
+  "D-024-R003": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4",
+   "project-control/reports/M0-T096-activation-package.md items 1-2",
+   "CLAIM: the loop is now OBSERVED end-to-end (Codex selects/reviews via injected reviewer, Fable produces via injected runner, state advances); activation stays owner-gated default-off"
+  ],
+  "D-024-R004": [
+   "tools/agent_supervisor/golden_run.py (FAKE_CODEX_GOLDEN echoes identity; CONTINUE decisions)",
+   "CLAIM: control-plane-leadership share - the injected Codex selects/continues; the producer writes; roles held throughout the golden run"
+  ],
+  "D-024-R007": [
+   "tools/test_agent_supervisor_golden_run.py::CampaignCrossingEvidenceTests",
+   "CLAIM: sequence >= 22 crossed from the ONE captured directive without re-prompting; the record re-derives authority from source-001"
+  ],
+  "D-024-R008": [
+   "progress_log (no owner question asked this unit)",
+   "CLAIM: unit ran claim->implement->gates without routine owner questions; stops reserved for the R187 activation hold"
+  ],
+  "D-024-R010": [
+   "campaign restrictions + tools/test_agent_supervisor_golden_run.py::CampaignCrossingEvidenceTests",
+   "CLAIM: PR #241 untouched; no pre-existing PR merged; the golden run pushes nothing to any real remote (disposable checkout only)"
+  ],
+  "D-024-R017": [
+   "project-control/reports/M0-T096-golden-run-evidence.md header + commit messages citing D-024-R106",
+   "CLAIM: every supervisor-touching commit this unit cites D-024-R106"
+  ],
+  "D-024-R018": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 0 (reuse boundary)",
+   "tools/test_agent_supervisor_golden_run.py::Section169RegisterTests + ::GoldenSequenceRegisterTests",
+   "CLAIM: executable prove-first registers - existing proofs CITED and source-verified by meta-tests; only genuine gaps built"
+  ],
+  "D-024-R019": [
+   "tools/test_agent_supervisor_golden_run.py::SoakTests (accelerated counters, no token burn)",
+   "CLAIM: runaway-work sizing proven by structural rules cited in the registers; the 860k incident drives the soak/breaker boundaries"
+  ],
+  "D-024-R020": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "CLAIM: producer authority exercised inside the harness - the injected producer edits/commits/checkpoints on the task branch under authority"
+  ],
+  "D-024-R021": [
+   "tools/agent_supervisor/golden_run.py (reviewer echoes reviewed identity, selects next prompt)",
+   "CLAIM: Codex actions in the golden run stay within the allowed list (read packet, assess, select next, CONTINUE decision)"
+  ],
+  "D-024-R022": [
+   "cited: test_agent_supervisor_reviewer.py::only_enumerated_read_only_git_commands_are_allowed",
+   "CLAIM: reviewer mutation impossibility is accepted machinery; this unit adds no reviewer capability"
+  ],
+  "D-024-R023": [
+   "cited: codex_reviewer read-only argv + FORBIDDEN_REVIEWER_FLAGS (accepted); tools/test_agent_supervisor_golden_run.py runs the real CodexReviewer against the fake",
+   "CLAIM: the golden run exercises the mechanical boundary, adds none"
+  ],
+  "D-024-R024": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step (real CodexReviewer invocation contract: stdin packet, --output-last-message, schema validation, identity echo)",
+   "CLAIM: the accepted bridge contract is what the golden run drives"
+  ],
+  "D-024-R025": [
+   "cited: reviewer schema-retry/refusal pack (accepted)",
+   "CLAIM: no dispatch on missing/malformed decision - unchanged machinery; golden run only forwards on a VALID decision"
+  ],
+  "D-024-R026": [
+   "project-control/reports/M0-T096-activation-package.md (default-off; owner-only steps item 14)",
+   "CLAIM: durable stop/pause precedence cited (succession S4); activation package stops at the owner boundary"
+  ],
+  "D-024-R030": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_injected_controller_restart_continues_without_duplicate_work",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_ambiguous_effect_blocks_the_restart_from_dispatching",
+   "CLAIM: restart created no second controller/successor/duplicate effect"
+  ],
+  "D-024-R031": [
+   "cited: succession S5ThreeInterruptionClasses + S9HostRestartAutoResume",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_injected_controller_restart_continues_without_duplicate_work",
+   "CLAIM: turnover + controller-crash proven here; host-restart = accepted autostart machinery + truthful limitation (activation package item 14)"
+  ],
+  "D-024-R032": [
+   "cited: succession::forbidden_registration_reports_a_truthful_activation_blocker",
+   "project-control/reports/M0-T096-activation-package.md item 14",
+   "CLAIM: the one-command resume after reboot is documented; limitation reported as an activation consideration, never claimed unattended"
+  ],
+  "D-024-R033": [
+   "cited: outage_policy pack (accepted unit F)",
+   "CLAIM: unavailability handling unchanged; golden-run restart proves exactly-once resume after recovery"
+  ],
+  "D-024-R043": [
+   "cited: telemetry final-totalTokens caveat fixtures (unit A-C)",
+   "CLAIM: no new usage interpretation added; watcher reads persisted records only"
+  ],
+  "D-024-R045": [
+   "cited: S13NoWorkerPollution + assert_worker_text_clean packs",
+   "tools/agent_supervisor/live_observation.py (watcher never messages workers; structural test)",
+   "CLAIM: no worker-facing quota/countdown anywhere in the new surfaces"
+  ],
+  "D-024-R052": [
+   "cited: rotation thresholds + bands packs (accepted)",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step (threshold rotation at the seam, never mid-unit)",
+   "CLAIM: calibration machinery unchanged; the golden run exercises it"
+  ],
+  "D-024-R079": [
+   "cited: test_code_graph determinism/staleness cluster + test_context_benchmark frozen no-worse baseline",
+   "CLAIM: graph system untouched by this unit; regression suites green at the deliverable identity (whole-suite + CI)"
+  ],
+  "D-024-R080": [
+   "cited: bounded_contracts::test_stale_graph_is_reported_never_used",
+   "CLAIM: no new graph authority; campaign record staleness detection exercised via campaign_continuity tests"
+  ],
+  "D-024-R082": [
+   "whole-suite run incl. test_code_graph/test_context_pack/test_repo_index_* green at the deliverable identity (section 4 + CI)",
+   "CLAIM: this unit changes no graph results/ordering/packet behavior - proven by the unchanged green graph suites"
+  ],
+  "D-024-R087": [
+   "cited: operator_channel S6BridgeSecurity (accepted unit G)",
+   "CLAIM: no new operator input surface; watcher adds no command path"
+  ],
+  "D-024-R088": [
+   "project-control/reports/M0-T096-activation-package.md item 5",
+   "CLAIM: truthful interception state restated; zero-context proof stays pending-owner-C1; second terminal advertised as authoritative"
+  ],
+  "D-024-R089": [
+   "tools/test_agent_supervisor_golden_run.py::InjectedFaultTests::test_status_answers_read_only_while_the_producer_is_running",
+   "CLAIM: the 16.9(f) composition - status answers read-only at CLAUDE_RUNNING without touching the producer"
+  ],
+  "D-024-R091": [
+   "this unit's single consolidated cycle: one frozen identity, one gate wave (gates/M0-T096-*)",
+   "CLAIM: bounded diff, no drip-feeding; the golden-run pack lands as one reviewed unit"
+  ],
+  "D-024-R093": [
+   "cited: evidence.build_packet + review_packet guards (accepted)",
+   "tools/agent_supervisor/golden_run.py (the fake reviewer reads the PACKET, not producer claims)",
+   "CLAIM: review packets remain independently built in the golden run"
+  ],
+  "D-024-R098": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step (healthy successor READY resume; rotation only at seam)",
+   "CLAIM: seam choice by health/threshold, not per-task session churn"
+  ],
+  "D-024-R106": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4 (the Phase-H closure evidence)",
+   "CLAIM: DISCHARGED - fault-injected suites, golden run, recovery, activation package; shadow-vs-real + live canaries stay owner-gated and are truthfully bounded in section 2"
+  ],
+  "D-024-R107": [
+   "cited: units A-C telemetry matrix (accepted; 16.1)",
+   "CLAIM: not re-proven; unchanged and green in the whole-suite run"
+  ],
+  "D-024-R108": [
+   "cited: unit B/C bounded contracts + runtime supervision (16.2)",
+   "CLAIM: not re-proven; cited in the R186 register steps 4-6"
+  ],
+  "D-024-R109": [
+   "cited: unit D safe-seam/state-machine/recovery matrix (16.3)",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_injected_controller_restart_continues_without_duplicate_work",
+   "CLAIM: golden-run compositions ADD the CLI-level restart/ambiguous-effect closures over the accepted 16.3 core"
+  ],
+  "D-024-R110": [
+   "tools/test_agent_supervisor_golden_run.py::InjectedFaultTests (refusal + quota + bridge refusals)",
+   "CLAIM: 16.4 core accepted at H1; this unit adds the PRODUCTION-PATH wiring proof (W-7) + CLI-level injected refusal/quota runs"
+  ],
+  "D-024-R111": [
+   "cited: unit G operator channel matrix (16.5; 54/54)",
+   "CLAIM: not re-proven; status-while-running composition added"
+  ],
+  "D-024-R112": [
+   "cited: unit H2 repair-gate matrix (16.6; 78/78)",
+   "CLAIM: not re-proven; unchanged and green"
+  ],
+  "D-024-R113": [
+   "cited: 16.7 graph/context regression suites (register rows)",
+   "tools/test_agent_supervisor_golden_run.py::OnDemandAfterCompactTests",
+   "CLAIM: the one 16.7 gap (on-demand retrieval after a compact handoff) closed by composition; everything else cited"
+  ],
+  "D-024-R114": [
+   "cited: unit H2 GitHub/external-effect matrix (16.8)",
+   "CLAIM: not re-proven; the golden run's effects stay in the disposable checkout under the same discipline"
+  ],
+  "D-024-R115": [
+   "tools/test_agent_supervisor_golden_run.py::Section169RegisterTests (a-m, meta-verified)",
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4",
+   "CLAIM: DISCHARGED - the 16.9 register maps every item to a named passing proof (existing or built here)"
+  ],
+  "D-024-R116": [
+   "gates/M0-T096-G3,G4,G5 + DCV at ONE frozen identity",
+   "CLAIM: this unit's wave follows the consolidated-round protocol; recorded by the orchestrator after reviewer verdicts"
+  ],
+  "D-024-R117": [
+   "cited: codex decision schema + reviewer validation (accepted)",
+   "CLAIM: structured bounded review output unchanged; exercised in the golden run's real reviewer invocations"
+  ],
+  "D-024-R118": [
+   "tools/test_agent_supervisor_golden_run.py::LadderRegisterTests (11 rungs; exactly one owner-gated)",
+   "project-control/reports/M0-T096-activation-package.md",
+   "CLAIM: DISCHARGED - the ladder register binds every rung to a named proof or its explicit owner gate; default-off proven by start refusals"
+  ],
+  "D-024-R119": [
+   "tools/test_agent_supervisor_golden_run.py::SoakTests + accelerated counters throughout",
+   "CLAIM: no token-waste simulation anywhere; boundaries via counters"
+  ],
+  "D-024-R120": [
+   "cited: bounded_mode limited-auto machinery (accepted)",
+   "project-control/reports/M0-T096-activation-package.md item 1",
+   "CLAIM: bounded rules mandatory post-activation; unchanged"
+  ],
+  "D-024-R121": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_golden_run_records_the_exact_owner_command_shape",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "CLAIM: DISCHARGED - the harness drives cli.main with the owner verb+flag shape; zero human messages between the two units"
+  ],
+  "D-024-R122": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4 (criterion-by-criterion closure note)",
+   "project-control/reports/M0-T096-activation-package.md item 14",
+   "CLAIM: section-19 criteria evidenced or truthfully bounded (live canaries owner-gated; host-restart limitation named)"
+  ],
+  "D-024-R123": [
+   "project-control/reports/M0-T096-activation-package.md (items 1-14, no placeholders)",
+   "CLAIM: DISCHARGED - the owner handoff is written with exact commands and honest pending items"
+  ],
+  "D-024-R125": [
+   "project-control/reports/M0-T096-G0-readiness.md item 1",
+   "CLAIM: Gate 0 passed at claim; primary cwd = worktree root"
+  ],
+  "D-024-R126": [
+   "project-control/reports/M0-T096-G0-readiness.md item 1",
+   "CLAIM: MCP-clean proven (zero mcp__* tools in the live session)"
+  ],
+  "D-024-R127": [
+   "G0 readiness verdict PASS (no failure path taken)",
+   "CLAIM: no write occurred before the gate passed"
+  ],
+  "D-024-R128": [
+   "G0 readiness (fresh session independently passed Gate 0)",
+   "CLAIM: no uncommitted work adopted; clean tree at claim"
+  ],
+  "D-024-R139": [
+   "campaign restriction row (hold SATISFIED at seq 10)",
+   "CLAIM: M0-T096 claimed only after accepted deps T093/T094/T095"
+  ],
+  "D-024-R140": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "CLAIM: roles preserved throughout - injected Codex supervises, injected Fable produces, ledger/git stay authoritative, owner gates untouched"
+  ],
+  "D-024-R143": [
+   "cited: M0-T102 re-baseline + unit C native adapter (accepted)",
+   "CLAIM: golden run launches through the selected backend path; no duplicate machinery added (reuse boundary section 0)"
+  ],
+  "D-024-R145": [
+   "no update/admission performed this unit",
+   "CLAIM: authorization row - nothing in its scope exercised"
+  ],
+  "D-024-R146": [
+   "campaign restrictions + this unit's diff (no MCP/SDK/merge/activation change)",
+   "CLAIM: every prohibition held; hooks untouched; ledger authoritative"
+  ],
+  "D-024-R149": [
+   "cited: unit-C installed-version fixtures + project-control/reports/M0-T096-activation-package.md item 5",
+   "CLAIM: no new feature adopted on assumption; interception state restated truthfully"
+  ],
+  "D-024-R164": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 0 (custom control preserved; extensions only)",
+   "CLAIM: every listed custom-control concern stays custom; the watcher extends detection without replacing any control"
+  ],
+  "D-024-R166": [
+   "campaign top-level loop = the supervisor (not /loop etc.)",
+   "CLAIM: prohibition held; nothing adopted as campaign authority"
+  ],
+  "D-024-R178": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4",
+   "CLAIM: DISCHARGED - unit I is this deliverable"
+  ],
+  "D-024-R180": [
+   "tools/agent_supervisor/cli.py (bridge wiring REPLACES the missing construction; no parallel path)",
+   "CLAIM: replace-not-layer held - the wiring fix supplies the one missing construction; no redundant seam left beside it"
+  ],
+  "D-024-R181": [
+   "no code deleted this unit on documentation claims",
+   "CLAIM: prohibition held"
+  ],
+  "D-024-R182": [
+   "tools/test_agent_supervisor_golden_run.py (fixtures, accelerated counters, simulated failures, disposable checkouts throughout)",
+   "CLAIM: DISCHARGED for this unit's scope"
+  ],
+  "D-024-R183": [
+   "cited: units B-E native runtime/platform proof packs",
+   "CLAIM: platform proofs unchanged; golden pack runs on Windows locally AND Linux CI (the same suite)"
+  ],
+  "D-024-R184": [
+   "cited: worker-protection packs (S13/S14)",
+   "tools/agent_supervisor/live_observation.py (no context injection; no polling messages)",
+   "CLAIM: succession/rotation composition adds the multi-epoch proof"
+  ],
+  "D-024-R185": [
+   "project-control/reports/M0-T096-golden-run-evidence.md section 4 (crash windows, reconciliation, mutation matrix, suite totals)",
+   "CLAIM: DISCHARGED for this unit - incl. the 12-mutant kill matrix"
+  ],
+  "D-024-R186": [
+   "tools/test_agent_supervisor_golden_run.py::GoldenSequenceRegisterTests (15 steps meta-verified)",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "CLAIM: DISCHARGED - every R186 step maps to a named passing proof; the composed run observes the sequence end to end"
+  ],
+  "D-024-R187": [
+   "project-control/reports/M0-T096-activation-package.md header + item 14",
+   "CLAIM: HOLD HELD - continuous mode disabled after the golden run; activation left entirely to the owner"
+  ],
+  "D-024-R188": [
+   "campaign record seq advance at accept + this unit's lifecycle",
+   "CLAIM: one cohesive writer task; fresh producer context; durable NEXT advanced at the accepted checkpoint"
+  ],
+  "D-024-R220": [
+   "this unit's timeline (no waiting; lane-1 completed now)",
+   "CLAIM: PROHIBITION HELD - nothing blocked on a natural event"
+  ],
+  "D-024-R221": [
+   "zero live provider calls in the whole unit (fakes only)",
+   "CLAIM: PROHIBITION HELD - no allowance consumed to provoke anything"
+  ],
+  "D-024-R222": [
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step",
+   "tools/test_agent_supervisor_golden_run.py::TwoUnitGoldenRunTests::test_an_injected_controller_restart_continues_without_duplicate_work",
+   "tools/test_agent_supervisor_golden_run.py::InjectedFaultTests",
+   "CLAIM: DISCHARGED - the full lane-1 list executed: golden sequence, forced rotation, injected refusal/quota/fallback/restart/ambiguous-effect, exact-once succession, correct stop/hold"
+  ],
+  "D-024-R223": [
+   "tools/test_agent_supervisor_golden_run.py::WatcherLabelingTests",
+   "tools/agent_supervisor/golden_run.py (INJECTED marker)",
+   "CLAIM: DISCHARGED - closed vocabulary, marker backstop, no 'live' value exists; harness evidence labels itself"
+  ],
+  "D-024-R224": [
+   "tools/test_agent_supervisor_golden_run.py::WatcherLabelingTests::test_no_code_path_writes_verified_live_true",
+   "project-control/reports/D-024-amendment-7-owner-report.md section 6",
+   "CLAIM: DISCHARGED - register holds pending_live_observation; nothing can mark the live canary PASS"
+  ],
+  "D-024-R225": [
+   "tools/agent_supervisor/live_observation.py (reads ONLY existing records; no new capture machinery)",
+   "CLAIM: DISCHARGED - source list enumerated in the module + owner report"
+  ],
+  "D-024-R226": [
+   "tools/test_agent_supervisor_golden_run.py::WatcherCaptureTests + ::WatcherStartEpilogueTests",
+   "project-control/reports/D-024-amendment-7-owner-report.md section 6",
+   "CLAIM: DISCHARGED - durable bounded detection path wired into the start epilogue; five capture fields; no producer-context pollution"
+  ],
+  "D-024-R227": [
+   "tools/test_agent_supervisor_golden_run.py::WatcherLabelingTests::test_comparison_refuses_wrong_sides_and_mutates_nothing",
+   "CLAIM: DISCHARGED - the comparison REPORT exists; graduation is explicitly not performed by code"
+  ],
+  "D-024-R228": [
+   "tools/test_agent_supervisor_golden_run.py::WatcherLabelingTests::test_a_pre_graduation_natural_event_holds_fail_closed",
+   "project-control/reports/D-024-amendment-7-owner-report.md section 3",
+   "CLAIM: DISCHARGED - only the 4.8 bridge actuation is gated; the general loop proceeds; fail-safe proven"
+  ],
+  "D-024-R229": [
+   "project-control/directives/D-024-fable-codex-loop/source-007-amendment.md (capture + reconciliation, seq 22)",
+   "CLAIM: discharged at capture; this unit implements within the cited existing scope exactly as the reconciliation ordered"
+  ],
+  "D-024-R230": [
+   "project-control/reports/D-024-amendment-7-owner-report.md (all five return items; section 6 refresh)",
+   "CLAIM: DISCHARGED - the owner report answers all five, refreshed with the delivered watcher evidence"
+  ]
+ }
+}

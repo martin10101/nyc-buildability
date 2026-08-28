@@ -55,3 +55,35 @@ refuses (measured-live shape absent AND R595 absent; fail-safe, proven by test).
 captures the sanitized evidence record and marks the observation satisfied. Graduation of the
 bridge afterwards still requires the R227 comparison against the injected proof plus the
 standard gates plus R595 — never automatically at the moment of the event.
+
+## 6. Refresh at unit-I delivery (M0-T096; the design commitment in §4 discharged)
+
+The watcher is DELIVERED as `tools/agent_supervisor/live_observation.py` (unit-I deliverable
+identity `5ff7f08`), exactly as §4 described, with these delivered specifics:
+
+- **Reuse (R225):** it consumes ONLY records the supervisor already writes — the
+  `guardrail_refusal/*` journal rows, the worker-turnover exhaustion transitions, the
+  `usage_limit_record`, the `provider_abort_record`, the outage retry/blocked records, and the
+  `model_change_audit` list. No new capture machinery; no schema change (the register lives in
+  the existing `state_kv` under `pending_live_observation/*`).
+- **When it observes (R226):** every `start` session's epilogue runs the scan (wired in
+  `cli.py`; a watcher failure is audited and never breaks `start`). It therefore notices a
+  natural event recorded during ANY running supervised/shadow session — at that session's end,
+  or at the next `start` against the same checkout. It cannot observe outside a running
+  session (the truthful §4 limitation, unchanged). It never prompts, spawns, or injects
+  context — asserted structurally and behaviorally by test.
+- **Capture fields:** one CAS-idempotent sanitized row per distinct event carrying the five
+  ordered fields (observed event type; installed-version shape from the PERSISTED capability
+  probe; classification decision; selected response; sanitized outcome + redaction count).
+- **Labeling (R223):** closed vocabulary `injected` / `live_candidate` — there is deliberately
+  NO `live` value; fixture-born evidence (the harness marker) is classed `injected` even when
+  scanned by a live session; nothing in the module (or anywhere) can write
+  `verified_live=true` — proven by a source-scan test plus behavior tests.
+- **Graduation (R227/R228):** `compare_with_injected_proof` produces the comparison REPORT
+  (it refuses an injected row on the live side); `graduation_readiness` reports the 4.8
+  bridge `not_ready` (measured-live absent AND R595 absent) and the general loop
+  `not_gated_on_live_observation`. Both are read-only; graduation remains the owner-reviewed
+  fixture `upgrade_procedure` plus standard gates plus R595.
+
+Register state at delivery: `pending_live_observation` with the three awaited observations of
+§2; zero live candidates; the injected golden-run reference rows exist for future comparison.

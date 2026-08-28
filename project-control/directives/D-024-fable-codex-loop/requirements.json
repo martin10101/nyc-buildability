@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 230,
+ "requirement_count": 249,
  "producer": "orchestrator",
- "updated_at": "2026-08-28T07:40:00+00:00",
+ "updated_at": "2026-08-28T18:20:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -8427,6 +8427,586 @@
     "project-control/reports/D-024-amendment-7-owner-report.md"
    ],
    "amendment_sequence": 7
+  },
+  {
+   "id": "D-024-R231",
+   "text": "Capture this direction verbatim as the next D-024 amendment before further activation work; reconcile it against the live ledger and the current M0-T096 state before changing scope.",
+   "source_ref": "source-008-amendment.md#capture",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110",
+     "M0-T111",
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "capture commit + reconciliation record in source-008 + amendment-8 owner report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R232",
+   "text": "Two additional capabilities are REQUIRED BEFORE continuous-mode activation: (1) a persistent same-terminal Codex-only discussion channel; (2) Telegram notification delivery for stuck/approval/completion conditions.",
+   "source_ref": "source-008-amendment.md#capabilities",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110",
+     "M0-T111",
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R233",
+   "text": "Do not represent a custom Claude Code command as equivalent to the built-in /btw without measured proof; official behavior queues ordinary commands submitted while Claude is responding until the turn ends, while /btw is a special built-in command - preserve that limitation honestly.",
+   "source_ref": "source-008-amendment.md#btw-honesty",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R234",
+   "text": "Provide a user-invoked same-terminal command surface such as /loop-codex new <question>, continue <thread-id> <message>, show <thread-id>, promote <message-id>, close <thread-id>.",
+   "source_ref": "source-008-amendment.md#command-surface",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R235",
+   "text": "Use the existing user-only skill and UserPromptSubmit interception architecture; a successfully intercepted Codex discussion command must be blocked and erased before Fable receives it; prove zero Fable-context pollution on the installed Claude Code version; the response must be displayed in the same terminal.",
+   "source_ref": "source-008-amendment.md#interception",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "installed-version interception fixture + zero-context proof or the truthful documented fallback",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R236",
+   "text": "A fresh Codex invocation must not start from the beginning or scan the complete repository; every turn receives: a bounded durable discussion summary; a bounded number of recent discussion exchanges; fresh current supervisor/campaign/task/checkpoint/health state; relevant repository evidence references; read-only access for deeper inspection when required.",
+   "source_ref": "source-008-amendment.md#turn-context",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R237",
+   "text": "Never send the full Claude transcript, full repository, all source code, full logs, or unrelated history; reuse the existing evidence-packet, redaction, token-budget, frozen-identity and read-only Codex machinery.",
+   "source_ref": "source-008-amendment.md#never-send",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R238",
+   "text": "Prefer commit SHAs, content digests, changed paths, diff hunks, symbols, tests and graph references over unstable bare line numbers.",
+   "source_ref": "source-008-amendment.md#stable-refs",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R239",
+   "text": "The discussion must not automatically alter Fable's instructions; Codex responses require an explicit disposition from the closed set: ADVICE_ONLY, QUEUE_NEXT_BOUNDARY, REVISE_CURRENT_TASK, PROPOSE_NEW_TASK, URGENT_PAUSE, STOP_FOR_OWNER.",
+   "source_ref": "source-008-amendment.md#dispositions",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R240",
+   "text": "Only existing authorized repair findings may enter the current Fable task through the existing review route; new features, changed priorities or expanded scope require explicit owner promotion/approval and durable directive/task capture; queue nonurgent information for the next safe boundary; pause only for genuine safety/integrity urgency.",
+   "source_ref": "source-008-amendment.md#promotion",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R241",
+   "text": "Add a bounded Telegram notification sink for exactly: STOP_FOR_OWNER; approval waiting; circuit-breaker/open stuck state; repeated CI failure; unrecovered controller/session failure; quota/refusal hold; golden-run completion; campaign completion.",
+   "source_ref": "source-008-amendment.md#telegram-sink",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T111"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R242",
+   "text": "Telegram starts one-way only: no Telegram approvals, merges, code execution or configuration changes in this unit.",
+   "source_ref": "source-008-amendment.md#one-way",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T111"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R243",
+   "text": "Store the bot token and chat identifier only in an approved local secret mechanism, never Git, packets, logs, telemetry, reports or messages.",
+   "source_ref": "source-008-amendment.md#secrets",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T111"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R244",
+   "text": "Apply redaction, bounded retries, deduplication and failure isolation so Telegram downtime cannot stop the coding loop.",
+   "source_ref": "source-008-amendment.md#isolation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T111"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R245",
+   "text": "A real Telegram send remains an owner-gated exact-command canary.",
+   "source_ref": "source-008-amendment.md#live-send",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T111"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R246",
+   "text": "Do not silently broaden the currently claimed M0-T096 contract; determine the safest bounded task sequence and capture it durably.",
+   "source_ref": "source-008-amendment.md#sequencing",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110",
+     "M0-T111",
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "new task packets M0-T110/M0-T111/M0-T112 + amendment-8 owner report section 2",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R247",
+   "text": "Any supervisor or operator-channel change after a golden-run identity invalidates the affected final certification; re-run the required affected/full golden certification after both additions, against the final frozen code identity, BEFORE presenting the R187/R595 activation package.",
+   "source_ref": "source-008-amendment.md#recertification",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "the golden-run pack + affected suites + whole suite + CI at the final frozen identity",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R248",
+   "text": "Do not activate continuous mode, enable the live 4.8 bridge, touch PR #241, admit the Agent SDK, add MCP servers, modify global Claude settings, or cross another owner-only boundary.",
+   "source_ref": "source-008-amendment.md#prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110",
+     "M0-T111",
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R249",
+   "text": "First report: (1) whether the direction is already authorized or requires a new amendment; (2) the proposed bounded task sequence; (3) which existing components will be reused; (4) the exact official Claude Code limitation on same-terminal mid-turn custom commands; (5) what certification must be rerun after these additions. Then proceed through all non-owner-gated work.",
+   "source_ref": "source-008-amendment.md#report",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T110",
+     "M0-T111",
+     "M0-T112"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-28"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/D-024-amendment-8-owner-report.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 8
   }
  ]
 }

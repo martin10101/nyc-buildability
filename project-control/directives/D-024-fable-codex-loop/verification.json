@@ -6227,7 +6227,275 @@
    ],
    "reviewed_manifest_sha256": "e893209ec1d51c67740647f4dc2596d9a4cb4500193f41f5b87780907b22c469",
    "verification_note": "Independent DCV pass 2026-08-28 (producer=orchestrator, verifier=directive-compliance-verifier) over the FULL 54-requirement applicable set at deliverable f6edf11 + correction db689c8; verifier reproduced the 54/54 matrix, modularity 0 failures, the resolved applicable set (exact match), PR #241 OPEN/unmerged, and the correction fixes in-diff, then re-affirmed all 54 rows at final content identity ca3318d (production surfaces byte-identical; DCV DELTA VERDICT: PASS, M0-T094-final-identity-acks.md). Owner-gated C1 zero-context/queued-input measurements carried pending-owner-C1 with the R088 second-terminal fallback; honesty of that state verified, not the measurement. Full report: project-control/reports/M0-T094-DCV.md."
+  },
+  {
+   "task_id": "M0-T110",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R231",
+    "D-024-R232",
+    "D-024-R233",
+    "D-024-R234",
+    "D-024-R235",
+    "D-024-R236",
+    "D-024-R237",
+    "D-024-R238",
+    "D-024-R239",
+    "D-024-R240",
+    "D-024-R246",
+    "D-024-R248",
+    "D-024-R249"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-024-R231",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R232",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R233",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R234",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R235",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R236",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R237",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R238",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R239",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R240",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R246",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R248",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R249",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T111",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R231",
+    "D-024-R232",
+    "D-024-R241",
+    "D-024-R242",
+    "D-024-R243",
+    "D-024-R244",
+    "D-024-R245",
+    "D-024-R246",
+    "D-024-R248",
+    "D-024-R249"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-024-R231",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R232",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R241",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R242",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R243",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R244",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R245",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R246",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R248",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R249",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T112",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R231",
+    "D-024-R232",
+    "D-024-R246",
+    "D-024-R247",
+    "D-024-R248",
+    "D-024-R249"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-024-R231",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R232",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R246",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R247",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R248",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R249",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
   }
  ],
- "updated_at": "2026-08-28T07:52:00+00:00"
+ "updated_at": "2026-08-28T18:35:00+00:00"
 }

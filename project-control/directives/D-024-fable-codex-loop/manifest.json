@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-28T07:40:00+00:00",
+ "updated_at": "2026-08-28T18:20:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -68,6 +68,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-28T07:40:00+00:00",
    "content_digest_sha256": "f0d16c4280546c79a328268146c6976b61871726aa560a8c7177b2e9edf2028e"
+  },
+  {
+   "file": "source-008-amendment.md",
+   "kind": "amendment",
+   "sequence": 8,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-28T18:20:00+00:00",
+   "content_digest_sha256": "3c32cf3fd2abb1f42688fa9549e6e3b4160e1907fa02ea030a229a9d43518a14"
   }
  ],
  "amendments": [
@@ -76,7 +84,8 @@
   "source-004-amendment.md",
   "source-005-amendment.md",
   "source-006-amendment.md",
-  "source-007-amendment.md"
+  "source-007-amendment.md",
+  "source-008-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -97,7 +106,10 @@
   "M0-T104",
   "M0-T105",
   "M0-T106",
-  "M0-T107"
+  "M0-T107",
+  "M0-T110",
+  "M0-T111",
+  "M0-T112"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -389,10 +401,29 @@
   "D-024-R227",
   "D-024-R228",
   "D-024-R229",
-  "D-024-R230"
+  "D-024-R230",
+  "D-024-R231",
+  "D-024-R232",
+  "D-024-R233",
+  "D-024-R234",
+  "D-024-R235",
+  "D-024-R236",
+  "D-024-R237",
+  "D-024-R238",
+  "D-024-R239",
+  "D-024-R240",
+  "D-024-R241",
+  "D-024-R242",
+  "D-024-R243",
+  "D-024-R244",
+  "D-024-R245",
+  "D-024-R246",
+  "D-024-R247",
+  "D-024-R248",
+  "D-024-R249"
  ],
- "requirements_id_digest_sha256": "8628a405fced2109994e26a0739764496f79f39881078b3bff4ff8b0c9a80fd8",
- "requirements_content_digest_sha256": "816af283a82204b081227ac1fe101be5c561cb80eeb386ca8410c6c7d6e73419",
+ "requirements_id_digest_sha256": "16be6dc56cccb54dfab0998a7a26e9cc5f1075973d06e50dc2b4b2a787a9e7e5",
+ "requirements_content_digest_sha256": "a6e07bac2f7d944a9b0dc3633961e0525e6994ee1ea88b11e6f50d226019f85b",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -455,6 +486,11 @@
    "at": "2026-08-28T07:40:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 7 captured (owner mid-turn instruction 2026-08-28, verbatim in source-007-amendment.md): two-lane golden-run evidence split - injected/deterministic proof proceeds now inside M0-T096 (already authorized by R186/R182/R106); natural-event observation deferred as pending_live_observation with a passive watcher deliverable and feature-specific gating (4.8 bridge stays shadow-only fail-safe per the accepted H1 double-gate). New rows D-024-R220..R230 appended (bound to M0-T096/M0-T107 only - the in-flight M0-T095 gate cycle's 46-row applicable set is deliberately unchanged). Digests recomputed."
+  },
+  {
+   "at": "2026-08-28T18:20:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 8 captured (owner mid-turn instruction 2026-08-28, verbatim in source-008-amendment.md): persistent same-terminal Codex-only discussion channel + one-way Telegram notification sink REQUIRED BEFORE continuous-mode activation (R232); /btw-equivalence prohibited without measured proof (R233); post-addition golden re-certification at the final frozen identity before presenting the R187/R595 activation package (R247). Rows R231-R249 bind to NEW tasks M0-T110 (Codex discussion), M0-T111 (Telegram sink), M0-T112 (re-certification); the claimed M0-T096 contract is NOT broadened (R246). M0-T096 sourced amendment reconciliation in source-008 header."
   }
  ]
 }
