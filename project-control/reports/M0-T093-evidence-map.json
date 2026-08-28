@@ -1,67 +1,243 @@
 {
-  "task_id": "M0-T093",
-  "directive_refs": [
-    {
-      "directive_id": "D-024",
-      "requirement_ids": "ALL"
-    }
+ "task_id": "M0-T093",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 49 requirement ids (the Phase-E guardrail-refusal/bridge core R068-R075 + R103/R110 + the standing conduct/identity/testing set), unchanged by the c7c0a36 allowed_paths amendment (re-resolved live: ok=true, missing=[], invalid=[], unresolved=[]). The C1 live refusal canary (R192/R197 exact-command pattern) is prepared and flagged, NOT executed; the deterministic core satisfies the applicable rows without it - the recognized-shape corpus ships documentation-confidence (verified_live=false, asserted by test) and live actuation is mechanically double-gated (assert_actuation_permitted). Detail per row: report sections 0-4.",
+ "task_evidence": [
+  "project-control/reports/M0-T093-guardrail-bridge.md",
+  "project-control/reports/M0-T093-evidence-map.json",
+  "tools/test_agent_supervisor_guardrail_bridge.py"
+ ],
+ "generated_at": "2026-08-28T05:39:13+00:00",
+ "requirements": {
+  "D-024-R002": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "CLAIM: this unit's readiness share only - the refusal-policy leg of one-prompt continuity (a recognized refusal is journaled, held safely, and the re-entry/bridge policy is deterministic); the two-unit golden run from the exact owner start command is owed by M0-T096, not claimed here"
   ],
-  "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 49 requirement ids (the Phase-E guardrail-refusal/bridge core R068-R075 + R103/R110 + the standing conduct/identity/testing set), unchanged by the c7c0a36 allowed_paths amendment (re-resolved live: ok=true, missing=[], invalid=[], unresolved=[]). The C1 live refusal canary (R192/R197 exact-command pattern) is prepared and flagged, NOT executed; the deterministic core satisfies the applicable rows without it - the recognized-shape corpus ships documentation-confidence (verified_live=false, asserted by test) and live actuation is mechanically double-gated (assert_actuation_permitted). Detail per row: report sections 0-4.",
-  "task_evidence": [
-    "project-control/reports/M0-T093-guardrail-bridge.md",
-    "project-control/reports/M0-T093-evidence-map.json",
-    "tools/test_agent_supervisor_guardrail_bridge.py"
+  "D-024-R003": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/agent_supervisor/loop.py",
+   "CLAIM: this unit's share of the durable loop - the section-8 refusal fallback policy; Fable remains the producer, the seam only records and pauses under SHADOW-ONLY"
   ],
-  "generated_at": "2026-08-28T05:39:13+00:00",
-  "requirements": [
-    ["D-024-R002", ["tools/agent_supervisor/refusal_bridge.py", "tools/agent_supervisor/guardrail_refusal.py", "CLAIM: this unit's readiness share only - the refusal-policy leg of one-prompt continuity (a recognized refusal is journaled, held safely, and the re-entry/bridge policy is deterministic); the two-unit golden run from the exact owner start command is owed by M0-T096, not claimed here"]],
-    ["D-024-R003", ["tools/agent_supervisor/refusal_bridge.py", "tools/agent_supervisor/loop.py", "CLAIM: this unit's share of the durable loop - the section-8 refusal fallback policy; Fable remains the producer, the seam only records and pauses under SHADOW-ONLY"]],
-    ["D-024-R004", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: unchanged by this unit - no Codex authority is added; the bridge is deterministic controller policy, and its output re-enters the standard review path (bridge_output_disposition) rather than making anyone a second producer"]],
-    ["D-024-R007", ["docs/SESSION_HANDOFF.md", "project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: this successor session implemented the unit from the frozen pack + captured directive alone, without asking the owner to re-paste anything (report section 4)"]],
-    ["D-024-R008", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: no routine owner questions were asked; the only owner-gated items (C1 canary, live actuation) are flagged in the report/fixture, not asked"]],
-    ["D-024-R010", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: PR #241 and every pre-existing PR untouched; this unit merged nothing"]],
-    ["D-024-R017", ["project-control/tasks/M0-T093.json", "project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: D-024-R103 is cited as AD-093 qualifying evidence in the task packet and in every commit of this unit (c7c0a36, 633a9d1, 0f4fc6a)"]],
-    ["D-024-R018", ["project-control/reports/M0-T093-guardrail-bridge.md", "tools/agent_supervisor/model_turnover.py", "CLAIM: prove-first honored - the section-0 reuse boundary was implemented as planned; shared negative guards are REUSED via additive public aliases in model_turnover.py, never duplicated; no conflicting older implementation existed (report section 4.1)"]],
-    ["D-024-R020", ["project-control/tasks/M0-T093.json", "CLAIM: produced under Fable producer authority inside the packet's allowed_paths on the campaign control branch; commits and pushes follow ADR-005/ADR-006 Tier A"]],
-    ["D-024-R021", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: unchanged by this unit - no Codex action surface is touched; the bridge adds no Codex verbs"]],
-    ["D-024-R022", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: reinforced - continuation_choice never answers arbitrary prompts (S5), and the bridge cannot become an alternate producer (S7 typed refusals of new-task/new-investigation/spawn-subagent/broaden-scope)"]],
-    ["D-024-R025", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: unchanged by this unit - no decision-parsing path is altered; a non-recognized refusal verdict never authorizes anything (fail-closed classifier)"]],
-    ["D-024-R026", ["tools/agent_supervisor/state_machine.py", "CLAIM: owner final authority preserved - owner_emergency_stop edges exist from BOTH new states, a durable stop wins over the bridge (existing stop_intent machinery untouched), and every actuation is owner-gated (SHADOW-ONLY + R595 + measured-live C1)"]],
-    ["D-024-R045", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: assert_worker_text_clean runs over the re-presentation at build time and S16 proves record + representation carry no quota/countdown/conserve pressure"]],
-    ["D-024-R068", ["tools/agent_supervisor/guardrail_refusal.py", "tools/agent_supervisor/fixtures/guardrail_refusal_shapes_2_1_248.json", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: the narrowly recognized, tested shape classifies ONLY with Fable attribution + proven owner-authorized task; security defects, failed tests, permission denials, credential boundaries, unknown prompts, prohibited (authorization-unproven) requests, and quota each route to their own condition (S1-S5 + mutation M1-M4 killed)"]],
-    ["D-024-R069", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: continuation_choice selects ONLY the exact config-allowlisted model-continuation option (approved_models exact membership); every other prompt kind is never answered; ambiguous menus refuse (S5/S6, mutation M9 killed); selection is actuation-INTENT only"]],
-    ["D-024-R070", ["tools/agent_supervisor/refusal_bridge.py", "tools/agent_supervisor/state_machine.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: the 4-step bridge sequence - identity-preserving bounded redacted journal record (S1), continue-with-4.8-or-stop option rule (S6), mechanically closed 4-operation vocabulary composing child_handoff + first-seam retirement through the existing handoff machinery, irreversible after landing (S7-S9, mutations M7/M8 killed), states GUARDRAIL_BRIDGE journaled on every edge"]],
-    ["D-024-R071", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: represent() re-presents the SAME request from structured fields (purpose/authorization/constraints/criteria preserved verbatim); the digest-bound durable counter allows at most two fresh Fable re-entries, survives restart on a reopened real journal (S11/S12/S14), and a third attempt is a typed refusal - no ping-pong (S13, mutations M5/M6 killed)"]],
-    ["D-024-R072", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: decide_after_cap reaches lower-tier ONLY after the durable cap, same bounded task ONLY (typed refusal otherwise), via workload_classifier + model_fit under the stricter profile; a higher-precedence conflict BLOCKS citing the exact conflict for the owner; next_seam_model returns to Fable unless explicit policy names otherwise (S13)"]],
-    ["D-024-R073", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: clarity is generative-from-fields; assert_semantic_preserved refuses each prohibited transform with its own typed code - purpose/authorization alteration, constraint deletion (narrowing may only ADD), criteria alteration, fragmentation, encoding - proven by S11 negative tests (mutation M10 killed)"]],
-    ["D-024-R074", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: bridge_output_disposition never accepts on completion - no verdict or an unrecognized verdict stays review_required, FAIL/BLOCKED rejects, only an independent PASS accepts (S10)"]],
-    ["D-024-R075", ["tools/agent_supervisor/guardrail_refusal.py", "tools/agent_supervisor/loop.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: BOTH directions proven - quota evidence (exact phrase, weekly rejection, typed code, 429 prose) never classifies as refusal, refusal evidence never classifies as exhaustion (S2 parameterized); the quota seam evaluates FIRST in the loop; triggers, condition codes, journal keys, and states are disjoint (S16); the quota detect-and-hold policy is byte-untouched"]],
-    ["D-024-R079", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: the graph system is not edited by this unit; the R072 decision consumes workload_classifier features, whose graph_stale flag fails closed to BLOCKED (S13 conservative-blocks test)"]],
-    ["D-024-R080", ["tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: stale graph evidence is reported and refused, never acted on - graph_stale features produce a BLOCKED lower-tier decision (S13)"]],
-    ["D-024-R098", ["tools/agent_supervisor/refusal_bridge.py", "tools/agent_supervisor/state_machine.py", "CLAIM: this unit's share - the bridge retires at the FIRST safe seam (never per-task forced rotation), healthy bounded children finish naturally through the existing coordinator, and the counter prevents avoidable re-entry churn"]],
-    ["D-024-R103", ["tools/agent_supervisor/guardrail_refusal.py", "tools/agent_supervisor/refusal_bridge.py", "tools/agent_supervisor/state_machine.py", "tools/agent_supervisor/loop.py", "CLAIM: Phase E delivered - exact refusal classification, allowlisted-continuation policy (intent-recorded), mechanically restricted 4.8 bridge, first-safe-seam return to fresh Fable 5, semantic-preserving re-presentation with the durable two-attempt cap, lower-tier-or-blocked per live policy; live actuation stays owner-gated"]],
-    ["D-024-R110", ["tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: the full section-16.4 matrix is implemented as S1-S16 (71 tests, 0 failures) - every named case incl. quota-cannot-enter (both directions), unrecognized-similar no-actuation, unknown-approval never auto-answered, bridge scope refusals, children reconcile, first-valid-seam landing, complete bounded handoff for fresh Fable, output reviewed/rejected, re-presentation preservation, first re-entry success, cap behavior, restart-surviving count, no ping-pong, return to Fable at next seam"]],
-    ["D-024-R120", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: bounded rules mandatory - the hard two-attempt cap, the closed bridge-operation vocabulary, and the typed cap refusal mean there is no keep-trying-until-something-works path in this policy"]],
-    ["D-024-R125", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: Bootstrap Gate 0 (launch root) passed this session before any write - primary cwd IS the worktree root, branch/HEAD/tree verified (report section 4)"]],
-    ["D-024-R126", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: MCP-clean passed this session - no MCP tools attached to the live session (report section 4)"]],
-    ["D-024-R127", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: not triggered - both Gate-0 checks passed; no writes preceded them"]],
-    ["D-024-R128", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: not triggered - no failed-start session's uncommitted work was adopted; the session started clean at the recorded seam"]],
-    ["D-024-R139", ["project-control/campaigns/D-024-fable-codex-loop.json", "CLAIM: hold satisfied before this claim - capture/verification/conversion completed at seq 10 and M0-T093 was claimed in the accepted dependency order (M0-T092 accepted at seq 17)"]],
-    ["D-024-R140", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: roles preserved exactly - Fable produced, no Codex write authority added, ledger/git/requirement records remain the durable authority, owner gates untouched"]],
-    ["D-024-R143", ["tools/agent_supervisor/refusal_bridge.py", "CLAIM: no duplicate machinery built - the unit composes existing surfaces (model_turnover, approved_models, child_handoff, handoff, durable_state, workload_classifier) and the native fallbackModel boundary is documented rather than replaced (R165 row)"]],
-    ["D-024-R145", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: conduct within the amendment's authorization - surgical implementation of a staged task; no binary update, no native replacement act needed by this unit"]],
-    ["D-024-R146", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: nothing prohibited done - no activation, no Agent SDK, no MCP servers/channels, no protected/held PR touched, no model substitution, no owner-gate bypass, no permission-bypass flags, no unbounded fan-out, ledger remains authority"]],
-    ["D-024-R149", ["tools/agent_supervisor/fixtures/guardrail_refusal_shapes_2_1_248.json", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: no documented feature assumed - the refusal shape ships documentation-confidence with verified_live=false asserted by test; live actuation additionally requires the owner-gated C1 measured-live capture (assert_actuation_permitted refuses, proven)"]],
-    ["D-024-R164", ["tools/agent_supervisor/guardrail_refusal.py", "tools/agent_supervisor/refusal_bridge.py", "CLAIM: this unit BUILDS the preserved custom control for refusal classification and the approved Fable-to-lower-model seam policy; the quota detect-and-hold policy remains its own preserved control, untouched"]],
-    ["D-024-R165", ["tools/agent_supervisor/refusal_bridge.py", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: fallback_model_scope pins the boundary - native fallbackModel covers only supported availability/overload cases and never governs the guardrail-refusal or quota policies, regardless of configuration (S15)"]],
-    ["D-024-R166", ["project-control/reports/M0-T093-guardrail-bridge.md", "CLAIM: no prohibited surface adopted as campaign authority - the unit adds deterministic controller policy only"]],
-    ["D-024-R177", ["tools/agent_supervisor/guardrail_refusal.py", "tools/agent_supervisor/refusal_bridge.py", "CLAIM: unit H's refusal-bridge share delivered as H1; the remaining unit-H items (root-cause repair gate, exact-once GitHub effects, graph regression) are M0-T095's packet (H2), not claimed here"]],
-    ["D-024-R180", ["tools/agent_supervisor/pending_prompt.py", "tools/agent_supervisor/loop.py", "CLAIM: replace-not-layer honored - no dual backend was added anywhere; the pending_prompt.py move is a verbatim facade-preserving split (one active implementation, loop.py re-exports), and the refusal policy is DISTINCT from, not parallel to, the quota policy"]],
-    ["D-024-R181", ["tools/agent_supervisor/pending_prompt.py", "CLAIM: no accepted code deleted - the moved block is byte-identical logic with preserved import sites; nothing was removed on a documentation claim"]],
-    ["D-024-R182", ["tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: deterministic fixtures, a real reopened journal for restart proof, hand-picked mutants run serially, and no token-burning threshold proofs (the whole matrix runs in ~1.4s)"]],
-    ["D-024-R183", ["tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: this unit's platform share - the deterministic core is proven on the installed Windows Python; the journal record is redaction-clean (S1 bounded+redacted test); no statusLine/telemetry surface changed; the installed-version refusal bytes remain owner-gated C1 (flagged, not assumed)"]],
-    ["D-024-R184", ["tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: this unit's share of the required proof set - no token quotas in worker-facing text (S16) and refusal-vs-quota triggers distinct end-to-end (S2/S16); the concurrency/rotation/handoff shares were proven by units F/G and are not re-claimed"]],
-    ["D-024-R185", ["project-control/reports/M0-T093-guardrail-bridge.md", "tools/test_agent_supervisor_guardrail_bridge.py", "CLAIM: this unit's share - the existing suite stays green (composed chunked run, report section 4.4), mutation tests prove the new gates fail when deliberately broken (10/10 killed), and the 4-reviewer independent review at the frozen identity is the gate cycle recorded in project-control/gates/"]],
-    ["D-024-R188", ["project-control/campaigns/D-024-fable-codex-loop.json", "project-control/tasks/M0-T093.json", "CLAIM: campaign rules followed - exactly one cohesive writer task claimed, fresh producer context (this successor session), continuity record advanced at the seam, no arbitrary token ceilings in any worker-facing text (S16), commit messages cite the qualifying evidence"]]
+  "D-024-R004": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: unchanged by this unit - no Codex authority is added; the bridge is deterministic controller policy, and its output re-enters the standard review path (bridge_output_disposition) rather than making anyone a second producer"
+  ],
+  "D-024-R007": [
+   "docs/SESSION_HANDOFF.md",
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: this successor session implemented the unit from the frozen pack + captured directive alone, without asking the owner to re-paste anything (report section 4)"
+  ],
+  "D-024-R008": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: no routine owner questions were asked; the only owner-gated items (C1 canary, live actuation) are flagged in the report/fixture, not asked"
+  ],
+  "D-024-R010": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: PR #241 and every pre-existing PR untouched; this unit merged nothing"
+  ],
+  "D-024-R017": [
+   "project-control/tasks/M0-T093.json",
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: D-024-R103 is cited as AD-093 qualifying evidence in the task packet and in every commit of this unit (c7c0a36, 633a9d1, 0f4fc6a)"
+  ],
+  "D-024-R018": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "tools/agent_supervisor/model_turnover.py",
+   "CLAIM: prove-first honored - the section-0 reuse boundary was implemented as planned; shared negative guards are REUSED via additive public aliases in model_turnover.py, never duplicated; no conflicting older implementation existed (report section 4.1)"
+  ],
+  "D-024-R020": [
+   "project-control/tasks/M0-T093.json",
+   "CLAIM: produced under Fable producer authority inside the packet's allowed_paths on the campaign control branch; commits and pushes follow ADR-005/ADR-006 Tier A"
+  ],
+  "D-024-R021": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: unchanged by this unit - no Codex action surface is touched; the bridge adds no Codex verbs"
+  ],
+  "D-024-R022": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: reinforced - continuation_choice never answers arbitrary prompts (S5), and the bridge cannot become an alternate producer (S7 typed refusals of new-task/new-investigation/spawn-subagent/broaden-scope)"
+  ],
+  "D-024-R025": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: unchanged by this unit - no decision-parsing path is altered; a non-recognized refusal verdict never authorizes anything (fail-closed classifier)"
+  ],
+  "D-024-R026": [
+   "tools/agent_supervisor/state_machine.py",
+   "CLAIM: owner final authority preserved - owner_emergency_stop edges exist from BOTH new states, a durable stop wins over the bridge (existing stop_intent machinery untouched), and every actuation is owner-gated (SHADOW-ONLY + R595 + measured-live C1)"
+  ],
+  "D-024-R045": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: assert_worker_text_clean runs over the re-presentation at build time and S16 proves record + representation carry no quota/countdown/conserve pressure"
+  ],
+  "D-024-R068": [
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "tools/agent_supervisor/fixtures/guardrail_refusal_shapes_2_1_248.json",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: the narrowly recognized, tested shape classifies ONLY with Fable attribution + proven owner-authorized task; security defects, failed tests, permission denials, credential boundaries, unknown prompts, prohibited (authorization-unproven) requests, and quota each route to their own condition (S1-S5 + mutation M1-M4 killed)"
+  ],
+  "D-024-R069": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: continuation_choice selects ONLY the exact config-allowlisted model-continuation option (approved_models exact membership); every other prompt kind is never answered; ambiguous menus refuse (S5/S6, mutation M9 killed); selection is actuation-INTENT only"
+  ],
+  "D-024-R070": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: the 4-step bridge sequence - identity-preserving bounded redacted journal record (S1), continue-with-4.8-or-stop option rule (S6), mechanically closed 4-operation vocabulary composing child_handoff + first-seam retirement through the existing handoff machinery, irreversible after landing (S7-S9, mutations M7/M8 killed), states GUARDRAIL_BRIDGE journaled on every edge"
+  ],
+  "D-024-R071": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: represent() re-presents the SAME request from structured fields (purpose/authorization/constraints/criteria preserved verbatim); the digest-bound durable counter allows at most two fresh Fable re-entries, survives restart on a reopened real journal (S11/S12/S14), and a third attempt is a typed refusal - no ping-pong (S13, mutations M5/M6 killed)"
+  ],
+  "D-024-R072": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: decide_after_cap reaches lower-tier ONLY after the durable cap, same bounded task ONLY (typed refusal otherwise), via workload_classifier + model_fit under the stricter profile; a higher-precedence conflict BLOCKS citing the exact conflict for the owner; next_seam_model returns to Fable unless explicit policy names otherwise (S13)"
+  ],
+  "D-024-R073": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: clarity is generative-from-fields; assert_semantic_preserved refuses each prohibited transform with its own typed code - purpose/authorization alteration, constraint deletion (narrowing may only ADD), criteria alteration, fragmentation, encoding - proven by S11 negative tests (mutation M10 killed)"
+  ],
+  "D-024-R074": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: bridge_output_disposition never accepts on completion - no verdict or an unrecognized verdict stays review_required, FAIL/BLOCKED rejects, only an independent PASS accepts (S10)"
+  ],
+  "D-024-R075": [
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "tools/agent_supervisor/loop.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: BOTH directions proven - quota evidence (exact phrase, weekly rejection, typed code, 429 prose) never classifies as refusal, refusal evidence never classifies as exhaustion (S2 parameterized); the quota seam evaluates FIRST in the loop; triggers, condition codes, journal keys, and states are disjoint (S16); the quota detect-and-hold policy is byte-untouched"
+  ],
+  "D-024-R079": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: the graph system is not edited by this unit; the R072 decision consumes workload_classifier features, whose graph_stale flag fails closed to BLOCKED (S13 conservative-blocks test)"
+  ],
+  "D-024-R080": [
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: stale graph evidence is reported and refused, never acted on - graph_stale features produce a BLOCKED lower-tier decision (S13)"
+  ],
+  "D-024-R098": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/agent_supervisor/state_machine.py",
+   "CLAIM: this unit's share - the bridge retires at the FIRST safe seam (never per-task forced rotation), healthy bounded children finish naturally through the existing coordinator, and the counter prevents avoidable re-entry churn"
+  ],
+  "D-024-R103": [
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/agent_supervisor/state_machine.py",
+   "tools/agent_supervisor/loop.py",
+   "CLAIM: Phase E delivered - exact refusal classification, allowlisted-continuation policy (intent-recorded), mechanically restricted 4.8 bridge, first-safe-seam return to fresh Fable 5, semantic-preserving re-presentation with the durable two-attempt cap, lower-tier-or-blocked per live policy; live actuation stays owner-gated"
+  ],
+  "D-024-R110": [
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: the full section-16.4 matrix is implemented as S1-S16 (71 tests, 0 failures) - every named case incl. quota-cannot-enter (both directions), unrecognized-similar no-actuation, unknown-approval never auto-answered, bridge scope refusals, children reconcile, first-valid-seam landing, complete bounded handoff for fresh Fable, output reviewed/rejected, re-presentation preservation, first re-entry success, cap behavior, restart-surviving count, no ping-pong, return to Fable at next seam"
+  ],
+  "D-024-R120": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: bounded rules mandatory - the hard two-attempt cap, the closed bridge-operation vocabulary, and the typed cap refusal mean there is no keep-trying-until-something-works path in this policy"
+  ],
+  "D-024-R125": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: Bootstrap Gate 0 (launch root) passed this session before any write - primary cwd IS the worktree root, branch/HEAD/tree verified (report section 4)"
+  ],
+  "D-024-R126": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: MCP-clean passed this session - no MCP tools attached to the live session (report section 4)"
+  ],
+  "D-024-R127": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: not triggered - both Gate-0 checks passed; no writes preceded them"
+  ],
+  "D-024-R128": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: not triggered - no failed-start session's uncommitted work was adopted; the session started clean at the recorded seam"
+  ],
+  "D-024-R139": [
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "CLAIM: hold satisfied before this claim - capture/verification/conversion completed at seq 10 and M0-T093 was claimed in the accepted dependency order (M0-T092 accepted at seq 17)"
+  ],
+  "D-024-R140": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: roles preserved exactly - Fable produced, no Codex write authority added, ledger/git/requirement records remain the durable authority, owner gates untouched"
+  ],
+  "D-024-R143": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: no duplicate machinery built - the unit composes existing surfaces (model_turnover, approved_models, child_handoff, handoff, durable_state, workload_classifier) and the native fallbackModel boundary is documented rather than replaced (R165 row)"
+  ],
+  "D-024-R145": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: conduct within the amendment's authorization - surgical implementation of a staged task; no binary update, no native replacement act needed by this unit"
+  ],
+  "D-024-R146": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: nothing prohibited done - no activation, no Agent SDK, no MCP servers/channels, no protected/held PR touched, no model substitution, no owner-gate bypass, no permission-bypass flags, no unbounded fan-out, ledger remains authority"
+  ],
+  "D-024-R149": [
+   "tools/agent_supervisor/fixtures/guardrail_refusal_shapes_2_1_248.json",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: no documented feature assumed - the refusal shape ships documentation-confidence with verified_live=false asserted by test; live actuation additionally requires the owner-gated C1 measured-live capture (assert_actuation_permitted refuses, proven)"
+  ],
+  "D-024-R164": [
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: this unit BUILDS the preserved custom control for refusal classification and the approved Fable-to-lower-model seam policy; the quota detect-and-hold policy remains its own preserved control, untouched"
+  ],
+  "D-024-R165": [
+   "tools/agent_supervisor/refusal_bridge.py",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: fallback_model_scope pins the boundary - native fallbackModel covers only supported availability/overload cases and never governs the guardrail-refusal or quota policies, regardless of configuration (S15)"
+  ],
+  "D-024-R166": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "CLAIM: no prohibited surface adopted as campaign authority - the unit adds deterministic controller policy only"
+  ],
+  "D-024-R177": [
+   "tools/agent_supervisor/guardrail_refusal.py",
+   "tools/agent_supervisor/refusal_bridge.py",
+   "CLAIM: unit H's refusal-bridge share delivered as H1; the remaining unit-H items (root-cause repair gate, exact-once GitHub effects, graph regression) are M0-T095's packet (H2), not claimed here"
+  ],
+  "D-024-R180": [
+   "tools/agent_supervisor/pending_prompt.py",
+   "tools/agent_supervisor/loop.py",
+   "CLAIM: replace-not-layer honored - no dual backend was added anywhere; the pending_prompt.py move is a verbatim facade-preserving split (one active implementation, loop.py re-exports), and the refusal policy is DISTINCT from, not parallel to, the quota policy"
+  ],
+  "D-024-R181": [
+   "tools/agent_supervisor/pending_prompt.py",
+   "CLAIM: no accepted code deleted - the moved block is byte-identical logic with preserved import sites; nothing was removed on a documentation claim"
+  ],
+  "D-024-R182": [
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: deterministic fixtures, a real reopened journal for restart proof, hand-picked mutants run serially, and no token-burning threshold proofs (the whole matrix runs in ~1.4s)"
+  ],
+  "D-024-R183": [
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: this unit's platform share - the deterministic core is proven on the installed Windows Python; the journal record is redaction-clean (S1 bounded+redacted test); no statusLine/telemetry surface changed; the installed-version refusal bytes remain owner-gated C1 (flagged, not assumed)"
+  ],
+  "D-024-R184": [
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: this unit's share of the required proof set - no token quotas in worker-facing text (S16) and refusal-vs-quota triggers distinct end-to-end (S2/S16); the concurrency/rotation/handoff shares were proven by units F/G and are not re-claimed"
+  ],
+  "D-024-R185": [
+   "project-control/reports/M0-T093-guardrail-bridge.md",
+   "tools/test_agent_supervisor_guardrail_bridge.py",
+   "CLAIM: this unit's share - the existing suite stays green (composed chunked run, report section 4.4), mutation tests prove the new gates fail when deliberately broken (10/10 killed), and the 4-reviewer independent review at the frozen identity is the gate cycle recorded in project-control/gates/"
+  ],
+  "D-024-R188": [
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "project-control/tasks/M0-T093.json",
+   "CLAIM: campaign rules followed - exactly one cohesive writer task claimed, fresh producer context (this successor session), continuity record advanced at the seam, no arbitrary token ceilings in any worker-facing text (S16), commit messages cite the qualifying evidence"
   ]
+ }
 }
