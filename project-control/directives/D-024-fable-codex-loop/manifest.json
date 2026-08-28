@@ -392,7 +392,7 @@
   "D-024-R230"
  ],
  "requirements_id_digest_sha256": "8628a405fced2109994e26a0739764496f79f39881078b3bff4ff8b0c9a80fd8",
- "requirements_content_digest_sha256": "34af83d3e7c9946e53b6e3436d56b393b09786e360d24658f2ca373f1364dab8",
+ "requirements_content_digest_sha256": "816af283a82204b081227ac1fe101be5c561cb80eeb386ca8410c6c7d6e73419",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
