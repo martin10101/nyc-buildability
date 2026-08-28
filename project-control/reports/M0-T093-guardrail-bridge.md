@@ -1,13 +1,11 @@
 # M0-T093 — Unit H1: guardrail-refusal classification + bounded 4.8 bridge — D-024 Phase E
 
 Producer: fable-orchestrator-session (orchestrator). Supervisor-freeze qualifying evidence:
-**D-024-R103** (Phase E; packet-named). Status: **STAGED (claim + G0 + scenario pack)** — the
-seq-19 session accepted unit G, claimed this unit, and authored this pack at a clean seam under
-the D-010 R113/R114 rotate-at-seam ceiling (the same pattern that staged units F and G). The
-successor implements from this frozen pack with a fresh context budget. No implementation code
-is written at this staging seam. Applicable set: **49 requirements** (R068–R075 Phase-E core,
-R103/R110, R165/R177, + the standing conduct/identity/testing set; resolve live via
-`evaluate_task_refs`).
+**D-024-R103** (Phase E; packet-named). Status: **IMPLEMENTED** — the seq-19 session staged
+this pack at a clean seam (the unit-F/G pattern); the seq-20 successor session implemented it
+from the frozen pack (§4 evidence). Applicable set: **49 requirements** (R068–R075 Phase-E
+core, R103/R110, R165/R177, + the standing conduct/identity/testing set; re-resolved live via
+`evaluate_task_refs` after the c7c0a36 packet amendment: ok=true, 49 ids, no missing/invalid).
 
 ## 0. Reuse boundary (R018: prove existing architecture, extend — never duplicate)
 
@@ -88,6 +86,80 @@ as `tools/test_agent_supervisor_guardrail_bridge.py`.
 - **Environment:** long background python runs are externally killed on this box — run
   suites in foreground chunks (see the seq-19 handoff §7 facts).
 
-## 4. Evidence (populated during implementation — successor)
+## 4. Evidence (implementation session, 2026-08-28, seq-20 successor)
 
-(pending — staging seam only)
+Bootstrap Gate 0 (R125–R128): passed BEFORE any write — primary cwd IS the worktree root
+(`git rev-parse --show-toplevel` = `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`), branch
+`control/D-024-fable-codex-loop`, HEAD `84f658e` clean and == origin at start; NO MCP tools
+attached to the live session (toolset enumerated: zero `mcp__*` entries).
+
+Deliverable commits: `c7c0a36` (packet allowed_paths surgical amendment — the 387f530
+precedent; the two state-count assertion files M0-T092 also carried), `633a9d1`
+(implementation), `0f4fc6a` (mutation-survivor test-gap closure). All cite D-024-R103.
+
+### 4.1 Prove-first reuse (R018)
+
+Reused exactly as §0 planned: `model_turnover` negative guards/normalization/attribution via
+NEW additive public aliases (no duplication); `classify_exhaustion` as the quota-direction
+delegate; `claude_runner` quota corpus untouched; `approved_models` exact membership (R069);
+`workload_classifier` + `spawn_decision.model_fit` (R072); `child_handoff.TurnoverCoordinator`
+(child drain); `handoff.Handoff`/`validate_handoff` (retirement); `durable_state` CAS
+(counter); `assert_worker_text_clean` + `redact_text` (hygiene); `worker_turnover.
+WorkerTurnoverIntegration` as the seam-object pattern; the unit-F additive-state pattern.
+Genuine gaps built (only the §0 list): `guardrail_refusal.py`, `refusal_bridge.py`,
+`fixtures/guardrail_refusal_shapes_2_1_248.json`, +2 states/+11 documented transitions,
+thin loop seam AFTER the quota seam (R075 ordering), and the §1 matrix test file.
+
+### 4.2 Modularity
+
+A `baseline_growth` FAIL appeared on grandfathered `loop.py` (baseline 1899 SLOC, allowance
++190; the seam pushed it to 2100). Resolved by the unit-G precedent — facade-preserving
+split, NOT an exception record: the pending-prompt approval-binding block (327 physical
+lines: `approval_digest`, parked/approved/consumed records, M0-T048 covered-instruction
+reconstruction, sealed-audit cross-check) moved VERBATIM to NEW `pending_prompt.py`;
+`loop.py` re-exports every public name. Its four accepted test packs pass unchanged
+(pending_prompt 19, park_approve_binding 9, audit_anchor 6, c2_binding 10).
+`modularity_check --check`: **0 failures**. ruff 0.13.0 (the CI-pinned version): **0
+findings on every new/changed surface**; the 5 `loop.py` F401s predate this unit at the
+accepted HEAD (verified via `git show HEAD:` — same 5 lines, recorded not hidden).
+
+### 4.3 Matrix + mutation
+
+`tools/test_agent_supervisor_guardrail_bridge.py`: **71 tests, 0 failures** — S1–S16 incl.
+BOTH-direction quota-vs-refusal separation (S2 parameterized over the model_turnover/
+claude_runner shape set in each direction), restart-surviving digest-bound counter on a
+reopened real journal (S14), real-`SupervisedLoop` seam tests (recognized refusal →
+`guardrail_refusal_recorded` + PAUSED_RECOVERY + journaled identity-preserving record;
+ordinary/refusal-looking failures → the existing `no_valid_checkpoint` unchanged; absent
+integration → unchanged; quota-first ordering with both seams injected), and the
+activated-path state walk (refusal → bridge → seam → fresh session → re-present →
+accept/repeat/cap-blocked).
+
+Targeted mutation pass (unit-F/G method; serial, never during a live suite): **10/10
+non-equivalent mutants KILLED** — M1 skip quota delegate, M2 drop authorization proof,
+M3 refusal-looking→recognized, M4 drop attribution, M5 cap=3, M6 cap counts succeeded
+records, M7 spawn-subagent permitted, M8 retire never latches, M9 continuation matches
+kind only, M10 constraint deletion allowed. M6/M7 initially SURVIVED → two test gaps
+closed in `0f4fc6a` (hardcoded forbidden-op names; success-at-cap-boundary) → re-run
+KILLED. One analyzed EQUIVALENT mutant documented (not run): swapping the two loop seam
+blocks is observationally equivalent for every classifiable input because the classifier's
+own quota-direction delegate (M1, killed) enforces the R075 separation regardless of
+consultation order; the loop ordering is defense in depth.
+
+### 4.4 Composed suite (foreground chunks; long background python runs are externally killed here)
+
+Chunk A (21 supervisor files): **717 ran, 0 failures**. Chunk B (19): **808 ran, 0
+failures, 2 skipped**. Chunk C (16): **531 ran, 0 failures**. Chunk D (24 tool files):
+**417 ran, 0 failures, 1 skipped**. pytest pair (event_bus + goal_integration): **76
+passed**. `test_directive_compliance` by class groups (5 chunks): **120 ran, 0 failures**
+(29 + 6 + 20 + 33 + 32). **Composed total: 2,669 ran / 0 failures / 3 skipped.**
+`validate_directive_compliance.py --check`: **EXIT=0** after the c7c0a36 packet amendment
+and this unit's report/evidence-map. CI on the pushed SHA is the confirming whole-suite run.
+
+### 4.5 Owner-gated residuals (§2 unchanged)
+
+C1 live refusal canary (R192/R197 exact-command) still pending-owner: the corpus stays
+documentation-confidence (`verified_live=false` everywhere — asserted by a test). Live
+actuation of the continue-with-4.8 choice stays behind SHADOW-ONLY/R595;
+`assert_actuation_permitted` double-gates it mechanically and is proven to refuse each
+half-gate. DCV evidence map: `project-control/reports/M0-T093-evidence-map.json` (49 rows).
