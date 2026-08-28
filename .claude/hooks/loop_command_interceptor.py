@@ -83,6 +83,12 @@ _CODEX_SUBVERBS: dict[str, tuple[bool, int, bool]] = {
     "close": (False, 1, False),
 }
 
+#: Ids are data, never options (G3 MINOR-1 / G5 ADVISORY-1, M0-T110 gate
+#: round): an id token must match the channel's own shape BEFORE it is
+#: placed on argv, so an option-shaped token (`--anything`) is a visible
+#: refusal here, never a downstream argparse surprise.
+_CODEX_ID = re.compile(r"^(?:cxt_|cxm_)[A-Za-z0-9]+$")
+
 
 def _codex_argv(argument: str) -> tuple[list[str] | None, str]:
     """Map the /loop-codex argument to the supervisor argv, or a block reason.
@@ -105,10 +111,15 @@ def _codex_argv(argument: str) -> tuple[list[str] | None, str]:
         id_parts = rest.split(None, 1)
         if not id_parts or not id_parts[0]:
             return None, (f"/loop-codex {subverb} needs an id. {_CODEX_USAGE}")
+        if not _CODEX_ID.match(id_parts[0]):
+            return None, (f"/loop-codex {subverb} refused: {id_parts[0]!r} is "
+                          f"not a cxt_/cxm_ id (ids are data, never options; "
+                          f"nothing was executed). {_CODEX_USAGE}")
         ids = [id_parts[0]]
         rest = id_parts[1].strip() if len(id_parts) > 1 else ""
     if wants_text and not rest:
-        return None, (f"/loop-codex {subverb} needs a message. {_CODEX_USAGE}")
+        noun = "question" if subverb == "new" else "message"
+        return None, (f"/loop-codex {subverb} needs a {noun}. {_CODEX_USAGE}")
     if not wants_text and rest:
         return None, (f"/loop-codex {subverb} takes exactly one id; "
                       f"unexpected extra text was refused (nothing was "

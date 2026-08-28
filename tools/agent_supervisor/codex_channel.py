@@ -583,6 +583,8 @@ def promote_message(journal: Any, audit: Any,
     require durable directive/task capture through the existing route. The
     command surface reaching this function is owner-typed by construction
     (user-only skill + pre-model interception), so promotion is owner-gated.
+    Deliberate: promotion targets a specific MESSAGE, so it works on closed
+    threads too — closing a discussion never voids an owner's approval path.
     """
     if not isinstance(message_id, str) or \
             not message_id.startswith(MESSAGE_ID_PREFIX):

@@ -95,8 +95,10 @@ handling, per disposition:
 
 - **ADVICE_ONLY** — displayed; recorded on the thread. No other effect.
 - **QUEUE_NEXT_BOUNDARY** — one bounded row appended to the durable boundary queue
-  (`codex_channel/boundary_queue`, CAS, bounded depth with visible refusal when full);
-  surfaced for the next safe boundary. Nothing is injected into any model context.
+  (`codex_channel/boundary_queue`, CAS, bounded depth with visible refusal when full).
+  Honest bound (G5 INFO-2): in THIS unit the queue is deliberately write-only and inert —
+  no code reads it, nothing is injected into any model context; reading it at a safe
+  boundary is orchestrator/later-unit behavior, not unit-K machinery.
 - **REVISE_CURRENT_TASK** — displayed with the standing rule: a finding enters the current
   task ONLY through the existing authorized repair route (unit-H2 `repair_gate`, R076–R078);
   the channel records it and changes nothing itself.
@@ -180,8 +182,8 @@ rows have their own lanes; URGENT/STOP are attention, not scope).
 
 ## 6. Evidence (implementation; settled tree, foreground-chunked)
 
-**Deliverable files:** `tools/agent_supervisor/codex_channel.py` (domain, ~560 physical lines
-incl. docs) + `codex_channel_cli.py` (wiring) + `schemas/codex_discussion_reply.schema.json`
+**Deliverable files:** `tools/agent_supervisor/codex_channel.py` (domain, 632 physical lines
+incl. docs — count corrected per DCV note 1; below the 600-SLOC warn band, modularity exit 0) + `codex_channel_cli.py` (wiring) + `schemas/codex_discussion_reply.schema.json`
 + `cli.py` (one import + one registration line) + `operator_ask.py`
 (`_read_answer_file` → public `read_answer_file`, one call site) +
 `.claude/hooks/loop_command_interceptor.py` (regex alternation + `_codex_argv` subverb map)
@@ -211,3 +213,30 @@ incl. docs) + `codex_channel_cli.py` (wiring) + `schemas/codex_discussion_reply.
   58 pre-existing hits in files this unit never touched.)
 - **`modularity_check --check` exit 0** after `git add` (all new files far below warn).
 - **CI on the pushed deliverable SHA:** recorded in the progress log at the submit seam.
+
+## 7. Consolidated correction round (gate wave at `eacbb43`; all four verdicts PASS)
+
+Reviewer returns: **G3 PASS** (MINOR-1 blocking-for-acceptance + INFO-1..4), **G4 PASS**
+(MINOR-1..4 + INFO-1..4), **G5 PASS** (ADVISORY-1 + INFO-1..3), **DCV PASS 13/13** (notes
+1–4). Verbatim reports: `M0-T110-{G3-code-review,G4-qa,G5-security,DCV}.md`. ONE
+consolidated round applied every actionable item:
+
+| Finding | Disposition |
+|---|---|
+| G3 MINOR-1 / G5 ADVISORY-1 (id tokens not protected as data) | **FIXED** — `_codex_argv` validates ids against `^(?:cxt_|cxm_)[A-Za-z0-9]+$` BEFORE argv construction; option-shaped ids are a visible hook refusal ("ids are data, never options; nothing was executed"). New test `test_an_option_shaped_id_is_refused_before_any_execution` (3 shapes); new mutant M16 (validation removed) KILLED. |
+| G4 MINOR-1 (`--` hardening untested/unmutated on the codex path) | **FIXED** — `test_free_text_rides_behind_the_end_of_options_separator` imports the hook module directly (provider env patched) and asserts `argv[-2:] == ["--", <hostile dash/metachar/newline message>]` for `new` AND `continue`; new mutant M15 (drop `--`) KILLED. |
+| G4 MINOR-2 (non-text refusal untested) | **FIXED** — K6.1 now covers `12345` and `None` → typed `question_not_text`. |
+| G4 MINOR-3 (inbound reply redaction untested) | **FIXED** — `test_a_secret_inside_the_reply_is_redacted_before_store_and_display`: a fake `ghp_` token in reply + updated_summary is absent from `outcome.reply` and the entire stored thread record. |
+| G4 MINOR-4 (`close` no-provider path untested) | **FIXED** — `test_close_executes_without_provider_inputs` (real hook subprocess → executed → `unknown_thread`). |
+| G3 INFO-1 (45 s effective hook window undocumented in the skill) | **FIXED** — SKILL.md now states the ~45 s interception-path bound and that `--window` 90 s applies only off-hook. |
+| G3 INFO-4 / G4 INFO-2 (`new` refusal says "message" not "question") | **FIXED** — per-verb noun in `_codex_argv`. |
+| G4 INFO-3 (promote-on-closed-thread undocumented) | **FIXED** — documented as deliberate in the `promote_message` docstring (closing a discussion never voids the approval path). |
+| G5 INFO-2 (queue "surfaced at next boundary" aspirational) | **FIXED** — §3 wording corrected: the queue is write-only and inert in this unit. |
+| DCV note 1 (line-count imprecision) | **FIXED** — §6 corrected to 632 lines. |
+| G3 INFO-2 / G5 (pending-owner-C1 canary) | **NO CHANGE NEEDED** — already stated honestly; remains owner-gated. |
+| G3 INFO-3 (resolution-unusable branch / attention-CAS return untested), G4 INFO-1 (transitive assertions), G5 INFO-1 (45s/90s nesting — inherited unit-G structure), G5 INFO-3 (fail-open-to-pass-through posture) | **ACCEPTED AS-IS** — low-value additions / inherited accepted structure / deliberate documented posture; carried as non-blocking notes. |
+
+**Corrected-identity evidence:** K-pack **56/56** (52 + 4 new); operator-channel 54/54
+(110 combined); mutation now **16/16 KILLED** (M15/M16 added); ruff clean; secret scan
+PASS (the new fake inbound token carries its own justification pragma); modularity exit 0;
+CI on the resubmitted SHA recorded in the progress log.

@@ -33,3 +33,6 @@ Honest limitation (R233): this is an ordinary custom command — submitted while
 responding it is QUEUED until the turn ends. It is NOT `/btw` and is never claimed to be
 (no measured equivalence exists). The real-time path while a turn is running is a second
 terminal running the same `codex` commands. This is NOT the built-in `/loop` command (R159).
+On the interception path a `new`/`continue` turn is bounded by the hook's ~45 s subprocess
+timeout (the CLI's `--window` default of 90 s applies only off-hook); a longer turn belongs
+in the second terminal, where no hook cap applies.

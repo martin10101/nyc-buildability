@@ -282,6 +282,55 @@ class K2Interception(unittest.TestCase):
             env_extra=NO_PROVIDER_ENV)
         self.assertEqual((code, out), (0, ""))
 
+    def test_close_executes_without_provider_inputs(self) -> None:
+        # G4 MINOR-4: the clean no-provider round trip for `close` itself.
+        code, out = run_hook(self.payload("/loop-codex close cxt_nothere"),
+                             env_extra=NO_PROVIDER_ENV)
+        self.assertEqual(code, 0)
+        decision = json.loads(out)
+        self.assertEqual(decision["decision"], "block")
+        self.assertIn("unknown_thread", decision["reason"])
+
+    def test_an_option_shaped_id_is_refused_before_any_execution(self) -> None:
+        # G3 MINOR-1 / G5 ADVISORY-1: ids are data, never options - an
+        # option-shaped token is a visible hook refusal, not a downstream
+        # argparse surprise.
+        for prompt in ("/loop-codex show --checkout=C:/Windows",
+                       "/loop-codex promote --help",
+                       "/loop-codex close -rf"):
+            code, out = run_hook(self.payload(prompt),
+                                 env_extra=NO_PROVIDER_ENV)
+            self.assertEqual(code, 0, prompt)
+            decision = json.loads(out)
+            self.assertEqual(decision["decision"], "block")
+            self.assertIn("not a cxt_/cxm_ id", decision["reason"])
+            self.assertIn("nothing was executed", decision["reason"])
+
+    def test_free_text_rides_behind_the_end_of_options_separator(self) -> None:
+        # G4 MINOR-1: exercise the argv-construction line directly (every
+        # subprocess test blocks earlier on missing provider env). A message
+        # with a leading dash, metacharacters, quotes, and newlines is ONE
+        # argv element behind an explicit "--".
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "loop_hook_under_test", str(HOOK))
+        hook_mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(hook_mod)
+        env = {"SUPERVISOR_CODEX_EXECUTABLE": "C:/fake/codex.exe",
+               "SUPERVISOR_CONFIG": "C:/fake/config.toml",
+               "SUPERVISOR_MODEL_SELECTION": "C:/fake/selection.toml"}
+        hostile = '-rf; rm -rf / $(whoami) "quoted" line1\nline2'
+        with mock.patch.dict("os.environ", env):
+            argv, reason = hook_mod._codex_argv(f"new {hostile}")
+            self.assertEqual(reason, "")
+            self.assertEqual(argv[-2:], ["--", hostile])
+            argv, reason = hook_mod._codex_argv(
+                f"continue cxt_abc123 {hostile}")
+            self.assertEqual(reason, "")
+            self.assertEqual(argv[-2:], ["--", hostile])
+            self.assertIn("cxt_abc123", argv)
+            self.assertLess(argv.index("cxt_abc123"), argv.index("--"))
+
     def test_no_btw_equivalence_claim_anywhere(self) -> None:
         hook_text = HOOK.read_text(encoding="utf-8")
         skill_text = SKILL.read_text(encoding="utf-8")
@@ -606,13 +655,33 @@ class K6Security(CodexChannelBase):
         journal = self.journal()
         try:
             cases = (("", "empty_question"),
-                     ("x" * 5_000, "question_too_large"))
+                     ("x" * 5_000, "question_too_large"),
+                     (12345, "question_not_text"),
+                     (None, "question_not_text"))
             for text, code in cases:
                 with self.assertRaises(cc.ChannelError) as ctx:
                     cc.new_thread(text,
                                   runner=answering_runner(good_reply()),
                                   **self.turn_kwargs(journal))
                 self.assertEqual(ctx.exception.code, code)
+        finally:
+            journal.close()
+
+    def test_a_secret_inside_the_reply_is_redacted_before_store_and_display(
+            self) -> None:
+        # G4 MINOR-3: the INBOUND direction - a hostile/careless provider
+        # reply carrying a secret-looking string never reaches the stored
+        # thread or the displayed outcome unredacted.
+        journal = self.journal()
+        try:
+            secret = "ghp_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210ab"  # gitleaks:allow secretscan:allow fake token proving inbound redaction, leak-absence test
+            outcome = self.opened_thread(
+                journal, runner=answering_runner(good_reply(
+                    reply=f"the token is {secret} - rotate it",
+                    updated_summary=f"summary leaks {secret} too")))
+            self.assertNotIn(secret, outcome.reply)
+            record = cc.show_thread(journal, outcome.thread_id)
+            self.assertNotIn(secret, json.dumps(record))
         finally:
             journal.close()
 
