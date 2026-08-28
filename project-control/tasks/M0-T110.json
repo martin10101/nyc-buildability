@@ -56,7 +56,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-28T18:29:19.311661+00:00",
-  "updated_at": "2026-08-28T21:29:57.594827+00:00",
+  "updated_at": "2026-08-28T21:48:41.963822+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -87,6 +87,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Unit K IMPLEMENTED (deliverable e632da2): codex_channel.py + codex_channel_cli.py + reply schema + hook subverb map + loop-codex skill + K-pack 52/52 (interception via real hook subprocess; CAS single-winner incl. concurrent-writer conflict; closed dispositions typed-fail; owner-gated promotion idempotent). Suites: supervisor 2654/0(2 skipped), non-supervisor 559/1, affected packs 175/175, mutation 14/14 killed (CAS-overwrite mutant survived round 1 -> new conflict test added -> killed), ruff 0.13.0 clean on changed files, modularity exit 0. Next: CI on e632da2, then submit + 4-reviewer gate wave. (D-024-R232/R234)"
+    },
+    {
+      "at": "2026-08-28T21:48:41.070575+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "rework",
+      "message": "ONE consolidated correction round applied at c8b38ba (all four gate-wave verdicts PASS at eacbb43; reports committed verbatim): hook id-shape validation ^(cxt_|cxm_)[A-Za-z0-9]+$ before argv (G3 MINOR-1/G5 ADVISORY-1); 4 new K-pack tests closing G4 MINOR-1..4 (direct --separator argv proof via hook import, option-shaped-id refusal, non-text typed refusal, inbound reply redaction, close no-provider); skill 45s window sentence; per-verb noun; promote-on-closed documented; report Sec7 disposition table. Pack 56/56; op-channel 54/54; mutation 16/16 killed; ruff clean; secret scans PASS (gitleaks needed its own allow annotation on the new fake token); modularity 0. Next: CI at c8b38ba, resubmit, SendMessage delta re-attestations from the SAME four reviewers. (D-024-R232/R234)"
     }
   ]
 }
