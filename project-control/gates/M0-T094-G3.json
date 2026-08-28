@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T094",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T094-G3-code-review-delta.md",
+  "reviewed_at": "2026-08-28T03:54:50.094439+00:00",
+  "content_manifest_sha256": "e893209ec1d51c67740647f4dc2596d9a4cb4500193f41f5b87780907b22c469",
+  "reviewed_sha": "bf8893314fc03b230299607a1a28782b57e8e8ed",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T094-G3-code-review.md",
+      "reviewed_at": "2026-08-28T03:54:49.225023+00:00"
+    }
+  ],
+  "updated_at": "2026-08-28T03:54:50.672889+00:00"
+}
