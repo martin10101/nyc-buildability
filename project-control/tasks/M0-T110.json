@@ -1,68 +1,78 @@
 {
- "task_id": "M0-T110",
- "title": "D-024 Amendment 8 unit K: persistent same-terminal Codex-only discussion channel (/loop-codex)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Amendment 8 (R233-R240 + R231/R232/R246/R248/R249): user-invoked /loop-codex new/continue/show/promote/close surface over the existing user-only skill + UserPromptSubmit interception architecture; intercepted commands blocked+erased before Fable with zero-context proof on the installed version or the truthful documented fallback (never /btw-equivalence without measured proof, R233); per-turn bounded context (durable discussion summary, bounded recent exchanges, fresh supervisor/campaign/task/checkpoint/health state, evidence references, read-only deep inspection) reusing evidence-packet/redaction/token-budget/frozen-identity/read-only Codex machinery; closed disposition vocabulary ADVICE_ONLY/QUEUE_NEXT_BOUNDARY/REVISE_CURRENT_TASK/PROPOSE_NEW_TASK/URGENT_PAUSE/STOP_FOR_OWNER with no automatic Fable-instruction changes and owner-gated promotion. Supervisor-freeze qualifying evidence: D-024-R232/R234.",
- "business_reason": "Owner-required capability before continuous-mode activation (Amendment 8, R232).",
- "inputs": [],
- "outputs": [
-  "codex discussion channel modules under tools/agent_supervisor",
-  ".claude/skills/loop-codex/SKILL.md (user-only, disable-model-invocation)",
-  "tools/test_agent_supervisor_codex_channel.py",
-  "project-control/reports/M0-T110-codex-channel.md"
- ],
- "dependencies": [
-  "M0-T096"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_codex_channel.py",
-  ".claude/skills/loop-codex",
-  ".claude/hooks/loop_command_interceptor.py",
-  "project-control/reports/M0-T110-codex-channel.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks/agent_dispatch_guard.py",
-  ".claude/hooks/readonly_agent_guard.py",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-28T18:29:19.311661+00:00",
- "updated_at": "2026-08-28T18:29:19.549109+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-28T18:29:19.312476+00:00"
+  "task_id": "M0-T110",
+  "title": "D-024 Amendment 8 unit K: persistent same-terminal Codex-only discussion channel (/loop-codex)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 8 (R233-R240 + R231/R232/R246/R248/R249): user-invoked /loop-codex new/continue/show/promote/close surface over the existing user-only skill + UserPromptSubmit interception architecture; intercepted commands blocked+erased before Fable with zero-context proof on the installed version or the truthful documented fallback (never /btw-equivalence without measured proof, R233); per-turn bounded context (durable discussion summary, bounded recent exchanges, fresh supervisor/campaign/task/checkpoint/health state, evidence references, read-only deep inspection) reusing evidence-packet/redaction/token-budget/frozen-identity/read-only Codex machinery; closed disposition vocabulary ADVICE_ONLY/QUEUE_NEXT_BOUNDARY/REVISE_CURRENT_TASK/PROPOSE_NEW_TASK/URGENT_PAUSE/STOP_FOR_OWNER with no automatic Fable-instruction changes and owner-gated promotion. Supervisor-freeze qualifying evidence: D-024-R232/R234.",
+  "business_reason": "Owner-required capability before continuous-mode activation (Amendment 8, R232).",
+  "inputs": [],
+  "outputs": [
+    "codex discussion channel modules under tools/agent_supervisor",
+    ".claude/skills/loop-codex/SKILL.md (user-only, disable-model-invocation)",
+    "tools/test_agent_supervisor_codex_channel.py",
+    "project-control/reports/M0-T110-codex-channel.md"
+  ],
+  "dependencies": [
+    "M0-T096"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_codex_channel.py",
+    ".claude/skills/loop-codex",
+    ".claude/hooks/loop_command_interceptor.py",
+    "project-control/reports/M0-T110-codex-channel.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks/agent_dispatch_guard.py",
+    ".claude/hooks/readonly_agent_guard.py",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 5,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-28T18:29:19.311661+00:00",
+  "updated_at": "2026-08-28T19:44:56.974066+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-28T18:29:19.312476+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-28T19:44:56.972061+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "Unit K claimed at seq-23 NEXT (G0 PASS at 8fc8a5b; resolver ok=true 13 applicable ids R231-R240/R246/R248/R249). Owner resume prompt 2026-08-28 classified citation-only (no new requirement; Amendment 8 already captured, validator EXIT=0 at capture). Next: prove-first over the unit-G operator-channel pack (skill+UserPromptSubmit interception, codex_reviewer read-only contract, evidence-packet/redaction/token-budget, durable_state CAS), then /loop-codex design+implementation. (D-024-R232/R234)"
+    }
+  ]
 }
