@@ -16,8 +16,11 @@ Supervisor-freeze qualifying evidence: **D-024-R105**.
    after all suites finished; original restored and baseline re-verified;
    mutant list in report §4.3). No survivors, no equivalent-mutant analysis owed.
 4. **Modularity** — `python tools/modularity_check.py --check`: **0 failures**;
-   no warning on either new file (repair_gate.py sits below the 600-SLOC warn
-   threshold). Cohesion judgment recorded in report §4.3.
+   `repair_gate.py` emits a `warn review_signal` (625 SLOC > the 600 warn
+   threshold; below the 750 justify and 1,000 hard thresholds). Cohesion
+   judgment recorded in report §4.3. CORRECTED in the consolidated round
+   (G3-F1/G4-LOW-1): the original "no warning" wording came from a pre-`git add`
+   run that excluded the untracked file from selection.
 5. **Lint** — ruff 0.13.0 (the CI-pinned version): **0 findings on both new
    files**. The 67 pre-existing whole-tree findings are in files this task does
    not touch and outside the CI lint scope (CI's ruff job runs in `services/api`).

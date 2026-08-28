@@ -125,8 +125,9 @@ FLOW = `test_agent_supervisor_github_flow.py`, POLICY =
 
 ### 4.2 Deliverables
 
-- `tools/agent_supervisor/repair_gate.py` (NEW, the pack §0 module; below the
-  600-SLOC modularity warn threshold): R076 `RepairRecord` + 8 named predicates;
+- `tools/agent_supervisor/repair_gate.py` (NEW, the pack §0 module; **625 SLOC** —
+  above the 600 warn signal, below the 750 justify and 1,000 hard thresholds;
+  cohesion judgment recorded in §4.3): R076 `RepairRecord` + 8 named predicates;
   R078 closed 6-question checkpoint set + unit-H1 disposition pattern (complete
   answers never auto-accept); R077 `CompatibilityException` (one typed refusal per
   missing field; expiry from injected clock/milestone facts only, undecidable
@@ -155,8 +156,14 @@ FLOW = `test_agent_supervisor_github_flow.py`, POLICY =
   verdict; M8 expiry boundary `>` for `>=`; M9 drip threshold widened; M10
   owner-hold precedence dropped; M11 commit citation unchecked; M12 review
   validity always true.
-- `python tools/modularity_check.py --check`: failures 0; no warning on either
-  new file. `ruff check` on both new files: clean (0.13.0). The 67 pre-existing
+- `python tools/modularity_check.py --check`: **failures 0**; `repair_gate.py`
+  emits a `warn review_signal` (625 SLOC > the 600 warn threshold; below the 750
+  justify and 1,000 hard thresholds — a signal, not a failure; the cohesion
+  judgment below is the required record). CORRECTION (consolidated round after
+  G3-F1/G4-LOW-1/G5-INFO-2/DCV): an earlier producer run reported "no warning"
+  because it ran before `git add`, when the checker's file selection excluded the
+  then-untracked new module — the corrected result above is the reproducible one.
+  `ruff check` on both new files: clean (0.13.0). The 67 pre-existing
   whole-tree ruff findings are in files this task does not touch and are outside
   the CI lint scope (the CI ruff job runs `ruff check .` inside `services/api`).
 - Cohesion judgment (code-architecture item 6): `repair_gate.py` holds ONE
@@ -166,7 +173,23 @@ FLOW = `test_agent_supervisor_github_flow.py`, POLICY =
   closed typed records evaluated at the same seam; no I/O, no persistence, no
   external effects, mirroring `push_policy`'s pure-policy shape.
 
-### 4.4 Boundary confirmations
+### 4.4 Bootstrap Gate 0 attestation (session-conduct evidence, R125–R128)
+
+Recorded by the implementing session (added in the consolidated correction round
+for DCV evidence-parity with M0-T093):
+
+- **Launch root (R125):** `git rev-parse --show-toplevel` =
+  `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24` — the session's primary cwd IS the
+  worktree root; branch `control/D-024-fable-codex-loop`; start HEAD `11ad5c5`
+  (== origin tip after fetch); `git status --porcelain` empty (clean tree),
+  all verified BEFORE any write.
+- **MCP-clean (R126):** the live session's tool inventory contained **zero
+  `mcp__*` tools** (no MCP servers/connectors attached; deferred-tool listing
+  enumerated and checked at session start).
+- **R127/R128:** not triggered — both checks passed before any write, and no
+  failed-start session's uncommitted work was adopted (clean seq-21 seam).
+
+### 4.5 Boundary confirmations
 
 - SHADOW-ONLY: no subprocess/network/effect execution anywhere in the new code;
   E6 exercises `GitHubFlow` strictly through the injected fake runner and a

@@ -805,6 +805,12 @@ def checkpoint_section(
     prose is a transmission), and the mechanical checkpoint outcome. It carries no
     verdict of its own: acceptance stays with `repair_gate_disposition` after the
     independent review.
+
+    Redaction contract: only the free-prose surfaces (finding details, answers)
+    are redacted HERE; identity/key fields (task_id, defect_id, question keys)
+    rely on `evidence.build_packet`'s whole-packet `redact_structure` backstop -
+    route this section through `build_packet(extra_sections=...)`, never serialize
+    it directly to an external sink.
     """
     return {
         "schema_version": REPAIR_GATE_SCHEMA_VERSION,
