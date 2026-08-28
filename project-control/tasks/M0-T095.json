@@ -52,12 +52,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 15,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T06:37:44.871535+00:00",
+  "updated_at": "2026-08-28T07:21:26.744545+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -74,6 +74,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit H2 STAGED to the claim+G0+scenario-pack seam (rotate-at-seam ceiling D-010 R113/R114; the same pattern that staged units F, G, and H1). Applicable set 46 requirements (R076-R078 root-cause core, R090/R091 GitHub-effect core, R105/R112/R114, + standing conduct/identity/testing set; evaluate_task_refs ok=true). Reuse boundary mapped (report section 0): github_flow Tier A/B/D + S5.5 merge conditions as the 16.8 verification target; external_effects exactly-once journal; push_policy hard-denies; codex_reviewer/review_packet path carries the R078 checkpoint questions; code_graph for unreachability evidence; unit-H1 disposition/typed-error patterns; freeze-citation convention. Genuine gaps = repair_gate.py (RepairRecord protocol + R078 question set + patch-stacking rejection + R077 CompatibilityException with expiry-blocks-acceptance) + thin review-packet wiring + unproven 16.8 cases only (prove-first mapping table required) + the 16.6/16.8 matrices as tools/test_agent_supervisor_repair_gate.py. Scenario pack T1-T9 + E1-E14 recorded (report section 1). NO implementation this session; successor implements from the frozen pack with fresh context. Supervisor-freeze qualifying evidence: D-024-R105."
+    },
+    {
+      "at": "2026-08-28T07:14:28.913562+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Unit H2 implemented from the frozen pack at cef5ded (deliverable 1e86670): prove-first 16.8 mapping table (report section 4.1, executable register); repair_gate.py (R076 RepairRecord + R078 closed question set + patch-stacking rejection + R077 CompatibilityException expiry-blocks-acceptance + R091 identity/round discipline + E10/E11 effect-free PR classification + R017/E13 freeze-citation validator + record-only packet wiring); tools/test_agent_supervisor_repair_gate.py 78/78; supervisor suite chunked 2563/0 (>=1165 baseline); mutation 12/12 killed; modularity 0 failures; ruff clean on new files. SHADOW-ONLY, injected runners; R595 untouched. Next: evidence map + submit + 4-reviewer gates + DCV (46 rows). Supervisor-freeze qualifying evidence: D-024-R105."
     }
   ]
 }
