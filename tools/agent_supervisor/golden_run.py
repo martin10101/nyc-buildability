@@ -169,7 +169,9 @@ FAKE_CLAUDE_GOLDEN = textwrap.dedent('''
         env.update({"GIT_AUTHOR_NAME": "golden-run-fixture",
                     "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
                     "GIT_COMMITTER_NAME": "golden-run-fixture",
-                    "GIT_COMMITTER_EMAIL": "fixture@example.invalid"})
+                    "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+                    "GIT_CONFIG_GLOBAL": os.devnull,
+                    "GIT_CONFIG_SYSTEM": os.devnull})
         out = subprocess.run(["git", *argv], cwd=worktree, check=True,
                              capture_output=True, text=True, env=env)
         return out.stdout.strip()

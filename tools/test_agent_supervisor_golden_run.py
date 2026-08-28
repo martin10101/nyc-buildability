@@ -400,6 +400,13 @@ class WatcherCaptureTests(WatcherBase):
                    "sanitized_outcome")
 
     def test_capture_is_idempotent_and_carries_the_five_fields(self) -> None:
+        # One source per DISCOVERY BRANCH (G4 MINOR-1): refusal, usage-limit
+        # quota, provider-abort availability, outage availability, model-change
+        # turnover, and a worker-turnover transition - so a broken or renamed
+        # source key can never silently un-capture an event kind.
+        from tools.agent_supervisor.outage_policy import RETRY_KEY
+        from tools.agent_supervisor.worker_turnover import (
+            REASON_TURNOVER_RECORDED)
         self.refusal_record("d1")
         self.journal.set_state("usage_limit_record",
                               {"limit_class": "weekly", "recorded_at_utc": "t",
@@ -407,17 +414,33 @@ class WatcherCaptureTests(WatcherBase):
         self.journal.set_state(rot.PROVIDER_ABORT_KEY,
                               {"unit_id": "u1", "recorded_at_utc": "t",
                                "reason_code": "provider_enforced_abort"})
+        self.journal.set_state(RETRY_KEY,
+                              {"cause": "network", "reason": "timeout",
+                               "attempt": 1, "recorded_at_utc": "t"})
+        self.journal.set_state("model_change_audit",
+                              [{"change": "claude-fable-5->claude-opus-4-8",
+                                "at_utc": "t"}])
+        self.journal.record_transition(
+            state_from="CLAUDE_RUNNING", state_to="PAUSED_RECOVERY",
+            trigger="unsafe_condition", run_id="run-w2",
+            detail={"reason": REASON_TURNOVER_RECORDED, "cycle": 1,
+                    "turnover": {"reason_code": REASON_TURNOVER_RECORDED}})
         first = lo.record_observations(self.journal,
                                        session_provenance="injected")
-        self.assertEqual(first["rows_written"], 3)
+        self.assertEqual(first["rows_written"], 6)
         again = lo.record_observations(self.journal,
                                        session_provenance="injected")
         self.assertEqual(again["rows_written"], 0,
                          "a re-scan must be a counted no-op (CAS)")
-        for row in lo.observation_rows(self.journal):
+        rows = lo.observation_rows(self.journal)
+        for row in rows:
             for field in self.R226_FIELDS:
                 self.assertIn(field, row)
             self.assertIn(row["observed_event_type"], lo.EVENT_TYPES)
+        self.assertEqual({row["observed_event_type"] for row in rows},
+                         set(lo.EVENT_TYPES),
+                         "every event kind in the closed vocabulary is "
+                         "captured through its own discovery branch")
 
     def test_register_rows_are_sanitized_at_the_boundary(self) -> None:
         secret = "api_key=sk-" + "a" * 40

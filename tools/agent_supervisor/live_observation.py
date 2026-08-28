@@ -265,18 +265,24 @@ def build_observation_record(source: Mapping[str, Any], *,
         raise ObservationError(f"unknown event_type {event_type!r}")
     payload = source.get("payload")
     payload = dict(payload) if isinstance(payload, Mapping) else {}
+    # Every scalar copied from a source record passes the same boundary
+    # sanitizer as the outcome payload (G5 INFO-2 defense-in-depth) - none is
+    # attacker-controllable today, but the register never relies on that.
     sanitized = sanitize_structure({
         "classification_decision": _classification_of(event_type, payload),
         "selected_response": _selected_response_of(event_type, payload),
         "outcome": payload,
+        "installed_version_shape": installed_version,
+        "applicable_shape": str(payload.get("matched_shape", "") or ""),
+        "source_record_key": str(source.get("source_record_key", "")),
     })
     record = {
         "schema": SCHEMA,
         "kind": "pending_live_observation",
         "observation_digest": observation_digest(source),
         "observed_event_type": event_type,
-        "installed_version_shape": installed_version,
-        "applicable_shape": str(payload.get("matched_shape", "") or ""),
+        "installed_version_shape": sanitized.value["installed_version_shape"],
+        "applicable_shape": sanitized.value["applicable_shape"],
         "applicable_shape_verified_live": bool(
             payload.get("shape_verified_live", False)),
         "classification_decision": sanitized.value["classification_decision"],

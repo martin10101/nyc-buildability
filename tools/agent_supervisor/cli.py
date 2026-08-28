@@ -3055,18 +3055,22 @@ def cmd_start(args: argparse.Namespace) -> int:
         # left behind (refusal/quota/availability/model-turnover) and CAS-
         # persists at most one sanitized register row per distinct event -
         # read-only over existing records, no prompt, no worker message.
-        # Bounded: a watcher failure is audited and never breaks `start`.
+        # Bounded: a watcher failure is audited and never breaks `start`, and
+        # the nested finally keeps lock/journal cleanup unconditional even if
+        # a BaseException (interrupt) lands inside the scan (G5 INFO-1).
         try:
-            from .live_observation import record_observations
-            record_observations(journal, session_provenance="live")
-        except Exception as watch_error:
             try:
-                audit.append("live_observation_scan_failed",
-                             detail={"error": type(watch_error).__name__})
-            except Exception:
-                pass
-        lock.release()
-        journal.close()
+                from .live_observation import record_observations
+                record_observations(journal, session_provenance="live")
+            except Exception as watch_error:
+                try:
+                    audit.append("live_observation_scan_failed",
+                                 detail={"error": type(watch_error).__name__})
+                except Exception:
+                    pass
+        finally:
+            lock.release()
+            journal.close()
 
     lines = [f"mode:            {args.mode}",
              f"classification:  {outcome.classification} ({outcome.reason_code})",
