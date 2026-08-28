@@ -1,0 +1,36 @@
+{
+  "schema": "guardrail_refusal_shapes/v1",
+  "directive": "D-024",
+  "task": "M0-T093",
+  "recorded": "2026-08-28",
+  "claude_version": "2.1.248 (Claude Code)",
+  "confidence": "documented",
+  "live_capture": {
+    "status": "pending-owner-C1",
+    "note": "No live Fable 5 guardrail refusal has been captured on this workstation. Every recognized shape below is a DOCUMENTED CANDIDATE (verified_live=false): it may classify for record-intent purposes, but live bridge actuation additionally requires a measured-live shape (owner-approved exact-command C1 canary, R192/R197 pattern) AND the R595 activation - both absent on this build. Unrecognized or merely refusal-looking output NEVER actuates (conservative, D-024-R068).",
+    "upgrade_procedure": "capture the exact CLI bytes (stream events, stderr, exit code) from an owner-approved live refusal canary, add/flip the matching shape entry with verified_live=true plus the exact cli_version, and record the capture provenance here - no other code change (mirrors the claude_runner QUOTA_EXHAUSTION_FIXTURES flip discipline)."
+  },
+  "recognized_shapes": [
+    {
+      "name": "structured_stop_reason_refusal",
+      "structured_value": "refusal",
+      "structured_keys": ["stop_reason", "stopReason", "subtype", "reason"],
+      "text_regex": null,
+      "verified_live": false,
+      "cli_version": "UNCAPTURED - no live guardrail refusal recorded on this build; base CLI 2.1.248",
+      "provenance": "The Anthropic Messages API documents 'refusal' as a typed stop_reason value (the model declined to answer for safety reasons). This shape recognizes that exact typed value under a stop/reason-class key, one nested error level deep, mirroring model_turnover's structured-code scan. It is the narrowest defensible documented shape: free-text refusal wording is deliberately NOT a recognized shape until an owner-gated C1 live capture proves the installed CLI's exact refusal bytes."
+    }
+  ],
+  "unrecognized_similar_examples": [
+    {
+      "name": "free_text_refusal_wording",
+      "example": "I can't help with that request.",
+      "expected": "AMBIGUOUS_FAIL_CLOSED (refusal-looking but not a recognized shape; held for review, never actuated)"
+    },
+    {
+      "name": "free_text_unable_wording",
+      "example": "I'm unable to assist with this task.",
+      "expected": "AMBIGUOUS_FAIL_CLOSED (refusal-looking but not a recognized shape; held for review, never actuated)"
+    }
+  ]
+}

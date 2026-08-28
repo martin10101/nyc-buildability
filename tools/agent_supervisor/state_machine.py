@@ -70,6 +70,19 @@ AWAIT_CHILDREN = "AWAIT_CHILDREN"            # R029 "awaiting/reconciling child 
 CODEX_OUTAGE_BACKOFF = "CODEX_OUTAGE_BACKOFF"  # R033 transient-outage backoff
 NO_ELIGIBLE_WORK = "NO_ELIGIBLE_WORK"        # R029/R033 bounded idle
 
+# D-024 section-8 Phase-E additions (M0-T093; supervisor-freeze qualifying
+# evidence D-024-R103). Two distinctions no existing state expresses:
+# a mechanically RESTRICTED 4.8 continuity bridge is not CLAUDE_RUNNING (the
+# bridge may only finish/collect/checkpoint/handoff, R070 step 3), and a fresh
+# Fable re-entry carrying a RE-PRESENTED refused request under the durable
+# two-attempt cap is not an ordinary START_FRESH_SESSION successor (R071).
+# Both are journaled on every entry/exit like every other state. These states
+# exist for the R595-activated path and are exercised deterministically in
+# tests; on this build the loop's refusal seam records intent and pauses
+# (SHADOW-ONLY) without entering them.
+GUARDRAIL_BRIDGE = "GUARDRAIL_BRIDGE"        # R070 bounded 4.8 continuity bridge
+REPRESENT_FABLE = "REPRESENT_FABLE"          # R071 re-presented Fable re-entry
+
 STATES: tuple[str, ...] = (
     IDLE, RECOVER_BOOT, PREFLIGHT, START_CLAUDE, CLAUDE_RUNNING,
     ROTATION_PENDING, CHECKPOINT_RECEIVED, COLLECT_EVIDENCE, CODEX_REVIEW,
@@ -78,6 +91,7 @@ STATES: tuple[str, ...] = (
     SCHEDULED_RESUME, PREPARE_ROTATION, VERIFY_HANDOFF, START_FRESH_SESSION,
     COMPLETE, EMERGENCY_STOPPED, HALTED,
     GRACEFUL_STOPPING, AWAIT_CHILDREN, CODEX_OUTAGE_BACKOFF, NO_ELIGIBLE_WORK,
+    GUARDRAIL_BRIDGE, REPRESENT_FABLE,
 )
 
 #: States in which the supervisor performs NO provider work and NO side effects
@@ -330,6 +344,52 @@ TRANSITIONS: tuple[Transition, ...] = (
        "Emergency stop while idle."),
     _t(NO_ELIGIBLE_WORK, HALTED, "owner_halt",
        "The owner halted the run while it was idle."),
+
+    # --- D-024 unit H1 additions (M0-T093; D-024-R103) -----------------------
+    # The guardrail-refusal bridge (R068-R073): entered ONLY on a narrowly
+    # recognized refusal with the exact allowlisted continuation option
+    # (R069); every edge is journaled. Live actuation of these paths stays
+    # owner-gated (R595 + measured-live C1 shape); the deterministic table is
+    # complete now so activation changes nothing structural.
+    _t(CLAUDE_RUNNING, GUARDRAIL_BRIDGE, "guardrail_refusal_recognized",
+       "A narrowly recognized Fable guardrail refusal (R068) with the EXACT "
+       "allowlisted continue-with-4.8 option (R069): the bounded continuity "
+       "bridge begins - finish/collect/checkpoint/handoff only (R070)."),
+    _t(GUARDRAIL_BRIDGE, PREPARE_ROTATION, "bridge_first_seam_reached",
+       "The bridge finished the smallest atomic operation, reconciled bounded "
+       "children, and validated its checkpoint: retire at the FIRST safe seam "
+       "through the standard rotation/handoff machinery toward a fresh Fable 5 "
+       "session (R070 step 4); it never continues past the seam."),
+    _t(GUARDRAIL_BRIDGE, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop interrupts the bridge; evidence preserved."),
+    _t(GUARDRAIL_BRIDGE, PAUSED_RECOVERY, "unsafe_condition",
+       "A S4.5 synchronous-stop condition fired while the bridge was landing."),
+    _t(START_FRESH_SESSION, REPRESENT_FABLE, "represent_refused_request",
+       "The fresh Fable 5 session is ready and a durably recorded refused "
+       "request is pending: it receives the semantic-preserving re-presented "
+       "request (R071/R073) and the digest-bound durable attempt counter "
+       "increments (at most two attempts, surviving restart)."),
+    _t(REPRESENT_FABLE, CLAUDE_RUNNING, "representation_accepted",
+       "Fable accepted the re-presented request: the durable counter records "
+       "the success and the normal working loop resumes (R071)."),
+    _t(REPRESENT_FABLE, GUARDRAIL_BRIDGE, "refusal_repeated_within_cap",
+       "The re-presented request was refused again and the durable counter is "
+       "below the two-attempt cap: one more bounded bridge carries continuity "
+       "to the next seam for the second and FINAL fresh re-entry (R071)."),
+    _t(REPRESENT_FABLE, START_CLAUDE, "refusal_cap_lower_tier",
+       "Both fresh Fable attempts received the recognized refusal and the "
+       "already-configured lower-tier model passed its stricter workload-fit/"
+       "health profile for the SAME bounded task (R072): continue there, "
+       "returning to Fable 5 at the next safe seam."),
+    _t(REPRESENT_FABLE, WAIT_FOR_OWNER, "refusal_cap_blocked",
+       "Both fresh Fable attempts received the recognized refusal and a live "
+       "higher-precedence policy forbids (or nothing is configured for) the "
+       "narrow lower-tier fallback: blocked, citing the exact conflict for "
+       "the owner to reconcile (R072)."),
+    _t(REPRESENT_FABLE, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop during a re-presentation attempt."),
+    _t(REPRESENT_FABLE, PAUSED_RECOVERY, "unsafe_condition",
+       "A S4.5 synchronous-stop condition fired during a re-presentation."),
 
     # --- exits ---------------------------------------------------------------
     _t(COMPLETE, IDLE, "run_closed",

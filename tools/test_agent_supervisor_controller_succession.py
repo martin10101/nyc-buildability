@@ -146,7 +146,10 @@ class S1SectionThreeStateSet(JournalCase):
             self.assertIn(state, sm.STATES)
             self.assertNotIn(state, sm.BLOCKING_STATES)
             self.assertNotIn(state, sm.TERMINAL_STATES)
-        self.assertEqual(len(sm.STATES), 27)
+        # 27 at unit F; +2 unit-H1 Phase-E states (GUARDRAIL_BRIDGE,
+        # REPRESENT_FABLE) — M0-T093, D-024-R070/R071/R103; covered in
+        # tools/test_agent_supervisor_guardrail_bridge.py.
+        self.assertEqual(len(sm.STATES), 29)
 
     def test_every_new_edge_is_walkable_and_documented(self) -> None:
         new_states = {sm.GRACEFUL_STOPPING, sm.AWAIT_CHILDREN,
