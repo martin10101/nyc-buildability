@@ -69,6 +69,17 @@ D-024-R185|PASS|This-unit share, boundary stated: existing suite stays green (co
 D-024-R188|PASS|Campaign execution rules followed: exactly one cohesive writer task claimed (M0-T093), fresh producer context (seq-20 successor), continuity advanced at the seam (campaign next_action updated), no arbitrary token ceilings in worker-facing text (S16), commit messages cite the qualifying evidence (R017).
 D-024-R177|PASS|This-unit share, boundary stated: unit H's refusal-bridge leg delivered as H1 (guardrail_refusal.py + refusal_bridge.py + states + seam + matrix). Boundary: the remaining unit-H items (root-cause repair gate, exact-once GitHub effects, graph-regression) are explicitly M0-T095's H2 packet, not claimed here — correctly partitioned, no gap masked.
 
+## Delta attestation (same verifier, follow-up; saved VERBATIM by the orchestrator)
+
+The orchestrator's assembly check found the enumerated list above carries 48 rows —
+D-024-R165 was inadvertently omitted (the header count of 49 and the R143 row's
+fallback_model_scope citation already reflected it). The SAME directive-compliance-verifier
+agent was resumed with its context intact and returned:
+
+D-024-R165|PASS|refusal_bridge.py fallback_model_scope (lines 779-795) returns native_fallback_scope="supported availability/overload cases only" with native_fallback_governs_guardrail_refusals=False and native_fallback_governs_quota_exhaustion=False as fixed constants that do NOT vary with the native_fallback_configured flag; S15FallbackModelBoundaryTests.test_native_fallback_scope_is_fixed_regardless_of_config (tools/test_agent_supervisor_guardrail_bridge.py:812-819) reproduces this for configured in (True, False), asserting both governs flags stay False and the scope names availability/overload — proving native fallbackModel never silently replaces the custom guardrail-refusal or quota policies.
+
+Context: this row was inadvertently omitted from my enumerated list (my header count of 49 and R143's fallback_model_scope citation already reflected it); it was verified against the same frozen identity and all other rows stand — overall verdict remains PASS.
+
 ## Overall verdict: PASS
 
 All 49 applicable requirements reproduced SATISFIED against primary evidence (source code at the frozen SHA, tests I re-ran, git objects, gh read, and control-plane records). No requirement is VIOLATED or UNVERIFIABLE. Share/umbrella requirements are ruled on this unit's proven share with the boundary stated per line; owner-gated residuals (C1 live canary `verified_live=false`; live continue-with-4.8 actuation behind R595 + measured-live gate) are honestly flagged, mechanically enforced (assert_actuation_permitted), and do not block the applicable set. Prohibited-action posture is clean: PR #241 OPEN/unmerged, unit commits absent from `origin/main`, SHADOW-ONLY (no actuation), nothing merged/deployed/installed, diff strictly in scope, modularity + directive validator pass.
