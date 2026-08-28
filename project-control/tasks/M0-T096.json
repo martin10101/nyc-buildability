@@ -56,11 +56,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 15,
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T17:06:08.711091+00:00",
+  "updated_at": "2026-08-28T18:55:26.200905+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -84,6 +84,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit I STAGED: reuse boundary + 24-scenario matrix committed (M0-T096-golden-run-evidence.md sections 0-3). Prove-first verdicts: 16.9 b/c/d/j/k + R031/R032 + R186 steps 1,3-7,9-11,13-15 + R113 (minus on-demand-after-compact) fully proven by existing packs (cited); genuine gaps = golden-run pack (16.9 m + h soak + a/e/f/g/i compositions + R186 steps 2/12 + R118 ladder register + R113 compact-retrieval) + live_observation.py watcher/register (R224-R227) + DISCOVERED DEFECT: H1 GuardrailBridgeIntegration never constructed in cli._run_loop (refusal seam inert in production start; R226 unobservable) - wiring fix in scope. Golden run mode: limited-auto with explicit per-launch enable inside disposable harness (only no-human-continuation forwarding mode; bounded_mode precedent). Next: implement."
+    },
+    {
+      "at": "2026-08-28T18:55:26.200905+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Unit I IMPLEMENTED (deliverable 5ff7f08; reports through this commit): golden_run.py (407 ln harness: disposable checkout, exact-command argv, sequenced fake providers with real git effects, INJECTED marker) + live_observation.py (451 ln watcher/register: CAS-idempotent, closed injected/live_candidate vocabulary, no verified_live write path) + cli.py wiring (H1 GuardrailBridgeIntegration constructed in _run_loop - discovered integration defect fixed - + R226 epilogue scan) + test_agent_supervisor_golden_run.py (40/40: two-unit golden run crossing rotation from exact owner command, injected controller restart exact-once, refusal/quota/ambiguous/double-start faults, watcher matrix, executable 16.9/R186/R118 registers). Suites foreground-chunked: supervisor 2584 passed/2 skipped/0 failed; non-supervisor 373+2(rerun after mid-suite Amendment-8 registry race)+184 passed/1 skipped. Mutation 12/12 killed. Ruff clean; modularity failures 0; validator EXIT=0. Mid-unit: D-024 Amendment 8 captured (2be8031, rows R231-R249, tasks M0-T110/T111/T112; M0-T096 scope unchanged per R246; activation-package presentation deferred behind R247). Next: G2 self-check, submit, 4-reviewer gates, DCV (83 rows), accept; R187 HOLD."
     }
   ]
 }
