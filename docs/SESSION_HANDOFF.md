@@ -8,11 +8,16 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 ## Handoff — seq 23: M0-T096 (unit I) ACCEPTED; D-024 Amendment 8 captured; NEXT = M0-T110
 
-1. **Generated:** 2026-08-28 ~20:00Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (the seq-22 successor). **Turnover reason:** the standard D-010 R113/R114 ~400k
-   rotate-at-seam ceiling, landed at the clean seq-23 acceptance seam (same pattern as
-   seq 20→21→22). **Sub-agents in flight:** none (all four reviewers + their delta
-   re-attestations completed naturally; reports committed verbatim).
+1. **Generated:** 2026-08-28 ~20:00Z (header finalized ~20:45Z) · orchestrator session
+   `session_01HfptKuEs3RDxaxsSHJjc7t` (the seq-22 successor). **Turnover reason
+   (verbatim):** owner invoked `/session-handoff` with no stated reason — landed at the
+   clean seq-23 acceptance seam already reached under the standard D-010 R113/R114
+   rotate-at-seam ceiling (same pattern as seq 20→21→22→23). **Sub-agents in flight:**
+   none (all four reviewers — G3 code-reviewer, G4 qa-engineer, G5 security-reviewer,
+   DCV — completed their bounded assignments AND their delta re-attestations naturally;
+   reports committed verbatim; no producer or background task is running). **CI on the
+   tip `5615d3e`: all checks green** (confirmed complete; the corrected-identity wave
+   `6dede15` was 20/20 green, and the reviewed wave `1a935fb` was 20/20 green).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **23**).
 3. **M0-T096 (unit I) = ACCEPTED** (deliverable `5ff7f08`, corrections `635fac5`, gate wave
