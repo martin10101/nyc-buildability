@@ -8,11 +8,15 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 ## Handoff — seq 22: M0-T095 (unit H2) ACCEPTED; D-024 Amendment 7 captured; NEXT = M0-T096 (unit I)
 
-1. **Generated:** 2026-08-28T08:05Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (the seq-21 successor). **Turnover reason:** the standard D-010 R113/R114 ~400k
-   rotate-at-seam ceiling was reached at the clean acceptance seam (same pattern as
-   seq 19→20→21). **Sub-agents in flight:** none (all four reviewers returned, delta
-   attestations landed, reports committed verbatim).
+1. **Generated:** 2026-08-28T08:05Z (header finalized ~08:15Z) · orchestrator session
+   `session_01HfptKuEs3RDxaxsSHJjc7t` (the seq-21 successor). **Turnover reason
+   (verbatim):** owner invoked `/session-handoff` with no stated reason — landed at the
+   clean seq-22 acceptance seam already reached under the standard D-010 R113/R114
+   rotate-at-seam ceiling (same pattern as seq 19→20→21). **Sub-agents in flight:** none
+   (all four reviewers — G3 code-reviewer, G4 qa-engineer, G5 security-reviewer, DCV —
+   completed their bounded assignments naturally, returned delta attestations, and their
+   reports are committed verbatim; no producer or background task is running; CI on the
+   tip `dc2bc04` is 20/20 green).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **22**, frozen f26771b).
 3. **M0-T095 (unit H2) = ACCEPTED** (deliverable identity `a3030ba`; gates at reports commit
