@@ -297,6 +297,19 @@ class S2StatusSection14(OperatorChannelBase):
         self.assertIn("unknown", out)          # honest absence, rendered
         self.assertNotIn("token health:      0", out)  # never coerced to zero
 
+    def test_status_json_is_redacted_like_every_transmission(self) -> None:
+        # Correction C1 (G3 MINOR-1 / G5 MINOR-1): a token-shaped string in
+        # the durable graceful-stop reason must be masked on the --json path
+        # exactly as on the concise path (built at runtime; never a literal).
+        fake_pat = "ghp_" + "z9Y8" * 5
+        code, _, _ = self.cli_run("graceful-stop", "--reason",
+                                  f"rotate {fake_pat} then stop")
+        self.assertEqual(code, 0)
+        code, out, _ = self.cli_run("status", "--json")
+        self.assertEqual(code, 0)
+        self.assertNotIn(fake_pat, out)
+        self.assertIn("REDACTED", out)
+
 
 # --------------------------------------------------------------------------
 # S3 - durable-before-ack controls; graceful-stop verb (R027/R036/R086)
@@ -817,6 +830,34 @@ class S12HookFailClosed(unittest.TestCase):
         self.assertEqual(payload["decision"], "block")
         self.assertIn("SUPERVISOR_CODEX_EXECUTABLE", payload["reason"])
         self.assertIn("python -m tools.agent_supervisor ask", payload["reason"])
+
+    def test_loop_ask_question_rides_behind_an_end_of_options_separator(
+            self) -> None:
+        # Correction C3 (G5 ADVISORY-2): a dash-leading question is still the
+        # question, never an option - proven behaviorally by echoing the argv
+        # the hook actually built through a fake supervisor.
+        root = _fake_supervisor_root(self.tmp, """
+            import json, sys
+            print(json.dumps(sys.argv[1:]))
+        """)
+        # The hook's display path imports bound_answer from the TARGET root;
+        # give the fake root a pass-through stub so the echo survives (the
+        # real bound_answer is behaviorally tested in S6).
+        (root / "tools" / "agent_supervisor" / "operator_ask.py").write_text(
+            "def bound_answer(text):\n    return text\n", encoding="utf-8")
+        code, out = run_hook(
+            {"hook_event_name": "UserPromptSubmit", "cwd": str(root),
+             "prompt": "/loop-ask --show is this an option?"},
+            env_extra={"SUPERVISOR_CODEX_EXECUTABLE": "fake-codex",
+                       "SUPERVISOR_CONFIG": "fake-config.toml",
+                       "SUPERVISOR_MODEL_SELECTION": "fake-selection.toml"})
+        self.assertEqual(code, 0)
+        payload = json.loads(out)
+        self.assertEqual(payload["decision"], "block")
+        echoed = json.loads(payload["reason"].splitlines()[-1])
+        separator = echoed.index("--")
+        self.assertEqual(echoed[separator + 1], "--show is this an option?")
+        self.assertEqual(echoed[0], "ask")
 
     def test_a_hung_supervisor_is_killed_and_reported(self) -> None:
         root = _fake_supervisor_root(self.tmp, """

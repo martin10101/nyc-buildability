@@ -1535,7 +1535,13 @@ def cmd_status(args: argparse.Namespace) -> int:
         }
 
     if args.json:
-        print(json.dumps(payload, indent=2))
+        # M0-T094 correction C1 (G3 MINOR-1 / G5 MINOR-1): stdout is a
+        # TRANSMISSION (M0-T079 C2 rule), and section14 newly routes durable
+        # owner text (e.g. the graceful-stop reason) through this path - so
+        # the JSON view obeys redaction exactly like emit_payload and the
+        # concise path.
+        print(json.dumps(redact_structure(payload).value, indent=2,
+                         default=str))
     else:
         print(f"state:            {payload['current_state']}")
         print(f"mode:             {payload['mode']}")

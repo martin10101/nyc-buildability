@@ -181,12 +181,15 @@ def main() -> int:
                    "--codex-executable <path> --config <path> "
                    "--model-selection <path>")
             return 0
-        # The question is ONE argv element - metacharacters, quotes, Unicode,
-        # and newlines are data, never shell (R087). The CLI's own
-        # sanitize_question applies its bounds and redaction.
+        # The question is ONE argv element after an explicit "--"
+        # end-of-options separator (G5 ADVISORY-2 hardening): a question
+        # beginning with "-" is still the question, never an option -
+        # metacharacters, quotes, Unicode, and newlines are data, never
+        # shell (R087). The CLI's own sanitize_question applies its bounds
+        # and redaction.
         argv = [sys.executable, "-m", "tools.agent_supervisor", "ask",
-                argument, "--codex-executable", exe, "--config", cfg,
-                "--model-selection", sel]
+                "--codex-executable", exe, "--config", cfg,
+                "--model-selection", sel, "--", argument]
     elif verb == "loop-stop" and argument:
         # The optional [reason] rides into the durable graceful-stop record.
         argv = [sys.executable, "-m", "tools.agent_supervisor",

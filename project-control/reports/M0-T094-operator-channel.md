@@ -4,7 +4,7 @@ Producer: fable-orchestrator-session (orchestrator). Supervisor-freeze qualifyin
 **D-024-R104** (Phase F; packet-named). Status: **IMPLEMENTED (deterministic core; §4 evidence)**
 — the seq-17 session staged this pack at a clean seam; the seq-18 successor session implemented
 from it unchanged (§0 reuse boundary held; §1 matrix delivered as
-`tools/test_agent_supervisor_operator_channel.py`, 51/51 PASS). The owner-gated C1 interception
+`tools/test_agent_supervisor_operator_channel.py`, 52/52 PASS). The owner-gated C1 interception
 canary (§2) remains pending; the honest second-terminal fallback is documented (§4.2/§4.4).
 
 ## 0. Reuse boundary (R018: prove existing architecture, extend — never duplicate)
@@ -122,7 +122,7 @@ controls do not re-run the MCP-clean probe.
 
 ### 4.3 Test + check evidence
 
-* `tools/test_agent_supervisor_operator_channel.py`: **51/51 PASS** — the full
+* `tools/test_agent_supervisor_operator_channel.py`: **52/52 PASS** — the full
   §1 matrix S1–S14 incl. R111's named cases (metacharacter/Unicode/quoted/
   multiline/empty/oversized questions, terminal-escape stripping both
   directions, runtime-built secret redaction, timeout single-request +
