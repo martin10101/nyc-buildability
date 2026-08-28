@@ -53,12 +53,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 15,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-27T23:49:25.372112+00:00",
+  "updated_at": "2026-08-28T03:24:04.693248+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -75,6 +75,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit G STAGED to the claim+G0+scenario-pack seam (rotate-at-seam ceiling D-010 R113/R114; same pattern that staged unit F at seq 16 and delivered it at seq 17). Applicable set 54 requirements (R104 Phase-F core, R034-R036 start/status/stop, R083-R089 operator surface + bridge security, R158/R159 thin skills + UserPromptExpansion, R111 section-16.5 matrix, R125-R128 Gate-0, R176). Reuse boundary mapped (report section 0): existing cli.py verb surface (start/status/stop/resume/watchdog/answer groups), refusals, NotificationSink, codex_reviewer read-only contract, unit-F stop_intent/epoch_lease/bootstrap_gate consumed; genuine gaps = ask operation, graceful-stop verb, section-14 status fields, 8 thin /loop-* skills, feature-detected interception hook, R035 alias doc. Scenario pack S1-S14 + owner-gated C1 live interception canary recorded (report section 1). NO implementation this session; successor implements from the frozen pack with fresh context. Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:23:53.005689+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "self_check",
+      "message": "Unit G implemented at f6edf11 (branch control/D-024-fable-codex-loop). Deliverables: operator_status.py + operator_ask.py + operator_channel_cli.py + durable_state.ask_by_id + operator_ask_answer schema + loop_command_interceptor.py hook + additive settings registration + 8 /loop-* skills + detection fixture (UserPromptSubmit selected; zero-context proof pending-owner-C1 with documented second-terminal fallback per R088). Tests: matrix 52/52 PASS; mutation 10/10 non-equivalent killed; regression 332 PASS; composed whole-suite 2971 passed / 3 skipped / 0 failed (M0-T094-full-suite-T1.txt). modularity 0 failures; ruff clean on touched files. Next authorized action: submit for the 4-reviewer gate cycle (G3/G4/G5 + DCV). Supervisor-freeze qualifying evidence: D-024-R104."
     }
   ]
 }
