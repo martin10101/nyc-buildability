@@ -96,6 +96,82 @@ get new tests. All effects remain SHADOW-ONLY (injected runners/fakes; R595 unto
   suites in foreground chunks; never run a mutation pass while a suite is in flight;
   `test_directive_compliance` by class groups.
 
-## 4. Evidence (populated during implementation — successor)
+## 4. Evidence (implementation session, seq 22)
 
-(pending — staging seam only)
+### 4.1 Prove-first 16.8 mapping table (R018/R114 — every case → its proof)
+
+This table is EXECUTABLE: `Section168RegisterTests` in
+`tools/test_agent_supervisor_repair_gate.py` verifies each citation against the
+cited file's actual source, so a renamed/deleted proof breaks the build. Files:
+FLOW = `test_agent_supervisor_github_flow.py`, POLICY =
+`test_agent_supervisor_policy.py`, THIS = `test_agent_supervisor_repair_gate.py`.
+
+| Case | Status | Proof (file :: test) |
+|---|---|---|
+| E1 branch/base/head identity | existing | FLOW :: `test_a_push_to_the_wrong_task_branch_is_denied`, `test_a_remote_identity_mismatch_is_denied`, `test_pr_creation_works_and_is_journaled` |
+| E2 protected/default write rejected | existing | FLOW :: `test_direct_main_push_is_hard_denied`, `test_force_push_is_hard_denied`; POLICY :: `test_push_to_main_and_force_push_are_denied_and_continue` |
+| E3 overlapping worktree writer rejected | existing | `test_agent_supervisor_bounded_contracts.py` :: `test_overlapping_write_scopes_cannot_both_obtain_leases`; `test_agent_supervisor_runtime_supervision.py` :: `test_parent_rotation_never_creates_overlapping_writers` |
+| E4 commit/push after required checks | existing | POLICY :: `test_authority_gating` (`review_not_passed` → never AUTO); FLOW :: `test_merge_refuses_on_a_failing_required_check` |
+| E5 remote-success/local-timeout reconciled | existing | FLOW :: `test_crash_mid_push_leaves_a_pending_effect_reconciled_not_retried`, `test_reconciling_a_proven_merge_confirms_it_without_duplication`, `test_a_second_merge_attempt_on_a_pending_effect_does_not_re_fire` |
+| E6 duplicate PR/comment/update idempotent | existing + 1 gap | FLOW :: `test_a_confirmed_push_is_not_pushed_again`, `test_a_repeated_begin_after_a_crash_reuses_the_same_action_id`; gap (PR-create) → THIS :: `test_a_duplicate_pr_create_is_idempotent` (exercises the EXISTING `GitHubFlow` guard — no new machinery) |
+| E7 identity change invalidates review | GAP | THIS :: `test_an_identity_change_invalidates_the_prior_review` (`repair_gate.review_still_valid`) |
+| E8 no credentials anywhere | existing | FLOW :: `test_a_raw_secret_in_findings_is_refused`, `test_condition_logging_is_routed_through_redaction`; POLICY :: `test_a_secret_scan_finding_stops_synchronously` |
+| E9 Codex cannot stage/commit/push/merge | existing | `test_agent_supervisor_reviewer.py` :: `test_only_enumerated_read_only_git_commands_are_allowed` (R022) |
+| E10 pre-existing PRs never merged | existing + classification | FLOW :: `test_merge_refuses_when_not_authorized`; THIS :: `test_a_pre_existing_pr_carries_no_actions`, `test_pr_241_is_classified_as_deliberately_unmerged`, `test_the_existing_flow_refuses_an_unauthorized_merge` |
+| E11 held/stale PRs classified separately | GAP | THIS :: `test_the_pr_classification_vocabulary_is_closed`, `test_a_long_inactive_foreign_pr_is_flagged_stale_not_actioned`, `test_every_classification_is_effect_free` (`repair_gate.classify_pr`, closed 4-class vocabulary, no action ever) |
+| E12 failed required checks block | existing | FLOW :: `test_merge_refuses_on_a_failing_required_check`, `test_merge_refuses_when_no_required_check_ran` |
+| E13 freeze-citation fixture | GAP | THIS :: `test_an_uncited_supervisor_change_record_is_rejected` (+ packet-only, cited-ok, non-supervisor-exempt directions) |
+| E14 consolidated correction round | GAP | THIS :: `test_a_consolidated_single_round_is_the_valid_shape`, `test_drip_feeding_per_finding_identity_churn_is_refused` (`repair_gate.evaluate_correction_round`) |
+
+### 4.2 Deliverables
+
+- `tools/agent_supervisor/repair_gate.py` (NEW, the pack §0 module; below the
+  600-SLOC modularity warn threshold): R076 `RepairRecord` + 8 named predicates;
+  R078 closed 6-question checkpoint set + unit-H1 disposition pattern (complete
+  answers never auto-accept); R077 `CompatibilityException` (one typed refusal per
+  missing field; expiry from injected clock/milestone facts only, undecidable
+  expiry blocks acceptance fail-closed); R091 `review_still_valid` +
+  `evaluate_correction_round` (drip-feeding refused by shape); E10/E11
+  `classify_pr` closed-vocabulary effect-free snapshot classification; R017/E13
+  `validate_freeze_citation` (reuses `policy.CONTROLLER_PATHS`); record-only
+  packet wiring via `checkpoint_section` → `evidence.build_packet(extra_sections)`
+  (answers routed through `redaction.redact_text`).
+- `tools/test_agent_supervisor_repair_gate.py` (NEW): 16.6 T1–T9 + 16.8 gap
+  cases + wiring + the two executable registers. **78 tests.**
+
+### 4.3 Test + quality evidence (all foreground, no suite/mutation overlap)
+
+- New matrix: `78 passed` (0.27s).
+- Register-cited packs re-run: github_flow + policy + bounded_contracts +
+  runtime_supervision + reviewer + ephemeral_review = `392 passed, 1 skipped`.
+- Full supervisor suite, three foreground chunks (files 1–20 / 21–40 / 41–56):
+  `915 passed` + `942 passed, 2 skipped` + `706 passed` = **2563 passed, 0
+  failed** (≥ the 1165-test freeze baseline; includes the 78 new tests).
+- Mutation pass (after suites finished; scratchpad harness, one mutant at a
+  time, original restored + baseline re-verified): **12/12 killed** —
+  M1 invert patch-stacking justification; M2 patch-stacking never rejects;
+  M3 regression-exists ignored; M4 replacement `or` for `and`; M5 stale-caller
+  guard dropped; M6 checkpoint `and` for `or`; M7 disposition accepts unknown
+  verdict; M8 expiry boundary `>` for `>=`; M9 drip threshold widened; M10
+  owner-hold precedence dropped; M11 commit citation unchecked; M12 review
+  validity always true.
+- `python tools/modularity_check.py --check`: failures 0; no warning on either
+  new file. `ruff check` on both new files: clean (0.13.0). The 67 pre-existing
+  whole-tree ruff findings are in files this task does not touch and are outside
+  the CI lint scope (the CI ruff job runs `ruff check .` inside `services/api`).
+- Cohesion judgment (code-architecture item 6): `repair_gate.py` holds ONE
+  responsibility — the deterministic acceptance/review-time record protocols of
+  D-024 Phase G (repair records, checkpoint questions, compatibility exceptions,
+  identity/round discipline, snapshot classification, freeze citation) — all
+  closed typed records evaluated at the same seam; no I/O, no persistence, no
+  external effects, mirroring `push_policy`'s pure-policy shape.
+
+### 4.4 Boundary confirmations
+
+- SHADOW-ONLY: no subprocess/network/effect execution anywhere in the new code;
+  E6 exercises `GitHubFlow` strictly through the injected fake runner and a
+  temporary journal. R595 untouched; live publication stays owner-gated (§2).
+- No wall-clock: expiry and staleness consume injected facts only
+  (`now_utc`/`milestone_reached`/`days_since_update`); nothing reads a clock.
+- Supervisor-freeze: this change cites **D-024-R105** in the task packet (above)
+  and in the deliverable and report commit messages.
