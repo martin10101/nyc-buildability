@@ -1,11 +1,11 @@
 # M0-T094 — Unit G: operator channel (one-command start, status, /loop-* commands, ask-Codex) — D-024 Phase F
 
 Producer: fable-orchestrator-session (orchestrator). Supervisor-freeze qualifying evidence:
-**D-024-R104** (Phase F; packet-named). Status: **STAGED (claim + G0 + scenario pack)** — the
-seq-17 session accepted unit F, claimed this unit, and authored this pack at a clean seam under
-the D-010 R113/R114 rotate-at-seam ceiling; the successor implements from this frozen pack with a
-fresh context budget (the same pattern that staged unit F at seq 16 and delivered it at seq 17).
-No implementation code is written at this staging seam.
+**D-024-R104** (Phase F; packet-named). Status: **IMPLEMENTED (deterministic core; §4 evidence)**
+— the seq-17 session staged this pack at a clean seam; the seq-18 successor session implemented
+from it unchanged (§0 reuse boundary held; §1 matrix delivered as
+`tools/test_agent_supervisor_operator_channel.py`, 51/51 PASS). The owner-gated C1 interception
+canary (§2) remains pending; the honest second-terminal fallback is documented (§4.2/§4.4).
 
 ## 0. Reuse boundary (R018: prove existing architecture, extend — never duplicate)
 
@@ -71,6 +71,99 @@ No implementation code is written at this staging seam.
 - **DCV scale:** 54 applicable requirements — build the evidence map per behavior cluster as
   unit F did (`M0-T092-evidence-map.json` is the worked template).
 
-## 4. Evidence (populated during implementation — successor)
+## 4. Evidence (implementation session, 2026-08-27/28)
 
-(pending — staging seam only)
+### 4.1 Prove-first result (R018) — the §0 boundary held exactly
+
+Every section-14 operation except the named gaps mapped to an EXISTING verb:
+`start` (idempotent via `SingleInstanceLock`, no duration, `--run-wall-clock-seconds`
+optional-unlimited), `status`, `pause`/`resume`/`stop --clear`/`emergency-stop`
+(durable-before-ack, existing), `pending-approvals`/answer verbs, `export-handoff`.
+The genuine gaps were ONLY the §3 list — nothing else was added:
+
+| Gap | Delivered as |
+|---|---|
+| `ask` operation | NEW `operator_ask.py` (400 ln): bounded question sanitation (size/control-seq/redaction), identity validation, bounded state packet, ONE read-only Codex window via the REUSED `codex_reviewer.build_argv` contract (S2.2 flags, forbidden-flag refusal, `--sandbox read-only`), `process.run` containment (timeout kills the tree — R087 no-background-duplicate), durable `queued_asks` fallback (`oper_*` ids; `--show`, `--resubmit` re-poses the SAME row); + `operator_ask_answer.schema.json` |
+| graceful-stop verb | `graceful-stop [--reason] [--clear]` over accepted unit-F `stop_intent` (durable BEFORE ack; emergency>graceful>pause) |
+| section-14 status fields | NEW `operator_status.py` (279 ln): labeled facts (value+source+R042 confidence; absent = `unknown`, never zero; persisted measurements keep their own label) composed read-only from journal + campaign records; additive `status` payload key `section14` + concise lines; `--json` = verbose |
+| 8 thin skills | `.claude/skills/loop-{start,status,tasks,ask,pause,resume,stop,emergency-stop}/SKILL.md`, each `disable-model-invocation: true`, thin CLI-calling bodies, no `/loop` collision, no `/btw` |
+| interception hook | NEW `.claude/hooks/loop_command_interceptor.py` (232 ln) + additive `settings.json` UserPromptSubmit registration; guard hooks untouched |
+| R035 alias doc | cli.py module docstring + `start` help: "'Start the agent loop' IS the `start` command" |
+
+CLI wiring stayed thin per the modularity policy: the two new handlers + parser
+registration + the shared `_open_runtime`/`_emit` helpers live in NEW
+`operator_channel_cli.py` (244 ln); cli.py net diff is +34 lines and
+`modularity_check --check` = failures 0 (cli.py had tripped `baseline_growth`
+mid-session; the split resolved it — no exception record needed).
+`durable_state.py` gained one additive read-only method (`ask_by_id`, for
+`--show` over answered rows).
+
+### 4.2 Feature detection + honest measurement state (R084/R088/R089/R149)
+
+`fixtures/loop_interception_detection_2_1_248.json`: **selected_event =
+UserPromptSubmit** (payload measured-live per `hook_event_payloads_v1.json`;
+block/display/erasure contract official-docs; the exit-0+stdout context path
+measured every session by `directive_reminder.py` on the same event).
+UserPromptExpansion is catalog-present but its RESPONSE contract is UNPROVEN
+on 2.1.248 → the hook passes a matching prompt through unchanged on that
+event, never a fake (R088); flipping requires a measured capture. The hook
+reads the fixture at runtime (fail-closed default = the measured path).
+**zero_context_proof = pending-owner-C1** and **queued_input_behavior =
+pending-owner-C1**: until the owner-gated C1 canary (R192/R197) runs, the
+SECOND TERMINAL (`status`/`ask`/`pause`/`graceful-stop`/`stop`/`emergency-stop`)
+is the advertised zero-context real-time path — R088's truthful fallback,
+asserted by tests S9/S11.
+
+Identity-validation scope (deliberate, for reviewers): the ask/hook paths
+validate repo-root markers + machine-validated campaign records
+(`campaign_continuity.load`, fail-closed on tamper); the unit-F
+`bootstrap_gate` module remains the SESSION-write gate — operator reads/
+controls do not re-run the MCP-clean probe.
+
+### 4.3 Test + check evidence
+
+* `tools/test_agent_supervisor_operator_channel.py`: **51/51 PASS** — the full
+  §1 matrix S1–S14 incl. R111's named cases (metacharacter/Unicode/quoted/
+  multiline/empty/oversized questions, terminal-escape stripping both
+  directions, runtime-built secret redaction, timeout single-request +
+  same-row resubmit, hook fail-closed on malformed payload / broken supervisor
+  / hung supervisor with kill, exact-match-only interception incl.
+  `/loop-statuses`/`loop-status`/mention forms, pass-through emits NOTHING,
+  block emits ONLY decision+reason, worker-text-clean ask instruction,
+  identity refusals at module/CLI/hook levels with typed exits 11/13).
+* Regression over the touched surfaces: operator_channel + command_authority +
+  controller_succession + phase1 + reviewer + start_reentry = **332 PASS**.
+* Whole-suite baseline (freeze rule): `python -m pytest tools/ -q` run this
+  session — result recorded in the checkpoint/progress entry; CI
+  supervisor-bridge job is the confirming whole-suite run on the pushed SHA.
+* `ruff check` on every new/changed file: clean (the 9 cli.py F401s are
+  PRE-EXISTING at the accepted HEAD and untouched under the defect-only lane).
+* `python tools/modularity_check.py --check`: failures 0.
+* Live smoke (read-only + scratch runtime): `status` renders the section-14
+  concise block; `graceful-stop` set→status→clear round-trip durable;
+  hook end-to-end `/loop-status` and `/loop-tasks` block-with-output.
+
+### 4.4 Exact owner commands (task output)
+
+From the repository root (`C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`):
+
+* **Start the agent loop** (R035 alias): `python -m tools.agent_supervisor start`
+  (idempotent; add the explicit executables/config/packet inputs to dispatch,
+  per `--help`; no duration exists — omit `--run-wall-clock-seconds` for unlimited)
+* **Status** (section 14, no model call): `python -m tools.agent_supervisor status`
+  (verbose/JSON: `--json`) · campaign NEXT: `python -m tools.agent_supervisor.campaign_continuity --status`
+* **Pause / resume:** `python -m tools.agent_supervisor pause` / `resume`
+* **Graceful stop (land the unit, then stop):** `python -m tools.agent_supervisor graceful-stop --reason "<why>"` · clear: `graceful-stop --clear`
+* **Hard stop / emergency:** `python -m tools.agent_supervisor stop` ·
+  `emergency-stop` · clear flags: `stop --clear`
+* **Ask Codex (read-only):** `python -m tools.agent_supervisor ask "<question>"
+  --codex-executable <path> --config <path> --model-selection <path>
+  [--window 90]` · after a timeout: `ask --show <request-id>` /
+  `ask --resubmit <request-id> --codex-executable ... --config ... --model-selection ...`
+* **In the Claude Code terminal:** `/loop-start /loop-status /loop-tasks
+  /loop-ask <q> /loop-pause /loop-resume /loop-stop [reason]
+  /loop-emergency-stop` — intercepted pre-model where supported; until the C1
+  zero-context proof lands, treat the second terminal as the authoritative
+  real-time path. `/loop-ask` in-terminal additionally needs
+  `SUPERVISOR_CODEX_EXECUTABLE`/`SUPERVISOR_CONFIG`/`SUPERVISOR_MODEL_SELECTION`
+  set, else it prints the exact second-terminal command.

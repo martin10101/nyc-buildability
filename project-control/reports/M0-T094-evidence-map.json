@@ -1,0 +1,254 @@
+{
+  "task_id": "M0-T094",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 54 requirement ids (the section-4/11/14/15-F/16.5 Phase-F operator-channel set). The owner-gated C1 live interception canary (R192/R197 exact-command pattern) is prepared and flagged, NOT executed; the deterministic core satisfies the applicable rows without it, with the R088/R089 measured shares carried honestly as pending-owner-C1 in fixtures/loop_interception_detection_2_1_248.json plus the documented second-terminal fallback (R088 explicitly permits this). Detail per row: report section 4.",
+  "task_evidence": [
+    "project-control/reports/M0-T094-operator-channel.md",
+    "project-control/reports/M0-T094-evidence-map.json",
+    "tools/test_agent_supervisor_operator_channel.py"
+  ],
+  "generated_at": "2026-08-28T00:00:00+00:00",
+  "requirements": {
+    "D-024-R002": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "tools/agent_supervisor/operator_ask.py",
+      "tools/agent_supervisor/operator_status.py",
+      "CLAIM: this unit's readiness share: the exact owner start command is documented (R035 alias) and the operator start/status/control/ask surface exists end-to-end; the two-unit golden run from that command is owed by M0-T096, not claimed here"
+    ],
+    "D-024-R003": [
+      "tools/agent_supervisor/operator_ask.py",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: operator-channel share only: the ask path invokes Codex strictly read-only (reused codex_reviewer.build_argv contract, S4 test pins --sandbox read-only + S2.2 flags); Fable remains the producer, untouched"
+    ],
+    "D-024-R004": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: ask grants Codex no mutation tools and no production authority; the answer is display-only, never a dispatch trigger"
+    ],
+    "D-024-R007": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "project-control/campaigns/D-024-fable-codex-loop.json",
+      "CLAIM: this successor session implemented from the frozen pack + campaign record alone; the owner re-pasted nothing"
+    ],
+    "D-024-R008": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: no routine owner questions were asked; the only owner items flagged are the genuinely owner-gated C1 canary and gate/accept authority"
+    ],
+    "D-024-R010": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: no PR merged; all work on control/D-024-fable-codex-loop; PR #241 untouched"
+    ],
+    "D-024-R017": [
+      "project-control/tasks/M0-T094.json",
+      "CLAIM: packet and every commit cite D-024-R104 as the supervisor-freeze qualifying evidence"
+    ],
+    "D-024-R018": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: prove-first held: report section 0/4.1 cites the existing verb surface per operation; tests S1/S3 pin the reuse (SingleInstanceLock, existing pause/stop verbs) at source level; only the six pack-listed gaps were added"
+    ],
+    "D-024-R020": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: the Fable orchestrator session produced the unit inside the packet's allowed_paths; no forbidden path touched"
+    ],
+    "D-024-R021": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: the ask packet gives Codex read-only state to assess; nothing in the ask path lets Codex act"
+    ],
+    "D-024-R022": [
+      "tools/agent_supervisor/operator_ask.py",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: the reused FORBIDDEN_REVIEWER_FLAGS + read-only sandbox make every Codex-mutating shape unreachable from ask (S4 invocation-contract test)"
+    ],
+    "D-024-R025": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: a malformed/empty/timed-out ask answer is a typed error or a durable request id, never an action (S5/S6 tests: no_answer, answer_empty, timeout single-request)"
+    ],
+    "D-024-R026": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: durable owner intents win: graceful-stop journals BEFORE ack (S3 source pin), emergency outranks graceful (S3 precedence test), clear is owner-command-only (unit-F stop_intent reused)"
+    ],
+    "D-024-R034": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "tools/agent_supervisor/operator_status.py",
+      "CLAIM: the section-14 operation list is complete on the EXISTING command surface (no parallel CLI): start/status/pause/resume/graceful-stop/emergency-stop/ask, with the R034 status field set composed in operator_status (S1-S4 tests)"
+    ],
+    "D-024-R035": [
+      "tools/agent_supervisor/cli.py",
+      ".claude/skills/loop-start/SKILL.md",
+      "CLAIM: 'Start the agent loop' is documented verbatim as the start command in the CLI docstring, the start help, and the /loop-start skill (S1 test)"
+    ],
+    "D-024-R036": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: start idempotency rides the existing SingleInstanceLock (S1 source pin); stop/graceful-stop/emergency-stop are durable before acknowledgment (S3 source-order pins + behavior round-trip)"
+    ],
+    "D-024-R045": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: S13 runs assert_worker_text_clean over the ask instruction; no operator text reaches a worker assignment; no quota/countdown language added anywhere"
+    ],
+    "D-024-R079": [
+      "project-control/tasks/M0-T094.json",
+      "CLAIM: no graph-subsystem file or integration boundary was edited (allowed_paths exclude them); the operator surface reads the journal + campaign records directly"
+    ],
+    "D-024-R080": [
+      "tools/agent_supervisor/operator_status.py",
+      "CLAIM: status facts come from the authoritative sources the requirement names (durable journal, machine-validated campaign records); the graph is not consulted, so stale-graph risk is not introduced"
+    ],
+    "D-024-R083": [
+      ".claude/skills/loop-status/SKILL.md",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: all 8 /loop-* commands exist as user-only skills (disable-model-invocation: true, S7 test), implemented by pre-model interception + the external CLI, not as ordinary prompt commands; /btw is not used"
+    ],
+    "D-024-R084": [
+      ".claude/hooks/loop_command_interceptor.py",
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "CLAIM: the interception path is feature-DETECTED per the committed installed-version fixture (UserPromptExpansion preferred-when-proven, UserPromptSubmit selected as the measured path); exact-match only (S10), block+display+erase via the documented decision contract (S8/S10 tests)"
+    ],
+    "D-024-R085": [
+      "tools/agent_supervisor/operator_ask.py",
+      ".claude/hooks/loop_command_interceptor.py",
+      "CLAIM: /loop-status and /loop-tasks read durable state with no model call (hook maps to status/campaign_continuity); ask sends a bounded packet to read-only Codex and returns a concise answer or a durable request id retrievable/re-posable later (S4/S5 tests)"
+    ],
+    "D-024-R086": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "CLAIM: pause/graceful-stop/emergency-stop journal BEFORE acknowledging (S3); the producer observes them through the controller; emergency semantics (cancel dispatch, block lease renewal, explicit resume) are the accepted unit-F/existing verbs, reused not duplicated"
+    ],
+    "D-024-R087": [
+      "tools/agent_supervisor/operator_ask.py",
+      ".claude/hooks/loop_command_interceptor.py",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: exact matching (S10), argv arrays only (S4/S6), bounded I/O with typed refusals (S6), UTF-8/metacharacter safety as data (S6), repo-root + campaign identity validation (S14), timeouts with tree-kill and NO background duplicate (S5/S12), secret + terminal-escape redaction both directions (S6), digest-only privacy-bounded audit (S4)"
+    ],
+    "D-024-R088": [
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: the live CLI was inspected (no pre-existing ask; report section 4.1); the zero-context PROOF is honestly pending-owner-C1 with the measurement method recorded and the documented second-terminal fallback advertised as the real-time path - the exact fallback R088 permits (S9 test enforces the honest shape)"
+    ],
+    "D-024-R089": [
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "CLAIM: idle-vs-active behavior is a live measurement carried as pending-owner-C1; queued slash input is NOT advertised as real-time control - the second-terminal CLI is the advertised immediate path (S11 test enforces the wording)"
+    ],
+    "D-024-R094": [
+      "tools/agent_supervisor/operator_status.py",
+      "CLAIM: the durable status record answers campaign id/state, control flags, lease owner+epoch, model/session+fallback, current task from the transition log, subagents, and usage - without waking Fable; absent facts are honest unknowns (S2 tests)"
+    ],
+    "D-024-R095": [
+      "tools/agent_supervisor/cli.py",
+      "CLAIM: concise human-readable status by default (bounded line set), verbose/JSON via --json; on-demand and authoritative (S2 CLI test)"
+    ],
+    "D-024-R098": [
+      ".claude/hooks/loop_command_interceptor.py",
+      "CLAIM: operator traffic creates no session churn: status/control reads never wake or rotate the producer session (hook pass-through emits nothing; S13 no-context tests)"
+    ],
+    "D-024-R104": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "tools/agent_supervisor/operator_ask.py",
+      "tools/agent_supervisor/operator_status.py",
+      ".claude/hooks/loop_command_interceptor.py",
+      "CLAIM: Phase F delivered: canonical start/status/control/ask CLI operations, feature-detected pre-model interception, secure synchronous + durable asynchronous Codex-question handling; the zero-context proof share is the flagged owner-gated C1 with the honest fallback"
+    ],
+    "D-024-R111": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: the full section-16.5 matrix is implemented as 51 deterministic tests S1-S14, including every named case: exact-match/similar-text, no-model-call status, read-only ask, empty/large/Unicode/quoted/multiline/metacharacter questions, timeout single-request, hook fail-closed; the transcript/context-usage measured cases are the pending-owner-C1 canary asserted honest by S9/S11"
+    ],
+    "D-024-R120": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: bounded rules kept: one ask window, no retry loop, bounded packet/question/answer, hook subprocess timeout with kill; no keep-trying-until-something-works path exists"
+    ],
+    "D-024-R125": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: operator commands validate repository-root markers + machine-validated campaign identity before acting (S14); the session-level Gate-0 (MCP-clean, primary-cwd) was verified at this session's start per the handoff and remains the write gate"
+    ],
+    "D-024-R126": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: session share: this session verified root/branch/HEAD/tree and MCP-clean before any write (reconciliation record in the session log; G0 record M0-T094-G0 from staging)"
+    ],
+    "D-024-R127": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: identity mismatch fails closed at every layer - module (AskError identity_mismatch), CLI (exit 11 unsafe), hook (block with visible refusal) - S14 tests"
+    ],
+    "D-024-R128": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: a tampered/malformed campaign record refuses (campaign_record_invalid, fail closed) rather than sending unvalidated identity onward (S6 test)"
+    ],
+    "D-024-R139": [
+      "project-control/campaigns/D-024-fable-codex-loop.json",
+      "CLAIM: the hold was discharged before this claim: M0-T102 capture/verification/conversion accepted, and M0-T094 was claimed only after M0-T092 acceptance per the dependency sequence (campaign seq 17/18 records)"
+    ],
+    "D-024-R140": [
+      "tools/agent_supervisor/operator_ask.py",
+      "CLAIM: roles preserved exactly: Fable produced this unit; Codex is reachable only through the read-only ask contract; ledger/git/requirement records remain the authority the status surface reads"
+    ],
+    "D-024-R143": [
+      ".claude/skills/loop-start/SKILL.md",
+      ".claude/hooks/loop_command_interceptor.py",
+      "CLAIM: native reuse over duplicate machinery: the commands are native skills + a native hook event, wrapping the existing supervisor CLI; no custom slash-command parser or UI was built"
+    ],
+    "D-024-R145": [
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "CLAIM: capability decisions are evidence-based against the captured 2.1.248 fixtures; no binary update was performed this session"
+    ],
+    "D-024-R146": [
+      ".claude/settings.json",
+      "CLAIM: nothing prohibited was touched: no activation, no SDK, no MCP servers/channels (settings diff is one additive hook registration), no PR merge/modify, no model substitution, no permission-bypass flags, no fan-out; the ledger remains authoritative"
+    ],
+    "D-024-R149": [
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "CLAIM: no feature was assumed: the selected interception path carries an installed-version fixture; the unproven UserPromptExpansion contract is explicitly NOT adopted; the real canary is queued owner-gated (upgrade path recorded)"
+    ],
+    "D-024-R158": [
+      ".claude/skills/loop-ask/SKILL.md",
+      "CLAIM: skills ARE the reused surface: 8 thin owner controls over the existing supervisor with disable-model-invocation: true; /session-handoff already existed and is untouched (S7 tests)"
+    ],
+    "D-024-R159": [
+      "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json",
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: UserPromptExpansion was evaluated as the preferred path and honestly found unproven on the installed version; the second-terminal fallback is retained and documented; names are /loop-* exactly - no collision with built-in /loop (S7/S8 tests)"
+    ],
+    "D-024-R164": [
+      "tools/agent_supervisor/operator_channel_cli.py",
+      "CLAIM: custom D-024 control is preserved: the supervisor CLI/journal/campaign record remain the authority; skills and the hook are display/relay layers that add no alternate control plane"
+    ],
+    "D-024-R166": [
+      ".claude/skills/loop-status/SKILL.md",
+      "CLAIM: no native feature was adopted as campaign authority: the skills/hook forward to the supervisor; Codex, the ledger, git, and owner gates remain the loop authority"
+    ],
+    "D-024-R176": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: unit G is exactly this: the thin slash-command/operator interface using skills with feature-detected pre-model interception"
+    ],
+    "D-024-R180": [
+      "tools/agent_supervisor/operator_status.py",
+      "CLAIM: replace-not-layer: one active implementation per responsibility - status composition reads existing records (no parallel bookkeeping), the hook wraps the CLI (no duplicate command engine), and the modularity split moved shared helpers instead of copying them (single AUDIT_FILENAME drift-pin test)"
+    ],
+    "D-024-R181": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: nothing accepted was deleted; cli.py changes are moves + additive wiring, proven behavior-neutral by the regression run"
+    ],
+    "D-024-R182": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: the mandated method was used: deterministic fixtures, fake runners, an env-accelerated hook timeout, scratch runtimes, and low-risk real smoke commands; no token-burning threshold proof"
+    ],
+    "D-024-R183": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: this unit's platform share: Windows-native subprocess behavior (kill-on-timeout, argv arrays) exercised by the real hook subprocess tests on this workstation; statusline/telemetry paths untouched; the broader R183 platform set is carried by the accepted unit C/D/E fixtures; the per-event live payload share stays with the owner-gated C1"
+    ],
+    "D-024-R184": [
+      "tools/test_agent_supervisor_operator_channel.py",
+      "CLAIM: worker protection held: no polling messages enter Fable context (pass-through emits nothing; block erases the prompt - S13), no quotas in worker assignments (S13), refusal/timeout triggers stay distinct typed codes"
+    ],
+    "D-024-R185": [
+      "project-control/reports/M0-T094-operator-channel.md",
+      "CLAIM: this unit performs NO GitHub external effects; the existing-suite-stays-green share is proven by the whole-suite run + the CI supervisor-bridge job on the pushed SHA; the crash/reconciliation and idempotency proofs remain with their accepted units (F) and M0-T096"
+    ],
+    "D-024-R188": [
+      "project-control/campaigns/D-024-fable-codex-loop.json",
+      "CLAIM: campaign mechanics followed: one cohesive writer task claimed, campaign record current at seq 18, requirement verification kept current through this map + the DCV, frozen identities recorded at gate time"
+    ]
+  }
+}

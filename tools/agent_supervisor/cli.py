@@ -17,6 +17,12 @@ silently does something surprising. As of Phase 4 EVERY S12.1 command is live -
     start                   pre-dispatch, and - when executables are named - the
                             real shadow/supervised loop (see below)
     pause / resume / stop   durable flags that beat autostart
+    graceful-stop           durable landing-rule intent: finish only the smallest
+                            safe atomic unit underway, land it, then stop
+                            (unit-F stop_intent; M0-T094)
+    ask                     bounded owner question to the READ-ONLY Codex
+                            supervisor; a timeout returns a durable request id
+                            (M0-T094)
     emergency-stop          child-tree termination, wake cancellation, durable stop
     recovery-status         read-only S11.5 view
     schedule-status         read-only usage-limit/wake view
@@ -25,6 +31,11 @@ silently does something surprising. As of Phase 4 EVERY S12.1 command is live -
     install/uninstall-autostart  owner-approved OS mutation; needs the plan digest
     export-handoff          the stored VERIFIED handoff for a fresh session
     set-codex-model / set-claude-model  the S3.2 rule-6 authenticated path only
+
+THE OWNER INTENT "Start the agent loop" IS THE `start` COMMAND (D-024 R035):
+`python -m tools.agent_supervisor start`. It is idempotent - a running campaign
+is REPORTED, never duplicated - and takes NO duration (R027/R036); the /loop-start
+skill and the pre-model /loop-* interception hook are thin wrappers over it.
 
 `start` in Phase 4. It always performs the pre-dispatch sequence first -
 single-instance lock, the S11.5 RECOVER_BOOT algorithm, journal and audit
@@ -216,6 +227,12 @@ from .recovery import (
     set_manual_pause,
 )
 from . import refusals
+from .operator_channel_cli import (
+    emit_payload as _emit,
+    open_runtime as _open_runtime,
+    register_operator_verbs,
+)
+from .operator_status import compose_status, render_concise
 from .redaction import redact_structure
 from .remote_approvals import RemoteApprovalRegistry
 from .run_budget import BudgetError, RunBudget, RunBudgetLedger
@@ -1511,6 +1528,10 @@ def cmd_status(args: argparse.Namespace) -> int:
             "audit_detail": chain.message,
             "mode": journal.get_state("mode", "none"),
             "limited_auto_enabled": False,
+            # M0-T094 (R034/R094/R095): the section-14 fact set, composed
+            # read-only from durable records, every entry labeled with source
+            # + R042 confidence; absent facts are honest unknowns, never zero.
+            "section14": compose_status(journal, checkout=checkout),
         }
 
     if args.json:
@@ -1530,6 +1551,10 @@ def cmd_status(args: argparse.Namespace) -> int:
                   f"(revoked/answered approval requests; not actionable)")
         print("limited-auto:     off for this run (the bounded mode is implemented and "
               "enabled only per launch by an explicit owner input)")
+        for line in redact_structure(
+                render_concise(payload["section14"])).value:
+            print(line)
+        print("verbose/JSON:     --json carries the full labeled fact set")
     return 0 if payload["journal_ok"] and payload["audit_chain_ok"] else 1
 
 
@@ -1777,27 +1802,8 @@ def cmd_record_manifest(args: argparse.Namespace) -> int:
 # --------------------------------------------------------------------------
 
 
-def _open_runtime(args: argparse.Namespace) -> tuple[pathlib.Path, DurableJournal, AuditLog]:
-    """Open the runtime directory, journal, and audit log for one command."""
-    checkout = pathlib.Path(args.checkout).resolve()
-    runtime = runtime_dir_for(checkout, base=args.runtime_base)
-    journal = DurableJournal(runtime / DB_FILENAME).open()
-    audit = AuditLog(runtime / AUDIT_FILENAME)
-    return runtime, journal, audit
-
-
-def _emit(args: argparse.Namespace, payload: dict[str, Any], lines: Sequence[str]) -> None:
-    """Print a command's result, REDACTED, on stdout.
-
-    C2 (G5 M2): stdout is a TRANSMISSION, so it obeys redaction.py's rule like
-    every other. It did not, and M0-T079 routed the raw `git remote get-url`
-    result into the payload - so a PAT-bearing remote reached the log.
-    """
-    if args.json:
-        print(json.dumps(redact_structure(payload).value, indent=2, default=str))
-    else:
-        for line in redact_structure(list(lines)).value:
-            print(line)
+# _open_runtime and _emit moved to operator_channel_cli (M0-T094 modularity
+# split); imported above under their established names - call sites unchanged.
 
 
 def cmd_pause(args: argparse.Namespace) -> int:
@@ -3147,8 +3153,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     start = sub.add_parser(
         "start",
-        help="run the pre-dispatch sequence (lock, RECOVER_BOOT, integrity), then the "
-             "assembled loop when every input is named explicitly. limited-auto never")
+        help="'Start the agent loop' (the documented owner intent, R035): run the "
+             "pre-dispatch sequence (lock, RECOVER_BOOT, integrity), then the "
+             "assembled loop when every input is named explicitly. Idempotent - a "
+             "running campaign is reported, never duplicated; no duration. "
+             "limited-auto never")
     add_common(start)
     start.add_argument("--mode", choices=["shadow", "supervised", "limited-auto"],
                        default="shadow")
@@ -3370,6 +3379,8 @@ def build_parser() -> argparse.ArgumentParser:
     stop.add_argument("--clear", action="store_true",
                       help="explicit owner command clearing the durable stop flags")
     stop.set_defaults(func=cmd_stop)
+
+    register_operator_verbs(sub, add_common)
 
     resume_pp = sub.add_parser(
         "resume-pending-prompt",

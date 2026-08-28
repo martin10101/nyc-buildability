@@ -652,6 +652,24 @@ class DurableJournal:
                 "SELECT * FROM queued_asks WHERE answered_at_utc = '' ORDER BY created_at_utc")
         ]
 
+    def ask_by_id(self, ask_id: str) -> QueuedAsk | None:
+        """Read ONE queued ask verbatim, answered or not (M0-T094, R085).
+
+        `open_asks` deliberately hides answered rows; the operator `ask
+        --show` retrieval needs the row either way, by its durable request
+        id. Read-only - retrieval never mutates history.
+        """
+        row = self.conn.execute(
+            "SELECT * FROM queued_asks WHERE ask_id = ?", (ask_id,)).fetchone()
+        if row is None:
+            return None
+        return QueuedAsk(
+            ask_id=row["ask_id"], run_id=row["run_id"], task_id=row["task_id"],
+            question=row["question"], request_digest=row["request_digest"],
+            created_at_utc=row["created_at_utc"],
+            classification=row["classification"],
+            answered_at_utc=row["answered_at_utc"], answer=row["answer"])
+
     def resolve_ask(self, ask_id: str, answer: str) -> bool:
         """Mark a queued ASK answered, preserving the row as history.
 
