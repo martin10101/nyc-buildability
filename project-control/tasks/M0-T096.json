@@ -1,72 +1,82 @@
 {
- "task_id": "M0-T096",
- "title": "D-024 H: integrated canaries, independent reviews, two-unit golden run, activation package",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Close the campaign per sections 15-H, 16.9, 17, 18: fault-injected deterministic suites; shadow mode against real sessions; disposable bounded canary with subagents and forced rotations/fallback simulations; crash/restart and ambiguous-effect recovery; one low-risk real repository task end to end on a non-protected branch; the two-unit golden end-to-end readiness run started by the exact owner command with no human continuation (Codex selects, Fable produces, tests/checkpoint/push, frozen-identity Codex review, state advances, next unit selected; crosses one safe primary-session rotation and one injected controller restart without duplicate work); OS-appropriate host-restart/auto-resume canary or truthful limitation report; required bounded soak/reliability proof (accelerated counters for health-band boundaries - no token-waste simulation); all section-17 independent reviews against one frozen identity, consolidated findings, one coordinated correction round, re-review of the corrected frozen identity; owner activation package with continuous mode default-off and the exact section-20 handoff (items 1-14, no placeholders). Supervisor-freeze qualifying evidence: D-024-R106 (Phase H). (Amendment 3 conversion, M0-T102 accepted: the golden run executes the amendment's 15-step sequence (R186) from the exact owner start command through the selected native runtime backend; includes upgrade-regression canaries on 2.1.246; graph/context-pack regression coverage R079/R080/R082/R113 is explicitly bound to this task (G3 ADV-3); continuous mode stays DISABLED after the golden run until explicit owner activation (R187/R595); G5 unit-I security preconditions apply.)",
- "business_reason": "D-024 sections 18-20: readiness is the observed complete control loop across consecutive units from the owner's exact start command, not a pile of passing unit tests.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
-  "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
- ],
- "outputs": [
-  "canary/golden-run harnesses + fault injection under tools/agent_supervisor",
-  "tools/test_agent_supervisor_golden_run.py",
-  "project-control/reports/M0-T096-golden-run-evidence.md (two consecutive units, autonomous selection, rotation, controller recovery, exact command)",
-  "project-control/reports/M0-T096-activation-package.md (section-20 owner handoff items 1-14; activation default-off)"
- ],
- "dependencies": [
-  "M0-T093",
-  "M0-T094",
-  "M0-T095"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor",
-  "tools/test_agent_supervisor_golden_run.py",
-  "project-control/reports/M0-T096-golden-run-evidence.md",
-  "project-control/reports/M0-T096-activation-package.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-24T12:35:22+00:00",
- "updated_at": "2026-08-26T22:33:01+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-24T12:35:22+00:00"
+  "task_id": "M0-T096",
+  "title": "D-024 H: integrated canaries, independent reviews, two-unit golden run, activation package",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the campaign per sections 15-H, 16.9, 17, 18: fault-injected deterministic suites; shadow mode against real sessions; disposable bounded canary with subagents and forced rotations/fallback simulations; crash/restart and ambiguous-effect recovery; one low-risk real repository task end to end on a non-protected branch; the two-unit golden end-to-end readiness run started by the exact owner command with no human continuation (Codex selects, Fable produces, tests/checkpoint/push, frozen-identity Codex review, state advances, next unit selected; crosses one safe primary-session rotation and one injected controller restart without duplicate work); OS-appropriate host-restart/auto-resume canary or truthful limitation report; required bounded soak/reliability proof (accelerated counters for health-band boundaries - no token-waste simulation); all section-17 independent reviews against one frozen identity, consolidated findings, one coordinated correction round, re-review of the corrected frozen identity; owner activation package with continuous mode default-off and the exact section-20 handoff (items 1-14, no placeholders). Supervisor-freeze qualifying evidence: D-024-R106 (Phase H). (Amendment 3 conversion, M0-T102 accepted: the golden run executes the amendment's 15-step sequence (R186) from the exact owner start command through the selected native runtime backend; includes upgrade-regression canaries on 2.1.246; graph/context-pack regression coverage R079/R080/R082/R113 is explicitly bound to this task (G3 ADV-3); continuous mode stays DISABLED after the golden run until explicit owner activation (R187/R595); G5 unit-I security preconditions apply.)",
+  "business_reason": "D-024 sections 18-20: readiness is the observed complete control loop across consecutive units from the owner's exact start command, not a pile of passing unit tests.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "canary/golden-run harnesses + fault injection under tools/agent_supervisor",
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T096-golden-run-evidence.md (two consecutive units, autonomous selection, rotation, controller recovery, exact command)",
+    "project-control/reports/M0-T096-activation-package.md (section-20 owner handoff items 1-14; activation default-off)"
+  ],
+  "dependencies": [
+    "M0-T093",
+    "M0-T094",
+    "M0-T095"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T096-golden-run-evidence.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 5,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-28T16:51:09.840810+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-28T16:51:09.840810+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "Unit I claimed at seq-22 NEXT (G0 PASS at f0852a7; resolver ok=true 83 applicable ids incl. R220-R230). Owner resume prompt 2026-08-28 classified citation-only (no requirement beyond D-024 R001-R230; determination in G0 report section 4). Plan: prove-first staging over existing crash/recovery/rotation/turnover packs (R018); lane-1 injected proofs only (R220/R221/R223); golden-run harness + fault injection + test_agent_supervisor_golden_run.py; Amendment-7 passive watcher + pending_live_observation register (R224-R226); two-unit golden run from exact owner command (R186); activation package default-off (section 20 items 1-14); then 4-reviewer gates, DCV, accept; R187 HOLD after golden run."
+    }
+  ]
 }
