@@ -52,12 +52,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T07:22:05.875793+00:00",
+  "updated_at": "2026-08-28T07:59:24.343895+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -81,6 +81,22 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Unit H2 implemented from the frozen pack at cef5ded (deliverable 1e86670): prove-first 16.8 mapping table (report section 4.1, executable register); repair_gate.py (R076 RepairRecord + R078 closed question set + patch-stacking rejection + R077 CompatibilityException expiry-blocks-acceptance + R091 identity/round discipline + E10/E11 effect-free PR classification + R017/E13 freeze-citation validator + record-only packet wiring); tools/test_agent_supervisor_repair_gate.py 78/78; supervisor suite chunked 2563/0 (>=1165 baseline); mutation 12/12 killed; modularity 0 failures; ruff clean on new files. SHADOW-ONLY, injected runners; R595 untouched. Next: evidence map + submit + 4-reviewer gates + DCV (46 rows). Supervisor-freeze qualifying evidence: D-024-R105."
+    },
+    {
+      "at": "2026-08-28T07:58:48.628803+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 97,
+      "status": "awaiting_gate",
+      "message": "Resubmission cycle at the corrected identity: consolidated correction round a3030ba (G3-F1/G4-LOW-1/G5-INFO-1+2/DCV notes) moved the content identity after the first submit; G3/G4/G5 recorded PASS at 7ec184c with the post-correction manifest b1933009; all four delta attestations PASS at a3030ba; DCV 46/46 PASS + delta; CI ALL GREEN at a3030ba. Re-submitting the same report + evidence map at the corrected identity for acceptance. Supervisor-freeze qualifying evidence: D-024-R105."
+    },
+    {
+      "at": "2026-08-28T07:59:11.768695+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 97,
+      "status": "rework",
+      "message": "Transition to rework solely for the identity-resubmission cycle: the consolidated correction round (a3030ba) legitimately moved the frozen content identity after the first submit; deliverable content is final and fully re-attested (G3/G4/G5 + DCV deltas all PASS at a3030ba)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-28T07:59:24.342226+00:00"
 }

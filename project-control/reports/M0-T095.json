@@ -2,11 +2,11 @@
   "task_id": "M0-T095",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T095-repair-gate.md",
-  "submitted_at": "2026-08-28T07:21:26.232301+00:00",
+  "submitted_at": "2026-08-28T07:59:12.740409+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T095-evidence-map.json",
-  "content_manifest_sha256": "d377a9eddca8f5e4355172e130128bb23665fd3b373bfd234fde0381ba3069e7",
-  "reviewed_sha": "068bdbd2e40d6c12de7b93fe11e24cef63301860",
+  "content_manifest_sha256": "b193300914e79f61314d1274b8efb19a31a3715abaa9f8bb7c385c798bc71994",
+  "reviewed_sha": "7ec184ccec177e34b8b66fd97b2d05dc19b6d518",
   "applicable_requirements": [
     "D-024-R002",
     "D-024-R003",
@@ -55,5 +55,5 @@
     "D-024-R185",
     "D-024-R188"
   ],
-  "updated_at": "2026-08-28T07:21:26.728668+00:00"
+  "updated_at": "2026-08-28T07:59:14.580234+00:00"
 }
