@@ -6587,8 +6587,8 @@
     "D-024-R248",
     "D-024-R249"
    ],
-   "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd",
-   "verified_at": "2026-08-28T21:59:49.768009+00:00",
+   "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b",
+   "verified_at": "2026-08-28T22:01:57.783856+00:00",
    "requirements": [
     {
      "id": "D-024-R231",
@@ -6598,7 +6598,7 @@
       "K8::test_R231 PASS (56/56 pack)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R232",
@@ -6608,7 +6608,7 @@
       "K8::test_R232 PASS; delta re-attestation PASS at c8b38ba (M0-T110-DCV-delta.md)"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R233",
@@ -6618,7 +6618,7 @@
       "K2::test_no_btw_equivalence_claim_anywhere + K8::test_R233 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R234",
@@ -6628,7 +6628,7 @@
       "K1Surface (6 tests) + K8::test_R234 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R235",
@@ -6638,7 +6638,7 @@
       "K2Interception (11 real-subprocess tests incl. option-shaped-id refusal) + K8::test_R235 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R236",
@@ -6648,7 +6648,7 @@
       "K3BoundedContext (8) + K8::test_R236 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R237",
@@ -6658,7 +6658,7 @@
       "K3 ceiling + instruction tests + K8::test_R237 PASS; inbound reply-redaction test added in the correction round"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R238",
@@ -6668,7 +6668,7 @@
       "K3 stable-reference test + K8::test_R238 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R239",
@@ -6678,7 +6678,7 @@
       "K4Dispositions (5) + K8::test_R239 PASS; mutants M1/M2/M13 killed"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R240",
@@ -6688,7 +6688,7 @@
       "K5Promotion (4) + K8::test_R240 PASS; mutants M10/M11 killed"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R246",
@@ -6698,7 +6698,7 @@
       "K8::test_R246 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R248",
@@ -6708,7 +6708,7 @@
       "K8::test_R248 source scan PASS; CI 20/20 green at the tip"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     },
     {
      "id": "D-024-R249",
@@ -6718,7 +6718,7 @@
       "K8::test_R249 PASS"
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "237be832cf13da45aa17a1978f6585380e77edfd"
+     "reviewed_sha": "79098aee327850c91cd54653ee641859576f899b"
     }
    ],
    "reviewed_manifest_sha256": "0c97eb77e12a3dcac25a90e22fec81c3cba1a764d117d0e57d1e0828629f5f43"
@@ -6876,5 +6876,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-28T21:59:49.768009+00:00"
+ "updated_at": "2026-08-28T22:01:57.783856+00:00"
 }
