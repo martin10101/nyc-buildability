@@ -58,7 +58,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T03:24:04.693248+00:00",
+  "updated_at": "2026-08-28T03:43:07.997890+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -82,6 +82,13 @@
       "percent": 85,
       "status": "self_check",
       "message": "Unit G implemented at f6edf11 (branch control/D-024-fable-codex-loop). Deliverables: operator_status.py + operator_ask.py + operator_channel_cli.py + durable_state.ask_by_id + operator_ask_answer schema + loop_command_interceptor.py hook + additive settings registration + 8 /loop-* skills + detection fixture (UserPromptSubmit selected; zero-context proof pending-owner-C1 with documented second-terminal fallback per R088). Tests: matrix 52/52 PASS; mutation 10/10 non-equivalent killed; regression 332 PASS; composed whole-suite 2971 passed / 3 skipped / 0 failed (M0-T094-full-suite-T1.txt). modularity 0 failures; ruff clean on touched files. Next authorized action: submit for the 4-reviewer gate cycle (G3/G4/G5 + DCV). Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:43:06.559151+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "rework",
+      "message": "Correction round C1-C3 applied at db689c8 after G3/G4/G5 all returned PASS with converged MINOR findings: C1 status --json now redacted (G3/G5 MINOR-1, behavioral test), C2 report count 51->52 (G3 adv/G4 MINOR-1), C3 /loop-ask '--' end-of-options separator (G5 ADVISORY-2, argv-echo test). Matrix 54/54; regression slice 200 PASS; modularity 0 failures. G5 ADVISORY-3/4 carried non-blocking to M0-T109. Delta re-attestations requested from all three reviewers; DCV dispatched over the 54-req applicable set at db689c8. Supervisor-freeze qualifying evidence: D-024-R104."
     }
   ]
 }
