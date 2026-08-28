@@ -2,11 +2,11 @@
   "task_id": "M0-T096",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T096-golden-run-evidence.md",
-  "submitted_at": "2026-08-28T18:59:40.153591+00:00",
+  "submitted_at": "2026-08-28T19:25:50.964576+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T096-evidence-map.json",
-  "content_manifest_sha256": "d057e62f0f31a6e1ca3f480ef9ab0e63b7add372fa3d3639f08ac95e89281027",
-  "reviewed_sha": "9b8ad17239827a5b3079577a1d051484da084d6a",
+  "content_manifest_sha256": "0d9997498e6e25b9ec2c4b7736a15338829645dc0dc9a0af7a7aa1bab3e44f43",
+  "reviewed_sha": "635fac5a867cb28b3ef6cd79109e371e59921ae2",
   "applicable_requirements": [
     "D-024-R002",
     "D-024-R003",
@@ -92,5 +92,5 @@
     "D-024-R229",
     "D-024-R230"
   ],
-  "updated_at": "2026-08-28T18:59:40.752738+00:00"
+  "updated_at": "2026-08-28T19:25:51.533013+00:00"
 }

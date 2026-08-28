@@ -60,7 +60,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T18:59:40.752738+00:00",
+  "updated_at": "2026-08-28T19:25:51.548661+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -91,6 +91,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Unit I IMPLEMENTED (deliverable 5ff7f08; reports through this commit): golden_run.py (407 ln harness: disposable checkout, exact-command argv, sequenced fake providers with real git effects, INJECTED marker) + live_observation.py (451 ln watcher/register: CAS-idempotent, closed injected/live_candidate vocabulary, no verified_live write path) + cli.py wiring (H1 GuardrailBridgeIntegration constructed in _run_loop - discovered integration defect fixed - + R226 epilogue scan) + test_agent_supervisor_golden_run.py (40/40: two-unit golden run crossing rotation from exact owner command, injected controller restart exact-once, refusal/quota/ambiguous/double-start faults, watcher matrix, executable 16.9/R186/R118 registers). Suites foreground-chunked: supervisor 2584 passed/2 skipped/0 failed; non-supervisor 373+2(rerun after mid-suite Amendment-8 registry race)+184 passed/1 skipped. Mutation 12/12 killed. Ruff clean; modularity failures 0; validator EXIT=0. Mid-unit: D-024 Amendment 8 captured (2be8031, rows R231-R249, tasks M0-T110/T111/T112; M0-T096 scope unchanged per R246; activation-package presentation deferred behind R247). Next: G2 self-check, submit, 4-reviewer gates, DCV (83 rows), accept; R187 HOLD."
+    },
+    {
+      "at": "2026-08-28T19:23:40.075128+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "rework",
+      "message": "ONE consolidated correction round (R091; the four reviewers returned PASS with non-blocking findings): apply G3 MINOR-1 (fake providers' inline git mirrors _GIT_ENV isolation), G4 MINOR-1 (behavioral coverage for the model_change_audit + turnover-transition + outage discovery branches), G5 INFO-1 (nest lock.release/journal.close in their own finally so a BaseException in the watcher cannot skip cleanup), G5 INFO-2 (sanitize installed_version_shape/applicable_shape/source_record_key at the register boundary). Then resubmit at the corrected identity and collect delta re-attestations from the SAME four reviewers."
     }
   ]
 }
