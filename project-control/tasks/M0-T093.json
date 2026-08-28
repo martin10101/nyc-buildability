@@ -20,6 +20,8 @@
   "allowed_paths": [
     "tools/agent_supervisor",
     "tools/test_agent_supervisor_guardrail_bridge.py",
+    "tools/test_agent_supervisor_phase1.py",
+    "tools/test_agent_supervisor_controller_succession.py",
     "project-control/reports/M0-T093-guardrail-bridge.md"
   ],
   "forbidden_paths": [
