@@ -6,75 +6,76 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff — seq 20: M0-T094 (unit G) ACCEPTED; M0-T093 (unit H1) STAGED at 15%; NEXT = implement unit H1
+## Handoff — seq 21: M0-T093 (unit H1) ACCEPTED; M0-T095 (unit H2) STAGED at 15%; NEXT = implement unit H2
 
-1. **Generated:** 2026-08-28T04:10Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (the same session that resumed at seq 18 and delivered unit G end-to-end, then staged unit H1).
-   **Turnover reason (verbatim):** owner invoked `/session-handoff` with no stated reason —
-   landed at the clean seq-20 staged seam under the standard D-010 R113/R114 rotate-at-seam
-   ceiling, mirroring seq 17→18. **Sub-agents in flight:** none (3 gate reviewers + DCV all
-   landed, delta-re-attested, final-identity-acked, and reconciled into committed reports; the
-   only background task is a read-only CI watcher on the final push).
+1. **Generated:** 2026-08-28T06:40Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
+   (the seq-20 successor that implemented unit H1 from the frozen pack and accepted it
+   end-to-end, then staged H2). **Turnover reason:** the standard D-010 R113/R114
+   rotate-at-seam ceiling — landed at the clean acceptance+staging seam, mirroring seq
+   17→18 and 19→20. **Sub-agents in flight:** none (G3/G4/G5 + DCV all landed and are
+   reconciled into committed verbatim reports; the DCV was resumed once for a missing-row
+   delta attestation, recorded in its report).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop` (campaign seq **20**). Installed CLI 2.1.248.
-3. **M0-T094 (unit G) = ACCEPTED** (deliverable `f6edf11` + corrections `db689c8` + prose
-   `ca3318d`, final content identity `e893209e`): operator channel — `graceful-stop` +
-   `ask` verbs (NEW `operator_ask.py` bounded read-only Codex ask with durable `oper_*`
-   request-id fallback + `--show`/`--resubmit`; `operator_channel_cli.py` holds both verbs +
-   the moved `open_runtime`/`emit_payload` helpers; cli.py net +34 lines, modularity 0
-   failures), section-14 labeled status (`operator_status.py`, unknown-never-zero, `--json`
-   redacted after correction C1), additive `durable_state.ask_by_id`, 8 thin user-only
-   `/loop-*` skills, feature-detected `loop_command_interceptor.py` (UserPromptSubmit
-   selected per the 2.1.248 fixture; UserPromptExpansion honestly UNPROVEN; C3 added a `--`
-   separator for `/loop-ask`), R035 alias doc. Matrix 54/54; mutation 10/10 non-equivalent
-   killed (1 documented equivalent); composed whole-suite 2971 passed / 3 skipped / 0 failed
-   (chunked same-tree; single background runs are EXTERNALLY KILLED on this box — compose,
-   and lean on the CI supervisor-bridge run) + CI all green; G0/G2/G3/G4/G5 PASS + delta
-   re-attestations + DCV 54/54 PASS, all re-affirmed at the final identity
-   (`M0-T094-final-identity-acks.md`).
-4. **Residuals carried (non-blocking):** unit-G C1 live interception canary is OWNER-GATED
-   (R192/R197 exact-command): zero-context proof + queued-input behavior are
-   `pending-owner-C1` in `fixtures/loop_interception_detection_2_1_248.json`; the
-   second-terminal CLI is the advertised real-time path (R088). G5 ADVISORY-3 (POSIX
-   process-group kill for the hook child) + ADVISORY-4 ([HOME] masking) → M0-T109 backlog.
-5. **M0-T093 = STAGED (unit H1, 15%, claimed):** guardrail-refusal classification +
-   bounded 4.8 bridge (49 applicable reqs). This session recorded G0 PASS + the reuse
-   boundary + scenario pack S1–S16 + owner-gated C1 live refusal canary in
-   `project-control/reports/M0-T093-guardrail-bridge.md` (§0/§1) and STOPPED at the clean
-   seam. **EXACT next action:** implement from the frozen pack — genuine gaps ONLY
-   `guardrail_refusal.py` + `refusal_bridge.py` (R073 structured-field re-presentation;
-   durable digest-bound two-attempt counter surviving restart) + additive state-machine
-   states + thin loop wiring; write `tools/test_agent_supervisor_guardrail_bridge.py`
-   (R110 matrix incl. BOTH-direction quota-vs-refusal separation, R075); then 4-reviewer
-   gates → DCV (49 rows; `M0-T094-evidence-map.json` is the worked template) → accept.
-   Sequence after: M0-T095 (H2) → M0-T096 (I golden run; **R187 HOLD after**) → M0-T107
-   (J). M0-T109 backlog non-blocking parallel (now carries unit-G G5 ADVISORY-3/4).
-6. **Accept-mechanics facts (all re-proven this session):** commit BEFORE in-regime submit;
-   an allowed_paths report edit AFTER submit moves the identity → rework→resubmit (+ delta
-   acks from every verifier); verification.json `reviewed_sha` must equal HEAD at accept —
-   restamp it in the WORKING TREE to current HEAD, accept, then commit both together;
-   gates recorded after committing reports, `--sha` == live HEAD, original→delta two-step;
-   assemble verification rows in the orchestrator from the DCV's machine-parsable lines;
-   the correction-round pattern (consolidated fixes → delta re-attestations via SendMessage
-   to the SAME reviewer agents) worked twice.
-7. **Environmental facts:** long background python runs (pytest, validators) are externally
-   killed on this workstation — run in foreground chunks (`test_directive_compliance.py`
-   alone needs ~25 min, run it by class groups); never run a mutation pass while a suite
-   is in flight (a polluted run was stopped and disclosed in G2).
+   `control/D-024-fable-codex-loop` (campaign seq **21**).
+3. **M0-T093 (unit H1) = ACCEPTED** (deliverables `633a9d1` + `0f4fc6a`; content identity
+   `b587720`, manifest `3a0ce311`; accepted at `3ac404a`, accept commit `ffa6282`):
+   `guardrail_refusal.py` (conservative fail-closed classifier; quota delegate FIRST,
+   negative guards, Fable attribution + proven authorization required; documentation-
+   confidence corpus fixture, verified_live=false asserted by test) + `refusal_bridge.py`
+   (R069 exact-allowlisted continuation, R070 closed 4-op bridge + irreversible first-seam
+   retire, R071/R073 structured-field re-presentation + typed prohibited-transform
+   refusals, digest-bound durable two-attempt CAS counter, R072 lower-tier-or-blocked,
+   R074 disposition, R165 boundary, record-intent-only loop seam AFTER the quota seam) +
+   2 additive states/11 transitions + `pending_prompt.py` facade split (modularity
+   baseline_growth remedy, verbatim move verified by G3/G5/DCV). Matrix 71/71; mutation
+   10/10 killed (2 survivor gaps closed in `0f4fc6a`); composed chunked suite 2669/0/3;
+   validator EXIT=0; CI green; G0/G2/G3/G4/G5 PASS + DCV 49/49 PASS, all verbatim in
+   `project-control/reports/M0-T093-*`.
+4. **Residuals carried (non-blocking):** C1 live refusal canary OWNER-GATED (R192/R197
+   exact-command; corpus stays documentation-confidence until captured); live 4.8-bridge
+   actuation double-gated (`assert_actuation_permitted`: measured-live shape AND R595 —
+   both absent); G5 F2/F3 advisories (encoded-blob guard scope, excerpt redaction scope)
+   optional hardening only; `refusal_bridge.py` cohesion judgment recorded in the G3/G5
+   reports (code-architecture item 6).
+5. **M0-T095 = STAGED (unit H2, 15%, claimed):** root-cause repair gate + GitHub effect
+   integration (46 applicable reqs). This session recorded G0 PASS + the reuse boundary +
+   scenario pack T1–T9 (16.6) / E1–E14 (16.8) in
+   `project-control/reports/M0-T095-repair-gate.md` (§0/§1) and STOPPED at the clean seam.
+   **EXACT next action:** implement from the frozen pack — prove-first with a 16.8
+   case→existing-test mapping table over `github_flow`/`external_effects`/`push_policy`
+   FIRST; genuine gaps ONLY `repair_gate.py` (R076 RepairRecord + R078 closed question set
+   + patch-stacking rejection + R077 CompatibilityException, expiry blocks acceptance) +
+   thin review-packet wiring + unproven 16.8 cases +
+   `tools/test_agent_supervisor_repair_gate.py`; then 4-reviewer gates → DCV (46 rows;
+   `M0-T093-evidence-map.json` is the worked template) → accept. Sequence after:
+   M0-T096 (unit I golden run; **R187 HOLD after**) → M0-T107 (J). M0-T109 backlog
+   non-blocking parallel.
+6. **Accept-mechanics facts (re-proven this session):** commit reports BEFORE recording a
+   gate (`--sha` == live HEAD; content identity binds committed content); G0 moves
+   backlog→ready and precedes claim; submit needs the evidence map `requirements` as a
+   DICT; verification rows assemble in the orchestrator from the DCV's machine-parsable
+   lines — COUNT them against the applicable set (a missing row here was recovered by
+   resuming the SAME verifier for a delta attestation, never fabricated); reviewed_sha
+   stamps to live HEAD at accept, then verification+ledger commit together; producer
+   report edits after submit move identity — do not touch them post-submit.
+7. **Environmental facts:** long background python runs are externally killed — foreground
+   chunks (`test_directive_compliance` by class groups: 29+6+20+33+32=120, first group
+   alone ~49 min); never run a mutation pass while a suite is in flight; CI on the pushed
+   SHA is the confirming whole-suite run.
 8. **Standing restrictions:** NEVER merge PR #241 or any pre-existing PR; continuous-mode
-   activation owner-gated (D-024 §18/R595; supervisor SHADOW-ONLY); Amendment-3
-   prohibitions; Bootstrap Gate 0 every fresh session; supervisor commits cite
-   `D-024-R###`; repo PUBLIC; never `name:` on producers; expansion-planning hold in
-   force; guards inside `.claude/hooks` untouchable without G5 (unit G ADDED
-   `loop_command_interceptor.py` under its own G5 — the guard packs are untouched).
+   activation owner-gated (D-024 §18/R595; supervisor SHADOW-ONLY; all GitHub-effect
+   proofs use injected runners); Amendment-3 prohibitions; Bootstrap Gate 0 every fresh
+   session; supervisor commits cite `D-024-R###`; repo PUBLIC; never `name:` on
+   producers; expansion-planning hold in force; guards inside `.claude/hooks` untouchable
+   without G5.
 9. **Successor must read:** `CLAUDE.md`; this file; `.claude/session-handoff-profile.md`;
-   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 20);
-   `project-control/tasks/M0-T093.json`;
-   `project-control/reports/M0-T093-guardrail-bridge.md` (the frozen pack to implement
-   from); `docs/LEAN_OPERATING_PROCESS.md`.
+   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 21);
+   `project-control/tasks/M0-T095.json`;
+   `project-control/reports/M0-T095-repair-gate.md` (the frozen pack to implement from);
+   `docs/LEAN_OPERATING_PROCESS.md`.
 10. **Stop/change conditions:** Gate-0 failure; validator non-zero; reviewer FAIL/BLOCKED
-    (consolidated correction round → delta re-attestations; M0-T094 is the latest worked
-    example); anything owner-only (credentials, payment, production, legal, PR #241,
+    (consolidated correction round → delta re-attestations; M0-T093/T094 are the worked
+    examples); anything owner-only (credentials, payment, production, legal, PR #241,
     activation, live-canary exact-command).
 11. **Successor prompt:** *"Work from durable repository evidence only. Verify root =
     C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch control/D-024-fable-codex-loop, HEAD,
@@ -82,14 +83,16 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
     docs/SESSION_HANDOFF.md, .claude/session-handoff-profile.md, and the §9 files. Run
     `python tools/project_control.py status` and `python -m
     tools.agent_supervisor.campaign_continuity --status`. Reconcile against live git + the
-    ledger (they win over prose). Continue the campaign seq-20 NEXT: M0-T093 (unit H1
-    guardrail-refusal classification + bounded 4.8 bridge) is claimed at 15% with its
-    S1–S16 scenario pack + reuse boundary recorded — implement prove-first per R018 from
-    the frozen pack (cite model_turnover/claude_runner/child_handoff/state_machine before
-    adding machinery; add only the pack §0 genuine gaps; quota-vs-refusal stays distinct
-    both directions per R075), write tools/test_agent_supervisor_guardrail_bridge.py (the
-    R110 §16.4 matrix), then the 4-reviewer gate cycle → DCV → accept, and proceed through
-    M0-T095 → M0-T096 (golden run; R187 hold after) → M0-T107. The C1 live refusal canary
-    is owner-gated (exact-command); ship the conservative deterministic classifier without
-    it. Stop for anything owner-only. The standard D-010 R113/R114 ~400k rotate-at-seam
-    ceiling governs your session."*
+    ledger (they win over prose). Continue the campaign seq-21 NEXT: M0-T095 (unit H2
+    root-cause repair gate + GitHub effect integration) is claimed at 15% with its
+    T1–T9/E1–E14 scenario pack + reuse boundary recorded — implement prove-first per R018
+    from the frozen pack (map every 16.8 case to existing github_flow/external_effects/
+    push_policy proof FIRST; add only the pack §0 genuine gaps; all GitHub effects stay
+    SHADOW-ONLY via injected runners), write tools/test_agent_supervisor_repair_gate.py
+    (the R112/R114 §16.6+§16.8 matrices incl. the supervisor-freeze citation fixture),
+    then the 4-reviewer gate cycle → DCV (46 rows) → accept, and proceed through M0-T096
+    (golden run; R187 hold after) → M0-T107. Long background python runs are externally
+    killed — foreground chunks; never mutate during a live suite. Do not merge PR #241 or
+    any pre-existing PR; supervisor stays SHADOW-ONLY; guards inside .claude/hooks are
+    untouchable without G5. Stop for anything owner-only. The standard D-010 R113/R114
+    ~400k rotate-at-seam ceiling governs your session."*
