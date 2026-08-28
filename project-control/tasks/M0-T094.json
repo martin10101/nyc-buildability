@@ -58,7 +58,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T03:43:07.997890+00:00",
+  "updated_at": "2026-08-28T03:52:31.862772+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -89,6 +89,13 @@
       "percent": 90,
       "status": "rework",
       "message": "Correction round C1-C3 applied at db689c8 after G3/G4/G5 all returned PASS with converged MINOR findings: C1 status --json now redacted (G3/G5 MINOR-1, behavioral test), C2 report count 51->52 (G3 adv/G4 MINOR-1), C3 /loop-ask '--' end-of-options separator (G5 ADVISORY-2, argv-echo test). Matrix 54/54; regression slice 200 PASS; modularity 0 failures. G5 ADVISORY-3/4 carried non-blocking to M0-T109. Delta re-attestations requested from all three reviewers; DCV dispatched over the 54-req applicable set at db689c8. Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:52:30.759635+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 92,
+      "status": "rework",
+      "message": "Prose-count re-flow (52/52 -> 54/54, DCV recommendation) moved the report identity; verification set committed at ca3318d (G3/G4/G5 delta re-attestations all PASS at db689c8 + DCV 54/54 PASS at db689c8). Re-submitting at ca3318d; DCV delta-ack over the count-only diff requested next. Supervisor-freeze qualifying evidence: D-024-R104."
     }
   ]
 }
