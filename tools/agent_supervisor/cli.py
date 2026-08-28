@@ -72,13 +72,12 @@ import os
 import pathlib
 import sys
 import zoneinfo
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
 from .anchor import (
     ANCHOR_BRANCH,
     AnchorError,
-    activation_status,
     assert_no_execution as assert_anchor_no_execution,
     build_publish_plan,
 )
@@ -141,7 +140,6 @@ from .loop import (
     DEFAULT_OWNER_TOUCH_BUDGET,
     MODE_LIMITED_AUTO,
     MODE_SUPERVISED,
-    OWNER_GATED_MODES,
     RUNNABLE_MODES,
     SESSION_ROLE_ORCHESTRATOR,
     LimitedAutoRefused,
@@ -158,7 +156,6 @@ from .manifest import (CONFIG_LOGICAL_NAME, EXCLUDED_NAMES, MANIFEST_FILENAME,
                        generate_manifest, read_manifest, verify_manifest_with_config,
                        write_manifest)
 from .model_change_ipc import (
-    NAMED_PIPE_STATUS,
     Caller,
     IpcError,
     ModelChangeEndpoint,
@@ -185,7 +182,6 @@ from .policy import (
     validate_documented_test_commands,
 )
 from .preflight import (
-    UNVERIFIED,
     control_response_round_trip,
     probe_record,
     record_probe,
@@ -220,7 +216,6 @@ from .recovery import (
     account_for_children,
     autostart_permitted,
     clear_emergency_stop,
-    interrupted_turn_resumption,
     last_outcome as last_recovery_outcome,
     recover_boot,
     set_emergency_stop,
@@ -268,9 +263,9 @@ from .resume_scheduler import (
     wake_suppressed,
 )
 from .retention import RetentionPolicy, file_sha256
-from .models import sha256_hex
 from .worker_turnover import WorkerTurnoverIntegration
-from .model_turnover import TurnoverEvidence, classify_exhaustion
+from .guardrail_refusal import AuthorizedTaskRecord
+from .refusal_bridge import GuardrailBridgeIntegration
 from .turnover_adapters import (
     make_subprocess_command_runner,
 )
@@ -2768,6 +2763,25 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         cli_version=str(runner.executable_identity().get("digest", "")))
     worker_turnover_integration = WorkerTurnoverIntegration(controller=worker_controller)
 
+    # M0-T096 (D-024 Phase H, D-024-R106): construct the accepted H1 refusal
+    # seam for real runs. Until this wiring the loop's `guardrail_bridge`
+    # parameter was never supplied by `start`, so a live guardrail refusal was
+    # never recorded and the Amendment-7 watcher (R226) had nothing to observe.
+    # Task legitimacy comes from the packet the controller already holds; a
+    # packet without authorization/criteria leaves the record unproven and the
+    # classifier fails closed (CONDITION_AUTHORIZATION_UNPROVEN). Either way
+    # this build records intent only - the bridge has no actuation channel.
+    guardrail_bridge = GuardrailBridgeIntegration(
+        journal=journal,
+        authorized_task=AuthorizedTaskRecord(
+            task_id=str(packet.get("task_id", "") or ""),
+            authorization=str(packet.get("authorization", "") or ""),
+            acceptance_criteria=tuple(
+                str(item) for item in
+                (packet.get("acceptance_criteria")
+                 or packet.get("stop_conditions") or ())),
+            purpose=str(packet.get("objective", "") or "")))
+
     loop = SupervisedLoop(
         config=LoopConfig(
             mode=args.mode, task_id=str(packet.get("task_id", "")),
@@ -2813,6 +2827,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # byte-identical to the pre-activation path. Every non-exhaustion path is
         # unchanged either way.
         worker_turnover=worker_turnover_integration,
+        guardrail_bridge=guardrail_bridge,
         # M0-T079: the durable run budget. It also carries the breaker tallies
         # across a crash-resume, so a restarted run cannot earn back model calls,
         # external writes, or restarts it has already spent.
@@ -3035,6 +3050,21 @@ def cmd_start(args: argparse.Namespace) -> int:
                 # M0-T079: how a run ended is a machine-readable fact too.
                 refusal = dispatched_run_refusal(args.mode, run)
     finally:
+        # M0-T096 (D-024 Amendment 7, R226): the passive natural-event scan.
+        # Every `start` session epilogue notices classifier records the run
+        # left behind (refusal/quota/availability/model-turnover) and CAS-
+        # persists at most one sanitized register row per distinct event -
+        # read-only over existing records, no prompt, no worker message.
+        # Bounded: a watcher failure is audited and never breaks `start`.
+        try:
+            from .live_observation import record_observations
+            record_observations(journal, session_provenance="live")
+        except Exception as watch_error:
+            try:
+                audit.append("live_observation_scan_failed",
+                             detail={"error": type(watch_error).__name__})
+            except Exception:
+                pass
         lock.release()
         journal.close()
 
