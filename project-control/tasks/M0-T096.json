@@ -55,12 +55,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T19:25:51.548661+00:00",
+  "updated_at": "2026-08-28T19:32:20.970483+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -99,5 +99,7 @@
       "status": "rework",
       "message": "ONE consolidated correction round (R091; the four reviewers returned PASS with non-blocking findings): apply G3 MINOR-1 (fake providers' inline git mirrors _GIT_ENV isolation), G4 MINOR-1 (behavioral coverage for the model_change_audit + turnover-transition + outage discovery branches), G5 INFO-1 (nest lock.release/journal.close in their own finally so a BaseException in the watcher cannot skip cleanup), G5 INFO-2 (sanitize installed_version_shape/applicable_shape/source_record_key at the register boundary). Then resubmit at the corrected identity and collect delta re-attestations from the SAME four reviewers."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-28T19:32:20.970483+00:00"
 }
