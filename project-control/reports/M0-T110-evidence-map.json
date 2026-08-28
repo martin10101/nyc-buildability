@@ -1,0 +1,82 @@
+{
+ "task_id": "M0-T110",
+ "producer": "fable-orchestrator-session",
+ "deliverable_sha": "ba25516ca812c90528ea297010a9d10cac5c2442",
+ "requirements": {
+  "D-024-R231": [
+   "project-control/directives/D-024-fable-codex-loop/source-008-amendment.md (verbatim capture, reconciliation recorded before any scope change)",
+   "project-control/reports/D-024-amendment-8-owner-report.md",
+   "tools/test_agent_supervisor_codex_channel.py::K8RequirementRegister::test_R231_the_amendment_is_captured_verbatim",
+   "CLAIM: DISCHARGED at capture (seq 23, validator EXIT=0), before this unit began"
+  ],
+  "D-024-R232": [
+   "This unit delivers required capability 1 (the Codex discussion channel); M0-T111 delivers capability 2 (Telegram sink); the activation package stays unpresented behind R247/M0-T112",
+   "project-control/campaigns/D-024-fable-codex-loop.json restrictions (Amendment-8 sequencing row)",
+   "tools/test_agent_supervisor_codex_channel.py::K8RequirementRegister::test_R232_the_pre_activation_hold_is_recorded_in_the_campaign",
+   "CLAIM: HOLD IN FORCE and honored - no continuous-mode activation, no activation-package presentation in this unit"
+  ],
+  "D-024-R233": [
+   ".claude/skills/loop-codex/SKILL.md (the honest limitation paragraph: ordinary commands QUEUED until the turn ends; NOT /btw; second terminal is the real-time path)",
+   "tools/test_agent_supervisor_codex_channel.py::K2Interception::test_no_btw_equivalence_claim_anywhere",
+   "project-control/reports/D-024-amendment-8-owner-report.md section 4 (the exact official limitation)",
+   "CLAIM: DISCHARGED - no /btw-equivalence representation anywhere; limitation preserved verbatim"
+  ],
+  "D-024-R234": [
+   "tools/agent_supervisor/codex_channel_cli.py (codex new/continue/show/promote/close on the existing CLI)",
+   ".claude/hooks/loop_command_interceptor.py (_codex_argv subverb map)",
+   "tools/test_agent_supervisor_codex_channel.py::K1Surface (5 tests) + ::K8RequirementRegister::test_R234_the_five_subverb_surface_exists",
+   "CLAIM: DISCHARGED - the command surface exists exactly as listed"
+  ],
+  "D-024-R235": [
+   ".claude/hooks/loop_command_interceptor.py (exact-match block+erase on the fixture-selected UserPromptSubmit event; fail-closed on every malformed shape)",
+   "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_248.json (the measured installed-version basis)",
+   "tools/test_agent_supervisor_codex_channel.py::K2Interception (8 tests, real hook subprocess) + ::K8RequirementRegister::test_R235_blocked_and_erased_before_the_model",
+   ".claude/skills/loop-codex/SKILL.md (truthful documented fallback if interception did not fire)",
+   "CLAIM: DISCHARGED within the measured basis; the owner-typed live zero-context canary remains pending-owner-C1 exactly as unit G recorded (stated in M0-T110-codex-channel.md section 1)"
+  ],
+  "D-024-R236": [
+   "tools/agent_supervisor/codex_channel.py::build_turn_packet (bounded durable summary + bounded recent exchanges + fresh compose_status state + campaigns + reference guidance; read-only sandbox = deeper inspection)",
+   "tools/test_agent_supervisor_codex_channel.py::K3BoundedContext (8 tests) + ::K8RequirementRegister::test_R236_the_turn_context_is_exactly_the_bounded_set",
+   "CLAIM: DISCHARGED - every turn receives exactly the bounded set; a fresh invocation never rescans the repository"
+  ],
+  "D-024-R237": [
+   "tools/agent_supervisor/codex_channel.py (structural absence of transcript/repo/log inputs; MAX_PACKET_BYTES hard ceiling with visible trimming then typed refusal; reuse of sanitize_question/validate_identity/redact_structure/build_argv/minimal_env/read_answer_file/resolve_model/state_kv CAS)",
+   "tools/test_agent_supervisor_codex_channel.py::K3BoundedContext::test_the_byte_ceiling_trims_visibly_then_fails_closed + ::K8RequirementRegister::test_R237_no_bulk_content_and_a_hard_ceiling",
+   "CLAIM: DISCHARGED - nothing bulk is ever sent; the existing machinery is reused, not re-implemented"
+  ],
+  "D-024-R238": [
+   "tools/agent_supervisor/codex_channel.py (reference_guidance in every packet)",
+   "tools/agent_supervisor/schemas/codex_discussion_reply.schema.json (evidence_refs description requires SHAs/digests/paths/symbols/tests, never bare line numbers)",
+   "tools/test_agent_supervisor_codex_channel.py::K3BoundedContext::test_stable_reference_guidance_over_bare_line_numbers + ::K8RequirementRegister::test_R238_stable_references_preferred",
+   "CLAIM: DISCHARGED"
+  ],
+  "D-024-R239": [
+   "tools/agent_supervisor/schemas/codex_discussion_reply.schema.json (disposition enum = the closed six)",
+   "tools/agent_supervisor/codex_channel.py::validate_reply (unknown/missing disposition = typed failure, never defaulted) + DISPOSITION_GUIDANCE (no actuation; exact owner commands named)",
+   "tools/test_agent_supervisor_codex_channel.py::K4Dispositions (5 tests incl. no-actuation-surface import scan) + ::K8RequirementRegister::test_R239_closed_dispositions_and_no_automatic_change",
+   "CLAIM: DISCHARGED - the discussion cannot alter Fable's instructions; mutation pass killed the accept-any-disposition and attention-row-skipped mutants"
+  ],
+  "D-024-R240": [
+   "tools/agent_supervisor/codex_channel.py::promote_message (owner-typed surface; CAS-idempotent promotion row with authorizes_nothing=true and required_next=/directive-compliance capture)",
+   "tools/test_agent_supervisor_codex_channel.py::K5Promotion (4 tests) + ::K8RequirementRegister::test_R240_promotion_is_owner_gated_and_captures_nothing_itself",
+   "CLAIM: DISCHARGED - promotion records approval evidence only; scope changes still flow through the existing durable capture route; REVISE_CURRENT_TASK guidance routes to the existing repair route"
+  ],
+  "D-024-R246": [
+   "project-control/tasks/M0-T110.json + M0-T111.json + M0-T112.json (the durable bounded sequence contracted at capture)",
+   "M0-T096 was ACCEPTED at seq 23 BEFORE this unit began (its contract was never broadened)",
+   "tools/test_agent_supervisor_codex_channel.py::K8RequirementRegister::test_R246_the_bounded_task_sequence_is_captured_durably",
+   "CLAIM: DISCHARGED"
+  ],
+  "D-024-R248": [
+   "No continuous-mode activation, no live 4.8 bridge, no PR #241 touch, no Agent SDK, no MCP servers, no global Claude settings change in this unit (allowed_paths honored; forbidden guards untouched)",
+   "tools/test_agent_supervisor_codex_channel.py::K8RequirementRegister::test_R248_the_unit_touches_no_prohibited_surface (source scan of both new modules)",
+   "CI 20/20 green at ba25516 (branch-protection contexts incl. hook/guard integrity checks)",
+   "CLAIM: PROHIBITIONS HONORED"
+  ],
+  "D-024-R249": [
+   "project-control/reports/D-024-amendment-8-owner-report.md (the five numbered first-report answers)",
+   "tools/test_agent_supervisor_codex_channel.py::K8RequirementRegister::test_R249_the_first_report_answers_the_five_items",
+   "CLAIM: DISCHARGED at capture, before this unit began"
+  ]
+ }
+}
