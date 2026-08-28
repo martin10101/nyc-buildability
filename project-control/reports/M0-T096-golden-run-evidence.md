@@ -123,6 +123,94 @@ the harness produces (R223).
 - DCV scale: 83 applicable requirements; `M0-T095-evidence-map.json` + its verification entry
   are the worked templates.
 
-## 4. Evidence (filled by the implementation session)
+## 4. Evidence (implementation session, 2026-08-28)
 
-*Pending implementation.*
+### 4.1 Prove-first result (R018) — the §0 boundary held; registers are executable
+
+The three registers in `tools/test_agent_supervisor_golden_run.py` are the machine-checked
+form of the prove-first duty — meta-tests verify every citation against the cited file's
+actual test names, so a renamed or deleted proof breaks the build:
+
+* `Section169RegisterTests` — 16.9 items (a)–(m), 13 rows: b/c/d/j/k fully CITED to the
+  existing packs; a/e/f/g/h/i composed or built here; l = mechanism cited + the live
+  campaign record (sequence ≥ 22 from the one captured directive); m = built here.
+* `GoldenSequenceRegisterTests` — R186 steps 1–15: steps 1,3–7,9–11,13–15 CITED; steps
+  2/12 composed here; step 8 composed (real reviewer contract + the golden run itself).
+* `LadderRegisterTests` — the R118 ladder, 11 rungs: 9 proof-bound, 1 process rung
+  (independent review = this unit's gate wave), exactly ONE owner-gated rung (R187/R595) —
+  asserted by test.
+
+### 4.2 The golden run and fault injections (all INJECTED, R222/R223)
+
+* **Two-unit golden run + rotation (16.9 m, R121, R186):** ONE `cli.main` invocation of the
+  exact operator command (`start --mode limited-auto --owner-enable-bounded-auto
+  --max-cycles 3 --context-rotation-threshold 100000` + the six explicit dispatch inputs,
+  disposable checkout, scratch runtime, fake executables) ran unit A (REAL git commit on
+  `task/GOLD-001-canary`), crossed the threshold, rotated at the seam via the standard path
+  (`last_rotation` recorded, READY successor verified), ran unit B (second real commit) —
+  launches `[work, ready, work]` proven from a log written by the child processes; each
+  commit exactly once; outbox drained; zero pending effects; zero human continuation.
+* **Injected controller restart (16.9 m/g):** the SAME command re-run after controller death
+  resumed exactly-once — unit A never re-ran; no lost pending action.
+* **Ambiguous effect:** a begun-but-unconfirmed effect blocks the restart from dispatching;
+  the effect is never re-fired.
+* **Injected refusal (16.4/R110 production path):** the typed structured refusal classified
+  through the REAL `start`-built loop — quota delegate declined, guardrail seam recorded the
+  R070 journal record (`shape_verified_live=false`), PAUSED_RECOVERY, no actuation
+  (`assert_actuation_permitted` refuses both halves). **This exposed and fixed a genuine
+  integration defect:** `_run_loop` never constructed the accepted H1
+  `GuardrailBridgeIntegration` (quota seam wired, refusal seam inert) — wired now, pinned by
+  test, mutation-verified (M9).
+* **Injected quota exhaustion:** the R289 stream-shape phrase → detect-and-hold at
+  PAUSED_RECOVERY, exactly one launch.
+* **Double-start (16.9 i):** a live foreign lock holder → typed report naming the owner pid,
+  no dispatch (`recover_boot` UNSAFE_OR_DRIFTED path, exit 11).
+* **Compositions:** multi-epoch × forced rotation (a); extended pause byte-identical across
+  restart (e); status/ask read-only at CLAUDE_RUNNING (f); accelerated overnight + restart
+  with no duplicate forwards and no earned-back elapsed time (g); bounded soak — every
+  registered counter boundary trips exactly at its limit and not below, tallies survive a
+  mid-soak reopen, repeated persists do not grow the journal (h); autonomous bounded
+  selection + correct-next advance with stale-sequence refusal (R186 s2/s12); compact
+  handoff omits content that on-demand retrieval returns exactly (R113).
+
+### 4.3 Watcher + pending_live_observation register (R224–R228)
+
+`live_observation.py` delivered per Amendment 7 (details: the Amendment-7 owner report §6):
+structurally passive (no subprocess/prompt/context path — source- and behavior-asserted);
+CAS-idempotent one-row-per-event capture of the five R226 fields, sanitized at the boundary;
+closed `injected`/`live_candidate` vocabulary with the harness-marker backstop (an
+INJECTED-GOLDEN-RUN-born event scanned by a live session still labels injected); NO code
+path can write `verified_live=true`; the R227 comparison is a report that refuses an
+injected row on the live side; `graduation_readiness` reports the 4.8 bridge `not_ready`
+and the general loop not gated (R228). Wired into the `start` epilogue (bounded; a watcher
+failure is audited, never breaks start) and proven end-to-end through the CLI refusal run.
+
+### 4.4 Test, mutation, and check evidence
+
+* `tools/test_agent_supervisor_golden_run.py`: **40/40 PASS** (~28 s).
+* Supervisor packs re-run this session, foreground-chunked at the deliverable identity:
+  303 + 317 + 590 + 546 + 828 = **2,584 passed, 2 skipped, 0 failed**.
+* Non-supervisor tools packs: chunk F 373 passed + 2 directive-compliance tests that failed
+  ONLY because the Amendment-8 registry capture landed mid-suite under them (the registry
+  files changed while the chunk ran); both re-run PASS against the settled tree, and the
+  validator reports EXIT=0. Chunk G (repo-index/views/project-control/guards) run in this
+  session — result in the checkpoint/progress entry. CI on the pushed SHA is the confirming
+  whole-suite run.
+* **Mutation matrix: 12/12 non-equivalent mutants KILLED** — evidence-class default flip;
+  marker-scan removal; `verified_live` flip; CAS→overwrite; comparison side-check removal;
+  provenance check removal; graduation "ready" flip; refusal-source discovery removal;
+  bridge wiring nulled in `_run_loop`; epilogue scan dropped; fake refusal loses its typed
+  shape; READY successor never READY. Each killed by the named test in this pack.
+* `ruff check` on every new/changed file: clean. `python tools/modularity_check.py --check`:
+  **failures 0** (new files: golden_run.py 407 ln, live_observation.py 451 ln, test pack
+  1,017 ln; cli.py +38/−8).
+
+### 4.5 Honest boundaries (unchanged from §2) + Amendment-8 impact
+
+No live-model canary was run and no natural event was awaited or provoked (R220/R221/R119);
+the live refusal-shape capture stays pending-owner-C1; exactly ONE feature is gated on live
+observation (4.8 bridge actuation, R228); continuous mode stays DISABLED (R187).
+**Amendment 8 (captured mid-unit, 2026-08-28):** the activation-package DOCUMENT is a
+unit-I deliverable, but its R187/R595 presentation is deferred behind M0-T110 (Codex
+discussion channel) + M0-T111 (Telegram sink) + M0-T112 (golden re-certification at the
+final frozen identity) per R232/R247. M0-T096's own scope and evidence are unchanged (R246).
