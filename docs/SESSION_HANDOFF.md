@@ -10,11 +10,13 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 1. **Generated:** 2026-08-28T06:40Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
    (the seq-20 successor that implemented unit H1 from the frozen pack and accepted it
-   end-to-end, then staged H2). **Turnover reason:** the standard D-010 R113/R114
-   rotate-at-seam ceiling — landed at the clean acceptance+staging seam, mirroring seq
-   17→18 and 19→20. **Sub-agents in flight:** none (G3/G4/G5 + DCV all landed and are
-   reconciled into committed verbatim reports; the DCV was resumed once for a missing-row
-   delta attestation, recorded in its report).
+   end-to-end, then staged H2). **Turnover reason (verbatim):** owner invoked
+   `/session-handoff` with no stated reason — landed at the clean seq-21
+   acceptance+staging seam already reached under the standard D-010 R113/R114
+   rotate-at-seam ceiling, mirroring seq 17→18 and 19→20. **Sub-agents in flight:** none
+   (G3/G4/G5 + DCV all landed and are reconciled into committed verbatim reports; the DCV
+   was resumed once for a missing-row delta attestation, recorded in its report; no
+   producer or background task is running).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **21**).
 3. **M0-T093 (unit H1) = ACCEPTED** (deliverables `633a9d1` + `0f4fc6a`; content identity
