@@ -483,11 +483,19 @@ class S7BridgeRestrictionTests(unittest.TestCase):
 
     def test_forbidden_operations_refuse_with_typed_error(self) -> None:
         bridge = rb.BridgeRestrictions(self.coordinator)
-        for op in rb.FORBIDDEN_BRIDGE_OPERATIONS:
+        # The op names are HARDCODED (never iterated from the production
+        # constant) so an edit that quietly moves one into the permitted set
+        # fails here, not silently (mutation survivor M7 closed).
+        for op in ("new-task", "new-investigation", "spawn-subagent",
+                   "broaden-scope", "consume-campaign"):
             with self.subTest(op=op):
                 with self.assertRaises(rb.BridgeError) as caught:
                     bridge.authorize(op)
                 self.assertEqual(caught.exception.code, "bridge_scope_forbidden")
+        self.assertEqual(rb.PERMITTED_BRIDGE_OPERATIONS,
+                         ("finish-smallest-atomic-operation",
+                          "collect-bounded-children", "checkpoint-validation",
+                          "durable-handoff"))
 
     def test_unknown_operations_fail_closed(self) -> None:
         bridge = rb.BridgeRestrictions(self.coordinator)
@@ -669,6 +677,17 @@ class S12ReentrySuccessTests(JournalCase):
         record = self.journal.get_state(f"{rb.REENTRY_KEY_PREFIX}{digest}")
         self.assertEqual(record["status"], "succeeded")
         self.assertEqual(record["succeeded_after_attempts"], 1)
+
+    def test_success_after_both_attempts_is_not_cap_exhausted(self) -> None:
+        # Attempt 2 SUCCEEDED: the cap governs only requests that remain
+        # refused (status "open"); a success at the cap boundary never reads
+        # as exhausted (mutation survivor M6 closed).
+        digest = refused_request().digest()
+        rb.record_reentry_attempt(self.journal, digest)
+        rb.record_reentry_attempt(self.journal, digest)
+        rb.record_reentry_success(self.journal, digest)
+        self.assertFalse(rb.reentry_cap_exhausted(self.journal, digest))
+        self.assertEqual(rb.attempts_recorded(self.journal, digest), 0)
 
 
 class S13CapTests(JournalCase):
