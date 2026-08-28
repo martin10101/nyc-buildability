@@ -53,12 +53,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-24T12:35:22+00:00",
-  "updated_at": "2026-08-28T03:54:54.326227+00:00",
+  "updated_at": "2026-08-28T03:56:00.649367+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -97,5 +97,7 @@
       "status": "rework",
       "message": "Prose-count re-flow (52/52 -> 54/54, DCV recommendation) moved the report identity; verification set committed at ca3318d (G3/G4/G5 delta re-attestations all PASS at db689c8 + DCV 54/54 PASS at db689c8). Re-submitting at ca3318d; DCV delta-ack over the count-only diff requested next. Supervisor-freeze qualifying evidence: D-024-R104."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-28T03:56:00.649367+00:00"
 }
