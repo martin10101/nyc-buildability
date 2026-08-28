@@ -17,12 +17,12 @@
  ],
  "next_action": {
   "task_id": "M0-T093",
-  "description": "M0-T094 (unit G operator channel) ACCEPTED at seq 18: graceful-stop + ask verbs, section-14 status (operator_status/operator_ask/operator_channel_cli, thin cli.py wiring, durable_state.ask_by_id), 8 /loop-* skills (disable-model-invocation:true), feature-detected UserPromptSubmit interception hook + 2.1.248 detection fixture, R035 alias doc. Matrix 54/54; mutation 10/10 non-equivalent killed; composed whole-suite 2971/3-skip/0-fail + CI green; G0/G2/G3/G4/G5 PASS + delta re-attestations + DCV 54/54 PASS at final identity e893209e (deliverable f6edf11, corrections db689c8, prose ca3318d, gates bf88933/0d6466e). Owner-gated residuals carried: unit-G C1 interception canary (zero-context + queued-input measurements, R088 second-terminal fallback documented); G5 ADVISORY-3 (POSIX process-group kill) + ADVISORY-4 ([HOME] masking) to M0-T109 backlog. NEXT: claim and implement M0-T093 (unit H1) from its packet under the standard prove-first + scenario-pack + 4-reviewer-gate + DCV cycle; sequence after: M0-T095 (H2) -> M0-T096 (I golden run; R187 HOLD after) -> M0-T107 (J portability). NEVER merge PR #241; supervisor SHADOW-ONLY; continuous mode owner-gated (R595)."
+  "description": "M0-T094 (unit G) ACCEPTED at seq 19; M0-T093 (unit H1 guardrail-refusal classification + bounded 4.8 bridge) CLAIMED and STAGED at 15% (G0 PASS + reuse boundary + section-16.4 scenario pack S1-S16 + owner-gated C1 live refusal canary, all in project-control/reports/M0-T093-guardrail-bridge.md). SUCCESSOR IMPLEMENTS FROM THE FROZEN PACK: prove-first over model_turnover/claude_runner/approved_models/workload_classifier/child_handoff/state_machine/journal surfaces; genuine gaps ONLY guardrail_refusal.py + refusal_bridge.py (R073 semantic-preserving re-presentation as a structured-field transform, durable digest-bound two-attempt counter surviving restart) + additive state-machine states + thin loop wiring; write tools/test_agent_supervisor_guardrail_bridge.py (R110 matrix incl. BOTH-direction quota-vs-refusal separation per R075), then 4-reviewer gates -> DCV (49 applicable reqs; M0-T094-evidence-map.json is the worked template) -> accept. Sequence after H1: M0-T095 (H2) -> M0-T096 (I golden run; R187 HOLD after) -> M0-T107 (J). Environment: long background python runs are externally killed - foreground chunks; never mutate during a live suite. Guards inside .claude/hooks untouchable (this packet FORBIDS .claude/hooks and settings.json). C1 canaries remain owner-gated exact-command (R192/R197)."
  },
  "frozen": {
-  "head_sha": "0d6466e7230142de3e51cbd22da4b27cbca9b14c",
-  "recorded_at": "2026-08-28T03:56:30+00:00"
+  "head_sha": "19143755a16381ba5811ef44ee9197ebc1c6ef93",
+  "recorded_at": "2026-08-28T04:00:50+00:00"
  },
- "sequence": 19,
- "updated_at": "2026-08-28T03:56:30+00:00"
+ "sequence": 20,
+ "updated_at": "2026-08-28T04:00:50+00:00"
 }
