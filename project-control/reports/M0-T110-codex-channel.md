@@ -178,6 +178,36 @@ rows have their own lanes; URGENT/STOP are attention, not scope).
    reviewer 81, golden 40).
 7. CI modularity check must pass before submission.
 
-## 6. Evidence (filled at implementation/submission)
+## 6. Evidence (implementation; settled tree, foreground-chunked)
 
-- (pending) new pack run; affected packs; foreground-chunked suites; ruff; modularity; CI.
+**Deliverable files:** `tools/agent_supervisor/codex_channel.py` (domain, ~560 physical lines
+incl. docs) + `codex_channel_cli.py` (wiring) + `schemas/codex_discussion_reply.schema.json`
++ `cli.py` (one import + one registration line) + `operator_ask.py`
+(`_read_answer_file` → public `read_answer_file`, one call site) +
+`.claude/hooks/loop_command_interceptor.py` (regex alternation + `_codex_argv` subverb map)
++ `.claude/skills/loop-codex/SKILL.md` + `tools/test_agent_supervisor_codex_channel.py`
+(K-pack, reusing the unit-G harness by import — one harness authority).
+
+- **K-pack: 52/52 passed** (K1 surface 6, K2 interception 8 — real hook subprocess,
+  K3 bounded context 8, K4 dispositions 5, K5 promotion 4, K6 security 7, K7 skill 1,
+  K8 executable requirement register 13 — one row per applicable req).
+- **Affected packs re-run green:** operator-channel 54/54, golden-run 40/40,
+  reviewer 81/81.
+- **Whole supervisor suite (freeze-rule baseline re-established):** 3 chunks =
+  895 + 895 (2 skipped) + 864 → **2,654 passed, 2 skipped, 0 failed** (was 2,584+2 at
+  M0-T096; the growth is this unit's 52 + the K-pack-imported harness collection).
+- **Non-supervisor tools suite:** 3 chunks = 279 + 160 (1 skipped) + 120 →
+  **559 passed, 1 skipped** — exactly the accepted M0-T096 baseline.
+- **Mutation pass: 14/14 KILLED** (accept-any-disposition; drop-STOP_FOR_OWNER;
+  summary-erasure; recents-keep-oldest; ceiling-fails-open; CAS→blind-overwrite;
+  continue-ignores-closed; thread-full-removed; queue-unbounded; promote-anything;
+  promotion-overwrite; hook-executes-unknown-subverbs; attention-row-skipped;
+  timeout-drops-owner-message). Honest note: the CAS→blind-overwrite mutation SURVIVED
+  the first pass — no test exercised a real concurrent-writer conflict — so
+  `test_a_concurrent_thread_write_loses_cleanly_via_cas` was added (red under the
+  mutation, green under the real code) and the mutation now dies.
+- **ruff 0.13.0 (the CI version): all changed files clean.** (CI's ruff job runs with
+  `working-directory: services/api` — untouched by this unit; the repo-root tree carries
+  58 pre-existing hits in files this unit never touched.)
+- **`modularity_check --check` exit 0** after `git add` (all new files far below warn).
+- **CI on the pushed deliverable SHA:** recorded in the progress log at the submit seam.

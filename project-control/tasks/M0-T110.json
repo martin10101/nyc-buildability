@@ -52,11 +52,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 5,
+  "progress_percent": 15,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-28T18:29:19.311661+00:00",
-  "updated_at": "2026-08-28T19:44:56.974066+00:00",
+  "updated_at": "2026-08-28T19:51:22.426004+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -73,6 +73,13 @@
       "percent": 5,
       "status": "in_progress",
       "message": "Unit K claimed at seq-23 NEXT (G0 PASS at 8fc8a5b; resolver ok=true 13 applicable ids R231-R240/R246/R248/R249). Owner resume prompt 2026-08-28 classified citation-only (no new requirement; Amendment 8 already captured, validator EXIT=0 at capture). Next: prove-first over the unit-G operator-channel pack (skill+UserPromptSubmit interception, codex_reviewer read-only contract, evidence-packet/redaction/token-budget, durable_state CAS), then /loop-codex design+implementation. (D-024-R232/R234)"
+    },
+    {
+      "at": "2026-08-28T19:51:22.426004+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Unit K STAGED (M0-T110-codex-channel.md sections 0-5): reuse boundary over unit-G interception/ask + codex_reviewer read-only argv + durable_state CAS + compose_status; prove-first runs green on settled tree (operator-channel 54/54, reviewer 81/81); decided: no automatic actuation from any disposition (R239), promotion owner-gated by construction feeding /directive-compliance (R240), honest /btw non-equivalence + pending-owner-C1 posture (R233/R235). Next: implement codex_channel.py + codex_channel_cli.py + schema + hook extension + skill + K-pack. (D-024-R232/R234)"
     }
   ]
 }

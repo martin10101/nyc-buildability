@@ -235,10 +235,11 @@ class AskOutcome:
         return dataclasses.asdict(self)
 
 
-def _read_answer_file(output_path: str, result: ProcessResult) -> Any:
+def read_answer_file(output_path: str, result: ProcessResult) -> Any:
     """The decision file, else stdout ONLY when no provider failure event -
     the same rule as ``CodexReviewer._invoke`` (a `turn.failed` payload must
-    never be mistaken for an answer)."""
+    never be mistaken for an answer). Public: the codex_channel discussion
+    turn (M0-T110) reuses this exact rule rather than re-deriving it."""
     path = pathlib.Path(output_path)
     text = path.read_text(encoding="utf-8-sig").strip() if path.exists() else ""
     if not text:
@@ -332,7 +333,7 @@ def run_ask(
                               request_id=request_id, timed_out=True,
                               tree_terminated=result.tree_terminated,
                               redactions=redactions)
-        raw = _read_answer_file(output_path, result)
+        raw = read_answer_file(output_path, result)
         try:
             if raw is None:
                 raise AskError(

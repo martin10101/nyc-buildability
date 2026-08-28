@@ -49,9 +49,11 @@ SUBPROCESS_TIMEOUT_SECONDS = float(
 
 #: Exact command-token match (R087: never substring). Anchored: the prompt IS
 #: the command - "tell me about /loop-status", "loop-status", and
-#: "/loop-statuses" all pass through untouched.
+#: "/loop-statuses" all pass through untouched. `loop-codex` (M0-T110,
+#: D-024-R234/R235) rides the same single interception authority.
 _COMMAND = re.compile(
-    r"^/(loop-(?:start|status|tasks|ask|pause|resume|stop|emergency-stop))"
+    r"^/(loop-(?:start|status|tasks|ask|pause|resume|stop|emergency-stop"
+    r"|codex))"
     r"(?:\s+([\s\S]*))?$")
 
 #: verb -> supervisor argv tail. /loop-stop maps to the graceful landing-rule
@@ -67,6 +69,74 @@ _VERB_ARGV: dict[str, list[str]] = {
 }
 
 _DETECTION_FIXTURE_GLOB = "loop_interception_detection_*.json"
+
+#: /loop-codex subverb shapes (M0-T110; R234). Each entry:
+#: (needs provider inputs, id-argument count, free-text tail expected, usage).
+_CODEX_USAGE = ("/loop-codex new <question> | continue <thread-id> <message> "
+                "| show <thread-id> | promote <message-id> | "
+                "close <thread-id>")
+_CODEX_SUBVERBS: dict[str, tuple[bool, int, bool]] = {
+    "new": (True, 0, True),
+    "continue": (True, 1, True),
+    "show": (False, 1, False),
+    "promote": (False, 1, False),
+    "close": (False, 1, False),
+}
+
+
+def _codex_argv(argument: str) -> tuple[list[str] | None, str]:
+    """Map the /loop-codex argument to the supervisor argv, or a block reason.
+
+    Fail closed and visible on every malformed shape (R087): never
+    half-executed, never passed to the model.
+    """
+    parts = argument.split(None, 1)
+    if not parts:
+        return None, f"/loop-codex needs a subverb: {_CODEX_USAGE}"
+    subverb = parts[0]
+    rest = parts[1].strip() if len(parts) > 1 else ""
+    shape = _CODEX_SUBVERBS.get(subverb)
+    if shape is None:
+        return None, (f"/loop-codex {subverb} is not a channel subverb. "
+                      f"{_CODEX_USAGE}")
+    needs_provider, id_count, wants_text = shape
+    ids: list[str] = []
+    if id_count:
+        id_parts = rest.split(None, 1)
+        if not id_parts or not id_parts[0]:
+            return None, (f"/loop-codex {subverb} needs an id. {_CODEX_USAGE}")
+        ids = [id_parts[0]]
+        rest = id_parts[1].strip() if len(id_parts) > 1 else ""
+    if wants_text and not rest:
+        return None, (f"/loop-codex {subverb} needs a message. {_CODEX_USAGE}")
+    if not wants_text and rest:
+        return None, (f"/loop-codex {subverb} takes exactly one id; "
+                      f"unexpected extra text was refused (nothing was "
+                      f"executed). {_CODEX_USAGE}")
+    tail = [sys.executable, "-m", "tools.agent_supervisor", "codex", subverb]
+    if needs_provider:
+        exe = os.environ.get("SUPERVISOR_CODEX_EXECUTABLE", "")
+        cfg = os.environ.get("SUPERVISOR_CONFIG", "")
+        sel = os.environ.get("SUPERVISOR_MODEL_SELECTION", "")
+        if not (exe and cfg and sel):
+            id_hint = "<thread-id> " if id_count else ""
+            text_hint = '"<message>" ' if wants_text else ""
+            return None, (
+                f"/loop-codex {subverb} refused: SUPERVISOR_CODEX_EXECUTABLE, "
+                f"SUPERVISOR_CONFIG, and SUPERVISOR_MODEL_SELECTION are not "
+                f"all set for this session. Second-terminal path: python -m "
+                f"tools.agent_supervisor codex {subverb} {id_hint}{text_hint}"
+                f"--codex-executable <path> --config <path> "
+                f"--model-selection <path>")
+        tail += ["--codex-executable", exe, "--config", cfg,
+                 "--model-selection", sel]
+    tail += ids
+    if wants_text:
+        # ONE argv element behind an explicit end-of-options separator (the
+        # unit-G G5 ADVISORY-2 hardening): a message starting with "-" is
+        # still the message, never an option; metacharacters are data.
+        tail += ["--", rest]
+    return tail, ""
 
 
 def _repo_root(payload: dict) -> pathlib.Path | None:
@@ -160,7 +230,13 @@ def main() -> int:
         return 0
 
     ignored_argument = ""
-    if verb == "loop-tasks":
+    if verb == "loop-codex":
+        argv_or_none, block_reason = _codex_argv(argument)
+        if argv_or_none is None:
+            _block(block_reason)
+            return 0
+        argv = argv_or_none
+    elif verb == "loop-tasks":
         argv = [sys.executable, "-m",
                 "tools.agent_supervisor.campaign_continuity", "--status"]
         ignored_argument = argument

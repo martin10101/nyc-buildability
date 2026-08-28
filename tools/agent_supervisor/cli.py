@@ -222,6 +222,7 @@ from .recovery import (
     set_manual_pause,
 )
 from . import refusals
+from .codex_channel_cli import register_codex_channel_verbs
 from .operator_channel_cli import (
     emit_payload as _emit,
     open_runtime as _open_runtime,
@@ -3421,6 +3422,7 @@ def build_parser() -> argparse.ArgumentParser:
     stop.set_defaults(func=cmd_stop)
 
     register_operator_verbs(sub, add_common)
+    register_codex_channel_verbs(sub, add_common)
 
     resume_pp = sub.add_parser(
         "resume-pending-prompt",
