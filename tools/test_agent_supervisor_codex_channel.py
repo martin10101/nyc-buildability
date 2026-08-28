@@ -622,7 +622,7 @@ class K6Security(CodexChannelBase):
             capture: list = []
             outcome = cc.new_thread(
                 "check \x1b[31mthis\x1b[0m token "
-                "ghp_0123456789abcdefghijklmnopqrstuvwxyzAB",
+                "ghp_0123456789abcdefghijklmnopqrstuvwxyzAB",  # secretscan:allow fake token proving redaction, leak-absence test
                 runner=answering_runner(good_reply(), capture=capture),
                 **self.turn_kwargs(journal))
             self.assertTrue(outcome.answered, outcome.error_message)
