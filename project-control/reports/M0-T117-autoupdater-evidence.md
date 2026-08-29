@@ -5,16 +5,37 @@ Worktree: `C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t117`
 (`git rev-parse --show-toplevel` verified this exact path before any other command).
 Python: 3.11.9 (sandbox). Interpreter: `C:\Users\MLFLL\AppData\Local\Programs\Python\Python311\python.exe`.
 
-The change forces `DISABLE_AUTOUPDATER=1` into the environment of every
-controller-launched CLAUDE child, at both `claude_runner` Popen sites, via a new
-claude-scoped helper `process.claude_child_env` (applied AFTER the env allowlist and
-any config `extra_env`). Codex children (which use the shared `minimal_env`) are
-untouched.
+The change forces `DISABLE_AUTOUPDATER=1` into the environment of every CLAUDE child
+the supervisor launches with a **constructed** environment, via a new claude-scoped
+helper `process.claude_child_env` (applied AFTER the env allowlist and any config
+`extra_env`). Codex children (which use the shared `minimal_env`) are untouched.
+
+**Covered / uncovered set (precise, after the G3-8 correction).** Injection-forced —
+every claude launch that builds its env via `claude_child_env`:
+
+- worker launch (`claude_runner.ClaudeRunner.run_unit`);
+- model-availability probe (`claude_runner.probe_model_launch`);
+- `doctor --live` control-response probe run inside the certification window
+  (`preflight.control_response_round_trip`) — G3-2 rework;
+- turnover successor launch, worker redispatch AND orchestrator/handoff start alike
+  (`turnover_adapters.SupervisorLauncher._build_invocation`) — G3-3 rework.
+
+NOT injection-forced (inherit the FULL parent environment; covered by the owner
+machine-scope belt): the two bare `claude --version`/`--help` capability probes —
+`capability_probe.py::_run` (~line 99, no `env=`) and `native_runtime.py::_run`
+(~line 101, `env=None`). Outside allowed_paths; the documented exclusion. A version/
+help check needs the real PATH, so they are deliberately not env-stripped.
+
+**G3 Finding-4 fact (recorded where the owner belt is discussed).** `minimal_env`'s
+allowlist STRIPS `DISABLE_AUTOUPDATER` (it is not on `DEFAULT_ENV_ALLOWLIST`), so a
+supervisor-constructed child would lose even a machine-scope value through the
+allowlist — which is exactly why the code-side forced injection has to exist. The two
+belts are complementary, not redundant.
 
 Fail-closed choice for AS-6: **the forced pair wins**. A config `extra_env` that
 supplies a conflicting `DISABLE_AUTOUPDATER` value (e.g. `"0"`) is overridden back to
 `"1"` rather than raising. Rationale: the guarantee this control exists to make is
-that NO input (parent env, allowlist, or config) ever yields a controller-launched
+that NO input (parent env, allowlist, or config) ever yields a supervisor-constructed
 claude child without `DISABLE_AUTOUPDATER=1`. An unconditional forced value delivers
 that for every input; a launch-time typed refusal is strictly weaker (it fails the
 launch on a config typo instead of neutralizing it, and adds an error path that could
@@ -130,15 +151,79 @@ $ python -m pytest tools/test_agent_supervisor_claude_runner_env.py tools/test_a
 
 ---
 
+## REWORK — G3-2 (preflight) + G3-3 (turnover) new seams: RED then GREEN
+
+New tests were written and run against the PRE-FIX source of `preflight.py` and
+`turnover_adapters.py` (both still building env via `minimal_env`). Meaningful red —
+`None != '1'` at the real preflight Popen, `KeyError` on the turnover invocation env:
+
+```
+$ python -m pytest "tools/test_agent_supervisor_claude_runner_env.py::DoctorLiveProbeEnvTests" \
+      "tools/test_agent_supervisor_claude_runner_env.py::TurnoverSuccessorEnvTests" -q
+...
+        with mock.patch("subprocess.Popen", _capturing_popen(store)):
+            with self.assertRaises(_StopLaunch):
+                preflight.control_response_round_trip("claude", live=True)
+        env = store["env"]
+        assert isinstance(env, dict)
+>       self.assertEqual(env.get("DISABLE_AUTOUPDATER"), "1")
+E       AssertionError: None != '1'
+tools\test_agent_supervisor_claude_runner_env.py:186: AssertionError
+_ TurnoverSuccessorEnvTests.test_orchestrator_successor_env_injects_the_control _
+        inv = self._launcher()._build_invocation(self._request(tc.TurnoverLayer.ORCHESTRATOR))
+>       self.assertEqual(inv.env["DISABLE_AUTOUPDATER"], "1")
+E       KeyError: 'DISABLE_AUTOUPDATER'
+tools\test_agent_supervisor_claude_runner_env.py:241: KeyError
+_ TurnoverSuccessorEnvTests.test_worker_successor_env_injects_and_preserves_existing_pairs _
+        inv = self._launcher()._build_invocation(self._request(tc.TurnoverLayer.WORKER))
+>       self.assertEqual(inv.env["DISABLE_AUTOUPDATER"], "1")
+E       KeyError: 'DISABLE_AUTOUPDATER'
+tools\test_agent_supervisor_claude_runner_env.py:233: KeyError
+=========================== short test summary info ===========================
+FAILED ...::DoctorLiveProbeEnvTests::test_control_response_round_trip_injects_the_control
+FAILED ...::TurnoverSuccessorEnvTests::test_orchestrator_successor_env_injects_the_control
+FAILED ...::TurnoverSuccessorEnvTests::test_worker_successor_env_injects_and_preserves_existing_pairs
+3 failed in 0.31s
+```
+
+After routing both seams through `claude_child_env` — GREEN:
+
+```
+$ python -m pytest "tools/test_agent_supervisor_claude_runner_env.py::DoctorLiveProbeEnvTests" \
+      "tools/test_agent_supervisor_claude_runner_env.py::TurnoverSuccessorEnvTests" -q
+...                                                                      [100%]
+3 passed in 0.19s
+```
+
+Injection module + process + the two extended-scope packs, all green:
+
+```
+$ python -m pytest tools/test_agent_supervisor_claude_runner_env.py \
+      tools/test_agent_supervisor_process.py \
+      tools/test_agent_supervisor_recovery_probes.py \
+      tools/test_agent_supervisor_turnover_live_seam.py -q
+221 passed, 1 skipped in 23.82s
+```
+
+The G4-F6 allowlist-re-enable test
+(`ClaudeChildEnvSeamTests::test_g4f6_allowlist_reenable_vector_is_overridden`) is part
+of the 12-test injection module and passes: with the allowlist widened to admit
+`DISABLE_AUTOUPDATER` and the parent env carrying `"0"`, `minimal_env` returns `"0"`
+but `claude_child_env` still returns `"1"`.
+
+---
+
 ## Full supervisor suite
 
 ```
 $ python -m pytest tools/test_agent_supervisor_*.py -q
 ...
-3 failed, 2717 passed, 2 skipped in 192.08s (0:03:12)
+3 failed, 2721 passed, 2 skipped in 188.51s (0:03:08)
 ```
 
-Collected 2722 = baseline 2712 + 10 new (8 new module + 2 in process module).
+Collected 2726 = baseline 2712 + 14 new (round 1: 8 injection module + 2 process
+module; this rework: G4-F6 + preflight seam + worker successor + orchestrator successor
+= 4).
 
 The 3 failures are ALL the same pre-existing live drift tooth — installed CLI
 `2.1.251` vs the committed fixture `2.1.248` (AD-093 drift, M0-T118's fixture-recapture

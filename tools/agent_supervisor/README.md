@@ -389,16 +389,44 @@ tests are there to catch.
 So a Claude Code upgrade is never something that just *happens* to the controller —
 it is a **deliberate admission event** (D-024-R286/R287):
 
-1. **Background updates stay disabled for controller-launched workers.** Every
-   controller-launched claude child (both the worker launch and the model-availability
-   probe) is started with `DISABLE_AUTOUPDATER=1` forced into its environment,
-   unconditionally — see `process.claude_child_env`, applied *after* the env allowlist
-   and any config `extra_env`, so neither can drop or override it. This is
-   claude-scoped: codex children keep the plain `minimal_env` and are untouched.
-   `DISABLE_AUTOUPDATER` only blocks the *background* update attempt; the manual
-   `claude update` still works. **`DISABLE_UPDATES` is deliberately NOT used** — it
-   would also block a manual, intentional update, and intentional updates are the
-   whole point of an admission event (D-024-R280).
+1. **Background updates stay disabled for every claude child the supervisor launches
+   with a CONSTRUCTED environment.** Each such child is started with
+   `DISABLE_AUTOUPDATER=1` forced into its environment, unconditionally — see
+   `process.claude_child_env`, applied *after* the env allowlist and any config
+   `extra_env`, so neither can drop or override it. This is claude-scoped: codex
+   children keep the plain `minimal_env` and are untouched. `DISABLE_AUTOUPDATER` only
+   blocks the *background* update attempt; the manual `claude update` still works.
+   **`DISABLE_UPDATES` is deliberately NOT used** — it would also block a manual,
+   intentional update, and intentional updates are the whole point of an admission
+   event (D-024-R280).
+
+   *Exactly which claude launches are injection-forced* (every one that builds its
+   own env through `claude_child_env`):
+   - the **worker launch** (`claude_runner.ClaudeRunner.run_unit`);
+   - the **model-availability probe** (`claude_runner.probe_model_launch`);
+   - the **`doctor --live` control-response probe** run *inside* the certification
+     window (`preflight.control_response_round_trip`);
+   - the **turnover successor launch** — worker redispatch **and** orchestrator/handoff
+     start alike (`turnover_adapters.SupervisorLauncher._build_invocation`).
+
+   *What is NOT injection-forced, and why it is still covered.* Two seams launch the
+   CLI as a bare `claude --version` / `claude --help` capability probe and inherit the
+   **full parent environment** rather than a supervisor-constructed one:
+   `capability_probe.py` (`_run`, ~line 99, no `env=`) and `native_runtime.py`
+   (`_run`, ~line 101, `env=None`). They are deliberately NOT env-stripped (a version/
+   help check needs the real PATH), so the forced injection does not reach them; they
+   are covered instead by the owner's **machine-scope** `DISABLE_AUTOUPDATER` variable
+   when it is set. This split is the precise truth: *every claude child launched with
+   a supervisor-constructed environment is injection-forced; the two bare version/help
+   probes inherit the parent environment and rely on the owner belt.*
+
+   *Why the injection has to exist at all (G3 Finding-4).* `minimal_env`'s allowlist
+   **strips** `DISABLE_AUTOUPDATER` — it is not on `DEFAULT_ENV_ALLOWLIST` — so even
+   if the owner has set the machine-scope variable, a supervisor-constructed child
+   would *lose* it through the allowlist. The forced `claude_child_env` injection is
+   what re-establishes it for those launches; the two belts are complementary, not
+   redundant (allowlist stripping is exactly why the code-side injection is needed,
+   and the bare probes are exactly why the machine-scope belt is still worth setting).
 2. **To admit a new version, do it intentionally, in order:** update the CLI on
    purpose → recapture the measured fixture pack at the new version → run the full
    recertification (fixtures, drift teeth, live probes, golden suites, gates,

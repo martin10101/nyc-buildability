@@ -30,7 +30,10 @@ sys.path.insert(0, str(REPO))
 
 from tools.agent_supervisor import claude_runner as cr  # noqa: E402
 from tools.agent_supervisor import codex_channel  # noqa: E402
+from tools.agent_supervisor import preflight  # noqa: E402
 from tools.agent_supervisor import process as pc  # noqa: E402
+from tools.agent_supervisor import turnover_adapters as ta  # noqa: E402
+from tools.agent_supervisor import turnover_controller as tc  # noqa: E402
 
 
 class _StopLaunch(Exception):
@@ -133,6 +136,110 @@ class ClaudeChildEnvSeamTests(unittest.TestCase):
         env = pc.claude_child_env({"FAKE_MODE": "normal"})
         self.assertEqual(env["FAKE_MODE"], "normal")
         self.assertEqual(env["DISABLE_AUTOUPDATER"], "1")
+
+    def test_g4f6_allowlist_reenable_vector_is_overridden(self) -> None:
+        # G4 F6: even if the allowlist CONTAINS DISABLE_AUTOUPDATER and the parent
+        # env carries a re-enabling "0", the inherited value cannot survive - the
+        # forced pair is applied last. This closes the "widen the allowlist to let
+        # the parent turn it back on" vector.
+        prev = os.environ.get("DISABLE_AUTOUPDATER")
+        os.environ["DISABLE_AUTOUPDATER"] = "0"
+        try:
+            allow = tuple(pc.DEFAULT_ENV_ALLOWLIST) + ("DISABLE_AUTOUPDATER",)
+            # Prove the allowlist really would have admitted the parent's "0"...
+            self.assertEqual(pc.minimal_env(None, allow)["DISABLE_AUTOUPDATER"], "0")
+            # ...and that claude_child_env forces it back to "1" regardless.
+            self.assertEqual(pc.claude_child_env(None, allow)["DISABLE_AUTOUPDATER"], "1")
+        finally:
+            if prev is None:
+                os.environ.pop("DISABLE_AUTOUPDATER", None)
+            else:
+                os.environ["DISABLE_AUTOUPDATER"] = prev
+
+
+class DoctorLiveProbeEnvTests(unittest.TestCase):
+    """G3-2: the doctor --live control-response probe (preflight) injects the control.
+
+    This probe launches the real claude executable INSIDE the certification window,
+    so it must carry DISABLE_AUTOUPDATER=1 like every other supervisor-constructed
+    claude launch. Same real-seam interception style as AS-1/AS-2.
+    """
+
+    def setUp(self) -> None:
+        self._had = "DISABLE_AUTOUPDATER" in os.environ
+        self._prev = os.environ.pop("DISABLE_AUTOUPDATER", None)
+
+    def tearDown(self) -> None:
+        if self._had:
+            os.environ["DISABLE_AUTOUPDATER"] = self._prev  # type: ignore[assignment]
+        else:
+            os.environ.pop("DISABLE_AUTOUPDATER", None)
+
+    def test_control_response_round_trip_injects_the_control(self) -> None:
+        self.assertNotIn("DISABLE_AUTOUPDATER", os.environ)
+        store: dict[str, object] = {}
+        with mock.patch("subprocess.Popen", _capturing_popen(store)):
+            with self.assertRaises(_StopLaunch):
+                preflight.control_response_round_trip("claude", live=True)
+        env = store["env"]
+        assert isinstance(env, dict)
+        self.assertEqual(env.get("DISABLE_AUTOUPDATER"), "1")
+
+
+class TurnoverSuccessorEnvTests(unittest.TestCase):
+    """G3-3: the turnover successor launcher injects the control for BOTH layers.
+
+    The successor launch (worker redispatch and orchestrator/handoff start) builds
+    its env once in `_build_invocation`; that env must force DISABLE_AUTOUPDATER=1
+    while preserving the existing effort/role pairs it already passes.
+    """
+
+    def setUp(self) -> None:
+        self._had = "DISABLE_AUTOUPDATER" in os.environ
+        self._prev = os.environ.pop("DISABLE_AUTOUPDATER", None)
+
+    def tearDown(self) -> None:
+        if self._had:
+            os.environ["DISABLE_AUTOUPDATER"] = self._prev  # type: ignore[assignment]
+        else:
+            os.environ.pop("DISABLE_AUTOUPDATER", None)
+
+    def _launcher(self) -> "ta.SupervisorLauncher":
+        targets = ta.SuccessorLaunchTargets(
+            checkout="C:/some/checkout",
+            claude_executable="claude",
+            orchestrator_argv_prefix=("python", "-m", "supervisor", "start"),
+        )
+        return ta.SupervisorLauncher(
+            command_runner=lambda inv: ta.CommandRunResult(started=True, successor_id="s"),
+            targets=targets,
+        )
+
+    def _request(self, layer: "tc.TurnoverLayer") -> "tc.LaunchRequest":
+        return tc.LaunchRequest(
+            layer=layer,
+            task_id="M0-T117",
+            event_id="evt-1",
+            model_id="claude-opus-4-8",
+            effort="xhigh",
+            handoff_reference="handoff-1",
+            safe_checkpoint_id="ckpt-1",
+            failed_fable_execution_id="exec-1",
+        )
+
+    def test_worker_successor_env_injects_and_preserves_existing_pairs(self) -> None:
+        self.assertNotIn("DISABLE_AUTOUPDATER", os.environ)
+        inv = self._launcher()._build_invocation(self._request(tc.TurnoverLayer.WORKER))
+        self.assertEqual(inv.env["DISABLE_AUTOUPDATER"], "1")
+        # The pre-existing effort/role pairs are preserved (claude_child_env(extra)).
+        self.assertEqual(inv.env["SUPERVISOR_SUCCESSOR_EFFORT"], "xhigh")
+        self.assertEqual(inv.env["SUPERVISOR_SESSION_ROLE"], "worker")
+
+    def test_orchestrator_successor_env_injects_the_control(self) -> None:
+        self.assertNotIn("DISABLE_AUTOUPDATER", os.environ)
+        inv = self._launcher()._build_invocation(self._request(tc.TurnoverLayer.ORCHESTRATOR))
+        self.assertEqual(inv.env["DISABLE_AUTOUPDATER"], "1")
+        self.assertEqual(inv.env["SUPERVISOR_SESSION_ROLE"], "orchestrator")
 
 
 class CodexScopeTests(unittest.TestCase):

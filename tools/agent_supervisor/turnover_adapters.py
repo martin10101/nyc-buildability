@@ -50,7 +50,7 @@ from .audit_log import AuditChainError, AuditLog
 from .claude_runner import RunnerConfig, build_argv
 from .locking import LockError, SingleInstanceLock
 from .models import sha256_hex, to_utc_iso
-from .process import assert_argv_safe, minimal_env
+from .process import assert_argv_safe, claude_child_env
 from .turnover_controller import (
     ALLOWED_SUCCESSOR_EFFORT,
     LaunchRequest,
@@ -394,7 +394,11 @@ class SupervisorLauncher:
             argv = tuple(self._worker_argv(model_id))
         else:
             argv = tuple(self._orchestrator_argv(model_id))
-        env = minimal_env({
+        # D-024-R278/R286: every successor claude child (worker redispatch and
+        # orchestrator/handoff start alike) carries the forced DISABLE_AUTOUPDATER=1.
+        # claude_child_env preserves the effort/role pairs below and forces the
+        # control pair LAST, so neither the allowlist nor these extras can drop it.
+        env = claude_child_env({
             # Effort and role ride as env/metadata, never as a hard-denied CLI
             # flag. They are applied out of band by the launch mechanism.
             "SUPERVISOR_SUCCESSOR_EFFORT": effort,
