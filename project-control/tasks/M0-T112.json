@@ -48,12 +48,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-28T18:29:20.786911+00:00",
-  "updated_at": "2026-08-29T03:11:27.019528+00:00",
+  "updated_at": "2026-08-29T03:21:47.526482+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -78,5 +78,7 @@
       "status": "in_progress",
       "message": "Certification runs complete at frozen identity (supervisor material 8574c58, run head a4f94b7): golden pack 40/40; affected packs 493/493; whole suite 2694 passed/2 skipped/0 failed (2696 collected, +4 = accepted L-pack correction tests). CI CONFIRMED 20/20 green on pushed certification tip 615f661a1ad30883469c72932970dd1ae64dc317 (check-runs API). Activation-package items 10-12 refreshed. Evidence map (6 rows) + G2 self-check written; submitting for the 4-reviewer wave."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T03:21:47.524743+00:00"
 }
