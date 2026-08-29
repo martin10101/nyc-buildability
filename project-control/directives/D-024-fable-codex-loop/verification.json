@@ -7231,32 +7231,43 @@
     "D-024-R275",
     "D-024-R276"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "b90889b8cc693fa7050b9a987810c3aa7205c215",
+   "verified_at": "2026-08-29T07:48:59.233708+00:00",
    "requirements": [
     {
      "id": "D-024-R273",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Unit span project-control/** only across both rounds (DCV + all reviewers verified name-only diffs empty for tools/**); golden pack blob cf03caaa byte-identical at span start, run head, and every tip (re-run only); zero journal writes or tooling",
+      "M0-T116-DCV.md row R273 + M0-T116-DCV-delta.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b90889b8cc693fa7050b9a987810c3aa7205c215"
     },
     {
      "id": "D-024-R275",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Full M0-T112-pattern recertification at the ONE frozen post-repair identity (material f89aa29, tree 7487901c, golden blob cf03caaa) AFTER both repair units accepted (ancestry verified by DCV): golden 41/41 (spot-executed by DCV, G3, G4), affected 705/705 (re-run in full by G4), whole suite 2710/2/0 with collection 2712 = 2696+14+2 (chain independently re-counted by DCV and G4 from the accepted units' diffs); CI 20/20 at 07233f5 incl. the supervisor-bridge whole-suite job",
+      "Activation-package items 10-12 refreshed; correction round closed G3 MAJOR-1 (top banner rewritten to the Amendment-12/R276 state; all four delta re-attestations PASS at 11cfe8b)",
+      "M0-T116-recertification.md; M0-T116-DCV.md row R275 + delta; M0-T116-G3-code-review.md + G3-delta (MAJOR-1 CLOSED); M0-T116-G4-qa.md + delta"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b90889b8cc693fa7050b9a987810c3aa7205c215"
     },
     {
      "id": "D-024-R276",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "HOLD IN FORCE and honored: resume NOT performed (M0-T107 claimed/not-started; no start invocation in the span; loop stopped - G5 status read: PREFLIGHT, mode none, limited-auto off, 0 pending effects); the corrected banner + item 12 + report sec 1/4/6 all gate the R276 resume on THIS unit's acceptance + manifest re-record + verify-controller + doctor + doctor --live + CI, stay-stopped-on-failure",
+      "M0-T116-DCV.md row R276 + delta row R276; M0-T116-G5-security.md item 6"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b90889b8cc693fa7050b9a987810c3aa7205c215"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "b4816a0e54aea17634daff6d712b8a7d0e2e8c9e61cfa8b67adb775645aad5af"
   }
  ],
- "updated_at": "2026-08-29T07:16:10.773521+00:00"
+ "updated_at": "2026-08-29T07:48:59.233708+00:00"
 }
