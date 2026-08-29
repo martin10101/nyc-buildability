@@ -1,0 +1,39 @@
+{
+ "task_id": "M0-T120",
+ "note": "Evidence per D-024 Amendment-14 requirement applicable to M0-T120 (resolver set: R289/R290/R291/R292/R293/R294/R295/R296). Material identity commit 7d8195b (cherry-pick of worktree 4e0d307, after two recorded scope extensions). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R289": [
+   "M0-T118 was finished through DCV and acceptance BEFORE this amendment arrived: verification.json M0-T118 block 5/5 PASS, accept commit 5251c73, gates G0/G2/G3/G4/G5 PASS, DCV addendum with all trailing harnesses green (M0-T118-DCV.md).",
+   "CLAIM: SATISFIED (pre-capture; disclosed in source-014-amendment.md timing disclosure)"
+  ],
+  "D-024-R290": [
+   "Reconciliation performed with durable evidence: ledger-wide search returned ZERO tasks/requirements addressing bashFirst/issue-88041/shell-first routing (recorded in source-014-amendment.md reconciliation finding); the unresolved behavior = the three ASK-held shell discovery proposals of run_M0_T107_unitJ (M0-T113-activation-evidence.md item 4). The gap was then RESOLVED empirically by this unit: the live probe root-caused the original stops to CROSS-WORKTREE discovery (paths outside the worker cwd), not version routing.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R291": [
+   "Created as a SEPARATE bounded ledger task (own packet, worktree wt-m0t120, own commits and evidence) before the M0-T119 recertification completes; M0-T119 held throughout under R297.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R292": [
+   "Empirical proof executed LIVE by the producer at installed 2.1.251 under the EXACT controller construction (build_argv + claude_child_env): canned discovery -> Grep (native, auto-allowed); canned edit -> Read then Edit; the mutating Edit emitted can_use_tool and was DENIED (no_broker); ZERO shell proposals; NO file written; provider_calls_made=3 (bound honored); verdict native_preferred. Measured stream + argv/env provenance + version and digest stamps recorded in fixtures/shell_routing_2026-08-29_m0t120_2_1_251.json (cli_identity d6f6c29a = file hash of the measured binary). Material live findings recorded honestly: F-LIVE-1 (permissionMode reporting), F-LIVE-2 (cross-worktree root cause).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R293": [
+   "Broker and classifier BYTE-UNTOUCHED (no policy/broker module in the delta); no new AUTO class anywhere; 13 added Windows-shape assertions are tests only; the two permissiveness findings (python|sh pipe ASK-not-HARD_DENY; powershell -Command Remove-Item ASK-not-HARD_DENY) were RECORDED for the gate wave, not fixed - both shapes remain gated, never AUTO. No owner gate touched; cli.py forbidden and untouched.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R294": [
+   "Native Read/Grep/Glob/Edit/Write preference delivered in the worker path: prompts/claude_native_tools.md appended at the checkpoint-contract seam (idempotent, worker-text-clean preserved); validation commands stay explicitly classified and brokered via documented_test_commands; measured probe confirms the 2.1.251 worker follows native routing under this construction.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R295": [
+   "PRE-DISPATCH routing drift tooth LIVE AND GATING: probe_shell_routing_evidence (S11.5 set) requires evidence keyed to the pinned CLI executable DIGEST (file hash, no version-spawn); start_gate.live_revalidation folds it into cli_capability_manifest for MODE_LIMITED_AUTO - a certified start without current evidence refuses pre-dispatch: UNSAFE_OR_DRIFTED, failed_steps [cli_capability_manifest], reason routing_evidence_stale, dispatched False, 0 provider calls, exit 11 (tooth-bite proven as permanent golden test; golden pack now 42). Fail-closed on absent/unreadable/mismatched evidence. Harnesses seed evidence for their fake identities in SETUP via the durable journal (record_routing_evidence - M0-T072 bound-manifest precedent, never the shipped fixtures dir, never a production special-case); the committed real fixture still passes for the real installed digest.",
+   "ORCHESTRATOR RULING (recorded in the progress log, flagged for reviewer scrutiny): the GATING effect is scoped to the certified limited-auto run, faithful to R295's text; the tooth runs and reports its verdict in every mode; shadow forwards nothing and supervised holds every prompt for a human, so neither is a silent entry path.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R296": [
+   "Kept SEPARATE (own commits 4e0d307->7d8195b, own evidence and reviews); consequence recorded: the supervisor tree and golden blob move - the SINGLE M0-T119 recertification certifies the new final identity including this unit (T119 still held until this unit is accepted).",
+   "CLAIM: SEQUENCING HONORED"
+  ]
+ }
+}
