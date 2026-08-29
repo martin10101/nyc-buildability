@@ -7173,31 +7173,43 @@
     "D-024-R273",
     "D-024-R274"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "81b7f23d482a9d2ad469313fb313d7785953c769",
+   "verified_at": "2026-08-29T06:48:39.804185+00:00",
    "requirements": [
     {
      "id": "D-024-R272",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Own bounded lifecycle verified by all four reviewers: separate packet/claim/commits (deliverable 91664bb + correction d89d740), separate evidence and reviewer wave; M0-T114 backlog untouched (DCV delta: grep over b180754..HEAD for its file set -> NONE)",
+      "Scope extension (loop_turnover.py + turnover_live_seam pack) judged completion-of-the-reviewed-defect-class, not broadening, by DCV delta (R272 DELTA PASS) with the recorded scope_extension_note; no forbidden path touched (cli.py diff empty, G3 delta)",
+      "M0-T115-DCV-delta.md row R272"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "81b7f23d482a9d2ad469313fb313d7785953c769"
     },
     {
      "id": "D-024-R273",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Zero runtime-journal writes both rounds: shared owner_unanswered_asks helper + seam feed + probe all read-time-only (DCV delta needle scan over b180754..HEAD: no production journal-edit tooling); read-only proof test keeps the raw pre-fix row unanswered after the probe passes",
+      "G5 delta: R273 upheld, gitleaks clean, no activation surface; M0-T115-DCV-delta.md row R273"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "81b7f23d482a9d2ad469313fb313d7785953c769"
     },
     {
      "id": "D-024-R274",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Both live-refused boundaries proven vs both journal shapes: S11.5 probe (4 defect tests round 1) + rotation-seam feed (2 defect tests round 2, G3 BLOCKER-1); 7 guards + 1 hardening keep the gate unweakened; 14 new tests total reconciled independently by G3/G4/DCV",
+      "RED recorded per file at pre-fix 8d46318; GREEN reproduced by every reviewer (211/211 three packs; G4 748/748 14-pack sweep; G3 full suite 2708 passed/2 skipped); revert-proofs recorded round 1 (stash -> 4 FAIL) and round 2 (stash -> 2 seam FAIL); complete open_asks consumer enumeration with honest retraction",
+      "M0-T115-repair-record.md sec 3/4/6; M0-T115-G3-code-review-delta.md; M0-T115-G4-qa-delta.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "81b7f23d482a9d2ad469313fb313d7785953c769"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "0a2ff0adf0beb2ac7a1fb592448ba5f853b503f596b9cacb3e8c358f052fedf7"
   },
   {
    "task_id": "M0-T116",
@@ -7236,5 +7248,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-29T06:03:35.852703+00:00"
+ "updated_at": "2026-08-29T06:48:39.804185+00:00"
 }

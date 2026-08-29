@@ -51,12 +51,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T05:38:25.765325+00:00",
-  "updated_at": "2026-08-29T06:47:37.740033+00:00",
+  "updated_at": "2026-08-29T06:50:10.809226+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -82,5 +82,7 @@
       "message": "G3 FAIL (BLOCKER-1) -> ONE consolidated correction round: 4th open_asks consumer loop_turnover.py:86 feeds RAW asks into turnover_seam approval_pending -> rotation refusal carries the same defect class for pre-fix journals incl. the live run. Scope extended (loop_turnover.py + turnover_live_seam test pack) with recorded reason: completing the reviewed root cause per H2 predicates 7/8 - NOT R272 broadening. Plan: single shared broker.owner_unanswered_asks() helper (no third predicate copy); probe refactored onto it; seam feed extracted into named seam_safety_state() using it; defect-named seam tests (pre-fix DENIED/APPROVED not refused, PENDING/non-broker still refuse) + G5 LOW-2 all_state-unreadable test; G4 MINOR-1/2 + DCV count NOTE corrected in the revised repair record; G5 LOW-1 declined-with-reason (predicate consistency across surfaces, single source). Then resubmit at corrected identity + SendMessage delta re-attestations to the same four reviewers."
     }
   ],
-  "scope_extension_note": "Rework scope extension recorded by the orchestrator at the G3 FAIL seam (BLOCKER-1): loop_turnover.py:86 feeds RAW open_asks() into turnover_seam.safety_state_from_run, so the IDENTICAL defect class refuses the first rotation seam of any pre-fix journal (including the live run_M0_T107_unitJ that R276 resumes). Extending the fix to this fourth consumer COMPLETES the contracted root cause (H2 predicates 7/8) found by the independent gate inside this unit's own review - it is not new scope under R272's no-broadening rule, which guards against scope creep, not against finishing the reviewed defect. Implementation avoids a third predicate copy: one shared broker.owner_unanswered_asks() helper used by both the probe and the seam feed; cli.py (forbidden path) keeps its accepted inline copy with a convergence follow-up noted."
+  "scope_extension_note": "Rework scope extension recorded by the orchestrator at the G3 FAIL seam (BLOCKER-1): loop_turnover.py:86 feeds RAW open_asks() into turnover_seam.safety_state_from_run, so the IDENTICAL defect class refuses the first rotation seam of any pre-fix journal (including the live run_M0_T107_unitJ that R276 resumes). Extending the fix to this fourth consumer COMPLETES the contracted root cause (H2 predicates 7/8) found by the independent gate inside this unit's own review - it is not new scope under R272's no-broadening rule, which guards against scope creep, not against finishing the reviewed defect. Implementation avoids a third predicate copy: one shared broker.owner_unanswered_asks() helper used by both the probe and the seam feed; cli.py (forbidden path) keeps its accepted inline copy with a convergence follow-up noted.",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T06:50:10.809226+00:00"
 }
