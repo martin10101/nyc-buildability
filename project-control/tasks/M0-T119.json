@@ -1,79 +1,80 @@
 {
- "task_id": "M0-T119",
- "title": "D-024 Amendment 13 unit S: third golden recertification at the frozen post-admission identity (2.1.251)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Full R247 recertification window at ONE frozen final post-admission identity (Amendment 13 R283; M0-T112/T116 pattern): FULL golden-run pack + all affected packs + the WHOLE supervisor suite with exact collected-count reconciliation against the M0-T116 baseline (2712 + additions) + CI green on the pushed certification tip + activation-package items 10-12 and top-banner refresh to the Amendment-13 state. The certification runs under the established DISABLE_AUTOUPDATER controls (M0-T117) so the CLI cannot change mid-window; the drift teeth must be green at 2.1.251 (M0-T118). Only when EVERY item of the R282 pass list holds at the frozen identity is 2.1.251 recorded as the admitted version. After acceptance, the R276 resume sequence reruns FROM THE BEGINNING (R284) with the one-time --repin-cli-identity + digest verification on the certified start (R285, executed under M0-T113). Supervisor-freeze qualifying evidence: D-024-R283.",
- "business_reason": "Owner Amendment 13: certification must be re-established at the post-admission identity before the authorized limited-auto loop resumes.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R282/R283/R284)",
-  "project-control/reports/M0-T116-recertification.md (baseline + pattern)",
-  "accepted M0-T117 + M0-T118 deliverables"
- ],
- "outputs": [
-  "project-control/reports/M0-T119-recertification.md: full golden pack + affected packs + whole-suite run with exact collected-count reconciliation against the M0-T116 baseline (2712 + Amendment-13 additions), CI green on the pushed certification tip, at ONE frozen final identity",
-  "2.1.251 recorded as the ADMITTED version in the recertification report ONLY after the complete R282 pass list holds",
-  "M0-T096-activation-package.md items 10-12 + top banner refreshed to the Amendment-13 state (resume gated on this unit's acceptance + full R276 rerun with one-time repin)"
- ],
- "dependencies": [
-  "M0-T117",
-  "M0-T118"
- ],
- "allowed_paths": [
-  "project-control/reports/M0-T119-recertification.md",
-  "project-control/reports/M0-T096-activation-package.md"
- ],
- "forbidden_paths": [],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "scenario": "Whole-suite total reconciles EXACTLY: M0-T116 baseline 2712 collected + M0-T117 additions + M0-T118 additions = new collected count; 0 failures; no test removed.",
-   "verification": "recertification report arithmetic + reviewer re-run"
-  },
-  {
-   "id": "AS-2",
-   "scenario": "Golden pack + affected packs pass at the frozen identity; CI green on the pushed tip; certified anchors (new material SHA, tree hash, golden blob) pinned in the report.",
-   "verification": "report + check-runs API"
-  },
-  {
-   "id": "AS-3",
-   "scenario": "Certification ran with DISABLE_AUTOUPDATER controls active and claude --version identical at window start and end (2.1.251).",
-   "verification": "version stamps in the report"
-  },
-  {
-   "id": "AS-4",
-   "scenario": "The R282 admission line appears ONLY after every pass-list item is recorded PASS in the same report.",
-   "verification": "report structure review"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-29T17:54:00.129217+00:00",
- "updated_at": "2026-08-29T17:57:59.130715+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-29T17:54:00.129217+00:00",
- "path_free_governance": true,
- "path_free_justification": "Re-certification unit (M0-T112/T116 pattern): it RUNS the golden pack, affected packs, whole suite, and CI at the frozen post-admission identity and records results + refreshes activation-package items; it edits no production source. Its report files do not exist at packet-creation HEAD, so the path set resolves empty until delivery (same posture as M0-T116)."
+  "task_id": "M0-T119",
+  "title": "D-024 Amendment 13 unit S: third golden recertification at the frozen post-admission identity (2.1.251)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Full R247 recertification window at ONE frozen final post-admission identity (Amendment 13 R283; M0-T112/T116 pattern): FULL golden-run pack + all affected packs + the WHOLE supervisor suite with exact collected-count reconciliation against the M0-T116 baseline (2712 + additions) + CI green on the pushed certification tip + activation-package items 10-12 and top-banner refresh to the Amendment-13 state. The certification runs under the established DISABLE_AUTOUPDATER controls (M0-T117) so the CLI cannot change mid-window; the drift teeth must be green at 2.1.251 (M0-T118). Only when EVERY item of the R282 pass list holds at the frozen identity is 2.1.251 recorded as the admitted version. After acceptance, the R276 resume sequence reruns FROM THE BEGINNING (R284) with the one-time --repin-cli-identity + digest verification on the certified start (R285, executed under M0-T113). Supervisor-freeze qualifying evidence: D-024-R283.",
+  "business_reason": "Owner Amendment 13: certification must be re-established at the post-admission identity before the authorized limited-auto loop resumes.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R282/R283/R284)",
+    "project-control/reports/M0-T116-recertification.md (baseline + pattern)",
+    "accepted M0-T117 + M0-T118 deliverables"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T119-recertification.md: full golden pack + affected packs + whole-suite run with exact collected-count reconciliation against the M0-T116 baseline (2712 + Amendment-13 additions), CI green on the pushed certification tip, at ONE frozen final identity",
+    "2.1.251 recorded as the ADMITTED version in the recertification report ONLY after the complete R282 pass list holds",
+    "M0-T096-activation-package.md items 10-12 + top banner refreshed to the Amendment-13 state (resume gated on this unit's acceptance + full R276 rerun with one-time repin)"
+  ],
+  "dependencies": [
+    "M0-T117",
+    "M0-T118"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T119-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "Whole-suite total reconciles EXACTLY: M0-T116 baseline 2712 collected + M0-T117 additions + M0-T118 additions = new collected count; 0 failures; no test removed.",
+      "verification": "recertification report arithmetic + reviewer re-run"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Golden pack + affected packs pass at the frozen identity; CI green on the pushed tip; certified anchors (new material SHA, tree hash, golden blob) pinned in the report.",
+      "verification": "report + check-runs API"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "Certification ran with DISABLE_AUTOUPDATER controls active and claude --version identical at window start and end (2.1.251).",
+      "verification": "version stamps in the report"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "The R282 admission line appears ONLY after every pass-list item is recorded PASS in the same report.",
+      "verification": "report structure review"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator-recert-runner",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T17:54:00.129217+00:00",
+  "updated_at": "2026-08-29T21:24:10.041936+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T17:54:00.129217+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Re-certification unit (M0-T112/T116 pattern): it RUNS the golden pack, affected packs, whole suite, and CI at the frozen post-admission identity and records results + refreshes activation-package items; it edits no production source. Its report files do not exist at packet-creation HEAD, so the path set resolves empty until delivery (same posture as M0-T116).",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }
