@@ -1,65 +1,75 @@
 {
- "task_id": "M0-T112",
- "title": "D-024 Amendment 8 unit M: final golden re-certification at the frozen post-addition identity",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Amendment 8 (R247 + R231/R232/R246/R248/R249): after M0-T110 and M0-T111 land, re-run the affected/full golden certification (the golden-run pack, the affected operator-channel/notification suites, the whole supervisor suite, CI) against the FINAL frozen code identity; refresh the activation-package identity/evidence items; only then may the R187/R595 activation package be presented to the owner. Supervisor-freeze qualifying evidence: D-024-R247.",
- "business_reason": "Any supervisor/operator-channel change after a golden-run identity invalidates the affected final certification (Amendment 8, R247).",
- "inputs": [],
- "outputs": [
-  "re-run golden certification evidence at the final frozen identity",
-  "project-control/reports/M0-T112-recertification.md",
-  "refreshed M0-T096-activation-package.md identity/evidence items"
- ],
- "dependencies": [
-  "M0-T110",
-  "M0-T111"
- ],
- "allowed_paths": [
-  "tools/test_agent_supervisor_golden_run.py",
-  "project-control/reports/M0-T112-recertification.md",
-  "project-control/reports/M0-T096-activation-package.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "project-control/tasks",
-  "services",
-  "supabase",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-28T18:29:20.786911+00:00",
- "updated_at": "2026-08-28T18:29:21.023058+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-28T18:29:20.791956+00:00"
+  "task_id": "M0-T112",
+  "title": "D-024 Amendment 8 unit M: final golden re-certification at the frozen post-addition identity",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 8 (R247 + R231/R232/R246/R248/R249): after M0-T110 and M0-T111 land, re-run the affected/full golden certification (the golden-run pack, the affected operator-channel/notification suites, the whole supervisor suite, CI) against the FINAL frozen code identity; refresh the activation-package identity/evidence items; only then may the R187/R595 activation package be presented to the owner. Supervisor-freeze qualifying evidence: D-024-R247.",
+  "business_reason": "Any supervisor/operator-channel change after a golden-run identity invalidates the affected final certification (Amendment 8, R247).",
+  "inputs": [],
+  "outputs": [
+    "re-run golden certification evidence at the final frozen identity",
+    "project-control/reports/M0-T112-recertification.md",
+    "refreshed M0-T096-activation-package.md identity/evidence items"
+  ],
+  "dependencies": [
+    "M0-T110",
+    "M0-T111"
+  ],
+  "allowed_paths": [
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T112-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 5,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-28T18:29:20.786911+00:00",
+  "updated_at": "2026-08-29T02:39:15.024566+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-28T18:29:20.791956+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T02:39:15.024566+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "Unit M claimed at seq-25 NEXT (G0 PASS at a4f94b7; resolver ok=true 6 applicable ids R231/R232/R246/R247/R248/R249). Frozen post-addition identity: supervisor material identity last moved at 8574c58 (tree 132e698c15a9f9412d53905e45ce0ae0724abe15 at HEAD). Plan: re-run golden-run pack + affected packs (operator/codex/telegram/adversarial/endurance/phase1/reviewer) + whole supervisor suite foreground-chunked + CI on pushed SHA; refresh-only activation-package items 10-12; residuals carried not fixed (outside allowed_paths)."
+    }
+  ]
 }

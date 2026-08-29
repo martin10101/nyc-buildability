@@ -7,13 +7,13 @@ section-20 handoff the owner reads AT the activation decision — it grants
 nothing by existing. Recorded by the orchestrator at unit-I delivery
 (deliverable identity `5ff7f08`; gate/DCV identities in item 11).
 
-**Amendment-8 sequencing (D-024-R232/R247, captured 2026-08-28):** this document
-is the unit-I deliverable, but it is NOT yet the presentable activation package.
-Two owner-required capabilities (M0-T110 Codex discussion channel, M0-T111
-Telegram sink) must land first, and M0-T112 must re-run the golden certification
-against the FINAL frozen post-addition identity and refresh items 10–12 here.
-Only after M0-T112 is accepted may this package be presented for the R187/R595
-activation decision.
+**Amendment-8 sequencing (D-024-R232/R247, captured 2026-08-28; refreshed at
+M0-T112):** both owner-required capabilities are ACCEPTED (M0-T110 Codex
+discussion channel; M0-T111 one-way Telegram sink), and M0-T112 has re-run the
+golden certification at the FINAL frozen post-addition identity and refreshed
+items 10–12 below (`M0-T112-recertification.md`). This package becomes
+presentable for the R187/R595 activation decision ONLY once M0-T112 itself is
+ACCEPTED through its gates; presentation and activation remain owner-gated.
 
 ## 1. What was implemented (plain language)
 
@@ -140,26 +140,35 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence
+## 10. Identity and evidence (refreshed at M0-T112 — the certified identity)
 
-* Branch: `control/D-024-fable-codex-loop`; unit-I deliverable identity:
-  **`5ff7f08`** (golden_run.py 407 ln; live_observation.py 451 ln;
-  test_agent_supervisor_golden_run.py 1,017 ln / 40 tests; cli.py +38/−8).
-* Test evidence: golden-run pack 40/40; supervisor packs re-run this session
-  foreground-chunked: 303 + 317 + 590 + 546 + 828 = **2,584 passed, 2 skipped**
-  (remaining tools chunks + CI totals in
-  `M0-T096-golden-run-evidence.md` §4). CI on the pushed SHA is the confirming
-  whole-suite run.
+* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-addition
+  identity:** supervisor material identity last moved at **`8574c58`**
+  (unit-I system `5ff7f08` + corrections `635fac5`, plus accepted unit K
+  `/loop-codex` `ba25516`+`c8b38ba`, plus accepted unit L Telegram sink
+  `c9b3b9a` + corrections `8574c58`); `tools/agent_supervisor` tree
+  `132e698c15a9f9412d53905e45ce0ae0724abe15`; golden-run pack blob
+  `d2946392f1c1` (1,040 ln / 40 tests, unchanged by M0-T112 — re-run only).
+* Re-certification evidence at that identity (M0-T112, run head `a4f94b7`):
+  golden-run pack **40/40**; affected packs (operator/codex/telegram/
+  adversarial/endurance/phase1/reviewer) **493/493**; WHOLE supervisor suite
+  **2,694 passed, 2 skipped, 0 failed** (2,696 collected; +4 vs the prior
+  baseline = exactly the four accepted L-pack correction tests). Full detail:
+  `M0-T112-recertification.md`. CI on the pushed certification tip is the
+  confirming whole-suite run (SHA + 20/20 pinned in the M0-T112 progress_log).
 * PR/check links: the campaign branch pushes run the standard 20-check CI; the
   supervisor-bridge job is the whole-suite confirmation.
 
-## 11. Independent review verdicts
+## 11. Independent review verdicts (refreshed at M0-T112)
 
-Recorded at this unit's gate wave (G3 code-reviewer, G4 qa-engineer, G5
-security-reviewer, DCV directive-compliance-verifier) against ONE frozen
-identity — see `project-control/gates/M0-T096-G*.json` and
-`project-control/reports/M0-T096-{G3,G4,G5,DCV}*.md`. A later identity change
-invalidates them (rework→resubmit).
+Each unit carries its own 4-reviewer wave (G3 code-reviewer, G4 qa-engineer,
+G5 security-reviewer, DCV directive-compliance-verifier) against ONE frozen
+identity: unit I (`project-control/gates/M0-T096-G*.json` + reports), unit K
+(`M0-T110-*`, DCV 13/13), unit L (`M0-T111-*`, DCV 10/10, all-PASS delta
+re-attestations at `8574c58`), and the re-certification unit itself
+(`M0-T112-*`, recorded at its gate wave — the acceptance this package's
+presentability waits on). A later identity change invalidates the affected
+verdicts (rework→resubmit; R247 re-triggers re-certification).
 
 ## 12. Golden-run evidence (the observed complete loop)
 
@@ -176,6 +185,11 @@ ambiguous-effect scenarios each held fail-closed. Full detail:
 `project-control/reports/M0-T096-golden-run-evidence.md` §4. **All INJECTED
 (lane 1). The natural-event lane stays `pending_live_observation`** — it gates
 ONLY the automatic 4.8 bridge's live actuation (item 8), nothing else (R228).
+**Refreshed at M0-T112:** the identical 40-test pack was re-run 40/40 at the
+FINAL frozen post-addition identity (item 10) — the observed complete loop,
+rotation crossing, restart resume, and fail-closed fault scenarios all hold
+with the accepted Codex-channel and Telegram-sink additions in place
+(`M0-T112-recertification.md` §3).
 
 ## 13. Clean-session launch (proven shape)
 
