@@ -7137,31 +7137,41 @@
     "D-024-R272",
     "D-024-R273"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "0342280c83f9e1adda9ec447e453c83f3cdccfe2",
+   "verified_at": "2026-08-29T07:16:10.773521+00:00",
    "requirements": [
     {
      "id": "D-024-R258",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Both code residuals FIXED and independently traced by all four reviewers (telegram_sink post-builder like-for-like queue digest at :335-336; live_observation sanitized source_record_key at :299 with unchanged redaction-count semantics per G3); residual 3 dispositioned no-code inert-by-design (codex_channel.py untouched, outside allowed_paths); R247 re-trigger scheduled as M0-T116 (verified backlog by DCV)",
+      "M0-T114-DCV.md rows R258 + M0-T114-DCV-delta.md; M0-T114-G3-code-review.md; M0-T114-G5-security.md (full record-dict sweep: no remaining raw source-derived scalar)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0342280c83f9e1adda9ec447e453c83f3cdccfe2"
     },
     {
      "id": "D-024-R272",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Own bounded lifecycle separate from M0-T115: deliverable f89aa29 + pragma correction a22e34a touch only the 5 allowed paths; M0-T115 files and codex_channel.py untouched (name-only diffs EMPTY, verified by DCV and G3/G4/G5); M0-T115 accepted at b8ea872 BEFORE any T114 commit; both units recertify together only at M0-T116",
+      "M0-T114-DCV.md row R272 + delta row R272"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0342280c83f9e1adda9ec447e453c83f3cdccfe2"
     },
     {
      "id": "D-024-R273",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No manual runtime-journal edit: both fixes are pure code paths on a passed-in journal executing only in future calls; tests use tempfile journals (verified file:line by DCV); the sole journal touch in the diff is the pre-existing relocated audit append carrying a one-way SHA-256 digest (G5 item c)",
+      "M0-T114-DCV.md row R273 + delta row R273; M0-T114-G5-security.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0342280c83f9e1adda9ec447e453c83f3cdccfe2"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "93e97aacabf2181befa482b38e75e166a1b871dd74e0a15840c5b26a893f981c"
   },
   {
    "task_id": "M0-T115",
@@ -7248,5 +7258,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-29T06:48:39.804185+00:00"
+ "updated_at": "2026-08-29T07:16:10.773521+00:00"
 }

@@ -12,7 +12,7 @@
     "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle"
   ],
   "dependencies": [
-    "M0-T113"
+    "M0-T112"
   ],
   "allowed_paths": [
     "tools/agent_supervisor/telegram_sink.py",
@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.868128+00:00",
-  "updated_at": "2026-08-29T07:13:08.926170+00:00",
+  "updated_at": "2026-08-29T07:17:37.056353+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -76,5 +76,8 @@
       "status": "rework",
       "message": "One consolidated correction: the CI credential scan (a different scanner from local gitleaks) flagged the unpragma'd fake register-key sentinel at 5e2c8c3; allow pragmas added at a22e34a per the L-pack convention (comment-only, test semantics unchanged); CI 20/20 green at a22e34a. Resubmitting at the corrected identity for delta re-attestations."
     }
-  ]
+  ],
+  "dependency_change_note": "Orchestrator dependency correction at the accept seam (ADR-005 authority): the packet was created at Amendment-9 capture with dependency M0-T113, but Amendment 12 (R272/R275/R276) reordered the sequence - M0-T113 COMPLETES only at the post-recertification resume, which the owner placed AFTER M0-T114 and M0-T116. The factual prerequisite for the residual fixes is the M0-T112-certified baseline (accepted). Recorded 2026-08-29; G0 readiness item 3 documented this reading at claim.",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T07:17:37.056353+00:00"
 }
