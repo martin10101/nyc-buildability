@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.868128+00:00",
-  "updated_at": "2026-08-29T06:52:25.647998+00:00",
+  "updated_at": "2026-08-29T06:58:45.763701+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -60,5 +60,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-29T03:46:33.868128+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T06:58:45.763701+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Residuals executed: (1) telegram_sink queue-growth suppression now compares post-builder vs post-builder (already_queued after build_notification; at-least-once preserved; delivered-dedup unchanged); (2) live_observation reads the already-sanitized source_record_key (one line); (3) unit-K boundary-queue notes dispositioned inert-by-design no-code (outside allowed_paths). RED both defect tests failed pre-fix; GREEN L-pack 36/36 + golden 41/41; revert-proof stash->2 FAIL->pop->2 PASS; sweep 535/535; ruff clean; modularity EXIT=0; zero journal writes (R273). Submitting for the 4-reviewer wave."
+    }
+  ]
 }
