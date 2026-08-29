@@ -46,12 +46,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T06:02:51.159891+00:00",
-  "updated_at": "2026-08-29T07:18:53.379367+00:00",
+  "updated_at": "2026-08-29T07:33:04.648015+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -60,5 +60,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-29T06:02:51.159891+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T07:33:04.648015+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Recertification runs complete at the post-repair frozen identity (material f89aa29, tree 7487901c, run head c67830f): golden 41/41; affected 705/705 (10 packs); whole suite 2710 passed/2 skipped/0 failed (2712 collected = 2696+14+2 exact). CI CONFIRMED 20/20 green on pushed certification tip 07233f520a1bf1ed29eb54a13612cea544af7527 (check-runs API). Activation-package items 10-12 second refresh done. Evidence map (3 rows) + G2 self-check written; submitting for the 4-reviewer wave."
+    }
+  ]
 }
