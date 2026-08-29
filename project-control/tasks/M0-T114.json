@@ -1,63 +1,64 @@
 {
- "task_id": "M0-T114",
- "title": "D-024 residual follow-up: _already_queued digest normalization + live_observation raw source_record_key + unit-K boundary notes",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Fix the three pinned non-blocking certification residuals carried through M0-T112 (recertification report sec 5): (1) telegram_sink _already_queued compares the stored post-builder summary digest vs the raw notify-time digest (normalize so outage growth suppression is exact for redaction/truncation-altered summaries, preserving at-least-once); (2) live_observation.py:296 raw source_record_key one-liner; (3) unit-K boundary-queue write-only/inert notes. OWNER SEQUENCING: this task runs only when the owner schedules it - any supervisor change re-invalidates the R247 certification and re-triggers the golden re-certification cycle (Amendment 9 R258 records the owner's decision to carry these as tracked follow-up work, not fix pre-activation).",
- "business_reason": "Owner directive: carry the nonblocking residuals as tracked follow-up work (Amendment 9, R258).",
- "inputs": [],
- "outputs": [
-  "residual fixes + tests",
-  "project-control/reports/M0-T114-residual-fixes.md",
-  "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle"
- ],
- "dependencies": [
-  "M0-T113"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor/telegram_sink.py",
-  "tools/agent_supervisor/live_observation.py",
-  "tools/test_agent_supervisor_telegram_sink.py",
-  "tools/test_agent_supervisor_golden_run.py",
-  "project-control/reports/M0-T114-residual-fixes.md"
- ],
- "forbidden_paths": [
-  ".claude",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "tools/project_control.py",
-  "tools/directive_registry.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-29T03:46:33.868128+00:00",
- "updated_at": "2026-08-29T03:46:34.011165+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-29T03:46:33.868128+00:00"
+  "task_id": "M0-T114",
+  "title": "D-024 residual follow-up: _already_queued digest normalization + live_observation raw source_record_key + unit-K boundary notes",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Fix the three pinned non-blocking certification residuals carried through M0-T112 (recertification report sec 5): (1) telegram_sink _already_queued compares the stored post-builder summary digest vs the raw notify-time digest (normalize so outage growth suppression is exact for redaction/truncation-altered summaries, preserving at-least-once); (2) live_observation.py:296 raw source_record_key one-liner; (3) unit-K boundary-queue write-only/inert notes. OWNER SEQUENCING: this task runs only when the owner schedules it - any supervisor change re-invalidates the R247 certification and re-triggers the golden re-certification cycle (Amendment 9 R258 records the owner's decision to carry these as tracked follow-up work, not fix pre-activation).",
+  "business_reason": "Owner directive: carry the nonblocking residuals as tracked follow-up work (Amendment 9, R258).",
+  "inputs": [],
+  "outputs": [
+    "residual fixes + tests",
+    "project-control/reports/M0-T114-residual-fixes.md",
+    "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle"
+  ],
+  "dependencies": [
+    "M0-T113"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/telegram_sink.py",
+    "tools/agent_supervisor/live_observation.py",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T114-residual-fixes.md"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T03:46:33.868128+00:00",
+  "updated_at": "2026-08-29T06:52:25.647998+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T03:46:33.868128+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }
