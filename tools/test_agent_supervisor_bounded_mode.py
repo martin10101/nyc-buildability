@@ -1332,5 +1332,85 @@ class RevisionResetDerivationTests(unittest.TestCase):
         self.assertNotIn("consecutive_revision_loops", lb._REVISE_SAFE_RESETS)
 
 
+# --------------------------------------------------------------------------
+# D-024 Amendment 14 (M0-T120, R295): the shell-routing drift tooth at the
+# START-GATE level - the fold SEMANTICS proven deterministically.
+# --------------------------------------------------------------------------
+#
+# The one-line gating fold in `start_gate.live_revalidation` ANDs the routing
+# tooth into `cli_capability_manifest` (the pinned-identity step), exactly the way
+# `config_identity` is ANDed into `controller_manifest`. These tests prove that
+# semantics without driving `cli.main`: (1) the tooth's three states at the pinned
+# DIGEST identity, and (2) that a failing tooth, folded into the capability step,
+# makes `recovery.classify` return UNSAFE_OR_DRIFTED (refuse) while a passing tooth
+# leaves the dispatch-shaped map SAFE. See the M0-T120 producer report (L1) for why
+# the LIVE fold line is staged (it would refuse every fake-executable start harness,
+# including the out-of-scope golden pack, until each seeds routing evidence).
+class ShellRoutingGateFoldTests(unittest.TestCase):
+    def setUp(self) -> None:
+        from tools.agent_supervisor import recovery as rec
+        from tools.agent_supervisor import recovery_probes as rp
+        self.rec = rec
+        self.rp = rp
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.dir = pathlib.Path(self._tmp.name)
+        self.identity = "d6f6c29a" * 8  # a stand-in pinned executable digest
+        (self.dir / "shell_routing_pinned.json").write_text(json.dumps({
+            "schema": "shell_routing/v1", "measured": True,
+            "claude_version": "2.1.251", "cli_identity": self.identity,
+            "routing_summary": {"verdict": "native_preferred"}}), encoding="utf-8")
+
+    def _routing(self, installed_identity: str):
+        return self.rp.probe_shell_routing_evidence(
+            evidence_dir=str(self.dir), installed_identity=installed_identity)
+
+    def _dispatch_shaped_map(self, *, shell_routing_ok: bool) -> dict:
+        """The revalidation map a dispatch-ready start produces, with the R295
+        fold applied (cli_capability_manifest ANDed with the routing tooth)."""
+        base = {step: True for step in self.rec.REVALIDATION_STEPS}
+        base["cli_capability_manifest"] = bool(
+            base["cli_capability_manifest"] and shell_routing_ok)
+        return base
+
+    def test_current_evidence_for_the_pinned_identity_passes_the_tooth(self) -> None:
+        self.assertTrue(self._routing(self.identity).passes)
+
+    def test_no_evidence_refuses_the_dispatch(self) -> None:
+        routing = self.rp.probe_shell_routing_evidence(
+            evidence_dir=str(self.dir / "empty"), installed_identity=self.identity)
+        self.assertFalse(routing.passes)
+        outcome = self.rec.classify(self.rec.RecoveryContext(
+            revalidation=self._dispatch_shaped_map(shell_routing_ok=routing.passes)))
+        self.assertEqual(outcome.classification, self.rec.UNSAFE_OR_DRIFTED)
+        self.assertIn("cli_capability_manifest", outcome.failed_steps)
+
+    def test_stale_identity_evidence_refuses_the_dispatch(self) -> None:
+        routing = self._routing("b" * 64)  # a DIFFERENT pinned identity
+        self.assertFalse(routing.passes)
+        self.assertEqual(routing.reason_code, "routing_evidence_stale")
+        outcome = self.rec.classify(self.rec.RecoveryContext(
+            revalidation=self._dispatch_shaped_map(shell_routing_ok=routing.passes)))
+        self.assertEqual(outcome.classification, self.rec.UNSAFE_OR_DRIFTED)
+
+    def test_current_evidence_leaves_the_dispatch_map_safe(self) -> None:
+        routing = self._routing(self.identity)
+        self.assertTrue(routing.passes)
+        outcome = self.rec.classify(self.rec.RecoveryContext(
+            revalidation=self._dispatch_shaped_map(shell_routing_ok=routing.passes)))
+        # The routing tooth no longer forces UNSAFE; cli_capability_manifest holds.
+        self.assertNotIn("cli_capability_manifest", outcome.failed_steps)
+
+    def test_the_gate_helper_sources_identity_by_file_hash_not_a_spawn(self) -> None:
+        """`_claude_identity_digest` is a file hash (no `claude --version` spawn)."""
+        from tools.agent_supervisor.start_gate import _claude_identity_digest
+        from tools.agent_supervisor.process import executable_identity
+        # A real file (this test module) hashes to the same digest both ways;
+        # nothing is executed, so any readable file yields a stable identity.
+        expected = executable_identity(__file__, name="claude").digest
+        self.assertEqual(_claude_identity_digest(__file__), expected)
+        self.assertEqual(_claude_identity_digest(""), "")
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main(verbosity=2)

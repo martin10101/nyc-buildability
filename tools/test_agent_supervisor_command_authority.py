@@ -515,5 +515,141 @@ class RevokeStatusLifecycleTests(unittest.TestCase):
         self.assertFalse(self.journal.resolve_ask("ask_missing", "revoked"))
 
 
+# --------------------------------------------------------------------------
+# D-024 Amendment 14 (M0-T120, R293): Windows-shape classifier coverage
+# --------------------------------------------------------------------------
+#
+# The command classifier (`policy.evaluate`) is BYTE-UNTOUCHED by this unit; this
+# class only MAPS its existing coverage of the shapes the owner named and adds the
+# ASK/HARD_DENY assertions that were missing for Windows-style inputs. The one
+# security invariant every shape below must satisfy is that it is NEVER AUTO:
+# unclassifiable is ASK, never AUTO (policy S4.3), so a shell shape can only be a
+# queued ASK or a HARD_DENY, never a silent proceed.
+#
+# EXISTING COVERAGE MAP (verified empirically against the installed classifier;
+# `policy.SHELL_METACHARACTERS` = | > < & ; \n \r, `SUBSTITUTION_MARKERS` include
+# $(, `, ${, $env:, iex, invoke-expression, -encodedcommand/-enc, | sh, | bash):
+#
+#   shape                         mechanism                       -> tier / reason
+#   ----------------------------- ------------------------------- ------------------
+#   heredoc / PS here-string      newline is a metacharacter      -> ASK undocumented_command
+#   pipeline ( | )                metacharacter                   -> ASK undocumented_command
+#   redirection ( > , < )         metacharacter                   -> ASK undocumented_command
+#   compound ( ; , && , & )       metacharacter (segments split)  -> ASK undocumented_command
+#   cmd /c chain                  metacharacter in the chain      -> ASK undocumented_command
+#   scratch-file copy (copy/Copy) unknown program, single segment -> ASK undocumented_command
+#   ambiguous $env: read          substitution, not concealing    -> ASK undocumented_command
+#   iex / -EncodedCommand         concealed dynamic execution     -> HARD_DENY concealed_execution
+#   credential path read/copy     `_looks_like_credential_path`   -> HARD_DENY credential_access
+#   del /s , rm -rf , Remove-Item recursive/wildcard delete verb  -> HARD_DENY recursive_or_wildcard_delete
+#   --no-verify etc.              CONTROL_DISABLING_MARKERS        -> HARD_DENY control_disabling
+#
+# TWO RECORDED PERMISSIVENESS FINDINGS (NOT fixed here - the classifier is frozen;
+# both remain safely GATED as ASK, never AUTO, so they never silently proceed):
+#   F1  `python gen.py | sh` (pipe raw output into an interpreter) classifies ASK
+#       undocumented_command, not HARD_DENY concealed_execution - the `| sh`
+#       substitution marker only hard-denies when it ALSO conceals a destructive
+#       segment or hits an iex/-enc marker.
+#   F2  a destructive delete wrapped inside `powershell -Command "Remove-Item
+#       -Recurse -Force ..."` classifies ASK undocumented_command, not HARD_DENY
+#       recursive_or_wildcard_delete - the delete verb is inside the quoted
+#       -Command argument, so the segment program is `powershell` and the
+#       destructive-segment check does not reach inside the string.
+
+
+class WindowsShapeCoverageTests(unittest.TestCase):
+    """R293: Windows-style shell shapes are ASK or HARD_DENY, never AUTO."""
+
+    def setUp(self) -> None:
+        self.authority = fixture_authority()
+
+    def assertNeverAuto(self, command: str) -> pol.PolicyDecision:
+        decision = classify(command, self.authority)
+        self.assertIn(decision.tier, (pol.ASK, pol.HARD_DENY),
+                      f"{command!r} classified {decision.tier} - a shell shape is "
+                      f"never AUTO")
+        self.assertNotEqual(decision.tier, pol.AUTO, command)
+        return decision
+
+    # --- ASK shapes (metacharacters / unknown programs; gated, not AUTO) ------
+
+    def test_powershell_here_string_is_ask(self) -> None:
+        d = self.assertNeverAuto(
+            "powershell -Command \"$x = @'\nhello\n'@; Write-Output $x\"")
+        self.assertEqual((d.tier, d.reason_code), (pol.ASK, "undocumented_command"))
+
+    def test_cmd_c_ampersand_chain_is_ask(self) -> None:
+        for cmd in ("cmd /c \"dir & type foo.txt\"", "cmd /c dir && type foo.txt"):
+            d = self.assertNeverAuto(cmd)
+            self.assertEqual((d.tier, d.reason_code),
+                             (pol.ASK, "undocumented_command"), cmd)
+
+    def test_output_and_input_redirection_is_ask(self) -> None:
+        for cmd in ("python run.py > out.txt", "python run.py < in.txt"):
+            d = self.assertNeverAuto(cmd)
+            self.assertEqual((d.tier, d.reason_code),
+                             (pol.ASK, "undocumented_command"), cmd)
+
+    def test_semicolon_and_ampamp_compounds_are_ask(self) -> None:
+        for cmd in ("python a.py ; python b.py", "python a.py && python b.py"):
+            d = self.assertNeverAuto(cmd)
+            self.assertEqual((d.tier, d.reason_code),
+                             (pol.ASK, "undocumented_command"), cmd)
+
+    def test_plain_pipeline_is_ask(self) -> None:
+        d = self.assertNeverAuto("type foo.txt | findstr bar")
+        self.assertEqual((d.tier, d.reason_code), (pol.ASK, "undocumented_command"))
+
+    def test_scratch_file_copy_to_temp_is_ask(self) -> None:
+        for cmd in ("copy sample.py %TEMP%\\sample.py",
+                    "Copy-Item sample.py $env:TEMP\\sample.py"):
+            d = self.assertNeverAuto(cmd)
+            self.assertEqual((d.tier, d.reason_code),
+                             (pol.ASK, "undocumented_command"), cmd)
+
+    def test_ambiguous_env_read_is_ask(self) -> None:
+        # A $env: read that conceals nothing destructive stays ASK, not AUTO.
+        d = self.assertNeverAuto("powershell -Command \"Get-Content $env:APPDATA\\x\"")
+        self.assertEqual((d.tier, d.reason_code), (pol.ASK, "undocumented_command"))
+
+    # --- HARD_DENY shapes (never reachable, whatever any model says) ----------
+
+    def test_iex_and_encoded_command_are_hard_denied(self) -> None:
+        for cmd in ("powershell -Command \"iex (Get-Content payload.ps1 -Raw)\"",
+                    "powershell -EncodedCommand ZABpAHIA"):
+            d = self.assertNeverAuto(cmd)
+            self.assertEqual((d.tier, d.reason_code),
+                             (pol.HARD_DENY, "concealed_execution"), cmd)
+
+    def test_credential_path_read_is_hard_denied(self) -> None:
+        d = self.assertNeverAuto(
+            "powershell -Command \"Get-Content $env:USERPROFILE\\.netrc\"")
+        self.assertEqual((d.tier, d.reason_code), (pol.HARD_DENY, "credential_access"))
+
+    def test_recursive_delete_is_hard_denied(self) -> None:
+        d = self.assertNeverAuto("del /s /q build")
+        self.assertEqual((d.tier, d.reason_code),
+                         (pol.HARD_DENY, "recursive_or_wildcard_delete"))
+
+    def test_control_disabling_is_hard_denied(self) -> None:
+        d = self.assertNeverAuto("git commit --no-verify -m x")
+        self.assertEqual((d.tier, d.reason_code), (pol.HARD_DENY, "control_disabling"))
+
+    # --- The two recorded permissiveness findings (gated, never AUTO) ---------
+
+    def test_finding_f1_pipe_to_interpreter_is_ask_not_hard_deny(self) -> None:
+        """F1: `| sh` alone is ASK, not HARD_DENY - still gated, never AUTO."""
+        d = self.assertNeverAuto("python gen.py | sh")
+        self.assertEqual(d.tier, pol.ASK)
+        self.assertEqual(d.reason_code, "undocumented_command")
+
+    def test_finding_f2_powershell_wrapped_delete_is_ask_not_hard_deny(self) -> None:
+        """F2: a delete inside `powershell -Command "..."` is ASK, never AUTO."""
+        d = self.assertNeverAuto(
+            "powershell -Command \"Remove-Item -Recurse -Force $env:TEMP\\x\"")
+        self.assertEqual(d.tier, pol.ASK)
+        self.assertEqual(d.reason_code, "undocumented_command")
+
+
 if __name__ == "__main__":
     unittest.main()

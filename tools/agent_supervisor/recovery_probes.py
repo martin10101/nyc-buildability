@@ -582,6 +582,220 @@ def probe_surviving_children(*, journal: Any) -> ProbeResult:
 
 
 # --------------------------------------------------------------------------
+# Shell-routing drift tooth (D-024 Amendment 14, R295)
+# --------------------------------------------------------------------------
+#
+# Qualifying evidence: D-024-R291 (the first live run's shell-first ASK stops,
+# `M0-T113-activation-evidence.md` item 4, that no ledger task addressed). The
+# certified loop must never dispatch on a Claude CLI whose tool-routing behavior
+# has not been MEASURED for that exact installed identity - a CLI that started
+# steering routine discovery/editing to shell ("bashFirst", GitHub issue #88041)
+# under an unattended controller is drift, not a detail. This probe refuses
+# fail-closed unless current shell-routing evidence exists whose recorded
+# `claude_version` equals the installed CLI's version. It is a FOLDED probe (it
+# strengthens the pinned-identity story `cli_capability_manifest` already tells)
+# and follows the same conventions as the others: ok/known/reason_code/detail,
+# and anything undetermined fails closed.
+
+#: The packaged directory the version-keyed routing fixtures live in.
+ROUTING_EVIDENCE_DIR = str(pathlib.Path(__file__).resolve().parent / "fixtures")
+
+#: The routing fixtures this tooth reads, and the schema they must declare.
+ROUTING_FIXTURE_GLOB = "shell_routing_*.json"
+ROUTING_EVIDENCE_SCHEMA = "shell_routing/v1"
+
+#: Durable-journal key holding routing evidence recorded for a specific pinned CLI
+#: identity (the M0-T072 bound-manifest precedent: the certified identity records
+#: its measured routing evidence durably, and the gate reads it - the SAME way a
+#: bound manifest is recorded and then verified at dispatch). The shipped package
+#: fixture covers the REAL installed claude; a run against any OTHER pinned identity
+#: (an operator who re-measured routing after a CLI change; a test harness with a
+#: FAKE executable) records that identity's evidence here, never in the shipped
+#: `fixtures/` dir. Value is a list of {cli_identity, claude_version, verdict}.
+SHELL_ROUTING_EVIDENCE_KEY = "shell_routing_evidence"
+
+
+def record_routing_evidence(journal: Any, *, cli_identity: str,
+                            claude_version: str = "",
+                            verdict: str = "native_preferred") -> None:
+    """Record a durable routing-evidence record for one pinned CLI identity.
+
+    The M0-T072 precedent for a fake-executable harness (or an operator who
+    re-measured routing for a changed CLI): the evidence is recorded in the DURABLE
+    JOURNAL keyed on the identity it was measured against, and the pre-dispatch
+    tooth reads it there - never by writing into the shipped `fixtures/` directory
+    and never by special-casing the identity in production policy.
+    """
+    identity = str(cli_identity or "").strip()
+    if not identity:
+        raise JournalError("routing evidence requires a non-empty cli_identity")
+    records = journal.get_state(SHELL_ROUTING_EVIDENCE_KEY, []) or []
+    if not isinstance(records, list):
+        records = []
+    records = [r for r in records
+              if not (isinstance(r, Mapping) and str(r.get("cli_identity", "")) == identity)]
+    records.append({"cli_identity": identity, "claude_version": str(claude_version or ""),
+                    "verdict": str(verdict or "")})
+    journal.set_state(SHELL_ROUTING_EVIDENCE_KEY, records)
+
+
+def _journal_routing_records(journal: Any) -> list[dict[str, Any]]:
+    """Durable routing-evidence records, or [] when none/unreadable (fail closed)."""
+    if journal is None:
+        return []
+    try:
+        raw = journal.get_state(SHELL_ROUTING_EVIDENCE_KEY, []) or []
+    except Exception:  # an unreadable journal is not evidence; the dir may still match
+        return []
+    out: list[dict[str, Any]] = []
+    if isinstance(raw, list):
+        for r in raw:
+            if isinstance(r, Mapping) and str(r.get("cli_identity", "")).strip():
+                out.append({"cli_identity": str(r.get("cli_identity", "")).strip(),
+                            "claude_version": str(r.get("claude_version", "")).strip(),
+                            "verdict": str(r.get("verdict", "")).strip()})
+    return out
+
+
+def default_claude_version_runner(executable_path: str) -> str:
+    """`claude --version` as a bare version token, or ``""`` when unreadable.
+
+    A bounded, read-only local subprocess (no network) - the same shape the Git
+    seam uses. Returns only the leading version token (``2.1.251``) so it can be
+    compared against a fixture's recorded ``claude_version``.
+    """
+    try:
+        completed = subprocess.run(  # noqa: S603 - fixed argv head, no shell
+            [executable_path, "--version"], capture_output=True, text=True,
+            timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return ""
+    first = (completed.stdout or completed.stderr or "").strip().splitlines()
+    if not first:
+        return ""
+    parts = first[0].split()
+    return parts[0].strip() if parts else ""
+
+
+def _dir_routing_records(directory: str) -> tuple[list[dict[str, Any]], str]:
+    """Measured routing records from the fixtures dir, and an unreadable reason.
+
+    Returns ``(records, unreadable_reason)``; a non-empty reason means the store
+    itself could not be read (fail closed). A malformed individual fixture is
+    skipped, never trusted and never fatal.
+    """
+    dpath = pathlib.Path(directory)
+    if not dpath.is_dir():
+        return [], ""  # a missing dir is "no evidence here", not "unreadable"
+    try:
+        fixtures = sorted(dpath.glob(ROUTING_FIXTURE_GLOB))
+    except OSError as exc:
+        return [], f"the evidence directory {directory} could not be listed ({exc})"
+    records: list[dict[str, Any]] = []
+    for path in fixtures:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError):
+            continue
+        if not isinstance(data, dict):
+            continue
+        if data.get("schema") != ROUTING_EVIDENCE_SCHEMA or data.get("measured") is not True:
+            continue
+        fx_identity = str(data.get("cli_identity", "")).strip()
+        fx_version = str(data.get("claude_version", "")).strip()
+        if not fx_identity and not fx_version:
+            continue
+        verdict = ""
+        summary = data.get("routing_summary")
+        if isinstance(summary, Mapping):
+            verdict = str(summary.get("verdict", ""))
+        records.append({"cli_identity": fx_identity, "claude_version": fx_version,
+                        "verdict": verdict, "source": path.name})
+    return records, ""
+
+
+def probe_shell_routing_evidence(
+    *, evidence_dir: str = "", installed_version: str = "",
+    installed_identity: str = "", executable_path: str = "",
+    version_runner: Callable[[str], str] | None = None,
+    journal: Any = None,
+) -> ProbeResult:
+    """Current shell-routing evidence exists for the PINNED CLI identity (R295).
+
+    The pinned identity is the executable DIGEST (``installed_identity``) - the
+    same identity `_claude_cli_identity` / the capability-manifest machinery uses,
+    computed by hashing the binary (no spawn, no provider call). Evidence comes
+    from two durable sources: the shipped ``evidence_dir`` fixtures (the REAL
+    installed claude) AND journal records under ``SHELL_ROUTING_EVIDENCE_KEY`` (the
+    M0-T072 bound-manifest precedent - an operator who re-measured routing for a
+    changed CLI, or a fake-executable harness, records that identity's evidence
+    durably). A version string (``installed_version``, read/injected) is an
+    ALTERNATE match key kept for direct/version-keyed use. Fails closed unless a
+    measured record matches:
+
+    * neither identity nor version can be determined -> UNDETERMINED (fails closed);
+    * no measured routing evidence is present at all -> ``routing_evidence_absent``;
+    * evidence is present but none matches the pinned identity -> a changed CLI
+      whose routing was never measured, ``routing_evidence_stale``;
+    * a record matches -> the routing was measured for this identity, PASS.
+
+    Injected inputs only, so no test contacts a provider; a malformed or unreadable
+    fixture is never counted as evidence.
+    """
+    step = "shell_routing"
+    directory = evidence_dir or ROUTING_EVIDENCE_DIR
+    identity = installed_identity.strip() if isinstance(installed_identity, str) else ""
+    version = installed_version.strip() if isinstance(installed_version, str) else ""
+    if not identity and not version and executable_path:
+        runner = version_runner or default_claude_version_runner
+        try:
+            version = str(runner(executable_path) or "").strip()
+        except Exception:  # a version probe that raised did not establish a version
+            version = ""
+    #: The token the refusal detail names as the pinned identity.
+    pinned = identity or version
+    if not pinned:
+        return _unknown(step, "cli_version_undetermined",
+                        "the installed Claude CLI identity could not be determined (no "
+                        "digest or version), so current shell-routing evidence cannot be "
+                        "matched to the pinned identity; an unverifiable identity fails closed")
+    dir_records, unreadable = _dir_routing_records(directory)
+    if unreadable:
+        return _unknown(step, "routing_evidence_unreadable",
+                        f"{unreadable}; an unreadable evidence store fails closed")
+    records = dir_records + _journal_routing_records(journal)
+    evidence_identities: list[str] = []
+    for rec in records:
+        fx_identity = str(rec.get("cli_identity", "")).strip()
+        fx_version = str(rec.get("claude_version", "")).strip()
+        evidence_identities.append(fx_identity or fx_version)
+        # Match on the DIGEST identity when the gate supplied one; otherwise fall
+        # back to the version string (direct/version-keyed callers and tests).
+        matched = ((identity and fx_identity and fx_identity == identity)
+                   or (not identity and version and fx_version == version))
+        if matched:
+            return _ok(step,
+                       f"measured shell-routing evidence exists for the pinned CLI "
+                       f"identity {pinned!r} ({rec.get('source', 'journal')}; routing "
+                       f"verdict {rec.get('verdict', '')!r})",
+                       cli_identity=pinned, claude_version=fx_version,
+                       fixture=str(rec.get("source", "journal")),
+                       routing_verdict=str(rec.get("verdict", "")))
+    if evidence_identities:
+        return _fail(step, "routing_evidence_stale",
+                     f"shell-routing evidence exists but only for "
+                     f"{sorted(set(evidence_identities))}, not the pinned CLI identity "
+                     f"{pinned!r}; changed shell-routing behavior must be re-measured "
+                     f"before it enters a certified run",
+                     pinned_identity=pinned,
+                     evidence_identities=sorted(set(evidence_identities)))
+    return _fail(step, "routing_evidence_absent",
+                 f"no measured shell-routing evidence for the pinned CLI identity "
+                 f"{pinned!r} was found (dir {directory} + journal)",
+                 pinned_identity=pinned)
+
+
+# --------------------------------------------------------------------------
 # The suite
 # --------------------------------------------------------------------------
 
@@ -613,6 +827,17 @@ class ProbeInputs:
     #: The hash-chained audit log, so a re-pin leaves a durable owner-visible
     #: record. Default None keeps every existing caller unchanged.
     audit: Any = None
+    #: R295 shell-routing drift tooth. `installed_cli_identity` is the executable
+    #: DIGEST the gate holds (same identity `_claude_cli_identity` uses; computed by
+    #: hashing the binary, no spawn) - the primary match key. `installed_cli_version`
+    #: is the alternate version-string key; when both are empty the tooth reads a
+    #: version once from the claude executable via `routing_version_runner`.
+    #: `routing_evidence_dir` defaults to the packaged fixtures directory. Injected
+    #: so no test contacts a provider.
+    installed_cli_identity: str = ""
+    installed_cli_version: str = ""
+    routing_evidence_dir: str = ""
+    routing_version_runner: Callable[[str], str] | None = None
 
 
 def _isolated(step: str, probe: Callable[[], ProbeResult]) -> ProbeResult:
@@ -671,6 +896,23 @@ def run_live_probes(inputs: ProbeInputs) -> ProbeReport:
             manifest_ok=inputs.manifest_ok, manifest_reason=inputs.manifest_reason,
             config_path=inputs.config_path)),
         ("surviving_children", lambda: probe_surviving_children(journal=inputs.journal)),
+        # R295: the routing tooth reads the installed CLI version from
+        # `installed_cli_version` (injected). It deliberately does NOT auto-launch
+        # the executable here: `run_live_probes` runs on every start, and spawning
+        # `claude --version` in the sweep would both add a launch to the hot path
+        # and, in the golden fakes, increment their launch counters. A caller that
+        # WANTS the version read from the binary supplies `routing_version_runner`
+        # explicitly (with the executable path); by default the version is injected
+        # and an absent version fails closed (folded, so it never gates dispatch by
+        # itself - see FOLDED_PROBES and the start_gate fold note).
+        ("shell_routing", lambda: probe_shell_routing_evidence(
+            evidence_dir=inputs.routing_evidence_dir,
+            installed_identity=inputs.installed_cli_identity,
+            installed_version=inputs.installed_cli_version,
+            executable_path=(inputs.executables.get("claude", "")
+                             if inputs.routing_version_runner else ""),
+            version_runner=inputs.routing_version_runner,
+            journal=inputs.journal)),
     )
     return ProbeReport(results=tuple(_isolated(step, probe) for step, probe in probes))
 
@@ -685,8 +927,14 @@ STEP_PROBES: tuple[str, ...] = (
 #: Probes the directive names that are FOLDED into an existing step rather than
 #: widening the frozen step vocabulary. `config_identity` strengthens
 #: `controller_manifest`; `surviving_children` reports what `recover_boot`'s own
-#: child accounting already gates on.
-FOLDED_PROBES: tuple[str, ...] = ("config_identity", "surviving_children")
+#: child accounting already gates on; `shell_routing` (D-024-R295) strengthens the
+#: pinned-CLI-identity story `cli_capability_manifest` tells - it appears in the
+#: report so the refusal payload names it, and gating it into the revalidation map
+#: is the one-line fold `start_gate.live_revalidation` already applies to
+#: `config_identity` (start_gate.py is outside this unit's allowed paths; see the
+#: producer report's integration finding).
+FOLDED_PROBES: tuple[str, ...] = (
+    "config_identity", "surviving_children", "shell_routing")
 
 
 def default_worktree(repo_root: str, worktree: str = "") -> str:

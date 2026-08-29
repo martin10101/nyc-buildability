@@ -780,6 +780,21 @@ class ConfigIdentityProbeTests(ProbeTestBase):
 
 
 class SuiteTests(ProbeTestBase):
+    def routing_dir(self, version: str = "test-cli-1.0.0") -> str:
+        """A temp evidence dir carrying ONE measured shell_routing fixture.
+
+        Keeps the healthy-checkout probe sweep clean without depending on the
+        installed CLI: the R295 tooth matches this fixture's `claude_version`
+        against the injected `installed_cli_version`.
+        """
+        d = self.tmp / "routing_evidence"
+        d.mkdir(exist_ok=True)
+        (d / f"shell_routing_{version}.json").write_text(json.dumps({
+            "schema": "shell_routing/v1", "measured": True,
+            "claude_version": version,
+            "routing_summary": {"verdict": "native_preferred"}}), encoding="utf-8")
+        return str(d)
+
     def inputs(self, **overrides) -> rp.ProbeInputs:
         config = self.tmp / "config.toml"
         config.write_text("[limits]\n", encoding="utf-8")
@@ -788,7 +803,11 @@ class SuiteTests(ProbeTestBase):
             worktree=self.worktree, packet_path="packet.json",
             executables={"claude": sys.executable, "codex": sys.executable},
             config_path=str(config), manifest_ok=True, git=self.git,
-            clock=lambda: 1_770_000_000.0)
+            clock=lambda: 1_770_000_000.0,
+            # R295: supply matching routing evidence for the injected CLI version
+            # so the folded shell_routing tooth passes on the healthy path.
+            installed_cli_version="test-cli-1.0.0",
+            routing_evidence_dir=self.routing_dir())
         params.update(overrides)
         return rp.ProbeInputs(**params)
 
@@ -860,6 +879,32 @@ class SuiteTests(ProbeTestBase):
                     refusals.outcome_for_recovery(outcome.classification,
                                                   outcome.reason_code),
                     refusals.UNSAFE)
+
+    def test_the_shell_routing_tooth_is_registered_and_folded(self) -> None:
+        """R295: the routing tooth runs in the S11.5 sweep and is FOLDED.
+
+        It appears in `run_live_probes`'s report (so the refusal payload names
+        it) and in `FOLDED_PROBES`, but NOT in `STEP_PROBES`/`REVALIDATION_STEPS`
+        - so, like `config_identity`, it is `start_gate`'s to fold into the
+        revalidation map and cannot itself widen the frozen step vocabulary.
+        """
+        self.write_ledger("M0-T079")
+        report = rp.run_live_probes(self.inputs())
+        self.assertIn("shell_routing", report.by_step())
+        self.assertIn("shell_routing", rp.FOLDED_PROBES)
+        self.assertNotIn("shell_routing", rp.STEP_PROBES)
+        self.assertNotIn("shell_routing", rec.REVALIDATION_STEPS)
+        # Folded probes never enter the map `recovery.classify` validates.
+        self.assertNotIn("shell_routing", report.revalidation(rp.STEP_PROBES))
+
+    def test_a_stale_cli_version_fails_the_routing_tooth_in_the_sweep(self) -> None:
+        """R295: with evidence only for another CLI identity, the sweep refuses."""
+        self.write_ledger("M0-T079")
+        report = rp.run_live_probes(self.inputs(installed_cli_version="9.9.9"))
+        routing = report.by_step()["shell_routing"]
+        self.assertFalse(routing.passes)
+        self.assertEqual(routing.reason_code, "routing_evidence_stale")
+        self.assertIn("shell_routing", report.to_dict()["failed"])
 
 
 # --------------------------------------------------------------------------
@@ -1011,7 +1056,16 @@ class StartProbeIntegrationTests(unittest.TestCase):
         self.make_git_checkout()
         with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
             _, payload = self.run_cli(*self.full_inputs())
-        self.assertEqual(payload["probes"]["failed"], [], payload["probes"])
+        # R295: the FOLDED shell_routing tooth is the only probe that can fail
+        # here, and only because these end-to-end tests pass `sys.executable` as
+        # the "claude" binary - so `<python> --version` reports a Python version
+        # that legitimately does not match the committed routing fixture (keyed to
+        # the real claude 2.1.251). In production the executable IS claude 2.1.251
+        # and the tooth passes. Being folded, it never enters the revalidation map,
+        # so dispatch still proceeds; every other probe still passes.
+        self.assertEqual(
+            [s for s in payload["probes"]["failed"] if s != "shell_routing"], [],
+            payload["probes"])
         self.assertTrue(payload["dispatched"], payload["stopped_because"])
 
     def test_a_pending_approval_request_stops_the_next_start(self) -> None:
@@ -1168,7 +1222,13 @@ class StartProbeIntegrationTests(unittest.TestCase):
         # claim under test is that it is no longer stopped by the drift latch.)
         with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
             code, payload = self.run_cli(*self.full_inputs(), "--repin-cli-identity")
-        self.assertEqual(payload["probes"]["failed"], [], payload["probes"])
+        # R295: `shell_routing` is a FOLDED tooth and the only probe that can fail
+        # here, only because `sys.executable` stands in for the claude binary (its
+        # `--version` does not match the committed 2.1.251 routing fixture). It is
+        # never in the revalidation map, so the re-pin claim under test is unaffected.
+        self.assertEqual(
+            [s for s in payload["probes"]["failed"] if s != "shell_routing"], [],
+            payload["probes"])
         self.assertNotIn("provider_cli_drift", json.dumps(payload))
 
         journal = DurableJournal(db).open()
@@ -1182,9 +1242,12 @@ class StartProbeIntegrationTests(unittest.TestCase):
         self.assertIn("cli_identity_repinned", self.audit_events())
 
         # And the NEXT ordinary start - no flag - passes against the new pin.
+        # (R295: `shell_routing` is the only remaining folded failure, from the
+        # `sys.executable` stand-in; excluded here as above.)
         with self.host_containment(self.proc.CONTAINMENT_JOB_OBJECT):
             _, payload = self.run_cli(*self.full_inputs())
-        self.assertEqual(payload["probes"]["failed"], [])
+        self.assertEqual(
+            [s for s in payload["probes"]["failed"] if s != "shell_routing"], [])
 
 
 if __name__ == "__main__":  # pragma: no cover

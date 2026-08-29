@@ -83,6 +83,20 @@ class GoldenRunBase(unittest.TestCase):
         self.packet = gr.task_packet(self.tmp / f"{TASK}.json", task_id=TASK)
         self.runtime = self.tmp / "runtime"
         self.launch_log = self.tmp / "launch_log.jsonl"
+        # D-024-R295 (M0-T120): the certified (limited-auto) start now gates on
+        # measured shell-routing evidence for the PINNED CLI identity. This golden
+        # harness runs against a FAKE claude executable whose digest is not the real
+        # installed CLI, so it records ITS OWN fake identity's routing evidence in
+        # the runtime journal - the M0-T072 bound-manifest precedent (recorded
+        # durably in the harness's temp runtime, NEVER in the shipped fixtures/
+        # dir). A test that wants to prove the tooth BITES calls
+        # `clear_routing_evidence()` to remove the seed.
+        gr.seed_routing_evidence(self.checkout, self.runtime, self.fakes["claude"])
+
+    def clear_routing_evidence(self) -> None:
+        """Remove the routing-evidence seed so the certified start REFUSES (the
+        tooth biting) - used by the removal-sensitivity gate test."""
+        gr.clear_routing_evidence(self.checkout, self.runtime)
 
     def plan(self, responses, **kwargs) -> None:
         gr.write_plan(pathlib.Path(self.fakes["plan"]), run_id="run-golden",
@@ -131,6 +145,26 @@ class GoldenRunBase(unittest.TestCase):
 
 class TwoUnitGoldenRunTests(GoldenRunBase):
     """16.9(m)/R121/R186/R222: two consecutive bounded units from ONE start."""
+
+    def test_the_routing_tooth_bites_a_certified_start_without_evidence(self) -> None:
+        # D-024-R295 (M0-T120): the tooth BITES. With the routing-evidence seed
+        # removed, the certified (limited-auto) start refuses fail-closed - the
+        # end-to-end proof that changed shell-routing behavior cannot silently
+        # enter a certified run. (The seeded case is proven green by every other
+        # dispatching test in this pack.)
+        self.plan([self.work_step("cp-A", "unit-a.txt")])
+        self.review_plan(["INJECTED next bounded unit."])
+        self.clear_routing_evidence()
+        code, payload = self.run_cli(self.argv(max_cycles=1))
+        self.assertFalse(payload["dispatched"], payload)
+        self.assertEqual(payload["provider_calls_made"], 0)
+        self.assertEqual(payload["recovery"]["classification"], "UNSAFE_OR_DRIFTED")
+        self.assertIn("cli_capability_manifest", payload["recovery"]["failed_steps"])
+        routing = next(p for p in payload["probes"]["probes"]
+                       if p["step"] == "shell_routing")
+        self.assertFalse(routing["passes"])
+        self.assertIn(routing["reason_code"],
+                      ("routing_evidence_absent", "routing_evidence_stale"))
 
     def test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step(self) -> None:
         # Unit A crosses the context threshold; the seam rotates; the

@@ -407,3 +407,50 @@ def task_packet(path: pathlib.Path, *, task_id: str,
         "objective": "golden-run disposable unit",
     }), encoding="utf-8")
     return path
+
+
+def _runtime_journal_path(checkout: pathlib.Path,
+                          runtime: pathlib.Path) -> pathlib.Path:
+    from .durable_state import DB_FILENAME, runtime_dir_for
+    runtime_dir = runtime_dir_for(checkout, base=str(runtime))
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    return runtime_dir / DB_FILENAME
+
+
+def seed_routing_evidence(checkout: pathlib.Path, runtime: pathlib.Path,
+                          claude_executable: str) -> str:
+    """Record measured shell-routing evidence for the FAKE claude's own identity
+    (D-024-R295 / M0-T120), so the certified `limited-auto` start's routing tooth
+    passes for THIS disposable harness.
+
+    The M0-T072 bound-manifest precedent: the evidence is recorded in the harness's
+    own temp RUNTIME JOURNAL keyed on the fake executable's digest - never written
+    into the shipped `fixtures/` directory and never by special-casing fake digests
+    in production policy. Returns the seeded identity (the fake's digest).
+    """
+    from .durable_state import DurableJournal
+    from .process import executable_identity
+    from .recovery_probes import record_routing_evidence
+
+    identity = executable_identity(claude_executable, name="claude").digest
+    journal = DurableJournal(_runtime_journal_path(checkout, runtime)).open()
+    try:
+        record_routing_evidence(journal, cli_identity=identity,
+                                claude_version="golden-fake-cli",
+                                verdict="native_preferred")
+    finally:
+        journal.close()
+    return identity
+
+
+def clear_routing_evidence(checkout: pathlib.Path, runtime: pathlib.Path) -> None:
+    """Remove any recorded routing evidence so the certified start REFUSES - used
+    to prove the R295 tooth BITES (removal sensitivity)."""
+    from .durable_state import DurableJournal
+    from .recovery_probes import SHELL_ROUTING_EVIDENCE_KEY
+
+    journal = DurableJournal(_runtime_journal_path(checkout, runtime)).open()
+    try:
+        journal.set_state(SHELL_ROUTING_EVIDENCE_KEY, [])
+    finally:
+        journal.close()

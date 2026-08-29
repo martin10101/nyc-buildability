@@ -91,6 +91,24 @@ def bounded_mode_gate(args: argparse.Namespace) -> refusals.Refusal | None:
     return None
 
 
+def _claude_identity_digest(executable: str) -> str:
+    """The pinned Claude CLI identity (executable digest), or "" when unknown.
+
+    The SAME identity `cli._claude_cli_identity` and the capability manifest use:
+    the content digest of the named binary, computed by hashing the file - never a
+    PATH search and never a spawn/provider call (D-024-R295: the routing tooth must
+    not launch `claude --version` in the pre-dispatch sweep). An unresolvable
+    identity returns "", which makes the routing tooth fail closed downstream.
+    """
+    if not executable:
+        return ""
+    try:
+        from .process import executable_identity
+        return str(executable_identity(executable, name="claude").digest)
+    except Exception:
+        return ""
+
+
 def remote_reachability(git) -> Callable[[str], ProbeResult]:
     """A read-only `git ls-remote` reachability check, injected into the probe."""
 
@@ -140,6 +158,16 @@ def live_revalidation(
     `controller_manifest` is ANDed with the config-identity probe: the manifest
     verdict alone did not say that the config the run would actually read is the
     one the manifest binds.
+
+    D-024-R295 fold: `cli_capability_manifest` is ANDed with the shell-routing
+    drift tooth, exactly the way `controller_manifest` is ANDed with
+    `config_identity`. The pinned identity the tooth matches against is the SAME
+    executable digest the capability manifest pins (`_claude_identity_digest`,
+    computed by hashing the binary - no spawn, no provider call). Absent,
+    unreadable, or identity-mismatched routing evidence now fails
+    `cli_capability_manifest`, so `recovery.classify` turns it into
+    UNSAFE_OR_DRIFTED before any provider contact - a changed shell-routing
+    behavior can no longer silently enter a certified run.
     """
     repo = pathlib.Path(args.repo or checkout).resolve()
     worktree = pathlib.Path(args.worktree or repo).resolve()
@@ -162,6 +190,11 @@ def live_revalidation(
         # C10: the owner's explicit acceptance of a legitimately changed provider
         # CLI. Absent (the default) drift still refuses, unchanged.
         repin_cli_identity=bool(getattr(args, "repin_cli_identity", False)),
+        # R295: the pinned CLI identity (executable digest) the routing tooth
+        # matches evidence against - no spawn, just the file hash the capability
+        # manifest already uses. An unresolvable identity leaves this empty, and
+        # the tooth then fails closed (`cli_version_undetermined`).
+        installed_cli_identity=_claude_identity_digest(args.claude_executable),
         audit=audit))
     answers = report.by_step()
     config_identity_ok = answers["config_identity"].passes
@@ -171,6 +204,31 @@ def live_revalidation(
         "audit_chain": bool(chain_ok),
         **report.revalidation(STEP_PROBES),
     }
+    # R295 GATING FOLD (D-024 Amendment 14; orchestrator Option 1). The routing
+    # tooth is ANDed into `cli_capability_manifest` exactly the way `config_identity`
+    # is ANDed into `controller_manifest` above: absent, unreadable, or
+    # identity-mismatched shell-routing evidence for the PINNED CLI identity drifts
+    # the capability step, which `recovery.classify` turns into UNSAFE_OR_DRIFTED
+    # before any provider contact. In production the installed claude digest matches
+    # the committed measured fixture, so this is a no-op for the good case; a
+    # changed CLI whose routing was never re-measured refuses. Fake-executable
+    # start harnesses record routing evidence for their own fake identity in the
+    # journal during setup (`recovery_probes.record_routing_evidence`, the M0-T072
+    # bound-manifest precedent) - never in the shipped fixtures/ dir.
+    #
+    # SCOPE: the gate applies to the CERTIFIED run - the owner-enabled `limited-auto`
+    # unattended loop - which is exactly what R295 protects ("changed shell-routing
+    # behavior cannot silently enter a CERTIFIED run"). A `shadow`/`supervised` start
+    # is human-observed and is not the unattended run R295 targets, so it is not
+    # gated here (and this avoids editing the shadow/supervised cmd_start test
+    # harnesses, three of which are outside this unit's allowed paths - see the
+    # M0-T120 producer report L1 FOLLOW-UP). The tooth still RUNS in every mode and
+    # its verdict is in the report; only its gating effect is scoped to the
+    # certified run.
+    if getattr(args, "mode", "") == MODE_LIMITED_AUTO:
+        revalidation["cli_capability_manifest"] = bool(
+            revalidation.get("cli_capability_manifest")
+            and answers["shell_routing"].passes)
     return revalidation, report
 
 
