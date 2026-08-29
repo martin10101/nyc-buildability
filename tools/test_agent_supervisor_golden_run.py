@@ -400,7 +400,7 @@ class WatcherCaptureTests(WatcherBase):
         the register row wrote the RAW source_record_key although its
         sanitized value was already computed - a key-shaped token embedded in
         a source record key must never reach the register."""
-        secret = "sk-ant-api03-FAKEFAKEFAKEFAKE1234567890abcdefg"
+        secret = "sk-ant-api03-FAKEFAKEFAKEFAKE1234567890abcdefg"  # gitleaks:allow secretscan:allow fake sentinel proving register-key redaction
         self.refusal_record(f"d-{secret}")
         lo.record_observations(self.journal, session_provenance="injected")
         rows = lo.observation_rows(self.journal)
