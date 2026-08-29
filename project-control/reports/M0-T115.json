@@ -2,15 +2,15 @@
   "task_id": "M0-T115",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T115-repair-record.md",
-  "submitted_at": "2026-08-29T06:15:23.643680+00:00",
+  "submitted_at": "2026-08-29T06:36:01.514015+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T115-evidence-map.json",
-  "content_manifest_sha256": "c95cec8b7d39984ee63d52370ab5a0a71dee0e362b7ad72befd094b27221805c",
-  "reviewed_sha": "848d68b8dfbdff478369d25e88843103e64984e9",
+  "content_manifest_sha256": "0a2ff0adf0beb2ac7a1fb592448ba5f853b503f596b9cacb3e8c358f052fedf7",
+  "reviewed_sha": "c55030928ea684eaa405f2e338741143fd0bf765",
   "applicable_requirements": [
     "D-024-R272",
     "D-024-R273",
     "D-024-R274"
   ],
-  "updated_at": "2026-08-29T06:15:24.310600+00:00"
+  "updated_at": "2026-08-29T06:36:02.290807+00:00"
 }
