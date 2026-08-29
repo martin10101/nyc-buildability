@@ -1,0 +1,36 @@
+{
+ "task_id": "M0-T117",
+ "note": "Evidence per D-024 Amendment-13 requirement applicable to M0-T117 (resolver set: R277/R278/R279/R280/R286/R287/R288). Material identity commit fa16560 (cherry-pick of worktree 2cd9c5c). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R277": [
+   "This unit delivers the FIRST element of the authorized Option-A chain: the DISABLE_AUTOUPDATER control. The remaining elements are bound to their own units: fixture recapture (M0-T118, R281), recertification window (M0-T119, R283), R276 rerun + one-time repin (M0-T113, R284/R285).",
+   "CLAIM: SATISFIED for this unit's slice of the authorization; the chain continues under its own packets"
+  ],
+  "D-024-R278": [
+   "Controller-launched scope ESTABLISHED + VERIFIED: process.py claude_child_env() applies FORCED_CLAUDE_CHILD_ENV = {DISABLE_AUTOUPDATER: '1'} LAST (after allowlist filter and extra_env merge) so no input can drop or override it; both claude Popen sites in claude_runner.py (worker run_unit ~1103, probe probe_model_launch ~1549) use the helper; codex children untouched.",
+   "Verified by 10 new removal-sensitive tests (AS-1/AS-2 red first on the unmodified seam: 7 failed with None != '1'; green after: touched modules 38 passed/1 skipped; orchestrator re-ran independently, same counts). Whole suite 2722 collected = 2712 baseline + 10, 2717 passed, 2 skipped, 3 failed = the three PRE-EXISTING live drift teeth (2.1.251 vs 2.1.248 fixtures - M0-T118 scope, untouched).",
+   "Workstation/certification-window scope: exact administrator PowerShell + verification command pack DELIVERED to the owner in-session and recorded verbatim in M0-T117-autoupdater-evidence.md (never executed by any agent, R288). OWNER CONFIRMATION PENDING at submit time - this half of R278 completes on the owner's typed confirmation.",
+   "CLAIM: code scope SATISFIED; workstation scope delivered and owner-executed - PENDING the owner's confirmation (acceptance-blocking until then, fail closed)"
+  ],
+  "D-024-R279": [
+   "No fixture recapture has begun: M0-T118 is backlog/unclaimed, its worktree does not exist, and its packet objective states it MUST NOT start before R278 is verified in BOTH scopes; ledger dependency M0-T118 -> M0-T117 enforces the order mechanically.",
+   "CLAIM: SEQUENCING HONORED"
+  ],
+  "D-024-R280": [
+   "No DISABLE_UPDATES anywhere in the delta (the docs sections explicitly say it is NOT used and why); claude NOT downgraded (installed remains 2.1.251); no global configuration change performed - the diff spans only the packet's allowed_paths; the only workstation-level change is the owner-executed command pack, delivered but never run from this side.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R286": [
+   "Background updates are disabled for controller-launched workers BY CONSTRUCTION: the forced pair is unconditional at both claude child-env seams and removal-sensitive tests fail if it is removed; documented as standing policy in tools/agent_supervisor/README.md and docs/CONTROLLER_UPDATE_RUNBOOK.md section 13.",
+   "CLAIM: SATISFIED (code-enforced, not configuration-dependent)"
+  ],
+  "D-024-R287": [
+   "Admission-event discipline documented in both operator-facing documents: future Claude Code upgrades are deliberate admission events - update intentionally, recapture the measured fixture pack, run full recertification, only then repin (--repin-cli-identity); silent drift acceptance prohibited. This very window (Amendment 13) is the discipline's first execution.",
+   "CLAIM: SATISFIED (documented; being exercised by this window)"
+  ],
+  "D-024-R288": [
+   "STOPPED before any Windows change: no agent executed any environment mutation (M0-T117-autoupdater-evidence.md line ~183 states none of the owner-side commands were executed); the exact Administrator PowerShell command, stored-value verification, inheritance verification, and claude-doctor behavioral check were delivered to the owner in-session and recorded verbatim in the evidence report.",
+   "CLAIM: SATISFIED"
+  ]
+ }
+}

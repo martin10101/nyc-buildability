@@ -1,0 +1,20 @@
+{
+  "task_id": "M0-T117",
+  "producer_agent": "supervisor-autoupdater-producer",
+  "report_file": "project-control/reports/M0-T117-producer-report.md",
+  "submitted_at": "2026-08-29T18:21:53.025901+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T117-evidence-map.json",
+  "content_manifest_sha256": "8d95453b2bfaa99e6aee184ca632aa3bef4bc95a1266ed43922339d9cffc96b8",
+  "reviewed_sha": "fa16560e7b52d1a69f527b14df6ac9f4d3efb05e",
+  "applicable_requirements": [
+    "D-024-R277",
+    "D-024-R278",
+    "D-024-R279",
+    "D-024-R280",
+    "D-024-R286",
+    "D-024-R287",
+    "D-024-R288"
+  ],
+  "updated_at": "2026-08-29T18:21:53.834104+00:00"
+}
