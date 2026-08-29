@@ -7374,43 +7374,58 @@
    "requirements": [
     {
      "id": "D-024-R277",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Second chain element only (recapture): packet objective/outputs recapture-scoped; recert stays R283->M0-T119, rerun+repin R284/R285->M0-T113; no over-reach",
+      "project-control/reports/M0-T118-DCV.md row R277"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91"
     },
     {
      "id": "D-024-R279",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Timeline reproduced from primary records: M0-T117 accepted 19:46 (verification 7/7 PASS incl R278 both scopes + R288) -> T118 G0 19:48 -> capture window 19:49-20:07 -> material commit 20:21; workstation control re-verified LIVE at DCV time (reg query -> REG_SZ 1)",
+      "project-control/reports/M0-T118-DCV.md row R279"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91"
     },
     {
      "id": "D-024-R280",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Only negation mentions of DISABLE_UPDATES; claude --version live = 2.1.251 (no downgrade/update; AS-4 stamps identical); delta = exactly the 13 allowed_paths files; no global config change",
+      "project-control/reports/M0-T118-DCV.md row R280"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91"
     },
     {
      "id": "D-024-R281",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Five packet-named fixtures present; catalog 33 events with +2 reconciliation (PostModelSwitch/PreModelSwitch added, none removed) bound by test_s8_recorded_drift_matches_computed_drift; KNOWN_HOOK_EVENTS unwidened at 31; three live teeth exact-match and PASS at 2.1.251 (DCV reproduced 169 passed 0 skipped + 4 teeth explicitly); honest labels (inherited/UNCAPTURED not escalated; pending-owner-C1 preserved); pointers re-pointed; 2_1_248 predecessors append-only untouched; whole suite reproduced 2726/2724/2/0 by BOTH G4 and DCV independently; CI 20/20 at d4a529d",
+      "project-control/reports/M0-T118-DCV.md row R281 + M0-T118-recapture-evidence.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91"
     },
     {
      "id": "D-024-R282",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No admission record anywhere in the delta or reports - every occurrence is an explicit deferral to M0-T119's frozen-identity certification",
+      "project-control/reports/M0-T118-DCV.md row R282"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91"
     }
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "reviewed_manifest_sha256": null
+   "reviewed_sha": "69e1d0426e205dbb1f6108b54848b58adaf24c91",
+   "verified_at": "2026-08-29T21:23:10.138769+00:00",
+   "reviewed_manifest_sha256": "6671cb0d13ffb3c1cb5571185f9e295514eec84b1875c12868f12807a01f5168"
   },
   {
    "task_id": "M0-T119",
@@ -7466,5 +7481,5 @@
    "reviewed_manifest_sha256": null
   }
  ],
- "updated_at": "2026-08-29T19:46:45.362099+00:00"
+ "updated_at": "2026-08-29T21:23:10.138769+00:00"
 }
