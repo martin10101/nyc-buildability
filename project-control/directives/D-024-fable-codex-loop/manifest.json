@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T17:52:30.041639+00:00",
+ "updated_at": "2026-08-29T21:37:48.525776+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -116,6 +116,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T17:52:30.041639+00:00",
    "content_digest_sha256": "ede5293ab6fcde7767401a1a7d3289299fbc9c7e3685508c2cc8ccdc9fb2f7d3"
+  },
+  {
+   "file": "source-014-amendment.md",
+   "kind": "amendment",
+   "sequence": 14,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T21:37:48.525776+00:00",
+   "content_digest_sha256": "013155a6835bc1939b056a5559a0c8984a64d644d629ce5747c0623a344c578d"
   }
  ],
  "amendments": [
@@ -130,7 +138,8 @@
   "source-010-amendment.md",
   "source-011-amendment.md",
   "source-012-amendment.md",
-  "source-013-amendment.md"
+  "source-013-amendment.md",
+  "source-014-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -161,7 +170,8 @@
   "M0-T116",
   "M0-T117",
   "M0-T118",
-  "M0-T119"
+  "M0-T119",
+  "M0-T120"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -511,10 +521,19 @@
   "D-024-R285",
   "D-024-R286",
   "D-024-R287",
-  "D-024-R288"
+  "D-024-R288",
+  "D-024-R289",
+  "D-024-R290",
+  "D-024-R291",
+  "D-024-R292",
+  "D-024-R293",
+  "D-024-R294",
+  "D-024-R295",
+  "D-024-R296",
+  "D-024-R297"
  ],
- "requirements_id_digest_sha256": "d2161b15754d75a2547aad6035f5a0d7b4caf817c37404db2cbcb458ccbc1d30",
- "requirements_content_digest_sha256": "ceee2803b3823e72bc8a04cbe95f1913b3847aadf84860707204597c34ecd32c",
+ "requirements_id_digest_sha256": "fc97b2ab215b5746aeadf2ce9d22b1198fa017bd89365596cfb44286a97921a9",
+ "requirements_content_digest_sha256": "df92d0d027998232aa57c67be82efaa86da3fc849a7b6096f881b89d97aad379",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -607,6 +626,11 @@
    "at": "2026-08-29T17:52:30.041639+00:00",
    "by": "orchestrator",
    "note": "Amendment 13 captured (owner instruction 2026-08-29, verbatim in source-013-amendment.md): Option A authorized after the seq-30 R276 stop on provider CLI drift (installed 2.1.251 vs certified 2.1.248). Rows R277-R288: umbrella Option-A authorization (R277 -> T113/T117/T118/T119); establish+verify DISABLE_AUTOUPDATER=1 for controller-launched claude children AND the certification window (R278 -> T117) strictly BEFORE recapture (R279 -> T117+T118); prohibitions: no DISABLE_UPDATES, no downgrade, no unrelated global config changes (R280 -> T113/T117/T118/T119); bounded fixture recapture at 2.1.251 (R281 -> T118); 2.1.251 admitted ONLY after fixtures/drift teeth/live probes/golden suites/gates/independent reviews/manifest binding/frozen-identity certification all pass (R282 hold -> T118+T119); full R247 recert window at one frozen identity (R283 -> T119); rerun R276 from the beginning after certification (R284 -> T113+T119); one-time --repin-cli-identity + digest verification + limited-auto resume of M0-T107 (R285 -> T113); standing: background updates disabled for controller-launched workers (R286), future upgrades are deliberate admission events - recapture, recertify, only then repin, never silent drift (R287); owner-side Windows env changes are owner-executed - stop and deliver exact admin PowerShell + verification commands (R288). New units M0-T117/T118/T119; no owner gate loosened."
+  },
+  {
+   "at": "2026-08-29T21:37:48.525776+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 14 captured (owner instruction 2026-08-29, verbatim in source-014-amendment.md): shell-routing compatibility reconciliation. Timing disclosed: M0-T118 already accepted (R289 satisfied at capture); M0-T119 already claimed + certification runs started pre-directive - halted, runs VOID, unit HELD (R297). Reconciliation finding: NO ledger task addresses bashFirst/issue-88041 shell-first worker routing (R290 evidence recorded in the amendment). Rows R289-R297: finish T118 (R289, satisfied); reconcile (R290); create separate bounded task M0-T120 (R291); empirical routing proof at 2.1.251 under the exact controller launch config (R292); broker + owner gates preserved, no broad shell allowances (R293 -> T119+T120); native Read/Grep/Glob/Edit/Write preference with brokered validation commands (R294); pre-dispatch shell-routing drift tooth (R295); separate task, single M0-T119 recert at ONE final identity including T120 (R296 -> T119+T120); T119 hold until T120 accepted (R297 -> T119). No owner gate loosened."
   }
  ]
 }

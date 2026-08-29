@@ -7437,7 +7437,10 @@
     "D-024-R280",
     "D-024-R282",
     "D-024-R283",
-    "D-024-R284"
+    "D-024-R284",
+    "D-024-R293",
+    "D-024-R296",
+    "D-024-R297"
    ],
    "requirements": [
     {
@@ -7474,6 +7477,104 @@
      "evidence": [],
      "verified_by": "",
      "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R293",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R296",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R297",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    }
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "reviewed_manifest_sha256": null
+  },
+  {
+   "task_id": "M0-T120",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R289",
+    "D-024-R290",
+    "D-024-R291",
+    "D-024-R292",
+    "D-024-R293",
+    "D-024-R294",
+    "D-024-R295",
+    "D-024-R296"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R289",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R290",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R291",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R292",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R293",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R294",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R295",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R296",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": "",
+     "reviewed_sha": null
     }
    ],
    "reviewed_sha": null,
@@ -7481,5 +7582,5 @@
    "reviewed_manifest_sha256": null
   }
  ],
- "updated_at": "2026-08-29T21:23:10.138769+00:00"
+ "updated_at": "2026-08-29T21:39:26.782168+00:00"
 }

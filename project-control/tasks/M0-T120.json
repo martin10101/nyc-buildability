@@ -1,0 +1,94 @@
+{
+ "task_id": "M0-T120",
+ "title": "D-024 Amendment 14 unit T: shell-routing compatibility - empirical 2.1.251 routing proof under the live launch config, native-tool preference, pre-dispatch routing drift tooth",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Resolve the bashFirst / GitHub issue #88041 reconciliation gap (Amendment 14 R290/R291): the first live limited-auto run's worker proposed TWO PowerShell + ONE Bash read-only discovery commands instead of native Read/Grep/Glob (ASK-held, run_M0_T107_unitJ) and NO ledger task ever addressed that routing behavior. Deliver: (1) R292 - EMPIRICALLY prove how installed Claude Code 2.1.251 routes routine repository discovery and edits under the controller's EXACT live launch configuration (same build_argv + claude_child_env construction the certified start uses): bounded NON-FORWARDING live probes (deny-everything permission handler; every tool request recorded and denied; no file writes; 1-3 provider calls maximum) over canned discovery + edit assignments; record the measured tool-request stream in a version-keyed fixture. (2) R294 - native-tool preference in the WORKER PATH: explicit assignment/prompt guidance to use native Read/Grep/Glob/Edit/Write for repository discovery and editing, with required validation commands remaining explicitly classified and brokered via the documented_test_commands pattern - NO broker change, NO new AUTO class, NO classifier loosening. (3) R295 - PRE-DISPATCH routing drift tooth: dispatch fails closed unless current shell-routing evidence exists for the PINNED CLI identity (version-keyed fixture + probe in the S11.5 set); removal-sensitive tests. (4) Windows-shape classifier coverage check: map existing command-authority coverage for heredocs, pipelines/exit propagation, redirections, compound commands, scratch-file transfers, ambiguous effects; add ONLY missing ASK/HARD_DENY assertions (tests only - the classifier itself is untouched). PROHIBITED (R293): broadly allowing Python, PowerShell, sed, heredocs, redirections, compound commands, or arbitrary scripts; any owner-gate or broker weakening. SEPARATE unit (R296): own commits/evidence/reviews; its final identity joins the SINGLE M0-T119 recertification. Supervisor-freeze qualifying evidence: D-024-R291 (also AD-093: reproduced live shell-first ASK stops + inability to complete an authorized product task without owner touches).",
+ "business_reason": "Owner Amendment 14 (2026-08-29, source-014-amendment.md): the certified loop must not recur into ASK-stops on routine discovery, and changed shell-routing behavior must never silently enter a certified run.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-014-amendment.md (rows R289-R297)",
+  "project-control/reports/M0-T113-activation-evidence.md item 4 (the three ASK-held shell discovery proposals - the behavior under test)",
+  "tools/agent_supervisor/claude_runner.py (build_argv, with_checkpoint_contract, deny_everything) + process.py claude_child_env",
+  "tools/agent_supervisor/recovery_probes.py (S11.5 probe set) + preflight capability records",
+  ".claude/rules/supervisor-freeze.md (qualifying evidence duty: cite D-024-R291)"
+ ],
+ "outputs": [
+  "Measured shell-routing fixture at 2.1.251 (version-keyed, honest provenance): the recorded tool-request stream from bounded non-forwarding live probes of canned discovery + edit assignments under the EXACT controller launch configuration (build_argv + claude_child_env)",
+  "Native-tool preference guidance in the worker assignment path (prompt-level; validation commands stay classified+brokered via documented_test_commands); broker/classifier UNTOUCHED",
+  "Pre-dispatch routing drift tooth: S11.5-set probe failing closed when no current routing evidence exists for the pinned CLI identity; removal-sensitive tests",
+  "Windows-shape classifier coverage map + only-missing ASK/HARD_DENY test additions (heredocs, pipelines/exit propagation, redirections, compound commands, scratch-file transfers, ambiguous effects)",
+  "project-control/reports/M0-T120-producer-report.md + M0-T120-routing-evidence.md (probe transcripts, denial records, provider-call count, red/green)"
+ ],
+ "dependencies": [
+  "M0-T118"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor/routing_probe.py",
+  "tools/agent_supervisor/recovery_probes.py",
+  "tools/agent_supervisor/claude_runner.py",
+  "tools/agent_supervisor/prompts/claude_checkpoint.md",
+  "tools/agent_supervisor/prompts/claude_native_tools.md",
+  "tools/agent_supervisor/fixtures/shell_routing_2026-08-29_m0t120_2_1_251.json",
+  "tools/test_agent_supervisor_routing_probe.py",
+  "tools/test_agent_supervisor_recovery_probes.py",
+  "tools/test_agent_supervisor_command_authority.py",
+  "project-control/reports/M0-T120-producer-report.md",
+  "project-control/reports/M0-T120-routing-evidence.md"
+ ],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "scenario": "Live routing proof: under the exact controller launch configuration, a canned discovery assignment and a canned edit assignment are dispatched with a deny-everything handler; EVERY tool request the 2.1.251 worker makes is recorded and denied; zero file writes; provider calls <= 3; the measured request stream lands in the version-keyed fixture with honest labels.",
+   "verification": "routing evidence report + fixture + denial records"
+  },
+  {
+   "id": "AS-2",
+   "scenario": "Native-tool preference: the worker assignment/prompt text explicitly directs native Read/Grep/Glob/Edit/Write for repository discovery and editing and directs validation through the packet's documented commands; assert_worker_text_clean still passes (no quotas/countdowns).",
+   "verification": "unit test on the assignment/prompt construction"
+  },
+  {
+   "id": "AS-3",
+   "scenario": "Pre-dispatch tooth: with NO routing evidence recorded for the pinned CLI identity, dispatch REFUSES fail-closed with a typed reason; with current evidence present, the probe passes; a stale fixture (different CLI identity) refuses.",
+   "verification": "removal-sensitive probe tests"
+  },
+  {
+   "id": "AS-4",
+   "scenario": "Broker preservation: the classifier and policy tiers are byte-untouched; heredoc, pipeline, redirection, compound, scratch-transfer and ambiguous-effect shapes classify ASK or HARD_DENY exactly as before (coverage mapped; only missing assertions added).",
+   "verification": "command-authority test pack + diff scope"
+  },
+  {
+   "id": "AS-5",
+   "scenario": "Red/green: the tooth tests fail on the pre-change code; the prompt-guidance test fails without the guidance; captured verbatim.",
+   "verification": "producer red/green evidence"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-29T21:38:47.517369+00:00",
+ "updated_at": "2026-08-29T21:39:26.782168+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-29T21:38:47.518419+00:00"
+}

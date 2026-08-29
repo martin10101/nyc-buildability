@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 288,
+ "requirement_count": 297,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T17:52:30.041639+00:00",
+ "updated_at": "2026-08-29T21:37:48.525776+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -10192,6 +10192,278 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R289",
+   "text": "Finish M0-T118 through DCV and acceptance (satisfied at capture: DCV 5/5 PASS, accepted at commit 5251c73 before this amendment arrived).",
+   "source_ref": "source-014-amendment.md#finish-t118",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "M0-T118 acceptance records: verification.json M0-T118 block 5/5 PASS, accept commit 5251c73, gates G0/G2/G3/G4/G5 PASS",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R290",
+   "text": "Reconcile the campaign against the owner's earlier direction on Claude Code Auto-mode bashFirst / GitHub issue #88041: establish with durable evidence whether a separate accepted compatibility task resolves the original shell-first ASK behavior.",
+   "source_ref": "source-014-amendment.md#reconcile-bashfirst",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "ledger-wide search evidence (zero matching tasks/requirements) + the three ASK-held shell discovery proposals from run_M0_T107_unitJ as the unresolved behavior",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R291",
+   "text": "The shell-routing compatibility work is confirmed missing: create it as a SEPARATE bounded ledger task (M0-T120) before the M0-T119 recertification completes.",
+   "source_ref": "source-014-amendment.md#create-separate-task",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R292",
+   "text": "Empirically prove how installed Claude Code 2.1.251 routes routine repository discovery and edits under the controller's EXACT live launch configuration (same argv/env construction the certified start uses; bounded, non-forwarding probes).",
+   "source_ref": "source-014-amendment.md#empirical-routing-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "measured routing fixture(s) recording which tools the live worker requested for canned discovery/edit assignments under the controller launch configuration",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R293",
+   "text": "Preserve the command broker and ALL owner gates unchanged; do NOT broadly allow Python, PowerShell, sed, heredocs, redirections, compound commands, or arbitrary scripts (no new AUTO classes, no classifier loosening).",
+   "source_ref": "source-014-amendment.md#broker-preserved",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T119",
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R294",
+   "text": "Prefer native Read/Grep/Glob/Edit/Write for repository discovery and editing in the worker path; required validation commands remain explicitly classified and brokered (documented_test_commands pattern), never broadly allowed.",
+   "source_ref": "source-014-amendment.md#native-tools-preference",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R295",
+   "text": "Add a PRE-DISPATCH drift tooth so changed shell-routing behavior cannot silently enter a certified run (version-keyed routing evidence required at the pinned CLI identity; fail closed when absent or mismatched).",
+   "source_ref": "source-014-amendment.md#pre-dispatch-drift-tooth",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the new pre-dispatch probe + removal-sensitive tests proving dispatch refuses without current routing evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R296",
+   "text": "Keep the compatibility task SEPARATE (own commits, evidence, reviews), then include its final identity in the SINGLE M0-T119 recertification at ONE frozen final identity.",
+   "source_ref": "source-014-amendment.md#single-recert",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T119",
+     "M0-T120"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R297",
+   "text": "Do not begin (complete any further work on) M0-T119 until this reconciliation is resolved: M0-T119 holds until M0-T120 is accepted; the pre-directive M0-T119 certification runs are VOID for certification purposes and the certification re-runs in full at the final identity.",
+   "source_ref": "source-014-amendment.md#t119-hold",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 14
   }
  ]
 }
