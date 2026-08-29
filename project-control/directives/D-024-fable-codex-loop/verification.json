@@ -7285,57 +7285,79 @@
    "requirements": [
     {
      "id": "D-024-R277",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "R277 applicability binds M0-T113/T117/T118/T119; this unit delivers the first chain element; R281->T118 (backlog), R283->T119 (backlog), R284->T113/T119, R285->T113 all bound with existing packets - binding structure matches the amendment forward trace",
+      "project-control/reports/M0-T117-DCV.md row R277"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R278",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Code scope: all four supervisor-constructed claude env seams source-confirmed routed through claude_child_env (process.py:245-246 forced-last; claude_runner.py:1103/:1549; preflight.py:139; turnover_adapters.py:401 both layers); removal-sensitive tests reproduced 42 passed/1 skipped incl. G4-F6 allowlist re-enable vector; two bare-probe exclusions (capability_probe.py:99-102, native_runtime.py:101-105) honestly documented",
+      "Workstation scope: owner typed 'autoupdater env set'; orchestrator readback [Environment]::GetEnvironmentVariable=1; DCV independent registry re-verification: reg query HKLM ... /v DISABLE_AUTOUPDATER -> REG_SZ 1",
+      "project-control/reports/M0-T117-DCV.md row R278 + M0-T117-autoupdater-evidence.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R279",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Recapture NOT begun at verification time: M0-T118 backlog with no worktree, wt-m0t118 directory absent, zero *_2_1_251.json fixtures; ledger dependency T118->T117 enforces order",
+      "project-control/reports/M0-T117-DCV.md row R279"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R280",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DISABLE_UPDATES appears only as a documentary not-used comment (process.py); claude --version = 2.1.251 (not downgraded); diff dca3817..d6a2ac8 spans only packet allowed_paths incl. recorded scope extension; no unrelated global config change; owner-side command pack delivered but never executed agent-side",
+      "project-control/reports/M0-T117-DCV.md row R280"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R286",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Code-enforced at all four unconditional seams with removal-sensitive proof (red/green reproduced); documented as standing policy in README.md:388-410 + CONTROLLER_UPDATE_RUNBOOK.md section 13",
+      "project-control/reports/M0-T117-DCV.md row R286"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R287",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Admission-event discipline documented in README.md:430-435 + runbook:256-263 with the exact order update -> recapture -> recertify -> only then repin; never silent drift",
+      "project-control/reports/M0-T117-DCV.md row R287"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     },
     {
      "id": "D-024-R288",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No agent-executed environment mutation anywhere in the diff/tests (only transient in-process os.environ save/restore inside test fixtures); exact admin PowerShell + verification commands recorded verbatim in M0-T117-autoupdater-evidence.md:254-268 labeled owner-executed; the owner performed the Windows action personally",
+      "project-control/reports/M0-T117-DCV.md row R288"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593"
     }
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "reviewed_manifest_sha256": null
+   "reviewed_sha": "1062c484c191540770c02d62ddfec8937bdf7593",
+   "verified_at": "2026-08-29T19:46:45.362099+00:00",
+   "reviewed_manifest_sha256": "e4e79dd0ea7246516e5a6d36ffcf10238a34853b36d8ac5ba91386f5cebcdf59"
   },
   {
    "task_id": "M0-T118",
@@ -7444,5 +7466,5 @@
    "reviewed_manifest_sha256": null
   }
  ],
- "updated_at": "2026-08-29T17:58:38.933678+00:00"
+ "updated_at": "2026-08-29T19:46:45.362099+00:00"
 }
