@@ -83,11 +83,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 90,
+  "progress_percent": 92,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T17:53:59.311136+00:00",
-  "updated_at": "2026-08-29T19:05:45.564833+00:00",
+  "updated_at": "2026-08-29T19:23:31.589385+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -118,6 +118,13 @@
       "percent": 90,
       "status": "awaiting_gate",
       "message": "CI 20/20 GREEN at tip ca9d2c0 (fresh full runs; the single web-e2e failure at 0a647cd was a focus-timing flake in untouched apps/web - did not recur; its rerun was superseded/cancelled by the newer pushes). M0-T117 now holds: material d6a2ac8, G0/G2/G3/G4/G5 PASS (delta head 6037570), CI green. SOLE REMAINING BLOCKERS: (1) owner types the R288 workstation confirmation (autoupdater env set) completing R278 scope 2; (2) then ONE DCV run over the 7-row applicable set at the frozen head; (3) accept. M0-T118 releases on the same owner confirmation (R279)."
+    },
+    {
+      "at": "2026-08-29T19:23:31.589385+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 92,
+      "status": "awaiting_gate",
+      "message": "OWNER R288 CONFIRMATION RECEIVED (typed: autoupdater env set). Orchestrator readback verified: [Environment]::GetEnvironmentVariable(DISABLE_AUTOUPDATER, Machine) = 1. R278 scope 2 (workstation/certification window) now ESTABLISHED and VERIFIED; combined with the gated code scope (4 constructed-env seams), R278 is complete in both scopes. R279 precondition for M0-T118 is satisfied once M0-T117 is accepted. DCV dispatched over the 7-row applicable set at the frozen head (material d6a2ac8)."
     }
   ],
   "scope_extension_note": "Rework scope extension (2026-08-29, consolidated correction round after the G3 FAIL / G5 SEC-MINOR-1 at head 0324342): preflight.py (doctor --live control-response probe env) and turnover_adapters.py (turnover successor launcher env) added to route the two remaining controller-launched claude children through claude_child_env - completing the SAME defect class this unit exists to fix (R278 every-claude-child guarantee; G3 Findings 2/3 REQUIRED), not a broadening; their existing test packs (recovery_probes / turnover_live_seam) admitted for the matching removal-sensitive tests. cli.py remains forbidden and untouched."
