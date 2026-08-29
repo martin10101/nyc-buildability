@@ -2,18 +2,20 @@
  "task_id": "M0-T115",
  "requirements": {
   "D-024-R272": [
-   "Executed as its OWN bounded task with its own claim (G0 8d46318), its own deliverable commit (91664bb: only broker.py + recovery_probes.py + the two test packs + the repair record), its own control commit (be5e09a), its own evidence map and reviewer wave - M0-T114 runs separately in the same certification window; no broadening (diff touches exactly the allowed_paths; cli.py forbidden and untouched)",
+   "Executed as its OWN bounded task with its own claim (G0 8d46318), deliverable commits (91664bb round 1 + the consolidated correction commit), control commits, evidence and reviewer wave - M0-T114 remains a separate un-executed backlog packet on a disjoint file set",
+   "Rework scope extension (loop_turnover.py + turnover_live_seam test pack) recorded with reason in the task packet's scope_extension_note: completing the reviewed defect class per G3 BLOCKER-1 and H2 predicates 7/8 - not R272 broadening; cli.py stayed forbidden and untouched",
    "CLAIM: SATISFIED for this unit's half of the same-window order"
   ],
   "D-024-R273": [
-   "NO runtime-journal edit at any point: the live journal's three pre-fix rows become truthful via the READ-TIME reconciliation in probe_pending_requests only; the probe-level test proves the raw row is STILL unanswered after the probe passes (read-only); the broker-side fix writes only through the existing resolve_ask surface on NEW answers",
+   "NO runtime-journal edit at any point, both rounds: pre-fix journals become truthful via READ-TIME reconciliation only (shared broker.owner_unanswered_asks); probe test proves the raw row is STILL unanswered after the probe passes; seam feed reads through the same helper without writing; broker-side resolve_ask fires only on NEW digest-verified owner answers",
    "project-control/reports/M0-T115-repair-record.md sec 2/4",
    "CLAIM: PROHIBITION HONORED"
   ],
   "D-024-R274": [
-   "RED recorded: 4 defect-named tests FAILED against unchanged code (deny/approve-once row resolution; pre-fix denied/approved journal shapes) while 6 guards passed; GREEN: both packs 117/117; REVERT-PROOF: fixes stashed -> same 4 tests FAILED -> restored -> passed (M0-T115-repair-record.md sec 3)",
-   "Path decomposition sec 4: deny->clear-recovery->restart and approve-once->restart proven at the exact probe boundary that refused live, against BOTH journal shapes; gate-not-weakened guards (pending, no-record, non-broker, digest-mismatch) all still block; the real-journal end-to-end restart executes at the R276 resume after M0-T116",
-   "Affected packs 353/353 (broker/command-authority/recovery-probes/recovery/crash/start-reentry/phase1)",
+   "Round-1 RED recorded per file (2 broker resolve tests FAILED; 2 pre-fix probe tests FAILED; guards passed) at pre-fix 8d46318; GREEN 117/117; REVERT-PROOF stash->4 FAIL->pop->4 PASS (M0-T115-repair-record.md sec 3)",
+   "Round-2 (G3 BLOCKER-1 seam): RED recorded (2 seam defect tests FAIL against the pre-correction module via stash; 7 others pass) -> GREEN 211/211 across the three packs -> restored 9/9 on the defect selection; seam guards (pending/no-record/non-broker still refuse) added",
+   "Coverage: deny->restart and approve-once->restart proven at BOTH live-refused boundaries (S11.5 probe AND rotation-seam feed) against BOTH journal shapes; 14 new tests total (6 defect-named + 7 guards + 1 hardening); complete open_asks() consumer enumeration in predicate 7",
+   "Affected sweep 748/748 across 14 packs; modularity EXIT=0; real-journal end-to-end restart executes at the R276 resume after M0-T116",
    "CLAIM: SATISFIED"
   ]
  }

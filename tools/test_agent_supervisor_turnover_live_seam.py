@@ -45,6 +45,7 @@ from tools.agent_supervisor import approved_models as am  # noqa: E402
 from tools.agent_supervisor import claude_runner as cr  # noqa: E402
 from tools.agent_supervisor import config as cfg  # noqa: E402
 from tools.agent_supervisor import loop as lp  # noqa: E402
+from tools.agent_supervisor import loop_turnover as lt  # noqa: E402
 from tools.agent_supervisor import model_change_ipc as ipc  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import session_continuity as sc  # noqa: E402
@@ -135,6 +136,9 @@ class MemoryJournal:
 
     def open_asks(self):
         return list(self.asks)
+
+    def all_state(self):
+        return dict(self.state)
 
 
 def good_facts(**overrides) -> ts.SeamFacts:
@@ -433,6 +437,65 @@ class ContinuityDecisionTests(unittest.TestCase):
 # --------------------------------------------------------------------------
 # AS-4: the FULL S11.3 turnover the loop seams used to skip
 # --------------------------------------------------------------------------
+
+
+class _Facts:
+    """The four attributes seam_safety_state reads from SeamFacts."""
+
+    def __init__(self) -> None:
+        self.head_sha = "a" * 40
+        self.branch = "task/M0-T107-plugin-portability"
+        self.worktree = "/repo/wt"
+        self.stage = "build"
+
+
+class _Ask:
+    def __init__(self, ask_id: str) -> None:
+        self.ask_id = ask_id
+
+
+class SeamSafetyFeedReconciliationTests(unittest.TestCase):
+    """M0-T115 correction round (G3 BLOCKER-1; D-024-R274): the rotation
+    seam's approval_pending feed is the FOURTH open_asks() consumer and must
+    apply the broker reconciliation - the M0-T113 live-restart defect class
+    would otherwise refuse the first rotation seam of any pre-fix journal."""
+
+    def setUp(self) -> None:
+        self.journal = MemoryJournal()
+        self.facts = _Facts()
+
+    def _broker_ask(self, request_id: str, status: str | None) -> None:
+        self.journal.asks.append(_Ask(f"ask_{request_id}"))
+        if status is not None:
+            self.journal.state[f"approval/{request_id}"] = {
+                "request_id": request_id, "status": status}
+
+    def test_a_pre_fix_denied_journal_does_not_refuse_the_rotation_seam(
+            self) -> None:
+        self._broker_ask("9f45b2ca", "DENIED")
+        safety = lt.seam_safety_state(self.journal, self.facts)
+        self.assertFalse(safety.approval_pending)
+
+    def test_a_pre_fix_approved_journal_does_not_refuse_the_rotation_seam(
+            self) -> None:
+        self._broker_ask("c73f9247", "APPROVED_ONCE")
+        safety = lt.seam_safety_state(self.journal, self.facts)
+        self.assertFalse(safety.approval_pending)
+
+    def test_a_pending_request_still_refuses_the_seam(self) -> None:
+        self._broker_ask("7e4b33d8", "PENDING_OWNER")
+        safety = lt.seam_safety_state(self.journal, self.facts)
+        self.assertTrue(safety.approval_pending)
+
+    def test_a_broker_ask_with_no_record_still_refuses_the_seam(self) -> None:
+        self._broker_ask("deadbeef", None)
+        safety = lt.seam_safety_state(self.journal, self.facts)
+        self.assertTrue(safety.approval_pending)
+
+    def test_a_non_broker_ask_still_refuses_the_seam(self) -> None:
+        self.journal.asks.append(_Ask("rotation_pause/run-1/3"))
+        safety = lt.seam_safety_state(self.journal, self.facts)
+        self.assertTrue(safety.approval_pending)
 
 
 class SeamTurnoverTests(unittest.TestCase):

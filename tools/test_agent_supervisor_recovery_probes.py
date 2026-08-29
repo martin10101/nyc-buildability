@@ -630,6 +630,21 @@ class JournalFactProbeTests(ProbeTestBase):
         self._queue_broker_ask("deadbeef", None)
         self.assertFalse(rp.probe_pending_requests(journal=self.journal).passes)
 
+    def test_an_unreadable_approval_state_is_not_an_empty_one(self) -> None:
+        """G5 LOW-2 hardening test: open_asks readable but all_state raising
+        must fail closed as unreadable, never as an empty queue."""
+        class HalfReadable:
+            def open_asks(self):
+                return [type("A", (), {"ask_id": "ask_x"})()]
+
+            def all_state(self):
+                raise OSError("the journal is unreadable")
+
+        result = rp.probe_pending_requests(journal=HalfReadable())
+        self.assertFalse(result.passes)
+        self.assertFalse(result.known)
+        self.assertEqual(result.reason_code, "pending_requests_unreadable")
+
     def test_a_non_broker_ask_still_blocks_regardless_of_state(self) -> None:
         """Rotation-pause / model-chain asks have no approval record and must
         keep blocking exactly as before the fix."""

@@ -70,6 +70,24 @@ def seam_facts(loop: Any, *, reason_code: str, cycle: int) -> ts.SeamFacts:
     )
 
 
+def seam_safety_state(journal: Any, facts: Any) -> Any:
+    """The seam's safety feed, read through the broker reconciliation.
+
+    M0-T115 (D-024-R274, the M0-T113 defect class at its fourth consumer):
+    `approval_pending` must count only asks the OWNER has not answered —
+    a pre-fix journal whose denied/approved requests left unresolved
+    `ask_<request_id>` rows must not refuse a rotation seam, while a genuine
+    PENDING request or a non-broker ask still refuses it exactly as before.
+    """
+    from .broker import owner_unanswered_asks
+    return ts.safety_state_from_run(
+        pending_effects=list(journal.pending_effects()),
+        open_asks=owner_unanswered_asks(journal),
+        unit_in_flight=False,
+        head_sha=facts.head_sha, branch=facts.branch,
+        worktree=facts.worktree, task_stage=facts.stage)
+
+
 def full_turnover(loop: Any, *, cycle: int, reason_code: str,
                   successor_model: str) -> ts.SeamTurnoverResult:
     """Safe-seam -> handoff -> verify -> persist -> rotate -> arm READY -> actuate.
@@ -81,12 +99,7 @@ def full_turnover(loop: Any, *, cycle: int, reason_code: str,
     RECORDED rather than assumed.
     """
     facts = seam_facts(loop, reason_code=reason_code, cycle=cycle)
-    safety = ts.safety_state_from_run(
-        pending_effects=list(loop.journal.pending_effects()),
-        open_asks=list(loop.journal.open_asks()),
-        unit_in_flight=False,
-        head_sha=facts.head_sha, branch=facts.branch,
-        worktree=facts.worktree, task_stage=facts.stage)
+    safety = seam_safety_state(loop.journal, facts)
     continuity = sc.decide_continuity(
         # U14/G4-F6: scoped to THIS run, so run B never resumes or archives
         # a session run A left behind in the same checkout.

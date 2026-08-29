@@ -738,6 +738,41 @@ TOOL_KIND: Mapping[str, str] = {
 _PATH_INPUT_KEYS = ("file_path", "path", "notebook_path", "filePath")
 
 
+def owner_unanswered_asks(journal: Any) -> list[Any]:
+    """Open asks that still await the OWNER, reconciled at read time.
+
+    M0-T070/M0-T115 (D-024-R274): a broker-origin ask row (``ask_<request_id>``,
+    minted by :meth:`ApprovalBroker.defer`) whose approval record the owner has
+    already answered (``status != PENDING_OWNER``: denied, approved, revoked,
+    consumed) is answered history, not an open question — journals written
+    before the answer paths resolved their rows stay truthful WITHOUT any
+    journal write. Non-broker asks (rotation pause, model-chain exhaustion) and
+    still-pending records always count as open. This is the single shared
+    predicate for every blocking consumer of ``open_asks()`` (the S11.5
+    restart probe, the rotation-seam safety feed); the status command keeps
+    its identical pre-existing inline copy in ``cli.py``.
+
+    Read errors propagate: an unreadable queue is the CALLER's fail-closed
+    decision, never an empty one. A journal without ``all_state`` (reduced
+    test fakes) degrades conservatively: every open ask stays blocking.
+    """
+    asks = list(journal.open_asks())
+    if not asks:
+        return asks
+    if getattr(journal, "all_state", None) is None:
+        return asks
+    state = journal.all_state()
+
+    def _owner_answered(ask: Any) -> bool:
+        ask_id = str(getattr(ask, "ask_id", ""))
+        if not ask_id.startswith("ask_"):
+            return False
+        record = state.get(APPROVAL_PREFIX + ask_id[len("ask_"):])
+        return isinstance(record, dict) and record.get("status") != STATUS_PENDING
+
+    return [ask for ask in asks if not _owner_answered(ask)]
+
+
 def action_from_tool_request(
     tool_name: str,
     tool_input: Mapping[str, Any],

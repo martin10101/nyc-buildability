@@ -419,38 +419,18 @@ def probe_pending_requests(*, journal: Any) -> ProbeResult:
     something, and starting again would abandon the question.
     """
     step = "pending_requests"
+    # M0-T115 (D-024-R274, the M0-T113 live-restart defect): read through the
+    # shared broker reconciliation - a broker-origin ask the owner has already
+    # answered is history, not an open question, so journals written BEFORE the
+    # broker-side fix stay truthful without any journal write. Non-broker asks
+    # and still-pending records block exactly as before.
+    from .broker import owner_unanswered_asks
     try:
-        open_asks = journal.open_asks()
+        open_asks = owner_unanswered_asks(journal)
     except Exception as exc:  # a journal that cannot answer is not an empty queue
         return _unknown(step, "pending_requests_unreadable",
                         f"the queued approval requests could not be read ({exc}); an "
                         f"unreadable request queue is never treated as an empty one")
-    if open_asks:
-        # M0-T115 (D-024-R274, the M0-T113 live-restart defect): apply the same
-        # read-time broker-reconciliation the status command applies (M0-T070).
-        # A broker-origin ask row (`ask_<request_id>`, minted by
-        # `ApprovalBroker.defer`) whose approval record the owner has already
-        # answered (status != PENDING_OWNER: denied, approved, revoked,
-        # consumed) is answered history, not an open question - journals
-        # written BEFORE the broker-side fix stay truthful without any journal
-        # write. A non-broker ask (rotation pause, model-chain exhaustion) or a
-        # still-pending record blocks exactly as before.
-        from .broker import APPROVAL_PREFIX, STATUS_PENDING
-        try:
-            state = journal.all_state()
-        except Exception as exc:  # unreadable state is never an empty one
-            return _unknown(step, "pending_requests_unreadable",
-                            f"the approval records could not be read ({exc}); an "
-                            f"unreadable request queue is never treated as an empty one")
-
-        def _owner_answered(ask: Any) -> bool:
-            ask_id = str(getattr(ask, "ask_id", ""))
-            if not ask_id.startswith("ask_"):
-                return False
-            record = state.get(APPROVAL_PREFIX + ask_id[len("ask_"):])
-            return isinstance(record, dict) and record.get("status") != STATUS_PENDING
-
-        open_asks = [ask for ask in open_asks if not _owner_answered(ask)]
     if open_asks:
         ids = [getattr(ask, "ask_id", "") for ask in open_asks]
         return _fail(step, "approval_pending",
