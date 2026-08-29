@@ -1,59 +1,69 @@
 {
- "task_id": "M0-T113",
- "title": "D-024 Amendment 9 unit N: R187/R595 limited-auto activation act + first-loop operation proof",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Amendment 9 (R250-R260): durably record the owner's R187/R595 limited-auto activation authorization; run the complete activation preflight against the certified package (M0-T096-activation-package.md item 3) and current repository state; execute the exact certified start command with --mode limited-auto --owner-enable-bounded-auto ONLY if the repository is clean, the certified identity/configuration match, and all required gates pass; on ANY precondition mismatch stop and report the exact mismatch without improvising or partially activating; then prove operation beyond process launch and return the owner's 7-item report. Exclusions R257 remain owner-gated; 4.8 bridge stays shadow-only; certified supervisor code must not be modified before activation (R258). Supervisor-freeze qualifying evidence: D-024-R250.",
- "business_reason": "Owner-typed R595 activation authorization 2026-08-29 (Amendment 9); activation must be preflight-verified, fail-closed, and durably evidenced.",
- "inputs": [],
- "outputs": [
-  "project-control/reports/M0-T113-activation-preflight.md (preflight matrix: identity/config/gates, or the exact mismatch)",
-  "project-control/reports/M0-T113-activation-evidence.md (activation record + 7-item owner report evidence)"
- ],
- "dependencies": [
-  "M0-T112"
- ],
- "allowed_paths": [
-  "project-control/reports/M0-T113-activation-preflight.md",
-  "project-control/reports/M0-T113-activation-evidence.md"
- ],
- "forbidden_paths": [
-  ".claude",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "tools"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-29T03:46:33.452684+00:00",
- "updated_at": "2026-08-29T03:46:33.583805+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-29T03:46:33.452684+00:00",
- "path_free_governance": true,
- "path_free_justification": "Activation-act governance packet (Amendment 9, R250-R260): the unit executes the owner-authorized R595 start command and records preflight/operation evidence into NEW report files under project-control/reports/ (listed in allowed_paths; they exist only after the act). It binds no production code by design - R258 prohibits modifying certified supervisor code, and the certified identity is protected by the M0-T112 certification anchors, not by this packet's path set."
+  "task_id": "M0-T113",
+  "title": "D-024 Amendment 9 unit N: R187/R595 limited-auto activation act + first-loop operation proof",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 9 (R250-R260): durably record the owner's R187/R595 limited-auto activation authorization; run the complete activation preflight against the certified package (M0-T096-activation-package.md item 3) and current repository state; execute the exact certified start command with --mode limited-auto --owner-enable-bounded-auto ONLY if the repository is clean, the certified identity/configuration match, and all required gates pass; on ANY precondition mismatch stop and report the exact mismatch without improvising or partially activating; then prove operation beyond process launch and return the owner's 7-item report. Exclusions R257 remain owner-gated; 4.8 bridge stays shadow-only; certified supervisor code must not be modified before activation (R258). Supervisor-freeze qualifying evidence: D-024-R250.",
+  "business_reason": "Owner-typed R595 activation authorization 2026-08-29 (Amendment 9); activation must be preflight-verified, fail-closed, and durably evidenced.",
+  "inputs": [],
+  "outputs": [
+    "project-control/reports/M0-T113-activation-preflight.md (preflight matrix: identity/config/gates, or the exact mismatch)",
+    "project-control/reports/M0-T113-activation-evidence.md (activation record + 7-item owner report evidence)"
+  ],
+  "dependencies": [
+    "M0-T112"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T113-activation-preflight.md",
+    "project-control/reports/M0-T113-activation-evidence.md"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "tools"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 45,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T03:46:33.452684+00:00",
+  "updated_at": "2026-08-29T04:06:50.476979+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T03:46:33.452684+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Activation-act governance packet (Amendment 9, R250-R260): the unit executes the owner-authorized R595 start command and records preflight/operation evidence into NEW report files under project-control/reports/ (listed in allowed_paths; they exist only after the act). It binds no production code by design - R258 prohibits modifying certified supervisor code, and the certified identity is protected by the M0-T112 certification anchors, not by this packet's path set.",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T04:06:50.476979+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 45,
+      "status": "in_progress",
+      "message": "Preflight COMPLETE (R252): 14/14 mechanical checks PASS (capture a87b407 + CI 20/20; anchors 8574c58/132e698c/d2946392 intact; claude 2.1.248 + codex 0.146.0; protected-config 6AEF12A9 + model-selection 0E2432C0 digests match runbook; fresh manifest a5c9e1ce over 117 files outside repo; verify-controller + doctor PASS, ACL PROTECTED). R259 STOP: 2 owner-only mismatches - (1) worker model pinned claude-opus-4-8 under exhaustion-era R296/R308, revert trigger = owner-typed Fable-is-back switch-back, contradicts Amendment-9 'direct Fable' + certified bridge geometry; (2) [approved_models] empty -> APPROVED_MODELS_EMPTY=HALTED at first rotation/turnover/quota act, so certified continuous rotation cannot occur live until owner populates protected config via S13.1. NO start executed; nothing partially activated; supervisor SHADOW-ONLY. Awaiting owner: option A (switch-back + populate approved_models -> re-preflight -> launch) or option B (explicit launch-as-is directive)."
+    }
+  ]
 }
