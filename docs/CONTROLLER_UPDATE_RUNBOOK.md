@@ -213,3 +213,49 @@ variants stay ASK/HARD_DENY.
 3. **OWNER** — any ASK-tier command the worker proposes outside the documented set.
 4. Everything else in this runbook is executable by the authorized orchestrator under
    D-017 (capture: `project-control/directives/D-017-a-to-z-completion-authorization/`).
+
+## 13. Claude Code version admission events (autoupdater control)
+
+Source: D-024 Amendment 13 (R278/R280/R286/R287/R288), task M0-T117. The controller is
+certified against ONE exact Claude CLI identity; a silent CLI auto-update breaks it (seq-30
+reproduced installed `2.1.251` vs certified `2.1.248`). A Claude Code upgrade is therefore a
+**deliberate admission event**, never a background event.
+
+**Background updates stay disabled for controller-launched workers (R286).** Every
+controller-launched claude child — the worker launch and the model-availability probe alike —
+is started with `DISABLE_AUTOUPDATER=1` forced into its environment, unconditionally
+(`tools/agent_supervisor/process.py::claude_child_env`, applied *after* the env allowlist and
+any config `extra_env`, so neither can drop or override it). This is claude-scoped; codex
+children are untouched. `DISABLE_AUTOUPDATER` blocks only the *background* update attempt — the
+manual `claude update` still works. **`DISABLE_UPDATES` is deliberately NOT used** (R280): it
+would also block a manual, intentional update, and intentional updates are the whole point.
+
+**Admitting a new version — ordered (R287):**
+
+1. Update the CLI on purpose (`claude update`, or install the new build).
+2. Recapture the measured fixture pack at the new version.
+3. Run the full recertification: fixtures, drift teeth, live probes, golden suites, gates,
+   independent review, manifest binding, frozen-identity certification.
+4. **Only then** repin the CLI identity with `--repin-cli-identity` and verify the new
+   executable digest. Never repin first; never silently accept version drift.
+
+**OWNER — workstation-scope machine environment variable (R288).** If the certification window
+also needs `DISABLE_AUTOUPDATER=1` at Windows *machine* scope (belt-and-braces, so no terminal
+anywhere can trigger a background update while certification runs), this is an OWNER action in an
+**Administrator PowerShell**. An agent never sets a machine-scope environment variable itself.
+The forced per-child injection above does not depend on this; machine scope is defense in depth.
+
+```powershell
+# 1. Set (Administrator PowerShell):
+[Environment]::SetEnvironmentVariable('DISABLE_AUTOUPDATER', '1', 'Machine')
+
+# 2. Verify the stored value (any NEW PowerShell window) — must print 1:
+[Environment]::GetEnvironmentVariable('DISABLE_AUTOUPDATER', 'Machine')
+
+# 3. Verify inheritance (any NEW terminal) — must print 1:
+$env:DISABLE_AUTOUPDATER
+```
+
+Behavioral check: `claude doctor` reports the result of the most recent update attempt.
+Already-running terminals keep their old environment and must be **restarted** to pick up the
+new machine-scope value.

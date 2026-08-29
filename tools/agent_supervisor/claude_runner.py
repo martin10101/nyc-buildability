@@ -61,8 +61,8 @@ from .process import (
     DEFAULT_ENV_ALLOWLIST,
     ProcessContainer,
     assert_argv_safe,
+    claude_child_env,
     executable_identity,
-    minimal_env,
     terminate_process_tree,
 )
 from .recovery import (
@@ -1099,7 +1099,8 @@ class ClaudeRunner:
         prompt = with_checkpoint_contract(prompt)
         argv = build_argv(self.config)
         handler = permission_handler or deny_everything
-        env = minimal_env(dict(self.config.extra_env), self.config.env_allowlist)
+        # D-024-R278/R286: forced DISABLE_AUTOUPDATER=1 on every claude worker child.
+        env = claude_child_env(dict(self.config.extra_env), self.config.env_allowlist)
         parser = ClaudeStreamParser()
         decisions: list[PermissionDecision] = []
         events: list[dict[str, Any]] = []
@@ -1544,7 +1545,8 @@ def probe_model_launch(
                           f"a launch probe needs the exact model id to attempt, got {model!r}")
     probe_config = dataclasses.replace(config, model=model, expected_model=model)
     argv = build_argv(probe_config)
-    env = minimal_env(dict(probe_config.extra_env), probe_config.env_allowlist)
+    # D-024-R278/R286: forced DISABLE_AUTOUPDATER=1 on the claude probe child too.
+    env = claude_child_env(dict(probe_config.extra_env), probe_config.env_allowlist)
     parser = ClaudeStreamParser()
     observed: list[str] = []
     stderr_chunks: list[str] = []

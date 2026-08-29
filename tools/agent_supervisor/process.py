@@ -210,6 +210,43 @@ def minimal_env(extra: Mapping[str, str] | None = None,
     return env
 
 
+#: Forced into the environment of EVERY controller-launched CLAUDE child process,
+#: unconditionally (D-024 Amendment 13, R278/R286). Background auto-updates are
+#: disabled so the certified Claude CLI identity cannot drift mid-run the way it
+#: did at seq-30 (installed 2.1.251 vs certified 2.1.248). `DISABLE_AUTOUPDATER`
+#: only blocks the background update attempt; `DISABLE_UPDATES` (which also blocks
+#: a manual `claude update`) is deliberately NOT used here (R280). This is
+#: CLAUDE-scoped on purpose - codex children (`codex_channel`) keep `minimal_env`
+#: untouched, so this pair is applied by `claude_child_env`, never by `minimal_env`.
+FORCED_CLAUDE_CHILD_ENV: dict[str, str] = {"DISABLE_AUTOUPDATER": "1"}
+
+
+def claude_child_env(extra: Mapping[str, str] | None = None,
+                     allowlist: Sequence[str] = DEFAULT_ENV_ALLOWLIST) -> dict[str, str]:
+    """Child environment for a controller-launched CLAUDE process (R278/R286).
+
+    Identical to ``minimal_env(extra, allowlist)`` except that
+    ``FORCED_CLAUDE_CHILD_ENV`` is applied LAST - after both the allowlist filter
+    and the ``extra`` (config ``extra_env``) merge. Applying it last is the whole
+    point: neither omitting ``DISABLE_AUTOUPDATER`` from the env allowlist nor a
+    config ``extra_env`` supplying a conflicting value can drop or override the
+    forced disable.
+
+    Fail-closed choice for AS-6 - THE FORCED PAIR WINS. A conflicting
+    ``extra_env["DISABLE_AUTOUPDATER"]`` (e.g. ``"0"``) is overridden back to
+    ``"1"`` rather than raising a typed refusal. Rationale: the guarantee this
+    control exists to make is that NO input - parent env, allowlist, or config -
+    ever yields a controller-launched claude child without ``DISABLE_AUTOUPDATER=1``.
+    An unconditional forced value delivers that guarantee for every input; a
+    launch-time refusal is strictly weaker (it fails the launch on a config typo
+    instead of neutralizing it, and adds an error path that could itself regress
+    to fail-open). The forced pair is therefore made unconditional and total.
+    """
+    env = minimal_env(extra, allowlist)
+    env.update(FORCED_CLAUDE_CHILD_ENV)
+    return env
+
+
 # --------------------------------------------------------------------------
 # Executable resolution and identity (S13.4)
 # --------------------------------------------------------------------------

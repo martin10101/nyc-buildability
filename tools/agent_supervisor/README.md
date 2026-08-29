@@ -378,6 +378,46 @@ complete audit record.
 
 ---
 
+## Claude Code version admission events
+
+The controller is certified against **one exact Claude CLI identity** (executable
+digest + reported version). A silent CLI auto-update breaks that certification: it
+happened mid-campaign (seq-30 — the installed CLI drifted to `2.1.251` while the
+certified fixture pins `2.1.248`), which is exactly the failure the drift-tooth
+tests are there to catch.
+
+So a Claude Code upgrade is never something that just *happens* to the controller —
+it is a **deliberate admission event** (D-024-R286/R287):
+
+1. **Background updates stay disabled for controller-launched workers.** Every
+   controller-launched claude child (both the worker launch and the model-availability
+   probe) is started with `DISABLE_AUTOUPDATER=1` forced into its environment,
+   unconditionally — see `process.claude_child_env`, applied *after* the env allowlist
+   and any config `extra_env`, so neither can drop or override it. This is
+   claude-scoped: codex children keep the plain `minimal_env` and are untouched.
+   `DISABLE_AUTOUPDATER` only blocks the *background* update attempt; the manual
+   `claude update` still works. **`DISABLE_UPDATES` is deliberately NOT used** — it
+   would also block a manual, intentional update, and intentional updates are the
+   whole point of an admission event (D-024-R280).
+2. **To admit a new version, do it intentionally, in order:** update the CLI on
+   purpose → recapture the measured fixture pack at the new version → run the full
+   recertification (fixtures, drift teeth, live probes, golden suites, gates,
+   independent review, manifest binding, frozen-identity certification) → **only
+   then** repin the CLI identity with `--repin-cli-identity`. Never repin first, and
+   never silently accept version drift (D-024-R287).
+3. **The workstation-scope machine environment variable is owner-side only.** If the
+   certification window also needs `DISABLE_AUTOUPDATER=1` set at the Windows machine
+   scope (so no terminal anywhere can trigger a background update while certification
+   runs), that is an **owner action in an Administrator PowerShell**, given as an exact
+   command pair for the owner to run — an agent never sets a machine-scope environment
+   variable itself (D-024-R288). The forced per-child injection above does not depend
+   on it; the machine-scope control is defense in depth for the certification window.
+
+See `docs/CONTROLLER_UPDATE_RUNBOOK.md` for the step-by-step recertification/repin
+procedure and the exact owner-side command pack.
+
+---
+
 ## If you are not the person who wrote this
 
 This section is the plain-language guide D-007 §12.1 asks for. No code editing is
