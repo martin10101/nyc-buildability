@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 276,
+ "requirement_count": 288,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T06:03:35.852703+00:00",
+ "updated_at": "2026-08-29T17:52:30.041639+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -9823,6 +9823,375 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 12
+  },
+  {
+   "id": "D-024-R277",
+   "text": "Option A is authorized: a bounded fixture recapture at Claude Code 2.1.251, the one-time --repin-cli-identity on the next certified start, the resulting R247 full recertification window, and then a rerun of R276 in full.",
+   "source_ref": "source-013-amendment.md#option-a-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T117",
+     "M0-T118",
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R278",
+   "text": "Establish AND verify the supported DISABLE_AUTOUPDATER=1 control for BOTH scopes: controller-launched Claude processes (durable, in the supervisor's child-process environment) and the certification window on this workstation, so the installed CLI cannot change while certification is running.",
+   "source_ref": "source-013-amendment.md#autoupdater-control",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T117"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "verification that controller-launched claude children receive DISABLE_AUTOUPDATER=1 (test) and that the workstation-level control is active for the certification window (owner-confirmed; env readback)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R279",
+   "text": "The DISABLE_AUTOUPDATER=1 control (R278) must be established and verified BEFORE the fixture recapture begins.",
+   "source_ref": "source-013-amendment.md#autoupdater-control",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T117",
+     "M0-T118"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R280",
+   "text": "Do not use DISABLE_UPDATES, do not downgrade Claude, and do not make unrelated global configuration changes.",
+   "source_ref": "source-013-amendment.md#prohibited-means",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T117",
+     "M0-T118",
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R281",
+   "text": "Perform the fixture recapture at installed Claude Code 2.1.251 as its own bounded ledger task (measured fixture pack + drift teeth re-pointed + live probes re-run at the new version).",
+   "source_ref": "source-013-amendment.md#option-a-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T118"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R282",
+   "text": "Record 2.1.251 as the admitted version ONLY after its fixtures, drift teeth, live probes, golden suites, gates, independent reviews, manifest binding, and frozen-identity certification all pass.",
+   "source_ref": "source-013-amendment.md#admission-hold",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T118",
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the full pass list: recaptured fixtures, drift teeth green at 2.1.251, live probes, golden suite, gates, independent reviews, manifest binding, frozen-identity certification",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R283",
+   "text": "Complete the resulting full R247 recertification window (M0-T112/T116 pattern) at ONE frozen final identity.",
+   "source_ref": "source-013-amendment.md#option-a-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R284",
+   "text": "After certification passes, rerun the R276 resume sequence from the beginning, in full and in order.",
+   "source_ref": "source-013-amendment.md#resume-mechanics",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T119"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R285",
+   "text": "On the certified start, apply the authorized ONE-TIME --repin-cli-identity, verify the new executable digest, and resume M0-T107 in the already-authorized limited-auto mode (no new activation authority is created or implied).",
+   "source_ref": "source-013-amendment.md#resume-mechanics",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "repin audit event + the newly pinned executable digest verified and recorded in the activation evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R286",
+   "text": "Going forward, background updates stay disabled for controller-launched workers (standing).",
+   "source_ref": "source-013-amendment.md#standing-admission-discipline",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T117"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R287",
+   "text": "Future Claude Code upgrades are deliberate admission events: update intentionally, recapture fixtures, recertify, and only then repin. Silent acceptance of version drift is prohibited (standing).",
+   "source_ref": "source-013-amendment.md#standing-admission-discipline",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T117"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
+  },
+  {
+   "id": "D-024-R288",
+   "text": "If applying DISABLE_AUTOUPDATER=1 requires an owner-side Windows action, STOP before changing it and give the owner the exact administrator PowerShell command plus a verification command; the owner executes it.",
+   "source_ref": "source-013-amendment.md#owner-side-action",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T117"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 13
   }
  ]
 }

@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T06:03:35.852703+00:00",
+ "updated_at": "2026-08-29T17:52:30.041639+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -108,6 +108,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T06:03:35.852703+00:00",
    "content_digest_sha256": "d0846b48045dd7868c1725614069541647473e764e4eb1b6426cec7ec3de5cce"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T17:52:30.041639+00:00",
+   "content_digest_sha256": "ede5293ab6fcde7767401a1a7d3289299fbc9c7e3685508c2cc8ccdc9fb2f7d3"
   }
  ],
  "amendments": [
@@ -121,7 +129,8 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -149,7 +158,10 @@
   "M0-T113",
   "M0-T114",
   "M0-T115",
-  "M0-T116"
+  "M0-T116",
+  "M0-T117",
+  "M0-T118",
+  "M0-T119"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -487,10 +499,22 @@
   "D-024-R273",
   "D-024-R274",
   "D-024-R275",
-  "D-024-R276"
+  "D-024-R276",
+  "D-024-R277",
+  "D-024-R278",
+  "D-024-R279",
+  "D-024-R280",
+  "D-024-R281",
+  "D-024-R282",
+  "D-024-R283",
+  "D-024-R284",
+  "D-024-R285",
+  "D-024-R286",
+  "D-024-R287",
+  "D-024-R288"
  ],
- "requirements_id_digest_sha256": "3aad4831f3314e7a0ccba6e2473fc1bcb9104dfa8ae26f2d9f92a659611da770",
- "requirements_content_digest_sha256": "05f4342073785460c4e03f9ebab6c7bff4d2d9e69653708c405eb55a5f55666a",
+ "requirements_id_digest_sha256": "d2161b15754d75a2547aad6035f5a0d7b4caf817c37404db2cbcb458ccbc1d30",
+ "requirements_content_digest_sha256": "ceee2803b3823e72bc8a04cbe95f1913b3847aadf84860707204597c34ecd32c",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -578,6 +602,11 @@
    "at": "2026-08-29T06:03:35.852703+00:00",
    "by": "orchestrator",
    "note": "Amendment 12 captured (owner instruction 2026-08-29, verbatim in source-012-amendment.md): execute M0-T115 (broker/probe seam fix) + M0-T114 (carried residuals) in ONE certification window as SEPARATE bounded tasks/commits/evidence/reviews, no broadening (R272); standing no-manual-journal-edit rule (R273); executable proofs of deny->clear-recovery->restart AND approve-once->restart against new + pre-fix journal records (R274); then the full M0-T112-pattern recertification at ONE frozen final identity as NEW unit M0-T116 (R275); M0-T107 limited-auto resumes ONLY after every suite/gate/review/manifest-verification/live-preflight passes, stay-stopped-and-report on any failure (R276). Rows bind: R272->T114+T115; R273->T113/T114/T115/T116; R274->T115; R275->T116; R276->T113+T116."
+  },
+  {
+   "at": "2026-08-29T17:52:30.041639+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 13 captured (owner instruction 2026-08-29, verbatim in source-013-amendment.md): Option A authorized after the seq-30 R276 stop on provider CLI drift (installed 2.1.251 vs certified 2.1.248). Rows R277-R288: umbrella Option-A authorization (R277 -> T113/T117/T118/T119); establish+verify DISABLE_AUTOUPDATER=1 for controller-launched claude children AND the certification window (R278 -> T117) strictly BEFORE recapture (R279 -> T117+T118); prohibitions: no DISABLE_UPDATES, no downgrade, no unrelated global config changes (R280 -> T113/T117/T118/T119); bounded fixture recapture at 2.1.251 (R281 -> T118); 2.1.251 admitted ONLY after fixtures/drift teeth/live probes/golden suites/gates/independent reviews/manifest binding/frozen-identity certification all pass (R282 hold -> T118+T119); full R247 recert window at one frozen identity (R283 -> T119); rerun R276 from the beginning after certification (R284 -> T113+T119); one-time --repin-cli-identity + digest verification + limited-auto resume of M0-T107 (R285 -> T113); standing: background updates disabled for controller-launched workers (R286), future upgrades are deliberate admission events - recapture, recertify, only then repin, never silent drift (R287); owner-side Windows env changes are owner-executed - stop and deliver exact admin PowerShell + verification commands (R288). New units M0-T117/T118/T119; no owner gate loosened."
   }
  ]
 }

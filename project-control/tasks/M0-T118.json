@@ -1,0 +1,88 @@
+{
+ "task_id": "M0-T118",
+ "title": "D-024 Amendment 13 unit R: bounded fixture recapture at installed Claude Code 2.1.251 (M0-T092 precedent)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Bounded fixture recapture at the installed Claude Code 2.1.251 (Amendment 13 R281; M0-T092 precedent for 2.1.247->2.1.248): re-capture/re-point the measured fixture pack and drift teeth - hook_event_catalog (event_drift re-point + live tooth), loop_interception_detection, guardrail_refusal_shapes, capability_probe live record, native_runtime_detection - each re-measured against the live 2.1.251 CLI with bounded no-write probes; drift teeth must be GREEN at 2.1.251 afterward and remain removal-sensitive (they must still go RED on the NEXT version drift). 2.1.251 is RECORDED as the admitted version only after the full R282 pass list (fixtures, drift teeth, live probes, golden suites, gates, independent reviews, manifest binding, frozen-identity certification) - the admission record lands with M0-T119, not here. MUST NOT START before M0-T117's DISABLE_AUTOUPDATER control is established and verified (R279). PROHIBITED: DISABLE_UPDATES, downgrading Claude, unrelated global configuration changes (R280). Supervisor-source change: joins the Amendment-13 R247 recertification window (M0-T119). Supervisor-freeze qualifying evidence: D-024-R281 (AD-093 provider CLI drift).",
+ "business_reason": "Owner Amendment 13: deliberate admission of 2.1.251 to restore a truthful certified identity after live CLI drift.",
+ "inputs": [
+  "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R277/R279/R280/R281/R282)",
+  "M0-T092 precedent (2.1.247->2.1.248 re-point) + its fixture formats",
+  "tools/agent_supervisor/fixtures/*_2_1_248.json (the outgoing measured pack)"
+ ],
+ "outputs": [
+  "New measured fixture pack at 2.1.251 (hook_event_catalog, loop_interception_detection, guardrail_refusal_shapes, capability_probe_live, native_runtime_detection), each captured with bounded no-write probes against the live CLI; old 2_1_248 fixtures kept for history (append-only), pointers re-pointed",
+  "Drift teeth GREEN at 2.1.251 and still removal-sensitive (they go RED on the NEXT version drift without a re-capture)",
+  "Re-pointed consumers: event_drift catalog pointer, guardrail_refusal shapes pointer, fixture-consuming tests",
+  "project-control/reports/M0-T118-producer-report.md + M0-T118-recapture-evidence.md (red/green + measured-live provenance per fixture)"
+ ],
+ "dependencies": [
+  "M0-T117"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor/event_drift.py",
+  "tools/agent_supervisor/guardrail_refusal.py",
+  "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_251.json",
+  "tools/agent_supervisor/fixtures/loop_interception_detection_2_1_251.json",
+  "tools/agent_supervisor/fixtures/guardrail_refusal_shapes_2_1_251.json",
+  "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-29_m0t118_2_1_251.json",
+  "tools/agent_supervisor/fixtures/native_runtime_detection_2026-08-29_m0t118.json",
+  "tools/test_agent_supervisor_event_bus.py",
+  "tools/test_agent_supervisor_capability_probe.py",
+  "tools/test_agent_supervisor_native_adapter.py",
+  "tools/test_agent_supervisor_operator_channel.py",
+  "project-control/reports/M0-T118-producer-report.md",
+  "project-control/reports/M0-T118-recapture-evidence.md"
+ ],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "scenario": "hook-event catalog re-captured from the official docs + live verification at 2.1.251; deterministic drift test matches catalog_drift(); S8 live tooth passes at 2.1.251 and would fail at any other installed version.",
+   "verification": "pytest tools/test_agent_supervisor_event_bus.py"
+  },
+  {
+   "id": "AS-2",
+   "scenario": "capability probe re-run live at 2.1.251 (claude/codex versions + flags), recorded as a new fixture; no FAILED probe rows for capabilities this build depends on.",
+   "verification": "pytest tools/test_agent_supervisor_capability_probe.py + live probe record"
+  },
+  {
+   "id": "AS-3",
+   "scenario": "interception-detection + guardrail-shape fixtures re-pointed/re-measured at 2.1.251 with honest confidence labels (unproven surfaces stay marked unproven, never faked).",
+   "verification": "pytest tools/test_agent_supervisor_operator_channel.py tools/test_agent_supervisor_native_adapter.py"
+  },
+  {
+   "id": "AS-4",
+   "scenario": "The recapture ran only after M0-T117's DISABLE_AUTOUPDATER control was verified (R279) and `claude --version` is IDENTICAL before and after the capture session (no mid-capture drift).",
+   "verification": "version stamps in M0-T118-recapture-evidence.md"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-29T17:53:59.710932+00:00",
+ "updated_at": "2026-08-29T17:57:59.130715+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-29T17:53:59.710932+00:00"
+}
