@@ -1,0 +1,19 @@
+{
+  "task_id": "M0-T112",
+  "producer_agent": "fable-orchestrator-session",
+  "report_file": "project-control/reports/M0-T112-recertification.md",
+  "submitted_at": "2026-08-29T02:59:10.213317+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T112-evidence-map.json",
+  "content_manifest_sha256": "60c1b21eb45cd02f71be8a7a164217ef1a1a037d8f4644a43f0499995757a794",
+  "reviewed_sha": "c2518d4cbef44196efd4e9f78493285d94af7a56",
+  "applicable_requirements": [
+    "D-024-R231",
+    "D-024-R232",
+    "D-024-R246",
+    "D-024-R247",
+    "D-024-R248",
+    "D-024-R249"
+  ],
+  "updated_at": "2026-08-29T02:59:11.119909+00:00"
+}
