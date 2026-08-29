@@ -98,3 +98,69 @@ Both mismatches are RESOLVED and the complete preflight was re-run:
 certified item-3 start command with `--mode limited-auto --owner-enable-bounded-auto`;
 every R257 exclusion remains closed (no autostart, no PR #241, no C1 canary, no Telegram
 live send, 4.8 bridge shadow-only).
+
+## 6. ADDENDUM 2026-08-29 (seq 29→30) — the R276 RESUME preflight: **STOP at step 5, one exact mismatch (provider CLI drift)**
+
+Executed by the orchestrator after the Amendment-12 window closed (M0-T115 + M0-T114 +
+M0-T116 all accepted). Sequence per the campaign seq-29 NEXT; stop-and-report per
+R259/R270/R276. **The start command (step 6) was NOT attempted.**
+
+### R276 steps 1–4 — PASS (post-repair identity `f89aa29` / tree `7487901c…` / blob `cf03caaa…`, all intact at HEAD `eafdce4`)
+
+| Step | Command | Result |
+|---|---|---|
+| 1 | `record-manifest` from the ctl24 root, `--config` protected, `--out %LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json` | PASS — 117 files, **new manifest digest `99b2e608105d28f7…`** (replaces pre-repair `b07818fa…`), external `config.toml` bound, controller 0.4.0-phase4 |
+| 2 | `verify-controller` at the new manifest | PASS — `ok: true`, `config_bound: true` |
+| 3 | `doctor` (full, non-live) | PASS — **43/43 checks**; manifest row verifies 117 files against `99b2e608…`; `approved_models ['claude-fable-5','claude-opus-4-8']`; `model_selection` codex `gpt-5.6-sol` / claude `''`, selection digest `b2b927c6…`; journal integrity ok; audit chain ok |
+| 4 | `doctor --live --claude-executable C:\Users\MLFLL\.local\bin\claude.exe` | PASS — control-response live probe **VERIFIED** (`sha256_head d6f6c29a8ac6b3cf`): the installed CLI accepted the exact control_response bytes, denied the tool, echoed the deny message |
+
+### R276 step 5 — preflight matrix: **FAIL on exactly one row**
+
+| Check | Result |
+|---|---|
+| Repository clean + synced | PASS — tree clean; HEAD `eafdce4` == origin |
+| Certified anchors intact at HEAD | PASS — material `f89aa29`; tree `7487901cea729f5c254f98c8f7dcf859eb64e2c5`; golden blob `cf03caaa261da972…` |
+| CI at tip `eafdce4` | PASS — 20/20 success (check-runs API) |
+| Codex executable | PASS — codex-cli **0.146.0** |
+| Protected-config digest | PASS — raw `A1F995016B541B9D…D1436` (matches §5 A2) |
+| Model-selection digest | PASS — raw `FCBBF70F553AE115…DD2B`, `[claude] model = ""` (Fable 5 default) |
+| First bounded packet staged | PASS — M0-T107 claimed; worktree `wt-m0t107` on `task/M0-T107-plugin-portability` @ `796e18f`, clean |
+| Pre-fix journal reconciliation (M0-T115 live proof, status surface) | PASS — `status`: `open_asks: []`, the 3 denied asks appear in `resolved_asks` (`approval_status: DENIED`, `actionable: false`), journal resting at PREFLIGHT after `owner_cleared_pause`, audit chain ok (head seq 16). The end-to-end R274 restart proof remains pending the launch. |
+| **Claude executable** | **FAIL — installed `claude --version` = `2.1.251 (Claude Code)`; the certified/measured version is `2.1.248`** (the CLI auto-updated after the 2026-08-29 activation). |
+
+### Why the mismatch is blocking (three independent confirmations)
+
+1. **Preflight contract:** item 6 of this matrix pins "equals the measured
+   interception-fixture version" — the whole 2.1.248 fixture pack
+   (`hook_event_catalog_2_1_248.json`, `loop_interception_detection_2_1_248.json`,
+   `guardrail_refusal_shapes_2_1_248.json`, `capability_probe_live_…_2_1_248.json`,
+   `native_runtime_detection_…`) was measured at 2.1.248; R254 conditions launch on "the
+   certified identity and configuration match".
+2. **The certified suite's own drift tooth is RED:**
+   `tools/test_agent_supervisor_event_bus.py::test_s8_live_version_matches_catalog_fixture`
+   FAILS live: `assert '2.1.251 (Claude Code)' == '2.1.248 (Claude Code)'` — by design
+   ("re-capture the catalog for the new version and re-review").
+3. **`start` would refuse anyway:** `recovery_probes.probe_cli_capability_manifest`
+   compares each provider executable's digest against the identity pinned at first start;
+   the auto-update replaced `claude.exe`, so the S11.5 probe returns
+   `provider_cli_drift` and the certified command (which does not carry
+   `--repin-cli-identity`) refuses pre-dispatch. The only supported remedy is that
+   explicit per-launch operator flag, recorded as an owner-requested act (C10/G3 I-3).
+
+### Disposition (R259/R270/R276)
+
+Steps 1–4 stand (the re-recorded manifest `99b2e608…` correctly binds the post-repair
+tree and stays valid). Step 6 NOT attempted; NO restart loop; NO journal edit; NO fixture
+re-capture or repin performed — both are owner-gated. Supervisor remains STOPPED; nothing
+partially activated. Owner options reported at the seam:
+
+* **(A) Recommended — repin + re-capture + third re-certification window** (the M0-T092
+  precedent for the 2.1.247→2.1.248 auto-update): owner authorizes a bounded fixture
+  re-capture task at 2.1.251 (touches `tools/agent_supervisor/**` → re-triggers R247 →
+  M0-T112/T116-pattern recert at the new frozen identity) plus `--repin-cli-identity` on
+  the next certified start; then the R276 sequence re-runs in full.
+* **(B) Pin the CLI back to 2.1.248** (owner machine act; auto-update would recur unless
+  disabled): the existing certification matches again; re-run R276 from step 2.
+* Launching with repin but WITHOUT re-capture would contradict R254's certified-identity
+  condition and leave the drift tooth RED — it would require an explicit owner amendment
+  overriding R254 and is not recommended.

@@ -45,7 +45,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.452684+00:00",
-  "updated_at": "2026-08-29T05:40:10.731398+00:00",
+  "updated_at": "2026-08-29T17:42:16.132441+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -92,6 +92,13 @@
       "percent": 95,
       "status": "in_progress",
       "message": "R268 EXECUTED: 3 denials (digests matched) + clear-recovery (journal PREFLIGHT) + identical certified restart at green tip 871cab8. RESTART REFUSED PRE-DISPATCH: UNSAFE_OR_DRIFTED, revalidation failed ['pending_requests'], dispatched=false, 0 provider calls, exit 11. ROOT CAUSE (primary evidence): deny_request/approve_once never resolve their ask_<request_id> queued_asks rows (M0-T070 fix applied to revoke_all ONLY, broker.py:684) AND probe_pending_requests reads raw open_asks() without the status command's read-time reconciliation - after any owner deny, restart is permanently blocked; revoke-all skips DENIED records. R270 HONORED: no further restarts, no journal hand-edit, loop stopped safely (no process, no effects, worktree clean). PROPOSED: M0-T115 (backlog) - bounded root-cause fix + regression tests + H2 RepairRecord; supervisor-source change -> R247 recert required before autonomous resume (R271). Awaiting owner decision on M0-T115 execution (+ optional M0-T114 same-window)."
+    },
+    {
+      "at": "2026-08-29T17:42:16.132441+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "R276 RESUME EXECUTED THROUGH STEP 5, STOPPED PRE-START (R259/R276): steps 1-4 PASS - manifest RE-RECORDED for the post-repair tree (99b2e608, 117 files, config bound, replaces pre-repair b07818fa), verify-controller PASS, doctor 43/43 PASS, doctor --live control-response VERIFIED (d6f6c29a8ac6b3cf). Step 5 preflight: every row PASS (anchors f89aa29/7487901c/cf03caaa intact at eafdce4; CI 20/20; codex 0.146.0; config A1F99501 + selection FCBBF70F with model=''; wt-m0t107 clean at 796e18f; M0-T115 seam fix LIVE-PROVEN at status surface: open_asks empty, 3 denied asks resolved/not-actionable, journal PREFLIGHT) EXCEPT ONE EXACT MISMATCH: installed claude 2.1.251 vs certified 2.1.248 (CLI auto-updated post-activation). Drift tooth test_s8 RED by design; start would refuse provider_cli_drift at the S11.5 pinned-identity probe; the remedy flag --repin-cli-identity is an owner-requested act. START NOT ATTEMPTED, no restart loop, no journal edit, no fixture re-capture. AWAITING OWNER: (A recommended) authorize 2.1.251 fixture re-capture task + repin -> R247 re-triggers -> third recert window -> full R276 re-run; or (B) pin CLI back to 2.1.248 and re-run R276 from step 2. Preflight report section 6 has the full matrix."
     }
   ]
 }
