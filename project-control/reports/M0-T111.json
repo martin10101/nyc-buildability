@@ -2,11 +2,11 @@
   "task_id": "M0-T111",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T111-telegram-sink.md",
-  "submitted_at": "2026-08-29T01:40:52.905484+00:00",
+  "submitted_at": "2026-08-29T01:59:45.015286+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T111-evidence-map.json",
-  "content_manifest_sha256": "1469c12eb65329bd6a474303c2c0ff3c1d459d2ccccd7825c951820f41995246",
-  "reviewed_sha": "6ae6155902619b76d096fe809e2b203c2f9868f6",
+  "content_manifest_sha256": "925e1901c2819a3189e765940653ba66d3c8eddc127b9af99af72e53cb0c8742",
+  "reviewed_sha": "8574c58b3425137aa41457c6d7ba3c3923b8605e",
   "applicable_requirements": [
     "D-024-R231",
     "D-024-R232",
@@ -19,5 +19,5 @@
     "D-024-R248",
     "D-024-R249"
   ],
-  "updated_at": "2026-08-29T01:40:53.531857+00:00"
+  "updated_at": "2026-08-29T01:59:45.538459+00:00"
 }
