@@ -8,11 +8,17 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 
 ## Handoff — seq 25: M0-T110 AND M0-T111 ACCEPTED; NEXT = M0-T112 (final golden re-certification)
 
-1. **Generated:** 2026-08-28 ~23:30Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (this single session claimed and accepted BOTH Amendment-8 capability units). **Seam
-   reason:** task acceptance (LEAN trigger e). **Sub-agents in flight:** none (eight reviewer
-   assignments — 4 per unit — all completed reviews AND delta re-attestations; reports
-   committed verbatim).
+1. **Generated:** 2026-08-28 ~23:30Z (header finalized 2026-08-29 ~02:45Z) · orchestrator
+   session `session_01HfptKuEs3RDxaxsSHJjc7t` (this single session claimed and accepted BOTH
+   Amendment-8 capability units). **Turnover reason (verbatim):** owner invoked
+   `/session-handoff` with no stated reason — landed at the clean seq-25 acceptance seam
+   already reached under the standard D-010 R113/R114 rotate-at-seam ceiling (same pattern
+   as seq 23→24→25). **Sub-agents in flight:** none (eight reviewer assignments — 4 per
+   unit — all completed their bounded reviews AND delta re-attestations naturally; reports
+   committed verbatim; no producer or background task is running; the only stopped
+   processes this session were the orchestrator's own over-long pytest shell commands,
+   re-run to completion as foreground splits). **CI on the tip `8d175d7`: 20/20 green**
+   (confirmed complete).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **25**), accept-time head `42e4e58`.
 3. **M0-T110 (unit K, /loop-codex) = ACCEPTED** (deliverable `ba25516`+`c8b38ba`, DCV 13/13 at
