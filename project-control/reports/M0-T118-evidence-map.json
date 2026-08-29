@@ -1,0 +1,27 @@
+{
+ "task_id": "M0-T118",
+ "note": "Evidence per D-024 Amendment-13 requirement applicable to M0-T118 (resolver set: R277/R279/R280/R281/R282). Material identity commit d1b05bb (cherry-pick of worktree e94d7a5). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R277": [
+   "This unit delivers the SECOND element of the authorized Option-A chain (the bounded fixture recapture at 2.1.251); the recertification window (M0-T119, R283) and the R276 rerun + one-time repin (M0-T113, R284/R285) remain bound to their own packets.",
+   "CLAIM: SATISFIED for this unit's slice of the authorization"
+  ],
+  "D-024-R279": [
+   "The recapture began ONLY after R278 was verified in BOTH scopes: M0-T117 ACCEPTED at 1062c48 (all four constructed-env claude seams forced, 7-row DCV PASS) and the owner-typed R288 confirmation + orchestrator readback + DCV registry re-verification (Machine DISABLE_AUTOUPDATER=1) all predate the M0-T118 claim (G0 readiness report row 3, gate record at the post-acceptance tip).",
+   "CLAIM: SEQUENCING HONORED"
+  ],
+  "D-024-R280": [
+   "No DISABLE_UPDATES applied anywhere in the delta; the CLI was neither downgraded nor updated during the unit (AS-4 version stamps identical at capture start 19:49:31Z and end 20:07:08Z, both '2.1.251 (Claude Code)'); the diff spans only the packet's allowed_paths (5 new fixtures + 2 pointer modules + 4 test packs + 2 reports); no global configuration change.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R281": [
+   "Bounded recapture executed as its own ledger task in isolated worktree wt-m0t118: hook_event_catalog_2_1_251.json (33 events from the 2026-08-29 official-docs re-fetch, orchestrator-captured source per the sandbox web boundary; the REAL +2 event-set drift vs the 31-event 2.1.248 catalog is named - PreModelSwitch and PostModelSwitch added, none removed - and the deterministic drift test asserts the recorded reconciliation matches catalog_drift() output); loop_interception_detection_2_1_251.json + guardrail_refusal_shapes_2_1_251.json with honest inherited/UNCAPTURED confidence labels (nothing invented; zero-context proof stays pending-owner-C1); capability_probe_live and native_runtime_detection fixtures MEASURED LIVE at 2.1.251 with bounded no-write probes; event_drift.py + guardrail_refusal.py pointers re-pointed; 2_1_248 fixtures kept append-only.",
+   "Drift teeth GREEN at 2.1.251 and removal-sensitive for the NEXT drift: red proven before re-point (3 failed, each '2.1.251 (Claude Code)' != '2.1.248 (Claude Code)'), green after (3 passed); every exact-match version assert stands un-weakened. Four fixture-consuming modules 169 passed 0 failed (orchestrator independently reproduced the same 169). Producer whole suite: 2726 collected, 2724 passed, 2 skipped, 0 FAILED (first fully-green suite since the drift); orchestrator confirming run reached ~80% all-green before an external stop - the CI supervisor-bridge job on the pushed tip d1b05bb is the confirming whole-suite run (M0-T116 pattern), with the live teeth exercised locally (CI runners skip requires_claude).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R282": [
+   "2.1.251 is NOT recorded as the admitted version by this unit: the recapture evidence stops at fixtures/teeth/probes; the admission record is explicitly deferred to M0-T119's frozen-identity certification after the full pass list (packet objective + M0-T118-recapture-evidence.md state this; no admission line exists anywhere in this delta).",
+   "CLAIM: HOLD HONORED (admission deferred to M0-T119)"
+  ]
+ }
+}
