@@ -1,0 +1,66 @@
+{
+ "task_id": "M0-T115",
+ "title": "D-024 unit O: broker answer paths must resolve their queued_asks rows + recovery-probe read-time reconciliation (restart-blocking defect from the first live limited-auto run)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "PROPOSED bounded control-plane correction (Amendment 11 R270; owner approval required before claim). ROOT CAUSE (primary evidence, first live run run_M0_T107_unitJ): ApprovalBroker.deny_request and approve_once mark the approval record answered but never resolve the linked queued_asks row ask_<request_id> - the exact omission M0-T070 fixed in revoke_all only; revoke_all cannot clear DENIED records; recovery_probes.probe_pending_requests reads raw journal.open_asks() WITHOUT the M0-T070 read-time broker-reconciliation the status command applies (cli.py ~1487). NET EFFECT: after an owner deny, S11.5 revalidation fails pending_requests forever and the certified deny->clear-recovery->restart path is permanently blocked (observed live: restart refused UNSAFE_OR_DRIFTED, 0 provider calls, exit 11). FIX (root-cause, H2 RepairRecord 8-predicate gate): (1) deny_request and approve_once resolve their ask_<request_id> row exactly as revoke_all does (answered history, never deleted); (2) probe_pending_requests applies the M0-T070 read-time reconciliation (broker-origin ask whose approval record is resolved is NOT an open owner question) so journals written BEFORE this fix - including the live one with 3 denied-but-unanswered rows - become truthful WITHOUT hand-editing any runtime journal; (3) regression tests that fail if either fix is removed (deny leaves ask row resolved; probe passes on reconciled pre-fix journal shape; probe still FAILS on a genuinely unanswered non-broker ask). CONSEQUENCE (R271): this is a supervisor-source change - it invalidates the R247 golden certification; the full re-certification cycle (M0-T112 pattern: golden pack + affected packs + whole suite + CI at the new frozen identity + activation-package items 10-12 refresh) MUST run before autonomous operation resumes. Owner may optionally schedule M0-T114 (residuals) into the same window to avoid a second recert cycle - owner decision, not bundled by default (corrections stay separate). Supervisor-freeze qualifying evidence: D-024-R270.",
+ "business_reason": "Owner standing rule (Amendment 11 R270/R271): on a blocked/recurring stop, no restart-looping - stop safely and propose a bounded separate correction; recertify before resuming if certification is invalidated.",
+ "inputs": [],
+ "outputs": [
+  "deny_request/approve_once ask-row resolution (mirror of the revoke_all M0-T070 fix)",
+  "probe_pending_requests read-time broker-reconciliation (pre-fix journals stay truthful)",
+  "regression tests failing if either fix is removed",
+  "project-control/reports/M0-T115-repair-record.md (H2 RepairRecord, 8-predicate gate)",
+  "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle before autonomous resume (R271)"
+ ],
+ "dependencies": [
+  "M0-T112"
+ ],
+ "allowed_paths": [
+  "tools/agent_supervisor/broker.py",
+  "tools/agent_supervisor/recovery_probes.py",
+  "tools/test_agent_supervisor_command_authority.py",
+  "tools/test_agent_supervisor_recovery_probes.py",
+  "project-control/reports/M0-T115-repair-record.md"
+ ],
+ "forbidden_paths": [
+  ".claude",
+  "apps",
+  "packages",
+  "services",
+  "supabase",
+  "tools/project_control.py",
+  "tools/directive_registry.py",
+  "tools/validate_directive_compliance.py",
+  "tools/agent_supervisor/cli.py"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-29T05:38:25.765325+00:00",
+ "updated_at": "2026-08-29T05:38:25.922988+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-29T05:38:25.765325+00:00"
+}
