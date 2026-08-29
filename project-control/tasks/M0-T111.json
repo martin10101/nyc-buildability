@@ -48,11 +48,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 15,
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-28T18:29:20.087551+00:00",
-  "updated_at": "2026-08-28T22:18:37.371285+00:00",
+  "updated_at": "2026-08-29T01:35:47.443310+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -76,6 +76,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Unit L STAGED (M0-T111-telegram-sink.md sections 0-5): reuse S13.10 build_notification leak-refusal + NotificationQueue queued-not-lost + state_kv CAS dedup register; decided: closed 8-condition vocabulary (2 passively derivable: stop_for_owner attention rows + usage_limit_record; 6 loop-emitted at the seam - honest bound); secrets ONLY via SUPERVISOR_TELEGRAM_* env (repr-redacted holder; error details carry status classes never URLs); one-way only (no receive surface, source-scan enforced); real transport constructible only behind --live-canary-authorized-by-owner (R245; never fired this unit); bounded 3-attempt in-call retries + digest dedup + never-raise isolation (run_must_pause structurally False). Prove-first green: adversarial+endurance 187/187, phase1 80/80. Next: implement telegram_sink.py + telegram_sink_cli.py + L-pack. (D-024-R232/R241)"
+    },
+    {
+      "at": "2026-08-29T01:35:47.443310+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Unit L IMPLEMENTED (deliverable c9b3b9a): telegram_sink.py + telegram_sink_cli.py + cli.py registration + L-pack 31/31 (closed 8-condition vocabulary; env-only secrets with leak-absence proofs; one-way AST source scan; owner-gated live transport never fired; bounded retries/dedup/never-raise isolation; read-only discovery). Mutation 13/13 killed; affected packs 408/408; supervisor 2690/0(2 skipped); non-supervisor 559/1 (validator pack split into 4 class-groups after two external kills - workstation slow this pass); ruff clean; modularity 0. Next: CI on c9b3b9a, then submit + 4-reviewer gate wave. (D-024-R232/R241)"
     }
   ]
 }
