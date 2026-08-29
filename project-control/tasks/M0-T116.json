@@ -51,7 +51,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T06:02:51.159891+00:00",
-  "updated_at": "2026-08-29T07:33:20.238636+00:00",
+  "updated_at": "2026-08-29T07:44:42.250321+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -68,6 +68,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Recertification runs complete at the post-repair frozen identity (material f89aa29, tree 7487901c, run head c67830f): golden 41/41; affected 705/705 (10 packs); whole suite 2710 passed/2 skipped/0 failed (2712 collected = 2696+14+2 exact). CI CONFIRMED 20/20 green on pushed certification tip 07233f520a1bf1ed29eb54a13612cea544af7527 (check-runs API). Activation-package items 10-12 second refresh done. Evidence map (3 rows) + G2 self-check written; submitting for the 4-reviewer wave."
+    },
+    {
+      "at": "2026-08-29T07:44:28.918058+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "rework",
+      "message": "ONE consolidated correction (G3 MAJOR-1): activation-package TOP banner rewritten from the stale Amendment-8/M0-T112 state (which read as already-presentable on an invalidated cert and contradicted item 11) to the Amendment-12 state gating the R276 RESUME on M0-T116 acceptance + full preflight; recertification sec 4 reworded to describe the actual edit (banner + items 10-12). Doc-only; certification runs unchanged. Resubmitting for delta re-attestations."
     }
   ]
 }
