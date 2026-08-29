@@ -41,11 +41,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.452684+00:00",
-  "updated_at": "2026-08-29T04:59:14.368844+00:00",
+  "updated_at": "2026-08-29T05:16:23.128226+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -78,6 +78,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "Owner confirmed 'config updated'. Re-preflight COMPLETE AND PASSING (preflight report sec 5): protected config verified verbatim (digest A1F99501; [claude] allowed_models + [approved_models] both = fable-5+opus-4-8); manifest RE-RECORDED (b07818fa, 117 files, config bound, round-trip PASS); verify-controller PASS; doctor PASS (approved_models populated, config identity b4f28b75); model_selection '' accepted (b2b927c6); anchors 8574c58/132e698c/d2946392 intact; CI 20/20 at bbb932a; M0-T107 staged as first bounded packet (G0 PASS, claimed by supervisor-loop-fable-producer, worktree wt-m0t107 branch task/M0-T107-plugin-portability @ 796e18f). R267 SATISFIED - launch authorized under R253/R254 once CI confirms green on the launch tip. Next: push, CI green, execute the certified start command."
+    },
+    {
+      "at": "2026-08-29T05:16:23.128226+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "ACTIVATION EXECUTED (R253/R254): certified start ran at green tip cfc6b16 - mode limited-auto, limited_auto_enabled=true, dispatched=true, 11/11 pre-dispatch probes PASS, containment job_object, 1 provider call (Fable worker live in wt-m0t107). First cycle FAIL-CLOSED per certification: worker proposed 3 read-only discovery commands -> ASK/DEFER_TO_OWNER (never AUTO); no structured checkpoint -> S14 -> PAUSED_RECOVERY -> typed refusal exit 11 no_valid_checkpoint; worktree clean, zero writes, zero forwards. R260 7-item report recorded in M0-T113-activation-evidence.md. Telegram: not configured (presence-only), queued 0. AWAITING OWNER: disposition of 3 ASK requests + clear-recovery + explicit re-start (restart 0/3, claude runs 1/12). R256 PROVEN LIVE: the loop stopped at a protected decision instead of improvising."
     }
   ]
 }
