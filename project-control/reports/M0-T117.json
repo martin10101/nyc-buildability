@@ -2,11 +2,11 @@
   "task_id": "M0-T117",
   "producer_agent": "supervisor-autoupdater-producer",
   "report_file": "project-control/reports/M0-T117-producer-report.md",
-  "submitted_at": "2026-08-29T18:21:53.025901+00:00",
+  "submitted_at": "2026-08-29T18:52:13.934346+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T117-evidence-map.json",
-  "content_manifest_sha256": "8d95453b2bfaa99e6aee184ca632aa3bef4bc95a1266ed43922339d9cffc96b8",
-  "reviewed_sha": "fa16560e7b52d1a69f527b14df6ac9f4d3efb05e",
+  "content_manifest_sha256": "e4e79dd0ea7246516e5a6d36ffcf10238a34853b36d8ac5ba91386f5cebcdf59",
+  "reviewed_sha": "d6a2ac8e7b612e5d5e48668750ef32d8546aa38e",
   "applicable_requirements": [
     "D-024-R277",
     "D-024-R278",
@@ -16,5 +16,5 @@
     "D-024-R287",
     "D-024-R288"
   ],
-  "updated_at": "2026-08-29T18:21:53.834104+00:00"
+  "updated_at": "2026-08-29T18:52:14.943820+00:00"
 }

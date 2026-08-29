@@ -1,110 +1,110 @@
 {
- "task_id": "M0-T117",
- "title": "D-024 Amendment 13 unit Q: DISABLE_AUTOUPDATER=1 control for controller-launched Claude workers + standing admission-event discipline",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Establish AND verify the supported DISABLE_AUTOUPDATER=1 control (Amendment 13 R278) BEFORE any fixture recapture (R279): (1) controller-launched Claude child processes receive DISABLE_AUTOUPDATER=1 durably - forced injection at the supervisor's claude child-environment seam (minimal_env S13/S13.3 call sites in claude_runner), NOT dependent on parent-environment inheritance or the env allowlist; (2) removal-sensitive tests proving the injection on every claude launch path and proving no OTHER environment change is introduced; (3) the workstation-scope control for the certification window is an OWNER-SIDE Windows action: deliver the exact administrator PowerShell command plus a verification command and STOP - never apply it from this side (R288); (4) document the standing admission-event discipline: background updates stay disabled for controller-launched workers (R286); future Claude Code upgrades are deliberate admission events - update intentionally, recapture fixtures, recertify, only then repin; never silently accept version drift (R287). PROHIBITED: DISABLE_UPDATES, downgrading Claude, unrelated global configuration changes (R280). Supervisor-source change: joins the Amendment-13 R247 recertification window (M0-T119). Supervisor-freeze qualifying evidence: D-024-R278 (also AD-093 provider CLI drift, reproduced live at seq 30: installed 2.1.251 vs certified 2.1.248).",
- "business_reason": "Owner Amendment 13 (2026-08-29, source-013-amendment.md): the CLI auto-updated mid-campaign and broke the certified identity; the certification window must be drift-proof before 2.1.251 is admitted.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R277-R288)",
-  "project-control/reports/M0-T113-activation-preflight.md section 6 (the seq-30 drift stop)",
-  "tools/agent_supervisor/process.py minimal_env (S13/S13.3) + claude_runner call sites",
-  ".claude/rules/supervisor-freeze.md (qualifying evidence duty: cite D-024-R278)"
- ],
- "outputs": [
-  "Forced DISABLE_AUTOUPDATER=1 injection on EVERY controller-launched Claude child (both minimal_env call sites in claude_runner: worker launch ~1102 and probe launch ~1547), independent of parent environment and env allowlist (R278/R286)",
-  "Removal-sensitive tests: injection present on every claude launch path; NO other environment key added/changed; codex launches NOT modified (claude-scoped only)",
-  "Standing admission-event discipline documented in tools/agent_supervisor/README.md + docs/CONTROLLER_UPDATE_RUNBOOK.md: future Claude Code upgrades are deliberate admission events - update intentionally, recapture fixtures, recertify, only then repin; never silent drift (R287)",
-  "Owner-side workstation command pack recorded in the evidence report: exact administrator PowerShell command + verification command; owner executes it, never this side (R288)",
-  "project-control/reports/M0-T117-producer-report.md + M0-T117-autoupdater-evidence.md"
- ],
- "dependencies": [
-  "M0-T116"
- ],
- "allowed_paths": [
-  "tools/agent_supervisor/process.py",
-  "tools/agent_supervisor/claude_runner.py",
-  "tools/test_agent_supervisor_process.py",
-  "tools/test_agent_supervisor_claude_runner_env.py",
-  "tools/agent_supervisor/README.md",
-  "docs/CONTROLLER_UPDATE_RUNBOOK.md",
-  "project-control/reports/M0-T117-producer-report.md",
-  "project-control/reports/M0-T117-autoupdater-evidence.md",
-  "tools/agent_supervisor/preflight.py",
-  "tools/agent_supervisor/turnover_adapters.py",
-  "tools/test_agent_supervisor_recovery_probes.py",
-  "tools/test_agent_supervisor_turnover_live_seam.py"
- ],
- "forbidden_paths": [],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "scenario": "Worker launch path: the claude child env built at claude_runner's primary Popen site contains DISABLE_AUTOUPDATER=1 even when the parent environment lacks the variable and the allowlist does not include it.",
-   "verification": "unit test on the env-construction seam"
-  },
-  {
-   "id": "AS-2",
-   "scenario": "Probe launch path: the secondary claude Popen site (probe_config) injects DISABLE_AUTOUPDATER=1 identically.",
-   "verification": "unit test"
-  },
-  {
-   "id": "AS-3",
-   "scenario": "No collateral env change: apart from DISABLE_AUTOUPDATER, the constructed child env is byte-identical to the pre-change construction for identical inputs.",
-   "verification": "snapshot/equality test"
-  },
-  {
-   "id": "AS-4",
-   "scenario": "Removal sensitivity: reverting the injection makes AS-1/AS-2 fail (red proven before green).",
-   "verification": "producer red/green evidence in the report"
-  },
-  {
-   "id": "AS-5",
-   "scenario": "Scope: codex child environments are NOT modified by this change.",
-   "verification": "unit test"
-  },
-  {
-   "id": "AS-6",
-   "scenario": "extra_env precedence: an explicit config extra_env cannot silently DISABLE the injection (the forced pair wins or a typed refusal is raised - producer picks and documents the fail-closed choice).",
-   "verification": "unit test + documented rationale"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": "supervisor-autoupdater-producer",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "rework",
- "progress_percent": 60,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-29T17:53:59.311136+00:00",
- "updated_at": "2026-08-29T18:32:52.686993+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-29T17:53:59.311136+00:00",
- "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t117",
- "progress_log": [
-  {
-   "at": "2026-08-29T18:32:34.394633+00:00",
-   "agent": "fable-orchestrator-session",
-   "percent": 60,
-   "status": "rework",
-   "message": "REWORK (consolidated round, T115/T116 pattern) after gate wave at 0324342 (material fa16560, CI 20/20): G5 security PASS (SEC-MINOR-1 = same gap; SEC-INFO x2 optional, carried). G3 code FAIL with mechanical root cause: DEFAULT_ENV_ALLOWLIST lacks DISABLE_AUTOUPDATER so minimal_env STRIPS even the owner machine-scope belt on the two uncovered claude launch paths. REQUIRED: (a) route the doctor--live control-response probe (preflight.py:136) and the turnover successor launcher (turnover_adapters.py:397, WORKER + orchestrator layers) through claude_child_env; (b) correct the overstated every-claude-child claims in both reports + README + runbook to the actual covered set; MINOR-5 disposition: capability_probe/native_runtime bare --version/--help probes inherit FULL parent env (owner belt reaches them, allowlist strip does not apply) - dispositioned with documented rationale rather than touching the shared 3-provider probe runner. G4 QA still reviewing - its findings fold into this same round. Scope extension recorded in packet (preflight.py, turnover_adapters.py + their test packs). Then: resubmit at corrected identity, delta re-attestations from the SAME three reviewers, gates recorded PASS at the delta head. Verbatim G3/G5 reports saved."
-  }
- ],
- "scope_extension_note": "Rework scope extension (2026-08-29, consolidated correction round after the G3 FAIL / G5 SEC-MINOR-1 at head 0324342): preflight.py (doctor --live control-response probe env) and turnover_adapters.py (turnover successor launcher env) added to route the two remaining controller-launched claude children through claude_child_env - completing the SAME defect class this unit exists to fix (R278 every-claude-child guarantee; G3 Findings 2/3 REQUIRED), not a broadening; their existing test packs (recovery_probes / turnover_live_seam) admitted for the matching removal-sensitive tests. cli.py remains forbidden and untouched."
+  "task_id": "M0-T117",
+  "title": "D-024 Amendment 13 unit Q: DISABLE_AUTOUPDATER=1 control for controller-launched Claude workers + standing admission-event discipline",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Establish AND verify the supported DISABLE_AUTOUPDATER=1 control (Amendment 13 R278) BEFORE any fixture recapture (R279): (1) controller-launched Claude child processes receive DISABLE_AUTOUPDATER=1 durably - forced injection at the supervisor's claude child-environment seam (minimal_env S13/S13.3 call sites in claude_runner), NOT dependent on parent-environment inheritance or the env allowlist; (2) removal-sensitive tests proving the injection on every claude launch path and proving no OTHER environment change is introduced; (3) the workstation-scope control for the certification window is an OWNER-SIDE Windows action: deliver the exact administrator PowerShell command plus a verification command and STOP - never apply it from this side (R288); (4) document the standing admission-event discipline: background updates stay disabled for controller-launched workers (R286); future Claude Code upgrades are deliberate admission events - update intentionally, recapture fixtures, recertify, only then repin; never silently accept version drift (R287). PROHIBITED: DISABLE_UPDATES, downgrading Claude, unrelated global configuration changes (R280). Supervisor-source change: joins the Amendment-13 R247 recertification window (M0-T119). Supervisor-freeze qualifying evidence: D-024-R278 (also AD-093 provider CLI drift, reproduced live at seq 30: installed 2.1.251 vs certified 2.1.248).",
+  "business_reason": "Owner Amendment 13 (2026-08-29, source-013-amendment.md): the CLI auto-updated mid-campaign and broke the certified identity; the certification window must be drift-proof before 2.1.251 is admitted.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R277-R288)",
+    "project-control/reports/M0-T113-activation-preflight.md section 6 (the seq-30 drift stop)",
+    "tools/agent_supervisor/process.py minimal_env (S13/S13.3) + claude_runner call sites",
+    ".claude/rules/supervisor-freeze.md (qualifying evidence duty: cite D-024-R278)"
+  ],
+  "outputs": [
+    "Forced DISABLE_AUTOUPDATER=1 injection on EVERY controller-launched Claude child (both minimal_env call sites in claude_runner: worker launch ~1102 and probe launch ~1547), independent of parent environment and env allowlist (R278/R286)",
+    "Removal-sensitive tests: injection present on every claude launch path; NO other environment key added/changed; codex launches NOT modified (claude-scoped only)",
+    "Standing admission-event discipline documented in tools/agent_supervisor/README.md + docs/CONTROLLER_UPDATE_RUNBOOK.md: future Claude Code upgrades are deliberate admission events - update intentionally, recapture fixtures, recertify, only then repin; never silent drift (R287)",
+    "Owner-side workstation command pack recorded in the evidence report: exact administrator PowerShell command + verification command; owner executes it, never this side (R288)",
+    "project-control/reports/M0-T117-producer-report.md + M0-T117-autoupdater-evidence.md"
+  ],
+  "dependencies": [
+    "M0-T116"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/process.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_process.py",
+    "tools/test_agent_supervisor_claude_runner_env.py",
+    "tools/agent_supervisor/README.md",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "project-control/reports/M0-T117-producer-report.md",
+    "project-control/reports/M0-T117-autoupdater-evidence.md",
+    "tools/agent_supervisor/preflight.py",
+    "tools/agent_supervisor/turnover_adapters.py",
+    "tools/test_agent_supervisor_recovery_probes.py",
+    "tools/test_agent_supervisor_turnover_live_seam.py"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "Worker launch path: the claude child env built at claude_runner's primary Popen site contains DISABLE_AUTOUPDATER=1 even when the parent environment lacks the variable and the allowlist does not include it.",
+      "verification": "unit test on the env-construction seam"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Probe launch path: the secondary claude Popen site (probe_config) injects DISABLE_AUTOUPDATER=1 identically.",
+      "verification": "unit test"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "No collateral env change: apart from DISABLE_AUTOUPDATER, the constructed child env is byte-identical to the pre-change construction for identical inputs.",
+      "verification": "snapshot/equality test"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "Removal sensitivity: reverting the injection makes AS-1/AS-2 fail (red proven before green).",
+      "verification": "producer red/green evidence in the report"
+    },
+    {
+      "id": "AS-5",
+      "scenario": "Scope: codex child environments are NOT modified by this change.",
+      "verification": "unit test"
+    },
+    {
+      "id": "AS-6",
+      "scenario": "extra_env precedence: an explicit config extra_env cannot silently DISABLE the injection (the forced pair wins or a typed refusal is raised - producer picks and documents the fail-closed choice).",
+      "verification": "unit test + documented rationale"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "supervisor-autoupdater-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T17:53:59.311136+00:00",
+  "updated_at": "2026-08-29T18:52:14.943820+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T17:53:59.311136+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t117",
+  "progress_log": [
+    {
+      "at": "2026-08-29T18:32:34.394633+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 60,
+      "status": "rework",
+      "message": "REWORK (consolidated round, T115/T116 pattern) after gate wave at 0324342 (material fa16560, CI 20/20): G5 security PASS (SEC-MINOR-1 = same gap; SEC-INFO x2 optional, carried). G3 code FAIL with mechanical root cause: DEFAULT_ENV_ALLOWLIST lacks DISABLE_AUTOUPDATER so minimal_env STRIPS even the owner machine-scope belt on the two uncovered claude launch paths. REQUIRED: (a) route the doctor--live control-response probe (preflight.py:136) and the turnover successor launcher (turnover_adapters.py:397, WORKER + orchestrator layers) through claude_child_env; (b) correct the overstated every-claude-child claims in both reports + README + runbook to the actual covered set; MINOR-5 disposition: capability_probe/native_runtime bare --version/--help probes inherit FULL parent env (owner belt reaches them, allowlist strip does not apply) - dispositioned with documented rationale rather than touching the shared 3-provider probe runner. G4 QA still reviewing - its findings fold into this same round. Scope extension recorded in packet (preflight.py, turnover_adapters.py + their test packs). Then: resubmit at corrected identity, delta re-attestations from the SAME three reviewers, gates recorded PASS at the delta head. Verbatim G3/G5 reports saved."
+    }
+  ],
+  "scope_extension_note": "Rework scope extension (2026-08-29, consolidated correction round after the G3 FAIL / G5 SEC-MINOR-1 at head 0324342): preflight.py (doctor --live control-response probe env) and turnover_adapters.py (turnover successor launcher env) added to route the two remaining controller-launched claude children through claude_child_env - completing the SAME defect class this unit exists to fix (R278 every-claude-child guarantee; G3 Findings 2/3 REQUIRED), not a broadening; their existing test packs (recovery_probes / turnover_live_seam) admitted for the matching removal-sensitive tests. cli.py remains forbidden and untouched."
 }
