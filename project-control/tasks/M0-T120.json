@@ -35,7 +35,10 @@
   "project-control/reports/M0-T120-producer-report.md",
   "project-control/reports/M0-T120-routing-evidence.md",
   "tools/agent_supervisor/start_gate.py",
-  "tools/test_agent_supervisor_bounded_mode.py"
+  "tools/test_agent_supervisor_bounded_mode.py",
+  "tools/agent_supervisor/golden_run.py",
+  "tools/test_agent_supervisor_golden_run.py",
+  "tools/test_agent_supervisor_loop.py"
  ],
  "forbidden_paths": [],
  "acceptance_scenarios": [
@@ -84,7 +87,7 @@
  "risks": [],
  "blockers": [],
  "created_at": "2026-08-29T21:38:47.517369+00:00",
- "updated_at": "2026-08-29T22:40:45.792724+00:00",
+ "updated_at": "2026-08-29T23:09:37.977995+00:00",
  "directive_refs": [
   {
    "directive_id": "D-024",
@@ -94,5 +97,5 @@
  "directive_regime_version": "1.0",
  "directive_regime_entered_at": "2026-08-29T21:38:47.518419+00:00",
  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t120",
- "scope_extension_note": "Rework-window scope extension (2026-08-29, pre-gate, producer limitation L1): start_gate.py (+ its bounded_mode test pack (where live_revalidation coverage lives)) admitted so the R295 routing drift tooth actually GATES production dispatch - live_revalidation folds probe_shell_routing_evidence into a REVALIDATION_STEP with installed_cli_version supplied, exactly as config_identity is folded. Completes the SAME requirement this unit exists for (a tooth that does not gate dispatch does not satisfy R295); not a broadening. cli.py and the broker remain forbidden and untouched."
+ "scope_extension_note": "Rework-window scope extension (2026-08-29, pre-gate, producer limitation L1): start_gate.py (+ its bounded_mode test pack (where live_revalidation coverage lives)) admitted so the R295 routing drift tooth actually GATES production dispatch - live_revalidation folds probe_shell_routing_evidence into a REVALIDATION_STEP with installed_cli_version supplied, exactly as config_identity is folded. Completes the SAME requirement this unit exists for (a tooth that does not gate dispatch does not satisfy R295); not a broadening. cli.py and the broker remain forbidden and untouched. SECOND extension (same seam, orchestrator decision on the producer stop-and-report): golden_run.py + test_agent_supervisor_golden_run.py + test_agent_supervisor_loop.py admitted so the fake-executable start harnesses seed routing evidence for their fake identities in SETUP (the M0-T072 bound-manifest precedent) and the R295 fold can gate production dispatch for real. Consequence accepted and recorded: the golden pack blob moves; the single M0-T119 recertification certifies the new final identity (R296). Seeding lives in test/harness setup only - never a production bypass; the tooth itself is never weakened."
 }
