@@ -636,6 +636,13 @@ class ApprovalBroker:
         record["outcome"] = outcome.to_dict()
         record["answered_at_utc"] = to_utc_iso()
         self.journal.set_state(self._key(request_id), record)
+        # M0-T115 (D-024-R274): an owner answer must also resolve the queued
+        # ASK row minted in `defer`, exactly as revoke_all does (M0-T070) -
+        # otherwise the S11.5 `pending_requests` revalidation treats the
+        # answered question as still open and blocks every later restart
+        # (the M0-T113 live-restart defect). Answered history, never deleted.
+        self.journal.resolve_ask(f"ask_{request_id}",
+                                 "approved_once: bound to the displayed digest")
         self._audit_record_only("approval_owner_approved", request_id, outcome)
         return outcome
 
@@ -659,6 +666,14 @@ class ApprovalBroker:
         record["outcome"] = outcome.to_dict()
         record["answered_at_utc"] = to_utc_iso()
         self.journal.set_state(self._key(request_id), record)
+        # M0-T115 (D-024-R274): an owner answer must also resolve the queued
+        # ASK row minted in `defer`, exactly as revoke_all does (M0-T070) -
+        # otherwise the S11.5 `pending_requests` revalidation treats the
+        # answered question as still open and blocks every later restart
+        # (the M0-T113 live-restart defect). Answered history, never deleted.
+        self.journal.resolve_ask(
+            f"ask_{request_id}",
+            f"denied: {reason or 'the owner denied this request'}")
         self._audit_record_only("approval_owner_denied", request_id, outcome)
         return outcome
 

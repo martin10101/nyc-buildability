@@ -461,6 +461,52 @@ class RevokeStatusLifecycleTests(unittest.TestCase):
         self.assertEqual(status["open_asks"][0]["ask_id"],
                          "rotation_pause/run_M0_T063_A1/3")
 
+    def test_deny_resolves_the_queued_ask_row_not_just_the_approval_record(
+            self) -> None:
+        """M0-T113 live-restart defect (D-024-R274): `deny` answered the
+        approval record but left the `ask_<request_id>` row unanswered, so the
+        S11.5 `pending_requests` revalidation blocked every later restart. An
+        owner deny must resolve its ask row exactly as revoke_all does."""
+        request = self.defer_one("python tools/test_repo_fingerprint.py")
+        self.assertEqual(len(self.journal.open_asks()), 1)
+
+        outcome = self.broker.deny_request(request.request_id, request.digest())
+        self.assertEqual(outcome.reason_code, "owner_denied")
+
+        self.assertEqual(self.journal.open_asks(), [])
+        rows = list(self.journal.conn.execute(
+            "SELECT ask_id, answered_at_utc, answer FROM queued_asks"))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["ask_id"], f"ask_{request.request_id}")
+        self.assertNotEqual(rows[0]["answered_at_utc"], "")
+        self.assertIn("denied", rows[0]["answer"])
+        record = self.broker.record(request.request_id)
+        self.assertEqual(record["status"], bk.STATUS_DENIED)
+
+    def test_approve_once_resolves_the_queued_ask_row(self) -> None:
+        """Same defect class on the approve path (D-024-R274): an owner-answered
+        request must never linger as an open question blocking restart."""
+        request = self.defer_one("python tools/test_repo_fingerprint.py")
+        outcome = self.broker.approve_once(request.request_id, request.digest())
+        self.assertEqual(outcome.reason_code, "owner_approved_once")
+
+        self.assertEqual(self.journal.open_asks(), [])
+        rows = list(self.journal.conn.execute(
+            "SELECT ask_id, answered_at_utc, answer FROM queued_asks"))
+        self.assertEqual(len(rows), 1)
+        self.assertNotEqual(rows[0]["answered_at_utc"], "")
+        self.assertIn("approved", rows[0]["answer"])
+        record = self.broker.record(request.request_id)
+        self.assertEqual(record["status"], bk.STATUS_APPROVED)
+
+    def test_a_digest_mismatch_deny_leaves_the_ask_row_open(self) -> None:
+        """A refused answer is NOT an answer: only a successful deny/approve
+        resolves the ask row; a digest mismatch leaves the question open."""
+        request = self.defer_one("python tools/test_repo_fingerprint.py")
+        outcome = self.broker.deny_request(request.request_id, "0" * 64)
+        self.assertEqual(outcome.reason_code, "digest_mismatch")
+        self.assertEqual(len(self.journal.open_asks()), 1)
+
     def test_resolve_ask_is_idempotent_and_reports_misses(self) -> None:
         request = self.defer_one("python tools/test_repo_fingerprint.py")
         ask_id = f"ask_{request.request_id}"

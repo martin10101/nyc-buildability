@@ -583,6 +583,64 @@ class JournalFactProbeTests(ProbeTestBase):
         self.assertFalse(result.known)
         self.assertEqual(result.reason_code, "pending_requests_unreadable")
 
+    def _queue_broker_ask(self, request_id: str, status: str | None) -> None:
+        """A broker-origin ask row plus (optionally) its approval record -
+        the exact shape `ApprovalBroker.defer` + an owner answer produce."""
+        self.journal.queue_ask(QueuedAsk(
+            ask_id=f"ask_{request_id}", run_id="run_M0_T107_unitJ",
+            task_id="M0-T107", question="Approve PowerShell for task M0-T107?",
+            request_digest="d" * 64, created_at_utc=to_utc_iso(),
+            classification="unclassified"))
+        if status is not None:
+            self.journal.set_state(f"approval/{request_id}", {
+                "request_id": request_id, "status": status,
+                "request_digest": "d" * 64, "answered_at_utc": to_utc_iso()})
+
+    def test_a_pre_fix_denied_request_journal_does_not_block_restart(
+            self) -> None:
+        """M0-T113 live-restart defect (D-024-R274): journals written BEFORE
+        the broker-side fix hold DENIED approval records with unanswered
+        `ask_*` rows. The probe must reconcile at read time - the owner HAS
+        answered - without writing to the journal (D-024-R273)."""
+        self._queue_broker_ask("9f45b2ca", "DENIED")
+        result = rp.probe_pending_requests(journal=self.journal)
+        self.assertTrue(result.passes)
+        # Read-only proof: the raw row is STILL unanswered afterwards.
+        self.assertEqual(len(self.journal.open_asks()), 1)
+
+    def test_a_pre_fix_approved_request_journal_does_not_block_restart(
+            self) -> None:
+        """Approve-once -> restart path against the pre-fix journal shape
+        (D-024-R274): an APPROVED_ONCE record is an owner answer too."""
+        self._queue_broker_ask("c73f9247", "APPROVED_ONCE")
+        self.assertTrue(rp.probe_pending_requests(journal=self.journal).passes)
+
+    def test_a_broker_ask_with_a_pending_record_still_blocks(self) -> None:
+        """The reconciliation must not weaken the gate: a genuinely
+        unanswered (PENDING_OWNER) request still stops the run."""
+        self._queue_broker_ask("7e4b33d8", "PENDING_OWNER")
+        result = rp.probe_pending_requests(journal=self.journal)
+        self.assertFalse(result.passes)
+        self.assertEqual(result.reason_code, "approval_pending")
+        self.assertEqual(result.evidence["ask_ids"], ["ask_7e4b33d8"])
+
+    def test_a_broker_ask_with_no_approval_record_still_blocks(self) -> None:
+        """A broker-shaped ask id whose approval record is missing is an open
+        question, never assumed answered."""
+        self._queue_broker_ask("deadbeef", None)
+        self.assertFalse(rp.probe_pending_requests(journal=self.journal).passes)
+
+    def test_a_non_broker_ask_still_blocks_regardless_of_state(self) -> None:
+        """Rotation-pause / model-chain asks have no approval record and must
+        keep blocking exactly as before the fix."""
+        self.journal.queue_ask(QueuedAsk(
+            ask_id="rotation_pause/run-1/3", run_id="run-1", task_id="M0-T107",
+            question="rotation paused; how to proceed?", request_digest="e" * 64,
+            created_at_utc=to_utc_iso(), classification="security"))
+        result = rp.probe_pending_requests(journal=self.journal)
+        self.assertFalse(result.passes)
+        self.assertEqual(result.evidence["ask_ids"], ["rotation_pause/run-1/3"])
+
     def test_no_deadline_passes_and_an_outstanding_one_is_reported_not_masked(self) -> None:
         clock = lambda: 1_770_000_000.0  # noqa: E731 - a one-line injected clock
         self.assertTrue(rp.probe_scheduled_deadlines(journal=self.journal,
