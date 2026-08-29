@@ -318,15 +318,6 @@ def notify_condition(journal: Any, audit: Any, *, condition: str,
         return NotifyOutcome(condition=condition, deduplicated=True,
                              detail="identical notification already sent; "
                                     "deduplicated (R244)")
-    if _already_queued(journal, digest):
-        if audit is not None:
-            audit.append("telegram_already_queued",
-                         detail={"condition": condition, "digest": digest})
-        return NotifyOutcome(condition=condition, already_queued=True,
-                             still_queued=True,
-                             detail="an identical item is already queued "
-                                    "awaiting delivery; not re-enqueued "
-                                    "(bounded queue growth, R244)")
     try:
         notification = build_notification(
             run_id=run_id, task_id=task_id, checkpoint_id=checkpoint_id,
@@ -337,6 +328,21 @@ def notify_condition(journal: Any, audit: Any, *, condition: str,
     except NotificationError as exc:
         return NotifyOutcome(condition=condition, error_code=exc.code,
                              detail=exc.message)
+    # M0-T114 residual 1 (pinned at the T111 accept): the queue stores the
+    # POST-BUILDER summary, so the growth check must compare like-for-like -
+    # the raw notify-time summary can differ after redaction/truncation and
+    # previously re-enqueued an identical failing item on every retry.
+    queued_digest = _dedup_digest(condition, task_id, notification.summary)
+    if _already_queued(journal, queued_digest):
+        if audit is not None:
+            audit.append("telegram_already_queued",
+                         detail={"condition": condition,
+                                 "digest": queued_digest})
+        return NotifyOutcome(condition=condition, already_queued=True,
+                             still_queued=True,
+                             detail="an identical item is already queued "
+                                    "awaiting delivery; not re-enqueued "
+                                    "(bounded queue growth, R244)")
     queue = NotificationQueue(journal, audit=audit)
     result = queue.deliver(notification, sink, unit_can_proceed=True)
     if result.delivered:

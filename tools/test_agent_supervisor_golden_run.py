@@ -395,6 +395,21 @@ class WatcherPassivityTests(WatcherBase):
 class WatcherCaptureTests(WatcherBase):
     """W-2/W-6: idempotent CAS capture of the five R226 fields, sanitized."""
 
+    def test_the_source_record_key_is_sanitized_not_raw(self) -> None:
+        """M0-T114 residual 2 (unit-I G-report one-liner, pinned at accept):
+        the register row wrote the RAW source_record_key although its
+        sanitized value was already computed - a key-shaped token embedded in
+        a source record key must never reach the register."""
+        secret = "sk-ant-api03-FAKEFAKEFAKEFAKE1234567890abcdefg"
+        self.refusal_record(f"d-{secret}")
+        lo.record_observations(self.journal, session_provenance="injected")
+        rows = lo.observation_rows(self.journal)
+        self.assertEqual(len(rows), 1)
+        key_value = rows[0]["source_record_key"]
+        self.assertNotIn(secret, key_value,
+                         msg="the raw key-shaped token leaked into the register")
+        self.assertIn("[REDACTED", key_value)
+
     R226_FIELDS = ("observed_event_type", "installed_version_shape",
                    "classification_decision", "selected_response",
                    "sanitized_outcome")

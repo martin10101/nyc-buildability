@@ -293,7 +293,10 @@ def build_observation_record(source: Mapping[str, Any], *,
         # Constant on every row this module can produce: graduation is an
         # owner-reviewed act (R224/R227), never a watcher side effect.
         "verified_live": False,
-        "source_record_key": str(source.get("source_record_key", "")),
+        # M0-T114 residual 2 (unit-I one-liner, pinned at accept): read the
+        # SANITIZED value computed above - the raw key must never bypass the
+        # boundary sanitizer every other copied scalar passes through.
+        "source_record_key": sanitized.value["source_record_key"],
         "observed_at_utc": to_utc_iso(),
     }
     return record

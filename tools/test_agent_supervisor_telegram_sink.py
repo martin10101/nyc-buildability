@@ -465,6 +465,34 @@ class L5Isolation(TelegramBase):
         finally:
             journal.close()
 
+    def test_a_builder_altered_summary_still_bounds_queue_growth(self) -> None:
+        """M0-T114 residual 1 (T111 delta reviewers, pinned at accept): the
+        queue check compared the RAW notify-time summary digest against the
+        POST-BUILDER (redacted/truncated) stored summary, so a summary the
+        builder alters was re-enqueued on every retry during an outage. The
+        comparison must be like-for-like (post-builder vs post-builder)."""
+        long_summary = "the golden run completed cleanly " * 30  # > 400 chars
+        journal = self.journal()
+        try:
+            first = self.notify(journal, self.sink(fake_transport(
+                fail_first=99)), summary=long_summary)
+            self.assertFalse(first.delivered)
+            queued = journal.get_state(QUEUE_KEY, [])
+            self.assertEqual(len(queued), 1)
+            self.assertNotEqual(queued[0]["summary"], long_summary,
+                                msg="precondition: the builder truncated the "
+                                    "summary, so raw != stored")
+            for _ in range(4):
+                repeat = self.notify(journal, self.sink(fake_transport(
+                    fail_first=99)), summary=long_summary)
+                self.assertTrue(repeat.already_queued)
+                self.assertTrue(repeat.still_queued)
+            self.assertEqual(len(journal.get_state(QUEUE_KEY, [])), 1,
+                             msg="queue depth stays bounded even when the "
+                                 "builder alters the summary")
+        finally:
+            journal.close()
+
     def test_the_dedup_register_is_fifo_bounded(self) -> None:
         journal = self.journal()
         try:
