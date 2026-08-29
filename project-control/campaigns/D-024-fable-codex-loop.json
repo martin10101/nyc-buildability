@@ -8,7 +8,7 @@
  "authority": "project-control/directives/D-024-fable-codex-loop/source-001.md (owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537); ledger + git win over any prose",
  "restrictions": [
   "NEVER merge PR #241 or any pre-existing PR without separate owner authorization",
-  "continuous-mode activation stays behind the owner gate (D-024 s18); R595 prerequisite unchanged",
+  "continuous-mode activation: the owner exercised the R595 gate 2026-08-29 (Amendment 9, source-009-amendment.md, rows R250-R260) authorizing limited-auto via the certified item-3 start command with --owner-enable-bounded-auto ONLY, conditional on clean repo + certified identity/config match + all gates (R254) with stop-and-report on any mismatch (R259); every OTHER owner gate remains closed: autostart, PR #241, production, credentials, payments, legal, OS-ACL, C1 canary, Telegram live send, natural-event graduation, live 4.8 actuation (shadow-only), residual fixes (R257)",
   "Bootstrap Gate 0 before any write in every session (D-024-R125..R128): primary cwd must BE this worktree root; /mcp must prove empty/allowlisted",
   "supervisor changes require a cited D-024-R### qualifying-evidence id in packet + commit (freeze rule)",
   "no worker-facing token quotas/countdowns ever (D-024-R045)",
@@ -20,13 +20,13 @@
   "Amendment 8 (D-024-R242/R243/R245): Telegram is one-way only; bot token/chat id only in an approved local secret mechanism (never Git/packets/logs/telemetry/reports/messages); the real send is an owner-gated exact-command canary"
  ],
  "next_action": {
-  "task_id": "M0-T107",
-  "description": "ACTIVATION PACKAGE PRESENTED to the owner 2026-08-29 (owner command 'present the activation package', typed at seq 26 after M0-T112 acceptance satisfied the R247 precondition; CI 20/20 confirmed on acceptance tip 88b909d). Presented artifact: project-control/reports/M0-T096-activation-package.md (items 1-14, items 10-12 at the certified identity: supervisor material 8574c58, tree 132e698c15a9f9412d53905e45ce0ae0724abe15, golden pack blob d2946392 re-run only; golden 40/40, affected packs 493/493, whole suite 2694/2/0, CI 20/20 at 615f661). PRESENTATION GRANTS NOTHING: continuous mode remains DISABLED (R187), live actuation remains behind the R595 owner path, supervisor stays SHADOW-ONLY. The owner decision set now pending (each a separate explicit owner act, package item 14): (1) R187/R595 activation decision; (2) install-autostart with plan digest; (3) pending-owner-C1 live interception canary; (4) natural-event refusal-corpus graduation (R226/R227); (5) controller-config OS-ACL hardening. Also pending owner weighing: residual-fix-then-recertify vs activate-then-fix (recert report sec 5; any supervisor change re-triggers R247). NEXT non-owner-gated unit unchanged: claim M0-T107 (Amendment-3 unit J, plugin portability plan, dep M0-T096 accepted, non-blocking) unless the owner directs otherwise; no activation step may be taken from this record alone."
+  "task_id": "M0-T113",
+  "description": "OWNER AUTHORIZATION CAPTURED (Amendment 9, 2026-08-29, verbatim source-009-amendment.md, rows R250-R260, validator EXIT=0): R187/R595 activation of the continuous supervisor loop in limited-auto mode via the exact certified item-3 start command incl. --mode limited-auto --owner-enable-bounded-auto. NEXT: execute ledger task M0-T113 (activation act + first-loop operation proof; path-free governance packet): G0 -> claim -> complete activation preflight vs the certified package (repo clean/synced; certified anchors supervisor tree 132e698c / golden blob d2946392 / material 8574c58 intact at HEAD; CI 20/20 on the capture tip; claude.exe 2.1.248 + codex-cli 0.146.0 verified; protected config raw digest 6AEF12A9 and model_selection 0E2432C0 verified vs docs/CONTROLLER_UPDATE_RUNBOOK.md sec 1; record-manifest for the ctl24 certified tree OUTSIDE the repo + verify-controller incl. external config binding + doctor) -> claim M0-T107 as the loop's first bounded task packet (evaluate_task_refs first; isolated worktree + task branch) -> execute the start command -> prove operation beyond process launch and return the owner's 7-item report (R260) -> record evidence in M0-T113-activation-{preflight,evidence}.md. ON ANY PRECONDITION MISMATCH: stop and report exactly (R259), no improvisation, no partial activation. M0-T114 (residual follow-up) stays backlog owner-scheduled (R258; executing it re-triggers R247 re-certification). After activation the loop owns campaign task execution; the interactive orchestrator monitors via status/pause/graceful-stop/emergency-stop and stops at owner touchpoints."
  },
  "frozen": {
-  "head_sha": "88b909dfd6ceef03a6872b9b6fcdeddf28a05a26",
-  "recorded_at": "2026-08-29T03:29:07+00:00"
+  "head_sha": "00484a58e561a017bfd3712f76970fcc36c8142c",
+  "recorded_at": "2026-08-29T03:59:51+00:00"
  },
- "sequence": 27,
- "updated_at": "2026-08-29T03:29:07+00:00"
+ "sequence": 28,
+ "updated_at": "2026-08-29T03:59:51+00:00"
 }

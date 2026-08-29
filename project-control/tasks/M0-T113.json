@@ -1,0 +1,59 @@
+{
+ "task_id": "M0-T113",
+ "title": "D-024 Amendment 9 unit N: R187/R595 limited-auto activation act + first-loop operation proof",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Amendment 9 (R250-R260): durably record the owner's R187/R595 limited-auto activation authorization; run the complete activation preflight against the certified package (M0-T096-activation-package.md item 3) and current repository state; execute the exact certified start command with --mode limited-auto --owner-enable-bounded-auto ONLY if the repository is clean, the certified identity/configuration match, and all required gates pass; on ANY precondition mismatch stop and report the exact mismatch without improvising or partially activating; then prove operation beyond process launch and return the owner's 7-item report. Exclusions R257 remain owner-gated; 4.8 bridge stays shadow-only; certified supervisor code must not be modified before activation (R258). Supervisor-freeze qualifying evidence: D-024-R250.",
+ "business_reason": "Owner-typed R595 activation authorization 2026-08-29 (Amendment 9); activation must be preflight-verified, fail-closed, and durably evidenced.",
+ "inputs": [],
+ "outputs": [
+  "project-control/reports/M0-T113-activation-preflight.md (preflight matrix: identity/config/gates, or the exact mismatch)",
+  "project-control/reports/M0-T113-activation-evidence.md (activation record + 7-item owner report evidence)"
+ ],
+ "dependencies": [
+  "M0-T112"
+ ],
+ "allowed_paths": [
+  "project-control/reports/M0-T113-activation-preflight.md",
+  "project-control/reports/M0-T113-activation-evidence.md"
+ ],
+ "forbidden_paths": [
+  ".claude",
+  "apps",
+  "packages",
+  "services",
+  "supabase",
+  "tools"
+ ],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-29T03:46:33.452684+00:00",
+ "updated_at": "2026-08-29T03:46:33.583805+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-29T03:46:33.452684+00:00",
+ "path_free_governance": true,
+ "path_free_justification": "Activation-act governance packet (Amendment 9, R250-R260): the unit executes the owner-authorized R595 start command and records preflight/operation evidence into NEW report files under project-control/reports/ (listed in allowed_paths; they exist only after the act). It binds no production code by design - R258 prohibits modifying certified supervisor code, and the certified identity is protected by the M0-T112 certification anchors, not by this packet's path set."
+}

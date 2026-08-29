@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 249,
+ "requirement_count": 260,
  "producer": "orchestrator",
- "updated_at": "2026-08-28T18:20:00+00:00",
+ "updated_at": "2026-08-29T03:49:34.314973+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -9007,6 +9007,337 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 8
+  },
+  {
+   "id": "D-024-R250",
+   "text": "The owner explicitly authorizes R187/R595 activation of the continuous Codex supervisor loop in limited-auto mode (the project's full bounded autonomous mode). The loop still stops at protected owner decisions; the authorization is exercised via the certified start command only.",
+   "source_ref": "source-009-amendment.md#authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T113-activation-evidence.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R251",
+   "text": "Durably record this owner authorization before acting on it (verbatim amendment capture + registry rows + campaign record, committed and pushed).",
+   "source_ref": "source-009-amendment.md#record",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "source-009-amendment.md + capture commit",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R252",
+   "text": "Run the complete activation preflight against the certified package (M0-T096-activation-package.md) and current repository state before any start attempt.",
+   "source_ref": "source-009-amendment.md#preflight",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T113-activation-preflight.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R253",
+   "text": "Execute the exact certified start command from activation-package item 3, including --mode limited-auto and --owner-enable-bounded-auto; no other launch shape is authorized.",
+   "source_ref": "source-009-amendment.md#start-command",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "the item-3 start command shape",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R254",
+   "text": "Start the loop now if - and only if - the repository is clean, the certified identity and configuration match, and all required gates pass.",
+   "source_ref": "source-009-amendment.md#conditions",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R255",
+   "text": "Codex may continuously select bounded tasks from the durable campaign record, direct Fable to perform them, review and validate the results, and advance the campaign under the already-certified commit/push and exactly-once policies.",
+   "source_ref": "source-009-amendment.md#continuous-scope",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R256",
+   "text": "Refusals, quota exhaustion, ambiguous effects, crashes, and rotations must continue to fail closed under live limited-auto operation.",
+   "source_ref": "source-009-amendment.md#fail-closed",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R257",
+   "text": "This authorization does NOT include: autostart across reboots, PR #241, production deployment, credentials, payments, legal decisions, OS-ACL changes, the C1 live-interception canary, Telegram live-send testing, natural-event graduation or live actuation of the 4.8 bridge, or fixing the three certification residuals - each remains separately owner-gated; the 4.8 bridge stays shadow-only.",
+   "source_ref": "source-009-amendment.md#exclusions",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R258",
+   "text": "Do not modify certified supervisor code before activation; carry the nonblocking certification residuals as tracked follow-up work (ledger task M0-T114, owner-scheduled; executing it re-triggers the R247 re-certification).",
+   "source_ref": "source-009-amendment.md#no-premod",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T114"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R259",
+   "text": "If any activation precondition differs from the certified package: do not improvise or partially activate; stop and report the exact mismatch to the owner.",
+   "source_ref": "source-009-amendment.md#mismatch",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R260",
+   "text": "After starting, prove operation beyond process launch and report: (1) activation record and effective mode; (2) controller PID/session/run identity; (3) selected campaign task; (4) evidence of the first bounded dispatch; (5) status, pause, graceful-stop, and emergency-stop commands; (6) Telegram notification state; (7) whether anything is awaiting owner approval.",
+   "source_ref": "source-009-amendment.md#report",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T113-activation-evidence.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 9
   }
  ]
 }

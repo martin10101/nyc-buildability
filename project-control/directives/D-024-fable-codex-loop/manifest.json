@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-28T18:20:00+00:00",
+ "updated_at": "2026-08-29T03:49:34.314973+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -76,6 +76,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-28T18:20:00+00:00",
    "content_digest_sha256": "3c32cf3fd2abb1f42688fa9549e6e3b4160e1907fa02ea030a229a9d43518a14"
+  },
+  {
+   "file": "source-009-amendment.md",
+   "kind": "amendment",
+   "sequence": 9,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T03:49:34.314973+00:00",
+   "content_digest_sha256": "3e1353d7e7a506ee10fcf8cf39cc63f669b16928eb3306793967f79508199ea5"
   }
  ],
  "amendments": [
@@ -85,7 +93,8 @@
   "source-005-amendment.md",
   "source-006-amendment.md",
   "source-007-amendment.md",
-  "source-008-amendment.md"
+  "source-008-amendment.md",
+  "source-009-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -109,7 +118,9 @@
   "M0-T107",
   "M0-T110",
   "M0-T111",
-  "M0-T112"
+  "M0-T112",
+  "M0-T113",
+  "M0-T114"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -420,10 +431,21 @@
   "D-024-R246",
   "D-024-R247",
   "D-024-R248",
-  "D-024-R249"
+  "D-024-R249",
+  "D-024-R250",
+  "D-024-R251",
+  "D-024-R252",
+  "D-024-R253",
+  "D-024-R254",
+  "D-024-R255",
+  "D-024-R256",
+  "D-024-R257",
+  "D-024-R258",
+  "D-024-R259",
+  "D-024-R260"
  ],
- "requirements_id_digest_sha256": "16be6dc56cccb54dfab0998a7a26e9cc5f1075973d06e50dc2b4b2a787a9e7e5",
- "requirements_content_digest_sha256": "a6e07bac2f7d944a9b0dc3633961e0525e6994ee1ea88b11e6f50d226019f85b",
+ "requirements_id_digest_sha256": "530c4a0c271de452a3420479452b40cf398fc422ea9213cb3503307a6a92e94d",
+ "requirements_content_digest_sha256": "ff02a63ecf522dd09f34f41cbe2af08df66e7e790745219495077a8487b00209",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -491,6 +513,11 @@
    "at": "2026-08-28T18:20:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 8 captured (owner mid-turn instruction 2026-08-28, verbatim in source-008-amendment.md): persistent same-terminal Codex-only discussion channel + one-way Telegram notification sink REQUIRED BEFORE continuous-mode activation (R232); /btw-equivalence prohibited without measured proof (R233); post-addition golden re-certification at the final frozen identity before presenting the R187/R595 activation package (R247). Rows R231-R249 bind to NEW tasks M0-T110 (Codex discussion), M0-T111 (Telegram sink), M0-T112 (re-certification); the claimed M0-T096 contract is NOT broadened (R246). M0-T096 sourced amendment reconciliation in source-008 header."
+  },
+  {
+   "at": "2026-08-29T03:49:34.314973+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 9 captured (owner-typed authorization 2026-08-29, verbatim in source-009-amendment.md): R187/R595 activation of the continuous supervisor loop in limited-auto mode AUTHORIZED via the certified item-3 start command with --owner-enable-bounded-auto (R250/R253); durable record before action (R251); complete preflight + clean/identity/config/gate conditions (R252/R254); continuous bounded operation under certified exactly-once policies with fail-closed refusal/quota/ambiguity/crash/rotation handling (R255/R256); exclusion list stays owner-gated incl. autostart, PR #241, C1 canary, Telegram live send, 4.8 bridge shadow-only (R257); no supervisor-code modification pre-activation and residuals carried as tracked follow-up M0-T114 (R258); stop-and-report on any precondition mismatch (R259); 7-item post-start operation proof (R260). Rows R250-R260 bind to NEW task M0-T113 (R258 also M0-T114). The Amendment-3/R248 activation clause is satisfied-by-owner-act for exactly this launch shape; every other prohibition remains in force."
   }
  ]
 }
