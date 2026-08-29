@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 260,
+ "requirement_count": 267,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T03:49:34.314973+00:00",
+ "updated_at": "2026-08-29T04:31:52.438111+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -9338,6 +9338,216 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 9
+  },
+  {
+   "id": "D-024-R261",
+   "text": "OWNER FACT CORRECTION: Fable 5 never went away and is currently available to the owner's account with substantial usage; the owner's active main session runs Fable 5. The 2026-08-09 exhaustion-era Opus-4.8 worker pin (D-010-R296/R308) is STALE.",
+   "source_ref": "source-010-amendment.md#correction",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R262",
+   "text": "The owner explicitly authorizes removing the stale worker pin and restoring Fable 5 as the primary autonomous worker.",
+   "source_ref": "source-010-amendment.md#authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R263",
+   "text": "BEFORE changing anything: perform a read-only live capability probe proving the controller can launch Fable 5 successfully (the certified bounded control-response probe, doctor --live, which launches the canonical executable at the account default model).",
+   "source_ref": "source-010-amendment.md#probe",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T113-fable-probe.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R264",
+   "text": "Record the probe evidence and this owner correction durably (verbatim amendment + committed probe evidence report).",
+   "source_ref": "source-010-amendment.md#record",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "source-010-amendment.md + project-control/reports/M0-T113-fable-probe.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R265",
+   "text": "If the probe passes: update ONLY the required model-selection setting (the recorded revert path: model_selection.toml [claude] model -> empty string = account/CLI default Fable 5). No other change.",
+   "source_ref": "source-010-amendment.md#revert",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R266",
+   "text": "Give the owner exact administrator-level instructions for adding claude-fable-5 and claude-opus-4-8 to the protected approved-model configuration ([approved_models] in the immutable config, S13.1 process).",
+   "source_ref": "source-010-amendment.md#admin-instructions",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R267",
+   "text": "Do NOT launch until the manifest is re-recorded and the COMPLETE activation preflight passes again (re-affirms R254/R259).",
+   "source_ref": "source-010-amendment.md#launch-hold",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 10
   }
  ]
 }

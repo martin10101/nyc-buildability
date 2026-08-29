@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T03:49:34.314973+00:00",
+ "updated_at": "2026-08-29T04:31:52.438111+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -84,6 +84,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T03:49:34.314973+00:00",
    "content_digest_sha256": "3e1353d7e7a506ee10fcf8cf39cc63f669b16928eb3306793967f79508199ea5"
+  },
+  {
+   "file": "source-010-amendment.md",
+   "kind": "amendment",
+   "sequence": 10,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T04:31:52.438111+00:00",
+   "content_digest_sha256": "b3a0444a5e02f41350303c09e73b26ae94d101aa0c99019cdbd3621907233832"
   }
  ],
  "amendments": [
@@ -94,7 +102,8 @@
   "source-006-amendment.md",
   "source-007-amendment.md",
   "source-008-amendment.md",
-  "source-009-amendment.md"
+  "source-009-amendment.md",
+  "source-010-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -442,10 +451,17 @@
   "D-024-R257",
   "D-024-R258",
   "D-024-R259",
-  "D-024-R260"
+  "D-024-R260",
+  "D-024-R261",
+  "D-024-R262",
+  "D-024-R263",
+  "D-024-R264",
+  "D-024-R265",
+  "D-024-R266",
+  "D-024-R267"
  ],
- "requirements_id_digest_sha256": "530c4a0c271de452a3420479452b40cf398fc422ea9213cb3503307a6a92e94d",
- "requirements_content_digest_sha256": "ff02a63ecf522dd09f34f41cbe2af08df66e7e790745219495077a8487b00209",
+ "requirements_id_digest_sha256": "b653eedfa0b302a168008abc73c41f078e915cfc44a4ac2f7963ba9a88189710",
+ "requirements_content_digest_sha256": "2159fbd4edd846f21dcbaa3d39ad7cb58875f9a8a2e45938facbb294da21d296",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -518,6 +534,11 @@
    "at": "2026-08-29T03:49:34.314973+00:00",
    "by": "orchestrator",
    "note": "Amendment 9 captured (owner-typed authorization 2026-08-29, verbatim in source-009-amendment.md): R187/R595 activation of the continuous supervisor loop in limited-auto mode AUTHORIZED via the certified item-3 start command with --owner-enable-bounded-auto (R250/R253); durable record before action (R251); complete preflight + clean/identity/config/gate conditions (R252/R254); continuous bounded operation under certified exactly-once policies with fail-closed refusal/quota/ambiguity/crash/rotation handling (R255/R256); exclusion list stays owner-gated incl. autostart, PR #241, C1 canary, Telegram live send, 4.8 bridge shadow-only (R257); no supervisor-code modification pre-activation and residuals carried as tracked follow-up M0-T114 (R258); stop-and-report on any precondition mismatch (R259); 7-item post-start operation proof (R260). Rows R250-R260 bind to NEW task M0-T113 (R258 also M0-T114). The Amendment-3/R248 activation clause is satisfied-by-owner-act for exactly this launch shape; every other prohibition remains in force."
+  },
+  {
+   "at": "2026-08-29T04:31:52.438111+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 10 captured (owner-typed correction 2026-08-29, verbatim in source-010-amendment.md): Fable 5 never went away and is available with substantial usage - the 2026-08-09 exhaustion-era Opus-4.8 worker pin (D-010-R296/R308) is declared STALE (R261); removal of the pin + restoration of Fable 5 as primary autonomous worker AUTHORIZED (R262); read-only live capability probe (doctor --live at the account default model) required BEFORE any change (R263) with durable probe evidence (R264); on pass, update ONLY the model-selection setting via the recorded revert path (R265); provide exact administrator instructions for populating [approved_models] with claude-fable-5 + claude-opus-4-8 (R266); NO LAUNCH until the manifest is re-recorded and the complete activation preflight passes again (R267). Rows R261-R267 bind to the claimed activation-act task M0-T113 (precondition adjustment, not contract broadening). This resolves preflight MISMATCH 1 by owner correction; MISMATCH 2 remains until the owner's administrator config edit."
   }
  ]
 }
