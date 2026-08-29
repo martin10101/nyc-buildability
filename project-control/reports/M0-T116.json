@@ -1,0 +1,16 @@
+{
+  "task_id": "M0-T116",
+  "producer_agent": "fable-orchestrator-session",
+  "report_file": "project-control/reports/M0-T116-recertification.md",
+  "submitted_at": "2026-08-29T07:33:19.716413+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T116-evidence-map.json",
+  "content_manifest_sha256": "63c23ca671cc7230c45ea7e22ece61f28e149140c8205ea84611ef658b5859f9",
+  "reviewed_sha": "f102d2de8d1d246914f60f26f2bcc96b0491b90d",
+  "applicable_requirements": [
+    "D-024-R273",
+    "D-024-R275",
+    "D-024-R276"
+  ],
+  "updated_at": "2026-08-29T07:33:20.238636+00:00"
+}
