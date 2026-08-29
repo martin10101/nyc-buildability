@@ -122,6 +122,36 @@ Nothing here invents an event that did not durably occur.
    endurance 187, phase1 80).
 7. CI modularity check must pass before submission.
 
-## 6. Evidence (filled at implementation/submission)
+## 6. Evidence (implementation; settled tree, foreground-chunked)
 
-- (pending) L-pack run; affected packs; suites; mutation; ruff; modularity; CI.
+**Deliverable files:** `tools/agent_supervisor/telegram_sink.py` (domain, ~370 lines incl.
+docs) + `telegram_sink_cli.py` (status/canary wiring) + `cli.py` (one import + one
+registration line) + `tools/test_agent_supervisor_telegram_sink.py` (L-pack, reusing the
+unit-G harness base).
+
+- **L-pack: 31/31 passed** (L1 conditions 3, L2 view-only 2, L3 secrets 4, L4 one-way 1 —
+  AST-functional-source scan excluding the honest documentation, L5 isolation/dedup 6,
+  L6 owner-gated canary 4 — no socket anywhere, L7 CLI 1, L8 executable requirement
+  register 10).
+- **Affected packs green (one run, 408/408):** L-pack 31 + adversarial + endurance +
+  phase1 (the notifications-covering packs) + K-pack 56 + operator-channel 54.
+- **Whole supervisor suite (freeze-rule baseline re-established):** 3 chunks =
+  900 + 895 (2 skipped) + 895 → **2,690 passed, 2 skipped, 0 failed**.
+- **Non-supervisor tools suite:** 279 + 160 (1 skipped) + 120 (the validator pack split
+  into 4 class-groups after two >29-min external kills — the workstation was markedly
+  slower this pass) → **559 passed, 1 skipped** — exactly the accepted baseline.
+- **Mutation pass: 13/13 KILLED** (accept-any-condition; drop-a-condition;
+  dedup-check-disabled; dedup-register-unbounded; retries-collapse-to-one;
+  transport-exceptions-escape; live-send-gate-removed; empty-credentials-accepted;
+  sink-can-pause-the-run; leak-refusals-leak-through; delivery-skips-dedup-record;
+  discovery-inverts-disposition; discovery-ignores-actuated). No survivors: the one
+  first-pass PATTERN-MISS (a multi-line mutant string) was re-run as two precise
+  single-line mutants, both killed.
+- **ruff 0.13.0 (the CI version): all changed files clean.**
+- **Secret scans:** repo scanner PASS; gitleaks pre-commit clean (both fake sentinels
+  carry `gitleaks:allow` + `secretscan:allow` justification pragmas).
+- **`modularity_check --check` exit 0** after `git add`.
+- **CLI smoke:** `telegram status --json` → configured:false presence-only;
+  `telegram canary` without the owner flag → typed `live_send_owner_gated` refusal
+  naming the exact command.
+- **CI on the pushed deliverable SHA:** recorded in the progress log at the submit seam.
