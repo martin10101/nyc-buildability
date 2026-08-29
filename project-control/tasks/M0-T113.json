@@ -41,11 +41,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 60,
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.452684+00:00",
-  "updated_at": "2026-08-29T04:39:39.477716+00:00",
+  "updated_at": "2026-08-29T04:59:14.368844+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -71,6 +71,13 @@
       "percent": 60,
       "status": "in_progress",
       "message": "Amendment 10 executed through its hold: capture c5ca81a (rows R261-R267, validator EXIT=0) -> R263 probe PASS (doctor --live control_response_live_probe VERIFIED sha256_head 8a9c9c9018460062; supplemental shipped-flow probe persisted events: init_model=claude-fable-5, 1 denial, no file, bounded) -> R265 single edit applied (model_selection [claude] model claude-opus-4-8 -> empty = account default Fable 5; new raw digest FCBBF70F...; post-edit doctor overall PASS, selection digest b2b927c6...) -> R266 admin instructions delivered to owner for [approved_models] + allowed_models -> R267 HOLD: no launch until owner config edit + manifest re-record + full re-preflight. Preflight MISMATCH 1 resolved by owner correction; MISMATCH 2 awaits the owner administrator edit."
+    },
+    {
+      "at": "2026-08-29T04:59:14.366840+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Owner confirmed 'config updated'. Re-preflight COMPLETE AND PASSING (preflight report sec 5): protected config verified verbatim (digest A1F99501; [claude] allowed_models + [approved_models] both = fable-5+opus-4-8); manifest RE-RECORDED (b07818fa, 117 files, config bound, round-trip PASS); verify-controller PASS; doctor PASS (approved_models populated, config identity b4f28b75); model_selection '' accepted (b2b927c6); anchors 8574c58/132e698c/d2946392 intact; CI 20/20 at bbb932a; M0-T107 staged as first bounded packet (G0 PASS, claimed by supervisor-loop-fable-producer, worktree wt-m0t107 branch task/M0-T107-plugin-portability @ 796e18f). R267 SATISFIED - launch authorized under R253/R254 once CI confirms green on the launch tip. Next: push, CI green, execute the certified start command."
     }
   ]
 }

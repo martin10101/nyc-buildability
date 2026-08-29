@@ -1,61 +1,62 @@
 {
- "task_id": "M0-T107",
- "title": "D-024 Amendment 3 unit J: generic Claude Code plugin portability plan (post-golden-run, non-blocking)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "AFTER the local loop passes its golden run (M0-T096): prepare a separate portability plan for a generic Claude Code plugin containing the reusable skills, agents, hooks, and adapters built by units C-G (plugins bundle skills/agents/hooks/workflows per the plugins-reference snapshot; adapters ship as skills/bin - no native 'adapters' component type). NYC-specific graph, ledger, security policy, profiles, and product rules STAY in this repository. Planning deliverable only; MUST NOT block the local loop's activation (D-024-R179).",
- "business_reason": "Amendment 3 unit J: portability is explicitly ordered as separate, later, and non-blocking.",
- "inputs": [],
- "outputs": [
-  "docs/D024_PORTABILITY_PLAN.md (generic plugin plan: reusable skills/agents/hooks/adapters; NYC-specific stays in-repo)",
-  "project-control/reports/M0-T107-portability-plan.md"
- ],
- "dependencies": [
-  "M0-T096"
- ],
- "allowed_paths": [
-  "docs/D024_PORTABILITY_PLAN.md",
-  "project-control/reports/M0-T107-portability-plan.md"
- ],
- "forbidden_paths": [
-  ".claude/ORCHESTRATION_POLICY.md",
-  ".claude/hooks",
-  ".claude/settings.json",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "project-control/directives/D-001-owner-directive-compliance-system",
-  "project-control/tasks",
-  "tools/directive_registry.py",
-  "tools/project_control.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-26T22:31:57.765156+00:00",
- "updated_at": "2026-08-26T22:34:58+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-26T22:31:57.765156+00:00",
- "path_free_governance": true,
- "path_free_justification": "Planning-only unit-J packet created at campaign conversion; its two deliverable files (docs/D024_PORTABILITY_PLAN.md, project-control/reports/M0-T107-portability-plan.md) do not exist until production, which begins only after the M0-T096 golden run. The allowed_paths pin the eventual write scope; the content identity binds real files from the first produced commit onward (re-pinned at claim)."
+  "task_id": "M0-T107",
+  "title": "D-024 Amendment 3 unit J: generic Claude Code plugin portability plan (post-golden-run, non-blocking)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "AFTER the local loop passes its golden run (M0-T096): prepare a separate portability plan for a generic Claude Code plugin containing the reusable skills, agents, hooks, and adapters built by units C-G (plugins bundle skills/agents/hooks/workflows per the plugins-reference snapshot; adapters ship as skills/bin - no native 'adapters' component type). NYC-specific graph, ledger, security policy, profiles, and product rules STAY in this repository. Planning deliverable only; MUST NOT block the local loop's activation (D-024-R179).",
+  "business_reason": "Amendment 3 unit J: portability is explicitly ordered as separate, later, and non-blocking.",
+  "inputs": [],
+  "outputs": [
+    "docs/D024_PORTABILITY_PLAN.md (generic plugin plan: reusable skills/agents/hooks/adapters; NYC-specific stays in-repo)",
+    "project-control/reports/M0-T107-portability-plan.md"
+  ],
+  "dependencies": [
+    "M0-T096"
+  ],
+  "allowed_paths": [
+    "docs/D024_PORTABILITY_PLAN.md",
+    "project-control/reports/M0-T107-portability-plan.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "supervisor-loop-fable-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T22:31:57.765156+00:00",
+  "updated_at": "2026-08-29T04:56:42.002818+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T22:31:57.765156+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Planning-only unit-J packet created at campaign conversion; its two deliverable files (docs/D024_PORTABILITY_PLAN.md, project-control/reports/M0-T107-portability-plan.md) do not exist until production, which begins only after the M0-T096 golden run. The allowed_paths pin the eventual write scope; the content identity binds real files from the first produced commit onward (re-pinned at claim).",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107"
 }

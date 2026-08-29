@@ -65,7 +65,7 @@ include `"claude-fable-5"`. After any protected-config edit the manifest must be
 re-recorded (`record-manifest`) and `verify-controller`/`doctor` re-run — the orchestrator
 executes those mechanical steps; the config edit itself is owner-only.
 
-## 4. Disposition
+## 4. Disposition (superseded by §5 — kept for the record)
 
 Preflight items 1–14 PASS; mismatches 2 (§2, §3), both remediable only by owner acts.
 Per R259: **activation NOT attempted; nothing partially activated; supervisor remains
@@ -77,3 +77,24 @@ accepted). Additional launch note: the session permission classifier auto-denied
 bare no-op `start` probe, so the eventual launch may require the owner to run the exact
 command in-session (`!` prefix) or add a permission rule — surfaced per the harness rules,
 not worked around.
+
+## 5. ADDENDUM 2026-08-29 — full re-preflight after Amendments 10 remediation: **PASS, launch authorized**
+
+Both mismatches are RESOLVED and the complete preflight was re-run:
+
+| # | Check | Result |
+|---|---|---|
+| A1 | MISMATCH 1 resolution (Amendment 10, rows R261–R267, capture `c5ca81a`, validator EXIT=0) | RESOLVED — R263 live probe PASS (`doctor --live` control-response **VERIFIED**, sha256_head `8a9c9c9018460062`; supplemental shipped-flow probe init event **`model: claude-fable-5`**, 1 denial, no file, bounded — `M0-T113-fable-probe.md`); R265 single edit applied: `model_selection.toml [claude] model = ""` (account default = Fable 5), new raw digest `FCBBF70F…DD2B`, selection digest `b2b927c6…` |
+| A2 | MISMATCH 2 resolution (owner administrator edit, confirmed "config updated") | RESOLVED — protected config now: `[claude] allowed_models = ["claude-fable-5","claude-opus-4-8"]`; `[approved_models] models = ["claude-fable-5","claude-opus-4-8"]`; new raw digest `A1F995016B541B9D69F8D78249ED4EF15563B9D7FF59B027ED3B04C1F41D1436`; content read back verbatim — only the two instructed changes present |
+| A3 | Manifest RE-RECORDED against the new config (R267 requirement) | PASS — 117 files, new manifest digest `b07818fa0a281cde…`, external `config.toml` bound, round-trip verification passed |
+| A4 | `verify-controller` at the new manifest | PASS — "controller verified, including the external config.toml binding" |
+| A5 | `doctor` (full) at the new manifest/config | PASS overall — `approved_models: ['claude-fable-5','claude-opus-4-8']` (config identity `b4f28b75adc38bc0…`); `controller_config` allowlists coherent; `model_selection` `''` accepted; initial pin path = allowed_models + model_selection (no probe needed); seam switches launch-probe by actual launch |
+| A6 | Certified identity anchors at HEAD | PASS — material `8574c58`, tree `132e698c…`, golden blob `d2946392…` (unchanged through every control commit) |
+| A7 | Repository clean + CI | PASS — clean tree; CI **20/20** at `bbb932a`; the launch-tip run is confirmed green before `start` executes (R254 "all required gates pass") |
+| A8 | First bounded packet staged | PASS — M0-T107 G0 PASS + claimed by `supervisor-loop-fable-producer`; isolated worktree `wt-m0t107` on branch `task/M0-T107-plugin-portability` @ `796e18f`; resolver ok=true (7 rows) |
+
+**R267 SATISFIED** (manifest re-recorded + complete preflight passes again).
+**VERDICT: PREFLIGHT PASSES — launch authorized under Amendment 9 R253/R254** via the exact
+certified item-3 start command with `--mode limited-auto --owner-enable-bounded-auto`;
+every R257 exclusion remains closed (no autostart, no PR #241, no C1 canary, no Telegram
+live send, 4.8 bridge shadow-only).
