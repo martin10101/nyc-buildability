@@ -6950,7 +6950,9 @@
     "D-024-R268",
     "D-024-R269",
     "D-024-R270",
-    "D-024-R271"
+    "D-024-R271",
+    "D-024-R273",
+    "D-024-R276"
    ],
    "reviewed_sha": null,
    "verified_at": null,
@@ -7108,6 +7110,20 @@
      "evidence": [],
      "verified_by": null,
      "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R273",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R276",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
     }
    ]
   },
@@ -7117,7 +7133,9 @@
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
    "applicable_requirement_ids": [
-    "D-024-R258"
+    "D-024-R258",
+    "D-024-R272",
+    "D-024-R273"
    ],
    "reviewed_sha": null,
    "verified_at": null,
@@ -7128,9 +7146,95 @@
      "evidence": [],
      "verified_by": null,
      "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R272",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R273",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T115",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R272",
+    "D-024-R273",
+    "D-024-R274"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-024-R272",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R273",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R274",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T116",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R273",
+    "D-024-R275",
+    "D-024-R276"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-024-R273",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R275",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R276",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
     }
    ]
   }
  ],
- "updated_at": "2026-08-29T05:25:44.659573+00:00"
+ "updated_at": "2026-08-29T06:03:35.852703+00:00"
 }

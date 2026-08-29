@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T05:25:44.659573+00:00",
+ "updated_at": "2026-08-29T06:03:35.852703+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -100,6 +100,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T05:25:44.659573+00:00",
    "content_digest_sha256": "1b4c68d8e027b43e8db0a579e764dddb958e572fdc811c5e61f39c412f560018"
+  },
+  {
+   "file": "source-012-amendment.md",
+   "kind": "amendment",
+   "sequence": 12,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T06:03:35.852703+00:00",
+   "content_digest_sha256": "d0846b48045dd7868c1725614069541647473e764e4eb1b6426cec7ec3de5cce"
   }
  ],
  "amendments": [
@@ -112,7 +120,8 @@
   "source-008-amendment.md",
   "source-009-amendment.md",
   "source-010-amendment.md",
-  "source-011-amendment.md"
+  "source-011-amendment.md",
+  "source-012-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -138,7 +147,9 @@
   "M0-T111",
   "M0-T112",
   "M0-T113",
-  "M0-T114"
+  "M0-T114",
+  "M0-T115",
+  "M0-T116"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -471,10 +482,15 @@
   "D-024-R268",
   "D-024-R269",
   "D-024-R270",
-  "D-024-R271"
+  "D-024-R271",
+  "D-024-R272",
+  "D-024-R273",
+  "D-024-R274",
+  "D-024-R275",
+  "D-024-R276"
  ],
- "requirements_id_digest_sha256": "686844964290d838516962e00a152213e18c65b9c3828fa03a0b58bc5d1bc31a",
- "requirements_content_digest_sha256": "7f4e588e490172fa601e4fe03985dde2cffb389f939647ecb305961962dc9556",
+ "requirements_id_digest_sha256": "3aad4831f3314e7a0ccba6e2473fc1bcb9104dfa8ae26f2d9f92a659611da770",
+ "requirements_content_digest_sha256": "05f4342073785460c4e03f9ebab6c7bff4d2d9e69653708c405eb55a5f55666a",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -557,6 +573,11 @@
    "at": "2026-08-29T05:25:44.659573+00:00",
    "by": "orchestrator",
    "note": "Amendment 11 captured (owner instruction 2026-08-29, verbatim in source-011-amendment.md): deny the three stale run_M0_T107_unitJ ASK requests, clear PAUSED_RECOVERY, restart with the SAME certified limited-auto start command, no policy loosening/bypass (R268); confirm new run identity / live Fable 5 dispatch / current task / first-checkpoint progression (R269); STANDING RULE: on a recurring routine-discovery ASK-stop, never restart-loop - stop safely and propose a bounded SEPARATE control-plane correction steering workers to in-scope file tools or documented safe commands, preserving all owner gates (R270); recertify per R247 before resuming autonomous operation if such a correction invalidates the certification (R271). Rows bind to M0-T113."
+  },
+  {
+   "at": "2026-08-29T06:03:35.852703+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 12 captured (owner instruction 2026-08-29, verbatim in source-012-amendment.md): execute M0-T115 (broker/probe seam fix) + M0-T114 (carried residuals) in ONE certification window as SEPARATE bounded tasks/commits/evidence/reviews, no broadening (R272); standing no-manual-journal-edit rule (R273); executable proofs of deny->clear-recovery->restart AND approve-once->restart against new + pre-fix journal records (R274); then the full M0-T112-pattern recertification at ONE frozen final identity as NEW unit M0-T116 (R275); M0-T107 limited-auto resumes ONLY after every suite/gate/review/manifest-verification/live-preflight passes, stay-stopped-and-report on any failure (R276). Rows bind: R272->T114+T115; R273->T113/T114/T115/T116; R274->T115; R275->T116; R276->T113+T116."
   }
  ]
 }

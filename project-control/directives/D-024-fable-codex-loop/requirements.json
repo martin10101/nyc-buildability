@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 271,
+ "requirement_count": 276,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T05:25:44.659573+00:00",
+ "updated_at": "2026-08-29T06:03:35.852703+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -9668,6 +9668,161 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 11
+  },
+  {
+   "id": "D-024-R272",
+   "text": "Execute M0-T115 and M0-T114 in the SAME certification window while keeping them SEPARATE bounded tasks, commits, evidence, and reviews; do not broaden either task.",
+   "source_ref": "source-012-amendment.md#same-window",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T114",
+     "M0-T115"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-024-R273",
+   "text": "Never manually edit the runtime journal (durable supervisor state); every state change goes through a documented CLI/broker surface or a reviewed code fix whose read-time reconciliation keeps pre-fix journals truthful.",
+   "source_ref": "source-012-amendment.md#no-journal-edit",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T114",
+     "M0-T115",
+     "M0-T116"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-024-R274",
+   "text": "Prove the COMPLETE deny -> clear-recovery -> restart path AND the approve-once -> restart path against BOTH new and pre-fix journal records (executable regression tests that fail if either fix is removed).",
+   "source_ref": "source-012-amendment.md#path-proofs",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T115"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "tools/test_agent_supervisor_command_authority.py + tools/test_agent_supervisor_recovery_probes.py new tests",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-024-R275",
+   "text": "After both repair units land, perform the FULL M0-T112-pattern recertification over ONE frozen final identity (golden pack + affected packs + whole supervisor suite + CI + activation-package items 10-12 refresh).",
+   "source_ref": "source-012-amendment.md#recert",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T116"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T116-recertification.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 12
+  },
+  {
+   "id": "D-024-R276",
+   "text": "Resume M0-T107 in limited-auto ONLY after every suite, gate, independent review, manifest verification, and live preflight passes; on ANY failure remain stopped and report - never bypass a gate.",
+   "source_ref": "source-012-amendment.md#resume-conditions",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113",
+     "M0-T116"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 12
   }
  ]
 }
