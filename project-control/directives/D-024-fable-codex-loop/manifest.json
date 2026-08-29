@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T04:31:52.438111+00:00",
+ "updated_at": "2026-08-29T05:25:44.659573+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -92,6 +92,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T04:31:52.438111+00:00",
    "content_digest_sha256": "b3a0444a5e02f41350303c09e73b26ae94d101aa0c99019cdbd3621907233832"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-29T05:25:44.659573+00:00",
+   "content_digest_sha256": "1b4c68d8e027b43e8db0a579e764dddb958e572fdc811c5e61f39c412f560018"
   }
  ],
  "amendments": [
@@ -103,7 +111,8 @@
   "source-007-amendment.md",
   "source-008-amendment.md",
   "source-009-amendment.md",
-  "source-010-amendment.md"
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -458,10 +467,14 @@
   "D-024-R264",
   "D-024-R265",
   "D-024-R266",
-  "D-024-R267"
+  "D-024-R267",
+  "D-024-R268",
+  "D-024-R269",
+  "D-024-R270",
+  "D-024-R271"
  ],
- "requirements_id_digest_sha256": "b653eedfa0b302a168008abc73c41f078e915cfc44a4ac2f7963ba9a88189710",
- "requirements_content_digest_sha256": "2159fbd4edd846f21dcbaa3d39ad7cb58875f9a8a2e45938facbb294da21d296",
+ "requirements_id_digest_sha256": "686844964290d838516962e00a152213e18c65b9c3828fa03a0b58bc5d1bc31a",
+ "requirements_content_digest_sha256": "7f4e588e490172fa601e4fe03985dde2cffb389f939647ecb305961962dc9556",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -539,6 +552,11 @@
    "at": "2026-08-29T04:31:52.438111+00:00",
    "by": "orchestrator",
    "note": "Amendment 10 captured (owner-typed correction 2026-08-29, verbatim in source-010-amendment.md): Fable 5 never went away and is available with substantial usage - the 2026-08-09 exhaustion-era Opus-4.8 worker pin (D-010-R296/R308) is declared STALE (R261); removal of the pin + restoration of Fable 5 as primary autonomous worker AUTHORIZED (R262); read-only live capability probe (doctor --live at the account default model) required BEFORE any change (R263) with durable probe evidence (R264); on pass, update ONLY the model-selection setting via the recorded revert path (R265); provide exact administrator instructions for populating [approved_models] with claude-fable-5 + claude-opus-4-8 (R266); NO LAUNCH until the manifest is re-recorded and the complete activation preflight passes again (R267). Rows R261-R267 bind to the claimed activation-act task M0-T113 (precondition adjustment, not contract broadening). This resolves preflight MISMATCH 1 by owner correction; MISMATCH 2 remains until the owner's administrator config edit."
+  },
+  {
+   "at": "2026-08-29T05:25:44.659573+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 11 captured (owner instruction 2026-08-29, verbatim in source-011-amendment.md): deny the three stale run_M0_T107_unitJ ASK requests, clear PAUSED_RECOVERY, restart with the SAME certified limited-auto start command, no policy loosening/bypass (R268); confirm new run identity / live Fable 5 dispatch / current task / first-checkpoint progression (R269); STANDING RULE: on a recurring routine-discovery ASK-stop, never restart-loop - stop safely and propose a bounded SEPARATE control-plane correction steering workers to in-scope file tools or documented safe commands, preserving all owner gates (R270); recertify per R247 before resuming autonomous operation if such a correction invalidates the certification (R271). Rows bind to M0-T113."
   }
  ]
 }

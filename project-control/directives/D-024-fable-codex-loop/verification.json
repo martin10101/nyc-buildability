@@ -6946,7 +6946,11 @@
     "D-024-R264",
     "D-024-R265",
     "D-024-R266",
-    "D-024-R267"
+    "D-024-R267",
+    "D-024-R268",
+    "D-024-R269",
+    "D-024-R270",
+    "D-024-R271"
    ],
    "reviewed_sha": null,
    "verified_at": null,
@@ -7076,6 +7080,34 @@
      "evidence": [],
      "verified_by": null,
      "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R268",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R269",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R270",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-024-R271",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
     }
    ]
   },
@@ -7100,5 +7132,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-29T04:31:52.438111+00:00"
+ "updated_at": "2026-08-29T05:25:44.659573+00:00"
 }

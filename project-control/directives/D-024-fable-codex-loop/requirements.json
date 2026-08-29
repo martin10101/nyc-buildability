@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 267,
+ "requirement_count": 271,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T04:31:52.438111+00:00",
+ "updated_at": "2026-08-29T05:25:44.659573+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -9548,6 +9548,126 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 10
+  },
+  {
+   "id": "D-024-R268",
+   "text": "Deny all three stale ASK requests from run run_M0_T107_unitJ, clear PAUSED_RECOVERY via the audited clear-recovery act, and restart the loop using the SAME certified limited-auto start command; do not loosen or bypass the command policy in any way.",
+   "source_ref": "source-011-amendment.md#deny-clear-restart",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "journal approval/denial records + restart evidence in M0-T113-activation-evidence.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-024-R269",
+   "text": "Confirm to the owner: the new run identity, live Fable 5 dispatch, the current task, and whether the run advances beyond the first structured checkpoint (expected continuation: checkpoint -> automatic Codex review -> loop continues).",
+   "source_ref": "source-011-amendment.md#confirm",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "project-control/reports/M0-T113-activation-evidence.md (restart section)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-024-R270",
+   "text": "If routine discovery produces another ASK-stop: do NOT repeatedly restart. Stop safely and PROPOSE a bounded, SEPARATE control-plane correction that directs workers toward the existing in-scope file tools or explicitly documented safe commands; preserve all owner gates.",
+   "source_ref": "source-011-amendment.md#no-restart-loop",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 11
+  },
+  {
+   "id": "D-024-R271",
+   "text": "If such a correction invalidates the golden certification, recertify (R247 cycle) before resuming autonomous operation.",
+   "source_ref": "source-011-amendment.md#recertify",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-29"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 11
   }
  ]
 }
