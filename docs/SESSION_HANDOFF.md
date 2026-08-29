@@ -6,7 +6,7 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff — seq 26: M0-T112 ACCEPTED; activation package now PRESENTABLE (owner-gated)
+## Handoff — seq 27: M0-T112 ACCEPTED; activation package PRESENTED (activation still owner-gated)
 
 1. **Generated:** 2026-08-28 ~23:30 local (2026-08-29 UTC) · orchestrator session
    `session_01HfptKuEs3RDxaxsSHJjc7t` continuation (fresh context, same session id) at the
@@ -26,14 +26,15 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    Reports: `project-control/reports/M0-T112-*`. Residuals CARRIED not fixed (recert report §5):
    `_already_queued` digest normalization; unit-I `live_observation.py:296`; unit-K notes —
    any supervisor fix re-triggers R247 re-certification.
-4. **EXACT next action:** the **R187/R595 activation package is now PRESENTABLE**:
-   `project-control/reports/M0-T096-activation-package.md` (items 10–12 refreshed at M0-T112).
-   Presenting it for the owner's activation decision is an owner-facing step; ACTIVATION,
-   continuous mode, live 4.8 bridge, autostart install, and the Telegram live canary each stay
-   owner-only. The only remaining non-owner-gated campaign unit is **M0-T107** (unit J, plugin
-   portability plan; dep M0-T096 accepted; non-blocking, gates nothing) — claim it, or hold the
-   seam if the owner is reviewing the package. Recommend the owner weigh
-   residual-fix-then-recertify vs activate-then-fix at the activation decision.
+4. **EXACT next action:** the **R187/R595 activation package was PRESENTED 2026-08-29**
+   (owner-typed command at seq 26; campaign seq-27 record; CI 20/20 on acceptance tip
+   `88b909d`): `project-control/reports/M0-T096-activation-package.md`. Presentation granted
+   NOTHING — the owner decision set is pending (package item 14): activation decision,
+   autostart install, C1 live canary, natural-event graduation, ACL hardening; plus weighing
+   residual-fix-then-recertify vs activate-then-fix (any supervisor change re-triggers R247).
+   Do NOT re-present or nudge. The only remaining non-owner-gated campaign unit is
+   **M0-T107** (unit J, plugin portability plan; dep M0-T096 accepted; non-blocking) —
+   claim it unless the owner directs otherwise.
 5. **Mechanics proven this unit:** verification entries are FILLED IN PLACE into the
    capture-time skeleton (appending a duplicate trips validator c16 fail-closed); stamp
    `reviewed_manifest_sha256` from `project_control._task_git_identity` (accept refuses
@@ -65,11 +66,11 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
     docs/SESSION_HANDOFF.md, .claude/session-handoff-profile.md, and the §8 files. Run
     `python tools/project_control.py status` and `python -m
     tools.agent_supervisor.campaign_continuity --status`. Reconcile against live git + the
-    ledger (they win over prose). The Amendment-8 sequence is COMPLETE (M0-T112 accepted);
-    the R187/R595 activation package at project-control/reports/M0-T096-activation-package.md
-    is PRESENTABLE — surface it to the owner without activating anything. Unless the owner
-    directs otherwise, continue with M0-T107 (unit J, plugin portability plan) under the
-    standard controlled-task workflow. Do not merge PR #241 or any pre-existing PR;
+    ledger (they win over prose). The Amendment-8 sequence is COMPLETE (M0-T112 accepted)
+    and the R187/R595 activation package was already PRESENTED (seq 27) — do NOT re-present
+    it or prompt for the activation decision; the owner decision set in its item 14 is
+    pending. Unless the owner directs otherwise, continue with M0-T107 (unit J, plugin
+    portability plan) under the standard controlled-task workflow. Do not merge PR #241 or any pre-existing PR;
     supervisor stays SHADOW-ONLY; guards inside .claude/hooks are untouchable without G5.
     Stop for anything owner-only. The standard D-010 R113/R114 ~400k rotate-at-seam ceiling
     governs your session."*
