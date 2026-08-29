@@ -7,13 +7,21 @@ section-20 handoff the owner reads AT the activation decision — it grants
 nothing by existing. Recorded by the orchestrator at unit-I delivery
 (deliverable identity `5ff7f08`; gate/DCV identities in item 11).
 
-**Amendment-8 sequencing (D-024-R232/R247, captured 2026-08-28; refreshed at
-M0-T112):** both owner-required capabilities are ACCEPTED (M0-T110 Codex
-discussion channel; M0-T111 one-way Telegram sink), and M0-T112 has re-run the
-golden certification at the FINAL frozen post-addition identity and refreshed
-items 10–12 below (`M0-T112-recertification.md`). This package becomes
-presentable for the R187/R595 activation decision ONLY once M0-T112 itself is
-ACCEPTED through its gates; presentation and activation remain owner-gated.
+**Current sequencing (Amendment 12, D-024-R275/R276; supersedes the
+Amendment-8 note that stood here through M0-T112):** the Amendment-8 chain
+completed (M0-T110 + M0-T111 accepted; M0-T112 certified and accepted; the
+package was PRESENTED and the owner exercised the R187/R595 activation
+decision — Amendment 9, limited-auto). The first live run then stopped
+fail-closed and exposed a restart seam defect; the certified repair window
+(M0-T115 seam fix + M0-T114 residuals, both accepted) INVALIDATED the
+M0-T112 certification per R247, and **M0-T116 re-ran the golden certification
+at the post-repair frozen identity and refreshed items 10–12 below**
+(`M0-T116-recertification.md`). The remaining gate is the **R276 RESUME**:
+the authorized loop resumes ONLY once M0-T116 itself is ACCEPTED through its
+gates AND the complete activation preflight (manifest re-record,
+verify-controller, doctor, doctor --live, CI) passes again; on any failure
+the loop stays stopped. Nothing in this package activates or resumes
+anything by existing.
 
 ## 1. What was implemented (plain language)
 

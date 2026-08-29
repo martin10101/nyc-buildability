@@ -61,13 +61,18 @@ delta reviewer ran the full suite at the pre-T114 identity: 2,708 passed + 2 ski
   seam. Prior tips `723f1d8` (T114 resubmit) and `29fc1e2` (T115 resubmit) were both
   20/20 green.
 
-## 4. Activation-package refresh (REFRESH-ONLY, items 10–12, second refresh)
+## 4. Activation-package refresh (items 10–12 + the top sequencing banner)
 
 Items 10–12 of `M0-T096-activation-package.md` now cite the post-repair identity and this
-re-certification; the Amendment-12 sequencing note records that the R276 resume conditions
-apply. The package still activates nothing; the R187/R595 activation DECISION was already
-exercised by the owner (Amendment 9) — what remains gated by THIS unit's acceptance is the
-R276 RESUME of the authorized loop.
+re-certification. **Correction round (G3 MAJOR-1):** the initial refresh left the TOP
+sequencing banner at its Amendment-8/M0-T112 state, which — with M0-T112 now accepted —
+read as "already presentable" on an invalidated certification and contradicted the
+refreshed item 11. The banner is now rewritten to the Amendment-12 state: it records the
+completed Amendment-8 chain, the owner's already-exercised R187/R595 activation decision
+(Amendment 9), the R247 invalidation by the repair window, and gates the **R276 RESUME**
+on THIS unit's acceptance plus the complete activation preflight. The package still
+activates nothing; what remains gated by this unit's acceptance is the R276 RESUME of the
+authorized loop.
 
 ## 5. Residuals and known characteristics of the certified identity
 
