@@ -1,63 +1,64 @@
 {
- "task_id": "M0-T116",
- "title": "D-024 unit P: second golden re-certification at the post-repair frozen final identity (M0-T112 pattern; R275)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Amendment 12 (R275, instantiating R247/R271): after M0-T115 (broker/probe seam fix) and M0-T114 (carried residuals) are BOTH accepted, re-run the full golden certification at the ONE frozen post-repair identity: the FULL golden-run pack (test_agent_supervisor_golden_run.py), the affected packs (command-authority, recovery-probes, telegram L-pack, operator-channel, codex-channel K-pack, adversarial/endurance/phase1, reviewer), the WHOLE supervisor suite (freeze baseline), and CI on the pushed SHA; refresh the activation package identity/evidence items (10-12) REFRESH-ONLY. Only after this unit is accepted may M0-T107 limited-auto operation resume, and only after manifest re-record + verify-controller + doctor + doctor --live + the complete activation preflight all pass (R276); on any failure remain stopped and report - never bypass a gate. Supervisor-freeze qualifying evidence: D-024-R275.",
- "business_reason": "Any supervisor change after a golden-run identity invalidates the affected certification (R247); the owner ordered one recertification window covering both repair units (R272/R275).",
- "inputs": [],
- "outputs": [
-  "re-run golden certification evidence at the post-repair frozen identity",
-  "project-control/reports/M0-T116-recertification.md",
-  "refreshed M0-T096-activation-package.md identity/evidence items"
- ],
- "dependencies": [
-  "M0-T115",
-  "M0-T114"
- ],
- "allowed_paths": [
-  "tools/test_agent_supervisor_golden_run.py",
-  "project-control/reports/M0-T116-recertification.md",
-  "project-control/reports/M0-T096-activation-package.md"
- ],
- "forbidden_paths": [
-  ".claude",
-  "apps",
-  "packages",
-  "services",
-  "supabase",
-  "project-control/tasks",
-  "tools/project_control.py",
-  "tools/directive_registry.py",
-  "tools/validate_directive_compliance.py"
- ],
- "acceptance_scenarios": [],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-29T06:02:51.159891+00:00",
- "updated_at": "2026-08-29T06:02:51.319582+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-29T06:02:51.159891+00:00"
+  "task_id": "M0-T116",
+  "title": "D-024 unit P: second golden re-certification at the post-repair frozen final identity (M0-T112 pattern; R275)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 12 (R275, instantiating R247/R271): after M0-T115 (broker/probe seam fix) and M0-T114 (carried residuals) are BOTH accepted, re-run the full golden certification at the ONE frozen post-repair identity: the FULL golden-run pack (test_agent_supervisor_golden_run.py), the affected packs (command-authority, recovery-probes, telegram L-pack, operator-channel, codex-channel K-pack, adversarial/endurance/phase1, reviewer), the WHOLE supervisor suite (freeze baseline), and CI on the pushed SHA; refresh the activation package identity/evidence items (10-12) REFRESH-ONLY. Only after this unit is accepted may M0-T107 limited-auto operation resume, and only after manifest re-record + verify-controller + doctor + doctor --live + the complete activation preflight all pass (R276); on any failure remain stopped and report - never bypass a gate. Supervisor-freeze qualifying evidence: D-024-R275.",
+  "business_reason": "Any supervisor change after a golden-run identity invalidates the affected certification (R247); the owner ordered one recertification window covering both repair units (R272/R275).",
+  "inputs": [],
+  "outputs": [
+    "re-run golden certification evidence at the post-repair frozen identity",
+    "project-control/reports/M0-T116-recertification.md",
+    "refreshed M0-T096-activation-package.md identity/evidence items"
+  ],
+  "dependencies": [
+    "M0-T115",
+    "M0-T114"
+  ],
+  "allowed_paths": [
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T116-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/tasks",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T06:02:51.159891+00:00",
+  "updated_at": "2026-08-29T07:18:53.379367+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T06:02:51.159891+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
 }

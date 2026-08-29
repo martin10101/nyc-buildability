@@ -140,35 +140,41 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (refreshed at M0-T112 — the certified identity)
+## 10. Identity and evidence (second refresh at M0-T116 — the post-repair certified identity)
 
-* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-addition
-  identity:** supervisor material identity last moved at **`8574c58`**
-  (unit-I system `5ff7f08` + corrections `635fac5`, plus accepted unit K
-  `/loop-codex` `ba25516`+`c8b38ba`, plus accepted unit L Telegram sink
-  `c9b3b9a` + corrections `8574c58`); `tools/agent_supervisor` tree
-  `132e698c15a9f9412d53905e45ce0ae0724abe15`; golden-run pack blob
-  `d2946392f1c1` (1,040 ln / 40 tests, unchanged by M0-T112 — re-run only).
-* Re-certification evidence at that identity (M0-T112, run head `a4f94b7`):
-  golden-run pack **40/40**; affected packs (operator/codex/telegram/
-  adversarial/endurance/phase1/reviewer) **493/493**; WHOLE supervisor suite
-  **2,694 passed, 2 skipped, 0 failed** (2,696 collected; +4 vs the prior
-  baseline = exactly the four accepted L-pack correction tests). Full detail:
-  `M0-T112-recertification.md`. CI on the pushed certification tip is the
-  confirming whole-suite run (SHA + 20/20 pinned in the M0-T112 progress_log).
+* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-repair
+  identity:** supervisor material identity last moved at **`f89aa29`**
+  (the M0-T112-certified `8574c58` system, plus accepted M0-T115 seam repair
+  `91664bb`+`d89d740` — owner answer paths resolve their ask rows; shared
+  read-time reconciliation at the S11.5 restart probe AND the rotation-seam
+  feed — plus accepted M0-T114 residual fixes `f89aa29`+`a22e34a`);
+  `tools/agent_supervisor` tree `7487901cea729f5c254f98c8f7dcf859eb64e2c5`;
+  golden pack blob `cf03caaa` (41 tests — the 40 certified scenarios
+  unchanged plus M0-T114's additive register test; re-run only at M0-T116).
+* Re-certification evidence at that identity (M0-T116, run head `c67830f`):
+  golden-run pack **41/41**; affected packs (command-authority,
+  recovery-probes, turnover-live-seam, telegram, operator, codex,
+  adversarial, endurance, phase1, reviewer) **705/705**; WHOLE supervisor
+  suite **2,710 passed, 2 skipped, 0 failed** (2,712 collected — exact chain:
+  2,696 M0-T112 baseline + 14 M0-T115 tests + 2 M0-T114 tests). Full detail:
+  `M0-T116-recertification.md` (prior cycle: `M0-T112-recertification.md`).
+  CI on the pushed certification tip is the confirming whole-suite run
+  (SHA + 20/20 pinned in the M0-T116 progress_log).
 * PR/check links: the campaign branch pushes run the standard 20-check CI; the
   supervisor-bridge job is the whole-suite confirmation.
 
-## 11. Independent review verdicts (refreshed at M0-T112)
+## 11. Independent review verdicts (second refresh at M0-T116)
 
 Each unit carries its own 4-reviewer wave (G3 code-reviewer, G4 qa-engineer,
 G5 security-reviewer, DCV directive-compliance-verifier) against ONE frozen
-identity: unit I (`project-control/gates/M0-T096-G*.json` + reports), unit K
-(`M0-T110-*`, DCV 13/13), unit L (`M0-T111-*`, DCV 10/10, all-PASS delta
-re-attestations at `8574c58`), and the re-certification unit itself
-(`M0-T112-*`, recorded at its gate wave — the acceptance this package's
-presentability waits on). A later identity change invalidates the affected
-verdicts (rework→resubmit; R247 re-triggers re-certification).
+identity: unit I (`M0-T096-*`), unit K (`M0-T110-*`, DCV 13/13), unit L
+(`M0-T111-*`, DCV 10/10), the first re-certification (`M0-T112-*`, DCV 6/6,
+accepted), the seam repair (`M0-T115-*`, DCV 3/3 — one G3 BLOCKER found and
+fixed in a consolidated correction round, then four delta-PASS attestations),
+the residual fixes (`M0-T114-*`, DCV 3/3, four PASS + four delta-PASS), and
+the second re-certification itself (`M0-T116-*`, recorded at its gate wave —
+the acceptance the R276 resume waits on). A later identity change invalidates
+the affected verdicts (rework→resubmit; R247 re-triggers re-certification).
 
 ## 12. Golden-run evidence (the observed complete loop)
 
@@ -190,6 +196,14 @@ FINAL frozen post-addition identity (item 10) — the observed complete loop,
 rotation crossing, restart resume, and fail-closed fault scenarios all hold
 with the accepted Codex-channel and Telegram-sink additions in place
 (`M0-T112-recertification.md` §3).
+**Second refresh at M0-T116:** after the first live limited-auto run exposed
+and the certified process repaired the deny→restart seam defect (M0-T115) and
+the carried residuals (M0-T114), the pack (now 41 tests) was re-run **41/41**
+at the post-repair identity — the certified scenarios are byte-unchanged and
+all hold; the live run's fail-closed stop itself validated the design (ASK
+never AUTO; a missing checkpoint never read as success). Resume of the
+authorized loop is gated on M0-T116 acceptance + the full R276 preflight
+(`M0-T116-recertification.md`).
 
 ## 13. Clean-session launch (proven shape)
 
