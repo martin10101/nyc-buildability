@@ -46,3 +46,21 @@ All five applicable rows PASS on primary evidence I reproduced myself.
 **DCV VERDICT: PASS at d1b05bb**
 
 (Note for the orchestrator: I did not run any `project_control.py`/git/gh write command; this report is returned for you to save verbatim and to record the gate. Two background stdlib harnesses — `test_project_control.py`, `test_directive_compliance.py` — were still running at report time; if you want their exit codes recorded, capture them from the launched jobs, but neither bears on the M0-T118 requirement verdicts above.)
+
+---
+
+## ADDENDUM (verifier follow-up, saved verbatim by the orchestrator)
+
+The last harness is confirmed: `test_directive_compliance.py` → **Ran 120 tests, OK (exit 0)**.
+
+All four required harnesses now pass — nothing changes the M0-T118 verdict. Final consolidated harness/verification status:
+
+- `python tools/validate_directive_compliance.py --check` → exit 0
+- `python tools/test_directive_compliance.py` → 120 tests OK (exit 0)
+- `python tools/test_project_control.py` → 23/23 groups OK (exit 0)
+- `python tools/test_directive_reminder.py` → 12/12 OK (exit 0)
+- `python tools/modularity_check.py --check` → exit 0 (touched modules absent from warnings)
+- Full supervisor suite (verifier's own run) → 2724 passed, 2 skipped, 0 failed; 2726 collected
+- Four-module fixture suite → 169 passed, 0 skipped; the 4 live drift teeth explicitly PASSED at 2.1.251
+
+**DCV VERDICT (unchanged): PASS at d1b05bb** — all five applicable rows PASS; gates G0/G2/G3/G4/G5 PASS at content byte-identical to `d1b05bb`. (This addendum arrived after M0-T118 was accepted on the recorded 5/5 verdict; it strengthens, and does not alter, that record.)
