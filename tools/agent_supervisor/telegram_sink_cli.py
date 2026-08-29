@@ -14,7 +14,12 @@ import argparse
 from typing import Any, Callable
 
 from . import refusals
-from .notifications import DELIVERED_KEY, QUEUE_KEY, build_notification
+from .notifications import (
+    DELIVERED_KEY,
+    QUEUE_KEY,
+    NotificationQueue,
+    build_notification,
+)
 from .operator_channel_cli import emit_payload, open_runtime
 from .start_gate import emit_refusal
 from .telegram_sink import (
@@ -22,7 +27,6 @@ from .telegram_sink import (
     DEDUP_KEY,
     LIVE_CANARY_COMMAND,
     TOKEN_ENV,
-    NotificationQueue,
     TelegramError,
     TelegramSink,
     build_real_transport,

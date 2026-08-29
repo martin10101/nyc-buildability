@@ -155,3 +155,30 @@ unit-G harness base).
   `telegram canary` without the owner flag → typed `live_send_owner_gated` refusal
   naming the exact command.
 - **CI on the pushed deliverable SHA:** recorded in the progress log at the submit seam.
+
+## 7. Consolidated correction round (gate wave at `4ce8131`; all four verdicts PASS)
+
+Reviewer returns: **G3 PASS** (MINOR-1 + INFO-1..5), **G4 PASS** (MINOR-1..5 + INFO-1..3),
+**G5 PASS** (MINOR-1/MINOR-2 + ADVISORY-1/2 + INFO-1/2), **DCV PASS 10/10** (no material
+discrepancies). Verbatim reports: `M0-T111-{G3-code-review,G4-qa,G5-security,DCV}.md`.
+ONE consolidated round applied every actionable item:
+
+| Finding | Disposition |
+|---|---|
+| G3 MINOR-1 (CLI imports `NotificationQueue` via a re-export) | **FIXED** — imported from `.notifications` alongside the other symbols. |
+| G5 MINOR-2 / G4 INFO-1 (identifier fields transmitted unredacted) | **FIXED** — `compose_text` runs `task_id`/`run_id` through `redact_text`; new test + mutant M17 KILLED. |
+| G3 INFO-3 (no hard total outbound bound) | **FIXED** — `MAX_OUTBOUND_CHARS = 3500` cap with a visible truncation marker; mutant M18 KILLED. |
+| G5 MINOR-1 / G4 MINOR-4 (one-way scan dead/evadable checks) | **FIXED** — `functional_text` now includes `ast.Import`/`ast.ImportFrom` module+alias names; exec/eval/subprocess/socket/http.client/asyncio matched as EXACT identifiers (paren-suffixed needles removed as dead; bare substrings would false-positive on the honest "no … execution" strings). |
+| G4 MINOR-1 (authorized CLI-canary glue untested) | **FIXED** — `test_cli_canary_with_flag_but_no_env_queues_without_a_send`: env cleared, flag passed → `telegram_not_configured`, still_queued, attempts 0, no network. |
+| G4 MINOR-2 (dedup `task_id` participation unpinned) | **FIXED** — same condition+summary, different task → both delivered; mutant M14 (digest drops task_id) KILLED. |
+| G4 MINOR-3 (risk map only key-checked) | **FIXED** — exact `CONDITION_RISK` map equality asserted; mutant M15 (value swap) KILLED. |
+| G4 MINOR-5 (L2.2 asserted a bound, not redaction) | **FIXED** — a pragma'd fake token in the summary is asserted absent from the sent text. |
+| G5 ADVISORY-1 / G3 INFO-2 / G4 INFO-3 (queue growth under sustained outage) | **FIXED (hardened in-module)** — `notify_condition` now checks the pending queue and returns a visible `already_queued` outcome instead of re-enqueueing an identical item (at-least-once preserved — the queued item still delivers); new test proves depth stays 1 under repeated failing emissions; mutant M16 KILLED. The frozen S13.10 queue itself is untouched. |
+| G4 INFO-2 (CODEX_HOLD_KEY branch, timeout forwarding untested) | **FIXED** — L1.3 exercises both quota source keys (one row per source, per G3 INFO-5's reading); L5.1 asserts the sink forwards its timeout to the transport. |
+| G5 ADVISORY-2 (entry-point raise framing) | **NO CODE CHANGE** — documented: `deliver` never raises; `notify_condition` raises only the typed programming-error guard (`unknown_condition`), which the seam caller must respect. |
+| G3 INFO-1 (dedup scope excludes run_id/checkpoint) / INFO-4 (no inter-retry backoff) / INFO-5 (two quota rows) / G5 INFO-1 (redirect posture) | **ACCEPTED AS-IS** — documented design choices / inherited accepted behavior. |
+
+**Corrected-identity evidence:** L-pack **35/35** (31 + 4 new); affected packs 302/302
+(L + adversarial + endurance + phase1); mutation now **18/18 KILLED** (M14–M18 added);
+ruff clean; secret scans PASS (two new pragma'd fake sentinels); modularity exit 0;
+CI on the resubmitted SHA recorded in the progress log.

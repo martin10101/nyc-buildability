@@ -42,12 +42,14 @@ from typing import Any, Callable, Mapping
 from .codex_channel import ATTENTION_KEY_PREFIX
 from .models import digest_of, to_utc_iso
 from .notifications import (
+    QUEUE_KEY,
     Notification,
     NotificationError,
     NotificationQueue,
     NotificationSink,
     build_notification,
 )
+from .redaction import redact_text
 from .resume_scheduler import CODEX_HOLD_KEY, LIMIT_RECORD_KEY
 
 #: The closed R241 condition vocabulary. Anything else is a typed refusal -
@@ -83,6 +85,9 @@ TRANSPORT_TIMEOUT_SECONDS = 10.0
 #: Durable dedup register: FIFO-trimmed digest list (R244 deduplication).
 DEDUP_KEY = "telegram_dedup"
 DEDUP_MAX_ENTRIES = 64
+#: Hard total bound on one outbound message (Telegram caps at 4096; staying
+#: well under keeps the truncation marker visible).
+MAX_OUTBOUND_CHARS = 3_500
 
 #: The owner's local secret mechanism (R243) - environment only, never a
 #: repository file, never discovered from anywhere else.
@@ -200,13 +205,20 @@ class TelegramSink(NotificationSink):
         self.last_attempts = 0
 
     def compose_text(self, notification: Notification) -> str:
-        """The outbound text: view-only fields only (already redacted and
-        bounded by the S13.10 builder); nothing else can ride along."""
-        return (f"[{notification.risk_class}] {notification.reason}\n"
-                f"task: {notification.task_id or '-'}  "
-                f"run: {notification.run_id or '-'}\n"
+        """The outbound text: view-only fields only. The S13.10 builder has
+        already redacted/bounded reason/summary/where_to_review; the identifier
+        fields ride through the builder unredacted (G5 MINOR-2, gate round),
+        so they are redacted HERE, and the whole message carries a hard total
+        bound with a visible truncation marker."""
+        task = str(redact_text(notification.task_id or "-").value)
+        run = str(redact_text(notification.run_id or "-").value)
+        text = (f"[{notification.risk_class}] {notification.reason}\n"
+                f"task: {task}  run: {run}\n"
                 f"{notification.summary}\n"
                 f"review: {notification.where_to_review}")
+        if len(text) > MAX_OUTBOUND_CHARS:
+            text = text[:MAX_OUTBOUND_CHARS - 15].rstrip() + " ...[truncated]"
+        return text
 
     def deliver(self, notification: Notification) -> tuple[bool, str]:
         """Bounded attempts; NEVER raises (R244 failure isolation)."""
@@ -239,6 +251,7 @@ class NotifyOutcome:
 
     condition: str
     deduplicated: bool = False
+    already_queued: bool = False
     delivered: bool = False
     still_queued: bool = False
     attempts: int = 0
@@ -258,6 +271,19 @@ def _dedup_digest(condition: str, task_id: str, summary: str) -> str:
 def _dedup_seen(journal: Any, digest: str) -> bool:
     entries = journal.get_state(DEDUP_KEY, []) or []
     return any(e.get("digest") == digest for e in entries)
+
+
+def _already_queued(journal: Any, digest: str) -> bool:
+    """True when an identical (condition, task, summary) item is already
+    sitting in the durable queue awaiting delivery. Bounds queue growth
+    under a sustained outage (G5 ADVISORY-1, gate round) without touching
+    the frozen S13.10 queue itself — at-least-once is preserved because the
+    queued item is still there to deliver."""
+    for item in journal.get_state(QUEUE_KEY, []) or []:
+        if _dedup_digest(item.get("reason", ""), item.get("task_id", ""),
+                         item.get("summary", "")) == digest:
+            return True
+    return False
 
 
 def _dedup_record(journal: Any, digest: str) -> None:
@@ -292,6 +318,15 @@ def notify_condition(journal: Any, audit: Any, *, condition: str,
         return NotifyOutcome(condition=condition, deduplicated=True,
                              detail="identical notification already sent; "
                                     "deduplicated (R244)")
+    if _already_queued(journal, digest):
+        if audit is not None:
+            audit.append("telegram_already_queued",
+                         detail={"condition": condition, "digest": digest})
+        return NotifyOutcome(condition=condition, already_queued=True,
+                             still_queued=True,
+                             detail="an identical item is already queued "
+                                    "awaiting delivery; not re-enqueued "
+                                    "(bounded queue growth, R244)")
     try:
         notification = build_notification(
             run_id=run_id, task_id=task_id, checkpoint_id=checkpoint_id,

@@ -20,6 +20,7 @@ import json
 import pathlib
 import sys
 import unittest
+from unittest import mock
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent
@@ -34,6 +35,7 @@ from tools.agent_supervisor.notifications import (  # noqa: E402
     QUEUE_KEY,
 )
 from tools.agent_supervisor.resume_scheduler import (  # noqa: E402
+    CODEX_HOLD_KEY,
     LIMIT_RECORD_KEY,
 )
 from tools.test_agent_supervisor_operator_channel import (  # noqa: E402
@@ -99,7 +101,18 @@ class TelegramBase(OperatorChannelBase):
 class L1Conditions(TelegramBase):
     def test_all_eight_conditions_accepted_with_fixed_risk_classes(self) -> None:
         self.assertEqual(len(ts.CONDITIONS), 8)
-        self.assertEqual(set(ts.CONDITION_RISK), set(ts.CONDITIONS))
+        # The EXACT fixed map (G4 MINOR-3): a within-RISK_CLASSES swap is a
+        # policy change and must fail here.
+        self.assertEqual(ts.CONDITION_RISK, {
+            "stop_for_owner": "ask",
+            "approval_waiting": "ask",
+            "breaker_open_stuck": "notify",
+            "repeated_ci_failure": "notify",
+            "unrecovered_controller_failure": "synchronous_stop",
+            "quota_refusal_hold": "notify",
+            "golden_run_complete": "info",
+            "campaign_complete": "info",
+        })
         journal = self.journal()
         try:
             for i, condition in enumerate(ts.CONDITIONS):
@@ -137,10 +150,13 @@ class L1Conditions(TelegramBase):
                 "disposition": "URGENT_PAUSE", "actuated": False,
                 "message_id": "cxm_paused01"})
             journal.set_state(LIMIT_RECORD_KEY, {"kind": "usage_limit"})
+            journal.set_state(CODEX_HOLD_KEY, {"kind": "rate_limit_hold"})
             before = dict(journal.all_state())
             found = ts.discover_conditions(journal)
             self.assertEqual(sorted(f["condition"] for f in found),
-                             ["quota_refusal_hold", "stop_for_owner"])
+                             ["quota_refusal_hold", "quota_refusal_hold",
+                              "stop_for_owner"],
+                             msg="one row per durable quota source")
             stop_rows = [f for f in found
                          if f["condition"] == "stop_for_owner"]
             self.assertEqual([f["reference"] for f in stop_rows],
@@ -181,15 +197,39 @@ class L2ViewOnly(TelegramBase):
         journal = self.journal()
         try:
             capture: list = []
+            secret = "ghp_FAKEsummaryLeakSentinel0123456789abcd"  # gitleaks:allow secretscan:allow fake token proving compose-path redaction
             outcome = self.notify(
                 journal, self.sink(fake_transport(capture=capture)),
-                summary="x" * 2_000)
+                summary=f"suite done; ignore {secret} " + "x" * 2_000)
             self.assertTrue(outcome.delivered)
             sent_text = capture[0]["text"]
             self.assertLess(len(sent_text), 700,
                             msg="outbound text is bounded by the builder")
+            self.assertNotIn(secret, sent_text,
+                             msg="the compose path is redacted (G4 MINOR-5)")
         finally:
             journal.close()
+
+    def test_identifier_fields_are_redacted_and_the_total_is_bounded(
+            self) -> None:
+        # G5 MINOR-2 + G3 INFO-3 (gate round): task_id/run_id ride through
+        # the S13.10 builder unredacted, so compose_text redacts them; the
+        # whole outbound message carries a hard cap.
+        secret = "ghp_FAKEtaskidLeakSentinel9876543210zyxwvu"  # gitleaks:allow secretscan:allow fake token proving identifier-field redaction
+        notification = ts.build_notification(
+            run_id=f"run-{secret}", task_id=f"task-{secret}",
+            checkpoint_id="", reason="golden_run_complete",
+            risk_class="info", summary="ok",
+            where_to_review="project-control/reports")
+        sink = self.sink(fake_transport())
+        text = sink.compose_text(notification)
+        self.assertNotIn(secret, text)
+        import dataclasses
+        long_note = dataclasses.replace(notification,
+                                        where_to_review="r" * 5_000)
+        self.assertLessEqual(len(sink.compose_text(long_note)),
+                             ts.MAX_OUTBOUND_CHARS)
+        self.assertIn("[truncated]", sink.compose_text(long_note))
 
 
 # --------------------------------------------------------------------------
@@ -286,19 +326,33 @@ class L4OneWay(unittest.TestCase):
                 parts.append(node.id)
             elif isinstance(node, ast.Attribute):
                 parts.append(node.attr)
+            elif isinstance(node, ast.Import):
+                parts.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                parts.append(node.module or "")
+                parts.extend(alias.name for alias in node.names)
             elif isinstance(node, ast.Constant) and \
                     isinstance(node.value, str) and id(node) not in docstrings:
                 parts.append(node.value)
         return "\n".join(parts).lower()
 
     def test_no_receive_or_command_surface_exists(self) -> None:
+        # G5 MINOR-1 / G4 MINOR-4 hardening: imports ride the functional
+        # blob (so `from subprocess import run` is caught); exec/eval and
+        # module names are matched as EXACT identifiers (call parens never
+        # survive AST extraction, and bare substrings would false-positive
+        # on the honest "no ... execution" display strings).
         for path in (SINK_SOURCE, CLI_SOURCE):
             functional = self.functional_text(path)
             for forbidden in ("getupdates", "webhook", "setwebhook",
-                              "getme", "long_poll", "subprocess", "exec(",
-                              "eval("):
+                              "getme", "long_poll"):
                 self.assertNotIn(forbidden, functional,
                                  msg=f"{path.name} must not carry {forbidden}")
+            tokens = set(functional.splitlines())
+            for identifier in ("exec", "eval", "subprocess", "socket",
+                               "http.client", "asyncio"):
+                self.assertNotIn(identifier, tokens,
+                                 msg=f"{path.name} must not use {identifier}")
         cli_source = CLI_SOURCE.read_text(encoding="utf-8")
         self.assertIn("no Telegram approvals, merges, execution", cli_source)
         self.assertIn("sendmessage",
@@ -324,6 +378,9 @@ class L5Isolation(TelegramBase):
             self.assertTrue(outcome.still_queued)
             self.assertEqual(outcome.attempts, ts.MAX_DELIVERY_ATTEMPTS)
             self.assertEqual(len(calls), ts.MAX_DELIVERY_ATTEMPTS)
+            self.assertEqual(calls[0]["timeout"], 5.0,
+                             msg="the sink forwards its timeout to the "
+                                 "transport (G4 INFO-2)")
             self.assertEqual(len(journal.get_state(QUEUE_KEY, [])), 1)
         finally:
             journal.close()
@@ -363,6 +420,48 @@ class L5Isolation(TelegramBase):
             changed = self.notify(journal, self.sink(fake_transport()),
                                   summary="a DIFFERENT durable fact")
             self.assertTrue(changed.delivered)
+        finally:
+            journal.close()
+
+    def test_the_same_condition_for_a_different_task_is_not_deduplicated(
+            self) -> None:
+        # G4 MINOR-2: task_id participates in the dedup key - approval
+        # waiting on M0-T111 and on M0-T112 are DIFFERENT facts.
+        journal = self.journal()
+        try:
+            a = self.notify(journal, self.sink(fake_transport()),
+                            condition="approval_waiting",
+                            summary="a gate awaits the owner",
+                            task_id="M0-T111")
+            b = self.notify(journal, self.sink(fake_transport()),
+                            condition="approval_waiting",
+                            summary="a gate awaits the owner",
+                            task_id="M0-T112")
+            self.assertTrue(a.delivered)
+            self.assertTrue(b.delivered)
+            self.assertFalse(b.deduplicated)
+            self.assertEqual(len(journal.get_state(DELIVERED_KEY, [])), 2)
+        finally:
+            journal.close()
+
+    def test_a_failing_identical_condition_does_not_grow_the_queue(
+            self) -> None:
+        # G5 ADVISORY-1 (gate round): during an outage, re-emitting the same
+        # (condition, task, summary) does NOT re-enqueue - the one queued
+        # item keeps waiting (at-least-once preserved, growth bounded).
+        journal = self.journal()
+        try:
+            first = self.notify(journal, self.sink(fake_transport(
+                fail_first=99)))
+            self.assertFalse(first.delivered)
+            self.assertEqual(len(journal.get_state(QUEUE_KEY, [])), 1)
+            for _ in range(4):
+                repeat = self.notify(journal, self.sink(fake_transport(
+                    fail_first=99)))
+                self.assertTrue(repeat.already_queued)
+                self.assertTrue(repeat.still_queued)
+            self.assertEqual(len(journal.get_state(QUEUE_KEY, [])), 1,
+                             msg="queue depth stays bounded under outage")
         finally:
             journal.close()
 
@@ -420,6 +519,26 @@ class L6OwnerGatedCanary(TelegramBase):
         payload = json.loads(out)
         self.assertEqual(payload["reason_code"], "live_send_owner_gated")
         self.assertIn(ts.LIVE_CANARY_COMMAND, payload["message"])
+
+    def test_cli_canary_with_flag_but_no_env_queues_without_a_send(
+            self) -> None:
+        # G4 MINOR-1: the authorized CLI glue, exercised safely - with the
+        # env vars guaranteed absent the sink refuses before any network
+        # call, the canary item stays queued, and the loop is unaffected.
+        import os
+        env = {k: v for k, v in os.environ.items()
+               if k not in (ts.TOKEN_ENV, ts.CHAT_ID_ENV)}
+        with mock.patch.dict("os.environ", env, clear=True):
+            code, out, _ = self.cli_run(
+                "telegram", "canary", "--live-canary-authorized-by-owner",
+                "--json")
+        self.assertEqual(code, 0)
+        payload = json.loads(out)
+        self.assertFalse(payload["delivered"])
+        self.assertTrue(payload["still_queued"])
+        self.assertIn("telegram_not_configured", payload["detail"])
+        self.assertEqual(payload["attempts"], 0,
+                         msg="no transport attempt was made")
 
     def test_authorized_transport_shape_without_a_socket(self) -> None:
         captured: dict = {}
