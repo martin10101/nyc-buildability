@@ -6,85 +6,85 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff — seq 24: M0-T110 (unit K) ACCEPTED; NEXT = M0-T111 (Telegram sink)
+## Handoff — seq 25: M0-T110 AND M0-T111 ACCEPTED; NEXT = M0-T112 (final golden re-certification)
 
-1. **Generated:** 2026-08-28 ~22:10Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
-   (the seq-23 successor, same session as the M0-T110 unit). **Seam reason:** task acceptance
-   (LEAN trigger e). **Sub-agents in flight:** none (all four reviewers — G3 code-reviewer,
-   G4 qa-engineer, G5 security-reviewer, DCV — completed reviews AND delta re-attestations;
-   reports committed verbatim).
+1. **Generated:** 2026-08-28 ~23:30Z · orchestrator session `session_01HfptKuEs3RDxaxsSHJjc7t`
+   (this single session claimed and accepted BOTH Amendment-8 capability units). **Seam
+   reason:** task acceptance (LEAN trigger e). **Sub-agents in flight:** none (eight reviewer
+   assignments — 4 per unit — all completed reviews AND delta re-attestations; reports
+   committed verbatim).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop` (campaign seq **24**), accept-time head `79098ae`.
-3. **M0-T110 (unit K) = ACCEPTED** (deliverable `ba25516`, corrections `c8b38ba`, gate wave
-   `237be83`, DCV entry at `79098ae`, manifest `0c97eb77`): `/loop-codex` five-subverb channel —
-   `codex_channel.py` (state_kv CAS threads incl. concurrent-writer single-winner; R236 bounded
-   turn packet with hard byte ceiling + visible trimming + typed refusal; R239 closed six
-   dispositions, NO actuation path, attention rows `actuated:False`; R240 owner-gated promotion
-   rows `authorizes_nothing:true`) + `codex_channel_cli.py` + reply schema (disposition enum) +
-   interceptor extension (exact-anchored; `_codex_argv` fail-closed; correction-round `_CODEX_ID`
-   pre-argv id guard) + user-only skill (honest R233: queued-until-turn-end, NOT `/btw`, 45 s
-   interception cap, second terminal = real-time; zero-context canary pending-owner-C1). K-pack
-   56/56; supervisor suite 2654/0 (2 skipped); non-supervisor 559/1; mutation 16/16 (two
-   first-round survivors honestly closed); CI 20/20 twice; ONE consolidated correction round with
-   all four SendMessage delta re-attestations PASS; G0/G2/G3/G4/G5 + DCV 13/13. Reports:
-   `project-control/reports/M0-T110-{codex-channel,G0-readiness,G2-self-check,G3-code-review,
-   G4-qa,G5-security,DCV}{,-delta}.md` + evidence map.
-   **Pinned immaterial residuals:** report line count 632 vs 634 (DCV-flagged, accuracy-only);
-   boundary queue write-only/inert this unit (reader wiring = later unit); unit-I
-   `live_observation.py:296` raw `source_record_key` one-liner still open.
-4. **EXACT next action:** claim M0-T111 (deps: M0-T096 accepted) — Amendment-8 unit L, one-way
-   Telegram sink; applicable rows R231/R232/R241–R245/R246/R248/R249 (run `evaluate_task_refs`
-   at claim to confirm). Bounded sink for EXACTLY the eight conditions (R241); one-way ONLY
-   (R242); **bot token + chat id only in an approved local secret mechanism — never
-   Git/packets/logs/telemetry/reports/messages (R243)**; redaction + bounded retries + dedup +
-   failure isolation so Telegram downtime never stops the loop (R244); reuse
-   `notifications.NotificationSink` + `circuit_breakers`/`outage_policy` patterns; stdlib HTTP
-   only — NO new dependency; **the real send is an owner-gated exact-command canary (R245):
-   build the path + fake-transport proof, never fire live**. Prove-first → implement →
-   4-reviewer gates → DCV (10 rows) → accept. Then M0-T112 (golden re-certification at the
-   FINAL frozen post-addition identity, R247) BEFORE any R187/R595 activation-package
-   presentation; M0-T107 trails non-blocking.
-5. **Mechanics (worked this session):** ONE consolidated correction round + SendMessage delta
-   re-attestations from the SAME four reviewers; rework→resubmit moves identity; commit reports
-   BEFORE recording gates; gate `--sha` == live HEAD; verification entry REPLACES the pending
-   placeholder in place and must be stamped at the **accept-time HEAD** (accept fails closed on
-   a stale reviewed_sha; restamp is fine — the material manifest is invariant across
-   control-plane commits); registry JSON LF; `modularity_check` after `git add`; gitleaks needs
-   its own `gitleaks:allow` besides `secretscan:allow` on fake tokens; a follow-up push
-   auto-cancels the prior CI run (judge the tip).
-6. **Environment:** long background python runs are externally killed — foreground chunks
-   (26-file non-supervisor run in one pytest invocation exceeded 30 min; 3 chunks pass);
-   never mutate during a live suite.
+   `control/D-024-fable-codex-loop` (campaign seq **25**), accept-time head `42e4e58`.
+3. **M0-T110 (unit K, /loop-codex) = ACCEPTED** (deliverable `ba25516`+`c8b38ba`, DCV 13/13 at
+   `79098ae`, manifest `0c97eb77`) — see seq-24 handoff in git history for detail.
+   **M0-T111 (unit L, Telegram sink) = ACCEPTED** (deliverable `c9b3b9a`, corrections
+   `8574c58`, gate wave `f263ab4`, DCV 10/10 at `42e4e58`, manifest `925e1901`): one-way
+   sink over the frozen S13.10 boundary — closed 8-condition vocabulary; env-only secrets
+   (`SUPERVISOR_TELEGRAM_BOT_TOKEN`/`CHAT_ID`), repr-redacted, status-bucket-only errors;
+   owner-gated live send (`--live-canary-authorized-by-owner`, NEVER fired, no socket in any
+   test); bounded retries + FIFO dedup + `already_queued` outage suppression + 3500-char
+   outbound cap + identifier redaction; read-only discovery of the two durable sources.
+   L-pack 35/35; mutation 18/18; suites supervisor 2690/0 (2 skipped) + non-supervisor 559/1;
+   CI 20/20 twice; one consolidated correction round; all four delta re-attestations PASS.
+   Reports: `project-control/reports/M0-T111-*`.
+   **Pinned residuals (non-blocking):** `_already_queued` digest normalization (stored
+   post-builder summary vs raw — best-effort growth bound for redaction-altered summaries;
+   all three delta reviewers converged; fix at the seam); unit-I `live_observation.py:296`
+   one-liner; unit-K boundary queue write-only/inert; unit-K report line-count nit.
+4. **EXACT next action:** claim M0-T112 (deps M0-T110+M0-T111 accepted) — Amendment-8 unit M,
+   **final golden re-certification at the FINAL frozen post-addition identity (R247)**.
+   Both additions touched `tools/agent_supervisor/**` + the operator channel, invalidating
+   the M0-T096-era certification. Re-run AT THE FINAL FROZEN IDENTITY: the FULL golden-run
+   pack (`test_agent_supervisor_golden_run.py`), the affected packs (operator-channel,
+   K-pack, L-pack, adversarial/endurance/phase1, reviewer), the WHOLE supervisor suite
+   (freeze baseline), and CI on the pushed SHA; then REFRESH-ONLY the activation package's
+   identity/evidence items (`M0-T096-activation-package.md` items 10–12). **ONLY AFTER
+   M0-T112 is accepted may the R187/R595 activation package be PRESENTED** — presentation is
+   a separate owner-facing step; activation itself stays owner-gated. M0-T107 (unit J)
+   trails non-blocking. Run `evaluate_task_refs` at claim (expected rows:
+   R231/R232/R246/R247/R248/R249 — confirm against the resolver).
+5. **Mechanics (proven twice this session):** ONE consolidated correction round + SendMessage
+   delta re-attestations from the SAME four reviewers; commit reports BEFORE gates; gate
+   `--sha` == live HEAD; verification entry stamped at the **accept-time HEAD**
+   (fill → validate → ACCEPT → commit together — committing the entry first forces a restamp
+   cycle); registry JSON LF; `modularity_check` after `git add`; fake tokens need BOTH
+   `gitleaks:allow` and `secretscan:allow`; a follow-up push auto-cancels the prior CI run
+   (judge the tip); reviewer packs importing the unit-G harness keep one harness authority.
+6. **Environment:** long python runs are externally killed — foreground chunks; the
+   directive-compliance validator pack needed a 4-way class-group split when the workstation
+   slowed (73+16+18+13 = 120); never mutate during a live suite.
 7. **Standing restrictions:** NEVER merge PR #241 or any pre-existing PR; continuous-mode
    activation owner-gated (R187/R595; supervisor SHADOW-ONLY); Amendment-3 prohibitions;
-   Amendment-7 no-wait/no-provoke + labeling; Amendment-8 sequencing (T111→T112 before the
-   activation package is presentable; R232/R247); Telegram one-way/secrets/live-canary
-   (R242/R243/R245); Bootstrap Gate 0 every session; supervisor commits cite `D-024-R###`;
-   repo PUBLIC; never `name:` on producers; expansion-planning hold; `.claude/hooks`
-   untouchable sans G5.
+   Amendment-7 no-wait/no-provoke + labeling; Amendment-8 sequencing (M0-T112 before the
+   activation package is presentable, R232/R247); Telegram one-way/secrets/live-canary
+   (R242/R243/R245 — the live canary command exists but remains owner-typed only);
+   Bootstrap Gate 0 every session; supervisor commits cite `D-024-R###`; repo PUBLIC;
+   never `name:` on producers; expansion-planning hold; `.claude/hooks` untouchable sans G5.
 8. **Successor must read:** `CLAUDE.md`; this file; `.claude/session-handoff-profile.md`;
-   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 24);
-   `project-control/tasks/M0-T111.json`;
-   `project-control/directives/D-024-fable-codex-loop/source-008-amendment.md` (+ owner report
-   `D-024-amendment-8-owner-report.md`); `tools/agent_supervisor/notifications.py` +
-   `circuit_breakers.py`/`outage_policy.py` (the reuse boundary); `docs/LEAN_OPERATING_PROCESS.md`.
+   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 25);
+   `project-control/tasks/M0-T112.json`;
+   `project-control/directives/D-024-fable-codex-loop/source-008-amendment.md` (+ owner
+   report `D-024-amendment-8-owner-report.md`);
+   `project-control/reports/M0-T096-activation-package.md` (the document M0-T112 refreshes);
+   `docs/LEAN_OPERATING_PROCESS.md`.
 9. **Stop/change conditions:** Gate-0 failure; validator non-zero; reviewer FAIL/BLOCKED
-   (consolidated round → delta re-attestations; M0-T110 is the freshest worked example);
-   anything owner-only (credentials, payment, production, legal, PR #241, activation,
-   **Telegram bot token/chat id + live send**, live-canary exact-command).
+   (consolidated round → delta re-attestations; M0-T110/T111 are the freshest worked
+   examples); anything owner-only (credentials, payment, production, legal, PR #241,
+   activation, Telegram secrets/live send, live-canary exact-command, and the activation-
+   package PRESENTATION decision itself).
 10. **Successor prompt:** *"Work from durable repository evidence only. Verify root =
     C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch control/D-024-fable-codex-loop, HEAD,
     tree, and /mcp empty (Bootstrap Gate 0) before any change. Read CLAUDE.md,
     docs/SESSION_HANDOFF.md, .claude/session-handoff-profile.md, and the §8 files. Run
     `python tools/project_control.py status` and `python -m
     tools.agent_supervisor.campaign_continuity --status`. Reconcile against live git + the
-    ledger (they win over prose). Continue the campaign seq-24 NEXT: claim M0-T111
-    (Amendment-8 unit L, one-way Telegram sink; rows R241–R245 + shared rows) — prove-first
-    over notifications/circuit-breaker machinery; secrets only in an approved local mechanism,
-    never committed anywhere; live send owner-gated (fake-transport proof only); then
-    4-reviewer gates → DCV → accept; then M0-T112 golden re-certification at the FINAL frozen
-    identity before any R187/R595 activation-package presentation. Foreground chunks; never
-    mutate during a live suite. Do not merge PR #241 or any pre-existing PR; supervisor stays
-    SHADOW-ONLY; guards inside .claude/hooks are untouchable without G5. Stop for anything
-    owner-only. The standard D-010 R113/R114 ~400k rotate-at-seam ceiling governs your
-    session."*
+    ledger (they win over prose). Continue the campaign seq-25 NEXT: claim M0-T112
+    (Amendment-8 unit M — the final golden re-certification at the FINAL frozen
+    post-addition identity, R247): full golden-run pack + affected packs + whole supervisor
+    suite + CI at that identity; refresh-only the activation package's identity/evidence
+    items; then 4-reviewer gates → DCV → accept. Only after that acceptance may the
+    R187/R595 activation package be PRESENTED to the owner — presentation and activation
+    stay owner-gated. Foreground chunks; never mutate during a live suite. Do not merge
+    PR #241 or any pre-existing PR; supervisor stays SHADOW-ONLY; guards inside
+    .claude/hooks are untouchable without G5. Stop for anything owner-only. The standard
+    D-010 R113/R114 ~400k rotate-at-seam ceiling governs your session."*

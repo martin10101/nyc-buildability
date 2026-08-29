@@ -6740,80 +6740,111 @@
     "D-024-R248",
     "D-024-R249"
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
+   "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e",
+   "verified_at": "2026-08-29T02:13:41.053351+00:00",
    "requirements": [
     {
      "id": "D-024-R231",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "source-008-amendment.md verbatim capture + reconciliation; validator EXIT=0 (M0-T111-DCV.md row R231)",
+      "L8::test_R231 PASS (35/35 pack)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R232",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "HOLD-IN-FORCE-AND-HONORED: capability 2 delivered; no activation or activation-package presentation in the unit diff; campaign restriction records the T110/T111/T112-before-R187/R595 sequencing (M0-T111-DCV.md row R232)",
+      "L8::test_R232 PASS; delta re-attestation PASS at 8574c58 (M0-T111-DCV-delta.md)"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R241",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "CONDITIONS closed 8-tuple maps 1:1 onto the amendment's eight verbatim bullets; CONDITION_RISK exact fixed map; notify_condition typed unknown_condition refusal (M0-T111-DCV.md row R241 + delta: tests tightened, values unchanged)",
+      "L1Conditions (3) + L8::test_R241 PASS; mutants M1/M2/M15 killed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R242",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "one-way only: no functional receive/poll/webhook/approval/exec surface (independent grep + hardened import-aware AST scan); transport speaks sendMessage POST only (M0-T111-DCV.md row R242 + delta row R242)",
+      "L4OneWay + L8::test_R242 PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R243",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "env-only credentials (SUPERVISOR_TELEGRAM_*); repr-redacted holder; status buckets never the token-bearing URL; delta adds identifier-field redaction in compose_text; only pragma'd fake sentinels in the diff (M0-T111-DCV.md row R243 + delta row R243 'strengthened')",
+      "L3Secrets (4) + L8::test_R243 PASS; mutants M8/M17 killed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R244",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "S13.10 composition redaction + leak refusal; bounded 3-attempt never-raise delivery; FIFO dedup register; queued-not-lost; run_must_pause structurally False; delta adds already_queued outage suppression + 3500-char outbound cap (M0-T111-DCV.md row R244 + delta row R244 'strengthened')",
+      "L5Isolation (8) + L2ViewOnly (3) + L8::test_R244 PASS; mutants M3/M4/M5/M6/M9/M11/M16/M18 killed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R245",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "HOLD-IN-FORCE-AND-HONORED: real transport constructible only behind live_send_authorized=True from the owner-typed CLI flag; no socket in any test; the authorized-no-env path proves refusal before any transport call (attempts=0); live send never fired; exact owner command documented (M0-T111-DCV.md row R245 + delta row R245)",
+      "L6OwnerGatedCanary (5) + L8::test_R245 PASS; mutant M7 killed"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R246",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M0-T110/T111/T112 ledger packets capture the bounded sequence durably; M0-T096 untouched (M0-T111-DCV.md row R246)",
+      "L8::test_R246 PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R248",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "diff touches only the four named files + control-plane; .claude/hooks forbidden this unit and untouched; stdlib-only imports, no dependency manifest (M0-T111-DCV.md row R248 + delta row R248)",
+      "L8::test_R248 PASS; CI 20/20 green at c9b3b9a and at the corrected tip 6cbac33"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     },
     {
      "id": "D-024-R249",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "D-024-amendment-8-owner-report.md answers the five numbered items (M0-T111-DCV.md row R249)",
+      "L8::test_R249 PASS"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "42e4e5879c1416396dd8ff9786154fe7070b0f2e"
     }
-   ]
+   ],
+   "reviewed_manifest_sha256": "925e1901c2819a3189e765940653ba66d3c8eddc127b9af99af72e53cb0c8742"
   },
   {
    "task_id": "M0-T112",
@@ -6876,5 +6907,5 @@
    ]
   }
  ],
- "updated_at": "2026-08-28T22:01:57.783856+00:00"
+ "updated_at": "2026-08-29T02:13:41.053351+00:00"
 }
