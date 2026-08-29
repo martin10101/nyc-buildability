@@ -156,8 +156,12 @@ class RefusalVerdict:
 
 #: Where the committed corpus lives. Missing or malformed -> EMPTY corpus,
 #: so nothing is ever recognized (fail closed), never a guess.
+#: M0-T118 (D-024-R281 Amendment 13): re-pointed 2_1_248 -> 2_1_251 for the
+#: deliberate 2.1.251 admission. The corpus and its (still-unverified)
+#: confidence labels are carried forward unchanged; only the base CLI version
+#: is updated. The 2_1_248 fixture stays committed as append-only history.
 SHAPES_FIXTURE_PATH = (pathlib.Path(__file__).resolve().parent / "fixtures"
-                       / "guardrail_refusal_shapes_2_1_248.json")
+                       / "guardrail_refusal_shapes_2_1_251.json")
 
 
 @dataclasses.dataclass(frozen=True)

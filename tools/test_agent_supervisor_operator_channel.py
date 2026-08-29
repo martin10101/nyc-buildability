@@ -68,7 +68,7 @@ from tools.agent_supervisor.subagent_contracts import (  # noqa: E402
 HOOK = REPO / ".claude" / "hooks" / "loop_command_interceptor.py"
 SKILLS_DIR = REPO / ".claude" / "skills"
 DETECTION_FIXTURE = (REPO / "tools" / "agent_supervisor" / "fixtures" /
-                     "loop_interception_detection_2_1_248.json")
+                     "loop_interception_detection_2_1_251.json")
 
 SKILL_NAMES = ("loop-start", "loop-status", "loop-tasks", "loop-ask",
                "loop-pause", "loop-resume", "loop-stop",
@@ -688,7 +688,7 @@ class S8FeatureDetection(unittest.TestCase):
         self.assertIn("measured-live", basis["UserPromptSubmit"]["payload"])
         self.assertIn("UNPROVEN",
                       basis["UserPromptExpansion"]["response_contract"])
-        self.assertIn("2.1.248", record["claude_version"])
+        self.assertIn("2.1.251", record["claude_version"])
 
     def test_the_hook_consults_the_fixture_not_a_hardcoded_choice(self) -> None:
         source = HOOK.read_text(encoding="utf-8")

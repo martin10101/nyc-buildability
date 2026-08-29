@@ -25,7 +25,7 @@ from tools.agent_supervisor.telemetry_hooks import KNOWN_HOOK_EVENTS
 from tools.agent_supervisor.telemetry_journal import TelemetryJournal
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
-CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_248.json"
+CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_251.json"
 PAYLOADS_FIXTURE = FIXTURES / "hook_event_payloads_v1.json"
 STREAM_FIXTURE = FIXTURES / "stream_json_subagent_events_v1.json"
 RECORDER = Path(__file__).parents[1] / ".claude" / "hooks" / "supervisor_event_recorder.py"
@@ -290,13 +290,16 @@ def test_s7_unknown_event_recorded_honestly(tmp_path):
 # ---------- S8 version drift ----------------------------------------------
 
 def test_s8_catalog_fixture_valid_and_masked():
-    # M0-T092 re-capture: installed CLI auto-updated 2.1.247 -> 2.1.248 during
-    # unit F; docs re-fetched, event set identical (the 2_1_247 catalog stays
-    # committed as history).
+    # M0-T118 re-capture (D-024 Amendment 13 R281): deliberate 2.1.251
+    # admission (M0-T092 precedent). Docs re-fetched 2026-08-29; unlike the
+    # identical 2.1.247->2.1.248 set, 2.1.251 is a REAL +2 event-set drift
+    # (PreModelSwitch + PostModelSwitch, 33 events). The 2_1_247/2_1_248
+    # catalogs stay committed as history.
     data = ed.load_catalog_fixture()
-    assert data["task"] == "M0-T092"
-    assert data["claude_version"] == "2.1.248 (Claude Code)"
+    assert data["task"] == "M0-T118"
+    assert data["claude_version"] == "2.1.251 (Claude Code)"
     assert data["confidence"] == "official-docs"
+    assert len(data["events"]) == 33
     whole = CATALOG_FIXTURE.read_text(encoding="utf-8")
     assert "Users" not in whole and "MLFLL" not in whole
 
@@ -307,8 +310,12 @@ def test_s8_recorded_drift_matches_computed_drift():
     recorded = data["drift_vs_2_1_220"]
     assert list(drift.added) == recorded["added"]
     assert list(drift.removed) == recorded["removed"]
-    assert not drift.has_drift  # 2.1.248 catalog identical at 31 events
-    assert drift.describe() == "no drift"
+    # 2.1.251 is a REAL +2 drift vs the 2.1.220/2.1.248 baseline: the two
+    # added model-switch events are reconciled as a FACT the test bites on.
+    assert drift.added == ("PostModelSwitch", "PreModelSwitch")
+    assert drift.removed == ()
+    assert drift.has_drift
+    assert drift.describe() == "added: PostModelSwitch, PreModelSwitch"
 
 
 def test_s8_drift_computation_surfaces_differences():
