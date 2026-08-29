@@ -2,15 +2,15 @@
   "task_id": "M0-T114",
   "producer_agent": "fable-orchestrator-session",
   "report_file": "project-control/reports/M0-T114-residual-fixes.md",
-  "submitted_at": "2026-08-29T06:58:59.845652+00:00",
+  "submitted_at": "2026-08-29T07:09:15.674168+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T114-evidence-map.json",
-  "content_manifest_sha256": "83d08aa6171f5469457e29ba9a77be70b6f40dc4596996beac8fffa783531200",
-  "reviewed_sha": "460daf6b1dcb436c3a035c09977a1aaa9b074ae2",
+  "content_manifest_sha256": "93e97aacabf2181befa482b38e75e166a1b871dd74e0a15840c5b26a893f981c",
+  "reviewed_sha": "c14bf67d3ce1f02ca27dd5d3db3f7e1c33b33ea9",
   "applicable_requirements": [
     "D-024-R258",
     "D-024-R272",
     "D-024-R273"
   ],
-  "updated_at": "2026-08-29T06:59:00.495202+00:00"
+  "updated_at": "2026-08-29T07:09:16.353117+00:00"
 }
