@@ -2,7 +2,9 @@
 
 **DELTA VERDICT: PASS.** BLOCKER-1 from my round-1 G3 is fully and correctly resolved; MINOR-1 (counts) corrected; no new defects introduced. All prior round-1 correctness findings remain intact.
 
-*(Orchestrator provenance note: the reviewer's transient idle-notification caption read "FAIL (predicate-7 residual)"; on the orchestrator's explicit challenge the reviewer delivered this full report, whose verdict is PASS with BLOCKER-1 marked RESOLVED. The report below is the authoritative verbatim text.)*
+*(Orchestrator provenance note: the reviewer's transient idle-notification caption read "FAIL (predicate-7 residual)"; on the orchestrator's explicit challenge the reviewer delivered this full report, whose verdict is PASS with BLOCKER-1 marked RESOLVED, and then a second copy prefixed with its own correction, verbatim below.)*
+
+**Reviewer's own verdict correction (verbatim from the resend):** "READ THIS FIRST — the summary line is mistaken. My delta re-review CONCLUDED **PASS**. The 'DELTA VERDICT FAIL (predicate-7 residual)' text is a STALE label carried over from my **round-1** G3 (the review of the pre-correction identity `4d3760e`), which correctly FAILED on BLOCKER-1 (the 4th `open_asks()` consumer). That BLOCKER was accepted and fixed in the correction round. At the corrected frozen identity **`29fc1e2`** my verdict is **PASS**. There is NO surviving predicate-7 residual. This matches G4's and DCV's independent re-enumeration (no fifth raw consumer; only the helper body and cli.py:1496's inline copy read raw asks)."
 
 **Frozen identity:** `29fc1e28e1e5c56036a87689d3ded203bf11f238` — confirmed `git rev-parse HEAD` matches; `git status --porcelain` empty (clean tree).
 
