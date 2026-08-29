@@ -41,11 +41,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 45,
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.452684+00:00",
-  "updated_at": "2026-08-29T04:06:50.476979+00:00",
+  "updated_at": "2026-08-29T04:39:39.477716+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -64,6 +64,13 @@
       "percent": 45,
       "status": "in_progress",
       "message": "Preflight COMPLETE (R252): 14/14 mechanical checks PASS (capture a87b407 + CI 20/20; anchors 8574c58/132e698c/d2946392 intact; claude 2.1.248 + codex 0.146.0; protected-config 6AEF12A9 + model-selection 0E2432C0 digests match runbook; fresh manifest a5c9e1ce over 117 files outside repo; verify-controller + doctor PASS, ACL PROTECTED). R259 STOP: 2 owner-only mismatches - (1) worker model pinned claude-opus-4-8 under exhaustion-era R296/R308, revert trigger = owner-typed Fable-is-back switch-back, contradicts Amendment-9 'direct Fable' + certified bridge geometry; (2) [approved_models] empty -> APPROVED_MODELS_EMPTY=HALTED at first rotation/turnover/quota act, so certified continuous rotation cannot occur live until owner populates protected config via S13.1. NO start executed; nothing partially activated; supervisor SHADOW-ONLY. Awaiting owner: option A (switch-back + populate approved_models -> re-preflight -> launch) or option B (explicit launch-as-is directive)."
+    },
+    {
+      "at": "2026-08-29T04:39:39.477716+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Amendment 10 executed through its hold: capture c5ca81a (rows R261-R267, validator EXIT=0) -> R263 probe PASS (doctor --live control_response_live_probe VERIFIED sha256_head 8a9c9c9018460062; supplemental shipped-flow probe persisted events: init_model=claude-fable-5, 1 denial, no file, bounded) -> R265 single edit applied (model_selection [claude] model claude-opus-4-8 -> empty = account default Fable 5; new raw digest FCBBF70F...; post-edit doctor overall PASS, selection digest b2b927c6...) -> R266 admin instructions delivered to owner for [approved_models] + allowed_models -> R267 HOLD: no launch until owner config edit + manifest re-record + full re-preflight. Preflight MISMATCH 1 resolved by owner correction; MISMATCH 2 awaits the owner administrator edit."
     }
   ]
 }
