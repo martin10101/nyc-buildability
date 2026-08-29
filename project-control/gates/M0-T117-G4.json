@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T117",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T117-G4-qa-review-delta.md",
+  "reviewed_at": "2026-08-29T18:59:39.648354+00:00",
+  "content_manifest_sha256": "e4e79dd0ea7246516e5a6d36ffcf10238a34853b36d8ac5ba91386f5cebcdf59",
+  "reviewed_sha": "603757002b20c0030f1b3dd4981426b29ab2db97",
+  "updated_at": "2026-08-29T18:59:40.454871+00:00"
+}
