@@ -49,11 +49,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 5,
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-28T18:29:20.786911+00:00",
-  "updated_at": "2026-08-29T02:39:15.024566+00:00",
+  "updated_at": "2026-08-29T02:58:59.430539+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -70,6 +70,13 @@
       "percent": 5,
       "status": "in_progress",
       "message": "Unit M claimed at seq-25 NEXT (G0 PASS at a4f94b7; resolver ok=true 6 applicable ids R231/R232/R246/R247/R248/R249). Frozen post-addition identity: supervisor material identity last moved at 8574c58 (tree 132e698c15a9f9412d53905e45ce0ae0724abe15 at HEAD). Plan: re-run golden-run pack + affected packs (operator/codex/telegram/adversarial/endurance/phase1/reviewer) + whole supervisor suite foreground-chunked + CI on pushed SHA; refresh-only activation-package items 10-12; residuals carried not fixed (outside allowed_paths)."
+    },
+    {
+      "at": "2026-08-29T02:58:59.430539+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Certification runs complete at frozen identity (supervisor material 8574c58, run head a4f94b7): golden pack 40/40; affected packs 493/493; whole suite 2694 passed/2 skipped/0 failed (2696 collected, +4 = accepted L-pack correction tests). CI CONFIRMED 20/20 green on pushed certification tip 615f661a1ad30883469c72932970dd1ae64dc317 (check-runs API). Activation-package items 10-12 refreshed. Evidence map (6 rows) + G2 self-check written; submitting for the 4-reviewer wave."
     }
   ]
 }

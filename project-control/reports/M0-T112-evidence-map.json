@@ -1,0 +1,36 @@
+{
+ "task_id": "M0-T112",
+ "requirements": {
+  "D-024-R231": [
+   "project-control/directives/D-024-fable-codex-loop/source-008-amendment.md (verbatim capture, rows R231-R249 assigned; forward trace recorded in the capture preamble)",
+   "CLAIM: DISCHARGED at capture (seq 23, validator EXIT=0), before this unit began"
+  ],
+  "D-024-R232": [
+   "Both required capabilities ACCEPTED before any activation step: M0-T110 (unit K, /loop-codex) accepted at seq 24; M0-T111 (unit L, Telegram sink) accepted at seq 25 - project-control/tasks/M0-T110.json + M0-T111.json status=accepted",
+   "project-control/campaigns/D-024-fable-codex-loop.json (Amendment-8 sequencing restriction row); continuous mode NOT activated; activation package NOT presented in this unit (presentability waits on this unit's own acceptance)",
+   "project-control/reports/M0-T112-recertification.md sec 1 (sequencing statement) + sec 6 (prohibition compliance)",
+   "CLAIM: HOLD IN FORCE and honored - this unit completes the pre-activation sequence without crossing the activation gate"
+  ],
+  "D-024-R246": [
+   "project-control/tasks/M0-T110.json + M0-T111.json + M0-T112.json (the durably captured bounded sequence, executed in order); M0-T096 completed unbroadened before the sequence began (accepted, contract unchanged)",
+   "project-control/reports/D-024-amendment-8-owner-report.md sec 2 (the captured sequence this unit is the final element of)",
+   "CLAIM: DISCHARGED - the safest bounded sequence was captured durably and has now been executed through its final unit"
+  ],
+  "D-024-R247": [
+   "project-control/reports/M0-T112-recertification.md sec 2 (FINAL frozen post-addition identity: supervisor material identity 8574c58, tools/agent_supervisor tree 132e698c15a9f9412d53905e45ce0ae0724abe15, golden pack blob d2946392f1c1 re-run only, run head a4f94b7)",
+   "project-control/reports/M0-T112-recertification.md sec 3: FULL golden-run pack 40/40; affected packs (operator_channel + codex_channel + telegram_sink + adversarial + endurance + phase1 + reviewer) 493/493; WHOLE supervisor suite 2694 passed / 2 skipped / 0 failed (2696 collected; +4 baseline delta = exactly the four accepted 8574c58 L-pack correction tests); CI 20-check run on the pushed certification tip (SHA + conclusion pinned in the M0-T112 progress_log at the submit seam)",
+   "project-control/reports/M0-T096-activation-package.md items 10-12 refreshed REFRESH-ONLY to the certified identity + banner updated (presentable only after this unit's acceptance)",
+   "CLAIM: SATISFIED - the affected/full golden certification was re-run at the final frozen post-addition identity BEFORE any presentation of the R187/R595 activation package"
+  ],
+  "D-024-R248": [
+   "No activation, no live 4.8 bridge, no PR #241 touch, no Agent SDK admission, no new MCP servers, no global Claude settings modification, no owner-boundary crossing; supervisor SHADOW-ONLY throughout; .claude/hooks untouched",
+   "Unit wrote ONLY: M0-T112-G0-readiness.md, M0-T112-recertification.md, M0-T096-activation-package.md items 10-12 refresh, this evidence map, the G2 self-check report, and control-plane records - zero source/test/config/dependency changes (git diff a2aec11..tip touches only project-control/**)",
+   "project-control/reports/M0-T112-recertification.md sec 6",
+   "CLAIM: PROHIBITIONS HONORED"
+  ],
+  "D-024-R249": [
+   "project-control/reports/D-024-amendment-8-owner-report.md (the five numbered first-report answers, recorded at capture)",
+   "CLAIM: DISCHARGED at capture, before this unit began"
+  ]
+ }
+}
