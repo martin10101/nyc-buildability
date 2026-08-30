@@ -8106,7 +8106,220 @@
    "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389",
    "verified_at": "2026-08-30T05:24:41.512915+00:00",
    "reviewed_manifest_sha256": "53e618cd13c1cc0059565dddb884d7a8b7ab14476d23b831efa0a0061b20c377"
+  },
+  {
+   "task_id": "M0-T123",
+   "directive_id": "D-024",
+   "producer": "supervisor-resume-path-producer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R327",
+    "D-024-R328",
+    "D-024-R329",
+    "D-024-R330",
+    "D-024-R331",
+    "D-024-R332",
+    "D-024-R333",
+    "D-024-R334",
+    "D-024-R335",
+    "D-024-R336",
+    "D-024-R337",
+    "D-024-R338",
+    "D-024-R339",
+    "D-024-R340",
+    "D-024-R341",
+    "D-024-R342",
+    "D-024-R343",
+    "D-024-R344",
+    "D-024-R345",
+    "D-024-R346"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R327",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): S16.7 disposition recorded verbatim in source-019 (DCV read the VERBATIM block); referenced in the packet. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R328",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Nothing granted exercised: preserved journal re-hashed by the DCV byte-identical to the G0 baseline (a4acb370...); no budget/policy/journal-surface change in any diff. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R329",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Complete touch history preserved: journal + audit both re-hashed by the DCV, byte-identical to the G0 baselines. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R330",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Window bounded to M0-T123 + held M0-T124 (ledger check since the capture); qualifying evidence cited. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R331",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Both live dimensions closed in ONE seam (launch_seam.py); root-cause file:line traces verified. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R332",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): enforce_launch UNCONDITIONAL at the sole worker Popen (DCV read the code + the anti-re-wrap invariant tests); dispatcher-set closure proves the only worker-argv+Popen sites are run_unit (guarded) and the non-worker probe; CLI gate + pre-first-dispatch shed also route through the seam. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R333",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): At-or-above-400k never resumed (>= comparison verified in code; exactly-at-400k test + the live 640k shape test pass). Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R334",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Rotate at the safe seam (shed) or fail closed pre-provider at the runner chokepoint; AS-1 RED/GREEN on the seeded cycle-2 shape. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R335",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): cwd bound to the packet's isolated worktree at both layers; Windows-aware normalization; UNC + 8.3 covered. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R336",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Primary-checkout/unexpected cwd fails closed pre-provider with typed refusals; the live cycle-2 cwd defect shape refuses. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R337",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): All seven properties individually asserted (DCV read each test body: lineage, task identity, branch+worktree, budgets via strict durable-diff, audit chain verify + strict subset + exactly-one-shed, exactly-once succession). Not vacuous. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R338",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Old oversized session shed and never resumed; new session identity distinct; idempotent shed. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R339",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Call sites enumerated mechanically from package ASTs with the same-seam proof (set-equality closure). Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R340",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Bypass-sensitive deterministic sweep: site-granular AST-prune REDs + anti-re-wrap RED; GREEN 64/64 (DCV ran it). Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R341",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Fixture source_sha256 == G0 baselines == the DCV's own read-only re-hash of all four preserved sources; originals unwritten. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R342",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): All 12 matrix items direct with named tests incl. the four hardening additions; the OSError limitation honestly framed as true-behavior assertion. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R343",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): rc=1 + missing result recorded honestly; DCV confirmed 0 result-type records in the cycle-2 transcript personally. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R344",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): Context-limit hypothesis contradicted and abandoned; terminal event RECOVERED (DCV grepped max_turns_reached maxTurns:12 turnCount:13 personally); count corrections disclosed with explanations. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R345",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): No restart/clear-recovery/journal edit/budget reset (journal byte-identical); PR #241 gh-confirmed OPEN and untouched. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    },
+    {
+     "id": "D-024-R346",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at a71bd65 (Amendment-19 defect window): G0/G2 + G3/G4/G5 PASS (producer != reviewers) + three delta attestations; mutation proof verified; full suite 2889/2/0 (G4 reviewer's own run + orchestrator); CI 20/20 at a71bd65; model identity 451/451 claude-opus-4-8 (DCV re-grepped); recert + manifest verification + R276 preflight correctly deferred to held M0-T124. Full verbatim report: project-control/reports/M0-T123-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386"
+    }
+   ],
+   "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386",
+   "verified_at": "2026-08-30T08:16:56.962926+00:00",
+   "reviewed_manifest_sha256": "21c79191d646189ba30a30ec935cb4350d7460f20f1a6856d7f114cc660eafb4"
   }
  ],
- "updated_at": "2026-08-30T05:24:41.512915+00:00"
+ "updated_at": "2026-08-30T08:16:56.962926+00:00"
 }
