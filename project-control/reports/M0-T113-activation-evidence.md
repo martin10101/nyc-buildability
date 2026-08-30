@@ -111,3 +111,59 @@ CI 20/20 on that tip before acting):
    dispatch — DID NOT occur this attempt (0 provider calls); current task — M0-T107
    (claimed, worktree clean at `796e18f`); first-checkpoint progression — NOT REACHED;
    blocked by the seam defect above, not by policy or by the worker.
+
+## ADDENDUM 2 — the R276 RERUN (2026-08-30): DISPATCH + FIRST CHECKPOINT ACHIEVED; certified fail-closed halt at the independent-review gate
+
+Executed after the complete Amendment-13/14 window (M0-T117/T118/T120/T119 all accepted;
+2.1.251 admitted per R282) and a fully green R276 preflight. Two owner-typed start
+attempts via the `!` prefix:
+
+* **Attempt 1** (bash stripped the unquoted backslash paths): every path-dependent S11.5
+  probe refused fail-closed — `UNSAFE_OR_DRIFTED`, dispatched false, 0 provider calls,
+  exit 11, journal stayed at PREFLIGHT. An orchestrator command-formatting error, and a
+  live demonstration that corrupt inputs cannot dispatch.
+* **Attempt 2** (forward-slash paths): **ALL 12 PROBES PASS → DISPATCHED.**
+
+**The R276 item-7 confirmation set — ALL CONFIRMED:**
+
+1. **Run identity:** `run_M0_T107_unitJ` RESUMED (resumes=1) under the byte-identical
+   run-budget digest `c1a51d3a…`; the pre-fix journal's 3 denied asks reconciled at both
+   seams (`pending_requests` PASS) — **the R274 end-to-end restart proof is COMPLETE.**
+2. **One-time repin (R285):** executed and recorded with provenance — `cli_capability_manifest`
+   PASS: "an operator re-pinned ['claude'] to their current identity"; the pinned digest
+   is the admitted `d6f6c29a8ac6b3cf…` (2.1.251). Drift detection re-armed against the new pin.
+3. **Routing tooth (M0-T120) live:** `shell_routing` PASS — measured evidence matched the
+   pinned identity, verdict `native_preferred`.
+4. **Live Fable 5 dispatch:** worker session `02b014ee…`, `observed_models:
+   ["claude-fable-5"]`, `model_mismatch: false`, returncode 0, 143 stream events,
+   2 provider calls this start (run counters: claude_runs 2/12, codex_reviews 1/3).
+5. **FIRST-CHECKPOINT PROGRESSION — ACHIEVED:** structured checkpoint
+   `M0-T107-ready-2026-08-29-01` returned, parsed, validated, and correlated (digest
+   `2ac59818…`); a bounded evidence packet assembled (46,025 bytes, digest `5539a2be…`);
+   **`permission_decisions: []` — the worker completed the whole run with ZERO brokered
+   command requests and zero ASK-stops** (the original shell-first stall did not recur;
+   routine discovery reached a structured checkpoint, satisfying the R276 proof goal).
+   Note recorded honestly: `native_tools_guidance_appended: false` — the resumed run
+   reuses its original digest-bound prompt (appending the M0-T120 guidance would break
+   the prompt digest); the 2.1.251 worker routed natively regardless, exactly as the
+   M0-T120 measurement predicted. Fresh runs minted after this one carry the guidance.
+6. **Certified fail-closed halt (cycle 1):** path START_CLAUDE → CLAUDE_RUNNING →
+   CHECKPOINT_RECEIVED → COLLECT_EVIDENCE → CODEX_REVIEW → VALIDATE_DECISION →
+   POLICY_CHECK → **HALTED**. The independent Codex reviewer (`gpt-5.6-sol`) returned
+   exactly one schema-valid decision: **HALT_UNSAFE** — finding: *"The mandatory fresh,
+   independent repository review was not completed, so issuing CONTINUE would rely on the
+   untrusted worker checkpoint."* Nothing was forwarded; a synchronous S9 stop was counted
+   (owner-touch 2 of budget 2, within budget); exit 10. The system refused to advance on
+   the worker's self-report — the exact review-independence principle this platform is
+   built on, exercised live.
+7. **Rotation pending:** the worker session crossed the 400k rotation threshold
+   (604,772 tokens); per S11.2 the in-flight unit was not interrupted — the NEXT start
+   rotates at the seam (the certified rotation crossing, to occur live on continuation).
+8. **State at rest:** journal HALTED → operator-startable; 0 open asks; 0 pending
+   effects; audit chain intact (31 events); worktree `wt-m0t107` clean at `796e18f`;
+   no external writes.
+
+**Resolution path:** the HALT_UNSAFE stop is a certified human touchpoint. Continuation is
+an explicit operator start of the SAME certified command WITHOUT `--repin-cli-identity`
+(the one-time repin is consumed); cycle 2 re-runs the Codex review (1/3 used) after the
+pending rotation. The owner decides when.

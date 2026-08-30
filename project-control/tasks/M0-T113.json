@@ -41,11 +41,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 96,
+  "progress_percent": 98,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T03:46:33.452684+00:00",
-  "updated_at": "2026-08-30T01:37:56.697483+00:00",
+  "updated_at": "2026-08-30T01:45:05.505801+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -113,6 +113,13 @@
       "percent": 96,
       "status": "in_progress",
       "message": "Owner-typed start attempt 1: the ! prefix ran through the BASH shell, which stripped unquoted backslashes from every Windows path (C:UsersMLFLL...) - all path-dependent S11.5 probes correctly refused fail-closed (UNSAFE_OR_DRIFTED, dispatched false, 0 provider calls, exit 11) and the journal remained at PREFLIGHT (no recovery clear needed; 0 asks, 0 effects). Orchestrator formatting error in the handed command, not a system defect - the refusal is itself live proof the probes catch corrupt inputs. Corrected command re-handed to the owner with cross-shell-safe forward-slash paths."
+    },
+    {
+      "at": "2026-08-30T01:45:05.505801+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "R276 RERUN COMPLETE THROUGH THE LIVE PROOF: attempt 2 (forward-slash paths) - ALL 12 PROBES PASS, DISPATCHED, one-time repin executed with provenance (pinned d6f6c29a = admitted 2.1.251), routing tooth PASS native_preferred, R274 restart proof COMPLETE (denied asks reconciled, pending_requests PASS). LIVE FABLE 5 CONFIRMED (observed_models claude-fable-5, session 02b014ee, 143 events, rc 0). FIRST-CHECKPOINT PROGRESSION ACHIEVED: checkpoint M0-T107-ready-2026-08-29-01 parsed/validated/correlated, 46KB evidence packet, ZERO permission decisions and ZERO ask-stops (the shell-first stall did not recur - R276 proof goal met). Cycle 1 ended in the CERTIFIED fail-closed halt: Codex (gpt-5.6-sol) returned schema-valid HALT_UNSAFE ('mandatory fresh independent repository review was not completed - CONTINUE would rely on the untrusted worker checkpoint'); synchronous S9 stop, touch 2/2 within budget, exit 10; nothing forwarded. Rotation pending at next start (604772 tokens > 400k threshold, S11.2). State: HALTED, 0 asks, 0 effects, audit intact, worktree clean. Full addendum in M0-T113-activation-evidence.md. Continuation = explicit operator start WITHOUT the repin flag - handed to the owner."
     }
   ]
 }
