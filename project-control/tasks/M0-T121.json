@@ -1,0 +1,120 @@
+{
+ "task_id": "M0-T121",
+ "title": "Restart-channel defect fix: audited fail-closed operator recovery surfaces for HALTED and EMERGENCY_STOPPED + F-2 edge-reachability closure",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Close the complete reproduced F-2 defect class per D-024 Amendment 16 (rows D-024-R302..R313): implement an explicit, audited, fail-closed operator recovery surface for the HALTED->IDLE owner_explicit_restart edge; give the EMERGENCY_STOPPED sibling an appropriately STRONGER explicit operator acknowledgment (never automatic or ordinary restart from an emergency stop); enumerate every blocking/terminal state and every recovery edge; prove exactly one documented callable CLI surface per intended operator-recovery edge (intentionally terminal edges explicitly unreachable); add a deterministic removal-sensitive reachability test that fails when a defined recovery edge has no command call site. QUALIFYING EVIDENCE (supervisor-freeze S2/S3): reproduced defect - the owner-typed certified cycle-2 start refused pre-dispatch exit 13 stale_state, illegal transition HALTED->HALTED, because owner_explicit_restart (state_machine.py:399) has zero call sites (project-control/reports/M0-T107-cycle2-start-refusal.md); authorized by D-024-R302. PROHIBITIONS (R310/R311): no generic state-changing command, no manual journal edits, no policy loosening, no budget resets, no audit-history erasure; restart refuses while open asks, pending effects, surviving children, identity drift, or unsafe recovery classification exist. Exactly-once transition + durable audited owner-restart record (R313). Fix invalidates certification and re-triggers R247 (recert = M0-T122).",
+ "business_reason": "The live limited-auto loop is stranded: after the certified HALT_UNSAFE no documented surface can restart it, so the owner-authorized cycle-2 continuation (Amendment 15) cannot run until this channel exists.",
+ "inputs": [
+  "project-control/reports/M0-T107-cycle2-start-refusal.md (the reproduced defect: root cause + verbatim refusal)",
+  "project-control/directives/D-024-fable-codex-loop/source-016-amendment.md (rows R302-R317) + source-017-amendment.md (rows R318-R322)",
+  "tools/agent_supervisor/state_machine.py (transition table; BLOCKING_STATES/TERMINAL_STATES; assert_can_act)",
+  "tools/agent_supervisor/cli.py (cmd_clear_recovery pattern ~1846; cmd_resume_pending_prompt ~1890; start refusal path ~3008)",
+  "tools/agent_supervisor/recovery.py (recover_boot classification; safe_no_auto_resume)",
+  "project-control/reports/M0-T115-repair-record.md (H2 RepairRecord precedent for the same defect family)"
+ ],
+ "outputs": [
+  "An explicit, audited, fail-closed operator CLI surface firing HALTED -> IDLE on owner_explicit_restart: exactly one state transition per invocation, a durable audited owner-restart record, refuses under the durable emergency-stop flag and from any other state, clears no flags, resets no budgets, dispatches nothing (R304/R310/R313)",
+  "A DISTINCT, appropriately stronger explicit operator acknowledgment surface for EMERGENCY_STOPPED -> IDLE; the ordinary restart surface, every automatic path, and recovery classification refuse it (R305/R306)",
+  "Fail-closed restart preconditions: the surface refuses while open asks, pending external effects, surviving children, provider identity drift, or an unsafe recovery classification exist (R311)",
+  "Complete enumeration of every blocking/terminal supervisor state and every state-machine recovery edge, with the per-edge proof: exactly one documented callable CLI surface per intended operator-recovery edge; intentionally terminal edges explicitly unreachable (R307/R308, in the producer report)",
+  "A deterministic, removal-sensitive reachability test failing whenever a defined recovery edge has no command call site - proven RED on the pre-fix tree, GREEN on the fixed tree (R309)",
+  "Test matrix per R312: pre-fix journals (the live journal's shape: HALTED after decision_halt_unsafe, resolved-ask history), current journals, repeated invocation, stale runs, concurrent controllers, emergency-stop recovery, audit-chain continuity, removal sensitivity",
+  "Operator documentation updates (README + runbook) for the new surfaces",
+  "project-control/reports/M0-T121-producer-report.md + project-control/reports/M0-T121-repair-record.md (H2 RepairRecord)"
+ ],
+ "dependencies": [],
+ "allowed_paths": [
+  "tools/agent_supervisor/state_machine.py",
+  "tools/agent_supervisor/cli.py",
+  "tools/agent_supervisor/recovery.py",
+  "tools/agent_supervisor/restart_channel.py",
+  "tools/agent_supervisor/README.md",
+  "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+  "tools/test_agent_supervisor_restart_channel.py",
+  "tools/test_agent_supervisor_invariants.py",
+  "tools/test_agent_supervisor_recovery.py",
+  "tools/test_agent_supervisor_crash.py",
+  "tools/test_agent_supervisor_endurance.py",
+  "tools/test_agent_supervisor_loop.py",
+  "project-control/reports/M0-T121-producer-report.md",
+  "project-control/reports/M0-T121-repair-record.md"
+ ],
+ "forbidden_paths": [
+  "project-control/** (except the two named report files)",
+  "the live runtime dir under %LOCALAPPDATA%/NYCBuildabilitySupervisor/** (NEVER touch the preserved journal)",
+  ".github/**",
+  "services/**",
+  "apps/**"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "scenario": "A journal with the LIVE defect shape (HALTED via decision_halt_unsafe, three resolved/denied asks in history, audit chain intact) accepts the new owner-restart command: exactly one HALTED -> IDLE transition on owner_explicit_restart, a durable audited owner-restart record, journal and audit chain remain valid.",
+   "verification": "unit test on a reconstructed pre-fix journal; audit-chain continuity asserted before/after"
+  },
+  {
+   "id": "AS-2",
+   "scenario": "Repeated invocation: a second invocation of the restart command refuses cleanly (state is no longer HALTED); no second transition, no journal corruption.",
+   "verification": "unit test"
+  },
+  {
+   "id": "AS-3",
+   "scenario": "The reachability test enumerates every recovery edge in TRANSITIONS and FAILS on the pre-fix tree (owner_explicit_restart has no call site) and PASSES on the fixed tree; deleting the new command's registration makes it fail again.",
+   "verification": "red/green run recorded in the producer report + removal-sensitivity test"
+  },
+  {
+   "id": "AS-4",
+   "scenario": "EMERGENCY_STOPPED: the ordinary restart surface refuses; only the distinct stronger acknowledgment surface exits it; no automatic path (recovery classification, scheduler, succession) can fire either edge.",
+   "verification": "unit tests for each refusing path"
+  },
+  {
+   "id": "AS-5",
+   "scenario": "Fail-closed preconditions: with (a) an open ask, (b) a pending external effect, (c) a recorded surviving child, (d) provider identity drift, (e) an unsafe recovery classification, the restart surface refuses with a typed refusal; each precondition individually forces the refusal.",
+   "verification": "five separate unit tests"
+  },
+  {
+   "id": "AS-6",
+   "scenario": "Durable emergency-stop flag set: the HALTED restart surface refuses and directs to the explicit stop-clear discipline first (clear-recovery precedent); no flag is cleared implicitly.",
+   "verification": "unit test"
+  },
+  {
+   "id": "AS-7",
+   "scenario": "Concurrent controllers / stale runs: with the single-instance lock held elsewhere the command refuses; a stale run identity is surfaced, never silently adopted; state transitions exactly once across racing invocations.",
+   "verification": "lock-contention and race unit tests"
+  },
+  {
+   "id": "AS-8",
+   "scenario": "No policy/budget/audit side effects: policy tiers, budgets, counters, and audit history are byte-identical apart from the appended restart records.",
+   "verification": "before/after snapshot assertions"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-30T03:15:05.664332+00:00",
+ "updated_at": "2026-08-30T03:18:26.276932+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-30T03:15:05.664332+00:00"
+}

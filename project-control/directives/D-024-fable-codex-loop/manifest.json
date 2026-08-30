@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-30T02:00:50.171083+00:00",
+ "updated_at": "2026-08-30T03:16:16.524313+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -132,6 +132,22 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-30T02:00:50.171083+00:00",
    "content_digest_sha256": "9973ce391b28cd1273bcdc1252e105db95d01c0774ffd210eaea46c9b77efd56"
+  },
+  {
+   "file": "source-016-amendment.md",
+   "kind": "amendment",
+   "sequence": 16,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T03:14:04.827286+00:00",
+   "content_digest_sha256": "849c675b7bc1653efa37f0f310411bbf14a610ba8c08ea0eaf92f860b985621b"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T03:16:16.524313+00:00",
+   "content_digest_sha256": "1070744b84599655a87900566b6b2da9dcfc7b3230cbaf48422fc565c400c8e8"
   }
  ],
  "amendments": [
@@ -148,7 +164,9 @@
   "source-012-amendment.md",
   "source-013-amendment.md",
   "source-014-amendment.md",
-  "source-015-amendment.md"
+  "source-015-amendment.md",
+  "source-016-amendment.md",
+  "source-017-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -543,10 +561,31 @@
   "D-024-R298",
   "D-024-R299",
   "D-024-R300",
-  "D-024-R301"
+  "D-024-R301",
+  "D-024-R302",
+  "D-024-R303",
+  "D-024-R304",
+  "D-024-R305",
+  "D-024-R306",
+  "D-024-R307",
+  "D-024-R308",
+  "D-024-R309",
+  "D-024-R310",
+  "D-024-R311",
+  "D-024-R312",
+  "D-024-R313",
+  "D-024-R314",
+  "D-024-R315",
+  "D-024-R316",
+  "D-024-R317",
+  "D-024-R318",
+  "D-024-R319",
+  "D-024-R320",
+  "D-024-R321",
+  "D-024-R322"
  ],
- "requirements_id_digest_sha256": "10d79f8625b5efce92f0de6d461902dc899b1639224d89cdbdd16a5d7dee330c",
- "requirements_content_digest_sha256": "9f88de78932248d51fb70a2a1ca76ab70673be3daa13a48609d02cce811068e1",
+ "requirements_id_digest_sha256": "58be4ffe0f04015b768bbfb2e535981f5df7538ce1be3f13c49603e470faf03d",
+ "requirements_content_digest_sha256": "0609117bcd47a5f45484a1905cfd99598d2addfb6ac577222be485ddca0419ae",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -649,6 +688,16 @@
    "at": "2026-08-30T02:00:50.171083+00:00",
    "by": "orchestrator",
    "note": "Amendment 15 captured (owner instruction 2026-08-30, verbatim in source-015-amendment.md): M0-T113 completes through gates+acceptance BEFORE the owner's cycle-2 continuation (R298); pre-continuation report of the clean pushed tip + at-rest journal with zero open requests (R299); cycle-2 stop protocol: on another counted stop NO further restart and ALL evidence preserved (R300), with the independent Codex review failure diagnosed as a SEPARATE bounded AD-093 defect task (R301). Rows R298-R301 bind M0-T113. The cycle-2 start itself remains the owner-typed act; no owner gate loosened."
+  },
+  {
+   "at": "2026-08-30T03:14:04.827286+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 16 captured (owner instruction 2026-08-30, verbatim in source-016-amendment.md): the bounded restart-channel defect task + R247 full recertification window AUTHORIZED after the seq-35 cycle-2 start refusal (owner_explicit_restart edge unreachable). Rows R302-R317: close the complete F-2 class (R303); audited fail-closed HALTED->IDLE surface (R304); stronger EMERGENCY_STOPPED acknowledgment + never-auto restart (R305/R306); full state/edge enumeration + one-surface-per-edge proof (R307/R308); deterministic removal-sensitive reachability test (R309); prohibitions + fail-closed restart preconditions (R310/R311); test matrix + exactly-once audited restart record (R312/R313); standard gates/DCV/mutation/CI/frozen-identity recert (R314); R276 rerun + command handover only after certification (R315); exactly one cycle-2 attempt (R316); Amendment-15 enforcement on any further counted stop (R317). Tasks allocated: M0-T121 (fix), M0-T122 (recertification). No other owner gate changed."
+  },
+  {
+   "at": "2026-08-30T03:16:16.524313+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 17 captured (owner addendum 2026-08-30, verbatim in source-017-amendment.md; captured at the immediate safe seam - no producer was in flight): completion-claim discipline for the Amendment-16 window. Rows R318-R322: never interrupt an in-flight producer to capture (R318); continuous operability is NOT proven by the new command + unit tests alone (R319); the final live evidence must exercise the REAL preserved journal through owner restart, preflight, fresh Fable rotation, independent Codex repository review, and actual M0-T107 advancement (R320); on live-journey failure preserve everything and report the new seam (R321), with no full-autonomy claim and no repeated restarts (R322). Binds M0-T121/M0-T122; extends Amendments 15/16 without relaxing them."
   }
  ]
 }

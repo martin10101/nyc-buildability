@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 301,
+ "requirement_count": 322,
  "producer": "orchestrator",
- "updated_at": "2026-08-30T02:00:50.171083+00:00",
+ "updated_at": "2026-08-30T03:16:16.524313+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -10584,6 +10584,640 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 15
+  },
+  {
+   "id": "D-024-R302",
+   "text": "The bounded restart-channel defect task and the resulting R247 full recertification window are AUTHORIZED (the seq-35 proposal: wire the audited owner-explicit restart channel; qualifying evidence = the reproduced cycle-2 start refusal, project-control/reports/M0-T107-cycle2-start-refusal.md).",
+   "source_ref": "source-016-amendment.md#authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121",
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R303",
+   "text": "Close the complete reproduced F-2 defect class (state-machine recovery edges defined in the transition table but reachable by no command surface), not merely the immediate HALTED case.",
+   "source_ref": "source-016-amendment.md#f2-class-scope",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R304",
+   "text": "Implement an explicit, audited, fail-closed operator recovery surface for the HALTED -> IDLE owner_explicit_restart edge.",
+   "source_ref": "source-016-amendment.md#halted-surface",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R305",
+   "text": "Address the EMERGENCY_STOPPED sibling edge with an appropriately STRONGER explicit operator acknowledgment than the ordinary HALTED recovery surface (a distinct, deliberate acknowledgment act).",
+   "source_ref": "source-016-amendment.md#emergency-sibling",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R306",
+   "text": "Never allow automatic or ordinary restart from an emergency stop: the EMERGENCY_STOPPED exit must not be reachable via the ordinary restart surface, any automatic path, or recovery classification.",
+   "source_ref": "source-016-amendment.md#emergency-sibling",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R307",
+   "text": "Enumerate every blocking or terminal supervisor state and every state-machine recovery edge (the complete inventory, recorded in the producer report).",
+   "source_ref": "source-016-amendment.md#edge-enumeration",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R308",
+   "text": "Prove that each INTENDED operator-recovery edge has exactly one documented, callable CLI surface, while intentionally terminal edges remain explicitly unreachable (the proof recorded per edge).",
+   "source_ref": "source-016-amendment.md#edge-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R309",
+   "text": "A deterministic reachability test exists and FAILS whenever a defined state-machine recovery edge has no command call site (removal-sensitive by construction).",
+   "source_ref": "source-016-amendment.md#reachability-test",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "pytest: the reachability test must FAIL on the pre-fix tree (red) and PASS on the fixed tree (green); mutation proof per the engineering-reliability standard",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R310",
+   "text": "Do not add a generic state-changing command, manually edit the journal, loosen policy, reset budgets, or erase audit history.",
+   "source_ref": "source-016-amendment.md#prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R311",
+   "text": "The restart surface must refuse (fail closed) while ANY of the following exist: open asks, pending external effects, surviving children, provider identity drift, or an unsafe recovery classification.",
+   "source_ref": "source-016-amendment.md#prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R312",
+   "text": "Test coverage must include: pre-fix journals, current journals, repeated invocation, stale runs, concurrent controllers, emergency-stop recovery, audit-chain continuity, and removal sensitivity.",
+   "source_ref": "source-016-amendment.md#test-matrix",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "pytest: one or more named tests per matrix item, enumerated in the producer report",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R313",
+   "text": "The restart command must transition state exactly once per invocation and leave a durable audited owner-restart record.",
+   "source_ref": "source-016-amendment.md#exactly-once",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R314",
+   "text": "The window runs the standard process: gates G0/G2/G3/G4/G5, independent review, DCV, mutation proof, CI, and the frozen-identity recertification.",
+   "source_ref": "source-016-amendment.md#gates-recert",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121",
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R315",
+   "text": "Only after the new certification passes may the orchestrator rerun R276 and hand the owner the same cycle-2 start command (certified item-3 shape, no --repin-cli-identity, forward-slash paths).",
+   "source_ref": "source-016-amendment.md#sequencing-hold",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R316",
+   "text": "Exactly ONE cycle-2 start attempt is permitted after the new certification passes.",
+   "source_ref": "source-016-amendment.md#one-attempt",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R317",
+   "text": "On any further post-dispatch counted stop in cycle 2, enforce Amendment 15: NO restart, preserve all evidence, diagnose per D-024-R300/R301.",
+   "source_ref": "source-016-amendment.md#one-attempt",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 16
+  },
+  {
+   "id": "D-024-R318",
+   "text": "Do not interrupt an in-flight producer to capture a directive; capture at the next safe seam (this window's standing capture-timing rule).",
+   "source_ref": "source-017-amendment.md#capture-seam",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121",
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-024-R319",
+   "text": "Do not declare continuous operability proven merely because the new restart command and its unit tests pass.",
+   "source_ref": "source-017-amendment.md#no-unit-test-operability-claim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121",
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-024-R320",
+   "text": "The FINAL live evidence must exercise the real preserved journal end-to-end through: owner restart, preflight, a fresh Fable rotation, the independent Codex repository review, and actual M0-T107 advancement.",
+   "source_ref": "source-017-amendment.md#live-journey-evidence",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live cycle-2 journey record over the real preserved journal (not a fixture, not a fresh journal, not unit tests)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-024-R321",
+   "text": "If the live journey fails: preserve everything (journal, audit, packets, worktree) and report the new seam.",
+   "source_ref": "source-017-amendment.md#journey-failure-protocol",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 17
+  },
+  {
+   "id": "D-024-R322",
+   "text": "On a live-journey failure: do not claim full autonomy and do not restart repeatedly (one attempt per D-024-R316; Amendment-15 enforcement per D-024-R317).",
+   "source_ref": "source-017-amendment.md#journey-failure-protocol",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T122"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 17
   }
  ]
 }

@@ -1,0 +1,80 @@
+{
+ "task_id": "M0-T122",
+ "title": "Fourth golden recertification at the post-restart-channel frozen identity + R276 rerun gate",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Run the R247 full recertification at the ONE final frozen identity that includes the accepted M0-T121 restart-channel fix (D-024-R314): golden-run pack green at the final tree, full suite baseline re-established (M0-T039 duty), controller manifest re-recorded and verified, doctor full pass, drift tooth green at the admitted CLI 2.1.251 (digest d6f6c29a..., no repin - identity pinned and undrifted), M0-T096 activation-package identity anchors refreshed. SEQUENCING HOLD (D-024-R315): only after this certification passes may the orchestrator rerun the R276 preflight and hand the owner the same cycle-2 start command (certified item-3 shape, no --repin-cli-identity, forward-slash paths). Cycle-2 protocol recorded for verification (D-024-R316/R317 + Amendment 17 R318..R322): exactly ONE owner-typed cycle-2 attempt; the final live evidence must exercise the real preserved journal through owner restart, preflight, fresh Fable rotation, independent Codex repository review, and actual M0-T107 advancement - continuous operability is NOT declared proven from unit tests alone; on live-journey failure preserve everything, report the new seam, no repeated restarts, no full-autonomy claim. QUALIFYING EVIDENCE: D-024-R302/R314 (authorized recertification window; M0-T121 touches tools/agent_supervisor/** invalidating the prior certification).",
+ "business_reason": "Certification is identity-bound: the restart-channel fix changes the supervisor tree, so autonomous operation may not resume until the full recertification passes at the final identity and the owner receives the certified cycle-2 command.",
+ "inputs": [
+  "Accepted M0-T121 (the restart-channel fix) at its merged identity",
+  "project-control/reports/M0-T119-recertification.md (third recert - the pattern and prior anchors)",
+  "project-control/reports/M0-T096-activation-package.md (identity anchors to refresh)",
+  "project-control/directives/D-024-fable-codex-loop/source-016-amendment.md + source-017-amendment.md"
+ ],
+ "outputs": [
+  "project-control/reports/M0-T122-recertification.md: the fourth golden recertification at the ONE final frozen identity including M0-T121 - golden pack green, full suite baseline re-established (>=1165 tests, 0 failures, M0-T039 duty), controller manifest re-recorded + verify-controller PASS, doctor full PASS, drift tooth green at admitted CLI 2.1.251 digest d6f6c29a... (no repin), new identity anchors (material SHA, tools/agent_supervisor tree hash, golden blob, manifest digest) recorded",
+  "M0-T096-activation-package.md identity anchors refreshed to the new certified identity",
+  "The recorded R315 sequencing hold: R276 rerun + cycle-2 command handover only after this certification passes; the R316/R317 + R318..R322 live-journey protocol recorded for the owner act"
+ ],
+ "dependencies": [
+  "M0-T121"
+ ],
+ "allowed_paths": [
+  "project-control/reports/M0-T122-recertification.md",
+  "project-control/reports/M0-T096-activation-package.md"
+ ],
+ "forbidden_paths": [
+  "tools/**",
+  "the live runtime dir (the preserved journal is never touched)"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "scenario": "The golden-run certification pack passes in full at the final frozen identity (the merged tree including M0-T121), and the recorded anchors (material SHA, tree hash, golden blob, manifest digest) all correspond to that single identity.",
+   "verification": "recorded command outputs in the recertification report, reproducible by the reviewer"
+  },
+  {
+   "id": "AS-2",
+   "scenario": "The full supervisor suite baseline is re-established at the same identity (M0-T039 duty: >=1165 tests, 0 failures) including the new reachability and restart-channel tests.",
+   "verification": "captured CI/suite evidence at the certified SHA"
+  },
+  {
+   "id": "AS-3",
+   "scenario": "Controller manifest re-recorded over the final tree, verify-controller PASS with the external config binding, doctor full PASS, drift tooth GREEN at the admitted 2.1.251 identity (digest unchanged - no repin needed).",
+   "verification": "recorded command outputs in the recertification report"
+  },
+  {
+   "id": "AS-4",
+   "scenario": "The R315 hold is honored: no R276 rerun and no cycle-2 command handed over before this task is accepted; the handover text (item-3 shape, no --repin-cli-identity, forward-slash paths) and the R316-R322 one-attempt/live-journey protocol are recorded verbatim in the recertification report.",
+   "verification": "DCV verification of the recorded sequencing + protocol"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-30T03:15:35.363549+00:00",
+ "updated_at": "2026-08-30T03:17:05.781988+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-30T03:15:35.363549+00:00"
+}
