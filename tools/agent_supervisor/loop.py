@@ -61,6 +61,7 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
+from . import launch_seam
 from . import rotation
 from . import session_continuity as sc
 from . import loop_turnover as lt
@@ -635,6 +636,15 @@ class SupervisedLoop:
         recorded_session = sc.recorded_provider_session(journal, run_id=run_id)
         self._provider_session_id = (recorded_session.session_id
                                      if recorded_session is not None else "")
+        # M0-T123 (D-024-R332/R333): the recorded session's last-observed ceiling
+        # telemetry, restored so the pre-first-dispatch launch seam can decide -
+        # BEFORE any provider contact - whether continuing this session would cross
+        # the 400k ceiling. `None`/False mean unknown, which the seam treats as
+        # fail-closed on a continuation (never assumed below the ceiling).
+        self._recorded_session_tokens = (recorded_session.context_tokens
+                                         if recorded_session is not None else None)
+        self._recorded_session_usage_known = (
+            bool(recorded_session.usage_known) if recorded_session is not None else False)
         self._rotation_record_key = ""
         self._resume_max_age_seconds = resume_max_age_seconds
         # D-004 am.26 / D-007 am.11 / am.12: the model the CURRENT session runs
@@ -956,6 +966,94 @@ class SupervisedLoop:
                 detail={"cycle": cycle, "reason_code": reason_code, "detail": detail,
                         "note": "the in-flight unit is NOT interrupted (S11.2); rotation "
                                 "happens before the next dispatch"})
+
+    def _rotate_over_ceiling_before_first_dispatch(self, *, cycle: int) -> bool:
+        """Rotate a recorded over-ceiling session to a fresh one BEFORE the first dispatch.
+
+        The reproduced cycle-2 defect (D-024-R332/R333): the durable
+        `rotation_pending=true` / `rotation_pending_reason=context_threshold` set
+        when a prior unit crossed the 400k ceiling (604,772 tokens) was left
+        UNCONSUMED across the next START, which then dispatched a unit on the
+        over-ceiling session that ran to 640,224 tokens and died. The between-cycle
+        and FORWARD_PROMPT rotation seams both check `rotation_pending`, but the
+        ordinary IDLE->PREFLIGHT->first-cycle start never did - so the ceiling was
+        never evaluated before the first provider contact.
+
+        This is that missing pre-first-dispatch seam. It routes the decision through
+        the ONE launch seam (`launch_seam.evaluate_ceiling`) and fires when either
+        the durable `rotation_pending` flag carries a context-shedding reason, or the
+        recorded session's known telemetry is at/above the ceiling. On a fire it
+        SHEDS the over-ceiling session at the safe seam: the recorded provider
+        session is forgotten (so nothing downstream can `--resume` it and the old
+        oversized transcript receives no new events), any resume binding on the
+        runner is dropped, and the durable rotation_pending flag is consumed - so the
+        first unit launches as a fresh, distinct session in the packet worktree.
+        Returns True when it rotated, False when there was nothing to shed.
+        """
+        if not self.config.forwards:
+            # A shadow observation dispatches nothing durable and never resumes; the
+            # pressure path is forwarding-mode only (see `_flag_rotation_if_needed`).
+            return False
+        reason = str(self.journal.get_state(rotation.ROTATION_REASON_KEY, "") or "")
+        pending_context = (self.rotation_pending()
+                           and reason in sc.CONTEXT_SHEDDING_REASONS)
+        ceiling = self.context_rotation_threshold or launch_seam.CONTEXT_ROTATION_CEILING
+        # Route the telemetry decision through the single seam. `rotate` names an
+        # at/above-ceiling session; a recorded session whose telemetry is known and
+        # over the ceiling triggers the shed even without a durable pending flag.
+        ceiling_decision = launch_seam.evaluate_ceiling(
+            resuming=bool(self._provider_session_id),
+            session_context_tokens=self._recorded_session_tokens,
+            session_usage_known=self._recorded_session_usage_known,
+            ceiling=ceiling)
+        known_over = ceiling_decision is not None and ceiling_decision.rotate
+        if not (pending_context or known_over):
+            return False
+        shed_session = self._provider_session_id
+        shed_tokens = (self._recorded_session_tokens
+                       if self._recorded_session_usage_known else None)
+        # Shed the over-ceiling session: nothing downstream may resume it.
+        self._provider_session_id = ""
+        self._recorded_session_tokens = None
+        self._recorded_session_usage_known = False
+        sc.clear_provider_session(self.journal)
+        drop_resume = getattr(self.runner, "with_resume", None)
+        # Drop any resume binding on the runner so the fresh launch carries no
+        # `--resume`. `with_resume("")` is refused by the runner (an empty id is not
+        # a session), so a bound runner is only cleared by re-deriving a fresh one;
+        # in practice the ordinary first-dispatch runner is never resume-bound, so
+        # this is a defensive no-op unless a prior act bound it.
+        if callable(drop_resume) and getattr(
+                getattr(self.runner, "config", None), "resume_session_id", ""):
+            # Re-create the runner without the resume binding by replacing the config.
+            cfg = getattr(self.runner, "config", None)
+            if cfg is not None and hasattr(cfg, "resume_session_id"):
+                self.runner.config = dataclasses.replace(
+                    cfg, resume_session_id="", resume_context_tokens=None,
+                    resume_usage_known=False)
+        rotation.clear_rotation_pending(self.journal)
+        self.journal.set_state(rotation.ROTATION_REASON_KEY, "")
+        record = {
+            "cycle": cycle,
+            "reason_code": reason or "context_threshold",
+            "shed_provider_session_id": shed_session,
+            "shed_context_tokens": shed_tokens,
+            "ceiling": ceiling,
+            "pending_flag_consumed": pending_context,
+            "known_over_ceiling": known_over,
+        }
+        self._rotations.append({**record, "kind": "over_ceiling_shed_pre_dispatch",
+                                "recorded_at_utc": to_utc_iso()})
+        if self.audit is not None:
+            self.audit.append(
+                "over_ceiling_session_shed", run_id=self.run_id,
+                policy_result="over_ceiling_resume_forbidden",
+                detail={**record,
+                        "note": "a session at or above the 400k ceiling is NEVER resumed "
+                                "(D-024-R333); it was shed at the safe seam BEFORE the "
+                                "first dispatch and the next unit launches as a fresh, "
+                                "distinct session in the packet worktree"})
+        return True
 
     def _refresh_session_handoff(self, *, cycle: int, reason_code: str) -> str:
         """Refresh the durable SESSION_HANDOFF snapshot before rotating.
@@ -1497,10 +1595,17 @@ class SupervisedLoop:
         session_conflict = str(getattr(run_result, "session_id_conflict", "") or "")
         if session_id and not session_conflict:
             self._provider_session_id = session_id
+            # M0-T123 (D-024-R332): persist the session's cumulative context
+            # telemetry alongside its identity, so a later START that might continue
+            # this session can evaluate the 400k ceiling BEFORE provider contact
+            # instead of re-launching to measure it. `usage_known` False records the
+            # tokens as unknown (never a below-ceiling zero).
             sc.record_provider_session(
                 self.journal, session_id=session_id,
                 model_id=self._current_model or self.pinned_model,
-                run_id=self.run_id, cycle=cycle)
+                run_id=self.run_id, cycle=cycle,
+                context_tokens=int(getattr(run_result, "context_tokens", 0) or 0),
+                usage_known=bool(getattr(run_result, "usage_known", False)))
         elif session_conflict:
             self._provider_session_id = ""
             sc.clear_provider_session(self.journal)
@@ -2536,6 +2641,16 @@ class SupervisedLoop:
                         rotations=tuple(self._rotations))
                 prompt = lt.with_reorientation(seam, prompt)
             start_index = next_index
+        # M0-T123 (D-024-R332/R333): the pre-first-dispatch ceiling seam. BEFORE the
+        # first bounded unit of this run is dispatched - i.e. before any provider
+        # contact - a recorded session at or above the 400k ceiling (or a durable,
+        # unconsumed context-shedding rotation) is shed to a fresh session at the
+        # safe seam. This closes the exact gap the reproduced cycle-2 start fell
+        # through: the ordinary IDLE->PREFLIGHT->first-cycle path never consulted the
+        # ceiling, so the over-ceiling session was continued and died. The FORWARD_
+        # PROMPT branch above already rotated when it resumed an approved forward, so
+        # this is a no-op there.
+        self._rotate_over_ceiling_before_first_dispatch(cycle=start_index)
         for index in range(start_index, self.config.max_cycles + 1):
             # M0-T079: the budget gate, at the seam BEFORE a unit is dispatched.
             # Nothing is in flight here, so exhaustion is a clean deterministic

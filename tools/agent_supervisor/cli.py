@@ -166,6 +166,7 @@ from .model_change_ipc import (
     probe_named_pipe_support,
 )
 from .notifications import NotificationError, build_notification
+from . import launch_seam
 from . import os_acl
 from .os_acl import evaluate_controller_config_acl
 from .resource_sampling import ResourceSampler
@@ -2640,6 +2641,19 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     packet = json.loads(pathlib.Path(args.task_packet).read_text(encoding="utf-8-sig"))
     repo = pathlib.Path(args.repo or checkout).resolve()
     worktree = pathlib.Path(args.worktree or repo).resolve()
+    # M0-T123 (D-024-R335/R336): the production cwd-binding gate, BEFORE the runner
+    # is built or a provider is contacted. The reproduced cycle-2 defect launched the
+    # worker in the orchestrator's PRIMARY control checkout (`...\ctl24`) because
+    # `--worktree` was absent and the worktree defaulted to the checkout, even though
+    # the packet declared the isolated worktree `wt-m0t107`. The launch seam refuses
+    # a bound worktree that is not the one the packet declares (naming the
+    # primary-checkout case specifically); the refusal rides the existing
+    # LoopError -> typed-refusal path in `cmd_start`.
+    _wt_binding = launch_seam.evaluate_packet_worktree_binding(
+        str(worktree), str(packet.get("worktree", "") or ""),
+        primary_checkout=str(checkout))
+    if _wt_binding is not None:
+        raise LoopError(_wt_binding.code, _wt_binding.message)
     config = load_controller_config(args.config)
     selection = load_model_selection(args.model_selection)
     validate_selection(config, selection)
@@ -2671,7 +2685,12 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     runner_config = RunnerConfig(
         executable=args.claude_executable, cwd=str(worktree),
         max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
-        model=launch_model, expected_model=expected_model)
+        model=launch_model, expected_model=expected_model,
+        # M0-T123 (D-024-R335/R336): bind the runner's pre-Popen launch seam to the
+        # packet's isolated worktree, so EVERY unit dispatch (ordinary, rotation,
+        # resume) fails closed before provider contact if its cwd is not the
+        # worktree - or is the primary control checkout, named specifically.
+        expected_worktree=str(worktree), primary_checkout=str(checkout))
     # M0-T053 (qualifying evidence: M0-T052 G5 SEC-MAJOR, correction C2): the
     # PRODUCTION launch path hands the runner the durable journal, so every
     # worker spawn is recorded and every verified exit clears the record. This

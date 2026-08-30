@@ -695,6 +695,70 @@ a test for that too. The fix only ever adds a denial; it removes none.
 
 ---
 
+## The launch seam: one pre-provider-contact gate for every worker launch/resume
+
+`launch_seam.py` (M0-T123, D-024 Amendment 19) is the single seam every path
+capable of launching or resuming a Claude worker passes through **before the
+provider is contacted** — ordinary start, recovery start, controller restart,
+rotation, turnover, and checkpoint continuation. It exists because a reproduced
+live run (cycle 2 of the M0-T107 journey) fell through the one gap that had no
+guard: the ordinary `IDLE → PREFLIGHT → first-cycle` start never evaluated the
+rotation ceiling, and the launch cwd was never bound to the packet's isolated
+worktree. The result was a worker that resumed an over-ceiling session in the
+orchestrator's **primary control checkout**, ran to 640k tokens, and died with no
+checkpoint.
+
+The seam owns two guards and nothing else (no I/O, no journal writes, no provider
+contact):
+
+* **Context-rotation ceiling (400k).** A session at or above the ceiling is
+  **never resumed** — it rotates to a fresh session at the safe seam, or fails
+  closed. Missing or unknown token telemetry on a session that would be continued
+  is fail-closed, never assumed below the ceiling. Exactly-at-400k is at-or-above.
+* **cwd binding.** A launch bound to anything other than the packet's isolated
+  worktree fails closed — the primary control checkout (named specifically), any
+  unexpected directory, or an unbound (empty) worktree. The comparison folds
+  Windows path forms (drive-letter case, slash direction) so a primary-checkout
+  launch can never masquerade as the worktree.
+
+It is enforced at three points, each proven by the removal-sensitive reachability
+sweep in `test_agent_supervisor_launch_seam.py`:
+
+1. **The runner chokepoint** — `ClaudeRunner.run_unit` calls the seam immediately
+   before its one `subprocess.Popen`, so no worker unit reaches the provider
+   without passing it. (The model-availability probe `probe_model_launch` also
+   launches `claude`, but it runs no work unit, brokers no permission, and resumes
+   nothing, so the ceiling/cwd guards do not apply to it.)
+2. **The CLI worktree gate** — `cli._run_loop` refuses, before the runner is
+   built, when the bound worktree is not the isolated worktree the task packet
+   declares (the reproduced defect: packet declared `wt-m0t107`, launch bound to
+   `…/ctl24`). The refusal rides the existing typed-refusal path.
+3. **The loop pre-first-dispatch seam** — `SupervisedLoop.run` sheds a recorded
+   over-ceiling session (or an unconsumed durable `rotation_pending=context_*`
+   flag) to a fresh session at the safe seam **before the first dispatch**, so the
+   over-ceiling session receives no new events and the next unit launches as a
+   distinct fresh session in the packet worktree.
+
+**Refusal codes** (all fail closed, all typed):
+
+| Code | Meaning |
+|---|---|
+| `cwd_primary_checkout` | the launch/worktree is the orchestrator's primary control checkout, not the packet's isolated worktree |
+| `cwd_mismatch` | the launch cwd/worktree is some other directory the packet does not declare |
+| `cwd_unbound` | no worktree was bound, or the cwd is empty |
+| `over_ceiling_resume_forbidden` | the session to be continued is at/above the 400k ceiling; rotate to a fresh session instead |
+| `ceiling_telemetry_missing` | a resume was requested but the session's usage is unknown; fail closed, never assume below |
+
+**Operator guidance.** Always pass `--worktree` pointing at the packet's isolated
+worktree; a `cwd_primary_checkout` / `cwd_mismatch` refusal means the worktree the
+command bound does not match the packet's declared `worktree`. An
+`over_ceiling_resume_forbidden` or `ceiling_telemetry_missing` refusal means the
+recorded session crossed (or may have crossed) the rotation ceiling; the run does
+not resume it — it starts fresh at the safe seam. None of these clear a flag,
+reset a budget, or touch the audit chain.
+
+---
+
 ## The safety rules this code is built around
 
 * No `shell=True`, ever, and no command strings — argument arrays only.
@@ -738,3 +802,9 @@ a test for that too. The fix only ever adds a denial; it removes none.
   nonce, and an expiry. A bare "yes" is not an approval.
 * A model change needs a confirmation token derived from that exact change, and
   applies only at a checkpoint boundary.
+* A session at or above the 400k context-rotation ceiling is never resumed — it
+  rotates to a fresh session at the safe seam, or fails closed. Unknown token
+  telemetry on a resume is fail-closed, never assumed below the ceiling.
+* Every worker launch, resume, and rotation binds its working directory to the
+  packet's isolated worktree before the provider is contacted; the primary
+  control checkout, an unexpected directory, or an unbound cwd fails closed.

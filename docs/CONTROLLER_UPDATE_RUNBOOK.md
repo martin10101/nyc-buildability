@@ -313,3 +313,39 @@ $env:DISABLE_AUTOUPDATER
 Behavioral check: `claude doctor` reports the result of the most recent update attempt.
 Already-running terminals keep their old environment and must be **restarted** to pick up the
 new machine-scope value.
+
+---
+
+## The launch seam: worktree binding and the rotation ceiling (M0-T123, D-024 Amendment 19)
+
+Every `start` (ordinary, recovery, or after `owner-restart`) now passes through one
+pre-provider-contact enforcement seam (`tools/agent_supervisor/launch_seam.py`) that binds the
+worker's working directory to the packet's isolated worktree and evaluates the 400k
+context-rotation ceiling **before any provider is contacted**. This closes the reproduced cycle-2
+defect, where a certified start launched the worker in the orchestrator's PRIMARY control checkout
+(`…/ctl24`) instead of the packet worktree (`wt-m0t107`) and continued an over-ceiling session that
+ran to 640k tokens and died with no checkpoint.
+
+**Always pass `--worktree`** pointing at the packet's isolated worktree. If you omit it, the
+worktree defaults to the checkout and the seam refuses (the run never dispatches). The seam emits
+typed, fail-closed refusals — none of which clear a flag, reset a budget, or touch the audit chain:
+
+| Refusal code | What it means | What to do |
+|---|---|---|
+| `cwd_primary_checkout` | the bound worktree is the primary control checkout, not the packet's isolated worktree | re-run `start` with `--worktree <the packet's isolated worktree>` |
+| `cwd_mismatch` | the bound worktree is not the isolated worktree the packet declares | pass the `--worktree` that matches the packet's `worktree` field |
+| `cwd_unbound` | no worktree was bound / the cwd is empty | pass `--worktree` |
+| `over_ceiling_resume_forbidden` | the recorded session is at/above the 400k ceiling | none — the run sheds it and starts a fresh session at the safe seam automatically |
+| `ceiling_telemetry_missing` | a resume was requested but the session's usage is unknown | none — the run fails closed rather than resuming an unmeasured session |
+
+When a start crosses a rotation ceiling, the loop **sheds** the over-ceiling session (the old
+oversized transcript receives no further events) and dispatches a fresh, distinct session in the
+packet worktree — this is the normal, expected behavior for a run that grew past 400k, and needs no
+operator action. A durable `rotation_pending=context_threshold` left over from a prior halt is
+consumed by the same shed at the next start.
+
+> **Note (frozen-identity recertification).** This change touches `tools/agent_supervisor/**`, so it
+> invalidates the current frozen-identity certification and requires the R247 recertification window
+> (Amendment 19 R330/R346) before any further live start — recapture the fixture pack, re-run the
+> full recertification, then the R276 preflight, and present the exact live-start package for a
+> separate owner decision (R347).

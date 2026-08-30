@@ -115,6 +115,17 @@ class ProviderSession:
     #: Monotonic-independent ordering aid: the epoch seconds the record was
     #: taken, when the caller supplied a clock. 0.0 means "not measured".
     recorded_at_epoch: float = 0.0
+    #: M0-T123 (D-024-R332/R333): the cumulative context-token usage this
+    #: session last reported (`RunResult.context_tokens`), so a later START that
+    #: might continue this session can evaluate the 400k rotation ceiling BEFORE
+    #: contacting the provider - without re-launching to measure it. `None` means
+    #: NO usage was ever observed for this session; it is NOT zero. The launch
+    #: seam treats an unknown value on a to-be-continued session as fail-closed
+    #: (never "assumed below the ceiling").
+    context_tokens: int | None = None
+    #: True only when at least one usage object was readable on this session's
+    #: stream. A False here means `context_tokens` is unknown, not measured-zero.
+    usage_known: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
@@ -134,6 +145,19 @@ class ProviderSession:
             epoch = float(data.get("recorded_at_epoch", 0.0) or 0.0)
         except (TypeError, ValueError):
             epoch = 0.0
+        # M0-T123: a legacy record (pre-token schema) carries no `context_tokens`
+        # key. That absence is honest "unknown", so it stays None and reads as
+        # missing telemetry - fail-closed for the ceiling - rather than being
+        # coerced to a below-ceiling zero.
+        raw_tokens = data.get("context_tokens", None)
+        tokens: int | None
+        if raw_tokens is None:
+            tokens = None
+        else:
+            try:
+                tokens = int(raw_tokens)
+            except (TypeError, ValueError):
+                tokens = None
         return cls(
             session_id=session_id,
             model_id=str(data.get("model_id", "") or ""),
@@ -141,24 +165,35 @@ class ProviderSession:
             cycle=cycle,
             recorded_at_utc=str(data.get("recorded_at_utc", "") or ""),
             recorded_at_epoch=epoch,
+            context_tokens=tokens,
+            usage_known=bool(data.get("usage_known", False)),
         )
 
 
 def record_provider_session(
     journal: Any, *, session_id: str, model_id: str = "", run_id: str = "",
     cycle: int = 0, at_epoch: float = 0.0,
+    context_tokens: int | None = None, usage_known: bool = False,
 ) -> ProviderSession | None:
     """Persist the provider session identity a completed unit reported.
 
     An EMPTY id is not recorded and does not overwrite a previous record: the
     honest meaning of "the stream carried no session id" is "we learned nothing
     new", never "the session identity is now blank".
+
+    M0-T123: `context_tokens`/`usage_known` carry the session's last observed
+    cumulative usage so a later START can evaluate the rotation ceiling before
+    provider contact. `usage_known=False` records the tokens as unknown (None),
+    never as a below-ceiling zero.
     """
     if not session_id:
         return None
     record = ProviderSession(
         session_id=session_id, model_id=model_id, run_id=run_id, cycle=cycle,
-        recorded_at_utc=to_utc_iso(), recorded_at_epoch=float(at_epoch or 0.0))
+        recorded_at_utc=to_utc_iso(), recorded_at_epoch=float(at_epoch or 0.0),
+        context_tokens=(int(context_tokens) if usage_known
+                        and context_tokens is not None else None),
+        usage_known=bool(usage_known))
     journal.set_state(PROVIDER_SESSION_KEY, record.to_dict())
     return record
 

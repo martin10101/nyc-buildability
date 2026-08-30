@@ -153,7 +153,24 @@ def actuate_resume(loop: Any, provider_session_id: str) -> None:
             f"{provider_session_id!r}, so the rotation would record a resume that never "
             f"reached the process; refusing rather than claiming a continuity the "
             f"successor does not have")
-    loop.runner = rebind(provider_session_id)
+    # M0-T123 (D-024-R332/R333): carry the recorded session's ceiling telemetry onto
+    # the resume so the runner's pre-Popen launch seam evaluates the 400k ceiling
+    # before the `--resume` reaches the provider. A resume of an at/above-ceiling or
+    # unknown-telemetry session then fails closed at the seam rather than
+    # re-launching an over-ceiling session (the reproduced defect). `decide_continuity`
+    # already re-orients (never resumes) a context-shedding rotation, so a resume
+    # here is expected to be below the ceiling; the seam is the fail-closed backstop.
+    recorded = sc.recorded_provider_session(loop.journal, run_id=loop.run_id)
+    tokens = recorded.context_tokens if recorded is not None else None
+    usage_known = bool(recorded.usage_known) if recorded is not None else False
+    try:
+        loop.runner = rebind(provider_session_id,
+                             context_tokens=tokens, usage_known=usage_known)
+    except TypeError:
+        # A runner (or test double) whose `with_resume` predates the telemetry
+        # kwargs still rebinds; the runner-level ceiling guard is simply inert for
+        # it, and the pre-dispatch loop seam remains the primary ceiling gate.
+        loop.runner = rebind(provider_session_id)
 
 
 def post_rotation_gates(loop: Any, checkpoint: Any, run_result: Any, *, cycle: int,

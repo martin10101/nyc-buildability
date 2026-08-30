@@ -48,6 +48,7 @@ import time
 import uuid
 from typing import Any, Callable, Iterator, Mapping, Sequence
 
+from . import launch_seam
 from .locking import process_start_token
 from .models import (
     CHECKPOINT_STATUSES,
@@ -319,6 +320,23 @@ class RunnerConfig:
     permission_prompt_tool: str = REQUIRED_PERMISSION_PROMPT_TOOL
     resume_session_id: str = ""
     resume_capability_verified: bool = False
+    #: M0-T123 (D-024-R335/R336): the packet's isolated worktree this launch MUST
+    #: be bound to. When set (the production `cli._run_loop` always sets it), the
+    #: launch seam enforces `cwd == expected_worktree` and the ceiling BEFORE any
+    #: `subprocess.Popen`. Empty (the default, for the many fake-executable tests
+    #: that never contact a provider) defers cwd binding to the loop/CLI seam that
+    #: holds the packet worktree, and the runner enforces neither guard.
+    expected_worktree: str = ""
+    #: The orchestrator's PRIMARY control checkout, so a cwd that lands on it is
+    #: named specifically by the seam rather than as a generic mismatch.
+    primary_checkout: str = ""
+    #: M0-T123 (D-024-R332/R333): when `resume_session_id` is set, the cumulative
+    #: context tokens that session last reported, so the seam evaluates the 400k
+    #: ceiling before a `--resume` reaches the provider. `None` = unknown (fail
+    #: closed on a resume), never a below-ceiling zero.
+    resume_context_tokens: int | None = None
+    #: True only when `resume_context_tokens` was actually observed.
+    resume_usage_known: bool = False
     env_allowlist: tuple[str, ...] = DEFAULT_ENV_ALLOWLIST
     extra_env: Mapping[str, str] = dataclasses.field(default_factory=dict)
     #: Phase 4: the Job Object is the DEFAULT container on Windows. Setting this
@@ -1108,7 +1126,9 @@ class ClaudeRunner:
         clone.config = dataclasses.replace(self.config, model=model, expected_model=model)
         return clone
 
-    def with_resume(self, provider_session_id: str) -> "ClaudeRunner":
+    def with_resume(self, provider_session_id: str, *,
+                    context_tokens: int | None = None,
+                    usage_known: bool = False) -> "ClaudeRunner":
         """A NEW runner whose next launch really is `--resume <provider id>`.
 
         M0-T080 (qualifying evidence: reproduced defect). `RunnerConfig` has
@@ -1140,8 +1160,16 @@ class ClaudeRunner:
                 f"a provider session identity; only an id the provider itself issued may be "
                 f"resumed (S8.2)")
         clone = copy.copy(self)
-        clone.config = dataclasses.replace(self.config,
-                                           resume_session_id=provider_session_id)
+        # M0-T123: carry the resumed session's ceiling telemetry onto the launch
+        # config so the runner's pre-Popen seam can evaluate the 400k ceiling
+        # before a `--resume` reaches the provider. `usage_known` False keeps the
+        # tokens as unknown (None) - a resume with unknown telemetry fails closed
+        # at the seam rather than being assumed below the ceiling.
+        clone.config = dataclasses.replace(
+            self.config, resume_session_id=provider_session_id,
+            resume_context_tokens=(int(context_tokens)
+                                   if usage_known and context_tokens is not None else None),
+            resume_usage_known=bool(usage_known))
         return clone
 
     def run_unit(
@@ -1177,6 +1205,29 @@ class ClaudeRunner:
         native_tools_appended = NATIVE_TOOLS_SENTINEL not in prompt
         prompt = with_native_tools_guidance(prompt)
         argv = build_argv(self.config)
+        # M0-T123 (D-024-R332..R336): the ironclad pre-provider-contact chokepoint.
+        # EVERY worker launch/resume funnels to this one `Popen`, so the launch seam
+        # is enforced here, before a single byte reaches the provider. When the
+        # production launch path bound a worktree (`expected_worktree` set), a cwd
+        # that is not the packet's isolated worktree and a `--resume` of an
+        # at/above-400k or unknown-telemetry session both fail closed as a typed
+        # `RunnerError` (LaunchSeamError is one). Fake-executable tests that never
+        # bind a worktree defer the cwd guard to the loop/CLI seam and are
+        # unaffected. A rotate verdict is a refusal HERE: a runner cannot rotate, so
+        # an over-ceiling `--resume` must never reach the process.
+        if self.config.expected_worktree:
+            _decision = launch_seam.enforce_launch(launch_seam.WorkerLaunchContext(
+                cwd=self.config.cwd,
+                expected_worktree=self.config.expected_worktree,
+                primary_checkout=self.config.primary_checkout,
+                resuming=bool(self.config.resume_session_id),
+                session_context_tokens=self.config.resume_context_tokens,
+                session_usage_known=self.config.resume_usage_known))
+            if not _decision.ok:
+                # A launch-seam refusal is surfaced as a RunnerError so it rides the
+                # runner's existing fail-closed error contract (the code is the
+                # seam's, e.g. `cwd_primary_checkout`, `over_ceiling_resume_forbidden`).
+                raise RunnerError(_decision.code, _decision.message)
         handler = permission_handler or deny_everything
         # D-024-R278/R286: forced DISABLE_AUTOUPDATER=1 on every claude worker child.
         env = claude_child_env(dict(self.config.extra_env), self.config.env_allowlist)
