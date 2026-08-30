@@ -7825,7 +7825,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): DCV reproduced: window bounded to M0-T121 + M0-T122 (exists, depends_on T121, held backlog); Amendment 16 verbatim allocation; qualifying evidence M0-T107-cycle2-start-refusal.md present and cited in packet+G0. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R303",
@@ -7834,7 +7834,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): DCV reproduced pre-fix zero call sites at 04216dd via git grep (owner_explicit_restart only at state_machine.py:397/399; owner_answer_validated only table+comments); three surfaces now exist - complete F-2 class (3 latent edges) closed. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R304",
@@ -7843,7 +7843,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): owner_restart fires exactly HALTED->IDLE on owner_explicit_restart via _locked/_fire_edge (restart_channel.py:310-322,270-307); one transition + durable operator_owner_restart event; AS-1 verifies chain cryptographically before AND after. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R305",
@@ -7852,7 +7852,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): acknowledge_emergency_stop requires explicit flag AND journal-derived confirm token (digest of the last transition-into-EMERGENCY_STOPPED provenance); materially stronger; wrong/missing token refuse (AS-4 tests, all reproduced in the 34-pass run). Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R306",
@@ -7861,7 +7861,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Ordinary restart refuses EMERGENCY_STOPPED (expected_from_state=HALTED -> wrong_state, two tests); trigger fired ONLY by the two restart_channel surfaces - no scheduler/recovery/succession/loop caller; policy.py has no restart classification. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R307",
@@ -7870,7 +7870,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): DCV independently recomputed blocking={WAIT_FOR_OWNER,PAUSED_RECOVERY,EMERGENCY_STOPPED,HALTED}, terminal={COMPLETE,EMERGENCY_STOPPED,HALTED} and all 11 exit edges; matches producer report row-for-row; meta-test pins the derived set. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R308",
@@ -7879,7 +7879,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): DCV derivation: exactly 5 operator-recovery edges, each with exactly one surface (per-surface drop tests prove it); terminal-deepening edges + COMPLETE->IDLE excluded by rule - intentionally unreachable. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R309",
@@ -7888,7 +7888,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): 34 passed reproduced; sweep is edge-granular ((state_from,trigger) from TRANSITIONS; per-handler AST closure requires BOTH source state and trigger); per-surface drop tests for all three verbs; RED permanently encoded (test_pre_fix_registration_set_is_red). Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R310",
@@ -7897,7 +7897,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Module writes only StateMachine.transition + audit.append; AS-8 byte-identical state diff {current_state,last_trigger}; manual_pause survives; fixed edges only (no generic command); state_machine.py/recovery.py unedited. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R311",
@@ -7906,7 +7906,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): evaluate_preconditions first-failure-wins: emergency flag, exact state, open asks, pending effects, surviving children, recovery classification (provider_identity_drift split out); each individually tested (AS-5a..e, AS-6) with state unchanged; live drift probe documented-deferred to start preflight. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R312",
@@ -7915,7 +7915,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Every matrix item mapped to a named passing test (DCV confirmed each in the 34-run); concurrent-controllers item met by the lock-contention proxy with reports accurately stating it is a proxy, not a threaded race. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R313",
@@ -7924,7 +7924,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): _locked holds the single-instance lock across precondition re-check AND transition; exactly one transition across two invocations (AS-7); durable audited owner-restart record appended after the journal-first commit. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R314",
@@ -7933,7 +7933,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Gates G0/G2/G3/G4/G5 all PASS with producer != reviewers (gate files checked); mutation red/green reproduced; freeze baseline 2811/0 (orchestrator) + DCV subset re-run; CI 20/20 success at 6edf820; recert correctly deferred to held M0-T122. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R318",
@@ -7942,7 +7942,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Producer never interrupted: single dispatch -> natural completion; transcript has zero interruption/stop markers; Amendments 17/18 captured at the safe seam read-only. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R319",
@@ -7951,7 +7951,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Grep across producer report/repair record/evidence map/README/runbook: only the explicit disclaimer appears; no affirmative continuous-operability or full-autonomy claim anywhere. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R323",
@@ -7960,7 +7960,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): DCV reproduced the primary evidence personally: 309/309 transcript events claude-opus-4-8, zero other ids; authority = D-004-R735 via backend-engineer.md frontmatter byte-stable since 8b1b386. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R324",
@@ -7969,7 +7969,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Running producer not interrupted; identity evidence gathered by read-only transcript grep only. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R325",
@@ -7978,7 +7978,7 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Determination AUTHORIZED supported: no model override at dispatch, no quota/unavailability/fallback event, uniform pre-assigned identity; fail-closed condition NOT met - no owner disposition required. Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     },
     {
      "id": "D-024-R326",
@@ -7987,13 +7987,13 @@
       "Independently verified by the DCV at 6edf820 (Amendments 16/17/18 window): Authority claimed only from the explicit D-004-R735 assignment + checked-in frontmatter; no allowlist consulted or cited (model-identity report sections 3-4). Full verbatim report: project-control/reports/M0-T121-DCV.md."
      ],
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5"
+     "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199"
     }
    ],
-   "reviewed_sha": "6edf82022b36d5df6da9a02589b329881d488df5",
+   "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199",
    "verified_at": "2026-08-30T04:58:37.698589+00:00",
    "reviewed_manifest_sha256": "7cadcc709cb6a314bf04c444f76ed5db6c1ed47f8541d04975a07a46c7329669"
   }
  ],
- "updated_at": "2026-08-30T04:58:37.698589+00:00"
+ "updated_at": "2026-08-30T04:59:36.098238+00:00"
 }
