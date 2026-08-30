@@ -7445,64 +7445,88 @@
    "requirements": [
     {
      "id": "D-024-R277",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Recertification slice only; rerun+repin stays bound to M0-T113 (in_progress) and has NOT run (DCV: supervisor status mode=none, no new run id, journal untouched since 05:28Z)",
+      "project-control/reports/M0-T119-DCV.md row R277"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R280",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "DISABLE_UPDATES NOT SET (DCV winreg check); DISABLE_AUTOUPDATER=1 (the authorized control); claude 2.1.251 not downgraded (digest stable); deliverable touches only the two report files",
+      "project-control/reports/M0-T119-DCV.md row R280"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R282",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Single ADMITTED declaration at recert report section 4 line 87 AFTER the complete pass-list table; DCV reproduced the pass list against primary artifacts: manifest 119 files 774f9198 with both new files present, all gate records PASS, golden 42/42 own run, suite 2782/2780/2/0 own run, and RE-HASHED the installed binary = admitted digest d6f6c29a (no drift since certification)",
+      "project-control/reports/M0-T119-DCV.md row R282"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R283",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Anchors reproduced at HEAD (material 7d8195b, tree 8d34ea53, golden blob c54fd0d2); golden 42/42 + whole suite 2782/2780/2/0 re-run by G3, G4, G5 AND the DCV independently (four separate reproductions); baseline 2712+14+0+56=2782 exact; CI 20/20 at tip 357bb50 pinned in the progress log AND independently confirmed by the DCV via the check-runs API",
+      "project-control/reports/M0-T119-DCV.md row R283"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R284",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Rerun NOT started: supervisor status PREFLIGHT/mode=none, last journal transition 2026-08-29T05:28Z (pre-window), no pending effects, no open asks, no new run artifacts; M0-T119 was awaiting_gate at verification time",
+      "project-control/reports/M0-T119-DCV.md row R284"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R293",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git diff 7d8195b..HEAD -- tools/ EMPTY: broker/policy/classifier byte-untouched through the entire certification window",
+      "project-control/reports/M0-T119-DCV.md row R293"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R296",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The certified identity IS M0-T120's deliverable (7d8195b, accepted); ONE recertification only; voided pre-Amendment-14 anchors grep-absent from the report",
+      "project-control/reports/M0-T119-DCV.md row R296"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     },
     {
      "id": "D-024-R297",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Hold (21:39:27Z) and resolution (00:29:35Z, on M0-T120 acceptance) recorded with commit anchors; every certification run post-dates the resolution; voided runs excluded",
+      "project-control/reports/M0-T119-DCV.md row R297"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301"
     }
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "reviewed_manifest_sha256": null
+   "reviewed_sha": "d6356b6b8c460de4348957b241a95344ec563301",
+   "verified_at": "2026-08-30T01:20:27.096669+00:00",
+   "reviewed_manifest_sha256": "a9992d8f239a643ad34f4da17108d1005ad514145c5482da73169d1ccbc3ba1c"
   },
   {
    "task_id": "M0-T120",
@@ -7607,5 +7631,5 @@
    "reviewed_manifest_sha256": "9773ecc55c57f4fe906ffe233a9394f4039b3f1fd09c5358ed3886794b2f25f2"
   }
  ],
- "updated_at": "2026-08-30T00:29:12.642596+00:00"
+ "updated_at": "2026-08-30T01:20:27.096669+00:00"
 }

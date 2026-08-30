@@ -60,12 +60,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T17:54:00.129217+00:00",
-  "updated_at": "2026-08-30T00:55:36.163304+00:00",
+  "updated_at": "2026-08-30T01:20:27.862607+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -99,5 +99,7 @@
       "status": "awaiting_gate",
       "message": "CI PIN (closes G3 MINOR-F9): the pushed certification tip 357bb50 (deliverable 882966b, certified material 7d8195b) is 20/20 GREEN on the check-runs API (0 failed, 0 pending) - the supervisor-bridge whole-suite job is the confirming CI run for the 2782/2780/2/0 certification counts. G3 verdict received: PASS (all packs re-run to identical counts; anchors, admission discipline, manifest binding, package accuracy, voided-runs honesty all verified; F9 was the sole MINOR and is closed by this pin). Awaiting G4/G5."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-30T01:20:27.862607+00:00"
 }
