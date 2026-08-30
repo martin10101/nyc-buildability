@@ -7468,233 +7468,329 @@
    "requirements": [
     {
      "id": "D-024-R250",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R251",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R252",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R253",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R254",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R255",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R256",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R257",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R258",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R259",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R260",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 9 (activation act)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R261",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R262",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R263",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R264",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R265",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R266",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R267",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 10 (Fable correction)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R268",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 11 (restart + seam)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R269",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 11 (restart + seam)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R270",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 11 (restart + seam)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R271",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 11 (restart + seam)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R273",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 12 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R276",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": null,
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 12 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R277",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 13 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R280",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 13 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R284",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 13 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R285",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 13 slice): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R298",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 15 (cycle-2 protocol)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R299",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 15 (cycle-2 protocol)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R300",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 15 (cycle-2 protocol)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     },
     {
      "id": "D-024-R301",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at 6c2fc12 (Amendment 15 (cycle-2 protocol)): per-row verdict PASS on primary evidence the verifier personally reproduced - audit chain recomputed from scratch (31 records, head 53db08f2), config/model-selection/binary digests re-hashed live, gh-confirmed PR #241 OPEN, journal at rest re-read",
+      "project-control/reports/M0-T113-DCV.md per-requirement verdicts + M0-T113-evidence-map.json row"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820"
     }
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "reviewed_manifest_sha256": null
+   "reviewed_sha": "7be95aed24fe177e0573a77d7601ca744d193820",
+   "verified_at": "2026-08-30T02:46:39.170858+00:00",
+   "reviewed_manifest_sha256": "f436c7d89ec36501659664e0b564eca61cd04669e37df38e411857b8648d4887"
   }
  ],
- "updated_at": "2026-08-30T02:00:50.171083+00:00"
+ "updated_at": "2026-08-30T02:46:39.170858+00:00"
 }
