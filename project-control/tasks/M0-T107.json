@@ -43,11 +43,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-08-29T04:56:42.002818+00:00",
+  "updated_at": "2026-08-30T03:06:43.218214+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -58,5 +58,14 @@
   "directive_regime_entered_at": "2026-08-26T22:31:57.765156+00:00",
   "path_free_governance": true,
   "path_free_justification": "Planning-only unit-J packet created at campaign conversion; its two deliverable files (docs/D024_PORTABILITY_PLAN.md, project-control/reports/M0-T107-portability-plan.md) do not exist until production, which begins only after the M0-T096 golden run. The allowed_paths pin the eventual write scope; the content identity binds real files from the first produced commit onward (re-pinned at claim).",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107",
+  "progress_log": [
+    {
+      "at": "2026-08-30T03:06:43.217177+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "CYCLE-2 START REFUSED PRE-DISPATCH (owner-typed certified command, exit 13 stale_state): illegal transition HALTED->HALTED trigger 'act'. Root cause: the owner_explicit_restart exit edge (HALTED->IDLE, state_machine.py:399) has zero call sites - no documented surface can restart after a certified halt; clear-recovery covers only PAUSED_RECOVERY. NOT a counted stop (dispatched false, 0 provider calls, touch budget untouched 2/2; R300/R301 not triggered). R259/R270 applied: one attempt, no retry, no journal edit; journal preserved HALTED (transitions still 13, audit head 33). Bounded AD-093 defect packet PROPOSED to wire the restart channel (F-2 class, third instance; fix re-triggers R247 recert). Full record: reports/M0-T107-cycle2-start-refusal.md (D-024-R259/R270)"
+    }
+  ]
 }
