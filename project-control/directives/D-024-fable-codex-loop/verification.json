@@ -8319,7 +8319,70 @@
    "reviewed_sha": "3bde8020bb9b8bdce514ec828f84204789065386",
    "verified_at": "2026-08-30T08:16:56.962926+00:00",
    "reviewed_manifest_sha256": "21c79191d646189ba30a30ec935cb4350d7460f20f1a6856d7f114cc660eafb4"
+  },
+  {
+   "task_id": "M0-T124",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R328",
+    "D-024-R330",
+    "D-024-R345",
+    "D-024-R346",
+    "D-024-R347"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R328",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at fa9b38c (Amendment-19 recert window): Nothing dispositioned exercised: DCV re-hashed the preserved journal+audit byte-identical to the G0 baselines; doctor readback PAUSED_RECOVERY/18/43; the presentation is commands-only text. Full verbatim report: project-control/reports/M0-T124-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd"
+    },
+    {
+     "id": "D-024-R330",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at fa9b38c (Amendment-19 recert window): Window closed exactly as bounded: M0-T123 accepted + this recert/presentation; no other task created under the authorization. Full verbatim report: project-control/reports/M0-T124-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd"
+    },
+    {
+     "id": "D-024-R345",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at fa9b38c (Amendment-19 recert window): No restart/clear-recovery/journal edit/budget reset (journal byte-identity is the proof); PR #241 gh-confirmed OPEN; deliverables execute nothing. Full verbatim report: project-control/reports/M0-T124-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd"
+    },
+    {
+     "id": "D-024-R346",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at fa9b38c (Amendment-19 recert window): Full standard process on primary evidence: gates G0/G2 + independent G3/G4/G5 (producer != reviewers); DCV's own 140-test certification sample + drift tooth + CLI digest d6f6c29a exact; whole suite 2889/2/0 TRIPLE-sourced; manifest verification (121 files vs 47293127, config-bound, verify-controller PASS) reproduced by the G4 reviewer's read-only doctor; R276 preflight commitment recorded; CI confirmed 20/20 at fa9b38c before acceptance (the DCV's stated condition, satisfied by the orchestrator's final poll). Full verbatim report: project-control/reports/M0-T124-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd"
+    },
+    {
+     "id": "D-024-R347",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at fa9b38c (Amendment-19 recert window): STOP honored and load-bearing-correct: the package presents clear-recovery (verified the right surface for the PAUSED_RECOVERY journal per state_machine.py:283, with owner-restart correctly excluded) + the byte-identical certified item-3 start, for a SEPARATE owner decision; nothing executed; R316 consumption restated. Full verbatim report: project-control/reports/M0-T124-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd"
+    }
+   ],
+   "reviewed_sha": "b5820272b7b2a4493f74bbbb306702f13cf8f8cd",
+   "verified_at": "2026-08-30T08:33:48.675972+00:00",
+   "reviewed_manifest_sha256": "5e317dfabd5829e5d56de014af96eaa6ca7ee2d46bf8ebe749a22ffb32d607da"
   }
  ],
- "updated_at": "2026-08-30T08:16:56.962926+00:00"
+ "updated_at": "2026-08-30T08:33:48.675972+00:00"
 }
