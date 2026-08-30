@@ -104,48 +104,62 @@ Every edge LEAVING a blocking-or-terminal state (mechanically derived by the rea
 | `HALTED` | `IDLE` | `owner_explicit_restart` | **`owner-restart`** (NEW) | operator-recovery |
 | `COMPLETE` | `IDLE` | `run_closed` | loop run-closeout (not `owner_`) | internal closeout |
 
-The reachability test defines an **operator-recovery trigger** mechanically: an edge whose source is
-blocking-or-terminal, whose target is NOT, and whose trigger begins with `owner_`. That yields
-exactly `{owner_answer_validated, owner_approved_pending_prompt, owner_cleared_pause,
-owner_explicit_restart}` — the four owner resume-into-the-live-cycle edges. Each now has exactly one
-(or, for `owner_explicit_restart`, two — HALTED and EMERGENCY_STOPPED) documented callable CLI
-surface. The `owner_*` edges to a terminal state (`owner_halt`, `owner_closed_stage`,
+The reachability test defines an **operator-recovery EDGE** mechanically as a `(state_from, trigger)`
+pair whose source is blocking-or-terminal, whose target is NOT, and whose trigger begins with
+`owner_`. That yields exactly the FIVE edges `{(WAIT_FOR_OWNER, owner_answer_validated),
+(WAIT_FOR_OWNER, owner_approved_pending_prompt), (PAUSED_RECOVERY, owner_cleared_pause),
+(EMERGENCY_STOPPED, owner_explicit_restart), (HALTED, owner_explicit_restart)}`. Note
+`owner_explicit_restart` appears on TWO edges — edge granularity (not trigger granularity) is
+required by R309, because a trigger-level sweep stays GREEN when one of those two edges loses its sole
+surface while the sibling keeps the trigger alive (the G3-F2 / G4 MEDIUM finding). Each edge now has
+exactly one documented callable CLI surface whose handler names BOTH the trigger and the source
+state. The `owner_*` edges to a terminal state (`owner_halt`, `owner_closed_stage`,
 `owner_emergency_stop`) are intentionally NOT operator-recovery-resume edges: they DEEPEN a stop, are
 loop-driven, and are excluded by the target-not-blocking-or-terminal rule. `COMPLETE -> IDLE`
 (`run_closed`) is the internal run closeout, not an owner action, and is likewise excluded.
 
-## 4. Reachability test — red/green + removal sensitivity (R309, AS-3; §3.1/§3.4)
+## 4. Reachability test — edge-granular, red/green + removal sensitivity (R309, AS-3; §3.1/§3.4)
 
-`tools/test_agent_supervisor_restart_channel.py::ReachabilitySweep` derives the trigger set from
-`TRANSITIONS` and, for a given set of registered CLI handlers, computes which triggers each handler's
-transitive closure (within `cli` + `restart_channel`, docstrings stripped, constant NAMES resolved to
-their string values) actually fires. Nothing is hand-listed.
+`tools/test_agent_supervisor_restart_channel.py::ReachabilitySweep` derives the `(state_from,
+trigger)` EDGE set from `TRANSITIONS` and, for a given set of registered CLI handlers, computes the
+string literals each handler's transitive closure (within `cli` + `restart_channel`, docstrings
+stripped, constant NAMES resolved to their string values) names. An edge is covered iff SOME handler's
+literals contain BOTH its source state AND its trigger. Because the shared helpers (`_locked`,
+`_fire_edge`, `evaluate_preconditions`) take the state and trigger as PARAMETERS and hardcode neither,
+each handler contributes only the state+trigger of the ONE edge it wires (`owner_restart` names
+`HALTED`+`owner_explicit_restart`; `acknowledge_emergency_stop` names
+`EMERGENCY_STOPPED`+`owner_explicit_restart`) — so a sibling that fires the same trigger from a
+different source cannot stand in. Nothing is hand-listed.
 
-**RED (verbatim), `register_restart_verbs(...)` temporarily disabled in `cli.py`
-(`python -m pytest ...ReachabilitySweep::test_every_operator_recovery_edge_has_a_registered_cli_surface -q`):**
+**GREEN (all registered):** `python -m pytest tools/test_agent_supervisor_restart_channel.py -q`
+→ `34 passed`; `uncovered_edges(all handlers) == set()`.
+
+**Single-surface removal sensitivity (in-suite AND reproduced by driving the helpers with reduced
+handler sets — no source edit; this is the exact defect G4 proved the trigger-level sweep missed):**
 ```
-E       AssertionError: Items in the first set but not the second:
-E       'owner_answer_validated'
-E       'owner_explicit_restart' : operator-recovery edges with NO registered CLI surface:
-        ['owner_answer_validated', 'owner_explicit_restart'] (the F-2 defect class)
-1 failed in 0.49s
+ALL registered                       -> uncovered edges: []
+drop ONLY 'owner-restart'            -> uncovered: [('HALTED', 'owner_explicit_restart')]
+drop ONLY 'acknowledge-emergency-stop' -> uncovered: [('EMERGENCY_STOPPED', 'owner_explicit_restart')]
+drop ONLY 'resume-after-answer'      -> uncovered: [('WAIT_FOR_OWNER', 'owner_answer_validated')]
+pre-fix subset (all three new dropped) -> uncovered: [('EMERGENCY_STOPPED', 'owner_explicit_restart'),
+                                                      ('HALTED', 'owner_explicit_restart'),
+                                                      ('WAIT_FOR_OWNER', 'owner_answer_validated')]
 ```
-(The same RED was first observed against the earlier per-command registration design before the
-modularity refactor; the mechanical result is identical because reachability is a pure function of
-the registered handlers.) Because the producer is barred from git writes, RED is reproduced by
-disabling the registration in-tree (a producer file edit), not by `git stash`.
+- `test_dropping_only_owner_restart_fails_the_sweep` — dropping ONLY `owner-restart` uncovers
+  `(HALTED, owner_explicit_restart)` while `(EMERGENCY_STOPPED, owner_explicit_restart)` stays covered.
+- `test_dropping_only_acknowledge_emergency_stop_fails_the_sweep` — the mirror.
+- `test_dropping_only_resume_after_answer_fails_the_sweep` — uncovers
+  `(WAIT_FOR_OWNER, owner_answer_validated)` (and NOT the held-prompt edge).
+- `test_pre_fix_registration_set_is_red` — the pre-fix registration subset leaves exactly the three
+  closed edges unreachable (the reproduced M0-T107 defect plus the latent third instance).
+- `test_parser_registers_the_three_recovery_commands` — each new command is a real
+  `cli.build_parser()` choice with a callable handler.
 
-**GREEN (registration restored):** `python -m pytest tools/test_agent_supervisor_restart_channel.py -q`
-→ `31 passed in 4.13s`.
-
-**Removal sensitivity (in-suite, no source edit):**
-- `test_removing_resume_after_answer_unreaches_owner_answer_validated` — dropping the
-  `resume-after-answer` registration from the discovered handler set removes `owner_answer_validated`
-  from the reachable set (its only surface).
-- `test_removing_owner_restart_and_ack_unreaches_owner_explicit_restart` — dropping BOTH
-  `owner-restart` and `acknowledge-emergency-stop` removes `owner_explicit_restart` (its two surfaces).
-- `test_pre_fix_registration_set_is_red` — the pre-fix registration subset leaves exactly
-  `{owner_answer_validated, owner_explicit_restart}` unreachable (the reproduced defect).
+RED-history note: before this rework the sweep was trigger-granular; G4 empirically showed dropping
+ONLY `owner-restart` left `owner_explicit_restart` reachable via the sibling (sweep stayed GREEN). The
+edge-granular version above closes that R309 gap. A full-registration RED remains reproducible by
+disabling `register_restart_verbs` in-tree (a producer edit; the producer is git-write-barred, so no
+`git stash`): `uncovered_edges` then reports all three new edges.
 
 ## 5. Test matrix (R312) → named tests (AS-1..AS-8)
 
@@ -153,9 +167,9 @@ disabling the registration in-tree (a producer file edit), not by `git stash`.
 |---|---|
 | AS-1 pre-fix live-shape journal (HALTED via `decision_halt_unsafe`, 3 denied asks in history, audit chain intact) restarts truthfully, no journal edit | `OwnerRestartHappyPath::test_AS1_live_shape_journal_restarts_truthfully` |
 | AS-2 repeated invocation refuses cleanly (no 2nd transition) | `OwnerRestartHappyPath::test_AS2_repeated_invocation_refuses_cleanly` |
-| AS-3 reachability RED→GREEN + removal sensitivity | `ReachabilitySweep::*` (§4) |
+| AS-3 EDGE-granular reachability GREEN + per-surface removal sensitivity + parser registration | `ReachabilitySweep::*` (§4): `test_the_recovery_edge_set_is_the_expected_owner_edges`, `test_every_operator_recovery_edge_has_a_registered_cli_surface`, `test_pre_fix_registration_set_is_red`, `test_dropping_only_owner_restart_fails_the_sweep`, `test_dropping_only_acknowledge_emergency_stop_fails_the_sweep`, `test_dropping_only_resume_after_answer_fails_the_sweep`, `test_parser_registers_the_three_recovery_commands` |
 | AS-4 EMERGENCY_STOPPED: ordinary refuses; stronger exits; wrong/missing token refuses; flag-set refuses; non-emergency refuses | `EmergencyStopAcknowledgment::test_AS4_*`, `test_ack_refuses_non_emergency_state` |
-| AS-5 five fail-closed preconditions, each individually | `OwnerRestartPreconditions::test_AS5a_open_ask` / `_AS5b_pending_effect` / `_AS5c_surviving_child` / `_AS5d_provider_identity_drift` / `_AS5e_unsafe_recovery_classification` (+`test_recovery_unclassified_refuses`) |
+| AS-5 five fail-closed preconditions, each individually (+ defensive `asks_unreadable`) | `OwnerRestartPreconditions::test_AS5a_open_ask` / `_AS5b_pending_effect` / `_AS5c_surviving_child` / `_AS5d_provider_identity_drift` / `_AS5e_unsafe_recovery_classification` (+`test_recovery_unclassified_refuses`, `test_unreadable_ask_queue_refuses_never_treated_as_empty`) |
 | AS-6 durable emergency-stop flag refuses (no implicit clear) | `OwnerRestartPreconditions::test_AS6_durable_emergency_stop_flag_refuses` |
 | AS-7 concurrent controllers / stale runs / exactly-once | `LockContentionAndExactlyOnce::test_AS7_live_foreign_lock_refuses` / `test_AS7_exactly_once_across_sequential_invocations` / `test_AS7_stale_lock_is_taken_over_not_refused` |
 | AS-8 no policy/budget/audit side effects (before/after byte-identical apart from appended records) | `NoSideEffects::test_AS8_only_state_and_trigger_keys_change` / `test_AS8_no_flag_or_budget_key_is_reset` |
@@ -165,10 +179,16 @@ Audit-chain continuity (R312): AS-1/AS-4/owner-answer tests assert `verify_chain
 AFTER; AS-8 asserts the durable state diff is exactly `{current_state, last_trigger}` and every other
 key byte-identical (nothing erased, only appended).
 
-Exactly-once (R313; §5.2): the transition runs under the held single-instance lock; a racing second
-invocation fails closed on `lock_held`, and a sequential second invocation fails closed on
-`wrong_state` — `test_AS7_exactly_once_across_sequential_invocations` asserts exactly one
-`HALTED -> IDLE` transition across both calls.
+Exactly-once (R313; §5.2): the single-instance lock is HELD across both the precondition re-check and
+the transition (`_locked`), so the check-then-act window is closed. Exactly-once is proven by two
+in-process tests that are a sound proxy for a true multi-process race (the CI host runs one process):
+`test_AS7_exactly_once_across_sequential_invocations` calls the surface twice sequentially and asserts
+exactly ONE `HALTED -> IDLE` transition (the second fails closed on `wrong_state`, state already
+`IDLE`); `test_AS7_live_foreign_lock_refuses` pre-acquires the lock under a LIVE foreign pid
+(`os.getppid()`) and asserts the surface refuses `lock_held` with no transition. Because the lock is
+held across check+transition, a second concurrent caller cannot pass the lock while the first holds
+it, so it takes the sequential/`wrong_state` path once the first releases — i.e. the two proxies
+together bound both interleavings. This is NOT a claim of tested "racing invocations".
 
 ## 6. Self-check results (§8 verification contexts)
 
@@ -186,13 +206,16 @@ invocation fails closed on `lock_held`, and a sequential second invocation fails
   named reviewers.
 
 Test totals (all PASS, 0 failures, control tip `04216dd`):
-- `restart_channel` = **31 passed**.
-- Required minimum set + golden run (`restart_channel + invariants + recovery + crash + loop +
-  endurance + golden_run`) = **410 passed** in 84.72s.
-- Additional related sweeps, all passed: `golden_run + command_authority + recovery_probes +
-  pending_prompt + operator_channel` = **248**; `loop + endurance + start_reentry + bounded_mode +
-  pending_prompt + r595_actuation` = **346**; `restart_channel + invariants + recovery + golden_run +
-  operator_channel + crash` = **263**. No pre-existing failure was observed in any suite.
+- `restart_channel` = **34 passed** (rework round; was 31, +3: `test_dropping_only_owner_restart_*`,
+  `test_dropping_only_acknowledge_emergency_stop_*`, `test_parser_registers_the_three_recovery_commands`,
+  `test_unreadable_ask_queue_refuses_never_treated_as_empty` added; the two prior union-removal tests
+  and the trigger meta-test were replaced by the edge-granular equivalents).
+- `restart_channel + invariants` (rework verification run) = **80 passed** (34 + 46).
+- Pre-rework required minimum + golden run (`restart_channel + invariants + recovery + crash + loop +
+  endurance + golden_run`) = **410 passed** in 84.72s; the +3 new restart_channel tests are additive
+  and touch no other suite. Additional related sweeps, all passed: `golden_run + command_authority +
+  recovery_probes + pending_prompt + operator_channel` = **248**; `loop + endurance + start_reentry +
+  bounded_mode + pending_prompt + r595_actuation` = **346**. No pre-existing failure in any suite.
 - `cli.DEFERRED_COMMANDS == {}` still holds (`test_agent_supervisor_endurance.py:674`).
 
 ## 7. Modularity note (CLAUDE.md principle 16; §2)
@@ -230,3 +253,38 @@ this fix invalidates the current certification and re-triggers R247 (recert = M0
   reachability test would otherwise be red or gerrymandered — closing it is the honest outcome (§3.5).
 - Not re-run in this session: the full whole-repo pytest and CI — those land at the frozen final
   identity in the recertification (M0-T122), per the standard R314 process.
+
+## 10. Rework round delta (post-gate; test-only + report wording)
+
+All three gates returned PASS; G3-F2 and G4's MEDIUM converged on an R309 gap: the reachability sweep
+was TRIGGER-granular, and G4 empirically proved that dropping ONLY `owner-restart` (or ONLY
+`acknowledge-emergency-stop`) left `owner_explicit_restart` reachable via the sibling — so a defined
+recovery EDGE could lose its sole call site while the sweep stayed GREEN. R309 requires failure
+"whenever a defined recovery edge has no command call site". Bounded rework, **test + report only —
+the three shipped surfaces were NOT changed** (`git status` shows only
+`tools/test_agent_supervisor_restart_channel.py` modified plus this report; `restart_channel.py`,
+`cli.py`, `state_machine.py`, `recovery.py`, README, runbook all byte-unchanged in this round).
+
+- **Sweep made EDGE-granular.** `operator_recovery_triggers()` → `operator_recovery_edges()` returns
+  `(state_from, trigger)` pairs; `reachable_triggers()` → `reachable_literals()` returns ALL reachable
+  string literals (no trigger intersection); new `edge_has_surface()` / `uncovered_edges()` require a
+  handler whose closure names BOTH the source state AND the trigger. This works because the handlers
+  hardcode `expected_from_state` and the shared helpers take state/trigger as parameters, so the AST
+  walk binds surface→edge. Fully mechanical, no hand-maintained list.
+- **New / renamed tests** (`ReachabilitySweep`): `test_the_recovery_edge_set_is_the_expected_owner_edges`
+  (was trigger meta), `test_dropping_only_owner_restart_fails_the_sweep`,
+  `test_dropping_only_acknowledge_emergency_stop_fails_the_sweep`,
+  `test_dropping_only_resume_after_answer_fails_the_sweep` (replacing the two union-removal tests),
+  `test_parser_registers_the_three_recovery_commands`. `test_every_operator_recovery_edge_has_a_registered_cli_surface`
+  and `test_pre_fix_registration_set_is_red` kept and rewritten to edges (still green, not weakened).
+  New precondition test `OwnerRestartPreconditions::test_unreadable_ask_queue_refuses_never_treated_as_empty`
+  covers the `asks_unreadable` defensive branch (G4 LOW).
+- **Proof the two single-surface drops now FAIL the sweep** (driving the helpers with reduced handler
+  sets, §4): drop-owner-restart → `[('HALTED', 'owner_explicit_restart')]`; drop-acknowledge →
+  `[('EMERGENCY_STOPPED', 'owner_explicit_restart')]`; drop-resume-after-answer →
+  `[('WAIT_FOR_OWNER', 'owner_answer_validated')]`; all-registered → `[]`.
+- **Counts:** `restart_channel` 31 → **34 passed**; `restart_channel + invariants` = **80 passed**
+  (34 + 46). 0 failures.
+- **AS-7 wording corrected** (§5): exactly-once is proven via a sequential second invocation
+  (`wrong_state`) plus a live-foreign-pid lock-contention refusal (`lock_held`) with the lock held
+  across check+transition — a sound proxy, NOT a claim of tested "racing invocations".

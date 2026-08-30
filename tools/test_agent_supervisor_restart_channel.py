@@ -95,17 +95,25 @@ class ReachabilityBase(unittest.TestCase):
     """
 
     #: The modules whose functions the closure walk descends into. A recovery
-    #: edge is "reachable" only through a REGISTERED handler that (transitively,
-    #: within these modules) fires the trigger.
+    #: EDGE is "reachable" only through a REGISTERED handler that (transitively,
+    #: within these modules) names BOTH its trigger AND its source state.
     OWN_MODULES = frozenset({cli.__name__, rc.__name__})
 
-    def operator_recovery_triggers(self) -> set[str]:
-        """Every trigger on an edge that LEAVES a blocking-or-terminal state for a
-        live (non-blocking, non-terminal) state under an explicit owner action.
-        Derived purely from the state-machine table."""
+    def operator_recovery_edges(self) -> set[tuple[str, str]]:
+        """Every operator-recovery EDGE as a ``(state_from, trigger)`` pair: an
+        edge that LEAVES a blocking-or-terminal state for a live (non-blocking,
+        non-terminal) state under an explicit owner action. Derived purely from
+        the state-machine table.
+
+        EDGE granularity (not trigger granularity) is the point of R309: one
+        trigger (`owner_explicit_restart`) fires TWO distinct edges (HALTED->IDLE
+        and EMERGENCY_STOPPED->IDLE), so a trigger-level sweep would stay GREEN
+        when one of those two edges lost its sole command surface while the
+        sibling kept the trigger alive. Keying on ``(state_from, trigger)`` makes
+        each edge accountable to a surface that constrains that source state."""
         blocking_or_terminal = sm.BLOCKING_STATES | sm.TERMINAL_STATES
         return {
-            t.trigger for t in sm.TRANSITIONS
+            (t.state_from, t.trigger) for t in sm.TRANSITIONS
             if t.state_from in blocking_or_terminal
             and t.state_to not in blocking_or_terminal
             and t.trigger.startswith("owner_")
@@ -133,12 +141,17 @@ class ReachabilityBase(unittest.TestCase):
                     node.body = body[1:]  # type: ignore[attr-defined]
         return tree
 
-    def reachable_triggers(self, handler_funcs) -> set[str]:
-        """String literals (docstrings excluded) reachable from the given handler
-        funcs, intersected with the state-machine's known triggers. Constant NAMES
-        are resolved to their string values via each function's own globals, so a
-        `trigger=OWNER_EXPLICIT_RESTART` call counts even though the literal lives
-        in a module constant."""
+    def reachable_literals(self, handler_funcs) -> set[str]:
+        """ALL string literals (docstrings excluded) reachable from the given
+        handler funcs' transitive closure within `cli`+`restart_channel`. Constant
+        NAMES are resolved to their string values via each function's own globals,
+        so `expected_from_state=HALTED, trigger=OWNER_EXPLICIT_RESTART` contributes
+        both "HALTED" and "owner_explicit_restart" even though each is a module
+        constant reference. Not intersected with anything - the edge check does
+        the binding, so a surface must name BOTH the source state AND the trigger.
+        The shared helpers (`_locked`, `_fire_edge`, `evaluate_preconditions`)
+        take the state and trigger as PARAMETERS and hardcode neither, so a
+        handler only contributes the state/trigger of the ONE edge it wires."""
         seen: set[object] = set()
         worklist = list(handler_funcs)
         literals: set[str] = set()
@@ -164,63 +177,109 @@ class ReachabilityBase(unittest.TestCase):
                           and getattr(val, "__module__", "") in self.OWN_MODULES
                           and getattr(val, "__code__", None) is not None):
                         worklist.append(val)
-        return literals & set(sm.TRIGGERS)
+        return literals
+
+    def edge_has_surface(self, edge: tuple[str, str], handlers) -> bool:
+        """True when SOME registered handler's closure names BOTH the edge's
+        source state AND its trigger - i.e. a command surface that constrains that
+        exact source state and fires that trigger. Per-handler (not unioned), so a
+        sibling command that fires the same trigger from a DIFFERENT source state
+        cannot stand in for a missing surface."""
+        state_from, trigger = edge
+        for handler in handlers:
+            literals = self.reachable_literals([handler])
+            if state_from in literals and trigger in literals:
+                return True
+        return False
+
+    def uncovered_edges(self, handlers) -> set[tuple[str, str]]:
+        return {edge for edge in self.operator_recovery_edges()
+                if not self.edge_has_surface(edge, handlers)}
 
 
 class ReachabilitySweep(ReachabilityBase):
-    def test_the_recovery_trigger_set_is_the_expected_owner_edges(self) -> None:
-        # Guards the derivation itself: exactly the four owner recovery-resume
-        # edges out of WAIT_FOR_OWNER / PAUSED_RECOVERY / EMERGENCY_STOPPED /
-        # HALTED. If the table gains another owner recovery edge, this fails and
-        # forces the enumeration to be revisited (R307/R308).
+    def test_the_recovery_edge_set_is_the_expected_owner_edges(self) -> None:
+        # Guards the derivation itself: exactly the five owner recovery-resume
+        # EDGES. Note owner_explicit_restart appears TWICE (HALTED and
+        # EMERGENCY_STOPPED) - the distinction a trigger-level sweep loses. If the
+        # table gains another owner recovery edge, this fails and forces the
+        # enumeration to be revisited (R307/R308).
         self.assertEqual(
-            self.operator_recovery_triggers(),
-            {"owner_answer_validated", "owner_approved_pending_prompt",
-             "owner_cleared_pause", "owner_explicit_restart"})
+            self.operator_recovery_edges(),
+            {("WAIT_FOR_OWNER", "owner_answer_validated"),
+             ("WAIT_FOR_OWNER", "owner_approved_pending_prompt"),
+             ("PAUSED_RECOVERY", "owner_cleared_pause"),
+             ("EMERGENCY_STOPPED", "owner_explicit_restart"),
+             ("HALTED", "owner_explicit_restart")})
 
     def test_every_operator_recovery_edge_has_a_registered_cli_surface(self) -> None:
-        # GREEN on the fixed tree: every derived operator-recovery trigger is
-        # fired by some registered command's transitive closure.
+        # GREEN on the fixed tree: every derived operator-recovery EDGE has a
+        # registered command whose handler names both its source state and trigger.
         handlers = list(self.registered_handlers().values())
-        reachable = self.reachable_triggers(handlers)
-        missing = self.operator_recovery_triggers() - reachable
-        self.assertEqual(missing, set(),
+        uncovered = self.uncovered_edges(handlers)
+        self.assertEqual(uncovered, set(),
                          f"operator-recovery edges with NO registered CLI surface: "
-                         f"{sorted(missing)} (the F-2 defect class)")
+                         f"{sorted(uncovered)} (the F-2 defect class)")
 
     def test_pre_fix_registration_set_is_red(self) -> None:
         # RED reproduction WITHOUT a git write: restrict the discovered handler
         # set to exactly the pre-fix registrations (drop this task's three new
         # recovery commands). Reachability is a pure function of the registered
-        # handlers + their delegated source, so this is the pre-fix tree's
-        # result: owner_explicit_restart and owner_answer_validated are
-        # unreachable, which is precisely the defect M0-T107 reproduced.
+        # handlers + their delegated source, so this is the pre-fix tree's result:
+        # the two owner_explicit_restart edges AND the discovered owner_answer_
+        # validated edge are unreachable - precisely the defect M0-T107 reproduced
+        # plus the latent third instance.
         handlers = self.registered_handlers()
         new_commands = {"owner-restart", "acknowledge-emergency-stop",
                         "resume-after-answer"}
         pre_fix = [fn for name, fn in handlers.items() if name not in new_commands]
-        reachable = self.reachable_triggers(pre_fix)
-        missing = self.operator_recovery_triggers() - reachable
         self.assertEqual(
-            missing, {"owner_answer_validated", "owner_explicit_restart"},
-            "the pre-fix registration set must leave exactly the two closed "
+            self.uncovered_edges(pre_fix),
+            {("HALTED", "owner_explicit_restart"),
+             ("EMERGENCY_STOPPED", "owner_explicit_restart"),
+             ("WAIT_FOR_OWNER", "owner_answer_validated")},
+            "the pre-fix registration set must leave exactly the three closed "
             "edges unreachable")
 
-    def test_removing_owner_restart_and_ack_unreaches_owner_explicit_restart(self) -> None:
-        # Removal sensitivity for the primary restart edge: owner_explicit_restart
-        # is fired by BOTH owner-restart and acknowledge-emergency-stop, so both
-        # must be gone for it to become unreachable.
+    def test_dropping_only_owner_restart_fails_the_sweep(self) -> None:
+        # G4 MEDIUM: owner_explicit_restart fires TWO edges. Dropping ONLY
+        # owner-restart must leave the HALTED->IDLE edge with no surface, even
+        # though acknowledge-emergency-stop keeps the trigger alive for the
+        # EMERGENCY_STOPPED edge.
+        handlers = self.registered_handlers()
+        kept = [fn for name, fn in handlers.items() if name != "owner-restart"]
+        uncovered = self.uncovered_edges(kept)
+        self.assertIn(("HALTED", "owner_explicit_restart"), uncovered)
+        self.assertNotIn(("EMERGENCY_STOPPED", "owner_explicit_restart"), uncovered)
+
+    def test_dropping_only_acknowledge_emergency_stop_fails_the_sweep(self) -> None:
+        # The mirror: dropping ONLY acknowledge-emergency-stop must leave the
+        # EMERGENCY_STOPPED->IDLE edge uncovered while HALTED->IDLE stays covered.
         handlers = self.registered_handlers()
         kept = [fn for name, fn in handlers.items()
-                if name not in {"owner-restart", "acknowledge-emergency-stop"}]
-        self.assertNotIn("owner_explicit_restart", self.reachable_triggers(kept))
+                if name != "acknowledge-emergency-stop"]
+        uncovered = self.uncovered_edges(kept)
+        self.assertIn(("EMERGENCY_STOPPED", "owner_explicit_restart"), uncovered)
+        self.assertNotIn(("HALTED", "owner_explicit_restart"), uncovered)
 
-    def test_removing_resume_after_answer_unreaches_owner_answer_validated(self) -> None:
-        # Removal sensitivity for the discovered third edge, whose only surface is
-        # resume-after-answer: deleting that registration breaks reachability.
+    def test_dropping_only_resume_after_answer_fails_the_sweep(self) -> None:
+        # The discovered third edge has a single surface: dropping it uncovers
+        # the WAIT_FOR_OWNER->PREFLIGHT owner_answer_validated edge (and NOT the
+        # held-prompt owner_approved_pending_prompt edge, a different surface).
         handlers = self.registered_handlers()
         kept = [fn for name, fn in handlers.items() if name != "resume-after-answer"]
-        self.assertNotIn("owner_answer_validated", self.reachable_triggers(kept))
+        uncovered = self.uncovered_edges(kept)
+        self.assertIn(("WAIT_FOR_OWNER", "owner_answer_validated"), uncovered)
+        self.assertNotIn(("WAIT_FOR_OWNER", "owner_approved_pending_prompt"),
+                         uncovered)
+
+    def test_parser_registers_the_three_recovery_commands(self) -> None:
+        # The real parser exposes each new command as a choice with a handler.
+        handlers = self.registered_handlers()
+        for name in ("owner-restart", "acknowledge-emergency-stop",
+                     "resume-after-answer"):
+            self.assertIn(name, handlers, f"{name} not registered on build_parser()")
+            self.assertTrue(callable(handlers[name]))
 
 
 # ==========================================================================
@@ -374,6 +433,20 @@ class OwnerRestartPreconditions(RestartChannelBase):
         result = rc.owner_restart(self.journal, self.audit, self.new_lock())
         self.assertFalse(result.ok)
         self.assertEqual(result.code, "open_asks")
+        self.assertEqual(self.journal.get_state(sm.STATE_KEY), sm.HALTED)
+
+    def test_unreadable_ask_queue_refuses_never_treated_as_empty(self) -> None:
+        # G4 LOW: an ask-queue read error is the caller's fail-closed decision
+        # (`asks_unreadable`), never an empty queue that would let a restart run.
+        self.drive(*PATH_TO_HALTED)
+        self.record_safe_checkpoint()
+
+        def _boom():
+            raise RuntimeError("queue read failed")
+        self.journal.open_asks = _boom  # type: ignore[method-assign]
+        result = rc.owner_restart(self.journal, self.audit, self.new_lock())
+        self.assertFalse(result.ok)
+        self.assertEqual(result.code, "asks_unreadable")
         self.assertEqual(self.journal.get_state(sm.STATE_KEY), sm.HALTED)
 
     def test_AS5b_pending_effect_refuses(self) -> None:
