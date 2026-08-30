@@ -103,12 +103,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T03:15:05.664332+00:00",
-  "updated_at": "2026-08-30T04:06:16.639944+00:00",
+  "updated_at": "2026-08-30T04:19:54.370061+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -117,5 +117,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-30T03:15:05.664332+00:00",
-  "worktree": "wt-m0t121"
+  "worktree": "wt-m0t121",
+  "progress_log": [
+    {
+      "at": "2026-08-30T04:19:54.370061+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "GATE WAVE ROUND 1: G3 PASS (1 MINOR F2) + G4 PASS (1 MEDIUM sec.7) + G5 PASS (3 INFO) - all three independent verdicts PASS at material identity 668c824, reports saved verbatim. ORCHESTRATOR ROUTES BOUNDED REWORK before DCV: both G3-F2 and G4-MEDIUM converge on the same R309 gap, empirically proven by G4 - the reachability sweep is TRIGGER-granular while owner row R309 requires failure whenever a defined recovery EDGE loses its call site; dropping ONLY one of the two owner_explicit_restart surfaces is NOT caught. Rework scope (test-only + report wording, behavior-neutral to shipped surfaces): (a) edge-granular (state_from,trigger) reachability + per-surface removal sensitivity + parser-registration assertions; (b) correct the AS-7 'racing invocations' overstatement to the accurate lock-contention-proxy description (G4 sec.5); (c) cover the asks_unreadable defensive branch (G4 LOW, cheap). Delta re-review via reviewer delta-attestations (M2-T015 pattern); gates recorded at the final identity. Freeze-baseline >=1165 confirmation queued as orchestrator evidence (D-024-R309/R312)"
+    }
+  ]
 }
