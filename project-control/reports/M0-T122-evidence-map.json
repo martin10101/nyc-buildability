@@ -1,0 +1,36 @@
+{
+ "task_id": "M0-T122",
+ "note": "Evidence per D-024 requirement applicable to M0-T122 (resolver set, 10 rows: R302, R314-R322). Producer of record: orchestrator (governance packet; all evidence is executed-command output, no code changed). Material identity: the certified final tree (supervisor material 668c824, tools/agent_supervisor tree d3db9f3c, golden blob c54fd0d2 unchanged); deliverables = M0-T122-recertification.md + the M0-T096-activation-package.md section-10 fourth refresh.",
+ "requirements": {
+  "D-024-R302": [
+   "This is the authorized recertification half of the Amendment-16 window (one defect task M0-T121 ACCEPTED + this recert; no other work started under the authorization). Recert report section 1-2; campaign seq 37."
+  ],
+  "D-024-R314": [
+   "The standard frozen-identity recertification executed: WHOLE supervisor suite 2,814 passed / 2 skipped / 0 failed at the final identity (chain: 2,780 T119 baseline + 34 T121; pre-delta cross-check 2,811 same session); golden pack blob byte-identical to the T119 certification (c54fd0d2, 42 tests); controller manifest re-recorded 120 files digest 7f9991cb config-bound round-trip-verified; verify-controller PASS; doctor overall PASS (audit chain 33 verified, OS-ACL PROTECTED); drift tooth test_s8 green at 2.1.251; CLI identity recomputed via executable_identity = d6f6c29a exactly (admitted, undrifted, NO repin); CI 20/20 at 6edf820 with the pushed certification tip re-running the same checks; gates G0/G2 + G3/G4/G5 wave + DCV on this task."
+  ],
+  "D-024-R315": [
+   "HOLD HONORED: no R276 rerun has been executed and no cycle-2 command has been handed to the owner; the handover text is recorded VERBATIM in recert report section 4 and is released only after this task's acceptance."
+  ],
+  "D-024-R316": [
+   "ONE-attempt protocol recorded verbatim in recert report section 4 (the authorization row; the attempt itself is the owner-typed act after acceptance)."
+  ],
+  "D-024-R317": [
+   "Amendment-15 enforcement on any further post-dispatch counted stop recorded verbatim in recert report section 4 (NO restart, preserve all evidence, separate bounded AD-093 defect task citing D-024-R301, S16.7 excess note - touch budget 2/2 at cap)."
+  ],
+  "D-024-R318": [
+   "No producer was interrupted in this window: the recert evidence is orchestrator-executed command output; the M0-T121 producer completed naturally before this task started; reviewer spawns run to natural completion."
+  ],
+  "D-024-R319": [
+   "Recert report section 3 states explicitly that unit tests + golden pack + this recertification do NOT prove continuous operability; no affirmative operability/autonomy claim appears in the recert report or the activation-package refresh."
+  ],
+  "D-024-R320": [
+   "The live-journey evidence standard is recorded verbatim (recert report sections 3-4): the REAL preserved journal through owner restart -> preflight -> fresh Fable rotation -> independent Codex review -> actual M0-T107 advancement; the journey itself is the owner-typed cycle-2 act after acceptance (protocol-recording verification per the R300/R301 precedent). The preserved journal was never touched by this window (doctor read it read-only: still HALTED, transitions 13, audit head 33)."
+  ],
+  "D-024-R321": [
+   "Live-journey failure protocol recorded verbatim in recert report section 4: preserve everything (journal/audit/packets/worktree), report the new seam."
+  ],
+  "D-024-R322": [
+   "No-full-autonomy-claim / no-repeated-restart rule recorded verbatim in recert report section 4; section 3 repeats the disclaimer."
+  ]
+ }
+}

@@ -160,35 +160,35 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (third refresh at M0-T119 — the post-admission certified identity)
+## 10. Identity and evidence (fourth refresh at M0-T122 — the post-restart-channel certified identity)
 
-* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-admission
-  identity:** supervisor material identity last moved at **`7d8195b`**
-  (the M0-T116-certified post-repair system at `f89aa29`, plus accepted
-  M0-T117 `d6a2ac8` — forced `DISABLE_AUTOUPDATER=1` at all four
-  supervisor-constructed claude env seams — plus accepted M0-T118 `d1b05bb` —
-  the 2.1.251 measured fixture pack — plus accepted M0-T120 `7d8195b` — the
-  shell-routing unit with the pre-dispatch routing tooth);
-  `tools/agent_supervisor` tree `8d34ea53575f2cdf5b2d99029111c9e174339596`;
-  golden pack blob `c54fd0d2` (**42 tests** — the 41 certified scenarios
-  carried un-weakened plus M0-T120's routing tooth-bite scenario).
-  **ADMITTED provider CLI: Claude Code 2.1.251** (executable digest
-  `d6f6c29a8ac6b3cf…`; codex-cli 0.146.0 unchanged) — the full R282 pass
-  list in `M0-T119-recertification.md` §4.
-* Re-certification evidence at that identity (M0-T119): golden-run pack
-  **42/42**; affected packs (process, claude-runner-env, recovery-probes,
-  turnover-live-seam, event-bus, capability-probe, native-adapter,
-  operator-channel, adversarial, start-reentry, routing-probe,
-  command-authority, bounded-mode) **672 passed / 1 skipped / 0 failed**;
-  WHOLE supervisor suite **2,780 passed, 2 skipped, 0 failed** (2,782
-  collected — exact chain: 2,712 M0-T116 baseline + 14 M0-T117 + 0 net
-  M0-T118 + 56 M0-T120); the whole-suite state was independently reproduced
-  at the same identity by the M0-T120 G4 reviewer and DCV. Controller
-  manifest re-recorded at the final tree: **119 files**, digest `774f9198…`,
-  config bound, verify-controller + doctor 43/43 PASS. Full detail:
-  `M0-T119-recertification.md` (prior cycles: `M0-T116-recertification.md`,
+* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-restart-channel
+  identity:** supervisor material identity last moved at **`668c824`**
+  (the M0-T119-certified post-admission system at `7d8195b`, plus accepted
+  M0-T121 `668c824`+`6432d2d` — the audited fail-closed operator recovery
+  surfaces `owner-restart` / `acknowledge-emergency-stop` /
+  `resume-after-answer` closing the complete F-2 edge class, with the
+  edge-granular removal-sensitive reachability sweep);
+  `tools/agent_supervisor` tree `d3db9f3c7ee66ff36c44d518e6177c5a39378e4a`;
+  golden pack blob `c54fd0d2` (**42 tests — byte-identical to the M0-T119
+  certification, carried un-weakened**); restart-channel pack blob
+  `d3e23087` (**34 tests**).
+  **ADMITTED provider CLI: Claude Code 2.1.251 UNCHANGED** (executable digest
+  re-computed at recert = `d6f6c29a8ac6b3cf…` exactly; codex-cli 0.146.0
+  unchanged; NO repin — the one-time R285 repin is consumed and the identity
+  is undrifted).
+* Re-certification evidence at that identity (M0-T122): WHOLE supervisor
+  suite **2,814 passed, 2 skipped, 0 failed** (exact chain: 2,780 M0-T119
+  baseline + 34 M0-T121; pre-delta cross-check 2,811 = 2,780+31 measured the
+  same session); drift tooth `test_s8` green at 2.1.251. Controller manifest
+  re-recorded at the final tree: **120 files**, digest `7f9991cb…`, config
+  bound, round-trip verified; verify-controller PASS; doctor overall PASS
+  (journal HALTED at rest, audit chain 33 verified, OS-ACL PROTECTED). The
+  restored HALTED restart path is the NEW certified `owner-restart` operator
+  surface (M0-T121). Full detail: `M0-T122-recertification.md` (prior cycles:
+  `M0-T119-recertification.md`, `M0-T116-recertification.md`,
   `M0-T112-recertification.md`). CI on the pushed certification tip is the
-  confirming whole-suite run (SHA + 20/20 pinned in the M0-T119 progress_log).
+  confirming whole-suite run (20/20; SHA pinned in the M0-T122 progress_log).
 * PR/check links: the campaign branch pushes run the standard 20-check CI; the
   supervisor-bridge job is the whole-suite confirmation.
 
