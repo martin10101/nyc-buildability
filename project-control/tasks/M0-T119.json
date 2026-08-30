@@ -60,12 +60,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 15,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T17:54:00.129217+00:00",
-  "updated_at": "2026-08-29T21:39:27.811145+00:00",
+  "updated_at": "2026-08-30T00:38:04.098903+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -84,6 +84,13 @@
       "percent": 15,
       "status": "claimed",
       "message": "R297 HOLD (Amendment 14, owner 2026-08-29): M0-T119 was claimed and its certification runs started ~35 min BEFORE the amendment arrived (golden 41/41 at 85cbcc4, affected packs 499/1, whole suite completed green in background). All pre-directive certification runs are VOID for certification purposes; the uncommitted activation-package draft was reverted. The unit HOLDS until M0-T120 (shell-routing compatibility) is accepted; then the SINGLE recertification re-runs IN FULL at the ONE final identity including M0-T120 (R296), and only then does the R276 rerun proceed. No submission, gate, or certification claim was made from the voided runs."
+    },
+    {
+      "at": "2026-08-30T00:29:35.281211+00:00",
+      "agent": "orchestrator-recert-runner",
+      "percent": 20,
+      "status": "claimed",
+      "message": "R297 HOLD RESOLVED: M0-T120 accepted at material 7d8195b (8-row DCV PASS, gates complete, suite 2782/2780/2/0 triple-reproduced). The single recertification now runs at the ONE final identity including M0-T120 (R296). Prior voided runs (pre-Amendment-14) remain void; this is a full fresh certification: golden pack (42) + affected packs + whole suite + CI at tip + activation-package refresh + the R282 admission line for 2.1.251."
     }
   ]
 }
