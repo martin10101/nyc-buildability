@@ -1,0 +1,33 @@
+{
+  "task_id": "M0-T123",
+  "producer_agent": "supervisor-resume-path-producer",
+  "report_file": "project-control/reports/M0-T123-producer-report.md",
+  "submitted_at": "2026-08-30T07:04:25.840331+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T123-evidence-map.json",
+  "content_manifest_sha256": "4a6faeab173812eaec72456d03a8fdddded6d35d246b90c0039f6fced84a6d2e",
+  "reviewed_sha": "6aada2913c699e3f90b7d1133267c2d469dd9ca3",
+  "applicable_requirements": [
+    "D-024-R327",
+    "D-024-R328",
+    "D-024-R329",
+    "D-024-R330",
+    "D-024-R331",
+    "D-024-R332",
+    "D-024-R333",
+    "D-024-R334",
+    "D-024-R335",
+    "D-024-R336",
+    "D-024-R337",
+    "D-024-R338",
+    "D-024-R339",
+    "D-024-R340",
+    "D-024-R341",
+    "D-024-R342",
+    "D-024-R343",
+    "D-024-R344",
+    "D-024-R345",
+    "D-024-R346"
+  ],
+  "updated_at": "2026-08-30T07:04:27.317591+00:00"
+}

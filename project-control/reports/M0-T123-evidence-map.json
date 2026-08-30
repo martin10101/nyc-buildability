@@ -1,0 +1,66 @@
+{
+ "task_id": "M0-T123",
+ "note": "Evidence per D-024 requirement applicable to M0-T123 (resolver set, 20 rows: R327-R346 as bound). Material identity: work commit 6aada29 on control/D-024-fable-codex-loop (cherry-pick of producer commit 9eba902 at base 7b78d6c). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R327": [
+   "The S16.7 disposition is recorded verbatim (source-019-amendment.md) and referenced in the packet; nothing in this window consumed or relied on any dispositioned allowance."
+  ],
+  "D-024-R328": [
+   "Nothing granted was exercised: no restart, no clear-recovery, no budget change anywhere in the window (G2 row 10; the diff contains no budget/policy/journal-surface change)."
+  ],
+  "D-024-R329": [
+   "Complete touch history preserved: the journal/audit are byte-identical to the G0 baselines (G2 row 2); no touch record altered or removed."
+  ],
+  "D-024-R330": [
+   "Authorization exercised exactly as bounded: this defect task + M0-T124 (recert+presentation, created, held on this task). Qualifying evidence cited in packet + commit (reproduced live defect, M0-T107-cycle2-live-journey.md)."
+  ],
+  "D-024-R331": [
+   "Both live-reproduced dimensions closed in one seam: rotation-ceiling enforcement AND packet-worktree cwd binding (tools/agent_supervisor/launch_seam.py; root-cause traces in the producer report with file:line for both)."
+  ],
+  "D-024-R332": [
+   "The seam is enforced at run_unit's sole subprocess.Popen (every worker process passes it), plus the _run_loop packet-worktree gate and the pre-first-dispatch ceiling shed - ordinary start, recovery start, controller restart, rotation, turnover, and checkpoint continuation all route through run_unit. Call-site enumeration + same-seam proof in the producer report (R339)."
+  ],
+  "D-024-R333": [
+   "At-or-above-400k resume refuses/rotates BEFORE provider contact; exactly-at-threshold counts as at-or-above (AS-2 boundary test); the live 640k shape refuses (AS-1 fixture test)."
+  ],
+  "D-024-R334": [
+   "Rotate-at-safe-seam or fail-closed pre-provider implemented and tested (AS-1 red/green on the seeded cycle-2 durable shape; rotation path via the real loop_turnover mechanism)."
+  ],
+  "D-024-R335": [
+   "cwd bound to the packet's isolated worktree on every launch/resume/rotation (RunnerConfig.cwd binding + seam check; AS-3 incl. Windows path forms)."
+  ],
+  "D-024-R336": [
+   "Primary-checkout or unexpected-cwd launch fails closed pre-provider with a typed refusal (AS-3; the live cycle-2 cwd defect shape refuses on the fixed tree)."
+  ],
+  "D-024-R337": [
+   "Rotation preserves checkpoint lineage, task identity, budgets, audit history, branch, worktree, exactly-once succession (AS-4 property tests; no duplicated or lost unit)."
+  ],
+  "D-024-R338": [
+   "Old oversized transcript receives no new events post-rotation; new session identity distinct and starts in the packet worktree (AS-4 transcript-freeze + distinct-identity tests)."
+  ],
+  "D-024-R339": [
+   "Every worker-launch/resume call site enumerated mechanically with the same-seam proof (producer report; the sweep discovers sites from code, not a hand list)."
+  ],
+  "D-024-R340": [
+   "Deterministic bypass-sensitive reachability test: AST removal-sensitivity RED tests (pruning the seam statement fails the invariant) + loop-level RED/GREEN on the seeded cycle-2 shape + runner-level refusal of a 640k --resume before Popen. GREEN on the fixed tree (45 passed, orchestrator-reproduced deterministically)."
+  ],
+  "D-024-R341": [
+   "Committed fixture derived READ-ONLY from the preserved cycle-2 evidence: all four source SHA-256 heads byte-identical before AND after derivation (journal a4acb370..., audit e80c057c..., t1 3a0d1f30..., t2 3c918568... - G0 baselines == G2 re-check). Fixture sanitized; the provenance digest field truncated/renamed by the orchestrator at commit for secret-scanner hygiene (disclosed, G2 row 8; it is a public path digest, not a secret)."
+  ],
+  "D-024-R342": [
+   "12-item matrix covered with named tests (45-test pack): oversized (live 640k fixture), exactly-at-threshold, below-threshold, missing telemetry (fail closed), stale session identities, controller restarts, recovery starts, Windows paths, cwd mismatch, concurrent controllers (lock), provider failure at launch (typed refusal), removal sensitivity (AST prune tests). Producer report maps each."
+  ],
+  "D-024-R343": [
+   "rc=1 + missing result recorded verbatim in the producer report AND the actual terminal event RECOVERED from primary evidence: max_turns_reached {maxTurns:12, turnCount:13} (cycle-2 transcript records 92-95, with a nested_memory attachment loading the primary checkout's rules - the wrong-cwd re-orientation consumed the turn budget)."
+  ],
+  "D-024-R344": [
+   "The prior provider context-limit hypothesis is explicitly CONTRADICTED and re-labeled unproven/abandoned in the producer report - the honest-revision discipline exercised exactly as directed. Also: the producer's initial test counts (46/2869) were caught by the orchestrator against reality (45/2870), reconciled with a coherent explanation, and corrected in the durable reports with explicit correction notes (G2 row 7)."
+  ],
+  "D-024-R345": [
+   "No live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241 anywhere in the window (G2 rows 2/10; journal byte-identical; PR #241 untouched)."
+  ],
+  "D-024-R346": [
+   "Standard process in flight at submit: G0 PASS + G2 self-check PASS; G3/G4/G5 dispatched to the independent roster; mutation proof (AST-prune RED tests + red/green); DCV at accept; CI on the pushed tip; frozen-identity recertification + manifest verification + R276 preflight = M0-T124 (held). Full suite at this identity: 2,870 passed / 2 skipped / 0 failed (orchestrator's own run)."
+  ]
+ }
+}
