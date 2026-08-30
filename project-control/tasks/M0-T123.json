@@ -111,12 +111,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T05:53:54.836171+00:00",
-  "updated_at": "2026-08-30T07:04:27.317591+00:00",
+  "updated_at": "2026-08-30T07:24:33.719523+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -125,5 +125,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-30T05:53:54.836171+00:00",
-  "worktree": "wt-m0t123"
+  "worktree": "wt-m0t123",
+  "progress_log": [
+    {
+      "at": "2026-08-30T07:24:33.719523+00:00",
+      "agent": "orchestrator",
+      "percent": 80,
+      "status": "rework",
+      "message": "GATE WAVE ROUND 1: G3 PASS + G4 PASS + G5 PASS (all three independent verdicts at material identity 6aada29; reports saved verbatim; G4 re-ran the full suite twice 2870/2/0). ORCHESTRATOR ROUTES ONE BOUNDED HARDENING ROUND before DCV - converged findings vs the owner's literal row wording: (1) G5-SEC-MINOR == G3-F5-INFO: the runner-chokepoint enforce_launch is co-gated on expected_worktree (R332 says EVERY path evaluates the ceiling; a hypothetical worktree-less resume-capable runner would skip it) -> call unconditionally + assert unconditionality; (2) G4 MEDIUM-LOW: R337's seven preservation properties not each individually asserted -> per-property tests; (3) G4 LOW-MED: R342 items 5/6/10/11 (stale identities, controller restarts, concurrent controllers, provider failure) covered indirectly -> dedicated tests; (4) optional UNC/8.3 fail-closed cases. Scope: ~3-line runner unwrap (strengthening-only; production behavior identical on all reachable paths) + tests + report delta. Delta re-review via attestations; gates at final identity (D-024-R332/R337/R342)"
+    }
+  ]
 }
