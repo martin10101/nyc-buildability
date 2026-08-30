@@ -72,3 +72,15 @@ design) — touches `tools/agent_supervisor/**` → R247 recertification consequ
 fresh worker need not rediscover it) if achievable without supervisor-source change;
 **(C)** close this line and hold. The orchestrator recommends nothing is lost by (A)+(B)
 together as ONE owner-authorized window, but takes no step without the decision.
+
+## 5. CORRECTION (2026-08-30, append-only — M0-T125 defect register D4)
+
+§2 secondary observation (a) is **WRONG as stated**: `native_tools_guidance_appended: false`
+does NOT mean the guidance was absent or that "the digest-bound prompt predates M0-T120." The
+flag is degenerate — computed AFTER `with_checkpoint_contract` already embedded the folded
+R294 native-tools block (claude_runner.py:1199-1206, 931), so it reads False on every fresh
+prompt while the guidance IS present. The preserved transcript's first user prompt contains
+BOTH sentinels. The dispatched prompt was the default `--prompt` plus the current folded
+contract, not a pre-T120 body. The worker routed natively because the guidance was delivered.
+Full evidence: `M0-T125-defect-register.md` D4. The rest of §2 (the 12/12 turn exhaustion root
+cause) stands unchanged.
