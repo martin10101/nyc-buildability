@@ -1,0 +1,128 @@
+{
+ "task_id": "M0-T123",
+ "title": "Resume-path defect fix: rotation-ceiling + cwd enforcement seam on every worker launch/resume path",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Close the COMPLETE resume-path defect class per D-024 Amendment 19 (rows R331..R344): every path capable of launching or resuming a Claude worker (ordinary start, recovery start, controller restart, rotation, turnover, checkpoint continuation) evaluates the context-rotation ceiling BEFORE provider contact; a session at or above the 400k ceiling is NEVER resumed - it rotates to a fresh session at the safe seam or fails closed pre-provider; every launch/resume/rotation binds cwd to the task packet's isolated worktree and fails closed on a primary-checkout or unexpected cwd; rotation preserves checkpoint lineage, task identity, budgets, audit history, branch, worktree, and exactly-once succession; the old oversized transcript receives no new events and the new session has a distinct identity starting in wt-m0t107. Enumerate every launch/resume call site with a same-seam proof + a deterministic bypass-sensitive reachability test (R339/R340). Use the preserved cycle-2 journal and transcript as READ-ONLY regression fixtures (R341); cover the 12-item matrix (R342). Record the rc=1/missing-result terminal evidence honestly; a provider context-limit rejection stays an inference unless recovered from primary evidence (R343/R344). QUALIFYING EVIDENCE (supervisor-freeze S2/S3): reproduced live defect - cycle-2 start resumed the 604,772-token session to context_tokens 640,224 with no rotation and cwd on the primary checkout, rc=1, S14 no_valid_checkpoint (project-control/reports/M0-T107-cycle2-live-journey.md); authorized by D-024-R330. PROHIBITIONS: R345 (no live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241) + R328 (the S16.7 disposition grants nothing). Fix invalidates the fourth certification -> fifth R247 recert = M0-T124.",
+ "business_reason": "The live loop cannot complete a context-rotation crossing: the resume path bypasses the rotation ceiling and worktree binding, so every long-running unit will eventually die exactly as cycle 2 did. This is the last defect standing between the certified system and a completable live journey.",
+ "inputs": [
+  "project-control/reports/M0-T107-cycle2-live-journey.md (the reproduced defect: audit seq 36-43 facts, transcript slugs, context_tokens 640224)",
+  "project-control/directives/D-024-fable-codex-loop/source-019-amendment.md (rows R327-R347, verbatim)",
+  "tools/agent_supervisor/session_continuity.py (recorded_provider_session - the resume source)",
+  "tools/agent_supervisor/loop_turnover.py (rotation_pending, new_rotation_record_key - the seam that did not fire)",
+  "tools/agent_supervisor/claude_runner.py (launch/resume argv + cwd construction)",
+  "tools/agent_supervisor/loop.py (cycle entry, S11.2 seam logic)",
+  "tools/agent_supervisor/cli.py (_run_loop / start wiring)",
+  "READ-ONLY fixtures sources (never write these): the preserved cycle-2 journal at %LOCALAPPDATA%/NYCBuildabilitySupervisor/33dfa57d.../supervisor_journal.sqlite3 + audit.jsonl, and the two worker transcripts (cycle-1 under the wt-m0t107 project slug, session 02b014ee...; cycle-2 under the ctl24 project slug, session 798d2f00...)"
+ ],
+ "outputs": [
+  "ONE enforcement seam through which EVERY worker launch/resume/rotation path passes, evaluating (a) the 400k context-rotation ceiling and (b) packet-worktree cwd binding BEFORE provider contact; at-or-above-ceiling resume refuses or rotates at the safe seam; primary-checkout/unexpected cwd fails closed (R332-R336)",
+  "Rotation preserving checkpoint lineage, task identity, budgets, audit history, branch, worktree, exactly-once succession; old transcript frozen post-rotation; distinct new session identity starting in the packet worktree (R337/R338)",
+  "Call-site enumeration + same-seam proof in the producer report (R339); deterministic bypass-sensitive reachability test proven RED against a bypass shape and GREEN on the fixed tree (R340)",
+  "Committed regression fixtures DERIVED read-only from the preserved cycle-2 journal/transcript (R341) - originals never written",
+  "12-item matrix tests (R342): oversized / exactly-at-threshold / below-threshold sessions, missing telemetry, stale session identities, controller restarts, recovery starts, Windows paths, cwd mismatch, concurrent controllers, provider failure, removal sensitivity",
+  "Honest terminal-evidence finding for cycle-2 rc=1 + missing result: recover the actual terminal event from primary evidence if recoverable; otherwise the context-limit hypothesis stays labeled an inference (R343/R344)",
+  "Operator documentation updates; project-control/reports/M0-T123-producer-report.md + M0-T123-repair-record.md (H2 RepairRecord)"
+ ],
+ "dependencies": [],
+ "allowed_paths": [
+  "tools/agent_supervisor/session_continuity.py",
+  "tools/agent_supervisor/loop_turnover.py",
+  "tools/agent_supervisor/claude_runner.py",
+  "tools/agent_supervisor/loop.py",
+  "tools/agent_supervisor/cli.py",
+  "tools/agent_supervisor/restart_channel.py",
+  "tools/agent_supervisor/launch_seam.py",
+  "tools/agent_supervisor/README.md",
+  "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+  "tools/agent_supervisor/fixtures/",
+  "tools/test_agent_supervisor_launch_seam.py",
+  "tools/test_agent_supervisor_loop.py",
+  "tools/test_agent_supervisor_loop_turnover.py",
+  "tools/test_agent_supervisor_session_continuity.py",
+  "tools/test_agent_supervisor_claude_runner_env.py",
+  "tools/test_agent_supervisor_crash.py",
+  "tools/test_agent_supervisor_endurance.py",
+  "tools/test_agent_supervisor_restart_channel.py",
+  "project-control/reports/M0-T123-producer-report.md",
+  "project-control/reports/M0-T123-repair-record.md"
+ ],
+ "forbidden_paths": [
+  "project-control/** (except the two named report files)",
+  "the live runtime dir under %LOCALAPPDATA%/NYCBuildabilitySupervisor/** (READ-ONLY: the preserved journal/audit are fixture SOURCES, never written)",
+  "the preserved worker transcripts under ~/.claude/projects/** (READ-ONLY fixture sources)",
+  ".github/**",
+  "services/**",
+  "apps/**"
+ ],
+ "acceptance_scenarios": [
+  {
+   "id": "AS-1",
+   "scenario": "REPRODUCED DEFECT RED: a journal/fixture in the live cycle-2 shape (recorded provider session with telemetry at/above 400k) driven through the pre-fix resume path reaches provider contact without rotation; the SAME shape on the fixed tree refuses or rotates BEFORE provider contact.",
+   "verification": "red/green pair on the enforcement seam; the red reproduced against the pre-fix logic"
+  },
+  {
+   "id": "AS-2",
+   "scenario": "Ceiling matrix: at 400k exactly and above -> never resumed (rotate or fail closed pre-provider); below 400k -> resume permitted; missing/unknown telemetry -> fail closed (never assumed below).",
+   "verification": "named tests per band incl. the exact-threshold boundary"
+  },
+  {
+   "id": "AS-3",
+   "scenario": "cwd binding: launch/resume/rotation with cwd == the packet's isolated worktree proceeds; primary-checkout cwd or any unexpected cwd fails closed BEFORE provider contact with a typed refusal.",
+   "verification": "named tests incl. Windows path forms (drive case, slashes)"
+  },
+  {
+   "id": "AS-4",
+   "scenario": "Rotation preservation: rotating at the seam carries checkpoint lineage, task identity, budgets, audit chain, branch, worktree; succession is exactly-once (no duplicate or lost unit); the old transcript/session receives no further events; the new session identity is distinct and starts in the packet worktree.",
+   "verification": "rotation tests asserting each preserved property + transcript-freeze + distinct-identity"
+  },
+  {
+   "id": "AS-5",
+   "scenario": "Call-site closure: the reachability sweep mechanically enumerates every worker-launch/resume call site and FAILS if any site bypasses the rotation guard or the cwd guard; removing the guard wiring from any one site turns the sweep RED.",
+   "verification": "bypass-sensitive reachability test + per-site removal sensitivity"
+  },
+  {
+   "id": "AS-6",
+   "scenario": "Lifecycle coverage: recovery start, controller restart (owner-restart then start), turnover, and checkpoint continuation all route through the same seam; concurrent controllers cannot double-launch (single-instance lock); stale session identities are surfaced, never silently adopted; a provider failure during launch is a typed refusal, not a crash.",
+   "verification": "named tests per lifecycle path"
+  },
+  {
+   "id": "AS-7",
+   "scenario": "Fixtures: committed regression fixtures are derived from the PRESERVED cycle-2 journal/transcript read-only (originals byte-unchanged after the derivation - hashes recorded before/after), and the fixture-driven tests reproduce the defect shape.",
+   "verification": "fixture derivation script/output + before/after hashes in the producer report"
+  },
+  {
+   "id": "AS-8",
+   "scenario": "Terminal-evidence honesty: the producer report records rc=1 + no result record verbatim; if the actual terminal event (stderr/API error) is recoverable from primary evidence it is quoted with provenance, otherwise the context-limit explanation is explicitly labeled an unproven inference.",
+   "verification": "producer report section reviewed against R343/R344"
+  }
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4",
+  "G5"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-08-30T05:53:54.836171+00:00",
+ "updated_at": "2026-08-30T05:54:49.554728+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-08-30T05:53:54.836171+00:00"
+}

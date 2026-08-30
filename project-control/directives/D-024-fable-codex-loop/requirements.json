@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 326,
+ "requirement_count": 347,
  "producer": "orchestrator",
- "updated_at": "2026-08-30T03:29:57.680829+00:00",
+ "updated_at": "2026-08-30T05:53:31.273673+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -11338,6 +11338,640 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 18
+  },
+  {
+   "id": "D-024-R327",
+   "text": "The cumulative S16.7 owner-touch excess is DISPOSITIONED as an accepted measurement of this failed activation campaign only.",
+   "source_ref": "source-019-amendment.md#s167-disposition",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R328",
+   "text": "The S16.7 disposition does NOT reset, increase, erase, or reinterpret any budget; does NOT authorize another restart; does NOT clear recovery; grants NO additional operational authority.",
+   "source_ref": "source-019-amendment.md#s167-disposition",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123",
+     "M0-T124"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R329",
+   "text": "Preserve the complete owner-touch history (no touch record altered or removed).",
+   "source_ref": "source-019-amendment.md#s167-disposition",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R330",
+   "text": "The bounded rotation-at-seam defect task and its required R247 recertification window are AUTHORIZED.",
+   "source_ref": "source-019-amendment.md#defect-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123",
+     "M0-T124"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R331",
+   "text": "Treat the defect as the COMPLETE resume-path defect class, covering both failures reproduced live (no-rotation resume of an over-ceiling session; resumed worker cwd on the primary checkout).",
+   "source_ref": "source-019-amendment.md#resume-path-class",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R332",
+   "text": "EVERY path capable of launching or resuming a Claude worker - ordinary start, recovery start, controller restart, rotation, turnover, checkpoint continuation - must evaluate the context-rotation ceiling BEFORE contacting the provider.",
+   "source_ref": "source-019-amendment.md#ceiling-every-path",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R333",
+   "text": "A worker session at or above the 400k ceiling must NEVER be resumed.",
+   "source_ref": "source-019-amendment.md#never-resume-oversized",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R334",
+   "text": "An at-or-above-ceiling session must rotate to a fresh session at the safe seam or fail closed BEFORE provider contact.",
+   "source_ref": "source-019-amendment.md#never-resume-oversized",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R335",
+   "text": "Every worker launch, resume, and rotation must bind its cwd to the task packet's isolated worktree.",
+   "source_ref": "source-019-amendment.md#cwd-binding",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R336",
+   "text": "A primary-checkout or unexpected-cwd launch must fail closed BEFORE provider contact.",
+   "source_ref": "source-019-amendment.md#cwd-binding",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R337",
+   "text": "Rotation must preserve checkpoint lineage, task identity, budgets, audit history, branch, worktree, and exactly-once succession without duplicating or losing work.",
+   "source_ref": "source-019-amendment.md#rotation-preservation",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R338",
+   "text": "After rotation the old oversized transcript receives NO new events; the new session has a DISTINCT identity and starts in wt-m0t107.",
+   "source_ref": "source-019-amendment.md#transcript-freeze",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R339",
+   "text": "Enumerate EVERY worker-launch and worker-resume call site and prove each passes through the same rotation and cwd enforcement seam.",
+   "source_ref": "source-019-amendment.md#call-site-proof",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R340",
+   "text": "A deterministic reachability test exists that FAILS if any launch/resume call site bypasses either the rotation-ceiling guard or the cwd guard.",
+   "source_ref": "source-019-amendment.md#call-site-proof",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "pytest: bypass-sensitive by construction; proven RED against a bypassing call site shape and GREEN on the fixed tree",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R341",
+   "text": "Use the preserved cycle-2 journal and transcript as READ-ONLY regression fixtures (derive committed fixtures; never write to the preserved originals).",
+   "source_ref": "source-019-amendment.md#fixtures-and-matrix",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R342",
+   "text": "Test coverage must include: oversized sessions, exactly-at-threshold sessions, below-threshold sessions, missing telemetry, stale session identities, controller restarts, recovery starts, Windows paths, cwd mismatch, concurrent controllers, provider failure, and removal sensitivity.",
+   "source_ref": "source-019-amendment.md#fixtures-and-matrix",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "pytest: one or more named tests per matrix item, enumerated in the producer report",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R343",
+   "text": "Record the cycle-2 CLI return code 1 and the missing result record HONESTLY in the defect diagnosis.",
+   "source_ref": "source-019-amendment.md#terminal-evidence-honesty",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R344",
+   "text": "Do NOT claim a provider context-limit rejection was PROVEN unless the underlying terminal event is recovered from primary evidence (absent that, it stays an inference, labeled as such).",
+   "source_ref": "source-019-amendment.md#terminal-evidence-honesty",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R345",
+   "text": "Do not restart the live loop, clear recovery, edit the journal, reset budgets, or touch PR #241 anywhere in this window.",
+   "source_ref": "source-019-amendment.md#prohibitions-process-hold",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123",
+     "M0-T124"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R346",
+   "text": "Complete the bounded task through G0/G2/G3/G4/G5, mutation testing, independent DCV, full frozen-identity recertification, manifest verification, and the R276 preflight.",
+   "source_ref": "source-019-amendment.md#prohibitions-process-hold",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T123",
+     "M0-T124"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R347",
+   "text": "AFTERWARD STOP: present the exact live-start package for a SEPARATE owner decision. No start of any kind follows automatically from this window's completion.",
+   "source_ref": "source-019-amendment.md#prohibitions-process-hold",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T124"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 19
   }
  ]
 }

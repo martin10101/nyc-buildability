@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-30T03:29:57.680829+00:00",
+ "updated_at": "2026-08-30T05:53:31.273673+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -156,6 +156,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-30T03:29:57.680829+00:00",
    "content_digest_sha256": "b23c69ea41668337f7e97c8e2226ea0f464576fd43b3b74d02b65a93fd3b3d1b"
+  },
+  {
+   "file": "source-019-amendment.md",
+   "kind": "amendment",
+   "sequence": 19,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T05:53:31.273673+00:00",
+   "content_digest_sha256": "6a7b94d6905dfaaf7c669f65c7ff3f5eb51a97c5e36bdcfccb4661668cc082b2"
   }
  ],
  "amendments": [
@@ -175,7 +183,8 @@
   "source-015-amendment.md",
   "source-016-amendment.md",
   "source-017-amendment.md",
-  "source-018-amendment.md"
+  "source-018-amendment.md",
+  "source-019-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -595,10 +604,31 @@
   "D-024-R323",
   "D-024-R324",
   "D-024-R325",
-  "D-024-R326"
+  "D-024-R326",
+  "D-024-R327",
+  "D-024-R328",
+  "D-024-R329",
+  "D-024-R330",
+  "D-024-R331",
+  "D-024-R332",
+  "D-024-R333",
+  "D-024-R334",
+  "D-024-R335",
+  "D-024-R336",
+  "D-024-R337",
+  "D-024-R338",
+  "D-024-R339",
+  "D-024-R340",
+  "D-024-R341",
+  "D-024-R342",
+  "D-024-R343",
+  "D-024-R344",
+  "D-024-R345",
+  "D-024-R346",
+  "D-024-R347"
  ],
- "requirements_id_digest_sha256": "07e327ca21782026af2a4a2fcef1fa1e0b302fee8832c8862db20eb492b6d05a",
- "requirements_content_digest_sha256": "90c296e48d97eb9989dfcfbcef9620e1c8e8c128c1cd8764893bbf55e91bdb9a",
+ "requirements_id_digest_sha256": "6e38e8a72176b511ca8b989ebe8faf3c6e4862f193b8de1a5c1c57da9edb533f",
+ "requirements_content_digest_sha256": "2e92069c42919d2e71e91e472bcd6eeb02951d7a035131c14332808e12da4d28",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -716,6 +746,11 @@
    "at": "2026-08-30T03:29:57.680829+00:00",
    "by": "orchestrator",
    "note": "Amendment 18 captured (owner instruction 2026-08-30, verbatim in source-018-amendment.md; the running M0-T121 producer NOT interrupted): before M0-T121 acceptance record the producer's ACTUAL model identity + the durable Opus-4.8 authority (R323); do not interrupt the running producer (R324); unauthorized substitution/fallback => fail closed + owner disposition before acceptance (R325); allowlisting alone is never authorization (R326). Rows bind M0-T121. Evidence report: project-control/reports/M0-T121-producer-model-identity.md."
+  },
+  {
+   "at": "2026-08-30T05:53:31.273673+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 19 captured (owner instruction 2026-08-30, verbatim in source-019-amendment.md): S16.7 cumulative owner-touch excess DISPOSITIONED as an accepted measurement of this failed activation campaign only - no budget reset/erase/reinterpretation, no restart authorization, no recovery clearing, no added authority, complete touch history preserved (R327-R329). The bounded rotation-at-seam defect task + fifth R247 recert window AUTHORIZED as the COMPLETE resume-path defect class (R330/R331): ceiling evaluation on every launch/resume path pre-provider (R332); never resume at-or-above-400k - rotate at the safe seam or fail closed (R333/R334); cwd bound to the packet worktree with fail-closed on mismatch (R335/R336); rotation preserves lineage/identity/budgets/audit/branch/worktree/exactly-once (R337); old transcript frozen + distinct new session in wt-m0t107 (R338); call-site enumeration + same-seam proof + bypass-sensitive reachability test (R339/R340); preserved cycle-2 journal+transcript as read-only fixtures + 12-item test matrix (R341/R342); honest rc=1/missing-result recording, no unproven context-limit claim (R343/R344); window prohibitions (R345); full standard process incl. recert + manifest verification + R276 preflight (R346); then STOP and present the live-start package for a SEPARATE owner decision (R347). Tasks: M0-T123 (fix), M0-T124 (recert + presentation)."
   }
  ]
 }
