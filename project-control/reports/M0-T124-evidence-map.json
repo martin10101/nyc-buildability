@@ -1,0 +1,21 @@
+{
+ "task_id": "M0-T124",
+ "note": "Evidence per D-024 requirement applicable to M0-T124 (resolver set, 5 rows: R328, R330, R345, R346, R347). Producer of record: orchestrator (governance packet; all evidence is executed-command output). Deliverables = M0-T124-recertification.md + the activation-package section-10 fifth refresh.",
+ "requirements": {
+  "D-024-R328": [
+   "The S16.7 disposition granted nothing and nothing was taken: no restart, no clear-recovery, no budget change anywhere in the window; the preserved journal remains byte-identical at rest (PAUSED_RECOVERY, transitions 18, audit 43 - doctor row); the recert report section 4 presents commands only, executing none."
+  ],
+  "D-024-R330": [
+   "The authorized window closed exactly as bounded: M0-T123 (accepted) + this recert/presentation task; no other work started under the authorization."
+  ],
+  "D-024-R345": [
+   "No live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241 anywhere: the journal's doctor readback matches the post-cycle-2 preserved state exactly (transitions 18, audit 43); PR #241 gh-confirmed OPEN by the DCV; the package presentation is text, not execution."
+  ],
+  "D-024-R346": [
+   "The full standard process ran: M0-T123 through G0/G2/G3/G4/G5 + mutation proof (site-granular AST-prune + anti-re-wrap REDs) + 3 delta attestations + 20-row DCV; THIS task through G0/G2 + G3/G4/G5 wave + DCV; frozen-identity recertification executed (whole suite 2889/2/0 twice, golden pack byte-identical c54fd0d2, manifest 121 files 47293127 config-bound + verify-controller PASS + doctor overall PASS + drift tooth green + CLI d6f6c29a exact - manifest verification per the row's explicit term); the R276-pattern preflight commitment recorded in section 4 (re-run at the then-current tip before any owner-typed attempt); CI 20/20 at a71bd65 with the certification tip re-running the same checks."
+  ],
+  "D-024-R347": [
+   "The STOP is honored: the recert report section 4 PRESENTS the exact live-start package (clear-recovery as the documented PAUSED_RECOVERY exit + the same certified item-3 start, expected certified behavior, what remains owner-only) for a SEPARATE owner decision; nothing was started, resumed, or cleared; the R316 one-attempt consumption is restated; the campaign NEXT records the same stop."
+  ]
+ }
+}

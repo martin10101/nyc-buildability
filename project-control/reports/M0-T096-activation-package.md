@@ -160,7 +160,28 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (fourth refresh at M0-T122 — the post-restart-channel certified identity)
+## 10. Identity and evidence (FIFTH refresh at M0-T124 — the post-resume-path certified identity)
+
+* **CURRENT (fifth) certified identity:** supervisor material last moved at **`16e1b3b`**
+  (accepted M0-T123 `6aada29`+`16e1b3b` — the launch/resume enforcement seam
+  `launch_seam.py`: unconditional 400k rotation-ceiling + packet-worktree cwd binding at
+  every worker path pre-provider, with the pre-first-dispatch shed and the site-granular
+  bypass-sensitive sweep); `tools/agent_supervisor` tree
+  **`a72a53b8c4f560c90dabbf65cb75478fef37ce43`**; golden pack blob `c54fd0d2` (42 tests,
+  byte-identical since T119); launch-seam pack blob `1a77b904` (64 tests); restart-channel
+  pack unchanged (34). **CLI: Claude Code 2.1.251 UNCHANGED** (digest recomputed at recert
+  = `d6f6c29a8ac6b3cf…` exactly; codex-cli 0.146.0; no admission event, no repin).
+* Fifth-recert evidence (M0-T124): WHOLE suite **2,889 passed, 2 skipped, 0 failed** (TWO
+  independent full runs; chain 2,814 + 56 + 19); controller manifest re-recorded **121
+  files** digest `47293127…` config-bound; verify-controller PASS; doctor overall PASS
+  (journal preserved at PAUSED_RECOVERY, transitions 18, audit 43 verified, OS-ACL
+  PROTECTED); drift tooth green. The journal's documented recovery path from the
+  preserved S14 stop is `clear-recovery` (PAUSED_RECOVERY → PREFLIGHT); the R316
+  one-attempt authorization is CONSUMED — any further live attempt is a NEW owner
+  decision (R347; the presented package is in `M0-T124-recertification.md` §4). Full
+  detail: `M0-T124-recertification.md`.
+
+## 10-prior. Identity and evidence (fourth refresh at M0-T122 — the post-restart-channel certified identity)
 
 * Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-restart-channel
   identity:** supervisor material identity last moved at **`668c824`**
