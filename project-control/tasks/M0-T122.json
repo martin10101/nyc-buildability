@@ -63,12 +63,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T03:15:35.363549+00:00",
-  "updated_at": "2026-08-30T05:17:44.286794+00:00",
+  "updated_at": "2026-08-30T05:24:42.310273+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -77,5 +77,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-30T03:15:35.363549+00:00",
-  "worktree": "ctl24-control"
+  "worktree": "ctl24-control",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-30T05:24:42.310273+00:00"
 }

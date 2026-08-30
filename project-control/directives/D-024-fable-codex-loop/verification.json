@@ -7993,7 +7993,120 @@
    "reviewed_sha": "b4a033716a0edbad0906fa558c7e02bd6662b199",
    "verified_at": "2026-08-30T04:58:37.698589+00:00",
    "reviewed_manifest_sha256": "7cadcc709cb6a314bf04c444f76ed5db6c1ed47f8541d04975a07a46c7329669"
+  },
+  {
+   "task_id": "M0-T122",
+   "directive_id": "D-024",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R302",
+    "D-024-R314",
+    "D-024-R315",
+    "D-024-R316",
+    "D-024-R317",
+    "D-024-R318",
+    "D-024-R319",
+    "D-024-R320",
+    "D-024-R321",
+    "D-024-R322"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R302",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): DCV ledger check: only M0-T121 (accepted) + M0-T122 created under the authorization; no other work; no R276-rerun/start commit in ef0d476..cf2f202. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R314",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Standard process on primary evidence: gates G0/G2 (orchestrator) + G3/G4/G5 (independent reviewers, producer != verifier) all PASS; DCV re-ran golden+restart 76 passed + drift tooth 1 passed; CLI digest recomputed byte-exact d6f6c29a; all git anchors reproduced (material 668c824, tree d3db9f3c, golden blob c54fd0d2 byte-identical to T119, restart blob d3e23087); whole-suite 2814/2/0 confirmed by TWO independent full runs (orchestrator + G4 reviewer's own); CI 19/20 green with supervisor-bridge in flight at DCV time, confirmed success by the orchestrator before acceptance. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R315",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Hold honored: no R276 rerun, no cycle-2 start executed (no dispatch commit; M0-T107 untouched since pre-window; journal HALTED/13); handover command recorded verbatim BEHIND the hold in recert section 4 with the exact certified shape (no repin flag, forward-slash, quoted config). Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R316",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): One-attempt protocol recorded verbatim in recert section 4 (protocol-recording verification per the R300/R301 precedent). Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R317",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Amendment-15 enforcement recorded verbatim: no restart, preserve evidence, separate bounded AD-093 defect citing D-024-R301, S16.7 touch-budget-at-cap note. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R318",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): No producer interrupted: orchestrator-produced governance packet; reviewer spawns ran to natural completion; T121 producer completed naturally pre-window. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R319",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Grep across both deliverables: only disclaimers/protocol lines; no affirmative continuous-operability or autonomy claim anywhere. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R320",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Live-journey standard recorded verbatim (real preserved journal through owner restart, preflight, fresh Fable rotation, independent Codex review, actual M0-T107 advancement); journal untouched by the window (transitions 13, audit 33 = 31 + pre-window refused-start events, HALTED at rest; corroborated by G4's independent read-only doctor). Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R321",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): Failure protocol recorded verbatim: preserve everything, report the new seam. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    },
+    {
+     "id": "D-024-R322",
+     "state": "PASS",
+     "evidence": [
+      "Independently verified by the DCV at cf2f202 (Amendment-16/17 recertification window): No-full-autonomy / no-repeated-restart recorded verbatim, bounded to one attempt with Amendment-15 enforcement. Full verbatim report: project-control/reports/M0-T122-DCV.md."
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389"
+    }
+   ],
+   "reviewed_sha": "58d91372663af85232ea7b0f3c0c23e212ef7389",
+   "verified_at": "2026-08-30T05:24:41.512915+00:00",
+   "reviewed_manifest_sha256": "53e618cd13c1cc0059565dddb884d7a8b7ab14476d23b831efa0a0061b20c377"
   }
  ],
- "updated_at": "2026-08-30T04:59:36.098238+00:00"
+ "updated_at": "2026-08-30T05:24:41.512915+00:00"
 }
