@@ -61,11 +61,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-29T17:54:00.129217+00:00",
-  "updated_at": "2026-08-30T00:38:04.098903+00:00",
+  "updated_at": "2026-08-30T00:47:09.275889+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -91,6 +91,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "R297 HOLD RESOLVED: M0-T120 accepted at material 7d8195b (8-row DCV PASS, gates complete, suite 2782/2780/2/0 triple-reproduced). The single recertification now runs at the ONE final identity including M0-T120 (R296). Prior voided runs (pre-Amendment-14) remain void; this is a full fresh certification: golden pack (42) + affected packs + whole suite + CI at tip + activation-package refresh + the R282 admission line for 2.1.251."
+    },
+    {
+      "at": "2026-08-30T00:47:09.275889+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "awaiting_gate",
+      "message": "CI PIN (closes G3 MINOR-F9): the pushed certification tip 357bb50 (deliverable 882966b, certified material 7d8195b) is 20/20 GREEN on the check-runs API (0 failed, 0 pending) - the supervisor-bridge whole-suite job is the confirming CI run for the 2782/2780/2/0 certification counts. G3 verdict received: PASS (all packs re-run to identical counts; anchors, admission discipline, manifest binding, package accuracy, voided-runs honesty all verified; F9 was the sole MINOR and is closed by this pin). Awaiting G4/G5."
     }
   ]
 }
