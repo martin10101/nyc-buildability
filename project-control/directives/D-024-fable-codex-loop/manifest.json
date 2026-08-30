@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-29T21:37:48.525776+00:00",
+ "updated_at": "2026-08-30T02:00:50.171083+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -124,6 +124,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-29T21:37:48.525776+00:00",
    "content_digest_sha256": "013155a6835bc1939b056a5559a0c8984a64d644d629ce5747c0623a344c578d"
+  },
+  {
+   "file": "source-015-amendment.md",
+   "kind": "amendment",
+   "sequence": 15,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T02:00:50.171083+00:00",
+   "content_digest_sha256": "9973ce391b28cd1273bcdc1252e105db95d01c0774ffd210eaea46c9b77efd56"
   }
  ],
  "amendments": [
@@ -139,7 +147,8 @@
   "source-011-amendment.md",
   "source-012-amendment.md",
   "source-013-amendment.md",
-  "source-014-amendment.md"
+  "source-014-amendment.md",
+  "source-015-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -530,10 +539,14 @@
   "D-024-R294",
   "D-024-R295",
   "D-024-R296",
-  "D-024-R297"
+  "D-024-R297",
+  "D-024-R298",
+  "D-024-R299",
+  "D-024-R300",
+  "D-024-R301"
  ],
- "requirements_id_digest_sha256": "fc97b2ab215b5746aeadf2ce9d22b1198fa017bd89365596cfb44286a97921a9",
- "requirements_content_digest_sha256": "df92d0d027998232aa57c67be82efaa86da3fc849a7b6096f881b89d97aad379",
+ "requirements_id_digest_sha256": "10d79f8625b5efce92f0de6d461902dc899b1639224d89cdbdd16a5d7dee330c",
+ "requirements_content_digest_sha256": "9f88de78932248d51fb70a2a1ca76ab70673be3daa13a48609d02cce811068e1",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -631,6 +644,11 @@
    "at": "2026-08-29T21:37:48.525776+00:00",
    "by": "orchestrator",
    "note": "Amendment 14 captured (owner instruction 2026-08-29, verbatim in source-014-amendment.md): shell-routing compatibility reconciliation. Timing disclosed: M0-T118 already accepted (R289 satisfied at capture); M0-T119 already claimed + certification runs started pre-directive - halted, runs VOID, unit HELD (R297). Reconciliation finding: NO ledger task addresses bashFirst/issue-88041 shell-first worker routing (R290 evidence recorded in the amendment). Rows R289-R297: finish T118 (R289, satisfied); reconcile (R290); create separate bounded task M0-T120 (R291); empirical routing proof at 2.1.251 under the exact controller launch config (R292); broker + owner gates preserved, no broad shell allowances (R293 -> T119+T120); native Read/Grep/Glob/Edit/Write preference with brokered validation commands (R294); pre-dispatch shell-routing drift tooth (R295); separate task, single M0-T119 recert at ONE final identity including T120 (R296 -> T119+T120); T119 hold until T120 accepted (R297 -> T119). No owner gate loosened."
+  },
+  {
+   "at": "2026-08-30T02:00:50.171083+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 15 captured (owner instruction 2026-08-30, verbatim in source-015-amendment.md): M0-T113 completes through gates+acceptance BEFORE the owner's cycle-2 continuation (R298); pre-continuation report of the clean pushed tip + at-rest journal with zero open requests (R299); cycle-2 stop protocol: on another counted stop NO further restart and ALL evidence preserved (R300), with the independent Codex review failure diagnosed as a SEPARATE bounded AD-093 defect task (R301). Rows R298-R301 bind M0-T113. The cycle-2 start itself remains the owner-typed act; no owner gate loosened."
   }
  ]
 }

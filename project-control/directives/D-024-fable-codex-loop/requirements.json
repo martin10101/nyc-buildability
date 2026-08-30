@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 297,
+ "requirement_count": 301,
  "producer": "orchestrator",
- "updated_at": "2026-08-29T21:37:48.525776+00:00",
+ "updated_at": "2026-08-30T02:00:50.171083+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -10464,6 +10464,126 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 14
+  },
+  {
+   "id": "D-024-R298",
+   "text": "Complete M0-T113 through its gates and acceptance BEFORE the owner's cycle-2 continuation start.",
+   "source_ref": "source-015-amendment.md#t113-first",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-024-R299",
+   "text": "Before the owner executes cycle 2: report the clean pushed tip and confirm the journal remains at rest with zero open requests.",
+   "source_ref": "source-015-amendment.md#pre-continuation-report",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the pre-continuation report naming the pushed tip SHA + a fresh supervisor status readback (0 open asks, 0 pending effects, operator-startable state)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-024-R300",
+   "text": "If cycle 2 produces another counted stop: do NOT restart again; preserve ALL evidence (journal, audit chain, evidence packets, worktree state) untouched.",
+   "source_ref": "source-015-amendment.md#cycle2-stop-protocol",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 15
+  },
+  {
+   "id": "D-024-R301",
+   "text": "On a cycle-2 counted stop: diagnose the independent Codex review failure as a SEPARATE bounded defect task (AD-093 defect lane; the new packet cites this row as qualifying evidence when created).",
+   "source_ref": "source-015-amendment.md#cycle2-stop-protocol",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T113"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 15
   }
  ]
 }
