@@ -472,8 +472,9 @@ To clear it you must deliberately run `stop --clear`.
 | `ROTATION_PENDING` | a threshold was crossed; the current unit will **finish** first, then hand over to a fresh session |
 | `WAIT_FOR_OWNER` | a question is queued for you |
 | `USAGE_LIMIT_WAIT` / `SCHEDULED_RESUME` | a provider limit was hit; the wake-up is scheduled |
-| `PAUSED_RECOVERY` | something could not be verified after an interruption; it is waiting for you |
-| `EMERGENCY_STOPPED` / `HALTED` | stopped deliberately; only you restart it |
+| `PAUSED_RECOVERY` | something could not be verified after an interruption; it is waiting for you. You leave it with `clear-recovery` |
+| `HALTED` | stopped deliberately after an unrecoverable fault; you leave it with `owner-restart`, once the cause is addressed |
+| `EMERGENCY_STOPPED` | stopped hard; you leave it with the stronger `acknowledge-emergency-stop`, and never an ordinary restart |
 
 **Where queued questions are, and how to answer.** `pending-approvals` lists
 them, each with a long digest. Answer with `approve-once <id> <digest>` or
@@ -485,6 +486,29 @@ approval and will be refused.
 **How to restart after a crash.** Just run `start --mode shadow` again. It works
 out what happened before doing anything, and it will not resume anything it
 cannot verify.
+
+**How to leave a blocking state — an explicit, audited owner act.** When a run
+stops in a blocking state, `start` alone cannot leave it: leaving is a deliberate,
+audited owner decision, one command per state, each fail-closed. None clears a
+flag, resets a budget, or dispatches anything; each transitions the state exactly
+once and writes a durable audited owner-recovery record, and then `start`
+re-validates before any provider is contacted.
+
+| From | Command | Notes |
+|---|---|---|
+| `PAUSED_RECOVERY` | `clear-recovery` | resumes to preflight after you resolve the pause |
+| `WAIT_FOR_OWNER` (a held prompt) | `resume-pending-prompt --approve-prompt-digest <digest>` | forwards the exact approved prompt |
+| `WAIT_FOR_OWNER` (a question) | `resume-after-answer` | resumes to preflight once you have answered every queued question with `approve-once`/`deny` |
+| `HALTED` | `owner-restart` | leaves `HALTED` once the cause is addressed |
+| `EMERGENCY_STOPPED` | `acknowledge-emergency-stop --acknowledge-emergency-stop --confirm-emergency-token <token>` | the **stronger** exit; needs the explicit flag AND the journal token it prints, so an emergency stop is never left by habit or a script |
+
+Every one of these refuses while a durable emergency stop is set (clear it first
+with `stop --clear`), from any state other than its own, and while an owner ask is
+open, an external effect is unreconciled, a child is unaccounted for, the provider
+identity drifted, or recovery has not classified the checkpoint `SAFE_CHECKPOINT`.
+The ordinary `owner-restart` refuses an emergency stop; only
+`acknowledge-emergency-stop` leaves that state, and no automatic path leaves
+either.
 
 **Verified recovery vs. an ambiguous pause — the important distinction.**
 

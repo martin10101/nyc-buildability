@@ -169,6 +169,7 @@ from .notifications import NotificationError, build_notification
 from . import os_acl
 from .os_acl import evaluate_controller_config_acl
 from .resource_sampling import ResourceSampler
+from .restart_channel import register_restart_verbs
 from .policy import (
     ASK,
     AUTO,
@@ -3425,6 +3426,7 @@ def build_parser() -> argparse.ArgumentParser:
     register_operator_verbs(sub, add_common)
     register_codex_channel_verbs(sub, add_common)
     register_telegram_verbs(sub, add_common)
+    register_restart_verbs(sub, add_common)
 
     resume_pp = sub.add_parser(
         "resume-pending-prompt",

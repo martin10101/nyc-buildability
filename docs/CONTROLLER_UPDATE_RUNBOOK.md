@@ -160,6 +160,37 @@ python -m tools.agent_supervisor pending-approvals --checkout C:\Users\MLFLL\Dow
 Expect: A1 still PREFLIGHT; no live children; revoked asks NOT shown as open;
 limited-auto disabled. The update itself must not have changed any journal.
 
+## 9a. Leaving a blocking state — explicit, audited owner recovery
+
+A run that stopped in a blocking or terminal state (`PAUSED_RECOVERY`,
+`WAIT_FOR_OWNER`, `HALTED`, `EMERGENCY_STOPPED`) is NOT left by `start`: leaving is
+a deliberate, audited owner act, one fail-closed command per state. Each clears NO
+flag, resets NO budget, and dispatches NOTHING; it transitions the state exactly
+once and appends a durable audited owner-recovery record. The next `start` then
+re-runs the full S11.5/preflight gate — including the live provider-CLI drift probe
+— before any provider is contacted. Recovery from `HALTED`/`EMERGENCY_STOPPED` in
+particular is an explicit owner decision, never automatic.
+
+| From | Command |
+|---|---|
+| `PAUSED_RECOVERY` | `python -m tools.agent_supervisor clear-recovery --checkout <wt>` |
+| `WAIT_FOR_OWNER` (held prompt) | `... resume-pending-prompt --approve-prompt-digest <digest> --checkout <wt>` |
+| `WAIT_FOR_OWNER` (question, after answering) | `... resume-after-answer --checkout <wt>` |
+| `HALTED` | `... owner-restart --checkout <wt>` |
+| `EMERGENCY_STOPPED` | `... acknowledge-emergency-stop --acknowledge-emergency-stop --confirm-emergency-token <token> --checkout <wt>` |
+
+`owner-restart` fires `HALTED -> IDLE`; it REFUSES on `EMERGENCY_STOPPED`. The
+stronger `acknowledge-emergency-stop` fires `EMERGENCY_STOPPED -> IDLE` and needs
+BOTH the explicit `--acknowledge-emergency-stop` flag AND the journal's
+`--confirm-emergency-token` (run it once without a token to have the required token
+printed), so an emergency stop is never left by a default or a script. All of these
+refuse while a durable emergency stop is set (clear it with `stop --clear` first),
+from any state other than their own, and while an owner ask is open, an external
+effect is unreconciled, a child is unaccounted for, the provider identity drifted,
+or recovery has not classified the checkpoint `SAFE_CHECKPOINT`. This is an
+`orchestrator`/`OWNER` action; it is never delegated to a worker and never fires on
+its own.
+
 ## 10. Rollback (exact)
 
 Roll back immediately if: manifest verification fails at §6, §7, or any later startup;
