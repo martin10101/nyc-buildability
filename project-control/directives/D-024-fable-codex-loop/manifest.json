@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-30T05:53:31.273673+00:00",
+ "updated_at": "2026-08-30T16:26:27.603472+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -164,6 +164,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-30T05:53:31.273673+00:00",
    "content_digest_sha256": "6a7b94d6905dfaaf7c669f65c7ff3f5eb51a97c5e36bdcfccb4661668cc082b2"
+  },
+  {
+   "file": "source-020-amendment.md",
+   "kind": "amendment",
+   "sequence": 20,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T16:26:27.603472+00:00",
+   "content_digest_sha256": "616c52d4123a346830f6aa1681fb626d1996b3d849ddab8e990289cb61f0a281"
   }
  ],
  "amendments": [
@@ -184,7 +192,8 @@
   "source-016-amendment.md",
   "source-017-amendment.md",
   "source-018-amendment.md",
-  "source-019-amendment.md"
+  "source-019-amendment.md",
+  "source-020-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -625,10 +634,25 @@
   "D-024-R344",
   "D-024-R345",
   "D-024-R346",
-  "D-024-R347"
+  "D-024-R347",
+  "D-024-R348",
+  "D-024-R349",
+  "D-024-R350",
+  "D-024-R351",
+  "D-024-R352",
+  "D-024-R353",
+  "D-024-R354",
+  "D-024-R355",
+  "D-024-R356",
+  "D-024-R357",
+  "D-024-R358",
+  "D-024-R359",
+  "D-024-R360",
+  "D-024-R361",
+  "D-024-R362"
  ],
- "requirements_id_digest_sha256": "6e38e8a72176b511ca8b989ebe8faf3c6e4862f193b8de1a5c1c57da9edb533f",
- "requirements_content_digest_sha256": "2e92069c42919d2e71e91e472bcd6eeb02951d7a035131c14332808e12da4d28",
+ "requirements_id_digest_sha256": "695e9497a403ed2c45f7ee5c0a6ec01343a4857a7b5ddf06ce64c8c963a2dded",
+ "requirements_content_digest_sha256": "6f87a65e61910a2215e0930a65ef1ae96547692144f5276ed621a3a9a757c0c3",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -751,6 +775,11 @@
    "at": "2026-08-30T05:53:31.273673+00:00",
    "by": "orchestrator",
    "note": "Amendment 19 captured (owner instruction 2026-08-30, verbatim in source-019-amendment.md): S16.7 cumulative owner-touch excess DISPOSITIONED as an accepted measurement of this failed activation campaign only - no budget reset/erase/reinterpretation, no restart authorization, no recovery clearing, no added authority, complete touch history preserved (R327-R329). The bounded rotation-at-seam defect task + fifth R247 recert window AUTHORIZED as the COMPLETE resume-path defect class (R330/R331): ceiling evaluation on every launch/resume path pre-provider (R332); never resume at-or-above-400k - rotate at the safe seam or fail closed (R333/R334); cwd bound to the packet worktree with fail-closed on mismatch (R335/R336); rotation preserves lineage/identity/budgets/audit/branch/worktree/exactly-once (R337); old transcript frozen + distinct new session in wt-m0t107 (R338); call-site enumeration + same-seam proof + bypass-sensitive reachability test (R339/R340); preserved cycle-2 journal+transcript as read-only fixtures + 12-item test matrix (R341/R342); honest rc=1/missing-result recording, no unproven context-limit claim (R343/R344); window prohibitions (R345); full standard process incl. recert + manifest verification + R276 preflight (R346); then STOP and present the live-start package for a SEPARATE owner decision (R347). Tasks: M0-T123 (fix), M0-T124 (recert + presentation)."
+  },
+  {
+   "at": "2026-08-30T16:26:27.603472+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 20 captured (owner instruction 2026-08-30 via the /session-handoff turnover reason; captured BEFORE the handoff): EXACTLY ONE new post-Amendment-19 live-loop attempt AUTHORIZED (R348) with no budget reset/reinterpretation (R349); preflight-first with every row reported and no action unless all pass (R350); both certified commands PRESENTED fresh for owner execution, separately and in order (R351); eight-point live proof from primary evidence (R352-R359: old 640k session never contacted; shed-before-launch; distinct fresh Fable 5 identity; worker in wt-m0t107; task/lineage/budgets/audit/exactly-once preserved; structured checkpoint to Codex; Codex review completes; M0-T107 advances); prohibitions (R360: no repin, no budget resets, no history clearing, no journal edits, no PR #241, no policy loosening); failure protocol (R361: no restart/retry/second clear-recovery/auto repair window - preserve + full system-level assessment for a NEW owner decision); no continuous-autonomy claim unless the complete journey succeeds (R362). Rows bind M0-T107."
   }
  ]
 }

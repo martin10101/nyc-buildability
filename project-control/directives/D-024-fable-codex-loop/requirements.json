@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 347,
+ "requirement_count": 362,
  "producer": "orchestrator",
- "updated_at": "2026-08-30T05:53:31.273673+00:00",
+ "updated_at": "2026-08-30T16:26:27.603472+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -11972,6 +11972,456 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 19
+  },
+  {
+   "id": "D-024-R348",
+   "text": "EXACTLY ONE new post-Amendment-19 live-loop attempt is AUTHORIZED, following the accepted M0-T123 repair and M0-T124 certification (a new single authorization; the consumed R316 attempt stays consumed).",
+   "source_ref": "source-020-amendment.md#one-attempt-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R349",
+   "text": "This authorization does NOT reset, erase, or reinterpret the cumulative S16.7 owner-touch measurement or any other budget.",
+   "source_ref": "source-020-amendment.md#one-attempt-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R350",
+   "text": "FIRST rerun the COMPLETE activation preflight against the then-current clean pushed tip; report EVERY row; take NO recovery or start action unless all rows pass.",
+   "source_ref": "source-020-amendment.md#preflight-first",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R351",
+   "text": "On a passing preflight, PRESENT the exact certified recovery command for the journal's current PAUSED_RECOVERY state AND the exact certified start command, restated fresh (never relying on the prior message's missing code block); the OWNER executes both, separately and in order.",
+   "source_ref": "source-020-amendment.md#present-both-commands",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R352",
+   "text": "PROVE from primary evidence: the old 640k session is not contacted again.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R353",
+   "text": "PROVE from primary evidence: rotation/shedding occurs BEFORE the worker provider launch.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R354",
+   "text": "PROVE from primary evidence: a DISTINCT fresh Fable 5 session identity is created.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R355",
+   "text": "PROVE from primary evidence: the worker launches INSIDE wt-m0t107, never the primary checkout.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R356",
+   "text": "PROVE from primary evidence: the task, checkpoint lineage, budgets, audit history, and exactly-once state are preserved.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R357",
+   "text": "PROVE from primary evidence: a VALID structured checkpoint reaches the independent Codex reviewer.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R358",
+   "text": "PROVE from primary evidence: Codex COMPLETES its independent review.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R359",
+   "text": "PROVE from primary evidence: M0-T107 ACTUALLY advances.",
+   "source_ref": "source-020-amendment.md#eight-point-proof",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "the live attempt's primary evidence (journal, audit chain, session transcripts, ledger)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R360",
+   "text": "Do not use --repin-cli-identity, reset budgets, clear history, edit the journal, touch PR #241, or loosen any policy.",
+   "source_ref": "source-020-amendment.md#prohibitions",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R361",
+   "text": "If the preflight differs, or the attempt produces ANY post-dispatch stop or live-journey failure: NO restart, NO retry, NO second clear-recovery, NO automatic repair window; preserve everything and report the FULL system-level assessment for a NEW owner decision.",
+   "source_ref": "source-020-amendment.md#failure-protocol",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
+  },
+  {
+   "id": "D-024-R362",
+   "text": "Do NOT claim continuous autonomy unless the COMPLETE live journey succeeds.",
+   "source_ref": "source-020-amendment.md#failure-protocol",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 20
   }
  ]
 }
