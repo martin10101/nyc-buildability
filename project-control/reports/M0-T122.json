@@ -1,0 +1,23 @@
+{
+  "task_id": "M0-T122",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T122-recertification.md",
+  "submitted_at": "2026-08-30T05:10:13.154338+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T122-evidence-map.json",
+  "content_manifest_sha256": "53e618cd13c1cc0059565dddb884d7a8b7ab14476d23b831efa0a0061b20c377",
+  "reviewed_sha": "acf65057931649f1e58b77944f2baf98743b532e",
+  "applicable_requirements": [
+    "D-024-R302",
+    "D-024-R314",
+    "D-024-R315",
+    "D-024-R316",
+    "D-024-R317",
+    "D-024-R318",
+    "D-024-R319",
+    "D-024-R320",
+    "D-024-R321",
+    "D-024-R322"
+  ],
+  "updated_at": "2026-08-30T05:10:13.541654+00:00"
+}
