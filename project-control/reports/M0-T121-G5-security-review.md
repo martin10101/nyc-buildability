@@ -111,3 +111,23 @@ Relevant files (absolute):
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\tasks\M0-T121.json`
 
 VERDICT: PASS
+
+---
+
+# G5 DELTA ATTESTATION (VERBATIM reviewer return; rework 668c824 -> 6432d2d; saved by the orchestrator)
+
+Delta verified. The reworked test is a genuine hardening of the reachability sweep, not a weakening.
+
+## DELTA ATTESTATION — M0-T121 (post-G5 rework 668c824 → 6432d2d)
+
+**Control head:** `6432d2d` (verified via `git rev-parse HEAD`).
+
+**(1) Scope — test-only + control-plane.** `git diff 668c824 6432d2d --stat`: the sole non-control-plane change is `tools/test_agent_supervisor_restart_channel.py` (`--numstat` = **+119/-46**, exactly as stated). Remaining entries are control-plane: gates/reports (incl. G3/G4/G5 report wording + producer report), `tasks/M0-T121.json`, `state.json`, evidence-map. Sensitive-file check `git diff 668c824 6432d2d --name-only -- restart_channel.py cli.py policy.py broker.py state_machine.py audit_log.py` returned **empty** → all six byte-unchanged. Therefore every basis of my G5 PASS (no automatic path to the verbs, emergency-token strength, R311 fail-closed preconditions, journal-first/audit-second ordering, scope/supply-chain, regression surface) is untouched by the delta.
+
+**(2) Test-delta inspection — hardening, no masking.** The G3/G4 finding was that a *trigger-level* sweep stays GREEN if one of the two `owner_explicit_restart` edges (HALTED→IDLE vs EMERGENCY_STOPPED→IDLE) lost its sole surface while the sibling kept the trigger alive. The rework re-keys the sweep on `(state_from, trigger)` **edges** derived purely from `sm.TRANSITIONS` (`operator_recovery_edges`, restart_channel test :102-120), and `edge_has_surface` (:182-193) requires SOME single registered handler's closure to name **both** the source state AND the trigger — evaluated **per-handler, not unioned** — so a sibling firing the same trigger from a different source state "cannot stand in for a missing surface." Three new removal-sensitivity tests (`test_dropping_only_owner_restart/…_acknowledge_emergency_stop/…_resume_after_answer_fails_the_sweep`) assert the specific uncovered edge. The two grep-flagged patterns are benign: the `return True` (:192) is the legitimate positive of `edge_has_surface`; `self.journal.open_asks = _boom` (:215-217) is fault injection proving the `asks_unreadable` fail-closed path (state stays HALTED) — both strengthen, neither weakens, a refusal path. No skip/xfail/`assertTrue(True)`/mock of a production function under test was introduced.
+
+**(3) Suite run.** `python -m pytest tools/test_agent_supervisor_restart_channel.py tools/test_agent_supervisor_command_authority.py -q` → **79 passed** (34+45) in 7.90s.
+
+Original security verdict stands unaffected.
+
+DELTA VERDICT: PASS

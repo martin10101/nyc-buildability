@@ -63,3 +63,18 @@ owner-resolved assignment (D-004-R735, commit `8b1b386`) for exactly this agent 
 R325 fail-closed condition is NOT met. Final transcript re-read to be recorded at accept
 time; if ANY non-`claude-opus-4-8` id appears in the final re-read, acceptance fails
 closed per R325 and goes to the owner for disposition.
+
+## 6. FINAL re-read at accept preparation (2026-08-30, post-rework)
+
+The producer's complete transcript (initial run + the bounded rework round, ended) was
+re-grepped after its final completion:
+
+```
+$ grep -o '"model":"[^"]*"' <producer-subagent transcript>.jsonl | sort | uniq -c
+    309 "model":"claude-opus-4-8"
+```
+
+**All 309 assistant events across the producer's entire lifetime carry
+`claude-opus-4-8` — no second model id ever appeared.** The Section 5 determination
+(AUTHORIZED, explicitly permitted bounded subagent assignment, R325 fail-closed condition
+NOT met) stands at the final identity. R323 evidence complete.

@@ -97,3 +97,32 @@ The three surfaces are correct, legal against the transition table, fail-closed 
 The single MINOR finding (F2) is a **non-blocking** test-robustness gap: the meta-test's trigger granularity cannot catch a future removal of the sole `acknowledge-emergency-stop` surface (the EMERGENCY_STOPPED→IDLE edge shares its trigger with the HALTED edge). The delivered surface is present and correct today; this is a recommendation to strengthen the removal-sensitivity assertion to edge granularity, and it is already flagged in the G2 self-check and evidence map. It does not gate acceptance of the delivered fix.
 
 VERDICT: PASS
+
+---
+
+# G3 DELTA ATTESTATION (VERBATIM reviewer return; rework 668c824 -> 6432d2d; saved by the orchestrator)
+
+## DELTA ATTESTATION — M0-T121 (bounded re-review of F2 rework)
+
+**Head:** `git rev-parse HEAD` = `6432d2d` (verified). **Delta vs my reviewed identity `668c824`:** within `tools/`, only `tools/test_agent_supervisor_restart_channel.py` changed (`git diff --stat 668c824 6432d2d -- tools/agent_supervisor/` is empty → all production source byte-unchanged; I independently confirmed, not taken on claim). The rest of the diff is control-plane evidence (producer report, gate/G-review reports, task/state).
+
+**What I re-verified (read-only):**
+
+1. **Scope** — production files unchanged; the sweep rework is test-only. Confirmed.
+
+2. **Edge-granular + mechanical** — `operator_recovery_edges()` (test `:102-120`) now derives `(state_from, trigger)` pairs from `TRANSITIONS` (5 edges, including `owner_explicit_restart` twice). `edge_has_surface()` (`:182-193`) requires SOME single handler whose AST-closure literals contain BOTH the source state AND the trigger, per-handler (not unioned), so a sibling on the shared trigger cannot stand in. Nothing hand-listed.
+
+3. **False-positive check (the coordinator's concern)** — I computed each handler's closure literal set empirically. Docstrings are stripped, so `owner_restart`'s docstring mention of `EMERGENCY_STOPPED` does NOT leak; error-message prose uses lowercase "emergency stop", not the constant; the shared helpers (`_locked`/`_fire_edge`/`evaluate_preconditions`) take state/trigger as parameters and bake in neither. Result — each handler covers EXACTLY its own edge:
+   - owner-restart → {HALTED,IDLE}/{owner_explicit_restart} → covers only (HALTED, …); contains no "EMERGENCY_STOPPED".
+   - acknowledge-emergency-stop → {EMERGENCY_STOPPED,IDLE}/{owner_explicit_restart} → covers only (EMERGENCY_STOPPED, …); contains no "HALTED".
+   - resume-after-answer → {WAIT_FOR_OWNER,PREFLIGHT,IDLE}/{owner_answer_validated}; resume-pending-prompt → {…}/{owner_approved_pending_prompt} (no `owner_answer_validated` leak — its mention is docstring+comments only); clear-recovery → (PAUSED_RECOVERY, owner_cleared_pause). No cross-contamination. No false positive.
+
+4. **Suite** — `python -m pytest tools/test_agent_supervisor_restart_channel.py -q` → **34 passed** (7.17s), up from 31 (+3: the two per-edge sibling-drop tests, the parser-registration test; pre-fix RED rewritten to edges; the `asks_unreadable` defensive-branch test present).
+
+5. **F2 probe reproduced** — dropping ONLY `acknowledge-emergency-stop` now yields `uncovered = [('EMERGENCY_STOPPED','owner_explicit_restart')]` while `('HALTED', …)` stays covered. The exact gap I flagged is now RED-caught. `test_dropping_only_acknowledge_emergency_stop_fails_the_sweep` and its mirror for `owner-restart` pin this.
+
+**F2 status:** CLOSED. The sweep is now genuinely edge-granular; each of the 5 recovery edges — including the two sharing `owner_explicit_restart` — is independently accountable to its sole surface, and removing any one surface fails the sweep.
+
+**New findings introduced by the delta:** none. Test-only, mechanical, no production behavior change; no reduction in prior coverage (functional AS-1..AS-8 tests untouched and still green within the 34).
+
+DELTA VERDICT: PASS

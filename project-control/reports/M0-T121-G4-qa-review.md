@@ -139,3 +139,46 @@ The RED in the producer report names **both** missing triggers (`owner_answer_va
 All required suites reproduce exactly at the reviewed identity (31; 410), zero failures, no flakiness, modularity clean. AS-1..AS-8 genuinely (not nominally) verify their scenarios — audit continuity is cryptographic, preconditions each individually force typed refusals, the emergency-stop acknowledgment is genuinely stronger (explicit flag + journal-derived token), and no-side-effects is proven by a before/after byte-level snapshot. The reachability test is mechanical, table-derived, and demonstrably removal-sensitive. The single MEDIUM finding is a **future-regression-detection** sensitivity limitation for a narrow shared-trigger mutation — disclosed, functionally mitigated, and not a defect in the delivered behavior (every recovery edge is reachable and correct today). It is recorded as recommended hardening and flagged for the directive-compliance-verifier's R309 literal-wording assessment; it does not warrant a QA FAIL.
 
 VERDICT: PASS
+
+---
+
+# G4 DELTA ATTESTATION (VERBATIM reviewer return; rework 668c824 -> 6432d2d; saved by the orchestrator)
+
+All delta verifications reproduced. Here is my delta attestation.
+
+---
+
+## G4 QA Delta Attestation — M0-T121 (bounded test-only rework)
+
+**Reviewed delta identity:** control head `6432d2d` (`668c824` is its ancestor)
+**Checkout:** `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24` (test file content-hash matches `6432d2d` blob: `a91c0343…6bd8bf`)
+
+**Scope confirmed (read-only):** `git diff --stat 668c824 6432d2d -- tools/` = **only** `test_agent_supervisor_restart_channel.py` (+119/-46). `git diff 668c824 6432d2d --` over `restart_channel.py`/`cli.py`/`state_machine.py`/`recovery.py` is **empty** — production byte-unchanged, so my prior 410-min-set and modularity PASS carry over unchanged.
+
+**(1) §4 empirical probe, NEW edge-granular helpers** (`(state_from,trigger)` pairs; `edge_has_surface` requires ONE handler's closure to name both state and trigger):
+```
+operator_recovery_edges: [(EMERGENCY_STOPPED,owner_explicit_restart),(HALTED,owner_explicit_restart),
+                          (PAUSED_RECOVERY,owner_cleared_pause),(WAIT_FOR_OWNER,owner_answer_validated),
+                          (WAIT_FOR_OWNER,owner_approved_pending_prompt)]
+ALL registered            -> uncovered: []                                    (GREEN)
+drop ONLY owner-restart   -> uncovered: [(HALTED, owner_explicit_restart)]     (now FAILS — was the blind spot)
+drop ONLY acknowledge     -> uncovered: [(EMERGENCY_STOPPED, owner_explicit_restart)]  (now FAILS)
+drop ONLY resume-after-answer -> uncovered: [(WAIT_FOR_OWNER, owner_answer_validated)]
+drop all three            -> uncovered: all three new edges
+```
+The §7 MEDIUM is genuinely closed: dropping a single shared-trigger surface now leaves its edge uncovered, and — critically — does **not** spuriously uncover the sibling edge, proving the per-handler attribution is sound (shared helpers take state/trigger as parameters and leak no source-state constant across closures).
+
+**(2) Suite twice:** `34 passed in 6.82s` / `34 passed in 6.65s` — matches expected 34, no flakiness.
+
+**(3) New test bodies are genuine, not nominal:**
+- `test_dropping_only_owner_restart_fails_the_sweep` / `_acknowledge_emergency_stop_` / `_resume_after_answer_`: each asserts the dropped edge is in `uncovered` AND the shared-trigger sibling stays covered — precise, matches my probe.
+- `test_parser_registers_the_three_recovery_commands`: asserts all three verbs are choices on `build_parser()` with callable handlers — closes the "cmd_* tests bypass registration" gap.
+- `test_unreadable_ask_queue_refuses_never_treated_as_empty`: monkeypatches `journal.open_asks` to raise `RuntimeError`, asserts `asks_unreadable` and state stays HALTED — genuinely forces the defensive branch fail-closed (passes only because `owner_unanswered_asks` really reads `open_asks`).
+
+**(4) Report wording fixed:** producer report §5 and new §10 accurately describe exactly-once as a lock-held-across-check+transition proxy (sequential `wrong_state` + live-foreign-pid `lock_held`) and state explicitly "This is NOT a claim of tested 'racing invocations'." Overstatement resolved.
+
+**Freeze baseline:** noted — orchestrator's full supervisor-suite run 2811 passed / 2 skipped / 0 failures (≥1165) covers my prior observation.
+
+The bounded rework addresses both of my raised findings without altering shipped behavior; the R309 edge-granularity requirement is now met and empirically demonstrated.
+
+DELTA VERDICT: PASS
