@@ -7,21 +7,31 @@ section-20 handoff the owner reads AT the activation decision — it grants
 nothing by existing. Recorded by the orchestrator at unit-I delivery
 (deliverable identity `5ff7f08`; gate/DCV identities in item 11).
 
-**Current sequencing (Amendment 12, D-024-R275/R276; supersedes the
-Amendment-8 note that stood here through M0-T112):** the Amendment-8 chain
-completed (M0-T110 + M0-T111 accepted; M0-T112 certified and accepted; the
-package was PRESENTED and the owner exercised the R187/R595 activation
-decision — Amendment 9, limited-auto). The first live run then stopped
-fail-closed and exposed a restart seam defect; the certified repair window
-(M0-T115 seam fix + M0-T114 residuals, both accepted) INVALIDATED the
-M0-T112 certification per R247, and **M0-T116 re-ran the golden certification
-at the post-repair frozen identity and refreshed items 10–12 below**
-(`M0-T116-recertification.md`). The remaining gate is the **R276 RESUME**:
-the authorized loop resumes ONLY once M0-T116 itself is ACCEPTED through its
-gates AND the complete activation preflight (manifest re-record,
-verify-controller, doctor, doctor --live, CI) passes again; on any failure
-the loop stays stopped. Nothing in this package activates or resumes
-anything by existing.
+**Current sequencing (Amendments 13+14, D-024-R277–R297; supersedes the
+Amendment-12 note that stood here through M0-T116):** the Amendment-12 window
+completed (M0-T115 + M0-T114 + M0-T116 accepted), but the R276 resume then
+STOPPED at preflight step 5 on **provider CLI drift** — Claude Code had
+auto-updated 2.1.248 → 2.1.251 after activation. The owner authorized a
+**deliberate admission event** (Amendment 13) and, mid-window, the
+**shell-routing reconciliation** (Amendment 14): **M0-T117** (forced
+`DISABLE_AUTOUPDATER=1` at all four supervisor-constructed claude env seams +
+owner machine-scope belt — accepted), **M0-T118** (the 2.1.251 measured
+fixture pack; drift teeth green; +2 hook events PreModelSwitch/PostModelSwitch
+recorded — accepted), **M0-T120** (empirical native-routing proof under the
+exact controller construction; native Read/Grep/Glob/Edit/Write worker
+guidance; a pre-dispatch shell-routing drift tooth GATING certified starts —
+accepted). **M0-T119 re-ran the golden certification at the ONE post-admission
+frozen identity and refreshed items 10–12 below**
+(`M0-T119-recertification.md`), recording **Claude Code 2.1.251 as the
+ADMITTED provider CLI** per the full R282 pass list. The remaining gate is
+the **R276 RESUME, rerun FROM THE BEGINNING (R284)**: only once M0-T119 is
+ACCEPTED through its gates AND the complete activation preflight passes again
+does the certified start re-run — carrying the authorized ONE-TIME
+`--repin-cli-identity` with executable-digest verification (R285). On any
+failure the loop stays stopped. Standing forever after (R286/R287): future
+Claude Code upgrades are deliberate admission events — update intentionally,
+recapture, recertify, only then repin; never silent drift. Nothing in this
+package activates or resumes anything by existing.
 
 ## 1. What was implemented (plain language)
 
@@ -95,8 +105,10 @@ the R595-gated owner act this package does NOT perform).
 
 ## 5. Pre-model slash interception (installed-version truth)
 
-On the installed CLI the hook path is **UserPromptSubmit** (measured fixture
-`loop_interception_detection_2_1_248.json`); UserPromptExpansion's response
+On the installed CLI the hook path is **UserPromptSubmit** (fixture
+`loop_interception_detection_2_1_251.json` — payload inherited from the
+2.1.248 measurement with event-set membership re-verified at 2.1.251, per its
+`payload_lineage`); UserPromptExpansion's response
 contract is UNPROVEN and is passed through unchanged, never faked. The
 zero-context proof remains **pending-owner-C1**: until that owner-gated live
 canary runs, the SECOND TERMINAL commands in item 4 are the authoritative
@@ -148,41 +160,56 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (second refresh at M0-T116 — the post-repair certified identity)
+## 10. Identity and evidence (third refresh at M0-T119 — the post-admission certified identity)
 
-* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-repair
-  identity:** supervisor material identity last moved at **`f89aa29`**
-  (the M0-T112-certified `8574c58` system, plus accepted M0-T115 seam repair
-  `91664bb`+`d89d740` — owner answer paths resolve their ask rows; shared
-  read-time reconciliation at the S11.5 restart probe AND the rotation-seam
-  feed — plus accepted M0-T114 residual fixes `f89aa29`+`a22e34a`);
-  `tools/agent_supervisor` tree `7487901cea729f5c254f98c8f7dcf859eb64e2c5`;
-  golden pack blob `cf03caaa` (41 tests — the 40 certified scenarios
-  unchanged plus M0-T114's additive register test; re-run only at M0-T116).
-* Re-certification evidence at that identity (M0-T116, run head `c67830f`):
-  golden-run pack **41/41**; affected packs (command-authority,
-  recovery-probes, turnover-live-seam, telegram, operator, codex,
-  adversarial, endurance, phase1, reviewer) **705/705**; WHOLE supervisor
-  suite **2,710 passed, 2 skipped, 0 failed** (2,712 collected — exact chain:
-  2,696 M0-T112 baseline + 14 M0-T115 tests + 2 M0-T114 tests). Full detail:
-  `M0-T116-recertification.md` (prior cycle: `M0-T112-recertification.md`).
-  CI on the pushed certification tip is the confirming whole-suite run
-  (SHA + 20/20 pinned in the M0-T116 progress_log).
+* Branch: `control/D-024-fable-codex-loop`. **FINAL frozen post-admission
+  identity:** supervisor material identity last moved at **`7d8195b`**
+  (the M0-T116-certified post-repair system at `f89aa29`, plus accepted
+  M0-T117 `d6a2ac8` — forced `DISABLE_AUTOUPDATER=1` at all four
+  supervisor-constructed claude env seams — plus accepted M0-T118 `d1b05bb` —
+  the 2.1.251 measured fixture pack — plus accepted M0-T120 `7d8195b` — the
+  shell-routing unit with the pre-dispatch routing tooth);
+  `tools/agent_supervisor` tree `8d34ea53575f2cdf5b2d99029111c9e174339596`;
+  golden pack blob `c54fd0d2` (**42 tests** — the 41 certified scenarios
+  carried un-weakened plus M0-T120's routing tooth-bite scenario).
+  **ADMITTED provider CLI: Claude Code 2.1.251** (executable digest
+  `d6f6c29a8ac6b3cf…`; codex-cli 0.146.0 unchanged) — the full R282 pass
+  list in `M0-T119-recertification.md` §4.
+* Re-certification evidence at that identity (M0-T119): golden-run pack
+  **42/42**; affected packs (process, claude-runner-env, recovery-probes,
+  turnover-live-seam, event-bus, capability-probe, native-adapter,
+  operator-channel, adversarial, start-reentry, routing-probe,
+  command-authority, bounded-mode) **672 passed / 1 skipped / 0 failed**;
+  WHOLE supervisor suite **2,780 passed, 2 skipped, 0 failed** (2,782
+  collected — exact chain: 2,712 M0-T116 baseline + 14 M0-T117 + 0 net
+  M0-T118 + 56 M0-T120); the whole-suite state was independently reproduced
+  at the same identity by the M0-T120 G4 reviewer and DCV. Controller
+  manifest re-recorded at the final tree: **119 files**, digest `774f9198…`,
+  config bound, verify-controller + doctor 43/43 PASS. Full detail:
+  `M0-T119-recertification.md` (prior cycles: `M0-T116-recertification.md`,
+  `M0-T112-recertification.md`). CI on the pushed certification tip is the
+  confirming whole-suite run (SHA + 20/20 pinned in the M0-T119 progress_log).
 * PR/check links: the campaign branch pushes run the standard 20-check CI; the
   supervisor-bridge job is the whole-suite confirmation.
 
-## 11. Independent review verdicts (second refresh at M0-T116)
+## 11. Independent review verdicts (third refresh at M0-T119)
 
 Each unit carries its own 4-reviewer wave (G3 code-reviewer, G4 qa-engineer,
 G5 security-reviewer, DCV directive-compliance-verifier) against ONE frozen
 identity: unit I (`M0-T096-*`), unit K (`M0-T110-*`, DCV 13/13), unit L
-(`M0-T111-*`, DCV 10/10), the first re-certification (`M0-T112-*`, DCV 6/6,
-accepted), the seam repair (`M0-T115-*`, DCV 3/3 — one G3 BLOCKER found and
-fixed in a consolidated correction round, then four delta-PASS attestations),
-the residual fixes (`M0-T114-*`, DCV 3/3, four PASS + four delta-PASS), and
-the second re-certification itself (`M0-T116-*`, recorded at its gate wave —
-the acceptance the R276 resume waits on). A later identity change invalidates
-the affected verdicts (rework→resubmit; R247 re-triggers re-certification).
+(`M0-T111-*`, DCV 10/10), the first re-certification (`M0-T112-*`, DCV 6/6),
+the seam repair (`M0-T115-*`, DCV 3/3 — one G3 BLOCKER correction round, four
+delta-PASS attestations), the residual fixes (`M0-T114-*`, DCV 3/3), the
+second re-certification (`M0-T116-*`), the autoupdater control (`M0-T117-*`,
+DCV 7/7 — one consolidated G3-FAIL round closed two uncovered claude launch
+seams, then three delta-PASS attestations), the 2.1.251 fixture recapture
+(`M0-T118-*`, DCV 5/5, zero-blocking wave), the shell-routing unit
+(`M0-T120-*`, DCV 8/8, zero-blocking wave; the limited-auto mode-scoping of
+the routing gate was independently adjudicated as satisfying R295 by G3, G5,
+AND the DCV), and the third re-certification itself (`M0-T119-*`, recorded at
+its gate wave — the acceptance the R276 RERUN waits on). A later identity
+change invalidates the affected verdicts (rework→resubmit; R247 re-triggers
+re-certification).
 
 ## 12. Golden-run evidence (the observed complete loop)
 
@@ -212,6 +239,22 @@ all hold; the live run's fail-closed stop itself validated the design (ASK
 never AUTO; a missing checkpoint never read as success). Resume of the
 authorized loop is gated on M0-T116 acceptance + the full R276 preflight
 (`M0-T116-recertification.md`).
+**Third refresh at M0-T119:** after the R276 resume stopped fail-closed on
+the 2.1.248→2.1.251 provider-CLI drift, the owner-authorized admission window
+landed (M0-T117 autoupdater control, M0-T118 fixture recapture, M0-T120
+shell-routing unit — all accepted), and the pack (now **42 tests**, the 41
+certified scenarios plus M0-T120's routing tooth-bite) was re-run **42/42**
+at the post-admission identity. The loop's observed complete run, rotation
+crossing, restart resume, and fail-closed fault scenarios all hold on the
+ADMITTED 2.1.251 CLI under the new drift-proof controls — and the certified
+start is now additionally gated by the pre-dispatch shell-routing tooth
+(a certified start without current routing evidence for the pinned executable
+digest refuses UNSAFE_OR_DRIFTED before any provider contact). The measured
+routing fixture shows the 2.1.251 worker prefers NATIVE tools (Grep/Read/Edit,
+zero shell) under the exact controller construction. The resume rerun is
+gated on M0-T119 acceptance + the full R276 preflight, and its certified
+start carries the one-time `--repin-cli-identity`
+(`M0-T119-recertification.md`).
 
 ## 13. Clean-session launch (proven shape)
 
