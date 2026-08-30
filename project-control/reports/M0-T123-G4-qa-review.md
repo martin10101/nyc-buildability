@@ -86,3 +86,31 @@ Items 5/6/10/11 are covered indirectly or by pre-existing mechanisms rather than
 All required suites reproduce exactly at the reviewed identity (45; 533; 2870/2/0 twice; collect 2872), zero failures, no flakiness, modularity clean. The dual-guard seam (400k ceiling with correct at-or-above boundary + fail-closed missing telemetry; Windows-aware cwd binding with the primary-checkout case named specifically) is genuine; AS-5 proves single-seam closure with **site-granular** removal-sensitive AST-prune RED tests plus a dispatcher-set closure that catches any new argv+Popen site; the fixture is faithfully derived read-only (hashes match G0 baseline, sanitized, hygiene test green); the chain arithmetic closes exactly (45+7+4=56); and AS-8's terminal-evidence recovery (max_turns 12/13, context-limit inference abandoned) is exemplary honesty. The findings are coverage-depth observations (recommended hardening), not defects in the delivered behavior, and are flagged for the orchestrator/DCV — the AS-4/R337 per-property assertion and the indirectly-covered R342 items in particular. None falsifies current-state correctness.
 
 VERDICT: PASS
+
+---
+
+# G4 DELTA ATTESTATION (VERBATIM reviewer return; hardening 6aada29 -> 16e1b3b; saved by the orchestrator)
+
+My full-suite regression run confirms **2889 passed, 2 skipped** — no regression from the production unwrap, and matching the +19 delta. All delta verifications pass.
+
+## G4 QA Delta Attestation — M0-T123 hardening round
+
+**Reviewed delta head:** `16e1b3b` (`6aada29` ancestor); delta = claude_runner.py unwrap + launch_seam tests + producer report §11 (production diff is the one-line-class unwrap only).
+
+**(1) launch_seam counts:** `--collect-only` = **64**; `-q` run 1 = **64 passed** (58.95s), run 2 = **64 passed** (57.64s) — deterministic, +19 over 45.
+
+**(2) New test bodies — genuine, not nominal:**
+- **R337 seven properties, each individually asserted:** lineage (`_last_checkpoint_id`/`_last_checkpoint` unchanged, `assertIs`), task identity (config+authority task_id, run_id), branch+worktree, **budgets** (strict `all_state()` diff == exactly `{PROVIDER_SESSION_KEY, ROTATION_PENDING_KEY, ROTATION_REASON_KEY}` + `touches.report()` unchanged), **audit** (chain verifies before+after, prior records a strict subset, exactly one `over_ceiling_session_shed` appended), exactly-once (one shed record, shed id `798d2f00` captured, fresh successor).
+- **R342 stale-identity** (`recorded_provider_session` is run-scoped; run-B never adopts run-A's session; the real loop does not restore it), **controller-restart** (HALTED-lineage → shed-before-first-dispatch → fresh dispatch with `resume_session_id==""`, `with_resume` never called), **concurrent-controllers** (live foreign lock → `lock_held`; stale lock taken over), **provider-failure** (seam refusal → typed `RunnerError` + zero children; the raw missing-exe `Popen` OSError asserted as TRUE behavior with zero children, honestly documented as an un-retyped limitation — not a false pass).
+- **UNC + 8.3** both fail closed (UNC server-share form → CWD_MISMATCH; `DOWNLO~1` short name cannot be proven equal to the long worktree → CWD_MISMATCH).
+- **Unwrap invariant:** `test_R332_seam_is_not_nested_under_an_expected_worktree_guard` (AST) + `test_RED_re_wrapping_the_seam_under_the_guard_is_detected` make the unconditional seam a regression-locked invariant; the two `RunnerChokepoint::test_R332_worktree_less_*` tests prove the behavioral strengthening.
+
+**Production unwrap:** removes `if self.config.expected_worktree:` so the seam runs unconditionally; the seam still skips only the cwd guard when unbound and always evaluates the ceiling — behavior-preserving on production paths (all bind `expected_worktree`), strengthening on unbound shapes. My **full-suite regression run = 2889 passed, 2 skipped** (exit 0) confirms no existing test broke.
+
+**(3) Chain:** `--collect-only` full = **2891** (= 2889 + 2 skips); 2870 + 19 = 2889. Verified.
+
+**(4) Producer report §11** records the corrected counts (launch_seam 64, four-suite 186, full 2889/2/0) with the exact `--collect-only -q`/`-q` commands and the honest OSError limitation. Modularity: failures 0.
+
+All three of my §6 findings (R337 per-property, R342 items 5/6/10/11, UNC/8.3) are genuinely closed with reproducible tests; the production change is strengthening-only and regression-free.
+
+DELTA VERDICT: PASS

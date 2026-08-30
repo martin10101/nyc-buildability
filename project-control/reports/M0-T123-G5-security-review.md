@@ -84,3 +84,27 @@ Relevant files (absolute):
 - `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\tasks\M0-T123.json`
 
 VERDICT: PASS
+
+---
+
+# G5 DELTA ATTESTATION (VERBATIM reviewer return; hardening 6aada29 -> 16e1b3b; saved by the orchestrator)
+
+The only scan hit is the G5 report echoing my own scan pattern (not an actual secret). Delta confirmed.
+
+## DELTA ATTESTATION — M0-T123 (SEC-MINOR closure 6aada29 → 16e1b3b)
+
+**Control head:** `16e1b3b` (verified via `git rev-parse HEAD`).
+
+**(1) Unwrap-only, no new logic, refusal unchanged.** `git diff 6aada29 16e1b3b --stat -- tools/agent_supervisor/` = **claude_runner.py only** (+26/-21). Reading the run_unit diff: the sole change is removing the `if self.config.expected_worktree:` wrapper (and its indentation) so `launch_seam.enforce_launch(...)` is now called **unconditionally**. The `WorkerLaunchContext` arguments are byte-identical (cwd, expected_worktree, primary_checkout, resuming, session_context_tokens, session_usage_known), and the refusal is byte-identical (`if not _decision.ok: raise RunnerError(_decision.code, _decision.message)`). No weakened refusal, no added branch. This is precisely my recommendation: the seam's internal cwd-guard skip for empty `expected_worktree` (launch_seam.py:312) is untouched, and the 400k ceiling now always evaluates (launch_seam.py:316).
+
+**(2) TOCTOU posture unchanged.** The seam still reads the same immutable `self.config.*`, still sits after `argv = build_argv(self.config)` (line 1207) and before the sole `subprocess.Popen`, with only `handler`/`env` setup in between (no `self.config` mutation). Same self.config.cwd read by seam and Popen; no new window introduced.
+
+**(3) Named hypothetical now refuses.** `python -m pytest tools/test_agent_supervisor_launch_seam.py -k "R332" -q` → **3 passed** (worktree-less over-ceiling resume AND unknown-telemetry resume both refuse at the chokepoint; anti-re-wrap AST tests present). Full suite `…launch_seam.py -q` → **64 passed** (up from 45 — strengthening-only, new unwrap/anti-re-wrap coverage).
+
+**(4) Sensitive modules byte-unchanged.** `git diff 6aada29 16e1b3b --name-only -- policy.py broker.py start_gate.py recovery_probes.py restart_channel.py state_machine.py audit_log.py` → **empty**. Policy tiers, broker binding, breakers/budgets, audit chain, start preflight, and the M0-T121 restart_channel preconditions remain intact.
+
+**(5) No new secrets.** Whole-delta `+`-line scan for the credential patterns returns only one line — the G5 report echoing my own scan pattern string, not an actual secret. The non-code delta is control-plane (gates/reports/state/task, orchestrator-written) plus the test file's +375 anti-re-wrap/worktree-less tests.
+
+My prior G5 basis is preserved and the SEC-MINOR is genuinely closed with a strengthening-only change; behavior on all reachable production paths is identical, and the previously-latent worktree-less over-ceiling resume now fails closed at the runner chokepoint.
+
+DELTA VERDICT: PASS

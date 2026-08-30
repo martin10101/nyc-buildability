@@ -54,3 +54,27 @@ Reproducibly evidenced: R327–R329 (S16.7 disposition; no budget change — pol
 Both reproduced root causes are correctly diagnosed and closed by a single, focused, pure-decision enforcement module routed through the sole worker `Popen`, the CLI packet-worktree gate, and an unconditional pre-first-dispatch shed, with the resume/turnover path carrying ceiling telemetry to the runner backstop. Ceiling semantics (at-or-above never resumed, unknown fails closed), Windows-aware fail-closed cwd binding, exactly-once idempotent rotation with transcript freeze, a mechanical site-granular bypass-sensitive sweep, and read-only fixtures (source hashes independently verified byte-identical to the live transcripts) all reproduce. The terminal event is independently confirmed as `max_turns_reached`, with the prior context-limit hypothesis honestly contradicted. Regression surface (policy/broker/start_gate/recovery_probes/recovery/restart_channel) is untouched; 45 + 76 + 203 tests pass; modularity is clean. The one INFO (runner-seam guards coupled to `expected_worktree`, mitigated by three-layer defense-in-depth and documented) is a non-blocking robustness recommendation. No defects; no required corrections.
 
 VERDICT: PASS
+
+---
+
+# G3 DELTA ATTESTATION (VERBATIM reviewer return; hardening 6aada29 -> 16e1b3b; saved by the orchestrator)
+
+## DELTA ATTESTATION — M0-T123 hardening round
+
+**Head:** `git rev-parse HEAD` = `16e1b3b` (verified). **Delta vs reviewed `6aada29`:** within `tools/`, only `claude_runner.py` and `test_agent_supervisor_launch_seam.py` changed (`git diff --stat` confirmed).
+
+**(1) claude_runner is unwrap-only.** `git diff -w 6aada29 16e1b3b -- claude_runner.py` shows the sole logic change is removal of the `if self.config.expected_worktree:` wrapper; the `enforce_launch(...)` call (1224-1230) and the `if not _decision.ok: raise RunnerError(...)` (1231-1235) are byte-identical, now unconditional. The 26+/21- stat is comment expansion + re-indentation. I read the region: no other change in run_unit. F5-INFO closed — the ceiling guard now runs on every worker path (the seam internally skips only the cwd guard when `expected_worktree` is empty).
+
+**(2) Re-wrap detection — genuine, with an honestly-noted narrowness.** `_enforce_nested_under_expected_worktree_if` walks for any `ast.If` whose test references a Name/Attribute `expected_worktree` containing an `enforce_launch` call; `test_RED_re_wrapping...` feeds a synthetic re-wrapped run_unit and it flags True, the real run_unit flags False. HONEST LIMITATION (as asked): a re-wrap under a *differently-named* condition (e.g. `ew = self.config.expected_worktree; if ew:`) would evade this AST check, since the `If.test` would reference `ew`, not `expected_worktree`. BUT the behavioral test `test_R332_worktree_less_over_ceiling_resume_still_refuses` pins the actual invariant — an unbound over-ceiling runner refuses at the chokepoint — so ANY re-wrap that suppresses the ceiling on unbound runners fails behaviorally regardless of naming. The AST test adds targeted syntactic sensitivity; the behavioral test is the robust guard. The pair is sound.
+
+**(3) G5 hypothetical refuses.** `test_R332_worktree_less_over_ceiling_resume_still_refuses`: runner with `resume_session_id`, 640_224 tokens, `usage_known`, and `expected_worktree==""` raises `RunnerError(OVER_CEILING_RESUME_FORBIDDEN)` before Popen; the unknown-telemetry variant (`..._unknown_telemetry_still_fails_closed`) is also present. Reproduced.
+
+**(4) Suite = 64 passed** (`pytest tools/test_agent_supervisor_launch_seam.py -q`). All 45 originals present by name (independent set-diff: 0 missing); +19 new = 64. No prior test weakened/renamed/deleted.
+
+**(5) R337 seven properties, individually asserted:** checkpoint-lineage (`_last_checkpoint_id` + `_last_checkpoint` identity), task-identity (`config.task_id`/`authority.task_id`/`run_id`), budgets (`touches.report()` unchanged AND durable-state diff is exactly `{provider_session, rotation_pending, rotation_reason}` — proving no budget key moved), audit (chain verifies before+after, `before` a subset of `after`, len +1, last event = `over_ceiling_session_shed`), branch + worktree (`authority.branch`/`authority.worktree`), exactly-once (first True/second False, exactly one recorded shed, shed id `798d2f00` captured-not-lost, new session distinct). Genuinely per-property.
+
+**(6) OSError limitation asserts TRUE behavior.** `test_raw_popen_failure_records_no_child` (class `MatrixR342ProviderFailureAtLaunch`, `_runner` uses `executable = tmp/missing.exe`, journal-wired): a missing exe makes `Popen` raise `FileNotFoundError` (OSError) *after* the seam passes and *before* any child record, so `account_for_children == 0`. This is real behavior, honestly documented; the follow-up framing is sound — exe existence is preflight's responsibility (guarded upstream in production), while the seam owns only the ceiling+cwd guards, so not converting a missing-exe OSError into a typed RunnerError is a correct boundary, not a gap.
+
+**New findings introduced by the delta:** none. Behavior-only strengthening (ceiling now unconditional) plus test additions; no production behavior narrowed, no prior coverage lost.
+
+DELTA VERDICT: PASS
