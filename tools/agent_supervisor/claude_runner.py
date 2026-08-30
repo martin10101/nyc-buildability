@@ -1207,27 +1207,32 @@ class ClaudeRunner:
         argv = build_argv(self.config)
         # M0-T123 (D-024-R332..R336): the ironclad pre-provider-contact chokepoint.
         # EVERY worker launch/resume funnels to this one `Popen`, so the launch seam
-        # is enforced here, before a single byte reaches the provider. When the
-        # production launch path bound a worktree (`expected_worktree` set), a cwd
-        # that is not the packet's isolated worktree and a `--resume` of an
-        # at/above-400k or unknown-telemetry session both fail closed as a typed
-        # `RunnerError` (LaunchSeamError is one). Fake-executable tests that never
-        # bind a worktree defer the cwd guard to the loop/CLI seam and are
-        # unaffected. A rotate verdict is a refusal HERE: a runner cannot rotate, so
-        # an over-ceiling `--resume` must never reach the process.
-        if self.config.expected_worktree:
-            _decision = launch_seam.enforce_launch(launch_seam.WorkerLaunchContext(
-                cwd=self.config.cwd,
-                expected_worktree=self.config.expected_worktree,
-                primary_checkout=self.config.primary_checkout,
-                resuming=bool(self.config.resume_session_id),
-                session_context_tokens=self.config.resume_context_tokens,
-                session_usage_known=self.config.resume_usage_known))
-            if not _decision.ok:
-                # A launch-seam refusal is surfaced as a RunnerError so it rides the
-                # runner's existing fail-closed error contract (the code is the
-                # seam's, e.g. `cwd_primary_checkout`, `over_ceiling_resume_forbidden`).
-                raise RunnerError(_decision.code, _decision.message)
+        # is enforced here UNCONDITIONALLY, before a single byte reaches the provider
+        # (owner row R332: "EVERY path ... must evaluate the ceiling before contacting
+        # the provider"). The seam itself is what decides which guards apply:
+        # `enforce_launch` skips ONLY the cwd guard when no worktree was bound
+        # (`expected_worktree` empty - the fake-executable tests that defer cwd binding
+        # to the loop/CLI seam) and ALWAYS evaluates the 400k ceiling. So a
+        # worktree-less runner still fails an at/above-ceiling or unknown-telemetry
+        # `--resume` closed here - the exact shape the G5 review named. Removing the
+        # former `if self.config.expected_worktree:` wrapper is strengthening-only:
+        # every production resume binds `expected_worktree` (verified G3/G5), so
+        # behavior on all reachable paths is identical; the wrapper had only ever
+        # suppressed the CEILING guard on unbound shapes, which is precisely the gap
+        # this unwrap closes. A rotate verdict is a refusal HERE: a runner cannot
+        # rotate, so an over-ceiling `--resume` must never reach the process.
+        _decision = launch_seam.enforce_launch(launch_seam.WorkerLaunchContext(
+            cwd=self.config.cwd,
+            expected_worktree=self.config.expected_worktree,
+            primary_checkout=self.config.primary_checkout,
+            resuming=bool(self.config.resume_session_id),
+            session_context_tokens=self.config.resume_context_tokens,
+            session_usage_known=self.config.resume_usage_known))
+        if not _decision.ok:
+            # A launch-seam refusal is surfaced as a RunnerError so it rides the
+            # runner's existing fail-closed error contract (the code is the
+            # seam's, e.g. `cwd_primary_checkout`, `over_ceiling_resume_forbidden`).
+            raise RunnerError(_decision.code, _decision.message)
         handler = permission_handler or deny_everything
         # D-024-R278/R286: forced DISABLE_AUTOUPDATER=1 on every claude worker child.
         env = claude_child_env(dict(self.config.extra_env), self.config.env_allowlist)

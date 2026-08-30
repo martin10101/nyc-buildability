@@ -148,8 +148,8 @@ recovered cause is turn-budget exhaustion, itself driven by the wrong-cwd defect
 - Named related suites together (launch_seam + loop + loop_turnover + session_continuity +
   claude_runner_env + crash + endurance + restart_channel + golden_run + rotation + runner +
   turnover_integration) — **533 passed**
-- Full `tools/test_agent_supervisor_*.py` — **2870 passed, 2 skipped** (the 2 skips are pre-existing,
-  untouched by this task)
+- Full `tools/test_agent_supervisor_*.py` — **2870 passed, 2 skipped** at the original-round HEAD
+  (superseded post-hardening by **2889 passed, 2 skipped**; see §11)
 - `modularity_check.py --check` — **selected 329 files; failures 0; warnings 10** (all pre-existing;
   `launch_seam.py` not among them)
 - Ruff 0.13.0 on all new/changed files — **all checks passed** (the 5 residual F401s in
@@ -176,11 +176,60 @@ New: `tools/agent_supervisor/launch_seam.py`; `tools/agent_supervisor/fixtures/r
   against the real runtime (R345); every test uses constructed/temp journals and fixture copies.
 - **Scope note:** the pre-existing `loop.py`/`cli.py` F401 lint warnings are unrelated to this task
   and were left untouched (not in scope; not on the CI ruff path).
-- **Risk (low):** the runner-level cwd guard is active only when `expected_worktree` is bound (the
-  production `_run_loop` always binds it); unbound fake-exe runners defer to the CLI/loop seam. This
-  keeps the ~2800-test suite byte-for-byte green while the production launch path is fully guarded —
-  proven by the reachability sweep and the CLI gate.
+- **Risk (low):** since the §11 hardening round the runner chokepoint seam runs UNCONDITIONALLY
+  (the ceiling guard always applies; only the *cwd* guard defers when no worktree is bound, which
+  `enforce_launch` decides internally). Production always binds `expected_worktree`, so behavior on
+  every reachable path is identical to the pre-unwrap tree — proven by an unchanged full-suite total
+  and the AST nesting sweep.
 - **Process:** this change touches `tools/agent_supervisor/**` → it invalidates the fourth
   certification and requires the R247 recertification (M0-T124), manifest verification, and the R276
   preflight before any further start (R346), then STOP for the owner's separate live-start decision
   (R347). PR #241 untouched.
+
+## 11. Hardening-round delta (2026-08-30, post-gate; converged G3 F5-INFO / G5 SEC-MINOR + G4 findings)
+
+**Production change (unwrap ONLY, strengthening-only):** `claude_runner.py` `run_unit` no longer wraps
+the launch-seam call in `if self.config.expected_worktree:` — the seam now runs UNCONDITIONALLY before
+the sole worker `Popen` (owner row R332 "EVERY path"). `enforce_launch` already skips only the cwd
+guard when no worktree is bound and ALWAYS evaluates the 400k ceiling, so a worktree-less resume-capable
+config with 640k telemetry now refuses at the chokepoint (the exact G5 hypothetical). **No reachable-path
+behavior change:** every production resume binds `expected_worktree` (G3/G5 verified); the full
+`tools/test_agent_supervisor_*.py` total after the unwrap-alone was **2870 passed, 2 skipped** —
+identical to before it (background run, exit 0). The unwrap only added enforcement on the previously
+unbound-and-therefore-unchecked shapes.
+
+**New tests (all test-only; `test_agent_supervisor_launch_seam.py` 45 → 64):**
+- Unconditional-seam: `RunnerChokepoint::test_R332_worktree_less_over_ceiling_resume_still_refuses` and
+  `::test_R332_worktree_less_resume_unknown_telemetry_still_fails_closed`;
+  `ReachabilitySweep::test_R332_seam_is_not_nested_under_an_expected_worktree_guard` (AST: the
+  `enforce_launch` call must NOT sit inside any `if` testing `expected_worktree`) +
+  `::test_RED_re_wrapping_the_seam_under_the_guard_is_detected` (re-wrapping turns it RED).
+- R337 per-property preservation (`PreDispatchCeilingSeam::test_R337_*`): checkpoint lineage, task
+  identity, branch+worktree, budgets (only the provider-session + two rotation keys move; owner-touch
+  report unchanged), audit history (chain verifies + prior records a strict subset + exactly one shed
+  appended), exactly-once succession (one shed record; shed id captured; fresh distinct successor).
+- R342 four matrix items: `MatrixR342StaleSessionIdentity` (a foreign-run session id is never adopted —
+  `recorded_provider_session` run-scoped; the loop does not restore it), `MatrixR342ControllerRestart`
+  (HALTED-lineage → shed-before-first-dispatch → fresh dispatch, no `--resume`),
+  `MatrixR342ConcurrentControllers` (a live foreign single-instance lock refuses a second launch with
+  `lock_held`; a stale lock is taken over), `MatrixR342ProviderFailureAtLaunch` (a seam refusal at
+  launch is a typed `RunnerError` recording NO child; a raw missing-executable `Popen` records NO child
+  either — no half-recorded launch).
+- Item 4 (UNC + 8.3 short-name): `LaunchSeamUnit::test_unc_matching_worktree_proceeds_but_mismatch_fails_closed`
+  and `::test_8_3_short_name_cwd_fails_closed_against_long_name` (an 8.3 short name cannot be proven
+  equal to the long-name worktree, so it fails closed conservatively).
+
+**Honest limitation surfaced (R342 item d).** A raw `subprocess.Popen` failure from a *missing
+executable* currently raises `FileNotFoundError` (not a re-typed `RunnerError`); it records NO child, so
+there is no half-recorded launch, and production preflight guards a missing binary upstream. Re-typing
+that OSError is a candidate follow-up, deliberately OUT of this bounded round's one-line production
+scope; the test asserts the true current behavior (`OSError` + zero children) rather than a false pass.
+
+**Verified counts (this round; commands: `--collect-only -q` then `-q`).**
+- `test_agent_supervisor_launch_seam.py` — **64 collected, 64 passed**
+- Four named suites together (`launch_seam + invariants + restart_channel + golden_run`) — **186 passed**
+  (launch_seam 64 + invariants 46 + restart_channel 34 + golden_run 42)
+- Ruff 0.13.0 on the changed files (`launch_seam` test + `claude_runner.py`) — **all checks passed**
+- Full `tools/test_agent_supervisor_*.py` after the unwrap-alone — **2870 passed, 2 skipped** (exit 0);
+  with the new tests added — **2889 passed, 2 skipped** in 335s, exit 0 (2870 + 19 new launch-seam
+  tests; independently re-verified, both runs).

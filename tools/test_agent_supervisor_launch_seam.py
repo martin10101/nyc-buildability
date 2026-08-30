@@ -34,6 +34,7 @@ import ast
 import dataclasses
 import inspect
 import json
+import os
 import pathlib
 import sys
 import tempfile
@@ -51,8 +52,14 @@ from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
 from tools.agent_supervisor import session_continuity as sc  # noqa: E402
+from tools.agent_supervisor import recovery as rec  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
-from tools.agent_supervisor.durable_state import DurableJournal  # noqa: E402
+from tools.agent_supervisor.durable_state import (  # noqa: E402
+    DurableJournal,
+    checkout_key,
+    runtime_dir_for,
+)
+from tools.agent_supervisor.locking import LockError, SingleInstanceLock  # noqa: E402
 from tools.agent_supervisor.models import ClaudeCheckpoint  # noqa: E402
 from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 
@@ -149,6 +156,25 @@ class LaunchSeamUnit(unittest.TestCase):
         # single-checkout runs / older harnesses declare no worktree; the runner's
         # own cwd==expected guard still holds.
         self.assertIsNone(ls.evaluate_packet_worktree_binding(PRIMARY, "", PRIMARY))
+
+    # -- item 4: UNC and 8.3 short-name cwd forms fail CLOSED --------------
+
+    def test_unc_matching_worktree_proceeds_but_mismatch_fails_closed(self) -> None:
+        unc = r"\\server\share\wt-m0t107"
+        self.assertTrue(ls.same_path(unc, r"\\SERVER\share\wt-m0t107"))  # case-folded
+        self.assertIsNone(ls.evaluate_cwd(unc, unc))
+        # a UNC cwd that is not the expected worktree fails closed
+        d = ls.evaluate_cwd(r"\\server\share\ctl24", unc)
+        self.assertEqual(d.code, ls.CWD_MISMATCH)
+
+    def test_8_3_short_name_cwd_fails_closed_against_long_name(self) -> None:
+        # `os.path.normcase/normpath` do NOT expand an 8.3 short name, so a
+        # short-name cwd cannot be PROVEN equal to the long-name worktree and is
+        # refused (conservative fail-closed) rather than assumed equal.
+        short = r"C:\Users\MLFLL\DOWNLO~1\nyc-zoning\wt-m0t107"
+        long = r"C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t107"
+        self.assertFalse(ls.same_path(short, long))
+        self.assertEqual(ls.evaluate_cwd(short, long).code, ls.CWD_MISMATCH)
 
     # -- combined enforce_launch -------------------------------------------
 
@@ -262,6 +288,34 @@ class RunnerChokepoint(unittest.TestCase):
         ctx = ls.WorkerLaunchContext(cwd=PRIMARY, expected_worktree="")
         self.assertTrue(ls.enforce_launch(ctx).ok)
 
+    def test_R332_worktree_less_over_ceiling_resume_still_refuses(self) -> None:
+        # The exact G5 SEC-MINOR hypothetical (owner row R332 "EVERY path"): a
+        # resume-capable RunnerConfig with NO expected_worktree bound and 640k
+        # telemetry must STILL refuse at the chokepoint. The ceiling guard runs
+        # unconditionally (only the cwd guard defers when no worktree is bound), so
+        # the over-ceiling --resume never reaches Popen even on an unbound runner.
+        with tempfile.TemporaryDirectory() as d:
+            runner = self._runner(
+                cwd=d, resume_session_id="prov-1",  # NO expected_worktree
+                resume_capability_verified=True,
+                resume_context_tokens=640_224, resume_usage_known=True)
+            self.assertEqual(runner.config.expected_worktree, "")
+            with self.assertRaises(cr.RunnerError) as cm:
+                runner.run_unit("hi")
+            self.assertEqual(cm.exception.code, ls.OVER_CEILING_RESUME_FORBIDDEN)
+
+    def test_R332_worktree_less_resume_unknown_telemetry_still_fails_closed(self) -> None:
+        # The sibling: an unbound resume with UNKNOWN telemetry fails closed at the
+        # chokepoint too (never assumed below the ceiling).
+        with tempfile.TemporaryDirectory() as d:
+            runner = self._runner(
+                cwd=d, resume_session_id="prov-1",  # NO expected_worktree
+                resume_capability_verified=True,
+                resume_context_tokens=None, resume_usage_known=False)
+            with self.assertRaises(cr.RunnerError) as cm:
+                runner.run_unit("hi")
+            self.assertEqual(cm.exception.code, ls.CEILING_TELEMETRY_MISSING)
+
 
 # ==========================================================================
 # AS-1 / AS-4: the loop-level pre-first-dispatch ceiling seam
@@ -270,8 +324,10 @@ class RunnerChokepoint(unittest.TestCase):
 
 def _checkpoint(**kw) -> ClaudeCheckpoint:
     data = dict(schema_version="1.1", checkpoint_id="cp-1", status="UNIT_COMPLETE",
-                task_id="M0-T107", claude_session_id="sess-fresh",
+                task_id="M0-T107", run_id="run_33dfa57d54db",
+                claude_session_id="sess-fresh",
                 starting_sha="a" * 40, current_sha="a" * 40,
+                branch="control/D-024-fable-codex-loop", worktree="wt",
                 summary="did work", proposed_next_action="next",
                 changed_files=(), tests=(), blockers=(),
                 owner_decisions_required=())
@@ -397,6 +453,90 @@ class PreDispatchCeilingSeam(unittest.TestCase):
         self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
         self.assertFalse(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
 
+    # -- R337: per-property preservation across the shed/rotation ----------
+    #
+    # Snapshot-before/after (the M0-T121 AS-8 pattern): the shed to a fresh
+    # session must preserve EACH of the seven owner-named properties individually.
+
+    def _audit_records(self) -> list[dict]:
+        text = (self.tmp / "audit.jsonl").read_text() if (
+            self.tmp / "audit.jsonl").exists() else ""
+        return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+    def _loop_with_lineage(self) -> lp.SupervisedLoop:
+        """A loop seeded with the over-ceiling shape AND checkpoint lineage."""
+        self._seed_over_ceiling(tokens_present=True)
+        loop = self._loop(_FakeRunner())
+        loop._last_checkpoint_id = "cp-lineage-7"
+        loop._last_checkpoint = _checkpoint(checkpoint_id="cp-lineage-7")
+        return loop
+
+    def test_R337_checkpoint_lineage_preserved(self) -> None:
+        loop = self._loop_with_lineage()
+        before_id, before_cp = loop._last_checkpoint_id, loop._last_checkpoint
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        self.assertEqual(loop._last_checkpoint_id, before_id)
+        self.assertIs(loop._last_checkpoint, before_cp)
+
+    def test_R337_task_identity_preserved(self) -> None:
+        loop = self._loop_with_lineage()
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        self.assertEqual(loop.config.task_id, "M0-T107")
+        self.assertEqual(loop.authority.task_id, "M0-T107")
+        self.assertEqual(loop.run_id, self.run_id)
+
+    def test_R337_branch_and_worktree_preserved(self) -> None:
+        loop = self._loop_with_lineage()
+        before_branch, before_wt = loop.authority.branch, loop.authority.worktree
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        self.assertEqual(loop.authority.branch, before_branch)
+        self.assertEqual(loop.authority.worktree, before_wt)
+
+    def test_R337_budgets_untouched(self) -> None:
+        # The owner-touch budget counter is not spent by the shed, and no budget
+        # state key changes: the ONLY durable keys the shed moves are the provider
+        # session and the two rotation keys.
+        loop = self._loop_with_lineage()
+        touches_before = loop.touches.report()
+        before = dict(self.journal.all_state())
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        after = dict(self.journal.all_state())
+        changed = {k for k in set(before) | set(after)
+                   if before.get(k) != after.get(k)}
+        self.assertEqual(
+            changed,
+            {sc.PROVIDER_SESSION_KEY, rot.ROTATION_PENDING_KEY, rot.ROTATION_REASON_KEY},
+            f"the shed moved unexpected durable state: {changed}")
+        self.assertEqual(loop.touches.report(), touches_before)
+
+    def test_R337_audit_history_verifies_and_only_grows(self) -> None:
+        loop = self._loop_with_lineage()
+        before = self._audit_records()
+        before_keys = {(r.get("sequence"), r.get("event_type")) for r in before}
+        self.assertTrue(self.audit.verify_chain().ok)
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        after = self._audit_records()
+        after_keys = {(r.get("sequence"), r.get("event_type")) for r in after}
+        # chain still verifies, NO prior record removed, exactly the shed appended
+        self.assertTrue(self.audit.verify_chain().ok)
+        self.assertTrue(before_keys.issubset(after_keys),
+                        "a prior audit record was removed or altered")
+        self.assertEqual(len(after), len(before) + 1)
+        self.assertEqual(after[-1]["event_type"], "over_ceiling_session_shed")
+
+    def test_R337_exactly_once_succession_no_duplicate_or_lost_unit(self) -> None:
+        loop = self._loop_with_lineage()
+        first = loop._rotate_over_ceiling_before_first_dispatch(cycle=1)
+        second = loop._rotate_over_ceiling_before_first_dispatch(cycle=1)
+        self.assertTrue(first)
+        self.assertFalse(second)  # no second shed -> no duplicated succession
+        sheds = [r for r in loop._rotations
+                 if r.get("kind") == "over_ceiling_shed_pre_dispatch"]
+        self.assertEqual(len(sheds), 1, "the shed must record exactly one succession")
+        # the shed session id is captured (not lost), and the new session is distinct
+        self.assertEqual(sheds[0]["shed_provider_session_id"], "798d2f00")
+        self.assertEqual(loop._provider_session_id, "")  # fresh -> distinct id later
+
 
 # ==========================================================================
 # AS-3 / AS-6: the production CLI worktree-binding gate
@@ -411,6 +551,192 @@ class CliWorktreeGate(unittest.TestCase):
         d = ls.evaluate_packet_worktree_binding(PRIMARY, "wt-m0t107", PRIMARY)
         self.assertIsNotNone(d)
         self.assertIn(d.code, (ls.CWD_PRIMARY_CHECKOUT, ls.CWD_MISMATCH))
+
+
+# ==========================================================================
+# R342: dedicated tests for the four indirectly-covered matrix items
+# ==========================================================================
+
+
+class MatrixR342StaleSessionIdentity(unittest.TestCase):
+    """(a) A stale/mismatched recorded session id is surfaced, never silently
+    adopted. `recorded_provider_session` is scoped by run_id: a record from a
+    DIFFERENT run reads as absent (the fail-closed continuity answer)."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.journal = DurableJournal(
+            pathlib.Path(self._tmp.name) / "j.sqlite3").open()
+        self.addCleanup(self.journal.close)
+
+    def test_a_foreign_run_session_is_not_adopted_by_this_run(self) -> None:
+        sc.record_provider_session(self.journal, session_id="stale-A",
+                                   run_id="run-A", cycle=3,
+                                   context_tokens=100, usage_known=True)
+        # This run (run-B) must NOT see run-A's leftover session.
+        self.assertIsNone(sc.recorded_provider_session(self.journal, run_id="run-B"))
+        # Its own run still reads it; the watchdog (no run_id) reads whoever's last.
+        self.assertEqual(
+            sc.recorded_provider_session(self.journal, run_id="run-A").session_id,
+            "stale-A")
+        self.assertEqual(
+            sc.recorded_provider_session(self.journal).session_id, "stale-A")
+
+    def test_the_loop_does_not_restore_a_foreign_run_session(self) -> None:
+        sc.record_provider_session(self.journal, session_id="stale-A",
+                                   run_id="run-A", cycle=3,
+                                   context_tokens=999_999, usage_known=True)
+        audit = AuditLog(pathlib.Path(self._tmp.name) / "audit.jsonl", fsync=False)
+        authority = pol.TaskAuthority.from_packet(
+            {"task_id": "M0-T107", "allowed_paths": ["tools/**"],
+             "forbidden_paths": [".github/**"], "status": "in_progress"},
+            repo_root=self._tmp.name, worktree=self._tmp.name,
+            branch="b", stage="phase4")
+        loop = lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T107", stage="phase4",
+                                 allowed_paths=authority.allowed_paths,
+                                 stop_conditions=("x",), max_cycles=2,
+                                 owner_touch_budget=2),
+            journal=self.journal,
+            audit=audit,
+            machine=StateMachine(self.journal, audit, "run-B"),
+            authority=authority, runner=_FakeRunner(), reviewer=None,
+            run_id="run-B", context_rotation_threshold=CEILING)
+        # run-B never adopts run-A's stale (over-ceiling) session id.
+        self.assertEqual(loop._provider_session_id, "")
+        self.assertIsNone(loop._recorded_session_tokens)
+
+
+class MatrixR342ControllerRestart(unittest.TestCase):
+    """(b) End-to-end shape: a HALTED-lineage journal that an owner-restart moved
+    to a restartable state -> the START path hits the shed/seam BEFORE the first
+    dispatch, so the first unit runs on a fresh session (no --resume)."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tmp = pathlib.Path(self._tmp.name).resolve()
+        self.journal = DurableJournal(self.tmp / "j.sqlite3").open()
+        self.addCleanup(self.journal.close)
+        self.audit = AuditLog(self.tmp / "audit.jsonl", fsync=False)
+        self.run_id = "run_33dfa57d54db"
+        self.authority = pol.TaskAuthority.from_packet(
+            {"task_id": "M0-T107", "allowed_paths": ["tools/agent_supervisor/**"],
+             "forbidden_paths": [".github/**"], "status": "in_progress"},
+            repo_root=str(self.tmp), worktree=str(self.tmp),
+            branch="control/D-024-fable-codex-loop", stage="phase4")
+
+    def test_restart_start_path_sheds_then_dispatches_fresh(self) -> None:
+        # HALTED-lineage shape an owner-restart left restartable: over-ceiling
+        # session recorded + unconsumed context rotation flag.
+        self.journal.set_state(rot.ROTATION_PENDING_KEY, True)
+        self.journal.set_state(rot.ROTATION_REASON_KEY, "context_threshold")
+        sc.record_provider_session(self.journal, session_id="798d2f00",
+                                   run_id=self.run_id, cycle=1,
+                                   context_tokens=604_772, usage_known=True)
+        loop = lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="supervised", task_id="M0-T107", stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("x",), max_cycles=2,
+                                 owner_touch_budget=2),
+            journal=self.journal, audit=self.audit,
+            machine=StateMachine(self.journal, self.audit, self.run_id),
+            authority=self.authority, runner=_FakeRunner(), reviewer=None,
+            run_id=self.run_id, context_rotation_threshold=CEILING)
+        # This is what run() does at the top before the first cycle.
+        self.assertTrue(loop._rotate_over_ceiling_before_first_dispatch(cycle=1))
+        # Now the first dispatch: it carries NO resume binding (fresh session).
+        self.assertEqual(loop._provider_session_id, "")
+        self.assertEqual(loop.runner.config.resume_session_id, "")
+        result = loop.runner.run_unit("first unit after restart")
+        self.assertEqual(loop.runner.prompts, ["first unit after restart"])
+        self.assertEqual(loop.runner.resumed, [])  # with_resume never called
+        # the shed left a durable, chain-verified audit record of the succession
+        self.assertTrue(self.audit.verify_chain().ok)
+        self.assertEqual(result.session_id, "sess-fresh")
+
+
+class MatrixR342ConcurrentControllers(unittest.TestCase):
+    """(c) One supervisor per checkout: with the single-instance lock held by a
+    LIVE foreign pid, a second controller's launch path fails closed
+    (`lock_held`) - the restart_channel lock-contention pattern applied at launch."""
+
+    def setUp(self) -> None:
+        self._co = tempfile.TemporaryDirectory()
+        self._base = tempfile.TemporaryDirectory()
+        self.addCleanup(self._co.cleanup)
+        self.addCleanup(self._base.cleanup)
+        self.checkout = pathlib.Path(self._co.name).resolve()
+        self.base = pathlib.Path(self._base.name).resolve()
+        self.runtime = runtime_dir_for(self.checkout, base=self.base)
+        self.runtime.mkdir(parents=True)
+
+    def _lock(self, pid=None) -> SingleInstanceLock:
+        return SingleInstanceLock(self.runtime,
+                                  checkout_key=checkout_key(self.checkout),
+                                  controller_version="0.3.0-test", pid=pid)
+
+    def test_live_foreign_lock_refuses_a_second_launch(self) -> None:
+        foreign = self._lock(pid=os.getppid())  # a live, different pid
+        foreign.acquire()
+        try:
+            with self.assertRaises(LockError) as cm:
+                self._lock().acquire()
+            self.assertEqual(getattr(cm.exception, "code", ""), "lock_held")
+        finally:
+            foreign.release()
+
+    def test_a_stale_lock_is_taken_over_not_refused(self) -> None:
+        stale = self._lock(pid=999_999_998)  # not a live pid
+        stale.acquire()
+        # a legitimate second controller takes over a dead holder's lock
+        self._lock().acquire()
+
+
+class MatrixR342ProviderFailureAtLaunch(unittest.TestCase):
+    """(d) A provider failure at launch never becomes a crash-with-half-record.
+    A seam refusal at launch is a TYPED RunnerError and records NO child; a raw
+    Popen failure (missing executable) records NO child either (the launch-record
+    is written only AFTER Popen returns), so there is never a half-recorded
+    launch. NOTE (honest): the raw Popen OSError itself is not yet re-typed as a
+    RunnerError - production preflight guards a missing binary upstream, and
+    typing it is a candidate follow-up outside this bounded round's one-line
+    production unwrap."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.tmp = pathlib.Path(self._tmp.name).resolve()
+        self.journal = DurableJournal(self.tmp / "j.sqlite3").open()
+        self.addCleanup(self.journal.close)
+
+    def _runner(self, **cfg) -> cr.ClaudeRunner:
+        base = dict(executable=str(self.tmp / "missing.exe"), max_turns=2,
+                    timeout_seconds=30.0, cwd=str(self.tmp))
+        base.update(cfg)
+        return cr.ClaudeRunner(cr.RunnerConfig(**base), journal=self.journal,
+                               run_id="run-x")
+
+    def test_seam_refusal_at_launch_is_typed_and_records_no_child(self) -> None:
+        runner = self._runner(
+            expected_worktree=str(self.tmp), resume_session_id="prov-1",
+            resume_capability_verified=True,
+            resume_context_tokens=640_224, resume_usage_known=True)
+        with self.assertRaises(cr.RunnerError) as cm:
+            runner.run_unit("hi")
+        self.assertEqual(cm.exception.code, ls.OVER_CEILING_RESUME_FORBIDDEN)
+        self.assertEqual(len(rec.account_for_children(self.journal)), 0,
+                         "a refused launch must not half-record a child")
+
+    def test_raw_popen_failure_records_no_child(self) -> None:
+        # A missing executable raises an OSError (current behavior) but leaves NO
+        # recorded child, so there is never a half-recorded launch.
+        runner = self._runner()  # no worktree, no resume -> seam passes, Popen fails
+        with self.assertRaises(OSError):
+            runner.run_unit("hi")
+        self.assertEqual(len(rec.account_for_children(self.journal)), 0,
+                         "a crashed launch must not half-record a child")
 
 
 # ==========================================================================
@@ -513,6 +839,51 @@ class ReachabilitySweep(unittest.TestCase):
         self.assertEqual(len(popen), 1, "run_unit must have exactly one worker Popen")
         self.assertLess(min(seam), popen[0],
                         "the launch seam must run BEFORE the worker Popen")
+
+    def _enforce_nested_under_expected_worktree_if(self, src: str) -> bool:
+        """True when the `enforce_launch` call sits inside the body of an `if` whose
+        test references `expected_worktree` - i.e. the seam is CONDITIONALLY skipped
+        for unbound runners (the pre-hardening wrapper). The seam must run
+        UNCONDITIONALLY (owner row R332 "EVERY path"), so this must be False."""
+        tree = ast.parse(textwrap.dedent(src))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.If):
+                continue
+            test_names = {n.id for n in ast.walk(node.test) if isinstance(n, ast.Name)}
+            test_attrs = {n.attr for n in ast.walk(node.test)
+                          if isinstance(n, ast.Attribute)}
+            if "expected_worktree" not in (test_names | test_attrs):
+                continue
+            for stmt in node.body:
+                for n in ast.walk(stmt):
+                    if (isinstance(n, ast.Call)
+                            and (self._dotted(n.func) or "").endswith("enforce_launch")):
+                        return True
+        return False
+
+    def test_R332_seam_is_not_nested_under_an_expected_worktree_guard(self) -> None:
+        # The unwrap invariant: the chokepoint seam runs unconditionally, NOT inside
+        # `if self.config.expected_worktree:`. Re-wrapping it turns this RED.
+        src = self._func_src(cr.ClaudeRunner.run_unit)
+        self.assertFalse(self._enforce_nested_under_expected_worktree_if(src),
+                         "run_unit's enforce_launch must not be nested under an "
+                         "`if ... expected_worktree` guard (R332: EVERY path)")
+
+    def test_RED_re_wrapping_the_seam_under_the_guard_is_detected(self) -> None:
+        # Removal/regression sensitivity: a synthetic run_unit whose seam call is
+        # re-wrapped under `if self.config.expected_worktree:` is caught by the check.
+        rewrapped = textwrap.dedent('''
+            def run_unit(self):
+                argv = build_argv(self.config)
+                if self.config.expected_worktree:
+                    _decision = launch_seam.enforce_launch(x)
+                    if not _decision.ok:
+                        raise RunnerError(_decision.code, _decision.message)
+                process = subprocess.Popen(argv)
+        ''')
+        self.assertTrue(
+            self._enforce_nested_under_expected_worktree_if(rewrapped),
+            "the check must flag a seam re-wrapped under the expected_worktree guard")
 
     def test_the_only_worker_dispatch_popen_is_run_unit_and_it_is_seam_guarded(self) -> None:
         # Two package functions build the worker argv and Popen: the WORKER
