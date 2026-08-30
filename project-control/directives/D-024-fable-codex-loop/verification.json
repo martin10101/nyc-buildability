@@ -7522,65 +7522,90 @@
    "requirements": [
     {
      "id": "D-024-R289",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M0-T118 accepted (status accepted, 5/5 verification PASS, accept commit 5251c73) PREDATING the Amendment-14 capture 47f9037 - ancestor relation verified by the DCV via merge-base",
+      "project-control/reports/M0-T120-DCV.md row R289"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R290",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Reconciliation recorded in source-014 and independently re-grepped by the DCV (only Amendment-14-era matches; zero prior tasks); gap resolved empirically - measured fixture with genuine native_preferred verdict",
+      "project-control/reports/M0-T120-DCV.md row R290"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R291",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Separate bounded unit (own packet/worktree wt-m0t120/commits 4e0d307->7d8195b); M0-T119 held throughout (claimed, R297 hold in progress_log, only G0 recorded)",
+      "project-control/reports/M0-T120-DCV.md row R291"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R292",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Fixture measured:true, 3 provider calls (<=3), no worker write, Grep/Read/Edit stream with Edit brokered+DENIED, claude_version 2.1.251; DCV independently re-hashed the installed binary = fixture cli_identity d6f6c29a EXACTLY; routing_probe uses build_argv + claude_child_env + deny_everything (the certified construction)",
+      "project-control/reports/M0-T120-DCV.md row R292 + M0-T120-routing-evidence.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R293",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "policy.py/broker.py/cli.py/process.py NOT in the delta (byte-untouched); 13 Windows-shape assertions ASK/HARD_DENY never AUTO (DCV ran them: 13 passed); F1/F2 recorded-not-fixed with pinning tests, both still gated",
+      "project-control/reports/M0-T120-DCV.md row R293"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R294",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "claude_native_tools.md names Read/Grep/Glob/Edit/Write, routes validation through documented_test_commands, worker-text-clean; folded into build_checkpoint_contract (single append seam); guidance tests re-run by DCV: 2 passed",
+      "project-control/reports/M0-T120-DCV.md row R294"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R295",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Fold in start_gate.live_revalidation gates MODE_LIMITED_AUTO dispatch on digest-keyed routing evidence, fail-closed (absent/stale/undetermined); DCV re-ran ShellRoutingGateFold 5 passed + golden routing_tooth_bites 1 passed (certified start REFUSES: UNSAFE_OR_DRIFTED, dispatched false).",
+      "Mode-scoping ruling independently judged by G3, G5 AND the DCV from loop.py primitives: limited-auto is the ONLY unattended self-forwarding mode (unattended iff limited-auto; shadow forwards nothing; supervised holds every prompt) - R295's cannot-silently-enter-a-certified-run text is satisfied; the tooth reports in every mode. Forward-looking caveat carried (mode-invariant regression guard).",
+      "project-control/reports/M0-T120-DCV.md row R295"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     },
     {
      "id": "D-024-R296",
-     "state": "pending",
-     "evidence": [],
-     "verified_by": "",
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Separate unit; tree/golden-blob movement consequence recorded in packet + reports; the single M0-T119 recertification (not yet run) certifies the one final identity - sequencing intact at verification time",
+      "project-control/reports/M0-T120-DCV.md row R296"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6"
     }
    ],
-   "reviewed_sha": null,
-   "verified_at": null,
-   "reviewed_manifest_sha256": null
+   "reviewed_sha": "975059fed0156d73c0863a78dad2305326d1d9e6",
+   "verified_at": "2026-08-30T00:29:12.642596+00:00",
+   "reviewed_manifest_sha256": "9773ecc55c57f4fe906ffe233a9394f4039b3f1fd09c5358ed3886794b2f25f2"
   }
  ],
- "updated_at": "2026-08-29T21:39:26.782168+00:00"
+ "updated_at": "2026-08-30T00:29:12.642596+00:00"
 }
