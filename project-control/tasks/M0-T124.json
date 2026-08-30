@@ -1,80 +1,81 @@
 {
- "task_id": "M0-T124",
- "title": "Fifth golden recertification at the post-resume-path frozen identity + live-start package presentation (owner-gated)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Run the fifth R247 full recertification at the ONE final frozen identity including accepted M0-T123 (D-024-R346): whole supervisor suite baseline re-established, golden pack green, controller manifest re-recorded + verify-controller PASS, doctor full PASS, drift tooth green at the admitted CLI identity, activation-package anchors refreshed; then run the R276-pattern preflight; then STOP (D-024-R347): present the exact live-start package (commands, expected behavior, protocol) for a SEPARATE owner decision - no start of any kind follows automatically. Standing: R345 prohibitions bind (no live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241); R328 (the S16.7 disposition grants no authority); the R316 one-attempt consumption stands - any future attempt is a NEW owner decision. QUALIFYING EVIDENCE: D-024-R330/R346 (authorized recert window; M0-T123 touches tools/agent_supervisor/** invalidating the fourth certification).",
- "business_reason": "Certification is identity-bound: the resume-path fix changes the supervisor tree; autonomous operation may not resume until recertified, and the next live start is explicitly a separate owner decision.",
- "inputs": [
-  "Accepted M0-T123 at its merged identity",
-  "project-control/reports/M0-T122-recertification.md (fourth recert - pattern + prior anchors)",
-  "project-control/reports/M0-T096-activation-package.md (identity anchors to refresh)",
-  "project-control/directives/D-024-fable-codex-loop/source-019-amendment.md"
- ],
- "outputs": [
-  "project-control/reports/M0-T124-recertification.md: fifth golden recertification at the ONE final frozen identity including M0-T123 (whole-suite baseline, golden pack, manifest re-record + verify-controller, doctor, drift tooth, CLI identity)",
-  "M0-T096-activation-package.md section-10 fifth refresh",
-  "The R276-pattern preflight record AND the R347 STOP: the exact live-start package (commands, expected behavior, protocol, what remains owner-only) PRESENTED for a separate owner decision - nothing started"
- ],
- "dependencies": [
-  "M0-T123"
- ],
- "allowed_paths": [
-  "project-control/reports/M0-T124-recertification.md",
-  "project-control/reports/M0-T096-activation-package.md"
- ],
- "forbidden_paths": [
-  "tools/**",
-  "the live runtime dir (preserved journal never touched)"
- ],
- "acceptance_scenarios": [
-  {
-   "id": "AS-1",
-   "scenario": "The golden certification passes in full at the final frozen identity including M0-T123; anchors (material SHA, tree hash, golden blob, fixture/test blobs, manifest digest) recorded for that single identity.",
-   "verification": "recorded command outputs reproducible by reviewers"
-  },
-  {
-   "id": "AS-2",
-   "scenario": "Whole supervisor suite baseline re-established at the same identity (0 failures) including the new launch-seam tests; chain arithmetic vs the fourth recert recorded.",
-   "verification": "suite run(s) + CI evidence at the certified SHA"
-  },
-  {
-   "id": "AS-3",
-   "scenario": "Manifest re-recorded + verify-controller PASS + doctor full PASS + drift tooth green at the admitted CLI identity (or a NEW deliberate admission event if the CLI drifted - never silent).",
-   "verification": "recorded command outputs"
-  },
-  {
-   "id": "AS-4",
-   "scenario": "R347 honored: after certification + R276 preflight the window STOPS; the live-start package is presented verbatim for a separate owner decision; no start, no clear-recovery, no journal edit occurred anywhere in the window (R345); the S16.7 disposition recorded as granting nothing (R328).",
-   "verification": "DCV verification of the recorded sequencing + prohibitions"
-  }
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4",
-  "G5"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [],
- "blockers": [],
- "created_at": "2026-08-30T05:53:55.242919+00:00",
- "updated_at": "2026-08-30T05:54:49.554728+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-08-30T05:53:55.242919+00:00"
+  "task_id": "M0-T124",
+  "title": "Fifth golden recertification at the post-resume-path frozen identity + live-start package presentation (owner-gated)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Run the fifth R247 full recertification at the ONE final frozen identity including accepted M0-T123 (D-024-R346): whole supervisor suite baseline re-established, golden pack green, controller manifest re-recorded + verify-controller PASS, doctor full PASS, drift tooth green at the admitted CLI identity, activation-package anchors refreshed; then run the R276-pattern preflight; then STOP (D-024-R347): present the exact live-start package (commands, expected behavior, protocol) for a SEPARATE owner decision - no start of any kind follows automatically. Standing: R345 prohibitions bind (no live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241); R328 (the S16.7 disposition grants no authority); the R316 one-attempt consumption stands - any future attempt is a NEW owner decision. QUALIFYING EVIDENCE: D-024-R330/R346 (authorized recert window; M0-T123 touches tools/agent_supervisor/** invalidating the fourth certification).",
+  "business_reason": "Certification is identity-bound: the resume-path fix changes the supervisor tree; autonomous operation may not resume until recertified, and the next live start is explicitly a separate owner decision.",
+  "inputs": [
+    "Accepted M0-T123 at its merged identity",
+    "project-control/reports/M0-T122-recertification.md (fourth recert - pattern + prior anchors)",
+    "project-control/reports/M0-T096-activation-package.md (identity anchors to refresh)",
+    "project-control/directives/D-024-fable-codex-loop/source-019-amendment.md"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T124-recertification.md: fifth golden recertification at the ONE final frozen identity including M0-T123 (whole-suite baseline, golden pack, manifest re-record + verify-controller, doctor, drift tooth, CLI identity)",
+    "M0-T096-activation-package.md section-10 fifth refresh",
+    "The R276-pattern preflight record AND the R347 STOP: the exact live-start package (commands, expected behavior, protocol, what remains owner-only) PRESENTED for a separate owner decision - nothing started"
+  ],
+  "dependencies": [
+    "M0-T123"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T124-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [
+    "tools/**",
+    "the live runtime dir (preserved journal never touched)"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "The golden certification passes in full at the final frozen identity including M0-T123; anchors (material SHA, tree hash, golden blob, fixture/test blobs, manifest digest) recorded for that single identity.",
+      "verification": "recorded command outputs reproducible by reviewers"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Whole supervisor suite baseline re-established at the same identity (0 failures) including the new launch-seam tests; chain arithmetic vs the fourth recert recorded.",
+      "verification": "suite run(s) + CI evidence at the certified SHA"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "Manifest re-recorded + verify-controller PASS + doctor full PASS + drift tooth green at the admitted CLI identity (or a NEW deliberate admission event if the CLI drifted - never silent).",
+      "verification": "recorded command outputs"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "R347 honored: after certification + R276 preflight the window STOPS; the live-start package is presented verbatim for a separate owner decision; no start, no clear-recovery, no journal edit occurred anywhere in the window (R345); the S16.7 disposition recorded as granting nothing (R328).",
+      "verification": "DCV verification of the recorded sequencing + prohibitions"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-30T05:53:55.242919+00:00",
+  "updated_at": "2026-08-30T08:19:58.188636+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-30T05:53:55.242919+00:00",
+  "worktree": "ctl24-control"
 }
