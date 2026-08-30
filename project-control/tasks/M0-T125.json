@@ -20,18 +20,18 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervisor-stabilization-surveyor",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:06:57.545683+00:00",
-  "updated_at": "2026-08-30T21:06:58.158905+00:00",
+  "updated_at": "2026-08-30T21:19:48.945364+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -41,5 +41,6 @@
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-30T21:06:57.545683+00:00",
   "path_free_governance": true,
-  "path_free_justification": "Pre-code analysis packet (D-024-R383/R384): deliverables are two NEW report files (M0-T125-callgraph-and-transitions.md, M0-T125-defect-register.md); the task changes no production code and binds no existing tracked content identity. Reviewed_sha stamps the analyzed identity at gate time."
+  "path_free_justification": "Pre-code analysis packet (D-024-R383/R384): deliverables are two NEW report files (M0-T125-callgraph-and-transitions.md, M0-T125-defect-register.md); the task changes no production code and binds no existing tracked content identity. Reviewed_sha stamps the analyzed identity at gate time.",
+  "worktree": "ctl24-control"
 }
