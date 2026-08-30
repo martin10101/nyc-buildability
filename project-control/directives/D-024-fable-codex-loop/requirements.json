@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 371,
+  "requirement_count": 394,
   "producer": "orchestrator",
-  "updated_at": "2026-08-30T19:16:37.879156+00:00",
+  "updated_at": "2026-08-30T21:02:34.401584+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -12692,6 +12692,721 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 21
+    },
+    {
+      "id": "D-024-R372",
+      "text": "EXACTLY ONE bounded, FINAL end-to-end stabilization and commissioning window is AUTHORIZED, expanding the combined A+B correction; it is not merely another fix for the 12-turn checkpoint failure.",
+      "source_ref": "source-022-amendment.md#window-authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125",
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R373",
+      "text": "The window's objective is to inspect, correct, test, and certify EVERY remaining seam from fresh-worker launch through orientation, checkpoint emission, independent Codex review, exactly-once task advancement, next-task selection, and continued multi-unit operation.",
+      "source_ref": "source-022-amendment.md#window-authorization",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125",
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R374",
+      "text": "Preserve the current PAUSED_RECOVERY journal, audit chain, transcripts, worktrees, budgets, owner-touch history, and ALL live evidence byte-for-byte throughout the window.",
+      "source_ref": "source-022-amendment.md#preservation-and-prohibitions",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125",
+          "M0-T126",
+          "M0-T127",
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R375",
+      "text": "During this window: do NOT restart or clear recovery, edit the journal, repin binaries, merge PR #241, weaken any policy, cross an owner-only gate, or perform another live launch.",
+      "source_ref": "source-022-amendment.md#preservation-and-prohibitions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125",
+          "M0-T126",
+          "M0-T127",
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R376",
+      "text": "Checkpoint design item 1: front-load a compact, evidence-grounded orientation packet for EVERY fresh or rotated worker, including its task, lineage, worktree, current progress, relevant files and exact required output.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R377",
+      "text": "Checkpoint design item 2: require an EARLY structured progress checkpoint and support INCREMENTAL checkpoints during the unit.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R378",
+      "text": "Checkpoint design item 3: reserve a FINAL turn exclusively for mandatory checkpoint emission before exhaustion, preventing additional exploratory tool use during that reserved turn wherever technically enforceable.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R379",
+      "text": "Checkpoint design item 4: allow an honest incomplete-but-resumable checkpoint WITHOUT treating it as completion or advancing the task.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R380",
+      "text": "Checkpoint design item 5: size working-turn allowances from the bounded task/workload class under a documented hard safety ceiling; do NOT solve this merely by raising the fixed max_turns.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R381",
+      "text": "Checkpoint design item 6: FAIL CLOSED if checkpoint emission, validation, persistence or forwarding does not complete.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R382",
+      "text": "Checkpoint design item 7: preserve EXACTLY-ONCE checkpoint persistence and forwarding across crashes, restarts, rotations and duplicate provider output.",
+      "source_ref": "source-022-amendment.md#checkpoint-design",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R383",
+      "text": "BEFORE changing code: review the complete launch-to-next-task call graph and enumerate every intended state transition and operating surface.",
+      "source_ref": "source-022-amendment.md#pre-code-review-and-one-identity",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R384",
+      "text": "Specifically search for: unreachable edges, missing CLI arguments, command/runbook drift, primary-checkout leakage, resume-path differences, fixed-budget assumptions, stale durable state, duplicated actions, incomplete recovery transitions, and differences between tested command shapes and owner-presented command shapes.",
+      "source_ref": "source-022-amendment.md#pre-code-review-and-one-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R385",
+      "text": "Correct ALL defects discovered within this bounded stabilization scope at ONE final frozen identity rather than invalidating certification one defect at a time.",
+      "source_ref": "source-022-amendment.md#pre-code-review-and-one-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R386",
+      "text": "Build removal-sensitive AND adversarial coverage for the complete journey using the preserved real artifacts as READ-ONLY replay fixtures.",
+      "source_ref": "source-022-amendment.md#adversarial-coverage",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R387",
+      "text": "Coverage minimum (every item): fresh-session and rotated-session orientation; a worker consuming every available working turn; early/incremental/incomplete/final checkpoints; missing/malformed/duplicate/contradictory checkpoints; Codex HALT and CONTINUE outcomes; missing/malformed/duplicate/stale Codex verdicts; Codex independent-review failure and successful completion; exactly-once task advancement; interruption immediately before and after checkpoint persistence, Codex forwarding, verdict persistence and campaign advancement; next-task selection and dispatch; rotation before provider contact; provider crash, refusal, quota exhaustion, context exhaustion and controller restart; worktree isolation and primary-checkout refusal on every launch and resume path; preservation of audit lineage, budgets, owner gates and pending-effect invariants; command-document validation proving every owner-presented command contains the complete required argument set and matches the certified executable path.",
+      "source_ref": "source-022-amendment.md#adversarial-coverage",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R388",
+      "text": "Require SEVERAL CONSECUTIVE simulated bounded task advancements with no human intervention, no duplicate or lost work, no false acceptance and no unsafe effect.",
+      "source_ref": "source-022-amendment.md#simulated-advancements",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R389",
+      "text": "Independently review the implementation and the complete system-level evidence, and run ALL applicable gates and DCV requirements.",
+      "source_ref": "source-022-amendment.md#review-gates-recertification",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T125",
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R390",
+      "text": "Perform the FULL R247 recertification ONCE at the final frozen identity.",
+      "source_ref": "source-022-amendment.md#review-gates-recertification",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R391",
+      "text": "After certification, STOP and present ONE consolidated report containing: what was changed, the full end-to-end proof, every defect found proactively, all remaining limitations, the exact frozen identity, the complete preflight, and the exact commands for one controlled live commissioning attempt.",
+      "source_ref": "source-022-amendment.md#stop-and-present",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R392",
+      "text": "Do NOT execute the commissioning commands yourself.",
+      "source_ref": "source-022-amendment.md#stop-and-present",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R393",
+      "text": "Full autonomy may NOT be declared from unit tests or simulations alone; it requires a SEPARATE owner-authorized live commissioning journey proving: the over-ceiling session is never contacted; a fresh Fable 5 worker launches in the correct isolated worktree; a valid checkpoint reaches Codex; Codex completes an independent review; M0-T107 advances exactly once; the next bounded task is selected; and multiple successive units operate without an owner touch.",
+      "source_ref": "source-022-amendment.md#live-commissioning-boundary",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
+    },
+    {
+      "id": "D-024-R394",
+      "text": "Any live commissioning failure must STOP without retry, preserve all evidence, and return ONE consolidated system-level assessment for a new owner decision.",
+      "source_ref": "source-022-amendment.md#live-commissioning-boundary",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-30"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 22
     }
   ]
 }

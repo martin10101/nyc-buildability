@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-30T19:16:37.879156+00:00",
+  "updated_at": "2026-08-30T21:02:34.401584+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -180,6 +180,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-30T19:16:37.879156+00:00",
       "content_digest_sha256": "c5a85badc468f21165575c271a6df6be95cf1227cf3d1b7cc36569b89af1f230"
+    },
+    {
+      "file": "source-022-amendment.md",
+      "kind": "amendment",
+      "sequence": 22,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-30T21:02:34.401584+00:00",
+      "content_digest_sha256": "98d431a527f5d3a5e688665d6c461ab20434e9cd82bfbe79db84df596ffe546d"
     }
   ],
   "amendments": [
@@ -202,7 +210,8 @@
     "source-018-amendment.md",
     "source-019-amendment.md",
     "source-020-amendment.md",
-    "source-021-amendment.md"
+    "source-021-amendment.md",
+    "source-022-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -234,7 +243,10 @@
     "M0-T117",
     "M0-T118",
     "M0-T119",
-    "M0-T120"
+    "M0-T120",
+    "M0-T125",
+    "M0-T126",
+    "M0-T127"
   ],
   "affected_prs": [],
   "affected_branches": [
@@ -667,10 +679,33 @@
     "D-024-R368",
     "D-024-R369",
     "D-024-R370",
-    "D-024-R371"
+    "D-024-R371",
+    "D-024-R372",
+    "D-024-R373",
+    "D-024-R374",
+    "D-024-R375",
+    "D-024-R376",
+    "D-024-R377",
+    "D-024-R378",
+    "D-024-R379",
+    "D-024-R380",
+    "D-024-R381",
+    "D-024-R382",
+    "D-024-R383",
+    "D-024-R384",
+    "D-024-R385",
+    "D-024-R386",
+    "D-024-R387",
+    "D-024-R388",
+    "D-024-R389",
+    "D-024-R390",
+    "D-024-R391",
+    "D-024-R392",
+    "D-024-R393",
+    "D-024-R394"
   ],
-  "requirements_id_digest_sha256": "a5d900b5780b778bd9d383ba04769694e75124136f3ae001e3c3fdb13ada9be3",
-  "requirements_content_digest_sha256": "1b0abc25b91afad6a1926bba02a872c63bc2f5ff8ae7e5647ac48e1fb4bdbb55",
+  "requirements_id_digest_sha256": "f5b3bf4aa663fadbdcb64332c859f89a66d2bacb56e18a9466199933e1729efc",
+  "requirements_content_digest_sha256": "c54e735a7b9eb46a307603adfaae7b96033d431aae7eadb3b798911eca93f491",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -803,6 +838,11 @@
       "at": "2026-08-30T19:16:37.879156+00:00",
       "by": "orchestrator",
       "note": "Amendment 21 captured (owner instruction 2026-08-30, typed in-session after the exit-11 cwd_primary_checkout pre-dispatch refusal of the verbatim certified start): the SAME Amendment-20 attempt CONTINUES with the single --worktree C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107 correction (R363); the refusal is ruled NON-CONSUMING - no provider contacted, no cycle began (R364); four pre-presentation verifications required - journal PREFLIGHT, worktree clean, packet declares that exact worktree, complete command parses (R365); the M0-T124 command record is corrected append-only (R366) with control-plane validation/CI (R367); no supervisor-source change and no recertification unless the certified material identity actually changes (R368); ONE complete unwrapped command presented for OWNER execution (R369); the orchestrator never executes it (R370) and never runs clear-recovery again (R371). Rows R363-R371 bind M0-T107; every Amendment-20 row not modified here stays binding (R352-R362)."
+    },
+    {
+      "at": "2026-08-30T21:02:34.401584+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 22 captured (owner instruction 2026-08-30, typed in-session after the Amendment-20/21 counted stop and the R361 options A/B/C): ONE bounded FINAL end-to-end stabilization and commissioning window AUTHORIZED expanding A+B (R372/R373 - every seam launch->orientation->checkpoint->Codex->exactly-once advancement->next-task->multi-unit, not merely the 12-turn fix); byte-for-byte preservation of all live evidence + window prohibitions incl. NO live launch (R374/R375); seven-property durable checkpoint design (R376-R382: orientation packet, early+incremental checkpoints, reserved final emission turn, honest incomplete-but-resumable, workload-class turn sizing under a documented hard ceiling - never merely raising max_turns, fail-closed emission/validation/persistence/forwarding, exactly-once across crashes/restarts/rotations/duplicates); pre-code complete call-graph review + ten-class defect search (R383/R384); all in-scope defects corrected at ONE final frozen identity (R385); removal-sensitive adversarial coverage on preserved real artifacts as read-only replay fixtures with a sixteen-scenario minimum (R386/R387); several consecutive simulated bounded advancements with no human intervention (R388); independent review + all gates + DCV (R389); full R247 recertification ONCE at the final frozen identity (R390); then STOP and present one consolidated report incl. the exact commissioning commands, never executed by the orchestrator (R391/R392); autonomy declarable only via a separate owner-authorized live commissioning journey proving seven facts, any live failure stops without retry (R393/R394). Rows bind the window tasks M0-T125/M0-T126/M0-T127 and M0-T107 where its lifecycle is concerned."
     }
   ]
 }

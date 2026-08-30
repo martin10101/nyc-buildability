@@ -1,0 +1,47 @@
+{
+  "task_id": "M0-T127",
+  "title": "Single full R247 recertification at the final frozen identity + all gates + DCV + consolidated stabilization report + commissioning package",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment-22 window step 3 (D-024-R389..R392). At the ONE final frozen identity after M0-T126 acceptance: run the FULL R247 recertification ONCE (golden pack + whole-suite + manifest re-record + verify-controller + doctor + drift teeth + version stamps); run ALL applicable gates and DCV requirements over the window; then STOP and present ONE consolidated report containing: what was changed, the full end-to-end proof, every defect found proactively, all remaining limitations, the exact frozen identity, the complete preflight, and the exact commands for one controlled live commissioning attempt. The orchestrator NEVER executes those commands (R392). Autonomy is NOT declared from tests/simulations (R393); the live commissioning journey is a SEPARATE owner decision with the seven-fact proof burden and the R394 failure protocol. PROHIBITIONS: R374/R375 hold throughout. QUALIFYING EVIDENCE (supervisor-freeze rule): window authorized by D-024-R372 following the recorded counted stop (M0-T107-amendment20-live-journey-2.md).",
+  "business_reason": "Owner Amendment 22: certification once at the final frozen identity, then stop-and-present with the commissioning package",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T126"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T127-stabilization-report.md",
+    "project-control/reports/M0-T127-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-30T21:07:21.417654+00:00",
+  "updated_at": "2026-08-30T21:07:22.005399+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-30T21:07:21.417654+00:00"
+}

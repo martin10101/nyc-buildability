@@ -1,0 +1,45 @@
+{
+  "task_id": "M0-T125",
+  "title": "End-to-end launch-to-next-task call-graph review, transition/surface enumeration, and ten-class defect search (pre-code)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment-22 window step 1 (D-024-R383/R384, sequencing: BEFORE any code change). Review the COMPLETE launch-to-next-task call graph of tools/agent_supervisor: fresh-worker launch, orientation, checkpoint emission, checkpoint validation/persistence/forwarding, independent Codex review, verdict handling, exactly-once task advancement, next-task selection and dispatch, rotation/turnover, recovery/restart, and continued multi-unit operation. Enumerate EVERY intended state transition (state_machine documented transitions) and EVERY operating surface (CLI commands, runbook/owner-presented command shapes, durable state keys, audit events). Search specifically for the ten defect classes: unreachable edges; missing CLI arguments; command/runbook drift; primary-checkout leakage; resume-path differences; fixed-budget assumptions; stale durable state; duplicated actions; incomplete recovery transitions; differences between tested command shapes and owner-presented command shapes. Deliverables: (1) M0-T125-callgraph-and-transitions.md - the complete call-graph + transition/surface map with per-edge evidence (file:line); (2) M0-T125-defect-register.md - every defect found with class, evidence, in-scope/out-of-scope ruling and proposed correction, feeding M0-T126. READ-ONLY with respect to production code: no source changes in this task. Preserved live artifacts are read-only evidence (R374). QUALIFYING EVIDENCE (supervisor-freeze rule): live counted stop no_valid_checkpoint at exactly 12/12 turns after a fully-successful repaired launch (project-control/reports/M0-T107-amendment20-live-journey-2.md); window authorized by D-024-R372.",
+  "business_reason": "Owner Amendment 22: one bounded final stabilization window; pre-code review is mandatory sequencing (R383)",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M0-T125-callgraph-and-transitions.md",
+    "project-control/reports/M0-T125-defect-register.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-30T21:06:57.545683+00:00",
+  "updated_at": "2026-08-30T21:06:58.158905+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-30T21:06:57.545683+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Pre-code analysis packet (D-024-R383/R384): deliverables are two NEW report files (M0-T125-callgraph-and-transitions.md, M0-T125-defect-register.md); the task changes no production code and binds no existing tracked content identity. Reviewed_sha stamps the analyzed identity at gate time."
+}

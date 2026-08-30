@@ -1,0 +1,76 @@
+{
+  "task_id": "M0-T126",
+  "title": "Durable checkpoint design (7 properties) + all in-scope defect corrections + adversarial replay coverage + simulated multi-unit advancement",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment-22 window step 2 (D-024-R376..R388). Implement the seven-property durable checkpoint design: (1) front-loaded compact evidence-grounded orientation packet for every fresh/rotated worker (task, lineage, worktree, current progress, relevant files, exact required output); (2) required EARLY structured progress checkpoint + INCREMENTAL checkpoints during the unit; (3) a reserved FINAL turn exclusively for mandatory checkpoint emission before exhaustion, preventing exploratory tool use in that reserved turn wherever technically enforceable; (4) honest incomplete-but-resumable checkpoints never treated as completion or advancement; (5) working-turn allowances sized from the bounded task/workload class under a documented hard safety ceiling - NEVER merely raising the fixed max_turns; (6) fail-closed on incomplete checkpoint emission/validation/persistence/forwarding; (7) exactly-once checkpoint persistence and forwarding across crashes, restarts, rotations and duplicate provider output. Correct ALL in-scope defects from the M0-T125 register at ONE final frozen identity (R385). Build removal-sensitive AND adversarial coverage using the preserved real artifacts as READ-ONLY replay fixtures covering the full R387 sixteen-scenario minimum, plus SEVERAL CONSECUTIVE simulated bounded task advancements with no human intervention, no duplicate or lost work, no false acceptance, no unsafe effect (R388). PROHIBITIONS: R374 byte-for-byte preservation of all live evidence; R375 (no restart/clear-recovery/journal edit/repin/PR #241/policy weakening/owner-gate crossing/live launch). QUALIFYING EVIDENCE (supervisor-freeze rule): live counted stop no_valid_checkpoint at exactly 12/12 turns (M0-T107-amendment20-live-journey-2.md); window authorized by D-024-R372.",
+  "business_reason": "Owner Amendment 22: the durable checkpoint design and one-identity defect corrections are the core of the final stabilization window",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T125"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/loop_turnover.py",
+    "tools/agent_supervisor/session_continuity.py",
+    "tools/agent_supervisor/launch_seam.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/start_gate.py",
+    "tools/agent_supervisor/state_machine.py",
+    "tools/agent_supervisor/broker.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/agent_supervisor/models.py",
+    "tools/agent_supervisor/durable_state.py",
+    "tools/agent_supervisor/external_effects.py",
+    "tools/agent_supervisor/recovery_probes.py",
+    "tools/agent_supervisor/evidence.py",
+    "tools/agent_supervisor/prompts/",
+    "tools/agent_supervisor/schemas/",
+    "tools/agent_supervisor/fixtures/",
+    "tools/agent_supervisor/README.md",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "tools/test_agent_supervisor_launch_seam.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_loop_turnover.py",
+    "tools/test_agent_supervisor_session_continuity.py",
+    "tools/test_agent_supervisor_claude_runner_env.py",
+    "tools/test_agent_supervisor_crash.py",
+    "tools/test_agent_supervisor_endurance.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "tools/test_agent_supervisor_checkpoint_journey.py",
+    "tools/test_agent_supervisor_orientation.py",
+    "project-control/reports/M0-T126-producer-report.md",
+    "project-control/reports/M0-T126-design-record.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-30T21:07:19.603498+00:00",
+  "updated_at": "2026-08-30T21:07:20.276988+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-30T21:07:19.603498+00:00"
+}
