@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-08-30T03:16:16.524313+00:00",
+ "updated_at": "2026-08-30T03:29:57.680829+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -148,6 +148,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-08-30T03:16:16.524313+00:00",
    "content_digest_sha256": "1070744b84599655a87900566b6b2da9dcfc7b3230cbaf48422fc565c400c8e8"
+  },
+  {
+   "file": "source-018-amendment.md",
+   "kind": "amendment",
+   "sequence": 18,
+   "amends": "source-001.md",
+   "recorded_at": "2026-08-30T03:29:57.680829+00:00",
+   "content_digest_sha256": "b23c69ea41668337f7e97c8e2226ea0f464576fd43b3b74d02b65a93fd3b3d1b"
   }
  ],
  "amendments": [
@@ -166,7 +174,8 @@
   "source-014-amendment.md",
   "source-015-amendment.md",
   "source-016-amendment.md",
-  "source-017-amendment.md"
+  "source-017-amendment.md",
+  "source-018-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -582,10 +591,14 @@
   "D-024-R319",
   "D-024-R320",
   "D-024-R321",
-  "D-024-R322"
+  "D-024-R322",
+  "D-024-R323",
+  "D-024-R324",
+  "D-024-R325",
+  "D-024-R326"
  ],
- "requirements_id_digest_sha256": "58be4ffe0f04015b768bbfb2e535981f5df7538ce1be3f13c49603e470faf03d",
- "requirements_content_digest_sha256": "0609117bcd47a5f45484a1905cfd99598d2addfb6ac577222be485ddca0419ae",
+ "requirements_id_digest_sha256": "07e327ca21782026af2a4a2fcef1fa1e0b302fee8832c8862db20eb492b6d05a",
+ "requirements_content_digest_sha256": "90c296e48d97eb9989dfcfbcef9620e1c8e8c128c1cd8764893bbf55e91bdb9a",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -698,6 +711,11 @@
    "at": "2026-08-30T03:16:16.524313+00:00",
    "by": "orchestrator",
    "note": "Amendment 17 captured (owner addendum 2026-08-30, verbatim in source-017-amendment.md; captured at the immediate safe seam - no producer was in flight): completion-claim discipline for the Amendment-16 window. Rows R318-R322: never interrupt an in-flight producer to capture (R318); continuous operability is NOT proven by the new command + unit tests alone (R319); the final live evidence must exercise the REAL preserved journal through owner restart, preflight, fresh Fable rotation, independent Codex repository review, and actual M0-T107 advancement (R320); on live-journey failure preserve everything and report the new seam (R321), with no full-autonomy claim and no repeated restarts (R322). Binds M0-T121/M0-T122; extends Amendments 15/16 without relaxing them."
+  },
+  {
+   "at": "2026-08-30T03:29:57.680829+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 18 captured (owner instruction 2026-08-30, verbatim in source-018-amendment.md; the running M0-T121 producer NOT interrupted): before M0-T121 acceptance record the producer's ACTUAL model identity + the durable Opus-4.8 authority (R323); do not interrupt the running producer (R324); unauthorized substitution/fallback => fail closed + owner disposition before acceptance (R325); allowlisting alone is never authorization (R326). Rows bind M0-T121. Evidence report: project-control/reports/M0-T121-producer-model-identity.md."
   }
  ]
 }

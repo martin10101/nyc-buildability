@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 322,
+ "requirement_count": 326,
  "producer": "orchestrator",
- "updated_at": "2026-08-30T03:16:16.524313+00:00",
+ "updated_at": "2026-08-30T03:29:57.680829+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -11218,6 +11218,126 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 17
+  },
+  {
+   "id": "D-024-R323",
+   "text": "Before M0-T121 acceptance: record the producer's ACTUAL model identity (observed evidence, e.g. the per-request model ids in the producer session transcript, not configuration alone) AND the durable authority for using Opus 4.8 (the agent definition frontmatter + the owner-resolved D-004 model-assignment rows).",
+   "source_ref": "source-018-amendment.md#model-identity-evidence",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "durable report with the observed model-id evidence and the authority chain; re-verified at accept time",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-024-R324",
+   "text": "Do not interrupt the running M0-T121 producer (for any reason short of the standing unresponsive/unsafe exception; broader than the R318 capture-timing rule).",
+   "source_ref": "source-018-amendment.md#no-interrupt",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-024-R325",
+   "text": "If Opus 4.8 was used as an unauthorized substitution or fallback rather than an explicitly permitted bounded subagent assignment: FAIL CLOSED and obtain the owner's disposition BEFORE acceptance.",
+   "source_ref": "source-018-amendment.md#fail-closed-disposition",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 18
+  },
+  {
+   "id": "D-024-R326",
+   "text": "Never silently treat allowlisting alone as authorization for a model identity (allowlist-is-not-authorization).",
+   "source_ref": "source-018-amendment.md#allowlist-not-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T121"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-30"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 18
   }
  ]
 }
