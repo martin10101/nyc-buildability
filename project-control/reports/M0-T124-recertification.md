@@ -76,3 +76,20 @@ Telegram live send, natural-event graduation, OS-ACL unchanged). Before any owne
 attempt, the orchestrator will re-run the R276-pattern preflight at the then-current tip
 (clean synced tree, CI green, anchors intact, executables re-hashed, journal readback)
 and report it — the presentation of this package does not skip that step.
+
+## 5. CORRECTION (2026-08-30, Amendment 21 / D-024-R366 — append-only; §§1–4 above are the historical record)
+
+The §4 item-2 start command is **DEFECTIVE and superseded**: it lacks `--worktree`, and the
+M0-T123 launch seam this same certification certifies (fail-closed packet-worktree cwd
+binding, `launch_seam.py`) refuses that shape pre-dispatch — proven live 2026-08-30, exit
+11 `cwd_primary_checkout`, no provider contacted (`M0-T107-amendment20-start-refusal.md`).
+"Unchanged shape" in §4 was wrong: T123 changed the required arg contract. The corrected
+certified start (the ONLY dispatchable shape; sole delta = the added `--worktree`, bound to
+the packet's declared worktree, verified by `worktree_matches_packet`):
+
+`! python -m tools.agent_supervisor start --mode limited-auto --owner-enable-bounded-auto --claude-executable C:/Users/MLFLL/.local/bin/claude.exe --codex-executable C:/Users/MLFLL/AppData/Roaming/npm/codex.cmd --task-packet project-control/tasks/M0-T107.json --worktree C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107 --config "C:/Program Files/SupervisorConfig/config.toml" --model-selection C:/SupervisorController/model_selection.toml --manifest C:/Users/MLFLL/AppData/Local/NYCBuildabilitySupervisor/ctl24-activation/controller_manifest.json`
+
+This corrects a certification **document**, not certified code: supervisor material is
+untouched (`16e1b3b` / tree `a72a53b8…` stand) so no recertification triggers (R368).
+Carried follow-up: certification packages must re-derive the presented start command from
+the live `start` arg contract whenever the launch seam changes.
