@@ -43,11 +43,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 25,
+  "progress_percent": 35,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-08-30T05:49:15.314082+00:00",
+  "updated_at": "2026-08-30T19:42:55.899947+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -73,6 +73,13 @@
       "percent": 25,
       "status": "claimed",
       "message": "CYCLE-2 LIVE JOURNEY (R320): owner-restart WORKED LIVE (first certified use - HALTED->IDLE exactly-once, audited); certified start DISPATCHED (fresh probes green) then POST-DISPATCH COUNTED STOP at S14 no_valid_checkpoint, exit 11, PAUSED_RECOVERY. ROOT CAUSE (audit+transcripts, read-only): the certified ROTATION AT THE SEAM DID NOT FIRE - the start RESUMED the over-ceiling session (context_tokens 640224 vs the 400k ceiling; was 604772) instead of rotating to a fresh worker; second dimension: the resumed worker ran with cwd = the PRIMARY ctl24 checkout, not wt-m0t107 (isolation risk; zero writes, zero brokered decisions, read-only discovery only); terminal rc=1 mid-run with no result record (probable provider context-limit rejection - inferred, labeled as such). Codex review + M0-T107 advancement NOT REACHED. PROTOCOL ENFORCED: one attempt consumed (R316), NO restart (R317/R300), everything preserved (R321), no autonomy claim (R322); S16.7 touch-budget excess fires (cumulative 3rd counted stop vs cap 2) - OWNER disposition; bounded AD-093 rotation-at-seam defect task PROPOSED (R301 lane, target named transparently). Full record: reports/M0-T107-cycle2-live-journey.md (D-024-R317/R320/R321)"
+    },
+    {
+      "at": "2026-08-30T19:42:55.899947+00:00",
+      "agent": "orchestrator",
+      "percent": 35,
+      "status": "claimed",
+      "message": "Amendment-20/21 authorized attempt DISPATCHED then counted stop no_valid_checkpoint (S14) after exactly 12/12 worker turns: eight-point proof R352-R356 PASS (shed-before-launch, fresh Fable 5 session 0835bb80 in wt-m0t107, lineage/budgets/audit preserved), R357 FAIL (no structured checkpoint emitted - max_turns bound exhausted mid-tool-use), R358 not reached, R359 not achieved. Journal preserved at PAUSED_RECOVERY (transitions 22, audit 53). Full assessment: project-control/reports/M0-T107-amendment20-live-journey-2.md. R361 binding: no restart/retry/clear; NEW owner decision required."
     }
   ]
 }
