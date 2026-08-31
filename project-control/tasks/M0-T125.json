@@ -27,11 +27,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:06:57.545683+00:00",
-  "updated_at": "2026-08-30T21:48:20.582332+00:00",
+  "updated_at": "2026-08-31T01:17:25.668558+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -42,5 +42,14 @@
   "directive_regime_entered_at": "2026-08-30T21:06:57.545683+00:00",
   "path_free_governance": true,
   "path_free_justification": "Pre-code analysis packet (D-024-R383/R384): deliverables are two NEW report files (M0-T125-callgraph-and-transitions.md, M0-T125-defect-register.md); the task changes no production code and binds no existing tracked content identity. Reviewed_sha stamps the analyzed identity at gate time.",
-  "worktree": "ctl24-control"
+  "worktree": "ctl24-control",
+  "progress_log": [
+    {
+      "at": "2026-08-31T01:17:25.668558+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "G3 PASS + G4 PASS recorded at 2ecb5a9. BLOCKING for M0-T126 (not for this task): G4 required corrections 1-4 (synthesize a Codex CONTINUE fixture; duplicate/stale Codex verdict removal-sensitive fixtures; interruption rows for verdict persistence + campaign advancement once D9 machinery exists; scenarios 8/10/R388 are advancement-gated fresh design). Advisory G3 citation nits 1-4 (D9 line 2041-2042; D5 604772 originates seq 21; first-prompt 2237 vs 2176 chars measurement variance; D7 remote_approvals 295/307) to carry as corrected citations in M0-T126 design. O2: golden_run pack costs 3h13m locally - budget the R390 recert accordingly. Next: DCV verification of the 7 applicable rows, then accept."
+    }
+  ]
 }
