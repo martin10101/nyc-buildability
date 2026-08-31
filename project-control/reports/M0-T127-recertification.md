@@ -71,9 +71,11 @@ inside the suite; the same tests ran under both labels).
 `modularity_check --check` failures 0 (335 files); `supervisor_command_doc_check.py` exit 0
 (12 presented commands, 0 drift - now CI-wired by M0-T126 D1); CI **20/20 success** on the
 pushed chain at the material commit and at the M0-T127 G0 tip `1c82a50`; validator EXIT=0.
-Both presented commissioning commands in the stabilization report were dry-run validated this
-session against `build_parser()` + the pinned-flag set + `dispatch_inputs_missing` (both OK) -
-the D17 lesson made mechanical.
+All three presented commissioning commands in the stabilization report (clear-recovery,
+Stage-1 start --max-cycles 1, Stage-2 start --max-cycles 3; the staged protocol per
+Amendment 24) were dry-run validated this session against `build_parser()` + the pinned-flag
+set + `dispatch_inputs_missing` (all OK; the G3 delta reviewer independently re-validated all
+three) - the D17 lesson made mechanical.
 
 ## 6. Verdict
 
