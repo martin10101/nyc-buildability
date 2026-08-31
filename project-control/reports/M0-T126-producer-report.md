@@ -14,18 +14,23 @@ the mechanism map, defect status, and residual limitations.
 
 Tests (all zero-failure):
 
+Counts RE-MEASURED at the fresh-remediation identity (G4-1). The G3-1/G3-2 dispatch + unit tests added
++3 orientation, +3 checkpoint_journey, +4 loop; next_task and loop base counts were corrected to the
+G4-verified values (next_task 18 not 19, loop base 118 not 121) before adding the new loop tests:
+
 - test_agent_supervisor_command_docs.py       -> 17 passed
-- test_agent_supervisor_orientation.py        -> 10 passed
-- test_agent_supervisor_next_task.py          -> 19 passed (incl. G4-corr-3 verdict/advancement rows)
-- test_agent_supervisor_checkpoint_journey.py -> 22 passed
+- test_agent_supervisor_orientation.py        -> 13 passed (+3 RotatedReorientationTests, G3-1)
+- test_agent_supervisor_next_task.py          -> 18 passed (G4-1 corrected from 19)
+- test_agent_supervisor_checkpoint_journey.py -> 25 passed (+3 ReservedTurnInjectionTests, G3-2)
 - test_agent_supervisor_launch_seam.py        -> 69 passed (incl. 5 D2 tests)
-- test_agent_supervisor_loop.py               -> 121 passed (D8 test updated; D11/D12 + D5-ceiling + D10 cross-process)
+- test_agent_supervisor_loop.py               -> 122 passed (G4-1 base 118 + 4 new: RotatedOrientationDispatchTests 2 + ReservedTurnInjectionDispatchTests 2)
 - test_agent_supervisor_recovery.py           -> 63 passed (incl. D6 three crash-injection rows + D16 sweep)
 - test_agent_supervisor_runner.py             -> 74 passed (incl. D4 three-shape presence test)
+- 8 defect packs combined                     -> 401 passed (was 391 at e029c8a; +10 G3-1/G3-2 tests)
 - FAST golden_run classes (TwoUnit + InjectedFault + Watcher* + EpochRotation + StartEpilogue) -> 27 passed
 - FULL supervisor suite excluding the ~3h R247 recert:
   python -m pytest tools/test_agent_supervisor_*.py -q --ignore=tools/test_agent_supervisor_golden_run.py
-  -> 2980 passed, 2 skipped in ~215s   (baseline before this task: 2889 passed, 2 skipped)
+  -> 2990 passed, 2 skipped in ~655s   (was 2980 passed / 2 skipped at e029c8a; +10 new tests)
   The one golden_run restart test that broke (it relied on the D10 duplicate-suppression bug) was
   updated to the certified single-cycle shape and now passes.
 
@@ -35,11 +40,12 @@ Command-document CI tooth:
   command, now pinning all five load-bearing flags).
 
 Modularity (must stay failures 0):
-- python tools/modularity_check.py --check  ->  exit 0; "selected 330 files; failures 0; warnings 10"
+- python tools/modularity_check.py --check  ->  "selected 335 files; failures 0; warnings 10"
   (the 10 warnings are pre-existing, unrelated). Final SLOC vs baseline+10% thresholds: claude_runner.py
-  1383/1383, cli.py 2953/2953 (both at limit - D4/D7(a) done as net-zero MODIFICATIONS there), loop.py
-  2030/2088, recovery.py 525 (not baselined, under threshold). All new machinery is in the new focused
-  modules + loop.py/recovery.py.
+  1383/1383, cli.py 2953/2953 (both AT limit, kept net-zero this pass - the cli._turn_budget arg was
+  appended to an existing SupervisedLoop line), loop.py 2034/2088, loop_turnover.py 318, orientation.py
+  195, turn_budget.py 271, recovery.py 525 (all under threshold). The G3-1/G3-2 machinery lives in
+  orientation.py / turn_budget.py / loop_turnover.py + loop.py.
 - python tools/test_modularity_check.py  ->  exit 0 (proof tests; re-run because I touched
   baseline-tracked files).
 
@@ -93,13 +99,30 @@ Import smoke:
 - tools/agent_supervisor/launch_seam.py     (D2 evaluate_repo_binding + enforce_launch_bindings)
 - tools/agent_supervisor/session_continuity.py (D8: rotate_session in CONTEXT_SHEDDING_REASONS)
 - .github/workflows/ci.yml                  (wire supervisor_command_doc_check into supervisor-bridge)
-- docs/CONTROLLER_UPDATE_RUNBOOK.md         (D15: pin --checkout in the section-11 start command)
+- docs/CONTROLLER_UPDATE_RUNBOOK.md         (D15 FULL regen, G3-3: sec1 digests recomputed from live
+                                             sources; sec5/6/7/8/10/11 manifest moved outside the tree;
+                                             sec11 current D-024 campaign identities, retired M0-T063 out)
 - tools/test_agent_supervisor_launch_seam.py (5 D2 tests; AST reachability test -> enforce_launch_bindings)
 - tools/test_agent_supervisor_loop.py       (D8 routing test corrected; D11/D12 + D5-ceiling + D10 tests)
 - tools/test_agent_supervisor_recovery.py   (D6 three crash-injection rows + control; D16 sweep test)
 - tools/test_agent_supervisor_runner.py     (D4 three-shape presence test)
 - tools/test_agent_supervisor_golden_run.py (restart row -> certified single-cycle shape; it previously
                                              passed only via the D10 duplicate-suppression bug)
+
+Fresh-remediation-pass edits (D-024-R395), on top of the above:
+- tools/agent_supervisor/turn_budget.py     (G3-2: reserved_turn_message + reserved_turn_injection)
+- tools/agent_supervisor/orientation.py     (G3-1: oriented_reorientation_prompt, rotated packet)
+- tools/agent_supervisor/loop_turnover.py   (G3-1: with_reorientation(loop, seam, prompt) enriches the
+                                             reorientation handoff via orientation.oriented_reorientation_prompt)
+- tools/agent_supervisor/loop.py            (G3-1 both with_reorientation call sites pass self; G3-2
+                                             run_unit extra_turns=reserved_turn_injection; loop._turn_budget
+                                             field + turn_budget import)
+- tools/agent_supervisor/cli.py             (G3-1/G3-2: turn_budget=turn_budget on SupervisedLoop -
+                                             appended to an existing arg line, NET-ZERO SLOC)
+- tools/test_agent_supervisor_loop.py       (G3-1 RotatedOrientationDispatchTests; G3-2
+                                             ReservedTurnInjectionDispatchTests; FakeRunner records extra_turns)
+- tools/test_agent_supervisor_orientation.py (G3-1 RotatedReorientationTests)
+- tools/test_agent_supervisor_checkpoint_journey.py (G3-2 ReservedTurnInjectionTests)
 
 ## 4. Out-of-scope needs (record for the orchestrator)
 
@@ -125,9 +148,11 @@ Both report files are pure ASCII (verified: 0 non-ASCII bytes).
 ## 6. Requested status
 
 awaiting_gate. ALL 17 register defects (D1-D17) corrected at this one frozen identity per R385, plus
-the seven-property foundations, the CI-wired command-document tooth, the D9 next-task machinery,
+the seven-property foundations (property 1 now wired for ROTATED workers - G3-1; property 3 reserved
+turn now technically injected - G3-2), the CI-wired command-document tooth, the D9 next-task machinery,
 G4 corrections 1-4 (including correction 3's verdict-persistence and campaign-advancement interruption
-rows), R388, and the full R387 sixteen-scenario coverage - all green (2980 supervisor tests + 27 fast
-golden_run tests, ruff clean, modularity 0, tooth exit 0). No defect deferred. The only work not run
-in-window is the ~3h R247 recert (M0-T127). I do not self-accept; the gates and orchestrator judge
-acceptance.
+rows), R388, and the full R387 sixteen-scenario coverage - all green (2990 supervisor tests excl. golden
++ 27 fast golden_run tests, ruff clean, modularity 0, tooth exit 0, both reports pure ASCII). The G3
+FAIL (G3-1/G3-2/G3-3) and G4 required corrections (G4-1/G4-2/G4-3) are all remediated in this fresh
+pass (D-024-R395). No defect deferred. The only work not run in-window is the ~3h R247 recert
+(M0-T127). I do not self-accept; the gates and orchestrator judge acceptance.

@@ -205,6 +205,34 @@ def oriented_first_prompt(
     return with_orientation(prompt, inputs, budget)
 
 
+def oriented_reorientation_prompt(
+    reoriented_prompt: str, budget: TurnBudget | None, *,
+    task_id: str, stage: str, run_id: str, worktree: str, branch: str,
+    allowed_paths: Sequence[str], rotation_reason: str = "",
+    predecessor_session: str = "", progress_note: str = "",
+) -> str:
+    """Front-load the property-1 packet onto a ROTATED worker's first prompt.
+
+    G3-1 correction (M0-T126): the S11.3 reorientation handoff
+    (``loop_turnover.with_reorientation``) already carries task/lineage/worktree/
+    branch, but NOT the sized checkpoint cadence, the allowed-paths file list, or
+    the exact-required-output demand - the very elements property 1 mandates for
+    "every fresh OR rotated worker" and the D3 "no early checkpoint" fix. This
+    enriches the reoriented prompt with the same ``rotated=True`` orientation
+    packet a fresh worker gets, so the successor's DISPATCHED prompt carries them
+    too. Returns the prompt unchanged when no dispatchable budget is available
+    (an oversized/non-dispatchable unit is surfaced, never oriented).
+    """
+    if not isinstance(budget, TurnBudget) or not budget.dispatchable:
+        return reoriented_prompt
+    inputs = OrientationInputs(
+        task_id=task_id, stage=stage, run_id=run_id, worktree=worktree,
+        branch=branch, allowed_paths=tuple(allowed_paths), rotated=True,
+        rotation_reason=rotation_reason, predecessor_session=predecessor_session,
+        progress_note=progress_note)
+    return with_orientation(reoriented_prompt, inputs, budget)
+
+
 def with_orientation(prompt: str, inputs: OrientationInputs, budget: TurnBudget) -> str:
     """Front-load the orientation block onto ``prompt`` unless already present.
 

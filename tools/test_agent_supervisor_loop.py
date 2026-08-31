@@ -37,7 +37,9 @@ from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
 from tools.agent_supervisor import refusals  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
+from tools.agent_supervisor import orientation as orient  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
+from tools.agent_supervisor import turn_budget as tb  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.claude_runner import RunnerConfig, RunResult  # noqa: E402
 from tools.agent_supervisor.codex_reviewer import ReviewOutcome  # noqa: E402
@@ -99,6 +101,10 @@ class FakeRunner:
         self.models: list[str] = []
         #: M0-T080: every provider session id this runner was rebound to resume.
         self.resumed: list[str] = []
+        #: M0-T126 (G3-2): the extra_turns tuple each dispatched unit received,
+        #: so a test can prove the reserved-final-turn checkpoint demand was
+        #: injected through run_unit's stdin channel (or absent when unbudgeted).
+        self.extra_turns_seen: list[tuple[str, ...]] = []
         self.config = dataclasses.replace(_FAKE_LAUNCH_CONFIG, model=model,
                                           expected_model=model)
 
@@ -109,6 +115,7 @@ class FakeRunner:
         clone.prompts = self.prompts
         clone.models = self.models
         clone.resumed = self.resumed
+        clone.extra_turns_seen = self.extra_turns_seen
         return clone
 
     def with_resume(self, provider_session_id: str) -> "FakeRunner":
@@ -125,11 +132,13 @@ class FakeRunner:
         clone.prompts = self.prompts
         clone.models = self.models
         clone.resumed = self.resumed + [provider_session_id]
+        clone.extra_turns_seen = self.extra_turns_seen
         return clone
 
-    def run_unit(self, prompt: str, **_kwargs) -> RunResult:
+    def run_unit(self, prompt: str, *, extra_turns=(), **_kwargs) -> RunResult:
         self.prompts.append(prompt)
         self.models.append(self.config.model)
+        self.extra_turns_seen.append(tuple(extra_turns))
         return self.results[min(len(self.prompts) - 1, len(self.results) - 1)]
 
 
@@ -228,7 +237,7 @@ class LoopTestBase(unittest.TestCase):
               breakers=None, broker=None, pinned_model: str = "",
               context_rotation_threshold: int = 0, model_available=None,
               model_chain=None, session_role: str = "",
-              head_sha: str = HEAD_SHA) -> lp.SupervisedLoop:
+              head_sha: str = HEAD_SHA, turn_budget=None) -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
@@ -243,7 +252,7 @@ class LoopTestBase(unittest.TestCase):
             broker=broker, pinned_model=pinned_model,
             context_rotation_threshold=context_rotation_threshold,
             model_chain=model_chain,
-            head_sha=head_sha,
+            head_sha=head_sha, turn_budget=turn_budget,
             model_available=model_available)
 
 
@@ -1912,6 +1921,99 @@ class SeamRotationTests(LoopTestBase):
                           context_rotation_threshold=100_000)
         loop.run("only observation")
         self.assertFalse(rot.rotation_pending(self.journal))
+
+
+class RotatedOrientationDispatchTests(LoopTestBase):
+    """M0-T126 G3-1: the property-1 packet reaches the ROTATED worker's DISPATCHED
+    prompt, not just the orientation module's rotated branch (R387 scenario 1).
+
+    A dispatch-level proof: after a context-threshold rotation, the successor's
+    actual first prompt (`runner.prompts[1]`) must carry the sized checkpoint
+    cadence, the allowed-paths file list, and the exact-required-output demand -
+    the elements the S11.3 handoff alone did NOT carry.
+    """
+
+    def _rotating_runner(self) -> FakeRunner:
+        return FakeRunner(run_result(context_tokens=500_000, usage_known=True),
+                          self.successor_result(checkpoint_id="cp-successor"))
+
+    def test_rotated_dispatched_prompt_carries_cadence_paths_and_required_output(self) -> None:
+        self.at_preflight()
+        runner = self._rotating_runner()
+        budget = tb.budget_for_packet({})[1]
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          turn_budget=budget, approval_gate=lambda d, p: True)
+        loop.run("first unit")
+        self.assertEqual(len(runner.prompts), 2, "the rotated successor dispatched")
+        successor_prompt = runner.prompts[1]
+        # The S11.3 handoff still reaches the successor...
+        self.assertIn("SESSION REORIENTATION", successor_prompt)
+        # ...AND now so does the full property-1 orientation packet, rotated.
+        self.assertIn(orient.ORIENTATION_SENTINEL, successor_prompt)
+        self.assertIn("ROTATED successor", successor_prompt)
+        self.assertIn("context_threshold", successor_prompt)  # the rotation reason
+        self.assertIn("CHECKPOINT CADENCE", successor_prompt)
+        self.assertIn(f"by turn {budget.early_checkpoint_by}", successor_prompt)
+        self.assertIn(f"{budget.total_turns} turns total", successor_prompt)
+        self.assertIn("FINAL turn is reserved", successor_prompt)
+        self.assertIn("RELEVANT FILES", successor_prompt)
+        self.assertIn("tools/agent_supervisor", successor_prompt)  # an allowed path
+        self.assertIn("EXACT REQUIRED OUTPUT", successor_prompt)
+        self.assertIn("claude_checkpoint.schema.json", successor_prompt)
+
+    def test_without_a_budget_the_rotated_prompt_is_not_enriched(self) -> None:
+        # Removal-sensitive boundary: with no sized budget wired, the successor
+        # still gets the S11.3 handoff but NOT the property-1 packet - exactly the
+        # gap G3-1 flagged. The enrichment is what closes it.
+        self.at_preflight()
+        runner = self._rotating_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          turn_budget=None, approval_gate=lambda d, p: True)
+        loop.run("first unit")
+        self.assertEqual(len(runner.prompts), 2)
+        successor_prompt = runner.prompts[1]
+        self.assertIn("SESSION REORIENTATION", successor_prompt)
+        self.assertNotIn(orient.ORIENTATION_SENTINEL, successor_prompt)
+        self.assertNotIn("CHECKPOINT CADENCE", successor_prompt)
+
+
+class ReservedTurnInjectionDispatchTests(LoopTestBase):
+    """M0-T126 G3-2: the reserved-final-turn checkpoint demand is injected as an
+    ACTUAL follow-up user turn through run_unit's extra_turns stdin channel, not
+    prompt-text only (property 3). Removal-sensitive: without a sized budget no
+    demand is injected (the preserved 12/12 shape where a turn-exhausted worker
+    receives no boundary demand)."""
+
+    def test_reserved_turn_demand_is_injected_when_a_budget_is_wired(self) -> None:
+        self.at_preflight()
+        runner = FakeRunner(run_result())
+        budget = tb.budget_for_packet({})[1]
+        loop = self.build(mode="supervised", runner=runner,
+                          turn_budget=budget, approval_gate=lambda d, p: True)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(len(runner.extra_turns_seen), 1)
+        injected = runner.extra_turns_seen[0]
+        self.assertEqual(injected, tb.reserved_turn_injection(budget))
+        self.assertEqual(len(injected), 1, "exactly one reserved-turn demand")
+        demand = injected[0]
+        self.assertIn("RESERVED FINAL TURN", demand)
+        self.assertIn("Emit your mandatory checkpoint NOW", demand)
+        self.assertIn("do NOT start any new tool call", demand)
+        self.assertIn(f"{budget.total_turns}", demand)
+
+    def test_no_injection_without_a_budget(self) -> None:
+        # Removal-sensitive boundary: an unbudgeted dispatch passes empty
+        # extra_turns - run_unit is called exactly as before the fix.
+        self.at_preflight()
+        runner = FakeRunner(run_result())
+        loop = self.build(mode="supervised", runner=runner, turn_budget=None,
+                          approval_gate=lambda d, p: True)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(runner.extra_turns_seen, [()])
 
 
 # --------------------------------------------------------------------------

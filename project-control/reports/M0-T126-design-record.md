@@ -19,17 +19,47 @@ minimum. No defect is deferred. The only work NOT run in-window is the ~3h13m R2
 (test_agent_supervisor_golden_run.py's slow recert), which the packet assigns to M0-T127 (budget note
 O2); every FAST golden_run class passes. The gates and orchestrator judge acceptance.
 
-Full verification at the final identity: 2980 supervisor tests pass + all fast golden_run classes
-(27) pass, 2 pre-existing skips; ruff clean on every touched file; modularity failures 0; the
-command-document tooth exits 0.
+FRESH-REMEDIATION PASS (D-024-R395, this identity). The G3 FAIL and G4 required corrections were
+remediated in one fresh-producer pass:
+- G3-1: property-1 orientation is now wired into the ROTATED path. loop_turnover.with_reorientation
+  front-loads the rotated=True orientation packet (cadence + allowed_paths + exact-required-output)
+  onto the S11.3 handoff via orientation.oriented_reorientation_prompt, using a sized budget the loop
+  now holds (loop._turn_budget, wired from cli net-zero). Proven at DISPATCH level by
+  loop::RotatedOrientationDispatchTests (asserts the successor's actual prompt carries all three;
+  removal-sensitive with no budget), not just the module branch.
+- G3-2: the reserved final turn is now technically injected. loop.py's run_unit call passes
+  turn_budget.reserved_turn_injection(self._turn_budget) as extra_turns, delivering the mandatory
+  "emit the checkpoint NOW - do not run any other tool" demand as an ACTUAL follow-up user turn
+  through the provider's stdin channel (claude_runner run_unit extra_turns), not prompt-text only.
+  Removal-sensitive: no budget -> empty extra_turns (the preserved 12/12 shape). The fail-closed
+  exhaustion net (missing_checkpoint -> PAUSED_RECOVERY) is untouched. NOTE for the orchestrator: the
+  acceptance evidence-map R378 row (M0-T126-evidence-map.json, outside this task's allowed_paths) now
+  describes a REAL injection - reconcile it from the verified code (loop.py run_unit extra_turns +
+  turn_budget.reserved_turn_injection), not the prior text.
+- G3-3: the D15 runbook regeneration is complete. Section 1 digests were RECOMPUTED from the live
+  sources (readable this session): protected-config raw A1F99501...1436, LF-normalized 4c67875b...e75f,
+  model-selection FCBBF70F...DD2B (matches M0-T113 sec5). Section 5 (and 6/7/8/10/11) now write and
+  reference the manifest at the certified OUTSIDE-the-tree location
+  ($env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json). Section 11
+  is regenerated to the current D-024 campaign (branch control/D-024-fable-codex-loop), replacing the
+  retired M0-T063 identities; --run-id is omitted rather than invented. The tooth stays exit 0 (12
+  commands) and LivingRunbookTests + test_runbook_has_a_pinned_start_command pass.
+- G4-1/2/3: report test counts re-measured at THIS tree; the design-record test citations corrected
+  (see sec 5 scenario 6 and sec 6).
+
+Full verification at the final identity: 2990 supervisor tests pass excl. golden, 2 pre-existing skips (8 defect
+packs re-measured: next_task 18, command_docs 17, orientation 13, checkpoint_journey 25, recovery 63,
+launch_seam 69, loop 122, runner 74 = 401 combined) + all fast golden_run classes (27) pass, 2
+pre-existing skips; ruff clean on every touched file; modularity failures 0 (cli.py 2953/2953 and
+claude_runner.py 1383/1383 net-zero; loop.py 2034/2088); the command-document tooth exits 0.
 
 ## 1. Seven-property mapping (property -> mechanism -> file:line -> removal-sensitive test)
 
 | Prop | Mechanism | Location | Removal-sensitive test |
 |---|---|---|---|
-| 1 front-loaded orientation | build_orientation_packet / with_orientation / oriented_first_prompt; wired at first dispatch | orientation.py; cli.py _run_loop (loop.run call site) | test_agent_supervisor_orientation.py::RequiredElementsTests (every element present); ::IdempotenceAndSafetyTests::test_orientation_is_front_loaded |
+| 1 front-loaded orientation (fresh AND rotated) | FRESH: build_orientation_packet / with_orientation / oriented_first_prompt wired at first dispatch. ROTATED (G3-1): oriented_reorientation_prompt front-loads the same rotated=True packet onto the S11.3 reorientation handoff via loop_turnover.with_reorientation, using the loop's sized budget | orientation.py; cli.py _run_loop (fresh call site); loop_turnover.with_reorientation + loop.py:2766/2883 (rotated call sites); loop._turn_budget wired from cli | orientation::RequiredElementsTests + RotatedReorientationTests; loop::RotatedOrientationDispatchTests (the DISPATCHED rotated prompt carries cadence+allowed_paths+required-output; removal-sensitive: no budget -> not enriched) |
 | 2 early + incremental checkpoint | early_checkpoint_by, incremental_checkpoint_every sized from the budget and surfaced in the orientation cadence | turn_budget.size_turn_budget; orientation cadence block | checkpoint_journey::TurnBudgetTests::test_early_and_incremental_cadence_within_working_turns; orientation::test_cadence_names_early_incremental_and_reserved_final_turn |
-| 3 reserved final turn | RESERVED_FINAL_TURNS always 1; total = working + reserved; the orientation tells the worker the FINAL turn is reserved | turn_budget.py; orientation cadence | checkpoint_journey::test_cohesive_reserves_a_final_turn...; test_ceiling_clamp_preserves_reserved_final_turn |
+| 3 reserved final turn (technically injected, G3-2) | RESERVED_FINAL_TURNS always 1; total = working + reserved. The reserved turn is OCCUPIED by an actual follow-up user turn (turn_budget.reserved_turn_injection) delivered through run_unit's extra_turns stdin channel at loop.py:1619 - not prompt-text only. The orientation cadence still names the reserved turn; the injection enforces the emission demand at the boundary | turn_budget.py (reserved_turn_message / reserved_turn_injection); loop.py run_unit call (extra_turns); loop._turn_budget | checkpoint_journey::ReservedTurnInjectionTests; loop::ReservedTurnInjectionDispatchTests (removal-sensitive: no budget -> empty extra_turns, the preserved 12/12 shape); checkpoint_journey::test_cohesive_reserves_a_final_turn / test_ceiling_clamp_preserves_reserved_final_turn |
 | 4 honest incomplete-but-resumable | the 12/12 exhaustion replays to missing_checkpoint (never success); the sized budget exceeds the fixed 12 that starved the unit | claude_runner.extract_checkpoint (pre-existing, S14); fixtures/m0t107_stream_d5.json | checkpoint_journey::TurnExhaustionReplayTests::test_exhausted_stream_has_no_valid_checkpoint |
 | 5 workload-sized turns under hard ceiling | size_turn_budget + TurnAllowances (per-class), HARD_TURN_CEILING; sized total replaces max_turns | turn_budget.py; cli.py sized_max_turns -> RunnerConfig.max_turns | checkpoint_journey::test_class_sizes_differ_not_a_single_raised_constant; ::test_total_never_exceeds_the_hard_ceiling |
 | 6 fail-closed on incomplete emission | extract_checkpoint refuses missing/conflicting/multiple; a not-OK unit lands PAUSED_RECOVERY | claude_runner.extract_checkpoint; loop not-OK path (pre-existing) | checkpoint_journey::TurnExhaustionReplayTests; existing runner/loop suites |
@@ -69,8 +99,11 @@ size by construction) unless the packet declares a workload_class.
   launch_seam::CliRepoBindingGateD2. SEED-A LABEL: this is DCV discrepancy 1 (the evidence/review
   half of the cycle-2 leakage class); the worker cwd was already seam-bound, this closes the repo half.
 - D3 fixed 12-turn / sizing unwired: turn_budget + orientation, wired into cli (sized max_turns +
-  front-loaded orientation). Test: checkpoint_journey::TurnBudgetTests + TurnExhaustionReplayTests
-  (the preserved 12/12 replay fails the old design and passes the new via an honest missing-checkpoint).
+  front-loaded orientation for FRESH and, via the rotation seam, ROTATED workers - G3-1). The reserved
+  final turn is technically injected as a follow-up user turn (G3-2, turn_budget.reserved_turn_injection
+  through run_unit extra_turns). Test: checkpoint_journey::TurnBudgetTests + TurnExhaustionReplayTests
+  (the preserved 12/12 replay fails the old design and passes the new via an honest missing-checkpoint);
+  loop::RotatedOrientationDispatchTests + ReservedTurnInjectionDispatchTests.
 - D4 degenerate native_tools flag: renamed field RunResult.native_tools_guidance_present and compute
   it as sentinel-PRESENCE on the dispatched bytes AFTER both appends (claude_runner.py run_unit ~1231;
   RunResult field + audit key renamed). Test: test_agent_supervisor_runner.py::NativeToolsPresenceD4Tests
@@ -121,9 +154,16 @@ size by construction) unless the packet declares a workload_class.
 - D14 argparse requires nothing: the command-doc tooth pins --checkout/--repo/--branch/--worktree/
   --max-cycles and requires the six dispatch inputs on every presented start. Test:
   command_docs::ValidationTests::test_removing_each_pinned_flag_fails.
-- D15 runbook drift: docs/CONTROLLER_UPDATE_RUNBOOK.md section 11 start command now pins --checkout;
-  the CI tooth validates every runbook command. Test:
-  command_docs::LivingRunbookTests::test_runbook_presented_commands_all_pass.
+- D15 runbook drift: docs/CONTROLLER_UPDATE_RUNBOOK.md FULLY regenerated (G3-3). Section 1 digests
+  RECOMPUTED from the live sources this session (protected-config raw A1F99501...1436 + LF-normalized
+  4c67875b...e75f; model-selection FCBBF70F...DD2B; all match M0-T113 sec5). Section 5 (and 6/7/8/10/11)
+  write/reference the manifest at the certified outside-the-tree location
+  ($env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json, M0-T113 sec1
+  item 10). Section 11 regenerated to the current D-024 campaign (branch control/D-024-fable-codex-loop),
+  retired M0-T063 identities removed, --run-id omitted (never invented), --checkout still pinned. The
+  CI tooth validates every runbook command (exit 0, 12 commands). Test:
+  command_docs::LivingRunbookTests::test_runbook_presented_commands_all_pass +
+  test_runbook_has_a_pinned_start_command.
 - D16 legacy durable records / dead-child sweep: (i) the recorded session token is the LIVE figure
   (folded into D5's re-recording via _ceiling_context_tokens), so a legacy no-token record stays
   read-unknown/fail-closed; (ii) recovery.sweep_dead_child_records archives DETERMINED-DEAD child
@@ -146,12 +186,12 @@ size by construction) unless the packet declares a workload_class.
 
 | # | Scenario | Fixture / source | Test node |
 |---|---|---|---|
-| 1 | fresh + rotated orientation | (synthesized OrientationInputs) | orientation::FreshVsRotatedTests |
+| 1 | fresh + rotated orientation | (synthesized OrientationInputs) + real rotation seam | orientation::FreshVsRotatedTests + RotatedReorientationTests (module); loop::RotatedOrientationDispatchTests (the DISPATCHED rotated prompt, G3-1) |
 | 2 | consuming every working turn | m0t107_stream_d5.json (12 turns) | checkpoint_journey::TurnExhaustionReplayTests |
 | 3 | early/incremental/incomplete/final checkpoints | turn_budget cadence + m0t107_stream_d5 | checkpoint_journey::TurnBudgetTests + TurnExhaustionReplayTests |
 | 4 | missing/malformed/duplicate/contradictory checkpoints | m0t107_stream_d5 (missing) + extract_checkpoint suite (pre-existing) | checkpoint_journey::test_exhausted_stream_has_no_valid_checkpoint; runner suite |
 | 5 | Codex HALT and CONTINUE (G4 corr 1) | synthesized CONTINUE decision (no preserved replay) | checkpoint_journey::CodexContinueVerdictTests (removal-sensitive on next_claude_prompt) |
-| 6 | missing/malformed/duplicate/STALE Codex verdicts (G4 corr 2) | synthesized stale/duplicate decisions | checkpoint_journey::CodexStaleVerdictTests (correlation guard removal-sensitive) |
+| 6 | missing/malformed/duplicate/STALE Codex verdicts (G4 corr 2) | synthesized stale/duplicate decisions + real journal CAS | STALE half: checkpoint_journey::CodexStaleVerdictTests (correlation guard removal-sensitive); DUPLICATE half: next_task::ExactlyOnceAdvancementTests::test_duplicate_advancement_in_same_process_is_noop + ConsecutiveAdvancementTests::test_crash_AFTER_verdict_persistence_never_re_advances (a duplicate verdict never double-advances) |
 | 7 | Codex review failure + success | synthesized decisions + pre-existing codex suite | checkpoint_journey::CodexContinueVerdictTests + existing |
 | 8 | exactly-once task advancement (G4 corr 4, D9-gated) | real journal CAS | next_task::ExactlyOnceAdvancementTests |
 | 9 | interruption before/after checkpoint, forwarding, verdict persistence, advancement (G4 corr 3) | real journal crash/restart | see the scenario-9 sub-matrix below |
@@ -186,9 +226,11 @@ intervention: advance_and_select records each advancement exactly once (newly_re
 time), selects the next un-advanced packet, and terminates at NO_ELIGIBLE_WORK. No duplicate (each
 is_advanced exactly once), no lost work (order M0-T200, M0-T201, M0-T202), no false acceptance (a
 contradictory checkpoint id for an already-advanced task loses the CAS and returns the stored fact).
-test_crash_at_advancement_boundary_is_exactly_once proves the crash-at-boundary case: advance A,
-CRASH (reopen the durable journal), re-run advance_and_select for A -> newly_recorded False and B is
-selected (exactly-once across the boundary).
+The crash-at-boundary case is proven by two nodes:
+next_task::ConsecutiveAdvancementTests::test_crash_AFTER_campaign_advancement_is_exactly_once and
+next_task::ExactlyOnceAdvancementTests::test_advancement_survives_a_crash_restart_without_doubling -
+advance A, CRASH (reopen the durable journal), re-run advance_and_select for A -> newly_recorded
+False and B is selected (exactly-once across the boundary).
 
 ## 7. D5 must-have + D3 must-have (explicit)
 
@@ -204,14 +246,23 @@ selected (exactly-once across the boundary).
 ## 8. Residual limitations
 
 - NO register defect is deferred: all 17 (D1-D17) are corrected at this identity.
+- Property 3 (G3-2) scope: the reserved-final-turn demand is injected as a real follow-up user turn on
+  the provider's stdin channel (run_unit extra_turns), delivered up-front and processed after the
+  primary prompt's working turns - it OCCUPIES the reserved turn and forces the emission demand. With
+  the `--max-turns` streaming model the supervisor cannot HARD-block a worker from spending a turn on a
+  tool call, so this is enforcement "wherever technically enforceable" (the amendment's exact wording),
+  strictly stronger than the prior prompt-text-only reservation; the fail-closed exhaustion net
+  (missing_checkpoint -> PAUSED_RECOVERY, TurnExhaustionReplayTests) remains the backstop and is
+  unchanged.
 - The ~3h13m R247 recertification (test_agent_supervisor_golden_run.py's slow recert) was NOT run
   in-window; the packet assigns it to M0-T127 (budget note O2). Every FAST golden_run class passes
   (27 tests).
-- Modularity ceilings: claude_runner.py and cli.py are at their EXACT baseline+10% limit (0 headroom).
-  D4 and D7(a) were implemented as net-zero MODIFICATIONS there (not additions) to respect the
-  ceiling; all new machinery lives in the new focused modules + loop.py/recovery.py (which have
-  headroom). A future substantial change to claude_runner.py/cli.py will need a reviewed
-  tools/modularity_exceptions.json entry or a decomposition (that file is not in this task's
+- Modularity ceilings: claude_runner.py (1383/1383) and cli.py (2953/2953) remain at their EXACT
+  baseline+10% limit (0 headroom); the remediation kept both net-zero - the rotated-orientation and
+  reserved-turn logic went into orientation.py / turn_budget.py / loop_turnover.py and loop.py (2034/
+  2088, 54 headroom). The cli._turn_budget wiring was appended to an existing SupervisedLoop argument
+  line (net-zero physical SLOC). A future substantial change to claude_runner.py/cli.py will still need
+  a reviewed tools/modularity_exceptions.json entry or a decomposition (that file is not in this task's
   allowed_paths).
 - D6 uses the "journal a dispatch-intent -> AMBIGUOUS_EFFECT" option (not the "commit CLAUDE_RUNNING
   at launch" option); both are register-sanctioned. The classify branch is ADDITIVE (fires only on an
@@ -223,10 +274,15 @@ selected (exactly-once across the boundary).
 
 ## 9. Preservation and prohibitions (R374/R375)
 
-The live runtime dir and journal were never opened; the sqlite journal was not read. All fixtures were
-derived from the orchestrator-staged verbatim COPIES and the readable preserved transcript, scanned
-for secrets (repo is PUBLIC; no sk-/ghp- tokens found; absolute paths acceptable). No live launch, no
-supervisor CLI write verb, no clear-recovery, no restart, no repin, no PR #241 touch, no policy
-weakening, no owner-gate change, no R595/bounded-mode gate change. D7's fix is presentation/annotation
-only (epilogue text + a documentation comment) and changes no gate behavior; D6's classify branch is
-additive and fires only on an unreconciled dispatch intent.
+The live runtime dir (%LOCALAPPDATA%\NYCBuildabilitySupervisor\) and journal were never opened; the
+sqlite journal was not read. All fixtures were derived from the orchestrator-staged verbatim COPIES and
+the readable preserved transcript, scanned for secrets (repo is PUBLIC; no sk-/ghp- tokens found;
+absolute paths acceptable). For the G3-3 section-1 digest regeneration the two PROTECTED CONFIG files
+(C:\Program Files\SupervisorConfig\config.toml and C:\SupervisorController\model_selection.toml) were
+READ (bytes only, to recompute SHA-256) - these are NOT the runtime dir and the read is read-only; no
+config was modified. No live launch, no supervisor CLI write verb, no clear-recovery, no restart, no
+repin, no PR #241 touch, no policy weakening, no owner-gate change, no R595/bounded-mode gate change.
+The G3-2 reserved-turn injection adds a follow-up user turn to run_unit but changes NO gate, owner
+approval, or exhaustion-safety behavior. D7's fix is presentation/annotation only (epilogue text + a
+documentation comment) and changes no gate behavior; D6's classify branch is additive and fires only on
+an unreconciled dispatch intent.

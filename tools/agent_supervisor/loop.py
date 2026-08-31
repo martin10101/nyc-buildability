@@ -104,6 +104,7 @@ from .policy import (
     DEFAULT_POLICY_CONFIG,
 )
 from . import stop_intent
+from . import turn_budget as tb
 from .process import CONTAINMENT_JOB_OBJECT
 from .protocol import build_envelope
 from .resume_scheduler import EMERGENCY_STOP_KEY
@@ -608,6 +609,7 @@ class SupervisedLoop:
         review_model: str = "",
         advisory_model: str = "",
         resume_max_age_seconds: float | None = None,
+        turn_budget: Any = None,
     ) -> None:
         self.config = config
         self.journal = journal
@@ -670,6 +672,13 @@ class SupervisedLoop:
             bool(recorded_session.usage_known) if recorded_session is not None else False)
         self._rotation_record_key = ""
         self._resume_max_age_seconds = resume_max_age_seconds
+        # M0-T126 (property 1/3, G3-1/G3-2): the sized turn budget for this unit,
+        # so the ROTATED reorientation prompt carries the same front-loaded
+        # cadence/allowed_paths/required-output a fresh worker gets, and the
+        # reserved final turn is injected as an actual follow-up turn at dispatch.
+        # None keeps every existing caller and test byte-for-byte (no enrichment,
+        # no injection) - the production CLI wires the real budget.
+        self._turn_budget = turn_budget
         # D-004 am.26 / D-007 am.11 / am.12: the model the CURRENT session runs
         # on. It is the pinned model unless an orchestrator-role switch is active,
         # in which case it is the chain entry that switch selected. The durable
@@ -1616,8 +1625,16 @@ class SupervisedLoop:
         # reconciles rather than re-dispatching over the unit's already-made
         # provider calls / brokered effects.
         recovery.record_dispatch_intent(self.journal, run_id=self.run_id, cycle=cycle)
+        # M0-T126 (property 3 / D3, G3-2): inject the reserved-final-turn checkpoint
+        # demand as an ACTUAL follow-up user turn through run_unit's extra_turns
+        # stdin channel - technical enforcement of emission rather than prompt-text
+        # only. Empty when no sized budget is wired (unchanged dispatch). The
+        # fail-closed exhaustion net (missing_checkpoint -> PAUSED_RECOVERY) is
+        # untouched; this occupies the reserved turn so a worker that spent its
+        # working turns is still demanded to emit before exhaustion.
         run_result = self.runner.run_unit(
-            prompt, permission_handler=self._permission_handler())
+            prompt, permission_handler=self._permission_handler(),
+            extra_turns=tb.reserved_turn_injection(self._turn_budget))
         recovery.reconcile_dispatch_intent(self.journal)
         # M0-T080: capture the PROVIDER's own session identity at unit
         # completion and persist it, so a later rotation can really resume the
@@ -2763,7 +2780,7 @@ class SupervisedLoop:
                         forwarded_message_ids=tuple(self._forwarded),
                         provider_calls=self.provider_calls,
                         rotations=tuple(self._rotations))
-                prompt = lt.with_reorientation(seam, prompt)
+                prompt = lt.with_reorientation(self, seam, prompt)
             start_index = next_index
         elif self.machine.current_state == CLAUDE_RUNNING:
             # M0-T126 (M0-T125 D10): a prior run forwarded a CONTINUE prompt and
@@ -2880,7 +2897,7 @@ class SupervisedLoop:
                 # nothing, so the next unit receives the FULL persisted handoff
                 # ahead of the forwarded prompt. A real `--resume` successor
                 # already has the context and gets the forwarded prompt unchanged.
-                prompt = lt.with_reorientation(seam, prompt)
+                prompt = lt.with_reorientation(self, seam, prompt)
                 # Relaunched: the next cycle dispatches the forwarded prompt - on
                 # the pinned model, or on the substitute model while an
                 # orchestrator-role substitution is active - either resuming the
