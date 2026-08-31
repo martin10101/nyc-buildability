@@ -8400,42 +8400,71 @@
       "requirements": [
         {
           "id": "D-024-R372",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen afb6507: Amendment-22 capture commit 789b823 confirmed (source-022 verbatim, validator EXIT=0); M0-T125 created inside the window (21:06:57, post-capture); audit tail unchanged at seq 53 / 19:37:48.200Z - zero new records, no live attempt or launch by this task."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R373",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: callgraph report sections A.1-A.5 read in full cover the complete journey (start gate -> launch seam -> worker unit -> checkpoint -> evidence -> Codex -> verdicts -> forwarding -> multi-unit/rotation -> recovery); journey-tail gaps named as defects D8/D9/D10."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R374",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: audit.jsonl = 53 records ending seq 53 @ 2026-08-30T19:37:48.200Z prev_digest-chained; transcript = 97 lines; git diff 789b823..afb6507 touches ONLY control-plane files (tools/ diff EMPTY); sqlite journal never opened by producer, reviewers, or verifier."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R375",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: no restart/clear-recovery/journal edit/live launch (audit tail unchanged); gh pr view 241 = OPEN; git diff over .claude/settings*, config files, and tools/ across the window = EMPTY (no policy weakening, no repin, no supervisor-source change)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R383",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: callgraph-and-transitions report complete (section A per-edge call graph; section B 94-edge inventory totals 26 R / 61 UD / 7 XD; section C surfaces incl. owner-command reconciliation and fixed-bound map); 5 citations spot-verified against live source (cli.py:3175, state_machine.py:533-539, loop.py:1801, rotation.py:112, codex_reviewer.py:663) all accurate; NO production code changed in the window - the R383 BEFORE-code sequencing holds."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R384",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: 17 defects covering all ten classes (class assignments recounted by the verifier); every defect carries evidence + in-scope ruling + proposed correction + test implication; six seed areas dispositioned (seed c REFUTED with reproduced primary evidence; D2 = the unlabeled seed-a area, verified); D4 and D5 spot-reproduced end-to-end against the preserved transcript and audit chain. Full verbatim report: project-control/reports/M0-T125-DCV.md."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         },
         {
           "id": "D-024-R389",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV: four distinct identities (producer supervisor-stabilization-surveyor; G3 code-reviewer; G4 qa-engineer; DCV directive-compliance-verifier); G3/G4 gate records PASS at reviewed_sha 2ecb5a9 with substantive verification tables (G3: all-17 confirmation + XD sweep; G4: 19/19 live-evidence VERIFIED + test runs 64/91/42); G4's 4 required corrections bind the M0-T126 coverage design (recorded via progress message), not this gate. Full verbatim report: project-control/reports/M0-T125-DCV.md."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b"
         }
       ],
-      "reviewed_sha": null,
-      "verified_at": null
+      "reviewed_sha": "8a0d1b20dca86dfc48185bcda0330c5584276b5b",
+      "verified_at": "2026-08-31T01:26:13.291578+00:00",
+      "reviewed_manifest_sha256": "620c4184c76e0b954029b76a360dbb60f0a0882c8805f8b866bb57501a91873c"
     },
     {
       "task_id": "M0-T126",
@@ -8684,5 +8713,5 @@
       "verified_at": null
     }
   ],
-  "updated_at": "2026-08-30T21:14:01.804048+00:00"
+  "updated_at": "2026-08-31T01:26:13.291578+00:00"
 }
