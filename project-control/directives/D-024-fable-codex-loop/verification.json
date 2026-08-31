@@ -8921,7 +8921,105 @@
       "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5",
       "verified_at": "2026-08-31T06:35:08.333140+00:00",
       "reviewed_manifest_sha256": "91ac35230526369cfc43256a0ac33fcd5ae911421d5acea2138ab4c06134cb44"
+    },
+    {
+      "task_id": "M0-T128",
+      "directive_id": "D-024",
+      "producer": "supervisor-wiring-producer",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R400",
+        "D-024-R401",
+        "D-024-R402",
+        "D-024-R403",
+        "D-024-R404",
+        "D-024-R405"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R400",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R401",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R402",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R403",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R404",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R405",
+          "state": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "task_id": "M0-T129",
+      "directive_id": "D-024",
+      "producer": "orchestrator-recert-runner",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R401",
+        "D-024-R402",
+        "D-024-R403",
+        "D-024-R406",
+        "D-024-R407",
+        "D-024-R408",
+        "D-024-R409"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R401",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R402",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R403",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R406",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R407",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R408",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R409",
+          "state": "pending",
+          "evidence": []
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-31T06:35:08.333140+00:00"
+  "updated_at": "2026-08-31T08:19:02.848755+00:00"
 }

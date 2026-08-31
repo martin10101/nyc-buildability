@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 399,
+  "requirement_count": 409,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T06:26:16.111245+00:00",
+  "updated_at": "2026-08-31T08:18:26.014493+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -13559,6 +13559,309 @@
         "lifecycle_events": [],
         "effective_date": "2026-08-31"
       }
+    },
+    {
+      "id": "D-024-R400",
+      "text": "The bounded Stage-3 wiring task is AUTHORIZED: wire the already-built, simulation-proven exactly-once next-task selection and advancement machinery into the live limited-auto execution path so ONE owner-authorized start can complete M0-T107, select the next eligible campaign task, launch it in its correctly isolated worktree, and continue across multiple bounded tasks without another owner touch.",
+      "source_ref": "source-025-amendment.md#wiring-authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R401",
+      "text": "Preserve the current journal and all evidence untouched throughout the wiring implementation.",
+      "source_ref": "source-025-amendment.md#window-invariants",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128",
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R402",
+      "text": "Maintain every owner-only gate, fail-closed policy, budget, audit, worktree-isolation and exactly-once requirement throughout.",
+      "source_ref": "source-025-amendment.md#window-invariants",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128",
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R403",
+      "text": "During the correction window: do not merge PR #241, do not clear recovery, do not start the loop, and do not perform live commissioning.",
+      "source_ref": "source-025-amendment.md#window-invariants",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128",
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R404",
+      "text": "Add removal-sensitive coverage for: live-path cross-task selection; task eligibility; dependency ordering; isolated-worktree binding; checkpoint and Codex-review completion; duplicate advancement; crashes before and after advancement; stale campaign state; no eligible work; and stop/pause/emergency intents between tasks.",
+      "source_ref": "source-025-amendment.md#coverage-and-eligibility",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R405",
+      "text": "The controller must NEVER silently select owner-gated, blocked, claimed, stale or otherwise ineligible work; ineligible candidates are skipped or refused visibly, fail-closed.",
+      "source_ref": "source-025-amendment.md#coverage-and-eligibility",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T128"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R406",
+      "text": "Run the complete R247 recertification ONCE at the final frozen identity, followed by all applicable independent gates and DCV.",
+      "source_ref": "source-025-amendment.md#recert-and-presentation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R407",
+      "text": "Then STOP and present one complete preflight and one owner-executed commissioning protocol capable of proving all seven R393 facts, including cross-task selection and multiple successive tasks without an owner touch.",
+      "source_ref": "source-025-amendment.md#recert-and-presentation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R408",
+      "text": "Mechanically validate every presented command against the live CLI contract.",
+      "source_ref": "source-025-amendment.md#recert-and-presentation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R409",
+      "text": "The orchestrator never executes the commissioning commands itself.",
+      "source_ref": "source-025-amendment.md#recert-and-presentation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T129"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 25
     }
   ]
 }

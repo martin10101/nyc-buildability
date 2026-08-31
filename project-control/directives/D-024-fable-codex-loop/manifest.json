@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T06:26:16.111245+00:00",
+  "updated_at": "2026-08-31T08:18:26.014493+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -204,6 +204,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-31T06:16:29.757491+00:00",
       "content_digest_sha256": "e1279d7064357ce205c0c4771d84bbf85f2894464f0eb3b0f72171a02f6de4e5"
+    },
+    {
+      "file": "source-025-amendment.md",
+      "kind": "amendment",
+      "sequence": 25,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T08:18:26.014493+00:00",
+      "content_digest_sha256": "2dcf6691f448a44cf6aa34a10afae9bdb726c47db1af9513ca86c346272966a6"
     }
   ],
   "amendments": [
@@ -229,7 +237,8 @@
     "source-021-amendment.md",
     "source-022-amendment.md",
     "source-023-amendment.md",
-    "source-024-amendment.md"
+    "source-024-amendment.md",
+    "source-025-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -264,7 +273,9 @@
     "M0-T120",
     "M0-T125",
     "M0-T126",
-    "M0-T127"
+    "M0-T127",
+    "M0-T128",
+    "M0-T129"
   ],
   "affected_prs": [],
   "affected_branches": [
@@ -725,10 +736,20 @@
     "D-024-R396",
     "D-024-R397",
     "D-024-R398",
-    "D-024-R399"
+    "D-024-R399",
+    "D-024-R400",
+    "D-024-R401",
+    "D-024-R402",
+    "D-024-R403",
+    "D-024-R404",
+    "D-024-R405",
+    "D-024-R406",
+    "D-024-R407",
+    "D-024-R408",
+    "D-024-R409"
   ],
-  "requirements_id_digest_sha256": "4bcafcb17acd544e814ee7f3d8fc696194de247c733646dcb494da47496ab1b6",
-  "requirements_content_digest_sha256": "c31e6c0c0ebb39f7aecac99bb307b855269564dafa739441977680551d5bbe11",
+  "requirements_id_digest_sha256": "1aaa7868dba078281fccafc83afb6b530be1ee986b4c4d91815a9f26a6845120",
+  "requirements_content_digest_sha256": "b8ea65c23555b9bf482fe3e5c5b5fac227d13f2d19e4d197ca00d340f8a9b4eb",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -881,6 +902,11 @@
       "at": "2026-08-31T06:26:16.111245+00:00",
       "by": "orchestrator",
       "note": "Metadata correction found by the M0-T127 round-2 DCV (blocking discrepancy 1): the Amendment-24 capture stamped D-024-R399 with classification 'owner_decision', which is not in the schema/validator enum and made validate_directive_compliance fail closed (c1). Corrected to the valid enum value 'decision' (already used by 3 other rows). Requirement id, text, applicability, and binding unchanged; requirements body digest recomputed. No source file changed."
+    },
+    {
+      "at": "2026-08-31T08:18:26.014493+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 25 captured (owner instruction 2026-08-31 selecting Option A of the staged commissioning protocol): the bounded Stage-3 wiring window is AUTHORIZED - R400 wire the simulation-proven exactly-once next-task selection/advancement machinery into the live limited-auto path (one start: complete M0-T107 -> select next ELIGIBLE task -> launch in its isolated worktree -> multiple bounded tasks, no owner touch); R401 journal/evidence untouched; R402 all gates/fail-closed/budget/audit/isolation/exactly-once maintained; R403 window holds (no PR #241, no clear-recovery, no loop start, no live commissioning); R404 ten removal-sensitive live-path coverage families; R405 never silently select owner-gated/blocked/claimed/stale/ineligible work; R406 R247 recert once + gates + DCV; R407 stop-and-present seven-fact-capable protocol; R408 mechanical command validation; R409 never executed by the orchestrator. Rows bind the new window tasks M0-T128 (wiring+coverage) and M0-T129 (recert+protocol)."
     }
   ]
 }

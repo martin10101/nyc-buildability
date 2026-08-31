@@ -1,0 +1,47 @@
+{
+  "task_id": "M0-T129",
+  "title": "Post-wiring R247 recertification + seven-fact commissioning protocol presentation",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment-25 wiring window step 2 (D-024-R406..R409). At the post-wiring final frozen identity: run the complete R247 recertification ONCE (golden pack + whole suite + manifest re-record + verify-controller + doctor + drift teeth + version stamps); all applicable independent gates + DCV; then STOP and present one complete preflight and one owner-executed commissioning protocol capable of proving all seven R393 facts including cross-task selection and multiple successive tasks without an owner touch; every presented command mechanically validated against the live CLI contract (R408); the orchestrator NEVER executes the commissioning commands (R409). R401/R402/R403 hold throughout.",
+  "business_reason": "Owner Amendment 25: certification and honest presentation of the seven-fact-capable protocol",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M0-T128"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T129-recertification.md",
+    "project-control/reports/M0-T129-commissioning-protocol.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-31T08:18:28.534679+00:00",
+  "updated_at": "2026-08-31T08:19:02.848755+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-31T08:18:28.537986+00:00"
+}
