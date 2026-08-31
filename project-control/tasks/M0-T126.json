@@ -82,12 +82,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 15,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:07:19.603498+00:00",
-  "updated_at": "2026-08-31T01:48:10.449135+00:00",
+  "updated_at": "2026-08-31T01:50:55.885252+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -96,5 +96,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-30T21:07:19.603498+00:00",
-  "worktree": "wt-m0t126"
+  "worktree": "wt-m0t126",
+  "progress_log": [
+    {
+      "at": "2026-08-31T01:50:55.885252+00:00",
+      "agent": "supervisor-stabilization-producer",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Producer dispatched (unnamed roster spawn, isolated worktree, base reset to 1bb7735). BLOCKING for coverage acceptance (recorded per gate-verdict semantics): G4 required corrections 1-4 (synthesize Codex CONTINUE fixture; duplicate+stale verdict fixtures on the correlation guard; interruption rows for verdict persistence and campaign advancement once D9 exists; scenarios 8/10/R388 are advancement-gated fresh design). Binding design constraints: G3 citation fixes (D9 loop.py:2041-2042; 604772 originates audit seq 21; D7 writers remote_approvals.py:295/307); DCV discrepancy 1 (label the D2 seed-a mapping in the design record); O2 golden-run pack ~3h13m excluded from producer runs, budgeted to the M0-T127 recert. D9 next-task machinery FIRST. D4's append-only journey-2 report note verified already present (report section 5)."
+    }
+  ]
 }
