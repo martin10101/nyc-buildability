@@ -33,8 +33,11 @@ directory (R401: the live journal and preserved evidence are never touched).
 from __future__ import annotations
 
 import argparse
+import ast
 import dataclasses
+import inspect
 import json
+import os
 import pathlib
 import sys
 import tempfile
@@ -110,6 +113,39 @@ def _review_outcome(dec: CodexDecision) -> ReviewOutcome:
         decision=dec, model_used="fake-review-model", selection_digest="sel",
         attempts=1, decision_digest=digest_of(dec.to_dict()),
         tier=map_decision_to_tier(dec))
+
+
+class _LoopRunner:
+    """A fake ClaudeRunner for the REAL cli._run_loop wrapper (families that drive
+    _run_loop / the real cli.py:3069 dispatch line). It adds the
+    ``executable_identity()`` the wrapper calls before assembling the worker
+    actuation channel, and returns a COMPLETE result for the task bound to its
+    launch cwd (the worktree). The task id is resolved from the runner config's
+    ``cwd`` so one factory serves every task in the journey."""
+
+    def __init__(self, config: RunnerConfig, task_id: str, branch: str) -> None:
+        self.config = config
+        cp = _checkpoint(task_id, str(config.cwd), branch)
+        self.result = RunResult(argv=("fake",), returncode=0, duration_seconds=0.1,
+                                session_id="sess-1", checkpoint=cp,
+                                containment="job_object")
+
+    def run_unit(self, prompt: str, **_kwargs) -> RunResult:
+        return self.result
+
+    def executable_identity(self) -> dict:
+        return {"digest": ""}
+
+
+class _LoopReviewer:
+    """A fake CodexReviewer that returns a COMPLETE decision for the task bound to
+    its ``repo`` (the worktree)."""
+
+    def __init__(self, task_id: str) -> None:
+        self.out = _review_outcome(_complete_decision(task_id))
+
+    def review(self, packet, **_kwargs) -> ReviewOutcome:
+        return self.out
 
 
 # --------------------------------------------------------------------------
@@ -710,6 +746,357 @@ class BetweenTaskIntentTests(CrossTaskBase):
 
     def test_no_intent_proceeds(self) -> None:
         self.assertEqual(nt.between_task_seam(self.journal, {"run_budget": None}), "")
+
+
+# --------------------------------------------------------------------------
+# Driver envelope confinement (G3-C1): the multi-task driver runs ONLY under
+# --mode limited-auto (the mode half; bounded_mode_gate enforces the enable half)
+# --------------------------------------------------------------------------
+
+
+class ModeConfinementTests(CrossTaskBase):
+    def _refused(self, *, mode: str, max_tasks: int,
+                 with_queue: bool) -> None:
+        """A non-limited-auto multi-task start is refused BEFORE the body runs."""
+        self.write_packet("M0-TA")
+        self.write_packet("M0-TB")
+        e_a = self.entry("M0-TA")
+        e_b = self.entry("M0-TB")
+        queue = self.write_queue([e_b]) if with_queue else None
+        args = self.make_args(e_a, max_tasks=max_tasks, packet_queue=queue,
+                              mode=mode)
+        with self.assertRaises(nt.NextTaskError) as ctx:
+            nt.run_task_queue(args, self.checkout, self.journal, self.audit,
+                              self.scripted_run_one({}))
+        self.assertEqual(ctx.exception.code, "cross_task_mode_refused")
+        # The driver body never ran: nothing dispatched, no successor snapshot
+        # was taken, and the typed refusal was audited.
+        self.assertEqual(self.dispatched, [])
+        self.assertEqual(
+            self.journal.get_state(nt.queued_digest_key("M0-TB"), ""), "")
+        self.assertIn("cross_task_mode_refused", self.audit_events())
+        self.assertNotIn("cross_task_dispatch", self.audit_events())
+
+    def test_supervised_multi_task_via_queue_is_refused(self) -> None:
+        # The exact escape G3-C1 named: --mode supervised --max-tasks 2
+        # --packet-queue reaches the routing ternary but is refused by the driver.
+        self._refused(mode="supervised", max_tasks=2, with_queue=True)
+
+    def test_shadow_multi_task_via_max_tasks_is_refused(self) -> None:
+        self._refused(mode="shadow", max_tasks=2, with_queue=False)
+
+    def test_supervised_multi_task_via_max_tasks_only_is_refused(self) -> None:
+        self._refused(mode="supervised", max_tasks=2, with_queue=False)
+
+    def test_limited_auto_multi_task_proceeds(self) -> None:
+        # The authorized envelope: limited-auto (the enable half is enforced
+        # pre-dispatch by bounded_mode_gate; this harness is at driver altitude,
+        # the same convention as every other family). The driver runs.
+        self.write_packet("M0-TA")
+        self.write_packet("M0-TB")
+        e_a = self.entry("M0-TA")
+        args = self.make_args(e_a, max_tasks=2,
+                              packet_queue=self.write_queue([self.entry("M0-TB")]),
+                              mode="limited-auto")
+        run = nt.run_task_queue(args, self.checkout, self.journal, self.audit,
+                                self.scripted_run_one({}))
+        self.assertEqual(self.dispatched, ["M0-TA", "M0-TB"])
+        self.assertNotIn("cross_task_mode_refused", self.audit_events())
+        self.assertEqual(run["task_queue"]["dispatched"], 2)
+
+
+# --------------------------------------------------------------------------
+# Category-1 (packet readability) sub-codes are individually distinct (G4-O2)
+# --------------------------------------------------------------------------
+
+
+class Category1SubCodeTests(CrossTaskBase):
+    def _verdict(self, entry: nt.TaskQueueEntry) -> nt.EligibilityVerdict:
+        return nt.evaluate_eligibility(entry, queued_digest="",
+                                       primary_checkout=str(self.checkout))
+
+    def test_a_file_io_error_is_packet_unreadable(self) -> None:
+        # The packet file does not exist on disk (a read/IO error), distinct from
+        # an unparseable-but-readable file.
+        wt = self.make_worktree("wt-m0-tb")
+        missing = self.tasks_dir / "M0-TB.json"  # never written
+        entry = nt.TaskQueueEntry("M0-TB", str(missing), str(wt), "task/b", str(wt))
+        verdict = self._verdict(entry)
+        self.assertFalse(verdict.eligible)
+        self.assertEqual(verdict.code, "packet_unreadable")
+
+    def test_valid_json_that_is_not_an_object_is_packet_not_object(self) -> None:
+        # Valid JSON, but a list rather than a JSON object.
+        (self.tasks_dir / "M0-TB.json").write_text("[1, 2, 3]", encoding="utf-8")
+        wt = self.make_worktree("wt-m0-tb")
+        entry = nt.TaskQueueEntry("M0-TB", str(self.tasks_dir / "M0-TB.json"),
+                                  str(wt), "task/b", str(wt))
+        verdict = self._verdict(entry)
+        self.assertFalse(verdict.eligible)
+        self.assertEqual(verdict.code, "packet_not_object")
+
+
+# --------------------------------------------------------------------------
+# Real cli._run_loop altitude: shared run_id budget resume + close-run + D6
+# across a multi-task journey (G3-C2), and the REAL cli.py:3069 dispatch line
+# (G4 required-correction #1)
+# --------------------------------------------------------------------------
+
+_PIN = "claude-fable-5"
+_CONFIG_TOML = f"""
+[codex]
+allowed_models = ["codex-primary"]
+
+[claude]
+allowed_models = ["{_PIN}"]
+
+[controller]
+default_mode = "shadow"
+
+[model_chain]
+orchestrator_preference = ["{_PIN}"]
+
+[limits]
+max_review_packet_bytes = 262144
+"""
+_SELECTION_TOML = f"""
+[codex]
+review_model = "codex-primary"
+advisory_model = "codex-primary"
+fallback_models = []
+
+[claude]
+model = "{_PIN}"
+fallback_models = []
+"""
+
+
+class LiveLoopBase(CrossTaskBase):
+    """Harness that drives the REAL ``cli._run_loop`` with a faked provider.
+
+    ``cli._run_loop`` builds the runner and reviewer from the controller config,
+    so we supply a real config + model_selection and monkeypatch ``cli.ClaudeRunner``
+    / ``cli.CodexReviewer`` to the COMPLETE-returning loop fakes. Everything else in
+    ``_run_loop`` runs for real: the launch-seam binding, the shared-run_id
+    ``RunBudgetLedger.start()``, ``plan_close_run`` on the shared journal, and the
+    real ``SupervisedLoop`` (with its D6 dispatch-intent record/reconcile)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.config_path = self.root / "config.toml"
+        self.config_path.write_text(_CONFIG_TOML, encoding="utf-8")
+        self.selection_path = self.root / "model_selection.toml"
+        self.selection_path.write_text(_SELECTION_TOML, encoding="utf-8")
+        # cwd(worktree) -> (task_id, branch) for the provider factories.
+        self._task_by_cwd: dict[str, tuple[str, str]] = {}
+
+    def live_entry(self, task_id: str, *, branch: str = "task/branch") -> nt.TaskQueueEntry:
+        """A queue entry whose worktree is registered for the provider factories."""
+        self.write_packet(task_id)
+        entry = self.entry(task_id, branch=branch)
+        self._task_by_cwd[os.path.normcase(str(entry.worktree))] = (task_id, branch)
+        return entry
+
+    def patch_providers(self) -> None:
+        """Route cli.ClaudeRunner / cli.CodexReviewer to the loop fakes."""
+        from tools.agent_supervisor import cli
+
+        def runner_factory(config: RunnerConfig, **_kwargs) -> _LoopRunner:
+            task_id, branch = self._task_by_cwd[os.path.normcase(str(config.cwd))]
+            return _LoopRunner(config, task_id, branch)
+
+        def reviewer_factory(_executable, *, repo, **_kwargs) -> _LoopReviewer:
+            task_id, _branch = self._task_by_cwd[os.path.normcase(str(repo))]
+            return _LoopReviewer(task_id)
+
+        orig_runner, orig_reviewer = cli.ClaudeRunner, cli.CodexReviewer
+        cli.ClaudeRunner = runner_factory  # type: ignore[assignment]
+        cli.CodexReviewer = reviewer_factory  # type: ignore[assignment]
+        self.addCleanup(setattr, cli, "ClaudeRunner", orig_runner)
+        self.addCleanup(setattr, cli, "CodexReviewer", orig_reviewer)
+
+    def live_args(self, first: nt.TaskQueueEntry, *, max_tasks: int,
+                  packet_queue: pathlib.Path | None,
+                  run_wall_clock_seconds: float | None = 3600.0,
+                  mode: str = "limited-auto") -> argparse.Namespace:
+        """A fully-named Namespace with every field cli._run_loop reads."""
+        return argparse.Namespace(
+            task_packet=first.packet_path, worktree=first.worktree,
+            branch=first.branch, repo=first.repo, mode=mode,
+            owner_enable_bounded_auto=(mode == "limited-auto"), run_id="run-xtask",
+            config=str(self.config_path), model_selection=str(self.selection_path),
+            claude_executable="fake-claude", codex_executable="fake-codex",
+            stage="phase4", max_cycles=1, max_turns=12, unit_timeout=60,
+            owner_touch_budget=8, approve_prompt_digest=[],
+            run_wall_clock_seconds=run_wall_clock_seconds, session_role="",
+            expected_worker_model="", context_rotation_threshold=None,
+            authorize_turnover_actuation=False, prompt="do the authorized unit",
+            max_tasks=max_tasks,
+            packet_queue=str(packet_queue) if packet_queue else None)
+
+    def audit_records(self) -> list[dict]:
+        text = (self.root / "audit.jsonl").read_text(encoding="utf-8")
+        return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+
+class LiveRunLoopCrossTaskTests(LiveLoopBase):
+    """G3-C2: the cross-task journey through the REAL cli._run_loop, asserting the
+    per-journey shared-run_id budget semantics + close-run + D6 across the task
+    boundary."""
+
+    def test_two_task_journey_through_real_run_loop(self) -> None:
+        from tools.agent_supervisor import cli
+
+        e_a = self.live_entry("M0-TA", branch="task/a")
+        e_b = self.live_entry("M0-TB", branch="task/b")
+        queue = self.write_queue([e_b])
+        args = self.live_args(e_a, max_tasks=2, packet_queue=queue)
+        self.patch_providers()
+
+        run = nt.run_task_queue(args, self.checkout, self.journal, self.audit,
+                                cli._run_loop)
+
+        tq = run["task_queue"]
+        # Both tasks ran through the REAL _run_loop, each advanced exactly once.
+        # (self.dispatched is only tracked by the harness' fake run_one variants;
+        # the real cli._run_loop path proves dispatch through advancement.)
+        self.assertEqual(tq["dispatched"], 2)
+        self.assertEqual(tq["advanced"], ["M0-TA", "M0-TB"])
+        self.assertEqual(tq["stop_reason"], "queue_exhausted")
+        self.assertTrue(nt.is_advanced(self.journal, "M0-TA"))
+        self.assertTrue(nt.is_advanced(self.journal, "M0-TB"))
+
+        events = [r.get("event_type") for r in self.audit_records()]
+        # (a) ONE owner-set run budget bounds the WHOLE journey: task 1 STARTS it,
+        # task 2 (same run_id, same budget digest) takes the clean RESUME branch -
+        # never a budget_conflict / refusal.
+        self.assertEqual(events.count("run_budget_started"), 1)
+        self.assertEqual(events.count("run_budget_resumed"), 1)
+        self.assertNotIn("budget_conflict", events)
+        self.assertNotIn("run_budget_refused", events)
+
+        # (b) plan_close_run closes COMPLETE->IDLE on the SHARED journal between
+        # tasks (task 2's _run_loop closes task 1's resting COMPLETE run).
+        closes = [r for r in self.audit_records()
+                  if r.get("event_type") == "state_transition"
+                  and r.get("policy_result") == nt.RUN_CLOSED_TRIGGER]
+        self.assertTrue(closes, "no run_closed transition was recorded")
+        self.assertTrue(any(c.get("state_from") == sm.COMPLETE
+                            and c.get("state_to") == sm.IDLE for c in closes),
+                        f"no COMPLETE->IDLE close on the shared journal: {closes}")
+
+        # (c) the D6 dispatch-intent record/reconcile cycle behaves across the task
+        # boundary: nothing is left unreconciled after the completed journey.
+        self.assertEqual(list(self.journal.pending_effects()), [])
+
+
+class CmdStartDispatchTests(LiveLoopBase):
+    """G4 required-correction #1: exercise the REAL cli.py:3069 dispatch line.
+
+    Full ``cli.cmd_start`` cannot be driven in a focused unit test: its
+    live-revalidation gauntlet (the ``auth`` and ``cli_capability_manifest``
+    probes) requires a real launched provider process and a live capability
+    manifest (golden-run altitude). So instead of an inline copy of the condition
+    (the gap the G4 review named in ``DefaultShapeTests``), these tests execute the
+    VERBATIM ``run = (...)`` expression extracted from ``cli.cmd_start``'s own
+    source: a regression in the routing condition or in the arguments passed to
+    ``run_task_queue`` changes the executed bytes and is caught here."""
+
+    @staticmethod
+    def dispatch_expression() -> str:
+        """The verbatim cli.py:3069 assignment, read from cmd_start's source."""
+        from tools.agent_supervisor import cli
+
+        src = inspect.getsource(cli.cmd_start)
+        module = ast.parse(src)
+        func = module.body[0]
+        for node in ast.walk(func):
+            if (isinstance(node, ast.Assign) and len(node.targets) == 1
+                    and isinstance(node.targets[0], ast.Name)
+                    and node.targets[0].id == "run"
+                    and isinstance(node.value, ast.IfExp)):
+                segment = ast.get_source_segment(src, node)
+                if segment and "next_task.run_task_queue" in segment:
+                    return segment
+        raise AssertionError("the cli.py:3069 dispatch assignment was not found")
+
+    def test_the_extracted_line_is_the_real_dispatch_expression(self) -> None:
+        # Guard the extraction itself: it must be the routing ternary, not an
+        # inline re-implementation.
+        line = self.dispatch_expression()
+        self.assertIn("next_task.run_task_queue(args, checkout, journal, audit, "
+                      "_run_loop)", line)
+        self.assertIn("_run_loop(args, checkout, journal, audit)", line)
+        self.assertIn("max_tasks", line)
+        self.assertIn("packet_queue", line)
+
+    def test_multi_task_start_routes_to_the_driver_with_run_loop_injected(self) -> None:
+        # The TRUE branch: --max-tasks 2 / --packet-queue set. Executing the REAL
+        # line must call next_task.run_task_queue with cli._run_loop as the 5th
+        # (run_one) argument, and drive the whole journey through it.
+        from tools.agent_supervisor import cli
+
+        e_a = self.live_entry("M0-TA", branch="task/a")
+        e_b = self.live_entry("M0-TB", branch="task/b")
+        queue = self.write_queue([e_b])
+        args = self.live_args(e_a, max_tasks=2, packet_queue=queue)
+        self.patch_providers()
+
+        captured: dict[str, object] = {}
+        real_rtq = nt.run_task_queue
+
+        def spy_run_task_queue(args, checkout, journal, audit, run_one):
+            captured["run_one"] = run_one
+            return real_rtq(args, checkout, journal, audit, run_one)
+
+        self.addCleanup(setattr, nt, "run_task_queue", real_rtq)
+        nt.run_task_queue = spy_run_task_queue  # type: ignore[assignment]
+
+        namespace = {"next_task": nt, "_run_loop": cli._run_loop, "args": args,
+                     "checkout": self.checkout, "journal": self.journal,
+                     "audit": self.audit}
+        exec(compile(self.dispatch_expression(), "<cli-3069>", "exec"),  # noqa: S102
+             namespace)
+
+        # Dispatch reached run_task_queue with the REAL cli._run_loop injected.
+        self.assertIs(captured.get("run_one"), cli._run_loop)
+        run = namespace["run"]
+        self.assertEqual(run["task_queue"]["dispatched"], 2)
+        self.assertEqual(run["task_queue"]["advanced"], ["M0-TA", "M0-TB"])
+        self.assertTrue(nt.is_advanced(self.journal, "M0-TA"))
+        self.assertTrue(nt.is_advanced(self.journal, "M0-TB"))
+
+    def test_default_start_calls_run_loop_directly_not_the_driver(self) -> None:
+        # The FALSE branch: certified defaults (max_tasks=1, packet_queue=None). The
+        # real line must call _run_loop DIRECTLY and never enter the driver.
+        e_a = self.live_entry("M0-TA", branch="task/a")
+        args = self.live_args(e_a, max_tasks=1, packet_queue=None, mode="supervised")
+
+        driver_calls: list[object] = []
+        real_rtq = nt.run_task_queue
+
+        def spy_run_task_queue(*a, **k):
+            driver_calls.append(a)
+            return real_rtq(*a, **k)
+
+        loop_calls: list[object] = []
+
+        def spy_run_loop(args, checkout, journal, audit):
+            loop_calls.append(args)
+            return {"run_id": "run-xtask", "mode": args.mode,
+                    "final_state": sm.COMPLETE, "cycles": [], "stopped": ""}
+
+        self.addCleanup(setattr, nt, "run_task_queue", real_rtq)
+        nt.run_task_queue = spy_run_task_queue  # type: ignore[assignment]
+
+        namespace = {"next_task": nt, "_run_loop": spy_run_loop, "args": args,
+                     "checkout": self.checkout, "journal": self.journal,
+                     "audit": self.audit}
+        exec(compile(self.dispatch_expression(), "<cli-3069>", "exec"),  # noqa: S102
+             namespace)
+
+        self.assertEqual(driver_calls, [], "the default start must not enter the driver")
+        self.assertEqual(len(loop_calls), 1, "the default start must call _run_loop once")
 
 
 # --------------------------------------------------------------------------
