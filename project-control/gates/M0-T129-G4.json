@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T129",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T129-G4-qa-review.md",
+  "reviewed_at": "2026-08-31T10:40:42.076980+00:00",
+  "content_manifest_sha256": "da2dd5958258cc4d1643ceb3623b9ce3d736ac375551f29c4e9374754883de95",
+  "reviewed_sha": "012be56a975f2580be82341e31f12366a92c186a",
+  "updated_at": "2026-08-31T10:40:43.577988+00:00"
+}

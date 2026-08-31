@@ -2,11 +2,11 @@
   "task_id": "M0-T129",
   "producer_agent": "orchestrator-recert-runner",
   "report_file": "project-control/reports/M0-T129-commissioning-protocol.md",
-  "submitted_at": "2026-08-31T10:30:55.897257+00:00",
+  "submitted_at": "2026-08-31T10:40:44.415104+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T129-evidence-map.json",
-  "content_manifest_sha256": "ecc4b07c870b27126258b274b60f041939a52c06d9a675f02e594590bd16baf7",
-  "reviewed_sha": "8b3266e0d26cb6178a343e8527bb286bc2bfd1b1",
+  "content_manifest_sha256": "da2dd5958258cc4d1643ceb3623b9ce3d736ac375551f29c4e9374754883de95",
+  "reviewed_sha": "012be56a975f2580be82341e31f12366a92c186a",
   "applicable_requirements": [
     "D-024-R401",
     "D-024-R402",
@@ -16,5 +16,5 @@
     "D-024-R408",
     "D-024-R409"
   ],
-  "updated_at": "2026-08-31T10:30:57.886234+00:00"
+  "updated_at": "2026-08-31T10:40:54.774733+00:00"
 }
