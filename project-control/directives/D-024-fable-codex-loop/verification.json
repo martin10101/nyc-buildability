@@ -9163,31 +9163,45 @@
       "requirements": [
         {
           "id": "D-024-R420",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "AD-093 citation in commit 20bfa449 + packet; M0-T108 precedent producer orchestrator-defect-runner; G0/G2 PASS + independent G3 (code-reviewer) and G4 (qa-engineer) PASS after FAIL->remediation->delta-PASS rounds; producer != reviewer confirmed from the verbatim reports"
+          ]
         },
         {
           "id": "D-024-R421",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "claude_runner.py:1361/1373/1404-1414: only the first prompt written at launch; pending_turns held; injection only on a result event at idle and only when checkpoint_question_decided(events) is False (helper :801-814 returns False only for missing_checkpoint) - inject implies no valid checkpoint arrived"
+          ]
         },
         {
           "id": "D-024-R422",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "claude_runner.py:1415-1421 latch (results_seen >= expected_results and not pending_turns); wall watchdog :1327-1344 unchanged for runaway units; graceful-close path distinguished; tests fast-failure (elapsed<30, not timed_out) + hang (timed_out, tree_terminated) confirm both branches; 78 passed reproduced"
+          ]
         },
         {
           "id": "D-024-R423",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "three fake modes (absorbs_early_second_prompt :279 reproducing the journey-3 merged no-checkpoint open-session shape; no_checkpoint_then_checkpoint :326; never_checkpoint) + ReservedTurnDeliveryTests :834 + repurposed skip-path :789 + unchanged runaway node :809; fixture provenance M0-T107-commissioning-journey-3.md:26-42; no new provider launches; removal-sensitivity traced independently by G3 and G4"
+          ]
         },
         {
           "id": "D-024-R424",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "sequencing commitments recorded (packet objective; producer report residual 3); git diff 81d5a9ba..517895c4 shows no journal write, no supervisor launch, no live-commissioning artifact in the window; post-acceptance R247 recert + re-presentation correctly deferred and named; S16.7 untouched"
+          ]
         }
-      ]
+      ],
+      "reviewed_manifest_sha256": "fd4e61d6fce3bc83ef44cb91c4fe2f54be200a31a71430419f00dce62caa1b6c",
+      "reviewed_sha": "517895c44d9e9301390a2f3ce603e8aeb237516a",
+      "verified_at": "2026-08-31T19:41:04+00:00",
+      "verification_report": "project-control/reports/M0-T130-DCV.md"
     }
   ],
-  "updated_at": "2026-08-31T18:59:37.833435+00:00"
+  "updated_at": "2026-08-31T19:41:04.089031+00:00"
 }
