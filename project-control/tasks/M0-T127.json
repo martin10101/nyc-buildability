@@ -31,11 +31,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:07:21.417654+00:00",
-  "updated_at": "2026-08-31T06:28:40.691145+00:00",
+  "updated_at": "2026-08-31T06:34:20.957232+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -52,6 +52,13 @@
       "percent": 80,
       "status": "rework",
       "message": "Amendment 24 captured (owner 2026-08-31, relaying an external-model review; contradiction VERIFIED in code): the stabilization package presents a --max-cycles 1 commissioning command while stating the journey must prove all seven R393 facts, but next_task.select_next_packet/record_advancement/advance_and_select have ZERO production call sites (only plan_close_run is wired at cli.py:2687) - facts 6 (next task selected live) and cross-task fact 7 are unprovable by ANY currently-presented command. R397 HOLD: commissioning commands not to be executed until resolved mechanically + reviewed. R398: seven-fact stage/command/wiring mapping duty. R399: wiring-vs-staged resolution is a NEW owner decision presented as options. Task to rework: stabilization report section 7 (and section 4) to be revised with the honest staged protocol + options; then delta re-gates + DCV over the now-25-row applicable set. The in-flight DCV on the 22-row set will be captured and superseded by a delta pass."
+    },
+    {
+      "at": "2026-08-31T06:34:20.094041+00:00",
+      "agent": "orchestrator-recert-runner",
+      "percent": 97,
+      "status": "rework",
+      "message": "Administrative identity re-stamp: the G3-O1 recert section-5 wording fix (9b39f49) moved the allowed-paths content identity past the 5d7f958 submit record (a6304213 -> 91ac3523). No substantive change since the delta reviews: G3 (9b39f49) and G4 (a15e595) both reviewed content identical to the current identity; DCV round 3 confirmed 25/25 at 67fc23f with material unmoved. Resubmitting at the current identity, then verification + accept."
     }
   ]
 }

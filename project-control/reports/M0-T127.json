@@ -2,11 +2,11 @@
   "task_id": "M0-T127",
   "producer_agent": "orchestrator-recert-runner",
   "report_file": "project-control/reports/M0-T127-stabilization-report.md",
-  "submitted_at": "2026-08-31T06:20:07.579103+00:00",
+  "submitted_at": "2026-08-31T06:34:20.360246+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T127-evidence-map.json",
-  "content_manifest_sha256": "a63042137ae1aa9d1de7413d0f9dbed03d9c2c12451493f4b22c5eda30ef79c1",
-  "reviewed_sha": "5d7f958f2262a39b6ba24f54c4635fea1b410f18",
+  "content_manifest_sha256": "91ac35230526369cfc43256a0ac33fcd5ae911421d5acea2138ab4c06134cb44",
+  "reviewed_sha": "30db96333af036727eca4a197e827d27d8ed78c9",
   "applicable_requirements": [
     "D-024-R372",
     "D-024-R373",
@@ -34,5 +34,5 @@
     "D-024-R398",
     "D-024-R399"
   ],
-  "updated_at": "2026-08-31T06:20:08.162647+00:00"
+  "updated_at": "2026-08-31T06:34:20.952124+00:00"
 }
