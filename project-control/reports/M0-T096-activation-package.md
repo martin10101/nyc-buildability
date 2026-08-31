@@ -7,8 +7,25 @@ section-20 handoff the owner reads AT the activation decision — it grants
 nothing by existing. Recorded by the orchestrator at unit-I delivery
 (deliverable identity `5ff7f08`; gate/DCV identities in item 11).
 
-**Current sequencing (Amendments 13+14, D-024-R277–R297; supersedes the
-Amendment-12 note that stood here through M0-T116):** the Amendment-12 window
+**Current sequencing (Amendments 22+23, D-024-R372–R396; supersedes the
+Amendment-13/14 note preserved below):** after the Amendment-20/21 live journey
+ended in a counted 12/12-turn stop with no checkpoint, the owner authorized ONE
+bounded final end-to-end stabilization window. It is now COMPLETE: M0-T125 (the
+pre-code survey: 17-defect register + complete call-graph) and M0-T126 (the
+seven-property durable checkpoint design + ALL 17 corrections at the ONE final
+frozen identity `2d46fb0`, sixteen-scenario removal-sensitive coverage, and
+consecutive simulated advancements) are ACCEPTED through G0/G2/G3/G4 + DCV, and
+M0-T127 ran the single full R247 recertification at that identity (item 10).
+The window then STOPPED as ordered: the consolidated stabilization report and
+the exact commissioning commands are in `M0-T127-stabilization-report.md` —
+the orchestrator never executes them (R392). The next step belongs to the
+owner alone: the R393 live commissioning journey (seven-fact proof burden;
+R394 on any failure: stop without retry, preserve, one consolidated
+assessment). Producer rotate-at-seam and never-run-to-exhaustion are standing
+rules (Amendment 23, R395/R396).
+
+**Prior sequencing (Amendments 13+14, D-024-R277–R297; superseded — historical
+record):** the Amendment-12 window
 completed (M0-T115 + M0-T114 + M0-T116 accepted), but the R276 resume then
 STOPPED at preflight step 5 on **provider CLI drift** — Claude Code had
 auto-updated 2.1.248 → 2.1.251 after activation. The owner authorized a
@@ -160,7 +177,32 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (FIFTH refresh at M0-T124 — the post-resume-path certified identity)
+## 10. Identity and evidence (SIXTH refresh at M0-T127 — the Amendment-22 final frozen identity)
+
+* **CURRENT (sixth) certified identity:** supervisor material last moved at **`2d46fb0`**
+  (accepted M0-T126 — the Amendment-22 stabilization: seven-property durable checkpoint
+  design with fresh+rotated orientation, class-sized turns under a documented hard ceiling
+  of 40, a genuinely injected reserved-turn emission demand, exactly-once CAS task
+  advancement + next-packet selection (`next_task.py`), cross-process forwarded-prompt
+  persistence, dispatch-intent crash reconciliation, D2 wrong-tree refusal, and the D1
+  command-document CI tooth — ALL 17 register defects at this one identity);
+  `tools/agent_supervisor` tree **`46722aa1af8f92f063d74b638a5a04e996a1f52d`**; golden pack
+  blob `deeca07b` (42 tests; sole delta from `c54fd0d2` = the disclosed D10 correction to a
+  restart row that previously passed only via the bug); launch-seam pack blob `0aed4902`.
+  **CLI: Claude Code 2.1.251 UNCHANGED** (supervisor-native digest reproduced at recert =
+  `d6f6c29a8ac6b3cf…` exactly; codex-cli 0.146.0; no admission event, no repin).
+* Sixth-recert evidence (M0-T127): golden pack **42/42 in 52.20s** single-process (the
+  historical "3h13m" figure was PROVEN an environmental artifact of one reviewer session —
+  M0-T119 measured the same pack at 15.00s); WHOLE suite **2,990 passed, 2 skipped, 0
+  failed** (chain 2,889 M0-T124 baseline + 101 M0-T126 tests); controller manifest
+  re-recorded **125 files** digest `a43f133b…` config-bound; verify-controller PASS; doctor
+  overall PASS (journal preserved at PAUSED_RECOVERY, transitions 22, audit 53, OS-ACL
+  PROTECTED); command-doc tooth 12/0; validator EXIT=0; CI 20/20. The commissioning package
+  (preflight + the two owner-typed commands, dry-run validated against the live contract)
+  is `M0-T127-stabilization-report.md` §6–§7; the live journey remains a SEPARATE
+  owner-authorized decision (R393/R394). Full detail: `M0-T127-recertification.md`.
+
+## 10-prior-a. Identity and evidence (fifth refresh at M0-T124 — the post-resume-path certified identity)
 
 * **CURRENT (fifth) certified identity:** supervisor material last moved at **`16e1b3b`**
   (accepted M0-T123 `6aada29`+`16e1b3b` — the launch/resume enforcement seam
@@ -231,6 +273,13 @@ AND the DCV), and the third re-certification itself (`M0-T119-*`, recorded at
 its gate wave — the acceptance the R276 RERUN waits on). A later identity
 change invalidates the affected verdicts (rework→resubmit; R247 re-triggers
 re-certification).
+**Fourth refresh at M0-T127 (the Amendment-22 window):** the pre-code survey
+(`M0-T125-*`: G3+G4+DCV 7/7, four independent identities), the stabilization
+implementation (`M0-T126-*`: an HONEST G3 FAIL at the first candidate identity
+remediated by a FRESH producer under the owner's rotate-at-seam directive,
+G3+G4 delta PASS, DCV 18/18 — five independent identities across two producer
+contexts and three reviewers), and the M0-T127 recert wave recorded at its own
+gates. FAIL reports are preserved on file beside their delta-PASS supersessions.
 
 ## 12. Golden-run evidence (the observed complete loop)
 
