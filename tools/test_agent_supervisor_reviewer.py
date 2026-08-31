@@ -98,6 +98,9 @@ FAKE_CODEX = textwrap.dedent('''
         return ARGV[ARGV.index(name) + 1] if name in ARGV else ""
 
     packet = sys.stdin.read()
+    stdin_target = os.environ.get("FAKE_STDIN_TARGET", "")
+    if stdin_target:
+        pathlib.Path(stdin_target).write_text(packet, encoding="utf-8")
     output_path = flag("--output-last-message")
     model = flag("-m")
 
@@ -272,6 +275,57 @@ class ReviewerArgvTests(ReviewerTestBase):
     def test_the_packet_travels_on_stdin(self) -> None:
         outcome = self.reviewer().review(self.packet())
         self.assertGreater(outcome.decision.verified_facts[0]["packet_bytes"], 10)
+
+
+# --------------------------------------------------------------------------
+# Review stdin contract (M0-T131; the journey-4 HALT_UNSAFE fix)
+# --------------------------------------------------------------------------
+
+
+class ReviewStdinContractTests(ReviewerTestBase):
+    """D-024-R426/R427: the live journey-4 reviewer received a data-only packet,
+    inferred its duties from the output schema alone, attempted reads outside
+    its sandboxed workspace root, was blocked by policy (the measured
+    boundary), and honestly returned HALT_UNSAFE. Every review now carries a
+    deterministic instruction preamble INSIDE the stdin JSON object
+    (reviewer_instructions, first key), with every packet field unchanged at
+    the top level - stdin stays one valid JSON object for every consumer."""
+
+    def test_stdin_is_one_json_object_with_instructions_and_packet(self) -> None:
+        target = self.tmp / "captured_stdin.txt"
+        outcome = self.reviewer(
+            extra_env={"FAKE_STDIN_TARGET": str(target)}).review(self.packet())
+        self.assertTrue(outcome.ok, outcome.error_message)
+        body = json.loads(target.read_text(encoding="utf-8"))
+        self.assertEqual(body[rv.REVIEW_INSTRUCTIONS_KEY], rv.REVIEW_INSTRUCTIONS)
+        recovered = {k: v for k, v in body.items()
+                     if k != rv.REVIEW_INSTRUCTIONS_KEY}
+        self.assertEqual(recovered, self.packet(),
+                         "every packet field travels VERBATIM at the top level")
+
+    def test_the_preamble_states_the_measured_boundary_and_the_split(self) -> None:
+        text = rv.REVIEW_INSTRUCTIONS
+        # Removal-sensitive anchors: each phrase carries one load-bearing duty
+        # from the journey-4 fix; dropping any of them re-opens the defect.
+        self.assertIn("INSIDE your working directory", text)
+        self.assertIn("BLOCKED BY POLICY", text)
+        self.assertIn("cwd-relative", text)
+        self.assertIn("verified_repo_head", text)
+        self.assertIn("NEVER return HALT_UNSAFE merely because", text)
+        self.assertIn("UNTRUSTED WORKER OUTPUT", text)
+
+    def test_the_stdin_payload_is_deterministic_ascii(self) -> None:
+        first = rv.review_stdin_payload(self.packet())
+        second = rv.review_stdin_payload(self.packet())
+        self.assertEqual(first, second, "no clock, no randomness")
+        first.encode("ascii")  # raises if any non-ASCII byte slipped in
+
+    def test_a_packet_carrying_the_key_is_refused_not_overwritten(self) -> None:
+        poisoned = dict(self.packet())
+        poisoned[rv.REVIEW_INSTRUCTIONS_KEY] = "worker-injected text"
+        with self.assertRaises(rv.ReviewError) as ctx:
+            rv.review_stdin_payload(poisoned)
+        self.assertEqual(ctx.exception.code, "packet_key_collision")
 
 
 # --------------------------------------------------------------------------
