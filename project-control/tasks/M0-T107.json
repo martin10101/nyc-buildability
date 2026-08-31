@@ -43,11 +43,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 40,
+  "progress_percent": 55,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-08-31T18:54:43.605683+00:00",
+  "updated_at": "2026-08-31T20:07:31.337193+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -94,6 +94,13 @@
       "percent": 40,
       "status": "claimed",
       "message": "COMMISSIONING JOURNEY 3 (owner-typed corrected Step-2): DISPATCHED - the Option-A repo correction is live-proven (full pre-dispatch gauntlet PASS incl task_authority); fresh worker 6786b4b0 in wt-m0t107 (job_object); Stage-3 driver ENGAGED live (queued digest M0-T109 snapshotted); the worker emitted the FIRST VALID live checkpoint of the campaign (honest IN_PROGRESS cp1). COUNTED STOP no_valid_checkpoint (exit 11, transitions 26, PAUSED_RECOVERY): root cause = real-CLI queued-prompt ABSORPTION (queue event absorbed_mid_turn 18:35:01Z) - the reserved-final-turn prompt merged into the worker first turn, truncating the unit to discovery-only (symptom A) AND collapsing two written prompts into one terminal result so expected_results=2 never satisfied, unit_complete never latched, 900s wall ride, tree-termination, S14 counts it (symptom B); consecutive_invalid_outputs 3/3 hard limit; touches 3 of 2 (S16.7 EXCESS - owner matter). Golden fake-CLI delivers queued prompts as own turns = fixture-fidelity gap (AD-093: reproduced defect + provider drift + measured problem). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-3.md; NEXT = owner decides (bounded defect task on reserved-turn delivery + expected_results robustness, then R247 recert, then fresh journey; S16.7 disposition). wt-m0t107 clean c5c6ff7 zero writes; wt-m0t109 clean 1c06957 never dispatched; Codex never contacted; no advancement (D-024-R394)"
+    },
+    {
+      "at": "2026-08-31T20:07:31.335594+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "COMMISSIONING JOURNEY 4 (owner-typed, fresh run_m0t107_j4): FARTHEST EVER - M0-T130 fix live-proven end to end (worker did ~7min real work, 503KB transcript, no truncation, no wall ride); FIRST valid checkpoint validated + forwarded (facts 1-3); FIRST live Codex review completed (fact 4: gpt-5.6-sol, attempts 1, schema-valid). Codex verdict HALT_UNSAFE with the honest finding that the reviewer execution policy blocks repository reads - the supervisor honored it exactly (HALTED, no advancement, exactly-once preserved, M0-T109 never dispatched). Root cause assessed from preserved evidence: first live codex exec on this host; candidate mechanisms = codex read-only sandbox unenforceable on Windows under exec+strict-config (fail-closed) and/or linked-worktree .git redirection outside the -C root; certification could not catch it (fake reviewer by design, R220/R221). NOT a machinery defect on our side: transport/schema/allowlist/validation/halt all worked. Counted touch 1 of 2 on the new run (S16.7 cumulative excess continues). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-4.md; NEXT = owner decides the bounded reviewer-access diagnostic+fix task (one authorized minimal live codex sandbox probe, then the measured fix; R247 re-trigger if supervisor changes); restart path when ready = owner-restart (HALTED->IDLE) then a fresh start (D-024-R394)"
     }
   ]
 }
