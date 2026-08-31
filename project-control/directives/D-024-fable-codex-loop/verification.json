@@ -8686,7 +8686,10 @@
         "D-024-R392",
         "D-024-R393",
         "D-024-R394",
-        "D-024-R396"
+        "D-024-R396",
+        "D-024-R397",
+        "D-024-R398",
+        "D-024-R399"
       ],
       "requirements": [
         {
@@ -8798,11 +8801,26 @@
           "id": "D-024-R396",
           "state": "pending",
           "evidence": []
+        },
+        {
+          "id": "D-024-R397",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R398",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R399",
+          "state": "pending",
+          "evidence": []
         }
       ],
       "reviewed_sha": null,
       "verified_at": null
     }
   ],
-  "updated_at": "2026-08-31T05:35:13.379000+00:00"
+  "updated_at": "2026-08-31T06:16:29.757491+00:00"
 }

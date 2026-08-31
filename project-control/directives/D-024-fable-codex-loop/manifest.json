@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T03:12:04.014729+00:00",
+  "updated_at": "2026-08-31T06:16:29.757491+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -196,6 +196,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-31T03:12:04.014729+00:00",
       "content_digest_sha256": "dbd9081a305dee5943d829030f31dc61297987dbe920d29ecd628ea61c62ce17"
+    },
+    {
+      "file": "source-024-amendment.md",
+      "kind": "amendment",
+      "sequence": 24,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T06:16:29.757491+00:00",
+      "content_digest_sha256": "e1279d7064357ce205c0c4771d84bbf85f2894464f0eb3b0f72171a02f6de4e5"
     }
   ],
   "amendments": [
@@ -220,7 +228,8 @@
     "source-020-amendment.md",
     "source-021-amendment.md",
     "source-022-amendment.md",
-    "source-023-amendment.md"
+    "source-023-amendment.md",
+    "source-024-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -713,10 +722,13 @@
     "D-024-R393",
     "D-024-R394",
     "D-024-R395",
-    "D-024-R396"
+    "D-024-R396",
+    "D-024-R397",
+    "D-024-R398",
+    "D-024-R399"
   ],
-  "requirements_id_digest_sha256": "04d22129251d7a3ea6e1a1698ab73cc5f565b6cda54744be890c970fabd90d8d",
-  "requirements_content_digest_sha256": "2df2340a3fbc2466ccc4c72433caba2ff3c9615d79ebd4f5a383c096badc0b97",
+  "requirements_id_digest_sha256": "4bcafcb17acd544e814ee7f3d8fc696194de247c733646dcb494da47496ab1b6",
+  "requirements_content_digest_sha256": "8aecda78683c2113352f53d01a28223100f9880fa02498735bb8b65dfed8f268",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -859,6 +871,11 @@
       "at": "2026-08-31T03:12:04.014729+00:00",
       "by": "orchestrator",
       "note": "Amendment 23 captured (owner instruction 2026-08-31, typed in-session after the orchestrator proposed rotating the ~429k-cumulative-token M0-T126 producer at its next natural seam): R395 rotate-at-seam (capture the producer's uncommitted worktree work as a durable patch at the seam; never resume that agent context again; continue via a FRESH unnamed roster-typed producer in a new isolated worktree oriented from durable artifacts); R396 no producer in the Amendment-22 window runs toward context exhaustion (bounded assignments; durable checkpoint + early return for rotation on context risk). Rows bind M0-T126 (R395/R396) and M0-T127 (R396)."
+    },
+    {
+      "at": "2026-08-31T06:16:29.757491+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 24 captured (owner instruction 2026-08-31 relaying an external-model review; contradiction VERIFIED in code by the orchestrator - zero production callers for select_next_packet/record_advancement/advance_and_select): R397 HOLD on executing the presented commissioning commands until the package coherence gap is resolved mechanically and reviewed; R398 seven-fact stage/command/wiring mapping duty with plain naming of unprovable facts + prerequisites; R399 the wiring-vs-staged-commissioning resolution is a NEW owner decision presented as options. Rows bind M0-T107 (R397) and M0-T127 (R397/R398/R399)."
     }
   ]
 }

@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 396,
+  "requirement_count": 399,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T03:12:04.014729+00:00",
+  "updated_at": "2026-08-31T06:16:29.757491+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -13460,6 +13460,97 @@
       "applicability": {
         "task_ids": [
           "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      }
+    },
+    {
+      "binding": true,
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 24,
+      "id": "D-024-R397",
+      "text": "HOLD: the presented commissioning commands are not to be executed - even after M0-T127 acceptance - until the commissioning contradiction is resolved mechanically and independently reviewed: the package must explain exactly how the journey progresses from M0-T107 into subsequent tasks without another owner command, or honestly re-scope what each presented command proves.",
+      "source_ref": "source-024-amendment.md#commissioning-hold",
+      "classification": "hold",
+      "applicability": {
+        "task_ids": [
+          "M0-T107",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      }
+    },
+    {
+      "binding": true,
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 24,
+      "id": "D-024-R398",
+      "text": "The stabilization/commissioning package must map EACH of the seven R393 facts to the exact stage, command, and wiring that proves it; any fact not provable with the current deliberately-unwired live next-task dispatch (select_next_packet / record_advancement / advance_and_select have zero production call sites) must be named plainly together with the prerequisite work required before it can be proven.",
+      "source_ref": "source-024-amendment.md#coherence-mapping",
+      "classification": "obligation",
+      "applicability": {
+        "task_ids": [
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      }
+    },
+    {
+      "binding": true,
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 24,
+      "id": "D-024-R399",
+      "text": "Resolving the gap - wiring live next-task dispatch (a supervisor code change that re-triggers R247 recertification) versus accepting a staged commissioning with per-stage owner-typed commands - is a NEW owner decision: the package presents the options with their consequences and the orchestrator never self-authorizes either path.",
+      "source_ref": "source-024-amendment.md#wiring-decision",
+      "classification": "owner_decision",
+      "applicability": {
+        "task_ids": [
           "M0-T127"
         ],
         "task_types": [],
