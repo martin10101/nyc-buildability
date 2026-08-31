@@ -17,7 +17,7 @@ the owner personally types the commands.
 | 3. Valid checkpoint reaches Codex | orientation packet + sized turns + reserved-turn injection (M0-T126) | checkpoint validated + forwarded; audit chain |
 | 4. Codex completes an independent review | certified reviewer channel | codex verdict persisted |
 | 5. M0-T107 advances exactly once (AUDITED) | `record_advancement` CAS - now LIVE-wired advance-before-select | durable `task_advancement/M0-T107` written exactly once |
-| 6. Next bounded task is selected | `evaluate_eligibility` + `select_next_packet` - now LIVE in `run_task_queue` | audit `cross_task_dispatch` (or visible skip rows + NO_ELIGIBLE_WORK) |
+| 6. Next bounded task is selected | `run_task_queue`'s ordered-queue iteration + `evaluate_eligibility` (eleven fail-closed categories) + the `is_advanced` already-done skip - LIVE since M0-T128 (`record_advancement` drives exactly-once; the standalone `select_next_packet` helper remains simulation-only with zero production callers, corrected here per the G3 review) | audit `cross_task_dispatch` (or visible skip rows + NO_ELIGIBLE_WORK) |
 | 7. Multiple successive units AND tasks, no owner touch | in-task CONTINUE forwarding (--max-cycles) + cross-task driver (--max-tasks) behind the owner gate | >= 2 tasks dispatched in one journey, zero owner interventions between |
 
 ## 2. Complete preflight (every row must PASS before the owner types anything; the orchestrator re-runs and reports this at the then-current tip - presenting this package does not skip it)
@@ -44,10 +44,12 @@ in listed order. Suggested location: `C:/Users/MLFLL/Downloads/nyc-zoning/commis
 (matches the presented command; any path works if the command is edited coherently).
 
 **Per-successor prerequisites** (the eligibility engine enforces all of these fail-closed):
-packet exists and parses; `status` is `claimed`; every dependency's packet is `accepted`; no
-blockers and no owner-gate field; the declared isolated worktree exists, is not the primary
-checkout, is clean, and binds via the launch seam; packet content unchanged between queueing
-and selection.
+packet exists and parses; the queue entry's `task_id` equals the packet's own `task_id`;
+`status` is `claimed`; every dependency's packet is `accepted`; no blockers and no owner-gate
+field; the declared isolated worktree exists, is not the primary checkout, and binds via the
+launch seam; packet content unchanged between queueing and selection. (Worktree
+git-CLEANLINESS is a PREPARATION duty, not an eligibility category: leave each successor
+worktree clean when preparing it - the orchestrator's preflight report covers this.)
 
 **Preparation step (standard process, before the journey):** the owner names the successor
 tasks; the orchestrator prepares them under the NORMAL control process (packet + claim +
