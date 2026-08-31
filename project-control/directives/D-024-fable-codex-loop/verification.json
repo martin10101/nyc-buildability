@@ -8494,97 +8494,170 @@
       "requirements": [
         {
           "id": "D-024-R372",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): source-022 verbatim authorizes ONE bounded window; M0-T126 in-regime (regime 1.0, D-024:ALL) as window step 2 after accepted M0-T125; no live launch - preserved journal still PAUSED_RECOVERY, audit 53 records unchanged."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R373",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): design record maps every journey seam to mechanism+test; orientation.py (launch/orient), next_task.py (advancement/selection), loop.py D10 cross-process forward all exist at the frozen identity; tail defects D8/D9/D10 corrected in code and tests."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R374",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): LIVE re-verification: audit.jsonl 53 records; sqlite read-only (mode=ro,immutable) current_state PAUSED_RECOVERY, transitions 22, effects/outbox/inbox 0; wt-m0t107 clean at 796e18f; transcript 97 lines; fixtures match preserved originals."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R375",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): PR #241 OPEN, updatedAt 2026-08-20 (pre-window, untouched); broker.py diff EMPTY over the window; safe_auto_resume stays R595-gated unreachable; new dispatch-intent guard is MORE conservative; no journal mutation; no policy weakening."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R376",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): build_orientation_packet renders all six mandated elements; wired FRESH at cli.py:2903 and ROTATED at loop_turnover.py:372 via oriented_reorientation_prompt (loop.py:2783/2900); dispatch-level RotatedOrientationDispatchTests + removal-sensitive no-budget control; loop pack 122 passed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R377",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): cadence (early_checkpoint_by, incremental_checkpoint_every) sized from the budget and surfaced in the packet; TurnBudgetTests cadence assertion; checkpoint_journey pack 25 passed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R378",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): reserved_turn_injection (turn_budget.py:293) passed as extra_turns at loop.py:1637, written as a real stdin user turn at claude_runner.py:1347; demand forbids new tool use; ReservedTurnInjectionDispatchTests removal-sensitive; corrected evidence-map row carries the honest wherever-technically-enforceable hedge with no residual overclaim."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R379",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): extract_checkpoint refuses missing/malformed; advancement requires a Codex-reviewed checkpoint id (next_task.py:203-206); TurnExhaustionReplayTests prove the preserved 12/12 exhaustion is never treated as success."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R380",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): HARD_TURN_CEILING=40 documented (turn_budget.py:66); per-class working_turns_for with total=min(uncapped,40); tests prove class sizes differ (not a raised constant), the ceiling binds, and over-ceiling fails closed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R381",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): fail-closed verified: extract refuses missing/conflicting/multiple checkpoints; not-OK unit lands PAUSED_RECOVERY; forwarding failure leaves the next-unit-prompt pointer unconsumed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R382",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): record_advancement over compare_and_swap_state single-winner (next_task.py:217); D10 pointer consumed exactly once (loop.py:2562/2792); crash-restart-without-doubling and contradictory-output tests pass; next_task pack 18 passed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R385",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): all 17 register defects at ONE lineage ending 2d46fb0 (e029c8a ancestor; D15 completed in the remediation); DCV spot-reproduced D2/D9/D10/D15 directly; 8 packs 401 reproduced; modularity 0 failures; per-defect table in the G3 chain (16 CORRECT + D15 resolved at delta)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R386",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): fixtures verified against preserved originals: audit seq 21 = 604772, seq 50 = 694251; transcript final usage 72546 with 12 distinct assistant ids; live originals untouched."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R387",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): sixteen-scenario matrix names real collected nodes; scenario 5 (CodexContinueVerdictTests), 6 (stale + duplicate halves), 9 (full sub-matrix: 4 D6 crash rows + 3 D10 forwarding + 4 verdict/campaign before/after rows) spot-verified; G4 audited all 16 rows VERIFIED."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R388",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): three consecutive simulated advancements exactly-once each (M0-T200/201/202) plus crash-AFTER-advancement exactly-once across a genuine journal reopen; next_task pack 18 passed reproduced by the DCV."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R389",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): gates on record at accept: G0 (orchestrator, administrative), G3 code-reviewer (FAIL at e029c8a preserved on file + delta PASS at 2d46fb0), G4 qa-engineer (PASS w/ corrections + delta PASS), G2 self-check (orchestrator record), this DCV; producer differs from every reviewer; honest FAIL-to-PASS chain confirmed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R395",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): both seam patches hash-verified (1a2c2865... 216236 B; 2025bb14... 64445 B); original context patch-captured and retired at its seam with no resume; remediation ran in a FRESH context oriented from durable artifacts only, likewise patch-captured and retired."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         },
         {
           "id": "D-024-R396",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at frozen material 2d46fb0 (full verbatim report project-control/reports/M0-T126-DCV.md): producer reported no context pressure at return 2 (valve delivered, not tripped); remediation was a bounded single-return pass; recorded evidence consistent and uncontradicted."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947"
         }
       ],
-      "reviewed_sha": null,
-      "verified_at": null
+      "reviewed_sha": "fccd1f7aeacd7b24f4e5b99cafb2364456338947",
+      "verified_at": "2026-08-31T05:35:13.379000+00:00",
+      "reviewed_manifest_sha256": "f24fb439e41737459576e6b7f6e3a7655bdbb1283b852bd7af5b68f52ea51511"
     },
     {
       "task_id": "M0-T127",
@@ -8731,5 +8804,5 @@
       "verified_at": null
     }
   ],
-  "updated_at": "2026-08-31T03:12:04.014729+00:00"
+  "updated_at": "2026-08-31T05:35:13.379000+00:00"
 }
