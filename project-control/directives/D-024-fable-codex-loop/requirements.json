@@ -4,7 +4,7 @@
   "version": 1,
   "requirement_count": 399,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T06:16:29.757491+00:00",
+  "updated_at": "2026-08-31T06:26:16.111245+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -13548,7 +13548,7 @@
       "id": "D-024-R399",
       "text": "Resolving the gap - wiring live next-task dispatch (a supervisor code change that re-triggers R247 recertification) versus accepting a staged commissioning with per-stage owner-typed commands - is a NEW owner decision: the package presents the options with their consequences and the orchestrator never self-authorizes either path.",
       "source_ref": "source-024-amendment.md#wiring-decision",
-      "classification": "owner_decision",
+      "classification": "decision",
       "applicability": {
         "task_ids": [
           "M0-T127"

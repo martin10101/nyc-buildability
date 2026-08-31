@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T06:16:29.757491+00:00",
+  "updated_at": "2026-08-31T06:26:16.111245+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -728,7 +728,7 @@
     "D-024-R399"
   ],
   "requirements_id_digest_sha256": "4bcafcb17acd544e814ee7f3d8fc696194de247c733646dcb494da47496ab1b6",
-  "requirements_content_digest_sha256": "8aecda78683c2113352f53d01a28223100f9880fa02498735bb8b65dfed8f268",
+  "requirements_content_digest_sha256": "c31e6c0c0ebb39f7aecac99bb307b855269564dafa739441977680551d5bbe11",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -876,6 +876,11 @@
       "at": "2026-08-31T06:16:29.757491+00:00",
       "by": "orchestrator",
       "note": "Amendment 24 captured (owner instruction 2026-08-31 relaying an external-model review; contradiction VERIFIED in code by the orchestrator - zero production callers for select_next_packet/record_advancement/advance_and_select): R397 HOLD on executing the presented commissioning commands until the package coherence gap is resolved mechanically and reviewed; R398 seven-fact stage/command/wiring mapping duty with plain naming of unprovable facts + prerequisites; R399 the wiring-vs-staged-commissioning resolution is a NEW owner decision presented as options. Rows bind M0-T107 (R397) and M0-T127 (R397/R398/R399)."
+    },
+    {
+      "at": "2026-08-31T06:26:16.111245+00:00",
+      "by": "orchestrator",
+      "note": "Metadata correction found by the M0-T127 round-2 DCV (blocking discrepancy 1): the Amendment-24 capture stamped D-024-R399 with classification 'owner_decision', which is not in the schema/validator enum and made validate_directive_compliance fail closed (c1). Corrected to the valid enum value 'decision' (already used by 3 other rows). Requirement id, text, applicability, and binding unchanged; requirements body digest recomputed. No source file changed."
     }
   ]
 }
