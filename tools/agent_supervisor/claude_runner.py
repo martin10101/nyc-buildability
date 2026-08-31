@@ -722,6 +722,24 @@ def inspect_stream(
     return tuple(observed), mismatch, detail, context_tokens, usage_known
 
 
+#: Per-turn usage fields whose sum approximates one turn's LIVE context (D5).
+LIVE_CONTEXT_USAGE_FIELDS = ("input_tokens", "cache_read_input_tokens",
+                             "cache_creation_input_tokens", "output_tokens")
+
+
+def live_context_tokens(events: Sequence[Mapping[str, Any]]) -> tuple[int, bool]:
+    # LIVE-context peak per-turn usage, EXCLUDING the cumulative result event (D5).
+    best, known = 0, False
+    for event in events:
+        usage = None if event.get("type") == "result" else _event_usage(event)
+        ints = [] if usage is None else [
+            v for k in LIVE_CONTEXT_USAGE_FIELDS
+            if isinstance(v := usage.get(k), int) and not isinstance(v, bool)]
+        if ints:
+            known, best = True, max(best, sum(ints))
+    return best, known
+
+
 def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
     """Find and validate the ONE structured checkpoint (S8.3).
 
@@ -1032,7 +1050,9 @@ class RunResult:
     checkpoint_contract_appended: bool = False
     #: D-024-R294: True when the runner appended the native-tool preference block
     #: to the dispatched prompt (False means the prompt already carried it).
-    native_tools_guidance_appended: bool = False
+    #: M0-T125 D4: whether the native-tool guidance sentinel is PRESENT in the
+    #: dispatched prompt bytes (not "appended by this call"). See run_unit.
+    native_tools_guidance_present: bool = False
     #: V1.2 (D-004-R739): every distinct model id the stream reported.
     observed_models: tuple[str, ...] = ()
     #: V1.2 (D-004-R739): a stream event reported a model other than the pinned
@@ -1045,6 +1065,14 @@ class RunResult:
     context_tokens: int = 0
     #: True when at least one usage object was readable on the stream.
     usage_known: bool = False
+    #: M0-T126 (D-024-R372; M0-T125 D5): the LIVE-context estimate, recorded
+    #: SEPARATELY from the cumulative `context_tokens`. The terminal `result`
+    #: usage is cumulative (694,251 on the live journey vs ~72.5k live), so
+    #: cumulative over-counts against the 400k ceiling; this is the correct
+    #: ceiling input. Defaults preserve every existing RunResult construction.
+    live_context_tokens: int = 0
+    #: True when at least one NON-terminal-result event carried live usage.
+    live_context_usage_known: bool = False
     #: M0-T054 increment 5 (live proof project-control/reports/M0-T054-live-proof/,
     #: reproducing D-010 source-028 / R289): the exhaustion-relevant text distilled
     #: from the stream's api-error `result`/`assistant` events. On a REAL Fable
@@ -1198,12 +1226,15 @@ class ClaudeRunner:
         """
         contract_appended = CHECKPOINT_CONTRACT_SENTINEL not in prompt
         prompt = with_checkpoint_contract(prompt)
-        # D-024-R294: append the native-tool preference block, idempotently (the
-        # sentinel guards against a duplicate append), the same way as the
-        # checkpoint contract above. Worker-facing guidance only; the broker and
-        # classifier are untouched.
-        native_tools_appended = NATIVE_TOOLS_SENTINEL not in prompt
+        # D-024-R294: append the native-tool preference block, idempotently.
         prompt = with_native_tools_guidance(prompt)
+        # M0-T126 (M0-T125 D4): record the native-tool guidance PRESENCE on the
+        # DISPATCHED bytes, computed AFTER both appends - not "did THIS call
+        # append it", which was always False on a fresh prompt because
+        # with_checkpoint_contract already folds the sentinel in (the degenerate
+        # flag the live journey recorded false at seq 50 despite the guidance
+        # being present). Renamed field: native_tools_guidance_present.
+        native_tools_present = NATIVE_TOOLS_SENTINEL in prompt
         argv = build_argv(self.config)
         # M0-T123 (D-024-R332..R336): the ironclad pre-provider-contact chokepoint.
         # EVERY worker launch/resume funnels to this one `Popen`, so the launch seam
@@ -1437,6 +1468,8 @@ class ClaudeRunner:
         observed_models, model_mismatch, mismatch_detail, context_tokens, usage_known = \
             inspect_stream(events, expected_model=self.config.expected_model
                            or self.config.model)
+        # M0-T126 (M0-T125 D5): the live-context estimate, recorded separately.
+        live_ctx_tokens, live_ctx_known = live_context_tokens(events)
 
         # M0-T054 increment 5: distill the exhaustion-relevant stream signal so the
         # worker-turnover seam can see the exact weekly-limit message (and any
@@ -1467,12 +1500,14 @@ class ClaudeRunner:
             injection_labels=untrusted.labels,
             raw_events=tuple(events),
             checkpoint_contract_appended=contract_appended,
-            native_tools_guidance_appended=native_tools_appended,
+            native_tools_guidance_present=native_tools_present,
             observed_models=observed_models,
             model_mismatch=model_mismatch,
             mismatch_detail=mismatch_detail,
             context_tokens=context_tokens,
             usage_known=usage_known,
+            live_context_tokens=live_ctx_tokens,
+            live_context_usage_known=live_ctx_known,
             result_text=result_text,
             rate_limit_rejection=rate_limit_rejection,
         )
@@ -1620,12 +1655,15 @@ class ClaudeRunner:
                 "injection_labels": list(result.injection_labels),
                 "session_id_recorded": bool(result.session_id),
                 "checkpoint_contract_appended": result.checkpoint_contract_appended,
-                "native_tools_guidance_appended": result.native_tools_guidance_appended,
+                "native_tools_guidance_present": result.native_tools_guidance_present,
                 "observed_models": list(result.observed_models),
                 "expected_model": self.config.expected_model or self.config.model,
                 "model_mismatch": result.model_mismatch,
                 "context_tokens": result.context_tokens,
                 "usage_known": result.usage_known,
+                # M0-T125 D5: live estimate recorded alongside the cumulative
+                # (0 when live usage was unknown; see usage_known above).
+                "live_context_tokens": result.live_context_tokens,
             })
 
 

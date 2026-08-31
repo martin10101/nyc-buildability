@@ -217,6 +217,17 @@ class TwoUnitGoldenRunTests(GoldenRunBase):
         # Invocation 1 completes unit A and dies (the controller "crash" is
         # the process ending with durable state behind it). Invocation 2 runs
         # the SAME command; recovery reconciles and unit B runs exactly once.
+        #
+        # M0-T126 (M0-T125 D10): both invocations use the certified single-cycle
+        # shape (--max-cycles 1), the runbook's operation. Invocation 1 forwards
+        # the unit-B prompt and exits at CLAUDE_RUNNING; invocation 2 dispatches
+        # THAT forwarded prompt (the D10 cross-process resume) for its one cycle.
+        # This previously "passed" with max_cycles=2 only because the D10 bug
+        # dead-ended invocation 2 via duplicate_suppressed on the re-minted cycle-1
+        # message id; with the advancing cycle number that dead-end is gone, so the
+        # always-CONTINUE fake reviewer would (correctly) run a second unit under
+        # max_cycles=2. One unit per start is the certified mode and the real
+        # scenario this row asserts.
         self.plan([
             self.work_step("cp-A", "unit-a.txt"),
             self.work_step("cp-B", "unit-b.txt"),
@@ -224,7 +235,7 @@ class TwoUnitGoldenRunTests(GoldenRunBase):
         self.review_plan(["INJECTED next bounded unit: implement unit B."])
         code1, payload1 = self.run_cli(self.argv(max_cycles=1))
         self.assertTrue(payload1["dispatched"], payload1)
-        code2, payload2 = self.run_cli(self.argv(max_cycles=2))
+        code2, payload2 = self.run_cli(self.argv(max_cycles=1))
         self.assertTrue(payload2["dispatched"], payload2)
         kinds = [entry["kind"] for entry in self.launches()]
         self.assertEqual(kinds, ["work", "work"],

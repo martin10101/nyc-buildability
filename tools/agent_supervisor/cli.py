@@ -167,8 +167,11 @@ from .model_change_ipc import (
 )
 from .notifications import NotificationError, build_notification
 from . import launch_seam
+from . import next_task
+from . import orientation as orientation_mod
 from . import os_acl
 from .os_acl import evaluate_controller_config_acl
+from .turn_budget import TurnAllowances, TurnBudgetError, budget_for_packet
 from .resource_sampling import ResourceSampler
 from .restart_channel import register_restart_verbs
 from .policy import (
@@ -2641,19 +2644,18 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     packet = json.loads(pathlib.Path(args.task_packet).read_text(encoding="utf-8-sig"))
     repo = pathlib.Path(args.repo or checkout).resolve()
     worktree = pathlib.Path(args.worktree or repo).resolve()
-    # M0-T123 (D-024-R335/R336): the production cwd-binding gate, BEFORE the runner
-    # is built or a provider is contacted. The reproduced cycle-2 defect launched the
-    # worker in the orchestrator's PRIMARY control checkout (`...\ctl24`) because
-    # `--worktree` was absent and the worktree defaulted to the checkout, even though
-    # the packet declared the isolated worktree `wt-m0t107`. The launch seam refuses
-    # a bound worktree that is not the one the packet declares (naming the
-    # primary-checkout case specifically); the refusal rides the existing
-    # LoopError -> typed-refusal path in `cmd_start`.
-    _wt_binding = launch_seam.evaluate_packet_worktree_binding(
-        str(worktree), str(packet.get("worktree", "") or ""),
-        primary_checkout=str(checkout))
-    if _wt_binding is not None:
-        raise LoopError(_wt_binding.code, _wt_binding.message)
+    # M0-T123 (R335/R336) + M0-T126 (D-024-R372; defect D2): the production
+    # launch-binding gate BEFORE the runner is built. Refuses a worker cwd that
+    # is not the packet's isolated worktree (the reproduced cycle-2 defect that
+    # launched in the primary control checkout), AND refuses an evidence/review
+    # repo that is the primary checkout while the packet declares a worktree (D2:
+    # the collector/reviewer would bind to the control tree). The command-doc
+    # tooth pins --worktree/--repo in presented commands; this is the runtime
+    # backstop. The refusal rides the LoopError -> typed-refusal path.
+    _binding = launch_seam.enforce_launch_bindings(
+        str(worktree), str(repo), str(packet.get("worktree", "") or ""), str(checkout))
+    if _binding is not None:
+        raise LoopError(_binding.code, _binding.message)
     config = load_controller_config(args.config)
     selection = load_model_selection(args.model_selection)
     validate_selection(config, selection)
@@ -2662,11 +2664,35 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         packet, repo_root=str(repo), worktree=str(worktree),
         branch=args.branch or "", stage=args.stage or str(packet.get("status", "")))
     run_id = args.run_id or f"run_{checkout_key(checkout)[:12]}"
+    # M0-T126 (D-024-R372; property 5 / R380, defect D3): size the worker's
+    # working-turn allowance from its structural workload CLASS under a documented
+    # hard ceiling (turn_budget), replacing the fixed 12-turn bound that produced
+    # the live counted stop. The sized total replaces max_turns, never merely
+    # raises it; an oversized class stays at --max-turns and is surfaced.
+    try:
+        _classification, turn_budget = budget_for_packet(
+            packet, TurnAllowances.from_controller_config(config))
+    except TurnBudgetError as exc:
+        raise LoopError(exc.code, exc.message) from exc
+    sized_max_turns = (turn_budget.total_turns if turn_budget.dispatchable
+                       else args.max_turns)
     machine = StateMachine(journal, audit, run_id)
-    # `start` IS the S7 `start_command` trigger. A brand-new journal sits at IDLE,
-    # and the loop's first cycle begins at PREFLIGHT, so the operator's command is
-    # what moves it there - explicitly, and recorded as a transition like any
-    # other, rather than the loop silently assuming a state.
+    # M0-T126 (D-024-R372; defect D9): a run resting at COMPLETE is closed to
+    # IDLE via the EXISTING `run_closed` edge before the next task starts —
+    # mirroring owner-restart discipline. The reviewed identity had NO caller for
+    # `run_closed`, so COMPLETE (not a CYCLE_ENTRY_STATE) stranded every later
+    # start with `bad_cycle_entry_state`. Closing NEVER merges, accepts, deploys,
+    # or crosses an owner gate; it only returns the checkout to IDLE so the next
+    # bounded task can start. Idempotent: a non-COMPLETE state is left untouched.
+    _close_plan = next_task.plan_close_run(machine.current_state)
+    if _close_plan.should_close:
+        machine.transition(_close_plan.to_state, _close_plan.trigger,
+                           detail={"note": _close_plan.reason, "operator_initiated": True})
+    # `start` IS the S7 `start_command` trigger. A brand-new journal sits at IDLE
+    # (or a just-closed COMPLETE run is now IDLE), and the loop's first cycle
+    # begins at PREFLIGHT, so the operator's command is what moves it there -
+    # explicitly, and recorded as a transition like any other, rather than the
+    # loop silently assuming a state.
     if machine.current_state == INITIAL_STATE:
         machine.transition(PREFLIGHT_STATE, "start_command",
                            detail={"mode": args.mode, "operator_initiated": True})
@@ -2684,7 +2710,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     expected_model = args.expected_worker_model or launch_model
     runner_config = RunnerConfig(
         executable=args.claude_executable, cwd=str(worktree),
-        max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
+        max_turns=sized_max_turns, timeout_seconds=args.unit_timeout,
         model=launch_model, expected_model=expected_model,
         # M0-T123 (D-024-R335/R336): bind the runner's pre-Popen launch seam to the
         # packet's isolated worktree, so EVERY unit dispatch (ordinary, rotation,
@@ -2723,6 +2749,14 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # hash-chained log - `budget_conflict` above all, since it is the
         # canonical "a run tried to change its own bounds" tamper signal.
         audit=audit)
+    # M0-T126 (D-024-R372; defect D13): assert the machine can act BEFORE the
+    # durable run budget starts. The reviewed identity started (and RESUMED) the
+    # budget on a start over a HALTED/PAUSED journal because recovery.classify
+    # never reads current_state — mutating durable budget and starting the
+    # owner's wall clock on a start the loop then refused (live seq 32-33).
+    # assert_can_act raises IllegalTransitionError for any blocking state, which
+    # cmd_start reports as a typed refusal; the budget below is never reached.
+    machine.assert_can_act()
     budget_ledger.start()
 
     # AS-3: wire live resource sampling into the loop for the R207 gauge set. The
@@ -2861,7 +2895,15 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         review_model=str(getattr(selection.codex, "primary", "") or ""),
         advisory_model=str(getattr(selection.codex, "advisory_model", "") or ""),
         approval_gate=(lambda digest, _prompt: digest in approved))
-    return loop.run(args.prompt).to_dict()
+    # M0-T126 (D-024-R372; property 1 / R376, defect D3): FRONT-LOAD the
+    # evidence-grounded orientation packet onto a fresh worker's first prompt
+    # (task, lineage, worktree, progress, files, sized cadence, exact required
+    # output) instead of the bare default. Rotated successors are re-oriented by
+    # the rotation seam; an oversized unit runs the raw prompt and is surfaced.
+    first_prompt = orientation_mod.oriented_first_prompt(
+        args.prompt, packet, turn_budget, run_id=run_id, worktree=str(worktree),
+        branch=args.branch, stage=args.stage, allowed_paths=authority.allowed_paths)
+    return loop.run(first_prompt).to_dict()
 
 
 def cmd_start(args: argparse.Namespace) -> int:
@@ -3094,10 +3136,15 @@ def cmd_start(args: argparse.Namespace) -> int:
             lock.release()
             journal.close()
 
+    # M0-T126 (M0-T125 D7): annotate `resume permitted` on an operator-typed start
+    # carrying --owner-enable-bounded-auto, so the recovery classification block no
+    # longer misleads ("resume permitted: False ... waits for an explicit operator
+    # start" then dispatches). The per-launch enable is honored by the mode gate,
+    # not by recovery classification. Inlined to stay net-zero SLOC.
     lines = [f"mode:            {args.mode}",
              f"classification:  {outcome.classification} ({outcome.reason_code})",
              f"next state:      {outcome.next_state}",
-             f"resume permitted:{outcome.resume_permitted}",
+             f"resume permitted:{outcome.resume_permitted}{' (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)' if getattr(args, 'owner_enable_bounded_auto', False) else ''}",
              f"reason:          {outcome.reason}",
              ""]
     if payload["dispatched"]:

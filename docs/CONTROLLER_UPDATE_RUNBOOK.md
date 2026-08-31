@@ -218,6 +218,7 @@ tree without deleting anything else; journals are untouched.)
 ```powershell
 Set-Location C:\SupervisorController
 python -m tools.agent_supervisor start --mode supervised `
+  --checkout C:\SupervisorController `
   --manifest tools\agent_supervisor\controller_manifest.json `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
   --model-selection model_selection.toml `
@@ -229,6 +230,13 @@ python -m tools.agent_supervisor start --mode supervised `
   --task-packet C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063\project-control\tasks\M0-T063.json `
   --run-id run_M0_T063_A1 --max-cycles 1
 ```
+
+`--checkout` is pinned EXPLICITLY (D-024-R372; M0-T125 D1/D15): the runtime
+journal is addressed by `sha256(checkout)`, so a start invoked from a different
+directory would silently address a different runtime. It is one of the five
+load-bearing flags (`--checkout --repo --branch --worktree --max-cycles`) that
+`tools/supervisor_command_doc_check.py` requires every presented `start` command
+to carry, so an omission fails CI rather than surfacing as a live refusal.
 
 `--manifest` is now a REQUIRED dispatch input: `start` without it refuses to dispatch,
 and `start` with it verifies the package tree AND the external config before any

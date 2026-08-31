@@ -85,6 +85,12 @@ CONTEXT_SHEDDING_REASONS: frozenset[str] = frozenset({
     "mandatory_threshold",
     "large_job_threshold",
     "unknown_usage_conservative",
+    # M0-T126 (D-024-R372; defect D8): a Codex ROTATE_SESSION verdict's whole
+    # purpose is to shed the session and start fresh; resuming it would carry the
+    # context straight back and defeat the rotation. So it sheds (and is
+    # never resumed), exactly like the other shedding reasons, which lets the
+    # pre-first-dispatch seam rotate it at the proven seam on the next start.
+    "rotate_session",
 })
 
 

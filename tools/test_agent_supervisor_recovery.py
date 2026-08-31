@@ -264,6 +264,56 @@ class CrashBoundaryTests(RecoveryBase):
         self.assertEqual(journal.get_state("current_state"), "PREFLIGHT")
         self.assertEqual(journal.last_transition().state_to, "PREFLIGHT")
 
+    # -- M0-T126 (defect D6): unit-dispatch crash-injection replays ---------
+    # Three R387 scenario-9 interruption rows. Each leaves an UNRECONCILED
+    # dispatch intent at recovery, so the crash-mid-unit is classified
+    # AMBIGUOUS_EFFECT (reconcile before re-dispatch), never SAFE (re-dispatch).
+
+    def _classify_after_crash(self):
+        journal = self.reopen()
+        return rec.recover_boot(journal=journal, lock=None,
+                                revalidation=all_pass(), audit=self.audit)
+
+    def test_d6_crash_immediately_after_popen_is_ambiguous(self) -> None:
+        rec.record_dispatch_intent(self.journal, run_id="r", cycle=1)
+        outcome = self._classify_after_crash()
+        self.assertEqual(outcome.classification, rec.AMBIGUOUS_EFFECT)
+        self.assertEqual(outcome.reason_code, "unit_dispatch_unreconciled")
+
+    def test_d6_crash_after_partial_stream_is_ambiguous(self) -> None:
+        # Partial stream, no checkpoint extracted: the durable signal is the
+        # still-pending dispatch intent, which drives AMBIGUOUS.
+        rec.record_dispatch_intent(self.journal, run_id="r", cycle=1)
+        outcome = self._classify_after_crash()
+        self.assertEqual(outcome.classification, rec.AMBIGUOUS_EFFECT)
+        self.assertEqual(outcome.reason_code, "unit_dispatch_unreconciled")
+
+    def test_d6_crash_checkpoint_in_stream_before_extract_is_ambiguous(self) -> None:
+        # The checkpoint reached the stream but the supervisor crashed before
+        # extracting/journaling the outcome: the intent is still pending.
+        rec.record_dispatch_intent(self.journal, run_id="r", cycle=2)
+        outcome = self._classify_after_crash()
+        self.assertEqual(outcome.classification, rec.AMBIGUOUS_EFFECT)
+        self.assertEqual(outcome.reason_code, "unit_dispatch_unreconciled")
+
+    def test_d6_reconciled_dispatch_is_not_ambiguous(self) -> None:
+        # Removal sensitivity: a unit whose outcome WAS reconciled must classify
+        # SAFE, so the AMBIGUOUS branch fires only on an unreconciled crash.
+        rec.record_dispatch_intent(self.journal, run_id="r", cycle=1)
+        rec.reconcile_dispatch_intent(self.journal)
+        outcome = self._classify_after_crash()
+        self.assertEqual(outcome.classification, rec.SAFE_CHECKPOINT)
+
+    def test_d16_determined_dead_child_is_archived_with_provenance(self) -> None:
+        rec.record_launched_child(self.journal, pid=999999, role="worker",
+                                  start_token="tok")
+        archived = rec.sweep_dead_child_records(self.journal, audit=self.audit)
+        self.assertEqual(len(archived), 1)
+        self.assertIn("archived_at_utc", archived[0])
+        self.assertEqual(self.journal.get_state(rec.CHILD_PROCESSES_KEY, []), [])
+        stored = self.journal.get_state(rec.ARCHIVED_DEAD_CHILDREN_KEY, [])
+        self.assertEqual(len(stored), 1)
+
 
 # --------------------------------------------------------------------------
 # Reconciliation

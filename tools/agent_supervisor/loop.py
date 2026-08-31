@@ -57,11 +57,11 @@ or change a tier - this module imports no grant constructor and mutates no
 from __future__ import annotations
 
 import dataclasses
-import re
 from typing import Any, Callable, Mapping, Sequence
 
 from . import CONTROLLER_VERSION
 from . import launch_seam
+from . import recovery
 from . import rotation
 from . import session_continuity as sc
 from . import loop_turnover as lt
@@ -74,12 +74,13 @@ from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
 from .config import ModelChain
 from .durable_state import JournalError
 from .errors import LoopError
-from .evidence import STOP_FOR_OWNER, build_packet
+from .evidence import STOP_FOR_OWNER, build_packet  # noqa: F401  (re-export facade)
 from .models import ClaudeCheckpoint, CodexDecision, QueuedAsk, digest_of, to_utc_iso
 # M0-T079: owner-touch accounting moved to its own module under the
 # modularity rule. Re-exported here so every existing caller, test, and
-# `from .loop import ...` import site is unchanged.
-from .owner_touch import (
+# `from .loop import ...` import site is unchanged (e.g. lp.TOUCH_NOTIFY in the
+# loop tests). The F401 noqa marks the deliberate compatibility facade.
+from .owner_touch import (  # noqa: F401  (re-export facade)
     COUNTED_TOUCH_KINDS,
     OWNER_TOUCH_KEY,
     TOUCH_BLOCKING_ASK,
@@ -102,6 +103,7 @@ from .policy import (
     evaluate as evaluate_policy,
     DEFAULT_POLICY_CONFIG,
 )
+from . import stop_intent
 from .process import CONTAINMENT_JOB_OBJECT
 from .protocol import build_envelope
 from .resume_scheduler import EMERGENCY_STOP_KEY
@@ -116,11 +118,16 @@ from .state_machine import (
     PAUSED_RECOVERY,
     POLICY_CHECK,
     PREFLIGHT,
-    PREPARE_ROTATION,
     START_CLAUDE,
     VALIDATE_DECISION,
     WAIT_FOR_OWNER,
 )
+
+#: M0-T126 (D-024-R372; defect D8): the rotation-reason code a Codex
+#: ROTATE_SESSION verdict sets. It is in `session_continuity.CONTEXT_SHEDDING_
+#: REASONS`, so the pre-first-dispatch seam sheds the session and the next
+#: dispatch launches fresh at the proven seam (never the dead PREPARE_ROTATION).
+ROTATE_SESSION_REASON = "rotate_session"
 
 # --------------------------------------------------------------------------
 # Modes
@@ -545,6 +552,22 @@ from .pending_prompt import (  # noqa: E402,F401
 )
 
 
+def _ceiling_context_tokens(run_result: Any) -> tuple[int, bool, str]:
+    """The token figure the 400k ceiling should consume (M0-T125 D5).
+
+    Prefers the LIVE-context estimate (``live_context_tokens`` when
+    ``live_context_usage_known``) — the correct per-turn measure — and falls
+    back to the CUMULATIVE ``context_tokens`` only when live is unknown, so a
+    stream without per-turn usage keeps its prior conservative behavior. Returns
+    ``(tokens, known, basis)`` where ``basis`` names which figure was used.
+    """
+    if bool(getattr(run_result, "live_context_usage_known", False)):
+        return int(getattr(run_result, "live_context_tokens", 0) or 0), True, "live"
+    if bool(getattr(run_result, "usage_known", False)):
+        return int(getattr(run_result, "context_tokens", 0) or 0), True, "cumulative"
+    return 0, False, "unknown"
+
+
 class SupervisedLoop:
     """One controlled task's supervised or shadow loop.
 
@@ -940,16 +963,21 @@ class SupervisedLoop:
             return
         reason_code = ""
         detail = ""
+        # M0-T126 (D-024-R372; M0-T125 D5): the ceiling decision consumes the
+        # LIVE-context estimate when the stream carried it, NOT the cumulative
+        # figure (which over-counts and rotates after nearly every unit). Falls
+        # back to cumulative only when live is unknown (conservative: premature
+        # rotation is the safe direction), preserving prior behavior for streams
+        # without per-turn usage.
+        ceiling_tokens, ceiling_known, ceiling_basis = _ceiling_context_tokens(run_result)
         if getattr(run_result, "model_mismatch", False):
             reason_code = "model_downgrade"
             detail = str(getattr(run_result, "mismatch_detail", "") or "")
         elif (self.context_rotation_threshold > 0
-              and getattr(run_result, "usage_known", False)
-              and int(getattr(run_result, "context_tokens", 0) or 0)
-              >= self.context_rotation_threshold):
+              and ceiling_known
+              and ceiling_tokens >= self.context_rotation_threshold):
             reason_code = "context_threshold"
-            detail = (f"cumulative context usage "
-                      f"{int(getattr(run_result, 'context_tokens', 0) or 0)} crossed the "
+            detail = (f"{ceiling_basis} context usage {ceiling_tokens} crossed the "
                       f"configured threshold {self.context_rotation_threshold}")
         if not reason_code:
             return
@@ -1582,8 +1610,15 @@ class SupervisedLoop:
         # shadow mode the handler permits nothing (deny/observe only) - shadow
         # semantics unchanged.
         self.provider_calls += 1
+        # M0-T126 (M0-T125 D6): journal the dispatch intent BEFORE the provider is
+        # contacted and reconcile it once the unit returns. A crash mid-unit
+        # leaves it pending, so recovery classifies AMBIGUOUS_EFFECT and
+        # reconciles rather than re-dispatching over the unit's already-made
+        # provider calls / brokered effects.
+        recovery.record_dispatch_intent(self.journal, run_id=self.run_id, cycle=cycle)
         run_result = self.runner.run_unit(
             prompt, permission_handler=self._permission_handler())
+        recovery.reconcile_dispatch_intent(self.journal)
         # M0-T080: capture the PROVIDER's own session identity at unit
         # completion and persist it, so a later rotation can really resume the
         # session that did the work instead of minting one. A stream that
@@ -1595,17 +1630,24 @@ class SupervisedLoop:
         session_conflict = str(getattr(run_result, "session_id_conflict", "") or "")
         if session_id and not session_conflict:
             self._provider_session_id = session_id
-            # M0-T123 (D-024-R332): persist the session's cumulative context
-            # telemetry alongside its identity, so a later START that might continue
-            # this session can evaluate the 400k ceiling BEFORE provider contact
-            # instead of re-launching to measure it. `usage_known` False records the
-            # tokens as unknown (never a below-ceiling zero).
+            # M0-T123 (D-024-R332): persist the session's context telemetry
+            # alongside its identity, so a later START that might continue this
+            # session can evaluate the 400k ceiling BEFORE provider contact
+            # instead of re-launching to measure it. `usage_known` False records
+            # the tokens as unknown (never a below-ceiling zero).
+            # M0-T126 (D-024-R372; M0-T125 D5): the RECORDED figure the resume-path
+            # ceiling consumes is the LIVE-context estimate when known, not the
+            # cumulative figure — the same correction as `_flag_rotation_if_needed`,
+            # applied at the durable-record source so every downstream ceiling
+            # consumer (launch_seam.evaluate_ceiling on resume) is consistent.
+            # Falls back to cumulative when live is unknown.
+            ceiling_tokens, ceiling_known, _basis = _ceiling_context_tokens(run_result)
             sc.record_provider_session(
                 self.journal, session_id=session_id,
                 model_id=self._current_model or self.pinned_model,
                 run_id=self.run_id, cycle=cycle,
-                context_tokens=int(getattr(run_result, "context_tokens", 0) or 0),
-                usage_known=bool(getattr(run_result, "usage_known", False)))
+                context_tokens=ceiling_tokens,
+                usage_known=ceiling_known)
         elif session_conflict:
             self._provider_session_id = ""
             sc.clear_provider_session(self.journal)
@@ -2032,10 +2074,29 @@ class SupervisedLoop:
             return stop("stop_for_owner", decision.owner_question, WAIT_FOR_OWNER)
 
         if decision.decision == "ROTATE_SESSION":
-            self.machine.transition(PREPARE_ROTATION, "decision_rotate_session",
-                                    detail={"cycle": cycle,
-                                            "rotation_reason": decision.rotation_reason})
-            return stop("rotate_session", decision.rotation_reason, PREPARE_ROTATION)
+            # M0-T126 (D-024-R372; defect D8): route the legal ROTATE_SESSION
+            # verdict through the EXISTING rotation seam machinery instead of the
+            # dead PREPARE_ROTATION chain, which has NO exit caller and is not a
+            # CYCLE_ENTRY_STATE — so the reviewed identity's next start raised
+            # `bad_cycle_entry_state`, permanently stranding the campaign journal
+            # on one reviewer verdict. Set rotation_pending + reason and close the
+            # cycle into PREFLIGHT (a legal entry state) via `cycle_closed`; the
+            # pre-first-dispatch seam then sheds the session and the next dispatch
+            # launches fresh at the proven seam. Never build the dead
+            # PREPARE_ROTATION/VERIFY_HANDOFF/START_FRESH_SESSION states.
+            rotation.observe_mid_unit(
+                self.journal, reason_code=ROTATE_SESSION_REASON,
+                detail=str(decision.rotation_reason or ""))
+            self.journal.set_state(rotation.ROTATION_REASON_KEY, ROTATE_SESSION_REASON)
+            self.machine.transition(
+                PREFLIGHT, "cycle_closed",
+                detail={"cycle": cycle, "rotation_reason": decision.rotation_reason,
+                        "note": "ROTATE_SESSION routed through the rotation seam "
+                                "(D8): rotation_pending set, cycle closed to "
+                                "PREFLIGHT; the next dispatch rotates at the "
+                                "proven seam rather than stranding at "
+                                "PREPARE_ROTATION"})
+            return stop("rotate_session", decision.rotation_reason, PREFLIGHT)
 
         if decision.decision == "COMPLETE":
             self.machine.transition(
@@ -2463,6 +2524,41 @@ class SupervisedLoop:
             # The caller's fail-closed raise remains the security guarantee.
             pass
 
+    #: M0-T126 (M0-T125 D10): durable pointer to the next unit's forwarded prompt
+    #: bytes, keyed by run id, so a run that forwarded and then exited at
+    #: CLAUDE_RUNNING (max_cycles reached) can dispatch those bytes on the NEXT
+    #: start instead of the generic default prompt. Consumed exactly once.
+    def _next_unit_prompt_key(self) -> str:
+        return f"next_unit_prompt/{self.run_id}"
+
+    def _persist_next_unit_prompt(self, prompt: str, *, next_cycle: int) -> None:
+        """Persist the forwarded bytes + the ADVANCING cycle number (D10).
+
+        The cycle number is the journal's advancing count, not a per-process
+        counter, so a cross-process re-decision mints a DISTINCT forward message
+        id (keyed on the cycle) and is not dead-ended by duplicate suppression.
+        """
+        self.journal.set_state(self._next_unit_prompt_key(),
+                               {"prompt": prompt, "cycle": next_cycle,
+                                "run_id": self.run_id})
+
+    def _consume_next_unit_prompt(self) -> tuple[str, int] | None:
+        """Read and CLEAR the next-unit-prompt pointer (exactly once).
+
+        Returns `(prompt, cycle)` when a forwarded prompt is pending for this run,
+        else None. Clearing on read is what makes the cross-process dispatch
+        exactly-once: a second start finds no pointer and never re-dispatches the
+        same forwarded bytes.
+        """
+        key = self._next_unit_prompt_key()
+        value = self.journal.get_state(key, None)
+        if not isinstance(value, Mapping) or not value.get("prompt"):
+            return None
+        if str(value.get("run_id", "")) != self.run_id:
+            return None
+        self.journal.set_state(key, {"consumed": True})
+        return str(value["prompt"]), int(value.get("cycle", 1) or 1)
+
     def _resume_approved_forward(self) -> tuple[str, int]:
         """Complete a forward that was APPROVED in an earlier, separate process.
 
@@ -2597,12 +2693,40 @@ class SupervisedLoop:
         """
         return lb.budget_stop(self.run_budget, audit=self.audit, run_id=self.run_id)
 
+    def _intent_stop(self) -> str:
+        """Between-cycle owner-intent gate (M0-T126; defects D11/D12).
+
+        Reads the durable stop/pause/graceful/emergency intents the owner may
+        have set from a SECOND terminal while this multi-cycle run executed, and
+        returns a stop reason (with the intent's precedence) when new work must
+        not be dispatched. The reviewed identity consulted these flags only at
+        the NEXT start, so an in-flight limited-auto run ran to its own bounds
+        before honoring a stop; graceful-stop was consumed only by the status
+        display (D12). Returns "" when no intent blocks the next dispatch.
+        """
+        intent = stop_intent.effective_intent(
+            stop_intent.StopIntents.read(self.journal))
+        if stop_intent.may_dispatch_new_work(intent):
+            return ""
+        if self.audit is not None:
+            self.audit.append(
+                "between_cycle_intent_stop", run_id=self.run_id,
+                policy_result=intent,
+                detail={"note": "owner stop/pause/graceful/emergency intent read "
+                                "at the between-cycle seam; the next unit is not "
+                                "dispatched (D11/D12)"})
+        return f"owner_intent_{intent}"
+
     def run(self, first_prompt: str) -> LoopRun:
         """Run bounded cycles until the loop stops or the cycle bound is reached."""
         cycles: list[CycleResult] = []
         prompt = first_prompt
         stopped = ""
         start_index = 1
+        # M0-T126 (D10): the forward message-id cycle number is journal-advancing,
+        # not a per-process counter. cycle_base offsets the per-process loop index
+        # so a cross-process CLAUDE_RUNNING resume forwards at an ADVANCING cycle.
+        cycle_base = 0
         # M0-T079: reconcile the persisted breaker tallies BEFORE anything runs,
         # so a crash-resume re-enters with the allowance it left behind rather
         # than a fresh one, and refuse immediately when the budget it is resuming
@@ -2641,6 +2765,17 @@ class SupervisedLoop:
                         rotations=tuple(self._rotations))
                 prompt = lt.with_reorientation(seam, prompt)
             start_index = next_index
+        elif self.machine.current_state == CLAUDE_RUNNING:
+            # M0-T126 (M0-T125 D10): a prior run forwarded a CONTINUE prompt and
+            # then exited at CLAUDE_RUNNING (max_cycles reached), leaving the
+            # reviewed bytes in a durable pointer. The reviewed identity had NO
+            # branch here, so the next start dispatched the GENERIC default prompt
+            # and the Codex-directed instruction was lost. Consume the pointer
+            # exactly once and dispatch THOSE bytes, at the advancing cycle number.
+            resumed = self._consume_next_unit_prompt()
+            if resumed is not None:
+                prompt, resume_cycle = resumed
+                cycle_base = max(0, resume_cycle - 1)
         # M0-T123 (D-024-R332/R333): the pre-first-dispatch ceiling seam. BEFORE the
         # first bounded unit of this run is dispatched - i.e. before any provider
         # contact - a recorded session at or above the 400k ceiling (or a durable,
@@ -2659,7 +2794,18 @@ class SupervisedLoop:
             if exhausted:
                 stopped = exhausted
                 break
-            result = self.run_cycle(prompt, cycle=index)
+            # M0-T126 (D11/D12): the between-cycle owner-intent seam. A durable
+            # stop/pause/graceful/emergency intent set from another terminal stops
+            # the run synchronously here, BEFORE the next unit is dispatched,
+            # instead of waiting for the run's own bounds to end.
+            intent_stop = self._intent_stop()
+            if intent_stop:
+                stopped = intent_stop
+                break
+            # M0-T126 (D10): the cycle NUMBER (used for the forward message-id and
+            # audit) is journal-advancing; the loop bound `index` stays per-process.
+            cycle = cycle_base + index
+            result = self.run_cycle(prompt, cycle=cycle)
             cycles.append(result)
             self._persist_breaker_tallies()
             if result.stopped:
@@ -2689,6 +2835,11 @@ class SupervisedLoop:
                     f"{result.forward.message_id!r} sent but carried no prompt bytes "
                     f"for the next unit; refusing to fall back to the original prompt")
             prompt = result.forward.sent_prompt
+            # M0-T126 (D10): persist the forwarded bytes + the ADVANCING next-cycle
+            # number durably, so a run that exits at CLAUDE_RUNNING (max_cycles)
+            # can dispatch these exact bytes on the next start rather than the
+            # generic default. Consumed exactly once on that next start.
+            self._persist_next_unit_prompt(prompt, next_cycle=cycle + 1)
             # V1.2 (D-004): SEAM. Honor any pending rotation BEFORE dispatching
             # the next unit. This is structurally the only place rotation acts:
             # the just-finished unit has returned and no new unit is in flight, so
@@ -2701,7 +2852,7 @@ class SupervisedLoop:
             # am.11). Only fires when there IS a next unit to relaunch.
             if index < self.config.max_cycles and (
                     self.rotation_pending() or self._active_substitution() is not None):
-                seam = self._rotate_at_seam(cycle=index + 1)
+                seam = self._rotate_at_seam(cycle=cycle + 1)
                 if seam.paused:
                     # Pinned model unavailable and NOT a quota-exhausted
                     # orchestrator substitution: PAUSE + notify. The worker default
