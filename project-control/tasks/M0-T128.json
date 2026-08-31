@@ -83,12 +83,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-31T08:18:27.106673+00:00",
-  "updated_at": "2026-08-31T10:25:23.393010+00:00",
+  "updated_at": "2026-08-31T10:26:14.588088+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -120,5 +120,7 @@
       "status": "rework",
       "message": "Remediation integrated at de18f27 (fresh producer, patch 010cf7f5 captured, context retired): G3-C1 mode confinement with mutation-proven ModeConfinementTests; G3-C2 LiveRunLoopCrossTaskTests through the REAL cli._run_loop (shared-budget clean resume + run_closed + D6 across the boundary; design-record sec 5A); G4-1 CmdStartDispatchTests executing the verbatim cli.py:3069 expression; G4-O2 sub-code assertions. Producer suite 3035/2/0; orchestrator 154 across three packs + modularity 0 + tooth 12/0. Delta re-verdicts next."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-31T10:26:14.586824+00:00"
 }

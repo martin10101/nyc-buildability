@@ -8938,35 +8938,62 @@
       "requirements": [
         {
           "id": "D-024-R400",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): run_task_queue wired at cli.py:3069 behind bounded_mode_gate + first-act mode guard; DCV reproduced cross_task 45 passed; dispatch-branch and real-_run_loop journey coverage confirmed present and passing; complete->advance->select->rebind->bounded-continue flow traced."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         },
         {
           "id": "D-024-R401",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): live journal re-checked PAUSED_RECOVERY / transitions 22 / audit 53 / effects 0; wt-m0t107 clean 796e18f; tests temp-runtime only; driver writes only new durable keys."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         },
         {
           "id": "D-024-R402",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): mode guard first-act fail-closed; advance-before-select CAS ordering; shared-budget clean-resume proven by the real journey test; empty diffs over broker/recovery/start_gate/state_machine; no R595/allowlist change; exactly-once preserved (next_task 18, genuine crash-reopen matrix)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         },
         {
           "id": "D-024-R403",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): PR #241 OPEN untouched; no clear-recovery/loop start/live commissioning - proven by the unchanged journal counts."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         },
         {
           "id": "D-024-R404",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): design section 9 maps all ten families exactly; five families spot-verified by collection + body read (live-path, crash-reopen, stale, no-eligible-work, between-task intents); G3/G4 independently confirmed mutation-sensitivity; the four-item correction round (C1/C2/G4-1/O2) closed by a fresh producer and delta-verified."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         },
         {
           "id": "D-024-R405",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at remediated material de18f27 (full verbatim report project-control/reports/M0-T128-DCV.md): evaluate_eligibility eleven fail-closed VISIBLE categories with per-category coded refusals + audit rows; eligible set exactly {claimed}; category-to-test coverage verified by collection."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963"
         }
-      ]
+      ],
+      "reviewed_sha": "997841896f6db5eafc9d274c6db38627d8dde963",
+      "verified_at": "2026-08-31T10:25:58.648900+00:00",
+      "reviewed_manifest_sha256": "0d416a637fb0161e8ed569ad1c41c65d284747782fcb2137e56c79197399ed89"
     },
     {
       "task_id": "M0-T129",
@@ -9021,5 +9048,5 @@
       ]
     }
   ],
-  "updated_at": "2026-08-31T08:19:02.848755+00:00"
+  "updated_at": "2026-08-31T10:25:58.648900+00:00"
 }
