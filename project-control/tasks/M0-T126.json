@@ -83,11 +83,11 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 15,
+  "progress_percent": 55,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:07:19.603498+00:00",
-  "updated_at": "2026-08-31T01:50:55.885252+00:00",
+  "updated_at": "2026-08-31T03:00:22.861004+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -104,6 +104,13 @@
       "percent": 15,
       "status": "in_progress",
       "message": "Producer dispatched (unnamed roster spawn, isolated worktree, base reset to 1bb7735). BLOCKING for coverage acceptance (recorded per gate-verdict semantics): G4 required corrections 1-4 (synthesize Codex CONTINUE fixture; duplicate+stale verdict fixtures on the correlation guard; interruption rows for verdict persistence and campaign advancement once D9 exists; scenarios 8/10/R388 are advancement-gated fresh design). Binding design constraints: G3 citation fixes (D9 loop.py:2041-2042; 604772 originates audit seq 21; D7 writers remote_approvals.py:295/307); DCV discrepancy 1 (label the D2 seed-a mapping in the design record); O2 golden-run pack ~3h13m excluded from producer runs, budgeted to the M0-T127 recert. D9 next-task machinery FIRST. D4's append-only journey-2 report note verified already present (report section 5)."
+    },
+    {
+      "at": "2026-08-31T03:00:22.861004+00:00",
+      "agent": "supervisor-stabilization-producer",
+      "percent": 55,
+      "status": "in_progress",
+      "message": "Producer return 1 captured VERBATIM (M0-T126-producer-return-1.md): A/B/D/E delivered (D9 next-task machinery, seven-property design, 4 new modules, 64 new tests, suite 2963 passed excl. golden, modularity 0 failures) but correction set INCOMPLETE - 12/17 (D4/D7 blocked on modularity headroom; D6/D10/D16 deferred by producer). R385 continuation directive issued via return channel: complete all 17 at this identity; D4/D7 resolved by FURTHER EXTRACTION into the new allowed modules (no modularity exception, no scope change); D6/D10/D16 per register correction lines; G4 correction 3 verdict-persistence interruption rows both halves; plus static-analysis defects found by orchestrator review (loop.py:949 _ceiling_context_tokens UNDEFINED in the D5 rotation path, command_docs.py:209 _strip_trailing_comment UNDEFINED, claude_runner.py:1502 dead live_ctx assignments) must be fixed with tests that execute those paths. Task NOT moved to awaiting_gate."
     }
   ]
 }
