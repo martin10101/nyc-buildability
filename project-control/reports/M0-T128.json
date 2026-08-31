@@ -1,0 +1,19 @@
+{
+  "task_id": "M0-T128",
+  "producer_agent": "supervisor-wiring-producer",
+  "report_file": "project-control/reports/M0-T128-producer-report.md",
+  "submitted_at": "2026-08-31T09:06:15.063113+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T128-evidence-map.json",
+  "content_manifest_sha256": "fe92bfee79a387f729a56d70bb8ea444675d8905f0adefa464aeca35a3b13def",
+  "reviewed_sha": "9b3045c1229dcabdda6d846e2af2730dc364a84f",
+  "applicable_requirements": [
+    "D-024-R400",
+    "D-024-R401",
+    "D-024-R402",
+    "D-024-R403",
+    "D-024-R404",
+    "D-024-R405"
+  ],
+  "updated_at": "2026-08-31T09:06:30.873528+00:00"
+}
