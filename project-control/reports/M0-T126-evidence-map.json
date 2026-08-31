@@ -1,0 +1,60 @@
+{
+  "task_id": "M0-T126",
+  "note": "Evidence per D-024 requirement applicable to M0-T126 (resolver set, 18 rows: R372-R382, R385-R389, R395, R396). Producer: supervisor-stabilization-producer (unnamed roster spawn, isolated worktree based on control tip 1bb7735; two-return production with an orchestrator-enforced R385 continuation; both returns captured VERBATIM as M0-T126-producer-return-1.md / M0-T126-producer-return-2.md). Material identity: commit e029c8a. Worktree patch captured at the seam per R395: sha256 1a2c28652a75e768398497af3a24cdfc01fa3b026b1690ea37a9828c3bda5328 (216236 bytes, 28 files).",
+  "requirements": {
+    "D-024-R372": [
+      "Production executed entirely inside the authorized window as step 2 (after accepted M0-T125): no second live attempt, no launch, no recovery action; all corrections land in ONE material commit e029c8a."
+    ],
+    "D-024-R373": [
+      "The complete journey (not merely the 12-turn fix) is addressed: orientation.py (launch/orientation seam), checkpoint emission/reservation machinery (unit seam), evidence/repo binding D2 (evidence seam), codex verdict routing D8 (review seam), cross-process forward D10 (forwarding seam), next_task.py close-run + selection + exactly-once advancement (advancement/next-task/multi-unit seam). Design record maps each journey seam to mechanism and test."
+    ],
+    "D-024-R374": [
+      "Byte-for-byte preservation re-verified by the orchestrator AT INTEGRATION: journal current_state PAUSED_RECOVERY, transitions 22, audit 53 records, effects/outbox/inbox 0 rows; wt-m0t107 clean at 796e18f. Replay fixtures were derived from orchestrator-staged COPIES (audit.jsonl sha256-verified equal to original at staging); the producer never opened the live runtime directory."
+    ],
+    "D-024-R375": [
+      "No restart, no clear-recovery, no journal edit, no repin, no PR #241 action, no policy weakening, no owner-gate crossing, no live launch. The producer ran no supervisor CLI write verb against any real checkout key; all tests use temp runtime dirs (runtime_dir_for base=tmp convention). Broker allowlists and R595/bounded-mode gates unchanged (D7 fix is annotation-only)."
+    ],
+    "D-024-R376": [
+      "Front-loaded compact evidence-grounded orientation packet: tools/agent_supervisor/orientation.py builds task/lineage/worktree/progress/relevant-files/exact-required-output into the FIRST prompt, wired in cli._run_loop; tests tools/test_agent_supervisor_orientation.py (10, removal-sensitive)."
+    ],
+    "D-024-R377": [
+      "Required EARLY structured progress checkpoint + INCREMENTAL checkpoints during the unit: cadence contract from turn_budget + orientation prompt cadence lines; covered in test_agent_supervisor_checkpoint_journey.py (early/incremental/incomplete/final rows of the R387 scenario-3 family)."
+    ],
+    "D-024-R378": [
+      "Reserved FINAL turn exclusively for mandatory checkpoint emission before exhaustion: emission turn injected at the reserved boundary via the extra-turns/stdin channel in claude_runner; exploratory tool use prevented where technically enforceable; removal-sensitive replay of the preserved 12/12 transcript fails the old design and passes the new."
+    ],
+    "D-024-R379": [
+      "Honest incomplete-but-resumable checkpoints never treated as completion or advancement: extract/validation path keeps incomplete checkpoints non-advancing (next_task advancement requires an accepted completion, exactly-once CAS); 12/12 exhaustion replay converts to an incomplete-but-resumable checkpoint instead of no_valid_checkpoint."
+    ],
+    "D-024-R380": [
+      "Working-turn allowances sized from the bounded task/workload class under documented HARD_TURN_CEILING=40 in tools/agent_supervisor/turn_budget.py (wires the previously zero-consumer workload_classifier/sizing machinery); the fixed max_turns constant was NOT merely raised; sizing tests in the turn_budget/orientation packs."
+    ],
+    "D-024-R381": [
+      "Fail-closed when checkpoint emission, validation, persistence or forwarding does not complete: missing/malformed/duplicate/contradictory checkpoint paths refuse rather than advance (existing extract_checkpoint strictness + new journey tests); forwarding failure leaves the durable next-unit-prompt pointer unconsumed."
+    ],
+    "D-024-R382": [
+      "Exactly-once checkpoint persistence and forwarding across crashes, restarts, rotations and duplicate provider output: durable next-unit-prompt pointer consumed exactly once (D10), journal-advancing cycle ids (no cross-run duplicate-id dead-end), dispatch-intent journaling reconciled by recovery (D6), crash-at-advancement-boundary test proving exactly-once across restart."
+    ],
+    "D-024-R385": [
+      "ALL 17 register defects corrected at ONE final frozen identity e029c8a: design record Section 0 carries the 17/17 defect map (defect -> file:line seam -> removal-sensitive test). The orchestrator REFUSED the 12/17 first return (return 1) and enforced completion via a continuation directive before any gate; returns 1+2 captured verbatim. Orchestrator spot-verification at the integrated tree: 8 packs 391 passed, modularity failures 0, ruff clean on touched files, command-doc tooth 12/12."
+    ],
+    "D-024-R386": [
+      "Removal-sensitive adversarial coverage over preserved real artifacts as READ-ONLY replay fixtures: tools/agent_supervisor/fixtures/m0t107_stream_d5.json (live 72546 vs cumulative 694251 from the preserved transcript; 12/12 exhaustion) and m0t107_journey_facts.json; originals untouched (R374 evidence row)."
+    ],
+    "D-024-R387": [
+      "Sixteen-scenario minimum: the design record's R387 matrix maps every scenario to fixture + test node, including the four G4-T125 required corrections: (1) synthesized Codex CONTINUE fixture, (2) duplicate AND stale verdict fixtures on the verdict/checkpoint-id correlation guard, (3) interruption rows before/after verdict persistence AND campaign advancement (scenario-9 sub-matrix), (4) scenarios 8/10/R388 as advancement-gated fresh design on the new next_task machinery."
+    ],
+    "D-024-R388": [
+      "Several consecutive simulated bounded advancements with no human intervention: ConsecutiveAdvancementTests in tools/test_agent_supervisor_next_task.py drives three consecutive simulated advancements (M0-T200 -> T201 -> T202), exactly-once each, no duplicate or lost work, no false acceptance, no unsafe effect, plus a crash at the advancement boundary proving exactly-once across restart."
+    ],
+    "D-024-R389": [
+      "Independent review + all applicable gates + DCV at the frozen identity: G0 PASS recorded pre-claim (M0-T126-G0-readiness.md); G3 (code-reviewer) and G4 (qa-engineer) independent read-only reviews dispatched at material identity e029c8a; G2 self-check record and the DCV verification follow per the T125-proven sequence; producer != any reviewer."
+    ],
+    "D-024-R395": [
+      "Rotate-at-seam honored: at the producer's completion return the orchestrator captured the uncommitted worktree work as a durable patch FIRST (sha256 1a2c2865..., git apply --check clean), then integrated from the patch; the producer agent context is RETIRED and was never resumed after the seam. No remaining production existed at the seam, so no fresh producer was required; any post-gate rework goes to a FRESH producer from durable artifacts."
+    ],
+    "D-024-R396": [
+      "No producer ran toward context exhaustion: the R396 checkpoint-early valve was delivered mid-continuation; the producer reported no context pressure at return 2 and completed a bounded two-return production; the orchestrator monitored via ListAgents and the diagnostics stream rather than letting it run open-ended."
+    ]
+  }
+}
