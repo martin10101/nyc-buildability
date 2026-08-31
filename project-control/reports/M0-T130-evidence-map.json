@@ -1,0 +1,50 @@
+{
+  "task_id": "M0-T130",
+  "schema": "evidence_map/v1",
+  "requirements": {
+    "D-024-R420": [
+      {
+        "evidence": "Amendment-28 capture source-028-amendment.md; M0-T130 packet with AD-093 citation; produced via M0-T108 orchestrator-as-producer precedent with independent G3/G4 reviewers; standard gates G0/G2/G3/G4 recorded",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-028-amendment.md",
+          "project-control/tasks/M0-T130.json"
+        ]
+      }
+    ],
+    "D-024-R421": [
+      {
+        "evidence": "claude_runner.run_unit deferred pending_turns (never written at launch; written only after the prior terminal result and only when checkpoint_question_decided is False); commit 20bfa449",
+        "paths": [
+          "tools/agent_supervisor/claude_runner.py",
+          "project-control/reports/M0-T130-reserved-turn-fix.md"
+        ]
+      }
+    ],
+    "D-024-R422": [
+      {
+        "evidence": "unit_complete latches on every-written-prompt-answered AND nothing pending; fast honest failure test proves no wall ride; runaway watchdog test unchanged",
+        "paths": [
+          "tools/agent_supervisor/claude_runner.py",
+          "tools/test_agent_supervisor_runner.py"
+        ]
+      }
+    ],
+    "D-024-R423": [
+      {
+        "evidence": "absorbs_early_second_prompt fixture derived from journey-3 measured queue events; ReservedTurnDeliveryTests (4 nodes) + repurposed skip-path test; red-on-mutant proven; runner pack 78 passed; whole suite 3039/2/0",
+        "paths": [
+          "tools/test_agent_supervisor_runner.py",
+          "project-control/reports/M0-T130-reserved-turn-fix.md"
+        ]
+      }
+    ],
+    "D-024-R424": [
+      {
+        "evidence": "sequencing honored: R247 recertification re-runs at the new frozen identity after acceptance, then the journey command is re-presented for the owner to type; S16.7 untouched",
+        "paths": [
+          "project-control/reports/M0-T130-reserved-turn-fix.md"
+        ]
+      }
+    ]
+  }
+}
