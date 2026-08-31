@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 409,
+  "requirement_count": 416,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T08:18:26.014493+00:00",
+  "updated_at": "2026-08-31T17:44:02.568880+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -778,7 +778,7 @@
     },
     {
       "id": "D-024-R019",
-      "text": "Treat the owner's observed roughly 860,000-token manual subagent run as a required runaway-work test scenario and sizing warning \u2014 not as evidence that the Codex-supervised loop already failed; determine current implementation status independently.",
+      "text": "Treat the owner's observed roughly 860,000-token manual subagent run as a required runaway-work test scenario and sizing warning — not as evidence that the Codex-supervised loop already failed; determine current implementation status independently.",
       "source_ref": "source-001.md#s1-p-860k",
       "classification": "obligation",
       "binding": true,
@@ -977,7 +977,7 @@
     },
     {
       "id": "D-024-R023",
-      "text": "Enforce the Codex role boundary mechanically where possible \u2014 read-only worktrees/mounts, command allowlists, denied mutation tools, separate credentials, and tests \u2014 not prose alone.",
+      "text": "Enforce the Codex role boundary mechanically where possible — read-only worktrees/mounts, command allowlists, denied mutation tools, separate credentials, and tests — not prose alone.",
       "source_ref": "source-001.md#s2-mechanical",
       "classification": "obligation",
       "binding": true,
@@ -1629,7 +1629,7 @@
     },
     {
       "id": "D-024-R040",
-      "text": "The Agent SDK is optional, not required: do not install, admit, or upgrade it merely to implement this directive; use it only when already approved and present, or after separate owner-authorized dependency admission under the live dependency-security policy; lack of a repository reference to a platform feed proves only that it is not yet configured \u2014 determine support with installed-version probes and official documentation.",
+      "text": "The Agent SDK is optional, not required: do not install, admit, or upgrade it merely to implement this directive; use it only when already approved and present, or after separate owner-authorized dependency admission under the live dependency-security policy; lack of a repository reference to a platform feed proves only that it is not yet configured — determine support with installed-version probes and official documentation.",
       "source_ref": "source-001.md#s5.1-sdk",
       "classification": "prohibition",
       "binding": true,
@@ -1785,7 +1785,7 @@
     },
     {
       "id": "D-024-R044",
-      "text": "Normal monitoring is passive and adds no text to the Fable conversation and no continuous corrective messages to subagents: write compact external records on actual runtime events; aggregate outside the model context; wake the controller only on state threshold, no-progress rule, owner command, task boundary, error, or safe-seam changes; inject a model-visible instruction only when a real decision is required; the telemetry journal is bounded, rotated, redacted, and compactable, storing summaries and references \u2014 no full prompts, transcripts, secrets, or repeated repository content.",
+      "text": "Normal monitoring is passive and adds no text to the Fable conversation and no continuous corrective messages to subagents: write compact external records on actual runtime events; aggregate outside the model context; wake the controller only on state threshold, no-progress rule, owner command, task boundary, error, or safe-seam changes; inject a model-visible instruction only when a real decision is required; the telemetry journal is bounded, rotated, redacted, and compactable, storing summaries and references — no full prompts, transcripts, secrets, or repeated repository content.",
       "source_ref": "source-001.md#s5.3",
       "classification": "obligation",
       "binding": true,
@@ -1914,7 +1914,7 @@
     },
     {
       "id": "D-024-R047",
-      "text": "Workload-first supervision has two separate layers: (1) assignment planning before spawn \u2014 use the task graph, code graph, acceptance criteria, dependency boundaries, estimated files/symbols/tests, uncertainty, and historical telemetry to choose one cohesive unit large enough to justify startup cost and small enough for one clear objective, one ownership boundary, and a natural end-to-end proof; (2) invisible runtime health supervision \u2014 the controller watches occupancy, task tokens, compactions, time, tool use, retries, progress, and drift without including any of it in the subagent's instructions.",
+      "text": "Workload-first supervision has two separate layers: (1) assignment planning before spawn — use the task graph, code graph, acceptance criteria, dependency boundaries, estimated files/symbols/tests, uncertainty, and historical telemetry to choose one cohesive unit large enough to justify startup cost and small enough for one clear objective, one ownership boundary, and a natural end-to-end proof; (2) invisible runtime health supervision — the controller watches occupancy, task tokens, compactions, time, tool use, retries, progress, and drift without including any of it in the subagent's instructions.",
       "source_ref": "source-001.md#s5.5-layers",
       "classification": "obligation",
       "binding": true,
@@ -1950,7 +1950,7 @@
     },
     {
       "id": "D-024-R048",
-      "text": "Classify proposed work structurally rather than predicting exact token totals: main-session work (quick targeted changes, frequent back-and-forth, phases sharing substantial context \u2014 no fresh subagent for one small edit); cohesive subagent unit (preferred: self-contained ownership from investigation through implementation/test or evidence through bounded report); oversized/cross-boundary work (split at natural graph/ownership/test seams before dispatch); unknown work (cheapest bounded sizing/reconnaissance step first).",
+      "text": "Classify proposed work structurally rather than predicting exact token totals: main-session work (quick targeted changes, frequent back-and-forth, phases sharing substantial context — no fresh subagent for one small edit); cohesive subagent unit (preferred: self-contained ownership from investigation through implementation/test or evidence through bounded report); oversized/cross-boundary work (split at natural graph/ownership/test seams before dispatch); unknown work (cheapest bounded sizing/reconnaissance step first).",
       "source_ref": "source-001.md#s5.5-classes",
       "classification": "obligation",
       "binding": true,
@@ -2022,7 +2022,7 @@
     },
     {
       "id": "D-024-R050",
-      "text": "Maintain private, configurable health bands rather than worker-visible quotas: Normal (no action, no message); Observe (Codex checks progress/remaining scope from external evidence; worker uninterrupted); Prepare-to-land (controller-level prevention of new scope, children, and unrelated investigation; wait for next natural checkpoint); Land (one short course-correction through the supported parent/subagent messaging path \u2014 finish the current atomic step, save and test what is coherent, return the bounded handoff; no token arithmetic asked of the worker); Emergency stop (platform task-stop only for unresponsive/unsafe process, imminent provider/platform hard limit, owner emergency stop, or inability to reach a safe seam; quarantine and reconcile partial state afterward).",
+      "text": "Maintain private, configurable health bands rather than worker-visible quotas: Normal (no action, no message); Observe (Codex checks progress/remaining scope from external evidence; worker uninterrupted); Prepare-to-land (controller-level prevention of new scope, children, and unrelated investigation; wait for next natural checkpoint); Land (one short course-correction through the supported parent/subagent messaging path — finish the current atomic step, save and test what is coherent, return the bounded handoff; no token arithmetic asked of the worker); Emergency stop (platform task-stop only for unresponsive/unsafe process, imminent provider/platform hard limit, owner emergency stop, or inability to reach a safe seam; quarantine and reconcile partial state afterward).",
       "source_ref": "source-001.md#s5.5-bands",
       "classification": "obligation",
       "binding": true,
@@ -2316,7 +2316,7 @@
     },
     {
       "id": "D-024-R058",
-      "text": "Account for documented subagent startup behavior (isolated context; receives task message, CLAUDE.md hierarchy, agent prompt/skills, git snapshot \u2014 not the parent's conversation): when follow-up work is the same coherent assignment and the prior subagent remains healthy, resume the same resumable subagent; do not resume an overloaded or confused context merely to save startup cost; use a fork only when inheriting parent context and prompt-cache reuse are genuinely beneficial and the parent context is clean; do not fork a bloated parent by default.",
+      "text": "Account for documented subagent startup behavior (isolated context; receives task message, CLAUDE.md hierarchy, agent prompt/skills, git snapshot — not the parent's conversation): when follow-up work is the same coherent assignment and the prior subagent remains healthy, resume the same resumable subagent; do not resume an overloaded or confused context merely to save startup cost; use a fork only when inheriting parent context and prompt-cache reuse are genuinely beneficial and the parent context is clean; do not fork a bloated parent by default.",
       "source_ref": "source-001.md#s6-startup",
       "classification": "obligation",
       "binding": true,
@@ -2426,7 +2426,7 @@
     },
     {
       "id": "D-024-R061",
-      "text": "Prefer subagents for verbose self-contained work whose transcript should stay out of the primary context; prefer the main conversation for short work requiring frequent shared decisions; subagents return a bounded evidence summary, artifact references, and unresolved questions \u2014 not an entire transcript.",
+      "text": "Prefer subagents for verbose self-contained work whose transcript should stay out of the primary context; prefer the main conversation for short work requiring frequent shared decisions; subagents return a bounded evidence summary, artifact references, and unresolved questions — not an entire transcript.",
       "source_ref": "source-001.md#s6-transcripts",
       "classification": "obligation",
       "binding": true,
@@ -2572,7 +2572,7 @@
     },
     {
       "id": "D-024-R065",
-      "text": "Parent/child turnover: when the primary session rotates, existing subagents finish only their already-bounded cohesive assignments while external evidence shows healthy contexts \u2014 no new children, no broadened scope; a child reaching its own landing condition receives one landing instruction and returns a durable partial handoff; a new primary session may orient read-only while old children drain but must not take a conflicting write lease or dispatch new writes until child work, commits, test processes, and external effects are reconciled; preserve exact-once ownership.",
+      "text": "Parent/child turnover: when the primary session rotates, existing subagents finish only their already-bounded cohesive assignments while external evidence shows healthy contexts — no new children, no broadened scope; a child reaching its own landing condition receives one landing instruction and returns a durable partial handoff; a new primary session may orient read-only while old children drain but must not take a conflicting write lease or dispatch new writes until child work, commits, test processes, and external effects are reconciled; preserve exact-once ownership.",
       "source_ref": "source-001.md#s6.3",
       "classification": "obligation",
       "binding": true,
@@ -2640,7 +2640,7 @@
     },
     {
       "id": "D-024-R067",
-      "text": "Each handoff contains the smallest complete packet: campaign/epoch/task/assignment IDs; authority and explicit prohibitions; frozen git identity (branch, base, head SHA, tree/diff identity, dirty-state description); current task goal and acceptance criteria; verified facts and evidence references; changes made and tests run; unresolved defects/questions; active or reconciled children; external-effect journal status; token/context health with source/confidence; exact recommended next bounded action; reasons the seam is safe. Do not silently truncate required evidence \u2014 use on-demand references or stop and report insufficiency.",
+      "text": "Each handoff contains the smallest complete packet: campaign/epoch/task/assignment IDs; authority and explicit prohibitions; frozen git identity (branch, base, head SHA, tree/diff identity, dirty-state description); current task goal and acceptance criteria; verified facts and evidence references; changes made and tests run; unresolved defects/questions; active or reconciled children; external-effect journal status; token/context health with source/confidence; exact recommended next bounded action; reasons the seam is safe. Do not silently truncate required evidence — use on-demand references or stop and report insufficiency.",
       "source_ref": "source-001.md#s7-handoff",
       "classification": "obligation",
       "binding": true,
@@ -2742,7 +2742,7 @@
     },
     {
       "id": "D-024-R070",
-      "text": "Bridge sequence: (1) classify and journal the recognized refusal without unnecessary sensitive content, preserving task identity and exact authorization/acceptance criteria; (2) if the interface offers only continue-with-4.8 or stop, permit 4.8 as a temporary continuity bridge; (3) the bridge may finish the smallest current atomic operation, collect results of already-running bounded subagents, run necessary checkpoint validation, and create a durable handoff \u2014 it must not begin a new task/investigation, create subagents, broaden scope, or consume the campaign; (4) retire the bridge at the first safe seam and start a fresh Fable 5 session from durable verified artifacts.",
+      "text": "Bridge sequence: (1) classify and journal the recognized refusal without unnecessary sensitive content, preserving task identity and exact authorization/acceptance criteria; (2) if the interface offers only continue-with-4.8 or stop, permit 4.8 as a temporary continuity bridge; (3) the bridge may finish the smallest current atomic operation, collect results of already-running bounded subagents, run necessary checkpoint validation, and create a durable handoff — it must not begin a new task/investigation, create subagents, broaden scope, or consume the campaign; (4) retire the bridge at the first safe seam and start a fresh Fable 5 session from durable verified artifacts.",
       "source_ref": "source-001.md#s8-sequence",
       "classification": "obligation",
       "binding": true,
@@ -2946,7 +2946,7 @@
     },
     {
       "id": "D-024-R076",
-      "text": "Adopt a root-cause, replace-not-layer repair gate (not authorizing broad rewrites or deleting unrelated working code): for every defect task \u2014 reproduce the defect or establish a falsifiable failure condition; identify the root cause and smallest owning architectural boundary; characterize the correct behavior to preserve; add or identify a regression test failing for the defect for the right reason; explicitly choose direct repair (sound structure) or bounded replacement/refactor (wrong/duplicated/unsound path); implement one authoritative path; remove the obsolete implementation, dead callers, redundant wrappers, duplicate fallbacks, stale flags, and misleading tests/docs within the bounded component; run regression/integration/graph/compatibility tests appropriate to the boundary; prove via search/graph evidence that the obsolete path is no longer reachable.",
+      "text": "Adopt a root-cause, replace-not-layer repair gate (not authorizing broad rewrites or deleting unrelated working code): for every defect task — reproduce the defect or establish a falsifiable failure condition; identify the root cause and smallest owning architectural boundary; characterize the correct behavior to preserve; add or identify a regression test failing for the defect for the right reason; explicitly choose direct repair (sound structure) or bounded replacement/refactor (wrong/duplicated/unsound path); implement one authoritative path; remove the obsolete implementation, dead callers, redundant wrappers, duplicate fallbacks, stale flags, and misleading tests/docs within the bounded component; run regression/integration/graph/compatibility tests appropriate to the boundary; prove via search/graph evidence that the obsolete path is no longer reachable.",
       "source_ref": "source-001.md#s9-gate",
       "classification": "obligation",
       "binding": true,
@@ -3236,7 +3236,7 @@
     },
     {
       "id": "D-024-R083",
-      "text": "Implement project-level, user-invoked operator commands on supported installed versions \u2014 /loop-status, /loop-tasks, /loop-ask <question>, /loop-pause [reason], /loop-resume, /loop-stop, /loop-emergency-stop \u2014 marked user-only/non-model-invokable (locally supported equivalent of disable-model-invocation: true); do not implement them as ordinary prompt-based custom commands; /btw is not a substitute (it talks to Claude, not the external Codex supervisor).",
+      "text": "Implement project-level, user-invoked operator commands on supported installed versions — /loop-status, /loop-tasks, /loop-ask <question>, /loop-pause [reason], /loop-resume, /loop-stop, /loop-emergency-stop — marked user-only/non-model-invokable (locally supported equivalent of disable-model-invocation: true); do not implement them as ordinary prompt-based custom commands; /btw is not a substitute (it talks to Claude, not the external Codex supervisor).",
       "source_ref": "source-001.md#s11-commands",
       "classification": "obligation",
       "binding": true,
@@ -3412,7 +3412,7 @@
     },
     {
       "id": "D-024-R088",
-      "text": "Test and prove the intercepted command and its answer do not enter the Fable transcript or increase its conversational context; if the installed Claude Code version cannot provide the required pre-model interception/display behavior, do not fake it \u2014 provide a clearly documented second-terminal path using the existing supervisor CLI's status operation plus a new ask operation implemented by this directive (inspect the live CLI rather than assuming ask exists); keep the hook feature-detected, report the version requirement, and select the final supported path by actual installed-version tests.",
+      "text": "Test and prove the intercepted command and its answer do not enter the Fable transcript or increase its conversational context; if the installed Claude Code version cannot provide the required pre-model interception/display behavior, do not fake it — provide a clearly documented second-terminal path using the existing supervisor CLI's status operation plus a new ask operation implemented by this directive (inspect the live CLI rather than assuming ask exists); keep the hook feature-detected, report the version requirement, and select the final supported path by actual installed-version tests.",
       "source_ref": "source-001.md#s11-proof",
       "classification": "obligation",
       "binding": true,
@@ -3484,7 +3484,7 @@
     },
     {
       "id": "D-024-R090",
-      "text": "The loop may automatically publish permitted progress but Fable \u2014 not Codex \u2014 performs repository mutations, reusing the current branch/worktree/PR policy. At minimum: never write directly to a protected/default branch; never force-push unless existing explicit owner policy authorizes the exact case; use collision-free task branches/worktrees with known base/head identities; keep writers isolated; run required local checks before commit/push; journal every external intent before attempting it and record the confirmed result afterward; on crash/timeout reconcile remote state before retrying; make comments, pushes, PR creation/updates, and successor launch idempotent; never expose credentials in prompts, logs, diffs, process arguments, status output, or Codex review packets; never allow untrusted repository text to broaden permissions; never merge or deploy merely because a check passed; retain the owner's activation and protected-action gates.",
+      "text": "The loop may automatically publish permitted progress but Fable — not Codex — performs repository mutations, reusing the current branch/worktree/PR policy. At minimum: never write directly to a protected/default branch; never force-push unless existing explicit owner policy authorizes the exact case; use collision-free task branches/worktrees with known base/head identities; keep writers isolated; run required local checks before commit/push; journal every external intent before attempting it and record the confirmed result afterward; on crash/timeout reconcile remote state before retrying; make comments, pushes, PR creation/updates, and successor launch idempotent; never expose credentials in prompts, logs, diffs, process arguments, status output, or Codex review packets; never allow untrusted repository text to broaden permissions; never merge or deploy merely because a check passed; retain the owner's activation and protected-action gates.",
       "source_ref": "source-001.md#s12-rules",
       "classification": "obligation",
       "binding": true,
@@ -3518,7 +3518,7 @@
     },
     {
       "id": "D-024-R091",
-      "text": "Each pushed checkpoint maps to a bounded accepted task with enough evidence to review; do not accumulate one giant diff; do not drip-feed reviewers one finding at a time \u2014 complete the bounded implementation, freeze its identity, gather independent reviews, consolidate all findings, run one coordinated correction round, freeze a new identity, and re-review.",
+      "text": "Each pushed checkpoint maps to a bounded accepted task with enough evidence to review; do not accumulate one giant diff; do not drip-feed reviewers one finding at a time — complete the bounded implementation, freeze its identity, gather independent reviews, consolidate all findings, run one coordinated correction round, freeze a new identity, and re-review.",
       "source_ref": "source-001.md#s12-batching",
       "classification": "obligation",
       "binding": true,
@@ -3766,7 +3766,7 @@
     },
     {
       "id": "D-024-R098",
-      "text": "A task, session, and subagent assignment are different boundaries \u2014 do not make every task ID require a fresh model session; choose seams from workload cohesion, verified health, write-lease safety, and handoff quality; resume a healthy context when it avoids repeated repository read-in and keeps one coherent assignment together; rotate when the context is unhealthy, confused, materially out of scope, at a safe seam, or required by policy; do not restrict healthy-context reuse to a single phase or create avoidable startup churn.",
+      "text": "A task, session, and subagent assignment are different boundaries — do not make every task ID require a fresh model session; choose seams from workload cohesion, verified health, write-lease safety, and handoff quality; resume a healthy context when it avoids repeated repository read-in and keeps one coherent assignment together; rotate when the context is unhealthy, confused, materially out of scope, at a safe seam, or required by policy; do not restrict healthy-context reuse to a single phase or create avoidable startup churn.",
       "source_ref": "source-001.md#s15-seams",
       "classification": "obligation",
       "binding": true,
@@ -3821,7 +3821,7 @@
     },
     {
       "id": "D-024-R099",
-      "text": "Phase A: capture the directive and create the requirement-to-test matrix; pass Bootstrap Gate 0 from the session's actual primary working directory, then reconcile the actual workstation repository, linked worktrees, local/dirty/unpushed state, and remote state (imported-snapshot findings labeled historical until then); map current components and reusable behavior including the supervisor-freeze rule and qualifying-evidence path; verify installed CLI/SDK/hook capabilities and platform constraints \u2014 probe subagentStatusLine, UserPromptExpansion, and exact UserPromptSubmit blocking/display/context-erasure behavior rather than inferring support; record capability-probe results as deterministic fixtures (supported/unsupported/nullable/unknown) before changing control behavior; add deterministic fixtures for current state, event formats, and failure cases; prove the bootstrap continuity path before the longest implementation units \u2014 use the existing accepted supervisor/successor machinery in supervised implementation mode if safe and authorized, otherwise implement and validate the smallest safe bootstrap-continuity slice first, persisting campaign, next action, frozen identity, and handoff so successor sessions continue from this one directive without owner re-prompting.",
+      "text": "Phase A: capture the directive and create the requirement-to-test matrix; pass Bootstrap Gate 0 from the session's actual primary working directory, then reconcile the actual workstation repository, linked worktrees, local/dirty/unpushed state, and remote state (imported-snapshot findings labeled historical until then); map current components and reusable behavior including the supervisor-freeze rule and qualifying-evidence path; verify installed CLI/SDK/hook capabilities and platform constraints — probe subagentStatusLine, UserPromptExpansion, and exact UserPromptSubmit blocking/display/context-erasure behavior rather than inferring support; record capability-probe results as deterministic fixtures (supported/unsupported/nullable/unknown) before changing control behavior; add deterministic fixtures for current state, event formats, and failure cases; prove the bootstrap continuity path before the longest implementation units — use the existing accepted supervisor/successor machinery in supervised implementation mode if safe and authorized, otherwise implement and validate the smallest safe bootstrap-continuity slice first, persisting campaign, next action, frozen identity, and handoff so successor sessions continue from this one directive without owner re-prompting.",
       "source_ref": "source-001.md#s15-A",
       "classification": "obligation",
       "binding": true,
@@ -4397,7 +4397,7 @@
     },
     {
       "id": "D-024-R115",
-      "text": "Implement the full section 16.9 long-run and usability test matrix (multiple renewable epochs with forced rotations; mixed Fable/4.8 sequence; multiple bounded subagents without parent flooding; mixed main-session/healthy-resume/fresh-spawn sequence proving startup overhead considered; extended pause and clean resume; owner status/ask while producer running; crash/restart during overnight-equivalent accelerated campaign; bounded real soak/canary under the current reliability standard; idempotent no-duration one-command start; status clarity; stop leaving coherent resumable checkpoint; the implementation campaign itself crossing at least one primary-session turnover from the captured directive without owner re-prompting; a golden run of two consecutive bounded units from one start action \u2014 Codex selects, Fable produces, tests/checkpoints run, Codex reviews the frozen result, state advances, Codex selects the next unit without owner steering \u2014 crossing at least one safe primary-session rotation and one injected controller restart, then continuing without duplicated work, lost children, or conflicting writers).",
+      "text": "Implement the full section 16.9 long-run and usability test matrix (multiple renewable epochs with forced rotations; mixed Fable/4.8 sequence; multiple bounded subagents without parent flooding; mixed main-session/healthy-resume/fresh-spawn sequence proving startup overhead considered; extended pause and clean resume; owner status/ask while producer running; crash/restart during overnight-equivalent accelerated campaign; bounded real soak/canary under the current reliability standard; idempotent no-duration one-command start; status clarity; stop leaving coherent resumable checkpoint; the implementation campaign itself crossing at least one primary-session turnover from the captured directive without owner re-prompting; a golden run of two consecutive bounded units from one start action — Codex selects, Fable produces, tests/checkpoints run, Codex reviews the frozen result, state advances, Codex selects the next unit without owner steering — crossing at least one safe primary-session rotation and one injected controller restart, then continuing without duplicated work, lost children, or conflicting writers).",
       "source_ref": "source-001.md#s16.9",
       "classification": "harness",
       "binding": true,
@@ -13862,6 +13862,216 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 25
+    },
+    {
+      "id": "D-024-R410",
+      "text": "Prepare M0-T109 as the sole commissioning successor under the normal Tier A control process: complete packet, claim, and isolated worktree.",
+      "source_ref": "source-026-amendment.md#successor-preparation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R411",
+      "text": "Write a one-entry packet queue file whose only entry is M0-T109, in the load_task_queue format the commissioning protocol section 3 defines.",
+      "source_ref": "source-026-amendment.md#successor-preparation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R412",
+      "text": "After preparation, run the complete M0-T129 commissioning-protocol section-2 preflight (every row) at the then-current tip and report it.",
+      "source_ref": "source-026-amendment.md#successor-preparation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R413",
+      "text": "Keep M0-T107, its worktree wt-m0t107, PR #241, and the preserved journal untouched throughout the preparation.",
+      "source_ref": "source-026-amendment.md#preservation-and-prohibition",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R414",
+      "text": "Do not execute either commissioning-protocol section-4 owner command (reaffirms D-024-R409; owner-typed only).",
+      "source_ref": "source-026-amendment.md#preservation-and-prohibition",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R415",
+      "text": "The preflight report must explicitly state whether a one-task queue is sufficient to prove all seven R393 commissioning facts.",
+      "source_ref": "source-026-amendment.md#sufficiency-report-and-stop",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R416",
+      "text": "If the protocol requires an actual M0-T109-to-second-task advancement to prove any commissioning fact, stop at that finding, identify the eligible successor candidates from the live ledger, and never add a second queue entry without the owner decision.",
+      "source_ref": "source-026-amendment.md#sufficiency-report-and-stop",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 26
     }
   ]
 }

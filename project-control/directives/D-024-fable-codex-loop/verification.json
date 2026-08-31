@@ -1616,7 +1616,7 @@
           "id": "D-024-R002",
           "state": "PASS",
           "evidence": [
-            "No readiness/activation claim anywhere; unit is pre-spawn planning records only. `subagent_contracts.py` docstring + report \u00c2\u00a71 \"supervisor stays SHADOW-ONLY (R595 untouched)\"."
+            "No readiness/activation claim anywhere; unit is pre-spawn planning records only. `subagent_contracts.py` docstring + report Â§1 \"supervisor stays SHADOW-ONLY (R595 untouched)\"."
           ],
           "note": "conduct; one-prompt continuity/transport/restart/golden-run owed to M0-T092/T096, not claimed."
         },
@@ -1666,13 +1666,13 @@
           "evidence": [
             "`D-024-R101` cited in packet objective (`tasks/M0-T090.json`), **every** one of the 5 module docstrings (closing line \"Supervisor-freeze qualifying evidence: D-024-R101.\"), and commit `e8b21d1` header + body."
           ],
-          "note": "impl/conduct; freeze \u00c2\u00a73 satisfied."
+          "note": "impl/conduct; freeze Â§3 satisfied."
         },
         {
           "id": "D-024-R018",
           "state": "PASS",
           "evidence": [
-            "Report \u00c2\u00a74 records distinct-axis (rotation SMALL/MEDIUM/LARGE not overloaded) + reuse of `context_pack_budget` tiers + telemetry records; no duplicate machinery."
+            "Report Â§4 records distinct-axis (rotation SMALL/MEDIUM/LARGE not overloaded) + reuse of `context_pack_budget` tiers + telemetry records; no duplicate machinery."
           ],
           "note": "impl."
         },
@@ -1706,13 +1706,13 @@
           "evidence": [
             "Mechanical (not prose) enforcement delivered at contract level: `ROLES` vocabulary (read_only/review_only/write), `assert_grantable` refuses overlapping write scopes/resources + producer cap, `validate_pair` refuses lease-without-write."
           ],
-          "note": "impl (contract-level share); Codex-transport-specific mechanical enforcement (read-only worktree/allowlists) owed to M0-T092/T096 \u00e2\u20ac\u201d nothing here weakens it."
+          "note": "impl (contract-level share); Codex-transport-specific mechanical enforcement (read-only worktree/allowlists) owed to M0-T092/T096 â€” nothing here weakens it."
         },
         {
           "id": "D-024-R025",
           "state": "PASS",
           "evidence": [
-            "No dispatch/accept path added; `SpawnDecision.to_dict` records only \u00e2\u20ac\u201d nothing acts on a decision."
+            "No dispatch/accept path added; `SpawnDecision.to_dict` records only â€” nothing acts on a decision."
           ],
           "note": "conduct/no-violation."
         },
@@ -1728,7 +1728,7 @@
           "id": "D-024-R042",
           "state": "PASS",
           "evidence": [
-            "`validate_envelope` checks `telemetry_confidence` \u00e2\u02c6\u02c6 `CONFIDENCE_LABELS` (closed vocab); `StartupObservation.to_record` labels measurements `estimated`/`Measurement.unknown` for `None` (unknown never zero); `test_envelope_validation_fail_closed`, `test_unmeasured_startup_values_stay_unknown_never_zero`."
+            "`validate_envelope` checks `telemetry_confidence` âˆˆ `CONFIDENCE_LABELS` (closed vocab); `StartupObservation.to_record` labels measurements `estimated`/`Measurement.unknown` for `None` (unknown never zero); `test_envelope_validation_fail_closed`, `test_unmeasured_startup_values_stay_unknown_never_zero`."
           ],
           "note": "impl (label share)."
         },
@@ -1736,7 +1736,7 @@
           "id": "D-024-R045",
           "state": "PASS",
           "evidence": [
-            "`assert_worker_text_clean` runs over `worker_text_fields()` (**every** string + tuple-item field) AND re-scans the rendered prompt (\"rendered_prompt\"); 10 fail-closed pattern classes. Tests: `test_worker_prompt_contains_no_quota_language` (INDEPENDENT scan, line 262\u00e2\u20ac\u201c278, not the guard's own table), `test_quota_language_rejected_fail_closed` (8 phrasings incl. \"About 3.5k tokens should suffice\"), `test_quota_guard_covers_every_worker_field`."
+            "`assert_worker_text_clean` runs over `worker_text_fields()` (**every** string + tuple-item field) AND re-scans the rendered prompt (\"rendered_prompt\"); 10 fail-closed pattern classes. Tests: `test_worker_prompt_contains_no_quota_language` (INDEPENDENT scan, line 262â€“278, not the guard's own table), `test_quota_language_rejected_fail_closed` (8 phrasings incl. \"About 3.5k tokens should suffice\"), `test_quota_guard_covers_every_worker_field`."
           ],
           "note": "impl; positive primary evidence + rendered-prompt re-scan confirmed."
         },
@@ -1746,7 +1746,7 @@
           "evidence": [
             "Contract scaffolding present: `HealthBands` (occupancy ladder) + `DetectorPolicy` (no_progress_window, repeated_attempt_limit, scope_drift) as envelope fields."
           ],
-          "note": "deferred-share; the full runtime health-score evaluation against telemetry owed to M0-T091/T092 \u00e2\u20ac\u201d report \u00c2\u00a71 scopes runtime enforcement as deferred (verified honest)."
+          "note": "deferred-share; the full runtime health-score evaluation against telemetry owed to M0-T091/T092 â€” report Â§1 scopes runtime enforcement as deferred (verified honest)."
         },
         {
           "id": "D-024-R047",
@@ -1760,7 +1760,7 @@
           "id": "D-024-R048",
           "state": "PASS",
           "evidence": [
-            "`workload_classifier.py`: `WORK_CLASSES` closed 4-tuple, deterministic rule precedence, conservative unknown (`no_objective_features`, `cohesion_unproven` \u00e2\u2020\u2019 unknown-recon-first). Tests for all four classes + `test_cohesion_unproven_is_never_optimistic`."
+            "`workload_classifier.py`: `WORK_CLASSES` closed 4-tuple, deterministic rule precedence, conservative unknown (`no_objective_features`, `cohesion_unproven` â†’ unknown-recon-first). Tests for all four classes + `test_cohesion_unproven_is_never_optimistic`."
           ],
           "note": "impl."
         },
@@ -1784,9 +1784,9 @@
           "id": "D-024-R051",
           "state": "PASS",
           "evidence": [
-            "Grep of 5 modules: no `maxTurns`/`maxBudget`/`max_turns`/`max_budget` used as a cap \u00e2\u20ac\u201d the only `max...spend` token is the R045 *rejection* pattern that bans such phrasing from worker text. `emergency_ceiling_note` is a private envelope field."
+            "Grep of 5 modules: no `maxTurns`/`maxBudget`/`max_turns`/`max_budget` used as a cap â€” the only `max...spend` token is the R045 *rejection* pattern that bans such phrasing from worker text. `emergency_ceiling_note` is a private envelope field."
           ],
-          "note": "impl; catastrophic-ceiling *recovery test* deferred with runtime units (report \u00c2\u00a71 honest)."
+          "note": "impl; catastrophic-ceiling *recovery test* deferred with runtime units (report Â§1 honest)."
         },
         {
           "id": "D-024-R052",
@@ -1800,7 +1800,7 @@
           "id": "D-024-R053",
           "state": "PASS",
           "evidence": [
-            "`ExistingSubagentHealth.overloaded_or_confused` blocks resume regardless of counters; `decide_spawn` \u00e2\u2020\u2019 `unhealthy_not_resumed`; `test_overloaded_subagent_never_resumed_to_save_startup`."
+            "`ExistingSubagentHealth.overloaded_or_confused` blocks resume regardless of counters; `decide_spawn` â†’ `unhealthy_not_resumed`; `test_overloaded_subagent_never_resumed_to_save_startup`."
           ],
           "note": "impl; directly implemented at decision level."
         },
@@ -1810,7 +1810,7 @@
           "evidence": [
             "**Every s6 bullet has a field.** WorkerAssignment covers all 15 worker-facing items (IDs, exact_change, necessity, role, permitted_paths+tools, prohibited_areas+external_effects, deliverable_schema, acceptance_criteria, required_evidence, checkpoints, blocker_reporting, checkpoint_commit_allowed, extension_protocol, unrelated_discovery, handoff_requirements). SupervisionEnvelope covers all 10 controller items (size_class+cohesion_rationale, graph_files/symbols/tests+write_lease_paths/lease_resources, startup_overhead_note+packet_reuse_plan, resolved_model+model_context_window, telemetry_sources+confidence, health_bands+emergency_ceiling_note, detectors, landing_opportunities, extension_criteria, evidence_inspection_plan). `validate_pair`; `test_envelope_validation_fail_closed`."
           ],
-          "note": "impl; field-by-field cross-check against source-001 \u00c2\u00a76 bullets completed \u00e2\u20ac\u201d no missing field."
+          "note": "impl; field-by-field cross-check against source-001 Â§6 bullets completed â€” no missing field."
         },
         {
           "id": "D-024-R056",
@@ -1840,7 +1840,7 @@
           "id": "D-024-R059",
           "state": "PASS",
           "evidence": [
-            "Classifier keeps `requires_frequent_parent_decisions`/`phases_share_substantial_context` in main; `model_fit` routes lower tier only with window \u00e2\u2030\u00a5 target\u00c3\u2014headroom AND demonstrated capability, conservative on unknowns; `test_lower_tier_model_needs_window_and_demonstrated_capability` (all 4 branches)."
+            "Classifier keeps `requires_frequent_parent_decisions`/`phases_share_substantial_context` in main; `model_fit` routes lower tier only with window â‰¥ targetÃ—headroom AND demonstrated capability, conservative on unknowns; `test_lower_tier_model_needs_window_and_demonstrated_capability` (all 4 branches)."
           ],
           "note": "impl."
         },
@@ -1856,7 +1856,7 @@
           "id": "D-024-R061",
           "state": "PASS",
           "evidence": [
-            "Classifier `requires_frequent_parent_decisions` \u00e2\u2020\u2019 main-session; cohesive-subagent for self-contained; `deliverable_schema`/`return schema` bounds returned summary."
+            "Classifier `requires_frequent_parent_decisions` â†’ main-session; cohesive-subagent for self-contained; `deliverable_schema`/`return schema` bounds returned summary."
           ],
           "note": "impl (classifier/design share); verbose-transcript-out-of-context runtime behavior deferred (honest)."
         },
@@ -1874,7 +1874,7 @@
           "evidence": [
             "`DEFAULT_EXTENSION_PROTOCOL` carries the s6.1 return list (proven / uncertain / why-blocks-acceptance / least-costly-next / additional-scope+natural-completion-point / resume-vs-new / consequences / durable-partial-checkpoint); envelope `extension_criteria` for controller side. `test_rendered_prompt_carries_required_duties`."
           ],
-          "note": "impl. **Advisory (non-blocking):** the default worker text compresses s6.1's \"additional scope, **likely evidence sources**, and natural completion point\" to \"additional scope and its natural completion point\" \u00e2\u20ac\u201d the explicit *likely-evidence-sources* clause is absent from the overridable default (7 of 8 sub-items verbatim). Field is present and overridable; Codex approve/deny runtime gate deferred. Recommend a follow-up unit add the clause. Does not weaken the guard."
+          "note": "impl. **Advisory (non-blocking):** the default worker text compresses s6.1's \"additional scope, **likely evidence sources**, and natural completion point\" to \"additional scope and its natural completion point\" â€” the explicit *likely-evidence-sources* clause is absent from the overridable default (7 of 8 sub-items verbatim). Field is present and overridable; Codex approve/deny runtime gate deferred. Recommend a follow-up unit add the clause. Does not weaken the guard."
         },
         {
           "id": "D-024-R064",
@@ -1888,7 +1888,7 @@
           "id": "D-024-R079",
           "state": "PASS",
           "evidence": [
-            "Graph subsystem NOT edited; `neighborhood_from_view` adapts `repo_views` dict shape by value; no graph/index import in the package (leaf preserved); report \u00c2\u00a74."
+            "Graph subsystem NOT edited; `neighborhood_from_view` adapts `repo_views` dict shape by value; no graph/index import in the package (leaf preserved); report Â§4."
           ],
           "note": "impl/no-violation."
         },
@@ -1896,7 +1896,7 @@
           "id": "D-024-R080",
           "state": "PASS",
           "evidence": [
-            "`WorkloadFeatures.graph_stale` \u00e2\u2020\u2019 unknown-recon-first; `tier_signals` raises `stale_graph`; `neighborhood_from_view` fails closed on malformed views; `test_stale_graph_is_reported_never_used`, `test_malformed_view_fails_closed`."
+            "`WorkloadFeatures.graph_stale` â†’ unknown-recon-first; `tier_signals` raises `stale_graph`; `neighborhood_from_view` fails closed on malformed views; `test_stale_graph_is_reported_never_used`, `test_malformed_view_fails_closed`."
           ],
           "note": "impl."
         },
@@ -1930,15 +1930,15 @@
           "evidence": [
             "Phase C items 1 (schemas), 2 (classifier), 3 (startup measurement + goldilocks/resume/fork), 5 (graph sizing + packet plans) delivered; item 4 contract-level guards (cap/lease/no-quota) delivered."
           ],
-          "note": "deferred-share; runtime enforcement + item 6 (landing direction, emergency stop, child handoffs) owed to remaining Phase C/D units \u00e2\u20ac\u201d report \u00c2\u00a71 explicitly and honestly defers; nothing here forecloses them."
+          "note": "deferred-share; runtime enforcement + item 6 (landing direction, emergency stop, child handoffs) owed to remaining Phase C/D units â€” report Â§1 explicitly and honestly defers; nothing here forecloses them."
         },
         {
           "id": "D-024-R108",
           "state": "PASS",
           "evidence": [
-            "s16.2 SIZING subset (15 rows) mapped to named tests in report \u00c2\u00a72 and reproduced in the test file (vague/oversized/tiny/resume/overloaded/fork/cohesive/split/unknown/stale/startup-metrics/lower-tier/producer-cap/lease-overlap/nested-children-no-evade + independent no-quota proof)."
+            "s16.2 SIZING subset (15 rows) mapped to named tests in report Â§2 and reproduced in the test file (vague/oversized/tiny/resume/overloaded/fork/cohesive/split/unknown/stale/startup-metrics/lower-tier/producer-cap/lease-overlap/nested-children-no-evade + independent no-quota proof)."
           ],
-          "note": "harness/deferred-share; runtime rows (landing behaviors, TaskStop-for-emergency, catastrophic-ceiling recovery proof, child turnover, 40-min investigation) honestly owed to later Phase C/D units per report \u00c2\u00a71\u00e2\u20ac\u201c\u00c2\u00a72 (verified \u00e2\u20ac\u201d not falsely claimed)."
+          "note": "harness/deferred-share; runtime rows (landing behaviors, TaskStop-for-emergency, catastrophic-ceiling recovery proof, child turnover, 40-min investigation) honestly owed to later Phase C/D units per report Â§1â€“Â§2 (verified â€” not falsely claimed)."
         },
         {
           "id": "D-024-R120",
@@ -2552,7 +2552,7 @@
           "id": "D-024-R002",
           "state": "PASS",
           "evidence": [
-            "This-unit readiness share only: the refusal-policy leg of one-prompt continuity \u2014 a recognized refusal is journaled+held and the re-entry/bridge policy is deterministic (refusal_bridge.py, guardrail_refusal.py; S1/S12/S13). Boundary: the two-unit golden run from the exact owner start command is owed by M0-T096, not claimed here \u2014 correctly scoped, not overclaimed."
+            "This-unit readiness share only: the refusal-policy leg of one-prompt continuity — a recognized refusal is journaled+held and the re-entry/bridge policy is deterministic (refusal_bridge.py, guardrail_refusal.py; S1/S12/S13). Boundary: the two-unit golden run from the exact owner start command is owed by M0-T096, not claimed here — correctly scoped, not overclaimed."
           ]
         },
         {
@@ -2573,21 +2573,21 @@
           "id": "D-024-R007",
           "state": "PASS",
           "evidence": [
-            "Successor implemented from the frozen staged pack + captured directive alone (packet inputs cite source-001.md sha256 0611bb45...; progress_log shows seq-19 stage \u2192 seq-20 implement). No owner re-paste; corroborated by the durable packet/report structure, not a bare narrative."
+            "Successor implemented from the frozen staged pack + captured directive alone (packet inputs cite source-001.md sha256 0611bb45...; progress_log shows seq-19 stage → seq-20 implement). No owner re-paste; corroborated by the durable packet/report structure, not a bare narrative."
           ]
         },
         {
           "id": "D-024-R008",
           "state": "PASS",
           "evidence": [
-            "No routine owner questions surfaced in the diff/report; the only owner-gated items (C1 live canary, live actuation) are FLAGGED in fixture+report (\u00a72, \u00a74.5), not asked \u2014 matches the \"stop only for a real authorization boundary\" rule."
+            "No routine owner questions surfaced in the diff/report; the only owner-gated items (C1 live canary, live actuation) are FLAGGED in fixture+report (§2, §4.5), not asked — matches the \"stop only for a real authorization boundary\" rule."
           ]
         },
         {
           "id": "D-024-R010",
           "state": "PASS",
           "evidence": [
-            "`gh pr view 241` \u2192 state=OPEN, mergedAt=null, base=main. `git merge-base --is-ancestor b587720 origin/main` \u2192 false; commit 633a9d1 present only on control/D-024-fable-codex-loop. Nothing merged."
+            "`gh pr view 241` → state=OPEN, mergedAt=null, base=main. `git merge-base --is-ancestor b587720 origin/main` → false; commit 633a9d1 present only on control/D-024-fable-codex-loop. Nothing merged."
           ]
         },
         {
@@ -2601,7 +2601,7 @@
           "id": "D-024-R018",
           "state": "PASS",
           "evidence": [
-            "Reuse proven, no duplication: model_turnover.py additive public aliases LIMIT_HINT_PATTERN/PERMISSION_DENIED_PATTERN/normalize_output_text/references_fable (diff verified) are REUSED by the classifier (guardrail_refusal.py:42-51, 363-374); no conflicting older impl. Reuse boundary table in report \u00a70."
+            "Reuse proven, no duplication: model_turnover.py additive public aliases LIMIT_HINT_PATTERN/PERMISSION_DENIED_PATTERN/normalize_output_text/references_fable (diff verified) are REUSED by the classifier (guardrail_refusal.py:42-51, 363-374); no conflicting older impl. Reuse boundary table in report §0."
           ]
         },
         {
@@ -2615,7 +2615,7 @@
           "id": "D-024-R021",
           "state": "PASS",
           "evidence": [
-            "No Codex action surface touched; the module adds no Codex verbs \u2014 refusal_bridge.py is pure deterministic policy over verdicts + committed machinery (no process launch, no interface click, no messaging; module docstring + code inspection)."
+            "No Codex action surface touched; the module adds no Codex verbs — refusal_bridge.py is pure deterministic policy over verdicts + committed machinery (no process launch, no interface click, no messaging; module docstring + code inspection)."
           ]
         },
         {
@@ -2629,7 +2629,7 @@
           "id": "D-024-R025",
           "state": "PASS",
           "evidence": [
-            "Fail-closed classifier: unknown/ambiguous/unrecognized/unattributable/authorization-unproven evidence \u2192 AMBIGUOUS_FAIL_CLOSED, never actuates (guardrail_refusal.py:319-463; S3:289-350). A non-recognized verdict authorizes nothing."
+            "Fail-closed classifier: unknown/ambiguous/unrecognized/unattributable/authorization-unproven evidence → AMBIGUOUS_FAIL_CLOSED, never actuates (guardrail_refusal.py:319-463; S3:289-350). A non-recognized verdict authorizes nothing."
           ]
         },
         {
@@ -2643,7 +2643,7 @@
           "id": "D-024-R045",
           "state": "PASS",
           "evidence": [
-            "assert_worker_text_clean runs over the re-presentation (refusal_bridge.py:499) and S16:828-839 proves the record + representation carry no token/countdown/conserve pressure language; journal record bounded \u22641200 chars + redacted (S1:205-214, sk-ant- masked)."
+            "assert_worker_text_clean runs over the re-presentation (refusal_bridge.py:499) and S16:828-839 proves the record + representation carry no token/countdown/conserve pressure language; journal record bounded ≤1200 chars + redacted (S1:205-214, sk-ant- masked)."
           ]
         },
         {
@@ -2685,21 +2685,21 @@
           "id": "D-024-R073",
           "state": "PASS",
           "evidence": [
-            "assert_semantic_preserved (refusal_bridge.py:507-600) refuses each prohibited transform with its own typed code \u2014 purpose_altered/authorization_altered(escalation)/constraint_deleted/criteria_altered/request_fragmented/different_task/encoded_content; narrowing may ADD only. S11:602-647; euphemism excluded structurally by verbatim containment. M10 mutant documented killed."
+            "assert_semantic_preserved (refusal_bridge.py:507-600) refuses each prohibited transform with its own typed code — purpose_altered/authorization_altered(escalation)/constraint_deleted/criteria_altered/request_fragmented/different_task/encoded_content; narrowing may ADD only. S11:602-647; euphemism excluded structurally by verbatim containment. M10 mutant documented killed."
           ]
         },
         {
           "id": "D-024-R074",
           "state": "PASS",
           "evidence": [
-            "bridge_output_disposition never accepts on completion \u2014 no/unrecognized verdict \u2192 review_required, FAIL/BLOCKED \u2192 rejected, only independent PASS \u2192 accepted (refusal_bridge.py:365-388; S10:563-578)."
+            "bridge_output_disposition never accepts on completion — no/unrecognized verdict → review_required, FAIL/BLOCKED → rejected, only independent PASS → accepted (refusal_bridge.py:365-388; S10:563-578)."
           ]
         },
         {
           "id": "D-024-R075",
           "state": "PASS",
           "evidence": [
-            "Both directions proven distinct: classifier delegates quota FIRST (guardrail_refusal.py:363-374) so exhaustion never classifies as refusal, and classify_exhaustion never returns FABLE_EXHAUSTED on refusal shapes (S2:249-272); loop consults quota seam (loop.py:1580) BEFORE guardrail seam (1603) \u2014 quota-first test at S:1106-1120; codes/keys disjoint (S16:841-857); quota detect-and-hold policy byte-untouched."
+            "Both directions proven distinct: classifier delegates quota FIRST (guardrail_refusal.py:363-374) so exhaustion never classifies as refusal, and classify_exhaustion never returns FABLE_EXHAUSTED on refusal shapes (S2:249-272); loop consults quota seam (loop.py:1580) BEFORE guardrail seam (1603) — quota-first test at S:1106-1120; codes/keys disjoint (S16:841-857); quota detect-and-hold policy byte-untouched."
           ]
         },
         {
@@ -2713,21 +2713,21 @@
           "id": "D-024-R080",
           "state": "PASS",
           "evidence": [
-            "Stale graph is reported and refused, never acted on as fact \u2014 graph_stale \u2192 DECISION_BLOCKED reason_code workload_not_continuable (S13:754-772). Ledger/git/CI/directive remain authoritative in the policy."
+            "Stale graph is reported and refused, never acted on as fact — graph_stale → DECISION_BLOCKED reason_code workload_not_continuable (S13:754-772). Ledger/git/CI/directive remain authoritative in the policy."
           ]
         },
         {
           "id": "D-024-R098",
           "state": "PASS",
           "evidence": [
-            "This-unit share: bridge retires at the FIRST safe seam (BridgeRestrictions.retire, refusal_bridge.py:334-353; state edge GUARDRAIL_BRIDGE\u2192PREPARE_ROTATION \"bridge_first_seam_reached\"), healthy bounded children finish through the existing TurnoverCoordinator (S8:514-525), and the digest-bound counter prevents avoidable re-entry churn."
+            "This-unit share: bridge retires at the FIRST safe seam (BridgeRestrictions.retire, refusal_bridge.py:334-353; state edge GUARDRAIL_BRIDGE→PREPARE_ROTATION \"bridge_first_seam_reached\"), healthy bounded children finish through the existing TurnoverCoordinator (S8:514-525), and the digest-bound counter prevents avoidable re-entry churn."
           ]
         },
         {
           "id": "D-024-R103",
           "state": "PASS",
           "evidence": [
-            "Phase E delivered end-to-end and independently reproduced: exact refusal classification, allowlisted-continuation (intent-recorded), mechanically restricted 4.8 bridge, first-safe-seam return to fresh Fable, semantic-preserving re-presentation + durable two-attempt cap, lower-tier-or-blocked. Activated state-path walk S:914-931 walks refusal\u2192bridge\u2192seam\u2192fresh\u2192re-present\u2192accept/repeat/cap-blocked. Live actuation owner-gated."
+            "Phase E delivered end-to-end and independently reproduced: exact refusal classification, allowlisted-continuation (intent-recorded), mechanically restricted 4.8 bridge, first-safe-seam return to fresh Fable, semantic-preserving re-presentation + durable two-attempt cap, lower-tier-or-blocked. Activated state-path walk S:914-931 walks refusal→bridge→seam→fresh→re-present→accept/repeat/cap-blocked. Live actuation owner-gated."
           ]
         },
         {
@@ -2748,35 +2748,35 @@
           "id": "D-024-R125",
           "state": "PASS",
           "evidence": [
-            "This-session share, boundary stated: Gate-0 launch-root recorded passed BEFORE any write (report \u00a74: show-toplevel = worktree root, branch control/D-024-fable-codex-loop, clean start). Corroborated post-hoc \u2014 repo is a proper worktree at the expected root, correct branch, clean lineage, and all root-dependent tooling (project_control, modularity, directive registry) resolves. The runtime launch fact rests on recorded evidence; nothing contradicts it."
+            "This-session share, boundary stated: Gate-0 launch-root recorded passed BEFORE any write (report §4: show-toplevel = worktree root, branch control/D-024-fable-codex-loop, clean start). Corroborated post-hoc — repo is a proper worktree at the expected root, correct branch, clean lineage, and all root-dependent tooling (project_control, modularity, directive registry) resolves. The runtime launch fact rests on recorded evidence; nothing contradicts it."
           ]
         },
         {
           "id": "D-024-R126",
           "state": "PASS",
           "evidence": [
-            "This-session share, boundary stated: MCP-clean recorded passed (report \u00a74: zero mcp__* entries enumerated). The diff contains no MCP-connector usage and the unit adds no MCP surface. Boundary: the live server enumeration is a session-runtime fact not independently reproducible from frozen artifacts; ruled PASS on recorded evidence + absence of any contradicting MCP artifact (M0-T094 convention)."
+            "This-session share, boundary stated: MCP-clean recorded passed (report §4: zero mcp__* entries enumerated). The diff contains no MCP-connector usage and the unit adds no MCP surface. Boundary: the live server enumeration is a session-runtime fact not independently reproducible from frozen artifacts; ruled PASS on recorded evidence + absence of any contradicting MCP artifact (M0-T094 convention)."
           ]
         },
         {
           "id": "D-024-R127",
           "state": "PASS",
           "evidence": [
-            "Not triggered: both Gate-0 checks recorded passing and no writes preceded them (report \u00a74). No unknown/failed Gate-0 state to force read-only diagnosis. Consistent with clean repo state."
+            "Not triggered: both Gate-0 checks recorded passing and no writes preceded them (report §4). No unknown/failed Gate-0 state to force read-only diagnosis. Consistent with clean repo state."
           ]
         },
         {
           "id": "D-024-R128",
           "state": "PASS",
           "evidence": [
-            "Not triggered: no failed-start session's uncommitted work was adopted; the session started clean at the recorded seam (HEAD 84f658e clean == origin at start, report \u00a74). No history rewrite/discard."
+            "Not triggered: no failed-start session's uncommitted work was adopted; the session started clean at the recorded seam (HEAD 84f658e clean == origin at start, report §4). No history rewrite/discard."
           ]
         },
         {
           "id": "D-024-R139",
           "state": "PASS",
           "evidence": [
-            "HOLD satisfied before the claim: campaign D-024-fable-codex-loop.json state=active (durable capture/conversion complete), and M0-T092 status=accepted (dependency) verified before M0-T093 was claimed \u2014 dependency-ordered, per the re-baseline campaign."
+            "HOLD satisfied before the claim: campaign D-024-fable-codex-loop.json state=active (durable capture/conversion complete), and M0-T092 status=accepted (dependency) verified before M0-T093 was claimed — dependency-ordered, per the re-baseline campaign."
           ]
         },
         {
@@ -2790,7 +2790,7 @@
           "id": "D-024-R143",
           "state": "PASS",
           "evidence": [
-            "This-unit share: no duplicate machinery \u2014 the unit composes existing surfaces (model_turnover, approved_models, child_handoff/TurnoverCoordinator, handoff, durable_state, workload_classifier, spawn_decision) and DOCUMENTS the native fallbackModel boundary (fallback_model_scope, refusal_bridge.py:779-795) rather than rebuilding it."
+            "This-unit share: no duplicate machinery — the unit composes existing surfaces (model_turnover, approved_models, child_handoff/TurnoverCoordinator, handoff, durable_state, workload_classifier, spawn_decision) and DOCUMENTS the native fallbackModel boundary (fallback_model_scope, refusal_bridge.py:779-795) rather than rebuilding it."
           ]
         },
         {
@@ -2811,7 +2811,7 @@
           "id": "D-024-R149",
           "state": "PASS",
           "evidence": [
-            "No documented feature assumed: the corpus ships verified_live=false everywhere, asserted by test (S1:174-182, REFUSAL_SHAPE_VERIFIED False); live actuation additionally requires the owner-gated measured-live C1 capture \u2014 assert_actuation_permitted refuses both half-gates (S6:447-457). Installed-version bytes flagged pending, not assumed."
+            "No documented feature assumed: the corpus ships verified_live=false everywhere, asserted by test (S1:174-182, REFUSAL_SHAPE_VERIFIED False); live actuation additionally requires the owner-gated measured-live C1 capture — assert_actuation_permitted refuses both half-gates (S6:447-457). Installed-version bytes flagged pending, not assumed."
           ]
         },
         {
@@ -2825,7 +2825,7 @@
           "id": "D-024-R165",
           "state": "PASS",
           "evidence": [
-            "refusal_bridge.py fallback_model_scope (lines 779-795) returns native_fallback_scope=\"supported availability/overload cases only\" with native_fallback_governs_guardrail_refusals=False and native_fallback_governs_quota_exhaustion=False as fixed constants that do NOT vary with the native_fallback_configured flag; S15FallbackModelBoundaryTests.test_native_fallback_scope_is_fixed_regardless_of_config (tools/test_agent_supervisor_guardrail_bridge.py:812-819) reproduces this for configured in (True, False), asserting both governs flags stay False and the scope names availability/overload \u2014 proving native fallbackModel never silently replaces the custom guardrail-refusal or quota policies."
+            "refusal_bridge.py fallback_model_scope (lines 779-795) returns native_fallback_scope=\"supported availability/overload cases only\" with native_fallback_governs_guardrail_refusals=False and native_fallback_governs_quota_exhaustion=False as fixed constants that do NOT vary with the native_fallback_configured flag; S15FallbackModelBoundaryTests.test_native_fallback_scope_is_fixed_regardless_of_config (tools/test_agent_supervisor_guardrail_bridge.py:812-819) reproduces this for configured in (True, False), asserting both governs flags stay False and the scope names availability/overload — proving native fallbackModel never silently replaces the custom guardrail-refusal or quota policies."
           ]
         },
         {
@@ -2839,14 +2839,14 @@
           "id": "D-024-R177",
           "state": "PASS",
           "evidence": [
-            "This-unit share, boundary stated: unit H's refusal-bridge leg delivered as H1 (guardrail_refusal.py + refusal_bridge.py + states + seam + matrix). Boundary: the remaining unit-H items (root-cause repair gate, exact-once GitHub effects, graph-regression) are explicitly M0-T095's H2 packet, not claimed here \u2014 correctly partitioned, no gap masked."
+            "This-unit share, boundary stated: unit H's refusal-bridge leg delivered as H1 (guardrail_refusal.py + refusal_bridge.py + states + seam + matrix). Boundary: the remaining unit-H items (root-cause repair gate, exact-once GitHub effects, graph-regression) are explicitly M0-T095's H2 packet, not claimed here — correctly partitioned, no gap masked."
           ]
         },
         {
           "id": "D-024-R180",
           "state": "PASS",
           "evidence": [
-            "Replace-not-layer honored: the pending_prompt.py split is a facade-preserving move \u2014 loop.py re-exports every public name (loop.py:342-352) and I verified the 7 moved functions + APPROVAL_DIGEST_FIELDS/OPERATOR_APPROVAL_EVENT are byte-identical between old loop.py@84f658e and new pending_prompt.py (AST source comparison: 0 body mismatches). One active backend; 34 accepted facade tests pass. Refusal policy is distinct from, not parallel to, the quota policy."
+            "Replace-not-layer honored: the pending_prompt.py split is a facade-preserving move — loop.py re-exports every public name (loop.py:342-352) and I verified the 7 moved functions + APPROVAL_DIGEST_FIELDS/OPERATOR_APPROVAL_EVENT are byte-identical between old loop.py@84f658e and new pending_prompt.py (AST source comparison: 0 body mismatches). One active backend; 34 accepted facade tests pass. Refusal policy is distinct from, not parallel to, the quota policy."
           ]
         },
         {
@@ -2860,7 +2860,7 @@
           "id": "D-024-R182",
           "state": "PASS",
           "evidence": [
-            "Mandatory testing method honored: deterministic fixtures, a REAL reopened journal for restart proof (S14), hand-picked mutants run serially (report \u00a74.3), no token-burning threshold proofs \u2014 whole matrix reproduced in ~1.4s. Corroborated by my rerun."
+            "Mandatory testing method honored: deterministic fixtures, a REAL reopened journal for restart proof (S14), hand-picked mutants run serially (report §4.3), no token-burning threshold proofs — whole matrix reproduced in ~1.4s. Corroborated by my rerun."
           ]
         },
         {
@@ -2881,7 +2881,7 @@
           "id": "D-024-R185",
           "state": "PASS",
           "evidence": [
-            "This-unit share, boundary stated: existing suite stays green (composed chunked run report \u00a74.4 \u2014 2,669 ran / 0 failures; internally consistent and corroborated by my independent reruns of the guardrail + facade + succession packs); mutation gates present and reproduced (S7:484-498 hardcoded forbidden-op names kills M7; S12:681-691 success-at-cap kills M6; S11 kills M10; S13 cap kills M5); 4-reviewer independent review at the frozen identity is this gate cycle. Boundary: the GitHub-exactly-once/crash-recovery proof items belong to unit H2 (M0-T095) per R177, not this unit; mutation runs are producer-documented, corroborated by the specific killing assertions I read."
+            "This-unit share, boundary stated: existing suite stays green (composed chunked run report §4.4 — 2,669 ran / 0 failures; internally consistent and corroborated by my independent reruns of the guardrail + facade + succession packs); mutation gates present and reproduced (S7:484-498 hardcoded forbidden-op names kills M7; S12:681-691 success-at-cap kills M6; S11 kills M10; S13 cap kills M5); 4-reviewer independent review at the frozen identity is this gate cycle. Boundary: the GitHub-exactly-once/crash-recovery proof items belong to unit H2 (M0-T095) per R177, not this unit; mutation runs are producer-documented, corroborated by the specific killing assertions I read."
           ]
         },
         {
@@ -2989,7 +2989,7 @@
           "id": "D-024-R008",
           "state": "PASS",
           "evidence": [
-            "Report \u00a72 flags the sole owner-gated item (R595 live publication) as flagged-not-asked; no blocker/question record exists for routine implementation questions.",
+            "Report §2 flags the sole owner-gated item (R595 live publication) as flagged-not-asked; no blocker/question record exists for routine implementation questions.",
             "verified-at: project-control/reports/M0-T095-repair-gate.md;project-control/blockers"
           ]
         },
@@ -3109,7 +3109,7 @@
           "id": "D-024-R090",
           "state": "PASS",
           "evidence": [
-            "The R090 duty set is proven per \u00a74.1: I read and confirmed the cited existing tests prove protected/force-push hard-deny, identity checks, checks-before-merge, journal+crash-reconcile-not-retry, credential redaction; the E6 PR-create idempotence gap test passes; all cited packs pass.",
+            "The R090 duty set is proven per §4.1: I read and confirmed the cited existing tests prove protected/force-push hard-deny, identity checks, checks-before-merge, journal+crash-reconcile-not-retry, credential redaction; the E6 PR-create idempotence gap test passes; all cited packs pass.",
             "verified-at: tools/test_agent_supervisor_github_flow.py:114-139,229-238,487-544,763-781;tools/test_agent_supervisor_repair_gate.py:468-486"
           ]
         },
@@ -3213,7 +3213,7 @@
           "id": "D-024-R143",
           "state": "PASS",
           "evidence": [
-            "Re-baseline honored: the unit reuses github_flow/external_effects/push_policy/review-packet rather than duplicating, and only the pack \u00a70 genuine gaps were built (verified the reused packs pass).",
+            "Re-baseline honored: the unit reuses github_flow/external_effects/push_policy/review-packet rather than duplicating, and only the pack §0 genuine gaps were built (verified the reused packs pass).",
             "verified-at: project-control/reports/M0-T095-repair-gate.md:13-33;pytest 392 passed/1 skipped on cited packs"
           ]
         },
@@ -3420,7 +3420,7 @@
           "id": "D-024-R002",
           "state": "PASS",
           "evidence": [
-            "golden pack `TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step` + `\u2026injected_controller_restart\u2026` PASS (40/40) \u2014 two-unit run from exact command, no human step",
+            "golden pack `TwoUnitGoldenRunTests::test_the_two_unit_golden_run_crosses_a_rotation_with_no_human_step` + `…injected_controller_restart…` PASS (40/40) — two-unit run from exact command, no human step",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3430,7 +3430,7 @@
           "id": "D-024-R003",
           "state": "PASS",
           "evidence": [
-            "loop observed end-to-end (golden run); graph subsystem preserved \u2014 CI `code-graph`+`context-index-a1`=success; watcher extends, replaces nothing",
+            "loop observed end-to-end (golden run); graph subsystem preserved — CI `code-graph`+`context-index-a1`=success; watcher extends, replaces nothing",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3440,7 +3440,7 @@
           "id": "D-024-R004",
           "state": "PASS",
           "evidence": [
-            "`golden_run.py` FAKE_CODEX echoes reviewed identity + CONTINUE only (read-only, selects next); FAKE_CLAUDE commits (producer) \u2014 control-plane leadership only",
+            "`golden_run.py` FAKE_CODEX echoes reviewed identity + CONTINUE only (read-only, selects next); FAKE_CLAUDE commits (producer) — control-plane leadership only",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3450,7 +3450,7 @@
           "id": "D-024-R007",
           "state": "PASS",
           "evidence": [
-            "campaign record `authority` cites source-001 (sha 0611bb4\u2026); `CampaignCrossingEvidenceTests` asserts seq\u226522 from the one captured directive; reproduced seq=22",
+            "campaign record `authority` cites source-001 (sha 0611bb4…); `CampaignCrossingEvidenceTests` asserts seq≥22 from the one captured directive; reproduced seq=22",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3470,7 +3470,7 @@
           "id": "D-024-R010",
           "state": "PASS",
           "evidence": [
-            "`gh pr view 241`=OPEN/unmerged; campaign restriction \"NEVER merge PR #241\u2026\"; golden git effects in disposable checkout only",
+            "`gh pr view 241`=OPEN/unmerged; campaign restriction \"NEVER merge PR #241…\"; golden git effects in disposable checkout only",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3490,7 +3490,7 @@
           "id": "D-024-R018",
           "state": "PASS",
           "evidence": [
-            "`Section169RegisterTests`/`GoldenSequenceRegisterTests` prove-first registers; I re-resolved all 74 citations \u2192 0 missing (existing proofs cited, only gaps built)",
+            "`Section169RegisterTests`/`GoldenSequenceRegisterTests` prove-first registers; I re-resolved all 74 citations → 0 missing (existing proofs cited, only gaps built)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3550,7 +3550,7 @@
           "id": "D-024-R024",
           "state": "PASS",
           "evidence": [
-            "FAKE_CODEX_GOLDEN reads stdin packet + writes `--output-last-message`; identity echo + schema-validated decision \u2014 accepted bridge contract exercised",
+            "FAKE_CODEX_GOLDEN reads stdin packet + writes `--output-last-message`; identity echo + schema-validated decision — accepted bridge contract exercised",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3580,7 +3580,7 @@
           "id": "D-024-R030",
           "state": "PASS",
           "evidence": [
-            "`\u2026injected_controller_restart_continues_without_duplicate_work` + `\u2026ambiguous_effect_blocks_the_restart\u2026` PASS \u2014 no duplicate controller/successor/effect",
+            "`…injected_controller_restart_continues_without_duplicate_work` + `…ambiguous_effect_blocks_the_restart…` PASS — no duplicate controller/successor/effect",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3690,7 +3690,7 @@
           "id": "D-024-R088",
           "state": "PASS",
           "evidence": [
-            "activation item 5 restates truthful interception state (UserPromptSubmit; zero-context pending-owner-C1; second-terminal authoritative) \u2014 documented fallback, not faked",
+            "activation item 5 restates truthful interception state (UserPromptSubmit; zero-context pending-owner-C1; second-terminal authoritative) — documented fallback, not faked",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3700,7 +3700,7 @@
           "id": "D-024-R089",
           "state": "PASS",
           "evidence": [
-            "`InjectedFaultTests::test_status_answers_read_only_while_the_producer_is_running` PASS \u2014 status read-only at CLAUDE_RUNNING, no producer disruption",
+            "`InjectedFaultTests::test_status_answers_read_only_while_the_producer_is_running` PASS — status read-only at CLAUDE_RUNNING, no producer disruption",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3730,7 +3730,7 @@
           "id": "D-024-R098",
           "state": "PASS",
           "evidence": [
-            "golden run READY-successor healthy resume; rotation only at seam (`test_\u2026crosses_a_rotation\u2026` asserts kinds [work,ready,work])",
+            "golden run READY-successor healthy resume; rotation only at seam (`test_…crosses_a_rotation…` asserts kinds [work,ready,work])",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3740,7 +3740,7 @@
           "id": "D-024-R106",
           "state": "PASS",
           "evidence": [
-            "golden-run-evidence \u00a74 Phase-H closure; fault-injected suites + golden run + recovery + activation package; honest boundaries \u00a72",
+            "golden-run-evidence §4 Phase-H closure; fault-injected suites + golden run + recovery + activation package; honest boundaries §2",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3750,7 +3750,7 @@
           "id": "D-024-R107",
           "state": "PASS",
           "evidence": [
-            "16.1 telemetry matrix (units A-C) green \u2014 CI `supervisor-bridge`+`context-pipeline`=success; unchanged by unit",
+            "16.1 telemetry matrix (units A-C) green — CI `supervisor-bridge`+`context-pipeline`=success; unchanged by unit",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3900,7 +3900,7 @@
           "id": "D-024-R122",
           "state": "PASS",
           "evidence": [
-            "golden-run-evidence \u00a72/\u00a74 + activation item 14 honestly bound live canaries (owner-gated) and host-restart limitation; directive not over-claimed complete",
+            "golden-run-evidence §2/§4 + activation item 14 honestly bound live canaries (owner-gated) and host-restart limitation; directive not over-claimed complete",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3910,7 +3910,7 @@
           "id": "D-024-R123",
           "state": "PASS",
           "evidence": [
-            "activation-package.md items 1\u201314 present with exact commands, no placeholders; honest pending items (item 5 zero-context, item 14 host-restart)",
+            "activation-package.md items 1–14 present with exact commands, no placeholders; honest pending items (item 5 zero-context, item 14 host-restart)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -3980,7 +3980,7 @@
           "id": "D-024-R143",
           "state": "PASS",
           "evidence": [
-            "native adapter (unit C / M0-T102) cited; golden run launches through selected backend; reuse boundary \u00a70, no duplicate machinery",
+            "native adapter (unit C / M0-T102) cited; golden run launches through selected backend; reuse boundary §0, no duplicate machinery",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4010,7 +4010,7 @@
           "id": "D-024-R149",
           "state": "PASS",
           "evidence": [
-            "unit-C installed-version fixtures cited; activation item 5 restates interception truthfully \u2014 no feature adopted on assumption",
+            "unit-C installed-version fixtures cited; activation item 5 restates interception truthfully — no feature adopted on assumption",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4020,7 +4020,7 @@
           "id": "D-024-R164",
           "state": "PASS",
           "evidence": [
-            "golden-run-evidence \u00a70: every custom-control concern preserved; watcher extends detection, replaces no control",
+            "golden-run-evidence §0: every custom-control concern preserved; watcher extends detection, replaces no control",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4040,7 +4040,7 @@
           "id": "D-024-R178",
           "state": "PASS",
           "evidence": [
-            "unit I IS this deliverable (golden-run-evidence \u00a74; 40/40 pack)",
+            "unit I IS this deliverable (golden-run-evidence §4; 40/40 pack)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4050,7 +4050,7 @@
           "id": "D-024-R180",
           "state": "PASS",
           "evidence": [
-            "cli.py wiring supplies the ONE missing `GuardrailBridgeIntegration` construction (no parallel path) \u2014 replace-not-layer (diff at `_run_loop`)",
+            "cli.py wiring supplies the ONE missing `GuardrailBridgeIntegration` construction (no parallel path) — replace-not-layer (diff at `_run_loop`)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4060,7 +4060,7 @@
           "id": "D-024-R181",
           "state": "PASS",
           "evidence": [
-            "no accepted code deleted on doc claims; cli.py \u22128 are unused-import removals (ruff clean, CI green, tests pass)",
+            "no accepted code deleted on doc claims; cli.py −8 are unused-import removals (ruff clean, CI green, tests pass)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4100,7 +4100,7 @@
           "id": "D-024-R185",
           "state": "PASS",
           "evidence": [
-            "golden-run-evidence \u00a74.4: crash windows/reconciliation + 12/12 mutation matrix + suite totals; CI all-green at frozen identity; independent reviews at one frozen id",
+            "golden-run-evidence §4.4: crash windows/reconciliation + 12/12 mutation matrix + suite totals; CI all-green at frozen identity; independent reviews at one frozen id",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4150,7 +4150,7 @@
           "id": "D-024-R221",
           "state": "PASS",
           "evidence": [
-            "zero live provider calls \u2014 `golden_run.py` fakes only (comment \"never contact a provider\"); no allowance consumed to provoke anything",
+            "zero live provider calls — `golden_run.py` fakes only (comment \"never contact a provider\"); no allowance consumed to provoke anything",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4190,7 +4190,7 @@
           "id": "D-024-R225",
           "state": "PASS",
           "evidence": [
-            "`discover_events` reads ONLY existing records (refusal/usage_limit/provider_abort/outage/model_change/turnover); no new capture machinery; amendment-7 report \u00a76",
+            "`discover_events` reads ONLY existing records (refusal/usage_limit/provider_abort/outage/model_change/turnover); no new capture machinery; amendment-7 report §6",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4240,7 +4240,7 @@
           "id": "D-024-R230",
           "state": "PASS",
           "evidence": [
-            "`D-024-amendment-7-owner-report.md` \u00a71\u20135 answer all five items; \u00a76 refresh matches delivered `live_observation.py` (reuse/when-observes/5 fields/labeling/graduation)",
+            "`D-024-amendment-7-owner-report.md` §1–5 answer all five items; §6 refresh matches delivered `live_observation.py` (reuse/when-observes/5 fields/labeling/graduation)",
             "delta re-attestation at 635fac5/9f93587: DELTA VERDICT PASS (M0-T096-DCV-delta.md)"
           ],
           "verified_by": "directive-compliance-verifier",
@@ -4448,7 +4448,7 @@
           "id": "D-024-R140",
           "state": "PASS",
           "evidence": [
-            "capability-rebaseline.md \u00c2\u00a71/\u00c2\u00a75/\u00c2\u00a77: producer=Fable, Codex read-only supervisor, ledger authority, owner final",
+            "capability-rebaseline.md Â§1/Â§5/Â§7: producer=Fable, Codex read-only supervisor, ledger authority, owner final",
             "matrix requirement_index[R140]=authority-and-process/CUSTOM_REQUIRED"
           ],
           "note": "Roles preserved; unit-A duty discharged.",
@@ -4460,7 +4460,7 @@
           "state": "PASS",
           "evidence": [
             "native-reuse-matrix.json 147 IDs mapped; coverage machine-verified == resolver union",
-            "report \u00c2\u00a73/\u00c2\u00a76 native-reuse over duplicate machinery"
+            "report Â§3/Â§6 native-reuse over duplicate machinery"
           ],
           "note": "Re-baseline produced; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4481,7 +4481,7 @@
           "id": "D-024-R145",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a72/\u00c2\u00a79: installed still 2.1.220, binary upgrade deferred to M0-T103 with pre-update capture",
+            "report Â§2/Â§9: installed still 2.1.220, binary upgrade deferred to M0-T103 with pre-update capture",
             "no premature update in diff 05d03a0..HEAD"
           ],
           "note": "Authorization exercised within bounds; upgrade correctly deferred.",
@@ -4493,7 +4493,7 @@
           "state": "PASS",
           "evidence": [
             "diff 05d03a0..b69600f: only project-control/ + fixtures touched; 0 file deletions; no SDK/MCP/dep/PR-merge/model-sub",
-            "report \u00c2\u00a711: PR #241 never merged, continuous-mode owner-gated"
+            "report Â§11: PR #241 never merged, continuous-mode owner-gated"
           ],
           "note": "No prohibited action taken.",
           "verified_by": "directive-compliance-verifier",
@@ -4525,7 +4525,7 @@
           "state": "PASS",
           "evidence": [
             "matrix installed_probe fields record 2.1.220 gating (e.g. /goal check-ins 2.1.234+ absent)",
-            "report \u00c2\u00a710: installed-version fixture + real canary required per adopted feature; live fixtures flagged pending"
+            "report Â§10: installed-version fixture + real canary required per adopted feature; live fixtures flagged pending"
           ],
           "note": "Unit-A duty: fixture+canary requirement honored in plan; no unproven adoption.",
           "verified_by": "directive-compliance-verifier",
@@ -4569,7 +4569,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R153]=background-session-host/NATIVE_WRAPPED; docs agent-view.md",
-            "report \u00c2\u00a73: research-preview \u00e2\u2020\u2019 feature-detected fallback; never two process systems"
+            "report Â§3: research-preview â†’ feature-detected fallback; never two process systems"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4591,7 +4591,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R155]=hooks-event-bus/NATIVE_WRAPPED; docs hooks.md",
-            "report \u00c2\u00a73: all 17 required hook events exist in 31-event set"
+            "report Â§3: all 17 required hook events exist in 31-event set"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4602,7 +4602,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R156]=worktree-isolation/NATIVE_WRAPPED; docs worktrees.md",
-            "report \u00c2\u00a73: physical isolation native; logical leases/frozen-identity/branch policy RETAINED"
+            "report Â§3: physical isolation native; logical leases/frozen-identity/branch policy RETAINED"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4624,7 +4624,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R158]=skills-operator-surface/NATIVE_WRAPPED; docs skills.md",
-            "report \u00c2\u00a73: disable-model-invocation:true confirmed; /loop-* thin controls"
+            "report Â§3: disable-model-invocation:true confirmed; /loop-* thin controls"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4635,7 +4635,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R159]=userpromptexpansion-interception/NATIVE_WRAPPED; docs hooks.md",
-            "report \u00c2\u00a73: zero-model-context proof needs live fixture else honest 2nd-terminal fallback; must not collide with built-in /loop"
+            "report Â§3: zero-model-context proof needs live fixture else honest 2nd-terminal fallback; must not collide with built-in /loop"
           ],
           "note": "Unit-A evaluation duty discharged with honest caveat.",
           "verified_by": "directive-compliance-verifier",
@@ -4646,7 +4646,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R160]=session-identity-succession/NATIVE_WRAPPED; docs sessions.md",
-            "report \u00c2\u00a73: native resume NOT a seam substitute; --session-id must be UUID"
+            "report Â§3: native resume NOT a seam substitute; --session-id must be UUID"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4668,7 +4668,7 @@
           "state": "PASS",
           "evidence": [
             "requirement_index[R162]=context-safeguards/NATIVE_WRAPPED; docs statusline.md",
-            "report \u00c2\u00a75: statusLine telemetry RETAINED per R162; /autocompact emergency-only"
+            "report Â§5: statusLine telemetry RETAINED per R162; /autocompact emergency-only"
           ],
           "note": "Unit-A evaluation duty discharged.",
           "verified_by": "directive-compliance-verifier",
@@ -4690,7 +4690,7 @@
           "state": "PASS",
           "evidence": [
             "matrix 110 CUSTOM_REQUIRED rows incl authority/governance areas",
-            "report \u00c2\u00a77 enumerates the full must-remain-custom set (Codex review, sequencing, traceability, frozen identities, exact-once effects, owner gates, MCP default-deny, replace-not-layer)"
+            "report Â§7 enumerates the full must-remain-custom set (Codex review, sequencing, traceability, frozen identities, exact-once effects, owner gates, MCP default-deny, replace-not-layer)"
           ],
           "note": "Custom-control set preserved.",
           "verified_by": "directive-compliance-verifier",
@@ -4722,10 +4722,10 @@
           "id": "D-024-R169",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a78 dependency-ordered sequence A(M0-T102)\u00e2\u2020\u2019B(T103)\u00e2\u2020\u2019C(T104)\u00e2\u2020\u2019D(T105)\u00e2\u2020\u2019E(T106)\u00e2\u2020\u2019F(T092)\u00e2\u2020\u2019G(T094)\u00e2\u2020\u2019H1(T093)\u00e2\u2020\u2019H2(T095)\u00e2\u2020\u2019I(T096)\u00e2\u2020\u2019J(T107)",
+            "report Â§8 dependency-ordered sequence A(M0-T102)â†’B(T103)â†’C(T104)â†’D(T105)â†’E(T106)â†’F(T092)â†’G(T094)â†’H1(T093)â†’H2(T095)â†’I(T096)â†’J(T107)",
             "matrix requirement_index[R169]=governance/CUSTOM_REQUIRED"
           ],
-          "note": "Decomposed into \u00e2\u2030\u00a5A-J independently reviewable units.",
+          "note": "Decomposed into â‰¥A-J independently reviewable units.",
           "verified_by": "directive-compliance-verifier",
           "reviewed_sha": "7a7bbc99590c6519dffc30acb130b38e76bafc32"
         },
@@ -4733,7 +4733,7 @@
           "id": "D-024-R170",
           "state": "PASS",
           "evidence": [
-            "M0-T102 = unit A: amendment reconciliation (\u00c2\u00a71), docs snapshot (16/16), matrix (147), conversion proposal (\u00c2\u00a74/\u00c2\u00a78)",
+            "M0-T102 = unit A: amendment reconciliation (Â§1), docs snapshot (16/16), matrix (147), conversion proposal (Â§4/Â§8)",
             "task title/objective in M0-T102.json"
           ],
           "note": "Unit A deliverables present.",
@@ -4744,7 +4744,7 @@
           "id": "D-024-R172",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R172]=background-session-host/NATIVE_WRAPPED; report \u00c2\u00a74/\u00c2\u00a78 unit C=M0-T104 (native runtime adapter)"
+            "requirement_index[R172]=background-session-host/NATIVE_WRAPPED; report Â§4/Â§8 unit C=M0-T104 (native runtime adapter)"
           ],
           "note": "Unit-C definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4754,7 +4754,7 @@
           "id": "D-024-R173",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R173]=hooks-event-bus/NATIVE_WRAPPED; report \u00c2\u00a78 unit D=M0-T105 (native event integration)"
+            "requirement_index[R173]=hooks-event-bus/NATIVE_WRAPPED; report Â§8 unit D=M0-T105 (native event integration)"
           ],
           "note": "Unit-D definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4764,7 +4764,7 @@
           "id": "D-024-R174",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R174]=goal-bounded-continuation/NATIVE_WRAPPED; report \u00c2\u00a78 unit E=M0-T106 (bounded /goal)"
+            "requirement_index[R174]=goal-bounded-continuation/NATIVE_WRAPPED; report Â§8 unit E=M0-T106 (bounded /goal)"
           ],
           "note": "Unit-E definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4774,7 +4774,7 @@
           "id": "D-024-R175",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R175]=session-identity-succession/NATIVE_WRAPPED; report \u00c2\u00a74 unit F=M0-T092 (seams/succession, re-scoped)"
+            "requirement_index[R175]=session-identity-succession/NATIVE_WRAPPED; report Â§4 unit F=M0-T092 (seams/succession, re-scoped)"
           ],
           "note": "Unit-F definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4784,7 +4784,7 @@
           "id": "D-024-R176",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R176]=skills-operator-surface/NATIVE_WRAPPED; report \u00c2\u00a74/\u00c2\u00a78 unit G=M0-T094 (skills+UserPromptExpansion)"
+            "requirement_index[R176]=skills-operator-surface/NATIVE_WRAPPED; report Â§4/Â§8 unit G=M0-T094 (skills+UserPromptExpansion)"
           ],
           "note": "Unit-G definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4794,7 +4794,7 @@
           "id": "D-024-R177",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R177]=authority-and-process/CUSTOM_REQUIRED; report \u00c2\u00a74 unit H=M0-T093/T095 (refusal bridge, repair gate, exact-once GitHub, graph regression)"
+            "requirement_index[R177]=authority-and-process/CUSTOM_REQUIRED; report Â§4 unit H=M0-T093/T095 (refusal bridge, repair gate, exact-once GitHub, graph regression)"
           ],
           "note": "Unit-H definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4804,7 +4804,7 @@
           "id": "D-024-R178",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R178]=test-harnesses-canaries/CUSTOM_REQUIRED; report \u00c2\u00a78 unit I=M0-T096 (shadow/supervised/crash/golden-run)"
+            "requirement_index[R178]=test-harnesses-canaries/CUSTOM_REQUIRED; report Â§8 unit I=M0-T096 (shadow/supervised/crash/golden-run)"
           ],
           "note": "Unit-I definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4814,7 +4814,7 @@
           "id": "D-024-R179",
           "state": "PASS",
           "evidence": [
-            "requirement_index[R179]=portability-plugin/OPTIONAL_ENHANCEMENT; report \u00c2\u00a78 unit J=M0-T107 (portability plan, post-golden-run, non-blocking)"
+            "requirement_index[R179]=portability-plugin/OPTIONAL_ENHANCEMENT; report Â§8 unit J=M0-T107 (portability plan, post-golden-run, non-blocking)"
           ],
           "note": "Unit-J definition/mapping present; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4824,7 +4824,7 @@
           "id": "D-024-R180",
           "state": "PASS",
           "evidence": [
-            "matrix removal_plan fields per replaced area cite R180 (prove native\u00e2\u2020\u2019adapter\u00e2\u2020\u2019parity\u00e2\u2020\u2019one backend\u00e2\u2020\u2019separate reviewed removal)",
+            "matrix removal_plan fields per replaced area cite R180 (prove nativeâ†’adapterâ†’parityâ†’one backendâ†’separate reviewed removal)",
             "no runtime replacement performed in diff range (no layering violation)"
           ],
           "note": "Replace-not-layer rule embedded in plan; no violation yet.",
@@ -4836,7 +4836,7 @@
           "state": "PASS",
           "evidence": [
             "git diff 05d03a0..b69600f: 0 file deletions (name-status D=none)",
-            "report \u00c2\u00a75: 'Nothing is deleted on documentation claims alone (R181)'"
+            "report Â§5: 'Nothing is deleted on documentation claims alone (R181)'"
           ],
           "note": "No accepted code deleted.",
           "verified_by": "directive-compliance-verifier",
@@ -4846,7 +4846,7 @@
           "id": "D-024-R182",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a710: deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, real low-risk canaries; no token-burning",
+            "report Â§10: deterministic fixtures, accelerated counters, simulated failures, disposable branches/worktrees, real low-risk canaries; no token-burning",
             "matrix evidence_plan fields"
           ],
           "note": "Testing method (harness) specified; unit-A duty.",
@@ -4857,7 +4857,7 @@
           "id": "D-024-R183",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a710 allocates 26 required proofs (R183-R185) across units B-I via matrix evidence_plan per area (Windows-native, MCP default-deny, statusline leak-freedom, bg dispatch lifecycle, /goal 6 behaviors, hook order)"
+            "report Â§10 allocates 26 required proofs (R183-R185) across units B-I via matrix evidence_plan per area (Windows-native, MCP default-deny, statusline leak-freedom, bg dispatch lifecycle, /goal 6 behaviors, hook order)"
           ],
           "note": "Platform/native proof plan allocated; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4867,7 +4867,7 @@
           "id": "D-024-R184",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a710: no polling into Fable context, no worker token quotas, overlap rejection, seam rotation, handoff boundedness+successor reconstruction, refusal-vs-quota distinctness"
+            "report Â§10: no polling into Fable context, no worker token quotas, overlap rejection, seam rotation, handoff boundedness+successor reconstruction, refusal-vs-quota distinctness"
           ],
           "note": "Worker-protection/succession proof plan allocated; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4877,7 +4877,7 @@
           "id": "D-024-R185",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a710: GitHub exact-once + both crash windows, stale ledger/handoff reconciliation, graph regression, suite green (2707/3/0), independent sec/QA/control/DCV at frozen identity, mutation teeth"
+            "report Â§10: GitHub exact-once + both crash windows, stale ledger/handoff reconciliation, graph regression, suite green (2707/3/0), independent sec/QA/control/DCV at frozen identity, mutation teeth"
           ],
           "note": "External-effects/recovery/review proof plan allocated; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -4887,7 +4887,7 @@
           "id": "D-024-R186",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a710: golden run at M0-T096 executes the amendment's 15-step sequence from the exact owner start command",
+            "report Â§10: golden run at M0-T096 executes the amendment's 15-step sequence from the exact owner start command",
             "matrix requirement_index[R186]=test-harnesses/CUSTOM_REQUIRED"
           ],
           "note": "Golden-run plan present; unit-A duty (executed at M0-T096).",
@@ -4898,7 +4898,7 @@
           "id": "D-024-R188",
           "state": "PASS",
           "evidence": [
-            "report \u00c2\u00a78: one cohesive writer task at a time; M0-T092..T096 claims HELD until conversion accepted (R139); campaign-continuity/verification kept current",
+            "report Â§8: one cohesive writer task at a time; M0-T092..T096 claims HELD until conversion accepted (R139); campaign-continuity/verification kept current",
             "requirement_index[R188]=governance/CUSTOM_REQUIRED"
           ],
           "note": "Campaign execution rules honored; unit-A duty.",
@@ -4909,7 +4909,7 @@
           "id": "D-024-R190",
           "state": "PASS",
           "evidence": [
-            "capability-rebaseline.md \u00c2\u00a71-\u00c2\u00a711 present: (1)identity (2)versions 2.1.220\u00e2\u2020\u20192.1.246 (3)matrix (4)tasks-changed (5)untouched-accepted (6)native-replaces (7)remains-custom (8)sequence (9)upgrade/rollback (10)test/golden-run (11)owner-decisions=None"
+            "capability-rebaseline.md Â§1-Â§11 present: (1)identity (2)versions 2.1.220â†’2.1.246 (3)matrix (4)tasks-changed (5)untouched-accepted (6)native-replaces (7)remains-custom (8)sequence (9)upgrade/rollback (10)test/golden-run (11)owner-decisions=None"
           ],
           "note": "All 11 owner-report items present.",
           "verified_by": "directive-compliance-verifier",
@@ -4920,7 +4920,7 @@
           "state": "PASS",
           "evidence": [
             "capture-verification.md: report+amendment independently validated PASS",
-            "report \u00c2\u00a711: 'None to proceed', no owner gate reached; campaign continues"
+            "report Â§11: 'None to proceed', no owner gate reached; campaign continues"
           ],
           "note": "Independently validated; sequencing honored; unit-A duty.",
           "verified_by": "directive-compliance-verifier",
@@ -5628,8 +5628,8 @@
           "id": "D-024-R007",
           "state": "PASS",
           "evidence": [
-            "tasks/M0-T092.json progress_log: successor implemented from frozen pack \u00a70-\u00a73 + ledger; no owner re-prompt recorded",
-            "controller-succession.md \u00a74 carries R018 proofs authored by implementation session"
+            "tasks/M0-T092.json progress_log: successor implemented from frozen pack §0-§3 + ledger; no owner re-prompt recorded",
+            "controller-succession.md §4 carries R018 proofs authored by implementation session"
           ]
         },
         {
@@ -5660,7 +5660,7 @@
           "id": "D-024-R018",
           "state": "PASS",
           "evidence": [
-            "report \u00a74.1/\u00a74.2 prove-first tables; cited reuse symbols all exist (decide_pre_dispatch, land_child, CONTEXT_SHEDDING_REASONS, validate_decision, Measurement, HANDOFF_FIELDS)",
+            "report §4.1/§4.2 prove-first tables; cited reuse symbols all exist (decide_pre_dispatch, land_child, CONTEXT_SHEDDING_REASONS, validate_decision, Measurement, HANDOFF_FIELDS)",
             "composites honest: codex_reviewer.REQUIRED_BY_DECISION['REVISE'] + loop.effective_model present",
             "new machinery only for proven gaps (epoch_lease/stop_intent/outage_policy/bootstrap_gate)"
           ]
@@ -5830,7 +5830,7 @@
           "state": "PASS",
           "evidence": [
             "session_continuity.CONTEXT_SHEDDING_REASONS includes 'instruction_adherence_loss' (line 83)",
-            "rotation_pending path present; existing behavior cited \u00a74.1 'landing'"
+            "rotation_pending path present; existing behavior cited §4.1 'landing'"
           ]
         },
         {
@@ -5987,7 +5987,7 @@
           "state": "PASS",
           "evidence": [
             "tasks: M0-T102..T106 all status=accepted (T106 accepted 18:41:58Z)",
-            "M0-T092 first progress entry (claim) at 18:47:05Z \u2014 after T106; campaign seq-10 conversion complete"
+            "M0-T092 first progress entry (claim) at 18:47:05Z — after T106; campaign seq-10 conversion complete"
           ]
         },
         {
@@ -6058,7 +6058,7 @@
           "state": "PASS",
           "evidence": [
             "child_handoff (children finish/land once/quarantine) + START_FRESH_SESSION + reconcile_on_boot no-duplicate",
-            "S5/S8 tests PASS; report \u00a75 R175 behavior set mapped to code"
+            "S5/S8 tests PASS; report §5 R175 behavior set mapped to code"
           ]
         },
         {
@@ -6066,7 +6066,7 @@
           "state": "PASS",
           "evidence": [
             "runtime_backend.select_runtime_backend returns exactly one active backend; S13 test_exactly_one_backend_is_ever_active PASS",
-            "each new module fills a \u00a74.2-proven gap; no parallel duplicate left"
+            "each new module fills a §4.2-proven gap; no parallel duplicate left"
           ]
         },
         {
@@ -6081,7 +6081,7 @@
           "id": "D-024-R182",
           "state": "PASS",
           "evidence": [
-            "tests use injected rng (lambda:0.5), injected now (epoch seconds), fake journals (LosingJournal), reopen() restarts \u2014 no network/providers/sleeps",
+            "tests use injected rng (lambda:0.5), injected now (epoch seconds), fake journals (LosingJournal), reopen() restarts — no network/providers/sleeps",
             "independently reproduced 2 mutation kills (live-takeover guard, CAS single-winner) in-memory"
           ]
         },
@@ -6189,14 +6189,14 @@
           "id": "D-024-R002",
           "state": "PASS",
           "evidence": [
-            "task share proven: R035 start command documented (cli.py docstring; S1 test_the_owner_intent_alias) + full start/status/control/ask surface exists; fail-closed ask transport (operator_ask.run_ask timeout\u2192durable id, S5); two-unit golden run is M0-T096, honestly excluded in evidence-map"
+            "task share proven: R035 start command documented (cli.py docstring; S1 test_the_owner_intent_alias) + full start/status/control/ask surface exists; fail-closed ask transport (operator_ask.run_ask timeout→durable id, S5); two-unit golden run is M0-T096, honestly excluded in evidence-map"
           ]
         },
         {
           "id": "D-024-R003",
           "state": "PASS",
           "evidence": [
-            "ask-path share: operator_ask\u2192codex_reviewer.build_argv forces --sandbox read-only (S4 test_the_invocation_is_the_read_only_reviewer_contract asserts read-only + --ephemeral/--ignore-user-config/--strict-config); producer/supervisor roles intact; whole-loop carried by other units"
+            "ask-path share: operator_ask→codex_reviewer.build_argv forces --sandbox read-only (S4 test_the_invocation_is_the_read_only_reviewer_contract asserts read-only + --ephemeral/--ignore-user-config/--strict-config); producer/supervisor roles intact; whole-loop carried by other units"
           ]
         },
         {
@@ -6217,28 +6217,28 @@
           "id": "D-024-R008",
           "state": "PASS",
           "evidence": [
-            "only genuine owner-gated items flagged (C1 canary + gate/accept authority, report \u00a72); deterministic core built without owner questions"
+            "only genuine owner-gated items flagged (C1 canary + gate/accept authority, report §2); deterministic core built without owner questions"
           ]
         },
         {
           "id": "D-024-R010",
           "state": "PASS",
           "evidence": [
-            "gh pr view 241 \u2192 OPEN, mergedAt null, head task/M5-T002; f6edf11 only in control/D-024 branch, absent from main (git branch --contains)"
+            "gh pr view 241 → OPEN, mergedAt null, head task/M5-T002; f6edf11 only in control/D-024 branch, absent from main (git branch --contains)"
           ]
         },
         {
           "id": "D-024-R017",
           "state": "PASS",
           "evidence": [
-            "packet objective + both commits (f6edf11, db689c8) cite \"Supervisor-freeze qualifying evidence: D-024-R104\"; freeze rule .claude/rules/supervisor-freeze.md \u00a72 already recognizes D-024-R### ids (2026-08-25 amendment)"
+            "packet objective + both commits (f6edf11, db689c8) cite \"Supervisor-freeze qualifying evidence: D-024-R104\"; freeze rule .claude/rules/supervisor-freeze.md §2 already recognizes D-024-R### ids (2026-08-25 amendment)"
           ]
         },
         {
           "id": "D-024-R018",
           "state": "PASS",
           "evidence": [
-            "prove-first held: S1 test_idempotency_rides_the_existing_lock (inspect.getsource cmd_start\u2192SingleInstanceLock), S3 test_the_stop_verbs_map_to_the_existing_surface (pause/resume/stop/emergency-stop pre-existing); only 6 pack-listed gaps added; G3 confirmed reuse genuine"
+            "prove-first held: S1 test_idempotency_rides_the_existing_lock (inspect.getsource cmd_start→SingleInstanceLock), S3 test_the_stop_verbs_map_to_the_existing_surface (pause/resume/stop/emergency-stop pre-existing); only 6 pack-listed gaps added; G3 confirmed reuse genuine"
           ]
         },
         {
@@ -6266,14 +6266,14 @@
           "id": "D-024-R025",
           "state": "PASS",
           "evidence": [
-            "malformed/empty/timed-out answer \u2192 typed error or durable id, never action: S6 test_malformed_answers_are_typed (answer_empty), S5 test_a_timeout_returns_one_durable_request_id; operator_ask returns AskOutcome, no dispatch"
+            "malformed/empty/timed-out answer → typed error or durable id, never action: S6 test_malformed_answers_are_typed (answer_empty), S5 test_a_timeout_returns_one_durable_request_id; operator_ask returns AskOutcome, no dispatch"
           ]
         },
         {
           "id": "D-024-R026",
           "state": "PASS",
           "evidence": [
-            "durable owner intents win: S3 graceful-stop journaled BEFORE ack (test_the_journal_write_precedes_the_acknowledgment_in_source), test_emergency_outranks_graceful_and_both_stay_durable (effective_intent\u2192emergency); clear is owner-command-only (stop_intent.py clears_by)"
+            "durable owner intents win: S3 graceful-stop journaled BEFORE ack (test_the_journal_write_precedes_the_acknowledgment_in_source), test_emergency_outranks_graceful_and_both_stay_durable (effective_intent→emergency); clear is owner-command-only (stop_intent.py clears_by)"
           ]
         },
         {
@@ -6308,7 +6308,7 @@
           "id": "D-024-R079",
           "state": "PASS",
           "evidence": [
-            "task share: no graph-subsystem file edited (git diff grep code_graph/graph \u2192 NONE); operator surface reads journal + campaign records directly (operator_status.py), no integration-boundary change"
+            "task share: no graph-subsystem file edited (git diff grep code_graph/graph → NONE); operator surface reads journal + campaign records directly (operator_status.py), no integration-boundary change"
           ]
         },
         {
@@ -6336,7 +6336,7 @@
           "id": "D-024-R085",
           "state": "PASS",
           "evidence": [
-            "loop-status/tasks map to status/campaign_continuity subprocess, no model call (hook _VERB_ARGV + block erases prompt); ask\u2192bounded read-only Codex packet, concise answer or durable request id (S4/S5)"
+            "loop-status/tasks map to status/campaign_continuity subprocess, no model call (hook _VERB_ARGV + block erases prompt); ask→bounded read-only Codex packet, concise answer or durable request id (S4/S5)"
           ]
         },
         {
@@ -6357,7 +6357,7 @@
           "id": "D-024-R088",
           "state": "PASS",
           "evidence": [
-            "honest state verified: fixture zero_context_proof=pending-owner-C1 with second-terminal fallback + measurement_method (S9 test_zero_context_proof_is_measured_or_honestly_pending); ask genuinely added (was absent from CLI); no faked proof \u2014 verify honesty not measurement per task scope"
+            "honest state verified: fixture zero_context_proof=pending-owner-C1 with second-terminal fallback + measurement_method (S9 test_zero_context_proof_is_measured_or_honestly_pending); ask genuinely added (was absent from CLI); no faked proof — verify honesty not measurement per task scope"
           ]
         },
         {
@@ -6385,7 +6385,7 @@
           "id": "D-024-R098",
           "state": "PASS",
           "evidence": [
-            "task share: operator reads/controls create no session churn \u2014 hook pass-through emits nothing, block emits only decision+reason erased from context (S13 test_the_hook_never_injects_context); seam-selection heuristics carried by controller units; boundary stated"
+            "task share: operator reads/controls create no session churn — hook pass-through emits nothing, block emits only decision+reason erased from context (S13 test_the_hook_never_injects_context); seam-selection heuristics carried by controller units; boundary stated"
           ]
         },
         {
@@ -6399,7 +6399,7 @@
           "id": "D-024-R111",
           "state": "PASS",
           "evidence": [
-            "full \u00a716.5 matrix as 54 deterministic tests S1-S14 incl. all R111-named cases (exact/similar-text, no-model-call status, read-only ask, empty/large/Unicode/quoted/multiline/metachar, timeout single-request, distinct ids, hook fail-closed, unsupported\u2192documented fallback); reproduced 54 passed (report prose still says 52 \u2014 stale count, matrix complete)"
+            "full §16.5 matrix as 54 deterministic tests S1-S14 incl. all R111-named cases (exact/similar-text, no-model-call status, read-only ask, empty/large/Unicode/quoted/multiline/metachar, timeout single-request, distinct ids, hook fail-closed, unsupported→documented fallback); reproduced 54 passed (report prose still says 52 — stale count, matrix complete)"
           ]
         },
         {
@@ -6420,7 +6420,7 @@
           "id": "D-024-R126",
           "state": "PASS",
           "evidence": [
-            "session MCP-clean G0 carried at session start (M0-T094-G0-readiness.md + report \u00a74.2); not re-run per operator read by design; task's code share is identity validation; honest boundary"
+            "session MCP-clean G0 carried at session start (M0-T094-G0-readiness.md + report §4.2); not re-run per operator read by design; task's code share is identity validation; honest boundary"
           ]
         },
         {
@@ -6441,7 +6441,7 @@
           "id": "D-024-R139",
           "state": "PASS",
           "evidence": [
-            "HOLD discharged before claim: campaign restrictions record \"D-024-R139: capture+verification+conversion COMPLETE (M0-T102 accepted; conversion applied seq 10)\"; claim followed accepted dependency sequence (seq 17\u219218)"
+            "HOLD discharged before claim: campaign restrictions record \"D-024-R139: capture+verification+conversion COMPLETE (M0-T102 accepted; conversion applied seq 10)\"; claim followed accepted dependency sequence (seq 17→18)"
           ]
         },
         {
@@ -6490,7 +6490,7 @@
           "id": "D-024-R159",
           "state": "PASS",
           "evidence": [
-            "UserPromptExpansion evaluated as preferred, honestly found unproven; second-terminal fallback retained; names /loop-* exact \u2014 /loop passes through (S10 PASS_THROUGH includes \"/loop\"; S7 test_no_collision_with_the_builtin_loop asserts no loop skill dir)"
+            "UserPromptExpansion evaluated as preferred, honestly found unproven; second-terminal fallback retained; names /loop-* exact — /loop passes through (S10 PASS_THROUGH includes \"/loop\"; S7 test_no_collision_with_the_builtin_loop asserts no loop skill dir)"
           ]
         },
         {
@@ -6518,7 +6518,7 @@
           "id": "D-024-R180",
           "state": "PASS",
           "evidence": [
-            "replace-not-layer share: single active impl per responsibility \u2014 status reads existing records (no parallel bookkeeping), hook wraps CLI (no duplicate engine), helper move (open_runtime/emit_payload\u2192operator_channel_cli, re-imported) is behavior-neutral (G3 confirmed; S3 AUDIT_FILENAME drift-pin); skills fallback = documented rollback for supervised rollout"
+            "replace-not-layer share: single active impl per responsibility — status reads existing records (no parallel bookkeeping), hook wraps CLI (no duplicate engine), helper move (open_runtime/emit_payload→operator_channel_cli, re-imported) is behavior-neutral (G3 confirmed; S3 AUDIT_FILENAME drift-pin); skills fallback = documented rollback for supervised rollout"
           ]
         },
         {
@@ -9077,7 +9077,59 @@
       "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91",
       "verified_at": "2026-08-31T10:52:10.196927+00:00",
       "reviewed_manifest_sha256": "da2dd5958258cc4d1643ceb3623b9ce3d736ac375551f29c4e9374754883de95"
+    },
+    {
+      "task_id": "M0-T109",
+      "directive_id": "D-024",
+      "producer": "supervisor-loop-fable-producer",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R410",
+        "D-024-R411",
+        "D-024-R412",
+        "D-024-R413",
+        "D-024-R414",
+        "D-024-R415",
+        "D-024-R416"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R410",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R411",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R412",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R413",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R414",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R415",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R416",
+          "state": "pending",
+          "evidence": []
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-31T10:52:10.196927+00:00"
+  "updated_at": "2026-08-31T17:46:43.999014+00:00"
 }
