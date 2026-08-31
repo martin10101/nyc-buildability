@@ -9,9 +9,11 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 ## Handoff - seq 45: Amendment-22/24/25 windows ALL COMPLETE; awaiting the owner's seven-fact commissioning decision
 
 1. **Generated:** 2026-08-31 ~06:5x local by orchestrator session `session_01SfXcRw7emzdojCDJmKxNTM`
-   at the natural stop-and-present seam. All sub-agents completed bounded assignments (2 producers
-   + reviewers, every producer patch-captured at its seam and retired per R395); nothing in flight;
-   tree clean; pushed through the seq-54 campaign advance.
+   at the natural stop-and-present seam; **finalized by owner `/session-handoff` (no turnover
+   reason given - routine rotation at the completed-window seam)**. All sub-agents completed
+   bounded assignments (2 producers + reviewer/DCV contexts; every producer patch-captured at its
+   seam and retired per R395; zero subagents live at finalization); nothing in flight; tree clean;
+   zero unpushed commits; no pending approvals or unconfirmed external effects.
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **54**), local == origin.
 3. **This session end-to-end:** M0-T126 (seven-property checkpoint design + ALL 17 register
