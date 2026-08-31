@@ -6,85 +6,73 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff — seq 43: Amendments 16–20 arc COMPLETE; ONE new live attempt AUTHORIZED; NEXT = preflight + present both commands
+## Handoff — seq 44: Amendment-22 stabilization window OPEN; M0-T125 accepted; NEXT = M0-T126 implementation
 
-1. **Generated:** 2026-08-30 ~09:4x UTC · orchestrator session
-   `session_01SfXcRw7emzdojCDJmKxNTM`. **Turnover reason (owner, verbatim in
-   `source-020-amendment.md`):** authorize exactly one post-Amendment-19 live-loop attempt;
-   preflight first (every row, no action unless all pass); present both exact certified
-   commands fresh (owner executes separately, in order); eight-point live proof from primary
-   evidence; no repin/budget-reset/history-clear/journal-edit/PR #241/policy loosening; on
-   preflight mismatch or any post-dispatch stop — no restart/retry/clear, preserve
-   everything, full system-level assessment for a new owner decision; no continuous-autonomy
-   claim unless the complete journey succeeds. **Sub-agents:** every spawn this session
-   (2 producers, 3 reviewers, 1 DCV — reused via SendMessage across waves) completed its
-   bounded assignment naturally; none stopped; reports/attestations committed verbatim.
+1. **Generated:** 2026-08-30 ~21:3x UTC · orchestrator session `session_01SfXcRw7emzdojCDJmKxNTM`
+   at the D-010 rotate-at-seam point (post-acceptance seam). All sub-agents completed bounded
+   assignments (1 surveyor + G3 + G4 + DCV; G3 stalled once on a stream watchdog and was resumed
+   via SendMessage — completed fully; returns captured VERBATIM).
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop` (campaign seq **43**), tip at write = the Amendment-20
-   capture commit (local == origin after push; tree clean; CI 20/20 at every prior tip).
-3. **This session end-to-end:** cycle-2 owner start refused (HALTED edge unreachable) →
-   Amendment 16/17/18 → **M0-T121** (restart channel: owner-restart /
-   acknowledge-emergency-stop / resume-after-answer + edge-granular sweep) + **M0-T122**
-   (fourth recert) ACCEPTED → owner-restart **worked live** (HALTED→IDLE exactly-once) →
-   cycle-2 start DISPATCHED then S14 counted stop → root cause: rotation-at-seam never fired
-   (session resumed at 640,224 tok) + resumed worker cwd = primary checkout; terminal event
-   RECOVERED (`max_turns_reached` 13/12 — context-limit hypothesis abandoned) → Amendment 19
-   (S16.7 excess dispositioned as measurement-only; resume-path class authorized) →
-   **M0-T123** (launch_seam: unconditional 400k ceiling + packet-worktree cwd binding at the
-   sole worker Popen + pre-first-dispatch shed; 64-test pack; preserved evidence byte-identical
-   throughout) + **M0-T124** (fifth recert + R347 stop/presentation) ACCEPTED → Amendment 20
-   captured (this handoff). Suite chain 2,780→2,814→2,889 (0 failures, triple-sourced).
-4. **EXACT next action — successor (campaign seq-43 NEXT has the full text):**
-   (a) **R350 preflight** at the then-current clean pushed tip, EVERY row reported, the R276
-   pattern: tree clean local==origin; CI 20/20 at tip; anchors intact (material `16e1b3b`,
-   tree `a72a53b8…`, golden `c54fd0d2…`, launch-seam `1a77b904…`); `executable_identity` ==
-   `d6f6c29a…` exact + codex 0.146.0; config/model-selection digests; manifest 121 files
-   `47293127…` + verify-controller + doctor overall PASS; drift tooth green; `wt-m0t107`
-   clean @ `796e18f`; journal readback PAUSED_RECOVERY / transitions 18 / audit 43 / 0 asks
-   / 0 effects. NO recovery or start action unless ALL pass.
-   (b) **R351 presentation** on all-pass: BOTH commands fresh (step 1 `clear-recovery
-   --checkout C:/Users/MLFLL/Downloads/nyc-zoning/ctl24` — the PAUSED_RECOVERY exit, NOT
-   owner-restart; step 2 the certified item-3 start, NO repin flag, forward-slash paths,
-   config path quoted — verbatim source: `M0-T124-recertification.md` §4). Owner executes
-   separately, in order. (c) Verify the **eight-point proof** (R352–R359) from primary
-   evidence on the attempt; record honestly.
-5. **Failure protocol (R361/R362, BINDING):** preflight mismatch or ANY post-dispatch stop /
-   live-journey failure → NO restart, NO retry, NO second clear-recovery, NO automatic
-   repair window; preserve everything; full system-level assessment for a NEW owner
-   decision; never claim continuous autonomy unless the COMPLETE journey succeeds.
-6. **Standing restrictions:** NEVER merge PR #241 (gh-confirmed OPEN); owner-only: autostart,
-   C1 canary, Telegram live send, natural-event graduation, OS-ACL; R286/R287 admission
-   discipline permanent (CLI 2.1.251 `d6f6c29a…` undrifted — any drift = admission event,
-   never silent); R293 never broadly allow shell; Bootstrap Gate 0 every session; supervisor
-   commits cite `D-024-R###`; never `name:` producers; never resume a killed producer;
-   expansion hold; S16.7 measurement + touch history preserved (R349).
-7. **Task states:** M0-T113/T117–T124 accepted; M0-T107 claimed (checkpoint 1 delivered;
-   the authorized attempt is its lifecycle); M0-T109 backlog. Follow-up candidates carried:
-   launch OSError re-typing, F2 wrapper-evasion, F1, F-LIVE-1, mode-guard, T120 hygiene.
+   `control/D-024-fable-codex-loop` (campaign seq **50**), tip = the M0-T125 acceptance +
+   seq-50 advance (local == origin after push; CI 20/20 at every green-required tip).
+3. **This session end-to-end:** seq-43 R350 preflight ALL PASS → both certified commands
+   presented → owner step 1 clear-recovery OK → step 2 verbatim §4 start REFUSED pre-dispatch
+   exit 11 `cwd_primary_checkout` (T124 §4 lacked `--worktree` — cert-doc defect; T123 seam
+   worked) → **Amendment 21** (corrected start, refusal ruled non-consuming) → corrected start
+   **DISPATCHED** → counted stop `no_valid_checkpoint` at exactly **12/12 max_turns** (fresh
+   Fable session `0835bb80` in wt-m0t107; shed/lineage/cwd all PASS — **M0-T123 repair
+   live-validated**; eight-point proof 5 PASS / 1 FAIL / 2 not reached; journal preserved
+   PAUSED_RECOVERY transitions 22 / audit 53) → **Amendment 22** captured (rows R372–R394): ONE
+   bounded final end-to-end stabilization + commissioning window; tasks M0-T125/126/127 →
+   **M0-T125 ACCEPTED** (17-defect register + complete call-graph/transition/surface map; gates
+   G0/G2/G3/G4; DCV 7/7; four independent identities).
+4. **EXACT next action — campaign seq-50 NEXT has the FULL binding text:** M0-T126 G0 + claim
+   (producer `supervisor-stabilization-producer`, isolated worktree reset to the control tip),
+   implement at ONE final frozen identity: seven-property checkpoint design (R376–R382), ALL 17
+   register corrections (R385 — D1–D17 in `M0-T125-defect-register.md`; D9 next-task-selection
+   machinery FIRST, it gates R388), R386/R387 sixteen-scenario removal-sensitive replay
+   coverage + R388 consecutive simulated advancements. Binding: G4 corrections 1–4, G3 citation
+   fixes, DCV seed-a labeling, golden-run ~3h13m recert budget (O2). Then M0-T127: single full
+   R247 recert + all gates/DCV + consolidated stop-and-present report with commissioning
+   commands (R389–R392, orchestrator NEVER executes them).
+5. **Preservation binding throughout the window (R374/R375):** byte-for-byte journal
+   (PAUSED_RECOVERY, transitions 22, audit 53, 0 asks/effects), audit, transcripts (incl.
+   `~/.claude/projects/C--Users-MLFLL-Downloads-nyc-zoning-wt-m0t107/0835bb80-*.jsonl`),
+   worktrees (`wt-m0t107` clean @ `796e18f`), budgets, owner-touch history. NO restart, NO
+   clear-recovery, NO journal edit, NO repin, NO PR #241, NO policy weakening, NO owner-gate
+   crossing, **NO live launch in this window**. R393/R394: autonomy only via a SEPARATE
+   owner-authorized live commissioning journey; any live failure → stop, preserve, one
+   consolidated assessment.
+6. **Standing:** never merge PR #241 (OPEN, DCV-confirmed); owner-only gates unchanged; R286/287
+   admission discipline (CLI 2.1.251 `d6f6c29a…` undrifted); Bootstrap Gate 0 every session;
+   supervisor commits cite `D-024-R###`; producers UNNAMED and ROSTER-typed (non-roster spawns
+   are write-denied — return-channel + verbatim capture is the working pattern); never resume a
+   killed producer; expansion hold; S16.7 + budgets un-reset (R349).
+7. **Task states:** M0-T113/T117–T125 accepted; M0-T126 backlog (depends T125 — now unblocked),
+   M0-T127 backlog (depends T126); M0-T107 claimed (its live commissioning is the SEPARATE
+   owner-gated journey after certification); M0-T109 backlog.
 8. **Successor must read:** `CLAUDE.md`; this file; `.claude/session-handoff-profile.md`;
-   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 43);
-   `project-control/directives/D-024-fable-codex-loop/source-020-amendment.md` (the
-   authorization, R348–R362); `project-control/reports/M0-T124-recertification.md` (§4 =
-   the certified command package); `project-control/reports/M0-T107-cycle2-live-journey.md`.
-9. **Stop/change conditions:** Gate-0 failure; validator non-zero; any preflight row not
-   PASS; any owner-only item; any CLI drift (admission event). The eight-point proof and the
-   attempt outcome are recorded on M0-T107 + the campaign — never as chat-only claims.
+   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 50 — the full NEXT);
+   `project-control/directives/D-024-fable-codex-loop/source-022-amendment.md` (R372–R394);
+   `project-control/reports/M0-T125-defect-register.md` + `M0-T125-callgraph-and-transitions.md`
+   (the implementation's blueprint); `M0-T125-G4-qa-review.md` (corrections 1–4 + R387 gap
+   list).
+9. **Stop/change conditions:** Gate-0 failure; validator non-zero; any R374/R375 breach; any
+   owner-only item; any CLI drift (admission event). Campaign next_action text MUST be pure
+   ASCII (a U+2014 broke the operator-channel CI tooth once this session).
 10. **Successor prompt:** *"Work from durable repository evidence only. Verify root =
     C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch control/D-024-fable-codex-loop, HEAD,
     tree, and /mcp empty (Bootstrap Gate 0) before any change. Read CLAUDE.md,
     docs/SESSION_HANDOFF.md, .claude/session-handoff-profile.md, and the §8 files. Run
     `python tools/project_control.py status` and `python -m
     tools.agent_supervisor.campaign_continuity --status`. Reconcile against live git + the
-    ledger (they win over prose). Amendments 16–20 are complete: M0-T121/T122/T123/T124
-    accepted, the fifth certification stands, and the owner has authorized EXACTLY ONE new
-    live-loop attempt (D-024-R348–R362). Execute the seq-43 NEXT: run the complete R350
-    preflight at the then-current clean pushed tip and report every row; if and only if all
-    rows pass, present the owner BOTH certified commands fresh (clear-recovery, then the
-    certified start — verbatim in M0-T124-recertification.md §4); the owner executes them.
-    Then verify the eight-point live proof (R352–R359) from primary evidence. On preflight
-    mismatch or any post-dispatch stop: no restart, no retry, no second clear-recovery, no
-    automatic repair window — preserve everything and report the full system-level
-    assessment for a new owner decision (R361). Never claim continuous autonomy unless the
-    complete journey succeeds (R362). Never use --repin-cli-identity, reset budgets, clear
-    history, edit the journal, touch PR #241, or loosen any policy (R360). The standard
-    D-010 ~400k rotate-at-seam ceiling governs your session."*
+    ledger (they win over prose). The Amendment-22 stabilization window is OPEN (D-024-R372–R394)
+    and M0-T125 is accepted. Execute the campaign seq-50 NEXT: G0 + claim M0-T126 and drive the
+    implementation at ONE final frozen identity — seven-property checkpoint design, all 17
+    register corrections (D9 next-task-selection machinery first), the sixteen-scenario
+    removal-sensitive replay coverage, and consecutive simulated advancements — under the
+    R374/R375 preservation and no-live-launch prohibitions, with G4 corrections 1–4 and G3
+    citation fixes binding the design. Then M0-T127: the single full R247 recertification, all
+    gates and DCV, and the consolidated stop-and-present report whose commissioning commands
+    you never execute (R391/R392). The standard D-010 ~400k rotate-at-seam ceiling governs your
+    session."*
