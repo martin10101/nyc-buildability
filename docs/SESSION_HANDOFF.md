@@ -9,9 +9,11 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
 ## Handoff — seq 44: Amendment-22 stabilization window OPEN; M0-T125 accepted; NEXT = M0-T126 implementation
 
 1. **Generated:** 2026-08-30 ~21:3x UTC · orchestrator session `session_01SfXcRw7emzdojCDJmKxNTM`
-   at the D-010 rotate-at-seam point (post-acceptance seam). All sub-agents completed bounded
-   assignments (1 surveyor + G3 + G4 + DCV; G3 stalled once on a stream watchdog and was resumed
-   via SendMessage — completed fully; returns captured VERBATIM).
+   at the D-010 rotate-at-seam point (post-acceptance seam); finalized by owner `/session-handoff`
+   (no turnover reason given — routine rotation). All sub-agents completed bounded assignments
+   (1 surveyor + G3 + G4 + DCV; G3 stalled once on a stream watchdog and was resumed via
+   SendMessage — completed fully; none killed; returns captured VERBATIM). Nothing in flight at
+   close: tree clean, zero unpushed commits, no pending approvals/effects, CI 20/20 at the tip.
 2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `control/D-024-fable-codex-loop` (campaign seq **50**), tip = the M0-T125 acceptance +
    seq-50 advance (local == origin after push; CI 20/20 at every green-required tip).
