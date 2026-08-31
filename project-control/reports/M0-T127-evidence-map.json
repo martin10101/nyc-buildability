@@ -67,6 +67,15 @@
     ],
     "D-024-R396": [
       "No producer sub-agent was dispatched for M0-T127 (orchestrator-executed certification acts only; bounded background commands with recorded outputs); no context ran toward exhaustion."
+    ],
+    "D-024-R397": [
+      "The commissioning contradiction was resolved MECHANICALLY: section 7 of the stabilization report was rewritten under Amendment 24 into the staged protocol with the honest seven-fact provability map (7.1) - the code facts verified by the orchestrator AND by the round-1 DCV/G3/G4 record (zero production callers for select_next_packet/record_advancement/advance_and_select); the hold is stated in the section 7 header; no command was executed; the revised section is independently reviewed by the G3/G4/DCV delta round before acceptance."
+    ],
+    "D-024-R398": [
+      "Section 7.1 maps EACH of the seven R393 facts to the exact stage/command/wiring that proves it; facts 6 and cross-task 7 (and the audited half of fact 5) are named PLAINLY as not provable with current wiring, with the prerequisite Stage-3 wiring work described (7.4 Option A: wire advance_and_select behind the existing bounded-mode owner gate; supervisor code change -> R247 re-triggers). Section 4 limitation 2 restates the same consequence."
+    ],
+    "D-024-R399": [
+      "Section 7.4 presents the resolution as a NEW owner decision with three options and their consequences (A wire-now + recert; B staged de-risk first, recommended; C hold - the standing default); the orchestrator self-authorizes nothing and executes nothing."
     ]
   }
 }

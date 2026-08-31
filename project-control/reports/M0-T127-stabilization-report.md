@@ -85,8 +85,12 @@ frozen identity (M0-T126), then recertified once (M0-T127):
    turn on a tool call; the fail-closed exhaustion net is the backstop
    ("wherever technically enforceable" - the amendment's own hedge).
 2. **D9 autonomous tail is simulation-proven only:** `plan_close_run` is live-wired,
-   but automatic next-packet dispatch is deliberately NOT wired to a live start -
-   that is exactly what the R393 live commissioning journey must prove.
+   but automatic next-packet dispatch (`select_next_packet` / `record_advancement` /
+   `advance_and_select`) has ZERO production call sites - deliberately withheld under
+   the no-live-launch window and the R595 gate. CONSEQUENCE (Amendment 24): R393
+   facts 6 and cross-task 7 are NOT provable by any currently-presented command;
+   proving them requires the owner-authorized Stage-3 wiring described in section
+   7.4, which re-triggers R247 recertification. Section 7.1 maps every fact honestly.
 3. **Carried non-blocking observations:** one runbook digest is owner-machine-local
    (not sandbox-recomputable); runbook sections 2-10 still show `wt-m0t063` in
    EXAMPLES (outside the register's D15 scope - candidate follow-up task); the
@@ -121,16 +125,39 @@ point re-invalidates certification and re-triggers R247.
 8. The orchestrator re-runs and reports this preflight at the then-current tip before
    any owner-typed attempt - presenting this package does not skip that step.
 
-## 7. The exact commands for ONE controlled live commissioning attempt (OWNER-TYPED ONLY - the orchestrator NEVER runs these, R392)
+## 7. The STAGED commissioning protocol (OWNER-TYPED ONLY - the orchestrator NEVER runs any of these, R392; execution HELD under R397 until the owner decides section 7.4)
 
-Both commands were dry-run validated this session against the live `build_parser()`
-contract, the five pinned load-bearing flags, and `dispatch_inputs_missing` (both OK).
-Type them with `!`-prefix in the orchestrator session (forward slashes - bash strips
-unquoted backslashes), in order, after section 6 passes:
+REVISED under Amendment 24 (D-024-R397/R398/R399): the owner-relayed review found - and
+the orchestrator verified in code - that the original single-command presentation could
+not prove all seven R393 facts. The honest mechanics: `select_next_packet`,
+`record_advancement`, and `advance_and_select` have ZERO production call sites (only
+`plan_close_run` is live-wired, cli.py:2687). Live cross-TASK autonomy is therefore
+deliberately unwired at this identity, and NO currently-presentable command can prove
+R393 facts 6 and cross-task 7. This section maps every fact to the exact stage,
+command, and wiring that proves it (R398).
 
-**Step 1 - recovery exit (PAUSED_RECOVERY -> PREFLIGHT; this is the documented
-recovery path for the preserved S14 stop, an owner decision that ends the R374
-byte-for-byte preservation of the live journal state):**
+### 7.1 Seven-fact provability map at the frozen identity
+
+| R393 fact | Provable by | Stage |
+|---|---|---|
+| 1. Over-ceiling session never contacted | pre-dispatch shed at the launch seam | Stage 1 |
+| 2. Fresh Fable 5 worker launches in wt-m0t107 | Stage-1 command | Stage 1 |
+| 3. A valid checkpoint reaches Codex | Stage-1 command (the new orientation/cadence/reserved-turn machinery's first live test) | Stage 1 |
+| 4. Codex completes an independent review | Stage-1 command | Stage 1 |
+| 5. M0-T107 advances exactly once | PARTIAL at Stage 1: a COMPLETE verdict closes the unit and the run (close-to-IDLE on next start via the wired plan_close_run); the new AUDITED exactly-once advancement record (record_advancement) has no live caller yet - its live proof needs the Stage-3 wiring | Stage 1 (partial) / Stage 3 (full) |
+| 6. The next bounded task is selected | NOT provable live today - select_next_packet has zero production call sites; requires the Stage-3 wiring | Stage 3 only |
+| 7. Multiple successive units, no owner touch | WITHIN one task: Stage 2 (--max-cycles 3; Codex CONTINUE forwards drive successive units with zero owner touches between cycles - pre-existing in-process forwarding plus the new D10 cross-process persistence). ACROSS tasks: Stage 3 only | Stage 2 (in-task) / Stage 3 (cross-task) |
+
+### 7.2 Stage 1 - single bounded cycle (proves facts 1-4 + the unit half of 5)
+
+Both commands dry-run validated against the live `build_parser()` contract, the five
+pinned load-bearing flags, and `dispatch_inputs_missing`. Type with `!`-prefix in the
+orchestrator session (forward slashes - bash strips unquoted backslashes), in order,
+after section 6 passes:
+
+**Step 1 - recovery exit (PAUSED_RECOVERY -> PREFLIGHT; the documented recovery path
+for the preserved S14 stop; an owner decision that ends the R374 byte-for-byte
+preservation of the live journal state):**
 
 `! python -m tools.agent_supervisor clear-recovery --checkout C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`
 
@@ -139,12 +166,36 @@ flag - the CLI identity is undrifted):**
 
 `! python -m tools.agent_supervisor start --mode limited-auto --owner-enable-bounded-auto --checkout C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 --repo C:/Users/MLFLL/Downloads/nyc-zoning/nyc-development-feasibility-claude-pack --branch task/M0-T107-plugin-portability --worktree C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107 --max-cycles 1 --claude-executable C:/Users/MLFLL/.local/bin/claude.exe --codex-executable C:/Users/MLFLL/AppData/Roaming/npm/codex.cmd --task-packet project-control/tasks/M0-T107.json --config "C:/Program Files/SupervisorConfig/config.toml" --model-selection C:/SupervisorController/model_selection.toml --manifest C:/Users/MLFLL/AppData/Local/NYCBuildabilitySupervisor/ctl24-activation/controller_manifest.json`
 
-**What the live journey must prove (R393, the seven facts):** the over-ceiling session
-is never contacted; a fresh Fable 5 worker launches in `wt-m0t107`; a valid checkpoint
-reaches Codex; Codex completes an independent review; M0-T107 advances exactly once;
-the next bounded task is selected; multiple successive units operate without an owner
-touch. **On ANY live failure (R394):** stop without retry, preserve all evidence
-byte-for-byte, one consolidated system-level assessment for a new owner decision.
+### 7.3 Stage 2 - bounded multi-unit on the SAME task (adds the in-task half of fact 7)
+
+Identical to Stage-1 Step 2 with the single delta `--max-cycles 3` (dry-run validated
+OK this session). On a Codex CONTINUE verdict the loop forwards the reviewed prompt and
+runs the next unit with NO owner touch between cycles; on COMPLETE or any stop
+condition it lands fail-closed as certified. Run Stage 2 only after Stage 1 succeeds
+and its evidence is reviewed.
+
+### 7.4 Stage 3 - cross-task autonomy (facts 5-full, 6, and cross-task 7) - REQUIRES A NEW OWNER DECISION FIRST (R399)
+
+The orchestrator does not self-authorize either path. The options:
+
+* **Option A - authorize the wiring window now:** one more bounded supervisor task to
+  wire `advance_and_select` into the live post-COMPLETE path behind the EXISTING
+  bounded-mode owner gate (the machinery, its exactly-once CAS semantics, and its crash
+  matrix are already built and simulation-proven at this identity). It is a supervisor
+  code change: R247 re-triggers and the recert re-runs (now measured at under a minute
+  for golden; the full battery is sub-ten-minutes). Then ONE seven-fact live journey
+  becomes presentable. Estimated bounded scope: wiring + dispatch-level tests + recert.
+* **Option B (recommended) - de-risk live first:** run Stage 1, review its evidence,
+  run Stage 2, review - THEN decide Option A with live behavioral data on the new
+  checkpoint machinery. This is the incremental posture every prior live attempt has
+  vindicated; nothing about Option B forecloses Option A.
+* **Option C - hold everything** (the standing default; nothing runs until you type a
+  command).
+
+**What no option changes:** full autonomy is declarable ONLY after the complete
+seven-fact live proof (R393); **on ANY live failure at any stage (R394):** stop without
+retry, preserve all evidence byte-for-byte, one consolidated system-level assessment
+for a new owner decision.
 
 **Standing gates untouched by this package:** never merge PR #241; autostart, C1
 canary, Telegram live send, natural-event graduation, OS-ACL hardening, production,
