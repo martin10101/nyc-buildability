@@ -3,10 +3,19 @@
   "gate_id": "G4",
   "reviewer": "qa-engineer",
   "role": "independent_review",
-  "result": "FAIL",
-  "report_file": "project-control/reports/M0-T130-G4-qa-review.md",
-  "reviewed_at": "2026-08-31T19:31:14.488400+00:00",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T130-G4-qa-review-delta.md",
+  "reviewed_at": "2026-08-31T19:34:44.768269+00:00",
   "content_manifest_sha256": "fd4e61d6fce3bc83ef44cb91c4fe2f54be200a31a71430419f00dce62caa1b6c",
-  "reviewed_sha": "4972a5d80eb9fe8c5e2eec6e1e44b59d3bb3b51f",
-  "updated_at": "2026-08-31T19:31:14.904842+00:00"
+  "reviewed_sha": "6dac4e99a8bb546fe0d9530b053307fe98406eaf",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M0-T130-G4-qa-review.md",
+      "reviewed_at": "2026-08-31T19:31:14.488400+00:00"
+    }
+  ],
+  "updated_at": "2026-08-31T19:34:45.245679+00:00"
 }
