@@ -82,12 +82,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:07:19.603498+00:00",
-  "updated_at": "2026-08-31T03:44:21.961629+00:00",
+  "updated_at": "2026-08-31T04:00:11.247608+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -111,6 +111,13 @@
       "percent": 55,
       "status": "in_progress",
       "message": "Producer return 1 captured VERBATIM (M0-T126-producer-return-1.md): A/B/D/E delivered (D9 next-task machinery, seven-property design, 4 new modules, 64 new tests, suite 2963 passed excl. golden, modularity 0 failures) but correction set INCOMPLETE - 12/17 (D4/D7 blocked on modularity headroom; D6/D10/D16 deferred by producer). R385 continuation directive issued via return channel: complete all 17 at this identity; D4/D7 resolved by FURTHER EXTRACTION into the new allowed modules (no modularity exception, no scope change); D6/D10/D16 per register correction lines; G4 correction 3 verdict-persistence interruption rows both halves; plus static-analysis defects found by orchestrator review (loop.py:949 _ceiling_context_tokens UNDEFINED in the D5 rotation path, command_docs.py:209 _strip_trailing_comment UNDEFINED, claude_runner.py:1502 dead live_ctx assignments) must be fixed with tests that execute those paths. Task NOT moved to awaiting_gate."
+    },
+    {
+      "at": "2026-08-31T04:00:11.247608+00:00",
+      "agent": "supervisor-stabilization-producer",
+      "percent": 70,
+      "status": "rework",
+      "message": "G3 FAIL recorded (verbatim report M0-T126-G3-code-review.md): three blocking defects - G3-1 property-1 orientation packet not wired into the ROTATED reorientation seam (cadence/allowed_paths/required-output absent for rotated workers; test only exercises the module branch, not the dispatched prompt); G3-2 property-3 reserved final turn has no technical enforcement (extra_turns channel exists at claude_runner.py:1209 but NO caller passes it; the register D3 line prescribed the injection) AND the orchestrator-assembled evidence-map R378 row overclaims a nonexistent injection - evidence map must be corrected from the verified code, not the packet text; G3-3 D15 runbook regeneration incomplete (sec1 stale digests lines 18/21, sec5 manifest written inside repo tree line 90, sec11 retired M0-T063 identities lines 229-231). Non-blocking O1 (tooth scans runbook only - certification-checklist duty), O2 (D9 selection simulation-only, defensible under R388/R595), O3 (full golden pack owed at M0-T127 recert). All 17 register corrections otherwise verified CORRECT per-defect. Remediation bundles with the pending G4 verdict into ONE fresh-producer pass (R395 - retired context never resumed); new candidate frozen identity will result."
     }
   ]
 }
