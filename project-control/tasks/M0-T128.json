@@ -83,12 +83,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 82,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-31T08:18:27.106673+00:00",
-  "updated_at": "2026-08-31T09:22:50.631490+00:00",
+  "updated_at": "2026-08-31T10:01:11.489730+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -112,6 +112,13 @@
       "percent": 82,
       "status": "rework",
       "message": "G4 PASS recorded with required correction 1 (BLOCKING): the cli.py:3069 dispatch branch has zero real coverage - add a test exercising the REAL cmd_start routing (or the actual line, not an inline copy) with --max-tasks>1/--packet-queue asserting dispatch to run_task_queue with _run_loop injected. Non-blocking O1 (next_task.py growth signal) + O2 (category-1 sub-codes packet_unreadable/packet_not_object not individually asserted - include in remediation, cheap). CONSOLIDATED REMEDIATION LIST for ONE fresh producer (R395): G3-C1 driver mode confinement (typed refusal + removal-sensitive test), G3-C2 real _run_loop-altitude cross-task test (shared-run_id budget clean-resume + plan_close_run close + D6 dispatch-intent on the shared journal) + shared-budget semantics documented, G4-1 real dispatch-branch coverage, G4-O2 sub-code assertions. All reproduced numbers matched (35/18/3025/160/tooth/modularity/golden-blob/ASCII)."
+    },
+    {
+      "at": "2026-08-31T10:00:54.592237+00:00",
+      "agent": "supervisor-wiring-producer",
+      "percent": 90,
+      "status": "rework",
+      "message": "Remediation integrated at de18f27 (fresh producer, patch 010cf7f5 captured, context retired): G3-C1 mode confinement with mutation-proven ModeConfinementTests; G3-C2 LiveRunLoopCrossTaskTests through the REAL cli._run_loop (shared-budget clean resume + run_closed + D6 across the boundary; design-record sec 5A); G4-1 CmdStartDispatchTests executing the verbatim cli.py:3069 expression; G4-O2 sub-code assertions. Producer suite 3035/2/0; orchestrator 154 across three packs + modularity 0 + tooth 12/0. Delta re-verdicts next."
     }
   ]
 }
