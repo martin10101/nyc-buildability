@@ -798,6 +798,22 @@ def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
     return checkpoint
 
 
+def checkpoint_question_decided(events: Sequence[Mapping[str, Any]]) -> bool:
+    """True when the drained stream already ANSWERS the checkpoint question.
+
+    M0-T130 (D-024-R421): the reserved-final-turn demand exists to obtain a
+    checkpoint that is otherwise ABSENT. Any candidate at all - valid, invalid,
+    or conflicting - means one more demanded turn cannot improve the verdict (a
+    further candidate could only become another conflict), so only a stream
+    with NO candidate (`missing_checkpoint`) warrants the injection.
+    """
+    try:
+        extract_checkpoint(events)
+    except CheckpointError as exc:
+        return exc.code != "missing_checkpoint"
+    return True
+
+
 # --------------------------------------------------------------------------
 # The control protocol (S8.4)
 # --------------------------------------------------------------------------
@@ -1344,9 +1360,17 @@ class ClaudeRunner:
         try:
             write(user_message(prompt))
             expected_results += 1
-            for turn in extra_turns:
-                write(user_message(turn))
-                expected_results += 1
+            # M0-T130 (D-024-R421; the journey-3 `absorbed_mid_turn` defect):
+            # extra turns are NOT written at launch. The installed CLI absorbs
+            # a queued stdin prompt into the in-flight turn, which both
+            # truncated the working phase (the worker read "your turns are
+            # spent" seconds in) and collapsed two written prompts into ONE
+            # terminal result, so `expected_results` was never met and the unit
+            # rode the wall watchdog. Each extra turn is now written only at
+            # genuine idle - after the prior written turn's terminal result -
+            # and only while the stream has not already decided the checkpoint
+            # question.
+            pending_turns: list[str] = list(extra_turns)
 
             assert process.stdout is not None
             for chunk in process.stdout:
@@ -1379,10 +1403,20 @@ class ClaudeRunner:
                             decisions.append(decision)
                     elif kind == "result":
                         results_seen += 1
-                if results_seen >= expected_results:
-                    # Every written turn has its terminal result. Stop reading
-                    # here rather than waiting for an EOF the CLI never sends;
-                    # stdin is closed below and the process gets a bounded grace.
+                        if pending_turns and results_seen >= expected_results:
+                            if checkpoint_question_decided(events):
+                                # The stream already carries a checkpoint
+                                # candidate; the reserved demand is moot (one
+                                # more candidate could only conflict). R421.
+                                pending_turns.clear()
+                            else:
+                                write(user_message(pending_turns.pop(0)))
+                                expected_results += 1
+                if results_seen >= expected_results and not pending_turns:
+                    # Every written turn has its terminal result and nothing is
+                    # left to inject (R422). Stop reading here rather than
+                    # waiting for an EOF the CLI never sends; stdin is closed
+                    # below and the process gets a bounded grace.
                     unit_complete = True
                     break
         finally:

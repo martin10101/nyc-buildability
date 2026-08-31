@@ -276,6 +276,96 @@ FAKE_CLAUDE = textwrap.dedent('''
                         "\\n```\\n"})
         raise SystemExit(0)
 
+    if MODE == "absorbs_early_second_prompt":
+        # M0-T130: the journey-3 measured installed-CLI shape. A second user
+        # prompt arriving while the first turn is in flight is ABSORBED into
+        # it: ONE merged terminal result, no checkpoint, session left open
+        # (the live run then rode the 900s wall watchdog). A runner that only
+        # writes the reserved turn at genuine idle never triggers this branch.
+        import threading as _th
+        import time as _time
+        users = []
+        lock = _th.Lock()
+        def _reader():
+            for line in sys.stdin:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    parsed = json.loads(line)
+                except ValueError:
+                    continue
+                if parsed.get("type") == "user":
+                    with lock:
+                        users.append(parsed)
+        reader = _th.Thread(target=_reader, daemon=True)
+        reader.start()
+        _time.sleep(0.8)
+        with lock:
+            early = len(users)
+        if early >= 2:
+            emit({"type": "result", "subtype": "success", "uuid": "u-merged",
+                  "result": "merged turn, working phase truncated; no checkpoint"})
+            reader.join()
+            raise SystemExit(0)
+        emit({"type": "result", "subtype": "success", "uuid": "u-r1",
+              "result": json.dumps(CHECKPOINT)})
+        seen = early
+        while True:
+            reader.join(timeout=0.1)
+            with lock:
+                count = len(users)
+            if count > seen:
+                seen = count
+                emit({"type": "result", "subtype": "success",
+                      "uuid": "u-r%d" % seen, "result": json.dumps(CHECKPOINT)})
+            if not reader.is_alive():
+                break
+        raise SystemExit(0)
+
+    if MODE == "no_checkpoint_then_checkpoint":
+        # M0-T130: first turn ends WITHOUT a checkpoint (the max-turns-spent
+        # shape); the runner's deferred reserved-turn injection then demands it
+        # as a fresh turn, which succeeds.
+        emitted = 0
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                parsed = json.loads(line)
+            except ValueError:
+                continue
+            if parsed.get("type") == "user":
+                emitted += 1
+                if emitted == 1:
+                    emit({"type": "result", "subtype": "success", "uuid": "u-r1",
+                          "result": "max turns spent exploring; no checkpoint"})
+                else:
+                    emit({"type": "result", "subtype": "success",
+                          "uuid": "u-r%d" % emitted,
+                          "result": json.dumps(CHECKPOINT)})
+        raise SystemExit(0)
+
+    if MODE == "never_checkpoint":
+        # M0-T130: no turn ever yields a checkpoint - the honest failure must
+        # arrive FAST (every written prompt answered), never via the wall.
+        emitted = 0
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                parsed = json.loads(line)
+            except ValueError:
+                continue
+            if parsed.get("type") == "user":
+                emitted += 1
+                emit({"type": "result", "subtype": "success",
+                      "uuid": "u-n%d" % emitted,
+                      "result": "still exploring; nothing structured"})
+        raise SystemExit(0)
+
     emit({"type": "result", "subtype": "success", "uuid": "u-result",
           "result": json.dumps(CHECKPOINT)})
 
@@ -696,12 +786,18 @@ class SessionCloseTests(RunnerTestBase):
         self.assertEqual(result.checkpoint.summary, "broker said deny")
         self.assertFalse(result.graceful_close_failed)
 
-    def test_every_extra_turn_gets_its_terminal_result_before_the_close(self) -> None:
+    def test_a_checkpoint_in_the_first_result_skips_the_reserved_turn(self) -> None:
+        # M0-T130 (R421): the extra turn is deferred, and a first result that
+        # already carries the checkpoint makes the reserved demand moot - the
+        # second prompt is never written, so exactly ONE result arrives.
+        # (Before M0-T130 both prompts were written at launch and this fake
+        # emitted two results; the journey-3 installed CLI instead ABSORBED the
+        # early second prompt - see ReservedTurnDeliveryTests.)
         result = self.run_fake("session_open_two_turns", timeout=120.0,
                                extra_turns=("do the second unit",))
         self.assertTrue(result.ok, result.checkpoint_error)
         results = [e for e in result.raw_events if e.get("type") == "result"]
-        self.assertEqual(len(results), 2)
+        self.assertEqual(len(results), 1)
         self.assertFalse(result.graceful_close_failed)
 
     def test_a_worker_that_exits_on_its_own_is_unchanged(self) -> None:
@@ -718,6 +814,101 @@ class SessionCloseTests(RunnerTestBase):
         self.assertFalse(result.graceful_close_failed)
         self.assertTrue(result.tree_terminated)
         self.assertFalse(result.ok)
+
+
+# --------------------------------------------------------------------------
+# Reserved-turn delivery (M0-T130; the journey-3 absorbed_mid_turn defect)
+# --------------------------------------------------------------------------
+
+
+def _checkpoint_dict() -> dict:
+    """A fresh valid checkpoint body (the CheckpointExtractionTests shape)."""
+    return {
+        "schema_version": "1.0.0", "run_id": "r", "checkpoint_id": "cp-1",
+        "task_id": "M0-T036", "claude_session_id": "s", "status": "UNIT_COMPLETE",
+        "summary": "done", "starting_sha": "a" * 40, "current_sha": "b" * 40,
+        "branch": "task/x", "worktree": "/w", "proposed_next_action": "review",
+    }
+
+
+class ReservedTurnDeliveryTests(RunnerTestBase):
+    """D-024-R421/R422/R423 (Amendment 28). Installed Claude Code 2.1.251
+    ABSORBS a queued stdin prompt into the in-flight turn (journey-3 queue
+    event `absorbed_mid_turn`): the pre-queued reserved-final-turn demand
+    truncated the working phase AND collapsed two written prompts into one
+    terminal result, so `expected_results` was never met and the live unit
+    rode the 900s wall watchdog into tree-termination. The runner now writes
+    each extra turn only at genuine idle, and only while the stream has not
+    already decided the checkpoint question."""
+
+    RESERVED = "RESERVED FINAL TURN: emit your mandatory checkpoint NOW."
+
+    def test_an_absorbing_cli_never_sees_an_early_second_prompt(self) -> None:
+        # The fake reproduces the measured absorption: TWO user prompts inside
+        # its launch window yield ONE merged no-checkpoint result and an open
+        # session (the wall-ride shape). With deferred delivery the fake sees
+        # exactly one early prompt, answers with the checkpoint, and the
+        # reserved demand is skipped as moot. Reverting to launch-time writes
+        # makes this test ride the (short) wall timeout and fail.
+        started = time.monotonic()
+        result = self.run_fake("absorbs_early_second_prompt", timeout=15.0,
+                               extra_turns=(self.RESERVED,))
+        elapsed = time.monotonic() - started
+        self.assertTrue(result.ok, result.checkpoint_error)
+        self.assertIsNotNone(result.checkpoint)
+        self.assertFalse(result.timed_out)
+        self.assertFalse(result.tree_terminated)
+        results = [e for e in result.raw_events if e.get("type") == "result"]
+        self.assertEqual(len(results), 1)
+        self.assertLess(elapsed, 10.0, "completion came from the result event, "
+                                       "never the wall watchdog")
+
+    def test_reserved_turn_is_injected_when_the_first_result_lacks_one(self) -> None:
+        # Working phase ends with no checkpoint: the runner must deliver the
+        # reserved demand as its OWN turn at idle and collect the checkpoint
+        # from its terminal result. Dropping the injection entirely fails here
+        # (missing checkpoint); writing it at launch fails the absorption test.
+        result = self.run_fake("no_checkpoint_then_checkpoint", timeout=30.0,
+                               extra_turns=(self.RESERVED,))
+        self.assertTrue(result.ok, result.checkpoint_error)
+        self.assertIsNotNone(result.checkpoint)
+        self.assertFalse(result.timed_out)
+        results = [e for e in result.raw_events if e.get("type") == "result"]
+        self.assertEqual(len(results), 2)
+
+    def test_no_checkpoint_after_the_reserved_turn_fails_fast(self) -> None:
+        # R422: a worker that answered EVERY written prompt but never produced
+        # a checkpoint is an honest failure decided at its last result - the
+        # wall watchdog (reserved for runaway units) must play no part.
+        started = time.monotonic()
+        result = self.run_fake("never_checkpoint", timeout=60.0,
+                               extra_turns=(self.RESERVED,))
+        elapsed = time.monotonic() - started
+        self.assertFalse(result.ok)
+        self.assertIsNone(result.checkpoint)
+        self.assertIn("missing_checkpoint", result.checkpoint_error)
+        self.assertFalse(result.timed_out)
+        self.assertFalse(result.graceful_close_failed)
+        results = [e for e in result.raw_events if e.get("type") == "result"]
+        self.assertEqual(len(results), 2)
+        self.assertLess(elapsed, 30.0)
+
+    def test_checkpoint_question_decided_vocabulary(self) -> None:
+        # Only a stream with NO candidate warrants the injection; a valid,
+        # conflicting, or invalid candidate is already decided.
+        no_candidate = [{"type": "result", "result": "prose only"}]
+        self.assertFalse(cr.checkpoint_question_decided(no_candidate))
+        valid = [{"type": "result",
+                  "result": json.dumps(_checkpoint_dict())}]
+        self.assertTrue(cr.checkpoint_question_decided(valid))
+        first = _checkpoint_dict()
+        second = _checkpoint_dict()
+        second["current_sha"] = "c" * 40
+        conflicting = [
+            {"type": "result", "result": json.dumps(first)},
+            {"type": "result", "result": json.dumps(second)},
+        ]
+        self.assertTrue(cr.checkpoint_question_decided(conflicting))
 
 
 # --------------------------------------------------------------------------
