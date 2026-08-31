@@ -8694,133 +8694,234 @@
       "requirements": [
         {
           "id": "D-024-R372",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): one bounded window to its end; three tasks; stops at the stabilization report; task in-regime."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R373",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): complete-journey objective discharged; every seam mapped to mechanism and verification."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R374",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): LIVE journal PAUSED_RECOVERY / transitions 22 / audit 53 / effects-outbox-inbox 0; wt-m0t107 clean 796e18f; transcript 97 lines; re-confirmed at round 2; runtime mtimes untouched through the window (G3)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R375",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): PR #241 OPEN untouched (updatedAt 2026-08-20); no restart/clear-recovery/journal edit/repin/policy weakening/owner-gate crossing/live launch; doctor --live deliberately not re-run."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R376",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound at the unmoved identity (verified at the M0-T126 DCV); orientation tests green in the recert suite."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R377",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; cadence tests green in the recert suite."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R378",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; reserved-turn injection tests green; honest technically-enforceable hedge restated."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R379",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; exhaustion-replay tests green (12/12 never read as success)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R380",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; HARD_TURN_CEILING=40 class-sizing tests green."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R381",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; fail-closed emission/validation/persistence/forwarding tests green."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R382",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): carry-over sound; exactly-once CAS + cross-process pointer tests green."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R385",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): 17/17 one-identity set stands at 2d46fb0; recert certifies THAT identity; supervisor diff to HEAD empty at every step."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R386",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): read-only replay fixtures verified against preserved originals; originals untouched."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R387",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): sixteen-scenario matrix nodes verified; green in the recert suite."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R388",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): consecutive simulated advancements + crash-at-boundary exactly-once; next_task pack reproduced 18 passed."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R389",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): gates G0/G2/G3/G4 recorded PASS with genuine independent reproductions, PLUS the Amendment-24 delta wave (G3 delta PASS at 9b39f49, G4 delta PASS at a15e595) verified on file by DCV round 3; producer label differs from every independent reviewer."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R390",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): R247 recert ONCE at the frozen identity: anchors reproduced by rev-parse; golden 42/42 reproduced by DCV itself in 14.40s (fourth sub-minute datapoint resolving the 3h13m anomaly); exactly one recert commit; validator EXIT=0; modularity 0."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R391",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV rounds 2+3 (M0-T127-DCV-delta.md): all seven p8 contents present BEFORE and AFTER the Amendment-24 staged rewrite (round-1 check + round-2 re-check; G3/G4 deltas corroborate)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R392",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV rounds 2+3 (M0-T127-DCV-delta.md): commands OWNER-TYPED ONLY; validations parse-only; live journal unchanged (PAUSED_RECOVERY/22/53) proving no start/clear-recovery verb ran; PR #241 untouched."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R393",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): no autonomy declared from tests/simulations anywhere in the deliverables (grep-swept); seven-fact live burden stated; post-Amendment-24 the staged protocol makes the burden mapping explicit."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R394",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): stop-without-retry / preserve / one-consolidated-assessment protocol stated verbatim in the package."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R396",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV round 1 at frozen material 2d46fb0 (M0-T127-DCV.md): no producer sub-agent dispatched (orchestrator-executed certification acts only); no context ran toward exhaustion."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R397",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV rounds 2+3 (M0-T127-DCV-delta.md): HOLD stated in the section-7 header; resolution mechanical (7.1 map from code-verified facts); NO command executed (journal unchanged); independently reviewed - G3+G4 delta PASS on file at the revised identity; round-2 conditionality discharged at round 3."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R398",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV rounds 2+3 (M0-T127-DCV-delta.md): seven-fact stage/command/wiring map verified row by row; zero-caller claim independently reproduced by DCV, G3, and G4 (only plan_close_run wired at cli.py:2687; in-process CONTINUE continuation at loop.py:2806-2859); unprovable facts named plainly with prerequisites."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         },
         {
           "id": "D-024-R399",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV rounds 2+3 (M0-T127-DCV-delta.md): Options A/B/C presented with consequences; the orchestrator self-authorizes nothing and executes nothing; registry classification metadata corrected (owner_decision -> decision) with audit-log entry; validator EXIT=0 re-confirmed at round 3."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5"
         }
       ],
-      "reviewed_sha": null,
-      "verified_at": null
+      "reviewed_sha": "13b283f7dbb199cb6657c7a4646c969b24c56fd5",
+      "verified_at": "2026-08-31T06:35:08.333140+00:00",
+      "reviewed_manifest_sha256": "91ac35230526369cfc43256a0ac33fcd5ae911421d5acea2138ab4c06134cb44"
     }
   ],
-  "updated_at": "2026-08-31T06:16:29.757491+00:00"
+  "updated_at": "2026-08-31T06:35:08.333140+00:00"
 }
