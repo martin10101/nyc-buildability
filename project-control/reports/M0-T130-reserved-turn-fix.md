@@ -65,8 +65,10 @@ then the mutant was reverted and the pack returned green.
   command shape changed).
 - `modularity_check --check` — **CORRECTED after G3-C1/C2 (the original claim here was
   FALSE):** at the reviewed identity the checker FAILED (exit 1, `baseline_growth`:
-  claude_runner.py 1400 SLOC > limit 1383 = baseline 1258 + 10%; this diff's ~20 new
-  SLOC tipped 142 SLOC of cumulative certified growth over the threshold). The
+  claude_runner.py 1400 SLOC > limit 1383 = baseline 1258 + 10%; this diff's +17 effective
+  SLOC (G4's independently computed parent-relative delta; the parent commit sat
+  exactly at the 1383 limit) tipped 142 SLOC of cumulative certified growth over the
+  threshold). The
   producer's original run masked the exit code behind a shell pipe (`--check | tail`)
   and misread ruff's "All checks passed!" as covering the modularity tooth — an
   evidence-handling error, corrected here. Remediation (G3-C1, scope amendment adding

@@ -19,7 +19,8 @@ Recorded 2026-08-31 at commit `20bfa449` (implementation landing; supervisor tre
 - **Modularity — CORRECTED (G3-C1/C2; the original line here claimed "0 failures" and
   was FALSE):** at the reviewed identity `modularity_check --check` FAILED (exit 1,
   `baseline_growth`: claude_runner.py 1400 SLOC > 1383 limit; growth over the recorded
-  baseline is 142 SLOC, of which ~20 SLOC came from this diff). Producer error: the
+  baseline is 142 SLOC, of which +17 effective SLOC came from this diff (G4's
+  parent-relative measurement; the parent sat exactly at the 1383 limit)). Producer error: the
   check was run behind `| tail`, masking the exit code, and ruff's "All checks
   passed!" line was misread as the modularity verdict. Remediated under the recorded
   scope amendment: path-exact expiring exception in `tools/modularity_exceptions.json`
@@ -30,7 +31,10 @@ Recorded 2026-08-31 at commit `20bfa449` (implementation landing; supervisor tre
 - **Scope:** the diff touches exactly the three allowed paths; no journal key, flag,
   schema, broker, or loop/turn_budget change; journal untouched (PAUSED_RECOVERY,
   transitions 26); wt-m0t107 `c5c6ff7` / wt-m0t109 `1c06957` clean; PR #241 untouched.
-- **Honest residuals** (disclosed for G3/G4): CLI max-turns semantics across a second
-  written turn unmeasured (either semantic strictly improves on the absorbed shape;
-  worst case lands in the fast honest-failure path); the absorption fixture is a fake
+- **Honest residuals** (disclosed for G3/G4; synced with the fix report's corrected
+  residual #1 per the G3-delta nit): CLI max-turns semantics across a second written
+  turn unmeasured — the guaranteed property is that the working phase can no longer be
+  truncated and there is no regression versus the pre-fix wall-ride; if an exhausted
+  CLI silently swallows the injected reserved turn, a WATCHDOG-BOUNDED wall ride
+  remains possible (never a false success). The absorption fixture is a fake
   reproducing the journey-3 measured behavior, not a recorded live-CLI capture.
