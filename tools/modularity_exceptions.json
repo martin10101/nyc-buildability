@@ -1,15 +1,25 @@
 {
- "schema": "modularity_exceptions/v1",
- "note": "Explicit, expiring, path-specific exceptions to docs/CODE_MODULARITY_POLICY.md. Every entry needs owner, reason, review_evidence, expires. File exceptions need an exact path (no globs, no directories) and max_lines. Baseline regeneration needs a kind=baseline-regeneration entry with approval_id; expired regeneration approvals go inert for --check but are refused by --regenerate-baseline. Expired or malformed FILE exceptions fail the check closed.",
- "exceptions": [
-  {
-   "kind": "baseline-regeneration",
-   "approval_id": "M0-T073-initial-baseline",
-   "for_version": 1,
-   "owner": "owner (D-017 source-002-amendment.md item 5: versioned, reviewed baseline for existing legacy debt)",
-   "reason": "Initial adoption of the modularity policy: record the existing legacy-debt register at M0-T073 implementation time, re-measured after the G4-C2 comment-span-aware SLOC correction. Reviewed as part of the M0-T073 PR (G2/G3/G4/G5).",
-   "review_evidence": "project-control/tasks/M0-T073.json; project-control/directives/D-017-a-to-z-completion-authorization/requirements.json (D-017-R110); project-control/reports/M0-T073-G4-qa-review.md (C2)",
-   "expires": "2026-08-25"
-  }
- ]
+  "schema": "modularity_exceptions/v1",
+  "note": "Explicit, expiring, path-specific exceptions to docs/CODE_MODULARITY_POLICY.md. Every entry needs owner, reason, review_evidence, expires. File exceptions need an exact path (no globs, no directories) and max_lines. Baseline regeneration needs a kind=baseline-regeneration entry with approval_id; expired regeneration approvals go inert for --check but are refused by --regenerate-baseline. Expired or malformed FILE exceptions fail the check closed.",
+  "exceptions": [
+    {
+      "kind": "baseline-regeneration",
+      "approval_id": "M0-T073-initial-baseline",
+      "for_version": 1,
+      "owner": "owner (D-017 source-002-amendment.md item 5: versioned, reviewed baseline for existing legacy debt)",
+      "reason": "Initial adoption of the modularity policy: record the existing legacy-debt register at M0-T073 implementation time, re-measured after the G4-C2 comment-span-aware SLOC correction. Reviewed as part of the M0-T073 PR (G2/G3/G4/G5).",
+      "review_evidence": "project-control/tasks/M0-T073.json; project-control/directives/D-017-a-to-z-completion-authorization/requirements.json (D-017-R110); project-control/reports/M0-T073-G4-qa-review.md (C2)",
+      "expires": "2026-08-25"
+    },
+    {
+      "kind": "file",
+      "path": "tools/agent_supervisor/claude_runner.py",
+      "max_lines": 1410,
+      "baseline_sloc": 1400,
+      "owner": "orchestrator under D-024 Amendment 28 R420 (owner: fix it fastest way); M0-T130 G3-C1 remediation",
+      "reason": "M0-T130 reserved-turn delivery defect fix (journey-3 absorbed_mid_turn) added ~20 SLOC of deferred-injection + idle-completion logic, tipping the grandfathered provider adapter (baseline 1258; cumulative certified growth across the M0-T123..M0-T129 windows) to 1400 SLOC, 17 over the material-growth limit 1383. Cohesion: the change lives where the turn boundary is uniquely observable (the Claude worker stream adapter + checkpoint extraction); the G3 reviewer judged the addition cohesive with the file single responsibility. Narrow ceiling 1410 (no growth headroom); a module split is the recorded follow-up on the NEXT substantial growth, alongside the standing next_task.py decomposition candidate.",
+      "review_evidence": "project-control/reports/M0-T130-G3-code-review.md (C1 + cohesion finding); project-control/reports/M0-T130-reserved-turn-fix.md; delta re-review recorded in project-control/reports/M0-T130-G3-code-review-delta.md",
+      "expires": "2026-11-25"
+    }
+  ]
 }

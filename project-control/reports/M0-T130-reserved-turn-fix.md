@@ -61,19 +61,34 @@ then the mutant was reverted and the pack returned green.
 - Whole supervisor suite (all `tools/test_agent_supervisor*.py`, one process): recorded
   in the commit/gate evidence (expected 3,039 = 3,035 baseline + 4 new; reconciliation
   in the G2 gate record).
-- `ruff check` on both touched files: clean. `modularity_check --check`: PASS (0
-  failures; claude_runner.py is baseline-tracked, +~45 SLOC). Command-doc tooth: exit 0
-  (no flag or command shape changed).
+- `ruff check` on both touched files: clean. Command-doc tooth: exit 0 (no flag or
+  command shape changed).
+- `modularity_check --check` — **CORRECTED after G3-C1/C2 (the original claim here was
+  FALSE):** at the reviewed identity the checker FAILED (exit 1, `baseline_growth`:
+  claude_runner.py 1400 SLOC > limit 1383 = baseline 1258 + 10%; this diff's ~20 new
+  SLOC tipped 142 SLOC of cumulative certified growth over the threshold). The
+  producer's original run masked the exit code behind a shell pipe (`--check | tail`)
+  and misread ruff's "All checks passed!" as covering the modularity tooth — an
+  evidence-handling error, corrected here. Remediation (G3-C1, scope amendment adding
+  `tools/modularity_exceptions.json` to allowed_paths): a path-exact expiring FILE
+  exception (max_lines 1410, baseline_sloc 1400, expires 2026-11-25) with the cohesion
+  justification the G3 review endorsed; the checker now reports **failures 0, exit 0**
+  (re-run unpiped). A module split is the recorded follow-up on the next substantial
+  growth.
 
 ## 4. Honest residuals
 
 1. **CLI max-turns semantics across a second written turn** (cumulative-per-session vs
    per-run reset) remains UNMEASURED. Under either semantic this fix strictly improves
-   on the absorbed shape: the healthy path cannot be truncated, and the failure path
-   ends fast and honestly instead of riding the wall. If the semantics are cumulative
-   and a worker truly exhausts every turn, the injected reserved turn may be refused by
-   the CLI — landing in the fast honest-failure path, not a hang. The next owner-typed
-   journey measures this live.
+   on the absorbed shape: the healthy path cannot be truncated. Sub-cases when a worker
+   truly exhausts every turn (G3-O1 precision): if the exhausted CLI answers the
+   injected reserved turn with a terminal result (with or without a checkpoint), the
+   unit ends FAST and honestly; if it silently swallows the injected prompt (no result,
+   stream open), the unit still rides the 900s wall watchdog into a WATCHDOG-BOUNDED
+   tree-termination — narrower and safer than the original defect (turn 1 completed;
+   no truncation; never a false success), but a wall ride nonetheless. The fixtures do
+   not exercise the silent-swallow sub-case (consistent with it being unmeasured); the
+   next owner-typed journey measures the real semantics live.
 2. The absorption fixture is a FAKE reproducing the measured 2.1.251 behavior (derived
    from the journey-3 queue events); it is not a recorded live-CLI fixture. R286/R287
    stand: any future CLI upgrade is an admission event that re-measures this.
