@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T17:44:02.568880+00:00",
+  "updated_at": "2026-08-31T18:20:21.342494+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -220,6 +220,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-31T17:44:02.568880+00:00",
       "content_digest_sha256": "261b2e114c4e3e828434695c36b02bd0a41680cf23950b8ca6588f9ca1a3543f"
+    },
+    {
+      "file": "source-027-amendment.md",
+      "kind": "amendment",
+      "sequence": 27,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T18:20:21.342494+00:00",
+      "content_digest_sha256": "c094a0da297d32df063547ce13f437b7c1d6b17f6ded8c46d4633910f68e07fc"
     }
   ],
   "amendments": [
@@ -247,7 +255,8 @@
     "source-023-amendment.md",
     "source-024-amendment.md",
     "source-025-amendment.md",
-    "source-026-amendment.md"
+    "source-026-amendment.md",
+    "source-027-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -763,10 +772,13 @@
     "D-024-R413",
     "D-024-R414",
     "D-024-R415",
-    "D-024-R416"
+    "D-024-R416",
+    "D-024-R417",
+    "D-024-R418",
+    "D-024-R419"
   ],
-  "requirements_id_digest_sha256": "b37e2ed53daa0348ae51e1da7ceb3aab6eccc78e75af9a29f2151631581f23d5",
-  "requirements_content_digest_sha256": "9a66a646095652e3f86f701abc55bfa384358b4a7732b37f07cd9348a132371e",
+  "requirements_id_digest_sha256": "1dd8037b6482ba9e6aeb038ddd05b54761d73cf590a88f32ef55a8f540383ced",
+  "requirements_content_digest_sha256": "5cec3f62f2b17e089f0908298dd0f85328d76e2667865c998c5a500e0eda5e85",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -929,6 +941,11 @@
       "at": "2026-08-31T17:44:02.568880+00:00",
       "by": "orchestrator",
       "note": "Amendment 26 captured (owner instruction 2026-08-31, the seq-54 successor-naming decision): M0-T109 is the SOLE commissioning successor - R410 prepare packet/claim/isolated worktree under normal Tier A; R411 one-entry packet queue; R412 re-run the complete M0-T129 section-2 preflight and report; R413 preservation hold (M0-T107, wt-m0t107, PR #241, preserved journal untouched); R414 never execute either section-4 command (reaffirms R409); R415 report one-task-queue sufficiency for all seven R393 facts; R416 conditional STOP + eligible-candidate identification + owner decision before any second queue entry. Rows bind M0-T109."
+    },
+    {
+      "at": "2026-08-31T18:20:21.342494+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 27 captured (owner reply a = OPTION A of the seq-57 commissioning-refusal decision): R417 one-time narrow R413 lift solely to fast-forward wt-m0t107 (796e18f -> current control tip, clean, pure ff); R418 re-run the complete section-2 preflight and re-present Step 2 with the single corrected --repo value (wt-m0t107), mechanically re-validated; R419 owner re-types Step 2 only, Step 1 not repeated, orchestrator never executes (reaffirms R409/R414). Rows bind M0-T107 (amendment-20/22 precedent). Option B remains un-selected."
     }
   ]
 }

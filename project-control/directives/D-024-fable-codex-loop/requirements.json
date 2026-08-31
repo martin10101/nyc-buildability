@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 416,
+  "requirement_count": 419,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T17:44:02.568880+00:00",
+  "updated_at": "2026-08-31T18:20:21.342494+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14072,6 +14072,96 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 26
+    },
+    {
+      "id": "D-024-R417",
+      "text": "One-time narrow lift of the R413 hold on wt-m0t107 SOLELY to fast-forward its checked-out branch task/M0-T107-plugin-portability from 796e18f to the current control tip (clean worktree, pure fast-forward, only that branch ref moves); R413 otherwise stands and no other wt-m0t107 change is authorized.",
+      "source_ref": "source-027-amendment.md#option-a-lift",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 27
+    },
+    {
+      "id": "D-024-R418",
+      "text": "After the fast-forward, re-run the COMPLETE M0-T129 commissioning-protocol section-2 preflight at the then-current tip and re-present the Step-2 command corrected in exactly one value (--repo C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107), mechanically re-validated against the live CLI contract and the task_authority/launch-binding semantics.",
+      "source_ref": "source-027-amendment.md#option-a-repreflight",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 27
+    },
+    {
+      "id": "D-024-R419",
+      "text": "The owner re-types Step 2 only (Step 1 is not repeated; the journal rests at PREFLIGHT); the orchestrator never executes either section-4 command (reaffirms D-024-R409/R414).",
+      "source_ref": "source-027-amendment.md#option-a-owner-retype",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 27
     }
   ]
 }

@@ -5497,7 +5497,10 @@
       "producer": "orchestrator",
       "verifier": "directive-compliance-verifier",
       "applicable_requirement_ids": [
-        "D-024-R179"
+        "D-024-R179",
+        "D-024-R417",
+        "D-024-R418",
+        "D-024-R419"
       ],
       "reviewed_sha": null,
       "verified_at": null,
@@ -5508,6 +5511,21 @@
           "evidence": [],
           "verified_by": null,
           "reviewed_sha": null
+        },
+        {
+          "id": "D-024-R417",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R418",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R419",
+          "state": "pending",
+          "evidence": []
         }
       ]
     },
@@ -9131,5 +9149,5 @@
       ]
     }
   ],
-  "updated_at": "2026-08-31T17:46:43.999014+00:00"
+  "updated_at": "2026-08-31T18:20:21.342494+00:00"
 }
