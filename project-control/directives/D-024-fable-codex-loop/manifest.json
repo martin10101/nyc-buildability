@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-30T21:02:34.401584+00:00",
+  "updated_at": "2026-08-31T03:12:04.014729+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -188,6 +188,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-30T21:02:34.401584+00:00",
       "content_digest_sha256": "98d431a527f5d3a5e688665d6c461ab20434e9cd82bfbe79db84df596ffe546d"
+    },
+    {
+      "file": "source-023-amendment.md",
+      "kind": "amendment",
+      "sequence": 23,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T03:12:04.014729+00:00",
+      "content_digest_sha256": "dbd9081a305dee5943d829030f31dc61297987dbe920d29ecd628ea61c62ce17"
     }
   ],
   "amendments": [
@@ -211,7 +219,8 @@
     "source-019-amendment.md",
     "source-020-amendment.md",
     "source-021-amendment.md",
-    "source-022-amendment.md"
+    "source-022-amendment.md",
+    "source-023-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -702,10 +711,12 @@
     "D-024-R391",
     "D-024-R392",
     "D-024-R393",
-    "D-024-R394"
+    "D-024-R394",
+    "D-024-R395",
+    "D-024-R396"
   ],
-  "requirements_id_digest_sha256": "f5b3bf4aa663fadbdcb64332c859f89a66d2bacb56e18a9466199933e1729efc",
-  "requirements_content_digest_sha256": "c54e735a7b9eb46a307603adfaae7b96033d431aae7eadb3b798911eca93f491",
+  "requirements_id_digest_sha256": "04d22129251d7a3ea6e1a1698ab73cc5f565b6cda54744be890c970fabd90d8d",
+  "requirements_content_digest_sha256": "31f9585f71d5a1ad0883496fffe38f2125fec2303085bb83f4032e90989fb2fa",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -843,6 +854,11 @@
       "at": "2026-08-30T21:02:34.401584+00:00",
       "by": "orchestrator",
       "note": "Amendment 22 captured (owner instruction 2026-08-30, typed in-session after the Amendment-20/21 counted stop and the R361 options A/B/C): ONE bounded FINAL end-to-end stabilization and commissioning window AUTHORIZED expanding A+B (R372/R373 - every seam launch->orientation->checkpoint->Codex->exactly-once advancement->next-task->multi-unit, not merely the 12-turn fix); byte-for-byte preservation of all live evidence + window prohibitions incl. NO live launch (R374/R375); seven-property durable checkpoint design (R376-R382: orientation packet, early+incremental checkpoints, reserved final emission turn, honest incomplete-but-resumable, workload-class turn sizing under a documented hard ceiling - never merely raising max_turns, fail-closed emission/validation/persistence/forwarding, exactly-once across crashes/restarts/rotations/duplicates); pre-code complete call-graph review + ten-class defect search (R383/R384); all in-scope defects corrected at ONE final frozen identity (R385); removal-sensitive adversarial coverage on preserved real artifacts as read-only replay fixtures with a sixteen-scenario minimum (R386/R387); several consecutive simulated bounded advancements with no human intervention (R388); independent review + all gates + DCV (R389); full R247 recertification ONCE at the final frozen identity (R390); then STOP and present one consolidated report incl. the exact commissioning commands, never executed by the orchestrator (R391/R392); autonomy declarable only via a separate owner-authorized live commissioning journey proving seven facts, any live failure stops without retry (R393/R394). Rows bind the window tasks M0-T125/M0-T126/M0-T127 and M0-T107 where its lifecycle is concerned."
+    },
+    {
+      "at": "2026-08-31T03:12:04.014729+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 23 captured (owner instruction 2026-08-31, typed in-session after the orchestrator proposed rotating the ~429k-cumulative-token M0-T126 producer at its next natural seam): R395 rotate-at-seam (capture the producer's uncommitted worktree work as a durable patch at the seam; never resume that agent context again; continue via a FRESH unnamed roster-typed producer in a new isolated worktree oriented from durable artifacts); R396 no producer in the Amendment-22 window runs toward context exhaustion (bounded assignments; durable checkpoint + early return for rotation on context risk). Rows bind M0-T126 (R395/R396) and M0-T127 (R396)."
     }
   ]
 }

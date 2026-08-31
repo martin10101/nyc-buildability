@@ -8487,7 +8487,9 @@
         "D-024-R386",
         "D-024-R387",
         "D-024-R388",
-        "D-024-R389"
+        "D-024-R389",
+        "D-024-R395",
+        "D-024-R396"
       ],
       "requirements": [
         {
@@ -8569,6 +8571,16 @@
           "id": "D-024-R389",
           "state": "pending",
           "evidence": []
+        },
+        {
+          "id": "D-024-R395",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R396",
+          "state": "pending",
+          "evidence": []
         }
       ],
       "reviewed_sha": null,
@@ -8600,7 +8612,8 @@
         "D-024-R391",
         "D-024-R392",
         "D-024-R393",
-        "D-024-R394"
+        "D-024-R394",
+        "D-024-R396"
       ],
       "requirements": [
         {
@@ -8707,11 +8720,16 @@
           "id": "D-024-R394",
           "state": "pending",
           "evidence": []
+        },
+        {
+          "id": "D-024-R396",
+          "state": "pending",
+          "evidence": []
         }
       ],
       "reviewed_sha": null,
       "verified_at": null
     }
   ],
-  "updated_at": "2026-08-31T01:26:13.291578+00:00"
+  "updated_at": "2026-08-31T03:12:04.014729+00:00"
 }

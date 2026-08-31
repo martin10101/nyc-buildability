@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 394,
+  "requirement_count": 396,
   "producer": "orchestrator",
-  "updated_at": "2026-08-30T21:02:34.401584+00:00",
+  "updated_at": "2026-08-31T03:12:04.014729+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -13407,6 +13407,67 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 22
+    },
+    {
+      "classification": "sequencing",
+      "binding": true,
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 23,
+      "id": "D-024-R395",
+      "text": "At the M0-T126 producer's next natural seam (its next return-channel report, or a stall requiring intervention), the orchestrator must capture the producer's uncommitted worktree work as a durable patch immediately and must NOT resume that agent context again; any remaining production continues via a FRESH unnamed roster-typed producer in a new isolated worktree (control-tip reset + captured patch applied), oriented from durable artifacts (design record, producer report, defect register), not from the prior agent's transcript.",
+      "source_ref": "source-023-amendment.md#rotate-at-seam",
+      "applicability": {
+        "task_ids": [
+          "M0-T126"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      }
+    },
+    {
+      "classification": "prohibition",
+      "binding": true,
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 23,
+      "id": "D-024-R396",
+      "text": "No producer sub-agent in the Amendment-22 window may be run toward context exhaustion: assignments stay bounded; a producer facing context risk mid-assignment must checkpoint durably (reports updated, remaining items listed) and return early for rotation rather than continue to exhaustion.",
+      "source_ref": "source-023-amendment.md#no-exhaustion",
+      "applicability": {
+        "task_ids": [
+          "M0-T126",
+          "M0-T127"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      }
     }
   ]
 }
