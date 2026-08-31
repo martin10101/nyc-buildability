@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T18:20:21.342494+00:00",
+  "updated_at": "2026-08-31T18:59:37.833435+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -228,6 +228,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-31T18:20:21.342494+00:00",
       "content_digest_sha256": "c094a0da297d32df063547ce13f437b7c1d6b17f6ded8c46d4633910f68e07fc"
+    },
+    {
+      "file": "source-028-amendment.md",
+      "kind": "amendment",
+      "sequence": 28,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T18:59:37.833435+00:00",
+      "content_digest_sha256": "7f78a62cd92290b7e9e4120df258cc4f5e5f09e2cc6b6d04e3d2c876523eeb79"
     }
   ],
   "amendments": [
@@ -256,7 +264,8 @@
     "source-024-amendment.md",
     "source-025-amendment.md",
     "source-026-amendment.md",
-    "source-027-amendment.md"
+    "source-027-amendment.md",
+    "source-028-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -294,7 +303,8 @@
     "M0-T127",
     "M0-T128",
     "M0-T129",
-    "M0-T109"
+    "M0-T109",
+    "M0-T130"
   ],
   "affected_prs": [],
   "affected_branches": [
@@ -775,10 +785,15 @@
     "D-024-R416",
     "D-024-R417",
     "D-024-R418",
-    "D-024-R419"
+    "D-024-R419",
+    "D-024-R420",
+    "D-024-R421",
+    "D-024-R422",
+    "D-024-R423",
+    "D-024-R424"
   ],
-  "requirements_id_digest_sha256": "1dd8037b6482ba9e6aeb038ddd05b54761d73cf590a88f32ef55a8f540383ced",
-  "requirements_content_digest_sha256": "5cec3f62f2b17e089f0908298dd0f85328d76e2667865c998c5a500e0eda5e85",
+  "requirements_id_digest_sha256": "c17ab90b2185246831cc1512ee857941f09c5e35eb12802a046d47929cdbbd99",
+  "requirements_content_digest_sha256": "8864efb483e897a6a63eaf47c36b7db11bfad6f05e564227839298f8be5cc3aa",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -946,6 +961,11 @@
       "at": "2026-08-31T18:20:21.342494+00:00",
       "by": "orchestrator",
       "note": "Amendment 27 captured (owner reply a = OPTION A of the seq-57 commissioning-refusal decision): R417 one-time narrow R413 lift solely to fast-forward wt-m0t107 (796e18f -> current control tip, clean, pure ff); R418 re-run the complete section-2 preflight and re-present Step 2 with the single corrected --repo value (wt-m0t107), mechanically re-validated; R419 owner re-types Step 2 only, Step 1 not repeated, orchestrator never executes (reaffirms R409/R414). Rows bind M0-T107 (amendment-20/22 precedent). Option B remains un-selected."
+    },
+    {
+      "at": "2026-08-31T18:59:37.833435+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 28 captured (owner: fix it fastest way): R420 authorize the bounded AD-093 defect task M0-T130 (journey-3 reserved-turn/unit-completion defect) via the fastest sound path (M0-T108 orchestrator-as-producer precedent, independent reviewers, standard gates); R421 runner-side reserved-turn injection at genuine idle, never pre-queued; R422 robust unit-completion latch, wall watchdog only for runaway units; R423 removal-sensitive coverage with the absorption fixture derived from the journey-3 live measurement; R424 accept -> R247 recert at the new identity -> re-present the journey command for the owner to type; S16.7 unaltered."
     }
   ]
 }

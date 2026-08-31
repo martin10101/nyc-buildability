@@ -9147,7 +9147,47 @@
           "evidence": []
         }
       ]
+    },
+    {
+      "task_id": "M0-T130",
+      "directive_id": "D-024",
+      "producer": "orchestrator-defect-runner",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R420",
+        "D-024-R421",
+        "D-024-R422",
+        "D-024-R423",
+        "D-024-R424"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R420",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R421",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R422",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R423",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R424",
+          "state": "pending",
+          "evidence": []
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-31T18:20:21.342494+00:00"
+  "updated_at": "2026-08-31T18:59:37.833435+00:00"
 }

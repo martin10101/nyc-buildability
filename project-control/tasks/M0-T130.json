@@ -1,0 +1,60 @@
+{
+  "task_id": "M0-T130",
+  "title": "Reserved-turn delivery defect fix: runner-side deferred injection + unit-completion robustness (journey-3 absorbed_mid_turn)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "AD-093 qualifying evidence: the journey-3 REPRODUCED DEFECT (reports/M0-T107-commissioning-journey-3.md) + measured provider-CLI behavior (installed Claude Code 2.1.251 absorbed the pre-queued reserved-final-turn prompt mid-turn: queue event absorbed_mid_turn 18:35:01Z), authorized by D-024 Amendment 28 rows R420-R424. Fix claude_runner.run_unit: (1) NEVER write extra_turns at launch - hold them pending and write each only at genuine idle, after the prior written turn's terminal result, and only when the drained stream does not already carry a decided checkpoint (R421); (2) latch unit_complete when every written prompt has its terminal result and no injection remains pending, so a worker that answered everything never rides the 900s wall watchdog (which stays for genuinely runaway units) (R422); (3) removal-sensitive coverage with the absorption fixture derived from the journey-3 live measurement plus no-regression paths: checkpoint-in-first-result skips injection, injection path delivers as its own turn, honest fast failure when the reserved turn still yields no checkpoint, runaway units still wall-terminate (R423). Honest residual: CLI max-turns semantics across a second written turn (cumulative vs per-run) is unmeasured; under either semantic the fix strictly improves on the absorbed shape - disclose in the report. Supervisor change: re-triggers R247 (R424).",
+  "business_reason": "The owner-typed commissioning journey 3 dispatched and produced the first valid live checkpoint but was truncated at launch and then tree-terminated by the wall watchdog; every future journey hits the same defect until fixed (owner: fix it fastest way).",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/claude_runner.py (deferred reserved-turn injection at genuine idle; robust unit_complete latch)",
+    "tools/test_agent_supervisor_runner.py (absorption fixture from the journey-3 measurement + four no-regression paths)",
+    "project-control/reports/M0-T130-reserved-turn-fix.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/test_agent_supervisor_runner.py",
+    "project-control/reports/M0-T130-reserved-turn-fix.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-31T19:01:31.598695+00:00",
+  "updated_at": "2026-08-31T19:01:43.560383+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-31T19:01:31.600709+00:00"
+}
