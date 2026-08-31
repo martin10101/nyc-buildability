@@ -177,7 +177,29 @@ compatibility exceptions need owner + expiry + removal task, and an EXPIRED
 exception blocks acceptance) plus the closed 6-question checkpoint with a
 never-auto-accept disposition.
 
-## 10. Identity and evidence (SIXTH refresh at M0-T127 — the Amendment-22 final frozen identity)
+## 10. Identity and evidence (SEVENTH refresh at M0-T129 — the Amendment-25 post-wiring identity)
+
+* **CURRENT (seventh) certified identity:** supervisor material last moved at **`de18f27`**
+  (accepted M0-T128 — the owner-authorized Stage-3 wiring: `run_task_queue` live cross-task
+  driver behind the EXISTING bounded-mode owner gate plus a first-act mode guard;
+  owner-supplied ordered `--packet-queue` selection universe; eleven-category fail-closed
+  VISIBLE eligibility; audited exactly-once CAS advancement BEFORE selection; between-task
+  intent/budget/rotation seam; per-task launch-seam re-binding; `--max-tasks` bound
+  defaulting to the certified single-task shape); `tools/agent_supervisor` tree
+  **`b392100930bd4213cab90eb02aafa6d0d568f849`**; golden pack blob `deeca07b` (42 tests,
+  byte-identical since Amendment 22). **CLI: Claude Code 2.1.251 UNCHANGED** (supervisor-native
+  digest `d6f6c29a8ac6b3cf…`; codex-cli 0.146.0; no admission event, no repin).
+* Seventh-recert evidence (M0-T129): golden **42/42 in 51.32s**; WHOLE suite **3,035 passed,
+  2 skipped, 0 failed** (chain 2,990 + 35 + 10, no test removed, no existing test modified);
+  controller manifest re-recorded **125 files** digest `841ed11c…` binding the post-wiring
+  tree; verify-controller PASS; doctor overall PASS (journal preserved PAUSED_RECOVERY /
+  transitions 22 / audit 53, OS-ACL PROTECTED); command-doc tooth 12/0; validator EXIT=0.
+  **All seven R393 facts are now provable by ONE owner-typed command**: the seven-fact
+  commissioning protocol (preflight + successor-queue prerequisites + the two validated
+  owner-typed commands) is `M0-T129-commissioning-protocol.md` — the orchestrator never
+  executes it (R409); the live journey remains the owner's decision (R393/R394).
+
+## 10-prior-b. Identity and evidence (sixth refresh at M0-T127 — the Amendment-22 final frozen identity)
 
 * **CURRENT (sixth) certified identity:** supervisor material last moved at **`2d46fb0`**
   (accepted M0-T126 — the Amendment-22 stabilization: seven-property durable checkpoint
