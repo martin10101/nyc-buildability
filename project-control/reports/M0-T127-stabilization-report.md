@@ -2,7 +2,7 @@
 
 **THE WINDOW STOPS HERE.** This is the ONE consolidated report the owner ordered
 (source-022-amendment.md p8). Nothing below activates, launches, or resumes anything.
-The commissioning commands in §7 are PRESENTED ONLY - the orchestrator never executes
+The commissioning commands in section 7 are PRESENTED ONLY - the orchestrator never executes
 them (R392), and full autonomy is NOT declared from the tests and simulations herein
 (R393): it requires the separate owner-authorized live commissioning journey proving
 the seven facts, with the R394 failure protocol (stop without retry, preserve, one
@@ -91,7 +91,7 @@ frozen identity (M0-T126), then recertified once (M0-T127):
    (not sandbox-recomputable); runbook sections 2-10 still show `wt-m0t063` in
    EXAMPLES (outside the register's D15 scope - candidate follow-up task); the
    command-doc tooth scans the runbook only, so certification packages re-derive
-   their presented commands mechanically (done for §7 below).
+   their presented commands mechanically (done for section 7 below).
 4. **Live-behavior unknowns:** worker-side quota exhaustion and natural provider
    events remain pending_live_observation under the passive watcher (R224-R228);
    the owner-touch cap for M0-T107 is at excess - any further counted stop is an
@@ -126,7 +126,7 @@ point re-invalidates certification and re-triggers R247.
 Both commands were dry-run validated this session against the live `build_parser()`
 contract, the five pinned load-bearing flags, and `dispatch_inputs_missing` (both OK).
 Type them with `!`-prefix in the orchestrator session (forward slashes - bash strips
-unquoted backslashes), in order, after §6 passes:
+unquoted backslashes), in order, after section 6 passes:
 
 **Step 1 - recovery exit (PAUSED_RECOVERY -> PREFLIGHT; this is the documented
 recovery path for the preserved S14 stop, an owner decision that ends the R374

@@ -41,7 +41,7 @@ checkout (certification environment). ONE recertification at ONE identity, per R
 **Baseline reconciliation (freeze rule):** M0-T124 whole-suite baseline **2,889** + net **+101**
 M0-T126 tests (73 in the four new packs command_docs/orientation/checkpoint_journey/next_task +
 28 net across launch_seam/loop/recovery/runner/golden and remediation additions) = **2,990**.
-No test removed; the one golden-row change is the disclosed D10 correction (§1).
+No test removed; the one golden-row change is the disclosed D10 correction (section 1).
 **Labeling correction for the record:** the M0-T126-era phrase "full suite excl. golden = 2990"
 (producer return 3, G4 delta) was mislabeled - 2,990 IS the whole suite including golden (the
 `--ignore` had not bitten); no pass/fail conclusion changes (golden passes standalone 42/42 and
@@ -58,7 +58,7 @@ inside the suite; the same tests ran under both labels).
 * `doctor` (full, non-live) against the ctl24 journal: **overall PASS**, config OS-ACL posture
   **PROTECTED**, model-selection accepted, journal integrity ok.
 * `doctor --live` NOT re-run in-window (R375 caution: it contacts the provider binary; the
-  admitted control-response evidence stands - seq-30 VERIFIED `d6f6c29a8ac6b3cf` - and §1
+  admitted control-response evidence stands - seq-30 VERIFIED `d6f6c29a8ac6b3cf` - and section 1
   proves the executable identity is byte-identical, so the probe's subject is unchanged).
 * **Preservation (R374) verified BEFORE and AFTER the battery:** journal
   `current_state=PAUSED_RECOVERY`, transitions **22**, audit **53** records, effects/outbox/
@@ -78,8 +78,8 @@ the D17 lesson made mechanical.
 ## 6. Verdict
 
 R247 recertification: **PASS at the one final frozen identity** (material `2d46fb0`). The
-certification cost question is closed (§2). Carried non-blocking observations for the record:
+certification cost question is closed (section 2). Carried non-blocking observations for the record:
 DCV obs 2 (one producer-recomputed runbook digest not sandbox-recomputable), DCV obs 5
 (runbook `wt-m0t063` residual EXAMPLES outside the register's D15 scope - candidate follow-up),
 G3 O1 (the tooth scans the runbook only; certification packages re-derive presented commands -
-done mechanically for this package, see §5), G4 O2 (exact-at-ceiling unit-scope naming).
+done mechanically for this package, see section 5), G4 O2 (exact-at-ceiling unit-scope naming).
