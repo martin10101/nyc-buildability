@@ -1,0 +1,27 @@
+{
+  "task_id": "M0-T129",
+  "note": "Evidence per D-024 requirement applicable to M0-T129 (resolver set, 7 rows: R401/R402/R403/R406/R407/R408/R409). Producer: orchestrator-recert-runner (orchestrator-executed certification acts; no sub-agent producer). Deliverables: M0-T129-recertification.md + M0-T129-commissioning-protocol.md + the M0-T096-activation-package.md seventh refresh, at the post-wiring final frozen material identity de18f27.",
+  "requirements": {
+    "D-024-R401": [
+      "Journal and evidence untouched through the whole wiring window: PAUSED_RECOVERY / transitions 22 / audit 53 / effects 0 verified at G0, at the M0-T128 DCV, and again at recert report time; wt-m0t107 clean at 796e18f."
+    ],
+    "D-024-R402": [
+      "All owner gates/fail-closed/budget/audit/isolation/exactly-once maintained: verified across the M0-T128 gate chain and re-certified by the full battery (suite 3035/2/0; golden 42/42; doctor PASS ACL PROTECTED; no broker/recovery/start_gate/state_machine change in the window)."
+    ],
+    "D-024-R403": [
+      "No PR #241 merge, no clear-recovery, no loop start, no live commissioning in the window - proven by the unchanged journal counts and PR #241 OPEN (DCV-checked)."
+    ],
+    "D-024-R406": [
+      "The complete R247 recertification ran ONCE at the final frozen identity de18f27 (M0-T129-recertification.md): golden 42/42 in 51.32s; whole suite 3035/2/0 with the exact 2990+35+10 chain; manifest re-recorded 125 files 841ed11c binding the post-wiring tree + verify-controller PASS; doctor overall PASS; CLI identity undrifted d6f6c29a; validator EXIT=0; followed by the independent gate wave + DCV on this task."
+    ],
+    "D-024-R407": [
+      "The stop-and-present deliverable exists (M0-T129-commissioning-protocol.md): one complete preflight (8 rows, updated anchors) + one owner-executed protocol capable of proving ALL SEVEN R393 facts including live cross-task selection and multiple successive tasks without an owner touch (seven-fact mechanism table section 1; successor-queue format + prerequisites section 3; the two commands section 4)."
+    ],
+    "D-024-R408": [
+      "Both presented commands were mechanically validated against the live CLI contract this session (build_parser + pinned-flag set + dispatch_inputs_missing; both OK), recorded in recertification section 4."
+    ],
+    "D-024-R409": [
+      "The orchestrator executed NO commissioning command: validations were parse-only; the live journal is unchanged (PAUSED_RECOVERY/22/53/0 - a clear-recovery or start would move it); the protocol marks both commands OWNER-TYPED ONLY."
+    ]
+  }
+}
