@@ -83,11 +83,11 @@
     "directive-compliance-verifier"
   ],
   "status": "rework",
-  "progress_percent": 70,
+  "progress_percent": 72,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-30T21:07:19.603498+00:00",
-  "updated_at": "2026-08-31T04:00:11.247608+00:00",
+  "updated_at": "2026-08-31T04:04:16.871511+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -118,6 +118,13 @@
       "percent": 70,
       "status": "rework",
       "message": "G3 FAIL recorded (verbatim report M0-T126-G3-code-review.md): three blocking defects - G3-1 property-1 orientation packet not wired into the ROTATED reorientation seam (cadence/allowed_paths/required-output absent for rotated workers; test only exercises the module branch, not the dispatched prompt); G3-2 property-3 reserved final turn has no technical enforcement (extra_turns channel exists at claude_runner.py:1209 but NO caller passes it; the register D3 line prescribed the injection) AND the orchestrator-assembled evidence-map R378 row overclaims a nonexistent injection - evidence map must be corrected from the verified code, not the packet text; G3-3 D15 runbook regeneration incomplete (sec1 stale digests lines 18/21, sec5 manifest written inside repo tree line 90, sec11 retired M0-T063 identities lines 229-231). Non-blocking O1 (tooth scans runbook only - certification-checklist duty), O2 (D9 selection simulation-only, defensible under R388/R595), O3 (full golden pack owed at M0-T127 recert). All 17 register corrections otherwise verified CORRECT per-defect. Remediation bundles with the pending G4 verdict into ONE fresh-producer pass (R395 - retired context never resumed); new candidate frozen identity will result."
+    },
+    {
+      "at": "2026-08-31T04:04:16.871511+00:00",
+      "agent": "supervisor-stabilization-producer",
+      "percent": 72,
+      "status": "rework",
+      "message": "G4 PASS recorded with 3 required corrections (BLOCKING for acceptance per gate-verdict semantics; report accuracy only): G4-1 test-count drift 395->391 (next_task 18 not 19, loop 118 not 121) across producer-report/design-record/return-2 - re-measure at the remediation identity; G4-2 design-record sec6 cites non-existent test node (actual: ConsecutiveAdvancementTests::test_crash_AFTER_campaign_advancement_is_exactly_once + ExactlyOnceAdvancementTests::test_advancement_survives_a_crash_restart_without_doubling); G4-3 scenario-6 duplicate-verdict half attributed to CodexStaleVerdictTests but actually proven in next_task duplicate-advance tests. G4 independently VERIFIED: full suite 2980/2 skips, 8 packs 391, fast golden 27, all 16 R387 scenarios + scenario-9 sub-matrix all rows, removal-sensitivity bindings, fixture fidelity exact to preserved originals, R388 CAS substance with genuine process-death simulation, static-analysis flags false positives. Consolidated rework list = G3-1 + G3-2 + G3-3 + G4-1 + G4-2 + G4-3; ONE fresh-producer remediation pass (R395) dispatching now."
     }
   ]
 }
