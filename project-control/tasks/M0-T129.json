@@ -23,19 +23,19 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator-recert-runner",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-31T08:18:28.534679+00:00",
-  "updated_at": "2026-08-31T08:19:02.848755+00:00",
+  "updated_at": "2026-08-31T10:27:04.605905+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -43,5 +43,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-08-31T08:18:28.537986+00:00"
+  "directive_regime_entered_at": "2026-08-31T08:18:28.537986+00:00",
+  "worktree": "ctl24-control"
 }
