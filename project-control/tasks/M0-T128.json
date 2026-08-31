@@ -84,11 +84,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 80,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-31T08:18:27.106673+00:00",
-  "updated_at": "2026-08-31T09:06:30.890316+00:00",
+  "updated_at": "2026-08-31T09:17:02.122067+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -97,5 +97,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-31T08:18:27.106673+00:00",
-  "worktree": "wt-m0t128"
+  "worktree": "wt-m0t128",
+  "progress_log": [
+    {
+      "at": "2026-08-31T09:17:02.122067+00:00",
+      "agent": "supervisor-wiring-producer",
+      "percent": 80,
+      "status": "awaiting_gate",
+      "message": "G3 PASS with 2 REQUIRED CORRECTIONS (BLOCKING for acceptance per gate-verdict semantics): C1 confine run_task_queue to the limited-auto + owner-enable envelope (currently a supervised --max-tasks>1 start reaches the driver; fix = typed mode refusal in the driver + removal-sensitive confinement test); C2 add a real _run_loop-altitude cross-task test (shared-run_id budget clean-resume + plan_close_run COMPLETE->IDLE + D6 dispatch-intent on the shared journal across tasks) and document the per-journey shared-budget semantics in the design record. All other dimensions PASS (eligibility strong, exactly-once/crash genuine, security clean, certified single-task shape byte-identical, Pyright hints adjudicated). Remediation bundles with the pending G4 verdict into ONE fresh producer pass (R395 standing)."
+    }
+  ]
 }
