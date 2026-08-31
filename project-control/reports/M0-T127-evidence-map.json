@@ -1,0 +1,72 @@
+{
+  "task_id": "M0-T127",
+  "note": "Evidence per D-024 requirement applicable to M0-T127 (resolver set, 22 rows: R372-R382, R385-R394, R396). Producer: orchestrator-recert-runner (the recert is an orchestrator-executed certification act in the primary checkout; no sub-agent producer). Deliverables: M0-T127-recertification.md + M0-T127-stabilization-report.md + the M0-T096-activation-package.md sixth refresh, all at the final frozen material identity 2d46fb0.",
+  "requirements": {
+    "D-024-R372": [
+      "Window integrity held to its end: one bounded window, three tasks (T125 accepted, T126 accepted, T127 = this terminal step); no second live attempt; the window STOPS at the stabilization report per p8."
+    ],
+    "D-024-R373": [
+      "The complete-journey objective is discharged and evidenced end-to-end in stabilization-report sections 1-2 (every seam from launch to next-task selection has a mechanism + verification citation)."
+    ],
+    "D-024-R374": [
+      "Preservation verified BEFORE and AFTER the recert battery (recertification.md section 4): journal PAUSED_RECOVERY / transitions 22 / audit 53 / effects 0; wt-m0t107 clean at 796e18f; transcript 97 lines; doctor opened the journal read-only and counts are identical at G0, post-doctor, and report time."
+    ],
+    "D-024-R375": [
+      "No restart/clear-recovery/journal edit/repin/PR #241/policy weakening/owner-gate crossing/live launch in the window; doctor --live deliberately NOT re-run (R375 caution, recertification.md section 4); the presented commissioning commands were dry-run PARSED only, never executed (R392 row)."
+    ],
+    "D-024-R376": [
+      "Carried from the accepted M0-T126 verification (18/18 DCV) at the SAME frozen identity 2d46fb0; re-executed in the recert: orientation tests green inside the whole-suite 2990 run and the 8-pack 401 run."
+    ],
+    "D-024-R377": [
+      "Carried from M0-T126 acceptance at the same identity; cadence tests green in the recert whole-suite run."
+    ],
+    "D-024-R378": [
+      "Carried from M0-T126 acceptance at the same identity (reserved-turn injection via extra_turns); injection tests green in the recert whole-suite run; the honest technically-enforceable hedge restated in stabilization-report section 4 limitation 1."
+    ],
+    "D-024-R379": [
+      "Carried from M0-T126 acceptance; TurnExhaustionReplayTests green in the recert whole-suite run."
+    ],
+    "D-024-R380": [
+      "Carried from M0-T126 acceptance; HARD_TURN_CEILING=40 class-sizing tests green in the recert whole-suite run."
+    ],
+    "D-024-R381": [
+      "Carried from M0-T126 acceptance; fail-closed emission/validation/persistence/forwarding tests green in the recert whole-suite run."
+    ],
+    "D-024-R382": [
+      "Carried from M0-T126 acceptance; exactly-once CAS advancement + cross-process pointer tests green in the recert whole-suite run (next_task 18, loop 122)."
+    ],
+    "D-024-R385": [
+      "The 17/17 one-identity correction set stands at 2d46fb0 (accepted with DCV 18/18); the recert certifies THAT identity, unchanged since acceptance (git diff 2d46fb0 HEAD over supervisor paths empty at every step)."
+    ],
+    "D-024-R386": [
+      "Carried from M0-T126 acceptance; fixture-based replay tests green in the recert whole-suite run; preserved originals untouched (R374 row)."
+    ],
+    "D-024-R387": [
+      "Carried from M0-T126 acceptance (16-scenario matrix G4-audited row by row); all matrix test nodes green in the recert whole-suite run."
+    ],
+    "D-024-R388": [
+      "Carried from M0-T126 acceptance; ConsecutiveAdvancementTests green in the recert whole-suite run; restated as simulation-only in stabilization-report section 4 limitation 2 (R393 boundary)."
+    ],
+    "D-024-R389": [
+      "This task's own independent wave: G0 PASS pre-claim; G3 + G4 independent read-only reviews of the recert evidence and both reports at the frozen identity; G2 self-check record; DCV over the 22-row set - producer label (orchestrator-recert-runner) differs from every independent reviewer identity."
+    ],
+    "D-024-R390": [
+      "The FULL R247 recertification ran ONCE at the final frozen identity (M0-T127-recertification.md): golden 42/42 canonical single-process 52.20s + sharded corroboration; whole suite 2990/2/0; manifest 125 files a43f133b bound + verify-controller PASS; doctor overall PASS; drift teeth green; version stamps undrifted (claude 2.1.251 d6f6c29a supervisor-native, codex 0.146.0); validator EXIT=0; CI 20/20. The 3h13m historical figure resolved as an environmental artifact (T119 measured 15.00s)."
+    ],
+    "D-024-R391": [
+      "The ONE consolidated report exists with ALL seven ordered contents (M0-T127-stabilization-report.md): what was changed (s1), full end-to-end proof (s2), every defect found proactively (s3), all remaining limitations (s4), the exact frozen identity (s5), the complete preflight (s6), and the exact commissioning commands (s7)."
+    ],
+    "D-024-R392": [
+      "The orchestrator NEVER executed the commissioning commands: they were validated by DRY-RUN PARSE only (build_parser + pinned-flag + dispatch_inputs_missing checks - no process launched, no supervisor start/clear-recovery verb run this window); the report marks them OWNER-TYPED ONLY."
+    ],
+    "D-024-R393": [
+      "No autonomy claim is made from tests/simulations anywhere in the deliverables; the stabilization report explicitly requires the separate owner-authorized live commissioning journey and lists the seven facts it must prove."
+    ],
+    "D-024-R394": [
+      "The live-failure protocol is restated verbatim in the package (stop without retry, preserve byte-for-byte, one consolidated system-level assessment for a new owner decision)."
+    ],
+    "D-024-R396": [
+      "No producer sub-agent was dispatched for M0-T127 (orchestrator-executed certification acts only; bounded background commands with recorded outputs); no context ran toward exhaustion."
+    ]
+  }
+}
