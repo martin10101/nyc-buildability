@@ -1,0 +1,60 @@
+{
+  "task_id": "M0-T131",
+  "title": "Codex reviewer repository-read access on Windows: measured probe + fix (journey-4 HALT_UNSAFE, first live review)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "AD-093 qualifying evidence: the journey-4 REPRODUCED live finding (reports/M0-T107-commissioning-journey-4.md - the first live codex exec review returned HALT_UNSAFE because its execution policy blocked repository reads), authorized by D-024 Amendment 29 rows R425-R428. Step 1 (R426): ONE minimal live codex exec --sandbox read-only probe on this host in a SCRATCH git directory + linked worktree (never the real repositories), measuring: command execution at all, git operations, plain file reads, and the linked-worktree .git-redirection reach; record the raw transcript as a measured installed-version fixture (codex-cli 0.146.0, R233). Step 2 (R427): the fix the measurement dictates in tools/agent_supervisor/codex_reviewer.py (and only there plus its tests), preserving invariant 10: the reviewer NEVER gets write access to the worker or control trees (a disposable self-contained clone shape is acceptable; write access to real trees is not). Removal-sensitive tests for the changed reviewer shape; supervisor change re-triggers R247 (R428).",
+  "business_reason": "The commissioning journey cannot pass fact 4-7 while the independent reviewer cannot read the repository; journey 4 proved everything else works (owner: ok do it).",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/codex_reviewer.py (measured reviewer read-access fix)",
+    "tools/test_agent_supervisor_reviewer.py (removal-sensitive coverage for the fixed shape)",
+    "project-control/reports/M0-T131-reviewer-access-fix.md (incl the raw probe fixture)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "project-control/reports/M0-T131-reviewer-access-fix.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-31T20:10:58.107112+00:00",
+  "updated_at": "2026-08-31T20:11:47.990718+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-31T20:10:58.107112+00:00"
+}

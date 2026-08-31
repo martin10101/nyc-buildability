@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 424,
+  "requirement_count": 428,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T18:59:37.833435+00:00",
+  "updated_at": "2026-08-31T20:10:38.901208+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14312,6 +14312,126 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 28
+    },
+    {
+      "id": "D-024-R425",
+      "text": "The bounded reviewer-access diagnostic + fix task is AUTHORIZED (defect lane, standard gates), including ONE owner-authorized minimal live codex exec --sandbox read-only probe on this host, in a scratch git directory + linked worktree only - never the real repositories.",
+      "source_ref": "source-029-amendment.md#reviewer-access-authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 29
+    },
+    {
+      "id": "D-024-R426",
+      "text": "Measure what the codex 0.146.0 non-interactive read-only harness permits on this host (command execution, git operations, plain file reads, linked-worktree .git-redirection reach) and record it as a measured installed-version fixture (R233 discipline).",
+      "source_ref": "source-029-amendment.md#probe-measurement",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 29
+    },
+    {
+      "id": "D-024-R427",
+      "text": "Implement the fix the measurement dictates, preserving the reviewer read-only-with-respect-to-the-real-tree invariant (S13.12 invariant 10): never write access to worker or control trees.",
+      "source_ref": "source-029-amendment.md#measured-fix",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 29
+    },
+    {
+      "id": "D-024-R428",
+      "text": "Any supervisor change re-triggers R247 at the new frozen identity; afterwards the restart sequence (owner-restart then the start) is re-presented and remains owner-typed only (R409/R414/R419); S16.7 remains an unaltered owner measurement.",
+      "source_ref": "source-029-amendment.md#recert-and-restart",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-08-31"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 29
     }
   ]
 }

@@ -9201,7 +9201,41 @@
       "reviewed_sha": "517895c44d9e9301390a2f3ce603e8aeb237516a",
       "verified_at": "2026-08-31T19:41:04+00:00",
       "verification_report": "project-control/reports/M0-T130-DCV.md"
+    },
+    {
+      "task_id": "M0-T131",
+      "directive_id": "D-024",
+      "producer": "orchestrator-defect-runner",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R425",
+        "D-024-R426",
+        "D-024-R427",
+        "D-024-R428"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R425",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R426",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R427",
+          "state": "pending",
+          "evidence": []
+        },
+        {
+          "id": "D-024-R428",
+          "state": "pending",
+          "evidence": []
+        }
+      ]
     }
   ],
-  "updated_at": "2026-08-31T19:41:04.089031+00:00"
+  "updated_at": "2026-08-31T20:10:38.901208+00:00"
 }
