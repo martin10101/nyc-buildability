@@ -9012,41 +9012,72 @@
       "requirements": [
         {
           "id": "D-024-R401",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): final live re-check: journal PAUSED_RECOVERY / transitions 22 / audit 53 / effects 0; wt-m0t107 clean 796e18f; report-only window."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R402",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): golden 42/42 reproduced by the DCV itself (46.15s, fourth sub-minute datapoint); next_task 18 + cross_task 45 reproduced; no supervisor-path change in the window; modularity 0; validator EXIT=0; M0-T128 gate/exactly-once wiring unchanged."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R403",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): PR #241 OPEN untouched; the unchanged journal proves no clear-recovery/loop start/live commissioning."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R406",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): exactly ONE recert commit (e4ab79c) at the final frozen identity; anchors verified by rev-parse (tree b3921009, golden blob deeca07b unchanged); gates G0/G2/G3/G4 recorded with the honest correction chain; this DCV completes the wave."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R407",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): the stop-and-present protocol carries the complete 8-row preflight and the seven-fact-capable owner-executed protocol; the fact-6 mechanism citation verified code-accurate by the DCV's own grep (run_task_queue + evaluate_eligibility + is_advanced live; select_next_packet zero production callers, labeled simulation-only)."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R408",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): both presented commands independently parse-validated by the DCV via the real build_parser + validate_command (both ok) - the fourth independent validation."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         },
         {
           "id": "D-024-R409",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Independently verified by the DCV at material de18f27 (full verbatim report project-control/reports/M0-T129-DCV.md): no commissioning command executed: journal unchanged; validations parse-only; the protocol and activation package mark the commands OWNER-TYPED ONLY with the R393/R394 boundary restated."
+          ],
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91"
         }
-      ]
+      ],
+      "reviewed_sha": "e4aa0a93a0d7cc667b51f06da66475c151fc3f91",
+      "verified_at": "2026-08-31T10:52:10.196927+00:00",
+      "reviewed_manifest_sha256": "da2dd5958258cc4d1643ceb3623b9ce3d736ac375551f29c4e9374754883de95"
     }
   ],
-  "updated_at": "2026-08-31T10:25:58.648900+00:00"
+  "updated_at": "2026-08-31T10:52:10.196927+00:00"
 }

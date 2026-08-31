@@ -30,12 +30,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-31T08:18:28.534679+00:00",
-  "updated_at": "2026-08-31T10:51:34.581477+00:00",
+  "updated_at": "2026-08-31T10:52:13.384175+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -53,5 +53,7 @@
       "status": "rework",
       "message": "G3 PASS recorded with blocking correction C1 (fact-6 cited select_next_packet as live; actual mechanism = run_task_queue ordered-queue iteration + evaluate_eligibility + is_advanced skip - the Amendment-24 accuracy class caught again) + minor N1 (add category-2 task_id-match prerequisite) + N2 (is-clean is preparation not eligibility). All three report-only fixes APPLIED by the orchestrator-producer to the commissioning protocol; resubmit + delta re-verdicts follow once G4 lands (bundle)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-31T10:52:13.384175+00:00"
 }
