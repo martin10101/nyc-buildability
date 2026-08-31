@@ -43,11 +43,11 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 35,
+  "progress_percent": 40,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-08-31T18:17:04.658918+00:00",
+  "updated_at": "2026-08-31T18:54:43.605683+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -87,6 +87,13 @@
       "percent": 35,
       "status": "claimed",
       "message": "COMMISSIONING STEP-2 REFUSED PRE-DISPATCH (owner-typed exact presented command): UNSAFE_OR_DRIFTED, failed probe task_authority (ledger_record_missing) - the presented --repo (pack checkout at 94e243e, parked since 2026-08-11) has no project-control/tasks/M0-T107.json; probe reads the ledger from args.repo (start_gate.py:178). NOT a counted stop (nothing dispatched, 0 provider calls, touch ledger unchanged); journal rests at PREFLIGHT (owner Step-1 clear-recovery seq 23 stands; refusal wrote only last_recovery_outcome); queue never snapshotted. R394 applied: no retry; one consolidated assessment at reports/M0-T107-commissioning-start-refusal.md - OPTION A recommended (narrow R413 lift: ff wt-m0t107 796e18f->1c06957, then --repo wt-m0t107, re-preflight, owner re-types Step 2 only) vs OPTION B (AD-093 probe-root defect task, R247 re-trigger). All candidate --repo shapes verified read-only; corrected shape PASSES task_authority + launch bindings (D-024-R394/R409/R413)"
+    },
+    {
+      "at": "2026-08-31T18:54:43.605683+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "claimed",
+      "message": "COMMISSIONING JOURNEY 3 (owner-typed corrected Step-2): DISPATCHED - the Option-A repo correction is live-proven (full pre-dispatch gauntlet PASS incl task_authority); fresh worker 6786b4b0 in wt-m0t107 (job_object); Stage-3 driver ENGAGED live (queued digest M0-T109 snapshotted); the worker emitted the FIRST VALID live checkpoint of the campaign (honest IN_PROGRESS cp1). COUNTED STOP no_valid_checkpoint (exit 11, transitions 26, PAUSED_RECOVERY): root cause = real-CLI queued-prompt ABSORPTION (queue event absorbed_mid_turn 18:35:01Z) - the reserved-final-turn prompt merged into the worker first turn, truncating the unit to discovery-only (symptom A) AND collapsing two written prompts into one terminal result so expected_results=2 never satisfied, unit_complete never latched, 900s wall ride, tree-termination, S14 counts it (symptom B); consecutive_invalid_outputs 3/3 hard limit; touches 3 of 2 (S16.7 EXCESS - owner matter). Golden fake-CLI delivers queued prompts as own turns = fixture-fidelity gap (AD-093: reproduced defect + provider drift + measured problem). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-3.md; NEXT = owner decides (bounded defect task on reserved-turn delivery + expected_results robustness, then R247 recert, then fresh journey; S16.7 disposition). wt-m0t107 clean c5c6ff7 zero writes; wt-m0t109 clean 1c06957 never dispatched; Codex never contacted; no advancement (D-024-R394)"
     }
   ]
 }
