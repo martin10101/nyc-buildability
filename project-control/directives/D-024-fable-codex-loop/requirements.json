@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 430,
+  "requirement_count": 432,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T23:28:36.970771+00:00",
+  "updated_at": "2026-09-01T01:04:28.201173+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14492,6 +14492,66 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 30
+    },
+    {
+      "id": "D-024-R431",
+      "text": "STOP at the M0-T131 acceptance seam before beginning R247 recertification; NEVER recertify against the obsolete 2.1.251 provider pin while the installed executable is 2.1.252 (a pin-unchanged recert would force an immediate second recertification); preserve the HALTED journal, the worktrees, all evidence, the budgets, and every owner gate unchanged at the seam. Supersedes the Amendment-30 R430 sequencing detail 'provider pin UNCHANGED at the certified 2.1.251' for the recert step; the single-recertification principle (R428) stands, now targeted at the combined post-admission identity.",
+      "source_ref": "source-031-amendment.md#stop-no-obsolete-pin-recert",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 31
+    },
+    {
+      "id": "D-024-R432",
+      "text": "At the M0-T131 acceptance seam, report the final acceptance identity and the EXACT proposed combined plan for admitting the already-installed 2.1.252 identity and performing ONE single R247 recertification covering BOTH the M0-T131 supervisor tree move AND the admitted runtime. EXPLICIT NON-AUTHORIZATION: the 2026-09-01 owner message does not authorize the admission, the repin, the recertification, or any supervisor start - each remains an owner decision; the plan is PRESENTED ONLY.",
+      "source_ref": "source-031-amendment.md#seam-report-and-non-authorization",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 31
     }
   ]
 }
