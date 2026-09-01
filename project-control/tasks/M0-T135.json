@@ -1,0 +1,52 @@
+{
+  "task_id": "M0-T135",
+  "title": "D-024 Amendment 38 PHASE 1: bounded read-only launch-contract lab + stabilization repair estimate",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Read-only adjudication of the 14 launch-critical contracts named in D-024 Amendment 38 (R482), timeboxed <=8 engineering hours (R481), collection-style (no stop after first failure, no defect fixes). Produce ONE consolidated package: LAUNCH_CONTRACT_MATRIX.md + LAUNCH_CONTRACT_RESULTS.json + STABILIZATION_REPAIR_PLAN.md (R484) with per-row status/observed/expected/command/raw-exit/evidence-digest/proof-type/defect/files-functions/positive+mutant-test/dependency/hours; separate P0/P1 vs P2/P3 vs backlog (R485); evaluate the 7 KILL CRITERIA (R486); end with one recommendation PROCEED_WITH_ONE_BOUNDED_REPAIR_PACKAGE or NOT_VIABLE_WITHIN_CURRENT_BOUND (R487). Provider canaries only in a fresh TEMP scratch repo, non-mutating, <=8 calls, approved model only, BLOCKED_OWNER_GATE otherwise (R483). NO implementation (R477/R488); M0-T133 stays unaccepted + loop PAUSED_RECOVERY (R480); no repo/campaign/runtime/journal mutation (R479).",
+  "business_reason": "Owner course-correction after the external NO-GO audit: replace serial patch-and-launch with one bounded contract lab that discovers all launch-critical blockers at once and returns a single repair estimate + GO/NO-GO recommendation before any implementation is authorized.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/LAUNCH_CONTRACT_MATRIX.md",
+    "project-control/reports/LAUNCH_CONTRACT_RESULTS.json",
+    "project-control/reports/STABILIZATION_REPAIR_PLAN.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor",
+    "services",
+    "apps",
+    "packages",
+    "supabase",
+    ".claude/settings.json",
+    "project-control/directives",
+    "tools/project_control.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "directive-compliance-verifier",
+    "ci-evidence-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-01T07:13:25.831696+00:00",
+  "updated_at": "2026-09-01T07:13:26.470501+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T07:13:25.831696+00:00"
+}

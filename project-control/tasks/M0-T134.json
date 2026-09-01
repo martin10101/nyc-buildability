@@ -1,0 +1,112 @@
+{
+  "task_id": "M0-T134",
+  "title": "MRL Tranche A: controller-authoritative data contracts + claude_runner.py behavior-neutral split + raw gate-runner (D-024 Amendment 39)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Deliver MRL Tranche A under D-024 Amendment 39 (R489-R514), locally only, no live launch. (1) SPLIT tools/agent_supervisor/claude_runner.py behavior-neutrally by relocating RunnerError/_event_text and the checkpoint find/validate/extract helpers into tools/agent_supervisor/checkpoint_extraction.py behind a compatibility facade (public imports preserved; cli.py's except-RunnerError unchanged), bringing claude_runner.py under its restored 1410 exception WITHOUT editing either modularity policy file (R500/R509). (2) ADD controller-authoritative data contracts as new additive modules that do not disturb the legacy path: mrl_worker_result.py (untrusted WorkerResult {outcome,summary,requested_next_action} + controller-built ClaudeCheckpoint from observed facts; R501/R503), mrl_codex_decision.py (untrusted ReviewVerdict {verdict,rationale,evidence_ref_ids} + controller-built Option-B-neutral CodexDecision binding normalized remote URL/expected base ref/observed base SHA/task branch/task HEAD/observation timestamp; APPROVE never itself COMPLETE; R502/R503/R504/R505), mrl_remote.py (read-only ls-remote freshness observation; R505), mrl_transport.py (one fresh claude -p one-shot transport, stdin closed immediately, no second message/resume/background; C7 one-shot; R509), mrl_exec_identity.py (complete pre-spawn SHA-256 of the full dispatch chain wrapper->runtime->entrypoint with NO size/mtime cache; DISABLE_AUTOUPDATER=1 child env assertion; runtime model/version bind; R511). (3) ADD tools/gate_runner.py recording {absolute argv, cwd, start/end timestamps, repo HEAD/tree, executable-chain hashes, raw return code, stdout/stderr digests}; reports generated from that record; independently self-tested via direct process execution AND real PowerShell; mutation-harness exits 0 when it proves a mutant killed (R510/R514). Positive + mutation tests for every contract, all run through gate_runner. No push/PR/merge/integration-branch/live-journey/Tranche-B work; PR #241 untouched. Qualifying supervisor-freeze evidence: D-024-R500/R509/R510/R511 (Amendment 39).",
+  "business_reason": "D-024 Amendment 39 conditionally authorized MRL Tranche A. The PHASE-1 launch-contract lab reproduced four P0 cross-boundary defects (checkpoint validator accepts garbage; Codex COMPLETE unbound to git/evidence; gate evidence can show false green; audited tree modularity RED while reports said exit 0). Tranche A closes the controller-authoritative data contracts (C8/C9/C11/C12), the one-shot transport (C7), executable identity (C3 core), and discharges the M0-T133 modularity exception by a real split (not a renewal). Supervisor-freeze qualifying evidence: explicit D-024 requirement IDs R500/R509/R510/R511.",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/checkpoint_extraction.py",
+    "tools/agent_supervisor/mrl_worker_result.py",
+    "tools/agent_supervisor/mrl_codex_decision.py",
+    "tools/agent_supervisor/mrl_remote.py",
+    "tools/agent_supervisor/mrl_transport.py",
+    "tools/agent_supervisor/mrl_exec_identity.py",
+    "tools/gate_runner.py"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/checkpoint_extraction.py",
+    "tools/agent_supervisor/mrl_worker_result.py",
+    "tools/agent_supervisor/mrl_codex_decision.py",
+    "tools/agent_supervisor/mrl_remote.py",
+    "tools/agent_supervisor/mrl_transport.py",
+    "tools/agent_supervisor/mrl_exec_identity.py",
+    "tools/gate_runner.py",
+    "tools/agent_supervisor/schemas/worker_result.schema.json",
+    "tools/agent_supervisor/schemas/review_verdict.schema.json",
+    "tools/agent_supervisor/schemas/mrl_claude_checkpoint.schema.json",
+    "tools/agent_supervisor/schemas/mrl_codex_decision.schema.json",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_gate_runner.py",
+    "project-control/reports/M0-T134-producer-report.md",
+    "project-control/reports/M0-T134-G2-self-check.md",
+    "project-control/reports/M0-T134-tranche-a-evidence.json"
+  ],
+  "forbidden_paths": [
+    "tools/modularity_baseline.json",
+    "tools/modularity_exceptions.json",
+    "tools/agent_supervisor/next_task.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/models.py",
+    "tools/agent_supervisor/process.py",
+    ".claude/settings.json",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "project-control/directives"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (R509/R500 split): after the split, `from tools.agent_supervisor.claude_runner import RunnerError, extract_checkpoint` still resolves; the runner-related supervisor tests stay green; unpiped `python tools/modularity_check.py --check` returns exit 0 with tools/modularity_exceptions.json byte-identical to 6f5d12a6 (sha256 dba91e16..1792c7) and tools/modularity_baseline.json unchanged.",
+    "AS-2 (R501/R503 WorkerResult): a WorkerResult accepts exactly {outcome in COMPLETED|BLOCKED|NEEDS_OWNER, summary 1-4096, requested_next_action 0-1024}; unknown field / wrong type / invalid enum / excess length / any trusted factual field FAIL closed; the controller builds ClaudeCheckpoint only from its own observed run/task/session/git facts.",
+    "AS-3 (R502/R503/R504 ReviewVerdict + CodexDecision): a ReviewVerdict accepts exactly {verdict in APPROVE|REVISE|HALT, rationale 1-4096, evidence_ref_ids unique 1-64 each 1-128 matching a controller-issued id}; duplicates/non-controller ids/provider-supplied SHAs FAIL closed; APPROVE alone never yields COMPLETE; the controller constructs COMPLETE only after every invariant+gate passes.",
+    "AS-4 (R505 Option-B-neutral binding): the CodexDecision envelope binds normalized remote URL, expected base ref, freshly observed base SHA, task branch, task HEAD SHA and observation timestamp; origin/main is not hard-coded; a mismatch between observed and expected fails closed.",
+    "AS-5 (R511 exec identity): the executable-chain identity computes a complete SHA-256 over wrapper+runtime+entrypoint with no size/mtime cache; a replacement preserving size and restoring mtime is still rejected; a child env missing DISABLE_AUTOUPDATER=1 is rejected.",
+    "AS-6 (R510/R514 gate_runner): gate_runner records absolute argv, cwd, start/end timestamps, repo HEAD/tree, executable-chain hashes, raw return code and stdout/stderr digests; a piped/Tee-Object wrapper cannot change the recorded raw return code; the recorder is proven via direct process execution and real PowerShell; the mutation harness exits 0 when it proves a mutant killed.",
+    "AS-7 (R507): every allowed production file closes a named Tranche-A requirement and has a named test; no allowed_paths growth during implementation."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "mrl-tranche-a-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Behavior-neutral split must not break the frozen supervisor suite (>=1165 tests); mitigated by facade re-exports + running the runner suite before/after.",
+    "New contract modules must stay additive and not disturb the legacy models.py/codex_reviewer.py path (both forbidden from edits)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-01T06:09:30.011582+00:00",
+  "updated_at": "2026-09-01T21:22:48.588147+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T06:09:30.011582+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-09-01T21:22:27.356505+00:00",
+      "agent": "mrl-tranche-a-producer",
+      "percent": 40,
+      "status": "in_progress",
+      "message": "MRL Tranche A implemented at 5e89175d (split + contracts + gate_runner); self-checks green"
+    },
+    {
+      "at": "2026-09-01T21:22:27.581323+00:00",
+      "agent": "mrl-tranche-a-producer",
+      "percent": 70,
+      "status": "self_check",
+      "message": "G2 self-check on file; 77 Tranche-A tests + 3144/2/0 supervisor suite; modularity exit 0"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-01T21:22:48.588147+00:00"
+}

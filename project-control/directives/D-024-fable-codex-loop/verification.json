@@ -9432,7 +9432,101 @@
    "reviewed_sha": "d743ad24446455f01ff859304ae838c6b7792c6c",
    "verified_at": "2026-09-01",
    "verification_report": "project-control/reports/M0-T132-DCV.md"
+  },
+  {
+   "task_id": "M0-T134",
+   "directive_id": "D-024",
+   "producer": "mrl-tranche-a-producer",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R500",
+    "D-024-R501",
+    "D-024-R502",
+    "D-024-R503",
+    "D-024-R504",
+    "D-024-R505",
+    "D-024-R509",
+    "D-024-R510",
+    "D-024-R511",
+    "D-024-R514"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R500",
+     "state": "PASS",
+     "evidence": [
+      "Unpiped modularity_check.py --check -> raw exit 0, 0 failures; claude_runner.py 1432->1319 SLOC via checkpoint_extraction.py split, <=1410 retained exception. modularity_exceptions.json git-blob dba91e16..1792c7 == 6f5d12a6, baseline 8830a47d..731ca5 == 6f5d12a6 (byte-identical restore; pass from the split, not a policy edit)."
+     ]
+    },
+    {
+     "id": "D-024-R501",
+     "state": "PASS",
+     "evidence": [
+      "worker_result.schema.json additionalProperties:false, required exactly {outcome COMPLETED|BLOCKED|NEEDS_OWNER, summary 1-4096, requested_next_action 0-1024}; WorkerResult.from_provider + ControllerObservedFacts builder; 15 tests incl. 8-key forged-field loop reproduced PASS."
+     ]
+    },
+    {
+     "id": "D-024-R502",
+     "state": "PASS",
+     "evidence": [
+      "review_verdict.schema.json additionalProperties:false, required exactly {verdict APPROVE|REVISE|HALT, rationale 1-4096, evidence_ref_ids unique 1-64 each 1-128}; from_provider rejects non-controller-issued ids; dup/cardinality/wrong-type reproduced fail-closed."
+     ]
+    },
+    {
+     "id": "D-024-R503",
+     "state": "PASS",
+     "evidence": [
+      "Both provider schemas closed -> forged run_id/sha/branch/origin/model/gate_result/task_id are unknown keys, fail closed; controller builds all factual fields; worker supplies only summary+next_action, reviewer only verdict/rationale/evidence-refs. Reproduced."
+     ]
+    },
+    {
+     "id": "D-024-R504",
+     "state": "PASS",
+     "evidence": [
+      "build_codex_decision: APPROVE completes only when invariants_ok is True AND gates_ok is True (strict identity); truthy non-bool (1/'yes'/[1]) -> HOLD; failing invariants/gates -> HOLD. Reproduced via tests."
+     ]
+    },
+    {
+     "id": "D-024-R505",
+     "state": "PASS",
+     "evidence": [
+      "GitBinding binds normalized_remote_url/expected_base_ref/observed_base_sha/task_branch/task_head_sha/observed_at_utc; base ref is data (arbitrary ref test); verified_origin_main not a field/attr/as_dict key; malformed SHA and empty ref/url fail closed; observe_remote fresh 40-hex or fail closed. Live observed-vs-pinned comparison is Tranche B."
+     ]
+    },
+    {
+     "id": "D-024-R509",
+     "state": "PASS",
+     "evidence": [
+      "Behavior-neutral split to checkpoint_extraction.py behind a claude_runner facade; runtime is-identity of RunnerError/extract_checkpoint/CheckpointError confirmed; full supervisor suite 3144 passed/2 skipped/0 failed at ad770ad4; one-shot transport refuses resume/continue/fork/background and spawns exactly once."
+     ]
+    },
+    {
+     "id": "D-024-R510",
+     "state": "PASS",
+     "evidence": [
+      "gate_runner.run_gate refuses str/bytes argv (shell string), direct no-shell subprocess, records argv/cwd/timestamps/repo HEAD+tree/exec-chain sha256/raw returncode/stdout+stderr digests; reports rendered from the record; 11 tests incl. real-PowerShell pipe records child raw exit + mutation-killed=exit0. Reproduced (raw exit 0)."
+     ]
+    },
+    {
+     "id": "D-024-R511",
+     "state": "PASS",
+     "evidence": [
+      "sha256_file_complete hashes the whole file with no size/mtime cache; verify_executable_chain rejects any change/reorder; same-size(16B)+os.utime-restored-mtime replacement still rejected (reproduced PASS); DISABLE_AUTOUPDATER=1 required, DISABLE_UPDATES refused (R280); runtime model/version mismatch/empty fail closed."
+     ]
+    },
+    {
+     "id": "D-024-R514",
+     "state": "PASS",
+     "evidence": [
+      "Tranche-A acceptance evidence is the gate_runner machine record M0-T134-tranche-a-evidence.json (repo_head 5e89175d, repo_tree f8d3bbd4 == 5e89175d^{tree}, returncode 0); human reports generated from it; scope = MRL acceptance evidence only."
+     ]
+    }
+   ],
+   "reviewed_manifest_sha256": "1c3078c62692b26b3054c4239d51a2c79dec5da8f6ad8b9f6aad7ac051a6f23e",
+   "reviewed_sha": "ad770ad48a2d040c129d9e8d3c1b2bd6cf0fb0f4",
+   "verified_at": "2026-09-01",
+   "verification_report": "project-control/reports/M0-T134-DCV.md"
   }
  ],
- "updated_at": "2026-09-01T03:59:29.591853+00:00"
+ "updated_at": "2026-09-01T22:31:57.699361+00:00"
 }

@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 471,
+  "requirement_count": 606,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T05:05:26.093846+00:00",
+  "updated_at": "2026-09-01T22:31:57.699361+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -15722,6 +15722,4061 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R472",
+      "text": "The finished target remains a genuinely end-to-end ordinary-work lifecycle: isolated task branch, implementation, commit, push, correlated PR, required CI/review, permitted ordinary green merge, and ledger continuation. Success must NOT be redefined as a local-only producer/reviewer loop.",
+      "source_ref": "source-038-amendment.md#target-lifecycle",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-BOOTSTRAP",
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R473",
+      "text": "PR #241 and every pre-existing PR remain untouched unless separately authorized.",
+      "source_ref": "source-038-amendment.md#pr-untouched",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-BOOTSTRAP",
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R474",
+      "text": "Do NOT renew the claude_runner.py modularity exception.",
+      "source_ref": "source-038-amendment.md#no-renew",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-BOOTSTRAP",
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R475",
+      "text": "Preserve the existing local renewal commit (b7b203d2) as evidence; the eventual correction must SPLIT claude_runner.py responsibilities and remove reliance on the renewal.",
+      "source_ref": "source-038-amendment.md#preserve-and-split",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-BOOTSTRAP",
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R476",
+      "text": "No Agent SDK, third-party agent framework, or downloaded agent code; no global Claude configuration change; no protection weakening; no direct-main write; no silent model substitution; no unauthorized GitHub mutation.",
+      "source_ref": "source-038-amendment.md#prohibitions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-BOOTSTRAP",
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R477",
+      "text": "This directive authorizes PHASE 1 ONLY: a bounded read-only launch-contract lab and final repair estimate. It does NOT authorize implementation of any fix.",
+      "source_ref": "source-038-amendment.md#phase1-only",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R478",
+      "text": "PHASE 0 FREEZE: record and report the exact local HEAD, branch, tree, status, unpushed commits, and ahead/behind state; explain the local 567-ahead vs the external 565-apart result and identify the two local commits.",
+      "source_ref": "source-038-amendment.md#freeze",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R479",
+      "text": "PHASE 0: preserve all work. Do not reset, revert, amend, push, accept, recertify, or mutate the campaign/runtime/journal.",
+      "source_ref": "source-038-amendment.md#preserve-no-mutation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R480",
+      "text": "PHASE 0: M0-T133 must remain unaccepted and the loop must remain PAUSED_RECOVERY throughout Phase 1.",
+      "source_ref": "source-038-amendment.md#holds",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R481",
+      "text": "PHASE 1: timebox to <=8 engineering hours; run all independent checks collection-style (do not stop after the first failure); do not fix defects during this phase.",
+      "source_ref": "source-038-amendment.md#timebox-collection",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R482",
+      "text": "PHASE 1: adjudicate exactly the 14 enumerated launch-critical contracts (controller source/stale-main; PowerShell command semantics + LASTEXITCODE; executable hashes/versions/updater/drift; effective Claude/Codex settings inventory; child-env model+auth for Claude/Codex/GitHub; --permission-prompt-tool stdio behavior; two-message stream-json + controller-owned total budget; full Claude checkpoint schema + correlation; full Codex decision schema + HEAD/origin/evidence binding; queue/packet/worktree/branch/HEAD/status binding; fresh remote vs stale tracking refs; raw gate-result integrity through filters/pipelines; process-tree/EOF/timeout/recovery/zero-descendants; real GitHub lifecycle topology incl. worker-branch-to-integration-branch safety). Do not repeat general repository inventory or investigate unrelated P2 cleanup.",
+      "source_ref": "source-038-amendment.md#fourteen-contracts",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R483",
+      "text": "PHASE 1: provider canaries are authorized ONLY as non-mutating runs in a newly created TEMP scratch Git repository, with no repository/controller/journal/queue/campaign/PR/remote mutation, no updater, no background agents, no fallback or model substitution, at most eight provider calls, only an already owner-approved exact model, and no purchase/production/owner-gated operation. If an existing directive requires a more specific authorization, mark that row BLOCKED_OWNER_GATE; do not bypass it and do not call it a pass.",
+      "source_ref": "source-038-amendment.md#canary-bounds",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R484",
+      "text": "DELIVERABLE: return exactly one consolidated package (LAUNCH_CONTRACT_MATRIX.md + LAUNCH_CONTRACT_RESULTS.json + STABILIZATION_REPAIR_PLAN.md). For every matrix row include: status (PASS/FAIL/BLOCKED/NOT_RUN); observed fact; expected invariant; exact command or probe; raw exit code; evidence artifact and digest; whether proof is static/fixture/simulated/real-CLI; exact defect if failed; exact production files/functions affected; positive test and mutant test required; dependency on another row; estimated engineering hours.",
+      "source_ref": "source-038-amendment.md#deliverable",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R485",
+      "text": "DELIVERABLE: separate findings into launch-blocking P0/P1, post-launch hardening P2/P3, and unrelated backlog; do not expand P2/P3 work into the stabilization package.",
+      "source_ref": "source-038-amendment.md#severity-separation",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R486",
+      "text": "KILL CRITERIA: return NOT_VIABLE_WITHIN_CURRENT_BOUND and stop before implementation if any is true: launch-critical repair estimate exceeds five working days; safe GitHub topology requires an undefined large control-branch merge; the permission bridge cannot be reproduced reliably; structured checkpoint output cannot coexist with required stream/resume behavior; exact child authentication or effective configuration cannot be deterministically bound; more than twelve independent launch-critical defects remain after deduplication; a necessary fix requires Agent SDK, a new framework, protection weakening, or another owner-prohibited architecture change.",
+      "source_ref": "source-038-amendment.md#kill-criteria",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R487",
+      "text": "RECOMMENDATION: end with exactly one recommendation - PROCEED_WITH_ONE_BOUNDED_REPAIR_PACKAGE (including exact scope and total estimate) OR NOT_VIABLE_WITHIN_CURRENT_BOUND (including the smallest architecture decision required).",
+      "source_ref": "source-038-amendment.md#recommendation",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R488",
+      "text": "Do not implement anything and do not ask piecemeal questions; return the complete matrix and recommendation in one response.",
+      "source_ref": "source-038-amendment.md#one-response",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T135"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 38
+    },
+    {
+      "id": "D-024-R489",
+      "text": "stabilization/D-024-mrl is created from the exact current control head ad22e4dc; the existing control branch and its five commits are preserved unmodified as historical evidence (no reset/revert/squash/rewrite/delete/move); if the stabilization branch already existed or HEAD/status differed, stop before mutation with BLOCKED.",
+      "source_ref": "source-039-amendment.md#item1-branch",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R490",
+      "text": "Option B is the planning topology: a protected integration branch is created later from a clean stabilized head, not now; main remains the release branch.",
+      "source_ref": "source-039-amendment.md#option-b-topology",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R491",
+      "text": "Work locally only: no push, PR, merge, integration-branch creation, live supervisor journey, Tranche B work, or contact with PR #241.",
+      "source_ref": "source-039-amendment.md#item1-branch",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R492",
+      "text": "Capture this authorization as D-024 Amendment 39 via the repository's canonical tooling; do not hand-edit registry digests; if the tooling would rewrite unrelated historical records or produce unrelated mass formatting churn, stop and report the exact proposed diff.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R493",
+      "text": "In one separate governance commit, restore tools/modularity_exceptions.json byte-for-byte to its 6f5d12a6 version (sha256 dba91e163c27cad8205f1463bc1e6cfd447c750076cecd04c0b15a67ab1792c7), removing the forbidden renewal.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R494",
+      "text": "Keep tools/modularity_baseline.json byte-for-byte unchanged; do not regenerate the modularity baseline; remove it from Tranche-A allowed_paths.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R495",
+      "text": "Mark LAUNCH_CONTRACT_MATRIX.md and STABILIZATION_REPAIR_PLAN.md prominently SUPERSEDED/HISTORICAL; they must not remain the canonical implementation plan.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R496",
+      "text": "Classify the old docs/SESSION_HANDOFF.md version as historical orientation only; generate a current handoff from actual state after Tranche A; do not reapply the old wording as current.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R497",
+      "text": "Replan M0-T134 as the Tranche-A task with exact code, schema, test and report allowed_paths matching this authorization; separate orchestrator-owned task/ledger updates from producer-owned code paths.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R498",
+      "text": "Run the directive/task validators after the governance commit; they must pass before code work begins.",
+      "source_ref": "source-039-amendment.md#item2-governance",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R499",
+      "text": "The initial modularity gate is EXPECTED TO FAIL solely because claude_runner.py is 1432 against the restored 1410 exception; record that exact initial failure through an unpiped command; do not require or claim exit 0 at the start; if the initial gate reports any additional failure, stop before code implementation.",
+      "source_ref": "source-039-amendment.md#item3-modularity-honesty",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R500",
+      "text": "The final committed Tranche-A candidate must produce modularity exit 0 because claude_runner.py was split, not because either modularity policy file changed.",
+      "source_ref": "source-039-amendment.md#item3-modularity-honesty",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R501",
+      "text": "WorkerResult has exactly: outcome in {COMPLETED,BLOCKED,NEEDS_OWNER}; summary string 1-4096 chars; requested_next_action string 0-1024 chars; additionalProperties=false; unknown fields, wrong types, invalid enums and excess lengths fail closed.",
+      "source_ref": "source-039-amendment.md#item4-schemas",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R502",
+      "text": "ReviewVerdict has exactly: verdict in {APPROVE,REVISE,HALT}; rationale string 1-4096 chars; evidence_ref_ids a unique array of 1-64 strings each 1-128 chars, each required to match a controller-issued evidence ID; additionalProperties=false; duplicate references and non-controller evidence IDs fail closed.",
+      "source_ref": "source-039-amendment.md#item4-schemas",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R503",
+      "text": "Neither provider may supply trusted run IDs, task IDs, repository paths, SHAs, branch, origin, model identity, executable identity, gate results or evidence digests; the controller constructs and validates the authoritative ClaudeCheckpoint / CodexDecision envelopes.",
+      "source_ref": "source-039-amendment.md#item4-schemas",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R504",
+      "text": "APPROVE is only an untrusted reviewer opinion and must never itself produce COMPLETE; the controller may construct COMPLETE only after every factual invariant and gate passes.",
+      "source_ref": "source-039-amendment.md#item4-schemas",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R505",
+      "text": "The controller-owned MRL decision envelope binds normalized remote URL, expected base ref, freshly observed base SHA, task branch, task HEAD SHA and observation timestamp; origin/main must not be hard-coded; legacy verified_origin_main may remain for the disabled legacy path but must not be repurposed to mean an integration branch.",
+      "source_ref": "source-039-amendment.md#item5-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R506",
+      "text": "Remove tools/modularity_baseline.json, tools/agent_supervisor/next_task.py, tools/agent_supervisor/cli.py and tools/agent_supervisor/loop.py from Tranche-A production allowed_paths; queue selection and CLI/loop launch wiring belong to later tranches; Tranche A has no live launch.",
+      "source_ref": "source-039-amendment.md#item6-narrow-scope",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R507",
+      "text": "Before the first code edit, print a requirement -> production file -> test mapping; every allowed production file must close a named Tranche-A requirement and have a named test; remove every unmapped path; do not expand allowed_paths during implementation; an indispensable missing path is a typed BLOCKED result, not permission for scope growth.",
+      "source_ref": "source-039-amendment.md#item6-narrow-scope",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R508",
+      "text": "The controller, not Claude, owns commit, push and PR operations.",
+      "source_ref": "source-039-amendment.md#controller-owns-git",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R509",
+      "text": "Split tools/agent_supervisor/claude_runner.py behavior-neutrally, extracting worker-result/checkpoint construction and validation, single-process MRL execution/transport, and optionally process/result accounting; preserve public imports via a compatibility facade.",
+      "source_ref": "source-039-amendment.md#item6-narrow-scope",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R510",
+      "text": "Provide gate_runner binding absolute argv, cwd, start/end timestamps, repository HEAD/tree, executable-chain hashes, raw return code and stdout/stderr digests; reports are generated from that record; independently test the recorder via direct process execution and real PowerShell; the mutation harness exits 0 when it proves a mutant was killed and must not make a correctly functioning mutation test appear to be a failed gate.",
+      "source_ref": "source-039-amendment.md#item7-final-evidence",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R511",
+      "text": "Executable identity: compute a complete SHA-256 immediately before every spawn with no size/mtime cache in the security-critical check; resolve and bind the full dispatch chain (wrapper, actual runtime executable, actual JavaScript/package entrypoint) for wrappers such as codex.cmd and for the Claude executable; require DISABLE_AUTOUPDATER=1 in the actual Claude child environment; verify the runtime-reported model and version; a replacement with preserved size and restored mtime must still be rejected.",
+      "source_ref": "source-039-amendment.md#item5-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R512",
+      "text": "Return only the specified items (branch and exact candidate HEAD; governance correction commit; implementation commit(s); changed-file list; positive and mutation results with raw exits; initial expected modularity failure and final modularity success; byte comparisons for both modularity policy files; remaining limitations; confirmation nothing pushed and PR #241 untouched) and end exactly with TRANCHE_A_READY_FOR_INDEPENDENT_REVIEW or BLOCKED: followed by one precise blocking fact.",
+      "source_ref": "source-039-amendment.md#return",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R513",
+      "text": "Stop after Tranche A; do not start Tranche B.",
+      "source_ref": "source-039-amendment.md#return",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-39"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R514",
+      "text": "gate_runner is the sole MRL acceptance-evidence path; this applies to MRL acceptance evidence, not every historical command or unrelated repository workflow.",
+      "source_ref": "source-039-amendment.md#item7-final-evidence",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T134"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 39
+    },
+    {
+      "id": "D-024-R515",
+      "text": "OWNER DECISION: M0-T134 (MRL Tranche A) is formally accepted. The recorded acceptance stands as made on the archive branch stabilization/D-024-mrl at 76c4edff3175f0d185c136e52e1329e3a5cf8199 (reviewed commit ad770ad48a2d040c129d9e8d3c1b2bd6cf0fb0f4, reviewed content identity 1c3078c62692b26b3054c4239d51a2c79dec5da8f6ad8b9f6aad7ac051a6f23e, accepted code tree 5e89175d).",
+      "source_ref": "source-040-amendment.md#accept-and-role",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R516",
+      "text": "Proceed as the Tranche-B producer under this amendment. This is ONE bounded Tranche-B workflow; the clean reapplication (Cluster B0) is part of it, not a separate initiative.",
+      "source_ref": "source-040-amendment.md#accept-and-role",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R517",
+      "text": "OWNER DECISION: D-024-R513 (stop after Tranche A; do not start Tranche B) is lifted for this ONE bounded Tranche-B workflow only. Every other Amendment-39 hold remains in force.",
+      "source_ref": "source-040-amendment.md#accept-and-role",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R518",
+      "text": "Do not execute the previously suggested one-line 'git switch ... && git checkout ...' reapply command: it copies only tools content, uses a directory-level schemas path, and does not reconstruct canonical project-control state on the clean base.",
+      "source_ref": "source-040-amendment.md#reject-one-liner",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R519",
+      "text": "Permitted: local branch creation, authorized local edits, tests, governance records, and logical local commits.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R520",
+      "text": "No push, remote integration-branch creation, branch-protection change, PR creation/update, merge, task auto-acceptance, production deployment, or real Codex-loop launch.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R521",
+      "text": "PR #241 and all remote refs remain untouched.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R522",
+      "text": "Do not begin Tranche C.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R523",
+      "text": "Do not run live provider canaries until the offline implementation and the canary package are complete; prepare the exact owner-run PowerShell commands and stop for owner execution.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R524",
+      "text": "Foreground subagents within scope may be used for parallel read-only tracing, variant analysis, isolated non-overlapping implementation, test analysis, and independent self-review.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R525",
+      "text": "The primary session is the sole integrator and committer: no background agents and no subagent Git operations.",
+      "source_ref": "source-040-amendment.md#boundaries",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R526",
+      "text": "Apply defect convergence: survey and cluster the complete Tranche-B failure surface before implementation.",
+      "source_ref": "source-040-amendment.md#defect-convergence",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R527",
+      "text": "Resolve related producers, consumers, schemas, CLI wiring, policies, tests, documentation, and Windows behavior together; do not stop after each ordinary defect.",
+      "source_ref": "source-040-amendment.md#defect-convergence",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R528",
+      "text": "Verification cadence: focused tests while editing, affected tests when a cluster closes, and final regression once on the frozen candidate.",
+      "source_ref": "source-040-amendment.md#defect-convergence",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R529",
+      "text": "B0-1: verify stabilization/D-024-mrl is clean at acceptance commit 76c4edff with no upstream and no remote effects.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R530",
+      "text": "B0-2: preserve stabilization/D-024-mrl unchanged as the evidence/archive branch.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R531",
+      "text": "B0-3: verify the proposed local branch name does not already exist before creating anything.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R532",
+      "text": "B0-4: create a new local candidate integration branch from exact base 6f5d12a6203c2c89390a982657fa8d66a91a0c3d; local only, not yet the protected remote Option-B branch.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R533",
+      "text": "B0-5: reapply exactly the approved 19-file Tranche-A tools delta using explicit individual file paths; never checkout an entire directory.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R534",
+      "text": "B0-6: independently compare every reapplied production/schema/test blob with the accepted code tree at 5e89175d; all 19 must be byte-identical.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R535",
+      "text": "B0-7: do not copy the abandoned branch ancestry or blindly copy project-control/.",
+      "source_ref": "source-040-amendment.md#b0-steps",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R536",
+      "text": "Before writing governance, perform a reference-closure inventory from the accepted state identifying every canonical semantic record the clean branch must truthfully contain: applicable owner directives and exact requirement rows; the accepted M0-T134 task state; its evidence map; G0/G2/G3/G4/DCV records; its verification row and reviewed identity; every task/report/directive reference validators require; the correct current project-control status and continuation point.",
+      "source_ref": "source-040-amendment.md#b0-reference-closure",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R537",
+      "text": "Reconstruct that minimum complete semantic state through canonical project-control tooling and cleanly formatted targeted edits.",
+      "source_ref": "source-040-amendment.md#b0-reference-closure",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R538",
+      "text": "Do not import abandoned M0-T133 renewal state, noisy reserialization churn, stale current-work pointers, or obsolete handoff claims.",
+      "source_ref": "source-040-amendment.md#b0-reference-closure",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R539",
+      "text": "No dangling reference to evidence that exists only on the archive branch is permitted.",
+      "source_ref": "source-040-amendment.md#b0-reference-closure",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R540",
+      "text": "Run every project-control, directive, task, manifest, evidence, MCP, and campaign-continuity validator on the clean branch.",
+      "source_ref": "source-040-amendment.md#b0-validators",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R541",
+      "text": "The clean branch must independently report M0-T134 accepted and have one coherent next state.",
+      "source_ref": "source-040-amendment.md#b0-validators",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R542",
+      "text": "If reproducing accepted governance on a rewritten clean SHA requires a canonical cross-SHA provenance record, create that record explicitly rather than pretending the old reviewed SHA is the new SHA.",
+      "source_ref": "source-040-amendment.md#b0-validators",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R543",
+      "text": "OWNER CLARIFICATION (captured canonically): the earlier byte-identical restoration of tools/modularity_exceptions.json (D-024-R493) was the Tranche-A anti-renewal requirement; after formal Tranche-A acceptance, deletion of ONLY the stale tools/agent_supervisor/claude_runner.py file-exception entry is authorized.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R544",
+      "text": "Do not renew, extend, narrow, replace, or regenerate any modularity exception or baseline.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R545",
+      "text": "Keep tools/modularity_baseline.json unchanged.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R546",
+      "text": "Before deleting the exception entry, independently prove the expected baseline material-growth limit for claude_runner.py and its current SLOC.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R547",
+      "text": "Delete only the tools/agent_supervisor/claude_runner.py file-exception entry from tools/modularity_exceptions.json.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R548",
+      "text": "Prove the unpiped modularity gate remains green without the deleted entry (raw exit code, not piped).",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R549",
+      "text": "Preserve the inert baseline-regeneration record unless canonical policy requires otherwise.",
+      "source_ref": "source-040-amendment.md#b0-modularity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R550",
+      "text": "Add the concise defect-convergence guidance through the existing reliability architecture, not a new large skill.",
+      "source_ref": "source-040-amendment.md#b0-guidance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R551",
+      "text": "Add a short always-loaded defect-convergence instruction to the root CLAUDE.md.",
+      "source_ref": "source-040-amendment.md#b0-guidance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R552",
+      "text": "Extend the existing /engineering-reliability routing/standard only as necessary.",
+      "source_ref": "source-040-amendment.md#b0-guidance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R553",
+      "text": "The guidance must require failure-surface inventory, change-impact analysis, variant analysis, root-cause clustering, bounded repair, progressive verification, and frozen-candidate regression.",
+      "source_ref": "source-040-amendment.md#b0-guidance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R554",
+      "text": "Keep the guidance addition concise and avoid duplicating existing debugging rules.",
+      "source_ref": "source-040-amendment.md#b0-guidance",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R555",
+      "text": "After B0, freeze a clean candidate SHA and run: all 77 Tranche-A focused cases; the full affected supervisor suite; unpiped modularity; applicable lint; all project-control/directive/continuity validators.",
+      "source_ref": "source-040-amendment.md#b0-freeze",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R556",
+      "text": "Any B0 verification failure must be consolidated and resolved before Tranche-B behavior is added.",
+      "source_ref": "source-040-amendment.md#b0-freeze",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R557",
+      "text": "B1: build one canonical 'start --launch-manifest <absolute-path>' entrance.",
+      "source_ref": "source-040-amendment.md#b1-launch-manifest",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R558",
+      "text": "B1: the launch manifest supplies expected values and is never accepted as proof.",
+      "source_ref": "source-040-amendment.md#b1-launch-manifest",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R559",
+      "text": "B1: immediately before dispatch, independently verify the actual repository root, normalized origin, task ID, task-packet digest, worktree, branch, HEAD, tree, clean starting status, allowed paths, settings/profile identity, and authorized mode.",
+      "source_ref": "source-040-amendment.md#b1-launch-manifest",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R560",
+      "text": "B1: any expected-versus-observed mismatch refuses before provider launch.",
+      "source_ref": "source-040-amendment.md#b1-launch-manifest",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R561",
+      "text": "B2: resolve, hash, and bind the complete Claude and Codex dispatch chains: wrapper -> runtime executable -> actual package/entrypoint.",
+      "source_ref": "source-040-amendment.md#b2-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R562",
+      "text": "B2: use streaming full SHA-256 immediately before every spawn, with no size/mtime hash cache.",
+      "source_ref": "source-040-amendment.md#b2-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R563",
+      "text": "B2: verify updater disablement in the actual child environment.",
+      "source_ref": "source-040-amendment.md#b2-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R564",
+      "text": "B2: verify the runtime-reported model and version.",
+      "source_ref": "source-040-amendment.md#b2-executable-identity",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R565",
+      "text": "B2 tests: same-size/restored-mtime replacement, wrapper retargeting, entrypoint replacement, updater re-enablement, and model/version mismatch.",
+      "source_ref": "source-040-amendment.md#b2-executable-identity",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R566",
+      "text": "B3: do not permanently forbid Agent/subagent use.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R567",
+      "text": "B3: bounded-subagent contract has configurable per-run concurrent-agent and total-agent limits.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R568",
+      "text": "B3: initial delegation depth of one.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R569",
+      "text": "B3: foreground agents only.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R570",
+      "text": "B3: subagents inherit repository identity, task, allowed paths, and tool restrictions.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R571",
+      "text": "B3: controller-issued parent/child identities and global accounting.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R572",
+      "text": "B3: parallel read-only analysis is permitted.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R573",
+      "text": "B3: single-writer integration or isolated non-overlapping worktrees.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R574",
+      "text": "B3: no subagent commit, push, PR, merge, or acceptance.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R575",
+      "text": "B3: complete descendant termination.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R576",
+      "text": "B3: explicit denial of MCP and of all tools outside the inventory.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R577",
+      "text": "B3: the restricted profile must correctly combine the actual Claude CLI mechanisms: restricted operation, 'dontAsk', explicit tools inventory, exact approvals/denials, strict MCP denial, and accounted managed policy.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R578",
+      "text": "B3: do not assume that '--tools' alone grants permission.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R579",
+      "text": "B3: capability support must be proven by the later real Windows canary; offline tests are not capability proof.",
+      "source_ref": "source-040-amendment.md#b3-bounded-subagents",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R580",
+      "text": "B4: wire the accepted Tranche-A WorkerResult, ReviewVerdict, remote observation, gate recorder, transport, and executable-identity primitives into the actual CLI/loop path.",
+      "source_ref": "source-040-amendment.md#b4-one-shot-wiring",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R581",
+      "text": "B4: one task uses one fresh Claude process, one prompt, one schema-bound result; stdin closes; no resume, no second message, no background fallback.",
+      "source_ref": "source-040-amendment.md#b4-one-shot-wiring",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R582",
+      "text": "B4: apply total run accounting across the primary worker and its subagents.",
+      "source_ref": "source-040-amendment.md#b4-one-shot-wiring",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R583",
+      "text": "B4: enforce process and turn limits.",
+      "source_ref": "source-040-amendment.md#b4-one-shot-wiring",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R584",
+      "text": "B4: cancellation or timeout must terminate and prove zero remaining descendants.",
+      "source_ref": "source-040-amendment.md#b4-one-shot-wiring",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R585",
+      "text": "B5: replace or prominently obsolete the stale main-based runbook so there is exactly one operator launch path.",
+      "source_ref": "source-040-amendment.md#b5-launch-path-canary",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R586",
+      "text": "B5: build real PowerShell tests that preserve the raw $LASTEXITCODE and cannot be made green through piping or Tee-Object.",
+      "source_ref": "source-040-amendment.md#b5-launch-path-canary",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R587",
+      "text": "B5: prepare ONE exact owner-run canary package testing: clean-base manifest launch; live repository mismatch refusal; Claude/Codex child authentication; runtime model/version identity; updater disablement; restricted tool denial; one successful one-shot result; bounded subagent fan-out and over-limit denial; full process-tree cleanup; bad-command raw exit-code preservation.",
+      "source_ref": "source-040-amendment.md#b5-launch-path-canary",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R588",
+      "text": "B5: do not execute the live provider canaries within this authorization.",
+      "source_ref": "source-040-amendment.md#b5-launch-path-canary",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R589",
+      "text": "Every positive contract needs a paired negative or mutation test.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R590",
+      "text": "Gate results must come from the raw gate recorder (tools/gate_runner.py).",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R591",
+      "text": "No hand-authored success claims.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R592",
+      "text": "Do not run the entire suite after every edit.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R593",
+      "text": "When all B clusters are complete, freeze one candidate SHA and run the complete affected and repository verification once.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R594",
+      "text": "Any later code change invalidates that final frozen verification.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R595",
+      "text": "Regenerate docs/SESSION_HANDOFF.md only at the final frozen B candidate, not during intermediate work.",
+      "source_ref": "source-040-amendment.md#testing-evidence",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R596",
+      "text": "Finish with exactly one of: TRANCHE_B_OFFLINE_COMPLETE_CANARIES_READY or CONSOLIDATED_BLOCKED.",
+      "source_ref": "source-040-amendment.md#return",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R597",
+      "text": "Report the archive identity, clean-base identity, complete governance continuity mapping, exact commits, changed files, root-cause clusters, tests and raw return codes, mutation results, modularity-without-exception result, protected-file comparisons, final Git status, and the single owner-run PowerShell canary package.",
+      "source_ref": "source-040-amendment.md#return",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R598",
+      "text": "Report every blocker together; do not push, launch the real loop, or begin Tranche C.",
+      "source_ref": "source-040-amendment.md#return",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T136"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R599",
+      "text": "OWNER STANDING POLICY: the main/orchestrator session runs Fable 5.1 at effort high as the standard ('Fable 5.1 high'); the main pin is never changed by a subagent switch.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R600",
+      "text": "OWNER STANDING POLICY: when the main session falls back, it falls back to claude-opus-4-8 at effort xhigh; these are the only two main-session selections.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R601",
+      "text": "Provide an owner command that thematically switches ALL subagent selections (effort level, and model where stated) at once - e.g. 'switch all the subagents to ultra/max' - applied uniformly to the subagent definitions only and never to the main/orchestrator pin.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T137"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R602",
+      "text": "EXTERNAL FACT (verified, not guessed): the runtime-reported identifier for 'Fable 5.1' is 'claude-fable-5-1' (observed in .claude/telemetry/statusline_journal.jsonl model_id records and the statusline sidecar under Claude Code 2.1.252 on 2026-09-01); the installed CLI's effort vocabulary is low/medium/high/xhigh/max and contains no 'ultra' level. Re-verify against the live runtime before any pin change.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T137"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R603",
+      "text": "UNRESOLVED QUESTION (owner decision required; interpretation NOT applied silently): 'ultra' is read as effort xhigh ('ultra-high'); the owner may instead mean max. The switch command must accept an explicit alias table and refuse unknown words.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R604",
+      "text": "UNRESOLVED QUESTION (owner decision required): the Claude Code fallbackModel setting carries no per-model effort, so 'fall back to opus-4-8 xhigh' cannot be expressed in .claude/settings.json alone; the supervisor turnover path (D-010-R286/R308) already specifies claude-opus-4-8 xhigh for the orchestrator role. Confirm that the settings pin stays 'main = claude-fable-5-1 + fallbackModel [claude-opus-4-8]' and that xhigh-on-fallback is realized through the turnover path / owner /effort rather than a settings key.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R605",
+      "text": "UNRESOLVED QUESTION (owner decision required): D-004-R734/R741 pin the literal id 'claude-fable-5' and D-004-R742 keeps effortLevel UNWRITTEN (default high) while the live .claude/settings.json carries effortLevel 'xhigh' from the D-010 exhaustion window. Realizing 'Fable 5.1 high' requires (a) model 'claude-fable-5-1' in .claude/settings.json and (b) either deleting effortLevel (R742-compliant; needs validate_mcp_policy PRESERVED_KEYS edit) or writing 'high' explicitly. Owner to confirm (a)+(b) and that this supersedes D-004-R156/R734/R741/R742 for the main pin.",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-024-AMENDMENT-40"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
+    },
+    {
+      "id": "D-024-R606",
+      "text": "Any main-pin change to claude-fable-5-1 additionally depends on owner-only edits outside agent authority: adding 'claude-fable-5-1' to the protected supervisor config allowlist ([claude] allowed_models / [approved_models], C:/Program Files/SupervisorConfig/config.toml, D-010-R297) and a tier entry in tools/model_routing.py KNOWN_MODEL_TIERS (fail-closed 'never guess strength or cost'). Allowlisting alone is not authorization (D-024-R326).",
+      "source_ref": "source-040-amendment.md#model-selection",
+      "classification": "dependency",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T137"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 40
     }
   ]
 }
