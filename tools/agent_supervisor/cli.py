@@ -138,8 +138,6 @@ from .external_effects import ExternalEffectError, spec_for, stable_action_id
 from .loop import (
     ALL_MODE_NAMES,
     DEFAULT_OWNER_TOUCH_BUDGET,
-    MODE_LIMITED_AUTO,
-    MODE_SUPERVISED,
     RUNNABLE_MODES,
     SESSION_ROLE_ORCHESTRATOR,
     LimitedAutoRefused,
@@ -252,8 +250,10 @@ from .start_gate import (
     revalidation_note,
     run_dispatched,
     seal_owner_gate_refusal,
+    start_report_lines,
     unprobed_revalidation,
 )
+from .mrl_launch_path import apply_launch_manifest, preflight_launch
 from .resume_scheduler import (
     CODEX_HOLD_KEY,
     LIMIT_CLASSES,
@@ -2696,6 +2696,11 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     if machine.current_state == INITIAL_STATE:
         machine.transition(PREFLIGHT_STATE, "start_command",
                            detail={"mode": args.mode, "operator_initiated": True})
+    # M0-T136 (D-024-R558..R560): at PREFLIGHT, immediately before the runner is
+    # built, every manifest field is re-OBSERVED independently; any mismatch is a
+    # typed refusal before provider launch. `launch` is None on the legacy path.
+    launch = (preflight_launch(args, run_id=run_id, audit=audit)
+              if getattr(args, "launch_manifest", None) else None)
 
     # D-004-R739: every supervised session launches the worker with an explicit
     # --model = the resolved primary from model_selection. `expected_model` is
@@ -2707,6 +2712,9 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # run on the exhausted model while its records said otherwise, so the launch
     # config is built from the EFFECTIVE model - the pin unless a switch is active.
     launch_model = effective_model(journal, run_id, pinned_model)
+    if launch is not None and launch.manifest.dispatch["claude_model"] != launch_model:
+        raise LoopError("launch_manifest_mismatch", f"dispatch.claude_model "
+                        f"{launch.manifest.dispatch['claude_model']!r} != launch model {launch_model!r}")
     expected_model = args.expected_worker_model or launch_model
     runner_config = RunnerConfig(
         executable=args.claude_executable, cwd=str(worktree),
@@ -2919,6 +2927,12 @@ def cmd_start(args: argparse.Namespace) -> int:
     if gate is not None:
         seal_owner_gate_refusal(args, gate, AUDIT_FILENAME)
         return emit_refusal(args, gate)
+    # M0-T136 (D-024-R557): `--launch-manifest` is THE canonical entrance when
+    # present - it supplies every dispatch input (typed flags that disagree are
+    # refused, not preferred) and is verified at PREFLIGHT in `_run_loop`.
+    _launch, launch_refusal = apply_launch_manifest(args)
+    if launch_refusal is not None:
+        return emit_refusal(args, launch_refusal)
 
     checkout = pathlib.Path(args.checkout).resolve()
     runtime, journal, audit = _open_runtime(args)
@@ -3136,43 +3150,9 @@ def cmd_start(args: argparse.Namespace) -> int:
             lock.release()
             journal.close()
 
-    # M0-T126 (M0-T125 D7): annotate `resume permitted` on an operator-typed start
-    # carrying --owner-enable-bounded-auto, so the recovery classification block no
-    # longer misleads ("resume permitted: False ... waits for an explicit operator
-    # start" then dispatches). The per-launch enable is honored by the mode gate,
-    # not by recovery classification. Inlined to stay net-zero SLOC.
-    lines = [f"mode:            {args.mode}",
-             f"classification:  {outcome.classification} ({outcome.reason_code})",
-             f"next state:      {outcome.next_state}",
-             f"resume permitted:{outcome.resume_permitted}{' (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)' if getattr(args, 'owner_enable_bounded_auto', False) else ''}",
-             f"reason:          {outcome.reason}",
-             ""]
-    if payload["dispatched"]:
-        run = payload["loop"]
-        budget = run["budget"]
-        lines += [
-            f"DISPATCHED in {args.mode} mode. cycles={len(run['cycles'])} "
-            f"final_state={run['final_state']} stopped={run['stopped']}",
-            f"forwarded message ids: {run['forwarded_message_ids'] or '(none)'}",
-            f"owner touches counted: {budget['counted']} of budget {budget['budget']} "
-            f"(within budget: {budget['within_budget']})",
-            "the budget is a measurement and authorizes nothing.",
-        ]
-        if args.mode not in (MODE_SUPERVISED, MODE_LIMITED_AUTO):
-            lines.append("shadow mode forwarded NOTHING; the recorded plans say what "
-                         "would have happened.")
-        if run.get("run_budget"):
-            budget_report = run["run_budget"]
-            lines.append(
-                f"run budget: "
-                f"{'UNLIMITED (no owner wall-clock limit)' if budget_report['unlimited'] else str(budget_report['budget']['wall_clock_seconds']) + 's'}"
-                f", elapsed {budget_report['elapsed_seconds']:.1f}s"
-                f"{' (RESUMED)' if budget_report['resumed'] else ''}")
-    else:
-        lines += ["NOT DISPATCHED. " + payload["stopped_because"],
-                  "no provider was contacted."]
-        if args.mode != MODE_LIMITED_AUTO:
-            lines.append("limited-auto is off for this launch.")
+    # M0-T126 (M0-T125 D7) annotation preserved; rendering moved to start_gate
+    # (M0-T136, modularity ceiling) - the lines are byte-identical.
+    lines = start_report_lines(args, outcome, payload)
     if refusal is not None:
         payload = refusals.merge_into_payload(payload, refusal)
         lines = [*lines, "", *refusal.lines()]
@@ -3274,6 +3254,14 @@ def build_parser() -> argparse.ArgumentParser:
                        help="recorded controller manifest - a REQUIRED dispatch input "
                             "(M0-T072); verified together with --config, including the "
                             "external config.toml binding, before any provider contact")
+    start.add_argument("--launch-manifest", default=None,
+                       help="M0-T136 (D-024-R557): ABSOLUTE path to the mrl_launch_manifest/v1 "
+                            "document. When present it is THE canonical entrance: it supplies "
+                            "every dispatch input (a typed flag that disagrees is refused) and "
+                            "every expected value is independently re-observed at PREFLIGHT - "
+                            "repo root, origin, task id, packet digest, worktree, branch, HEAD, "
+                            "tree, clean status, allowed paths, profile identity, mode - with "
+                            "any mismatch refused before provider launch. Never proof by itself")
     start.add_argument("--claude-executable", default=None,
                        help="explicit path to the Claude executable; never a PATH search")
     start.add_argument("--codex-executable", default=None,

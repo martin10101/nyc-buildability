@@ -30,6 +30,7 @@ from typing import Any, Callable, Mapping, Sequence
 from . import refusals
 from .loop import (
     MODE_LIMITED_AUTO,
+    MODE_SUPERVISED,
     OWNER_GATED_MODES,
     RUNNABLE_MODES,
     LimitedAutoRefused,
@@ -462,3 +463,47 @@ def seal_owner_gate_refusal(args: argparse.Namespace, item: refusals.Refusal,
                             "gate; the R595 / D-023-R033 activation hold is unchanged"})
     except Exception:  # pragma: no cover - a refusal never becomes a crash
         pass
+
+
+def start_report_lines(args: argparse.Namespace, outcome: Any,
+                       payload: Mapping[str, Any]) -> list[str]:
+    """The human view of a `start` result. Presentation only; every fact comes
+    from `outcome`/`payload`, so the JSON document and these lines never diverge.
+
+    Moved out of `cmd_start` in M0-T136 (modularity: `cli.py` is a grandfathered
+    oversized file at its growth ceiling) byte-for-byte; the M0-T126 (M0-T125 D7)
+    `resume permitted` annotation is preserved verbatim.
+    """
+    lines = [f"mode:            {args.mode}",
+             f"classification:  {outcome.classification} ({outcome.reason_code})",
+             f"next state:      {outcome.next_state}",
+             f"resume permitted:{outcome.resume_permitted}{' (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)' if getattr(args, 'owner_enable_bounded_auto', False) else ''}",
+             f"reason:          {outcome.reason}",
+             ""]
+    if payload["dispatched"]:
+        run = payload["loop"]
+        budget = run["budget"]
+        lines += [
+            f"DISPATCHED in {args.mode} mode. cycles={len(run['cycles'])} "
+            f"final_state={run['final_state']} stopped={run['stopped']}",
+            f"forwarded message ids: {run['forwarded_message_ids'] or '(none)'}",
+            f"owner touches counted: {budget['counted']} of budget {budget['budget']} "
+            f"(within budget: {budget['within_budget']})",
+            "the budget is a measurement and authorizes nothing.",
+        ]
+        if args.mode not in (MODE_SUPERVISED, MODE_LIMITED_AUTO):
+            lines.append("shadow mode forwarded NOTHING; the recorded plans say what "
+                         "would have happened.")
+        if run.get("run_budget"):
+            budget_report = run["run_budget"]
+            lines.append(
+                f"run budget: "
+                f"{'UNLIMITED (no owner wall-clock limit)' if budget_report['unlimited'] else str(budget_report['budget']['wall_clock_seconds']) + 's'}"
+                f", elapsed {budget_report['elapsed_seconds']:.1f}s"
+                f"{' (RESUMED)' if budget_report['resumed'] else ''}")
+    else:
+        lines += ["NOT DISPATCHED. " + payload["stopped_because"],
+                  "no provider was contacted."]
+        if args.mode != MODE_LIMITED_AUTO:
+            lines.append("limited-auto is off for this launch.")
+    return lines
