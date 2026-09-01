@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 432,
+  "requirement_count": 436,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T01:04:28.201173+00:00",
+  "updated_at": "2026-09-01T01:25:56.018662+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14552,6 +14552,126 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 31
+    },
+    {
+      "id": "D-024-R433",
+      "text": "The 2026-09-01 read-only CLI-update investigation was performed with zero mutations and its eight findings recorded (handoff seq 47 section 4 + campaign seq 64). Conditional admission-target rule RESOLVED: nothing newer than 2.1.252 is installed or staged, so 2.1.252 (e713c5a6, 217406624 B) is the settled admission target - SUBJECT to re-verification of the installed identity at M0-T132 start; if the identity moved, stop and re-report (propose the then-current settled identity, never auto-admit). Never DISABLE_UPDATES, never downgrade (R280 unchanged).",
+      "source_ref": "source-032-amendment.md#readonly-investigation",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 32
+    },
+    {
+      "id": "D-024-R434",
+      "text": "The settled safest procedure, in order: (1) owner-typed fresh-terminal settle - quit ALL Claude Code sessions AND exit WindowsTerminal entirely, relaunch, verify $env:DISABLE_AUTOUPDATER prints 1 in the new shell BEFORE launching claude, launch from the ctl24 root, verify claude --version = 2.1.252 with no update banner and the versions dir unchanged; (2) only then may the owner authorize M0-T132 (ONE admission: recapture the three live fixtures at the settled identity + repin cli_capability_manifest; then ONE combined R247 recertification covering BOTH the accepted M0-T131 supervisor tree 45b5b729 AND the admitted identity); (3) then the owner-typed restart sequence (owner-restart from HALTED, then the corrected start with --repo wt-m0t107 and a fresh --run-id). The diagnostic message authorized nothing.",
+      "source_ref": "source-032-amendment.md#settled-procedure",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 32
+    },
+    {
+      "id": "D-024-R435",
+      "text": "The final session handoff at the clean M0-T131 acceptance seam captures: the completed M0-T131 acceptance identity, the read-only CLI investigation findings, the settled 2.1.252 admission target with the R433 re-verification condition, and the exact fresh-terminal procedure (R434); only the required handoff/control-plane records are committed and pushed; the tree is verified clean and synced; then the session STOPS.",
+      "source_ref": "source-033-amendment.md#final-handoff",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 33
+    },
+    {
+      "id": "D-024-R436",
+      "text": "Seam prohibitions until separate owner authorization: do NOT create or begin M0-T132, do NOT admit or repin the CLI, do NOT run recertification, do NOT modify the supervisor journal, do NOT start the loop.",
+      "source_ref": "source-033-amendment.md#seam-prohibitions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 33
     }
   ]
 }

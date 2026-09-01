@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-01T01:04:28.201173+00:00",
+  "updated_at": "2026-09-01T01:25:56.018662+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -260,6 +260,22 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-01T01:04:28.201173+00:00",
       "content_digest_sha256": "21ddb615f6c1df1c113b8d2db5490615f3c2e3d6a242d77aff2f65efa967a912"
+    },
+    {
+      "file": "source-032-amendment.md",
+      "kind": "amendment",
+      "sequence": 32,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-01T01:25:56.018662+00:00",
+      "content_digest_sha256": "24cc302774ff136bbb2d9deadd12ca88a47f4e01075f3c18768cdaba3a06a005"
+    },
+    {
+      "file": "source-033-amendment.md",
+      "kind": "amendment",
+      "sequence": 33,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-01T01:25:56.018662+00:00",
+      "content_digest_sha256": "65f1612a4368e7322ab1e472a1ee5cbd92225f80994aa543f7d2c365c8e5f05f"
     }
   ],
   "amendments": [
@@ -292,7 +308,9 @@
     "source-028-amendment.md",
     "source-029-amendment.md",
     "source-030-amendment.md",
-    "source-031-amendment.md"
+    "source-031-amendment.md",
+    "source-032-amendment.md",
+    "source-033-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -826,10 +844,14 @@
     "D-024-R429",
     "D-024-R430",
     "D-024-R431",
-    "D-024-R432"
+    "D-024-R432",
+    "D-024-R433",
+    "D-024-R434",
+    "D-024-R435",
+    "D-024-R436"
   ],
-  "requirements_id_digest_sha256": "08d1dbdb471a5c3710c9a6e44a500d7771355f86c252f6f353ac5976be18a48b",
-  "requirements_content_digest_sha256": "cf5aaeab55ca0bd34a2429955bbe4d8bc4a0a232249098f4c0cd726a269669c1",
+  "requirements_id_digest_sha256": "40d69e334348b7119e78e13686ce693f5aeebe95cfd0d7c54d26c194d34b6a2a",
+  "requirements_content_digest_sha256": "10355bb3d4cada9db73b1a78d9dd33f904c5ba334d1d410232cccf9ac90b0c24",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1017,6 +1039,11 @@
       "at": "2026-09-01T01:04:28.201173+00:00",
       "by": "orchestrator",
       "note": "Amendment 31 captured (owner mid-turn 2026-09-01): R431 STOP at the M0-T131 acceptance seam - no R247 recert against the obsolete 2.1.251 pin while installed is 2.1.252 (supersedes the Amendment-30 R430 pin-unchanged recert detail; single-recert principle R428 stands at the combined post-admission identity); R432 seam report = final acceptance identity + the exact proposed combined 2.1.252-admission + single-recert plan, PRESENTED ONLY (no admission/repin/recert/start authorized). Backward-looking parts (DCV uninterrupted -> PASS, accept, commit/push 00220b8c) were already satisfied as directed. Rows bind proposed task id M0-T132 (inert until created)."
+    },
+    {
+      "at": "2026-09-01T01:25:56.018662+00:00",
+      "by": "orchestrator",
+      "note": "Amendments 32+33 captured (owner 2026-09-01): R433 read-only CLI investigation done with zero mutations, conditional resolved - 2.1.252 (e713c5a6) is the settled admission target subject to re-verification at M0-T132 start; R434 settled procedure (fresh-terminal settle -> owner may authorize M0-T132 admission + ONE combined R247 recert -> owner-typed restart); R435 final handoff at the M0-T131 acceptance seam then STOP; R436 seam prohibitions (no M0-T132 creation, no admit/repin, no recert, no journal writes, no loop start). Amendment-32 capture was deferred while its take-no-action order stood; rows bind proposed task id M0-T132 (inert until created)."
     }
   ]
 }
