@@ -103,12 +103,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-01T01:58:06.749580+00:00",
-  "updated_at": "2026-09-01T03:37:23.745871+00:00",
+  "updated_at": "2026-09-01T04:03:22.343918+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -139,6 +139,15 @@
       "percent": 60,
       "status": "in_progress",
       "message": "B-020 resolved via Amendment 35 Option B (owner: proceed now, commission under Fable unavailability). opus-4-8 confirmed approved+available; shell-routing recaptured at e713c5a6 on opus-4-8 (native_preferred). Four fixtures captured+re-pointed; teeth green; whole suite 3043/2/0 (the 3 M0-T131 CLI-drift failures RESOLVED by the admission). Recert next."
+    },
+    {
+      "at": "2026-09-01T03:49:30.272381+00:00",
+      "agent": "orchestrator-admission-runner",
+      "percent": 80,
+      "status": "awaiting_gate",
+      "message": "G3 code-reviewer PASS (4 LOW/INFO, none blocking). Bookkeeping note per G3 LOW-3: the packet-named M0-T132-producer-report.md role is fulfilled by M0-T132-G2-self-check.md + M0-T132-recertification.md (orchestrator-run governance task; producer self-check split across the G2 + recert reports). G3 INFO-1: guardrail_refusal/loop_interception 2_1_251 pointers correctly left (out of the three-fixtures scope, not in allowed_paths, no live tooth); carried as a pre-existing one-patch-lag advisory. Awaiting G4 + DCV at d743ad24."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-01T04:03:22.343918+00:00"
 }
