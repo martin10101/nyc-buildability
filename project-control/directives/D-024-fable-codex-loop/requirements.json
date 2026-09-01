@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 436,
+  "requirement_count": 445,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T01:25:56.018662+00:00",
+  "updated_at": "2026-09-01T01:55:11.313215+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14672,6 +14672,276 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 33
+    },
+    {
+      "id": "D-024-R437",
+      "text": "Session preflight before any change: complete Bootstrap Gate 0 and reconcile live git, the project-control ledger, the campaign record, the supervisor journal and docs/SESSION_HANDOFF.md; verify root = C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24, branch = control/D-024-fable-codex-loop, HEAD equals origin, tree clean, /mcp reports no servers; read CLAUDE.md, docs/SESSION_HANDOFF.md, .claude/session-handoff-profile.md and the campaign seq-64 NEXT.",
+      "source_ref": "source-034-amendment.md#preflight-reconcile",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Recorded preflight results in the M0-T132 report (git identity, ledger/campaign status output, mcp evidence).",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R438",
+      "text": "Fresh-process CLI verification before beginning any task: DISABLE_AUTOUPDATER=1 inherited by this process, DISABLE_UPDATES unset, claude --version reports exactly 2.1.252, on-disk supervisor-native executable identity exactly e713c5a6 (sha256_head+size via tools/agent_supervisor/process.py executable_identity), and no newer update or update banner present. FAIL-CLOSED: if anything differs, stop and report without changing anything. Implements the R433 re-verification condition and R434 step (1).",
+      "source_ref": "source-034-amendment.md#fresh-process-verification",
+      "classification": "external_fact",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Measured identity output (digest + size), env-var readouts, version output, versions/downloads dir listing captured in the M0-T132 report.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R439",
+      "text": "Conditional owner authorization, effective only after R437+R438 PASS: the owner authorizes the bounded M0-T132 combined admission and recertification lane (create and execute M0-T132 under the standard project-control process). This is the separate owner authorization contemplated by R436 and it ends the R429 deferral; it authorizes ONLY this bounded lane.",
+      "source_ref": "source-034-amendment.md#m0t132-authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R440",
+      "text": "M0-T132 admission scope: admit the settled Claude Code 2.1.252 identity (e713c5a6), recapture the three affected live capability fixtures (capability_probe, event_bus, native_adapter) at the settled identity per R233, and repin the cli_capability_manifest to the admitted identity.",
+      "source_ref": "source-034-amendment.md#admission-scope",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "Fixture recapture at the live installed 2.1.252 CLI; manifest repin verified against the measured identity.",
+      "required_evidence": "Recaptured fixture files + repinned manifest + measured-identity record committed under the M0-T132 evidence set.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R441",
+      "text": "Perform ONE combined R247 recertification covering BOTH the accepted M0-T131 supervisor tree (45b5b729 at acceptance) AND the admitted 2.1.252 runtime, at the post-admission identity. Never split into per-change recerts; never recertify against the obsolete 2.1.251 pin (R431 stands).",
+      "source_ref": "source-034-amendment.md#combined-recert",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "The R247 golden certification run at the final frozen post-admission identity.",
+      "required_evidence": "Certification output + the frozen identity (manifest digest + tree sha) recorded in the M0-T132 report.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R442",
+      "text": "Run all required gates (G0/G2 producer checks, independent G3 and G4 reviews) and DCV for M0-T132 at ONE final frozen identity; reviewers independent of the producer; DCV covers every applicable requirement row.",
+      "source_ref": "source-034-amendment.md#gates-one-identity",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "Standard gate lifecycle per docs/GATES_AND_CHECKPOINTS.md + DCV via directive-compliance-verifier.",
+      "required_evidence": "Gate records + DCV verification.json rows at the frozen sha.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R443",
+      "text": "Preserve untouched throughout M0-T132: the HALTED supervisor journal (transitions 35, audit 85), the audit chain, all worktrees (including wt-m0t107 c5c6ff7 with its two untracked journey-4 worker plan drafts byte-for-byte and wt-m0t109 1c06957), budgets, owner-touch history (3-of-2 record), worker drafts, and every existing owner gate.",
+      "source_ref": "source-034-amendment.md#preservation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Before/after preservation check (journal counts, worktree shas, untracked-draft digests, queue digest) in the M0-T132 report.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R444",
+      "text": "Prohibited during this lane: starting the supervisor, clearing or restarting the journal, merging PR #241, resetting anything, and executing commissioning commands (owner-restart / certified start are presented only, never executed by the agent).",
+      "source_ref": "source-034-amendment.md#prohibitions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R445",
+      "text": "After everything passes: STOP and present (a) the complete fresh preflight and (b) the exact mechanically validated owner-typed owner-restart and certified start commands for the next commissioning journey. PRESENT-ONLY: never execute those commands. Implements R434 step (3).",
+      "source_ref": "source-034-amendment.md#final-report",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Final seam report with the full preflight results and the exact command lines, validated mechanically (argparse/dry-run level) without execution.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 34
     }
   ]
 }

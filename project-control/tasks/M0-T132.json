@@ -1,0 +1,135 @@
+{
+  "task_id": "M0-T132",
+  "title": "D-024 Amendment 34: combined Claude Code 2.1.252 admission + single R247 recertification (M0-T118 precedent)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Owner-authorized bounded admission+recert lane (D-024-R437..R445; R429 deferral ended by R439): (1) re-verify the settled installed identity at task start (R433/R438 fail-closed: on-disk claude.exe must still be 2.1.252 e713c5a6 via tools/agent_supervisor/process.py executable_identity; stop and re-report if moved); (2) recapture the three affected live capability fixtures at the settled identity per R233/R440 - capability_probe live record, event_bus hook-event catalog (S8 live tooth re-point), native_adapter runtime detection - each measured against the live 2.1.252 CLI with bounded no-write probes, old 2_1_251 fixtures kept append-only; (3) re-measure shell-routing evidence at the admitted identity (R295 fold: probe_shell_routing_evidence is digest-keyed and ANDed into cli_capability_manifest, so the repin is incomplete without it - mechanically required, disclosed as within the R440 manifest-repin work item); (4) repin cli_capability_manifest to e713c5a6 via the operator --repin-cli-identity path (journal EXECUTABLE_IDENTITY_KEY; audit chain EXTENDED never cleared); (5) ONE combined R247 recertification (R441) covering BOTH the accepted M0-T131 supervisor tree AND the admitted 2.1.252 runtime at ONE final frozen post-admission identity (golden pack + whole supervisor suite + runner pack + manifest re-record + verify-controller + modularity/ruff/command-doc/validator teeth; M0-T130-recertification.md precedent); never against the obsolete 2.1.251 pin (R431). PRESERVE (R443): HALTED journal (transitions 35, audit 85 - extended only by the authorized repin/admission events), worktrees incl. wt-m0t107 c5c6ff7 + two untracked drafts byte-for-byte, wt-m0t109 1c06957, budgets, owner-touch 3-of-2, queue digest 11eaa5a7. PROHIBITED (R444): supervisor start, journal clear/restart, PR #241 merge, resets, executing commissioning commands (owner-restart/certified start are PRESENTED only, R445). Supervisor-freeze qualifying evidence: D-024-R440/R441 (Amendment 34 owner authorization).",
+  "business_reason": "Owner Amendment 34 (2026-08-31/09-01): deliberate admission of 2.1.252 to restore a truthful certified identity after the fail-closed CLI-drift refusal, plus the R247 recert M0-T131 still requires.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-034-amendment.md (rows D-024-R437..R445 - the owner authorization + scope)",
+    "project-control/directives/D-024-fable-codex-loop/source-032-amendment.md (R433 settled target 2.1.252 e713c5a6 + R434 procedure)",
+    "tools/agent_supervisor/process.py (executable_identity - the identity instrument)",
+    "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_251.json + capability_probe_live_2026-08-29_m0t118_2_1_251.json + native_runtime_detection_2026-08-29_m0t118.json (outgoing measured pack, append-only history)",
+    "tools/agent_supervisor/fixtures/shell_routing_2026-08-29_m0t120_2_1_251.json (outgoing digest-keyed routing evidence)",
+    "project-control/reports/M0-T118-recapture-evidence.md (recapture precedent + exact capture commands)",
+    "project-control/reports/M0-T130-recertification.md (R247 recert shape + baseline 3040/2/3 whole-suite reconciliation source)"
+  ],
+  "outputs": [
+    "New measured fixtures at 2.1.252: tools/agent_supervisor/fixtures/hook_event_catalog_2_1_252.json, capability_probe_live_2026-09-01_m0t132_2_1_252.json, native_runtime_detection_2026-09-01_m0t132.json, shell_routing_2026-09-01_m0t132_2_1_252.json (old 2_1_251 pack kept append-only)",
+    "Re-pointed consumers: tools/agent_supervisor/event_drift.py catalog pointer + fixture-consuming tests (event_bus S8 live tooth, capability_probe live re-probe, native_adapter live detection) GREEN at 2.1.252 and still removal-sensitive (RED on the NEXT drift)",
+    "project-control/reports/M0-T132-producer-report.md + M0-T132-admission-evidence.md (measured-live provenance per fixture, red/green teeth proof, identity re-verification record)",
+    "POST-ACCEPT (orchestrator, primary checkout, NOT producer scope): operator --repin-cli-identity journal repin to e713c5a6 (audit chain extended), ONE combined R247 recertification at the final frozen identity (M0-T132-recertification.md), campaign advance, R445 present-only owner command sheet"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/event_drift.py",
+    "tools/agent_supervisor/fixtures/hook_event_catalog_2_1_252.json",
+    "tools/agent_supervisor/fixtures/capability_probe_live_2026-09-01_m0t132_2_1_252.json",
+    "tools/agent_supervisor/fixtures/native_runtime_detection_2026-09-01_m0t132.json",
+    "tools/agent_supervisor/fixtures/shell_routing_2026-09-01_m0t132_2_1_252.json",
+    "tools/test_agent_supervisor_event_bus.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "project-control/reports/M0-T132-producer-report.md",
+    "project-control/reports/M0-T132-admission-evidence.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py",
+    "tools/agent_supervisor/journal*"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "Identity re-verification FIRST (R438/R433 fail-closed): executable_identity of C:/Users/MLFLL/.local/bin/claude.exe == e713c5a6... sha256_head+size, 217,406,624 B, byte-identical to versions/2.1.252; DISABLE_AUTOUPDATER=1 inherited; DISABLE_UPDATES unset; claude --version == 2.1.252; nothing newer installed/staged. Recorded BEFORE any capture; any mismatch stops the lane with a report and zero changes.",
+      "verification": "identity record in M0-T132-admission-evidence.md reproduced by the reviewers"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Capability probe re-run live at 2.1.252 (bounded no-write probes), recorded as the new fixture; no FAILED rows for depended-on capabilities; live re-probe tooth matches the new fixture and would fail at any other installed version.",
+      "verification": "python -m pytest tools/test_agent_supervisor_capability_probe.py -q"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "Hook-event catalog re-measured/re-pointed at 2.1.252 (event_drift pointer -> hook_event_catalog_2_1_252.json); S8 live tooth GREEN at 2.1.252, proven still removal-sensitive (RED against the old fixture / next drift).",
+      "verification": "python -m pytest tools/test_agent_supervisor_event_bus.py -q"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "Native runtime detection re-measured live at 2.1.252 and committed; live detection tooth GREEN against the new fixture.",
+      "verification": "python -m pytest tools/test_agent_supervisor_native_adapter.py -q"
+    },
+    {
+      "id": "AS-5",
+      "scenario": "Shell-routing evidence measured at the ADMITTED digest identity e713c5a6 (R295 fold - mechanically required for the manifest repin to hold); probe_shell_routing_evidence PASS with the new record; red-proof: with only the 2_1_251 evidence the probe returns routing_evidence_stale.",
+      "verification": "python -m pytest tools/test_agent_supervisor_routing_probe.py -q + probe red/green record in M0-T132-admission-evidence.md"
+    },
+    {
+      "id": "AS-6",
+      "scenario": "POST-ACCEPT orchestrator/operator acts: journal repin via operator --repin-cli-identity records e713c5a6 under EXECUTABLE_IDENTITY_KEY with a cli_identity_repinned audit event; HALTED journal preserved (transitions 35; audit chain EXTENDED only by the authorized events, verified head); then ONE combined R247 recertification at the final frozen identity (golden pack, WHOLE supervisor suite reconciled against the 3040/2/3 baseline, runner pack, manifest re-record + verify-controller PASS, modularity/ruff/command-doc/validator exit 0) - never against the obsolete 2.1.251 pin.",
+      "verification": "M0-T132-recertification.md + journal audit verification output"
+    },
+    {
+      "id": "AS-7",
+      "scenario": "Preservation invariants (R443) hold before/after: wt-m0t107 clean c5c6ff7 + two untracked journey-4 drafts byte-for-byte (digest-compared), wt-m0t109 clean 1c06957, queue digest 11eaa5a7, owner-touch 3-of-2 untouched, budgets untouched, PR #241 OPEN unmerged; no supervisor start, no journal clear/restart, no resets (R444).",
+      "verification": "before/after preservation table in M0-T132-admission-evidence.md + M0-T132-recertification.md"
+    },
+    {
+      "id": "AS-8",
+      "scenario": "R445 present-only: the exact owner-typed owner-restart and certified start commands are mechanically validated (CLI parse OK, dispatch_inputs_missing EMPTY, task_authority PASS at repo=wt-m0t107, queue entry ELIGIBLE) WITHOUT executing them, and presented with the full fresh preflight in the final seam report.",
+      "verification": "validation transcript in the final seam report; no start/restart execution anywhere in the session record"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "orchestrator-admission-runner",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "blocked",
+  "progress_percent": 25,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-01T01:58:06.749580+00:00",
+  "updated_at": "2026-09-01T02:33:36.530324+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T01:58:06.751594+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-09-01T02:20:50.433885+00:00",
+      "agent": "orchestrator-admission-runner",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Claimed at ready; Bootstrap Gate 0 + R438 identity re-verification PASS (on-disk e713c5a6 == versions/2.1.252 217406624 B; DISABLE_AUTOUPDATER=1 inherited; DISABLE_UPDATES unset; --version 2.1.252; nothing newer staged; mcp empty). Scenarios AS-1..AS-8 recorded in packet. Beginning bounded live-CLI fixture recapture."
+    },
+    {
+      "at": "2026-09-01T02:33:36.530324+00:00",
+      "agent": "orchestrator-admission-runner",
+      "percent": 25,
+      "status": "blocked",
+      "message": "BLOCKED by B-020 (R394 stop). Preflight PASS (identity settled e713c5a6). Three owner-named fixtures captured live: benign version-only drift (claude --help sha unchanged 83af8a9a7edc; 33 hook events unchanged per official docs; native flags/verbs/background identical). LIVE BLOCKER: Fable 5 seven-day usage cap is REJECTING model calls (rate_limit_event 'rejected' seven_day_overage_included; 'You've reached your Fable 5 limit'), so the digest-keyed shell-routing evidence (R295 fold, ANDed into cli_capability_manifest) cannot be honestly captured at the new digest. R221 forbids spending owner allowance to work around it; R441/R442 require ONE combined recert at ONE identity, and R247 would force a second recert if shell-routing is captured after this one. Also a genuine scope ambiguity: shell-routing is a fourth, digest-entangled fixture beyond the owner's 'three affected fixtures'. No repin, no recert, no journal write; capped-model artifact fixture deleted (would false-green the gate); tree clean. Owner decision A/B/C/D required."
+    }
+  ]
+}
