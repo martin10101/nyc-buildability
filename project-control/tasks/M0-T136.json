@@ -24,7 +24,8 @@
     "docs/MRL_LAUNCH_RUNBOOK.md (single operator launch path) + docs/CONTROLLER_UPDATE_RUNBOOK.md section 11 obsoleted",
     "project-control/reports/M0-T136-failure-surface.md (defect-convergence inventory + root-cause clusters)",
     "project-control/reports/M0-T136-canary-package.md (ONE owner-run PowerShell canary package, ten items, NOT executed)",
-    "project-control/reports/M0-T136-tranche-b-evidence.json (gate_runner raw records) + M0-T136-G2-self-check.md + M0-T136-producer-report.md"
+    "project-control/reports/M0-T136-tranche-b-evidence.json (gate_runner raw records) + M0-T136-G2-self-check.md + M0-T136-producer-report.md",
+    "project-control/reports/M0-T136-gates/*.json (tools/gate_runner.py raw records: every positive gate run and its paired mutation, one file each)"
   ],
   "dependencies": [
     "M0-T134"
@@ -62,6 +63,7 @@
     "docs/CONTROLLER_UPDATE_RUNBOOK.md",
     "docs/MRL_LAUNCH_RUNBOOK.md",
     "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T136-gates/",
     "project-control/reports/M0-T136-producer-report.md",
     "project-control/reports/M0-T136-G2-self-check.md",
     "project-control/reports/M0-T136-tranche-b-evidence.json",
@@ -121,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-01T22:40:56.432427+00:00",
-  "updated_at": "2026-09-01T22:42:31.822734+00:00",
+  "updated_at": "2026-09-01T22:48:40.580833+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",

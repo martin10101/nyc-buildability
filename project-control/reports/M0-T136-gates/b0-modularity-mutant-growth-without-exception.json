@@ -1,0 +1,28 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "tools/modularity_check.py",
+  "--check",
+  "--repo",
+  "C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/4b281fa8-c111-4c27-bf71-8e95f5982a6f/scratchpad/mut-wt",
+  "--baseline",
+  "tools/modularity_baseline.json",
+  "--exceptions",
+  "tools/modularity_exceptions.json"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-01T22:45:48.811007+00:00",
+ "ended_at_utc": "2026-09-01T22:45:53.560082+00:00",
+ "repo_head": "27df43e4b499aa91ae7eb241faf7826a58a50933",
+ "repo_tree": "9fe57f18d18948e195f013ceac989f17de933344",
+ "executable_chain_sha256": "",
+ "returncode": 1,
+ "stdout_sha256": "f18f3a1da65748c6f4e2115e3a875dcf8a75d608912a46816c110231fab9c87b",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 1824,
+ "stderr_bytes": 0,
+ "mutation": {
+  "killed": true,
+  "ok": true
+ }
+}
