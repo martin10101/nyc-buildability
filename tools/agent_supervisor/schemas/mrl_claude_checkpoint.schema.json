@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/mrl_claude_checkpoint.schema.json",
+  "title": "MRL controller-built ClaudeCheckpoint factual envelope",
+  "description": "Guards the controller-observed factual/provenance envelope of the ClaudeCheckpoint the controller builds from an untrusted WorkerResult (D-024-R501/R503). Every field here is filled by the controller from its own run/task/session/Git view; the worker supplies only summary and proposed_next_action. additionalProperties is true because ClaudeCheckpoint also carries those two untrusted text fields and optional controller lists (claims, tests, ci, ...). This is a controller-side guard that the factual envelope was actually populated with well-formed values, in addition to ClaudeCheckpoint.validate().",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version", "run_id", "checkpoint_id", "task_id", "claude_session_id",
+    "status", "summary", "starting_sha", "current_sha", "branch", "worktree",
+    "proposed_next_action"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "checkpoint_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "claude_session_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["IN_PROGRESS", "UNIT_COMPLETE", "BLOCKED", "READY", "FAILED"]},
+    "summary": {"type": "string", "minLength": 1},
+    "starting_sha": {"type": "string", "minLength": 7, "maxLength": 64},
+    "current_sha": {"type": "string", "minLength": 7, "maxLength": 64},
+    "branch": {"type": "string", "minLength": 1},
+    "worktree": {"type": "string", "minLength": 1},
+    "proposed_next_action": {"type": "string", "minLength": 1}
+  }
+}
