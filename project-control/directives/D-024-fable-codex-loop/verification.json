@@ -9211,31 +9211,70 @@
         "D-024-R425",
         "D-024-R426",
         "D-024-R427",
-        "D-024-R428"
+        "D-024-R428",
+        "D-024-R429",
+        "D-024-R430"
       ],
       "requirements": [
         {
           "id": "D-024-R425",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "source-029-amendment.md lines 37-39 carry verbatim 'ok do it' authorizing the bounded reviewer-access diagnostic+fix task (defect lane, standard gates); lines 13-14/29-32 assign R425-R428 with the ONE scratch-only probe scope; base identity HEAD 158cce91",
+            "M0-T131.json objective + evidence-map R425 cite AD-093 qualifying evidence = journey-4 live HALT_UNSAFE; primary file project-control/reports/M0-T107-commissioning-journey-4.md present (6080 B)",
+            "Fix report section 1 (lines 11-25) records the probe as SCRATCH ONLY under session scratchpad path .../scratchpad/codexprobe/main + linked worktree /wt (never the real repositories); gate JSONs show producer orchestrator-defect-runner with independent G3=code-reviewer, G4=qa-engineer (producer != verifiers)"
+          ]
         },
         {
           "id": "D-024-R426",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "Fix report section 1 carries the verbatim measured fixture: probe_last_message.json (5 attempts - steps 1-3 ALLOWED, step 4 out-of-root 'git -C <outside>' BLOCKED by policy, step 5 ALLOWED) + probe_stderr router rejection + byte digests (stdout 5606B 9be3be3a, stderr 348B a0265955, last_message 1187B 8448807a); codex-cli 0.146.0, model gpt-5.6-sol",
+            "Measured findings (report lines 31-41): command exec/git/file reads ALLOWED inside workspace root incl the linked-worktree .git redirection; any out-of-root path BLOCKED by command routing; harness words 'Approval policy is never' - recorded as an installed-version fixture (R233 discipline)"
+          ]
         },
         {
           "id": "D-024-R427",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "git diff 58df90c2~1..58df90c2 tools/agent_supervisor/codex_reviewer.py: the ONLY behavioral change in _attempt is input_text json.dumps(payload) -> review_stdin_payload(payload); new review_stdin_payload builds ONE JSON object {reviewer_instructions first key = REVIEW_INSTRUCTIONS} then body.update(payload) verbatim, with a packet_key_collision guard raising ReviewError",
+            "build_argv is NOT in the commit diff; at HEAD it retains REQUIRED_SANDBOX='read-only' (line 55), '--sandbox read-only' (line 117), FORBIDDEN_REVIEWER_FLAGS rejection (lines 124-126) - invariant 10 preserved, no argv/sandbox change, no write access to worker/control trees",
+            "ReviewStdinContractTests = 4 removal-sensitive nodes (test file lines 285-328: one-JSON-object+verbatim-packet, 6 preamble anchors, deterministic-ASCII, packet_key_collision); independently re-ran -> 4 passed/81 deselected; full reviewer pack -> 85 passed; G3 (code-reviewer) + G4 (qa-engineer) both PASS"
+          ]
         },
         {
           "id": "D-024-R428",
-          "state": "pending",
-          "evidence": []
+          "state": "PASS",
+          "evidence": [
+            "R247 recert correctly DEFERRED, not falsely claimed: fix report section 5 residual 3 + evidence-map R428 state recert runs post-accept at the new frozen identity; task M0-T131 status = awaiting_gate (not accepted) at verification time; no premature recert claim",
+            "Implementation commit 58df90c2 changed only codex_reviewer.py, test_agent_supervisor_reviewer.py, M0-T131 report, + M0-T130.json (control-plane artifact) - no S16.7 owner-measurement ledger change in the task diff",
+            "source-029-amendment.md lines 24-27 + evidence-map R428: the restart sequence stays re-presented owner-typed only (R409/R414/R419 unchanged); no automated restart executed"
+          ]
+        },
+        {
+          "id": "D-024-R429",
+          "state": "PASS",
+          "evidence": [
+            "grep '2.1.252' across project-control/tasks/ = NONE; recent tasks M0-T128/129/130/131 are not admission-lane; no recapture/recertify/repin task packet was created (deferral honored)",
+            "source-030-amendment.md (working tree at verification; lands in the acceptance capture-commit) lines 15-21 capture the deferral verbatim 'dont worry on cc update' with explicit not-a-waiver language: R286/R287 stand in full, silent drift stays prohibited, the three live-fixture drift tests stay honestly red locally and skip on CI",
+            "requirements.json row R429 = classification 'decision', deferral NOT waiver, effective 2026-09-01, applies to M0-T131; validate_directive_compliance.py --check EXIT=0 confirms the Amendment-30 source digest is registered and consistent"
+          ]
+        },
+        {
+          "id": "D-024-R430",
+          "state": "PASS",
+          "evidence": [
+            "M0-T131 ran the standard process this session: G0 PASS (orchestrator), claim, G2 PASS self-check, submit, independent G3 code-reviewer PASS + G4 qa-engineer PASS - all four gate JSONs at reviewed_sha 57f1b70d, content_manifest_sha256 be3402045d",
+            "source-030-amendment.md lines 22-28 + fix report residuals 3-4: the single R247 recert is sequenced post-accept at the provider pin UNCHANGED 2.1.251 with the deferred 2.1.252 drift disclosed as an open admission event",
+            "Restart presentation carries the fail-closed caveat: 'a live start at installed 2.1.252 will refuse fail-closed at cli_capability_manifest until the admission lane is executed' (source-030 lines 27-28; fix report residual 4), owner-typed only"
+          ]
         }
-      ]
+      ],
+      "reviewed_manifest_sha256": "be3402045d52a9cf1aa218037ff9b3419af9de0bf7af874e1fdfd288fb6c43d8",
+      "reviewed_sha": "57f1b70de9f0acae8bee4c6f1da718cde15c4deb",
+      "verified_at": "2026-09-01T01:00:49+00:00",
+      "verification_report": "project-control/reports/M0-T131-DCV.md"
     }
   ],
-  "updated_at": "2026-08-31T20:10:38.901208+00:00"
+  "updated_at": "2026-09-01T01:00:49+00:00"
 }

@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 428,
+  "requirement_count": 430,
   "producer": "orchestrator",
-  "updated_at": "2026-08-31T20:10:38.901208+00:00",
+  "updated_at": "2026-08-31T23:28:36.970771+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14432,6 +14432,66 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 29
+    },
+    {
+      "id": "D-024-R429",
+      "text": "The 2.1.252 CLI-drift admission lane is DEFERRED by owner decision 2026-09-01 (dont worry on cc update): create no admission task and spend no effort on the CC-update lane for now; the fail-closed refusal at cli_capability_manifest is accepted as the standing state. This is a deferral, NOT a waiver of R286/R287: silent drift acceptance stays prohibited and the recapture -> recertify -> repin discipline applies in full whenever the owner later reopens the lane; the three live-fixture drift tests stay honestly red locally and skip on CI.",
+      "source_ref": "source-030-amendment.md#cc-update-deferral",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 30
+    },
+    {
+      "id": "D-024-R430",
+      "text": "Focus continues on the codex-loop lane (focuse on codex loop): M0-T131 proceeds through gates/DCV/accept under the standard process; the single R247 recertification (R428) runs at the post-accept frozen identity binding the M0-T131 supervisor tree move with the provider pin UNCHANGED at the certified 2.1.251 and the deferred 2.1.252 drift disclosed as an open admission event; the restart sequence stays presented owner-typed only (R409/R414/R419), with the honest caveat that a live start at installed 2.1.252 will refuse fail-closed at cli_capability_manifest until the admission lane is executed.",
+      "source_ref": "source-030-amendment.md#codex-loop-focus",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T131"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 30
     }
   ]
 }

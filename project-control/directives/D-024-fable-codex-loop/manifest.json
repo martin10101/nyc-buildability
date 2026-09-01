@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-08-31T20:10:38.901208+00:00",
+  "updated_at": "2026-08-31T23:28:36.970771+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -244,6 +244,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-08-31T20:10:38.901208+00:00",
       "content_digest_sha256": "2fe45a015bab853a544a574265626b9dbf656bde4dc9104db6772973de885ed6"
+    },
+    {
+      "file": "source-030-amendment.md",
+      "kind": "amendment",
+      "sequence": 30,
+      "amends": "source-001.md",
+      "recorded_at": "2026-08-31T23:26:17.431026+00:00",
+      "content_digest_sha256": "c22af5bf97d1d107aff77af11bea64559c8b9c295eabb73b59a034b0c2d74501"
     }
   ],
   "amendments": [
@@ -274,7 +282,8 @@
     "source-026-amendment.md",
     "source-027-amendment.md",
     "source-028-amendment.md",
-    "source-029-amendment.md"
+    "source-029-amendment.md",
+    "source-030-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -804,10 +813,12 @@
     "D-024-R425",
     "D-024-R426",
     "D-024-R427",
-    "D-024-R428"
+    "D-024-R428",
+    "D-024-R429",
+    "D-024-R430"
   ],
-  "requirements_id_digest_sha256": "a823e0f582be7a6072f9f3fe0a7f72966069566f7fea47001de99ad5741e99a7",
-  "requirements_content_digest_sha256": "516893570995e204002323c037235af9e6b084939fcffe09f509cab6470883b6",
+  "requirements_id_digest_sha256": "d56ec0525270cda754b97948c272bbbc005dcecb784c3c8f3eb06080ef32cdef",
+  "requirements_content_digest_sha256": "619ae6ae4bf436195bee47be645f093ea53e23d3a445d77c9e7c6306a6f14aff",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -985,6 +996,11 @@
       "at": "2026-08-31T20:10:38.901208+00:00",
       "by": "orchestrator",
       "note": "Amendment 29 captured (owner: ok do it, answering the journey-4 recommendation): R425 authorize the bounded reviewer-access diagnostic + fix task M0-T131 incl ONE minimal live codex read-only probe (scratch git dir + linked worktree only); R426 measure the codex 0.146.0 read-only exec harness on this host and record the fixture; R427 the measured fix preserving reviewer invariant 10 (never write access to real trees); R428 R247 re-trigger on supervisor change + owner-typed restart sequence + S16.7 unaltered. Rows bind M0-T131."
+    },
+    {
+      "at": "2026-08-31T23:26:17.431026+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 30 captured (owner: dont worry on cc update focuse on codex loop): R429 the 2.1.252 CLI-drift admission lane is DEFERRED (no admission task; fail-closed cli_capability_manifest refusal accepted; NOT a waiver of R286/R287); R430 codex-loop focus - M0-T131 gates/DCV/accept, single R247 recert at the post-accept identity with the provider pin unchanged at 2.1.251 and the drift disclosed, restart sequence owner-typed only with the fail-closed caveat. Rows bound to M0-T131; verification skeleton extended to 6 pending rows."
     }
   ]
 }
