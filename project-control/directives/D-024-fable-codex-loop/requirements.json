@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 448,
+  "requirement_count": 459,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T02:52:18.870476+00:00",
+  "updated_at": "2026-09-01T04:33:55.503657+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -15032,6 +15032,336 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 35
+    },
+    {
+      "id": "D-024-R449",
+      "text": "Owner authorizes ONE targeted, audited runtime-state correction of the spurious Fable-cap control_response_round_trip:FAILED capability entry that fail-closed the commissioning start. Scope is exactly this one false-negative record.",
+      "source_ref": "source-036-amendment.md#authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R450",
+      "text": "Prohibitions: this authorization does NOT permit supervisor-source changes, broad testing, full R247 recertification, another doctor --live run, or any unrelated journal modification.",
+      "source_ref": "source-036-amendment.md#prohibitions",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R451",
+      "text": "Step 1: confirm no supervisor, Claude worker, or Codex reviewer process is running, and acquire the normal controller/journal lock before touching the journal.",
+      "source_ref": "source-036-amendment.md#preconditions",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "process check + lock acquisition recorded in the correction report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R452",
+      "text": "Step 2: create a byte-for-byte backup of the complete pre-repair runtime journal and record its SHA-256.",
+      "source_ref": "source-036-amendment.md#backup",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "backup file path + SHA-256 recorded in the correction report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R453",
+      "text": "Step 3: verify the exact active entry dispositioned is control_response_round_trip:FAILED, bound to e713c5a6, produced by the Fable-default doctor --live probe, AND that the approved Opus e713c5a6 shell-routing round-trip evidence is present and passing.",
+      "source_ref": "source-036-amendment.md#verify-entry",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "entry dump + shell_routing pass recorded in the correction report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R454",
+      "text": "Step 4: preserve the failed Fable probe permanently in the audit/report evidence; remove ONLY that one false-negative entry from the active capability-probe gating cache using the existing durable-state APIs (NOT a text editor); change no other key.",
+      "source_ref": "source-036-amendment.md#single-key-removal",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "durable-state set_state on cli_capability_probes removing only control_response_round_trip",
+      "required_evidence": "before/after cli_capability_probes dump",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R455",
+      "text": "Step 5: append ONE explicit durable audit record stating the owner dispositioned this exact record as a model-cap false-negative; do NOT rewrite or delete any existing audit entry.",
+      "source_ref": "source-036-amendment.md#audit-record",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "new audit record content + audit head grows by exactly the disposition record(s)",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R456",
+      "text": "Step 6: post-verify invariants - journal remains IDLE; transition count unchanged; audit chain grows only by the expected disposition record and verifies; pending asks/effects remain zero; model pin remains claude-opus-4-8; manifest remains c228b7ca; supervisor tree and worktrees unchanged.",
+      "source_ref": "source-036-amendment.md#post-verify",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "before/after invariant table in the correction report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R457",
+      "text": "Step 7: run ONLY the targeted cli_capability_manifest pre-dispatch probe and directly related integrity checks; do NOT contact a provider and do NOT run unrelated suites.",
+      "source_ref": "source-036-amendment.md#targeted-probe",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "cli_capability_manifest probe result recorded read-only",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R458",
+      "text": "Step 8: if the probe passes, record the bounded correction and PRESENT the exact same owner-typed Step-4 start command with --repin-cli-identity; do NOT execute it. No clear-recovery/owner-restart needed (journal remains IDLE).",
+      "source_ref": "source-036-amendment.md#present-start",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R459",
+      "text": "Step 9: if any invariant cannot be preserved, restore the byte-identical backup and stop without retry. Also: do NOT run doctor --live again while Fable is capped; after the repair, stop for the owner's Step-4 command.",
+      "source_ref": "source-036-amendment.md#rollback-and-stop",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 36
     }
   ]
 }

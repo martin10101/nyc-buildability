@@ -1,0 +1,40 @@
+{
+  "key": "cli_capability_probes",
+  "removed_entry": {
+    "control_response_round_trip": {
+      "detail": "the CLI never emitted a can_use_tool control request, so the wrapper was never exercised. The adapter's mandatory --permission-mode manual is what makes the request appear; investigate before trusting any live run.",
+      "evidence": {
+        "argv_flags": [
+          "-p",
+          "--input-format",
+          "stream-json",
+          "--output-format",
+          "stream-json",
+          "--verbose",
+          "--max-turns",
+          "1",
+          "--permission-mode",
+          "manual",
+          "--permission-prompt-tool",
+          "stdio"
+        ],
+        "cli_protocol_error": false,
+        "control_request_seen": false,
+        "deny_message_echoed": false,
+        "events": 5,
+        "permission_denials": 0,
+        "probed_at_utc": "2026-09-01T03:26:08.355Z",
+        "response_sent": null,
+        "returncode": 1,
+        "stderr_tail": "",
+        "target_file_created": false
+      },
+      "executable_identity": "sha256_head:e713c5a6c8bc71af",
+      "name": "control_response_round_trip",
+      "ran_live": true,
+      "recorded_at_utc": "2026-09-01T03:26:08.369Z",
+      "status": "FAILED"
+    }
+  },
+  "disposition": "owner model-cap false-negative (D-024-R449, Amendment 36)"
+}

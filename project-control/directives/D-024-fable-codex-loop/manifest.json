@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-01T03:59:29.611891+00:00",
+  "updated_at": "2026-09-01T04:33:55.503657+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -292,6 +292,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-01T02:52:18.870476+00:00",
       "content_digest_sha256": "53d92424fada621fa98a6ffe8b6fba0a1760ded95dc6eee87755f81639e94a2b"
+    },
+    {
+      "file": "source-036-amendment.md",
+      "kind": "amendment",
+      "sequence": 36,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-01T04:33:55.503657+00:00",
+      "content_digest_sha256": "255bd501768333245783b9e4d76b69128887bd91935191927ed29265de297799"
     }
   ],
   "amendments": [
@@ -328,7 +336,8 @@
     "source-032-amendment.md",
     "source-033-amendment.md",
     "source-034-amendment.md",
-    "source-035-amendment.md"
+    "source-035-amendment.md",
+    "source-036-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -879,10 +888,21 @@
     "D-024-R445",
     "D-024-R446",
     "D-024-R447",
-    "D-024-R448"
+    "D-024-R448",
+    "D-024-R449",
+    "D-024-R450",
+    "D-024-R451",
+    "D-024-R452",
+    "D-024-R453",
+    "D-024-R454",
+    "D-024-R455",
+    "D-024-R456",
+    "D-024-R457",
+    "D-024-R458",
+    "D-024-R459"
   ],
-  "requirements_id_digest_sha256": "003435d15a4d6db70c54fd3294277993769cb4f5321cd3489354260890087ff1",
-  "requirements_content_digest_sha256": "5c670de77c638a9003ca48a82f2f8f15a84beb893cf5f29a7409b68128b439e0",
+  "requirements_id_digest_sha256": "24dbf7be54851b7a18df9e47e87f216848278a22877815a4cda1c5d60da43ff2",
+  "requirements_content_digest_sha256": "edd9de504af9ff7c5efbe978715a2a97bc2c902479014cd0433be2d0677a688d",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1085,6 +1105,11 @@
       "at": "2026-09-01T02:52:18.870476+00:00",
       "by": "orchestrator",
       "note": "Amendment 35 captured (owner 2026-09-01 'no waiting go on i need to start the codex loop even if fable is not available now'): B-020 resolved -> R446 proceed now (reject cap-wait), R447 commission under Fable unavailability via the fallback-model path, R448 = B-020 Option B (bounded shell-routing recapture at e713c5a6 on claude-opus-4-8, finish M0-T132 in one pass, prepare the certified start). No other owner gate lifted; R394 stop applies if the fallback model is also unavailable or any gate fails. Rows bind M0-T132."
+    },
+    {
+      "at": "2026-09-01T04:33:55.503657+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 36 captured (owner 2026-09-01): bounded authorization R449 for ONE targeted audited runtime correction of the spurious Fable-cap control_response_round_trip:FAILED entry that fail-closed the commissioning start; R450 prohibitions (no supervisor-source, no broad testing, no full recert, no doctor --live, no unrelated journal mod); R451-R459 the nine-step protocol (preconditions/lock, byte backup+sha256, verify-entry, single-key durable-state removal, one audit record, post-verify invariants, targeted cli_capability_manifest probe, present-only Step-4 start, rollback-and-stop). Rows bind M0-T132 (commissioning phase; accepted task not reopened)."
     }
   ]
 }
