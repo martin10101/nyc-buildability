@@ -1,0 +1,17 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "tools/validate_mcp_policy.py"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-01T22:52:01.282082+00:00",
+ "ended_at_utc": "2026-09-01T22:52:01.369010+00:00",
+ "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+ "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "b65106f2b30cc358504fabd787278a3081e56a83e7c2d9bf667867d3c1fcf1c8",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 189,
+ "stderr_bytes": 0
+}
