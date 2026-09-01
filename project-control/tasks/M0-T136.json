@@ -1,0 +1,143 @@
+{
+  "task_id": "M0-T136",
+  "title": "D-024 Amendment 40: MRL Tranche B (B0 clean-base consolidation + B1-B5 one-shot launch path), offline, no live launch",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Deliver D-024 Amendment 40 Tranche B (R515-R598) on candidate/D-024-mrl-option-b, locally only, no push/PR/merge/launch. B0: consolidate the clean base (governance continuity for accepted M0-T134 is committed at 1599daaf; delete ONLY the stale tools/agent_supervisor/claude_runner.py entry from tools/modularity_exceptions.json after proving baseline limit + SLOC (R545-R550); concise defect-convergence guidance in root CLAUDE.md + /engineering-reliability (R551-R555); freeze SHA and run the 77 Tranche-A cases, affected supervisor suite, unpiped modularity, lint, all validators (R556-R557)). B1: one canonical 'start --launch-manifest <abs-path>' entrance, manifest never proof, pre-dispatch verification of repo root/origin/task id/packet digest/worktree/branch/HEAD/tree/clean status/allowed paths/settings identity/mode; mismatch refuses before provider launch (R558-R561). B2: resolve+hash+bind full Claude and Codex chains wrapper->runtime->entrypoint with streaming SHA-256 before every spawn, no size/mtime cache; verify updater disabled in the child env and the runtime model/version (R562-R566). B3: bounded-subagent contract + restricted CLI profile (R567-R580). B4: wire Tranche-A primitives into the CLI/loop: one fresh process, one prompt, one schema-bound result, stdin closed, no resume/second message/background fallback; total run accounting; process/turn limits; cancel/timeout proves zero descendants (R581-R585). B5: one operator launch path (obsolete the main-based runbook), real PowerShell tests preserving raw LASTEXITCODE, ONE owner-run canary package of ten items, never executed here (R586-R589). Paired negative/mutation tests, gate_runner evidence, single final frozen verification (R590-R596).",
+  "business_reason": "Owner directive D-024 Amendment 40 (source-040-amendment.md) accepted M0-T134 and authorized ONE bounded Tranche-B producer workflow (R516; R517 lifts R513 for this workflow only). Supervisor-freeze qualifying evidence: D-024-R516 (authorization), R558 (B1), R562 (B2), R567 (B3), R581 (B4), R586 (B5).",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-040-amendment.md (D-024-R515..R598)",
+    "project-control/reports/M0-T134-cross-sha-continuity.md (B0 governance continuity, commit 1599daaf)",
+    "project-control/reports/LAUNCH_CONTRACT_MATRIX.md + LAUNCH_CONTRACT_RESULTS.json + STABILIZATION_REPAIR_PLAN.md (Phase-1 defect surface)",
+    "project-control/reports/M0-T134-tranche-a-evidence.json (accepted Tranche-A primitives: WorkerResult, ReviewVerdict, mrl_remote, gate_runner, mrl_transport, mrl_exec_identity)"
+  ],
+  "outputs": [
+    "tools/modularity_exceptions.json (ONLY the claude_runner.py entry deleted; baseline unchanged)",
+    "CLAUDE.md (short always-loaded defect-convergence instruction) + .claude/skills/engineering-reliability/SKILL.md (extended only as necessary)",
+    "tools/agent_supervisor/mrl_launch_manifest.py (B1 launch manifest + pre-dispatch verification)",
+    "tools/agent_supervisor/mrl_exec_chain.py (B2 wrapper->runtime->entrypoint chain identity, streaming SHA-256, updater/model/version checks)",
+    "tools/agent_supervisor/mrl_subagent_contract.py (B3 bounded-subagent contract + restricted CLI profile)",
+    "tools/agent_supervisor/mrl_one_shot.py (B4 one-shot dispatch wiring; total run accounting; descendant termination proof)",
+    "tools/agent_supervisor/cli.py + loop.py wiring of 'start --launch-manifest <abs-path>' (the ONE launch entrance)",
+    "tools/test_agent_supervisor_mrl_launch_manifest.py, _mrl_exec_chain.py, _mrl_subagent_contract.py, _mrl_one_shot.py, _mrl_launch_path.py (paired negative/mutation tests)",
+    "tools/agent_supervisor/ps_tests/*.ps1 (real PowerShell tests preserving raw $LASTEXITCODE)",
+    "docs/MRL_LAUNCH_RUNBOOK.md (single operator launch path) + docs/CONTROLLER_UPDATE_RUNBOOK.md section 11 obsoleted",
+    "project-control/reports/M0-T136-failure-surface.md (defect-convergence inventory + root-cause clusters)",
+    "project-control/reports/M0-T136-canary-package.md (ONE owner-run PowerShell canary package, ten items, NOT executed)",
+    "project-control/reports/M0-T136-tranche-b-evidence.json (gate_runner raw records) + M0-T136-G2-self-check.md + M0-T136-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T134"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/",
+    "tools/gate_runner.py",
+    "tools/test_gate_runner.py",
+    "tools/modularity_exceptions.json",
+    "tools/test_agent_supervisor_broker.py",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_claude_runner_checkpoint.py",
+    "tools/test_agent_supervisor_claude_runner_env.py",
+    "tools/test_agent_supervisor_codex_channel.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "tools/test_agent_supervisor_launch_seam.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_loop_turnover.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_mrl_launch_manifest.py",
+    "tools/test_agent_supervisor_mrl_exec_chain.py",
+    "tools/test_agent_supervisor_mrl_subagent_contract.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "tools/test_agent_supervisor_mrl_launch_path.py",
+    "tools/test_agent_supervisor_process.py",
+    "tools/test_agent_supervisor_recovery.py",
+    "tools/test_agent_supervisor_recovery_probes.py",
+    "tools/test_agent_supervisor_repair_gate.py",
+    "CLAUDE.md",
+    ".claude/skills/engineering-reliability/SKILL.md",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/MRL_LAUNCH_RUNBOOK.md",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T136-producer-report.md",
+    "project-control/reports/M0-T136-G2-self-check.md",
+    "project-control/reports/M0-T136-tranche-b-evidence.json",
+    "project-control/reports/M0-T136-canary-package.md",
+    "project-control/reports/M0-T136-failure-surface.md"
+  ],
+  "forbidden_paths": [
+    "tools/modularity_baseline.json",
+    "tools/modularity_check.py",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/model_routing.py",
+    "tools/agent_supervisor/campaign_continuity.py",
+    "tools/agent_supervisor/harden_controller_config.ps1",
+    ".claude/settings.json",
+    ".claude/agents/",
+    ".claude/hooks/",
+    ".claude/rules/",
+    ".github/workflows/",
+    "project-control/directives/",
+    "project-control/tasks/",
+    "project-control/gates/",
+    "project-control/state.json",
+    "project-control/campaigns/"
+  ],
+  "acceptance_scenarios": [
+    "AS-B0-1 (R545-R550 modularity): tools/modularity_baseline.json byte-identical to 6f5d12a6; tools/modularity_exceptions.json differs from 6f5d12a6 ONLY by the removed tools/agent_supervisor/claude_runner.py entry; the recorded baseline material-growth limit for claude_runner.py and its current SLOC are proven BEFORE the deletion; unpiped `python tools/modularity_check.py --check` exits 0 afterwards (raw exit code recorded by tools/gate_runner.py, not piped).",
+    "AS-B0-2 (R551-R555 guidance): root CLAUDE.md gains a short always-loaded defect-convergence instruction and /engineering-reliability is extended only as necessary; together they require failure-surface inventory, change-impact analysis, variant analysis, root-cause clustering, bounded repair, progressive verification, and frozen-candidate regression; `python tools/context_budget_check.py` stays green.",
+    "AS-B0-3 (R556-R557 freeze): at the frozen B0 SHA the 77 Tranche-A focused cases, the full affected supervisor suite, unpiped modularity, ruff, validate_directive_compliance --check, validate_mcp_policy, validate_product_map, campaign_continuity --status, and project_control status all pass with raw exit codes recorded; the clean branch reports M0-T134 accepted with one coherent next state (campaign seq 71 -> M0-T136).",
+    "AS-B1 (R558-R561): `start --launch-manifest <absolute-path>` is the only launch entrance; a manifest whose expected repo root / normalized origin / task id / packet digest / worktree / branch / HEAD / tree / clean status / allowed paths / settings-profile identity / authorized mode disagrees with the observed value refuses BEFORE any provider launch (one paired negative test per field); the manifest alone never satisfies any check.",
+    "AS-B2 (R562-R566): the Claude and Codex chains (wrapper -> runtime executable -> package/entrypoint) are resolved, streaming-SHA-256-hashed immediately before every spawn with no size/mtime cache; tests prove detection of same-size/restored-mtime replacement, wrapper retargeting, entrypoint replacement, updater re-enablement in the child env, and runtime model/version mismatch.",
+    "AS-B3 (R567-R580): the bounded-subagent contract enforces configurable concurrent/total limits, depth one, foreground only, inherited identity/task/paths/tools, controller-issued parent/child ids with global accounting, single-writer or isolated worktrees, no subagent commit/push/PR/merge/acceptance, complete descendant termination, explicit MCP + out-of-inventory denial; the restricted profile combines the real CLI mechanisms (restricted operation, dontAsk, explicit tools inventory, exact approvals/denials, strict MCP denial, accounted managed policy) and a test proves `--tools` alone grants nothing; over-limit fan-out is denied (paired test).",
+    "AS-B4 (R581-R585): one task -> one fresh Claude process, one prompt, one schema-bound WorkerResult, stdin closed, no resume/second message/background fallback (mutation tests for each); total run accounting spans primary + subagents; process/turn limits enforced; cancel/timeout terminates and proves zero remaining descendants.",
+    "AS-B5 (R586-R589): exactly one operator launch path remains documented (docs/MRL_LAUNCH_RUNBOOK.md; CONTROLLER_UPDATE_RUNBOOK section 11 prominently obsoleted); PowerShell tests preserve the raw $LASTEXITCODE and a mutation proves piping/Tee-Object cannot green them; ONE owner-run canary package lists the ten items with exact commands and is NOT executed.",
+    "AS-EV (R590-R596): every positive contract has a paired negative/mutation test; gate results come from tools/gate_runner.py raw records; no hand-authored success claims; final frozen verification once at the final candidate SHA; docs/SESSION_HANDOFF.md regenerated only then.",
+    "AS-NEG (R520-R525, R589, R597-R598): no push, no remote branch, no PR change, no merge, no self-acceptance, no live provider canary, no Tranche C; PR #241 and all remote refs untouched (verified by `git status -sb` / `git ls-remote` comparisons at the end); the final report ends with exactly one terminal token."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "mrl-tranche-b-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "cli.py (2953/2953) and loop.py (2082/2088) have ~zero modularity headroom: B4 wiring must extract before adding (new modules + thin facades), edits serialized in the primary session only.",
+    "Name collisions with legacy models (CodexDecision / ExecutableIdentity) and the transport protocol seam: resolve producers/consumers/schemas together per the defect-convergence rule, never by shimming one caller.",
+    "Windows process-tree semantics (no Job Object PID enumeration): descendant-termination proof must be built on measured behavior and covered by the owner-run canary, not assumed."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-01T22:40:56.432427+00:00",
+  "updated_at": "2026-09-01T22:42:31.822734+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T22:40:56.432427+00:00",
+  "progress_log": [
+    {
+      "at": "2026-09-01T22:42:31.437619+00:00",
+      "agent": "orchestrator",
+      "percent": 0,
+      "status": "ready",
+      "message": "B0 governance continuity committed at 1599daaf (M0-T134 identity 1c3078c6 reproduced at HEAD); packet material fields set; ready for claim under D-024 Amendment 40 (R516)"
+    }
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}

@@ -1,0 +1,71 @@
+{
+  "task_id": "M0-T137",
+  "title": "D-024 Amendment 40 model-selection: owner-commanded thematic subagent model/effort switch; main pin Fable 5.1 high, fallback claude-opus-4-8 xhigh",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the Amendment-40 standing model-selection policy (R599-R606) AFTER the owner resolves the recorded decision rows R603/R604/R605: an owner command that thematically switches ALL subagent effort/model selections at once (explicit alias table; refuse unknown words) without touching the main/orchestrator pin; main pin Fable 5.1 (runtime id claude-fable-5-1, R602) at effort high; fallback claude-opus-4-8 xhigh via the existing turnover path. Depends on owner-only protected-config allowlist + KNOWN_MODEL_TIERS edits (R606). Backlog until the owner decisions land; not part of the Tranche-B workflow.",
+  "business_reason": "Owner directive D-024 Amendment 40 #model-selection (R599-R606). Qualifying evidence: D-024-R601.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-040-amendment.md#model-selection (D-024-R599..R606)",
+    "Owner decisions on D-024-R603 ('ultra' alias), R604 (fallback-effort mechanism), R605 (main pin literal + effortLevel handling) \u2014 REQUIRED before claim",
+    "Owner-only: claude-fable-5-1 added to the protected supervisor config allowlist (D-010-R297) and to tools/model_routing.py KNOWN_MODEL_TIERS (R606)"
+  ],
+  "outputs": [
+    "tools/agent_model_switch.py + tools/test_agent_model_switch.py (thematic subagent switch with explicit alias table; refuses unknown words; never touches the main pin)",
+    ".claude/agents/*.md effort/model updates applied uniformly by the command",
+    ".claude/skills/model-switch/SKILL.md (owner-facing command) + docs/MODEL_SELECTION_POLICY.md (standing policy: main Fable 5.1 high; fallback claude-opus-4-8 xhigh)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/agents/",
+    ".claude/settings.json",
+    ".claude/skills/model-switch/SKILL.md",
+    "tools/agent_model_switch.py",
+    "tools/test_agent_model_switch.py",
+    "tools/validate_mcp_policy.py",
+    "tools/test_validate_mcp_policy.py",
+    "docs/MODEL_SELECTION_POLICY.md",
+    "project-control/reports/M0-T137-producer-report.md",
+    "project-control/reports/M0-T137-G2-self-check.md"
+  ],
+  "forbidden_paths": [
+    "tools/model_routing.py (owner-only tier entry, R606)",
+    "tools/agent_supervisor/",
+    "project-control/directives/",
+    "tools/project_control.py",
+    "tools/directive_registry.py"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (R601): one command switches every subagent definition's effort (and model where stated) uniformly; a diff shows only .claude/agents/** changed and the orchestrator/main pin untouched.",
+    "AS-2 (R603): the alias table is explicit (e.g. ultra -> xhigh only if the owner confirms) and an unknown word is refused with a non-zero exit (paired negative test).",
+    "AS-3 (R599/R600/R602/R605): the main pin resolves to the runtime-verified id claude-fable-5-1 at effort high and the fallback to claude-opus-4-8 xhigh, exactly as the owner decided on R604/R605; validate_mcp_policy stays green.",
+    "AS-4 (R606): claim is refused until the owner-only allowlist/tier edits exist (documented preflight check)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Conflicts with D-004 R734/R741/R742 and D-010 R286/R297 are recorded as owner-decision rows; implementing before the owner decides would be silent interpretation (prohibited)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-01T22:40:56.851841+00:00",
+  "updated_at": "2026-09-01T22:42:24.172057+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T22:40:56.851841+00:00"
+}
