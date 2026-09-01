@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 459,
+  "requirement_count": 471,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T04:33:55.503657+00:00",
+  "updated_at": "2026-09-01T05:05:26.093846+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -15362,6 +15362,366 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 36
+    },
+    {
+      "id": "D-024-R460",
+      "text": "Authorize ONE narrow AD-093 defect-lane task (M0-T133) for the journey-5 invalid_checkpoint finding; use the approved fallback models (claude-opus-4-8) immediately, do not wait for Fable; optimize for the fastest safe return to commissioning.",
+      "source_ref": "source-037-amendment.md#authorization",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R461",
+      "text": "Implement the SMALLEST durable correction: NOT a prompt-only wording fix and NOT simply retrying Opus.",
+      "source_ref": "source-037-amendment.md#smallest-correction",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R462",
+      "text": "Treat branch, worktree, starting_sha, current_sha as CONTROLLER-AUTHORITATIVE checkpoint-envelope fields (the controller already knows or can measure them deterministically).",
+      "source_ref": "source-037-amendment.md#authoritative-fields",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R463",
+      "text": "Before final checkpoint validation, populate ONLY those four fields from the dispatch context and a fresh read-only git measurement.",
+      "source_ref": "source-037-amendment.md#populate-before-validation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "checkpoint enrichment step runs before validation; only the four fields set",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R464",
+      "text": "If the worker supplied any of those four fields, require an EXACT NORMALIZED MATCH. Any mismatch, unreadable repository state, unexpected branch, wrong worktree, or ambiguous SHA must still FAIL CLOSED.",
+      "source_ref": "source-037-amendment.md#match-or-fail-closed",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "match-or-fail-closed enforced; fail-closed on any anomaly",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R465",
+      "text": "Preserve the worker's ORIGINAL checkpoint bytes as evidence and AUDIT exactly which controller-authoritative fields were added; NEVER present enrichment as worker-authored data.",
+      "source_ref": "source-037-amendment.md#preserve-and-audit",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "original checkpoint bytes preserved + enrichment audit record naming the added fields",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R466",
+      "text": "Do NOT alter semantic completion, evidence, status, review, advancement, worktree-isolation, effect, budget, or owner-gate requirements.",
+      "source_ref": "source-037-amendment.md#no-other-weakening",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R467",
+      "text": "Add focused removal-sensitive tests for: all four fields missing + safely enriched; partially missing; supplied fields matching; each supplied field mismatching; unreadable/ambiguous git state; normalized Windows worktree paths; the exact journey-5 Opus checkpoint fixture; no false completion or advancement.",
+      "source_ref": "source-037-amendment.md#tests",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "new removal-sensitive tests for all 8 named scenarios",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R468",
+      "text": "Run the directly affected checkpoint/runner/loop/recovery packs FIRST. At the single final identity, run ONE fast golden pack and ONE whole supervisor suite ONCE, then the required independent gates + DCV in parallel where allowed. Do NOT reopen the broad 17-defect survey or repeat unrelated certification runs.",
+      "source_ref": "source-037-amendment.md#test-sequence",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R469",
+      "text": "Preserve throughout implementation: the current PAUSED_RECOVERY journal, audit 104, pending effects 0, worktrees, budgets, owner-touch history, model pin (claude-opus-4-8), manifest (c228b7ca), and PR #241.",
+      "source_ref": "source-037-amendment.md#preservation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "before/after preservation table",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R470",
+      "text": "After acceptance and the single required R247 recertification, STOP and present: the targeted proof; the exact owner-typed clear-recovery command; one parse-validated start command using a FRESH UNUSED run id; no additional optional work.",
+      "source_ref": "source-037-amendment.md#present-commands",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
+    },
+    {
+      "id": "D-024-R471",
+      "text": "Do NOT clear recovery, start the loop, or execute the commissioning commands yourself. If this correction cannot be made without weakening fail-closed checkpoint integrity, STOP and report the precise blocker instead.",
+      "source_ref": "source-037-amendment.md#stop-if-weakening",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T133"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 37
     }
   ]
 }

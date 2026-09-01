@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-01T04:33:55.503657+00:00",
+  "updated_at": "2026-09-01T05:05:26.093846+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -300,6 +300,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-01T04:33:55.503657+00:00",
       "content_digest_sha256": "255bd501768333245783b9e4d76b69128887bd91935191927ed29265de297799"
+    },
+    {
+      "file": "source-037-amendment.md",
+      "kind": "amendment",
+      "sequence": 37,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-01T05:05:26.093846+00:00",
+      "content_digest_sha256": "03c7b1906489f0e23e91916075d6bd8994c2b092953b59ec67ebc511b15ab6ca"
     }
   ],
   "amendments": [
@@ -337,7 +345,8 @@
     "source-033-amendment.md",
     "source-034-amendment.md",
     "source-035-amendment.md",
-    "source-036-amendment.md"
+    "source-036-amendment.md",
+    "source-037-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -899,10 +908,22 @@
     "D-024-R456",
     "D-024-R457",
     "D-024-R458",
-    "D-024-R459"
+    "D-024-R459",
+    "D-024-R460",
+    "D-024-R461",
+    "D-024-R462",
+    "D-024-R463",
+    "D-024-R464",
+    "D-024-R465",
+    "D-024-R466",
+    "D-024-R467",
+    "D-024-R468",
+    "D-024-R469",
+    "D-024-R470",
+    "D-024-R471"
   ],
-  "requirements_id_digest_sha256": "24dbf7be54851b7a18df9e47e87f216848278a22877815a4cda1c5d60da43ff2",
-  "requirements_content_digest_sha256": "edd9de504af9ff7c5efbe978715a2a97bc2c902479014cd0433be2d0677a688d",
+  "requirements_id_digest_sha256": "0d00b0813432423c5ed749048270487cbde8081d03e6bed61376403543ef269d",
+  "requirements_content_digest_sha256": "bccb1694504c14151fdc89dff7dcafe77d06044d2258ac92cb8b86ea0d999d40",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1110,6 +1131,11 @@
       "at": "2026-09-01T04:33:55.503657+00:00",
       "by": "orchestrator",
       "note": "Amendment 36 captured (owner 2026-09-01): bounded authorization R449 for ONE targeted audited runtime correction of the spurious Fable-cap control_response_round_trip:FAILED entry that fail-closed the commissioning start; R450 prohibitions (no supervisor-source, no broad testing, no full recert, no doctor --live, no unrelated journal mod); R451-R459 the nine-step protocol (preconditions/lock, byte backup+sha256, verify-entry, single-key durable-state removal, one audit record, post-verify invariants, targeted cli_capability_manifest probe, present-only Step-4 start, rollback-and-stop). Rows bind M0-T132 (commissioning phase; accepted task not reopened)."
+    },
+    {
+      "at": "2026-09-01T05:05:26.093846+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 37 captured (owner 2026-09-01): narrow AD-093 defect-lane task M0-T133 for the journey-5 invalid_checkpoint; controller-authoritative git-state checkpoint enrichment (branch/worktree/starting_sha/current_sha populated before validation from dispatch context + fresh read-only git; match-or-fail-closed if worker-supplied; preserve original bytes + audit enrichment; no other checkpoint-integrity weakening). R460-R471 bind M0-T133. Use approved fallback opus-4-8 immediately. Stop-and-report if fail-closed integrity would weaken."
     }
   ]
 }

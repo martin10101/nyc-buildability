@@ -70,6 +70,8 @@ from .audit_log import AuditChainError
 from . import loop_breakers as lb
 from .circuit_breakers import GAUGE_LIMITS
 from .claude_runner import QUOTA_EXHAUSTED_REASON, broker_permission_handler
+from .checkpoint_envelope import CheckpointEnvelope
+from .recovery_probes import subprocess_git
 from .codex_reviewer import build_forwarded_prompt, stamp_forwarded_at
 from .config import ModelChain
 from .durable_state import JournalError
@@ -610,8 +612,13 @@ class SupervisedLoop:
         advisory_model: str = "",
         resume_max_age_seconds: float | None = None,
         turn_budget: Any = None,
+        git: Any = None,
     ) -> None:
         self.config = config
+        # M0-T133 (D-024 Amendment 37): read-only git runner for the controller-
+        # authoritative checkpoint-envelope measurement (starting/current SHA, branch,
+        # worktree). Injectable so tests never contact a real repository.
+        self._git = git or subprocess_git()
         self.journal = journal
         self.audit = audit
         self.machine = machine
@@ -1489,6 +1496,52 @@ class SupervisedLoop:
 
     # -- the cycle ----------------------------------------------------------
 
+    def _build_checkpoint_envelope(self) -> "CheckpointEnvelope | None":
+        """M0-T133 (D-024 Amendment 37): the controller-authoritative git-state
+        checkpoint envelope for this dispatch. Measures the pre-dispatch starting SHA
+        (read-only) and carries the dispatch branch/worktree + git runner so run_unit can
+        resolve current_sha/branch/worktree from a fresh measurement and fail closed on
+        any anomaly. Returns None only when there is no dispatch worktree/branch to be
+        authoritative from - the legacy worker-supplied path then still fails closed if
+        the worker also omits the fields.
+
+        SCOPE (R295 precedent): controller-authoritative enrichment applies to the
+        CERTIFIED unattended run (`limited-auto`) - exactly where the journey-5 defect
+        occurred and where no human validates the worker's git-state fields. A
+        `shadow`/`supervised` cycle is human-observed, so its worker-supplied fields are
+        validated under that oversight and are not enriched here."""
+        if self.mode != MODE_LIMITED_AUTO:
+            return None
+        worktree = str(getattr(self.authority, "worktree", "") or "")
+        branch = str(getattr(self.authority, "branch", "") or "")
+        if not worktree or not branch:
+            return None
+        measured = self._git(("rev-parse", "HEAD"), worktree)
+        # A pre-dispatch HEAD that cannot be read leaves starting_sha empty; the
+        # envelope's resolve() then fails closed (ambiguous_sha) at checkpoint time.
+        starting_sha = measured.text if getattr(measured, "ok", False) else ""
+        return CheckpointEnvelope(
+            expected_branch=branch, expected_worktree=worktree,
+            starting_sha=starting_sha, git=self._git, worktree=worktree)
+
+    def _audit_checkpoint_enrichment(self, run_result: Any) -> None:
+        """Record which controller-authoritative envelope fields were filled, so the
+        enrichment is never presented as worker-authored data (D-024 Amendment 37 R465)."""
+        added = tuple(getattr(run_result, "checkpoint_enriched_fields", ()) or ())
+        if not added:
+            return
+        try:
+            self.audit.append(
+                "checkpoint_envelope_enriched", policy_result="controller_authoritative",
+                detail={"added_fields": list(added),
+                        "worker_original_checkpoint_digest": str(
+                            getattr(run_result, "checkpoint_original_digest", "") or ""),
+                        "note": "the controller filled these controller-authoritative "
+                                "git-state fields from the dispatch context + a fresh "
+                                "read-only git measurement; they are NOT worker-authored"})
+        except Exception:  # pragma: no cover - a damaged audit chain is its own evidence
+            pass
+
     def run_cycle(self, prompt: str, *, cycle: int) -> CycleResult:
         """One complete supervised/shadow cycle. Returns what it established."""
         result = CycleResult(cycle=cycle, mode=self.mode,
@@ -1632,10 +1685,13 @@ class SupervisedLoop:
         # fail-closed exhaustion net (missing_checkpoint -> PAUSED_RECOVERY) is
         # untouched; this occupies the reserved turn so a worker that spent its
         # working turns is still demanded to emit before exhaustion.
+        checkpoint_envelope = self._build_checkpoint_envelope()
         run_result = self.runner.run_unit(
             prompt, permission_handler=self._permission_handler(),
-            extra_turns=tb.reserved_turn_injection(self._turn_budget))
+            extra_turns=tb.reserved_turn_injection(self._turn_budget),
+            checkpoint_envelope=checkpoint_envelope)
         recovery.reconcile_dispatch_intent(self.journal)
+        self._audit_checkpoint_enrichment(run_result)
         # M0-T080: capture the PROVIDER's own session identity at unit
         # completion and persist it, so a later rotation can really resume the
         # session that did the work instead of minting one. A stream that

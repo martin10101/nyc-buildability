@@ -1,0 +1,123 @@
+{
+  "task_id": "M0-T133",
+  "title": "D-024 Amendment 37 AD-093 defect: controller-authoritative git-state checkpoint enrichment (journey-5 invalid_checkpoint)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Smallest durable fix for the journey-5 invalid_checkpoint (opus worker omitted branch/worktree/starting_sha/current_sha). Make those four CONTROLLER-AUTHORITATIVE checkpoint-envelope fields (R462): a new tools/agent_supervisor/checkpoint_envelope.py resolves them from the dispatch context (expected branch/worktree, pre-dispatch starting_sha) + a fresh read-only git measurement (observed branch/worktree/current_sha), cross-checks expected==observed (unexpected branch / wrong worktree / unreadable / ambiguous SHA => FAIL CLOSED, R464), and enriches the worker checkpoint dict BEFORE final validation (R463): fill when absent, EXACT NORMALIZED MATCH when the worker supplied any (mismatch => fail closed). claude_runner.extract_checkpoint split into find_checkpoint_candidate + validate_checkpoint so run_unit enriches between them and records the ORIGINAL worker checkpoint bytes + the list of controller-added fields (R465, never presented as worker-authored); loop.py measures starting_sha pre-dispatch, provides the git_head_reader, builds the envelope, and audits which fields were added. NO prompt-only fix, NO bare Opus retry (R461); NO change to semantic completion/evidence/status/review/advancement/worktree-isolation/effect/budget/owner-gate requirements (R466). Removal-sensitive tests for all 8 named scenarios (R467). Test sequence R468: affected checkpoint/runner/loop/recovery packs first, then ONE golden + ONE whole suite once at the final identity, then independent G3/G4 + DCV; no broad 17-defect survey. Preserve PAUSED_RECOVERY journal/audit 104/pending 0/worktrees/budgets/owner-touch/model pin opus-4-8/manifest c228b7ca/PR #241 (R469). After accept + ONE R247 recert, present targeted proof + clear-recovery + one parse-validated start with a fresh run id (R470, present-only, R471). Supervisor-freeze qualifying evidence: journey-5 invalid_checkpoint (AD-093 reproduced defect / failed acceptance scenario; D-024-R394/R460).",
+  "business_reason": "Owner Amendment 37: the first live commissioning cycle stopped no_valid_checkpoint because opus omitted controller-knowable git-state fields; make them controller-authoritative to return to commissioning without weakening fail-closed checkpoint integrity.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-037-amendment.md (R460-R471)",
+    "project-control/reports/M0-T107-commissioning-journey-5.md (the reproduced invalid_checkpoint defect)",
+    "tools/agent_supervisor/claude_runner.py (extract_checkpoint L743, run_unit L1219/L1490, RunnerConfig)",
+    "tools/agent_supervisor/models.py (ClaudeCheckpoint required fields incl the four git-state ones)",
+    "tools/agent_supervisor/loop.py (self.authority.branch/worktree, run_unit call L1635)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/checkpoint_envelope.py (NEW: normalize + resolve authoritative envelope with git cross-checks + enrich-or-match-fail-closed)",
+    "tools/agent_supervisor/claude_runner.py (extract_checkpoint split into find_checkpoint_candidate + validate_checkpoint; run_unit enriches + records original bytes + added fields)",
+    "tools/agent_supervisor/loop.py (pre-dispatch starting_sha measurement + envelope construction + git_head_reader + enrichment audit event)",
+    "tools/test_agent_supervisor_checkpoint_envelope.py (NEW: removal-sensitive tests for all 8 scenarios incl the journey-5 opus fixture)",
+    "project-control/reports/M0-T133-producer-report.md + M0-T133-G2-self-check.md + M0-T133-recertification.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/checkpoint_envelope.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/test_agent_supervisor_checkpoint_envelope.py",
+    "tools/test_agent_supervisor_claude_runner_checkpoint.py",
+    "project-control/reports/M0-T133-producer-report.md",
+    "project-control/reports/M0-T133-G2-self-check.md",
+    "project-control/reports/M0-T133-recertification.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/tasks",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/agent_supervisor/models.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "All four git-state fields MISSING from the worker checkpoint -> controller enriches all four from authoritative sources (dispatch expected branch/worktree, pre-dispatch starting_sha, fresh git current_sha); checkpoint validates; added_fields lists all four; original worker bytes preserved.",
+      "verification": "pytest tools/test_agent_supervisor_checkpoint_envelope.py -k missing_all"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Partially missing (some supplied, some absent) -> absent filled, supplied matching pass; added_fields lists only the filled ones.",
+      "verification": "pytest -k partial"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "Worker supplied all four and they MATCH the authoritative values (normalized) -> pass, added_fields empty.",
+      "verification": "pytest -k supplied_match"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "Each supplied field MISMATCHING (branch, worktree, starting_sha, current_sha in turn) -> FAIL CLOSED (invalid_checkpoint), never enriched-over.",
+      "verification": "pytest -k mismatch"
+    },
+    {
+      "id": "AS-5",
+      "scenario": "Unreadable / ambiguous git state (git error, non-40-hex SHA, detached/unknown branch) -> FAIL CLOSED, no enrichment.",
+      "verification": "pytest -k unreadable_or_ambiguous"
+    },
+    {
+      "id": "AS-6",
+      "scenario": "Normalized Windows worktree paths: forward/back slashes + case differences that are the same path MATCH; genuinely different worktree FAILS closed.",
+      "verification": "pytest -k windows_worktree_normalize"
+    },
+    {
+      "id": "AS-7",
+      "scenario": "The EXACT journey-5 opus checkpoint fixture (missing the four fields) is now safely enriched and validates; a mutant that drops the enrichment call makes it RED (removal-sensitive).",
+      "verification": "pytest -k journey5_fixture"
+    },
+    {
+      "id": "AS-8",
+      "scenario": "No false completion/advancement: enrichment fills ONLY the four envelope fields and never touches status/summary/claims/evidence/review; a BLOCKED/FAILED worker status is preserved; advancement still requires the unchanged semantic checks.",
+      "verification": "pytest -k no_false_completion"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "orchestrator-defect-runner",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 15,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-01T05:10:52.625932+00:00",
+  "updated_at": "2026-09-01T05:12:00.686636+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-01T05:10:52.625932+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-09-01T05:12:00.685032+00:00",
+      "agent": "orchestrator-defect-runner",
+      "percent": 15,
+      "status": "claimed",
+      "message": "Claimed; investigation complete (extract_checkpoint L743 validates inside run_unit L1490; four git-state fields required in ClaudeCheckpoint; loop has authority.branch/worktree; starting_sha must be measured pre-dispatch). Implementing checkpoint_envelope.py + wiring."
+    }
+  ]
+}

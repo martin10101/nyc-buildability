@@ -49,6 +49,7 @@ import uuid
 from typing import Any, Callable, Iterator, Mapping, Sequence
 
 from . import launch_seam
+from .checkpoint_envelope import CheckpointEnvelope, EnvelopeError, enrich_checkpoint
 from .locking import process_start_token
 from .models import (
     CHECKPOINT_STATUSES,
@@ -740,8 +741,8 @@ def live_context_tokens(events: Sequence[Mapping[str, Any]]) -> tuple[int, bool]
     return best, known
 
 
-def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
-    """Find and validate the ONE structured checkpoint (S8.3).
+def find_checkpoint_candidate(events: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Find the ONE structured checkpoint CANDIDATE dict (S8.3); does NOT validate it.
 
     Accepts the checkpoint as a bare event object, inside a `result` payload, or
     fenced inside assistant text. Duplicate delivery of an identical checkpoint is
@@ -788,7 +789,18 @@ def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
             f"({sorted(by_id)}); a bounded unit reports exactly ONE structured "
             f"checkpoint, and the supervisor refuses to choose between them")
 
-    chosen = shaped[-1]
+    return shaped[-1]
+
+
+def validate_checkpoint(chosen: Mapping[str, Any]) -> ClaudeCheckpoint:
+    """Parse and validate one checkpoint dict into a `ClaudeCheckpoint` (S8.3).
+
+    Separated from `find_checkpoint_candidate` so the controller can enrich the
+    candidate's controller-authoritative git-state envelope fields (M0-T133,
+    D-024 Amendment 37) between finding and validating, without duplicating the
+    find/dedup logic. Unknown-field, missing-field, and shape violations remain a
+    fail-closed `invalid_checkpoint`.
+    """
     try:
         checkpoint = ClaudeCheckpoint.from_dict(chosen)
         checkpoint.validate()
@@ -796,6 +808,13 @@ def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
         raise CheckpointError("invalid_checkpoint",
                               f"the checkpoint does not conform: {exc}") from exc
     return checkpoint
+
+
+def extract_checkpoint(events: Sequence[Mapping[str, Any]]) -> ClaudeCheckpoint:
+    """Find and validate the ONE structured checkpoint (S8.3) - the composition used
+    where no controller-authoritative envelope enrichment applies (e.g.
+    `checkpoint_question_decided`, which only needs to know whether a candidate exists)."""
+    return validate_checkpoint(find_checkpoint_candidate(events))
 
 
 def checkpoint_question_decided(events: Sequence[Mapping[str, Any]]) -> bool:
@@ -1040,6 +1059,15 @@ class RunResult:
     permission_decisions: tuple[PermissionDecision, ...] = ()
     checkpoint: ClaudeCheckpoint | None = None
     checkpoint_error: str = ""
+    #: M0-T133 (D-024 Amendment 37): the four controller-authoritative git-state
+    #: envelope fields (`branch`/`worktree`/`starting_sha`/`current_sha`) the
+    #: controller FILLED because the worker omitted them. Empty when the worker
+    #: supplied all four (each then had to match). Never presented as worker-authored.
+    checkpoint_enriched_fields: tuple[str, ...] = ()
+    #: M0-T133: the digest of the worker's ORIGINAL checkpoint bytes, before any
+    #: controller envelope enrichment - preserved as evidence of what the worker
+    #: actually emitted (empty when there was no candidate to enrich).
+    checkpoint_original_digest: str = ""
     timed_out: bool = False
     cancelled: bool = False
     #: The unit finished (every turn's terminal `result` event arrived) and stdin
@@ -1223,6 +1251,7 @@ class ClaudeRunner:
         permission_handler: PermissionHandler | None = None,
         cancel_event: threading.Event | None = None,
         extra_turns: Sequence[str] = (),
+        checkpoint_envelope: CheckpointEnvelope | None = None,
     ) -> RunResult:
         """Run one bounded unit, brokering every permission request.
 
@@ -1486,8 +1515,29 @@ class ClaudeRunner:
         self._settle_worker_record(process)
         checkpoint: ClaudeCheckpoint | None = None
         checkpoint_error = ""
+        checkpoint_enriched_fields: tuple[str, ...] = ()
+        checkpoint_original_digest = ""
         try:
-            checkpoint = extract_checkpoint(events)
+            chosen = find_checkpoint_candidate(events)
+            checkpoint_original_digest = digest_of(chosen)
+            if checkpoint_envelope is not None:
+                # M0-T133 (D-024 Amendment 37): branch/worktree/starting_sha/current_sha
+                # are controller-authoritative. Resolve them from the dispatch context +
+                # a fresh read-only git measurement (fail-closed on any anomaly) and enrich
+                # the candidate BEFORE validation - filling any the worker omitted and
+                # requiring an exact normalized match for any it supplied. The worker's
+                # original bytes stay untouched (checkpoint_original_digest is the evidence).
+                authoritative = checkpoint_envelope.resolve()
+                enriched, added = enrich_checkpoint(chosen, authoritative)
+                checkpoint_enriched_fields = tuple(added)
+                checkpoint = validate_checkpoint(enriched)
+            else:
+                checkpoint = validate_checkpoint(chosen)
+        except EnvelopeError as exc:
+            # A fail-closed envelope condition (mismatch, unreadable/ambiguous git,
+            # unexpected branch, wrong worktree) is an invalid checkpoint, never enriched over.
+            checkpoint_error = (f"invalid_checkpoint: the checkpoint does not conform: "
+                                f"{exc.code}: {exc.message}")
         except CheckpointError as exc:
             checkpoint_error = f"{exc.code}: {exc.message}"
         if parser.stats.malformed_lines and checkpoint is None and not checkpoint_error:
@@ -1523,6 +1573,8 @@ class ClaudeRunner:
             permission_decisions=tuple(decisions),
             checkpoint=checkpoint,
             checkpoint_error=checkpoint_error,
+            checkpoint_enriched_fields=checkpoint_enriched_fields,
+            checkpoint_original_digest=checkpoint_original_digest,
             timed_out=timed_out.is_set(),
             cancelled=cancelled.is_set(),
             graceful_close_failed=graceful_close_failed,
