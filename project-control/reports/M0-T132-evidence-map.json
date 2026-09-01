@@ -1,0 +1,166 @@
+{
+  "task_id": "M0-T132",
+  "schema": "evidence_map/v1",
+  "requirements": {
+    "D-024-R431": [
+      {
+        "evidence": "STOP at the M0-T131 acceptance seam honored: M0-T131 was accepted at 00220b8c with NO recert then; this recert runs against the ADMITTED 2.1.252 (e713c5a6), NEVER the obsolete 2.1.251 pin (d6f6c29a).",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md",
+          "project-control/reports/M0-T132-admission-evidence.md"
+        ]
+      }
+    ],
+    "D-024-R432": [
+      {
+        "evidence": "Seam report delivered: the admission-evidence report (preflight + benign-drift findings + the R394 stop) and the recert report present the final acceptance identity and the executed combined plan.",
+        "paths": [
+          "project-control/reports/M0-T132-admission-evidence.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R433": [
+      {
+        "evidence": "Read-only CLI investigation carried; the settled target 2.1.252 (e713c5a6) was RE-VERIFIED at M0-T132 start (R438) and found unmoved; the R433 conditional resolved.",
+        "paths": [
+          "project-control/reports/M0-T132-admission-evidence.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R434": [
+      {
+        "evidence": "Settled procedure followed in order: fresh-process preflight PASS (this session runs the 2.1.252 image), owner authorized M0-T132 (Amendment 34), the owner-typed restart is PRESENTED not executed.",
+        "paths": [
+          "project-control/reports/M0-T132-G0-readiness.md",
+          "project-control/reports/M0-T132-admission-evidence.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R435": [
+      {
+        "evidence": "Final handoff at the seam written by the prior session (seq 47) and continued here; the current handoff (seq 48+) records the completed lane.",
+        "paths": [
+          "project-control/reports/M0-T132-admission-evidence.md"
+        ]
+      }
+    ],
+    "D-024-R436": [
+      {
+        "evidence": "Seam prohibitions held until separate owner authorization: nothing was admitted/repinned/recertified/journal-written/started until Amendment 34 R439 authorized the bounded lane; then only that lane proceeded.",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-034-amendment.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R437": [
+      {
+        "evidence": "Session preflight + reconciliation complete: Bootstrap Gate 0 (root/branch/HEAD/tree/mcp) + ledger/campaign/journal/handoff reconciliation recorded in the G0 readiness report and admission-evidence.",
+        "paths": [
+          "project-control/reports/M0-T132-G0-readiness.md",
+          "project-control/reports/M0-T132-admission-evidence.md"
+        ]
+      }
+    ],
+    "D-024-R438": [
+      {
+        "evidence": "Fresh-process CLI verification PASS (fail-closed): DISABLE_AUTOUPDATER=1 inherited, DISABLE_UPDATES unset, claude --version 2.1.252, on-disk identity e713c5a6 (217406624 B == versions/2.1.252), nothing newer staged. Recorded with digests in the G0 + admission-evidence + recert reports.",
+        "paths": [
+          "project-control/reports/M0-T132-G0-readiness.md",
+          "project-control/reports/M0-T132-admission-evidence.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R439": [
+      {
+        "evidence": "Conditional owner authorization effective after preflight PASS: Amendment 34 R439 authorized the bounded M0-T132 lane; the preflight passed, ending the R429 deferral.",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-034-amendment.md"
+        ]
+      }
+    ],
+    "D-024-R440": [
+      {
+        "evidence": "Admission scope executed: four measured 2.1.252 fixtures captured (capability_probe, hook_event_catalog [33 events, no drift], native_runtime_detection, shell_routing at e713c5a6 on opus-4-8); the controller manifest re-recorded to c228b7ca (verify-controller PASS). The journal CLI-identity repin is a per-launch owner act deferred to the certified start (R285 precedent, disclosed).",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md",
+          "project-control/reports/M0-T132-routing-capture.py"
+        ]
+      }
+    ],
+    "D-024-R441": [
+      {
+        "evidence": "ONE combined R247 recert at ONE final frozen identity covering BOTH accepted M0-T131 (codex_reviewer.py) AND the admitted 2.1.252 runtime (event_drift.py) - both bound in manifest c228b7ca; golden 42/42; whole suite 3043/2/0 (the 3 M0-T131 CLI-drift failures resolved); never against the obsolete 2.1.251 pin.",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md",
+          "project-control/reports/M0-T132-G2-self-check.md"
+        ]
+      }
+    ],
+    "D-024-R442": [
+      {
+        "evidence": "Gates + independent reviews + DCV run at ONE final frozen identity (259833de): G0 PASS, G2 self-check PASS; independent G3 (code-reviewer), G4 (qa-engineer), DCV (directive-compliance-verifier) dispatched read-only at this frozen SHA. Producer != reviewers.",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md",
+          "project-control/reports/M0-T132-G2-self-check.md"
+        ]
+      }
+    ],
+    "D-024-R443": [
+      {
+        "evidence": "Preservation verified: journal HALTED transitions 35 / audit 85 UNCHANGED (only the stale control_response probe record refreshed under doctor --live, disclosed); wt-m0t107 c5c6ff7 + two untracked drafts, wt-m0t109 1c06957, queue digest 11eaa5a7, owner-touch 3-of-2, budgets, PR #241 all preserved.",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R444": [
+      {
+        "evidence": "Prohibitions honored: no supervisor start, no journal clear/restart, no PR #241 merge, no reset; commissioning commands (stored-manifest overwrite, --repin-cli-identity, model_selection pin, owner-restart, start) are PRESENTED only, never executed.",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R445": [
+      {
+        "evidence": "After all passes, STOP and present the complete fresh preflight + the exact mechanically-validated owner-typed owner-restart and certified start commands (present-only). Delivered in the recert report sec 5 + the final seam presentation.",
+        "paths": [
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R446": [
+      {
+        "evidence": "B-020 owner decision PROCEED NOW (reject cap-wait Option A): the lane ran immediately on the non-capped worker model rather than waiting for the Fable cap reset.",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-035-amendment.md",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R447": [
+      {
+        "evidence": "Commissioned under Fable unavailability via the fallback path: claude-opus-4-8 (approved in config.toml [approved_models] + worker allowed_models) used for the model-dependent routing capture; no other owner gate lifted.",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-035-amendment.md",
+          "project-control/reports/M0-T132-recertification.md",
+          "project-control/reports/M0-T132-routing-capture.py"
+        ]
+      }
+    ],
+    "D-024-R448": [
+      {
+        "evidence": "B-020 Option B executed: bounded shell-routing recapture at e713c5a6 on claude-opus-4-8 (native_preferred), M0-T132 completed in one pass (four fixtures + manifest re-record + combined recert + gates), certified start prepared. opus confirmed available (not capped).",
+        "paths": [
+          "project-control/reports/M0-T132-routing-capture.py",
+          "project-control/reports/M0-T132-recertification.md"
+        ]
+      }
+    ]
+  }
+}
