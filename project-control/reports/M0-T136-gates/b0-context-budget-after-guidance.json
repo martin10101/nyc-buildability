@@ -1,0 +1,17 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "tools/context_budget_check.py"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-01T22:50:09.020522+00:00",
+ "ended_at_utc": "2026-09-01T22:50:09.106058+00:00",
+ "repo_head": "da523ebb18d39201ac5dedc5f7e3cb4d43f98428",
+ "repo_tree": "2744815389aafc37941c3272b87de0583fe3bd81",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "92a32722d8bf30fb10756125d1177453bacf6f708471c70692ca007a91fa6e0e",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 948,
+ "stderr_bytes": 0
+}

@@ -16,6 +16,27 @@ This is a router, not a copy of the standard. The authoritative text is
 | User- or caller-visible error path | §7, §3 |
 | Reviewing another identity's work | §8, §9 |
 | Claiming done / faster / cheaper / more reliable | §3, §8, §10 measured claims |
+| More than one related failure (failing suite, repair campaign, defect cluster) | **Defect convergence** below, then §1 per cluster, §3, §8 |
+
+## Defect convergence (multi-defect repair; CLAUDE.md principle 17)
+
+§1 diagnoses ONE defect. When several related failures exist, run this loop before applying §1 to
+any of them, and record each step in the task's failure-surface report:
+
+1. **Failure-surface inventory** — every failing test, contract, validator, CLI path, doc claim, and
+   Windows-specific behavior, with its raw exit code or observation; not the first one found.
+2. **Change-impact analysis** — for each failure, the producers, consumers, schemas, CLI wiring,
+   policies, tests, and docs that share the value or contract (`tools/code_graph` where available).
+3. **Variant analysis** — for each mechanism, search for the same pattern elsewhere (other callers,
+   other providers, other platforms) and add the hits to the inventory.
+4. **Root-cause clustering** — group the inventory by mechanism (§1.4 owning boundary), one cluster
+   per mechanism; a failure that fits no cluster is its own cluster, never "misc".
+5. **Bounded repair** — fix one cluster at a time as one change touching all of its members
+   together (§2), inside `allowed_paths`; never one caller, one shim, or one symptom.
+6. **Progressive verification** — focused tests while editing; the cluster's affected tests when
+   it closes; no full-suite run per edit.
+7. **Frozen-candidate regression** — one full regression at the final frozen SHA (§8.8); any later
+   change invalidates it. Raw gate records (`tools/gate_runner.py`), not narrated results.
 
 The standard's §0 lists rules that live elsewhere (gates, acceptance scenarios, modularity, typed
 errors, secrets, dependency security). Follow the citation to the canonical document; do not restate
