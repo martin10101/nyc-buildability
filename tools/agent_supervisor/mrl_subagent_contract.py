@@ -312,9 +312,16 @@ class RestrictedProfile:
         return frozenset((inventory & allows) - denies)
 
 
-def settings_profile_identity(profile_bytes: bytes, managed_settings_path: "pathlib.Path | None") -> "tuple[str, dict[str, Any]]":
-    """SHA-256 over the profile document + the managed policy (present or accounted-absent)."""
-    digest = hashlib.sha256(profile_bytes)
+def settings_profile_identity(policy_bytes: bytes, managed_settings_path: "pathlib.Path | None") -> "tuple[str, dict[str, Any]]":
+    """SHA-256 over the POLICY document + the managed policy (present or accounted-absent).
+
+    The policy document is the profile minus its per-run hook command strings (which
+    embed the run's ledger path) plus the hook script's own bytes, so the launch
+    manifest can pin the identity before the run directory exists (R559) while a
+    changed rule, inventory, agent definition, hook script, or managed policy
+    still changes it.
+    """
+    digest = hashlib.sha256(policy_bytes)
     managed: dict[str, Any] = {"path": str(managed_settings_path) if managed_settings_path else None,
                                "present": False, "sha256": None}
     if managed_settings_path and pathlib.Path(managed_settings_path).is_file():
@@ -325,6 +332,18 @@ def settings_profile_identity(profile_bytes: bytes, managed_settings_path: "path
     else:
         digest.update(b"\nmanaged:absent")
     return digest.hexdigest(), managed
+
+
+def policy_document_bytes(settings: Mapping[str, Any], agents: Mapping[str, Any],
+                          hook_script: pathlib.Path) -> bytes:
+    """Canonical bytes of everything policy-relevant in a profile (see settings_profile_identity)."""
+    hook_sha = hashlib.sha256(pathlib.Path(hook_script).read_bytes()).hexdigest()
+    hooks_shape = {event: [{"matcher": h["matcher"], "n": len(h["hooks"])} for h in rows]
+                   for event, rows in settings.get("hooks", {}).items()}
+    mrl = {k: v for k, v in settings["mrl"].items() if k not in ("run_id", "managed_policy")}
+    doc = {"permissions": settings["permissions"], "hooks": hooks_shape, "hook_script_sha256": hook_sha,
+           "mrl": mrl, "agents": agents}
+    return json.dumps(doc, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
 def build_restricted_profile(
@@ -388,7 +407,8 @@ def build_restricted_profile(
     profile_path = profile_dir / "mrl_settings_profile.json"
     profile_bytes = json.dumps(settings, indent=2, sort_keys=True).encode("utf-8")
     profile_path.write_bytes(profile_bytes)
-    identity, managed = settings_profile_identity(profile_bytes, managed_settings_path)
+    identity, managed = settings_profile_identity(
+        policy_document_bytes(settings, agents, hook_script), managed_settings_path)
     settings["mrl"]["managed_policy"] = managed
     flags: list[str] = [
         "--restricted",
@@ -408,5 +428,5 @@ def build_restricted_profile(
 __all__ = [
     "LEDGER_SCHEMA", "PROFILE_SCHEMA", "MAX_DEPTH", "WRITER_POLICIES", "MCP_DENY_RULE",
     "SubagentContract", "Decision", "SubagentLedger", "RestrictedProfile",
-    "settings_profile_identity", "build_restricted_profile",
+    "settings_profile_identity", "policy_document_bytes", "build_restricted_profile",
 ]

@@ -233,6 +233,17 @@ class TestRestrictedProfile:
         b = self._build(tmp_path, allow_rules=("Read",))
         assert a.identity_sha256 != b.identity_sha256
 
+    def test_identity_is_policy_not_run_dir(self, tmp_path):
+        # Same policy in two different run directories -> same pinnable identity ...
+        a = self._build(tmp_path, ledger_path=tmp_path / "run-a" / "ledger.json", profile_dir=tmp_path / "run-a")
+        b = self._build(tmp_path, ledger_path=tmp_path / "run-b" / "ledger.json", profile_dir=tmp_path / "run-b")
+        assert a.identity_sha256 == b.identity_sha256
+        # ... while a modified hook script (same rules) changes it.
+        edited = tmp_path / "hook_copy.py"
+        edited.write_bytes(HOOK.read_bytes() + b"\n# tampered\n")
+        c = self._build(tmp_path, hook_script=edited, profile_dir=tmp_path / "run-c")
+        assert c.identity_sha256 != a.identity_sha256
+
 
 # ---------------------------------------------------------------- hook (in-process and real subprocess)
 
