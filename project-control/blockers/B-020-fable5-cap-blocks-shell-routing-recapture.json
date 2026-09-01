@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-020",
  "title": "M0-T132 admission held: the Fable 5 seven-day usage cap is rejecting model calls, so the digest-keyed shell-routing evidence at 2.1.252 (e713c5a6) cannot be honestly captured; a repin+recert now cannot satisfy the owner's ONE-combined-recert-at-ONE-identity requirement (R441/R442) without a later R247-invalidating second recert",
- "status": "open",
+ "status": "resolved",
  "affects": [
   "M0-T132 (D-024 Amendment 34 combined 2.1.252 admission + single R247 recertification): three owner-named fixtures captured (benign version-only drift), but the manifest repin + one combined recert are held"
  ],
@@ -14,7 +14,12 @@
    "at": "2026-09-01T02:05:00+00:00",
    "actor": "orchestrator",
    "action": "Created at the M0-T132 admission preflight+capture stage after the Fable 5 seven-day cap rejected the shell-routing behavioral probe (R394 stop; three owner-named fixtures captured showing benign version-only drift; no repin, no recert, no journal write; tree clean). Returns the OPTION A/B/C/D decision to the owner."
+  },
+  {
+   "at": "2026-09-01T03:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "RESOLVED via Amendment 35 Option B: opus-4-8 confirmed approved + available; shell-routing recaptured at e713c5a6 on opus-4-8 (native_preferred, 3 native tool uses); all four fixtures re-pointed; whole suite 3043/2/0 (the 3 M0-T131 CLI-drift failures resolved by the admission). Recert + gates proceeding."
   }
  ],
- "owner_decision": "PENDING"
+ "owner_decision": "Owner 2026-09-01 ('no waiting go on i need to start the codex loop even if fable is not available now') = Amendment 35 (R446/R447/R448): PROCEED NOW (reject the cap-wait Option A); commission under Fable unavailability via the fallback path = Option B. Resolved: opus-4-8 is APPROVED in the certified config.toml ([approved_models] + worker allowed_models), so it is a legal selection; the shell-routing recapture ran on claude-opus-4-8 (available, not capped - only the shared seven-day warning at 0.78) and produced native_preferred at e713c5a6. M0-T132 completed in one pass."
 }

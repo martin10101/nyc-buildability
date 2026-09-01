@@ -25,7 +25,7 @@ from tools.agent_supervisor.telemetry_hooks import KNOWN_HOOK_EVENTS
 from tools.agent_supervisor.telemetry_journal import TelemetryJournal
 
 FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
-CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_251.json"
+CATALOG_FIXTURE = FIXTURES / "hook_event_catalog_2_1_252.json"
 PAYLOADS_FIXTURE = FIXTURES / "hook_event_payloads_v1.json"
 STREAM_FIXTURE = FIXTURES / "stream_json_subagent_events_v1.json"
 RECORDER = Path(__file__).parents[1] / ".claude" / "hooks" / "supervisor_event_recorder.py"
@@ -290,14 +290,15 @@ def test_s7_unknown_event_recorded_honestly(tmp_path):
 # ---------- S8 version drift ----------------------------------------------
 
 def test_s8_catalog_fixture_valid_and_masked():
-    # M0-T118 re-capture (D-024 Amendment 13 R281): deliberate 2.1.251
-    # admission (M0-T092 precedent). Docs re-fetched 2026-08-29; unlike the
-    # identical 2.1.247->2.1.248 set, 2.1.251 is a REAL +2 event-set drift
-    # (PreModelSwitch + PostModelSwitch, 33 events). The 2_1_247/2_1_248
-    # catalogs stay committed as history.
+    # M0-T132 re-capture (D-024 Amendment 34): deliberate 2.1.252 admission
+    # (M0-T118 precedent). Docs re-fetched 2026-09-01; 2.1.252 is a benign patch
+    # bump with the IDENTICAL 33-event set as 2.1.251, so the REAL +2 drift
+    # (PreModelSwitch + PostModelSwitch) versus the 2.1.220/2.1.248 baseline
+    # carries unchanged. The 2_1_247/2_1_248/2_1_251 catalogs stay committed as
+    # history.
     data = ed.load_catalog_fixture()
-    assert data["task"] == "M0-T118"
-    assert data["claude_version"] == "2.1.251 (Claude Code)"
+    assert data["task"] == "M0-T132"
+    assert data["claude_version"] == "2.1.252 (Claude Code)"
     assert data["confidence"] == "official-docs"
     assert len(data["events"]) == 33
     whole = CATALOG_FIXTURE.read_text(encoding="utf-8")

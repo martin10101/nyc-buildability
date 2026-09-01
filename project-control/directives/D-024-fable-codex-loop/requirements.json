@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 445,
+  "requirement_count": 448,
   "producer": "orchestrator",
-  "updated_at": "2026-09-01T01:55:11.313215+00:00",
+  "updated_at": "2026-09-01T02:52:18.870476+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -14942,6 +14942,96 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 34
+    },
+    {
+      "id": "D-024-R446",
+      "text": "B-020 owner decision: PROCEED NOW - do not wait for the Fable 5 seven-day cap reset (Option A rejected). 'no waiting go on'.",
+      "source_ref": "source-035-amendment.md#proceed-now",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 35
+    },
+    {
+      "id": "D-024-R447",
+      "text": "Commission/start the codex loop even though Fable 5 is unavailable (capped) now: proceed under Fable unavailability using the campaign's established fallback-model path (workers/model-dependent work on the non-capped worker model claude-opus-4-8, per the M0-T074 model-routing set) rather than blocking on Fable. Does NOT lift any other owner gate (PR #241, R595 terms, gates, fail-closed identity/dependency rules unchanged).",
+      "source_ref": "source-035-amendment.md#start-under-fable-unavailable",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 35
+    },
+    {
+      "id": "D-024-R448",
+      "text": "Mechanical consequence = B-020 Option B: run the bounded shell-routing recapture at e713c5a6 on the non-capped worker model so M0-T132 completes in ONE pass (three owner-named fixtures + shell-routing at the admitted digest + repin + ONE combined R247 recert at ONE final frozen identity + gates G0/G2/G3/G4 + DCV + accept) -> certified startable identity; then prepare the certified --owner-enable-bounded-auto start under R254/R259. If the non-capped model is ALSO unavailable or any gate/identity check fails, the standard R394 stop-and-report applies.",
+      "source_ref": "source-035-amendment.md#option-b-finish",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T132"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-01"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 35
     }
   ]
 }

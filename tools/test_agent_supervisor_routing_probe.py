@@ -37,7 +37,7 @@ from tools.agent_supervisor import subagent_contracts as sc  # noqa: E402
 
 PACKAGE = REPO / "tools" / "agent_supervisor"
 FIXTURE_PATH = (PACKAGE / "fixtures"
-                / "shell_routing_2026-08-29_m0t120_2_1_251.json")
+                / "shell_routing_2026-09-01_m0t132_2_1_252.json")
 
 
 # --------------------------------------------------------------------------
@@ -50,11 +50,15 @@ class RoutingFixtureShapeTests(unittest.TestCase):
         self.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8-sig"))
 
     def test_the_committed_fixture_is_measured_and_versioned(self) -> None:
+        # M0-T132 re-capture (D-024 Amendment 34/35): re-measured at the 2.1.252
+        # admission on the approved worker model claude-opus-4-8 (Fable 5 was under
+        # its seven-day cap; opus-4-8 is the model the loop runs under). native
+        # routing reproduces the M0-T120 verdict; the digest identity is e713c5a6.
         self.assertEqual(self.fixture["schema"], rpr.ROUTING_SCHEMA)
         self.assertIs(self.fixture["measured"], True)
-        self.assertEqual(self.fixture["claude_version"], "2.1.251")
-        self.assertEqual(self.fixture["task"], "M0-T120")
-        self.assertEqual(self.fixture["requirement"], "R292")
+        self.assertEqual(self.fixture["claude_version"], "2.1.252")
+        self.assertEqual(self.fixture["task"], "M0-T132")
+        self.assertIn("R292", self.fixture["requirement"])
 
     def test_the_fixture_records_native_routing_and_no_shell(self) -> None:
         summary = self.fixture["routing_summary"]
@@ -238,8 +242,8 @@ class DriftToothTests(unittest.TestCase):
         self.assertTrue(result.passes)
 
     def test_the_committed_package_fixture_matches_the_installed_version(self) -> None:
-        """The bundled fixture is current for 2.1.251 - the tooth is green now."""
-        result = rp.probe_shell_routing_evidence(installed_version="2.1.251")
+        """The bundled fixture is current for the admitted 2.1.252 - green now."""
+        result = rp.probe_shell_routing_evidence(installed_version="2.1.252")
         self.assertTrue(result.passes)
         self.assertEqual(result.evidence["fixture"], FIXTURE_PATH.name)
 

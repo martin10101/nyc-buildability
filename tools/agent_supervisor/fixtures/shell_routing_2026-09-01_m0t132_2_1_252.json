@@ -1,0 +1,141 @@
+{
+ "argv_provenance": "built by claude_runner.build_argv(RunnerConfig(...)) - the SAME construction the certified start uses; the executable path is redacted to <executable>",
+ "argv_shape": [
+  "<executable>",
+  "-p",
+  "--input-format",
+  "stream-json",
+  "--output-format",
+  "stream-json",
+  "--verbose",
+  "--max-turns",
+  "1",
+  "--permission-mode",
+  "manual",
+  "--permission-prompt-tool",
+  "stdio",
+  "--model",
+  "claude-opus-4-8"
+ ],
+ "assignments": [
+  {
+   "assignment": "discovery",
+   "assistant_events": 2,
+   "brokered_denials": [],
+   "files_written": false,
+   "first_tool_classification": "native",
+   "max_turns": 1,
+   "returncode": 1,
+   "timed_out": false,
+   "tool_uses": [
+    {
+     "assignment": "discovery",
+     "brokered": false,
+     "classification": "native",
+     "input_excerpt": "<tmp>\\routing_probe_<id>",
+     "order": 1,
+     "tool_name": "Grep"
+    }
+   ]
+  },
+  {
+   "assignment": "edit",
+   "assistant_events": 3,
+   "brokered_denials": [
+    {
+     "assignment": "edit",
+     "classification": "native",
+     "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+     "order": 1,
+     "tool_name": "Edit"
+    }
+   ],
+   "files_written": false,
+   "first_tool_classification": "native",
+   "max_turns": 2,
+   "returncode": 1,
+   "timed_out": false,
+   "tool_uses": [
+    {
+     "assignment": "edit",
+     "brokered": false,
+     "classification": "native",
+     "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+     "order": 1,
+     "tool_name": "Read"
+    },
+    {
+     "assignment": "edit",
+     "brokered": true,
+     "classification": "native",
+     "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+     "order": 2,
+     "tool_name": "Edit"
+    }
+   ]
+  }
+ ],
+ "brokered_denials": [
+  {
+   "assignment": "edit",
+   "classification": "native",
+   "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+   "order": 1,
+   "tool_name": "Edit"
+  }
+ ],
+ "capture_model": "claude-opus-4-8",
+ "capture_note": "Recaptured at the 2.1.252 admission (D-024 Amendment 34/35). Routing measured on the approved worker model claude-opus-4-8 because Fable 5 was under its seven-day usage cap (R220/R221/R447/R448); opus-4-8 is the model the loop runs under while Fable is unavailable. Routing behavior is a CLI/tool property and native_preferred reproduces the M0-T120 verdict; the digest identity is what the gate matches.",
+ "claude_version": "2.1.252",
+ "claude_version_line": "2.1.252 (Claude Code)",
+ "cli_identity": "e713c5a6c8bc71afbc149988c0d7ac4e313bf371316ed2b34e261e34c785a883",
+ "cli_identity_kind": "sha256_head+size",
+ "cli_identity_provenance": "sha256 head+size digest of the SAME installed claude.exe the routing was measured against, computed by file hash (executable_identity) - NOT a provider call and NOT a re-run of the probe; it pins this measured routing evidence to the exact binary identity the gate checks (_claude_cli_identity).",
+ "directive": "D-024",
+ "env_provenance": "child environment built by process.claude_child_env(extra_env, allowlist) - the SAME minimal allowlist + forced DISABLE_AUTOUPDATER=1 the certified start uses; the probe adds nothing",
+ "error": "",
+ "measured": true,
+ "measured_note": "MEASURED-LIVE: every tool the worker reached for below was observed from a bounded non-forwarding run of the installed executable under the deny-everything handler. Mutating tools were brokered and DENIED; read-only tools the CLI auto-allowed are recorded with brokered=false. No repository path was named and no worker file write was observed (files_written per assignment). When `measured` is False the run did not establish routing (see `error`) and this is NOT evidence.",
+ "no_worker_file_write_observed": true,
+ "permission_handler": "deny_everything (every brokered request recorded and denied)",
+ "provider_call_ceiling": 3,
+ "provider_calls_made": 3,
+ "requirement": "R292/R295 recaptured at the 2.1.252 admission",
+ "routing_summary": {
+  "discovery_first_tool": "native",
+  "edit_first_tool": "native",
+  "native": 3,
+  "other": 0,
+  "shell": 0,
+  "total_tool_uses": 3,
+  "verdict": "native_preferred"
+ },
+ "schema": "shell_routing/v1",
+ "task": "M0-T132",
+ "tool_use_stream": [
+  {
+   "assignment": "discovery",
+   "brokered": false,
+   "classification": "native",
+   "input_excerpt": "<tmp>\\routing_probe_<id>",
+   "order": 1,
+   "tool_name": "Grep"
+  },
+  {
+   "assignment": "edit",
+   "brokered": false,
+   "classification": "native",
+   "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+   "order": 1,
+   "tool_name": "Read"
+  },
+  {
+   "assignment": "edit",
+   "brokered": true,
+   "classification": "native",
+   "input_excerpt": "<tmp>\\routing_probe_<id>\\sample_module.py",
+   "order": 2,
+   "tool_name": "Edit"
+  }
+ ]
+}

@@ -31,7 +31,9 @@
     "tools/test_agent_supervisor_capability_probe.py",
     "tools/test_agent_supervisor_native_adapter.py",
     "project-control/reports/M0-T132-producer-report.md",
-    "project-control/reports/M0-T132-admission-evidence.md"
+    "project-control/reports/M0-T132-admission-evidence.md",
+    "tools/test_agent_supervisor_routing_probe.py",
+    "project-control/reports/M0-T132-routing-capture.py"
   ],
   "forbidden_paths": [
     ".claude/settings.json",
@@ -101,12 +103,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "blocked",
-  "progress_percent": 25,
+  "status": "in_progress",
+  "progress_percent": 60,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-01T01:58:06.749580+00:00",
-  "updated_at": "2026-09-01T02:33:36.530324+00:00",
+  "updated_at": "2026-09-01T03:22:20.531156+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -130,6 +132,13 @@
       "percent": 25,
       "status": "blocked",
       "message": "BLOCKED by B-020 (R394 stop). Preflight PASS (identity settled e713c5a6). Three owner-named fixtures captured live: benign version-only drift (claude --help sha unchanged 83af8a9a7edc; 33 hook events unchanged per official docs; native flags/verbs/background identical). LIVE BLOCKER: Fable 5 seven-day usage cap is REJECTING model calls (rate_limit_event 'rejected' seven_day_overage_included; 'You've reached your Fable 5 limit'), so the digest-keyed shell-routing evidence (R295 fold, ANDed into cli_capability_manifest) cannot be honestly captured at the new digest. R221 forbids spending owner allowance to work around it; R441/R442 require ONE combined recert at ONE identity, and R247 would force a second recert if shell-routing is captured after this one. Also a genuine scope ambiguity: shell-routing is a fourth, digest-entangled fixture beyond the owner's 'three affected fixtures'. No repin, no recert, no journal write; capped-model artifact fixture deleted (would false-green the gate); tree clean. Owner decision A/B/C/D required."
+    },
+    {
+      "at": "2026-09-01T03:22:20.527381+00:00",
+      "agent": "orchestrator-admission-runner",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "B-020 resolved via Amendment 35 Option B (owner: proceed now, commission under Fable unavailability). opus-4-8 confirmed approved+available; shell-routing recaptured at e713c5a6 on opus-4-8 (native_preferred). Four fixtures captured+re-pointed; teeth green; whole suite 3043/2/0 (the 3 M0-T131 CLI-drift failures RESOLVED by the admission). Recert next."
     }
   ]
 }

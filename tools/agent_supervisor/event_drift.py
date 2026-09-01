@@ -34,14 +34,15 @@ from typing import Any, Iterable
 from .telemetry_hooks import KNOWN_HOOK_EVENTS
 
 CATALOG_SCHEMA = "hook_event_catalog/v1"
-# M0-T118 (D-024-R281 Amendment 13): re-pointed 2_1_248 -> 2_1_251 for the
-# deliberate 2.1.251 admission (M0-T092 precedent). Unlike the identical
-# 2.1.247->2.1.248 set, 2.1.251 is a REAL +2 event-set drift versus the
-# 2.1.220/2.1.248 baseline (added PreModelSwitch + PostModelSwitch, 33 total);
-# the fixture records the reconciled drift and the deterministic test bites on
-# it. The 2_1_247/2_1_248 catalogs stay committed as append-only history.
+# M0-T132 (D-024 Amendment 34): re-pointed 2_1_251 -> 2_1_252 for the deliberate
+# 2.1.252 admission (M0-T118 precedent). 2.1.252 is a benign patch bump: the
+# documented event set is IDENTICAL to 2.1.251 (33 events; claude --help sha256
+# unchanged), so the +2 drift versus the 2.1.220/2.1.248 baseline (PreModelSwitch
+# + PostModelSwitch) carries unchanged. The fixture records the reconciled drift
+# and the deterministic test bites on it. The 2_1_247/2_1_248/2_1_251 catalogs
+# stay committed as append-only history.
 CATALOG_FIXTURE_PATH = (pathlib.Path(__file__).resolve().parent / "fixtures"
-                        / "hook_event_catalog_2_1_251.json")
+                        / "hook_event_catalog_2_1_252.json")
 
 
 class CatalogFixtureError(ValueError):

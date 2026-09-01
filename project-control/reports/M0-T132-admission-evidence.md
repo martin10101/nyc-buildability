@@ -1,5 +1,12 @@
 # M0-T132 — admission preflight + live-drift findings + STOP assessment (D-024 Amendment 34, R437..R445)
 
+> **SUPERSEDED 2026-09-01 by Amendment 35 (owner: "no waiting go on i need to start the codex loop
+> even if fable is not available now").** The STOP (§3–§6 below) was correct at the time. The owner
+> then ruled B-020 **Option B** (proceed now on the non-capped worker model): `claude-opus-4-8` is
+> approved in `config.toml`, the shell-routing recapture ran on it (`native_preferred` at `e713c5a6`),
+> and M0-T132 completed in one pass. Current outcome: `M0-T132-recertification.md` (recert PASS) +
+> `M0-T132-G2-self-check.md`. This report is retained as the accurate snapshot of the R394 stop.
+
 Executed by the orchestrator in the primary control checkout `ctl24`, 2026-09-01. This report is the
 ONE consolidated system-level assessment R394 requires: the fresh preflight PASSED, the three
 owner-named fixtures were captured live and show only benign version-string drift, and then a live

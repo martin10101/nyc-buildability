@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-01T02:31:50.448103+00:00",
+  "updated_at": "2026-09-01T02:52:18.870476+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -284,6 +284,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-01T01:55:11.313215+00:00",
       "content_digest_sha256": "d839406fee1e3dcc9a2272d7fc993c295ac2dab2448caa1b1e37d632868ffa1f"
+    },
+    {
+      "file": "source-035-amendment.md",
+      "kind": "amendment",
+      "sequence": 35,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-01T02:52:18.870476+00:00",
+      "content_digest_sha256": "53d92424fada621fa98a6ffe8b6fba0a1760ded95dc6eee87755f81639e94a2b"
     }
   ],
   "amendments": [
@@ -319,7 +327,8 @@
     "source-031-amendment.md",
     "source-032-amendment.md",
     "source-033-amendment.md",
-    "source-034-amendment.md"
+    "source-034-amendment.md",
+    "source-035-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -866,10 +875,13 @@
     "D-024-R442",
     "D-024-R443",
     "D-024-R444",
-    "D-024-R445"
+    "D-024-R445",
+    "D-024-R446",
+    "D-024-R447",
+    "D-024-R448"
   ],
-  "requirements_id_digest_sha256": "de65916d8bdb860557fe9f84b7bc1b5cfa0eb5b4d0011f4c8c750d54aee8ddcd",
-  "requirements_content_digest_sha256": "5624f66f82200315411124180ab50f6423ff09d669297f293ff7013b389c66be",
+  "requirements_id_digest_sha256": "003435d15a4d6db70c54fd3294277993769cb4f5321cd3489354260890087ff1",
+  "requirements_content_digest_sha256": "5c670de77c638a9003ca48a82f2f8f15a84beb893cf5f29a7409b68128b439e0",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1067,6 +1079,11 @@
       "at": "2026-09-01T01:55:11.313215+00:00",
       "by": "orchestrator",
       "note": "Amendment 34 captured (owner 2026-08-31/09-01): fresh-process preflight verified PASS by the successor session (DISABLE_AUTOUPDATER=1 inherited, DISABLE_UPDATES unset, --version 2.1.252, on-disk identity e713c5a6 == versions/2.1.252, running process on the new image, downloads empty, nothing newer staged, mcp empty, git identity clean at 1d4a6212). R439 is the separate owner authorization contemplated by R436 for the bounded M0-T132 combined admission + recertification lane (R440 admission scope, R441 ONE combined R247 recert, R442 gates+DCV at one frozen identity, R443/R444 preservation and prohibitions, R445 present-only restart commands). Rows bind task id M0-T132."
+    },
+    {
+      "at": "2026-09-01T02:52:18.870476+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 35 captured (owner 2026-09-01 'no waiting go on i need to start the codex loop even if fable is not available now'): B-020 resolved -> R446 proceed now (reject cap-wait), R447 commission under Fable unavailability via the fallback-model path, R448 = B-020 Option B (bounded shell-routing recapture at e713c5a6 on claude-opus-4-8, finish M0-T132 in one pass, prepare the certified start). No other owner gate lifted; R394 stop applies if the fallback model is also unavailable or any gate fails. Rows bind M0-T132."
     }
   ]
 }
