@@ -6,62 +6,75 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 49: M0-T132 ACCEPTED (2.1.252 admitted + combined R247 recert); owner-typed commissioning is the only thing left
+## Handoff - seq 50: M0-T133 (checkpoint-envelope fix) AWAITING_GATE; G3/G4/DCV in flight (owner /session-handoff)
 
-1. **Generated:** 2026-09-01 by the successor orchestrator (Fable 5). Owner Amendment 35 ("no waiting
-   go on i need to start the codex loop even if fable is not available now") resolved **B-020 Option B**
-   (proceed on the approved non-capped worker model `claude-opus-4-8`). M0-T132 ran the full standard
-   lifecycle and is **ACCEPTED**. Tree clean; zero live agents.
-2. **Identity (live at write):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `control/D-024-fable-codex-loop` (campaign seq **66**), accepted at frozen `d743ad24` (this commit
-   advances HEAD with the acceptance records). local == origin before this commit.
-3. **ADMITTED: Claude Code 2.1.252 (`e713c5a6`).** Fresh preflight PASS (Bootstrap Gate 0 + R438):
-   `/mcp` empty; `DISABLE_AUTOUPDATER=1` inherited; `DISABLE_UPDATES` unset; `claude --version` 2.1.252;
-   on-disk `claude.exe` = `e713c5a6`, 217,406,624 B == `versions/2.1.252`; nothing newer staged.
-4. **What ran (all evidence committed):** FOUR fixtures at 2.1.252 — `capability_probe` (`--help` sha256
-   UNCHANGED `83af8a9a7edc`), `hook_event_catalog` (docs re-fetched: same 33 events, no drift),
-   `native_runtime_detection` (identical), and **`shell_routing` measured at `e713c5a6` on
-   `claude-opus-4-8`** (`native_preferred`, observed live `can_use_tool` brokering). `event_drift.py`
-   re-pointed + four test files. **Whole suite 3,043/2/0** — the admission RESOLVED the exact 3 M0-T131
-   CLI-drift failures (3,040+3). **Combined R247 recert PASS:** manifest re-recorded to `c228b7ca`
-   binding BOTH `codex_reviewer.py` (M0-T131) AND `event_drift.py` (M0-T132); `verify-controller` +
-   non-live `doctor` PASS. Gates: **G0/G2 PASS, G3 code-reviewer PASS, G4 qa-engineer PASS** (clean-room
-   3,043/2/0 + red-on-mutant on 4 teeth), **DCV PASS 18/18 (R431–R448), zero violations**. Validator EXIT=0.
-5. **Honest disclosures (Fable-cap artifacts, NOT failures — recert §4):** routing captured on opus
-   because Fable 5 is under its seven-day cap; `doctor --live` control-response FAILED only because that
-   probe hardcodes the capped Fable default (NOT a 2.1.252 protocol break — the routing probe observed a
-   live `can_use_tool` on opus — and NOT a start gate); running it refreshed the journal's stale
-   control-response probe record, but **`transitions=35`/`audit=85` are unchanged**.
-6. **EXACT next actions — owner-typed commissioning (present-only here; parse-validated;
-   `project-control/reports/M0-T132-commissioning-presentation.md`):** (1) **`record-manifest --out
-   <stored manifest>`** to rebind the certified activation manifest `26a05096…`→`c228b7ca…` (the local
-   write classifier blocked the orchestrator, so the OWNER types this); (2) set
-   `C:/SupervisorController/model_selection.toml` `[claude] model = "claude-opus-4-8"` (runs under Fable
-   unavailability; opus is approved; R447 — the orchestrator can do this one-line edit on the owner's
-   say-so, held back only for R146); (3) **`owner-restart --checkout <ctl24>`** (HALTED→IDLE); (4)
-   **`start --mode limited-auto --owner-enable-bounded-auto --repin-cli-identity …`** (the `--repin-cli-identity`
-   completes the admission at the journal level; the start runs on opus). The start's pre-dispatch relies
-   on `cli_capability_manifest` + the digest-keyed `shell_routing` evidence (present at `e713c5a6`), NOT a
-   live control-response round-trip.
-7. **Preservation:** journal HALTED (transitions 35, audit 85 — only the stale control-response probe
-   record refreshed); `wt-m0t107` `c5c6ff7` + two untracked journey-4 drafts; `wt-m0t109` `1c06957`;
-   queue digest `11eaa5a7`; owner-touch 3-of-2; budgets; PR #241 OPEN. The orchestrator executed NO
-   commissioning command (R444).
-8. **Successor must read:** `CLAUDE.md`; this file; `.claude/session-handoff-profile.md`;
-   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 66); `project-control/reports/`:
-   `M0-T132-recertification.md`, `M0-T132-commissioning-presentation.md`, `M0-T132-DCV.md` (+supplement),
-   `M0-T132-G3-code-review.md`, `M0-T132-G4-qa-review.md`, `M0-T132-admission-evidence.md`; directives
-   `source-034/035-amendment.md`.
-9. **Stop/change conditions:** Gate-0 failure; validator non-zero; any owner-only item (the commissioning
-   start IS one — R595 `--owner-enable-bounded-auto`, owner-typed); any live failure (R394: stop, preserve,
-   one consolidated assessment); supervisor commits cite `D-024-R###`; producers UNNAMED + roster-typed,
-   rotate-at-seam, never resumed after a kill; campaign next_action pure ASCII; registry JSON writes LF.
-10. **Successor prompt:** *"Work from durable repository evidence only. Verify root, branch, HEAD, tree,
-    and /mcp empty (Bootstrap Gate 0) before any change. Read CLAUDE.md, docs/SESSION_HANDOFF.md, and the
-    section-8 files. Run `python tools/project_control.py status` and `python -m
-    tools.agent_supervisor.campaign_continuity --status`; reconcile against live git + the ledger (they
-    win). M0-T132 is ACCEPTED — Claude Code 2.1.252 (e713c5a6) is admitted and the combined R247 recert
-    is complete. The only thing left is the OWNER-TYPED commissioning sequence in
-    M0-T132-commissioning-presentation.md (record-manifest rebind, model_selection opus pin, owner-restart,
-    start --repin-cli-identity). Do NOT execute the start yourself; present it and wait. Never merge PR
-    #241. The D-010 ~400k rotate-at-seam ceiling governs."*
+1. **Generated:** 2026-09-01 by the orchestrator (Fable 5), owner `/session-handoff` (no reason
+   given). New work stopped. Durable state SAFE: tree clean, local == origin.
+2. **Identity (live):** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
+   `control/D-024-fable-codex-loop` (campaign seq **69**), HEAD `78f4d675`, origin
+   `https://github.com/martin10101/nyc-buildability.git`. Dirty files: **none**.
+3. **Where the campaign stands:** M0-T131 + M0-T132 ACCEPTED (Claude Code **2.1.252 `e713c5a6`
+   admitted**; combined R247 recert done). Commissioning journey-5 was the FIRST live limited-auto
+   dispatch (ran on opus-4-8) and stopped `no_valid_checkpoint` - the opus worker omitted the four
+   required git-state checkpoint fields. Owner authorized **M0-T133** (Amendment 37, rows
+   `D-024-R460..R471`) to fix it.
+4. **M0-T133 = controller-authoritative git-state checkpoint enrichment.** IMPLEMENTED + committed:
+   new `tools/agent_supervisor/checkpoint_envelope.py` makes `branch/worktree/starting_sha/current_sha`
+   controller-authoritative (filled from the dispatch context + a fresh read-only git measurement
+   BEFORE validation; exact match-or-fail-closed for any worker-supplied; worker bytes preserved +
+   enrichment audited; scoped to `limited-auto` per the R295 precedent). `claude_runner.py`
+   (extract_checkpoint split; run_unit envelope + RunResult fields) + `loop.py` (starting_sha
+   measurement, envelope build, audit). `models.py`/ClaudeCheckpoint UNCHANGED (fail-closed integrity
+   preserved). Tests: **24 new** (all 8 owner scenarios + removal-sensitivity on the exact journey-5
+   shape). Affected packs **477/0**, golden **42**, whole suite **3,067 passed / 2 skipped / 0 failed**
+   (3,043 baseline +24). ruff/modularity/command-doc clean.
+5. **Gates so far:** G0 PASS, G2 self-check PASS (both committed). **IN FLIGHT (session-bound):** G3
+   `code-reviewer`, G4 `qa-engineer`, DCV `directive-compliance-verifier` - all dispatched at
+   `78f4d675` on the **opus** fallback (R460). They report to THIS session. **If this session is
+   alive, it records their gates when they land; if a successor takes over, RE-DISPATCH all three
+   read-only at `78f4d675`** (their in-flight results do not cross sessions). Do NOT kill them for
+   turnover.
+6. **R247 recert evidence PRE-STAGED (scratch, not yet applied):** the recert re-records the manifest
+   to **126 files digest `ba23b3b7`** (adds `checkpoint_envelope.py`; changes `claude_runner.py` +
+   `loop.py`); `verify-controller` + non-live `doctor` PASS against it; journal preserved
+   (PAUSED_RECOVERY, transitions 40, audit 104). The stored manifest at
+   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json` is still the
+   accepted `c228b7ca` (M0-T132) - the re-record happens AT the recert, after acceptance.
+7. **EXACT next action:** when G3/G4 PASS + DCV PASS (18/18-style, R460-R471) at `78f4d675`: record the
+   gates + DCV verification.json row; **accept M0-T133**; run the single **R247 recertification**
+   (record-manifest to the stored path -> `ba23b3b7`; verify-controller; non-live doctor; cite the
+   already-run golden 42 + whole suite 3067/2/0 - do NOT re-run; NEVER `doctor --live` while Fable is
+   capped); then **present ONLY** (R470/R471, do NOT execute): the targeted proof, the exact
+   owner-typed `clear-recovery --checkout C:/Users/MLFLL/Downloads/nyc-zoning/ctl24` (journal is
+   PAUSED_RECOVERY, so clear-recovery NOT owner-restart), and one parse-validated `start ...
+   --repin-cli-identity --run-id <fresh-unused>` (the M0-T132 commissioning line with a NEW run id;
+   NOT `m0t107-commission-20260901`, already used).
+8. **Preservation / standing gates:** journal PAUSED_RECOVERY (transitions 40, audit 104, chain ok);
+   owner-touch 1-of-2 on run `m0t107-commission-20260901` (+ exhausted `run_33dfa57d54db`); model pin
+   `claude-opus-4-8` (owner-set for commissioning); PR #241 OPEN; wt-m0t107 `c5c6ff7` + 2 untracked
+   drafts; wt-m0t109 `1c06957`. **Never merge PR #241.** R394 on any live failure. Do NOT run
+   `doctor --live` while Fable 5 is capped (it records a false-negative capability probe that
+   fail-closes the start - see `M0-T132-commissioning-start-refusal.md`). Owner-only: credentials,
+   payment, production, legal, the commissioning start itself.
+9. **Successor must read:** `CLAUDE.md`; this file; `.claude/session-handoff-profile.md`;
+   `project-control/campaigns/D-024-fable-codex-loop.json` (seq 69); `project-control/reports/`:
+   `M0-T133-producer-report.md`, `M0-T133-G2-self-check.md`, `M0-T133-evidence-map.json`,
+   `M0-T107-commissioning-journey-5.md`, `M0-T132-commissioning-presentation.md`,
+   `M0-T132-commissioning-start-refusal.md`; directives `source-034..037-amendment.md`.
+10. **Stop/change conditions:** Gate-0 failure; validator non-zero; any owner-only item; any live
+    failure (R394); supervisor commits cite `D-024-R###`; producers UNNAMED + roster-typed; campaign
+    next_action pure ASCII; registry JSON writes LF. If a reviewer returns FAIL, move M0-T133 to
+    rework (do NOT accept).
+11. **Successor prompt:** *"Work from durable repository evidence only. Verify root =
+    C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch control/D-024-fable-codex-loop, HEAD, tree clean,
+    /mcp empty (Bootstrap Gate 0) before any change. Read CLAUDE.md, docs/SESSION_HANDOFF.md, and the
+    section-9 files. Run `python tools/project_control.py status` and `python -m
+    tools.agent_supervisor.campaign_continuity --status`; reconcile against live git + the ledger
+    (they win). M0-T133 is AWAITING_GATE at 78f4d675 (the checkpoint-envelope fix for journey-5) with
+    G0/G2 PASS; its G3/G4/DCV were dispatched in the prior session and do NOT cross sessions -
+    RE-DISPATCH code-reviewer + qa-engineer + directive-compliance-verifier read-only at 78f4d675 on
+    the opus fallback (R460). On all PASS: record the gates + DCV row, accept M0-T133, run the single
+    R247 recert (manifest -> ba23b3b7; verify-controller + non-live doctor; cite golden 42 + whole
+    suite 3067/2/0; NEVER doctor --live while Fable is capped), then PRESENT ONLY the clear-recovery +
+    fresh-run-id start (do NOT execute). Never merge PR #241. R394 on any live failure. The D-010
+    ~400k rotate-at-seam ceiling governs."*
