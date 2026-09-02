@@ -31,12 +31,13 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    (R651/R674). M0-T137 backlog (owner-only R603-R605); M0-T133 rework; M0-T135 backlog.
 5. **Owner-run continuation (R697/R699):** ONE deployed script
    `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\run_m0t142_fable_switch_and_canary.ps1`
-   (SHA-256 442782a4073ed8cc6cd08b8f63350bdecd54905f621a2882e45b31a268632e09; PS 5.1 parse 0
+   (SHA-256 e8c693ae77fdf16620000bc99c92dd77d40e0b24d0feec700b1b8403f93bd164; PS 5.1 parse 0
    errors; prior scripts renamed `.superseded-*`). Fail-fast: P0 preconditions (incl. stale
    wt-controller-src removal + REUSED b5-01 PASS row) -> backup -> install f8f0f0c8 ->
    record-manifest -> verify-manifest -> **PM canonical owner switch model_selection [claude]
    model -> exact `claude-fable-5`** (backup in activation dir; fallback stays []) -> normal
-   doctor -> conditional s9a clear-recovery -> draft (allow Read/Grep/Glob/Agent, BARE DENY Bash,
+   doctor (which ALSO asserts its model_selection row reads claude-fable-5; the former
+   python-import validation is removed - attempt-3 evidence M0-T140-canary-attempt3-pm-validation-refusal.md) -> conditional s9a clear-recovery -> draft (allow Read/Grep/Glob/Agent, BARE DENY Bash,
    runtime model from selection) -> exactly ONE one-shot `--run-id canary-b5-02r2` -> corrected
    rows (3: Claude auth vs Codex NOT_RUN split; 4: verified primary + `--model claude-fable-5`
    argv proof; 6: Bash absent+never executed; 8: unit accounting) -> harness -> ten-row table +
@@ -71,7 +72,7 @@ Gate 0 (cwd is that root, `/mcp` empty). Read `CLAUDE.md`, this file,
 `python tools/project_control.py status`; the ledger wins (campaign record stale at seq 71).
 M0-T141 + M0-T142 are ACCEPTED at frozen corrected candidate f8f0f0c8 (binding pins it).
 M0-T140 stays claimed until the owner-typed canary finishes: the owner runs
-`run_m0t142_fable_switch_and_canary.ps1` (ctl24-activation; sha 442782a4...; installs f8f0f0c8,
+`run_m0t142_fable_switch_and_canary.ps1` (ctl24-activation; sha e8c693ae...; installs f8f0f0c8,
 switches model_selection to exact claude-fable-5, runs ONE canary-b5-02r2 one-shot). Do NOT
 push, create/update/merge any PR, execute the owner script, rerun b5-01, change model_selection
 yourself, or start Tranche C. After CANARY_PACKAGE_PASS: write M0-T140's canary-execution
