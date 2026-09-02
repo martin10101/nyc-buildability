@@ -1,88 +1,88 @@
 {
- "task_id": "M0-T139",
- "title": "D-024 Amendment 42: controller-update transaction hardening (checked-in verified backup phase, backup-bound install, audited verified rollback, fail-closed raw exit codes, doc sweep, ps_tests mutants)",
- "task_type": "governance",
- "milestone_id": "M0",
- "objective": "Harden the controller-update transaction end to end per D-024-R622..R643: replace the manual runbook section-3 backup block with a tested fail-closed -Phase backup in tools/controller_update/update_controller_from_candidate.ps1 (unique collision-refused backup directory, per-invocation raw exit codes with typed terminating refusals, pre-copy approved-path/containment/reparse verification, complete bidirectional SHA-256 proof of both backups, atomic bound backup-evidence record); bind -Phase install to the exact verified backup-evidence identity (never newest) with the same pre-mirror containment/reparse discipline; replace section-10 with a -Phase rollback that restores the bound backup exactly (no partial-install residue) and proves post-restore digest equality; resolve the stale model-selection hash wording and the wt-m0t063-vs-canary checkout explanation without interpreting R603-R605; cover every failure class with positive ps_tests and independent mutants under real PowerShell 5.1 raw-exit behavior; run the affected checks at the frozen evidence head; submit awaiting independent G3/G4/DCV review.",
- "business_reason": "Owner directive 2026-09-02 (Amendment 42): the preflight adjudication proved runbook section 3 is not fail-closed (second robocopy masks the first failure) and the rollback auto-selects an arbitrary newest backup and cannot remove partial-install residue; a failed update could destroy the only healthy controller with no proven backup and no bound recovery path.",
- "inputs": [
-  "project-control/directives/D-024-fable-codex-loop/source-042-amendment.md (D-024-R622..R643)",
-  "project-control/reports/M0-T139-transaction-trace.md (the R623 pre-edit consolidated trace: D1-D17 clustered)",
-  "docs/CONTROLLER_UPDATE_RUNBOOK.md sections 1-4 + 10 (the defect surface) at d4f55668",
-  "tools/controller_update/update_controller_from_candidate.ps1 + source_binding.json + ps_tests/ (accepted M0-T138 base being extended)",
-  "project-control/reports/M0-T136-canary-package.md (READ-ONLY: canary checkout contrast for the R637 wt-m0t063 clarification; contents must not change, R641)",
-  "tools/supervisor_command_doc_check.py + tools/agent_supervisor/command_docs.py (READ-ONLY: the command-document tooth; fenced supervisor commands in the runbook must stay valid)",
-  "Accepted identity: frozen candidate 1489879e1f6787a9d53ed74db4524b24039e03a2, tools/agent_supervisor subtree 79af11a2c7fa33c8f5c1bf85c17e310736bf30a3 (unchanged by this task)"
- ],
- "outputs": [
-  "tools/controller_update/update_controller_from_candidate.ps1 extended to four phases: -Phase backup (unique collision-refused backup dir; per-invocation raw exit codes with typed terminating refusals; pre-copy approved-path/containment/reparse verification of every source and destination; complete bidirectional raw SHA-256 proof of BOTH backups; atomic controller_backup_evidence.json bound to run id, paths, pre-update controller identity, both raw copy codes, full digest sets, PASS verdict), -Phase install additionally requiring + re-verifying + recording the exact backup-evidence identity (never 'newest') with pre-mirror containment/reparse checks and post-mirror cache-residue removal, -Phase verify-manifest (unchanged contract), -Phase rollback (restores the BOUND backup only, same mirror discipline, removes partial-install residue, proves post-restore bidirectional digest equality, removes stale activation records with checked results, atomic rollback evidence)",
-  "tools/controller_update/source_binding.json schema v2: + backup_root, a1_runtime_dir (64-hex tail validated), backup_evidence, rollback_evidence; all v1 keys and pinned identities unchanged",
-  "tools/controller_update/ps_tests/: fixtures extended (v2 bindings, old-controller destination tree, fixture A1 runtime dir), new positive + refusal tests for every R634 failure class, extended mutants suite, PS 5.1 parse tooth over the new phases",
-  "docs/CONTROLLER_UPDATE_RUNBOOK.md: section 3 = ONE -Phase backup command; section 4 = backup-bound install note; section 10 = ONE -Phase rollback command; section 1 model-selection row de-staled (no R603-R605 interpretation); sections 2/7-9 wt-m0t063-vs-canary-checkout explanation (D15-D17)",
-  "project-control/reports/M0-T139-producer-report.md + M0-T139-G2-self-check.md + M0-T139-evidence-map.json (evidence at the frozen head)"
- ],
- "dependencies": [
-  "M0-T138"
- ],
- "allowed_paths": [
-  "docs/CONTROLLER_UPDATE_RUNBOOK.md",
-  "docs/SESSION_HANDOFF.md",
-  "tools/controller_update/",
-  "project-control/reports/M0-T139-transaction-trace.md",
-  "project-control/reports/M0-T139-producer-report.md",
-  "project-control/reports/M0-T139-G2-self-check.md",
-  "project-control/reports/M0-T139-evidence-map.json",
-  "project-control/reports/M0-T139-gates/"
- ],
- "forbidden_paths": [
-  "tools/agent_supervisor/ (accepted frozen-candidate surface; R594/R641 - no live supervisor behavior change)",
-  "project-control/reports/M0-T136-canary-package.md (R641: canary contents unchanged)",
-  "project-control/reports/M0-T136-*.md M0-T138-*.md (accepted evidence immutable, R622)",
-  "C:/SupervisorController and all live machine state (R642: no backup/install/rollback/doctor execution)",
-  "model_selection.toml anywhere; R603-R605 rows (R641: never interpreted)"
- ],
- "acceptance_scenarios": [
-  "AS-TX-1 (R625/R626): ps_tests lock a fixture controller source file exclusively and run -Phase backup: it refuses copy_failed naming the controller tree with raw exit 1, writes NO evidence file, and creates NO runtime-a1 copy - the first robocopy failure is never masked by a second copy.",
-  "AS-TX-2 (R627/R628): a junction planted at a backup source/root refuses reparse_point_detected before any copy; a binding whose backup path escapes its approved root refuses containment; the backup directory is fresh and collision-refused.",
-  "AS-TX-3 (R629/R630): a clean -Phase backup exits 0 and writes atomic controller_backup_evidence.json (schema controller_backup_evidence/v1) carrying run id, exact paths, both raw robocopy codes, complete bidirectional digest sets for BOTH trees, verdict PASS; a file deleted from / altered in / added to the backup afterwards makes the next phase refuse.",
-  "AS-TX-4 (R631): -Phase install without backup evidence refuses backup_evidence_missing; a tampered backup refuses backup_tampered; a destination modified after backup refuses backup_stale; a successful install records the backup run id + evidence digest in controller_update_evidence.json.",
-  "AS-TX-5 (R632/R633/R635): with a decoy newer directory under the backup root, -Phase rollback restores the BOUND backup (decoy untouched); an extra module planted at the destination is ABSENT after rollback; post-restore bidirectional SHA-256 equality against the bound evidence is proven; stale activation records are removed with checked results.",
-  "AS-TX-6 (R638): the mutants suite disables each new load-bearing guard in a COPY of the script and proves the behavioral difference under real powershell.exe -File raw exit codes (wrongly-passing where isolatable; changed refusal identity where a deeper layer still catches, documented per case)."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4"
- ],
- "producer_agent": "orchestrator",
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "directive-compliance-verifier"
- ],
- "status": "claimed",
- "progress_percent": 10,
- "risks": [],
- "blockers": [],
- "created_at": "2026-09-02T07:10:05.781243+00:00",
- "updated_at": "2026-09-02T07:17:44.546146+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-024",
-   "requirement_ids": "ALL"
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-09-02T07:10:05.781243+00:00",
- "documented_test_commands": [
-  "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1",
-  "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/agent_supervisor/ps_tests/run_ps_tests.ps1",
-  "python tools/supervisor_command_doc_check.py",
-  "python tools/supervisor_command_doc_check.py --doc project-control/reports/M0-T136-canary-package.md",
-  "python tools/validate_directive_compliance.py --check",
-  "python tools/modularity_check.py --check",
-  "python tools/context_budget_check.py"
- ],
- "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
+  "task_id": "M0-T139",
+  "title": "D-024 Amendment 42: controller-update transaction hardening (checked-in verified backup phase, backup-bound install, audited verified rollback, fail-closed raw exit codes, doc sweep, ps_tests mutants)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Harden the controller-update transaction end to end per D-024-R622..R643: replace the manual runbook section-3 backup block with a tested fail-closed -Phase backup in tools/controller_update/update_controller_from_candidate.ps1 (unique collision-refused backup directory, per-invocation raw exit codes with typed terminating refusals, pre-copy approved-path/containment/reparse verification, complete bidirectional SHA-256 proof of both backups, atomic bound backup-evidence record); bind -Phase install to the exact verified backup-evidence identity (never newest) with the same pre-mirror containment/reparse discipline; replace section-10 with a -Phase rollback that restores the bound backup exactly (no partial-install residue) and proves post-restore digest equality; resolve the stale model-selection hash wording and the wt-m0t063-vs-canary checkout explanation without interpreting R603-R605; cover every failure class with positive ps_tests and independent mutants under real PowerShell 5.1 raw-exit behavior; run the affected checks at the frozen evidence head; submit awaiting independent G3/G4/DCV review.",
+  "business_reason": "Owner directive 2026-09-02 (Amendment 42): the preflight adjudication proved runbook section 3 is not fail-closed (second robocopy masks the first failure) and the rollback auto-selects an arbitrary newest backup and cannot remove partial-install residue; a failed update could destroy the only healthy controller with no proven backup and no bound recovery path.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-042-amendment.md (D-024-R622..R643)",
+    "project-control/reports/M0-T139-transaction-trace.md (the R623 pre-edit consolidated trace: D1-D17 clustered)",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md sections 1-4 + 10 (the defect surface) at d4f55668",
+    "tools/controller_update/update_controller_from_candidate.ps1 + source_binding.json + ps_tests/ (accepted M0-T138 base being extended)",
+    "project-control/reports/M0-T136-canary-package.md (READ-ONLY: canary checkout contrast for the R637 wt-m0t063 clarification; contents must not change, R641)",
+    "tools/supervisor_command_doc_check.py + tools/agent_supervisor/command_docs.py (READ-ONLY: the command-document tooth; fenced supervisor commands in the runbook must stay valid)",
+    "Accepted identity: frozen candidate 1489879e1f6787a9d53ed74db4524b24039e03a2, tools/agent_supervisor subtree 79af11a2c7fa33c8f5c1bf85c17e310736bf30a3 (unchanged by this task)"
+  ],
+  "outputs": [
+    "tools/controller_update/update_controller_from_candidate.ps1 extended to four phases: -Phase backup (unique collision-refused backup dir; per-invocation raw exit codes with typed terminating refusals; pre-copy approved-path/containment/reparse verification of every source and destination; complete bidirectional raw SHA-256 proof of BOTH backups; atomic controller_backup_evidence.json bound to run id, paths, pre-update controller identity, both raw copy codes, full digest sets, PASS verdict), -Phase install additionally requiring + re-verifying + recording the exact backup-evidence identity (never 'newest') with pre-mirror containment/reparse checks and post-mirror cache-residue removal, -Phase verify-manifest (unchanged contract), -Phase rollback (restores the BOUND backup only, same mirror discipline, removes partial-install residue, proves post-restore bidirectional digest equality, removes stale activation records with checked results, atomic rollback evidence)",
+    "tools/controller_update/source_binding.json schema v2: + backup_root, a1_runtime_dir (64-hex tail validated), backup_evidence, rollback_evidence; all v1 keys and pinned identities unchanged",
+    "tools/controller_update/ps_tests/: fixtures extended (v2 bindings, old-controller destination tree, fixture A1 runtime dir), new positive + refusal tests for every R634 failure class, extended mutants suite, PS 5.1 parse tooth over the new phases",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md: section 3 = ONE -Phase backup command; section 4 = backup-bound install note; section 10 = ONE -Phase rollback command; section 1 model-selection row de-staled (no R603-R605 interpretation); sections 2/7-9 wt-m0t063-vs-canary-checkout explanation (D15-D17)",
+    "project-control/reports/M0-T139-producer-report.md + M0-T139-G2-self-check.md + M0-T139-evidence-map.json (evidence at the frozen head)"
+  ],
+  "dependencies": [
+    "M0-T138"
+  ],
+  "allowed_paths": [
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/SESSION_HANDOFF.md",
+    "tools/controller_update/",
+    "project-control/reports/M0-T139-transaction-trace.md",
+    "project-control/reports/M0-T139-producer-report.md",
+    "project-control/reports/M0-T139-G2-self-check.md",
+    "project-control/reports/M0-T139-evidence-map.json",
+    "project-control/reports/M0-T139-gates/"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/ (accepted frozen-candidate surface; R594/R641 - no live supervisor behavior change)",
+    "project-control/reports/M0-T136-canary-package.md (R641: canary contents unchanged)",
+    "project-control/reports/M0-T136-*.md M0-T138-*.md (accepted evidence immutable, R622)",
+    "C:/SupervisorController and all live machine state (R642: no backup/install/rollback/doctor execution)",
+    "model_selection.toml anywhere; R603-R605 rows (R641: never interpreted)"
+  ],
+  "acceptance_scenarios": [
+    "AS-TX-1 (R625/R626): ps_tests lock a fixture controller source file exclusively and run -Phase backup: it refuses copy_failed naming the controller tree with raw exit 1, writes NO evidence file, and creates NO runtime-a1 copy - the first robocopy failure is never masked by a second copy.",
+    "AS-TX-2 (R627/R628): a junction planted at a backup source/root refuses reparse_point_detected before any copy; a binding whose backup path escapes its approved root refuses containment; the backup directory is fresh and collision-refused.",
+    "AS-TX-3 (R629/R630): a clean -Phase backup exits 0 and writes atomic controller_backup_evidence.json (schema controller_backup_evidence/v1) carrying run id, exact paths, both raw robocopy codes, complete bidirectional digest sets for BOTH trees, verdict PASS; a file deleted from / altered in / added to the backup afterwards makes the next phase refuse.",
+    "AS-TX-4 (R631): -Phase install without backup evidence refuses backup_evidence_missing; a tampered backup refuses backup_tampered; a destination modified after backup refuses backup_stale; a successful install records the backup run id + evidence digest in controller_update_evidence.json.",
+    "AS-TX-5 (R632/R633/R635): with a decoy newer directory under the backup root, -Phase rollback restores the BOUND backup (decoy untouched); an extra module planted at the destination is ABSENT after rollback; post-restore bidirectional SHA-256 equality against the bound evidence is proven; stale activation records are removed with checked results.",
+    "AS-TX-6 (R638): the mutants suite disables each new load-bearing guard in a COPY of the script and proves the behavioral difference under real powershell.exe -File raw exit codes (wrongly-passing where isolatable; changed refusal identity where a deeper layer still catches, documented per case)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-02T07:10:05.781243+00:00",
+  "updated_at": "2026-09-02T07:45:12.205317+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-02T07:10:05.781243+00:00",
+  "documented_test_commands": [
+    "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/controller_update/ps_tests/run_ps_tests.ps1",
+    "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/agent_supervisor/ps_tests/run_ps_tests.ps1",
+    "python tools/supervisor_command_doc_check.py",
+    "python tools/supervisor_command_doc_check.py --doc project-control/reports/M0-T136-canary-package.md",
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check",
+    "python tools/context_budget_check.py"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
 }
