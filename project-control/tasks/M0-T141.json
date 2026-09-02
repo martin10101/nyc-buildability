@@ -1,0 +1,85 @@
+{
+  "task_id": "M0-T141",
+  "title": "D-024 Amendment 44: Claude Code JSON-Schema Draft-7 provider-schema compatibility hotfix at the CLI boundary",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "Fix the reproduced Claude Code 2.1.252 --json-schema rejection (Draft 2020-12 top-level $schema declaration; canary-b5-02 child exit 1 before provider contact): generate a deep-copied, explicitly Draft-7-declared provider schema at the Claude CLI boundary with fail-closed keyword compatibility verification; never mutate the canonical WorkerResult schema; add focused tests (canonical unchanged, Draft-7 declared, no 2020-12 in the serialized CLI argument, newer-only keywords refuse, exact failure signature reproduced with the guard removed); preserve the failed-run evidence (provider-contact count zero); freeze the corrected controller candidate and update the immutable source binding. Qualifying evidence per supervisor-freeze AD-093: reproduced defect + provider CLI drift + D-024-R664..R683 (Amendment 44).",
+  "business_reason": "Owner directive 2026-09-02 (D-024 Amendment 44, R664-R683): the live b5-02 canary failed before provider contact on the schema draft declaration; one bounded hotfix is the authorized correction.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-044-amendment.md (verbatim owner directive; R664-R683)",
+    "preserved failed-run evidence: %LOCALAPPDATA%/NYCBuildabilitySupervisor/9aca707563cfe6e2cdeeee99e5d153951936dc46edac131889c37c2a9f713b6a/mrl/canary-b5-02/one_shot_unit.json + audit.jsonl records 17-26 (read-only, never modified)",
+    "tools/agent_supervisor/schemas/worker_result.schema.json (canonical contract - READ ONLY, byte-identical after the fix)",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md sections 3-10 (installer contract the rebind must keep consistent)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/mrl_provider_schema.py: new focused module producing the deep-copied provider schema for Claude's --json-schema - explicit Draft-7 declaration (http://json-schema.org/draft-07/schema#), fail-closed allowlist walk over every keyword (any unknown, newer-draft-only, or draft-divergent keyword raises ContractError instead of silently translating), canonical in-memory schema never mutated",
+    "tools/agent_supervisor/mrl_one_shot.py: the one --json-schema call site passes the provider copy instead of the canonical schema (no other behavior change)",
+    "tools/test_agent_supervisor_mrl_provider_schema.py: focused tests - canonical schema unchanged (deep-copy proof), provider schema declares Draft 7, serialized CLI argument carries no Draft 2020-12 declaration, unknown/newer-only keywords refuse, and the guard-removed serialization reproduces the exact recorded failure signature (the 2020-12 URI from the preserved stderr)",
+    "tools/test_agent_supervisor_mrl_one_shot.py: argv-level assertions updated - the launched --json-schema value is the Draft-7 provider copy and contains no 2020-12 declaration",
+    "project-control/reports/M0-T141-canary-b502-schema-failure-evidence.md: preserved failed-run evidence (provider-contact count zero; verbatim stderr; audit records 17-26 incl. the reusable b5-01 PASS at record 17)",
+    "tools/controller_update/source_binding.json rebound to the frozen corrected candidate (commit/tree/subtree SHAs; required_modules += mrl_provider_schema.py + mrl_one_shot.py); docs/CONTROLLER_UPDATE_RUNBOOK.md section-4 SHA and ps_tests/test_runbook_parse.ps1 pinnedSha kept consistent (the binding's checked teeth)",
+    "project-control/reports/M0-T141-producer-report.md + M0-T141-G2-self-check.md + M0-T141-evidence-map.json + M0-T141-freeze.md (frozen corrected candidate record)"
+  ],
+  "dependencies": [
+    "M0-T136",
+    "M0-T138",
+    "M0-T139"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/agent_supervisor/mrl_one_shot.py",
+    "tools/test_agent_supervisor_mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "tools/controller_update/source_binding.json",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T141-canary-b502-schema-failure-evidence.md",
+    "project-control/reports/M0-T141-producer-report.md",
+    "project-control/reports/M0-T141-G2-self-check.md",
+    "project-control/reports/M0-T141-evidence-map.json",
+    "project-control/reports/M0-T141-freeze.md",
+    "project-control/reports/M0-T141-gates/"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/schemas/",
+    "tools/agent_supervisor/mrl_worker_result.py",
+    "tools/agent_supervisor/model_selection.py",
+    "project-control/reports/M0-T136-canary-package.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-DS-1 (R666/R670): tools/agent_supervisor/schemas/worker_result.schema.json is byte-identical (git diff empty) and a test proves the in-memory canonical dict is unmodified after building the provider copy (mutating the returned copy leaves a fresh canonical load equal to the pre-call snapshot).",
+    "AS-DS-2 (R667/R668): provider_schema_for_claude_cli(load_schema('worker_result.schema.json')) returns a deep copy whose top-level $schema is exactly http://json-schema.org/draft-07/schema# and whose remaining keys equal the canonical schema's.",
+    "AS-DS-3 (R671): the serialized CLI argument built by the one-shot runner (fake popen harness, no provider) parses back to a dict declaring Draft 7 and the raw argv string contains no substring 'json-schema.org/draft/2020-12'.",
+    "AS-DS-4 (R669): each newer-draft-only or unknown keyword ($defs, prefixItems, unevaluatedProperties, dependentRequired, minContains, a nested $schema, array-form items, an arbitrary unknown key) raises ContractError - none is silently dropped or translated.",
+    "AS-DS-5 (R671/R672): serializing the canonical schema the way the removed guard did yields an argument containing the exact URI from the preserved failure stderr ('https://json-schema.org/draft/2020-12/schema'), proving the same error would return with the guard removed; the preserved evidence report records provider-contact count zero.",
+    "AS-DS-6 (R676): mutation proof - with the boundary call reverted to the canonical schema, the AS-DS-3 test FAILS (red run captured), and passes again restored; pytest focused files green; modularity_check --check 0 failures; validate_directive_compliance --check exit 0.",
+    "AS-DS-7 (R678): source_binding.json commit_sha/commit_tree_sha/subtree_tree_sha equal the frozen corrected candidate commit's measured values, required_modules includes the two changed modules, runbook section 4 and test_runbook_parse.ps1 carry the same SHA, and run_ps_tests.ps1 exits 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-02T18:55:14.075593+00:00",
+  "updated_at": "2026-09-02T18:55:14.269887+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-02T18:55:14.075593+00:00"
+}

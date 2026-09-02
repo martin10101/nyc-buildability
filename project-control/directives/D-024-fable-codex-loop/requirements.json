@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 663,
+ "requirement_count": 683,
  "producer": "orchestrator",
- "updated_at": "2026-09-02T19:55:00+00:00",
+ "updated_at": "2026-09-02T21:05:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -21587,6 +21587,710 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 43
+  },
+  {
+   "id": "D-024-R664",
+   "text": "Implement one bounded Claude Code JSON-Schema compatibility hotfix and carry it through focused independent acceptance in this session. Do not start another broad audit or tranche.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R665",
+   "text": "Confirmed root cause (preserve in the repair record): Claude Code 2.1.252 locally rejects the provider-facing WorkerResult schema because it declares \"$schema\": \"https://json-schema.org/draft/2020-12/schema\"; the child exits 1 before provider contact. Anthropic's current structured-output documentation requires Draft 7, and anthropics/claude-code issue #80402 reproduces this exact error and documents Draft 7 or removal of the top-level declaration as the workaround.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R666",
+   "text": "Preserve the canonical internal WorkerResult contract and controller-side validation.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R667",
+   "text": "At the Claude CLI boundary, generate a deep-copied provider schema explicitly compatible with Draft 7.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R668",
+   "text": "Prefer the explicit Draft-7 declaration: http://json-schema.org/draft-07/schema#.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R669",
+   "text": "Verify every keyword used by WorkerResult is Draft-7 compatible. Fail closed instead of silently translating any unsupported newer-draft keyword.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R670",
+   "text": "Pass only the compatible copy to Claude's --json-schema; never mutate the canonical in-memory schema.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R671",
+   "text": "Add focused tests proving: canonical schema remains unchanged; provider schema declares Draft 7; the serialized CLI argument contains no Draft 2020-12 declaration; unknown/newer-only keywords refuse; the same exact error would return with the guard removed.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R672",
+   "text": "Preserve the existing failed run as evidence: provider-contact count was zero.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R673",
+   "text": "Correct the temporary canary continuation: reuse the existing b5-01 PASS, do not rerun it, remove the obsolete park/pending-approval assumption, canonically recover the current state, and use one correlated successor run for exactly one actual b5-02 provider call.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R674",
+   "text": "M0-T140 must remain properly claimed and authorized. Do not reopen accepted tasks or interpret R603-R605.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140",
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140",
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R675",
+   "text": "Create the next available bounded hotfix task. Limit production changes to the schema-at-CLI-boundary path and necessary focused tests.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R676",
+   "text": "Run focused tests, mutation proof, modularity, and governance checks.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R677",
+   "text": "Use separate foreground G3, G4, and DCV reviewers. Producer and verifier identities must differ. Resolve review findings within this bounded scope without returning to the owner after every step.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R678",
+   "text": "Freeze the corrected controller candidate and update its immutable source binding.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R679",
+   "text": "Do not push, merge, or make any provider call during implementation or verification.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140",
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140",
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R680",
+   "text": "After acceptance, generate and parser-validate one external owner-run PowerShell script that performs, fail-fast: verified backup; immutable hotfix installation; manifest recording and source verification; normal doctor; canonical recovery; exactly one resumed b5-02 provider canary; remaining evidence checks and the ten-row result.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R681",
+   "text": "On an installation/doctor failure, use the bound transactional rollback. Do not automatically rollback merely because a canary reports a product defect; preserve its evidence and stop.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R682",
+   "text": "Return only: SCHEMA_COMPATIBILITY_HOTFIX_READY or SCHEMA_COMPATIBILITY_HOTFIX_BLOCKED; accepted hotfix task and candidate SHA; focused test/review results; external script path and SHA-256; exactly one PowerShell execution command.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T141"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T141"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R683",
+   "text": "Do not execute the owner-run script yourself.",
+   "source_ref": "source-044-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 44
   }
  ]
 }

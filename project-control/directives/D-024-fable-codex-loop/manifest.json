@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-02T19:55:00+00:00",
+ "updated_at": "2026-09-02T21:05:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -356,6 +356,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-02T19:55:00+00:00",
    "content_digest_sha256": "dae87844291c60049873d7e9efc99409ced65998245f365cd80df1a695b8036e"
+  },
+  {
+   "file": "source-044-amendment.md",
+   "kind": "amendment",
+   "sequence": 44,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-02T21:05:00+00:00",
+   "content_digest_sha256": "6e74e1540a0d728ae5259e01367a18076df693c2c61a0db8fbf199fe3afc760c"
   }
  ],
  "amendments": [
@@ -400,7 +408,8 @@
   "source-040-amendment.md",
   "source-041-amendment.md",
   "source-042-amendment.md",
-  "source-043-amendment.md"
+  "source-043-amendment.md",
+  "source-044-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1173,10 +1182,30 @@
   "D-024-R660",
   "D-024-R661",
   "D-024-R662",
-  "D-024-R663"
+  "D-024-R663",
+  "D-024-R664",
+  "D-024-R665",
+  "D-024-R666",
+  "D-024-R667",
+  "D-024-R668",
+  "D-024-R669",
+  "D-024-R670",
+  "D-024-R671",
+  "D-024-R672",
+  "D-024-R673",
+  "D-024-R674",
+  "D-024-R675",
+  "D-024-R676",
+  "D-024-R677",
+  "D-024-R678",
+  "D-024-R679",
+  "D-024-R680",
+  "D-024-R681",
+  "D-024-R682",
+  "D-024-R683"
  ],
- "requirements_id_digest_sha256": "a9a2a22dbe9b75b6d8d0903dcb2c65e412cf0bf3a45cf1691de7fb4d4f0e44bc",
- "requirements_content_digest_sha256": "1264ab0aee8ee691c86a0fe88fcfa00f62ee2cc2b5f7e7afea94113c3bbb609b",
+ "requirements_id_digest_sha256": "4011e30cc294e9e6a2f43e54b186f4f9c2ad3d8351c26f37602f34b513fcda80",
+ "requirements_content_digest_sha256": "6747c3048e4c7def691b5d8477aaee7808ef50c5ae5600734ba932424955aa29",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1419,6 +1448,11 @@
    "at": "2026-09-02T19:55:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 43 captured verbatim (owner directive 2026-09-02, canary-fixture lifecycle correction): the live canary refused on task_authority because accepted M0-T136 confers no working authority; owner authorizes ONE minimal dedicated read-only canary-execution task at the next unused ID (M0-T140) under the R587-R589 canary scope plus replacement of the temporary external canary script (conditional canonical PAUSED_RECOVERY recovery, b5-01 intended-refusal proof, exactly one b5-02 provider one-shot, ten-item PASS/FAIL retention, PS 5.1 parse + independent subagent review). Requirements R644-R663 appended, all bound to M0-T140. No production-code change, no reopening accepted tasks, no push/merge, R603-R605 untouched."
+  },
+  {
+   "at": "2026-09-02T21:05:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 44 captured verbatim (owner directive 2026-09-02, JSON-Schema Draft-7 compatibility hotfix + canary continuation correction): Claude Code 2.1.252 rejected the Draft 2020-12 $schema declaration on the provider-facing WorkerResult schema (canary-b5-02 child exit 1 before provider contact; audit records 22-26; b5-01 PASS preserved at audit record 17). Owner authorizes ONE bounded hotfix task at the next unused ID (M0-T141): deep-copied Draft-7 provider schema at the Claude CLI boundary, fail-closed keyword compatibility, canonical schema untouched, focused tests + mutation proof + modularity + governance, separate foreground G3/G4/DCV reviewers, freeze corrected candidate + source-binding update; then one regenerated external owner-run script (backup/install/verify-manifest/doctor/canonical recovery/one correlated b5-02 successor run/ten-row result; transactional rollback on install/doctor failure only, never on a canary product defect). Requirements R664-R683 appended (hotfix rows -> M0-T141; canary-continuation rows -> M0-T140; R674/R679 -> both). No push/merge/provider call during implementation or verification; R603-R605 untouched."
   }
  ]
 }

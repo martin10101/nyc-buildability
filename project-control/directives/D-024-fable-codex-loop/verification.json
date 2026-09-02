@@ -10583,7 +10583,13 @@
     "D-024-R660",
     "D-024-R661",
     "D-024-R662",
-    "D-024-R663"
+    "D-024-R663",
+    "D-024-R673",
+    "D-024-R674",
+    "D-024-R679",
+    "D-024-R680",
+    "D-024-R681",
+    "D-024-R683"
    ],
    "requirements": [
     {
@@ -10685,11 +10691,41 @@
      "id": "D-024-R663",
      "state": "pending",
      "evidence": []
+    },
+    {
+     "id": "D-024-R673",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R674",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R679",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R680",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R681",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R683",
+     "state": "pending",
+     "evidence": []
     }
    ],
    "verification_report": "",
    "note": "Skeleton at claim time (Amendment 43). States become PASS only via the independent directive-compliance-verifier at the reviewed head after the owner-typed canary run; pending rows verify nothing."
   }
  ],
- "updated_at": "2026-09-02T19:55:00+00:00"
+ "updated_at": "2026-09-02T21:05:00+00:00"
 }
