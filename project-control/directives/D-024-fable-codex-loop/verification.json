@@ -10222,100 +10222,130 @@
       "requirements": [
         {
           "id": "D-024-R607",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Manual substitution rejected: CONTROLLER_UPDATE_RUNBOOK.md s4 presents exactly ONE checked-in install command (line 83, -Phase install) plus one recovery command; test_runbook_parse asserts script invocation + concrete -Phase install + no angle-bracket placeholder; command-document tooth rc0 (m0t138-doc-check-default.json, reproduced rc0 at HEAD, 11 commands)."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R608",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Immutable-SHA source: source_binding.json pins commit_sha 1489879e1f6787a9d53ed74db4524b24039e03a2; script gates on ^[0-9a-f]{40}$ (not_a_full_sha) and resolves no ref; fixture rejections reproduced at HEAD: origin/main, 12-hex abbreviation, branch name, literal HEAD all REFUSED not_a_full_sha with nothing installed; grep origin/main over the runbook empty."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R609",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Pre-copy verification fail-closed: Assert-SourceIdentity (toplevel, normalized origin vs https://github.com/martin10101/nyc-buildability, commit exists/type, commit tree == 0babc469..., subtree == 79af11a2..., all 8 required modules incl. mrl_launch_draft.py verified against raw git facts) + Assert-SourceWorktreeState (detached at exact commit, clean). tree_mismatch/subtree_mismatch/missing_module fixture-proven (suite rc0 at HEAD); source_not_detached/source_wrong_commit/source_unclean proven by independent verifier scratch reproductions (DCV report addendum item 2; checked-in suite exercises them only on the positive path - evidence-map wording noted as overstated, behavior verified correct)."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R610",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Post-copy proof: Compare-InstalledTree complete bidirectional RAW SHA-256 (missing/unexpected/changed all refuse content_mismatch); verifier reproductions additionally proved deleted-file, planted-file, swapped-content, and LF-only-flip destination tampers each REFUSED content_mismatch; destination-recorded manifest explicitly insufficient (runbook s5a re-proves against the ACCEPTED source); m_content mutant killed."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R611",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Update evidence binds provenance: controller_update_evidence.json carries commit_sha/commit_tree_sha/subtree_tree_sha/installed_files_sha256 (verified in fixture evidence JSON); verify-manifest cross-checks recorded manifest key set + LF-normalized digests against the ACCEPTED SOURCE (manifest_key_set_mismatch/manifest_digest_mismatch reproduced; independent python-hashlib manifest crafter); m_manifest mutant killed - adversarial fail-closed binding demonstrated."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R612",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Owner commands checked in, concrete, parse-tested, tooth-covered: 13/13 fenced runbook blocks + operator script parse with zero PS 5.1 errors (reproduced at HEAD); s4 carries the literal 40-hex SHA, no placeholder; supervisor_command_doc_check rc0 over the runbook (11 commands), MRL runbook (6), canary package (3)."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R613",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "All six rejection classes negative-tested with typed reasons + raw nonzero exits (suite reproduced rc0 at HEAD): mutable ref (not_a_full_sha), internally self-consistent wrong commit (tree_mismatch), missing Tranche-B module (missing_module), accepted SHA/tree mismatch (tree_mismatch/subtree_mismatch), destination changed after copy (content_mismatch), manifest from wrong installed tree (manifest_digest_mismatch/manifest_key_set_mismatch); 4/4 targeted mutants DETECTED with a fail-closed exactly-once generator."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R614",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "One consistent owner chain: no origin/main anywhere in the runbook (grep empty, parse-test asserts); s5a added; accepted M0-T136-canary-package.md prerequisite (sections 3-8) untouched and now correct; MRL_LAUNCH_RUNBOOK unchanged; SESSION_HANDOFF seq-73 item 6 states the single chain."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R615",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Blocking sequencing honored: no controller update executed (controller_update_evidence.json ABSENT at %LOCALAPPDATA%; C:/SupervisorController newest write 2026-08-18; wt-controller-src absent), no canary/provider run; exactly one bounded follow-up task M0-T138; independent review completed BEFORE any owner-typed update."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R616",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Scope holds verified: no push (no upstream configured), no PR, no merge (linear e60192ed..99cd3dad, 4 commits); .github/workflows untouched; zero changes under tools/agent_supervisor/**; M0-T136 evidence 0-diff since e60192ed; R603-R605 rows semantically byte-identical (independent decode: changed pre-existing rows = [], removed = [], added = exactly R607-R621); no Tranche C."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R617",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Smallest honest repair: docs + checked-in operator validator + tests only; zero production supervisor code changes; modularity rc0 with no limit raised and no exception added (tools/modularity_exceptions.json untouched); R611 satisfied via update-evidence binding + adversarial tests without expanding manifest.py/cli.py."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R618",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Method: consolidated pre-edit trace recorded (producer report s3, G0 readiness); targeted edits (63/401 runbook lines); complete focused/affected verification reproduced independently at HEAD with raw exit codes: both ps suites 0, doc tooth 0/0/0, pytest 77 passed, modularity 0, directive registry 0, context budget 0, ruff rc1 stdout_sha256 74680cc7... BYTE-IDENTICAL to frozen final-freeze-ruff.json (zero new findings; no .py changed); failure inventory EMPTY."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R619",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Canonical mechanics: one task M0-T138 (new-task -> G0 administrative -> claim D-024:ALL -> impl 435531de -> evidence 8e2cb909 -> submit awaiting_gate 99cd3dad); producer never self-accepted (only G0 administrative + G2 self_check recorded pre-review); G3 code-reviewer + G4 qa-engineer independent_review PASS at reviewed_sha 99cd3dad; acceptance recorded by the orchestrator after independent DCV."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R620",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Return items delivered: producer report carries exact changed files (s5), source-binding design (s4), positive+mutant results (s7), candidate SHA 1489879e (s1), final status; terminal token CONTROLLER_UPDATE_SOURCE_BINDING_SUBMITTED recorded in M0-T138-evidence-map.json (the return-channel message itself is ephemeral - noted by DCV as non-material)."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         },
         {
           "id": "D-024-R621",
-          "state": "pending",
-          "evidence": [],
-          "note": "awaiting independent verification at the submitted head (Amendment 41 capture; producer != verifier)"
+          "state": "PASS",
+          "evidence": [
+            "Bootstrap Gate 0 verified before any write: M0-T138-G0-readiness.md re-measures all seven owner-stated values live (root, branch, HEAD e60192ed, frozen candidate + tree + subtree, clean tree, M0-T136 accepted, /mcp empty); G0 gate PASS; ledger read via project_control.py status; the independent verifier re-verified the same identity chain at 99cd3dad."
+          ],
+          "verified_at": "2026-09-02T06:20:00+00:00"
         }
       ],
-      "reviewed_manifest_sha256": null,
-      "reviewed_sha": null,
-      "verification_report": null,
-      "note": "skeleton row created at claim (2026-09-02) so the in-regime task is tracked; every row pending until the independent directive-compliance-verifier writes the real verification at the frozen submitted head"
+      "reviewed_manifest_sha256": "dd8cf45d149735956414f5c6088836410e5b242adc227507975f868d52ae83ee",
+      "reviewed_sha": "99cd3dad52088bfb92c5c3ec9cc04c392f0d024e",
+      "verification_report": "project-control/reports/M0-T138-DCV.md",
+      "note": "Independent DCV at the submitted head: all 15 applicable Amendment-41 rows PASS. Verbatim DCV return + orchestrating-verifier reproductions: project-control/reports/M0-T138-DCV.md; G3/G4 independent_review PASS at the same reviewed_sha."
     }
   ],
-  "updated_at": "2026-09-02T06:00:00+00:00"
+  "updated_at": "2026-09-02T06:20:00+00:00"
 }
