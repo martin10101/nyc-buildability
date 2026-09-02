@@ -89,6 +89,27 @@ Assert-True -Condition ($runbookText.Contains($pinnedSha)) -Label 'runbook secti
 $section5a = @($blocks | Where-Object { $_.section -eq '5a' -and $_.text -match '-Phase verify-manifest' })
 Assert-True -Condition ($section5a.Count -ge 1) -Label 'section 5a presents the concrete -Phase verify-manifest command'
 
+# M0-T139 (D-024-R624/R632/R636): sections 3 and 10 are ONE checked-in command
+# each, and no long hash/runtime key is retyped into an owner command - those
+# live only in the validated binding contract.
+$section3 = @($blocks | Where-Object { $_.section -eq '3' })
+Assert-True -Condition ($section3.Count -ge 1) -Label 'section 3 presents a fenced command block'
+$backupBlocks = @($section3 | Where-Object { $_.text -match '-Phase backup' })
+Assert-True -Condition ($backupBlocks.Count -ge 1) -Label 'section 3 presents the concrete -Phase backup command'
+foreach ($block in $section3) {
+    Assert-True -Condition ($block.text -notmatch '[0-9a-f]{64}') -Label 'section 3 block retypes no 64-hex runtime key (R636)'
+    Assert-True -Condition (-not $block.text.Contains('robocopy')) -Label 'section 3 block carries no manual robocopy (R624)'
+}
+$section10 = @($blocks | Where-Object { $_.section -eq '10' })
+Assert-True -Condition ($section10.Count -ge 1) -Label 'section 10 presents a fenced command block'
+$rollbackBlocks = @($section10 | Where-Object { $_.text -match '-Phase rollback' })
+Assert-True -Condition ($rollbackBlocks.Count -ge 1) -Label 'section 10 presents the concrete -Phase rollback command'
+foreach ($block in $section10) {
+    Assert-True -Condition (-not $block.text.Contains('Sort-Object')) -Label 'section 10 never auto-selects a newest backup (R632)'
+}
+Assert-True -Condition ($binding.schema -eq 'controller_update_source_binding/v2') -Label 'binding contract is schema v2 with transaction keys'
+Assert-True -Condition (([string]$binding.a1_runtime_dir) -match '[0-9a-f]{64}$') -Label 'the A1 runtime key lives in the validated binding contract'
+
 if ($script:failures -gt 0) {
     Write-Output ("test_runbook_parse: " + $script:failures + " assertion failure(s)")
     exit 1

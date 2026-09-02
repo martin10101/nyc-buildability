@@ -76,9 +76,25 @@ function New-FixtureRepo {
 }
 
 function New-BindingFile {
+    # Schema v2 (M0-T139; D-024 Amendment 42): transaction keys are derived from
+    # the destination when a test does not override them, so every case gets a
+    # self-consistent isolated binding.
     param([string]$Path, [hashtable]$Values)
+    $destParent = Split-Path -Parent $Values.destination
+    $controllerRoot = $Values.controller_root
+    if (-not $controllerRoot) { $controllerRoot = $destParent }
+    $backupRoot = $Values.backup_root
+    if (-not $backupRoot) { $backupRoot = ($Values.destination + '-backups') }
+    $runtimeDir = $Values.a1_runtime_dir
+    if (-not $runtimeDir) {
+        $runtimeDir = Join-Path $destParent ('NYCBuildabilitySupervisor\' + ('a' * 64))
+    }
+    $backupEvidence = $Values.backup_evidence
+    if (-not $backupEvidence) { $backupEvidence = ($Values.destination + '-backup-evidence.json') }
+    $rollbackEvidence = $Values.rollback_evidence
+    if (-not $rollbackEvidence) { $rollbackEvidence = ($Values.destination + '-rollback-evidence.json') }
     $binding = [ordered]@{
-        schema = 'controller_update_source_binding/v1'
+        schema = 'controller_update_source_binding/v2'
         authority = 'fixture'
         source_repo = $Values.repo
         expected_origin_url = 'https://example.invalid/fixture-pack.git'
@@ -92,11 +108,45 @@ function New-BindingFile {
             'tools/agent_supervisor/manifest.py')
         source_worktree = $Values.source_worktree
         destination = $Values.destination
+        controller_root = $controllerRoot
+        backup_root = $backupRoot
+        a1_runtime_dir = $runtimeDir
+        backup_evidence = $backupEvidence
+        rollback_evidence = $rollbackEvidence
         controller_manifest = $Values.controller_manifest
         evidence_out = $Values.evidence_out
     }
     $binding | ConvertTo-Json -Depth 5 | Out-File -FilePath $Path -Encoding utf8
     return $Path
+}
+
+function Initialize-TxSources {
+    # Creates what -Phase backup needs to exist: an OLD controller tree at the
+    # destination (distinct content from every fixture candidate, plus a stale
+    # cache dir that must never be copied) and the shared A1 runtime fixture.
+    param([string]$BindingPath)
+    $binding = Get-Content -LiteralPath $BindingPath -Raw | ConvertFrom-Json
+    $dest = [string]$binding.destination
+    New-Item -ItemType Directory -Force -Path (Join-Path $dest 'launchers') | Out-Null
+    New-Item -ItemType Directory -Force -Path (Join-Path $dest '__pycache__') | Out-Null
+    Set-Content -LiteralPath (Join-Path $dest 'cli.py') -Value 'print("OLD controller cli")' -Encoding ascii
+    Set-Content -LiteralPath (Join-Path $dest 'legacy_module.py') -Value 'print("legacy only in old tree")' -Encoding ascii
+    Set-Content -LiteralPath (Join-Path $dest 'launchers\run.cmd') -Value '@echo old' -Encoding ascii
+    Set-Content -LiteralPath (Join-Path $dest '__pycache__\stale.pyc') -Value 'stale' -Encoding ascii
+    $runtime = [string]$binding.a1_runtime_dir
+    if (-not (Test-Path -LiteralPath $runtime)) {
+        New-Item -ItemType Directory -Force -Path (Join-Path $runtime 'sub') | Out-Null
+        Set-Content -LiteralPath (Join-Path $runtime 'journal.db') -Value 'fixture journal bytes' -Encoding ascii
+        Set-Content -LiteralPath (Join-Path $runtime 'sub\state.json') -Value '{"fixture": true}' -Encoding ascii
+    }
+    return $binding
+}
+
+function Invoke-BackupPhase {
+    # Runs -Phase backup for a case and asserts nothing: callers judge the
+    # result. Convenience only.
+    param([string]$ScriptPath, [string]$BindingFile)
+    return Invoke-UpdateScript -ScriptPath $ScriptPath -Phase backup -BindingFile $BindingFile
 }
 
 function Invoke-UpdateScript {

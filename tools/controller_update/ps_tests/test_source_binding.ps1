@@ -45,17 +45,26 @@ function New-CaseBinding {
     return @{ path = $path; values = $values }
 }
 
-# ---- positive control: install from the fixture's accepted candidate --------
+# ---- positive control: backup then install from the accepted candidate ------
+# (M0-T139: install is transactional - it refuses without the verified backup.)
 $p1 = New-CaseBinding -Name 'p1' -Sha $fix.shaB -Tree $fix.treeB -Subtree $fix.subtreeB
+Initialize-TxSources -BindingPath $p1.path | Out-Null
+$r = Invoke-BackupPhase -ScriptPath $scriptPath -BindingFile $p1.path
+if ($r.exit_code -ne 0) { Write-Output ("  backup stdout: " + $r.stdout.Trim() + " stderr: " + $r.stderr.Trim()) }
+Assert-True -Condition ($r.exit_code -eq 0) -Label 'P1 backup of the old controller exits 0'
 $r = Invoke-UpdateScript -ScriptPath $scriptPath -Phase install -BindingFile $p1.path
 if ($r.exit_code -ne 0) { Write-Output ("  install stdout: " + $r.stdout.Trim() + " stderr: " + $r.stderr.Trim()) }
 Assert-True -Condition ($r.exit_code -eq 0) -Label 'P1 install from accepted fixture commit exits 0'
 Assert-True -Condition (Test-Path -LiteralPath (Join-Path $p1.values.destination 'mrl_launch_draft.py')) -Label 'P1 installed mrl_launch_draft.py'
+Assert-True -Condition (-not (Test-Path -LiteralPath (Join-Path $p1.values.destination 'legacy_module.py'))) -Label 'P1 mirror removed the old-tree module'
 Assert-True -Condition (Test-Path -LiteralPath $p1.values.evidence_out) -Label 'P1 wrote controller_update_evidence.json'
 $evidence = Get-Content -LiteralPath $p1.values.evidence_out -Raw | ConvertFrom-Json
 Assert-True -Condition ($evidence.commit_sha -eq $fix.shaB) -Label 'P1 evidence binds the immutable commit SHA'
 Assert-True -Condition ($evidence.commit_tree_sha -eq $fix.treeB) -Label 'P1 evidence binds the accepted commit tree'
 Assert-True -Condition ($evidence.installed_file_count -ge 9) -Label 'P1 evidence carries per-file digests'
+Assert-True -Condition ($null -ne $evidence.backup_binding -and $evidence.backup_binding.reverified -eq 'PASS') -Label 'P1 evidence records the verified backup identity (R631)'
+$backupEvidence = Get-Content -LiteralPath ($p1.values.destination + '-backup-evidence.json') -Raw | ConvertFrom-Json
+Assert-True -Condition ($evidence.backup_binding.run_id -eq $backupEvidence.run_id) -Label 'P1 install bound the exact backup run id'
 
 # ---- rejection a: a mutable ref can never be the source (R613a) -------------
 $na = New-CaseBinding -Name 'na' -Sha 'origin/main' -Tree $fix.treeB -Subtree $fix.subtreeB
@@ -80,7 +89,11 @@ $r = Invoke-UpdateScript -ScriptPath $scriptPath -Phase install -BindingFile $nc
 Assert-Refused -Result $r -Code 'missing_module' -Label 'c) commit lacking mrl_launch_draft.py'
 
 # ---- stale source worktree refuses (fail-closed rerun) ----------------------
+# (needs a valid backup first: the worktree check follows the backup gates)
 $nw = New-CaseBinding -Name 'nw' -Sha $fix.shaB -Tree $fix.treeB -Subtree $fix.subtreeB
+Initialize-TxSources -BindingPath $nw.path | Out-Null
+$r = Invoke-BackupPhase -ScriptPath $scriptPath -BindingFile $nw.path
+Assert-True -Condition ($r.exit_code -eq 0) -Label 'nw backup exits 0'
 New-Item -ItemType Directory -Force -Path $nw.values.source_worktree | Out-Null
 $r = Invoke-UpdateScript -ScriptPath $scriptPath -Phase install -BindingFile $nw.path
 Assert-Refused -Result $r -Code 'source_worktree_exists' -Label 'stale source-worktree path'

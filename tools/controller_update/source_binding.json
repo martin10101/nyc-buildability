@@ -1,6 +1,6 @@
 {
-  "schema": "controller_update_source_binding/v1",
-  "authority": "D-024 Amendment 41 (R608-R611); accepted task M0-T136 at frozen production candidate 1489879e; this contract changes only through a reviewed commit - compare the installer's printed identity against project-control/reports/M0-T136-producer-report.md before continuing",
+  "schema": "controller_update_source_binding/v2",
+  "authority": "D-024 Amendment 41 (R608-R611); accepted task M0-T136 at frozen production candidate 1489879e; this contract changes only through a reviewed commit - compare the installer's printed identity against project-control/reports/M0-T136-producer-report.md before continuing; extended by D-024 Amendment 42 (R622-R643, task M0-T139): the backup and rollback phases bind the update transaction - controller_root, backup_root, a1_runtime_dir (the A1 journal runtime directory; its 64-hex tail is sha256 of the canonical wt-m0t063 checkout path, extracted programmatically, never retyped), backup_evidence and rollback_evidence are part of this reviewed contract",
   "source_repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\nyc-development-feasibility-claude-pack",
   "expected_origin_url": "https://github.com/martin10101/nyc-buildability.git",
   "commit_sha": "1489879e1f6787a9d53ed74db4524b24039e03a2",
@@ -19,6 +19,11 @@
   ],
   "source_worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-controller-src",
   "destination": "C:\\SupervisorController\\tools\\agent_supervisor",
+  "controller_root": "C:\\SupervisorController",
+  "backup_root": "C:\\SupervisorBackup",
+  "a1_runtime_dir": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\1854a2a4ff3baf3d1eb39d8640e27c170958ba06ea347477f5940cc464e5d262",
+  "backup_evidence": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_backup_evidence.json",
+  "rollback_evidence": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_rollback_evidence.json",
   "controller_manifest": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_manifest.json",
   "evidence_out": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_update_evidence.json"
 }

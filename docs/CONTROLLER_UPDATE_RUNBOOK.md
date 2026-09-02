@@ -17,13 +17,12 @@ marked **OWNER**. Everything else is executable by the authorized orchestrator u
 | Protected config (immutable, never modified) | `C:\Program Files\SupervisorConfig\config.toml` |
 | Expected protected-config SHA-256 (raw bytes, `Get-FileHash`) | `A1F995016B541B9D69F8D78249ED4EF15563B9D7FF59B027ED3B04C1F41D1436` |
 | Expected protected-config SHA-256 (LF-normalized, as the MANIFEST records it) | `4c67875b24be66c3e257270126ee8b109e69542c944f4fb18c48a5e7e3f9e75f` |
-| Mutable model selection (outside the manifest by design) | `C:\SupervisorController\model_selection.toml` |
-| Expected model-selection SHA-256 | `FCBBF70F553AE115FA126183DE9A26134A2F54BC4AC66D726A3F292101ECDD2B` |
+| Mutable model selection (outside the manifest by design; owner-mutable, its digest is recorded with every decision — deliberately **no pinned expected hash**: no §3–§8 step compares one, §7's doctor validates the live file against the config allowlists, and its content awaits the owner-only rows R603–R605 / M0-T137, uninterpreted here) | `C:\SupervisorController\model_selection.toml` |
 | A1 worktree / journal checkout | `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063` |
 | Claude executable (verify with `--version` before use) | `C:\Users\MLFLL\.local\bin\claude.exe` |
 | Codex executable (verify with `--version` before use) | `C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd` |
-| Backup root (never mirror-deleted) | `C:\SupervisorBackup` |
-| Controller-update source binding (immutable accepted candidate; D-024 Am. 41) | `tools/controller_update/source_binding.json`; evidence at `$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_update_evidence.json` |
+| Backup root (never mirror-deleted; populated ONLY by §3's checked-in `-Phase backup`, one unique run directory per backup) | `C:\SupervisorBackup` |
+| Controller-update source binding (immutable accepted candidate; D-024 Am. 41 + Am. 42 schema v2 — also carries the backup root, the A1 runtime-journal directory, and the evidence paths, so no long hash or runtime key is ever retyped into a command) | `tools/controller_update/source_binding.json`; evidence at `$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\` — `controller_update_evidence.json`, `controller_backup_evidence.json`, `controller_rollback_evidence.json` |
 
 ## 2. Preconditions (all read-only)
 
@@ -39,26 +38,45 @@ Get-FileHash C:\SupervisorController\model_selection.toml -Algorithm SHA256
 Every `status` or `stop` MUST name the intended `--checkout`; without it the command
 addresses the journal of the current directory's checkout, which may be the wrong runtime.
 
+Why `wt-m0t063` appears throughout §§2/7–9: it is the A1 unit's task worktree, and its runtime
+journal — the `a1_runtime_dir` recorded in `tools/controller_update/source_binding.json`,
+addressed by sha256(checkout) — is the historical A1 journal that §3 backs up and §9 proves
+unchanged by the update. The doctor/status commands here deliberately address THAT journal.
+The M0-T136 canary `start` is a different checkout by design: it runs with
+`--checkout C:\SupervisorController` (the controller checkout's own journal). The §8
+`doctor --live` probe record is per-checkout, opt-in diagnostic evidence; `start` never
+consumes it, so the checkout named in §§7–8 gates nothing downstream.
+
 Stop only if a run is live:
 
 ```powershell
 python -m tools.agent_supervisor stop --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063
 ```
 
-## 3. Unique timestamped backup (non-destructive; no /MIR, no /PURGE)
+## 3. Verified backup — ONE checked-in fail-closed command (non-destructive; no /MIR)
+
+The former manual two-robocopy block is retired (D-024 Amendment 42): it captured no exit
+codes (the second copy silently masked a failed first copy), enforced no uniqueness, verified
+nothing, and inlined the 64-hex A1 runtime key by hand. The checked-in backup phase now does
+all of it, fail closed: it verifies every source and the backup root (exact bound paths,
+containment, **no junctions/symlinks/mount points anywhere** — robocopy would follow one),
+creates a **unique, previously nonexistent** run directory (collision refused), copies the
+live controller subtree and the A1 runtime journal with each robocopy's **raw exit code
+captured immediately** (an unacceptable first code refuses before the second copy ever runs),
+proves **both** backups by complete bidirectional raw SHA-256 comparison, and only then
+atomically records `controller_backup_evidence.json` — run id, exact paths, the pre-update
+controller identity (every file digest), both raw copy codes, and the PASS verdict. §4's
+install REQUIRES that evidence. ONE owner command:
 
 ```powershell
-$stamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$backup = "C:\SupervisorBackup\$stamp"
-New-Item -ItemType Directory -Force "$backup\agent_supervisor" | Out-Null
-robocopy C:\SupervisorController\tools\agent_supervisor "$backup\agent_supervisor" /E /R:2 /W:2
-robocopy "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\1854a2a4ff3baf3d1eb39d8640e27c170958ba06ea347477f5940cc464e5d262" `
-  "$backup\runtime-a1" /E /R:2 /W:2
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\update_controller_from_candidate.ps1 -Phase backup
 ```
 
-`robocopy /E` copies without deleting anything at the destination; a fresh `$stamp`
-directory guarantees no earlier backup is touched. Runtime journals are never deleted
-in either direction.
+Expect `BACKUP VERIFIED run <timestamp-id>` with both file counts and both raw robocopy
+codes; any failure prints one typed `REFUSED reason_code` line and exits nonzero with no
+evidence written. `robocopy /E` never deletes at the destination, every run gets a fresh
+directory, and runtime journals are never deleted in either direction. All paths — including
+the A1 runtime-journal directory — come from the reviewed binding contract, never retyped.
 
 ## 4. Install the accepted controller from the frozen candidate (immutable source binding)
 
@@ -76,8 +94,17 @@ subtree into `C:\SupervisorController\tools\agent_supervisor` and proves the
 installation by a complete bidirectional per-file SHA-256 comparison against the
 accepted source (R610), recording `controller_update_evidence.json` (source
 commit/tree/subtree plus every installed-file digest) at the certified activation
-location. Any failed check prints one typed `REFUSED reason_code` line and exits
-nonzero with nothing further executed. ONE owner command, no substitution (R607/R612):
+location.
+
+The install is also TRANSACTIONAL (Amendment 42, R631): it refuses without §3's verified
+backup evidence (`backup_evidence_missing`), re-verifies the bound backup against that
+evidence (`backup_tampered`), proves the live controller unchanged since the backup was
+taken (`backup_stale` — re-run §3 after any change), re-checks destination containment and
+reparse-freedom immediately before the mirror, removes stale cache residue after it, and
+records the exact backup identity (run id + evidence-file digest) into
+`controller_update_evidence.json`. It never selects "the newest backup" — only the recorded
+evidence binds a backup. Any failed check prints one typed `REFUSED reason_code` line and
+exits nonzero with nothing further executed. ONE owner command, no substitution (R607/R612):
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\update_controller_from_candidate.ps1 -Phase install
@@ -234,28 +261,43 @@ or recovery has not classified the checkpoint `SAFE_CHECKPOINT`. This is an
 `orchestrator`/`OWNER` action; it is never delegated to a worker and never fires on
 its own.
 
-## 10. Rollback (exact)
+## 10. Rollback (exact, bound, verified)
 
 Roll back immediately if: manifest verification fails at §6, §7, or any later startup;
 doctor reports config ACL unprotected, model selection rejected, or journal integrity
 error; the §8 probe does not record VERIFIED; the A1 journal state changed during the
 update; or any file outside the accepted delta changed in `C:\SupervisorController`.
 
+The former "newest directory" restore is retired (D-024 Amendment 42, R632/R633): rollback
+now restores ONLY the backup bound by `controller_backup_evidence.json` — never an
+auto-selected newest name, so a decoy or partial newer directory can never become the restore
+source. The bound backup is first re-verified against its evidence (a tampered backup is
+never restored), the destination chain is containment- and reparse-checked immediately before
+the mirror, the mirror restores the **exact** pre-update file set (new modules and
+partial-install residue cannot survive; stale caches are removed), the restored tree is then
+proven bidirectionally digest-equal to the bound evidence, the invalidated
+`controller_manifest.json` and `controller_update_evidence.json` are removed with **checked**
+results, and `controller_rollback_evidence.json` is written atomically. Journals are never
+touched. ONE owner command, then the doctor:
+
 ```powershell
-$backup = Get-ChildItem C:\SupervisorBackup -Directory |
-  Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
-robocopy "$backup\agent_supervisor" C:\SupervisorController\tools\agent_supervisor /E /R:2 /W:2
-Remove-Item "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" -ErrorAction SilentlyContinue
-Remove-Item "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_update_evidence.json" -ErrorAction SilentlyContinue
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\update_controller_from_candidate.ps1 -Phase rollback
+```
+
+Expect `ROLLBACK VERIFIED to backup run <id>`; any failure is one typed
+`REFUSED reason_code` line, exit nonzero, nothing further executed. Then:
+
+```powershell
 python -m tools.agent_supervisor doctor `
   --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
   --model-selection C:\SupervisorController\model_selection.toml
 ```
 
-(The command selects the NEWEST timestamped backup automatically; to restore an older
-one, set `$backup` to that exact directory instead. Restoring copies over the live
-tree without deleting anything else; journals are untouched.)
+(Restoring an OLDER run than the bound one is a deliberate manual owner decision outside
+this command — `controller_backup_evidence.json` is script-written, never hand-edited. In
+that rare case copy the chosen run's tree by hand, then re-run the full §§3–8 chain from a
+fresh verified backup.)
 
 ## 11. Supervised start — OBSOLETE (superseded by the MRL launch runbook)
 
