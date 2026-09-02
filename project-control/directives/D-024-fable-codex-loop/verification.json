@@ -10725,7 +10725,166 @@
    ],
    "verification_report": "",
    "note": "Skeleton at claim time (Amendment 43). States become PASS only via the independent directive-compliance-verifier at the reviewed head after the owner-typed canary run; pending rows verify nothing."
+  },
+  {
+   "task_id": "M0-T141",
+   "directive_id": "D-024",
+   "producer": "orchestrator (Draft-7 provider-schema hotfix producer)",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R664",
+    "D-024-R665",
+    "D-024-R666",
+    "D-024-R667",
+    "D-024-R668",
+    "D-024-R669",
+    "D-024-R670",
+    "D-024-R671",
+    "D-024-R672",
+    "D-024-R674",
+    "D-024-R675",
+    "D-024-R676",
+    "D-024-R677",
+    "D-024-R678",
+    "D-024-R679",
+    "D-024-R682"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R664",
+     "state": "PASS",
+     "evidence": [
+      "One bounded hotfix task: git show --stat 2245de74 = 2 prod files + 2 tests (+ control-plane); only M0-T141.json added under tasks/ in f190c77c..reviewed head; no other tranche/audit started. DCV reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R665",
+     "state": "PASS",
+     "evidence": [
+      "Root cause preserved: M0-T141-canary-b502-schema-failure-evidence.md + module docstring; stderr URI == test RECORDED_STDERR == CANONICAL_DECLARATION; docs requirement + issue #80402 cited. DCV reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R666",
+     "state": "PASS",
+     "evidence": [
+      "git diff f190c77c..reviewed head -- tools/agent_supervisor/schemas tools/agent_supervisor/mrl_worker_result.py EMPTY; canonical schema still declares Draft 2020-12 internally. DCV + G3 reproduced (also empty vs 2245de74^)."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R667",
+     "state": "PASS",
+     "evidence": [
+      "copy.deepcopy before projection (mrl_provider_schema.py); deep-copy tamper test re-asserts canonical snapshot; shallow-copy mutant M5 DETECTED (producer + DCV independently). G3 confirmed deepcopy precedes any write."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R668",
+     "state": "PASS",
+     "evidence": [
+      "DRAFT7_DECLARATION == http://json-schema.org/draft-07/schema# returned as the explicit top-level declaration; DCV ran the real projection and observed it; keep-2020-12 mutant M2 DETECTED (producer + DCV + G4)."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R669",
+     "state": "PASS",
+     "evidence": [
+      "_walk raises ContractError draft7_schema_incompatible on newer-only/divergent/unknown/nested-$schema/array-items keywords (else-default refuse); 15+5 parametrized refusal tests; G3 found no silently mishandled keyword; G4 adversarial probes corroborate; mutants M3/M4/M6 DETECTED."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R670",
+     "state": "PASS",
+     "evidence": [
+      "Single --json-schema call site serializes the projection (diff); argv test asserts launched value == projection, draft-07, no 2020-12; canonical in-memory dict proven unmutated; wiring-revert mutant M1 DETECTED red-run. G3 verified failure path is typed refusal BEFORE provider contact."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R671",
+     "state": "PASS",
+     "evidence": [
+      "All five directed proofs present and green: focused suite 89 passed (producer, G3, G4, DCV each ran it); G4 judged every proof non-vacuous and mapped each to its specific test."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R672",
+     "state": "PASS",
+     "evidence": [
+      "Preserved failed-run report records provider-contact count zero (empty session_id/observed_models, processes_total 1, exit 1, verbatim stderr); no prior canary evidence deleted/renamed in range (git diff --diff-filter=DR EMPTY). DCV reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R674",
+     "state": "PASS",
+     "evidence": [
+      "M0-T140 remains claimed; M0-T136/T138/T139 packets + model_selection untouched (empty diffs); R603-R605 mentioned only as untouched/owner-only in reports, never interpreted. DCV reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R675",
+     "state": "PASS",
+     "evidence": [
+      "M0-T141 = next unused ID; production changes limited to mrl_provider_schema.py + the one mrl_one_shot.py call site + focused tests (subtree delta 1489879e..2245de74 = exactly the two modules). DCV + G3 reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R676",
+     "state": "PASS",
+     "evidence": [
+      "Focused tests 89 passed; mutants M1-M6 all DETECTED (producer harness; DCV reproduced M2/M4/M5; G4 reproduced M2/M3/M6 independently); full supervisor suite 3566 passed/2 skipped re-run independently by G3 and G4; modularity 0 failures; registry validator exit 0; both ps harnesses PASS."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R677",
+     "state": "PASS",
+     "evidence": [
+      "Separate foreground read-only reviewers: code-reviewer (G3 PASS), qa-engineer (G4 PASS), directive-compliance-verifier (PASS 16/16); producer orchestrator differs from every verifier; zero blocking findings, advisories dispositioned in the gate reports without owner round-trips."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R678",
+     "state": "PASS",
+     "evidence": [
+      "Frozen corrected candidate 2245de74 (tree 63119a9a, subtree edf026b3) measured by git and matched by source_binding.json + runbook s4 + ps_test pinnedSha; required_modules includes both changed modules, all present at the pinned commit; controller_update ps harness 7/7. DCV + G3 + G4 (AS-DS-7) reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R679",
+     "state": "PASS",
+     "evidence": [
+      "No push (branch has no upstream), no merge, PR #241 untouched (open, unrelated head, pre-dates work), no provider call (runtime mrl dir holds only the preserved canary-b5-01/canary-b5-02; tests offline). DCV reproduced."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    },
+    {
+     "id": "D-024-R682",
+     "state": "PASS",
+     "evidence": [
+      "Evidence-map row records the restricted five-item return plan matching the source list in order; discharged at session end from the completed matrix (this entry). DCV verified the recorded plan."
+     ],
+     "verified_at": "2026-09-02T22:10:00+00:00"
+    }
+   ],
+   "reviewed_manifest_sha256": "77875c4cc0ccf97cbd43b622c3c71e157563547ae442a154642254a111abbe71",
+   "reviewed_sha": "f8159f10cf4a66683f389dabc3b1c9adb8324c61",
+   "verified_at": "2026-09-02T22:10:00+00:00",
+   "verification_report": "project-control/reports/M0-T141-DCV.md",
+   "note": "Independent wave at reviewed head f8159f10 (content identity unchanged since the submitted head 71f0e063 the reviewers pinned; gate reports live outside allowed_paths): G3 code-reviewer PASS, G4 qa-engineer PASS, DCV PASS 16/16, zero blocking findings. Producer != every verifier (R677)."
   }
  ],
- "updated_at": "2026-09-02T21:05:00+00:00"
+ "updated_at": "2026-09-02T22:10:00+00:00"
 }

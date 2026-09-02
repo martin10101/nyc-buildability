@@ -68,12 +68,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-02T18:55:14.075593+00:00",
-  "updated_at": "2026-09-02T19:19:18.731017+00:00",
+  "updated_at": "2026-09-02T19:49:18.869055+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -82,5 +82,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-02T18:55:14.075593+00:00",
-  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-02T19:49:18.869055+00:00"
 }
