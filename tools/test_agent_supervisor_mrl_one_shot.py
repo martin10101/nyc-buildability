@@ -299,6 +299,10 @@ def test_one_fresh_process_one_prompt_one_schema_bound_result(launch):
     assert result.launch_record["max_turns"] == 12 and result.launch_record["version"] == "2.1.252"
     assert result.launch_record["starting_sha"] == HEAD
     assert result.launch_record["chain"]["combined_sha256"] == launch["pf"].manifest.dispatch["claude_chain_sha256"]
+    # the updater fact is measured from the SAME mapping Popen received, and recorded by name
+    assert result.launch_record["child_env_updater"] == {"DISABLE_AUTOUPDATER": "1", "disable_updates_present": False}
+    assert result.launch_record["child_env_updater"]["DISABLE_AUTOUPDATER"] == kwargs["env"]["DISABLE_AUTOUPDATER"]
+    assert unit_record(launch)["launch"]["child_env_updater"]["DISABLE_AUTOUPDATER"] == "1"
 
 
 def test_happy_path_writes_the_unit_record_and_audit_rows(launch):
@@ -324,6 +328,35 @@ def test_happy_path_writes_the_unit_record_and_audit_rows(launch):
     ledger = json.loads(launch["pf"].ledger_path.read_text(encoding="utf-8"))
     assert ledger["closed"] is True and ledger["primary_id"] == "run-1.primary"
     assert runner.executable_identity()["digest"] == launch["pf"].manifest.dispatch["claude_chain_sha256"]
+
+
+def test_permission_denials_are_recorded_from_the_result_object(launch):
+    """The restricted-tool canary item reads the unit record; the CLI's own denial rows land there."""
+    denials = [{"tool_name": "Bash", "tool_input": {"command": "git status"}, "tool_use_id": "tu_1"},
+               {"tool_name": "WebFetch", "tool_input": {"url": "https://example.invalid"}}]
+    harness = Harness(json.dumps(result_object(permission_denials=denials)))
+    result = make_runner(launch, harness).run_unit(PROMPT)
+    assert result.ok, result.checkpoint_error
+    assert result.permission_denials == (
+        {"tool_name": "Bash", "tool_input": {"command": "git status"}},
+        {"tool_name": "WebFetch", "tool_input": {"url": "https://example.invalid"}})
+    record = unit_record(launch)
+    assert record["permission_denials"] == list(result.permission_denials)
+    assert launch["audit"].events[2]["detail"]["permission_denials"] == 2
+
+
+def test_no_or_malformed_permission_denials_record_nothing(launch):
+    """Negative twin: an absent, non-list, or junk-row field is 'no denial observed', never a denial."""
+    harness = Harness(json.dumps(result_object()))
+    result = make_runner(launch, harness).run_unit(PROMPT)
+    assert result.ok and result.permission_denials == ()
+    assert unit_record(launch)["permission_denials"] == []
+    assert launch["audit"].events[2]["detail"]["permission_denials"] == 0
+    assert mos.permission_denials_of({"permission_denials": "Bash"}) == ()
+    assert mos.permission_denials_of({"permission_denials": [7, "x", None, {"tool_name": "Edit"}]}) == (
+        {"tool_name": "Edit", "tool_input": None},)
+    too_many = [{"tool_name": f"T{i}"} for i in range(mos.MAX_PERMISSION_DENIALS + 5)]
+    assert len(mos.permission_denials_of({"permission_denials": too_many})) == mos.MAX_PERMISSION_DENIALS
 
 
 def test_result_text_carrier_is_accepted_and_recorded(launch):
@@ -475,6 +508,8 @@ def test_updater_pair_is_forced_even_against_a_conflicting_extra(launch):
     assert result.ok
     env = harness.process.kwargs["env"]
     assert env["DISABLE_AUTOUPDATER"] == "1" and env["MRL_PROBE"] == "1"
+    # the recorded fact follows the forced mapping, not the conflicting input
+    assert result.launch_record["child_env_updater"]["DISABLE_AUTOUPDATER"] == "1"
 
 
 def test_prohibited_disable_updates_is_refused_before_any_spawn(launch):

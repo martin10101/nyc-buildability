@@ -108,6 +108,7 @@ class OneShotRunResult(RunResult):
     launch_record: dict[str, Any] = dataclasses.field(default_factory=dict)
     result_source: str = ""
     worker_result: dict[str, Any] = dataclasses.field(default_factory=dict)
+    permission_denials: tuple[dict[str, Any], ...] = ()
 
 
 def _refused(argv: Sequence[str], code: str, message: str, **extra: Any) -> OneShotRunResult:
@@ -156,6 +157,28 @@ def extract_worker_payload(result: Mapping[str, Any]) -> "tuple[Any, str]":
         except ValueError:
             return None, SOURCE_RESULT_TEXT
     return None, ""
+
+
+#: Denials kept per unit; the canary's restricted-tool item needs the first few, not a transcript.
+MAX_PERMISSION_DENIALS = 50
+
+
+def permission_denials_of(result: Mapping[str, Any]) -> tuple[dict[str, Any], ...]:
+    """The result object's ``permission_denials`` rows as ``{tool_name, tool_input}``.
+
+    The CLI reports a denied tool call in the ``result`` event's ``permission_denials``
+    list (the field ``preflight`` already measures). Anything that is not a list of
+    objects yields ``()`` - a missing or malformed field is recorded as *no denial
+    observed*, never as a denial. Capped at ``MAX_PERMISSION_DENIALS`` rows.
+    """
+    rows = result.get("permission_denials")
+    if not isinstance(rows, list):
+        return ()
+    kept: list[dict[str, Any]] = []
+    for row in rows[:MAX_PERMISSION_DENIALS]:
+        if isinstance(row, Mapping):
+            kept.append({"tool_name": str(row.get("tool_name", "") or ""), "tool_input": row.get("tool_input")})
+    return tuple(kept)
 
 
 class OneShotRunner:
@@ -244,6 +267,10 @@ class OneShotRunner:
             "profile_identity_sha256": self.launch.profile.identity_sha256,
             "max_turns": int(self.config.max_turns), "wall_clock_seconds": float(self.config.timeout_seconds),
             "starting_sha": before.head_sha, "launched_at_utc": to_utc_iso(),
+            # Measured from the exact mapping handed to Popen (R563): the canary's
+            # updater-disablement item reads this, not a narrative.
+            "child_env_updater": {"DISABLE_AUTOUPDATER": env.get("DISABLE_AUTOUPDATER", ""),
+                                  "disable_updates_present": "DISABLE_UPDATES" in env},
         }
         self._audit("mrl_one_shot_launched", detail={**launch_record, "chain": launch_record["chain"]["kind"]},
                     executable_identity={"name": "claude", "path": chain.executable,
@@ -339,7 +366,8 @@ class OneShotRunner:
             result_text=str(result_obj.get("result", "")) if result_obj else "",
             descendant_proof=proof.to_dict() if proof else {}, accounting=dict(accounting),
             launch_record=launch_record, result_source=source,
-            worker_result=dataclasses.asdict(worker) if worker else {})
+            worker_result=dataclasses.asdict(worker) if worker else {},
+            permission_denials=permission_denials_of(result_obj) if result_obj else ())
         self._write_unit_record(result)
         self._audit("mrl_one_shot_settled", checkpoint_id=checkpoint.checkpoint_id if checkpoint else "",
                     output_digest=digest_of(checkpoint.to_dict()) if checkpoint else "",
@@ -349,7 +377,8 @@ class OneShotRunner:
                             "containment": containment, "descendant_proof": result.descendant_proof,
                             "accounting": result.accounting, "result_source": source,
                             "observed_models": list(observed_models), "model_mismatch": model_mismatch,
-                            "session_id_recorded": bool(session_id)})
+                            "session_id_recorded": bool(session_id),
+                            "permission_denials": len(result.permission_denials)})
         return result
 
     def _assert_bound(self, state: Any, expected: Mapping[str, Any]) -> None:
@@ -372,6 +401,7 @@ class OneShotRunner:
             "containment_verified_in_job": result.containment_verified_in_job,
             "descendant_proof": result.descendant_proof, "accounting": result.accounting,
             "launch": result.launch_record, "max_turns": int(self.config.max_turns),
+            "permission_denials": list(result.permission_denials),
         }
         self.launch.run_dir.mkdir(parents=True, exist_ok=True)
         (self.launch.run_dir / UNIT_RECORD_NAME).write_text(
