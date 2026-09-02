@@ -217,3 +217,17 @@ def test_torn_lines_are_skipped_but_never_trusted(tmp_path):
     write_transcript(tmp_path, cwd, ['{"truncated', assistant_line(cwd=cwd)])
     evidence, _tools = verify(tmp_path, cwd)
     assert evidence.assistant_turns == 1
+
+
+def test_torn_multibyte_transcript_refuses_typed_not_crash(tmp_path):
+    """G3 Finding 1 (M0-T142): a child killed mid-write can tear a multibyte
+    character; UnicodeDecodeError is a ValueError, not an OSError, so it must be
+    caught here as a typed refusal, never escape settlement as a crash."""
+    cwd = str(tmp_path / "wt")
+    path = mri.transcript_path(tmp_path, cwd, SESSION)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(assistant_line(cwd=cwd).encode("utf-8")[:-1] + b"\xe2\x80")
+    with pytest.raises(ContractError) as exc:
+        verify(tmp_path, cwd)
+    assert exc.value.code == "transcript_missing"
+    assert "unreadable" in exc.value.message

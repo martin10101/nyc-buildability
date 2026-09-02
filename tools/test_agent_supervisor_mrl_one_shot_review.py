@@ -49,6 +49,8 @@ from tools.test_agent_supervisor_mrl_one_shot import (  # noqa: E402
     git_seam,
     make_launch,
     make_runner,
+    result_object,
+    write_transcript,
 )
 
 BASE_SHA = "5" * 40
@@ -281,6 +283,33 @@ def test_end_to_end_worker_unit_then_review_completes(launch, tmp_path):
     assert outcome.decision.verified_repo_head == result.checkpoint.current_sha == HEAD
     events = launch["audit"].names()
     assert events.index("mrl_one_shot_settled") < events.index("codex_review_decision")
+
+
+def test_review_completes_after_a_multi_key_usage_settlement(launch, tmp_path):
+    """AS-CX-1 (M0-T142, R695): the EXACT canary-b5-02r1 aggregate shape - pin +
+    internal haiku helper + pin[1m] context tier - settles AND Codex review then
+    proceeds to COMPLETE on the same chain."""
+    write_transcript(launch, models=("claude-opus-4-8", "claude-opus-4-8"), tools=("Agent",))
+    worker = Harness(json.dumps(result_object(
+        models=("claude-opus-4-8", "claude-haiku-4-5-20251001", "claude-opus-4-8[1m]"))))
+    result = make_runner(launch, worker).run_unit(PROMPT)
+    assert result.ok, result.checkpoint_error
+    assert result.model_mismatch is False
+    assert result.runtime_identity["auxiliary_models"] == ("claude-haiku-4-5-20251001",)
+    packet = evidence.build_packet(run_id="run-1", task_id=TASK_ID, checkpoint_id=result.checkpoint.checkpoint_id,
+                                   checkpoint=result.checkpoint.to_dict()).packet.to_dict()
+    rh = ReviewHarness()
+    outcome = reviewer_review(launch, rh, tmp_path, packet, result)
+    assert outcome.ok, (outcome.error_code, outcome.error_message)
+    assert outcome.decision.decision == "COMPLETE"
+    events = launch["audit"].names()
+    assert events.index("mrl_one_shot_settled") < events.index("codex_review_decision")
+
+
+def reviewer_review(launch, rh, tmp_path, packet, result):
+    reviewer = make_reviewer(launch, rh, tmp_path)
+    return reviewer.review(packet, expected_task_id=TASK_ID,
+                           expected_checkpoint_id=result.checkpoint.checkpoint_id)
 
 
 # ---------------------------------------------------------------- APPROVE alone never advances (R504)

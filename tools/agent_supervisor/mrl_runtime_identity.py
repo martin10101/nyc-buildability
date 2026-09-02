@@ -108,7 +108,10 @@ def read_transcript_turns(path: pathlib.Path, session_id: str,
     """
     try:
         text = pathlib.Path(path).read_text(encoding="utf-8")
-    except OSError as exc:
+    except (OSError, UnicodeDecodeError) as exc:
+        # UnicodeDecodeError is a ValueError, NOT an OSError: a child terminated
+        # mid-write can tear a multibyte character, and that torn transcript must
+        # refuse typed here rather than crash settlement (M0-T142 G3 Finding 1).
         _fail("transcript_missing",
               f"session transcript {path} is unreadable ({exc}); the runtime model "
               f"cannot be proven (fail closed)")
