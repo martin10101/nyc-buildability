@@ -218,42 +218,32 @@ python -m tools.agent_supervisor doctor `
 one, set `$backup` to that exact directory instead. Restoring copies over the live
 tree without deleting anything else; journals are untouched.)
 
-## 11. Supervised start (after a fully verified update)
+## 11. Supervised start — OBSOLETE (superseded by the MRL launch runbook)
 
-The example below is the CURRENT D-024 campaign shape (branch
-`control/D-024-fable-codex-loop`), regenerated from the retired M0-T063 A1
-context-index identities. Substitute the actual task's `--worktree` and
-`--task-packet` for the unit being started; `--run-id` is omitted so the operator
-supplies it (or `start` derives a stable `sha256(checkout)`-keyed default) — this
-runbook never hard-codes a specific run id.
+> **OBSOLETE (M0-T136 C-B5; D-024-R586).** This section previously presented the
+> legacy explicit-flag `start` command. There is now exactly ONE operator launch
+> path — the manifest form documented in `docs/MRL_LAUNCH_RUNBOOK.md` — and this
+> runbook deliberately presents NO `start` command any more, so a second copy can
+> never drift from the live contract. Sections 1–10 (update, verification,
+> rollback, recovery) remain current.
 
-```powershell
-Set-Location C:\SupervisorController
-python -m tools.agent_supervisor start --mode supervised `
-  --checkout C:\SupervisorController `
-  --manifest "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" `
-  --config "C:\Program Files\SupervisorConfig\config.toml" `
-  --model-selection model_selection.toml `
-  --claude-executable C:\Users\MLFLL\.local\bin\claude.exe `
-  --codex-executable C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd `
-  --repo C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack `
-  --worktree C:\Users\MLFLL\Downloads\nyc-zoning\wt-d024-a1 `
-  --branch control/D-024-fable-codex-loop --stage claimed `
-  --task-packet C:\Users\MLFLL\Downloads\nyc-zoning\wt-d024-a1\project-control\tasks\M0-T127.json `
-  --max-cycles 1
-```
-
-`--checkout` is pinned EXPLICITLY (D-024-R372; M0-T125 D1/D15): the runtime
-journal is addressed by `sha256(checkout)`, so a start invoked from a different
-directory would silently address a different runtime. It is one of the five
-load-bearing flags (`--checkout --repo --branch --worktree --max-cycles`) that
-`tools/supervisor_command_doc_check.py` requires every presented `start` command
-to carry, so an omission fails CI rather than surfacing as a live refusal.
-
-`--manifest` is now a REQUIRED dispatch input: `start` without it refuses to dispatch,
-and `start` with it verifies the package tree AND the external config before any
-provider contact. The named packet's `documented_test_commands` classify AUTO; altered
-variants stay ASK/HARD_DENY.
+How the launch shape changed: the legacy form typed every dispatch input as a
+flag, and the five load-bearing flags (`--checkout --repo --branch --worktree
+--max-cycles`) had to be pinned explicitly because each silent default was a
+named hazard (D-024-R372; M0-T125 D1/D14/D15). In the manifest form those inputs
+— the executables, controller `--manifest`, config, model selection, task
+packet, repo/worktree/branch, turn and timeout bounds, and the subagent contract
+— are drafted into ONE reviewed `launch_manifest.json` by
+`tools/agent_supervisor/mrl_launch_draft.py`, and `start` takes
+`--launch-manifest` plus only what the manifest cannot carry: `--checkout` (the
+runtime journal is addressed by `sha256(checkout)`), `--mode` (must equal the
+manifest's authorized mode), and `--max-cycles 1` (a manifest binds exactly one
+task to one fresh process for one cycle). The manifest is never proof: every
+expected identity in it is re-observed at PREFLIGHT and any disagreement refuses
+at exit 11 before a provider launches. A typed flag that disagrees with the
+manifest is refused (`launch_manifest_conflict`) rather than silently preferred.
+The exact drafting command, the one fenced start, the refusal and exit-code
+tables, and the WAIT_FOR_OWNER recovery path live in `docs/MRL_LAUNCH_RUNBOOK.md`.
 
 ## 12. Owner touchpoints
 

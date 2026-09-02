@@ -70,6 +70,11 @@ python -m tools.agent_supervisor start --mode shadow
 python -m tools.agent_supervisor start --mode supervised
 ```
 
+> **Operator launch path:** the commands on this page are pedagogical
+> `<placeholder>` templates. The ONE concrete operator launch path is the
+> manifest form — `mrl_launch_draft` then `start --launch-manifest <path>` —
+> documented in `docs/MRL_LAUNCH_RUNBOOK.md` (M0-T136 C-B5; D-024-R586).
+
 `start` runs the safety sequence first, every time — one supervisor per checkout,
 the after-a-crash check, and the integrity checks on its own records. Then it
 looks at whether you gave it everything it needs to actually run:

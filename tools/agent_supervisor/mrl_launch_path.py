@@ -84,7 +84,10 @@ def apply_launch_manifest(args: argparse.Namespace) -> "tuple[LaunchManifest | N
         manifest = LaunchManifest.load(path)
         manifest.base_ref()  # C-B4: the reviewer's decision binds to it (R504/R505); never defaulted
     except ContractError as exc:
-        return None, _refusal("launch_manifest_invalid", str(exc), path)
+        # A loader code already scoped to the manifest (launch_manifest_base_ref_missing)
+        # is the refusal itself (R504/R505); only unscoped contract violations collapse.
+        code = exc.code if exc.code.startswith("launch_manifest_") else "launch_manifest_invalid"
+        return None, _refusal(code, str(exc), path)
     max_cycles = getattr(args, "max_cycles", None)
     if getattr(args, "packet_queue", None) or int(getattr(args, "max_tasks", 1) or 1) > 1 \
             or (max_cycles is not None and int(max_cycles) != 1):

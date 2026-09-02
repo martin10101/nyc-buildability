@@ -44,14 +44,31 @@ supervisor_command_doc_check.py`` wires this into CI.
 Pure and offline: it imports the parser and gates by value and never launches,
 never contacts a provider, never opens the live journal (R374/R375 intact).
 
-Supervisor-freeze qualifying evidence: D-024-R372, M0-T125 D1/D14/D15/D17.
+M0-T136 C-B5 (D-024-R585) adds the MANIFEST-FORM ``start`` contract and the
+package-submodule programs. ``start --launch-manifest <absolute>`` is THE one
+operator launch path (``docs/MRL_LAUNCH_RUNBOOK.md``): the manifest supplies
+every dispatch input, so the pinned set is what the manifest cannot supply —
+``--checkout`` (journal address = cwd otherwise), ``--mode`` (the parser's
+``shadow`` default would meet the manifest's pinned mode as an exit-11
+``launch_manifest_mismatch`` at PREFLIGHT) and the manifest path itself, which
+must be absolute (``LaunchManifest.load`` refuses a relative one). The tooth
+mirrors the seam's single-task refusal offline and, when the named manifest
+exists on this host, applies it exactly as ``cmd_start`` does. A presented
+``python -m tools.agent_supervisor.<submodule>`` command is validated against
+that submodule's own ``build_parser()``; a submodule the tooth does not know is
+a FAILURE, never an unvalidated pass.
+
+Supervisor-freeze qualifying evidence: D-024-R372, M0-T125 D1/D14/D15/D17;
+D-024-R585/R589 (C-B5).
 """
 from __future__ import annotations
 
 import argparse
 import contextlib
 import dataclasses
+import importlib
 import io
+import pathlib
 import shlex
 from collections.abc import Sequence
 
@@ -66,12 +83,35 @@ REQUIRED_START_FLAGS: tuple[str, ...] = (
 #: The verb whose presented shape carries the pinned-flag requirement.
 START_VERB = "start"
 
+#: The manifest-form ``start`` (C-B5; D-024-R585). ``--launch-manifest`` selects
+#: the form; the manifest then supplies the executables, packet, config, model
+#: selection, controller manifest, worktree/repo/branch and bounds, and a typed
+#: flag that disagrees with it is refused (``launch_manifest_conflict``), so the
+#: legacy five-flag set is NOT the contract here. What the operator must still
+#: pin explicitly is exactly what the manifest cannot carry.
+MANIFEST_FLAG = "--launch-manifest"
+MANIFEST_START_FLAGS: tuple[str, ...] = ("--checkout", "--mode", MANIFEST_FLAG)
+
+#: The package CLI program key (``-m tools.agent_supervisor`` / ``cli.py`` /
+#: ``__main__.py``) versus the submodule programs an operator may be presented.
+CLI_PROGRAM = "cli"
+
+#: Package submodules a doc may present as ``python -m tools.agent_supervisor.<name>``
+#: (or ``.../agent_supervisor/<name>.py``), mapped to the module whose
+#: ``build_parser()`` validates the argv. Any submodule outside this table is a
+#: FAILURE (``unknown_program``): the tooth never lets a presented program pass
+#: merely because it cannot parse it.
+SUBMODULE_PROGRAMS: dict[str, str] = {
+    "mrl_launch_draft": "tools.agent_supervisor.mrl_launch_draft",
+}
+
 #: A presented command is a SUPERVISOR command (and thus validated) only when it
 #: actually INVOKES the package CLI — the module form ``-m tools.agent_supervisor``
-#: or a direct ``cli.py`` / ``__main__.py`` script path. A mere PATH mention of
-#: ``agent_supervisor`` (robocopy of the package tree, ``git diff`` over it, a
-#: ``$src = "...\agent_supervisor"`` assignment) is NOT an invocation and is
-#: ignored, so ordinary shell lines in a runbook code block are not mis-flagged.
+#: or a direct ``cli.py`` / ``__main__.py`` script path — or a registered
+#: submodule program. A mere PATH mention of ``agent_supervisor`` (robocopy of
+#: the package tree, ``git diff`` over it, a ``$src = "...\agent_supervisor"``
+#: assignment) is NOT an invocation and is ignored, so ordinary shell lines in a
+#: runbook code block are not mis-flagged.
 SUPERVISOR_INVOCATION_MARKERS: tuple[str, ...] = (
     "-m tools.agent_supervisor",
     "tools.agent_supervisor.cli",
@@ -79,7 +119,14 @@ SUPERVISOR_INVOCATION_MARKERS: tuple[str, ...] = (
     "agent_supervisor\\cli.py",
     "agent_supervisor/__main__.py",
     "agent_supervisor\\__main__.py",
+    *(f"agent_supervisor/{name}.py" for name in SUBMODULE_PROGRAMS),
+    *(f"agent_supervisor\\{name}.py" for name in SUBMODULE_PROGRAMS),
 )
+
+#: ``-m`` module spellings that mean the package CLI itself.
+_CLI_MODULES = frozenset({
+    "tools.agent_supervisor", "tools.agent_supervisor.cli", "tools.agent_supervisor.__main__"})
+_PACKAGE_MODULE_PREFIX = "tools.agent_supervisor."
 
 #: Fenced code-block languages whose bodies may carry presented commands.
 _FENCE_MARKERS: tuple[str, ...] = ("```", "~~~")
@@ -217,6 +264,15 @@ def subcommand_tokens(
     surrounding quotes are then stripped.
     """
     verbs = _verb_choices(parser)
+    cleaned = _tokens(raw)
+    for position, token in enumerate(cleaned):
+        if token in verbs:
+            return token, cleaned[position + 1:]
+    return "", []
+
+
+def _tokens(raw: str) -> list[str]:
+    """Comment-stripped, quote-stripped ``shlex(posix=False)`` tokens of a command."""
     raw = _strip_trailing_comment(raw)
     try:
         tokens = shlex.split(raw, posix=False)
@@ -224,10 +280,35 @@ def subcommand_tokens(
         raise CommandDocError(
             "untokenizable", f"could not tokenize presented command {raw!r}: {exc}"
         ) from exc
-    cleaned = [_strip_quotes(tok) for tok in tokens]
-    for position, token in enumerate(cleaned):
-        if token in verbs:
-            return token, cleaned[position + 1:]
+    return [_strip_quotes(tok) for tok in tokens]
+
+
+def program_of(raw: str) -> tuple[str, list[str]]:
+    """Which supervisor PROGRAM a presented command invokes, and the argv after it.
+
+    Returns ``(CLI_PROGRAM, argv)`` for the package CLI (``-m tools.agent_supervisor``,
+    ``-m tools.agent_supervisor.cli``, ``.../agent_supervisor/cli.py`` or
+    ``__main__.py``), ``(<submodule name>, argv)`` for ``-m
+    tools.agent_supervisor.<name>`` or ``.../agent_supervisor/<name>.py`` (whether or
+    not the name is registered — the validator decides), and ``("", [])`` when no
+    program marker is present (a bare ``supervisor <verb>`` alias form, resolved by
+    verb search).
+    """
+    tokens = _tokens(raw)
+    for position, token in enumerate(tokens):
+        if token == "-m" and position + 1 < len(tokens):
+            module = tokens[position + 1]
+            if module in _CLI_MODULES:
+                return CLI_PROGRAM, tokens[position + 2:]
+            if module.startswith(_PACKAGE_MODULE_PREFIX):
+                return module[len(_PACKAGE_MODULE_PREFIX):], tokens[position + 2:]
+            continue
+        normalized = token.replace("\\", "/")
+        if normalized.endswith(".py") and "/agent_supervisor/" in f"/{normalized}":
+            name = normalized.rsplit("/", 1)[-1][:-3]
+            if name in ("cli", "__main__"):
+                return CLI_PROGRAM, tokens[position + 1:]
+            return name, tokens[position + 1:]
     return "", []
 
 
@@ -293,10 +374,17 @@ def validate_command(
 
     Non-``start`` verbs pass on parser acceptance alone (their contract is the
     parser). ``start`` additionally carries the pinned-flag + dispatch-input
-    tooth. The worktree-binding dry-run is a separate call
-    (``check_worktree_binding``) the CI entry runs when the packet is resolvable,
-    so this function stays offline and packet-free.
+    tooth — the legacy five-flag form, or the manifest form when
+    ``--launch-manifest`` is present (``_validate_manifest_start``). A
+    submodule program (``-m tools.agent_supervisor.<name>``) is validated by
+    that module's own parser (``_validate_submodule``). The worktree-binding
+    dry-run is a separate call (``check_worktree_binding``) the CI entry runs
+    when the packet is resolvable, so this function stays offline and
+    packet-free.
     """
+    program, program_argv = program_of(command.raw)
+    if program not in ("", CLI_PROGRAM):
+        return _validate_submodule(command, program, program_argv)
     verb, argv = subcommand_tokens(command.raw, parser)
     if not verb:
         return CommandVerdict(
@@ -309,6 +397,8 @@ def validate_command(
         return CommandVerdict(
             command=command, verb=verb, ok=False, code="parser_rejected",
             message=f"build_parser() rejected the presented command: {error}")
+    if verb == START_VERB and MANIFEST_FLAG in argv:
+        return _validate_manifest_start(command, argv, namespace)
     if verb == START_VERB:
         present = set(argv)
         missing = [flag for flag in REQUIRED_START_FLAGS if flag not in present]
@@ -332,6 +422,112 @@ def validate_command(
     return CommandVerdict(
         command=command, verb=verb, ok=True, code="ok",
         message=f"presented {verb!r} command matches the live contract")
+
+
+def _fail(command: PresentedCommand, verb: str, code: str, message: str) -> CommandVerdict:
+    return CommandVerdict(command=command, verb=verb, ok=False, code=code, message=message)
+
+
+def is_absolute_path(value: str) -> bool:
+    """Absolute on EITHER platform (a doc is validated on Linux CI and run on Windows).
+
+    ``$env:LOCALAPPDATA\\...`` and relative spellings are not absolute: the launch
+    seam (``LaunchManifest.load``) refuses them, so the tooth must too.
+    """
+    text = str(value or "")
+    return (pathlib.PureWindowsPath(text).is_absolute()
+            or pathlib.PurePosixPath(text).is_absolute())
+
+
+def _validate_manifest_start(
+    command: PresentedCommand, argv: Sequence[str], namespace: argparse.Namespace,
+) -> CommandVerdict:
+    """The manifest-form ``start`` contract (C-B5; D-024-R585).
+
+    - every ``MANIFEST_START_FLAGS`` flag present explicitly -> else
+      ``missing_pinned_flag``;
+    - the manifest path absolute on either platform -> else
+      ``launch_manifest_not_absolute``;
+    - the seam's single-task refusal mirrored offline (``--packet-queue``,
+      ``--max-tasks>1``, ``--max-cycles!=1``) -> ``launch_manifest_single_task``;
+    - when the manifest EXISTS on this host: ``apply_launch_manifest`` must accept
+      it (its refusal code is the verdict code), the typed ``--mode`` must equal
+      ``expected.mode`` (``launch_manifest_mismatch``, the PREFLIGHT code) and
+      ``dispatch_inputs_missing`` must then be empty. When it does not exist
+      (CI, another host), the structural contract above is the verdict and the
+      message says so — a doc never passes as if the file were verified.
+    """
+    verb = START_VERB
+    present = set(argv)
+    missing = [flag for flag in MANIFEST_START_FLAGS if flag not in present]
+    if missing:
+        return _fail(command, verb, "missing_pinned_flag",
+                     f"presented manifest-form start omits {missing}; the manifest supplies "
+                     f"every dispatch input, and {list(MANIFEST_START_FLAGS)} are exactly "
+                     f"what it cannot supply (R585)")
+    path = str(namespace.launch_manifest)
+    if not is_absolute_path(path):
+        return _fail(command, verb, "launch_manifest_not_absolute",
+                     f"--launch-manifest {path!r} is not an absolute path on either platform; "
+                     f"LaunchManifest.load refuses it (R557), so the presented launch would "
+                     f"be refused")
+    max_cycles = getattr(namespace, "max_cycles", 1)
+    if (getattr(namespace, "packet_queue", None)
+            or int(getattr(namespace, "max_tasks", 1) or 1) > 1
+            or (max_cycles is not None and int(max_cycles) != 1)):
+        return _fail(command, verb, "launch_manifest_single_task",
+                     "a launch manifest binds exactly ONE task to ONE fresh process for ONE "
+                     "cycle (R581); --max-tasks>1 / --packet-queue / --max-cycles!=1 are "
+                     "refused with it")
+    if not pathlib.Path(path).is_file():
+        return CommandVerdict(
+            command=command, verb=verb, ok=True, code="ok",
+            message=(f"presented manifest-form start matches the structural contract; the "
+                     f"manifest {path!r} is not present on this host, so its content was "
+                     f"NOT applied (the launch re-observes everything at PREFLIGHT)"))
+    # Lazy imports: the seam imports the package; the extractor half of this
+    # module stays importable standalone.
+    from tools.agent_supervisor import start_gate
+    from tools.agent_supervisor.mrl_launch_path import apply_launch_manifest
+    manifest, refusal = apply_launch_manifest(namespace)
+    if refusal is not None:
+        return _fail(command, verb, refusal.reason_code,
+                     f"the manifest on this host refuses the presented start: {refusal.message}")
+    expected_mode = str(manifest.expected["mode"]) if manifest is not None else ""
+    if expected_mode != str(namespace.mode):
+        return _fail(command, verb, "launch_manifest_mismatch",
+                     f"presented --mode {namespace.mode!r} disagrees with the manifest's "
+                     f"expected.mode {expected_mode!r}; PREFLIGHT would refuse (R560)")
+    still_missing = start_gate.dispatch_inputs_missing(namespace)
+    if still_missing:
+        return _fail(command, verb, "dispatch_inputs_missing",
+                     f"after applying the manifest the start still lacks dispatch inputs "
+                     f"{still_missing}")
+    return CommandVerdict(
+        command=command, verb=verb, ok=True, code="ok",
+        message=(f"presented manifest-form start matches the live contract; the manifest "
+                 f"{path!r} on this host applied cleanly and every dispatch input is bound"))
+
+
+def _validate_submodule(
+    command: PresentedCommand, name: str, argv: Sequence[str],
+) -> CommandVerdict:
+    """Validate ``-m tools.agent_supervisor.<name> ...`` against that module's parser."""
+    verb = f"-m {name}"
+    module_name = SUBMODULE_PROGRAMS.get(name)
+    if module_name is None:
+        return _fail(command, verb, "unknown_program",
+                     f"the doc presents package program {name!r}, which the tooth does not "
+                     f"know how to validate; register it in SUBMODULE_PROGRAMS or do not "
+                     f"present it")
+    module = importlib.import_module(module_name)
+    namespace, error = _parse_quietly(module.build_parser(), argv)
+    if namespace is None:
+        return _fail(command, verb, "parser_rejected",
+                     f"{module_name}.build_parser() rejected the presented command: {error}")
+    return CommandVerdict(
+        command=command, verb=verb, ok=True, code="ok",
+        message=f"presented {verb!r} command matches {module_name}'s live parser")
 
 
 def check_worktree_binding(

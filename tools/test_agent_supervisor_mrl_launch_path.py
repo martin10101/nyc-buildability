@@ -225,12 +225,13 @@ def test_single_task_defaults_are_accepted(world):
 
 def test_manifest_without_base_ref_is_refused_before_the_runtime_opens(world):
     """C-B4 (R504/R505): the reviewer's decision binds to dispatch.base_ref; a manifest that
-    does not name one is invalid at the entrance, never defaulted to origin/main later."""
+    does not name one refuses at the entrance under the loader's own specific code,
+    never defaulted to origin/main later and never collapsed into the generic code."""
     del world["manifest"]["dispatch"]["base_ref"]
     _write(world)
     args = _parse("--mode", "supervised", "--launch-manifest", str(world["manifest_path"]))
     _m, refusal = mlp.apply_launch_manifest(args)
-    assert refusal is not None and refusal.reason_code == "launch_manifest_invalid"
+    assert refusal is not None and refusal.reason_code == "launch_manifest_base_ref_missing"
     assert "base_ref" in refusal.message
 
 
