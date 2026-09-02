@@ -11049,7 +11049,103 @@
    "verified_at": "2026-09-03T00:40:00+00:00",
    "verification_report": "project-control/reports/M0-T142-DCV.md",
    "note": "Independent wave at submitted head f2e79cc5 (G3 PASS 4-minor, G4 PASS 2-minor, DCV PASS 14/14) + in-scope review-wave delta (G3 Findings 1/4 resolved) + delta attestations at 57dce1a5 (G3 DELTA-ATTEST PASS, G4 DELTA-ATTEST PASS) + DCV re-verification at the resubmitted content. Producer != every verifier. Content identity stable from the resubmission evidence head through acceptance (gate reports live outside allowed_paths)."
+  },
+  {
+   "task_id": "M0-T143",
+   "directive_id": "D-024",
+   "producer": "orchestrator (codex review-schema repair producer)",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R700",
+    "D-024-R701",
+    "D-024-R702",
+    "D-024-R703",
+    "D-024-R704",
+    "D-024-R705",
+    "D-024-R706",
+    "D-024-R707",
+    "D-024-R708",
+    "D-024-R709",
+    "D-024-R710",
+    "D-024-R711",
+    "D-024-R712",
+    "D-024-R713"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R700",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R701",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R702",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R703",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R704",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R705",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R706",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R707",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R708",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R709",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R710",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R711",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R712",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R713",
+     "state": "pending",
+     "evidence": []
+    }
+   ],
+   "verification_report": "",
+   "note": "Skeleton at claim time (Amendment 46). States become PASS only via the independent directive-compliance verification at the frozen reviewed head."
   }
  ],
- "updated_at": "2026-09-03T00:40:00+00:00"
+ "updated_at": "2026-09-02T23:59:00+00:00"
 }

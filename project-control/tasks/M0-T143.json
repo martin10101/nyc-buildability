@@ -63,21 +63,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "The provider strict-subset keyword set is not published exhaustively; mitigation: allow only the keyword profile proven live by codex_decision.schema.json (run_m0t035_shadow_pilot_r6) and refuse everything else fail-closed.",
     "Observability change touches the live reviewer path; mitigation: behavior on SUCCESS is byte-identical (tails recorded only on failure), proven by existing suite + new tests."
   ],
   "blockers": [],
   "created_at": "2026-09-02T23:32:31.825879+00:00",
-  "updated_at": "2026-09-02T23:32:31.978628+00:00",
+  "updated_at": "2026-09-02T23:34:53.153776+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -85,5 +85,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-02T23:32:31.825879+00:00"
+  "directive_regime_entered_at": "2026-09-02T23:32:31.825879+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
 }
