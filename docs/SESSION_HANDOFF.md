@@ -6,69 +6,74 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 75: M0-T141 (Amendment 44 Draft-7 schema hotfix) ACCEPTED; corrected owner canary script deployed; M0-T140 still claimed awaiting the owner-typed run
+## Handoff - seq 76: M0-T141 + M0-T142 ACCEPTED (Draft-7 schema hotfix + settlement identity/Bash restriction); Fable-switch canary script deployed; M0-T140 claimed awaiting the owner-typed run
 
-1. **Generated:** 2026-09-02 by the M0-T141 session. The owner's second live canary run PASSED
-   b5-01 (audit record 17, clean_status refusal, exit 11) but canary-b5-02's claude child exited
-   1 BEFORE provider contact: Claude Code 2.1.252 rejects the Draft 2020-12 `$schema` declaration
-   on `--json-schema` (provider-contact count zero; evidence preserved in
-   `project-control/reports/M0-T141-canary-b502-schema-failure-evidence.md`). Amendment 44
-   (R664-R683) authorized ONE bounded hotfix + canary continuation correction.
+1. **Generated:** 2026-09-03 by the Amendment 44/45 session (owner ran `/session-handoff`
+   mid-close; the close COMPLETED first: reviews reconciled, task accepted, script deployed).
 2. **Identity:** root/worktree `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
    `candidate/D-024-mrl-option-b` (LOCAL ONLY - no upstream). **Frozen corrected CODE candidate:
-   `2245de74232947be919b555fd061ba8a6e6438de`** (tree 63119a9a, subtree edf026b3) - supersedes
-   1489879e as the controller install source; `tools/agent_supervisor` at HEAD is byte-identical
-   to it. `tools/controller_update/source_binding.json` + runbook s4 + ps_test pinnedSha all pin
-   it. Nothing pushed; PR #241 untouched (R520/R521).
-3. **Status:** M0-T141 ACCEPTED (independent G3 code-reviewer PASS + G4 qa-engineer PASS + DCV
-   PASS 16/16 at reviewed head f8159f10; accept dry-run zero reasons; accept commit e79d7ccc).
-   Fix: new `tools/agent_supervisor/mrl_provider_schema.py` projects a deep-copied, explicitly
-   Draft-7-declared provider schema at the single `--json-schema` call site (fail-closed
-   same-meaning keyword allowlist; canonical `schemas/worker_result.schema.json` +
-   `mrl_worker_result.py` byte-identical). Focused tests 89 passed; mutants M1-M6 all DETECTED;
-   supervisor suite 3566 passed/2 skipped; both ps harnesses PASS; modularity + registry
-   validator clean.
-4. **Ledger:** M0-T140 (canary-execution vehicle) stays **claimed** until the live canary
-   finishes (R651/R674). M0-T137 backlog (owner-only R603-R605, never interpreted); M0-T133
-   rework; M0-T135 backlog.
-5. **Owner-run continuation (R680):** ONE external script deployed at
-   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\run_m0t141_hotfix_and_canary.ps1`
-   (SHA-256 a4a3a347690c6ea965f5bc4f0c822f1d20c10612e68c1e47a2a55d4732ee1404; PS 5.1 parse 0
-   errors; prior script renamed `.superseded-by-m0t141`). Attempt 2 (2026-09-02 ~20:06Z) stopped
-   safely at install `source_worktree_exists` (stale wt-controller-src from the morning install;
-   rollback restored a byte-identical tree, journals untouched, post-rollback doctor PASS, zero
-   provider contact — `M0-T140-canary-attempt2-refusal-evidence.md`); P0 now removes a stale
-   wt-controller-src via the runbook s4 remedy up front. Fail-fast order: P0 (incl. stale-worktree
-   removal) -> backup -> install -> record-manifest -> verify-manifest -> normal doctor ->
-   conditional s9a clear-recovery (journal currently PAUSED_RECOVERY) -> manifest re-draft vs
-   M0-T140 -> exactly ONE provider one-shot `--run-id canary-b5-02r1` (correlated successor;
-   b5-01 PASS REUSED from audit record 17, never rerun; no park/pending-approval step) ->
-   readout -> harness -> ten-row table + one token. Rollback (bound backup only) fires ONLY on
-   install/doctor failure, NEVER on a canary product defect (evidence preserved, stop) - R681.
-6. **Next steps:** (a) owner types the one command (see M0-T141 return); (b) after the canary,
-   record M0-T140 evidence reports + gates and accept under standard gates; (c) push/PR/merge and
-   Tranche C stay owner-gated (R520-R522); R603-R605 owner-only.
-7. **Standing restrictions:** R518; R520-R525 (no push/PR/merge/auto-accept/deploy/real
-   loop/Tranche C); never merge PR #241; supervisor commits cite `D-024-R###` + AD-093
-   qualifying evidence; no `name:` on producer spawns; no bare `git stash`; thin client;
-   Bootstrap Gate 0 before any write; R683 never execute the owner-run script yourself.
-8. **Authoritative files:** `project-control/tasks/M0-T141.json` (+ `M0-T140.json`),
-   `project-control/directives/D-024-fable-codex-loop/source-044-amendment.md` (R664-R683),
-   `project-control/reports/M0-T141-*` (producer-report, freeze, DCV, G3, G4,
-   canary-b502-schema-failure-evidence), `tools/controller_update/source_binding.json`.
-9. **Stop conditions:** any push/remote/PR/merge need; legal/credential/payment;
-   ledger-vs-prose contradiction (ledger wins); owner rows R603-R605 (never interpreted).
+   `f8f0f0c89ff9c3f7762e144d5d37874b10f2b294`** (tree 23af20d5, subtree ffbde3b6) - supersedes
+   2245de74/1489879e as the controller install source; `tools/agent_supervisor` at HEAD is
+   byte-identical to it; binding + runbook s4 + ps_test pinnedSha all pin it. Working tree clean;
+   nothing pushed; PR #241 untouched. Campaign-continuity record is STALE at seq 71 (rc 1
+   fail-closed) - the ledger wins; do not trust its NEXT pointer.
+3. **Accepted this session:** M0-T141 (Amendment 44 Draft-7 provider-schema hotfix; accept
+   e79d7ccc) and M0-T142 (Amendment 45 settlement runtime-identity + explicit Bash restriction;
+   accept a56a12c5 at reviewed head cfe56bba; G3+G4 gate PASS at f2e79cc5 + delta attestations
+   PASS at 57dce1a5 + DCV 14/14 + RE-VERIFY PASS; dry-run zero reasons). M0-T142 fix: settlement
+   proves the pinned model from the correlation-bound session transcript (modelUsage = aggregate;
+   pin[1m] = same-family context tier; typed refusals incl. torn-multibyte); explicit
+   neither-allowed-nor-denied tool refusal at profile + draft (default deny Edit/Write/Bash/Agent).
+   Amendments 44 (R664-R683) + 45 (R684-R699) captured; validator exit 0. Suite at candidate:
+   3593 passed / 2 skipped; mutants M1-M6 + N1-N6 all DETECTED; G4 proved the REAL preserved
+   canary-b5-02r1 run now settles.
+4. **Ledger:** M0-T140 (canary vehicle) stays **claimed** until the live canary finishes
+   (R651/R674). M0-T137 backlog (owner-only R603-R605); M0-T133 rework; M0-T135 backlog.
+5. **Owner-run continuation (R697/R699):** ONE deployed script
+   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\run_m0t142_fable_switch_and_canary.ps1`
+   (SHA-256 442782a4073ed8cc6cd08b8f63350bdecd54905f621a2882e45b31a268632e09; PS 5.1 parse 0
+   errors; prior scripts renamed `.superseded-*`). Fail-fast: P0 preconditions (incl. stale
+   wt-controller-src removal + REUSED b5-01 PASS row) -> backup -> install f8f0f0c8 ->
+   record-manifest -> verify-manifest -> **PM canonical owner switch model_selection [claude]
+   model -> exact `claude-fable-5`** (backup in activation dir; fallback stays []) -> normal
+   doctor -> conditional s9a clear-recovery -> draft (allow Read/Grep/Glob/Agent, BARE DENY Bash,
+   runtime model from selection) -> exactly ONE one-shot `--run-id canary-b5-02r2` -> corrected
+   rows (3: Claude auth vs Codex NOT_RUN split; 4: verified primary + `--model claude-fable-5`
+   argv proof; 6: Bash absent+never executed; 8: unit accounting) -> harness -> ten-row table +
+   token. Rollback (+ model-selection restore) ONLY on install/doctor failure; NEVER on a canary
+   product defect (evidence preserved, stop).
+6. **Next steps:** (a) owner types the one command (below); (b) after CANARY_PACKAGE_PASS: write
+   `project-control/reports/M0-T140-canary-execution-evidence.md`, run M0-T140's independent
+   gates, accept; on a FAIL row: preserve evidence, causal-trace first (owner stop-order pattern),
+   no rollback, no reinstall loops; (c) push/PR/merge + Tranche C stay owner-gated (R520-R522);
+   R603-R605 remain owner-only (the Fable switch in the script is the OWNER exercising them).
+7. **Sub-agents at handoff:** all reconciled - G3/G4/DCV wave + delta attestations returned,
+   preserved verbatim (`M0-T142-G3-code-review.md`, `-G4-qa-review.md`, `-DCV.md`), gates
+   recorded. None running.
+8. **Standing restrictions:** R518; R520-R525; never merge PR #241; supervisor commits cite
+   `D-024-R###` + AD-093 evidence; no `name:` on producer spawns; no bare `git stash`; thin
+   client; Bootstrap Gate 0 before any write; R683/R697 never execute the owner-run script;
+   R699 exact `claude-fable-5` only (never the `fable` alias, never claude-fable-5-1, no CLI
+   upgrade, fallback []).
+9. **Authoritative files:** `project-control/tasks/M0-T142.json` (+ M0-T140/T141),
+   `project-control/directives/D-024-fable-codex-loop/source-044-amendment.md` +
+   `source-045-amendment.md`, `project-control/reports/M0-T142-*` + `M0-T141-*` +
+   `M0-T140-canary-b502r1-causal-trace.md`, `tools/controller_update/source_binding.json`.
+10. **Stop conditions:** any push/remote/PR/merge need; legal/credential/payment;
+    ledger-vs-prose contradiction (ledger wins); a canary FAIL row (trace, never loop).
 
 ## COPY INTO THE NEW SESSION
 
 Resume from durable evidence only. Confirm `git rev-parse --show-toplevel` =
 `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`, Bootstrap
 Gate 0 (cwd is that root, `/mcp` empty). Read `CLAUDE.md`, this file,
-`project-control/tasks/M0-T140.json`, and `project-control/reports/M0-T141-freeze.md`. Run
-`python tools/project_control.py status`; the ledger wins over prose. M0-T141 (Draft-7
-provider-schema hotfix) is ACCEPTED at frozen corrected candidate 2245de74; the binding pins it.
+`project-control/tasks/M0-T140.json`, and `project-control/reports/M0-T142-freeze.md`. Run
+`python tools/project_control.py status`; the ledger wins (campaign record stale at seq 71).
+M0-T141 + M0-T142 are ACCEPTED at frozen corrected candidate f8f0f0c8 (binding pins it).
 M0-T140 stays claimed until the owner-typed canary finishes: the owner runs
-`run_m0t141_hotfix_and_canary.ps1` (ctl24-activation; backup/install/verify/doctor/recovery/one
-canary-b5-02r1 one-shot). Do NOT push, create/update/merge any PR, execute the owner script,
-rerun b5-01, or start Tranche C. After a successful canary: write M0-T140 evidence reports, run
-its independent gates, accept. Stop for owner-only items (R603-R605 never interpreted).
+`run_m0t142_fable_switch_and_canary.ps1` (ctl24-activation; sha 442782a4...; installs f8f0f0c8,
+switches model_selection to exact claude-fable-5, runs ONE canary-b5-02r2 one-shot). Do NOT
+push, create/update/merge any PR, execute the owner script, rerun b5-01, change model_selection
+yourself, or start Tranche C. After CANARY_PACKAGE_PASS: write M0-T140's canary-execution
+evidence, run its independent gates, accept. On any FAIL row: preserve evidence, produce a
+causal trace first. Stop for owner-only items (R603-R605 exercised only by the owner).
