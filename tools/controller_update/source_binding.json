@@ -1,0 +1,24 @@
+{
+  "schema": "controller_update_source_binding/v1",
+  "authority": "D-024 Amendment 41 (R608-R611); accepted task M0-T136 at frozen production candidate 1489879e; this contract changes only through a reviewed commit - compare the installer's printed identity against project-control/reports/M0-T136-producer-report.md before continuing",
+  "source_repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\nyc-development-feasibility-claude-pack",
+  "expected_origin_url": "https://github.com/martin10101/nyc-buildability.git",
+  "commit_sha": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+  "commit_tree_sha": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+  "subtree_path": "tools/agent_supervisor",
+  "subtree_tree_sha": "79af11a2c7fa33c8f5c1bf85c17e310736bf30a3",
+  "required_modules": [
+    "tools/agent_supervisor/mrl_launch_draft.py",
+    "tools/agent_supervisor/mrl_launch_manifest.py",
+    "tools/agent_supervisor/mrl_launch_path.py",
+    "tools/agent_supervisor/command_docs.py",
+    "tools/agent_supervisor/launch_seam.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/agent_supervisor/manifest.py",
+    "tools/agent_supervisor/ps_tests/run_ps_tests.ps1"
+  ],
+  "source_worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-controller-src",
+  "destination": "C:\\SupervisorController\\tools\\agent_supervisor",
+  "controller_manifest": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_manifest.json",
+  "evidence_out": "%LOCALAPPDATA%\\NYCBuildabilitySupervisor\\ctl24-activation\\controller_update_evidence.json"
+}

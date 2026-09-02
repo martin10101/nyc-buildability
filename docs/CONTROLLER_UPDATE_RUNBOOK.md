@@ -23,6 +23,7 @@ marked **OWNER**. Everything else is executable by the authorized orchestrator u
 | Claude executable (verify with `--version` before use) | `C:\Users\MLFLL\.local\bin\claude.exe` |
 | Codex executable (verify with `--version` before use) | `C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd` |
 | Backup root (never mirror-deleted) | `C:\SupervisorBackup` |
+| Controller-update source binding (immutable accepted candidate; D-024 Am. 41) | `tools/controller_update/source_binding.json`; evidence at `$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_update_evidence.json` |
 
 ## 2. Preconditions (all read-only)
 
@@ -59,23 +60,40 @@ robocopy "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\1854a2a4ff3baf3d1eb39d8640
 directory guarantees no earlier backup is touched. Runtime journals are never deleted
 in either direction.
 
-## 4. Copy the accepted controller delta
+## 4. Install the accepted controller from the frozen candidate (immutable source binding)
 
-Derive the delta from a FRESH clean worktree pinned to accepted origin/main (never a
-transient task worktree), then copy ONLY the files that differ (CRLF-normalized
-comparison), and verify each copied file:
+The copy source is pinned to the immutable accepted production candidate commit
+`1489879e1f6787a9d53ed74db4524b24039e03a2` (M0-T136; D-024 Amendment 41 R608) by the
+checked-in binding contract `tools/controller_update/source_binding.json`. The installer
+never resolves a mutable ref — not a branch, not HEAD, not a remote-tracking name — and
+refuses any binding value that is not a full 40-hex commit SHA. Before copying it
+verifies, fail closed (R609): the source repository and normalized origin identity; that
+the full 40-character commit exists; that its commit tree and `tools\agent_supervisor`
+subtree match the accepted evidence; that every required Tranche-B module (including
+the MRL launch-draft module) exists at that exact commit; and that the fresh source
+worktree is DETACHED at exactly that commit and clean. It then mirrors the accepted
+subtree into `C:\SupervisorController\tools\agent_supervisor` and proves the
+installation by a complete bidirectional per-file SHA-256 comparison against the
+accepted source (R610), recording `controller_update_evidence.json` (source
+commit/tree/subtree plus every installed-file digest) at the certified activation
+location. Any failed check prints one typed `REFUSED reason_code` line and exits
+nonzero with nothing further executed. ONE owner command, no substitution (R607/R612):
 
 ```powershell
-$repo = "C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack"
-git -C $repo fetch origin
-$sha = git -C $repo rev-parse origin/main
-git -C $repo worktree add C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src $sha
-$src = "C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src\tools\agent_supervisor"
-git -C $repo diff --no-index --name-only C:\SupervisorController\tools\agent_supervisor $src
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\update_controller_from_candidate.ps1 -Phase install
 ```
 
-Copy each differing file with `Copy-Item`, then re-run the same `git diff --no-index`
-per file and expect empty (or CRLF-only) output.
+If it refuses `source_worktree_exists`, remove the stale source worktree and re-run:
+
+```powershell
+git -C C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pack worktree remove --force C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src
+```
+
+Compare the identity the installer prints (commit, commit tree, subtree tree) against
+the acceptance record (`project-control/reports/M0-T136-producer-report.md`; D-024
+Amendment 41 header) before continuing. The binding contract changes only through a
+reviewed commit; the negative and mutation tests live in
+`tools/controller_update/ps_tests/` (run `run_ps_tests.ps1` there from a repo checkout).
 
 ## 5. Record the manifest — binding the external protected config
 
@@ -105,6 +123,26 @@ NOTE on digests: the manifest records the LF-NORMALIZED SHA-256 of every covered
 (so CRLF and LF checkouts agree). For the protected config that is the second value in
 §1's table — it deliberately differs from `Get-FileHash`'s raw-byte value on a CRLF
 file. Do not "correct" a healthy manifest because the two differ.
+
+## 5a. Prove the recorded manifest matches the accepted source
+
+Recording a manifest from the destination is not provenance (D-024-R610): §5 generates
+it from whatever is installed, so a self-consistent but wrong installation would
+certify. This step proves the recorded manifest AND the live installation both match
+the exact ACCEPTED source: it re-verifies the source identity, re-compares every
+installed file against the detached source worktree, cross-checks every
+manifest-covered digest (LF-normalized, the manifest's own algorithm) against the
+accepted source tree, and binds the result into `controller_update_evidence.json`
+(R611). A manifest recorded from the wrong installed tree refuses
+`manifest_digest_mismatch` / `manifest_key_set_mismatch`; an installed file changed
+after §4 refuses `content_mismatch`:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\tools\controller_update\update_controller_from_candidate.ps1 -Phase verify-manifest
+```
+
+Keep the detached source worktree until §§6–8 pass; then it may be removed with the
+same `git worktree remove` command shown in §4.
 
 ## 6. Verify the controller — manifest AND external config
 
@@ -208,6 +246,7 @@ $backup = Get-ChildItem C:\SupervisorBackup -Directory |
   Sort-Object Name -Descending | Select-Object -First 1 -ExpandProperty FullName
 robocopy "$backup\agent_supervisor" C:\SupervisorController\tools\agent_supervisor /E /R:2 /W:2
 Remove-Item "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json" -ErrorAction SilentlyContinue
+Remove-Item "$env:LOCALAPPDATA\NYCBuildabilitySupervisor\ctl24-activation\controller_update_evidence.json" -ErrorAction SilentlyContinue
 python -m tools.agent_supervisor doctor `
   --checkout C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t063 `
   --config "C:\Program Files\SupervisorConfig\config.toml" `
