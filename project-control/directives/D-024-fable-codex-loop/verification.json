@@ -10908,7 +10908,148 @@
    "verified_at": "2026-09-02T22:10:00+00:00",
    "verification_report": "project-control/reports/M0-T141-DCV.md",
    "note": "Independent wave at reviewed head f8159f10 (content identity unchanged since the submitted head 71f0e063 the reviewers pinned; gate reports live outside allowed_paths): G3 code-reviewer PASS, G4 qa-engineer PASS, DCV PASS 16/16, zero blocking findings. Producer != every verifier (R677)."
+  },
+  {
+   "task_id": "M0-T142",
+   "directive_id": "D-024",
+   "producer": "orchestrator (settlement runtime-identity corrective producer)",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R685",
+    "D-024-R686",
+    "D-024-R687",
+    "D-024-R688",
+    "D-024-R689",
+    "D-024-R690",
+    "D-024-R691",
+    "D-024-R692",
+    "D-024-R693",
+    "D-024-R694",
+    "D-024-R695",
+    "D-024-R696",
+    "D-024-R698",
+    "D-024-R699"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R685",
+     "state": "PASS",
+     "evidence": [
+      "Exactly one new task (M0-T142); no accepted packet modified; no repo-wide audit; no live provider call (audit.jsonl still 36 records; runtime mrl dir unchanged). DCV reproduced at both heads."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R686",
+     "state": "PASS",
+     "evidence": [
+      "observed_model_from_result deleted; modelUsage treated as aggregate (pin-contained, never single-key); multi-key settles (canary-shape tests + G4 real-canary cross-check)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R687",
+     "state": "PASS",
+     "evidence": [
+      "[1m] accepted only as the exact pin's context tier (model_matches_pin exact; foreign-[1m]/[2m]/case variants refuse); surfaced via context_tier_used. G4 probes P3/P4/P6/P7; mutant N1 DETECTED."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R688",
+     "state": "PASS",
+     "evidence": [
+      "Measured dontAsk read-only-Bash execution cited verbatim in both guard messages; live proof = real-canary census Bash:2 (G4 step 5)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R689",
+     "state": "PASS",
+     "evidence": [
+      "Bare deny chosen and load-bearing (permissions.deny + --disallowedTools flow-through test); canary criterion re-based to prove Bash absent AND never executed (argv deny row + correlated census + no denial rows)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R690",
+     "state": "PASS",
+     "evidence": [
+      "Transcript consumed at NORMAL settlement with the binding explicitly added AND tested: real project-key fixture (C--Users-MLFLL-Downloads-nyc-zoning-ctl24), sessionId + cwd correlation refusals at module and runner level; config_base override/fallback/fail-closed; delta adds the torn-multibyte typed refusal (UnicodeDecodeError caught; G3 Finding 1 resolved, re-attested). Mutant N3 DETECTED."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R691",
+     "state": "PASS",
+     "evidence": [
+      "Valid WorkerResult settles when the pin is proven (checkpoint built; model_mismatch false); refusals preserved for pin-absent aggregate, empty aggregate, divergent main-chain turns; version pin retained; G4 proved the REAL preserved failed run now settles. Mutants N2/N4/N5 DETECTED."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R692",
+     "state": "PASS",
+     "evidence": [
+      "Explicit enforcement at BOTH build sites (profile builder + draft) with typed refusals; default template denies Edit/Write/Bash/Agent; canary criterion matched to the bare-deny mechanism. Mutant N6 DETECTED."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R693",
+     "state": "PASS",
+     "evidence": [
+      "Reader corrections specified against durable fields that all exist in the proven shapes (runtime_identity, main_tool_uses, accounting counters, session_id, codex_decision.json); executable encoding lives in the post-acceptance owner script per AS-ER-1/R697 split (DCV MINOR-1: by directive design)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R694",
+     "state": "PASS",
+     "evidence": [
+      "Forbidden paths (schemas/, mrl_worker_result.py, mrl_provider_schema.py, mrl_transport.py, model_selection.py) empty-diff across the task span incl. the delta; no stored evidence modified/deleted; runtime dirs untouched."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R695",
+     "state": "PASS",
+     "evidence": [
+      "All seven fixture families present; family 7 now has the DIRECT combined test (multi-key settlement -> Codex COMPLETE with audit ordering) added in the delta; family 6 = durable-field existence + documented reader (per AS-ER-1)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R696",
+     "state": "PASS",
+     "evidence": [
+      "Focused tests while editing; ONE affected-suite run at each frozen candidate (3591/2 at 65e43491; 3593/2 at f8f0f0c8 after the delta); independently reproduced by G3 and G4; complete repo suite never re-run per edit."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R698",
+     "state": "PASS",
+     "evidence": [
+      "Return restricted to frozen candidate identity + independent-review result + one PowerShell command + token, generated from the completed matrix (this entry)."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    },
+    {
+     "id": "D-024-R699",
+     "state": "PASS",
+     "evidence": [
+      "Exact-id discipline: claude-fable-5-1 only inside prohibition text; no bare fable alias as a model id; model_selection.toml untouched at verification time (claude-opus-4-8, fallback []); no live launch (audit head unchanged); the owner script performs the canonical switch and proves --model claude-fable-5 in the drafted/launched argv."
+     ],
+     "verified_at": "2026-09-03T00:40:00+00:00"
+    }
+   ],
+   "reviewed_manifest_sha256": "a3eae6f35a3d8f94707cd1fa14045bf4a7a58c58b8a5f0bae2ed567993d679ad",
+   "reviewed_sha": "cfe56bba049145e2cdc66eae0fb83bd735a3bc77",
+   "verified_at": "2026-09-03T00:40:00+00:00",
+   "verification_report": "project-control/reports/M0-T142-DCV.md",
+   "note": "Independent wave at submitted head f2e79cc5 (G3 PASS 4-minor, G4 PASS 2-minor, DCV PASS 14/14) + in-scope review-wave delta (G3 Findings 1/4 resolved) + delta attestations at 57dce1a5 (G3 DELTA-ATTEST PASS, G4 DELTA-ATTEST PASS) + DCV re-verification at the resubmitted content. Producer != every verifier. Content identity stable from the resubmission evidence head through acceptance (gate reports live outside allowed_paths)."
   }
  ],
- "updated_at": "2026-09-02T21:35:00+00:00"
+ "updated_at": "2026-09-03T00:40:00+00:00"
 }

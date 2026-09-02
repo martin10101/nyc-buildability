@@ -79,12 +79,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-02T20:42:50.964271+00:00",
-  "updated_at": "2026-09-02T22:12:12.728583+00:00",
+  "updated_at": "2026-09-02T22:23:25.711693+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -102,5 +102,7 @@
       "status": "rework",
       "message": "Review-wave delta applied in-scope (G3 Finding 1 UnicodeDecodeError hardening + Finding 4 AS-CX-1 combined test); moving to rework for resubmission at candidate v4 f8f0f0c8 per the frozen-evidence identity rule"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-02T22:23:25.711693+00:00"
 }
