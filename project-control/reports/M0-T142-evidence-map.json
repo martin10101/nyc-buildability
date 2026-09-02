@@ -1,0 +1,80 @@
+{
+ "schema": "directive_evidence_map/v1",
+ "task_id": "M0-T142",
+ "directive_id": "D-024",
+ "directive": "D-024-fable-codex-loop",
+ "generated_at": "2026-09-02T23:05:00+00:00",
+ "note": "Producer evidence over the 14 applicable Amendment-45 requirements (resolver ok=true, missing=[]). Producer statuses are claims; acceptance requires the independent verifiers (R677 pattern).",
+ "requirements": {
+  "D-024-R685": {
+   "evidence_paths": ["project-control/tasks/M0-T142.json", "project-control/reports/M0-T142-producer-report.md"],
+   "producer_proof": "Exactly one bounded corrective package in exactly one new task (M0-T142); no accepted task reopened; no repo-wide audit; no live provider call (all tests offline; no start/doctor --live).",
+   "producer_status": "implemented"
+  },
+  "D-024-R686": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_runtime_identity.py", "tools/agent_supervisor/mrl_exec_chain.py", "tools/test_agent_supervisor_mrl_runtime_identity.py"],
+   "producer_proof": "modelUsage treated as a session-wide aggregate; the exactly-one-key helper deleted; multi-key aggregate settles when the transcript proves the pin (canary-shape fixtures).",
+   "producer_status": "implemented"
+  },
+  "D-024-R687": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_runtime_identity.py", "tools/test_agent_supervisor_mrl_runtime_identity.py"],
+   "producer_proof": "CONTEXT_TIER_SUFFIX [1m] recognized as the exact pin's 1M-context tier (same family, distinct tier; recorded via context_tier_used); a different model with [1m] refuses; mutant N1 DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R688": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_subagent_contract.py", "project-control/reports/M0-T140-canary-b502r1-causal-trace.md"],
+   "producer_proof": "The measured dontAsk read-only-Bash execution is the cited basis of the neither-allowed-nor-denied refusal (guard message cites it verbatim; causal trace preserves the live proof).",
+   "producer_status": "implemented"
+  },
+  "D-024-R689": {
+   "evidence_paths": ["project-control/reports/M0-T142-producer-report.md", "tools/test_agent_supervisor_mrl_subagent_contract.py"],
+   "producer_proof": "Bare deny chosen (production contract wants no Bash): deny flows to permissions.deny + --disallowedTools (load-bearing test); canary criterion changed to prove Bash absent AND never executed (argv deny row + empty main_tool_uses census + no denial rows).",
+   "producer_status": "implemented"
+  },
+  "D-024-R690": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_runtime_identity.py", "tools/test_agent_supervisor_mrl_runtime_identity.py", "tools/test_agent_supervisor_mrl_one_shot.py"],
+   "producer_proof": "The transcript is consumed at NORMAL settlement with the binding explicitly added and tested: session_id-named path under the cwd-derived project key (fixture pins the real observed directory), sessionId equality on every carrying line, cwd equality on main-chain turns; missing/foreign transcript refuses; mutant N3 DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R691": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_one_shot.py", "tools/test_agent_supervisor_mrl_one_shot.py"],
+   "producer_proof": "A valid WorkerResult settles when the pin is proven (checkpoint built; AS-SI-1); auxiliary usage recorded separately; pinned[1m] same-family; refusals preserved for pin-absent aggregate and divergent top-level turns; mutants N2/N4/N5 DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R692": {
+   "evidence_paths": ["tools/agent_supervisor/mrl_subagent_contract.py", "tools/agent_supervisor/mrl_launch_manifest.py", "tools/agent_supervisor/mrl_launch_draft.py"],
+   "producer_proof": "Explicit enforcement per 2.1.252 semantics at BOTH build sites (profile + draft), default template denies Edit/Write/Bash/Agent; canary criterion matched to the bare-deny mechanism; mutant N6 DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R693": {
+   "evidence_paths": ["project-control/reports/M0-T142-producer-report.md"],
+   "producer_proof": "Reader corrections specified against durable fields: Claude auth = session_id; Codex NOT_RUN until invoked; row 8 = accounting issued=2/denied=1/processes_total=3; encoded in the regenerated script after acceptance.",
+   "producer_status": "implemented"
+  },
+  "D-024-R694": {
+   "evidence_paths": ["project-control/tasks/M0-T142.json", "project-control/reports/M0-T142-G2-self-check.md"],
+   "producer_proof": "Schema hotfix, transport, updater disablement, containment, manifest binding, canonical contract all forbidden paths with EMPTY diffs across the task commits; no stored evidence modified (causal trace + run dirs read-only).",
+   "producer_status": "implemented"
+  },
+  "D-024-R695": {
+   "evidence_paths": ["tools/test_agent_supervisor_mrl_runtime_identity.py", "tools/test_agent_supervisor_mrl_one_shot.py", "tools/test_agent_supervisor_mrl_one_shot_review.py", "tools/test_agent_supervisor_mrl_subagent_contract.py"],
+   "producer_proof": "All seven required fixture families present and derived from canary-b5-02r1 (multi-key settle; [1m] explicit; missing/different primary refuses; auxiliary never masquerades; Bash restriction load-bearing + measured criterion; rows 3/8 artifacts; Codex review after settlement).",
+   "producer_status": "implemented"
+  },
+  "D-024-R696": {
+   "evidence_paths": ["project-control/reports/M0-T142-producer-report.md", "project-control/reports/M0-T142-freeze.md"],
+   "producer_proof": "Focused tests while editing (402+ green); ONE affected-suite verification at the frozen candidate (3591 passed / 2 skipped, single run); the complete repository suite was never re-run per edit.",
+   "producer_status": "implemented"
+  },
+  "D-024-R698": {
+   "evidence_paths": ["project-control/reports/M0-T142-producer-report.md"],
+   "producer_proof": "The session return will carry exactly: frozen candidate identity, independent-review result, one PowerShell command, ending SETTLEMENT_PERMISSION_REPAIR_READY - generated from the completed matrix after acceptance + script generation.",
+   "producer_status": "implemented"
+  },
+  "D-024-R699": {
+   "evidence_paths": ["project-control/reports/M0-T142-G2-self-check.md", "tools/test_agent_supervisor_mrl_runtime_identity.py"],
+   "producer_proof": "Exact-id discipline: claude-fable-5 used verbatim in the owner-script plan only; no 'fable' alias, no claude-fable-5-1, no CLI upgrade, fallback stays []; the script will prove '--model claude-fable-5' in the drafted argv; no live launch performed.",
+   "producer_status": "implemented"
+  }
+ }
+}
