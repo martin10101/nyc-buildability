@@ -10378,139 +10378,186 @@
    "requirements": [
     {
      "id": "D-024-R622",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "One bounded task M0-T139; git diff d4f55668..HEAD touches no M0-T136-*/M0-T138-* evidence and no tools/agent_supervisor/** (frozen 1489879e subtree 79af11a2 byte-identical at HEAD); not Tranche C, not a supervisor refactor. Reproduced by DCV + orchestrating verifier (empty diffs vs acceptance commits e60192ed/d4f55668)."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R623",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Consolidated pre-edit trace M0-T139-transaction-trace.md (D1-D17, 5 root-cause clusters) committed at 87b0a668, an ancestor of the implementation commit 78acf086 (merge-base --is-ancestor confirmed); all clusters repaired in one implementation commit."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R624",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "-Phase backup implemented inside update_controller_from_candidate.ps1 (lines 503-617); runbook s3 replaced by ONE checked-in command; test_runbook_parse asserts no manual robocopy in s3; in-script choice justified (shared fail-closed plumbing). G3 concurs SATISFIED."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R625",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Invoke-Native captures raw LASTEXITCODE immediately, refuses native_no_exit_code on null via Exit-Refusal exit 1; robocopy site guards refuse copy_failed on unacceptable codes. Proven live: test_null_exit (raw exit 1 + typed refusal under real PS 5.1), suite re-run exit 0 this session."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R626",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Copy-1 guard (lines 549-552) refuses BEFORE copy-2 (line 554) can run; B3 (locked source: REFUSED copy_failed, zero runtime-a1 copies, no evidence) and mutant m_rc1 (disabling the guard lets copy-2 run - side-effect asserted) both reproduced in this session's suite run."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R627",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Unique ms-timestamp+8-hex-GUID run dir; Test-Path collision refusal, no -Force create, post-create emptiness check (lines 528-542); B2 proves distinct fresh dir per run with the earlier backup untouched."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R628",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Assert-ContainedIn + path_not_approved + Assert-NoReparseChain + Assert-TreeNoReparse run immediately before every copy (backup 504-526, install 658-662, rollback 815-823); J1/J2/J4 typed refusals reproduced; m_reparse proves the tree scan load-bearing."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R629",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Get-DigestCompareFailures is complete bidirectional raw SHA-256 (missing+extra+changed all refuse backup_verify_failed) applied to BOTH backups (controller documented-scope, runtime-a1 full inventory); B1 asserts both digest sets; m_reparse shows the proof catches leaked bytes."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R630",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Write-JsonAtomic (same-dir temp + rename) writes controller_backup_evidence/v1 only after verification, binding run id, generated_at_utc, exact paths, pre-update controller identity digests, runtime identity, BOTH raw robocopy codes, PASS verdict; B1 asserts every field; verifier probes V1/V4 prove partial/orphaned records are never accepted."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R631",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Install requires Read-BackupEvidence (backup_evidence_missing/_invalid/backup_verdict_not_pass/evidence_binding_mismatch), re-verifies tamper (backup_tampered) and currency (backup_stale), and records run_id + evidence sha256 in controller_update_evidence.json.backup_binding; I1-I7 + P1 reproduced; no directory-listing/newest code path exists (grep-verified)."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R632",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Rollback restores ONLY evidence.backup_paths.controller from the bound record; R1 decoy-newest ignored and untouched, R2 missing evidence never guesses; runbook s10 rewritten; parse tooth asserts no Sort-Object in any s10 block."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R633",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "/MIR of the bound backup + Remove-CacheDirs + post-restore bidirectional digest proof vs bound evidence (rollback_verify_failed); R1 proves planted residue and decoy content absent, restored digest equality; verifier probe V5 proves a planted extra module is removed."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R634",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "All ten adversarial classes fail closed with reproduced teeth: B3, I2/I3/I4/I6, I5, R1/R2, test_null_exit, J1-J3, mutants m_rc1/m_reparse/m_rbtamper; plus verifier probes V1-V5 covering truncated/FAIL-verdict/escaped/orphaned-tmp/locked-record evidence cases. Suite raw exit 0 re-run this session."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R635",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Both destructive mirrors gated by containment against controller_root + reparse checks immediately before the copy; recovery writes only the bound destination; stale-record removal checked (stale_record_removal_failed; proven live by verifier probe V5 with no rollback PASS evidence written)."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R636",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Runbook s3/s10 are ONE short command each; the 64-hex A1 runtime key lives only in source_binding.json a1_runtime_dir with machine validation (runtime_key_invalid); key independently re-derived as sha256(normcase(resolve(wt-m0t063))) = 1854a2a4..e5d262 matching durable_state.checkout_key; parse tooth asserts no 64-hex in s3 blocks."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R637",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "s1 model-selection row de-staled (owner-mutable, digest-recorded, compared by no s3-s8 step, doctor allowlist validation named, R603-R605 explicitly left uninterpreted); s2 explains wt-m0t063 (A1 historical-journal probe) vs canary --checkout C:/SupervisorController; R603-R605 rows dict-identical d4f55668-to-HEAD; no deferral needed."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R638",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "7 suites + 9 mutants under real powershell.exe -File raw-exit semantics; re-run this session raw exit 0, every assertion PASS; mutant generator fail-closed (pattern must match exactly once); three layered-defense mutants prove layer reach via side-effect assertions (junction bytes leaked; second copy ran; tampered bytes restored)."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R639",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Re-run at the frozen head this session with raw exits: controller_update ps_tests 0; supervisor ps_tests 0; supervisor_command_doc_check rc 0 (runbook 11 commands) and rc 0 (canary 3 commands); validate_directive_compliance --check rc 0; modularity_check --check 0 failures; context_budget_check PASS."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R640",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Producer (orchestrator session) submitted awaiting_gate recording only G0/G2; independent G3 (code-reviewer PASS), G4 (qa-engineer PASS) and this DCV performed by distinct read-only reviewers; verifier != producer on every record."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R641",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Complete task diff confined to controller-update script/tests/binding, runbook, SESSION_HANDOFF, and control-plane records; no supervisor code, model selection, canary contents (byte-identical vs acceptance), R603-R605, GitHub, or provider state changed."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R642",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "No controller update/backup/rollback/live doctor/canary/push/PR/merge: branch has no upstream and no remote candidate branch exists; all executions ran against TEMP fixtures; G4 verified C:/SupervisorController unchanged (pre-session LastWriteTime) and C:/SupervisorBackup absent after the runs."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     },
     {
      "id": "D-024-R643",
-     "state": "pending",
-     "evidence": [],
-     "verified_at": null
+     "state": "PASS",
+     "evidence": [
+      "Successful-completion branch taken: submission record a2bccfa4/71695eb1 shows awaiting_gate with the required token discipline recorded (evidence-map row R643); the BLOCKED no-partial-fix branch was not taken (full implementation present)."
+     ],
+     "verified_at": "2026-09-02T09:55:00+00:00"
     }
    ],
-   "note": "Skeleton bundled at capture (claim time); to be replaced by the independent directive-compliance-verifier at the submitted head. Producer never self-verifies (D-024-R640)."
+   "note": "Independent DCV at the submitted head: all 22 applicable Amendment-42 rows PASS. Verbatim DCV return + orchestrating-verifier reproductions (suite re-runs, adversarial probe pack V1-V5, key re-derivation): project-control/reports/M0-T139-DCV.md; independent G3/G4 PASS at the same reviewed_sha.",
+   "reviewed_manifest_sha256": "9dd97c31d3a1f9e3fc7e107d92ed3e5ab9c072e25a123c387f52939a33f57316",
+   "reviewed_sha": "71695eb1e74a36069fc9745e6816403aafc4d6a3",
+   "verification_report": "project-control/reports/M0-T139-DCV.md"
   }
  ],
- "updated_at": "2026-09-02T18:45:00+00:00"
+ "updated_at": "2026-09-02T09:55:00+00:00"
 }
