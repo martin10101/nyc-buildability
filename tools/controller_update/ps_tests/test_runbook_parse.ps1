@@ -23,7 +23,7 @@ $toolRoot = Split-Path $PSScriptRoot -Parent
 $repoRoot = Split-Path (Split-Path $toolRoot -Parent) -Parent
 $scriptPath = Join-Path $toolRoot 'update_controller_from_candidate.ps1'
 $runbookPath = Join-Path $repoRoot 'docs\CONTROLLER_UPDATE_RUNBOOK.md'
-$pinnedSha = '1489879e1f6787a9d53ed74db4524b24039e03a2'
+$pinnedSha = '2245de74232947be919b555fd061ba8a6e6438de'
 
 $tokens = $null
 $errors = $null

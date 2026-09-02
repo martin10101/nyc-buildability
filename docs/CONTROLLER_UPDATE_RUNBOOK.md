@@ -81,7 +81,8 @@ the A1 runtime-journal directory — come from the reviewed binding contract, ne
 ## 4. Install the accepted controller from the frozen candidate (immutable source binding)
 
 The copy source is pinned to the immutable accepted production candidate commit
-`1489879e1f6787a9d53ed74db4524b24039e03a2` (M0-T136; D-024 Amendment 41 R608) by the
+`2245de74232947be919b555fd061ba8a6e6438de` (M0-T141 Draft-7 provider-schema hotfix;
+D-024 Amendment 44 R678, superseding the M0-T136 candidate per Amendment 41 R608) by the
 checked-in binding contract `tools/controller_update/source_binding.json`. The installer
 never resolves a mutable ref — not a branch, not HEAD, not a remote-tracking name — and
 refuses any binding value that is not a full 40-hex commit SHA. Before copying it
@@ -117,8 +118,8 @@ git -C C:\Users\MLFLL\Downloads\nyc-zoning\nyc-development-feasibility-claude-pa
 ```
 
 Compare the identity the installer prints (commit, commit tree, subtree tree) against
-the acceptance record (`project-control/reports/M0-T136-producer-report.md`; D-024
-Amendment 41 header) before continuing. The binding contract changes only through a
+the freeze record (`project-control/reports/M0-T141-freeze.md`; D-024 Amendment 44)
+before continuing. The binding contract changes only through a
 reviewed commit; the negative and mutation tests live in
 `tools/controller_update/ps_tests/` (run `run_ps_tests.ps1` there from a repo checkout).
 
