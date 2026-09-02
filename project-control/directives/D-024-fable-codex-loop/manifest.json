@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-02T18:30:00+00:00",
+ "updated_at": "2026-09-02T19:55:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -348,6 +348,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-02T18:30:00+00:00",
    "content_digest_sha256": "d6c5d75a2da19e01a29e08daae61fe84491f45f1188efbef1fd711d24b591d92"
+  },
+  {
+   "file": "source-043-amendment.md",
+   "kind": "amendment",
+   "sequence": 43,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-02T19:55:00+00:00",
+   "content_digest_sha256": "dae87844291c60049873d7e9efc99409ced65998245f365cd80df1a695b8036e"
   }
  ],
  "amendments": [
@@ -391,7 +399,8 @@
   "source-039-amendment.md",
   "source-040-amendment.md",
   "source-041-amendment.md",
-  "source-042-amendment.md"
+  "source-042-amendment.md",
+  "source-043-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1144,10 +1153,30 @@
   "D-024-R640",
   "D-024-R641",
   "D-024-R642",
-  "D-024-R643"
+  "D-024-R643",
+  "D-024-R644",
+  "D-024-R645",
+  "D-024-R646",
+  "D-024-R647",
+  "D-024-R648",
+  "D-024-R649",
+  "D-024-R650",
+  "D-024-R651",
+  "D-024-R652",
+  "D-024-R653",
+  "D-024-R654",
+  "D-024-R655",
+  "D-024-R656",
+  "D-024-R657",
+  "D-024-R658",
+  "D-024-R659",
+  "D-024-R660",
+  "D-024-R661",
+  "D-024-R662",
+  "D-024-R663"
  ],
- "requirements_id_digest_sha256": "e0544938520fc52549f0aa74b292a592bf36998dd4798b7d269c3b406b841db4",
- "requirements_content_digest_sha256": "dfa5cc8c4420453baf696a907cd5694bdb54c78841c31cbe80d85b8120b5403d",
+ "requirements_id_digest_sha256": "a9a2a22dbe9b75b6d8d0903dcb2c65e412cf0bf3a45cf1691de7fb4d4f0e44bc",
+ "requirements_content_digest_sha256": "1264ab0aee8ee691c86a0fe88fcfa00f62ee2cc2b5f7e7afea94113c3bbb609b",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1385,6 +1414,11 @@
    "at": "2026-09-02T18:30:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 42 captured verbatim (owner directive 2026-09-02, controller-update transaction hardening): ONE bounded follow-up task M0-T139 - checked-in verified backup phase, per-invocation raw exit codes with typed terminating refusals, unique collision-refused backup directory, pre-copy path/containment/reparse verification, bidirectional SHA-256 backup proof, atomic bound backup-evidence record, install bound to the verified backup identity (never 'newest'), audited rollback restoring the bound backup with post-restore digest equality, ten adversarial fail-closed cases, mechanically-sourced owner commands, the two documentation clarifications without interpreting R603-R605, tests+mutants, full affected checks at the frozen head, submit awaiting independent G3/G4/DCV. 22 atomic requirements D-024-R622..R643 appended; owner-only rows R603-R605 untouched; no prior requirement superseded; M0-T139 added to scope and affected_tasks."
+  },
+  {
+   "at": "2026-09-02T19:55:00+00:00",
+   "by": "orchestrator",
+   "note": "Amendment 43 captured verbatim (owner directive 2026-09-02, canary-fixture lifecycle correction): the live canary refused on task_authority because accepted M0-T136 confers no working authority; owner authorizes ONE minimal dedicated read-only canary-execution task at the next unused ID (M0-T140) under the R587-R589 canary scope plus replacement of the temporary external canary script (conditional canonical PAUSED_RECOVERY recovery, b5-01 intended-refusal proof, exactly one b5-02 provider one-shot, ten-item PASS/FAIL retention, PS 5.1 parse + independent subagent review). Requirements R644-R663 appended, all bound to M0-T140. No production-code change, no reopening accepted tasks, no push/merge, R603-R605 untouched."
   }
  ]
 }

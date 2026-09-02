@@ -10557,7 +10557,139 @@
    "reviewed_manifest_sha256": "9dd97c31d3a1f9e3fc7e107d92ed3e5ab9c072e25a123c387f52939a33f57316",
    "reviewed_sha": "71695eb1e74a36069fc9745e6816403aafc4d6a3",
    "verification_report": "project-control/reports/M0-T139-DCV.md"
+  },
+  {
+   "task_id": "M0-T140",
+   "directive_id": "D-024",
+   "producer": "orchestrator (canary-execution vehicle producer)",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-024-R644",
+    "D-024-R645",
+    "D-024-R646",
+    "D-024-R647",
+    "D-024-R648",
+    "D-024-R649",
+    "D-024-R650",
+    "D-024-R651",
+    "D-024-R652",
+    "D-024-R653",
+    "D-024-R654",
+    "D-024-R655",
+    "D-024-R656",
+    "D-024-R657",
+    "D-024-R658",
+    "D-024-R659",
+    "D-024-R660",
+    "D-024-R661",
+    "D-024-R662",
+    "D-024-R663"
+   ],
+   "requirements": [
+    {
+     "id": "D-024-R644",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R645",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R646",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R647",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R648",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R649",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R650",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R651",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R652",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R653",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R654",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R655",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R656",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R657",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R658",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R659",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R660",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R661",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R662",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R663",
+     "state": "pending",
+     "evidence": []
+    }
+   ],
+   "verification_report": "",
+   "note": "Skeleton at claim time (Amendment 43). States become PASS only via the independent directive-compliance-verifier at the reviewed head after the owner-typed canary run; pending rows verify nothing."
   }
  ],
- "updated_at": "2026-09-02T09:55:00+00:00"
+ "updated_at": "2026-09-02T19:55:00+00:00"
 }

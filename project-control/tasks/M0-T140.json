@@ -1,0 +1,48 @@
+{
+ "task_id": "M0-T140",
+ "title": "D-024 Amendment 43: dedicated read-only canary-execution vehicle (R587-R589 live canary; task_authority fixture)",
+ "task_type": "governance",
+ "milestone_id": "M0",
+ "objective": "Serve as the claimed, runnable canary-execution task the M0-T136 ten-item live canary package binds to (probe_task_authority requires a packet+ledger status in {claimed,in_progress,awaiting_gate}; accepted M0-T136 confers no working authority). Read-only execution vehicle: the owner-typed canary script drafts the launch manifest against this packet and runs canary-b5-01 (intended launch_manifest_mismatch/clean_status refusal) and the single accepted canary-b5-02 supervised one-shot. Task stays claimed until the live canary finishes (D-024-R651). No production code is changed under this task.",
+ "business_reason": "Owner directive 2026-09-02 (D-024 Amendment 43, R644-R663): the live canary stopped safely on task_authority; a dedicated minimal canary-execution task is the authorized correction.",
+ "inputs": [],
+ "outputs": [],
+ "dependencies": [
+  "M0-T136",
+  "M0-T138",
+  "M0-T139"
+ ],
+ "allowed_paths": [
+  "project-control/reports/M0-T140-canary-b501-refusal-evidence.md",
+  "project-control/reports/M0-T140-canary-execution-evidence.md"
+ ],
+ "forbidden_paths": [],
+ "acceptance_scenarios": [],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [],
+ "blockers": [],
+ "created_at": "2026-09-02T18:10:29.188426+00:00",
+ "updated_at": "2026-09-02T18:10:29.341994+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-09-02T18:10:29.188426+00:00",
+ "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
+}
