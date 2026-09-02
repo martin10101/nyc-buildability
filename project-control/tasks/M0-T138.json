@@ -76,8 +76,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "PS 5.1 parser/quoting quirks (no && chains, backtick continuation) - mitigated by the parse test and running every test in a real powershell.exe -File process",
     "command-document tooth invocation-marker trap: a fenced runbook line containing agent_supervisor/mrl_launch_draft.py would be validated as a presented supervisor command - mitigated by keeping module paths inside source_binding.json and the script, never in fenced runbook blocks",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-02T05:08:34.714082+00:00",
-  "updated_at": "2026-09-02T05:10:34.571418+00:00",
+  "updated_at": "2026-09-02T05:38:26.289317+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
