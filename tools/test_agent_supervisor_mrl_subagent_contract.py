@@ -165,8 +165,9 @@ class TestLedger:
 
 class TestRestrictedProfile:
     def _build(self, tmp_path, **over):
+        # every inventory tool explicitly allowed or denied (M0-T142 R692)
         kw = dict(ledger_path=tmp_path / "ledger.json", hook_script=HOOK, allow_rules=("Read", "Grep", "Glob"),
-                  profile_dir=tmp_path / "profile", model="claude-opus-4-8")
+                  deny_rules=("Edit", "Agent"), profile_dir=tmp_path / "profile", model="claude-opus-4-8")
         kw.update(over)
         return msc.build_restricted_profile(_contract(), **kw)
 
@@ -178,7 +179,7 @@ class TestRestrictedProfile:
         assert "--strict-mcp-config" in flags and "--mcp-config" not in flags
         assert flags[flags.index("--settings") + 1] == p.profile_path
         assert "--allowedTools" in flags and "--disallowedTools" in flags
-        assert flags[flags.index("--disallowedTools") + 1:] == ["mcp__*"]
+        assert flags[flags.index("--disallowedTools") + 1:] == ["Edit", "Agent", "mcp__*"]
         assert set(json.loads(flags[flags.index("--agents") + 1])) == {"Explore", "code-reviewer"}
         written = json.loads(pathlib.Path(p.profile_path).read_text(encoding="utf-8"))
         assert written["permissions"]["defaultMode"] == "dontAsk"
@@ -193,15 +194,40 @@ class TestRestrictedProfile:
         assert len(p.identity_sha256) == 64
 
     def test_tools_alone_grants_nothing(self, tmp_path):
-        p = self._build(tmp_path, allow_rules=())
+        p = self._build(tmp_path, allow_rules=(),
+                        deny_rules=("Read", "Grep", "Glob", "Edit", "Agent"))
         assert "--tools" in p.argv_flags and "--allowedTools" not in p.argv_flags
         assert p.effective_grants() == frozenset()
-        q = self._build(tmp_path, allow_rules=("Read", "Edit(tools/**)"))
+        q = self._build(tmp_path, allow_rules=("Read", "Edit(tools/**)"),
+                        deny_rules=("Grep", "Glob", "Agent"))
         assert q.effective_grants() == frozenset({"Read", "Edit"})
 
     def test_deny_beats_allow_and_inventory(self, tmp_path):
-        p = self._build(tmp_path, allow_rules=("Read", "Edit"), deny_rules=("Edit",))
+        p = self._build(tmp_path, allow_rules=("Read", "Edit"),
+                        deny_rules=("Edit", "Grep", "Glob", "Agent"))
         assert p.effective_grants() == frozenset({"Read"})
+
+    def test_unpinned_inventory_tool_refuses(self, tmp_path):
+        """M0-T142 (R688/R692): 2.1.252 dontAsk EXECUTES read-only commands for a
+        tool merely absent from the allow rules - so an inventory tool that is
+        neither allowed nor denied refuses the profile outright."""
+        with pytest.raises(ContractError, match="neither allow-ruled nor deny-ruled"):
+            self._build(tmp_path, deny_rules=("Edit",))  # Agent left unpinned
+
+    def test_bash_bare_deny_is_load_bearing(self, tmp_path):
+        """AS-PB-1: the canary shape - Bash in the inventory, bare-denied - flows
+        into BOTH permissions.deny and --disallowedTools."""
+        p = msc.build_restricted_profile(
+            _contract(tools_inventory=("Bash", "Read", "Grep", "Glob", "Agent")),
+            ledger_path=tmp_path / "l.json", hook_script=HOOK,
+            allow_rules=("Read", "Grep", "Glob", "Agent"), deny_rules=("Bash",),
+            profile_dir=tmp_path / "p", model="claude-opus-4-8")
+        flags = list(p.argv_flags)
+        assert flags[flags.index("--disallowedTools") + 1:] == ["Bash", "mcp__*"]
+        written = json.loads(pathlib.Path(p.profile_path).read_text(encoding="utf-8"))
+        assert "Bash" in written["permissions"]["deny"]
+        assert "Bash" not in written["permissions"]["allow"]
+        assert p.effective_grants() == frozenset({"Read", "Grep", "Glob", "Agent"})
 
     def test_allow_outside_inventory_refuses(self, tmp_path):
         with pytest.raises(ContractError, match="outside the inventory"):
@@ -230,7 +256,8 @@ class TestRestrictedProfile:
 
     def test_identity_changes_with_profile_bytes(self, tmp_path):
         a = self._build(tmp_path)
-        b = self._build(tmp_path, allow_rules=("Read",))
+        b = self._build(tmp_path, allow_rules=("Read",),
+                        deny_rules=("Grep", "Glob", "Edit", "Agent"))
         assert a.identity_sha256 != b.identity_sha256
 
     def test_identity_is_policy_not_run_dir(self, tmp_path):
@@ -294,7 +321,9 @@ class TestHook:
         contract = _contract(max_concurrent=1, max_total=1)
         ledger = msc.SubagentLedger.create(tmp_path / "ledger.json", contract, primary_id="run-1.primary")
         profile = msc.build_restricted_profile(contract, ledger_path=ledger.path, hook_script=HOOK,
-                                               allow_rules=("Read",), profile_dir=tmp_path / "p", model="m")
+                                               allow_rules=("Read",),
+                                               deny_rules=("Grep", "Glob", "Edit", "Agent"),
+                                               profile_dir=tmp_path / "p", model="m")
         cmd = profile.settings["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
         assert cmd.startswith(f'"{sys.executable}"')
         base = [sys.executable, str(HOOK), "--ledger", str(ledger.path), "--parent", "run-1.primary"]

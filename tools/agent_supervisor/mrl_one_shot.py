@@ -47,7 +47,6 @@ from .mrl_exec_chain import (
     RunVersion,
     chain_record,
     observe_version,
-    observed_model_from_result,
     resolve_chain,
     verify_chain_now,
     verify_child_env,
@@ -55,6 +54,7 @@ from .mrl_exec_chain import (
 )
 from .mrl_launch_path import LaunchPreflight
 from .mrl_provider_schema import provider_schema_for_claude_cli
+from .mrl_runtime_identity import verify_primary_model
 from .mrl_subagent_contract import SubagentLedger
 from .mrl_transport import build_one_shot_plan, run_one_shot
 from .mrl_worker_result import (
@@ -110,6 +110,10 @@ class OneShotRunResult(RunResult):
     result_source: str = ""
     worker_result: dict[str, Any] = dataclasses.field(default_factory=dict)
     permission_denials: tuple[dict[str, Any], ...] = ()
+    #: What the correlation-bound transcript + usage aggregate proved (M0-T142 R690/R691).
+    runtime_identity: dict[str, Any] = dataclasses.field(default_factory=dict)
+    #: Main-chain tool_use census from the correlated transcript (Bash-absence evidence).
+    main_tool_uses: dict[str, int] = dataclasses.field(default_factory=dict)
 
 
 def _refused(argv: Sequence[str], code: str, message: str, **extra: Any) -> OneShotRunResult:
@@ -188,7 +192,8 @@ class OneShotRunner:
     def __init__(self, config: RunnerConfig, *, launch: LaunchPreflight, audit: Any = None,
                  run_id: str = "", journal: Any = None, git: GitRunner | None = None,
                  popen: Popen | None = None, run_version: RunVersion | None = None,
-                 snapshot: Snapshot | None = None, container_factory: Any = None) -> None:
+                 snapshot: Snapshot | None = None, container_factory: Any = None,
+                 transcript_base: "pathlib.Path | None" = None) -> None:
         self.config = config
         self.launch = launch
         self.audit = audit
@@ -199,6 +204,9 @@ class OneShotRunner:
         self._run_version = run_version
         self._snapshot = snapshot
         self._container_factory = container_factory or ProcessContainer
+        # Test seam only: production resolves the transcript base from the exact
+        # env handed to the child (mrl_runtime_identity.config_base).
+        self._transcript_base = transcript_base
         self._dispatched = False
         self.last_result: OneShotRunResult | None = None
 
@@ -324,6 +332,9 @@ class OneShotRunner:
         payload: Any = None
         source = ""
         worker: WorkerResult | None = None
+        runtime_identity: dict[str, Any] = {}
+        tool_census: dict[str, int] = {}
+        identity_attempted = False
         try:
             if spawn.timed_out or spawn.cancelled:
                 raise ContractError("terminated", "the unit was terminated before a result "
@@ -337,9 +348,21 @@ class OneShotRunner:
                 raise ContractError("worker_failed",
                                     f"claude exited {returncode} / is_error={result_obj.get('is_error')!r}: "
                                     f"{str(result_obj.get('result', ''))[:500]!r}")
+            if not session_id:
+                raise ContractError("session_id_missing", "the result object carries no session_id")
+            # M0-T142 (D-024-R686/R690/R691): modelUsage is a session-wide billing
+            # AGGREGATE, so the primary model is proven from the correlation-bound
+            # session transcript instead; the aggregate must still contain the pin,
+            # and every other key is recorded as auxiliary, never identity.
+            identity_attempted = True
+            identity_ev, tool_census = verify_primary_model(
+                expected_model=str(dispatch["claude_runtime_model"]), session_id=session_id,
+                cwd=self.config.cwd, usage_models=list(observed_models),
+                child_env=spawn.env, transcript_base=self._transcript_base)
+            runtime_identity = identity_ev.to_dict()
             verify_runtime_identity(expected_model=str(dispatch["claude_runtime_model"]),
                                     expected_version=str(dispatch["claude_version"]),
-                                    observed_model=observed_model_from_result(result_obj),
+                                    observed_model=identity_ev.primary_model,
                                     observed_version=str(launch_record["version"]))
             payload, source = extract_worker_payload(result_obj)
             worker = WorkerResult.from_provider(payload)
@@ -349,8 +372,6 @@ class OneShotRunner:
                                     f"total run accounting is not closed/bounded: {accounting} (R582)")
             after = measure_git_state(self._git, self.config.cwd)
             self._assert_bound(after, expected)
-            if not session_id:
-                raise ContractError("session_id_missing", "the result object carries no session_id")
             checkpoint = build_claude_checkpoint(worker, ControllerObservedFacts(
                 run_id=self.run_id, checkpoint_id=f"{self.run_id}.primary.cp1",
                 task_id=str(expected["task_id"]), claude_session_id=session_id,
@@ -358,6 +379,13 @@ class OneShotRunner:
                 branch=after.branch, worktree=after.toplevel))
         except (ContractError, EnvelopeError) as exc:
             checkpoint_error = f"{exc.code}: {exc.message}"
+        # The mismatch flag reports the VERIFIED identity outcome, not the raw
+        # aggregate: a passed verification clears the naive multi-key flag, and a
+        # failed verification is a mismatch whatever the aggregate looked like.
+        if runtime_identity:
+            model_mismatch, mismatch_detail = False, ""
+        elif identity_attempted:
+            model_mismatch, mismatch_detail = True, checkpoint_error
         result = OneShotRunResult(
             argv=argv, returncode=returncode, duration_seconds=duration, session_id=session_id,
             events=len(events), stats=StreamStats(lines=len(events), events=len(events), malformed_lines=malformed),
@@ -373,7 +401,8 @@ class OneShotRunner:
             descendant_proof=proof.to_dict() if proof else {}, accounting=dict(accounting),
             launch_record=launch_record, result_source=source,
             worker_result=dataclasses.asdict(worker) if worker else {},
-            permission_denials=permission_denials_of(result_obj) if result_obj else ())
+            permission_denials=permission_denials_of(result_obj) if result_obj else (),
+            runtime_identity=runtime_identity, main_tool_uses=dict(tool_census))
         self._write_unit_record(result)
         self._audit("mrl_one_shot_settled", checkpoint_id=checkpoint.checkpoint_id if checkpoint else "",
                     output_digest=digest_of(checkpoint.to_dict()) if checkpoint else "",
@@ -382,7 +411,10 @@ class OneShotRunner:
                     detail={"returncode": returncode, "timed_out": spawn.timed_out, "cancelled": spawn.cancelled,
                             "containment": containment, "descendant_proof": result.descendant_proof,
                             "accounting": result.accounting, "result_source": source,
-                            "observed_models": list(observed_models), "model_mismatch": model_mismatch,
+                            "observed_models": list(observed_models),
+                            "model_mismatch": result.model_mismatch,
+                            "primary_model": runtime_identity.get("primary_model", ""),
+                            "auxiliary_models": list(runtime_identity.get("auxiliary_models", ())),
                             "session_id_recorded": bool(session_id),
                             "permission_denials": len(result.permission_denials)})
         return result
@@ -408,6 +440,8 @@ class OneShotRunner:
             "descendant_proof": result.descendant_proof, "accounting": result.accounting,
             "launch": result.launch_record, "max_turns": int(self.config.max_turns),
             "permission_denials": list(result.permission_denials),
+            "runtime_identity": result.runtime_identity,
+            "main_tool_uses": result.main_tool_uses,
         }
         self.launch.run_dir.mkdir(parents=True, exist_ok=True)
         (self.launch.run_dir / UNIT_RECORD_NAME).write_text(

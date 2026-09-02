@@ -273,20 +273,11 @@ def observe_version(chain: ResolvedChain, *, run: RunVersion | None = None) -> s
     return parse_version(stdout) or parse_version(stderr)
 
 
-def observed_model_from_result(result: Mapping[str, Any]) -> str:
-    """The model the one-shot RUNTIME reports having used (result ``modelUsage`` keys).
-
-    Exactly one distinct model must appear; zero or several models yield "" so the
-    caller's ``verify_runtime_reported`` fails closed (a run that touched a second
-    model is not the pinned run).
-    """
-    if not isinstance(result, Mapping):
-        return ""
-    usage = result.get("modelUsage")
-    if not isinstance(usage, Mapping):
-        return ""
-    models = sorted(str(k) for k in usage.keys() if str(k).strip())
-    return models[0] if len(models) == 1 else ""
+# NOTE (M0-T142, D-024-R686): the former ``observed_model_from_result`` helper is
+# deleted - its exactly-one-``modelUsage``-key contract was disproven live on
+# 2.1.252 (the field is a session-wide aggregate over the main loop, subagents,
+# and CLI-internal calls). The one-shot settlement now proves the primary model
+# through ``mrl_runtime_identity.verify_primary_model`` (correlation-bound).
 
 
 def verify_runtime_identity(
@@ -300,5 +291,5 @@ __all__ = [
     "CHAIN_KINDS", "SHAPE_NATIVE", "SHAPE_SHIM_NATIVE", "SHAPE_SHIM_NODE", "SHAPE_SHIM_NODE_VENDOR",
     "ResolvedChain", "resolve_chain", "parse_npm_shim", "codex_target_triple",
     "bind_chain_now", "verify_chain_now", "chain_record", "verify_child_env",
-    "observe_version", "parse_version", "observed_model_from_result", "verify_runtime_identity",
+    "observe_version", "parse_version", "verify_runtime_identity",
 ]

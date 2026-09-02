@@ -352,9 +352,13 @@ def draft_manifest(worktree: str, task_packet: str, *, mode: str, run_git: RunGi
     dispatch["base_ref"] = "<fill: remote base ref the decision binds to, e.g. refs/heads/main (Option-B neutral)>"
     dispatch["max_turns"] = 12
     dispatch["unit_timeout_seconds"] = 900
+    # Every inventory tool is EXPLICITLY allowed or denied (M0-T142, D-024-R688/R692):
+    # measured live on 2.1.252, dontAsk EXECUTES read-only commands for a tool that is
+    # merely absent from the allow rules, so an unpinned tool no longer builds a profile.
     dispatch["subagents"] = {"max_concurrent": 2, "max_total": 4, "agent_inventory": ["Explore"],
                              "tools_inventory": ["Read", "Grep", "Glob", "Edit", "Write", "Bash", "Agent"],
-                             "allow_rules": ["Read", "Grep", "Glob"], "deny_rules": []}
+                             "allow_rules": ["Read", "Grep", "Glob"],
+                             "deny_rules": ["Edit", "Write", "Bash", "Agent"]}
     return {"schema": MANIFEST_SCHEMA, "expected": expected, "dispatch": dispatch}
 
 

@@ -245,13 +245,14 @@ def test_no_subagent_choice_keeps_the_draft_default_verbatim(world):
 def test_subagent_choices_replace_the_default_and_change_the_identity(world):
     base, _ = _fill(world)
     inputs = mld.DraftInputs(**{**vars(world["inputs"]), "allow_tools": ("Read", "Grep", "Glob", "Agent"),
-                                "deny_tools": ("WebFetch",), "agent_inventory": ("Explore",),
+                                "deny_tools": ("WebFetch", "Edit", "Write", "Bash"),  # every tool pinned (R692)
+                                "agent_inventory": ("Explore",),
                                 "max_concurrent": 1, "max_total": 2})
     draft, remaining = _fill(world, inputs)
     assert remaining == []
     sub = draft["dispatch"]["subagents"]
     assert sub["allow_rules"] == ["Read", "Grep", "Glob", "Agent"]
-    assert sub["deny_rules"] == ["WebFetch"]
+    assert sub["deny_rules"] == ["WebFetch", "Edit", "Write", "Bash"]
     assert sub["agent_inventory"] == ["Explore"]
     assert sub["max_concurrent"] == 1 and sub["max_total"] == 2
     assert sub["tools_inventory"] == _draft_default_subagents(world)["tools_inventory"]  # untouched
@@ -264,9 +265,20 @@ def test_subagent_choices_replace_the_default_and_change_the_identity(world):
 
 def test_tool_inventory_choice_replaces_wholesale_and_dedups(world):
     inputs = mld.DraftInputs(**{**vars(world["inputs"]), "tools_inventory": ("Read", "Grep", "Read", "Glob"),
-                                "allow_tools": ("Read",)})
+                                "allow_tools": ("Read",), "deny_tools": ("Grep", "Glob")})
     draft, _ = _fill(world, inputs)
     assert draft["dispatch"]["subagents"]["tools_inventory"] == ["Read", "Grep", "Glob"]
+
+
+def test_unpinned_inventory_tool_refuses_at_the_draft(world):
+    """M0-T142 (R688/R692): a tool in the inventory but in neither rule set refuses -
+    measured 2.1.252 dontAsk EXECUTES read-only commands for unlisted tools."""
+    # WebFetch is outside the draft default deny list, so leaving it unpinned trips
+    # the guard (Bash would inherit the default deny and pass).
+    inputs = mld.DraftInputs(**{**vars(world["inputs"]), "tools_inventory": ("Read", "WebFetch"),
+                                "allow_tools": ("Read",)})
+    with pytest.raises(ContractError, match="neither --allow-tool nor --deny-tool"):
+        _fill(world, inputs)
 
 
 def test_allow_rule_outside_the_inventory_refuses(world):

@@ -154,10 +154,13 @@ def apply_subagent_choices(dispatch: dict[str, Any], inputs: DraftInputs) -> dic
 
     Every supplied value replaces the draft default outright. The result is
     checked the way the launch checks it: ``allow_rules`` must name tools in
-    ``tools_inventory`` (``build_restricted_profile`` refuses anything else) and
-    ``max_concurrent`` <= ``max_total`` (``SubagentContract``). ``Agent`` fan-out
-    needs BOTH ``Agent`` in the inventory and an ``Agent`` allow rule: the draft
-    default grants Read/Grep/Glob only, so a canary that must fan out states it here.
+    ``tools_inventory`` (``build_restricted_profile`` refuses anything else),
+    every inventory tool must be EXPLICITLY allow- or deny-ruled (M0-T142
+    R688/R692: 2.1.252 dontAsk executes read-only commands for unlisted tools),
+    and ``max_concurrent`` <= ``max_total`` (``SubagentContract``). ``Agent``
+    fan-out needs BOTH ``Agent`` in the inventory and an ``Agent`` allow rule:
+    the draft default grants Read/Grep/Glob only and denies the rest, so a
+    canary that must fan out states both choices here.
     """
     sub = dict(dispatch["subagents"])
     for key, values, flag in (
@@ -178,6 +181,13 @@ def apply_subagent_choices(dispatch: dict[str, Any], inputs: DraftInputs) -> dic
     if outside:
         raise _violation(f"--allow-tool {outside} name tools outside the inventory {sorted(inventory)}; "
                          f"the restricted profile would refuse them (R574)")
+    allows = {rule.split("(", 1)[0] for rule in sub["allow_rules"]}
+    denies = {rule.split("(", 1)[0] for rule in sub["deny_rules"]}
+    unpinned = [t for t in sub["tools_inventory"] if t not in allows and t not in denies]
+    if unpinned:
+        raise _violation(f"inventory tool(s) {unpinned} are neither --allow-tool nor --deny-tool; "
+                         f"Claude Code 2.1.252 dontAsk EXECUTES read-only commands for unlisted "
+                         f"tools, so the restriction must be explicit (R688/R692)")
     dispatch["subagents"] = sub
     return sub
 
@@ -298,7 +308,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--unit-timeout-seconds", type=int, default=DEFAULT_UNIT_TIMEOUT_SECONDS)
     sub = parser.add_argument_group(
         "subagent contract", "each flag REPLACES the draft default outright (default: tools Read/Grep/Glob/Edit/"
-        "Write/Bash/Agent, allow Read/Grep/Glob, deny nothing, agents Explore, 2 concurrent / 4 total)")
+        "Write/Bash/Agent, allow Read/Grep/Glob, deny Edit/Write/Bash/Agent, agents Explore, 2 concurrent / "
+        "4 total; every inventory tool must be explicitly allowed or denied - R688/R692)")
     sub.add_argument("--tool", action="append", dest="tools_inventory", metavar="NAME",
                      help="a built-in tool the child may see at all (repeatable)")
     sub.add_argument("--allow-tool", action="append", dest="allow_tools", metavar="RULE",

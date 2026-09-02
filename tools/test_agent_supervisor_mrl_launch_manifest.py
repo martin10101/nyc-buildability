@@ -91,7 +91,9 @@ def build_world(tmp_path: pathlib.Path) -> dict:
             "base_ref": "refs/heads/main", "max_turns": 12, "unit_timeout_seconds": 900,
             "subagents": {"max_concurrent": 2, "max_total": 4, "agent_inventory": ["Explore"],
                           "tools_inventory": ["Read", "Grep", "Glob", "Agent"],
-                          "allow_rules": ["Read", "Grep", "Glob"], "deny_rules": []},
+                          # every inventory tool is explicitly allowed or denied (M0-T142
+                          # R692: an unpinned tool refuses the profile build)
+                          "allow_rules": ["Read", "Grep", "Glob", "Agent"], "deny_rules": []},
         },
     }
     manifest_path = tmp_path / "launch.json"
@@ -358,6 +360,7 @@ def test_profile_identity_matches_contract_builder(world, tmp_path):
     b, _ = mlm.observe_profile_identity(m, profile_dir=tmp_path / "p2", ledger_path=tmp_path / "p2" / "l.json")
     assert a == b and len(a) == 64
     world["manifest"]["dispatch"]["subagents"]["allow_rules"] = ["Read", "Grep"]  # a narrower policy = new identity
+    world["manifest"]["dispatch"]["subagents"]["deny_rules"] = ["Glob", "Agent"]  # every tool stays pinned (R692)
     _rewrite(world)
     c, _ = mlm.observe_profile_identity(mlm.LaunchManifest.load(world["manifest_path"]), profile_dir=tmp_path / "p3",
                                         ledger_path=tmp_path / "p3" / "l.json")

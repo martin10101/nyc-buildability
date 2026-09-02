@@ -447,7 +447,8 @@ def live(tmp_path: pathlib.Path):
         "managed_settings_path": "",
         "subagents": {"max_concurrent": 1, "max_total": 2, "agent_inventory": ["Explore"],
                       "tools_inventory": ["Read", "Grep", "Glob", "Agent"],
-                      "allow_rules": ["Read", "Grep", "Glob"], "deny_rules": []},
+                      # every inventory tool explicitly allowed or denied (M0-T142 R692)
+                      "allow_rules": ["Read", "Grep", "Glob"], "deny_rules": ["Agent"]},
     })
     manifest_path = tmp / "launch.json"
     live = {"tmp": tmp, "repo": repo, "runtime": tmp / "runtime", "manifest": draft,

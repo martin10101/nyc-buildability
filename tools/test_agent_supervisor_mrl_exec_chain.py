@@ -296,13 +296,12 @@ class TestRuntimeIdentity:
 
         assert mec.observe_version(chain, run=boom) == ""
 
-    def test_observed_model_exactly_one(self):
-        assert mec.observed_model_from_result({"modelUsage": {"claude-opus-4-8": {"inputTokens": 1}}}) \
-            == "claude-opus-4-8"
-        assert mec.observed_model_from_result({"modelUsage": {}}) == ""
-        assert mec.observed_model_from_result({"modelUsage": {"a": {}, "b": {}}}) == ""
-        assert mec.observed_model_from_result({}) == ""
-        assert mec.observed_model_from_result("not-a-mapping") == ""  # type: ignore[arg-type]
+    def test_observed_model_helper_is_gone(self):
+        # M0-T142 (D-024-R686): the exactly-one-modelUsage-key helper was deleted -
+        # modelUsage is a session-wide aggregate; the one-shot settlement proves the
+        # primary model via mrl_runtime_identity.verify_primary_model instead.
+        assert not hasattr(mec, "observed_model_from_result")
+        assert "observed_model_from_result" not in mec.__all__
 
     def test_verify_runtime_identity_pass_and_mismatches(self):
         mec.verify_runtime_identity(expected_model="m", expected_version="2.1.252",

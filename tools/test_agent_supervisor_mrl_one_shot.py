@@ -36,6 +36,7 @@ from tools.agent_supervisor import mrl_descendants as md  # noqa: E402
 from tools.agent_supervisor import mrl_exec_chain as mec  # noqa: E402
 from tools.agent_supervisor import mrl_launch_path as mlp  # noqa: E402
 from tools.agent_supervisor import mrl_one_shot as mos  # noqa: E402
+from tools.agent_supervisor import mrl_runtime_identity as mri  # noqa: E402
 from tools.agent_supervisor.claude_runner import WORKER_CHILD_ROLE, RunnerConfig  # noqa: E402
 from tools.agent_supervisor.models import digest_of  # noqa: E402
 from tools.agent_supervisor.mrl_provider_schema import provider_schema_for_claude_cli  # noqa: E402
@@ -198,6 +199,34 @@ class FakeJournal:
         self.state[key] = value
 
 
+def write_transcript(launch, *, session_id="sess-1", models=("claude-opus-4-8",),
+                     tools=(), sidechain_models=(), foreign_session=None):
+    """A correlation-bound session transcript in the launch's private base (M0-T142).
+
+    Mirrors the REAL 2.1.252 line shapes measured on canary-b5-02r1: every line
+    carries ``sessionId``; assistant lines carry ``isSidechain``/``cwd``/
+    ``message.model``/``message.content``.
+    """
+    base = launch["transcript_base"]
+    cwd = str(launch["world"]["worktree"])
+    lines = [json.dumps({"type": "queue-operation", "operation": "enqueue",
+                         "sessionId": foreign_session or session_id})]
+    for i, model in enumerate(models):
+        content = [{"type": "text", "text": f"turn {i}"}]
+        content += [{"type": "tool_use", "name": n, "input": {}} for n in (tools if i == 0 else ())]
+        lines.append(json.dumps({"type": "assistant", "sessionId": session_id, "isSidechain": False,
+                                 "cwd": cwd, "message": {"role": "assistant", "model": model,
+                                                         "content": content}}))
+    for model in sidechain_models:
+        lines.append(json.dumps({"type": "assistant", "sessionId": session_id, "isSidechain": True,
+                                 "message": {"role": "assistant", "model": model,
+                                             "content": [{"type": "text", "text": "side"}]}}))
+    path = mri.transcript_path(base, cwd, session_id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
 def make_launch(tmp_path, run_id="run-1"):
     """A verified launch bound to real fake executables (chains hashed from the files on disk)."""
     world = build_world(tmp_path)
@@ -215,8 +244,13 @@ def make_launch(tmp_path, run_id="run-1"):
     assert refusal is None
     audit = FakeAudit(tmp_path / "runtime" / "audit.jsonl")
     pf = mlp.preflight_launch(args, run_id=run_id, audit=audit, run_git=world["git"])
-    return {"world": world, "pf": pf, "audit": audit, "claude_exe": claude_exe, "codex_exe": codex_exe,
-            "run_id": run_id}
+    launch = {"world": world, "pf": pf, "audit": audit, "claude_exe": claude_exe, "codex_exe": codex_exe,
+              "run_id": run_id, "transcript_base": tmp_path / "claude-home"}
+    # Default correlation-bound transcript for the harness's default session
+    # (result_object session_id='sess-1', pinned model turns); tests exercising
+    # identity failure shapes overwrite it via write_transcript(...).
+    write_transcript(launch)
+    return launch
 
 
 def make_runner(launch, harness, *, journal=None, snapshot=None, run_version=None, **cfg):
@@ -229,7 +263,8 @@ def make_runner(launch, harness, *, journal=None, snapshot=None, run_version=Non
         RunnerConfig(**config), launch=launch["pf"], audit=launch["audit"], run_id=launch["run_id"],
         journal=journal, git=git_seam(world), popen=harness.popen,
         run_version=run_version or harness.run_version, snapshot=snapshot or (lambda: {}),
-        container_factory=harness.container_factory)
+        container_factory=harness.container_factory,
+        transcript_base=launch["transcript_base"])
 
 
 def unit_record(launch):
@@ -582,7 +617,8 @@ def test_unjournalable_child_is_terminated_and_refused(launch, monkeypatch):
     ({"reply": json.dumps(result_object({**PAYLOAD, "current_sha": HEAD}))}, "contract_violation"),
     ({"reply": json.dumps(result_object({"outcome": "DONE", "summary": "x", "requested_next_action": ""}))},
      "contract_violation"),
-    ({"reply": json.dumps({"type": "result", "is_error": False, "session_id": "s", "result": "x"})},
+    ({"reply": json.dumps({"type": "result", "is_error": False, "session_id": "sess-1", "result": "x",
+                           "modelUsage": {"claude-opus-4-8": {}}})},
      "contract_violation"),
 ])
 def test_settlement_refuses_every_non_conforming_result(launch, harness_kw, code):
@@ -596,27 +632,77 @@ def test_settlement_refuses_every_non_conforming_result(launch, harness_kw, code
     assert launch["audit"].events[-1]["error_category"] == code
 
 
-def test_runtime_model_other_than_pinned_is_a_detected_mismatch(launch):
+def test_pinned_model_absent_from_the_aggregate_refuses(launch):
+    """The transcript proves pinned turns, but the billed aggregate lacks the pin."""
     harness = Harness(json.dumps(result_object(models=("claude-sonnet-4-5",))))
     result = make_runner(launch, harness).run_unit(PROMPT)
     assert not result.ok and result.checkpoint_error.startswith("contract_violation")
-    assert "claude-sonnet-4-5" in result.checkpoint_error and "R511" in result.checkpoint_error
+    assert "absent from the session usage aggregate" in result.checkpoint_error
     assert result.model_mismatch is True and result.observed_models == ("claude-sonnet-4-5",)
     assert unit_record(launch)["model_mismatch"] is True
 
 
-def test_two_runtime_models_fail_closed_as_no_single_identity(launch):
-    harness = Harness(json.dumps(result_object(models=("claude-opus-4-8", "claude-haiku-4-5"))))
+def test_canary_b5_02r1_aggregate_settles_when_the_transcript_proves_the_pin(launch):
+    """The EXACT live regression (M0-T142, R686/R695): a valid WorkerResult with the
+    multi-key session aggregate {pin, internal haiku helper, pin[1m] context tier}
+    now SETTLES, because every main-chain turn provably ran the pinned model."""
+    write_transcript(launch, models=("claude-opus-4-8", "claude-opus-4-8"), tools=("Agent",),
+                     sidechain_models=("claude-opus-4-8",))
+    harness = Harness(json.dumps(result_object(
+        models=("claude-opus-4-8", "claude-haiku-4-5-20251001", "claude-opus-4-8[1m]"))))
+    result = make_runner(launch, harness).run_unit(PROMPT)
+    assert result.ok, result.checkpoint_error
+    assert result.model_mismatch is False and result.mismatch_detail == ""
+    record = unit_record(launch)
+    assert record["ok"] is True and record["model_mismatch"] is False
+    assert record["runtime_identity"]["primary_model"] == "claude-opus-4-8"
+    assert record["runtime_identity"]["auxiliary_models"] == ["claude-haiku-4-5-20251001"]
+    assert record["runtime_identity"]["context_tier_used"] is True
+    assert record["runtime_identity"]["assistant_turns"] == 2  # main chain only
+    assert record["main_tool_uses"] == {"Agent": 1}
+
+
+def test_pinned_context_tier_turn_settles_and_is_recorded(launch):
+    """A main-chain turn on pin+[1m] is the SAME model at a distinct tier (R687)."""
+    write_transcript(launch, models=("claude-opus-4-8[1m]", "claude-opus-4-8"))
+    harness = Harness(json.dumps(result_object(models=("claude-opus-4-8",))))
+    result = make_runner(launch, harness).run_unit(PROMPT)
+    assert result.ok, result.checkpoint_error
+    assert unit_record(launch)["runtime_identity"]["context_tier_used"] is True
+
+
+def test_divergent_main_chain_turn_refuses_despite_a_pinned_aggregate(launch):
+    """Auxiliary usage must never masquerade as primary identity (R691/R695): the
+    aggregate contains the pin, but a MAIN-chain turn ran another model."""
+    write_transcript(launch, models=("claude-opus-4-8", "claude-haiku-4-5-20251001"))
+    harness = Harness(json.dumps(result_object(models=("claude-opus-4-8", "claude-haiku-4-5-20251001"))))
     result = make_runner(launch, harness).run_unit(PROMPT)
     assert not result.ok and result.checkpoint_error.startswith("contract_violation")
-    assert "no model" in result.checkpoint_error and result.model_mismatch is True
+    assert "claude-haiku-4-5-20251001" in result.checkpoint_error
+    assert result.model_mismatch is True
+    assert unit_record(launch)["model_mismatch"] is True
 
 
-def test_no_runtime_model_reported_fails_closed(launch):
+def test_empty_usage_aggregate_fails_closed(launch):
     obj = result_object()
     del obj["modelUsage"]
     result = make_runner(launch, Harness(json.dumps(obj))).run_unit(PROMPT)
-    assert not result.ok and "no model" in result.checkpoint_error
+    assert not result.ok and "empty model-usage aggregate" in result.checkpoint_error
+
+
+def test_missing_transcript_fails_closed(launch):
+    """No correlation-bound runtime source -> no identity -> no checkpoint (R690)."""
+    harness = Harness(json.dumps(result_object(session_id="sess-unwritten")))
+    result = make_runner(launch, harness).run_unit(PROMPT)
+    assert not result.ok and result.checkpoint_error.startswith("transcript_missing")
+    assert result.model_mismatch is True
+
+
+def test_foreign_session_transcript_refuses(launch):
+    """A transcript at the correct path carrying another session's id refuses."""
+    write_transcript(launch, foreign_session="someone-else")
+    result = make_runner(launch, Harness()).run_unit(PROMPT)
+    assert not result.ok and result.checkpoint_error.startswith("transcript_uncorrelated")
 
 
 # ---------------------------------------------------------------- total run accounting (R582)

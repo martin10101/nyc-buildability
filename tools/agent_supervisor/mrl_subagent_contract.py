@@ -378,6 +378,19 @@ def build_restricted_profile(
         if base.startswith("mcp__"):
             raise _violation(f"allow rule {rule!r} would grant MCP; strictly denied (R575)")
     denies = tuple(dict.fromkeys([*deny_rules, MCP_DENY_RULE]))
+    # M0-T142 (D-024-R688/R689/R692, measured live on 2.1.252): a tool that is in the
+    # inventory but in NEITHER the allow nor the deny rules is NOT blocked - under
+    # dontAsk the CLI executed read-only Bash commands for exactly that shape
+    # (canary-b5-02r1). The restriction must be EXPLICIT: every inventory tool is
+    # either allow-ruled or deny-ruled, or the profile refuses to build.
+    allow_bases = {str(rule).split("(", 1)[0] for rule in allow_rules}
+    deny_bases = {str(rule).split("(", 1)[0] for rule in denies}
+    unpinned = [t for t in inventory if t not in allow_bases and t not in deny_bases]
+    if unpinned:
+        raise _violation(
+            f"inventory tool(s) {unpinned} are neither allow-ruled nor deny-ruled; "
+            f"Claude Code 2.1.252 dontAsk EXECUTES read-only commands for unlisted tools, "
+            f"so the restriction must be explicit (deny them or allow them; R688/R692)")
     hook_cmd = (f'"{python_executable}" "{hook_script}" --ledger "{pathlib.Path(ledger_path)}" '
                 f'--parent "{contract.run_id}.primary"')
     agents = {
