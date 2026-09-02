@@ -82,12 +82,16 @@ def apply_launch_manifest(args: argparse.Namespace) -> "tuple[LaunchManifest | N
         return None, None
     try:
         manifest = LaunchManifest.load(path)
+        manifest.base_ref()  # C-B4: the reviewer's decision binds to it (R504/R505); never defaulted
     except ContractError as exc:
         return None, _refusal("launch_manifest_invalid", str(exc), path)
-    if getattr(args, "packet_queue", None) or int(getattr(args, "max_tasks", 1) or 1) > 1:
+    max_cycles = getattr(args, "max_cycles", None)
+    if getattr(args, "packet_queue", None) or int(getattr(args, "max_tasks", 1) or 1) > 1 \
+            or (max_cycles is not None and int(max_cycles) != 1):
         return None, _refusal("launch_manifest_single_task",
-                              "a launch manifest binds exactly ONE task to ONE fresh process (R581); "
-                              "--max-tasks>1 / --packet-queue are not accepted with it", path)
+                              "a launch manifest binds exactly ONE task to ONE fresh process for ONE cycle "
+                              "(R581); --max-tasks>1 / --packet-queue / --max-cycles!=1 are not accepted with it",
+                              path)
     conflicts: list[str] = []
     for attr, section, key in PATH_FILLS:
         value = str(getattr(manifest, section)[key])

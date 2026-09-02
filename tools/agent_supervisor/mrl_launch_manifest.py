@@ -173,6 +173,21 @@ class LaunchManifest:
             raise _violation("dispatch.managed_settings_path must be absolute or empty")
         return p
 
+    def base_ref(self) -> str:
+        """The remote base ref the reviewer's decision is bound to (Option-B neutral).
+
+        ``dispatch.base_ref`` names the ref the controller observes with a real
+        ``git ls-remote`` (R504/R505) - e.g. ``refs/heads/main`` or an integration
+        branch. It is never defaulted: an absent, empty, or unfilled draft value
+        refuses so no decision is ever bound to a guessed ref.
+        """
+        raw = self.dispatch.get("base_ref")
+        if not isinstance(raw, str) or not raw.strip() or raw.startswith("<"):
+            raise ContractError("launch_manifest_base_ref_missing",
+                                "dispatch.base_ref must name the remote base ref (e.g. refs/heads/main); "
+                                "the controller never defaults it (R504/R505)")
+        return raw.strip()
+
     def subagent_contract(self, run_id: str) -> SubagentContract:
         sub = self.dispatch["subagents"]
         return SubagentContract(
@@ -334,6 +349,7 @@ def draft_manifest(worktree: str, task_packet: str, *, mode: str, run_git: RunGi
     expected["mode"] = mode
     dispatch: dict[str, Any] = {k: "<fill>" for k in DISPATCH_FIELDS}
     dispatch["task_packet_path"] = str(pathlib.Path(task_packet).resolve())
+    dispatch["base_ref"] = "<fill: remote base ref the decision binds to, e.g. refs/heads/main (Option-B neutral)>"
     dispatch["max_turns"] = 12
     dispatch["unit_timeout_seconds"] = 900
     dispatch["subagents"] = {"max_concurrent": 2, "max_total": 4, "agent_inventory": ["Explore"],

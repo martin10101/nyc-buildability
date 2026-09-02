@@ -29,6 +29,7 @@ import pytest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from tools.agent_supervisor import mrl_exec_chain as mec  # noqa: E402
 from tools.agent_supervisor import mrl_launch_manifest as mlm  # noqa: E402
 from tools.agent_supervisor import mrl_launch_path as mlp  # noqa: E402
 from tools.agent_supervisor import refusals  # noqa: E402
@@ -206,7 +207,8 @@ def test_relative_manifest_path_is_refused(world):
 
 
 @pytest.mark.parametrize("argv", [("--max-tasks", "2"), ("--packet-queue", "queue.json"),
-                                  ("--max-tasks", "3", "--packet-queue", "queue.json")])
+                                  ("--max-tasks", "3", "--packet-queue", "queue.json"),
+                                  ("--max-cycles", "2"), ("--max-cycles", "0")])
 def test_multi_task_launch_is_refused_with_a_manifest(world, argv):
     args = _parse("--mode", "supervised", "--launch-manifest", str(world["manifest_path"]), *argv)
     _m, refusal = mlp.apply_launch_manifest(args)
@@ -215,9 +217,21 @@ def test_multi_task_launch_is_refused_with_a_manifest(world, argv):
 
 
 def test_single_task_defaults_are_accepted(world):
-    args = _parse("--mode", "supervised", "--launch-manifest", str(world["manifest_path"]), "--max-tasks", "1")
+    args = _parse("--mode", "supervised", "--launch-manifest", str(world["manifest_path"]), "--max-tasks", "1",
+                  "--max-cycles", "1")
     _m, refusal = mlp.apply_launch_manifest(args)
     assert refusal is None
+
+
+def test_manifest_without_base_ref_is_refused_before_the_runtime_opens(world):
+    """C-B4 (R504/R505): the reviewer's decision binds to dispatch.base_ref; a manifest that
+    does not name one is invalid at the entrance, never defaulted to origin/main later."""
+    del world["manifest"]["dispatch"]["base_ref"]
+    _write(world)
+    args = _parse("--mode", "supervised", "--launch-manifest", str(world["manifest_path"]))
+    _m, refusal = mlp.apply_launch_manifest(args)
+    assert refusal is not None and refusal.reason_code == "launch_manifest_invalid"
+    assert "base_ref" in refusal.message
 
 
 # ---------------------------------------------------------------- preflight_launch
@@ -417,11 +431,16 @@ def live(tmp_path: pathlib.Path):
         generate_manifest(cli.PACKAGE_ROOT, extra_files=(("config.toml", config),)),
         tmp / "controller_manifest.json")
     draft = mlm.draft_manifest(str(repo), str(packet), mode="shadow")
+    # C-B4: the one-shot runner re-hashes the REAL chain and observes the REAL
+    # version before it spawns, so the manifest pins sys.executable's own identity.
+    chain = mec.resolve_chain(sys.executable, "claude")
+    chain_sha = mec.bind_chain_now(chain).combined_sha256
+    version = mec.observe_version(chain)
     draft["dispatch"].update({
-        "claude_executable": sys.executable, "claude_chain_sha256": "d" * 64,
-        "claude_model": "claude-worker", "claude_runtime_model": "claude-worker", "claude_version": "2.1.252",
-        "codex_executable": sys.executable, "codex_chain_sha256": "d" * 64,
-        "codex_model": "codex-primary", "codex_version": "0.50.0",
+        "claude_executable": sys.executable, "claude_chain_sha256": chain_sha,
+        "claude_model": "claude-worker", "claude_runtime_model": "claude-worker", "claude_version": version,
+        "codex_executable": sys.executable, "codex_chain_sha256": chain_sha,
+        "codex_model": "codex-primary", "codex_version": version, "base_ref": "refs/heads/main",
         "config": str(config), "model_selection": str(selection),
         "controller_manifest": str(controller_manifest), "task_packet_path": str(packet),
         "managed_settings_path": "",
@@ -475,8 +494,12 @@ def _job_object_host():
 
 @contextlib.contextmanager
 def _spawn_spy():
-    """Count worker spawns where the runner records them (the production accounting seam)."""
+    """Count worker spawns where the runners record them (the production accounting seam).
+
+    Both runners are spied: the legacy ``ClaudeRunner`` and the C-B4 ``OneShotRunner``
+    the manifest path selects - a spawn by either is a spawn."""
     from tools.agent_supervisor import claude_runner as cr
+    from tools.agent_supervisor import mrl_one_shot as mos
     spawned: list[int] = []
     real = cr.record_launched_child
 
@@ -485,10 +508,12 @@ def _spawn_spy():
         real(journal, pid=pid, role=role, start_token=start_token)
 
     cr.record_launched_child = spy  # type: ignore[assignment]
+    mos.record_launched_child = spy  # type: ignore[assignment]
     try:
         yield spawned
     finally:
         cr.record_launched_child = real  # type: ignore[assignment]
+        mos.record_launched_child = real  # type: ignore[assignment]
 
 
 def _audit_events(live) -> list[str]:
@@ -575,6 +600,12 @@ def test_cmd_start_verified_manifest_dispatches_from_the_manifest_alone(live):
     assert record["ok"] is True and record["observed"]["task_id"] == "M0-T136"
     assert record["observed"]["branch"] == "main"
     assert (records[0].parent / "profile" / "mrl_settings_profile.json").is_file()
+    # C-B4: the manifest path ran the ONE-SHOT runner (not the legacy multi-turn runner):
+    # its launch record, settled unit record and descendant proof are on disk.
+    assert "mrl_one_shot_launched" in events and "mrl_one_shot_settled" in events
+    unit = json.loads((records[0].parent / "one_shot_unit.json").read_text(encoding="utf-8"))
+    assert unit["ok"] is False and unit["descendant_proof"]["proven"] is True
+    assert unit["accounting"]["processes_total"] == 1 and unit["launch"]["max_turns"] == 12
 
 
 def test_cmd_start_claude_model_disagreeing_with_selection_refuses(live):

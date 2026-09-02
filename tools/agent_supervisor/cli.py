@@ -254,6 +254,8 @@ from .start_gate import (
     unprobed_revalidation,
 )
 from .mrl_launch_path import apply_launch_manifest, preflight_launch
+from .mrl_one_shot import OneShotRunner
+from .mrl_one_shot_review import OneShotReviewer
 from .resume_scheduler import (
     CODEX_HOLD_KEY,
     LIMIT_CLASSES,
@@ -2718,7 +2720,9 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     expected_model = args.expected_worker_model or launch_model
     runner_config = RunnerConfig(
         executable=args.claude_executable, cwd=str(worktree),
-        max_turns=sized_max_turns, timeout_seconds=args.unit_timeout,
+        # M0-T136 C-B4 (D-024-R583): a manifest launch enforces the manifest's own
+        # max_turns as the hard --max-turns; the sized allowance is the legacy path's.
+        max_turns=args.max_turns if launch is not None else sized_max_turns, timeout_seconds=args.unit_timeout,
         model=launch_model, expected_model=expected_model,
         # M0-T123 (D-024-R335/R336): bind the runner's pre-Popen launch seam to the
         # packet's isolated worktree, so EVERY unit dispatch (ordinary, rotation,
@@ -2730,12 +2734,21 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # worker spawn is recorded and every verified exit clears the record. This
     # single argument is what makes `recover_boot`'s surviving-child fail-closed
     # live in production instead of only in a test that recorded a child by hand.
-    runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id, journal=journal)
-    reviewer = CodexReviewer(
-        args.codex_executable, repo=str(repo),
-        schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
-        config=config, selection=selection, audit=audit, run_id=run_id,
-        timeout_seconds=args.unit_timeout)
+    # M0-T136 C-B4 (D-024-R580..R584): a verified launch manifest selects the MRL
+    # one-shot runner and reviewer (one fresh process, one prompt, one schema-bound
+    # result, total accounting, descendant-zero proof; controller-authoritative
+    # decision bound to a real ls-remote); the legacy pair is untouched otherwise.
+    if launch is not None:
+        runner = OneShotRunner(runner_config, launch=launch, audit=audit, run_id=run_id, journal=journal)
+        reviewer = OneShotReviewer(args.codex_executable, launch=launch, repo=str(repo), config=config,
+                                   selection=selection, audit=audit, run_id=run_id, timeout_seconds=args.unit_timeout)
+    else:
+        runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id, journal=journal)
+        reviewer = CodexReviewer(
+            args.codex_executable, repo=str(repo),
+            schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
+            config=config, selection=selection, audit=audit, run_id=run_id,
+            timeout_seconds=args.unit_timeout)
     collector = EvidenceCollector(repo_root=str(repo))
     approved = set(args.approve_prompt_digest or [])
     breakers = CircuitBreakers(config.limits)
@@ -2874,7 +2887,9 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
-        pinned_model=pinned_model, turn_budget=turn_budget,
+        # M0-T136 C-B4 (D-024-R581): no reserved-turn injection under a manifest
+        # launch - the one-shot runner refuses any second message by contract.
+        pinned_model=pinned_model, turn_budget=None if launch is not None else turn_budget,
         context_rotation_threshold=context_rotation_threshold,
         # D-004-R751/R758: the FIXED preference chain, straight out of the
         # IMMUTABLE controller config. Owner-editable only; never a runtime value.
@@ -2908,7 +2923,10 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # (task, lineage, worktree, progress, files, sized cadence, exact required
     # output) instead of the bare default. Rotated successors are re-oriented by
     # the rotation seam; an oversized unit runs the raw prompt and is surfaced.
-    first_prompt = orientation_mod.oriented_first_prompt(
+    # M0-T136 C-B4 (D-024-R581): under a manifest launch the operator's prompt IS
+    # the one prompt (the runner appends the schema-bound result contract); the
+    # multi-turn checkpoint-cadence orientation belongs to the legacy path only.
+    first_prompt = args.prompt if launch is not None else orientation_mod.oriented_first_prompt(
         args.prompt, packet, turn_budget, run_id=run_id, worktree=str(worktree),
         branch=args.branch, stage=args.stage, allowed_paths=authority.allowed_paths)
     return loop.run(first_prompt).to_dict()

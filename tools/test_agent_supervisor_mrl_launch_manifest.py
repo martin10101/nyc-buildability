@@ -88,7 +88,7 @@ def build_world(tmp_path: pathlib.Path) -> dict:
             "codex_model": "gpt-5-codex", "codex_version": "0.50.0",
             "config": str(exe / "config.json"), "model_selection": str(exe / "model_selection.json"),
             "controller_manifest": str(exe / "controller.json"), "task_packet_path": str(packet_path),
-            "max_turns": 12, "unit_timeout_seconds": 900,
+            "base_ref": "refs/heads/main", "max_turns": 12, "unit_timeout_seconds": 900,
             "subagents": {"max_concurrent": 2, "max_total": 4, "agent_inventory": ["Explore"],
                           "tools_inventory": ["Read", "Grep", "Glob", "Agent"],
                           "allow_rules": ["Read", "Grep", "Glob"], "deny_rules": []},
@@ -398,6 +398,31 @@ def test_draft_manifest_from_observation(world):
     assert d["expected"]["clean_status"] is True
     assert d["dispatch"]["task_packet_path"] == str(world["packet_path"].resolve())
     assert d["dispatch"]["claude_chain_sha256"] == "<fill>"  # a draft never asserts identities it did not bind
+    assert d["dispatch"]["base_ref"].startswith("<fill")  # C-B4: a draft never binds a base ref by default
+
+
+# ---------------------------------------------------------------- base_ref (C-B4; R504/R505)
+
+def test_base_ref_is_read_verbatim(world):
+    m = mlm.LaunchManifest.load(world["manifest_path"])
+    assert m.base_ref() == "refs/heads/main"
+    world["manifest"]["dispatch"]["base_ref"] = "  refs/heads/integration/x  "
+    _rewrite(world)
+    assert mlm.LaunchManifest.load(world["manifest_path"]).base_ref() == "refs/heads/integration/x"
+
+
+@pytest.mark.parametrize("bad", [None, "", "   ", 7, "<fill: e.g. refs/heads/main>"])
+def test_base_ref_never_defaults(world, bad):
+    """Absent, blank, non-string, or unfilled-draft base_ref refuses; nothing guesses origin/main."""
+    if bad is None:
+        del world["manifest"]["dispatch"]["base_ref"]
+    else:
+        world["manifest"]["dispatch"]["base_ref"] = bad
+    _rewrite(world)
+    m = mlm.LaunchManifest.load(world["manifest_path"])  # loading still succeeds: the field is optional at load
+    with pytest.raises(ContractError) as info:
+        m.base_ref()
+    assert info.value.code == "launch_manifest_base_ref_missing"
 
 
 def test_draft_refuses_dirty_tree(world):
