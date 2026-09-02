@@ -1,0 +1,655 @@
+{
+ "schema": "m0t136_tranche_b_evidence/v1",
+ "task_id": "M0-T136",
+ "directive": "D-024 Amendment 40 (R515-R598)",
+ "generated_from": "tools/gate_runner.py raw records only; no hand-authored success claims",
+ "frozen_candidate_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+ "records": [
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-context-budget-after-guidance.json",
+   "record_sha256": "0b3945b31242fb37f19683ce70ed4a8482dd1d5d32b7097348bef2a9855fca79",
+   "argv": [
+    "tools/context_budget_check.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "da523ebb18d39201ac5dedc5f7e3cb4d43f98428",
+   "repo_tree": "2744815389aafc37941c3272b87de0583fe3bd81",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:50:09.020522+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-campaign-continuity.json",
+   "record_sha256": "bb7851cacb2bf1b46d510f432c4435716e2951b171f0b689e3180d8bec1ee642",
+   "argv": [
+    "-m",
+    "tools.agent_supervisor.campaign_continuity",
+    "--status"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:02.018187+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-context-budget.json",
+   "record_sha256": "9e0cad654a2582e51b80f75a8971a887730a7037d1e4cbeee37ca347bac85ad3",
+   "argv": [
+    "tools/context_budget_check.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:02.798085+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-directive-compliance.json",
+   "record_sha256": "bcfce4b8f0776a1335105be6f13d9bbd6b99f4eef471fc2aeba09f427cef7eca",
+   "argv": [
+    "tools/validate_directive_compliance.py",
+    "--check"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:50:49.760157+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-mcp-policy.json",
+   "record_sha256": "fd64b07b1a50031ab07e3cd7e0840a9c90a0b4cbbfa11cf305931ef627e7a4bd",
+   "argv": [
+    "tools/validate_mcp_policy.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:01.282082+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-modularity.json",
+   "record_sha256": "afa099f27a673fac0297b17f4c465fee7edcfe2ee5e4e6e68225cde6ee3936b6",
+   "argv": [
+    "tools/modularity_check.py",
+    "--check"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:50:49.152268+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-product-map.json",
+   "record_sha256": "95f8c5f7294c305c74deadb7602fd9ca08b97544b1fe44d5c85b70371cfd5d0a",
+   "argv": [
+    "tools/validate_product_map.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:01.635375+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-project-control-status.json",
+   "record_sha256": "729fddd8a29f924ec83957bc922b2ea5eecabe42d056bffd273b1a7135a58f9b",
+   "argv": [
+    "tools/project_control.py",
+    "status"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:02.398246+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-ruff-changed-files.json",
+   "record_sha256": "283cfbe2c110ed150a400f8697bc0eb6f23f98f66242a2e331888ec66f6840f6",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "tools/agent_supervisor/checkpoint_extraction.py",
+    "tools/agent_supervisor/claude_runner.py",
+    "tools/agent_supervisor/mrl_codex_decision.py",
+    "tools/agent_supervisor/mrl_exec_identity.py",
+    "tools/agent_supervisor/mrl_remote.py",
+    "tools/agent_supervisor/mrl_transport.py",
+    "tools/agent_supervisor/mrl_worker_result.py",
+    "tools/gate_runner.py",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_gate_runner.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:53:08.427818+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-ruff-ci-scope.json",
+   "record_sha256": "8bc5861018ca876ef9ad4c02ffab177e951db1f5900d704a7640ea379134ba18",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "."
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\services\\api",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:52:47.941044+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-ruff.json",
+   "record_sha256": "97e1a6f913eafa05327051beef004993328bd0e97f84e2ee5a53874a54e15c17",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "."
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 1,
+   "started_at_utc": "2026-09-01T22:52:16.109065+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-supervisor-suite.json",
+   "record_sha256": "a28de5909895fd97ce3402ba14fb5c25809b522b357e4e68ae1a7ff36f5ec273",
+   "argv": [
+    "-m",
+    "pytest",
+    "tools/test_agent_supervisor_adversarial.py",
+    "tools/test_agent_supervisor_audit.py",
+    "tools/test_agent_supervisor_audit_anchor.py",
+    "tools/test_agent_supervisor_audit_fork_lock.py",
+    "tools/test_agent_supervisor_bootstrap_continuity.py",
+    "tools/test_agent_supervisor_bounded_contracts.py",
+    "tools/test_agent_supervisor_bounded_mode.py",
+    "tools/test_agent_supervisor_broker.py",
+    "tools/test_agent_supervisor_c2_binding.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_checkpoint_envelope.py",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_checkpoint_journey.py",
+    "tools/test_agent_supervisor_claude_runner_checkpoint.py",
+    "tools/test_agent_supervisor_claude_runner_env.py",
+    "tools/test_agent_supervisor_codex_channel.py",
+    "tools/test_agent_supervisor_command_authority.py",
+    "tools/test_agent_supervisor_command_docs.py",
+    "tools/test_agent_supervisor_controller_succession.py",
+    "tools/test_agent_supervisor_crash.py",
+    "tools/test_agent_supervisor_cross_task.py",
+    "tools/test_agent_supervisor_endurance.py",
+    "tools/test_agent_supervisor_ephemeral_review.py",
+    "tools/test_agent_supervisor_event_bus.py",
+    "tools/test_agent_supervisor_fuzz.py",
+    "tools/test_agent_supervisor_github_flow.py",
+    "tools/test_agent_supervisor_goal_integration.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "tools/test_agent_supervisor_guardrail_bridge.py",
+    "tools/test_agent_supervisor_invariants.py",
+    "tools/test_agent_supervisor_ipc.py",
+    "tools/test_agent_supervisor_launch_seam.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_loop_turnover.py",
+    "tools/test_agent_supervisor_manifest_binding.py",
+    "tools/test_agent_supervisor_model_chain.py",
+    "tools/test_agent_supervisor_model_turnover.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "tools/test_agent_supervisor_next_task.py",
+    "tools/test_agent_supervisor_operator_channel.py",
+    "tools/test_agent_supervisor_orientation.py",
+    "tools/test_agent_supervisor_os_acl.py",
+    "tools/test_agent_supervisor_park_approve_binding.py",
+    "tools/test_agent_supervisor_pending_prompt.py",
+    "tools/test_agent_supervisor_phase1.py",
+    "tools/test_agent_supervisor_policy.py",
+    "tools/test_agent_supervisor_process.py",
+    "tools/test_agent_supervisor_protocol.py",
+    "tools/test_agent_supervisor_quota_classifier.py",
+    "tools/test_agent_supervisor_r595_actuation.py",
+    "tools/test_agent_supervisor_recovery.py",
+    "tools/test_agent_supervisor_recovery_probes.py",
+    "tools/test_agent_supervisor_repair_gate.py",
+    "tools/test_agent_supervisor_replay.py",
+    "tools/test_agent_supervisor_resource_sampling.py",
+    "tools/test_agent_supervisor_restart_channel.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "tools/test_agent_supervisor_rotation.py",
+    "tools/test_agent_supervisor_routing_probe.py",
+    "tools/test_agent_supervisor_runner.py",
+    "tools/test_agent_supervisor_runtime_supervision.py",
+    "tools/test_agent_supervisor_scheduler.py",
+    "tools/test_agent_supervisor_session_continuity.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "tools/test_agent_supervisor_statusline_handler.py",
+    "tools/test_agent_supervisor_subagent_telemetry.py",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "tools/test_agent_supervisor_telemetry_core.py",
+    "tools/test_agent_supervisor_turnover_adapters.py",
+    "tools/test_agent_supervisor_turnover_controller.py",
+    "tools/test_agent_supervisor_turnover_integration.py",
+    "tools/test_agent_supervisor_turnover_live_seam.py",
+    "tools/test_agent_supervisor_turnover_live_signal.py",
+    "tools/test_gate_runner.py",
+    "-q",
+    "-p",
+    "no:cacheprovider"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:53:08.840085+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-freeze-tranche-a-77.json",
+   "record_sha256": "629af5ef940d81b66026d5a68f1b70178da6782cd8b08e16532992e3163de9e8",
+   "argv": [
+    "-m",
+    "pytest",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_gate_runner.py",
+    "-q"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+   "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:50:45.046987+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-modularity-after-deletion.json",
+   "record_sha256": "79ac3b320cd9340ba9879d55588b95b4f3535fdcd556b0ffeea4dcebca6a3f55",
+   "argv": [
+    "tools/modularity_check.py",
+    "--check"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "27df43e4b499aa91ae7eb241faf7826a58a50933",
+   "repo_tree": "9fe57f18d18948e195f013ceac989f17de933344",
+   "returncode": 0,
+   "started_at_utc": "2026-09-01T22:45:11.571721+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/b0-modularity-mutant-growth-without-exception.json",
+   "record_sha256": "5aadb59a9930a94b69718776ce4a4251cad8b8f97f89465fa6f78064d311cd71",
+   "argv": [
+    "tools/modularity_check.py",
+    "--check",
+    "--repo",
+    "C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/4b281fa8-c111-4c27-bf71-8e95f5982a6f/scratchpad/mut-wt",
+    "--baseline",
+    "tools/modularity_baseline.json",
+    "--exceptions",
+    "tools/modularity_exceptions.json"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "27df43e4b499aa91ae7eb241faf7826a58a50933",
+   "repo_tree": "9fe57f18d18948e195f013ceac989f17de933344",
+   "returncode": 1,
+   "started_at_utc": "2026-09-01T22:45:48.811007+00:00",
+   "mutation": {
+    "killed": true,
+    "ok": true
+   }
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-campaign-continuity.json",
+   "record_sha256": "6c18f7c2c8b3396186da5b174c63c61933031b06cb175ca55aa79d7ecb32216f",
+   "argv": [
+    "-m",
+    "tools.agent_supervisor.campaign_continuity",
+    "--status"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:39.492348+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-context-budget.json",
+   "record_sha256": "9e1161d37edbfd8f62bc6389bfc342c716d97de1a292cb5b9c08c62d2b14cc25",
+   "argv": [
+    "tools/context_budget_check.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:40.065860+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-directive-compliance.json",
+   "record_sha256": "975e3ce4904fc7f73e975a62b46e880e3f4b16e951e137e177deef4c3b4e4125",
+   "argv": [
+    "tools/validate_directive_compliance.py",
+    "--check"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:09:26.639143+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-doc-check-canary.json",
+   "record_sha256": "e735b71065c0d75f6accc87f99336b7f705a12adc7edcfbe42ecfa56cc6d0996",
+   "argv": [
+    "tools/supervisor_command_doc_check.py",
+    "--doc",
+    "project-control/reports/M0-T136-canary-package.md"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:41.530604+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-doc-check-default.json",
+   "record_sha256": "44a5244ebfbe9cf82f34cebd652b9494961b40a81a482c2774813d81557797f0",
+   "argv": [
+    "tools/supervisor_command_doc_check.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:40.323371+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-doc-check-mrl-runbook.json",
+   "record_sha256": "aaa4fa82341abf8d2c8821e10db8f8c8c423e0f1268db32046aea7ab16d07bc2",
+   "argv": [
+    "tools/supervisor_command_doc_check.py",
+    "--doc",
+    "docs/MRL_LAUNCH_RUNBOOK.md"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:40.922677+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-mcp-policy.json",
+   "record_sha256": "0c9666c92e9261d9820037ccddb3117ced6f32a295dd3f2c6eb2d24ae6ab9e21",
+   "argv": [
+    "tools/validate_mcp_policy.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:38.729443+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-modularity.json",
+   "record_sha256": "f614aca1a129b42d15224e15a08a8070aa7e15165aecac823e15db18d63cdc67",
+   "argv": [
+    "tools/modularity_check.py",
+    "--check"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:09:15.827709+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-mutation-doc-check.json",
+   "record_sha256": "f1d09dc35844cc49fafe5aae09616bcce1758dd25b9e4470d58d79851caaf267",
+   "argv": [
+    "tools/supervisor_command_doc_check.py",
+    "--doc",
+    "C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/9c483202-db08-4bca-9a76-58722f064678/scratchpad/mutated_runbook.md"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 1,
+   "started_at_utc": "2026-09-02T03:10:50.083247+00:00",
+   "mutation": {
+    "killed": true,
+    "ok": true
+   }
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-product-map.json",
+   "record_sha256": "eb37f517b3ec176185e455bec1cca1a560a1ca97b61ee066ed257976d02b08d6",
+   "argv": [
+    "tools/validate_product_map.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:38.989370+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-project-control-status.json",
+   "record_sha256": "a6147c2f0aef46cfc94fd8e85a7dd36371ecc4c2907818263c8488ed2f4e6336",
+   "argv": [
+    "tools/project_control.py",
+    "status"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:39.774352+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-ps-tests.json",
+   "record_sha256": "13dceb2bef1b0dc7261869949a090ddef0f9ca0a59af23be33e4c6dc2796ef2f",
+   "argv": [
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "tools\\agent_supervisor\\ps_tests\\run_ps_tests.ps1"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:10:50.662240+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-ruff-changed-files.json",
+   "record_sha256": "fd08c62a4f4560315cc868967b838ded02d0ab8ad48dfad7e4ea9fbea7dd7a31",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "tools/agent_supervisor/command_docs.py",
+    "tools/agent_supervisor/mrl_launch_path.py",
+    "tools/test_agent_supervisor_command_docs.py",
+    "tools/test_agent_supervisor_mrl_launch_path.py"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:09:16.930637+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-ruff-ci-scope.json",
+   "record_sha256": "330b64d3b727fc67b71342070061033f43fe397d44523e029d693c5fc1efa44d",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "."
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\services\\api",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:09:16.658186+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-ruff.json",
+   "record_sha256": "0465ee4157d9087e3c08270dfe8316857302bef78d3fc7cb03cec409fac08ba1",
+   "argv": [
+    "-m",
+    "ruff",
+    "check",
+    "."
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 1,
+   "started_at_utc": "2026-09-02T03:09:16.337721+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json",
+   "record_sha256": "8f3e267dba243a6ceadb52db9d78ed72e9c48886707061b7cd1f7d3e848f9666",
+   "argv": [
+    "-m",
+    "pytest",
+    "tools/test_agent_supervisor_adversarial.py",
+    "tools/test_agent_supervisor_audit.py",
+    "tools/test_agent_supervisor_audit_anchor.py",
+    "tools/test_agent_supervisor_audit_fork_lock.py",
+    "tools/test_agent_supervisor_bootstrap_continuity.py",
+    "tools/test_agent_supervisor_bounded_contracts.py",
+    "tools/test_agent_supervisor_bounded_mode.py",
+    "tools/test_agent_supervisor_broker.py",
+    "tools/test_agent_supervisor_c2_binding.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_checkpoint_envelope.py",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_checkpoint_journey.py",
+    "tools/test_agent_supervisor_claude_runner_checkpoint.py",
+    "tools/test_agent_supervisor_claude_runner_env.py",
+    "tools/test_agent_supervisor_codex_channel.py",
+    "tools/test_agent_supervisor_command_authority.py",
+    "tools/test_agent_supervisor_command_docs.py",
+    "tools/test_agent_supervisor_controller_succession.py",
+    "tools/test_agent_supervisor_crash.py",
+    "tools/test_agent_supervisor_cross_task.py",
+    "tools/test_agent_supervisor_endurance.py",
+    "tools/test_agent_supervisor_ephemeral_review.py",
+    "tools/test_agent_supervisor_event_bus.py",
+    "tools/test_agent_supervisor_fuzz.py",
+    "tools/test_agent_supervisor_github_flow.py",
+    "tools/test_agent_supervisor_goal_integration.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "tools/test_agent_supervisor_guardrail_bridge.py",
+    "tools/test_agent_supervisor_invariants.py",
+    "tools/test_agent_supervisor_ipc.py",
+    "tools/test_agent_supervisor_launch_seam.py",
+    "tools/test_agent_supervisor_loop.py",
+    "tools/test_agent_supervisor_loop_turnover.py",
+    "tools/test_agent_supervisor_manifest_binding.py",
+    "tools/test_agent_supervisor_model_chain.py",
+    "tools/test_agent_supervisor_model_turnover.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_exec_chain.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_agent_supervisor_mrl_launch_draft.py",
+    "tools/test_agent_supervisor_mrl_launch_manifest.py",
+    "tools/test_agent_supervisor_mrl_launch_path.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "tools/test_agent_supervisor_mrl_one_shot_review.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_subagent_contract.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "tools/test_agent_supervisor_next_task.py",
+    "tools/test_agent_supervisor_operator_channel.py",
+    "tools/test_agent_supervisor_orientation.py",
+    "tools/test_agent_supervisor_os_acl.py",
+    "tools/test_agent_supervisor_park_approve_binding.py",
+    "tools/test_agent_supervisor_pending_prompt.py",
+    "tools/test_agent_supervisor_phase1.py",
+    "tools/test_agent_supervisor_policy.py",
+    "tools/test_agent_supervisor_process.py",
+    "tools/test_agent_supervisor_protocol.py",
+    "tools/test_agent_supervisor_quota_classifier.py",
+    "tools/test_agent_supervisor_r595_actuation.py",
+    "tools/test_agent_supervisor_recovery.py",
+    "tools/test_agent_supervisor_recovery_probes.py",
+    "tools/test_agent_supervisor_repair_gate.py",
+    "tools/test_agent_supervisor_replay.py",
+    "tools/test_agent_supervisor_resource_sampling.py",
+    "tools/test_agent_supervisor_restart_channel.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "tools/test_agent_supervisor_rotation.py",
+    "tools/test_agent_supervisor_routing_probe.py",
+    "tools/test_agent_supervisor_runner.py",
+    "tools/test_agent_supervisor_runtime_supervision.py",
+    "tools/test_agent_supervisor_scheduler.py",
+    "tools/test_agent_supervisor_session_continuity.py",
+    "tools/test_agent_supervisor_start_reentry.py",
+    "tools/test_agent_supervisor_statusline_handler.py",
+    "tools/test_agent_supervisor_subagent_telemetry.py",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "tools/test_agent_supervisor_telemetry_core.py",
+    "tools/test_agent_supervisor_turnover_adapters.py",
+    "tools/test_agent_supervisor_turnover_controller.py",
+    "tools/test_agent_supervisor_turnover_integration.py",
+    "tools/test_agent_supervisor_turnover_live_seam.py",
+    "tools/test_agent_supervisor_turnover_live_signal.py",
+    "tools/test_gate_runner.py",
+    "-q",
+    "-p",
+    "no:cacheprovider"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:11:01.515843+00:00"
+  },
+  {
+   "record": "project-control/reports/M0-T136-gates/final-freeze-tranche-a-77.json",
+   "record_sha256": "a8b41d90f1790b60dad29600830764def89a91f7844f5bc92658283c35d6e2cb",
+   "argv": [
+    "-m",
+    "pytest",
+    "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+    "tools/test_agent_supervisor_mrl_worker_result.py",
+    "tools/test_agent_supervisor_mrl_remote.py",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_transport.py",
+    "tools/test_agent_supervisor_mrl_exec_identity.py",
+    "tools/test_gate_runner.py",
+    "-q"
+   ],
+   "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+   "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+   "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+   "returncode": 0,
+   "started_at_utc": "2026-09-02T03:09:12.451338+00:00"
+  }
+ ]
+}

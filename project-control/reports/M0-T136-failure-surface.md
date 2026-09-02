@@ -83,3 +83,23 @@ Focused tests per module while editing; each cluster's affected supervisor tests
 closes (recorded raw by `tools/gate_runner.py` under `project-control/reports/M0-T136-gates/`);
 the complete affected + repository verification exactly once at the final frozen Tranche-B
 candidate (R593); any later change invalidates it (R594).
+
+## 6. Closure at the frozen Tranche-B candidate (2026-09-01)
+
+All five clusters repaired as bounded changes; frozen candidate
+`1489879e1f6787a9d53ed74db4524b24039e03a2` (tree `0babc4691...`; chain
+895cfbe5 B0 freeze -> 2bcd9aa8 survey -> 0e37e115 C-B1 -> 9c8be98d C-B2 ->
+0e0c4bcc + 5319c50a C-B3 -> 4bf845cd C-B4 -> a57802cc/472ae045 packet scope ->
+d39c49bb C-B5 part 1 -> aa63a50f handoff -> 1489879e C-B5 part 2). The single
+complete affected + repository verification ran once at that SHA:
+`final-freeze-*.json` under `project-control/reports/M0-T136-gates/` (86-module
+supervisor suite rc=0; 77 Tranche-A cases rc=0; modularity, ruff changed/CI
+scope, all validators, doc-checks, ps_tests rc=0; root-tree ruff rc=1 =
+pre-existing F28 unchanged; doc-check mutation killed=true). One additional
+in-cluster mismatch converged during C-B5 part 2: `apply_launch_manifest`
+collapsed the loader's `launch_manifest_base_ref_missing` into
+`launch_manifest_invalid` (C-B1's specific-refusal contract); repaired in
+`mrl_launch_path.py` with its paired launch_path test and surfaced unchanged
+through the command-docs tooth. F28/F29 remain out of cluster; the F22
+out-of-packet surfaces (`.claude/skills/loop-start/SKILL.md`,
+`.claude/hooks/loop_command_interceptor.py:202`) remain open orchestrator items.

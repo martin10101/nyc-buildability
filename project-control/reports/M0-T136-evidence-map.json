@@ -1,0 +1,253 @@
+{
+ "task_id": "M0-T136",
+ "directive_id": "D-024",
+ "note": "Amendment 40 Tranche B evidence map; frozen candidate 1489879e; all gate verdicts are tools/gate_runner.py raw records (R590/R591).",
+ "requirements": {
+  "D-024-R516": [
+   "ONE bounded B0-B5 workflow on candidate/D-024-mrl-option-b, commits 895cfbe5..1489879e (project-control/reports/M0-T136-producer-report.md s2); B0 clean reapplication included (commits 2f3ab124/1599daaf)."
+  ],
+  "D-024-R518": [
+   "Rejected one-line reapply never run; reapply used explicit per-file paths at 2f3ab124 (project-control/reports/M0-T134-cross-sha-continuity.md); standing restriction restated in docs/SESSION_HANDOFF.md."
+  ],
+  "D-024-R519": [
+   "Only local branch work: git status -sb shows candidate/D-024-mrl-option-b with NO upstream; every change is a logical local commit (producer report s2)."
+  ],
+  "D-024-R520": [
+   "git ls-remote at the end: control/D-024-fable-codex-loop = 6f5d12a6 (unchanged), no remote candidate ref; no push/PR/merge/deploy/launch performed (project-control/reports/M0-T136-producer-report.md s8)."
+  ],
+  "D-024-R521": [
+   "refs/pull/241/head = 4174a3b2 untouched at the end (project-control/reports/M0-T136-producer-report.md s8)."
+  ],
+  "D-024-R522": [
+   "No Tranche-C work exists on the branch; the workflow stops at canaries-ready (terminal token, producer report s11)."
+  ],
+  "D-024-R523": [
+   "Canary package presented, NOT executed: project-control/reports/M0-T136-canary-package.md; no mrl/canary-* run dirs exist; tooth-validated project-control/reports/M0-T136-gates/final-freeze-doc-check-canary.json rc0."
+  ],
+  "D-024-R524": [
+   "Subagents used only foreground/in-scope for read-only tracing during the survey (2bcd9aa8); none dispatched as writers (SESSION_HANDOFF seq 71 item 12: none active)."
+  ],
+  "D-024-R525": [
+   "Every commit in the chain authored by the primary session; no subagent git operations (producer report s2 chain; single committer in git log)."
+  ],
+  "D-024-R526": [
+   "project-control/reports/M0-T136-failure-surface.md s1: 30-row failure-surface inventory written BEFORE implementation (draft commit 2bcd9aa8 at the frozen B0 candidate)."
+  ],
+  "D-024-R527": [
+   "project-control/reports/M0-T136-failure-surface.md s4: each cluster repaired as one bounded change across producers/consumers/schemas/CLI/docs/tests; s6 records the C-B5 base_ref convergence (mrl_launch_path.py + paired test + tooth in commit 1489879e)."
+  ],
+  "D-024-R528": [
+   "project-control/reports/M0-T136-failure-surface.md s5/s6: focused tests while editing (e.g. 88-test C-B5 part-1 run at d39c49bb), cluster-close records under project-control/reports/M0-T136-gates/, ONE final verification at 1489879e."
+  ],
+  "D-024-R529": [
+   "project-control/reports/M0-T134-cross-sha-continuity.md: archive stabilization/D-024-mrl clean at 76c4edff, no upstream, no remote effects."
+  ],
+  "D-024-R530": [
+   "Archive branch untouched this tranche (no commits to stabilization/D-024-mrl; project-control/reports/M0-T134-cross-sha-continuity.md preserves it as the evidence branch)."
+  ],
+  "D-024-R531": [
+   "Branch-name pre-check recorded in project-control/reports/M0-T134-cross-sha-continuity.md before creation."
+  ],
+  "D-024-R532": [
+   "candidate/D-024-mrl-option-b created from exact base 6f5d12a6, local only (project-control/reports/M0-T134-cross-sha-continuity.md; ls-remote shows no remote head)."
+  ],
+  "D-024-R533": [
+   "19-file Tranche-A delta reapplied with explicit individual file paths at 2f3ab124 (project-control/reports/M0-T134-cross-sha-continuity.md); no directory-level checkout."
+  ],
+  "D-024-R534": [
+   "All reapplied blobs byte-compared to the accepted tree (all 22 blobs identical to ad770ad4; identity 1c3078c6 reproduced) - project-control/reports/M0-T134-cross-sha-continuity.md."
+  ],
+  "D-024-R535": [
+   "No abandoned-branch ancestry or blind project-control copy: continuity built by canonical tooling (project-control/reports/M0-T134-cross-sha-continuity.md; governance commit 1599daaf)."
+  ],
+  "D-024-R536": [
+   "Reference-closure inventory in project-control/reports/M0-T134-cross-sha-continuity.md preceding the governance write (1599daaf)."
+  ],
+  "D-024-R537": [
+   "Semantic state reconstructed via project_control tooling + targeted edits (1599daaf; validators green in project-control/reports/M0-T136-gates/b0-freeze-*.json)."
+  ],
+  "D-024-R538": [
+   "No M0-T133 renewal state / stale pointers imported (project-control/reports/M0-T134-cross-sha-continuity.md; M0-T133 remains REWORK per campaign status)."
+  ],
+  "D-024-R539": [
+   "No dangling archive-only references: cross-SHA provenance record project-control/reports/M0-T134-cross-sha-continuity.md carries the mapping; validators rc0 (project-control/reports/M0-T136-gates/final-freeze-directive-compliance.json)."
+  ],
+  "D-024-R540": [
+   "All validators run on the clean branch: project-control/reports/M0-T136-gates/b0-freeze-directive-compliance.json, b0-freeze-mcp-policy.json, b0-freeze-product-map.json, b0-freeze-campaign-continuity.json, b0-freeze-project-control-status.json, b0-freeze-context-budget.json, all rc0 (repeated at final freeze)."
+  ],
+  "D-024-R541": [
+   "Clean branch independently reports M0-T134 accepted with one coherent next state (campaign seq 71 -> M0-T136): project-control/reports/M0-T136-gates/final-freeze-campaign-continuity.json rc0 stdout."
+  ],
+  "D-024-R542": [
+   "Canonical cross-SHA provenance record created explicitly: project-control/reports/M0-T134-cross-sha-continuity.md."
+  ],
+  "D-024-R543": [
+   "R493 byte-identical restoration honored: exceptions file restored byte-identical at Tranche A; this tranche performed ONLY the owner-directed deletion (producer report s7)."
+  ],
+  "D-024-R544": [
+   "No exception/baseline renewed, extended, narrowed, replaced, or regenerated: the only exceptions change is the single entry deletion (git diff vs 6f5d12a6 in producer report s7)."
+  ],
+  "D-024-R545": [
+   "tools/modularity_baseline.json byte-identical to 6f5d12a6 (0-line git diff, re-proven at the final freeze; producer report s7)."
+  ],
+  "D-024-R546": [
+   "Baseline material-growth limit (1410) and current SLOC (1319 after the checkpoint_extraction split) proven BEFORE deletion (project-control/reports/M0-T136-gates/b0-modularity-after-deletion.json context; M0-T134 evidence)."
+  ],
+  "D-024-R547": [
+   "Only the tools/agent_supervisor/claude_runner.py entry deleted from tools/modularity_exceptions.json (git diff 6f5d12a6..1489879e shows exactly that block removed)."
+  ],
+  "D-024-R548": [
+   "Unpiped modularity green without the entry: project-control/reports/M0-T136-gates/b0-modularity-after-deletion.json rc0 raw; project-control/reports/M0-T136-gates/final-freeze-modularity.json rc0."
+  ],
+  "D-024-R549": [
+   "Inert baseline-regeneration record preserved untouched (no edit in the diff)."
+  ],
+  "D-024-R550": [
+   "Defect-convergence guidance added through the existing reliability architecture (root CLAUDE.md principle 17 + /engineering-reliability extension), no new skill."
+  ],
+  "D-024-R551": [
+   "Root CLAUDE.md principle 17: short always-loaded defect-convergence instruction."
+  ],
+  "D-024-R552": [
+   ".claude/skills/engineering-reliability/SKILL.md extended only with the Defect convergence section."
+  ],
+  "D-024-R553": [
+   "The guidance names failure-surface inventory, change-impact analysis, variant analysis, root-cause clustering, bounded repair, progressive verification, frozen-candidate regression (CLAUDE.md principle 17 text)."
+  ],
+  "D-024-R554": [
+   "Concise: context budget green after the addition (project-control/reports/M0-T136-gates/b0-context-budget-after-guidance.json rc0; project-control/reports/M0-T136-gates/final-freeze-context-budget.json rc0)."
+  ],
+  "D-024-R555": [
+   "B0 freeze at 44702645: project-control/reports/M0-T136-gates/b0-freeze-*.json (77 Tranche-A cases, affected suite, unpiped modularity, ruff, all validators) raw records."
+  ],
+  "D-024-R556": [
+   "No unresolved B0 failure: every b0-freeze record rc0 except root-tree ruff rc1 = pre-existing F28 recorded out-of-cluster (project-control/reports/M0-T136-failure-surface.md F28; stdout byte-identical at final freeze)."
+  ],
+  "D-024-R557": [
+   "tools/agent_supervisor/mrl_launch_manifest.py + cli.py/mrl_launch_path.py wiring: start --launch-manifest ABSOLUTE-PATH is the one entrance (absolute-path refusal tested); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R558": [
+   "Manifest never proof: preflight re-observes every expected field (mrl_launch_path.preflight_launch); paired tests in tools/test_agent_supervisor_mrl_launch_path.py; project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R559": [
+   "Twelve-field pre-dispatch verification (repo root, origin, task id, packet digest, worktree, branch, HEAD, tree, clean status, allowed paths, settings identity, mode) with one paired negative per field in tools/test_agent_supervisor_mrl_launch_manifest.py; project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R560": [
+   "Mismatch refuses BEFORE provider launch (spawn-spy tests prove zero spawns on refusal, tools/test_agent_supervisor_mrl_launch_path.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R561": [
+   "tools/agent_supervisor/mrl_exec_chain.py resolves+hashes+binds full Claude and Codex chains wrapper->runtime->entrypoint; project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R562": [
+   "Streaming full SHA-256 immediately before every spawn, no size/mtime cache (mrl_exec_chain.py; cache-refusal test); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R563": [
+   "Updater disablement verified in the exact child env (launch_record.child_env_updater measured from the Popen env, mrl_one_shot.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R564": [
+   "Runtime-reported model/version verified (observed_models/model_mismatch/launch.version in the one-shot unit; worker_failed on version mismatch); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R565": [
+   "Paired tests: same-size/restored-mtime replacement, wrapper retarget, entrypoint replacement, updater re-enablement, model/version mismatch (tools/test_agent_supervisor_mrl_exec_chain.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R566": [
+   "Agent use not forbidden: bounded contract admits Agent + agent inventory (mrl_subagent_contract.py; draft --agent flag; canary item 8)."
+  ],
+  "D-024-R567": [
+   "Configurable per-run concurrent/total limits (SubagentContract max_concurrent/max_total; over-limit paired denial test); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R568": [
+   "Delegation depth one enforced (child-of-child denial test); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R569": [
+   "Foreground agents only enforced (background spawn denial test); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R570": [
+   "Inherited repo identity/task/allowed paths/tool restrictions (contract fields bound from the manifest; subagent_contract() in mrl_launch_manifest.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R571": [
+   "Controller-issued parent/child ids + global accounting ledger (subagent_ledger.json shape; mrl_subagent_contract.py accounting); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R572": [
+   "Parallel read-only analysis permitted within limits (contract allows concurrent read-only subagents up to max_concurrent); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R573": [
+   "Single-writer integration or isolated non-overlapping worktrees enforced by the contract; project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R574": [
+   "No subagent commit/push/PR/merge/acceptance (denial rules; draft refuses an --allow-tool outside the inventory); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R575": [
+   "Complete descendant termination in the contract + one-shot proof (mrl_descendants.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R576": [
+   "Explicit MCP denial + out-of-inventory denial (strict MCP config; inventory-closed rules); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R577": [
+   "RestrictedProfile combines the real CLI mechanisms (restricted operation, dontAsk, tools inventory, exact allow/deny rules, strict MCP denial, accounted managed policy) - mrl_subagent_contract.py; project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R578": [
+   "Paired test proves --tools alone grants nothing (tools/test_agent_supervisor_mrl_subagent_contract.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R579": [
+   "Capability proof deferred to the real Windows canary by design: canary package items 6/8/9 + G2 self-check known-limitations row; offline tests not claimed as capability proof."
+  ],
+  "D-024-R580": [
+   "Tranche-A primitives wired into the real CLI/loop path (commit 4bf845cd: WorkerResult, ReviewVerdict, mrl_remote observer, gate recorder, transport, exec identity consumed by mrl_one_shot.py/mrl_one_shot_review.py/_run_loop); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R581": [
+   "One fresh process, one prompt, one schema-bound result, stdin closed, no resume/second message/background fallback - each with its mutation test (tools/test_agent_supervisor_mrl_one_shot.py); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R582": [
+   "Total run accounting across primary + subagents (processes_total = 1 + issued; permission_denials capped at 50 into the unit record); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R583": [
+   "Process and turn limits enforced (max_turns/unit_timeout from the manifest; over-limit refusals); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R584": [
+   "Cancel/timeout terminates and proves zero descendants via stdlib Toolhelp32 snapshot (mrl_descendants.py; proven=False fail-closed when unobservable); project-control/reports/M0-T136-gates/final-freeze-supervisor-suite.json (rc0, repo_head 1489879e, 86 modules)."
+  ],
+  "D-024-R585": [
+   "Exactly one operator launch path: docs/MRL_LAUNCH_RUNBOOK.md presents exactly ONE start (LivingRunbookTests); CONTROLLER_UPDATE_RUNBOOK s11 OBSOLETE with NO start; README pointer; project-control/reports/M0-T136-gates/final-freeze-doc-check-mrl-runbook.json + -default.json rc0."
+  ],
+  "D-024-R586": [
+   "Real PowerShell tests preserving raw LASTEXITCODE (tools/agent_supervisor/ps_tests/: unpiped call-operator harness, null fail-closed, JSON record); project-control/reports/M0-T136-gates/final-freeze-ps-tests.json rc0."
+  ],
+  "D-024-R587": [
+   "ONE canary package with the ten items verbatim and exact PowerShell: project-control/reports/M0-T136-canary-package.md; project-control/reports/M0-T136-gates/final-freeze-doc-check-canary.json rc0."
+  ],
+  "D-024-R588": [
+   "Live canaries NOT executed: package is present-only; no canary run dirs; no provider contact this tranche (producer report s9)."
+  ],
+  "D-024-R589": [
+   "Paired negative/mutation tests throughout (producer report s6 list; ps mutants DETECTED inside project-control/reports/M0-T136-gates/final-freeze-ps-tests.json; doc-check mutation project-control/reports/M0-T136-gates/final-freeze-mutation-doc-check.json killed=true)."
+  ],
+  "D-024-R590": [
+   "All gate results from tools/gate_runner.py raw records: 32 records under project-control/reports/M0-T136-gates/ indexed with SHA-256 in project-control/reports/M0-T136-tranche-b-evidence.json."
+  ],
+  "D-024-R591": [
+   "No hand-authored success claims: project-control/reports/M0-T136-tranche-b-evidence.json generated mechanically from the records; reports cite record files."
+  ],
+  "D-024-R592": [
+   "Whole suite run only at the B0 freeze and the final freeze; interim work used focused module runs (SESSION_HANDOFF seq 71 item 7; failure-surface s5)."
+  ],
+  "D-024-R593": [
+   "ONE complete affected + repository verification at frozen candidate 1489879e: 17 final-freeze-*.json records, all repo_head 1489879e (project-control/reports/M0-T136-tranche-b-evidence.json)."
+  ],
+  "D-024-R594": [
+   "No code change after 1489879e; the only later commit is control-plane evidence (reports + regenerated SESSION_HANDOFF), no production code or tests (producer report s1)."
+  ],
+  "D-024-R595": [
+   "docs/SESSION_HANDOFF.md regenerated at the final frozen candidate (seq 72, in the evidence commit); the seq-71 mid-tranche regeneration was owner-invoked and is recorded as such (producer report s10 item 7)."
+  ],
+  "D-024-R596": [
+   "The final producer report to the owner ends with exactly one terminal token: TRANCHE_B_OFFLINE_COMPLETE_CANARIES_READY (producer report s11)."
+  ],
+  "D-024-R597": [
+   "All R597 items reported together in project-control/reports/M0-T136-producer-report.md s1-s9 (identities, continuity mapping, commits, changed files, clusters, tests/raw codes, mutations, modularity-without-exception, protected-surface comparisons, final git status, canary package)."
+  ],
+  "D-024-R598": [
+   "Every blocker reported together in project-control/reports/M0-T136-producer-report.md s10; no push, no real loop launch, no Tranche C (project-control/reports/M0-T136-producer-report.md s8)."
+  ]
+ }
+}
