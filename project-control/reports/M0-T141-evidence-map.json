@@ -1,0 +1,137 @@
+{
+ "schema": "directive_evidence_map/v1",
+ "task_id": "M0-T141",
+ "directive_id": "D-024",
+ "directive": "D-024-fable-codex-loop",
+ "generated_at": "2026-09-02T21:40:00+00:00",
+ "note": "Producer evidence over the 16 applicable Amendment-44 requirements (resolver: evaluate_task_refs, ok=true, missing_ids=[]). Producer statuses are claims; only the independent verifiers' verdicts satisfy acceptance (R677).",
+ "requirements": {
+  "D-024-R664": {
+   "evidence_paths": [
+    "project-control/tasks/M0-T141.json",
+    "project-control/reports/M0-T141-producer-report.md"
+   ],
+   "producer_proof": "One bounded task (M0-T141) carried claim->implementation->freeze->submit in this session; production diff is one new focused module + one call-site expression + focused tests; no other audit or tranche started (M0-T133/T135/T137 untouched).",
+   "producer_status": "implemented"
+  },
+  "D-024-R665": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-canary-b502-schema-failure-evidence.md",
+    "tools/agent_supervisor/mrl_provider_schema.py"
+   ],
+   "producer_proof": "Root cause preserved verbatim (stderr, one_shot_unit.json fields, audit records 22-26) and restated in the module docstring: 2.1.252 rejects the 2020-12 declaration; Draft 7 required per Anthropic docs; anthropics/claude-code#80402 reproduces it.",
+   "producer_status": "implemented"
+  },
+  "D-024-R666": {
+   "evidence_paths": [
+    "tools/agent_supervisor/schemas/worker_result.schema.json",
+    "tools/test_agent_supervisor_mrl_provider_schema.py"
+   ],
+   "producer_proof": "Canonical schema file byte-identical (forbidden path; git diff empty); mrl_worker_result.py untouched; test_canonical_schema_file_still_declares_2020_12_internally pins the internal dialect.",
+   "producer_status": "implemented"
+  },
+  "D-024-R667": {
+   "evidence_paths": [
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_provider_schema.py"
+   ],
+   "producer_proof": "provider_schema_for_claude_cli deep-copies (copy.deepcopy) before projecting; deep-copy proof test mutates the projection and re-asserts the canonical snapshot; mutant M5 (shallow copy) DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R668": {
+   "evidence_paths": [
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_provider_schema.py"
+   ],
+   "producer_proof": "DRAFT7_DECLARATION == http://json-schema.org/draft-07/schema# is the explicit top-level declaration of every projection (including undeclared input); mutant M2 DETECTED.",
+   "producer_status": "implemented"
+  },
+  "D-024-R669": {
+   "evidence_paths": [
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_provider_schema.py"
+   ],
+   "producer_proof": "Same-meaning allowlist walk over every keyword/position; 15 refusal cases + 5 nested-position cases raise ContractError draft7_schema_incompatible; mutants M3/M4/M6 DETECTED (silent translation paths all caught).",
+   "producer_status": "implemented"
+  },
+  "D-024-R670": {
+   "evidence_paths": [
+    "tools/agent_supervisor/mrl_one_shot.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py"
+   ],
+   "producer_proof": "The single --json-schema call site serializes provider_schema_for_claude_cli(load_schema(...)); argv-level test asserts the launched value equals the projection and never the canonical; canonical in-memory dict proven unmutated.",
+   "producer_status": "implemented"
+  },
+  "D-024-R671": {
+   "evidence_paths": [
+    "tools/test_agent_supervisor_mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "project-control/reports/M0-T141-producer-report.md"
+   ],
+   "producer_proof": "All five directed proofs present and green (89 passed): canonical unchanged; Draft-7 declared; no 2020-12 in serialized argument; unknown/newer-only keywords refuse; guard-removed serialization emits the URI byte-equal to the preserved stderr.",
+   "producer_status": "implemented"
+  },
+  "D-024-R672": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-canary-b502-schema-failure-evidence.md"
+   ],
+   "producer_proof": "Failed run preserved: provider-contact count zero (empty session_id, empty observed_models, processes_total 1, exit 1); run directories canary-b5-01/canary-b5-02 kept as-is; successor run id will be new and correlated.",
+   "producer_status": "implemented"
+  },
+  "D-024-R674": {
+   "evidence_paths": [
+    "project-control/tasks/M0-T140.json",
+    "project-control/reports/M0-T141-G2-self-check.md"
+   ],
+   "producer_proof": "M0-T140 remains claimed (ledger status claimed, producer orchestrator); no accepted task file modified; R603-R605/model_selection untouched and uninterpreted.",
+   "producer_status": "implemented"
+  },
+  "D-024-R675": {
+   "evidence_paths": [
+    "project-control/tasks/M0-T141.json",
+    "project-control/reports/M0-T141-G0.md"
+   ],
+   "producer_proof": "M0-T141 is the next unused ID; production changes limited to mrl_provider_schema.py + the one mrl_one_shot.py call site + focused tests (allowed_paths enforce; git stat of 2245de74 shows exactly those production files).",
+   "producer_status": "implemented"
+  },
+  "D-024-R676": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-producer-report.md",
+    "project-control/reports/M0-T141-freeze.md"
+   ],
+   "producer_proof": "Focused tests 89 passed; mutants M1-M6 all DETECTED; supervisor suite 3566 passed/2 skipped (freeze baseline re-established); ruff clean; modularity_check 0 failures; validate_directive_compliance exit 0; both ps harnesses PASS.",
+   "producer_status": "implemented"
+  },
+  "D-024-R677": {
+   "evidence_paths": [
+    "project-control/tasks/M0-T141.json"
+   ],
+   "producer_proof": "Reviewer roster = code-reviewer (G3), qa-engineer (G4), directive-compliance-verifier (DCV) - separate foreground read-only identities, producer (orchestrator) != every verifier; findings to be resolved in-scope without owner round-trips.",
+   "producer_status": "implemented"
+  },
+  "D-024-R678": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-freeze.md",
+    "tools/controller_update/source_binding.json",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1"
+   ],
+   "producer_proof": "Frozen corrected candidate 2245de74 (tree 63119a9a, subtree edf026b3) recorded; binding + runbook section 4 + ps_test pinnedSha all agree; required_modules includes both changed modules; controller_update ps harness 7/7 PASS.",
+   "producer_status": "implemented"
+  },
+  "D-024-R679": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-G2-self-check.md"
+   ],
+   "producer_proof": "No push (branch local-only, no upstream), no merge, no PR change, no provider call (no start, no doctor --live; only read-only status/recovery-status probes of the controller journal).",
+   "producer_status": "implemented"
+  },
+  "D-024-R682": {
+   "evidence_paths": [
+    "project-control/reports/M0-T141-producer-report.md"
+   ],
+   "producer_proof": "The session return will be generated from the completed matrix only after acceptance + script generation, restricted to the five ordered items (token, task+candidate SHA, test/review results, script path+SHA-256, one command).",
+   "producer_status": "implemented"
+  }
+ }
+}
