@@ -1,0 +1,200 @@
+{
+ "schema": "task_evidence_map/v1",
+ "task_id": "M0-T139",
+ "directive": "D-024 Amendment 42 (source-042-amendment.md)",
+ "generated_at": "2026-09-02",
+ "note": "Producer-side mapping only; independent G3/G4/DCV verification pending at the submitted head. Statuses here are producer claims, never acceptance evidence.",
+ "rows": [
+  {
+   "requirement": "D-024-R622",
+   "evidence_paths": [
+    "project-control/tasks/M0-T139.json",
+    "project-control/directives/D-024-fable-codex-loop/source-042-amendment.md"
+   ],
+   "producer_proof": "One bounded task; allowed/forbidden paths enforce scope; git history shows no edit to accepted M0-T136/M0-T138 evidence or tools/agent_supervisor.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R623",
+   "evidence_paths": [
+    "project-control/reports/M0-T139-transaction-trace.md"
+   ],
+   "producer_proof": "Consolidated D1-D17 trace committed at capture (87b0a668), before the implementation commit (78acf086); one-package repair.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R624",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md"
+   ],
+   "producer_proof": "-Phase backup inside the operator script; runbook section 3 is ONE command; in-script choice justified (producer report s1/R624).",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R625",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_null_exit.ps1",
+    "tools/controller_update/ps_tests/test_backup_phase.ps1"
+   ],
+   "producer_proof": "Invoke-Native null refusal (live-tested); Invoke-RobocopyRecorded immediate raw capture; site guards refuse+exit on <0/>=4 (backup) and >=8 (mirror).",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R626",
+   "evidence_paths": [
+    "tools/controller_update/ps_tests/test_backup_phase.ps1",
+    "tools/controller_update/ps_tests/test_mutants_detected.ps1"
+   ],
+   "producer_proof": "B3: locked first copy refuses before the second copy runs (no runtime-a1, no evidence); mutant m_rc1 proves the guard load-bearing.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R627",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_backup_phase.ps1"
+   ],
+   "producer_proof": "Unique ms-timestamp+guid run dir; collision/create/emptiness refusals; B2 proves fresh dir per run, prior backup untouched.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R628",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_junction_containment.ps1"
+   ],
+   "producer_proof": "Assert-ContainedIn / Assert-NoReparseChain / Assert-TreeNoReparse before every copy; J1-J4 junction/containment refusals.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R629",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_backup_phase.ps1"
+   ],
+   "producer_proof": "Bidirectional digest proof of BOTH backups (missing/extra/changed refuse backup_verify_failed); runtime tree at full inventory.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R630",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_backup_phase.ps1"
+   ],
+   "producer_proof": "Atomic (temp+rename) controller_backup_evidence.json with run id, paths, pre-update identity, both raw codes, digest sets, PASS; B1 asserts every field.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R631",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_install_rollback_binding.ps1",
+    "tools/controller_update/ps_tests/test_source_binding.ps1"
+   ],
+   "producer_proof": "Install requires+re-verifies the bound evidence and records run id + evidence sha256; I1-I7; no 'newest' code path exists.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R632",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "tools/controller_update/ps_tests/test_install_rollback_binding.ps1"
+   ],
+   "producer_proof": "Rollback restores only evidence.backup_paths.controller; decoy-newest ignored (R1); parse tooth: no Sort-Object in section 10.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R633",
+   "evidence_paths": [
+    "tools/controller_update/ps_tests/test_install_rollback_binding.ps1"
+   ],
+   "producer_proof": "R1: planted residue removed, corrupted file restored, post-restore bidirectional digest equality vs bound evidence.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R634",
+   "evidence_paths": [
+    "tools/controller_update/ps_tests/"
+   ],
+   "producer_proof": "All ten adversarial cases fail closed: B3/I2/I3/I4/I6/R1/R2, test_null_exit, J1-J3, mutants m_rc1/m_reparse/m_rbtamper.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R635",
+   "evidence_paths": [
+    "tools/controller_update/update_controller_from_candidate.ps1",
+    "tools/controller_update/ps_tests/test_junction_containment.ps1"
+   ],
+   "producer_proof": "Both /MIR sites gated by containment+reparse immediately before the copy; only the bound destination under controller_root is writable; checked stale-record removal.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R636",
+   "evidence_paths": [
+    "tools/controller_update/source_binding.json",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1"
+   ],
+   "producer_proof": "a1_runtime_dir written programmatically from checkout_key(wt-m0t063), 64-hex machine-validated; parse tooth: no 64-hex in section 3 blocks; owner commands are one line each.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R637",
+   "evidence_paths": [
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md"
+   ],
+   "producer_proof": "Section 1 model-selection row de-staled (no pinned hash; doctor allowlist validation named; R603-R605 explicitly left to the owner); section 2 explains wt-m0t063 vs canary checkout; no deferral needed.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R638",
+   "evidence_paths": [
+    "tools/controller_update/ps_tests/"
+   ],
+   "producer_proof": "7 suites PASS (exit 0) under real powershell.exe raw-exit semantics; 9 mutants; detection semantics per mutant in producer report s2.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R639",
+   "evidence_paths": [
+    "project-control/reports/M0-T139-G2-self-check.md"
+   ],
+   "producer_proof": "Command-doc (runbook + canary), both ps_tests suites, governance validator, modularity --check, context budget - all green at the evidence head.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R640",
+   "evidence_paths": [
+    "project-control/tasks/M0-T139.json"
+   ],
+   "producer_proof": "Submitted awaiting_gate; reviewers code-reviewer/qa-engineer/directive-compliance-verifier; producer recorded only G0/G2.",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R641",
+   "evidence_paths": [
+    "project-control/reports/M0-T139-G2-self-check.md"
+   ],
+   "producer_proof": "Diff limited to allowed paths; supervisor code, model selection, canary contents, R603-R605, GitHub, provider state untouched (G2 rows 2/4/9).",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R642",
+   "evidence_paths": [
+    "project-control/reports/M0-T139-G2-self-check.md"
+   ],
+   "producer_proof": "No controller update/backup/rollback/live doctor/canary/push/PR/merge executed; all runs against %TEMP% fixtures (G2 row 9).",
+   "producer_status": "implemented"
+  },
+  {
+   "requirement": "D-024-R643",
+   "evidence_paths": [
+    "project-control/reports/M0-T139-producer-report.md"
+   ],
+   "producer_proof": "Submission return ends with CONTROLLER_UPDATE_TRANSACTION_SUBMITTED.",
+   "producer_status": "implemented"
+  }
+ ]
+}
