@@ -10589,7 +10589,11 @@
     "D-024-R679",
     "D-024-R680",
     "D-024-R681",
-    "D-024-R683"
+    "D-024-R683",
+    "D-024-R684",
+    "D-024-R685",
+    "D-024-R697",
+    "D-024-R699"
    ],
    "requirements": [
     {
@@ -10719,6 +10723,26 @@
     },
     {
      "id": "D-024-R683",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R684",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R685",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R697",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R699",
      "state": "pending",
      "evidence": []
     }
@@ -10886,5 +10910,5 @@
    "note": "Independent wave at reviewed head f8159f10 (content identity unchanged since the submitted head 71f0e063 the reviewers pinned; gate reports live outside allowed_paths): G3 code-reviewer PASS, G4 qa-engineer PASS, DCV PASS 16/16, zero blocking findings. Producer != every verifier (R677)."
   }
  ],
- "updated_at": "2026-09-02T22:10:00+00:00"
+ "updated_at": "2026-09-02T21:35:00+00:00"
 }

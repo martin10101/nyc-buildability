@@ -1,0 +1,94 @@
+{
+  "task_id": "M0-T142",
+  "title": "D-024 Amendment 45: settlement runtime-identity + explicit Bash restriction corrective package (canary-b5-02r1 clusters A+B+C)",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "One bounded corrective package from the preserved canary-b5-02r1 causal trace: (A) settlement identity - prove the pinned worker model from a correlation-bound runtime source (the session transcript bound by session_id + cwd-derived project key, binding explicitly added and tested per R690), treat modelUsage as a session-wide aggregate (R686, never exactly-one-key), recognize pinned[1m] as the same model family at a distinct context tier (R687), keep refusing when the pinned model is absent or a top-level turn ran a different model (R691); (B) permission - enforce the intended Bash restriction explicitly per measured 2.1.252 semantics (R688/R689/R692: bare deny via deny_rules -> permissions.deny + disallowedTools; profile builder refuses an inventory tool that is neither allowed nor denied); (C) evidence-reader corrections for the canary readout rows 3/8 (R693). Regression fixtures derived from canary-b5-02r1 (R695); focused tests while editing + ONE affected-suite run at the frozen candidate (R696); preserve the proven schema hotfix, one-shot transport, updater disablement, containment, manifest binding, and all stored evidence (R694). Qualifying evidence per supervisor-freeze AD-093: reproduced live defect (settlement refusal of a valid WorkerResult) + provider CLI drift (2.1.252 aggregate modelUsage; dontAsk read-only Bash execution) + D-024-R684..R699.",
+  "business_reason": "Owner directive 2026-09-02 (D-024 Amendment 45): exactly one bounded corrective package based on LIVE_FAILURE_CAUSAL_TRACE_READY; exactly one new task.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-045-amendment.md (verbatim owner directives 1-3; R684-R699)",
+    "project-control/reports/M0-T140-canary-b502r1-causal-trace.md (preserved causal trace; clusters A/B/C)",
+    "preserved run artifacts (read-only, never modified): %LOCALAPPDATA%/NYCBuildabilitySupervisor/9aca7075.../mrl/canary-b5-02r1/* + the session transcript 7a8f8a17-11b0-4f36-aa25-89bfb41b834d.jsonl and its subagents/ sidechains under the user .claude projects dir"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/mrl_runtime_identity.py: NEW focused module - correlation-bound runtime identity at settlement: cwd->project-key transcript path resolution (binding fixture-proven against the REAL observed directory name), sessionId correlation (any line carrying a different sessionId refuses), main-chain assistant-turn primary-model evidence, main-chain tool-use census, [1m] context-tier normalization of the EXACT pinned id, aggregate-usage policy (pinned present required; other keys recorded as auxiliary, never identity), typed ContractError refusals for missing/uncorrelated/empty transcript, divergent top-level model, or pinned-absent aggregate",
+    "tools/agent_supervisor/mrl_one_shot.py: settlement wiring only - replaces the exactly-one-modelUsage-key check with the new verification; version pin check preserved; unit record gains runtime_identity (primary/auxiliary models, assistant turns, transcript path, main tool-use census, correlated flag) and model_mismatch/mismatch_detail now derive from the new verification; transcript_base test seam on the runner; transport/schema-hotfix/containment/updater code untouched (R694)",
+    "tools/agent_supervisor/mrl_subagent_contract.py: build_restricted_profile refuses an inventory tool that is neither allow-ruled nor deny-ruled (typed violation citing R688/R692) - the Bash restriction becomes explicit and load-bearing (deny_rules -> permissions.deny + --disallowedTools, existing channel)",
+    "tools/agent_supervisor/mrl_exec_chain.py: observed_model_from_result deleted (its exactly-one-key contract is disproven by R686; sole production caller was the one-shot settlement); __all__ updated",
+    "tools/test_agent_supervisor_mrl_runtime_identity.py: NEW - canary-b5-02r1-derived fixtures (R695): multi-key modelUsage settles; pinned[1m] tier explicit; missing/different primary refuses; auxiliary usage never masquerades as primary; project-key binding proven against the real observed directory name; sessionId correlation refusals",
+    "updated tests: test_agent_supervisor_mrl_one_shot.py + _one_shot_review.py (transcript fixtures in the harness; multi-key usage happy path; Codex review proceeds after successful settlement), test_agent_supervisor_mrl_subagent_contract.py (+ any launch fixture builders) for the neither-allowed-nor-denied refusal and deny flow-through, test_agent_supervisor_mrl_exec_chain.py (function removal)",
+    "project-control/reports/M0-T142-producer-report.md + M0-T142-G2-self-check.md + M0-T142-evidence-map.json + M0-T142-freeze.md (frozen corrected candidate v3 + binding rebind: source_binding.json, runbook section-4 SHA, ps_test pinnedSha)",
+    "corrected external owner-run script (post-acceptance, M0-T140 continuation R697/R699): ONE script - transactional update, manifest verification, canonical owner-controlled switch to exact claude-fable-5 (never the fable alias, never claude-fable-5-1, fallback list stays empty), recovery preparation, corrected canary rows (3/6/8 criteria per this package; --model claude-fable-5 argv proof); never executed by the agent"
+  ],
+  "dependencies": [
+    "M0-T141"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/mrl_runtime_identity.py",
+    "tools/agent_supervisor/mrl_one_shot.py",
+    "tools/agent_supervisor/mrl_subagent_contract.py",
+    "tools/agent_supervisor/mrl_exec_chain.py",
+    "tools/test_agent_supervisor_mrl_runtime_identity.py",
+    "tools/test_agent_supervisor_mrl_one_shot.py",
+    "tools/test_agent_supervisor_mrl_one_shot_review.py",
+    "tools/test_agent_supervisor_mrl_subagent_contract.py",
+    "tools/test_agent_supervisor_mrl_exec_chain.py",
+    "tools/test_agent_supervisor_mrl_launch_manifest.py",
+    "tools/test_agent_supervisor_mrl_launch_path.py",
+    "tools/test_agent_supervisor_mrl_launch_draft.py",
+    "tools/controller_update/source_binding.json",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T142-producer-report.md",
+    "project-control/reports/M0-T142-G2-self-check.md",
+    "project-control/reports/M0-T142-evidence-map.json",
+    "project-control/reports/M0-T142-freeze.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/schemas/",
+    "tools/agent_supervisor/mrl_worker_result.py",
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/agent_supervisor/mrl_transport.py",
+    "tools/agent_supervisor/model_selection.py",
+    "project-control/reports/M0-T136-canary-package.md",
+    "project-control/reports/M0-T140-canary-b502r1-causal-trace.md"
+  ],
+  "acceptance_scenarios": [
+    "AS-SI-1 (R686/R691/R695): a settlement with the EXACT canary-b5-02r1 shape - valid structured WorkerResult, modelUsage {pinned, claude-haiku-4-5-20251001, pinned[1m]}, transcript whose main-chain assistant turns all report the pinned id - produces a checkpoint (ok result), records primary=pinned and auxiliary={haiku, pinned[1m]}, model_mismatch false.",
+    "AS-SI-2 (R687): a transcript turn reporting exactly pinned+'[1m]' settles (same family, distinct context tier) and is recorded as the tier variant; a DIFFERENT model with '[1m]' refuses.",
+    "AS-SI-3 (R691): refusals - transcript missing / sessionId mismatch / zero assistant turns / any main-chain turn on a different model / pinned absent from a nonempty usage aggregate / empty usage aggregate - each a typed ContractError, no checkpoint.",
+    "AS-SI-4 (R690): the cwd->project-key binding is proven against the REAL observed mapping (C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 -> C--Users-MLFLL-Downloads-nyc-zoning-ctl24) and the sessionId correlation is load-bearing (a transcript at the right path with a foreign sessionId refuses).",
+    "AS-PB-1 (R689/R692): build_restricted_profile with Bash in the inventory and Bash in neither allow nor deny REFUSES (typed); with deny_rules including Bash it produces permissions.deny containing Bash and --disallowedTools containing Bash (load-bearing flow-through).",
+    "AS-ER-1 (R693): the corrected canary readout logic (documented in the producer report and encoded in the regenerated script) separates Claude auth (session_id) from Codex (NOT_RUN until invoked) and reads fan-out counters from the unit record accounting (issued=2, denied=1, processes_total=3 recognized as PASS).",
+    "AS-CX-1 (R695): the one-shot review path proceeds to a Codex decision after a successful multi-key-usage settlement (review-path test green).",
+    "AS-FZ-1 (R696/R678-pattern): focused tests green while editing; ONE full supervisor-suite run at the frozen candidate (0 failures); binding/runbook/ps_test SHA carriers agree on the new frozen commit; controller_update ps harness green.",
+    "AS-MD-1 (R699): the regenerated owner script sets model_selection [claude] model to exactly claude-fable-5 (never 'fable', never claude-fable-5-1), keeps fallback [], and its canary evidence includes an argv row proving '--model claude-fable-5'; parser-clean under PS 5.1; never executed by the agent."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-02T20:42:50.964271+00:00",
+  "updated_at": "2026-09-02T20:42:51.129637+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-02T20:42:50.964271+00:00"
+}

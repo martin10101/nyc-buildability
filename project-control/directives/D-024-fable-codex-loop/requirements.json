@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 683,
+ "requirement_count": 699,
  "producer": "orchestrator",
- "updated_at": "2026-09-02T21:05:00+00:00",
+ "updated_at": "2026-09-02T21:35:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -22291,6 +22291,570 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 44
+  },
+  {
+   "id": "D-024-R684",
+   "text": "Stop-order analysis (discharged): analyze only the preserved canary-b5-02r1 artifacts; adjudicate the five FAIL rows per the owner's framework (Claude auth PASS from the live session id; Codex NOT_RUN unless invoked; item 7 the actual failure; item 6 real only if the raw stream proves an attempted-but-unrecorded denial; item 4 separates primary from internal/subagent usage and strips decoration); report the seven extraction items, at most three root-cause clusters and one minimal repair boundary; implement nothing; confirm the claude-opus-4-8 pin unchanged; end LIVE_FAILURE_CAUSAL_TRACE_READY.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-1-mid-turn-stop-order--discharged-by-the-preserved-causal-trace",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R685",
+   "text": "Proceed with exactly one bounded corrective package based on LIVE_FAILURE_CAUSAL_TRACE_READY. Do not reopen accepted tasks, create multiple follow-ups, perform another repo-wide audit, or make another live provider call. If project control requires a new task, create exactly one.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140",
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140",
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R686",
+   "text": "Official correction 1: modelUsage is a session-wide aggregate covering the main loop, subagents, and internal calls. It must not be required to contain exactly one key.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R687",
+   "text": "Official correction 2: [1m] is a real 1-million-context model variant/suffix, not ANSI decoration.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R688",
+   "text": "Official correction 3: in Claude Code dontAsk, read-only Bash commands may execute even when Bash is absent from allowedTools.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R689",
+   "text": "Official correction 4: a bare disallowedTools Bash removes Bash from Claude's context, so it cannot create a Bash-denial event. If an observable denial is required, use a scoped deny rule or a PreToolUse hook for one exact harmless canary command. If the production contract requires no Bash whatsoever, use the bare deny and change the evidence criterion to prove Bash was absent and never executed.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R690",
+   "text": "Official correction 5: do not base production settlement on forensic-only transcript files unless the normal controller can securely correlate and consume them. Use a correlation-bound source already available during normal settlement, or explicitly add and test that binding.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R691",
+   "text": "Settlement identity correction: accept a valid WorkerResult when the requested/pinned model is proven by a normal, correlation-bound runtime source. Treat auxiliary modelUsage entries separately. Recognize <pinned-model>[1m] as the same model family with a distinct context tier - not as a different primary model. Continue refusing when the pinned model is absent or the actual top-level model differs.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R692",
+   "text": "Permission correction: enforce the intended Bash restriction explicitly using the correct Claude Code 2.1.252 semantics. Make the canary's evidence criterion match the chosen enforcement mechanism.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R693",
+   "text": "Evidence-reader correction: Claude authentication passes from the real session ID; Codex authentication is NOT_RUN until Codex is invoked; item 8 reads the actual subagent ledger and recognizes issued=2, denied=1, processes=3.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R694",
+   "text": "Preserve the already-proven schema hotfix, one-shot transport, updater disablement, process containment, manifest binding, and all stored evidence.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R695",
+   "text": "Add exact regression fixtures derived from canary-b5-02r1: valid WorkerResult plus multiple modelUsage keys settles successfully; the pinned model's [1m] context variant is handled explicitly; missing or genuinely different primary model refuses; auxiliary/internal model usage does not masquerade as primary identity; the chosen Bash restriction is load-bearing and its evidence is measured correctly; rows 3 and 8 read the correct artifacts; Codex review proceeds after successful settlement.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R696",
+   "text": "Run focused tests while editing, then one affected-suite verification at the frozen candidate. Do not repeatedly run the complete repository suite after each individual edit.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R697",
+   "text": "Prepare one owner-run PowerShell script that performs the transactional update, manifest verification, the canonical owner-controlled model switch (as corrected by R699), recovery preparation, and the corrected canary. Do not execute it. Do not give the owner separate commands.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R698",
+   "text": "Return the frozen candidate identity, independent-review result, and exactly one PowerShell command. End with SETTLEMENT_PERMISSION_REPAIR_READY.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-2-the-corrective-package-authorization",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R699",
+   "text": "Model-identifier correction (supersedes the 'Fable 5.1' wording in the script paragraph): the required worker model is the original Fable 5 only - exact identifier claude-fable-5. Never the 'fable' alias (can resolve to Fable 5.1); never claude-fable-5-1; do not upgrade Claude Code for Fable 5.1; keep the Claude fallback list empty. Prepare the canonical owner-controlled switch from claude-opus-4-8 to the exact pinned model claude-fable-5 and prove the generated launch argv contains exactly --model claude-fable-5. No live launch yet.",
+   "source_ref": "source-045-amendment.md#verbatim-owner-directive-3-model-identifier-correction-same-session-mid-turn",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140",
+     "M0-T142"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140",
+     "M0-T142"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 45
   }
  ]
 }
