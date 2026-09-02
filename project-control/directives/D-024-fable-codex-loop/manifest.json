@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-01T22:31:57.699361+00:00",
+  "updated_at": "2026-09-02T06:00:00+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -332,6 +332,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-01T22:30:00+00:00",
       "content_digest_sha256": "b9ff5e5b19ea092ff84e8b83db0150616ff3a8bbc2f9cc6e44d35d21ffc2b351"
+    },
+    {
+      "file": "source-041-amendment.md",
+      "kind": "amendment",
+      "sequence": 41,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-02T06:00:00+00:00",
+      "content_digest_sha256": "aa1fac552f1951b9f97dba9be35e08a383e6b4e1a198743ea18d87bf3df6145f"
     }
   ],
   "amendments": [
@@ -373,7 +381,8 @@
     "source-037-amendment.md",
     "source-038-amendment.md",
     "source-039-amendment.md",
-    "source-040-amendment.md"
+    "source-040-amendment.md",
+    "source-041-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -414,7 +423,8 @@
     "M0-T109",
     "M0-T130",
     "M0-T131",
-    "M0-T132"
+    "M0-T132",
+    "M0-T138"
   ],
   "affected_prs": [],
   "affected_branches": [
@@ -461,7 +471,8 @@
       "M0-T107",
       "M0-T134",
       "M0-T136",
-      "M0-T137"
+      "M0-T137",
+      "M0-T138"
     ],
     "task_types": [
       "governance"
@@ -1085,10 +1096,25 @@
     "D-024-R603",
     "D-024-R604",
     "D-024-R605",
-    "D-024-R606"
+    "D-024-R606",
+    "D-024-R607",
+    "D-024-R608",
+    "D-024-R609",
+    "D-024-R610",
+    "D-024-R611",
+    "D-024-R612",
+    "D-024-R613",
+    "D-024-R614",
+    "D-024-R615",
+    "D-024-R616",
+    "D-024-R617",
+    "D-024-R618",
+    "D-024-R619",
+    "D-024-R620",
+    "D-024-R621"
   ],
-  "requirements_id_digest_sha256": "447618d3070f3911acfb81e1acd167d6417d6fac7bc66e734729fbc7d68c3ab8",
-  "requirements_content_digest_sha256": "b3659f05e7fc9bb4d55ed978573fe6b2661375e1aaf6fd0fe3afe86e14442272",
+  "requirements_id_digest_sha256": "0ee381bf3bc29b017dba7a1145e82f005a3781b3816fa12dd802488a3d1c027d",
+  "requirements_content_digest_sha256": "f89b3b59e191bbe6bd44aa62c431660c4c3e4dcc8e6f1899ed761c56ce4fd655",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1316,6 +1342,11 @@
       "at": "2026-09-01T22:30:00+00:00",
       "by": "orchestrator",
       "note": "Amendment 40 captured verbatim (owner directive 2026-09-01, session_01Bc5Kqa74kPZ4h6nJaXM63k): M0-T134 formally accepted; ONE bounded Tranche-B producer workflow authorized (Cluster B0 clean reapplication onto 6f5d12a6 + B1-B5); R513 lifted for this workflow only; one-line reapply command rejected; deletion of ONLY the stale claude_runner.py modularity file-exception authorized after acceptance; concise defect-convergence guidance; standing model-selection policy (main Fable 5.1 high, fallback claude-opus-4-8 xhigh, owner-commanded thematic subagent switch). 92 atomic requirements D-024-R515..R606 appended; unresolved model-policy questions recorded as owner-decision rows, not interpreted. Governance continuity: amendments 38/39 rows R472-R514 and the M0-T134 acceptance records are carried semantically from archive branch stabilization/D-024-mrl@76c4edff onto the clean candidate branch candidate/D-024-mrl-option-b (cross-SHA provenance: project-control/reports/M0-T134-cross-sha-continuity.md)."
+    },
+    {
+      "at": "2026-09-02T06:00:00+00:00",
+      "by": "orchestrator",
+      "note": "Amendment 41 captured verbatim (owner directive 2026-09-02, controller-update source-binding repair): manual command-substitution shortcut REJECTED; ONE bounded blocking follow-up task (M0-T138) must repair the canonical controller-update procedure to source from the immutable accepted candidate 1489879e1f6787a9d53ed74db4524b24039e03a2 (tree 0babc469a07fc9109e5f7ce18ea73bf932952801) with fail-closed pre-copy identity verification, post-copy digest proof, manifest/update-evidence provenance binding, checked-in parse-tested PowerShell 5.1 commands, and negative/mutation coverage for six rejection classes, before any controller update or canary. 15 atomic requirements D-024-R607..R621 appended; owner-only rows R603-R605 untouched and uninterpreted; no prior requirement superseded; M0-T138 added to scope and affected_tasks."
     }
   ]
 }

@@ -1,0 +1,98 @@
+{
+  "task_id": "M0-T138",
+  "title": "D-024 Amendment 41: controller-update source binding to the immutable accepted candidate 1489879e (runbook section-4 repair, fail-closed install/verify script, negative and mutation ps_tests)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Repair the canonical controller-update procedure so the sole checked-in path sources the installation from the immutable accepted production candidate SHA 1489879e1f6787a9d53ed74db4524b24039e03a2 with fail-closed pre-copy identity verification (repo/origin/commit/tree/modules/detached-worktree), post-copy content-digest proof, manifest and update-evidence provenance binding, checked-in parse-tested PowerShell 5.1 owner commands under the command-document tooth, and negative/mutation coverage for the six rejection classes (D-024-R607..R621), before any controller update or canary.",
+  "business_reason": "Owner decision 2026-09-02: origin/main-based section 4 could install a stale controller lacking Tranche B while record-manifest certifies the wrong installation; a manual command substitution would bypass the checked-in command-document contract.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-041-amendment.md (D-024-R607..R621)",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md (section 4 = the defect; sections 3-10 the active update path)",
+    "docs/MRL_LAUNCH_RUNBOOK.md + project-control/reports/M0-T136-canary-package.md (read-only: the canary prerequisite chain that must become consistent)",
+    "tools/agent_supervisor/manifest.py + cli.py record-manifest/verify-controller (read-only trace: manifest is destination-generated, no source-provenance input)",
+    "tools/supervisor_command_doc_check.py + tools/agent_supervisor/command_docs.py (read-only: the command-document tooth; DEFAULT_DOCS includes the runbook; invocation-marker extraction rules)",
+    "tools/agent_supervisor/ps_tests/ (read-only: accepted raw-$LASTEXITCODE harness/runner house style)",
+    "M0-T136 accepted identity: frozen candidate 1489879e1f6787a9d53ed74db4524b24039e03a2, tree 0babc469a07fc9109e5f7ce18ea73bf932952801, tools/agent_supervisor subtree 79af11a2c7fa33c8f5c1bf85c17e310736bf30a3, accepted at HEAD e60192ed"
+  ],
+  "outputs": [
+    "tools/controller_update/update_controller_from_candidate.ps1 (single checked-in PS 5.1 operator script: -Phase install = pre-copy fail-closed identity verification + detached source worktree at the pinned SHA + robocopy /MIR + complete source-to-destination SHA-256 comparison + controller_update_evidence.json; -Phase verify-manifest = recorded-manifest cross-check against the accepted SOURCE digests, catching a manifest recorded from a wrong or tampered installation)",
+    "tools/controller_update/source_binding.json (pinned immutable binding contract: source repo, normalized origin, commit SHA 1489879e..., commit tree, tools/agent_supervisor subtree tree, required Tranche-B modules incl. mrl_launch_draft.py, source-worktree/destination/evidence paths)",
+    "tools/controller_update/ps_tests/run_ps_tests.ps1 (fail-fast fail-closed runner, house style)",
+    "tools/controller_update/ps_tests/test_source_binding.ps1 (positive install + verify-manifest control on a deterministic fixture git repo, plus the six typed rejection classes of D-024-R613)",
+    "tools/controller_update/ps_tests/test_mutants_detected.ps1 (targeted mutations of the tree/module/content/manifest checks are killed by the rejection fixtures - D-024-R589/R613)",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1 (PS 5.1 parser over the operator script and every fenced powershell block of docs/CONTROLLER_UPDATE_RUNBOOK.md; section 4 must carry the concrete 40-hex pinned SHA and no angle-bracket placeholder - D-024-R612)",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md (section 4 repaired: immutable-SHA source binding, one owner command; section 5a verify-manifest cross-check; rollback note for the update evidence; every origin/main instruction removed from the active path - D-024-R608/R614)",
+    "docs/SESSION_HANDOFF.md (seq-73: consistent owner command chain + M0-T138 state)",
+    "project-control/reports/M0-T138-producer-report.md + M0-T138-G2-self-check.md + M0-T138-evidence-map.json + M0-T138-gates/*.json (raw gate_runner records, D-024-R590)"
+  ],
+  "dependencies": [
+    "M0-T136"
+  ],
+  "allowed_paths": [
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "docs/SESSION_HANDOFF.md",
+    "tools/controller_update/",
+    "project-control/reports/M0-T138-producer-report.md",
+    "project-control/reports/M0-T138-G2-self-check.md",
+    "project-control/reports/M0-T138-evidence-map.json",
+    "project-control/reports/M0-T138-gates/"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/",
+    "tools/supervisor_command_doc_check.py",
+    "tools/modularity_baseline.json",
+    "tools/modularity_check.py",
+    "tools/modularity_exceptions.json",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    ".claude/",
+    ".github/workflows/",
+    "docs/MRL_LAUNCH_RUNBOOK.md",
+    "project-control/reports/M0-T136-canary-package.md",
+    "project-control/directives/",
+    "project-control/tasks/",
+    "project-control/gates/",
+    "project-control/state.json",
+    "project-control/campaigns/"
+  ],
+  "acceptance_scenarios": [
+    "AS-SB-1 (R608/R612): docs/CONTROLLER_UPDATE_RUNBOOK.md section 4 presents exactly ONE concrete owner command invoking the checked-in tools/controller_update/update_controller_from_candidate.ps1; the fenced block contains the literal 40-hex SHA 1489879e1f6787a9d53ed74db4524b24039e03a2, no angle-bracket placeholder, and no git ref resolution; `grep -n origin/main docs/CONTROLLER_UPDATE_RUNBOOK.md` returns no match; `python tools/supervisor_command_doc_check.py` (default docs) exits 0.",
+    "AS-SB-2 (R609/R613a-d): on a deterministic fixture git repo, -Phase install exits 0 only when repo identity, normalized origin, full-SHA commit existence, commit tree, tools/agent_supervisor subtree tree, required modules (incl. mrl_launch_draft.py), and a clean DETACHED source worktree at the exact commit all verify; the binding value 'origin/main' is refused as not_a_full_sha; a self-consistent wrong commit is refused (tree_mismatch/subtree_mismatch); a commit missing mrl_launch_draft.py is refused (missing_module) - each with a typed reason and raw nonzero exit.",
+    "AS-SB-3 (R610/R613e): after a successful install, every installed file's raw SHA-256 equals the accepted source worktree file's digest bidirectionally (no missing, no unexpected, no changed file), recorded in controller_update_evidence.json; mutating one destination byte afterwards makes -Phase verify-manifest refuse with content_mismatch.",
+    "AS-SB-4 (R611/R613f): -Phase verify-manifest refuses a controller manifest whose key set or LF-normalized digests disagree with the accepted SOURCE tree (manifest_key_set_mismatch/manifest_digest_mismatch), and accepts a manifest whose digests match digests computed independently (python hashlib) from the source; the update evidence binds source commit SHA, tree, subtree tree, and per-file digests.",
+    "AS-SB-5 (R589/R613 mutations): targeted mutants disabling the tree check, the module check, the content comparison, and the manifest cross-check are each KILLED by the corresponding rejection fixture (mutant passes where the real script refuses => detected); the mutant generator fails closed if a mutation pattern no longer matches exactly once.",
+    "AS-SB-6 (R612/R618): every fenced powershell block in docs/CONTROLLER_UPDATE_RUNBOOK.md and the operator script parse under real PowerShell 5.1 with zero parser errors; tools/controller_update/ps_tests/run_ps_tests.ps1 exits 0 with raw exit codes preserved; modularity --check and the governance validators PASS; ruff scope introduces no new finding."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "controller-update-source-binding-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "PS 5.1 parser/quoting quirks (no && chains, backtick continuation) - mitigated by the parse test and running every test in a real powershell.exe -File process",
+    "command-document tooth invocation-marker trap: a fenced runbook line containing agent_supervisor/mrl_launch_draft.py would be validated as a presented supervisor command - mitigated by keeping module paths inside source_binding.json and the script, never in fenced runbook blocks",
+    "a fully re-computed tampered binding contract cannot be distinguished by the script alone - bounded by the checked-in reviewed contract, the git history, and the runbook instruction to compare the printed identity against the acceptance record (disclosed in the producer report)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-02T05:08:34.714082+00:00",
+  "updated_at": "2026-09-02T05:10:34.571418+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-02T05:08:34.714082+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}
