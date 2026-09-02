@@ -38,6 +38,7 @@ from tools.agent_supervisor import mrl_launch_path as mlp  # noqa: E402
 from tools.agent_supervisor import mrl_one_shot as mos  # noqa: E402
 from tools.agent_supervisor.claude_runner import WORKER_CHILD_ROLE, RunnerConfig  # noqa: E402
 from tools.agent_supervisor.models import digest_of  # noqa: E402
+from tools.agent_supervisor.mrl_provider_schema import provider_schema_for_claude_cli  # noqa: E402
 from tools.agent_supervisor.mrl_subagent_contract import SubagentLedger  # noqa: E402
 from tools.agent_supervisor.mrl_worker_result import load_schema  # noqa: E402
 from tools.agent_supervisor.process import ContainmentReport, minimal_env  # noqa: E402
@@ -268,7 +269,13 @@ def test_one_fresh_process_one_prompt_one_schema_bound_result(launch):
     assert argv[1:5] == ["-p", "--output-format", "json", "--max-turns"]
     assert argv[5] == "12" and argv[6:8] == ["--model", "claude-opus-4-8"]
     schema_at = argv.index("--json-schema")
-    assert json.loads(argv[schema_at + 1]) == load_schema("worker_result.schema.json")
+    # M0-T141 (D-024-R667/R670/R671): the launched argument is the Draft-7 provider
+    # projection - the 2.1.252 CLI exits 1 before provider contact on a Draft 2020-12
+    # declaration, so no 2020-12 string may reach the argv.
+    assert json.loads(argv[schema_at + 1]) == provider_schema_for_claude_cli(
+        load_schema("worker_result.schema.json"))
+    assert json.loads(argv[schema_at + 1])["$schema"] == "http://json-schema.org/draft-07/schema#"
+    assert "json-schema.org/draft/2020-12" not in argv[schema_at + 1]
     assert schema_at < argv.index("--restricted"), "schema precedes the profile flags"
     assert "--permission-mode" in argv and "dontAsk" in argv and "--strict-mcp-config" in argv
     lowered = {a.lower() for a in argv}

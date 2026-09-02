@@ -54,6 +54,7 @@ from .mrl_exec_chain import (
     verify_runtime_identity,
 )
 from .mrl_launch_path import LaunchPreflight
+from .mrl_provider_schema import provider_schema_for_claude_cli
 from .mrl_subagent_contract import SubagentLedger
 from .mrl_transport import build_one_shot_plan, run_one_shot
 from .mrl_worker_result import (
@@ -256,7 +257,12 @@ class OneShotRunner:
             plan = build_one_shot_plan(
                 chain.executable, prompt + RESULT_CONTRACT, model=self.config.model,
                 max_turns=int(self.config.max_turns), wall_clock_seconds=float(self.config.timeout_seconds),
-                extra_flags=("--json-schema", json.dumps(load_schema("worker_result.schema.json"), sort_keys=True),
+                extra_flags=("--json-schema",
+                             # The CLI validates --json-schema as Draft 7 and exits 1 on the
+                             # canonical 2020-12 declaration before provider contact (M0-T141,
+                             # D-024-R667/R670): only the Draft-7 projection may cross this seam.
+                             json.dumps(provider_schema_for_claude_cli(
+                                 load_schema("worker_result.schema.json")), sort_keys=True),
                              *self.launch.profile.argv_flags))
             argv = tuple(assert_argv_safe(plan.argv))
         except (ContractError, EnvelopeError, ProcessError, HardDenyError, ValueError) as exc:
