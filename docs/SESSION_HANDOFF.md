@@ -33,14 +33,18 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    rework; M0-T135 backlog.
 5. **Owner-run continuation (R680):** ONE external script deployed at
    `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\run_m0t141_hotfix_and_canary.ps1`
-   (SHA-256 77705bc300fa95347ffb7ea646fb0742578a0a2e493e73bedde92796056984ea; PS 5.1 parse 0
-   errors; prior script renamed `.superseded-by-m0t141`). Fail-fast order: backup -> install ->
-   record-manifest -> verify-manifest -> normal doctor -> conditional s9a clear-recovery (journal
-   currently PAUSED_RECOVERY) -> manifest re-draft vs M0-T140 -> exactly ONE provider one-shot
-   `--run-id canary-b5-02r1` (correlated successor; b5-01 PASS REUSED from audit record 17, never
-   rerun; no park/pending-approval step) -> readout -> harness -> ten-row table + one token.
-   Rollback (bound backup only) fires ONLY on install/doctor failure, NEVER on a canary product
-   defect (evidence preserved, stop) - R681.
+   (SHA-256 a4a3a347690c6ea965f5bc4f0c822f1d20c10612e68c1e47a2a55d4732ee1404; PS 5.1 parse 0
+   errors; prior script renamed `.superseded-by-m0t141`). Attempt 2 (2026-09-02 ~20:06Z) stopped
+   safely at install `source_worktree_exists` (stale wt-controller-src from the morning install;
+   rollback restored a byte-identical tree, journals untouched, post-rollback doctor PASS, zero
+   provider contact — `M0-T140-canary-attempt2-refusal-evidence.md`); P0 now removes a stale
+   wt-controller-src via the runbook s4 remedy up front. Fail-fast order: P0 (incl. stale-worktree
+   removal) -> backup -> install -> record-manifest -> verify-manifest -> normal doctor ->
+   conditional s9a clear-recovery (journal currently PAUSED_RECOVERY) -> manifest re-draft vs
+   M0-T140 -> exactly ONE provider one-shot `--run-id canary-b5-02r1` (correlated successor;
+   b5-01 PASS REUSED from audit record 17, never rerun; no park/pending-approval step) ->
+   readout -> harness -> ten-row table + one token. Rollback (bound backup only) fires ONLY on
+   install/doctor failure, NEVER on a canary product defect (evidence preserved, stop) - R681.
 6. **Next steps:** (a) owner types the one command (see M0-T141 return); (b) after the canary,
    record M0-T140 evidence reports + gates and accept under standard gates; (c) push/PR/merge and
    Tranche C stay owner-gated (R520-R522); R603-R605 owner-only.
