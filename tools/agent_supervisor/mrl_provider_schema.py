@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
-"""Draft-7 provider-schema projection at the Claude CLI boundary (M0-T141;
-D-024 Amendment 44 R666-R671).
+"""Provider-facing schema safety at the CLI boundaries: the Draft-7 projection
+for Claude ``--json-schema`` (M0-T141; D-024 Amendment 44 R666-R671) and the
+strict structured-output-subset inspection for Codex ``--output-schema``
+(M0-T143; D-024 Amendment 46 R702/R705). One principle, one module: a schema a
+provider would refuse never reaches a child process, and the refusal is typed
+and fail-closed.
 
 Reproduced live defect (canary-b5-02, 2026-09-02, controller audit records 22-26):
 Claude Code 2.1.252 validates ``--json-schema`` with a Draft-7 validator and the
@@ -28,7 +32,7 @@ Import direction: this module imports ``.mrl_worker_result`` only (for
 from __future__ import annotations
 
 import copy
-from typing import Any, Mapping
+from typing import Any, Mapping, NoReturn
 
 from .mrl_worker_result import ContractError
 
@@ -122,6 +126,87 @@ def _walk(node: Any, where: str) -> None:
                 _walk(sub, f"{where}.{key}[{i}]")
         else:
             _refuse(where, key, "is not on the Draft-7 same-meaning allowlist")
+
+
+# --------------------------------------------------------------------------
+# Codex --output-schema strict-subset inspection (M0-T143; D-024-R702/R705)
+# --------------------------------------------------------------------------
+#
+# The Codex CLI forwards --output-schema to the provider's structured-output
+# validator, which 400-rejects constraint keywords (`invalid_json_schema`,
+# param `text.format.schema`, "In context=('properties', 'evidence_ref_ids'),
+# 'uniqueItems' is not permitted." - canary-b5-02r2 + owner probe
+# codex-schema-probe-20260902-191655532). The safe profile is the one
+# codex_decision.schema.json proved live (run_m0t035_shadow_pilot_r6):
+# structure only, additionalProperties always false, every property required.
+
+#: Keywords a Codex-facing output schema may carry, and nothing else.
+CODEX_STRUCTURAL_KEYWORDS = frozenset({
+    "$schema", "$id", "title", "description", "type", "enum",
+    "properties", "required", "additionalProperties", "items",
+})
+
+
+def _refuse_codex(where: str, key: str, why: str) -> NoReturn:
+    raise ContractError(
+        "codex_schema_unsupported_keyword",
+        f"{where}: keyword {key!r} {why}; the Codex output schema must stay inside the "
+        f"provider's strict structured-output subset (M0-T143, D-024-R702/R705) - the "
+        f"provider 400-rejects anything else before any verdict is produced")
+
+
+def _walk_codex(node: Any, where: str, *, top: bool) -> None:
+    if not isinstance(node, Mapping):
+        _refuse_codex(where, "<subschema>", f"is {type(node).__name__}, not a schema object")
+    if "type" not in node:
+        _refuse_codex(where, "type", "is missing; every subschema states its type explicitly")
+    for key, value in node.items():
+        if key not in CODEX_STRUCTURAL_KEYWORDS:
+            _refuse_codex(where, key, "is not a structural keyword")
+        if key in ("$schema", "$id") and not top:
+            _refuse_codex(where, key, "is only allowed at the top level")
+    if node.get("type") == "object":
+        if node.get("additionalProperties") is not False:
+            _refuse_codex(where, "additionalProperties",
+                          "must be exactly false on every object")
+        props = node.get("properties")
+        if not isinstance(props, Mapping) or not props:
+            _refuse_codex(where, "properties", "must be a nonempty name->subschema map")
+        required = node.get("required")
+        if sorted(props) != sorted(required or []):
+            _refuse_codex(where, "required",
+                          f"must list every property exactly (properties {sorted(props)} vs "
+                          f"required {sorted(required or [])}); the provider's strict mode "
+                          f"requires every property required")
+        for name, sub in props.items():
+            _walk_codex(sub, f"{where}.properties.{name}", top=False)
+    elif node.get("type") == "array":
+        items = node.get("items")
+        if isinstance(items, list):
+            _refuse_codex(where, "items", "is array-form (tuple) items, which is not structural")
+        if items is None:
+            _refuse_codex(where, "items", "is missing; every array states its item type")
+        _walk_codex(items, f"{where}.items", top=False)
+    elif "items" in node or "properties" in node or "required" in node:
+        _refuse_codex(where, "type",
+                      f"is {node.get('type')!r} but the node carries object/array keywords")
+
+
+def assert_codex_output_schema_strict(schema: Any, where: str = "schema") -> None:
+    """Refuse any Codex-facing output schema outside the strict subset, fail closed.
+
+    Called BEFORE any Codex process is spawned (R705): a schema the provider
+    would 400-reject never reaches a child process, and the refusal names the
+    exact context path the way the provider's own error does.
+    """
+    if not isinstance(schema, Mapping):
+        raise ContractError("codex_schema_unsupported_keyword",
+                            f"{where}: a Codex output schema must be a JSON object, got "
+                            f"{type(schema).__name__}")
+    declared = schema.get("$schema")
+    if declared is not None and declared not in (CANONICAL_DECLARATION, DRAFT7_DECLARATION):
+        _refuse_codex(where, "$schema", f"declares unrecognized dialect {declared!r}")
+    _walk_codex(schema, where, top=True)
 
 
 def provider_schema_for_claude_cli(schema: Any) -> dict[str, Any]:

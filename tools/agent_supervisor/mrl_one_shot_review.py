@@ -35,7 +35,9 @@ from .codex_reviewer import (
     DEFAULT_REVIEW_TIMEOUT_SECONDS,
     ReviewOutcome,
     build_argv,
+    failure_tails,
     map_decision_to_tier,
+    no_decision_error,
 )
 from .models import CodexDecision as LegacyDecision
 from .models import RecordError, digest_of
@@ -44,6 +46,7 @@ from .mrl_descendants import Snapshot, prove_zero_descendants
 from .mrl_exec_chain import RunVersion, chain_record, observe_version, resolve_chain, verify_chain_now, verify_child_env
 from .mrl_launch_path import LaunchPreflight
 from .mrl_one_shot import UNIT_RECORD_NAME
+from .mrl_provider_schema import assert_codex_output_schema_strict
 from .mrl_remote import observe_remote
 from .mrl_worker_result import ContractError
 from .policy import ASK, PolicyDecision, resolve_model
@@ -209,6 +212,13 @@ class OneShotReviewer:
         argv: tuple[str, ...] = (self.executable,)
         returncode = 0
         try:
+            # M0-T143 (D-024-R705): the output schema is inspected against the
+            # provider's strict structured-output subset BEFORE ANY spawn - even
+            # the version probe. A schema the provider would 400-reject
+            # (canary-b5-02r2: 'uniqueItems' is not permitted) fails closed here.
+            assert_codex_output_schema_strict(
+                json.loads(pathlib.Path(self.schema_path).read_text(encoding="utf-8-sig")),
+                "output_schema")
             chain = resolve_chain(self.executable, "codex")
             identity = verify_chain_now(chain, str(dispatch["codex_chain_sha256"]))
             version = observe_version(chain, run=self._run_version)
@@ -228,13 +238,19 @@ class OneShotReviewer:
             argv, returncode = result.argv, result.returncode
             if result.timed_out:
                 raise ContractError("review_timeout", "the reviewer timed out; partial output discarded"
+                                    + failure_tails(result)
                                     + ("" if proof["proven"] else f"; descendant proof FAILED: {proof}"))
             if not proof["proven"]:
                 raise ContractError("reviewer_descendants_remaining",
                                     f"the reviewer process tree was not proven empty: {proof} (R584)")
             if raw is None:
-                raise ContractError("no_decision", f"the reviewer produced no JSON object (exit {returncode}); "
-                                    f"stderr tail: {result.stderr[-300:]!r}")
+                # M0-T143 (D-024-R706): classify through the shared helper - a
+                # provider failure event on stdout becomes provider_rejected_request
+                # with the parsed error, the child returncode, and both bounded
+                # redacted stream tails; never a bare no_decision (the
+                # canary-b5-02r2 blindness: exit 1, empty stderr, discarded stdout).
+                failure = no_decision_error(result)
+                raise ContractError(failure.code, failure.message)
             verdict = ReviewVerdict.from_provider(raw, issued_evidence_ids=issued)
             observation = observe_remote(str(expected["origin_url"]), self.launch.manifest.base_ref(),
                                          run=self._ls_remote)

@@ -32,6 +32,16 @@ _SHA40 = re.compile(r"^[0-9a-f]{40}$")
 #: "reviewer approved but the controller is not satisfied" (R504).
 DECISIONS = ("COMPLETE", "REVISE", "HALT", "HOLD")
 
+#: Controller-enforced bounds formerly carried by review_verdict.schema.json.
+#: M0-T143 (D-024-R702/R703): the provider's strict structured-output validator
+#: 400-rejects constraint keywords (`invalid_json_schema`, param
+#: `text.format.schema`, "'uniqueItems' is not permitted" - canary-b5-02r2), so
+#: the provider file carries structure only and these bounds are law HERE, at
+#: the trust boundary, together with uniqueness and the issued-ids check.
+RATIONALE_MAX_CHARS = 4096
+EVIDENCE_REF_IDS_MAX = 64
+EVIDENCE_REF_ID_MAX_CHARS = 128
+
 
 @dataclasses.dataclass(frozen=True)
 class ReviewVerdict:
@@ -53,7 +63,44 @@ class ReviewVerdict:
             raise ContractError("contract_violation",
                                 f"ReviewVerdict must be a JSON object, got {type(raw).__name__}")
         validate_instance(dict(raw), load_schema("review_verdict.schema.json"), "review_verdict")
+        # The schema file is flattened to the provider's strict structured-output
+        # subset (R702), so every removed bound is enforced right here (R703).
+        rationale = raw["rationale"]
+        if not rationale:
+            raise ContractError("contract_violation",
+                                "review_verdict.rationale must be nonempty (controller-enforced "
+                                "bound, formerly schema minLength 1)")
+        if len(rationale) > RATIONALE_MAX_CHARS:
+            raise ContractError("contract_violation",
+                                f"review_verdict.rationale length {len(rationale)} exceeds the "
+                                f"controller-enforced bound {RATIONALE_MAX_CHARS} "
+                                f"(formerly schema maxLength)")
         ids = list(raw["evidence_ref_ids"])
+        if not ids:
+            raise ContractError("contract_violation",
+                                "review_verdict.evidence_ref_ids must carry at least one id "
+                                "(controller-enforced bound, formerly schema minItems 1)")
+        if len(ids) > EVIDENCE_REF_IDS_MAX:
+            raise ContractError("contract_violation",
+                                f"review_verdict.evidence_ref_ids carries {len(ids)} ids, above "
+                                f"the controller-enforced bound {EVIDENCE_REF_IDS_MAX} "
+                                f"(formerly schema maxItems)")
+        for ref in ids:
+            if not ref:
+                raise ContractError("contract_violation",
+                                    "review_verdict.evidence_ref_ids contains an empty id "
+                                    "(controller-enforced bound, formerly item minLength 1)")
+            if len(ref) > EVIDENCE_REF_ID_MAX_CHARS:
+                raise ContractError("contract_violation",
+                                    f"review_verdict evidence id length {len(ref)} exceeds the "
+                                    f"controller-enforced bound {EVIDENCE_REF_ID_MAX_CHARS} "
+                                    f"(formerly item maxLength)")
+        if len(set(ids)) != len(ids):
+            duplicates = sorted({i for i in ids if ids.count(i) > 1})
+            raise ContractError("contract_violation",
+                                f"review_verdict.evidence_ref_ids contains duplicate id(s) "
+                                f"{duplicates} (controller-enforced uniqueness, formerly schema "
+                                f"uniqueItems)")
         issued = set(issued_evidence_ids)
         unknown = [i for i in ids if i not in issued]
         if unknown:

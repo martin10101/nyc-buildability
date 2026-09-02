@@ -189,3 +189,109 @@ def test_compatible_nested_constructs_project_cleanly():
     assert projected["$schema"] == DRAFT7_DECLARATION
     assert projected["properties"] == schema["properties"]
     assert projected["properties"] is not schema["properties"]
+
+
+# ---------------------------------------------------------------- M0-T143: codex strict subset
+# (D-024-R702/R705) Live defect: canary-b5-02r2 + owner probe
+# codex-schema-probe-20260902-191655532 - the provider 400-rejected the old
+# review_verdict.schema.json (`invalid_json_schema`, param `text.format.schema`,
+# "In context=('properties', 'evidence_ref_ids'), 'uniqueItems' is not
+# permitted.") and the reviewer child exited 1 before any verdict.
+
+from tools.agent_supervisor.mrl_provider_schema import (  # noqa: E402
+    CODEX_STRUCTURAL_KEYWORDS,
+    assert_codex_output_schema_strict,
+)
+
+FIXTURES = pathlib.Path(__file__).resolve().parent / "agent_supervisor" / "fixtures"
+SCHEMAS = pathlib.Path(__file__).resolve().parent / "agent_supervisor" / "schemas"
+
+#: The exact constraint keywords the owner ordered removed together (R702).
+BANNED_CONSTRAINT_KEYWORDS = ("uniqueItems", "minLength", "maxLength", "minItems", "maxItems")
+
+
+def _flat_schema(**over):
+    schema = {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+              "additionalProperties": False, "required": ["verdict"],
+              "properties": {"verdict": {"type": "string", "enum": ["APPROVE"]}}}
+    schema.update(over)
+    return schema
+
+
+def test_both_shipped_codex_schemas_pass_the_strict_inspection():
+    for name in ("review_verdict.schema.json", "codex_decision.schema.json"):
+        assert_codex_output_schema_strict(load_schema(name), name)
+
+
+def test_flattened_review_verdict_carries_no_banned_keyword():
+    """R702: all five constraint keywords were removed together from the provider file."""
+    def keys(node, in_properties=False):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if not in_properties:
+                    yield key
+                yield from keys(value, in_properties=(key == "properties" and not in_properties))
+        elif isinstance(node, list):
+            for item in node:
+                yield from keys(item)
+    present = set(keys(load_schema("review_verdict.schema.json")))
+    assert not present.intersection(BANNED_CONSTRAINT_KEYWORDS)
+    assert present.issubset(CODEX_STRUCTURAL_KEYWORDS)
+
+
+@pytest.mark.parametrize("keyword,value", [
+    ("uniqueItems", True), ("minLength", 1), ("maxLength", 4096),
+    ("minItems", 1), ("maxItems", 64), ("pattern", "^x$"), ("format", "uri"),
+    ("allOf", []), ("anyOf", []), ("oneOf", []), ("not", {}), ("patternProperties", {}),
+])
+def test_each_nonstructural_keyword_is_refused(keyword, value):
+    schema = _flat_schema()
+    schema["properties"]["verdict"] = {"type": "array", "items": {"type": "string"}, keyword: value}
+    with pytest.raises(ContractError) as excinfo:
+        assert_codex_output_schema_strict(schema)
+    assert excinfo.value.code == "codex_schema_unsupported_keyword"
+    assert keyword in excinfo.value.message
+
+
+def test_objects_must_be_closed_and_fully_required():
+    open_object = _flat_schema(additionalProperties=True)
+    with pytest.raises(ContractError):
+        assert_codex_output_schema_strict(open_object)
+    partial = _flat_schema()
+    partial["properties"]["extra"] = {"type": "string"}  # not in required
+    with pytest.raises(ContractError):
+        assert_codex_output_schema_strict(partial)
+
+
+def test_arrays_state_their_item_type():
+    schema = _flat_schema()
+    schema["properties"]["verdict"] = {"type": "array"}
+    with pytest.raises(ContractError):
+        assert_codex_output_schema_strict(schema)
+
+
+def test_every_provider_facing_schema_passes_its_provider_inspection():
+    """R705: one sweep over every schema handed to a provider CLI - the sibling-defect guard.
+
+    worker_result -> Claude --json-schema (Draft-7 projection); review_verdict and
+    codex_decision -> Codex --output-schema (strict structured-output subset).
+    """
+    provider_facing = {
+        "worker_result.schema.json": provider_schema_for_claude_cli,
+        "review_verdict.schema.json": assert_codex_output_schema_strict,
+        "codex_decision.schema.json": assert_codex_output_schema_strict,
+    }
+    for name, inspect in provider_facing.items():
+        inspect(load_schema(name))
+
+
+def test_owner_probe_fixture_names_the_rejected_keyword():
+    """The regression fixture is the owner's captured provider error, verbatim facts."""
+    lines = (FIXTURES / "codex_schema_probe_20260902.jsonl").read_text(encoding="utf-8").splitlines()
+    events = [json.loads(line) for line in lines if line.strip()]
+    kinds = [e.get("type") for e in events]
+    assert "error" in kinds and "turn.failed" in kinds
+    error_text = json.dumps(events)
+    assert "invalid_json_schema" in error_text
+    assert "uniqueItems" in error_text
+    assert "text.format.schema" in error_text

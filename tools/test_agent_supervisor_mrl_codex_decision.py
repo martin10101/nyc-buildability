@@ -162,3 +162,54 @@ class Rule505GitBindingTests(unittest.TestCase):
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
+
+
+class M0T143ControllerEnforcedBoundsTests(unittest.TestCase):
+    """M0-T143 (D-024-R702/R703/R704): review_verdict.schema.json is flattened to
+    the provider's strict structured-output subset (the provider 400-rejected
+    'uniqueItems' - canary-b5-02r2), so every removed guarantee must hold
+    controller-side in ``from_provider``. Each case is one mutation the schema
+    can no longer catch."""
+
+    def _rejects(self, message_fragment="", issued=None, **over):
+        with self.assertRaises(ContractError) as ctx:
+            ReviewVerdict.from_provider(_raw(**over),
+                                        issued_evidence_ids=issued or ISSUED)
+        if message_fragment:
+            self.assertIn(message_fragment, str(ctx.exception))
+
+    def test_bounds_constants_are_the_old_schema_values(self) -> None:
+        self.assertEqual(mcd.RATIONALE_MAX_CHARS, 4096)
+        self.assertEqual(mcd.EVIDENCE_REF_IDS_MAX, 64)
+        self.assertEqual(mcd.EVIDENCE_REF_ID_MAX_CHARS, 128)
+
+    def test_boundary_values_are_accepted(self) -> None:
+        many = [f"ev-{i}" for i in range(64)]
+        verdict = ReviewVerdict.from_provider(
+            _raw(rationale="r" * 4096, evidence_ref_ids=many),
+            issued_evidence_ids=set(many))
+        self.assertEqual(len(verdict.evidence_ref_ids), 64)
+        long_id = "e" * 128
+        verdict = ReviewVerdict.from_provider(
+            _raw(evidence_ref_ids=[long_id]), issued_evidence_ids={long_id})
+        self.assertEqual(verdict.evidence_ref_ids, (long_id,))
+
+    def test_empty_rationale_rejected(self) -> None:
+        self._rejects("nonempty", rationale="")
+
+    def test_overlong_rationale_rejected_with_bound_named(self) -> None:
+        self._rejects("4096", rationale="x" * 4097)
+
+    def test_empty_id_rejected(self) -> None:
+        self._rejects("empty id", evidence_ref_ids=["ev-1", ""])
+
+    def test_duplicate_ids_name_the_duplicates(self) -> None:
+        self._rejects("duplicate", evidence_ref_ids=["ev-1", "ev-2", "ev-1"])
+
+    def test_wrong_item_type_rejected(self) -> None:
+        self._rejects(evidence_ref_ids=["ev-1", 5])
+
+    def test_non_object_payloads_rejected(self) -> None:
+        for payload in (None, [], "verdict", 7):
+            with self.assertRaises(ContractError):
+                ReviewVerdict.from_provider(payload, issued_evidence_ids=ISSUED)

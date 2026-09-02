@@ -2,19 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://nyc-buildability.local/agent_supervisor/review_verdict.schema.json",
   "title": "MRL ReviewVerdict (untrusted)",
-  "description": "The ONLY object Codex returns in the Minimum Reliable Loop. It is UNTRUSTED and carries a verdict, a human-readable rationale, and references to CONTROLLER-ISSUED evidence ids, and nothing else. It has no SHAs, origin, branch, model or executable identity, no gate/test results and no digests; the controller constructs the git-bound CodexDecision from its own observed facts (D-024-R502/R503). additionalProperties is false. verdict APPROVE is only an untrusted reviewer opinion and never itself produces a COMPLETE/advance decision (D-024-R504); each evidence_ref_id must match an id the controller issued for this review.",
+  "description": "The ONLY object Codex returns in the Minimum Reliable Loop. It is UNTRUSTED and carries a verdict, a human-readable rationale, and references to CONTROLLER-ISSUED evidence ids, and nothing else. It has no SHAs, origin, branch, model or executable identity, no gate/test results and no digests; the controller constructs the git-bound CodexDecision from its own observed facts (D-024-R502/R503). additionalProperties is false. verdict APPROVE is only an untrusted reviewer opinion and never itself produces a COMPLETE/advance decision (D-024-R504); each evidence_ref_id must match an id the controller issued for this review. This file is deliberately flattened to the provider's strict structured-output subset (M0-T143, D-024-R702; the provider 400-rejects e.g. uniqueItems with invalid_json_schema, param text.format.schema): only object/property types, enum, required fields, the array item type, and additionalProperties:false. Every removed bound (nonempty and maximum rationale length, evidence-ref count, per-id length, uniqueness) is enforced controller-side in ReviewVerdict.from_provider (D-024-R703).",
   "type": "object",
   "additionalProperties": false,
   "required": ["verdict", "rationale", "evidence_ref_ids"],
   "properties": {
     "verdict": {"type": "string", "enum": ["APPROVE", "REVISE", "HALT"]},
-    "rationale": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "rationale": {"type": "string"},
     "evidence_ref_ids": {
       "type": "array",
-      "minItems": 1,
-      "maxItems": 64,
-      "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+      "items": {"type": "string"}
     }
   }
 }

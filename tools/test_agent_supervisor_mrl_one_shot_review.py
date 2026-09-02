@@ -94,12 +94,14 @@ fallback_models = []
 class ReviewHarness:
     """The (never real) Codex reviewer process: records the invocation, writes the verdict."""
 
-    def __init__(self, verdict=APPROVE, *, text=None, returncode=0, timed_out=False, stderr="reviewer stderr"):
+    def __init__(self, verdict=APPROVE, *, text=None, returncode=0, timed_out=False, stderr="reviewer stderr",
+                 stdout=""):
         self.verdict = verdict
         self.text = text
         self.returncode = returncode
         self.timed_out = timed_out
         self.stderr = stderr
+        self.stdout = stdout
         self.calls: list[dict] = []
         self.ls_remote_calls: list[list[str]] = []
         self.version_calls: list[list[str]] = []
@@ -112,7 +114,7 @@ class ReviewHarness:
         body = self.text if self.text is not None else json.dumps(self.verdict)
         pathlib.Path(output_path).write_text(body, encoding="utf-8")
         container.adopt(777)
-        return ProcessResult(argv=tuple(argv), returncode=self.returncode, stdout="", stderr=self.stderr,
+        return ProcessResult(argv=tuple(argv), returncode=self.returncode, stdout=self.stdout, stderr=self.stderr,
                              duration_seconds=0.1, timed_out=self.timed_out)
 
     def ls_remote(self, argv):
@@ -434,11 +436,14 @@ def test_forged_or_malformed_verdict_is_refused(launch, tmp_path, verdict, fragm
 
 
 @pytest.mark.parametrize("text", ["", "   ", "not json", "[1, 2]", "\"a string\""])
-def test_no_json_object_is_no_decision(launch, tmp_path, text):
+def test_no_json_object_is_missing_decision_file_with_tails(launch, tmp_path, text):
+    """M0-T143 (D-024-R706): an unparseable failure is typed missing_decision_file
+    (never a bare no_decision) and carries the returncode plus both bounded tails."""
     write_unit(launch)
     outcome = review(launch, ReviewHarness(text=text, returncode=3, stderr="boom"), tmp_path, real_packet(launch))
-    assert not outcome.ok and outcome.error_code == "no_decision"
-    assert "exit 3" in outcome.error_message and "boom" in outcome.error_message
+    assert not outcome.ok and outcome.error_code == "missing_decision_file"
+    assert "returncode 3" in outcome.error_message and "boom" in outcome.error_message
+    assert "stdout tail:" in outcome.error_message and "stderr tail:" in outcome.error_message
     assert outcome.returncode == 3 and outcome.argv[1] == "exec"
 
 
@@ -684,3 +689,100 @@ def test_loop_consumes_the_reviewer_through_the_review_contract():
     assert "reviewer.review(" in source
     assert set(inspect.signature(mor.OneShotReviewer.review).parameters) >= {
         "packet", "expected_task_id", "expected_checkpoint_id"}
+
+
+# ---------------------------------------------------------------- M0-T143: schema-rejection repair
+# (D-024-R702/R705/R706) The live defect this section names: canary-b5-02r2 -
+# the reviewer child exited 1 with an EMPTY stderr tail and a discarded stdout,
+# so the provider's `invalid_json_schema` 400 ("In context=('properties',
+# 'evidence_ref_ids'), 'uniqueItems' is not permitted.", param
+# text.format.schema) was reduced to a blind `no_decision`.
+
+PROBE_FIXTURE = (pathlib.Path(__file__).resolve().parent / "agent_supervisor" / "fixtures"
+                 / "codex_schema_probe_20260902.jsonl")
+
+
+def test_provider_rejection_surfaces_parsed_error_and_tails(launch, tmp_path):
+    """The owner-captured canary-b5-02r2 probe stream is classified, parsed, and preserved."""
+    write_unit(launch)
+    stdout = PROBE_FIXTURE.read_text(encoding="utf-8")
+    rh = ReviewHarness(text="", returncode=1, stderr="", stdout=stdout)
+    outcome = review(launch, rh, tmp_path, real_packet(launch))
+    assert not outcome.ok and outcome.error_code == "provider_rejected_request"
+    assert outcome.returncode == 1
+    assert "invalid_json_schema" in outcome.error_message
+    assert "'uniqueItems' is not permitted" in outcome.error_message
+    assert "returncode 1" in outcome.error_message
+    assert "stdout tail:" in outcome.error_message and "stderr tail:" in outcome.error_message
+    rows = audit_rows(launch, "codex_review_failed")
+    assert len(rows) == 1 and rows[0]["error_category"] == "provider_rejected_request"
+    assert "invalid_json_schema" in rows[0]["detail"]["error_message"]
+    assert rows[0]["detail"]["returncode"] == 1
+
+
+def test_provider_error_never_reduced_to_bare_no_decision(launch, tmp_path):
+    """R706: no outcome of this reviewer carries the pre-repair blind code `no_decision`."""
+    write_unit(launch)
+    stdout = PROBE_FIXTURE.read_text(encoding="utf-8")
+    outcome = review(launch, ReviewHarness(text="", returncode=1, stderr="", stdout=stdout),
+                     tmp_path, real_packet(launch))
+    assert outcome.error_code != "no_decision"
+
+
+def test_oversized_failure_stream_is_truncated_with_marker(launch, tmp_path):
+    """R706: unbounded child output never lands in the record; the cut is explicit."""
+    write_unit(launch)
+    noise = "x" * 50_000
+    outcome = review(launch, ReviewHarness(text="", returncode=1, stderr=noise, stdout=noise),
+                     tmp_path, real_packet(launch))
+    assert not outcome.ok and outcome.error_code == "missing_decision_file"
+    assert "TRUNCATED" in outcome.error_message
+    assert len(outcome.error_message) < 3000
+    assert noise not in outcome.error_message
+
+
+def test_credential_shaped_output_is_redacted_in_tails(launch, tmp_path):
+    """R706: a token in either stream is redacted before it can reach the record."""
+    write_unit(launch)
+    seeded = "boom ghp_FAKESEEDEDGITHUBTOKEN0000 boom"
+    outcome = review(launch, ReviewHarness(text="", returncode=1, stderr=seeded, stdout=seeded),
+                     tmp_path, real_packet(launch))
+    assert "ghp_FAKESEEDEDGITHUBTOKEN0000" not in outcome.error_message
+    assert "[REDACTED:" in outcome.error_message
+
+
+def test_timeout_failure_carries_tails(launch, tmp_path, fast_proof):
+    write_unit(launch)
+    outcome = review(launch, ReviewHarness(text="", returncode=1, timed_out=True,
+                                           stderr="slow stderr", stdout="slow stdout"),
+                     tmp_path, real_packet(launch))
+    assert not outcome.ok and outcome.error_code == "review_timeout"
+    assert "stdout tail: 'slow stdout'" in outcome.error_message
+    assert "stderr tail: 'slow stderr'" in outcome.error_message
+
+
+def test_unsupported_schema_keyword_refuses_before_any_spawn(launch, tmp_path):
+    """R705: a schema the provider would 400-reject never reaches a child process -
+    not even the `--version` probe runs."""
+    write_unit(launch)
+    bad = {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
+           "additionalProperties": False, "required": ["verdict"],
+           "properties": {"verdict": {"type": "array", "items": {"type": "string"},
+                                      "uniqueItems": True}}}
+    bad_path = tmp_path / "bad_schema.json"
+    bad_path.write_text(json.dumps(bad), encoding="utf-8")
+    rh = ReviewHarness()
+    reviewer = make_reviewer(launch, rh, tmp_path)
+    reviewer.schema_path = str(bad_path)
+    outcome = reviewer.review(real_packet(launch), expected_task_id=TASK_ID,
+                              expected_checkpoint_id=CHECKPOINT_ID)
+    assert not outcome.ok and outcome.error_code == "codex_schema_unsupported_keyword"
+    assert "uniqueItems" in outcome.error_message
+    assert rh.calls == [] and rh.version_calls == []
+
+
+def test_shipped_schema_passes_the_strict_inspection_and_review_succeeds(launch, tmp_path):
+    """The flattened shipped schema clears the pre-spawn inspection (R702/R705)."""
+    write_unit(launch)
+    outcome = review(launch, ReviewHarness(), tmp_path, real_packet(launch))
+    assert outcome.ok

@@ -35,6 +35,8 @@ import tempfile
 from typing import Any, Callable, Mapping, Sequence
 
 from .models import USAGE_UNKNOWN, CodexDecision, RecordError, digest_of, to_utc_iso
+from .mrl_provider_schema import assert_codex_output_schema_strict
+from .mrl_worker_result import ContractError
 from .policy import (
     ASK,
     AUTO,
@@ -394,24 +396,56 @@ def parse_usage_telemetry(stdout: str) -> dict[str, Any] | str:
     return best if best is not None else USAGE_UNKNOWN
 
 
+#: Hard bound on the redacted stdout/stderr tail preserved for a FAILED review
+#: child (M0-T143, D-024-R706). Under `--json` the provider error travels on
+#: stdout, so a failure record without the stdout tail is blind (the
+#: canary-b5-02r2 lesson: `no_decision` with an empty stderr tail). Sized so a
+#: full failure message (parsed reason + both tails + framing) stays inside the
+#: existing bounded-message ceiling the reviewer tests enforce.
+STREAM_TAIL_BOUND_CHARS = 600
+
+
+def bounded_stream_tail(text: str, *, bound: int = STREAM_TAIL_BOUND_CHARS) -> str:
+    """The redacted LAST `bound` characters of a child stream, marked when cut.
+
+    Redaction runs before bounding so a secret split by the cut can never leak;
+    truncation is explicit, never silent (S10). Empty stays empty.
+    """
+    if not text:
+        return ""
+    redacted = redact_text(text).value
+    if len(redacted) <= bound:
+        return redacted
+    return f"[TRUNCATED {len(redacted) - bound} chars]..." + redacted[-bound:]
+
+
+def failure_tails(result: ProcessResult) -> str:
+    """The bounded, redacted stdout+stderr tail suffix every nonzero-exit
+    reviewer failure message carries (M0-T143, D-024-R706)."""
+    return (f"; stdout tail: {bounded_stream_tail(result.stdout)!r}"
+            f"; stderr tail: {bounded_stream_tail(result.stderr)!r}")
+
+
 def no_decision_error(result: ProcessResult) -> ReviewError:
     """Classify a review attempt that produced no parseable decision.
 
     A provider rejection (a `turn.failed` / `error` event in the `--json`
     stream, e.g. the structured-output validator refusing the schema with an
     HTTP 400) is `provider_rejected_request`; a genuinely absent decision file
-    stays `missing_decision_file`. Both carry the child returncode.
+    stays `missing_decision_file`. Both carry the child returncode and the
+    bounded, redacted stream tails - a known provider error is never reduced
+    to a bare no-decision (M0-T143, D-024-R706).
     """
     reason = provider_failure_reason(result.stdout)
     if reason:
         return ReviewError(
             "provider_rejected_request",
             f"the provider rejected the review request (child returncode "
-            f"{result.returncode}): {reason}")
+            f"{result.returncode}): {reason}{failure_tails(result)}")
     return ReviewError(
         "missing_decision_file",
         f"the reviewer produced no parseable decision file (child returncode "
-        f"{result.returncode})")
+        f"{result.returncode}){failure_tails(result)}")
 
 
 # --------------------------------------------------------------------------
@@ -516,6 +550,26 @@ class CodexReviewer:
 
         packet_body = dict(packet)
         packet_digest = digest_of(packet_body)
+
+        # M0-T143 (D-024-R705): a schema the provider's strict structured-output
+        # validator would 400-reject never reaches a child - inspected BEFORE any
+        # spawn, refused as a typed failed outcome, never retried (deterministic).
+        try:
+            assert_codex_output_schema_strict(
+                json.loads(pathlib.Path(self.schema_path).read_text(encoding="utf-8-sig")),
+                "output_schema")
+        except (ContractError, OSError, ValueError) as exc:
+            code = getattr(exc, "code", "codex_schema_unsupported_keyword")
+            message = getattr(exc, "message", f"output schema unreadable: {exc}")
+            outcome = ReviewOutcome(
+                None, resolution.model, resolution.selection_digest, 0,
+                error_code=code, error_message=message, packet_digest=packet_digest,
+                tier=PolicyDecision(tier=ASK, reason_code=code, reason=message,
+                                    rule_id="S9", classification="unclassified"),
+                notify_events=tuple(notify))
+            self._audit_outcome(outcome)
+            return outcome
+
         last_error: ReviewError | None = None
         last_returncode = 0
         last_stdout = ""
