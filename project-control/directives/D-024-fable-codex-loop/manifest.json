@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-02T21:35:00+00:00",
+ "updated_at": "2026-09-02T23:59:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -372,6 +372,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-02T21:35:00+00:00",
    "content_digest_sha256": "303aa2b4a9665dc83eb4902efd97181f56a53c582fccd93dedf1a567118f4c06"
+  },
+  {
+   "file": "source-046-amendment.md",
+   "kind": "amendment",
+   "sequence": 46,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-02T23:59:00+00:00",
+   "content_digest_sha256": "23cf8ea1e340ee7eb88dbd6b8cdd9580da2ec3e557921d8eaa469d595996738c"
   }
  ],
  "amendments": [
@@ -418,7 +426,8 @@
   "source-042-amendment.md",
   "source-043-amendment.md",
   "source-044-amendment.md",
-  "source-045-amendment.md"
+  "source-045-amendment.md",
+  "source-046-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -461,7 +470,8 @@
   "M0-T131",
   "M0-T132",
   "M0-T138",
-  "M0-T139"
+  "M0-T139",
+  "M0-T143"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1227,10 +1237,24 @@
   "D-024-R696",
   "D-024-R697",
   "D-024-R698",
-  "D-024-R699"
+  "D-024-R699",
+  "D-024-R700",
+  "D-024-R701",
+  "D-024-R702",
+  "D-024-R703",
+  "D-024-R704",
+  "D-024-R705",
+  "D-024-R706",
+  "D-024-R707",
+  "D-024-R708",
+  "D-024-R709",
+  "D-024-R710",
+  "D-024-R711",
+  "D-024-R712",
+  "D-024-R713"
  ],
- "requirements_id_digest_sha256": "a9c9ddfe48ebe42517d604e74071e7629d8f6ee8bb2e7b9f612d66efebab180b",
- "requirements_content_digest_sha256": "38e15d570bb2398b10c938a099597c3131006b0e4744fed6ab1a3af26868ad43",
+ "requirements_id_digest_sha256": "aec27eb5b9148bdbcceef6771c3e3146f3e52e322fff06909a49ac373821afae",
+ "requirements_content_digest_sha256": "cbd691e3e8417c86a5b14c342d9a2fe4abca89318958a5a02070b8036baa1f9b",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1483,6 +1507,12 @@
    "at": "2026-09-02T21:35:00+00:00",
    "by": "orchestrator",
    "note": "Amendment 45 captured verbatim (three owner messages 2026-09-02): (1) stop-order read-only causal trace of canary-b5-02r1 (discharged; preserved at project-control/reports/M0-T140-canary-b502r1-causal-trace.md; clusters A settlement identity misread PRIMARY / B Bash enforcement drift / C script evidence interpretation); (2) ONE bounded corrective package (task M0-T142): settlement identity via a correlation-bound runtime source with modelUsage as aggregate and [1m] as same-family context tier, explicit Bash restriction per 2.1.252 semantics, evidence-reader rows 3/8 corrected, canary-b5-02r1-derived regression fixtures, focused tests + ONE affected-suite run, then one owner-run script (transactional update, manifest verification, canonical owner model switch, recovery prep, corrected canary; never executed by the agent); (3) model-identifier correction: exact claude-fable-5 only, no alias, no 5-1, no CLI upgrade, empty fallback, argv must contain exactly --model claude-fable-5, no live launch yet. Requirements R684-R699 appended."
+  },
+  {
+   "at": "2026-09-02T23:59:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-46-captured",
+   "detail": "source-046-amendment.md captured verbatim; requirements D-024-R700..R713 appended (task M0-T143); id + content digests recomputed."
   }
  ]
 }

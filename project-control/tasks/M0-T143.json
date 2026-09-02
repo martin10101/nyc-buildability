@@ -1,0 +1,89 @@
+{
+  "task_id": "M0-T143",
+  "title": "D-024 Amendment 46: Codex --output-schema strict Structured-Outputs subset repair, controller-side guarantee preservation, and reviewer failure observability",
+  "task_type": "engineering",
+  "milestone_id": "M0",
+  "objective": "Repair the reproduced canary-b5-02r2 Codex review-schema defect (qualifying evidence per supervisor-freeze rule section 2: reproduced live defect + owner probe codex-schema-probe-20260902-191655532 showing invalid_json_schema status 400 param text.format.schema 'uniqueItems is not permitted', and explicit owner directive D-024 Amendment 46 requirements D-024-R700..D-024-R713): flatten review_verdict.schema.json to the strict Structured Outputs subset in one change; preserve every removed guarantee controller-side in ReviewVerdict.from_provider; add mutation tests and a pre-spawn provider-schema inspection applied to every provider-facing schema; preserve bounded redacted stdout JSONL tail + parsed provider error for every nonzero Codex exit; keep claude-fable-5 pinned exactly; correct the canary reporting; determine the canonical recovery path (review-resume vs one successor full canary); update the immutable installer binding and produce exactly one owner-run PowerShell command.",
+  "business_reason": "M0-T140 canary acceptance is blocked on the Codex review leg; the worker leg and model switch are proven good, so the smallest corrective package unblocks the campaign without re-proving healthy surfaces.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-046-amendment.md (verbatim owner authorization; D-024-R700..R713)",
+    "owner probe evidence %LOCALAPPDATA%/NYCBuildabilitySupervisor/ctl24-activation/codex-schema-probe-20260902-191655532 (stdout.jsonl UTF-16; invalid_json_schema / 400 / text.format.schema / 'uniqueItems' is not permitted)",
+    "canary-b5-02r2 durable evidence: runtime dir 9aca7075... audit seq 39-50, supervisor_journal transitions 20-25, mrl/canary-b5-02r2/one_shot_unit.json",
+    "tools/agent_supervisor/schemas/codex_decision.schema.json (the proven-live strict-subset profile, run_m0t035_shadow_pilot_r6 2026-08-04)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/schemas/review_verdict.schema.json: flattened in ONE change to the strict Structured Outputs subset (types, enum, required, array item type, additionalProperties:false; uniqueItems/minLength/maxLength/minItems/maxItems all removed together)",
+    "tools/agent_supervisor/mrl_codex_decision.py: ReviewVerdict.from_provider preserves every removed guarantee controller-side (shape, types, rationale length bound, evidence-ref count bound, per-id length bound, uniqueness, controller-issued ids only, verdict enum, no extra keys)",
+    "tools/agent_supervisor/mrl_provider_schema.py: codex strict-subset inspection (assert-style, fail closed, typed error) alongside the existing Draft-7 claude projection; principle applied to every provider-facing schema",
+    "tools/agent_supervisor/mrl_reviewer_failure.py: new focused module - bounded redacted stdout-JSONL tail capture + first structured error/turn.failed parse for nonzero codex exits (never full prompt/credentials/unbounded output)",
+    "tools/agent_supervisor/mrl_one_shot_review.py: pre-spawn schema inspection call + failure observability wiring (parsed provider error code/message + return code + bounded tails recorded; a known provider error is never reduced to bare no_decision)",
+    "tools/agent_supervisor/codex_reviewer.py: same pre-spawn inspection + failure observability on the legacy reviewer spawn path",
+    "tools/agent_supervisor/fixtures/codex_schema_probe_20260902.jsonl: owner-captured provider error as a UTF-8 regression fixture (provenance + original sha256 recorded in the evidence report)",
+    "mutation + inspection + observability tests in the four test files",
+    "tools/controller_update/source_binding.json: rebound to the new corrected candidate commit",
+    "project-control/reports/M0-T143-evidence.md: recovery-path determination (review-resume vs one successor full canary), test transcripts, fixture provenance, corrected canary-reporting semantics",
+    "exactly one owner-run PowerShell command (deployed to ctl24-activation; sha256 recorded)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/schemas/review_verdict.schema.json",
+    "tools/agent_supervisor/mrl_codex_decision.py",
+    "tools/agent_supervisor/mrl_one_shot_review.py",
+    "tools/agent_supervisor/mrl_provider_schema.py",
+    "tools/agent_supervisor/mrl_reviewer_failure.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/agent_supervisor/fixtures/codex_schema_probe_20260902.jsonl",
+    "tools/test_agent_supervisor_mrl_codex_decision.py",
+    "tools/test_agent_supervisor_mrl_provider_schema.py",
+    "tools/test_agent_supervisor_mrl_one_shot_review.py",
+    "tools/test_agent_supervisor_mrl_reviewer_failure.py",
+    "tools/test_agent_supervisor_codex_channel.py",
+    "tools/controller_update/source_binding.json",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T143-G0.md",
+    "project-control/reports/M0-T143-producer-report.md",
+    "project-control/reports/M0-T143-evidence.md",
+    "project-control/reports/M0-T143-G3-report.md",
+    "project-control/reports/M0-T143-G4-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-CS-1 (R702): review_verdict.schema.json contains ONLY structural keywords ($schema,$id,title,description,type,properties,required,additionalProperties,enum,items); none of uniqueItems/minLength/maxLength/minItems/maxItems remain; removed together in one commit (git history shows a single change).",
+    "AS-CS-2 (R703/R704): mutation tests prove ReviewVerdict.from_provider rejects, controller-side: overlong rationale, overlong evidence id, too many ids, too few ids, duplicate ids, fabricated (non-issued) ids, wrong field types, bad verdict enum, extra fields, non-object payloads.",
+    "AS-CS-3 (R705): the pre-spawn inspection refuses a schema carrying any non-structural keyword with a typed ContractError BEFORE any process launch (test proves the runner is never invoked); a sweep test asserts every provider-facing schema passes its provider's inspection/projection (worker_result via Draft-7 projection; review_verdict + codex_decision via the codex strict-subset inspection).",
+    "AS-CS-4 (R706/R710): with the owner-captured JSONL fixture as child stdout and exit 1, the recorded ReviewOutcome carries a provider-derived error_code (not bare no_decision), the parsed code invalid_json_schema + status 400 + first message, the child return code, and a bounded redacted stdout tail alongside stderr; an unparseable nonzero exit still records no_decision plus both bounded tails; oversized output is truncated with an explicit marker; credential-shaped strings are redacted; no live provider call anywhere in the tests.",
+    "AS-CS-5 (R707): no model-selection surface changes; the repo diff introduces no 'fable' alias and no claude-fable-5-1; the owner script validates claude-fable-5 via the doctor's model_selection row before the canary.",
+    "AS-CS-6 (R708/R709): the evidence report states the canonical recovery-path determination explicitly (supported review-resume from the preserved canary-b5-02r2 checkpoint, or - if none exists - one successor full canary) with the CLI-surface evidence for the determination, and records the corrected canary-reporting semantics (b5-02r2 Claude auth + Fable WorkerResult PASS; Codex review the only failed leg; item 8 PASS; item 10 NOT_RUN).",
+    "AS-CS-7 (R710): focused tests pass during implementation and ONE complete affected-suite run passes at the frozen corrected candidate (supervisor suite baseline re-established, >= 1165 tests, 0 failures).",
+    "AS-CS-8 (R711/R712): source_binding.json commit_sha == the new frozen corrected candidate; exactly one owner-run PowerShell command is produced and deployed with recorded sha256; the session does not execute it, push, or merge."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The provider strict-subset keyword set is not published exhaustively; mitigation: allow only the keyword profile proven live by codex_decision.schema.json (run_m0t035_shadow_pilot_r6) and refuse everything else fail-closed.",
+    "Observability change touches the live reviewer path; mitigation: behavior on SUCCESS is byte-identical (tails recorded only on failure), proven by existing suite + new tests."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-02T23:32:31.825879+00:00",
+  "updated_at": "2026-09-02T23:32:31.978628+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-02T23:32:31.825879+00:00"
+}

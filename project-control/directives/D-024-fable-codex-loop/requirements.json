@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 699,
+ "requirement_count": 713,
  "producer": "orchestrator",
- "updated_at": "2026-09-02T21:35:00+00:00",
+ "updated_at": "2026-09-02T23:59:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -22855,6 +22855,496 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 45
+  },
+  {
+   "id": "D-024-R700",
+   "text": "One bounded corrective task ONLY for the now-proven Codex review-schema failure (canary-b5-02r2 review_unavailable; owner probe: exit 1, invalid_json_schema, status 400, param text.format.schema, exact error \"In context=('properties', 'evidence_ref_ids'), 'uniqueItems' is not permitted.\"; evidence directory C:\\Users\\MLFLL\\AppData\\Local\\NYCBuildabilitySupervisor\\ctl24-activation\\codex-schema-probe-20260902-191655532). Do not reopen accepted tasks; if governance requires a new task, create exactly one bounded follow-up.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R701",
+   "text": "PROHIBITION: do not continue investigating authentication, model availability, executable identity, budgets, Fable, or repository state - the owner declares those proven healthy.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R702",
+   "text": "Flatten the provider-facing review_verdict.schema.json to the known-safe strict Structured Outputs subset: remove every nonessential constraint keyword TOGETHER in one change - uniqueItems, minLength, maxLength, minItems, maxItems - never a serial one-keyword-at-a-time repair. Retain only the structural provider contract: object/property types, enum, required fields, array item type, and additionalProperties: false.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R703",
+   "text": "Preserve EVERY removed guarantee inside ReviewVerdict.from_provider or its controller-owned validator: exact object shape, correct field types, bounded rationale length, bounded evidence-reference count, unique evidence-reference IDs, controller-issued evidence IDs only, valid verdict enum, no extra keys.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R704",
+   "text": "Add mutation tests proving overlong strings, too many IDs, too few IDs, duplicate IDs, fabricated IDs, wrong types, bad enum values, and extra fields are each rejected controller-side.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "pytest mutation tests over ReviewVerdict.from_provider / controller validator",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R705",
+   "text": "Add a provider-schema inspection that rejects unsupported/nonstructural keywords BEFORE a Codex process can be spawned, with a test; apply the same projection/inspection principle to every provider-facing schema (worker_result via the existing Draft-7 projection; review_verdict and codex_decision via the Codex strict-subset inspection) so this sibling defect cannot recur elsewhere.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "pytest inspection tests over every provider-facing schema",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R706",
+   "text": "Repair reviewer failure observability for EVERY nonzero Codex exit: preserve a bounded, redacted stdout JSONL tail as well as stderr; parse and record the first structured error/turn.failed code and message; record the child return code; never store the full prompt, credentials, or unbounded output; never reduce a known provider error to only no_decision.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R707",
+   "text": "Keep the exact worker model pinned to original Fable 5: claude-fable-5 exactly - no 'fable' alias, no claude-fable-5-1, no Fable fallback.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R708",
+   "text": "Correct the canary reporting: Claude authentication and the Fable WorkerResult from canary-b5-02r2 are already PASS; Codex review is the only failed/unavailable leg; R587 item 8 is already PASS; R587 item 10 is NOT_RUN (merely not reached).",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R709",
+   "text": "Prefer the canonical supported recovery path that retries Codex review from the preserved, validated canary-b5-02r2 checkpoint and evidence packet without launching Fable again. If the controller has no safe supported review-resume path, state that explicitly and use one successor full canary only; do not invent a bypass.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R710",
+   "text": "Run focused tests during implementation and one complete affected-suite verification at the frozen candidate. Use the owner's captured JSONL error as a regression fixture. No live provider call during implementation.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "focused pytest during work + full affected-suite run at the frozen candidate",
+   "required_evidence": "test run transcripts recorded in the task evidence report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R711",
+   "text": "Obtain independent review, update the immutable installer binding (tools/controller_update/source_binding.json), and produce exactly ONE owner-run PowerShell command that transactionally installs and verifies the candidate, confirms claude-fable-5 remains selected, executes the canonical Codex-review recovery or single successor canary, runs R587 item 10, and prints the consolidated ten-item result.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R712",
+   "text": "PROHIBITION: do not execute the owner script, push, merge, or start unrelated work.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R713",
+   "text": "Return-report requirement: the implementing session's response ends with exactly CODEX_SCHEMA_REPAIR_READY.",
+   "source_ref": "source-046-amendment.md#verbatim-owner-directive-corrective-package-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T143"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-02"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T143"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 46
   }
  ]
 }
