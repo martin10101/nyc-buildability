@@ -81,7 +81,7 @@ the A1 runtime-journal directory — come from the reviewed binding contract, ne
 ## 4. Install the accepted controller from the frozen candidate (immutable source binding)
 
 The copy source is pinned to the immutable accepted production candidate commit
-`65e43491129893fcfa49bbe7e7d4463b83336c0b` (M0-T142 settlement runtime-identity +
+`f8f0f0c89ff9c3f7762e144d5d37874b10f2b294` (M0-T142 settlement runtime-identity +
 explicit tool restriction; D-024 Amendment 45, superseding the M0-T141/M0-T136
 candidates) by the checked-in binding contract `tools/controller_update/source_binding.json`. The installer
 never resolves a mutable ref — not a branch, not HEAD, not a remote-tracking name — and

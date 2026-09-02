@@ -1,13 +1,14 @@
-# M0-T142 — frozen corrected controller candidate v3 (D-024 Amendment 45)
+# M0-T142 — frozen corrected controller candidate (v4 = v3 + review-wave delta; D-024 Amendment 45)
 
 Supersedes the M0-T141 candidate `2245de74` (and M0-T136's `1489879e`) as the controller
 install source. The installer's printed identity must equal this record.
 
 | Identity | Value |
 |---|---|
-| Frozen corrected candidate commit | `65e43491129893fcfa49bbe7e7d4463b83336c0b` |
-| Commit tree | `672f00d63c9050369939bc1f404c70a124e9853b` |
-| `tools/agent_supervisor` subtree tree | `35fa19763c13f903bfc20c23b30ae1dd05abcf0f` |
+| Frozen corrected candidate commit | `f8f0f0c89ff9c3f7762e144d5d37874b10f2b294` |
+| Commit tree | `23af20d5e985a1a4ef09ba4631d8c1900dd33c7a` |
+| `tools/agent_supervisor` subtree tree | `ffbde3b6ce5801b4bb07bae40e030e2bc0d68e4d` |
+| Delta commit inside the candidate | review-wave delta atop `65e43491` (G3 F1 torn-multibyte typed refusal + AS-CX-1 combined multi-key/review test) |
 | Supersedes (install source only) | `2245de74…` (subtree `edf026b3`), `1489879e…` (subtree `79af11a2`) |
 | Branch | `candidate/D-024-mrl-option-b` (local only; nothing pushed, R520/R521) |
 
@@ -42,7 +43,7 @@ the superseded candidate (R694 preserved; forbidden paths).
   pass-through), N6 profile guard removed — **all DETECTED**; modules restored
   byte-identical.
 - ONE affected-suite verification: full supervisor set `pytest tools/test_agent_supervisor*.py`
-  = **3591 passed, 2 skipped, 0 failed** (raw exit 0).
+  = **3591 passed, 2 skipped, 0 failed** at `65e43491`, re-established as **3593 passed, 2 skipped, 0 failed** at `f8f0f0c8` after the review-wave delta (one run each, raw exit 0).
 - `ruff check` on all changed files: clean. `modularity_check --check`: 0 failures.
   `validate_directive_compliance.py --check`: exit 0.
 

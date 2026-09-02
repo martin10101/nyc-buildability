@@ -96,3 +96,28 @@ all pin `65e43491…`; `required_modules` += the two new/changed identity module
 
 Self-verdict: ready for independent G3/G4/DCV at the submitted head (producer ≠ every
 verifier).
+
+## s8. Review-wave delta (resubmission at candidate v4 `f8f0f0c8`)
+
+The independent wave at submitted head `f2e79cc5` returned G3 PASS (4 MINOR), G4 PASS
+(2 MINOR), DCV PASS 14/14 — zero blocking findings. Two findings were RESOLVED in-scope
+per the Amendment-44 pattern (no owner round-trip):
+
+- **G3 Finding 1 (fail-closed hardening):** `read_transcript_turns` now catches
+  `UnicodeDecodeError` alongside `OSError` (a child torn mid-write of a multibyte
+  character refuses typed `transcript_missing` instead of escaping settlement as a
+  crash); corrupt-encoding fixture
+  `test_torn_multibyte_transcript_refuses_typed_not_crash` added.
+- **G3 Finding 4 (test completeness):** dedicated combined test
+  `test_review_completes_after_a_multi_key_usage_settlement` — the exact canary
+  aggregate settles AND Codex review COMPLETEs on the same chain (AS-CX-1 direct).
+
+Dispositioned WITHOUT change: G3 F2 / G4 MINOR-1 (AS-SI-1 packet text says
+`auxiliary={haiku, pinned[1m]}`; the implementation records `auxiliary={haiku}` +
+`context_tier_used=true` — the reviewers judged this the MORE faithful reading of R687,
+intent satisfied; packet text is immutable post-claim and the divergence is documented
+here); G3 F3 (disclosed trust-domain limitation); G4 MINOR-2 (DCV independently
+confirmed the 14-ID applicable set). Delta verification: focused 157 passed; ONE
+affected-suite run at v4 = **3593 passed, 2 skipped, 0 failed**; ruff clean;
+controller_update harness 7/7 at the rebound pin. Binding/runbook/ps_test now pin
+`f8f0f0c89ff9c3f7762e144d5d37874b10f2b294` (tree `23af20d5`, subtree `ffbde3b6`).

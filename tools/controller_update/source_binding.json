@@ -1,12 +1,12 @@
 {
   "schema": "controller_update_source_binding/v2",
-  "authority": "D-024 Amendment 41 (R608-R611); rebound by D-024 Amendment 45 (task M0-T142) to the frozen corrected candidate 65e43491 (settlement runtime-identity + explicit tool restriction; supersedes 2245de74/1489879e as the install source); this contract changes only through a reviewed commit - compare the installer's printed identity against project-control/reports/M0-T142-freeze.md before continuing; extended by D-024 Amendment 42 (R622-R643, task M0-T139): the backup and rollback phases bind the update transaction - controller_root, backup_root, a1_runtime_dir (the A1 journal runtime directory; its 64-hex tail is sha256 of the canonical wt-m0t063 checkout path, extracted programmatically, never retyped), backup_evidence and rollback_evidence are part of this reviewed contract",
+  "authority": "D-024 Amendment 41 (R608-R611); rebound by D-024 Amendment 45 (task M0-T142) to the frozen corrected candidate f8f0f0c8 (settlement runtime-identity + explicit tool restriction; supersedes 2245de74/1489879e as the install source); this contract changes only through a reviewed commit - compare the installer's printed identity against project-control/reports/M0-T142-freeze.md before continuing; extended by D-024 Amendment 42 (R622-R643, task M0-T139): the backup and rollback phases bind the update transaction - controller_root, backup_root, a1_runtime_dir (the A1 journal runtime directory; its 64-hex tail is sha256 of the canonical wt-m0t063 checkout path, extracted programmatically, never retyped), backup_evidence and rollback_evidence are part of this reviewed contract",
   "source_repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\nyc-development-feasibility-claude-pack",
   "expected_origin_url": "https://github.com/martin10101/nyc-buildability.git",
-  "commit_sha": "65e43491129893fcfa49bbe7e7d4463b83336c0b",
-  "commit_tree_sha": "672f00d63c9050369939bc1f404c70a124e9853b",
+  "commit_sha": "f8f0f0c89ff9c3f7762e144d5d37874b10f2b294",
+  "commit_tree_sha": "23af20d5e985a1a4ef09ba4631d8c1900dd33c7a",
   "subtree_path": "tools/agent_supervisor",
-  "subtree_tree_sha": "35fa19763c13f903bfc20c23b30ae1dd05abcf0f",
+  "subtree_tree_sha": "ffbde3b6ce5801b4bb07bae40e030e2bc0d68e4d",
   "required_modules": [
     "tools/agent_supervisor/mrl_runtime_identity.py",
     "tools/agent_supervisor/mrl_subagent_contract.py",
