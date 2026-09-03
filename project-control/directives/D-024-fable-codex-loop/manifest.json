@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-03T03:00:05+00:00",
+  "updated_at": "2026-09-03T03:02:54+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -1326,7 +1326,7 @@
     "D-024-R749"
   ],
   "requirements_id_digest_sha256": "82513a83d16cf697f2b088e471d44ee4ae0463311398621370c48b09051bd39f",
-  "requirements_content_digest_sha256": "f718cea8256e3b3043e6602e0f67bef534cd84e83991dbd834e65a9bc9ec1616",
+  "requirements_content_digest_sha256": "3c71acaa713bb21d45d884d6465bebb9ed5bb32c561d5b12a7830eab79185533",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1609,6 +1609,12 @@
       "actor": "orchestrator",
       "action": "amendment-50-captured",
       "detail": "source-050-amendment.md captured verbatim; requirements D-024-R738..R749 appended (continue M0-T107 from journey-m0t107-01: consolidated Codex adjudication, one bounded correction pass on the two allowed paths, then targeted verification + independent G3/G4/DCV wave)."
+    },
+    {
+      "at": "2026-09-03T03:02:54+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-50-classification-fix",
+      "detail": "D-024-R739 classification corrected owner_decision->decision (validator c1 vocabulary); no id/text change."
     }
   ]
 }

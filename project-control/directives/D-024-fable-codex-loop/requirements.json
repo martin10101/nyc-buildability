@@ -4,7 +4,7 @@
   "version": 1,
   "requirement_count": 749,
   "producer": "orchestrator",
-  "updated_at": "2026-09-03T03:00:05+00:00",
+  "updated_at": "2026-09-03T03:02:54+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -24225,7 +24225,7 @@
       "id": "D-024-R739",
       "text": "Classify the operator_declined stop of journey-m0t107-01 as the expected end of the one-cycle supervised script, not a defect (owner classification).",
       "source_ref": "source-050-amendment.md#verbatim-owner-directive",
-      "classification": "owner_decision",
+      "classification": "decision",
       "binding": true,
       "applicability": {
         "task_ids": [
