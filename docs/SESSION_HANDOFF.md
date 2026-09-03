@@ -32,15 +32,26 @@ as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-O
    `docs/D024_PORTABILITY_PLAN.md` + `project-control/reports/M0-T107-portability-plan.md`).
    ONE deployed script
    `%LOCALAPPDATA%\NYCBuildabilitySupervisor\ctl24-activation\run_first_supervised_journey.ps1`
-   (SHA-256 1b636d591dffaba14e1e0cf578eb6f76c7fdbf9ee13291ca15a5ecf5d0e34a65; PS 5.1 parse 0
-   errors; G3-reviewed safe). It: J0 preconditions -> J1 verify-manifest (NO install/backup) ->
-   J2 claude-fable-5 pin VERIFY-ONLY -> J3 doctor -> J4 canonical exit from the completed
-   canary state (resume-after-answer) -> J5 draft vs M0-T107 (allow
-   Read/Grep/Glob/Agent/Write/Edit, BARE DENY Bash, Explore 2/2, max-turns 40, timeout 1800s)
-   -> J6 ONE supervised one-shot `--run-id journey-m0t107-01` (one Fable worker + one Codex
-   review; a REVISE forward parks at the console for the owner) -> J7 concise status +
-   evidence paths. No push/PR/merge/deploy in any path; model_selection never edited;
-   preserved canary evidence guarded.
+   (**Amendment-48 path-wiring corrected**: SHA-256
+   ab051334b01c8db59909049ef932431a539703b51eef1f238cccb4b4d3fec124; PS 5.1 parse 0 errors).
+   Every WORKER binding (repo root/cwd/worktree/branch/HEAD/clean) now comes from
+   **wt-m0t107** (the packet's isolated worktree - the first attempt was refused
+   `cwd_mismatch` because it bound ctl24; the R335/R336 guard is untouched). It: J0
+   preconditions (control-plane checks on ctl24 + worker checks on wt-m0t107) -> J1
+   verify-manifest (NO install) -> J2 claude-fable-5 VERIFY-ONLY -> J3 doctor -> J4 canonical
+   journal transition -> J5 draft `--worktree wt-m0t107` vs the CURRENT ctl24 packet (allow
+   Read/Grep/Glob/Agent/Write/Edit, BARE DENY Bash, Explore 2/2, max-turns 40, 1800s; asserts
+   manifest.expected.worktree == wt-m0t107) -> J6 ONE supervised one-shot
+   `--run-id journey-m0t107-01` -> J7 status + evidence paths. No push/PR/merge/deploy;
+   model_selection never edited; preserved canary evidence guarded.
+   **LAUNCH BLOCKER (owner disposition required):** wt-m0t107 is NOT clean - two UNTRACKED
+   prior-journey drafts sit at exactly the deliverable paths (`docs/D024_PORTABILITY_PLAN.md`
+   250 lines + `project-control/reports/M0-T107-portability-plan.md` 70 lines, authored
+   2026-08-31 by supervisor-loop-fable-producer, run lineage run_m0t107_j4, at
+   task/M0-T107-plugin-portability @ c5c6ff77 - the task's recorded 55% progress). The script
+   (and the draft's own dirty-tree guard) refuses until the owner disposes: commit them to the
+   task branch as the starting state (the journey prompt then has the worker revise/complete
+   them), preserve them elsewhere, or remove them. Never overwrite silently.
 6. **After the journey:** worker-produced docs sit UNCOMMITTED in ctl24; the orchestrator
    reviews the diff against M0-T107's allowed_paths, then normal mechanics (commit, G2/G3 per
    the packet, accept). On a journey failure: evidence preserved under `mrl\journey-m0t107-01`;

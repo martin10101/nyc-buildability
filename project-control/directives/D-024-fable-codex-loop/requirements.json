@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 724,
+ "requirement_count": 731,
  "producer": "orchestrator",
- "updated_at": "2026-09-03T01:20:00+00:00",
+ "updated_at": "2026-09-03T03:05:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -23730,6 +23730,251 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R725",
+   "text": "Treat the cwd_mismatch journey refusal as a launch-script path-wiring defect, NOT a commissioning failure. PROHIBITIONS: do not reopen accepted tasks, create another stabilization tranche, modify production controller code, weaken the cwd guard, rerun canaries, or contact either provider.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R726",
+   "text": "First verify READ-ONLY that wt-m0t107 exists, is clean, and matches M0-T107's declared branch and task authority. If the worktree does not match the task packet, stop and report every observed-versus-expected mismatch together.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R727",
+   "text": "Regenerate the existing run_first_supervised_journey.ps1 so EVERY worker-repository binding - repo root, cwd, worktree, branch, live HEAD, and clean status - comes from wt-m0t107. Keep C:\\SupervisorController as the installed controller and ctl24 as the control-plane repository where appropriate; never confuse either with the worker worktree.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R728",
+   "text": "Run ONLY: PowerShell parser validation; read-only worktree identity/status validation; a local inspection proving the generated manifest/start arguments bind the worker to wt-m0t107; NO provider call.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R729",
+   "text": "Atomically replace the same activation script and return its SHA-256 plus exactly one owner-run PowerShell command.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R730",
+   "text": "Before launching the first real supervised task, confirm exactly what live information the owner will see in the foreground PowerShell terminal (per-event Fable execution, Codex review, controller decision, cycle transitions, refusals, final state; no hidden reasoning or secrets). If the visibility already exists, identify the one-command launch and show a representative output sample from existing code; if it does not exist, report that honestly and implement NOTHING without owner approval. Do not build another subsystem or reopen stabilization.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
+  },
+  {
+   "id": "D-024-R731",
+   "text": "Return-report requirement: the implementing session's response ends with exactly JOURNEY_LAUNCHER_PATH_CORRECTED.",
+   "source_ref": "source-048-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T107"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T107"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 48
   }
  ]
 }

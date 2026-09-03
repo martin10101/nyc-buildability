@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-03T01:20:00+00:00",
+ "updated_at": "2026-09-03T03:05:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -388,6 +388,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-03T01:20:00+00:00",
    "content_digest_sha256": "b2a742a5054ea4167600ce8a08d22cdb75f6942c24e61380b1da19bd4f229980"
+  },
+  {
+   "file": "source-048-amendment.md",
+   "kind": "amendment",
+   "sequence": 48,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-03T03:05:00+00:00",
+   "content_digest_sha256": "9d803b515fb25c23926a106c1c7d562cc2419293fda266d2de65296fe37d34f4"
   }
  ],
  "amendments": [
@@ -436,7 +444,8 @@
   "source-044-amendment.md",
   "source-045-amendment.md",
   "source-046-amendment.md",
-  "source-047-amendment.md"
+  "source-047-amendment.md",
+  "source-048-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1271,10 +1280,17 @@
   "D-024-R721",
   "D-024-R722",
   "D-024-R723",
-  "D-024-R724"
+  "D-024-R724",
+  "D-024-R725",
+  "D-024-R726",
+  "D-024-R727",
+  "D-024-R728",
+  "D-024-R729",
+  "D-024-R730",
+  "D-024-R731"
  ],
- "requirements_id_digest_sha256": "4a3c816b31956cd5336387eca513c03f71327d15fe9271a998229f28b9305e91",
- "requirements_content_digest_sha256": "0e83f0462beefdd7caaabcb30cc57de9bb53549a828d548038843154c6c384fa",
+ "requirements_id_digest_sha256": "b5f8eda9ebe78ee933462606e2cec7d66d244d6fbaabac9738b1311d4a5ddf7d",
+ "requirements_content_digest_sha256": "9412f776ad1a8da32300f9dd0d5fafa972a438ec557547de41df3dd571f2659f",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1539,6 +1555,12 @@
    "actor": "orchestrator",
    "action": "amendment-47-captured",
    "detail": "source-047-amendment.md captured verbatim; requirements D-024-R714..R724 appended (bound to M0-T140 closure); digests recomputed."
+  },
+  {
+   "at": "2026-09-03T03:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-48-captured",
+   "detail": "source-048-amendment.md captured verbatim; requirements D-024-R725..R731 appended (bound to M0-T107 journey-launcher correction)."
   }
  ]
 }
