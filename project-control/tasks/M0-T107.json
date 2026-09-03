@@ -47,7 +47,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-08-31T20:07:31.337193+00:00",
+  "updated_at": "2026-09-03T02:40:21.057638+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -101,6 +101,13 @@
       "percent": 55,
       "status": "claimed",
       "message": "COMMISSIONING JOURNEY 4 (owner-typed, fresh run_m0t107_j4): FARTHEST EVER - M0-T130 fix live-proven end to end (worker did ~7min real work, 503KB transcript, no truncation, no wall ride); FIRST valid checkpoint validated + forwarded (facts 1-3); FIRST live Codex review completed (fact 4: gpt-5.6-sol, attempts 1, schema-valid). Codex verdict HALT_UNSAFE with the honest finding that the reviewer execution policy blocks repository reads - the supervisor honored it exactly (HALTED, no advancement, exactly-once preserved, M0-T109 never dispatched). Root cause assessed from preserved evidence: first live codex exec on this host; candidate mechanisms = codex read-only sandbox unenforceable on Windows under exec+strict-config (fail-closed) and/or linked-worktree .git redirection outside the -C root; certification could not catch it (fake reviewer by design, R220/R221). NOT a machinery defect on our side: transport/schema/allowlist/validation/halt all worked. Counted touch 1 of 2 on the new run (S16.7 cumulative excess continues). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-4.md; NEXT = owner decides the bounded reviewer-access diagnostic+fix task (one authorized minimal live codex sandbox probe, then the measured fix; R247 re-trigger if supervisor changes); restart path when ready = owner-restart (HALTED->IDLE) then a fresh start (D-024-R394)"
+    },
+    {
+      "at": "2026-09-03T02:40:21.057638+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "OWNER DISPOSITION DECISION A EXECUTED (D-024 Amendment 49, R732-R737): the two run_m0t107_j4 prior-journey drafts committed UNALTERED to task/M0-T107-plugin-portability as the authorized starting state - commit ffc77bab80907fac1fde4e3bd81f1fdf1aa5dd81 (exactly 2 added paths; blob sha256 7546d4e9.../b203ebf0... byte-identical to pre-act hashes; wt-m0t107 CLEAN; no upstream/push/PR; journey NOT started - provider never contacted). Amendment 48 launch blocker RESOLVED; the journey script dirty-tree guard now passes. NEXT = owner types the one journey command (handoff seq 79 item 6)."
     }
   ]
 }
