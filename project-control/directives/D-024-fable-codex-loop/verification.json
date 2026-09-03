@@ -11074,78 +11074,123 @@
    "requirements": [
     {
      "id": "D-024-R700",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: exactly one new task M0-T143 (awaiting_gate, bounded allowed_paths); M0-T141/M0-T142 accepted and byte-unchanged in range; M0-T140 still claimed; G0 readiness cites the owner probe verbatim."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R701",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV by absence: git diff 56848d98 HEAD touches only schema/validator/inspection/failure-paths/tests/fixture/binding/script/docs; no re-investigation of the proven-healthy surfaces anywhere in the diff."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R702",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: the five constraint keywords removed TOGETHER in the single commit 3f4cee86 (only commit touching the file); after-state retains only types/enum/required/item-type/additionalProperties:false."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R703",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: from_provider enforces validate_instance + nonempty<=4096 rationale, 1..64 ids, nonempty<=128 per-id, uniqueness (duplicates named), issued-ids-only; independently ran the decision suite: 24 passed."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R704",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: all 8 named mutation classes covered controller-side (ReviewVerdictContractTests + M0T143ControllerEnforcedBoundsTests), 24/24 pass; matches the producer-recorded red/green + mutation pair."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R705",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: assert_codex_output_schema_strict called before ANY spawn in mrl_one_shot_review.py:219 and codex_reviewer.py:558; zero-spawn test PASS (rh.calls==[] and rh.version_calls==[]); every-provider-facing-schema sweep present; 47 provider_schema tests pass."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R706",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: bounded_stream_tail (redact-then-bound, TRUNCATED marker), failure_tails, no_decision_error with parsed first error/turn.failed code+message + returncode + both tails; provider_rejected_request never bare no_decision; all five R706 tests PASS."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R707",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no model-selection edit in the code diff; no fable alias / claude-fable-5-1 introduced; owner-script PV verifies exactly one claude-fable-5 pin + fallback [] and never edits; P5 doctor row asserts claude-fable-5."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R708",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: evidence.md s7 records the corrected semantics (Claude auth PASS fc7ddb4c; Codex the only failed leg; item 8 PASS; item 10 NOT_RUN); owner-script P9 implements the split legs + parsed codex_review_failed surfacing; item 10 run by P10."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R709",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV code-accurate: loop.py CYCLE_ENTRY_STATES excludes CODEX_REVIEW (no review-resume); resume-after-answer fires WAIT_FOR_OWNER->PREFLIGHT (owner_answer_validated); explicit fallback to ONE successor canary canary-b5-02r3 via audited surfaces; no bypass."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R710",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV independently ran the FULL affected suite at the code identity: 3626 passed / 2 skipped / 0 failed, exit 0 (exact match); focused suites reproduced (24/47/81); fixture sha256 3c40d9e9... matches; no live provider call. G3 addendum and G4 reproduced the same full-suite result."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R711",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: binding commit/tree/subtree shas verified against real git objects; runbook s4 + ps_test pinnedSha pin 3f4cee86; deployed owner script sha256 096ee3ea... matches exactly and implements install+verify, claude-fable-5 confirmation, canonical recovery + single successor canary, item 10, ten-item table. Independent review = G3 PASS (code-reviewer) + G4 PASS (qa-engineer) gate records."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R712",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no upstream configured (no push possible), commits local-only, owner script deployed but never invoked (no canary-b5-02r3 runtime dir), all touched files inside allowed_paths."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     },
     {
      "id": "D-024-R713",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV delta at 522b7c4b: durable artifact project-control/reports/M0-T143-return-report.md exists, last line verbatim CODEX_SCHEMA_REPAIR_READY; per D-001 durable repository state is the authoritative record; the live final reply reproduces it. PASS (was UNVERIFIABLE-BY-VERIFIER)."
+     ],
+     "verified_at": "2026-09-03T00:45:00+00:00"
     }
    ],
-   "verification_report": "",
-   "note": "Skeleton at claim time (Amendment 46). States become PASS only via the independent directive-compliance verification at the frozen reviewed head."
+   "verification_report": "project-control/reports/M0-T143-DCV.md",
+   "note": "Independent wave at submitted head 59f572c1 (G3 PASS 3-minor + full-suite addendum, G4 PASS 4-minor 1-info, DCV 13/14 PASS + R713 verifier-note) + DCV delta attestation at 522b7c4b upgrading R713 to PASS against the durable return-report artifact. 14/14 PASS. Producer != every verifier. Content identity 9c17f2d3 stable from submission through the gate wave (gate reports + return artifact live outside allowed_paths; the sole packet edit is the G4 MINOR-2 outputs wording correction).",
+   "reviewed_manifest_sha256": "9c17f2d3cda63786a10527f71eb03046bcbe4e75c276564d638d7c13ccf7b21c",
+   "reviewed_sha": "522b7c4bb46960ed5e791a8beabff55594bf50fc",
+   "verified_at": "2026-09-03T00:45:00+00:00"
   }
  ],
- "updated_at": "2026-09-02T23:59:00+00:00"
+ "updated_at": "2026-09-03T00:45:00+00:00"
 }
