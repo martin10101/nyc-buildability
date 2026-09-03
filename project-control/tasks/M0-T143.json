@@ -69,15 +69,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The provider strict-subset keyword set is not published exhaustively; mitigation: allow only the keyword profile proven live by codex_decision.schema.json (run_m0t035_shadow_pilot_r6) and refuse everything else fail-closed.",
     "Observability change touches the live reviewer path; mitigation: behavior on SUCCESS is byte-identical (tails recorded only on failure), proven by existing suite + new tests."
   ],
   "blockers": [],
   "created_at": "2026-09-02T23:32:31.825879+00:00",
-  "updated_at": "2026-09-03T00:07:52.079249+00:00",
+  "updated_at": "2026-09-03T00:08:54.618476+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
