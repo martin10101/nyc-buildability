@@ -10609,212 +10609,338 @@
    "requirements": [
     {
      "id": "D-024-R644",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: single bounded lifecycle from the failed b5-01 (M0-T140-G0.md + M0-T140-canary-b501-refusal-evidence.md); campaign closed in this vehicle."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R645",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: installs only from accepted candidates (binding commit_sha 3f4cee86, M0-T143 accepted); no prod code under M0-T140; no upstream -> no push/merge; R603-R605 untouched."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R646",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: b501 report corroboration - CANARY-UNTRACKED.txt absent, porcelain empty, HEAD recorded; tree clean now."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R647",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: failed canary preserved verbatim (b501 + attempt2 + attempt3 refusal reports all present)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R648",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: task_authority WORKING_STATUSES + runbook s9a clear-recovery traced in M0-T140-G0.md/b501 report; audit corroborates."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R649",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T140-G0.md unaccepted-task sweep 2026-09-02 - no existing task designated; M0-T137 untouched."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R650",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T140.json minimal read-only vehicle, allowed_paths = the two evidence reports, next unused ID."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R651",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: claimed through commissioning, never accepted/reopened early (packet history; G0 record)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R652",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: r3 launch_verification.json task_id=M0-T140 + clean_status true; audit seq 54 launch_manifest_verified; starting_sha 37b2c3b6."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R653",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: only external scripts superseded (.superseded-by-* chain); controller changed only via accepted M0-T141/T142/T143."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R654",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: canonical recovery in every script (clear-recovery/resume-after-answer); runtime state never deleted or hand-edited."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R655",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: audit seq 17 launch_manifest_refused clean_status; no b5-01 one_shot_unit.json (zero provider contact); exit 11 in b501 report."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R656",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: canonical recovery before each successor (owner_cleared_pause / owner_answer_validated -> preflight_pass in audit)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R657",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: mrl_one_shot_launched count exactly 1 per successor run (b5-02, r1, r2, r3)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R658",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: m0t143 script carries all ten items with reachable PASS/FAIL branches; final all-ten PASS in the canary-execution evidence s2."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R659",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T141-canary-script-review.md - independent read-only subagent, PS 5.1.26100.9168 parse 0 errors, ten-row reachability table."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R660",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: deployment-then-owner-run trace; journey script deployed-not-executed; no session-initiated canary execution."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R661",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: scope honored - M0-T140 allowed_paths 2 reports; production changes via gated M0-T141/T142/T143."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R662",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: successor return tokens durably captured (M0-T143-return-report.md; M0-T140-return-report.md)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R663",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no broad audit/tranche - one bounded package per proven failure, each singly authorized."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R673",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: b5-01 PASS reused (m0t143 row 2 REUSED; no b5-01 one_shot_unit); obsolete park removed; canonical recovery used."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R674",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T140 properly claimed/authorized throughout; directive_refs D-024:ALL; no accepted-task reopen."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R679",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no upstream -> no push/merge; provider one-shots only inside owner-typed canary runs."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R680",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: m0t143 script fail-fast backup->install(3f4cee86)->record-manifest->verify->doctor->recovery->one one-shot->ten-row; sha 096ee3ea recorded; PS-5.1 clean."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R681",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: rollback only on install-chain/doctor failure (attempt-3 ROLLBACK VERIFIED, zero provider contact); canary defects preserved, never rolled back."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R683",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: owner-run scripts never executed by a session (journey has no run dir; M0-T143 DCV R712)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R684",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T140-canary-b502r1-causal-trace.md - analysis-only on preserved artifacts, five FAIL rows adjudicated, ends LIVE_FAILURE_CAUSAL_TRACE_READY."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R685",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: exactly one bounded package per failure (M0-T141/T142/T143 each accepted under own gates); no repo-wide audit."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R697",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: transactional switch script prepared/deployed (e8c693ae); switch proven live (model_selection now claude-fable-5 vs pre-fable backup)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R699",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: exact claude-fable-5 proven twice (r2+r3 argv + primary model + model_mismatch false); live selection pin + fallback []; no alias."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R714",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: owner Amendment 47 verbatim 'all ten R587 items PASS'; canary-execution evidence s2 records all ten from durable artifacts (item 10 owner-attested, honestly noted)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R715",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no new diagnostic task; audit MAX seq 68 (no rerun); seq 68 deny = clean operator_declined close; verification not repeated."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R716",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: ledger+repo reconciled; commissioning evidence captured durably; no Claude/Codex rerun; accepted tasks untouched."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R717",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: canonical CLI transitions (G2 record at 704df814; submit; gates; acceptance the orchestrator's post-DCV canonical step); no hand edits."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R718",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: all 8 live-proven items reproduced from named artifacts (one_shot_unit, settings profile, subagent_ledger, codex_decision, descendant proofs both sides, controller_update_evidence 3f4cee86/04688351/209026fd)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R719",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: GitHub boundary honest - supervised-loop push/PR/CI/merge ZERO live evidence, stated UNPROVEN; corroborated (no upstream, no PR, no push event)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R720",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T107 existing, claimed, docs-only two-path scope, dependency M0-T096 accepted; not a canary/infra task."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R721",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: journey script read in full - canonical exit, verify-manifest (no install), pin verify + doctor row, ONE supervised M0-T107 journey max-cycles 1, one Fable + one Codex, Bash bare-deny + Explore 2/2, no push/PR/merge/deploy, concise status + evidence paths."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R722",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: not executed (no journey-m0t107-01 dir; J0 refuses overwrite); return report item 7 gives exactly ONE command."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R723",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: no Tranche C/campaign; the single owner-only GitHub decision identified separately (return report item 8)."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     },
     {
      "id": "D-024-R724",
-     "state": "pending",
-     "evidence": []
+     "state": "PASS",
+     "evidence": [
+      "DCV: M0-T140-return-report.md last line is exactly FIRST_REAL_SUPERVISED_RUN_READY; the live final reply reproduces it."
+     ],
+     "verified_at": "2026-09-03T02:05:00+00:00"
     }
    ],
-   "verification_report": "",
-   "note": "Skeleton at claim time (Amendment 43). States become PASS only via the independent directive-compliance-verifier at the reviewed head after the owner-typed canary run; pending rows verify nothing."
+   "verification_report": "project-control/reports/M0-T140-DCV.md",
+   "note": "Closure wave at submitted head 704df814 (G3 PASS 4-advisory, G4 PASS 3-minor, DCV 41/41 PASS at primary evidence incl. the 9aca7075 runtime artifacts). 14 historic + 27 campaign/closure rows all PASS. Producer != every verifier. Content identity stable from submission (post-submit commits are ledger records + verbatim wave reports outside allowed_paths). reviewed_sha stamped at the wave-report head ce48eaab; successors of the DCV head 704df814 are exclusively ledger/gate records and the verbatim report preservation.",
+   "reviewed_manifest_sha256": "033667f4bac559d313e037ecef0490fa8d43dc410a0a2d85eb33c0c1b1b36884",
+   "reviewed_sha": "dc49c85f1cec43a7e5588b934ce0b5d756dd881b",
+   "verified_at": "2026-09-03T02:05:00+00:00"
   },
   {
    "task_id": "M0-T141",
@@ -11258,5 +11384,5 @@
    "verified_at": "2026-09-03T00:45:00+00:00"
   }
  ],
- "updated_at": "2026-09-03T01:20:00+00:00"
+ "updated_at": "2026-09-03T02:05:00+00:00"
 }
