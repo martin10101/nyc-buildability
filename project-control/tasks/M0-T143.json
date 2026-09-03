@@ -30,13 +30,11 @@
     "tools/agent_supervisor/mrl_codex_decision.py",
     "tools/agent_supervisor/mrl_one_shot_review.py",
     "tools/agent_supervisor/mrl_provider_schema.py",
-    "tools/agent_supervisor/mrl_reviewer_failure.py",
     "tools/agent_supervisor/codex_reviewer.py",
     "tools/agent_supervisor/fixtures/codex_schema_probe_20260902.jsonl",
     "tools/test_agent_supervisor_mrl_codex_decision.py",
     "tools/test_agent_supervisor_mrl_provider_schema.py",
     "tools/test_agent_supervisor_mrl_one_shot_review.py",
-    "tools/test_agent_supervisor_mrl_reviewer_failure.py",
     "tools/test_agent_supervisor_codex_channel.py",
     "tools/controller_update/source_binding.json",
     "docs/SESSION_HANDOFF.md",
@@ -44,7 +42,9 @@
     "project-control/reports/M0-T143-producer-report.md",
     "project-control/reports/M0-T143-evidence.md",
     "project-control/reports/M0-T143-G3-report.md",
-    "project-control/reports/M0-T143-G4-report.md"
+    "project-control/reports/M0-T143-G4-report.md",
+    "docs/CONTROLLER_UPDATE_RUNBOOK.md",
+    "tools/controller_update/ps_tests/test_runbook_parse.ps1"
   ],
   "forbidden_paths": [],
   "acceptance_scenarios": [
