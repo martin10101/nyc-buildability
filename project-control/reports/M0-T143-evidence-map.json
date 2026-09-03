@@ -1,0 +1,48 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T143",
+  "requirements": {
+    "D-024-R700": [
+      "Exactly one bounded follow-up task (M0-T143) created for the proven defect; no accepted task reopened (M0-T141/M0-T142 untouched; M0-T140 remains claimed). Ledger: project-control/tasks/M0-T143.json; G0 readiness project-control/reports/M0-T143-G0.md cites the owner probe codex-schema-probe-20260902-191655532 verbatim facts."
+    ],
+    "D-024-R701": [
+      "No re-investigation performed: the package contains no auth/model-availability/executable-identity/budget/Fable/repo-state probing; scope is the schema, the controller validator, the reviewers' failure paths, tests, binding, and the owner script (git show --stat 3f4cee86 and 05d0542c)."
+    ],
+    "D-024-R702": [
+      "tools/agent_supervisor/schemas/review_verdict.schema.json flattened in ONE commit (3f4cee86): uniqueItems/minLength/maxLength/minItems/maxItems removed together; only types/enum/required/item-type/additionalProperties:false remain. Structural-walk test test_flattened_review_verdict_carries_no_banned_keyword asserts keys are a subset of CODEX_STRUCTURAL_KEYWORDS."
+    ],
+    "D-024-R703": [
+      "mrl_codex_decision.ReviewVerdict.from_provider enforces every removed guarantee: shape/types/enum/no-extra-keys via validate_instance over the flattened schema; explicit nonempty+4096 rationale, 1..64 ids, 1..128 chars/id, uniqueness (duplicates named), issued-ids-only. RED recorded pre-change (2 failed: lengths/cardinality + >max ids), GREEN after (24 passed). M0-T143-evidence.md s4."
+    ],
+    "D-024-R704": [
+      "Mutation tests: existing ReviewVerdictContractTests (unknown/forged fields, wrong types, bad enum, lengths, duplicates, fabricated ids, >64 ids) + new M0T143ControllerEnforcedBoundsTests (boundary accepts, empty rationale, overlong rationale, empty id, duplicate-named, wrong item type, non-object payloads). Recorded mutation pair: uniqueness check disabled -> 2 failed; restored -> 2 passed. M0-T143-evidence.md s4."
+    ],
+    "D-024-R705": [
+      "mrl_provider_schema.assert_codex_output_schema_strict called BEFORE any spawn in OneShotReviewer.review AND CodexReviewer.review; test_unsupported_schema_keyword_refuses_before_any_spawn proves zero child processes (rh.calls==[] and rh.version_calls==[]); test_each_nonstructural_keyword_is_refused covers 12 keywords; test_every_provider_facing_schema_passes_its_provider_inspection sweeps worker_result (Draft-7 projection) + review_verdict + codex_decision (strict inspection)."
+    ],
+    "D-024-R706": [
+      "codex_reviewer.bounded_stream_tail (redact-then-bound, explicit TRUNCATED marker) + failure_tails; no_decision_error carries parsed provider error (provider_failure_reason: first error/turn.failed code+message), child returncode, both tails; OneShotReviewer classifies through the shared helper (provider_rejected_request / missing_decision_file; timeout path carries tails); tests: fixture-driven parsed-error test, truncation test, seeded-credential redaction test, never-bare-no_decision test. M0-T143-evidence.md s3-s4."
+    ],
+    "D-024-R707": [
+      "No model-selection surface in the diff; no 'fable' alias / claude-fable-5-1 introduced; owner script PV phase VERIFIES exactly one model = \"claude-fable-5\" + fallback [] WITHOUT editing, and the P5 doctor model_selection row must read claude-fable-5 (script sha 096ee3ea749ca3b8654561a20aa442b0bac472ad6f1635e430da0116ebfed5de)."
+    ],
+    "D-024-R708": [
+      "Corrected reporting recorded in M0-T143-evidence.md s7 and implemented in the successor script P9: row 3 splits the Claude leg (PASS, session fc7ddb4c) from the Codex review leg and surfaces the parsed codex_review_failed category/message on failure; row 7 requires a post-review settled stop + review verdict; row 8 semantics reused (already PASS in r2); row 10 NOT_RUN in r2, executed by P10 after a passing canary."
+    ],
+    "D-024-R709": [
+      "Explicit determination (M0-T143-evidence.md s6): NO supported review-resume path exists - loop.py CYCLE_ENTRY_STATES={PREFLIGHT,START_CLAUDE,CLAUDE_RUNNING}; resume-pending-prompt requires a pending_prompt record (canary-b5-02r2 forwarded nothing). Therefore ONE successor full canary (canary-b5-02r3) through canonical audited surfaces only: recovery-status -> resume-after-answer (WAIT_FOR_OWNER -> PREFLIGHT, owner_answer_validated) -> start --launch-manifest. No bypass; no hand-edited state."
+    ],
+    "D-024-R710": [
+      "Focused tests during implementation (339 passed across the seven touched suites; per-file 47/24/81 after additions); ONE complete affected-suite run at the frozen candidate 3f4cee86: 3626 passed / 2 skipped / 0 failed in 288.69s (raw exit 0; 2 skips = pre-existing baseline shape per M0-T142 freeze). Owner capture re-encoded as fixtures/codex_schema_probe_20260902.jsonl (original sha256 5e51a5c5..., fixture sha256 3c40d9e9...) and consumed by the regression tests. No live provider call: every Codex process in tests is the injected harness."
+    ],
+    "D-024-R711": [
+      "Independent review: G3 (code-reviewer) + G4 (qa-engineer) gate records + DCV (directive-compliance-verifier) at the reviewed head, producer != every verifier. Immutable installer binding tools/controller_update/source_binding.json rebound to 3f4cee86/04688351/209026fd (+ runbook s4 + ps_test pinnedSha; test_runbook_parse.ps1 PASS). Exactly ONE owner-run command deployed: run_m0t143_codex_schema_repair_and_canary.ps1 (sha256 096ee3ea..., PS 5.1 parse 0 errors) - transactional install+verify, claude-fable-5 confirmation, canonical recovery + single successor canary, P10 harness, consolidated ten-item table."
+    ],
+    "D-024-R712": [
+      "The session did not execute the owner script, did not push, did not merge, and started no unrelated work (git log local-only; no gh/push invocations this task; script deployed but never invoked)."
+    ],
+    "D-024-R713": [
+      "The implementing session's final response ends with exactly CODEX_SCHEMA_REPAIR_READY."
+    ]
+  }
+}
