@@ -10,7 +10,7 @@
  "issued_at": "2026-08-24",
  "captured_at": "2026-08-24T12:05:17+00:00",
  "created_at": "2026-08-24T12:05:17+00:00",
- "updated_at": "2026-09-02T23:59:00+00:00",
+ "updated_at": "2026-09-03T01:20:00+00:00",
  "channel": "owner_terminal_prompt_attached_directive_file",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -380,6 +380,14 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-02T23:59:00+00:00",
    "content_digest_sha256": "23cf8ea1e340ee7eb88dbd6b8cdd9580da2ec3e557921d8eaa469d595996738c"
+  },
+  {
+   "file": "source-047-amendment.md",
+   "kind": "amendment",
+   "sequence": 47,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-03T01:20:00+00:00",
+   "content_digest_sha256": "b2a742a5054ea4167600ce8a08d22cdb75f6942c24e61380b1da19bd4f229980"
   }
  ],
  "amendments": [
@@ -427,7 +435,8 @@
   "source-043-amendment.md",
   "source-044-amendment.md",
   "source-045-amendment.md",
-  "source-046-amendment.md"
+  "source-046-amendment.md",
+  "source-047-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1251,10 +1260,21 @@
   "D-024-R710",
   "D-024-R711",
   "D-024-R712",
-  "D-024-R713"
+  "D-024-R713",
+  "D-024-R714",
+  "D-024-R715",
+  "D-024-R716",
+  "D-024-R717",
+  "D-024-R718",
+  "D-024-R719",
+  "D-024-R720",
+  "D-024-R721",
+  "D-024-R722",
+  "D-024-R723",
+  "D-024-R724"
  ],
- "requirements_id_digest_sha256": "aec27eb5b9148bdbcceef6771c3e3146f3e52e322fff06909a49ac373821afae",
- "requirements_content_digest_sha256": "cbd691e3e8417c86a5b14c342d9a2fe4abca89318958a5a02070b8036baa1f9b",
+ "requirements_id_digest_sha256": "4a3c816b31956cd5336387eca513c03f71327d15fe9271a998229f28b9305e91",
+ "requirements_content_digest_sha256": "0e83f0462beefdd7caaabcb30cc57de9bb53549a828d548038843154c6c384fa",
  "final_reviewed_sha": null,
  "final_reviewed_manifest_sha256": null,
  "audit_log": [
@@ -1513,6 +1533,12 @@
    "actor": "orchestrator",
    "action": "amendment-46-captured",
    "detail": "source-046-amendment.md captured verbatim; requirements D-024-R700..R713 appended (task M0-T143); id + content digests recomputed."
+  },
+  {
+   "at": "2026-09-03T01:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-47-captured",
+   "detail": "source-047-amendment.md captured verbatim; requirements D-024-R714..R724 appended (bound to M0-T140 closure); digests recomputed."
   }
  ]
 }

@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-024",
  "version": 1,
- "requirement_count": 713,
+ "requirement_count": 724,
  "producer": "orchestrator",
- "updated_at": "2026-09-02T23:59:00+00:00",
+ "updated_at": "2026-09-03T01:20:00+00:00",
  "requirements": [
   {
    "id": "D-024-R001",
@@ -23345,6 +23345,391 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 46
+  },
+  {
+   "id": "D-024-R714",
+   "text": "Treat the owner-run M0-T143 commissioning (canary-b5-02r3) as SUCCESSFUL: all ten R587 items PASS. The commissioning outcome is authoritative and complete.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R715",
+   "text": "PROHIBITIONS: do not create another diagnostic task; do not rerun any provider canary; do not reinterpret operator_declined as a defect (it is the owner's clean settled close of the supervised hold); do not repeat completed verification.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R716",
+   "text": "Reconcile the live ledger and repository. Capture the existing commissioning live evidence (canary-b5-02r3 durable artifacts) and complete any still-required independent G3/G4/DCV and acceptance mechanics WITHOUT rerunning Claude or Codex. Do not redo anything already accepted.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R717",
+   "text": "Close or correctly transition the claimed canary authority M0-T140 according to the canonical ledger mechanics (evidence, gates, acceptance - never a hand edit).",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R718",
+   "text": "Record that the following production path is now live-proven, from durable evidence: exact original Fable 5 pin claude-fable-5; Claude authentication and valid WorkerResult; restricted tool surface; bounded subagents and over-limit denial; Codex authentication and valid review decision; process-tree cleanup; immutable installation and manifest binding; raw PowerShell exit-code preservation.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R719",
+   "text": "Do not claim that GitHub push/PR/CI/merge is proven unless durable evidence already proves it; state that boundary honestly.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R720",
+   "text": "Select ONE existing, genuinely ready, low-risk repository task for the first real supervised production journey. Do not invent another canary or infrastructure task.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R721",
+   "text": "Prepare exactly one owner-run PowerShell script that: performs the canonical transition out of the completed canary state; verifies the installed manifest and the exact claude-fable-5 pin; launches one real task in supervised mode; permits one Fable worker result and one Codex review; preserves all existing safety boundaries; performs no push, PR, merge, or deployment unless already explicitly authorized by an existing owner requirement; and prints a concise final status and evidence paths.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R722",
+   "text": "Do not execute the script. Give the owner exactly ONE PowerShell command, not a sequence of commands.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R723",
+   "text": "Do not start Tranche C or another stabilization campaign. If one specific owner authorization is still required for GitHub activity, identify that single decision separately after preparing the local supervised journey.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
+  },
+  {
+   "id": "D-024-R724",
+   "text": "Return-report requirement: the implementing session's response ends with exactly FIRST_REAL_SUPERVISED_RUN_READY.",
+   "source_ref": "source-047-amendment.md#verbatim-owner-directive",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T140"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-03"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "tasks": [
+     "M0-T140"
+    ],
+    "prs": [],
+    "commits": [],
+    "paths": []
+   },
+   "reviewed_sha": "",
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 47
   }
  ]
 }

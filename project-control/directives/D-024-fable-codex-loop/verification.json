@@ -10593,7 +10593,18 @@
     "D-024-R684",
     "D-024-R685",
     "D-024-R697",
-    "D-024-R699"
+    "D-024-R699",
+    "D-024-R714",
+    "D-024-R715",
+    "D-024-R716",
+    "D-024-R717",
+    "D-024-R718",
+    "D-024-R719",
+    "D-024-R720",
+    "D-024-R721",
+    "D-024-R722",
+    "D-024-R723",
+    "D-024-R724"
    ],
    "requirements": [
     {
@@ -10743,6 +10754,61 @@
     },
     {
      "id": "D-024-R699",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R714",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R715",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R716",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R717",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R718",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R719",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R720",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R721",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R722",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R723",
+     "state": "pending",
+     "evidence": []
+    },
+    {
+     "id": "D-024-R724",
      "state": "pending",
      "evidence": []
     }
@@ -11192,5 +11258,5 @@
    "verified_at": "2026-09-03T00:45:00+00:00"
   }
  ],
- "updated_at": "2026-09-03T00:45:00+00:00"
+ "updated_at": "2026-09-03T01:20:00+00:00"
 }
