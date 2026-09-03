@@ -31,11 +31,11 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-02T18:10:29.188426+00:00",
-  "updated_at": "2026-09-03T01:21:27.711864+00:00",
+  "updated_at": "2026-09-03T01:42:07.517403+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
