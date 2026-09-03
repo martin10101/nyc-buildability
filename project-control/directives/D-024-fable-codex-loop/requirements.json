@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 737,
+  "requirement_count": 749,
   "producer": "orchestrator",
-  "updated_at": "2026-09-03T02:29:40+00:00",
+  "updated_at": "2026-09-03T03:00:05+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -24185,6 +24185,426 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 49
+    },
+    {
+      "id": "D-024-R738",
+      "text": "Continue M0-T107 from the completed journey-m0t107-01 evidence, treating it as a successful first supervised journey: Fable returned COMPLETED, Codex produced a valid REVISE decision, process cleanup passed, and the exit code was 0.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "journey-m0t107-01 one_shot_unit.json + codex_decision.json fields match the stated outcomes",
+      "required_evidence": "mrl/journey-m0t107-01 durable artifacts cited in the continuation record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R739",
+      "text": "Classify the operator_declined stop of journey-m0t107-01 as the expected end of the one-cycle supervised script, not a defect (owner classification).",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "owner_decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "no defect/incident record created for the operator_declined stop",
+      "required_evidence": "absence of any new incident artifact referencing operator_declined as a defect",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R740",
+      "text": "Do not open another incident, stabilization task, or controller-repair task from journey-m0t107-01.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "no new task/blocker/AD-093 packet created by the continuation session",
+      "required_evidence": "ledger task list and blockers unchanged except M0-T107 lifecycle records",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R741",
+      "text": "Read codex_decision.json and both modified allowed-path files (docs/D024_PORTABILITY_PLAN.md, project-control/reports/M0-T107-portability-plan.md) before adjudicating.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "continuation record quotes/derives from all three artifacts",
+      "required_evidence": "session evidence + committed continuation report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R742",
+      "text": "Consolidate every Codex revision request first and adjudicate them together as one set, never piecemeal.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "a single consolidated adjudication table exists covering every request in the Codex rationale",
+      "required_evidence": "adjudication section of the continuation report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R743",
+      "text": "Make all adjudicated-valid corrections in ONE bounded pass whose writes are limited to exactly docs/D024_PORTABILITY_PLAN.md and project-control/reports/M0-T107-portability-plan.md.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "git name-status of the correction commit(s) in wt-m0t107 lists only the two allowed paths",
+      "required_evidence": "correction commit(s) on task/M0-T107-plugin-portability",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R744",
+      "text": "After the bounded pass, run one normal targeted verification and an independent G3/G4/DCV acceptance wave for M0-T107 (producer never verifies its own work).",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "gate records G3/G4 + directive verification rows at the reviewed head; reviewers independent of the producers",
+      "required_evidence": "project-control/gates records + verification.json rows at reviewed_sha",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R745",
+      "text": "Do not rerun the live journey or any canary unless a specific requirement proves it unavoidable (none anticipated).",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "no new run dirs under the controller runtime mrl/ created by the continuation",
+      "required_evidence": "mrl/ directory listing unchanged except journey-m0t107-01",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R746",
+      "text": "Do not modify the controller, model selection, infrastructure, task scope, or the cwd guard during the continuation.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "no diffs under tools/agent_supervisor, model_selection, C:/SupervisorController, or the M0-T107 packet scope fields",
+      "required_evidence": "git diffs of the continuation commits",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R747",
+      "text": "No push, PR creation/update, merge, or deployment during the continuation.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "branches gain no upstream; no gh/PR activity; no deploy artifacts",
+      "required_evidence": "git remote state at verification time",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R748",
+      "text": "Return-report requirement: the continuation response presents the Codex findings in plain English, the corrections made, the gate results, and the final task status.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "final session response structure",
+      "required_evidence": "session response + committed continuation report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R749",
+      "text": "Return-report requirement: the continuation response ends with exactly M0_T107_ACCEPTED or M0_T107_ONE_CONSOLIDATED_BLOCKER.",
+      "source_ref": "source-050-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T107"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "final token check on the session response",
+      "required_evidence": "session response",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T107"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 50
     }
   ]
 }

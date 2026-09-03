@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-03T02:29:40+00:00",
+  "updated_at": "2026-09-03T03:00:05+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -404,6 +404,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-03T02:29:40+00:00",
       "content_digest_sha256": "651a3bae34a21f8324cb7c21681fc81de0273a6e8a4795f352e8b275eba68e3b"
+    },
+    {
+      "file": "source-050-amendment.md",
+      "kind": "amendment",
+      "sequence": 50,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-03T03:00:05+00:00",
+      "content_digest_sha256": "c100176ba9797413ce89de20603aa727ec3b669564dc874ebecb817a03d75849"
     }
   ],
   "amendments": [
@@ -454,7 +462,8 @@
     "source-046-amendment.md",
     "source-047-amendment.md",
     "source-048-amendment.md",
-    "source-049-amendment.md"
+    "source-049-amendment.md",
+    "source-050-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -1302,10 +1311,22 @@
     "D-024-R734",
     "D-024-R735",
     "D-024-R736",
-    "D-024-R737"
+    "D-024-R737",
+    "D-024-R738",
+    "D-024-R739",
+    "D-024-R740",
+    "D-024-R741",
+    "D-024-R742",
+    "D-024-R743",
+    "D-024-R744",
+    "D-024-R745",
+    "D-024-R746",
+    "D-024-R747",
+    "D-024-R748",
+    "D-024-R749"
   ],
-  "requirements_id_digest_sha256": "828a85444118a7d4af8dc975e8f5c33c3da6ed7d7e3d84ba6cd151e92c079a39",
-  "requirements_content_digest_sha256": "58dc3e765f132b1d904703f10ea37d881c1ee1bf4c48dfbd43cda72595659ba1",
+  "requirements_id_digest_sha256": "82513a83d16cf697f2b088e471d44ee4ae0463311398621370c48b09051bd39f",
+  "requirements_content_digest_sha256": "f718cea8256e3b3043e6602e0f67bef534cd84e83991dbd834e65a9bc9ec1616",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1582,6 +1603,12 @@
       "actor": "orchestrator",
       "action": "amendment-49-captured",
       "detail": "source-049-amendment.md captured verbatim; requirements D-024-R732..R737 appended (owner disposition decision A: commit the two M0-T107 drafts to task/M0-T107-plugin-portability as authorized starting state)."
+    },
+    {
+      "at": "2026-09-03T03:00:05+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-50-captured",
+      "detail": "source-050-amendment.md captured verbatim; requirements D-024-R738..R749 appended (continue M0-T107 from journey-m0t107-01: consolidated Codex adjudication, one bounded correction pass on the two allowed paths, then targeted verification + independent G3/G4/DCV wave)."
     }
   ]
 }
