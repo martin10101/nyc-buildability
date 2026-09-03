@@ -11186,9 +11186,9 @@
     }
    ],
    "verification_report": "project-control/reports/M0-T143-DCV.md",
-   "note": "Independent wave at submitted head 59f572c1 (G3 PASS 3-minor + full-suite addendum, G4 PASS 4-minor 1-info, DCV 13/14 PASS + R713 verifier-note) + DCV delta attestation at 522b7c4b upgrading R713 to PASS against the durable return-report artifact. 14/14 PASS. Producer != every verifier. Content identity 9c17f2d3 stable from submission through the gate wave (gate reports + return artifact live outside allowed_paths; the sole packet edit is the G4 MINOR-2 outputs wording correction).",
+   "note": "Independent wave at submitted head 59f572c1 (G3 PASS 3-minor + full-suite addendum, G4 PASS 4-minor 1-info, DCV 13/14 PASS + R713 verifier-note) + DCV delta attestation at 522b7c4b upgrading R713 to PASS against the durable return-report artifact. 14/14 PASS. Producer != every verifier. Content identity 9c17f2d3 stable from submission through the gate wave (gate reports + return artifact live outside allowed_paths; the sole packet edit is the G4 MINOR-2 outputs wording correction). reviewed_sha restamped to the live head 819b1666 at accept time: the successors of the DCV-delta head 522b7c4b are exclusively the G3/G4 gate records (6b07ef00) and this verification transcription (819b1666) - control-plane only; the DCV identity guard (supervisor subtree == 3f4cee86) holds at every one of them.",
    "reviewed_manifest_sha256": "9c17f2d3cda63786a10527f71eb03046bcbe4e75c276564d638d7c13ccf7b21c",
-   "reviewed_sha": "522b7c4bb46960ed5e791a8beabff55594bf50fc",
+   "reviewed_sha": "819b16662ef00ac14016b00840fef71fa4ab8e0d",
    "verified_at": "2026-09-03T00:45:00+00:00"
   }
  ],
