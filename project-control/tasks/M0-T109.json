@@ -52,7 +52,7 @@
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-27T04:55:47.085753+00:00",
-  "updated_at": "2026-09-04T17:23:36.931208+00:00",
+  "updated_at": "2026-09-04T17:38:30.963675+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -61,5 +61,14 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-08-27T04:55:47.085753+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t109"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t109",
+  "progress_log": [
+    {
+      "at": "2026-09-04T17:38:30.963675+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "GUARD-HARDENING CODE COMPLETE + ALL FIVE GATES PASS (G0/G2/G3/G4/G5), DCV 16 PASS/1 UNVERIFIABLE/1 NA/0 FAIL. Three M0-T108 residuals closed (ADV-R4-1 chained-assignment loop, ADV-4 reachable GetTypeFromProgID, ADV-R4-2 documented residuals); content 7f075e37 blob-identical to task tip 67b5b4dc; both guard suites + modularity + ruff green; Bash pack byte-unchanged; all M0-T108 denials preserved. G5 found one MEDIUM bypass (braced-variable assignment) proven PRE-EXISTING (base 1c069571, untouched by diff) -> tracked as new backlog M0-T145, does NOT fail M0-T109. ACCEPTANCE CORRECTLY BLOCKED at this identity by D-024-R754 (UNVERIFIABLE): the seven local-autonomy facts require durable LIVE evidence from the first-ever live limited-auto autonomous run, a genuine owner-only gate (real Fable+Codex allowance; the persistent-loop start the owner reserved). Terminal = BLOCKED_FOR_PERSISTENT_ACTIVATION (D-024-persistent-activation-terminal.md); positive viability decision + exact owner activation command handed over. accept() not attempted (would fail closed on R754, which is correct)."
+    }
+  ]
 }
