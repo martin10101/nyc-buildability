@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 766,
+  "requirement_count": 773,
   "producer": "orchestrator",
-  "updated_at": "2026-09-04T16:36:18+00:00",
+  "updated_at": "2026-09-04T17:57:38+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -25200,6 +25200,251 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R767",
+      "text": "Set the Codex reviewer (gpt-5.6-sol) to the MAXIMUM reasoning-effort tier. codex-cli 0.146.0 has no literal 'max' value; the documented model_reasoning_effort enum is minimal/low/medium/high/xhigh, so 'max' resolves to xhigh (the documented ceiling).",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "git diff shows the supervisor-owned effort field set to xhigh + threaded into the Codex argv",
+      "required_evidence": "config field + build_argv change + producer report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R768",
+      "text": "Thread the effort via the config-override form -c model_reasoning_effort=<value> in the Codex review invocation (build_argv), driven by a supervisor-owned config field; do NOT use the user-injected --effort/--reasoning-effort argv flags.",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "build_argv emits -c model_reasoning_effort=xhigh; argv-safety tests pass",
+      "required_evidence": "code + test evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R769",
+      "text": "Keep the user-injected effort flags (--effort, --effort=high, --reasoning-effort) HARD-DENIED; only the SUPERVISOR-set config-override value is admitted. Validate the value against the known enum (minimal/low/medium/high/xhigh) and fail closed on an unknown value.",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "hard-deny doctor check still rejects the flags; an out-of-enum value fails closed",
+      "required_evidence": "positive+negative tests",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R770",
+      "text": "Set the value config-driven (a supervisor-owned field, not a literal buried in argv) so the tier is a one-line change; provide a safe fallback to 'high' if a live review rejects xhigh (parsed provider error), since xhigh acceptance by gpt-5.6-sol is model-dependent and unverifiable offline.",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "config field present; fallback path covered by a test",
+      "required_evidence": "code + test evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R771",
+      "text": "Add positive, negative, and mutation tests proving the effort threading is load-bearing (RED-on-mutant when the threading is removed; no-FP that a normal review argv is unaffected; enum-rejection negative).",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "the guard/reviewer test suite passes with the new rows + mutant",
+      "required_evidence": "test run output",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R772",
+      "text": "This modifies the frozen supervisor tree as an OWNER-AUTHORIZED feature exception and TRIGGERS R247 recertification at the new frozen identity; the installed controller must be reinstalled for the live effect. Recert + reinstall + the live xhigh confirmation land behind the owner-gated live-run boundary; do not self-run a live review.",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "recert record produced at the new identity; no live provider review launched by the session",
+      "required_evidence": "recert evidence + audit shows no session-launched review",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R773",
+      "text": "Return-report requirement: report the exact changed files, the resolved effort value (and that 'max' mapped to xhigh with the reasoning), the validation result, the R247-recert consequence, and the commit SHA.",
+      "source_ref": "source-052-amendment.md#verbatim-owner-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "final response + durable M0-T146 report carry all five items",
+      "required_evidence": "session response + report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 52
     }
   ]
 }

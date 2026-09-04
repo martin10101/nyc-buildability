@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-04T16:36:18+00:00",
+  "updated_at": "2026-09-04T17:57:38+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -420,6 +420,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-04T16:36:18+00:00",
       "content_digest_sha256": "eba96a03dd4450fb5e96a46183d9469fda67b6e44093d49fe8d570d9d9899744"
+    },
+    {
+      "file": "source-052-amendment.md",
+      "kind": "amendment",
+      "sequence": 52,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-04T17:57:38+00:00",
+      "content_digest_sha256": "2039b4e60577d3a0b8a0268320581e41590f0d7fc80c7c1fb203b48442b51536"
     }
   ],
   "amendments": [
@@ -472,7 +480,8 @@
     "source-048-amendment.md",
     "source-049-amendment.md",
     "source-050-amendment.md",
-    "source-051-amendment.md"
+    "source-051-amendment.md",
+    "source-052-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -1349,10 +1358,17 @@
     "D-024-R763",
     "D-024-R764",
     "D-024-R765",
-    "D-024-R766"
+    "D-024-R766",
+    "D-024-R767",
+    "D-024-R768",
+    "D-024-R769",
+    "D-024-R770",
+    "D-024-R771",
+    "D-024-R772",
+    "D-024-R773"
   ],
-  "requirements_id_digest_sha256": "ccda40aee0c65c1fd86bcf39da75ff5cd1387a77b4727f78319d44b2b9936dc8",
-  "requirements_content_digest_sha256": "cc4e448d770307768244d98f3540895d8bf2609d455c763df018c422b176750e",
+  "requirements_id_digest_sha256": "75e2da35e10e948ab654044d1022fa101ce7973e6dbc1edcaa8aa39c57675992",
+  "requirements_content_digest_sha256": "6b90a512da68c3c44a1af04c7f1b687344f734966eb3ee3fb2382636c76195f6",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1647,6 +1663,12 @@
       "actor": "orchestrator",
       "action": "amendment-51-captured",
       "detail": "source-051-amendment.md captured verbatim; requirements D-024-R750..R760 (campaign continuation to persistent-local-loop proof, bound to M0-T109) and D-024-R761..R766 (deficit-convergence policy task, bound to M0-T144) appended."
+    },
+    {
+      "at": "2026-09-04T17:57:38+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-52-captured",
+      "detail": "source-052-amendment.md captured verbatim; requirements D-024-R767..R773 appended (Codex reviewer max reasoning effort = xhigh, config-driven, bound to M0-T146; R247 recert triggered)."
     }
   ]
 }
