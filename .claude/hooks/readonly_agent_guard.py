@@ -72,8 +72,16 @@ instead by the compensating controls (a) and (b) below:
   pre-existing residual (see `_launches_nested_shell`).
 - COM instantiation is denied via `New-Object -c…` (the `-ComObject` parameter
   down to its shortest unambiguous abbreviation `-c`, round-4 NF1) and via the
-  reflection path (`[Activator]::CreateInstance`, `GetTypeFromProgID`). A COM
-  object built through some other reflection chain is a residual.
+  reflection path (`[Activator]::CreateInstance` and, self-anchored so it is
+  actually REACHABLE, `[Type]::GetTypeFromProgID` — M0-T109 ADV-4). A COM object
+  built through some other reflection chain is a residual. Two OPEN-ENDED
+  reflection / command-lookup residuals a bounded static denylist cannot exhaust
+  (M0-T109 ADV-R4-2): `[Type]::GetTypeFromCLSID('{clsid}')` (the CLSID sibling of
+  GetTypeFromProgID — an unbounded set of GUIDs), and command-lookup indirection
+  such as `&(gcm powershell)` / `&(get-command …)` where the shell name is
+  produced by a subexpression rather than appearing in command position. These
+  are deliberately NOT chased with more denylist teeth (that arms-race is
+  unwinnable); they are covered by the orchestrator-only integration model below.
 - A mutating command reached by a call operator on a QUOTED literal is unwrapped
   on the PowerShell path (`& 'Set-Content'`), but the analogous Bash-tool form
   (`'gh' pr create`, a mutating verb whose only preceding char is a quote) is a
@@ -248,7 +256,7 @@ _PS_MUTATING = re.compile(
       | (?:Set|New|Remove)-CimInstance\b
       | New-Object\s+-c\w*\b                # -c/-co/-com…/-comobject (ONLY C-param of New-Object; NF1)
       | \[(?:System\.)?Activator\]::CreateInstance\b   # COM/type instantiation via reflection (NF1)
-      | GetTypeFromProgID\b                 # [type]::GetTypeFromProgID('Scripting.FileSystemObject') (NF1)
+      | \[(?:System\.)?Type\]::GetTypeFromProgID\b     # [Type]::GetTypeFromProgID('Scripting.FileSystemObject') reflection-COM setup (M0-T109 ADV-4: self-anchored so the belt-and-suspenders is REACHABLE; the bare `GetTypeFromProgID\b` never fired because the shared leading-delimiter class excludes ':')
       | New-Object\s+(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\b
       | \[(?:System\.)?IO\.(?:StreamWriter|FileStream|BinaryWriter)\]::new\b
       | \[(?:System\.)?IO\.(?:File|Directory)\]::
@@ -577,28 +585,36 @@ def _unquoted_redirect(cmd, powershell=False):
     return False
 
 
-def _effective_command_token(words):
-    """The COMMAND token of a segment, skipping a leading `$var =` / `$var=`
-    PowerShell assignment so an assignment-fronted invocation is seen in command
-    position (M0-T108 NF2: `$z = powershell -enc …` invokes powershell). Returns
-    the base name (path stripped) or None.
+_ASSIGN_LAYER = re.compile(r"^\$\{?[A-Za-z_][\w:]*\}?\s*=\s*")
 
-    Forms handled: `powershell …` -> powershell; `$x = powershell …` (tokens
-    `$x`,`=`,`powershell`) -> powershell; `$x=powershell …` (one token) ->
-    powershell; `$x= powershell` / `$x =powershell` -> powershell. A normal read
-    (`$x = Get-Content`) yields `Get-Content` -> not a shell -> allowed."""
+
+def _effective_command_token(words):
+    """The COMMAND token of a segment, skipping ALL leading `$var =` / `$var=`
+    PowerShell assignment layers so an assignment-fronted invocation is seen in
+    command position (M0-T108 NF2: `$z = powershell -enc …` invokes powershell).
+    Returns the base name (path stripped) or None.
+
+    CHAINED ASSIGNMENT (M0-T109 ADV-R4-1): the strip LOOPS while the head is
+    still an assignment, so a multi-layer assignment-fronted invocation is
+    resolved to its real command. `$a=$b=powershell -enc …` (one token
+    `$a=$b=powershell`) and `$a = $b = powershell` both reduce to `powershell`
+    and DENY, where the previous single-layer strip left `$b=powershell` and
+    ALLOWed. A normal chained read (`$a=$b=Get-Content`) reduces to `Get-Content`
+    -> not a shell -> allowed (no false positive).
+
+    Forms handled: `powershell …`; `$x = powershell …` (tokens `$x`,`=`,`powershell`);
+    `$x=powershell …` (one token); `$x= powershell` / `$x =powershell`; and any
+    chain of the above. The words are rejoined on single spaces (they were split
+    on whitespace) so an assignment split across tokens is stripped uniformly."""
     if not words:
         return None
-    w0 = words[0]
-    tok = w0
-    if w0.startswith("$") and "=" in w0:
-        rhs = w0.split("=", 1)[1]
-        tok = rhs if rhs else (words[1] if len(words) > 1 else "")
-    elif w0.startswith("$") and len(words) >= 3 and words[1] == "=":
-        tok = words[2]
-    elif w0.startswith("$") and len(words) >= 2 and words[1].startswith("="):
-        # `$x =powershell` -> second token is `=powershell`
-        tok = words[1].split("=", 1)[1] or (words[2] if len(words) > 2 else "")
+    head = " ".join(words)
+    prev = None
+    while prev != head:
+        prev = head
+        head = _ASSIGN_LAYER.sub("", head, count=1)
+    first = head.split(None, 1)
+    tok = first[0] if first else ""
     if not tok:
         return None
     return tok.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]

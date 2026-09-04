@@ -328,6 +328,28 @@ check("ADV-1 start-as-data allow (Bash)", "ALLOW", bash(ROLE, "git log --grep st
 # assignment read stays allowed
 check("assignment read allow", "ALLOW", ps(ROLE, "$x = Get-Content README.md"))
 
+print("== Round-5 (M0-T109: ADV-R4-1 chained assignment, ADV-4 GetTypeFromProgID, ADV-R4-2 residual doc) ==")
+# ADV-R4-1 — CHAINED assignment-fronted encoded/nested shell now DENY (single-layer strip left `$b=powershell` -> ALLOW)
+for cmd in ["$a=$b=powershell -enc SQBFAFgA", "$a=$b=$c=powershell -e SQBFAFgA",
+            "$a = $b = powershell -e SQBFAFgA", "$a=$b=pwsh -c Set-Content",
+            "$a=$b=cmd /c whoami"]:
+    check(f"ADV-R4-1 chained-assign deny: {cmd[:30]}", "DENY", ps(ROLE, cmd))
+# ADV-R4-1 no-FP — a chained assignment to a READ stays ALLOW (no false positive)
+check("ADV-R4-1 no-FP chained read allow", "ALLOW", ps(ROLE, "$a=$b=Get-Content README.md"))
+check("ADV-R4-1 no-FP chained read allow (spaced)", "ALLOW", ps(ROLE, "$a = $b = Get-Content README.md"))
+# ADV-4 — GetTypeFromProgID now REACHABLE (self-anchored) and denies standalone, no CreateInstance present
+for cmd in ["[Type]::GetTypeFromProgID('Scripting.FileSystemObject')",
+            "$t = [Type]::GetTypeFromProgID('Scripting.FileSystemObject')",
+            "[System.Type]::GetTypeFromProgID('Scripting.FileSystemObject')"]:
+    check(f"ADV-4 GetTypeFromProgID deny: {cmd[:32]}", "DENY", ps(ROLE, cmd))
+# ADV-4 no-FP — the name as DATA (a read of a note file) stays ALLOW
+check("ADV-4 no-FP GetTypeFromProgID as data allow", "ALLOW",
+      ps(ROLE, "Get-Content -Encoding UTF8 GetTypeFromProgID-notes.md"))
+# ADV-R4-2 — the two open-ended residuals are DOCUMENTED (not denied); assert the docstring names them
+_GUARD_SRC = GUARD.read_text(encoding="utf-8")
+check_static("ADV-R4-2 residual documented: GetTypeFromCLSID", "GetTypeFromCLSID" in _GUARD_SRC)
+check_static("ADV-R4-2 residual documented: gcm/get-command lookup", "get-command" in _GUARD_SRC.lower())
+
 print("== Identity pass-through unchanged ==")
 check("lead (no identity) + PS Set-Content -> allow", "ALLOW",
       ps(None, "Set-Content x.txt hi"))
@@ -409,10 +431,26 @@ MUTANTS = {
         SRC.replace(r"| New-Object\s+-c\w*\b", r"| New-Object\s+-Com\w*\b"),
         ps(ROLE, "New-Object -C Scripting.FileSystemObject"),
     ),
-    "mutant drops Activator/reflection COM tooth -> [activator]::CreateInstance would slip (NF1)": (
-        SRC.replace(r"| \[(?:System\.)?Activator\]::CreateInstance\b", "")
-           .replace(r"| GetTypeFromProgID\b", ""),
+    "mutant drops Activator reflection-COM tooth -> [activator]::CreateInstance would slip (NF1)": (
+        # Honest co-removal (M0-T109 ADV-4): this mutant drops ONLY the CreateInstance
+        # tooth and its payload carries no GetTypeFromProgID, so the CreateInstance
+        # tooth is proven independently load-bearing.
+        SRC.replace(r"| \[(?:System\.)?Activator\]::CreateInstance\b", ""),
         ps(ROLE, "[activator]::CreateInstance($t)"),
+    ),
+    "mutant drops GetTypeFromProgID tooth -> standalone reflection-COM setup would slip (M0-T109 ADV-4)": (
+        # The now-reachable GetTypeFromProgID tooth is proven load-bearing by a
+        # payload with NO CreateInstance present: only this tooth denies it.
+        SRC.replace(r"| \[(?:System\.)?Type\]::GetTypeFromProgID\b", ""),
+        ps(ROLE, "[Type]::GetTypeFromProgID('Scripting.FileSystemObject')"),
+    ),
+    "mutant reverts chained-assignment loop to single strip -> $a=$b=powershell would slip (M0-T109 ADV-R4-1)": (
+        SRC.replace(
+            "    while prev != head:\n"
+            "        prev = head\n"
+            '        head = _ASSIGN_LAYER.sub("", head, count=1)\n',
+            '    head = _ASSIGN_LAYER.sub("", head, count=1)\n'),
+        ps(ROLE, "$a=$b=powershell -enc SQBFAFgA"),
     ),
     "mutant drops spawn-alias -> start notepad would slip (ADV-1/F2)": (
         SRC.replace("or _SPAWN_ALIAS.match(tok)", ""),
