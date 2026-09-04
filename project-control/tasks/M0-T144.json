@@ -1,0 +1,62 @@
+{
+  "task_id": "M0-T144",
+  "title": "Deficit-convergence policy installation (repeated-failure convergence skill + CLAUDE.md trigger)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Owner directive D-024 Amendment 51 (R761-R766): add the project's repeated-failure convergence policy by changing exactly two paths - CLAUDE.md (one concise mandatory trigger, verbatim) and .claude/skills/deficit-convergence/SKILL.md (narrowly triggered skill carrying the owner's 20 enumerated rules, the ordinary-isolated-failure non-applicability statement, and the no-repo-wide-audit prohibition). Validate skill discovery + frontmatter, one independent policy review, one content commit. No controller code, no model selection, no GitHub config, no accepted-evidence change, no provider launch, no regression campaign.",
+  "business_reason": "Owner-ordered bounded policy task following M0-T107 acceptance (Amendment 51 part B).",
+  "inputs": [],
+  "outputs": [
+    "CLAUDE.md (one verbatim mandatory deficit-convergence trigger added; nothing else changed)",
+    ".claude/skills/deficit-convergence/SKILL.md (narrowly triggered 20-rule convergence skill)",
+    "project-control/reports/M0-T144-deficit-convergence-policy.md (producer report: validation output + review + provenance)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "CLAUDE.md",
+    ".claude/skills/deficit-convergence/SKILL.md",
+    "project-control/reports/M0-T144-deficit-convergence-policy.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor",
+    "model_selection.toml",
+    ".claude/settings.json",
+    ".claude/hooks",
+    ".github",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-04T16:39:51.620469+00:00",
+  "updated_at": "2026-09-04T16:41:03.140152+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-04T16:39:51.620469+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24"
+}
