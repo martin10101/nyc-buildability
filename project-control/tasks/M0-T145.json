@@ -6,10 +6,33 @@
   "objective": "Close the pre-existing MEDIUM residual found by the M0-T109 G5 security review: braced-variable assignment (dollar-brace x = powershell -enc <b64>, dollar-brace a-b = ...) launders an assignment-fronted nested shell past _launches_nested_shell because _SEGMENT_CHARS includes brace chars, so _split_command_segments tears the braced form before _effective_command_token runs. Fix: normalize braced var names to bare before segment-splitting OR extend _effective_command_token/_ASSIGN_LAYER to the brace form; add RED-on-mutant + no-FP rows; update the guard docstring to stop implying the brace form is covered until fixed. Pre-existing since M0-T108 (not introduced by M0-T109); bounded by the orchestrator-only compensating control. Keep Bash pack byte-unchanged; preserve all existing denials.",
   "business_reason": "Independent G5 finding on the accepted guard; tracked as a bounded follow-up per post-review discovery discipline (not a reopening of M0-T108/M0-T109).",
   "inputs": [],
-  "outputs": [],
-  "dependencies": [],
-  "allowed_paths": [],
-  "forbidden_paths": [],
+  "outputs": [
+    ".claude/hooks/readonly_agent_guard.py (brace-form normalization / _effective_command_token extension; honest docstring)",
+    "tools/test_readonly_agent_guard_powershell.py (RED-on-mutant + no-FP rows for the braced-variable form)",
+    "project-control/reports/M0-T145-guard-brace-residual.md"
+  ],
+  "dependencies": [
+    "M0-T109"
+  ],
+  "allowed_paths": [
+    ".claude/hooks/readonly_agent_guard.py",
+    "tools/test_readonly_agent_guard_powershell.py",
+    "project-control/reports/M0-T145-guard-brace-residual.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "path_free_governance": true,
+  "path_free_justification": "Backlog follow-up captured at creation from the M0-T109 G5 finding; its deliverable files do not yet exist as M0-T145 content (the guard/test edits and the M0-T145 report are written only when the task is claimed and worked). allowed_paths pin the eventual write scope; the c17 empty-identity guard is satisfied by this explicit path-free-at-creation declaration until production begins.",
   "acceptance_scenarios": [],
   "required_gates": [
     "G0",
