@@ -1,0 +1,57 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T146",
+  "requirements": {
+    "D-024-R767": [
+      "build_argv threads the supervisor-set effort at xhigh (the verified ceiling; codex-cli 0.146.0 has no literal 'max'); test_build_argv_threads_the_supervisor_set_effort + test_no_user_effort_flag_reaches_the_reviewer_argv."
+    ],
+    "D-024-R768": [
+      "Threaded via -c model_reasoning_effort=<value> (config-override form), NOT --effort/--reasoning-effort; assert_argv_safe passes it (test asserts no --effort flag present)."
+    ],
+    "D-024-R769": [
+      "process.EFFORT_ARGUMENT_PREFIXES still hard-denies user-injected --effort/--reasoning-effort; only the supervisor-set config-override value is admitted (enum-validated); test_build_argv_rejects_an_effort_outside_the_enum."
+    ],
+    "D-024-R770": [
+      "Config-driven (ProviderSelection.reasoning_effort from [codex] review_reasoning_effort, default xhigh); fallback to medium via the ladder when the top tier fails (test_the_effort_ladder_steps_down_from_the_max, test_a_fallback_model_review_runs_at_the_downgrade_tier)."
+    ],
+    "D-024-R771": [
+      "8 new/updated tests: positive (build_argv threads xhigh), negative (enum reject 'ultra'), narrow-key exception (admit codex.review_reasoning_effort, reject bad value + other effort keys), ladder + fallback-tier + notify; reviewer suite 92 pass."
+    ],
+    "D-024-R772": [
+      "Modifies the frozen supervisor as owner-authorized exception (D-024-R775 cited in packet + commit 431018cf); freeze baseline reconciled 3633 pass/2 skip/0 fail; R247 recert + reinstall + live confirmation owner-gated (no session-launched review; controller runtime mrl/ unchanged)."
+    ],
+    "D-024-R773": [
+      "Return report M0-T146-codex-max-effort.md + the session response carry changed files, resolved tier (max->xhigh + reasoning), validation, recert consequence, commit SHA."
+    ],
+    "D-024-R774": [
+      "assert_no_effort_key narrowed to admit ONLY codex.review_reasoning_effort (value-validated); every other effort key still raises effort_key_forbidden; user-injected flags still hard-denied; Claude effort untouched. test_the_effort_key_exception_is_narrow."
+    ],
+    "D-024-R775": [
+      "'Max' resolved to the verified ceiling xhigh (config reference enum minimal/low/medium/high/xhigh); build_argv emits -c model_reasoning_effort=xhigh for the primary review."
+    ],
+    "D-024-R776": [
+      "review_model + review_reasoning_effort are single runtime-config values; switching model (incl. future gpt-6-astra) or tier is a one-line change, no code edit (config-driven design; documented in report s4)."
+    ],
+    "D-024-R777": [
+      "Ladder sol@xhigh -> sol@medium (effort downgrade) -> fallback-model@medium implemented in _effort_ladder + _review_at_effort; resolve_model gives the Sol->fallback model step; test_the_effort_ladder_steps_down_from_the_max + fallback-tier test."
+    ],
+    "D-024-R778": [
+      "codex_effort_downgraded notify on the intra-model downgrade + existing model_fallback_engaged on the Sol->fallback model step; both surface via ReviewOutcome.notify_events -> loop; test_a_fallback_model_review_runs_at_the_downgrade_tier asserts the notify."
+    ],
+    "D-024-R779": [
+      "Effort value fail-closed against CODEX_REASONING_EFFORT_TIERS in build_argv (reasoning_effort_invalid) and in assert_no_effort_key (effort_value_invalid); xhigh model-dependency caveat recorded (report s1/s6, owner-gated live confirm)."
+    ],
+    "D-024-R780": [
+      "Owner-authorized frozen-tree exception; freeze baseline reconciled (3633/2/0); R247 recert + controller reinstall + live confirmation owner-gated (no session-launched review; audit unchanged). Report s6."
+    ],
+    "D-024-R781": [
+      "gpt-6-astra (released 2026-09-03, gated) NOT switched to now; the config-driven swap (R776) supports a later one-command 'switch the main reviewer to gpt-6-astra'; report s4."
+    ],
+    "D-024-R782": [
+      "Return report + session response carry changed files, resolved tier + reasoning, fallback ladder, notification surface, R247-recert consequence, commit SHA."
+    ],
+    "D-024-R783": [
+      "DEFERRED (hold) honored: no Claude/Fable effort key written anywhere in this task; config.py change touches only the codex review effort key; the Claude effort prohibition stands."
+    ]
+  }
+}
