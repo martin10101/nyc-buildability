@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T109",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T109-guard-hardening.md",
+  "reviewed_at": "2026-09-04T17:12:46.711190+00:00",
+  "content_manifest_sha256": "d597a4e26d190251c42d2d30b76d47a8cabcd2cbba9bc20ad63f8af089bc855a",
+  "reviewed_sha": "2ae60f55edd38ce0ba2ec31031c5226ca0cb541c",
+  "updated_at": "2026-09-04T17:12:47.267739+00:00"
+}
