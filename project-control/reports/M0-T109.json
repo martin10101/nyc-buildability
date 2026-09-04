@@ -1,0 +1,31 @@
+{
+  "task_id": "M0-T109",
+  "producer_agent": "supervisor-loop-fable-producer",
+  "report_file": "project-control/reports/M0-T109-guard-hardening.md",
+  "submitted_at": "2026-09-04T17:12:27.846039+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T109-evidence-map.json",
+  "content_manifest_sha256": "d597a4e26d190251c42d2d30b76d47a8cabcd2cbba9bc20ad63f8af089bc855a",
+  "reviewed_sha": "cb58e3aea6b4264e9f4306fff3fce3e495bb2c9c",
+  "applicable_requirements": [
+    "D-024-R410",
+    "D-024-R411",
+    "D-024-R412",
+    "D-024-R413",
+    "D-024-R414",
+    "D-024-R415",
+    "D-024-R416",
+    "D-024-R750",
+    "D-024-R751",
+    "D-024-R752",
+    "D-024-R753",
+    "D-024-R754",
+    "D-024-R755",
+    "D-024-R756",
+    "D-024-R757",
+    "D-024-R758",
+    "D-024-R759",
+    "D-024-R760"
+  ],
+  "updated_at": "2026-09-04T17:12:28.564349+00:00"
+}
