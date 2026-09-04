@@ -6,6 +6,26 @@
 as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
 `context-budget` CI fails > ~4000 tok.
 
+## Handoff - seq 82: Codex reviewer MAX effort built (M0-T146 code+G0/G2/G3/G5+DCV done; acceptance owner-gated on recert/reinstall/live)
+
+0. **seq 82 (2026-09-04, Amendment 52/53):** owner directive "set Codex reviewer to max effort."
+   Discovered it conflicts with the PERMANENT prohibition D-004-R159 ("no effort key ever written"),
+   raised **B-021**, owner explicitly authorized the narrow supersession ("go ahead") → **B-021
+   RESOLVED**. **M0-T146** built + reviewed: Codex reviewer at **xhigh** (verified ceiling; no
+   literal "max" in codex-cli 0.146.0), narrow R159 supersession for `codex.review_reasoning_effort`
+   ONLY (user-injected `--effort` flags still hard-denied; Claude effort untouched, deferred R783),
+   fallback ladder `sol@xhigh → sol@medium → gpt-5.6-luna@medium` with owner notifications, config-
+   driven model+effort for one-command swap (incl. future `gpt-6-astra`, released 2026-09-03/gated).
+   Content **431018cf**; reviewer suite 92 pass; **freeze baseline 3633 pass/2 skip/0 fail**; ruff
+   clean; G3 PASS + G5 PASS (no bypass across 15 config + 7 argv probes) + **DCV 15 PASS / 2
+   UNVERIFIABLE / 0 FAIL**. **Formal acceptance is coupled to the two owner-gated rows R772/R780**
+   (accept() blocks on them): the **R247 recert** at the new frozen identity, the **controller
+   reinstall** (to pick up the code + set `review_reasoning_effort = "xhigh"` and add `gpt-5.6-luna`
+   to the codex allowlist in the runtime files), and the **live confirmation** that `gpt-5.6-sol`
+   accepts `xhigh`. NO live review launched; nothing pushed; installed controller unchanged. Owner
+   runs recert+reinstall+live to activate + unblock. Ledger accepted=157 (unchanged), M0-T146
+   awaiting_gate@95%.
+
 ## Handoff - seq 81: Amendment 51 done; M0-T144 ACCEPTED, M0-T109 code+5 gates PASS; terminal = BLOCKED_FOR_PERSISTENT_ACTIVATION (one owner-only gate)
 
 1. **Generated:** 2026-09-04 (UTC) by the Amendment-51 campaign-continuation session.
