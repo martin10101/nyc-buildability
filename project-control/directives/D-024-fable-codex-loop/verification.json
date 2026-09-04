@@ -11935,7 +11935,76 @@
       "reviewed_manifest_sha256": "9c17f2d3cda63786a10527f71eb03046bcbe4e75c276564d638d7c13ccf7b21c",
       "reviewed_sha": "819b16662ef00ac14016b00840fef71fa4ab8e0d",
       "verified_at": "2026-09-03T00:45:00+00:00"
+    },
+    {
+      "task_id": "M0-T144",
+      "directive_id": "D-024",
+      "producer": "orchestrator (deficit-convergence policy producer)",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R761",
+        "D-024-R762",
+        "D-024-R763",
+        "D-024-R764",
+        "D-024-R765",
+        "D-024-R766"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R761",
+          "state": "PASS",
+          "evidence": [
+            "git show --name-status 6aafd5e4 = exactly M CLAUDE.md + A .claude/skills/deficit-convergence/SKILL.md; task packet at 2132371c."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        },
+        {
+          "id": "D-024-R762",
+          "state": "PASS",
+          "evidence": [
+            "No controller/test/model-selection/.github/accepted-evidence path touched across the four M0-T144 commits; no new run dir under mrl/ (no provider)."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        },
+        {
+          "id": "D-024-R763",
+          "state": "PASS",
+          "evidence": [
+            "CLAUDE.md diff = one inserted line (principle 18), trigger byte-equal to source-051 verbatim."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        },
+        {
+          "id": "D-024-R764",
+          "state": "PASS",
+          "evidence": [
+            "SKILL.md rules 1-20 byte-equal to the amendment; narrow trigger + isolated-failure carve-out + no-repo-wide-audit prohibition all present."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        },
+        {
+          "id": "D-024-R765",
+          "state": "PASS",
+          "evidence": [
+            "validate_directive_compliance --check exit 0; frontmatter parses (single description); rules 1..20 each once; live-harness discovered the skill; one content commit."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        },
+        {
+          "id": "D-024-R766",
+          "state": "PASS",
+          "evidence": [
+            "Durable return report M0-T144-deficit-convergence-policy.md carries changed files + final trigger + validation + commit SHA; DEFICIT_CONVERGENCE_POLICY_INSTALLED token closes the Part-B section of the session response."
+          ],
+          "verified_at": "2026-09-04T17:15:34+00:00"
+        }
+      ],
+      "reviewed_manifest_sha256": "76a75c6f2eeb9ef96fd6a94566cb4e2eaf2b4ff40d7125f40e9fa2df9d4fffb9",
+      "reviewed_sha": "966e69b9baa9fe2acf3b9cc360ca6a2708b6fd36",
+      "verified_at": "2026-09-04T17:15:34+00:00",
+      "verification_report": "project-control/reports/M0-T144-DCV-report.md",
+      "note": "Amendment-51 part B; DCV 6/6 PASS at baae6bfe; gates G0/G2/G3 PASS."
     }
   ],
-  "updated_at": "2026-09-04T15:59:56+00:00"
+  "updated_at": "2026-09-04T17:15:34+00:00"
 }
