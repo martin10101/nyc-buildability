@@ -48,11 +48,9 @@
   "status": "backlog",
   "progress_percent": 0,
   "risks": [
-    "BLOCKED by B-021: implementing Amendment 52 requires superseding the permanent owner prohibition D-004-R159 (no effort key ever written / supervisor never passes effort). Owner-only decision. Do not claim until resolved."
+    "Modifies the FROZEN supervisor (owner-authorized feature exception, cite D-024-R775); triggers R247 recertification + the >=1165-test freeze baseline. Live xhigh/luna acceptance is model-dependent (owner-gated live confirm). B-021 RESOLVED via Amendment 53."
   ],
-  "blockers": [
-    "B-021"
-  ],
+  "blockers": [],
   "created_at": "2026-09-04T17:59:55.896049+00:00",
   "updated_at": "2026-09-04T17:59:56.083768+00:00",
   "directive_refs": [
