@@ -1,0 +1,60 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T109",
+  "requirements": {
+    "D-024-R410": [
+      "M0-T109 prepared as sole commissioning successor: complete packet, claimed, isolated worktree wt-m0t109 (commit 1c069571 / e3439d7c)."
+    ],
+    "D-024-R411": [
+      "One-entry packet queue file (M0-T109 only) written in load_task_queue format (prep commit e3439d7c)."
+    ],
+    "D-024-R412": [
+      "Full section-2 preflight run at the then-current tip, all 8 rows PASS via the real eligibility engine (prep record)."
+    ],
+    "D-024-R413": [
+      "HOLD honored: M0-T107, wt-m0t107, PR #241, preserved journal untouched throughout (M0-T107 later accepted independently; no journal edit in this work)."
+    ],
+    "D-024-R414": [
+      "Neither section-4 owner command executed by the session (owner-typed only; audit shows no orchestrator execution)."
+    ],
+    "D-024-R415": [
+      "Preflight report states one-task-queue sufficiency; the persistent-loop proof plan (D-024-persistent-loop-proof-plan.md s2-3) supersedes for the Amendment-51 seven facts: advancement needs a 2nd queue task, identified as M0-T025 (R416 path)."
+    ],
+    "D-024-R416": [
+      "The advancement fact requires an M0-T109-to-second-task step; eligible successor identified (M0-T025) and the minimum sequence recorded in the proof plan; not silently interpreted."
+    ],
+    "D-024-R750": [
+      "Read-only reconciliation of every expected anchor: zero discrepancies (proof plan s1; live git/ledger/continuity/worktrees)."
+    ],
+    "D-024-R751": [
+      "M0-T107 treated as permanently closed: no reopening, no journey/canary rerun (ledger + runtime mrl/ unchanged)."
+    ],
+    "D-024-R752": [
+      "M0-T109 executed under its contract through implementation + independent G3/G4/G5 review + DCV; guard-hardening code complete at task tip 67b5b4dc, adopted 7f075e37, both suites + modularity + ruff green."
+    ],
+    "D-024-R753": [
+      "Seven-fact coverage statement recorded BEFORE proof work: M0-T109 alone insufficient; minimum sequence (M0-T144, M0-T133, live [M0-T109,M0-T025] run) identified (proof plan s2-3)."
+    ],
+    "D-024-R754": [
+      "PENDING (owner-gated): durable LIVE evidence for the seven local-autonomy facts requires the first-ever live limited-auto autonomous run, a genuine owner-only gate (real allowance spend; first exercise of the never-live-tested legacy autonomous path). Mechanisms verified + unit-tested + one live REVISE observed (journey-m0t107-01); full live proof awaits the owner-typed run. See terminal BLOCKED report."
+    ],
+    "D-024-R755": [
+      "Authorization exercised: continued automatically through all safe local work (policy install, guard hardening, reviews, reconciliation) without interrupting the owner for routine engineering; persistent-loop start never initiated by the session."
+    ],
+    "D-024-R756": [
+      "Safety boundaries retained: no model-selection/controller/cwd-guard/external-config change; worker pin unchanged; no push/PR/merge/deploy/PR-241; one writer per worktree; no guard weakened (guard was HARDENED, all M0-T108 denials preserved)."
+    ],
+    "D-024-R757": [
+      "Defect method honored: no live-rerun serial discovery performed; the M0-T133 modularity finding was traced to M0-T136 resolution read-only; deficit-convergence policy installed (M0-T144)."
+    ],
+    "D-024-R758": [
+      "Session stops only at the genuine owner-only gate (first live autonomous commissioning run); no stop for routine work."
+    ],
+    "D-024-R759": [
+      "INAPPLICABLE this session: the READY return fires only when every live proof passes; they do not (R754 pending), so the R760 path is taken instead."
+    ],
+    "D-024-R760": [
+      "Terminal outcome = BLOCKED_FOR_PERSISTENT_ACTIVATION with one consolidated blocker (owner-gated first-live autonomous run) + a positive architecture-viability decision + the exact activation command (session terminal report)."
+    ]
+  }
+}
