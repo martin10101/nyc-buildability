@@ -42,12 +42,12 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-08-26T22:31:57.765156+00:00",
-  "updated_at": "2026-09-03T03:40:47.677766+00:00",
+  "updated_at": "2026-09-04T16:00:13.061374+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -109,5 +109,7 @@
       "status": "claimed",
       "message": "OWNER DISPOSITION DECISION A EXECUTED (D-024 Amendment 49, R732-R737): the two run_m0t107_j4 prior-journey drafts committed UNALTERED to task/M0-T107-plugin-portability as the authorized starting state - commit ffc77bab80907fac1fde4e3bd81f1fdf1aa5dd81 (exactly 2 added paths; blob sha256 7546d4e9.../b203ebf0... byte-identical to pre-act hashes; wt-m0t107 CLEAN; no upstream/push/PR; journey NOT started - provider never contacted). Amendment 48 launch blocker RESOLVED; the journey script dirty-tree guard now passes. NEXT = owner types the one journey command (handoff seq 79 item 6)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-04T16:00:13.061374+00:00"
 }
