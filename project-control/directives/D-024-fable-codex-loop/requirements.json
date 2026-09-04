@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 773,
+  "requirement_count": 783,
   "producer": "orchestrator",
-  "updated_at": "2026-09-04T17:57:38+00:00",
+  "updated_at": "2026-09-04T18:47:33+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -25445,6 +25445,356 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 52
+    },
+    {
+      "id": "D-024-R774",
+      "text": "OWNER AUTHORIZATION resolving B-021: supersede the permanent prohibition D-004-R159 FOR the supervisor-set Codex reviewer reasoning effort ONLY. Record the supersession explicitly (append-only) and narrow config.assert_no_effort_key to admit ONLY that value. User-injected --effort/--reasoning-effort argv flags STAY hard-denied; the Claude/Fable effort prohibition is UNCHANGED.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "append-only supersession recorded; assert_no_effort_key narrowed with positive+negative tests",
+      "required_evidence": "D-004 amendment / registry supersession + code diff",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R775",
+      "text": "Set the Codex reviewer to the MAXIMUM reasoning tier. 'Max' = the highest tier (owner delegated the exact name); resolved to the verified ceiling xhigh (config reference enum minimal/low/medium/high/xhigh; a wrong value fails closed under --strict-config).",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "build_argv emits -c model_reasoning_effort=xhigh for the Sol review",
+      "required_evidence": "code + test evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R776",
+      "text": "Reviewer model AND effort are single config values (supervisor-owned), so the owner can switch the reviewer with one plain command; changing the model or tier is a one-line config change, not a code edit.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "review model + effort read from config; a swap test shows one value change re-points the reviewer",
+      "required_evidence": "config-driven design + test",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R777",
+      "text": "Reviewer fallback ladder when gpt-5.6-sol is unavailable/exhausted: sol@xhigh -> sol@medium (effort downgrade) -> gpt-5.6-luna (low-end). Add gpt-5.6-luna to the codex allowlist; luna/xhigh live-acceptance is model-dependent (confirmed on first live fallback).",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "resolve/fallback logic implements the ladder; allowlist includes luna; ladder covered by tests",
+      "required_evidence": "code + test evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R778",
+      "text": "Notify the owner (CLI/foreground surfacing) when gpt-5.6-sol is unavailable and which fallback tier/model engaged. Verify the exact notification surface during implementation (do not invent one).",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "an unavailability path emits a surfaced owner notice; test asserts the notice fires",
+      "required_evidence": "code + test evidence + surface citation",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R779",
+      "text": "Validate the effort value fail-closed against the codex enum; preserve the model-dependency caveat (xhigh acceptance by Sol confirmable only on a live call, owner-gated).",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "an out-of-enum value fails closed (negative test)",
+      "required_evidence": "negative + mutation tests",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R780",
+      "text": "This is an OWNER-AUTHORIZED feature exception to the supervisor freeze (cite D-024-R775 as qualifying evidence in packet + commit); it TRIGGERS R247 recert at the new frozen identity and must reconcile the >=1165-test freeze baseline. Recert + controller reinstall + live confirmation are owner-gated; the session launches NO live review.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "recert record at new identity; suite baseline reconciled; audit shows no session-launched review",
+      "required_evidence": "recert + suite evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R781",
+      "text": "FUTURE (owner-triggered, NOT now): GPT-6 Astra (gpt-6-astra, released 2026-09-03, gated availability) is not switched to now; the easy-swap design (R776) must let the owner later say 'switch the main reviewer to gpt-6-astra' and have it done, subject to the model being allowlisted/available in the owner's codex account.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "R776 swap design demonstrably supports a one-command model change",
+      "required_evidence": "design note in report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R782",
+      "text": "Return-report requirement: report the exact changed files, the resolved effort tier (max->xhigh + reasoning), the fallback ladder, the notification surface, the R247-recert consequence, and the commit SHA.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "final response + durable M0-T146 report carry all items",
+      "required_evidence": "session response + report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
+    },
+    {
+      "id": "D-024-R783",
+      "text": "DEFERRED (recorded, NOT implemented; owner said 'you don't need to change at the moment'): main Claude model = Fable 5 @ xhigh, fallback Opus 4.8 @ xhigh; important subagents = Fable 5, standard subagents = Opus 4.8. Implementing the Claude-side effort needs a SEPARATE explicit D-004-R159 supersession for Claude effort + its own recert; do NOT implement under this task.",
+      "source_ref": "source-053-amendment.md#verbatim-owner-directive",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T146"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-04"
+      },
+      "dependencies": [],
+      "required_harness": "no Claude effort key written; deferred until a separate owner-authorized task",
+      "required_evidence": "recorded intent only",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T146"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 53
     }
   ]
 }

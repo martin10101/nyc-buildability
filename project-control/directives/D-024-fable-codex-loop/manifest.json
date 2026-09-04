@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-04T17:57:38+00:00",
+  "updated_at": "2026-09-04T18:47:33+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -428,6 +428,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-04T17:57:38+00:00",
       "content_digest_sha256": "2039b4e60577d3a0b8a0268320581e41590f0d7fc80c7c1fb203b48442b51536"
+    },
+    {
+      "file": "source-053-amendment.md",
+      "kind": "amendment",
+      "sequence": 53,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-04T18:44:09+00:00",
+      "content_digest_sha256": "63a1bc863b6c250bfb7de3de054fcbf5c59386948c6b4ddc30c1d170c2d0d793"
     }
   ],
   "amendments": [
@@ -481,7 +489,8 @@
     "source-049-amendment.md",
     "source-050-amendment.md",
     "source-051-amendment.md",
-    "source-052-amendment.md"
+    "source-052-amendment.md",
+    "source-053-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -1365,10 +1374,20 @@
     "D-024-R770",
     "D-024-R771",
     "D-024-R772",
-    "D-024-R773"
+    "D-024-R773",
+    "D-024-R774",
+    "D-024-R775",
+    "D-024-R776",
+    "D-024-R777",
+    "D-024-R778",
+    "D-024-R779",
+    "D-024-R780",
+    "D-024-R781",
+    "D-024-R782",
+    "D-024-R783"
   ],
-  "requirements_id_digest_sha256": "75e2da35e10e948ab654044d1022fa101ce7973e6dbc1edcaa8aa39c57675992",
-  "requirements_content_digest_sha256": "6b90a512da68c3c44a1af04c7f1b687344f734966eb3ee3fb2382636c76195f6",
+  "requirements_id_digest_sha256": "6fc07a7bfe0bd87c963fed8b3525ec8825d5b98b0d42248379336a308d66f6ca",
+  "requirements_content_digest_sha256": "b4d3738930f5bb56fb64f6732cf39535afe45b37a3e575605ee1cc1083a99f64",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1669,6 +1688,18 @@
       "actor": "orchestrator",
       "action": "amendment-52-captured",
       "detail": "source-052-amendment.md captured verbatim; requirements D-024-R767..R773 appended (Codex reviewer max reasoning effort = xhigh, config-driven, bound to M0-T146; R247 recert triggered)."
+    },
+    {
+      "at": "2026-09-04T18:44:09+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-53-captured",
+      "detail": "source-053-amendment.md captured verbatim; requirements D-024-R774..R783 appended (owner resolves B-021: supersede D-004-R159 for Codex reviewer effort; Sol max=xhigh + fallback ladder sol@xhigh->sol@medium->luna + unavailability notification + easy model swap; Astra future; Claude-side effort DEFERRED). Bound to M0-T146."
+    },
+    {
+      "at": "2026-09-04T18:45:52+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-53-r783-fix",
+      "detail": "D-024-R783 (deferred Claude-effort policy) rebound to empty task_ids/maps_to (inert recorded hold, not a valid-task binding); digest refreshed."
     }
   ]
 }
