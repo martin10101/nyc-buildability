@@ -133,25 +133,60 @@ def _walk_keys(node: Any, trail: tuple[str, ...] = ()) -> list[tuple[tuple[str, 
     return found
 
 
+#: The GPT-5.6 codex reasoning-effort enum (config reference: minimal/low/medium/
+#: high/xhigh; a value outside it fails closed under `codex --strict-config`).
+CODEX_REASONING_EFFORT_TIERS: tuple[str, ...] = (
+    "minimal", "low", "medium", "high", "xhigh",
+)
+
+#: The ONLY effort key D-004-R159 is superseded for: the supervisor-set Codex
+#: reviewer reasoning effort (owner directive D-024 Amendment 53, R774 - a NARROW,
+#: explicit lift). It lives in the runtime model-selection file under [codex] and
+#: names the reviewer's reasoning tier. Every OTHER effort key stays permanently
+#: prohibited, and user-injected `--effort`/`--reasoning-effort` argv flags stay
+#: hard-denied (process.EFFORT_ARGUMENT_PREFIXES) - this exception is config-file
+#: only and value-validated.
+PERMITTED_EFFORT_KEY_PATHS: frozenset[tuple[str, ...]] = frozenset({
+    ("codex", "review_reasoning_effort"),
+})
+
+
 def assert_no_effort_key(data: Mapping[str, Any], source: str) -> None:
-    """Refuse any key containing "effort", at any depth (D-004-R159, S3.1)."""
-    for path, _value in _walk_keys(data):
+    """Refuse any key containing "effort", at any depth (D-004-R159, S3.1), EXCEPT
+    the single narrowly-superseded Codex reviewer reasoning-effort key
+    (`codex.review_reasoning_effort`, D-024 Amendment 53 R774), whose value is
+    validated against CODEX_REASONING_EFFORT_TIERS. Every other effort key stays
+    permanently prohibited."""
+    for path, value in _walk_keys(data):
         leaf = path[-1]
-        if "effort" in leaf.lower():
-            raise ConfigError(
-                "effort_key_forbidden",
-                f"key {'.'.join(path)!r} is an effort key; effort keys are "
-                f"permanently prohibited in every configuration file, prompt, and "
-                f"CLI invocation",
-                source,
-            )
+        if "effort" not in leaf.lower():
+            continue
+        if tuple(path) in PERMITTED_EFFORT_KEY_PATHS:
+            tier = value if isinstance(value, str) else ""
+            if tier not in CODEX_REASONING_EFFORT_TIERS:
+                raise ConfigError(
+                    "effort_value_invalid",
+                    f"{'.'.join(path)!r} = {value!r} is not a valid Codex reasoning "
+                    f"effort; permitted tiers are {list(CODEX_REASONING_EFFORT_TIERS)}",
+                    source,
+                )
+            continue
+        raise ConfigError(
+            "effort_key_forbidden",
+            f"key {'.'.join(path)!r} is an effort key; effort keys are "
+            f"permanently prohibited in every configuration file, prompt, and "
+            f"CLI invocation (the ONLY exception is the supervisor-set "
+            f"codex.review_reasoning_effort, D-004-R159 superseded by D-024 "
+            f"Amendment 53 R774)",
+            source,
+        )
 
 
 def _load_toml(path: str | os.PathLike[str]) -> dict[str, Any]:
     """Parse ONE file as standalone TOML. Never concatenated with another file."""
     file_path = pathlib.Path(path)
     if not file_path.exists():
-        raise ConfigError("missing_file", f"configuration file not found", str(file_path))
+        raise ConfigError("missing_file", "configuration file not found", str(file_path))
     try:
         with file_path.open("rb") as handle:
             return tomllib.load(handle)
@@ -470,6 +505,10 @@ class ProviderSelection:
     primary: str
     fallback_models: tuple[str, ...]
     advisory_model: str = ""
+    #: Supervisor-set reasoning-effort tier for this provider's REVIEW role
+    #: (codex only; D-024 Amendment 53 R774/R775). Empty string = the reviewer's
+    #: own default (max). Validated against CODEX_REASONING_EFFORT_TIERS at load.
+    reasoning_effort: str = ""
 
     def chain(self) -> tuple[str, ...]:
         """Primary first, then this provider's fallbacks, in order."""
@@ -526,6 +565,12 @@ def load_model_selection(path: str | os.PathLike[str]) -> ModelSelection:
                                                 "codex.advisory_model", source),
         fallback_models=_require_string_list(codex_section.get("fallback_models", []),
                                              "codex.fallback_models", source),
+        # D-024 Amendment 53 R774/R775: the supervisor-set Codex review reasoning
+        # tier (already value-validated in assert_no_effort_key above). Empty =
+        # the reviewer's own default (max).
+        reasoning_effort=_require_string_or_empty(
+            codex_section.get("review_reasoning_effort", ""),
+            "codex.review_reasoning_effort", source),
     )
     claude = ProviderSelection(
         provider="claude",

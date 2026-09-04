@@ -27,7 +27,6 @@ decision file. No network, no tokens, no real review.
 from __future__ import annotations
 
 import json
-import os
 import pathlib
 import sys
 import tempfile
@@ -46,6 +45,7 @@ from tools.agent_supervisor import review_packet as rp  # noqa: E402
 from tools.agent_supervisor.models import CodexDecision, USAGE_UNKNOWN  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.config import (  # noqa: E402
+    CODEX_REASONING_EFFORT_TIERS,
     ConfigError,
     load_controller_config,
     load_model_selection,
@@ -829,10 +829,100 @@ class ModelSelectionTests(ReviewerTestBase):
                     loader(path)
                 self.assertEqual(ctx.exception.code, "effort_key_forbidden")
 
-    def test_no_effort_flag_reaches_the_reviewer_argv(self) -> None:
+    def test_no_user_effort_flag_reaches_the_reviewer_argv(self) -> None:
+        # D-024 Amendment 53: the user-injected --effort/--reasoning-effort flags
+        # are NEVER passed (R769); the supervisor-set config-override
+        # `-c model_reasoning_effort=<tier>` IS, at the default MAX tier (R775).
         outcome = self.reviewer().review(self.packet())
         argv = outcome.decision.verified_facts[0]["argv"]
-        self.assertFalse([a for a in argv if "effort" in a.lower()])
+        self.assertFalse([a for a in argv
+                          if a.lower().startswith("--effort")
+                          or a.lower().startswith("--reasoning-effort")])
+        self.assertIn("-c", argv)
+        self.assertIn("model_reasoning_effort=xhigh", argv)
+
+    # -- D-024 Amendment 52/53: Codex reviewer max reasoning effort ------------
+
+    def test_build_argv_threads_the_supervisor_set_effort(self) -> None:
+        argv = rv.build_argv("codex", repo="/r", model="m", schema_path="/s",
+                             output_path="/o", reasoning_effort="xhigh")
+        self.assertIn("-c", argv)
+        self.assertIn("model_reasoning_effort=xhigh", argv)
+        # the config-override form is the LAST option before the "-" stdin marker
+        self.assertEqual(argv[-1], "-")
+        # and it survives the argv-safety layer (it is not a --effort flag)
+        self.assertFalse([a for a in argv if a.lower().startswith("--effort")
+                          or a.lower().startswith("--reasoning-effort")])
+
+    def test_build_argv_omits_effort_when_unset(self) -> None:
+        argv = rv.build_argv("codex", repo="/r", model="m", schema_path="/s",
+                             output_path="/o")
+        self.assertNotIn("model_reasoning_effort=", " ".join(argv))
+        self.assertNotIn("-c", argv)
+
+    def test_build_argv_rejects_an_effort_outside_the_enum(self) -> None:
+        # "ultra"/"max" are not in the codex enum; --strict-config would fail
+        # closed, so the supervisor refuses to pass them (R779).
+        with self.assertRaises(rv.ReviewError) as ctx:
+            rv.build_argv("codex", repo="/r", model="m", schema_path="/s",
+                          output_path="/o", reasoning_effort="ultra")
+        self.assertEqual(ctx.exception.code, "reasoning_effort_invalid")
+
+    def test_the_effort_key_exception_is_narrow(self) -> None:
+        # The ONLY admitted effort key is codex.review_reasoning_effort with a
+        # valid tier (R774); every other effort key stays forbidden.
+        good = SELECTION_TOML.replace(
+            'fallback_models = ["codex-fallback"]',
+            'fallback_models = ["codex-fallback"]\nreview_reasoning_effort = "xhigh"')
+        p = self.tmp / "good_selection.toml"
+        p.write_text(good, encoding="utf-8")
+        sel = load_model_selection(p)
+        self.assertEqual(sel.codex.reasoning_effort, "xhigh")
+        # an out-of-enum value on the permitted key fails closed
+        bad_value = good.replace('review_reasoning_effort = "xhigh"',
+                                 'review_reasoning_effort = "ultra"')
+        pbad = self.tmp / "bad_value_selection.toml"
+        pbad.write_text(bad_value, encoding="utf-8")
+        with self.assertRaises(ConfigError) as ctx:
+            load_model_selection(pbad)
+        self.assertEqual(ctx.exception.code, "effort_value_invalid")
+        # a DIFFERENT effort key is still permanently forbidden
+        other = SELECTION_TOML.replace(
+            'fallback_models = ["codex-fallback"]',
+            'fallback_models = ["codex-fallback"]\nreasoning_effort = "high"')
+        poth = self.tmp / "other_effort_selection.toml"
+        poth.write_text(other, encoding="utf-8")
+        with self.assertRaises(ConfigError) as ctx2:
+            load_model_selection(poth)
+        self.assertEqual(ctx2.exception.code, "effort_key_forbidden")
+
+    def test_the_effort_ladder_steps_down_from_the_max(self) -> None:
+        # Primary model: configured/default MAX then a step DOWN to medium (R777).
+        reviewer = self.reviewer()
+
+        class _Res:
+            fallback_engaged = False
+
+        self.assertEqual(reviewer._effort_ladder(_Res()), ("xhigh", "medium"))
+
+        class _Fb:
+            fallback_engaged = True
+
+        # A fallback MODEL runs at the low tier only.
+        self.assertEqual(reviewer._effort_ladder(_Fb()), ("medium",))
+
+    def test_a_fallback_model_review_runs_at_the_downgrade_tier(self) -> None:
+        # When the primary (Sol) is unavailable the low-end fallback model runs
+        # at medium and the fallback is surfaced to the owner (R777/R778).
+        outcome = self.reviewer(
+            availability=lambda m: m != "codex-primary").review(self.packet())
+        argv = outcome.decision.verified_facts[0]["argv"]
+        self.assertIn("model_reasoning_effort=medium", argv)
+        self.assertIn("model_fallback_engaged", outcome.notify_events)
+
+    def test_the_effort_tiers_match_the_documented_enum(self) -> None:
+        self.assertEqual(CODEX_REASONING_EFFORT_TIERS,
+                         ("minimal", "low", "medium", "high", "xhigh"))
 
     def test_the_runtime_selection_is_outside_the_controller_manifest(self) -> None:
         package = REPO / "tools" / "agent_supervisor"
