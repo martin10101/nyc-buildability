@@ -1,0 +1,30 @@
+{
+  "task_id": "M0-T146",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T146-codex-max-effort.md",
+  "submitted_at": "2026-09-04T19:56:07.510912+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T146-evidence-map.json",
+  "content_manifest_sha256": "6c35f7db2a0f698c4d1de78b16f2877bef9b62cf9a37560afdc684a8f985919a",
+  "reviewed_sha": "f07837817ec70e26d63458fcde174eb7854495ef",
+  "applicable_requirements": [
+    "D-024-R767",
+    "D-024-R768",
+    "D-024-R769",
+    "D-024-R770",
+    "D-024-R771",
+    "D-024-R772",
+    "D-024-R773",
+    "D-024-R774",
+    "D-024-R775",
+    "D-024-R776",
+    "D-024-R777",
+    "D-024-R778",
+    "D-024-R779",
+    "D-024-R780",
+    "D-024-R781",
+    "D-024-R782",
+    "D-024-R783"
+  ],
+  "updated_at": "2026-09-04T19:56:08.215020+00:00"
+}
