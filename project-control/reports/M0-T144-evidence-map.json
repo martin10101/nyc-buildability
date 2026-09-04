@@ -1,0 +1,24 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T144",
+  "requirements": {
+    "D-024-R761": [
+      "ONE bounded ledger task M0-T144 created (packet + G0 + claim at 2132371c); content commit 6aafd5e4 changes exactly CLAUDE.md and .claude/skills/deficit-convergence/SKILL.md (name-status: M + A, 2 files)."
+    ],
+    "D-024-R762": [
+      "Content commit touches no controller code, tests, model selection, GitHub config, or accepted evidence (name-status = the two policy paths only); no provider launch (controller runtime mrl/ unchanged); no campaign started."
+    ],
+    "D-024-R763": [
+      "CLAUDE.md gains exactly one inserted line - permanent principle 18 with the owner trigger verbatim (git diff -U0: 1 insertion)."
+    ],
+    "D-024-R764": [
+      "SKILL.md is narrowly triggered (description + Narrow trigger section), carries the 20 owner rules verbatim (numbered 1-20 exactly once), states non-applicability to ordinary isolated failures with proven cause, and prohibits repo-wide audits."
+    ],
+    "D-024-R765": [
+      "Frontmatter parses (repo skill format); live harness discovered /deficit-convergence immediately (listed invocable among 23 skill dirs); one independent policy review (G3, code-reviewer) recorded in the wave; single content commit 6aafd5e4."
+    ],
+    "D-024-R766": [
+      "Return section in the final session response + this report carry changed files, final trigger, validation results, and the commit SHA, ending with DEFICIT_CONVERGENCE_POLICY_INSTALLED."
+    ]
+  }
+}
