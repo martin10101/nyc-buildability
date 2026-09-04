@@ -1,0 +1,66 @@
+{
+  "task_id": "M0-T146",
+  "title": "Codex reviewer MAX reasoning effort (model_reasoning_effort=xhigh, config-driven)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "D-024 Amendment 52 (R767-R773): set the Codex reviewer gpt-5.6-sol to the maximum reasoning-effort tier. codex-cli 0.146.0 has no literal 'max'; documented enum minimal/low/medium/high/xhigh, so 'max' resolves to xhigh. Add a supervisor-owned config field (model_selection.toml [codex]) for the review reasoning effort; thread it into codex_reviewer.build_argv via -c model_reasoning_effort=<value> (NOT the hard-denied --effort/--reasoning-effort flags); validate the value against the enum and fail closed on unknown; safe fallback to high if a live review rejects xhigh (model-dependent, unverifiable offline). Positive/negative/mutation tests. Owner-authorized feature exception to the supervisor freeze; triggers R247 recertification at the new frozen identity; recert + controller reinstall + live xhigh confirmation are owner-gated (no session-launched live review).",
+  "business_reason": "Owner directive 2026-09-04: reviewer at max effort for higher-quality reviews (owner accepted the cost/latency tradeoff).",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/codex_reviewer.py (build_argv threads -c model_reasoning_effort=<value>)",
+    "tools/agent_supervisor/config.py (assert_no_effort_key narrowed to admit ONLY the supervisor-set Codex review reasoning-effort value)",
+    "tools/test_agent_supervisor_codex_reviewer.py (positive/negative/mutation rows for the effort threading)",
+    "project-control/reports/M0-T146-codex-max-effort.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/agent_supervisor/config.py",
+    "tools/test_agent_supervisor_codex_reviewer.py",
+    "project-control/reports/M0-T146-codex-max-effort.md"
+  ],
+  "forbidden_paths": [
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "path_free_governance": true,
+  "path_free_justification": "BLOCKED at creation by B-021 (D-004-R159 permanent effort prohibition vs D-024 Amendment 52). The deliverable edits are not written until the owner resolves B-021 and the task is claimed; allowed_paths pin the eventual write scope. Do NOT claim or implement until B-021 is resolved with an explicit D-004-R159 supersession.",
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "BLOCKED by B-021: implementing Amendment 52 requires superseding the permanent owner prohibition D-004-R159 (no effort key ever written / supervisor never passes effort). Owner-only decision. Do not claim until resolved."
+  ],
+  "blockers": [
+    "B-021"
+  ],
+  "created_at": "2026-09-04T17:59:55.896049+00:00",
+  "updated_at": "2026-09-04T17:59:56.083768+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-04T17:59:55.896049+00:00"
+}
