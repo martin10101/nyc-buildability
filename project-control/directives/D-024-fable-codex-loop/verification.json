@@ -12004,7 +12004,175 @@
       "verified_at": "2026-09-04T17:15:34+00:00",
       "verification_report": "project-control/reports/M0-T144-DCV-report.md",
       "note": "Amendment-51 part B; DCV 6/6 PASS at baae6bfe; gates G0/G2/G3 PASS."
+    },
+    {
+      "task_id": "M0-T146",
+      "directive_id": "D-024",
+      "producer": "orchestrator (codex max-effort producer)",
+      "verifier": "directive-compliance-verifier",
+      "applicable_requirement_ids": [
+        "D-024-R767",
+        "D-024-R768",
+        "D-024-R769",
+        "D-024-R770",
+        "D-024-R771",
+        "D-024-R772",
+        "D-024-R773",
+        "D-024-R774",
+        "D-024-R775",
+        "D-024-R776",
+        "D-024-R777",
+        "D-024-R778",
+        "D-024-R779",
+        "D-024-R780",
+        "D-024-R781",
+        "D-024-R782",
+        "D-024-R783"
+      ],
+      "requirements": [
+        {
+          "id": "D-024-R767",
+          "state": "PASS",
+          "evidence": [
+            "`codex_reviewer.py:70` `DEFAULT_REVIEW_REASONING_EFFORT=\"xhigh\"`; build_argv emits `model_reasoning_effort=xhigh`; test_no_user_effort_flag asserts it (argv)."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R768",
+          "state": "PASS",
+          "evidence": [
+            "build_argv diff: `argv += [\"-c\", f\"model_reasoning_effort={reasoning_effort}\"]` then `\"-\"`; test_build_argv_threads asserts `-c` present, no `--effort`."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R769",
+          "state": "PASS",
+          "evidence": [
+            "build_argv raises `reasoning_effort_invalid` off-enum; FORBIDDEN_REVIEWER_FLAGS check retained; test_build_argv_rejects_an_effort_outside_the_enum passes."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R770",
+          "state": "PASS",
+          "evidence": [
+            "Config-driven `ProviderSelection.reasoning_effort` (one-line) + `_effort_ladder` steps down; downgrade tier is `medium` per controlling Amendment 53 R777 (supersedes Am.52 \"high\")."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R771",
+          "state": "PASS",
+          "evidence": [
+            "Positive (threads xhigh, red-on-mutant if `argv+=` removed), no-FP (omit-when-unset), negative (enum reject \"ultra\") — all green in the 92-pass run."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R772",
+          "state": "UNVERIFIABLE",
+          "evidence": [
+            "Session parts PASS (commit cites \"D-024-R775 qualifying evidence\"; baseline spot-corroborated; no live review, no `mrl/`, not pushed) but the **R247 recert artifact / reinstall / live xhigh confirm ar"
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R773",
+          "state": "PASS",
+          "evidence": [
+            "Report §2 changed files, §1 max→xhigh+reasoning, §5 validation, §6 R247 consequence; commit SHA carried by the post-review session response (report predates its own hash) per task guidance."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R774",
+          "state": "PASS",
+          "evidence": [
+            "config.py `PERMITTED_EFFORT_KEY_PATHS={(\"codex\",\"review_reasoning_effort\")}`; other effort keys → `effort_key_forbidden`; supersession recorded append-only in source-053-amendment.md; B-021 resolved; "
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R775",
+          "state": "PASS",
+          "evidence": [
+            "build_argv emits `-c model_reasoning_effort=xhigh` for the primary; enum `(\"minimal\",\"low\",\"medium\",\"high\",\"xhigh\")`; test_the_effort_tiers_match_the_documented_enum passes."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R776",
+          "state": "PASS",
+          "evidence": [
+            "`review_model` + `reasoning_effort` are single runtime-config values (load_model_selection); swap is config-only, no code edit; report §4."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R777",
+          "state": "PASS",
+          "evidence": [
+            "`_effort_ladder` sol@xhigh→sol@medium; `resolve_model` gives sol→fallback-model@medium; test_a_fallback_model_review_runs_at_the_downgrade_tier asserts `model_reasoning_effort=medium`. NOTE: luna is n"
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R778",
+          "state": "PASS",
+          "evidence": [
+            "`model_fallback_engaged` (registered in policy.NOTIFY_EVENTS, surfaced via `notify_events→loop:2044`, asserted in test) covers sol→fallback; `codex_effort_downgraded` added on the tier step. Surface i"
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R779",
+          "state": "PASS",
+          "evidence": [
+            "Fail-closed twice: build_argv `reasoning_effort_invalid` + assert_no_effort_key `effort_value_invalid`; model-dependency caveat recorded (report §1/§6, owner-gated live confirm)."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R780",
+          "state": "UNVERIFIABLE",
+          "evidence": [
+            "Session parts PASS (owner-authorized exception cited; ≥1165-test baseline spot-corroborated 256/0-fail across 4 suites; NO live review launched; audit/mrl unchanged) but the **R247 recert / controller"
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R781",
+          "state": "PASS",
+          "evidence": [
+            "No `gpt-6-astra` switch in the diff; config-driven swap (R776) supports a later one-command switch; report §4."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R782",
+          "state": "PASS",
+          "evidence": [
+            "Report §2 files, §1 tier max→xhigh+reasoning, §4 ladder + notification surface, §6 R247 consequence; commit SHA via session response per task guidance."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        },
+        {
+          "id": "D-024-R783",
+          "state": "PASS",
+          "evidence": [
+            "claude `ProviderSelection` (config.py:575) carries NO reasoning_effort; PERMITTED_EFFORT_KEY_PATHS is codex-only; diff touches only the codex review effort path — Claude/Fable prohibition intact."
+          ],
+          "verified_at": "2026-09-04T20:06:24+00:00"
+        }
+      ],
+      "reviewed_manifest_sha256": "6c35f7db2a0f698c4d1de78b16f2877bef9b62cf9a37560afdc684a8f985919a",
+      "reviewed_sha": "f85631bcaa6d3e8518d8cd48f6b9c3ea85b0ffe3",
+      "verified_at": "2026-09-04T20:06:24+00:00",
+      "verification_report": "project-control/reports/M0-T146-DCV-report.md",
+      "note": "15 PASS + R772/R780 UNVERIFIABLE (owner-gated recert/reinstall/live-confirm); 0 FAIL. Code + G0/G2/G3/G5 PASS. Formal acceptance coupled to the owner-gated activation steps."
     }
   ],
-  "updated_at": "2026-09-04T17:15:34+00:00"
+  "updated_at": "2026-09-04T20:06:24+00:00"
 }
