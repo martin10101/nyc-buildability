@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T144",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T144-deficit-convergence-policy.md",
+  "reviewed_at": "2026-09-04T16:43:59.100338+00:00",
+  "content_manifest_sha256": "76a75c6f2eeb9ef96fd6a94566cb4e2eaf2b4ff40d7125f40e9fa2df9d4fffb9",
+  "reviewed_sha": "baae6bfe688c76c772cba677ccd0bb0145d76f7c",
+  "updated_at": "2026-09-04T16:44:00.582783+00:00"
+}
