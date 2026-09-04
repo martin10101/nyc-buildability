@@ -10,7 +10,7 @@
   "issued_at": "2026-08-24",
   "captured_at": "2026-08-24T12:05:17+00:00",
   "created_at": "2026-08-24T12:05:17+00:00",
-  "updated_at": "2026-09-03T03:02:54+00:00",
+  "updated_at": "2026-09-04T16:36:18+00:00",
   "channel": "owner_terminal_prompt_attached_directive_file",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -412,6 +412,14 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-03T03:00:05+00:00",
       "content_digest_sha256": "c100176ba9797413ce89de20603aa727ec3b669564dc874ebecb817a03d75849"
+    },
+    {
+      "file": "source-051-amendment.md",
+      "kind": "amendment",
+      "sequence": 51,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-04T16:36:18+00:00",
+      "content_digest_sha256": "eba96a03dd4450fb5e96a46183d9469fda67b6e44093d49fe8d570d9d9899744"
     }
   ],
   "amendments": [
@@ -463,7 +471,8 @@
     "source-047-amendment.md",
     "source-048-amendment.md",
     "source-049-amendment.md",
-    "source-050-amendment.md"
+    "source-050-amendment.md",
+    "source-051-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -1323,10 +1332,27 @@
     "D-024-R746",
     "D-024-R747",
     "D-024-R748",
-    "D-024-R749"
+    "D-024-R749",
+    "D-024-R750",
+    "D-024-R751",
+    "D-024-R752",
+    "D-024-R753",
+    "D-024-R754",
+    "D-024-R755",
+    "D-024-R756",
+    "D-024-R757",
+    "D-024-R758",
+    "D-024-R759",
+    "D-024-R760",
+    "D-024-R761",
+    "D-024-R762",
+    "D-024-R763",
+    "D-024-R764",
+    "D-024-R765",
+    "D-024-R766"
   ],
-  "requirements_id_digest_sha256": "82513a83d16cf697f2b088e471d44ee4ae0463311398621370c48b09051bd39f",
-  "requirements_content_digest_sha256": "3c71acaa713bb21d45d884d6465bebb9ed5bb32c561d5b12a7830eab79185533",
+  "requirements_id_digest_sha256": "ccda40aee0c65c1fd86bcf39da75ff5cd1387a77b4727f78319d44b2b9936dc8",
+  "requirements_content_digest_sha256": "cc4e448d770307768244d98f3540895d8bf2609d455c763df018c422b176750e",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1615,6 +1641,12 @@
       "actor": "orchestrator",
       "action": "amendment-50-classification-fix",
       "detail": "D-024-R739 classification corrected owner_decision->decision (validator c1 vocabulary); no id/text change."
+    },
+    {
+      "at": "2026-09-04T16:36:18+00:00",
+      "actor": "orchestrator",
+      "action": "amendment-51-captured",
+      "detail": "source-051-amendment.md captured verbatim; requirements D-024-R750..R760 (campaign continuation to persistent-local-loop proof, bound to M0-T109) and D-024-R761..R766 (deficit-convergence policy task, bound to M0-T144) appended."
     }
   ]
 }

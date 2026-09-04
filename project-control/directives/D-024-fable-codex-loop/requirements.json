@@ -2,9 +2,9 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-024",
   "version": 1,
-  "requirement_count": 749,
+  "requirement_count": 766,
   "producer": "orchestrator",
-  "updated_at": "2026-09-03T03:02:54+00:00",
+  "updated_at": "2026-09-04T16:36:18+00:00",
   "requirements": [
     {
       "id": "D-024-R001",
@@ -24605,6 +24605,601 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 50
+    },
+    {
+      "id": "D-024-R750",
+      "text": "Reconcile the expected completed anchor (M0-T107 accepted as task 156; reviewed commit 7d282011; acceptance 9dcbdd09; handoff seq 80 b8856e49; worker 4047c79c; correction 777ef5e4; both trees clean; next unit M0-T109; PR #241 untouched; R595/Option-A + R603-R605 owner-gated) READ-ONLY against live git, the ledger, campaign continuity, M0-T109's contract, and both worktrees; report all discrepancies together; never reset or alter the repository to match expected values.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "reconciliation section in the continuation records citing live command output",
+      "required_evidence": "session reconciliation + Amendment 51 context block",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R751",
+      "text": "Treat M0-T107 as permanently closed: do not reopen its accepted findings, rerun journey-m0t107-01, or rerun commissioning canaries without new contradictory evidence.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "no M0-T107 lifecycle changes and no journey/canary rerun dirs after this capture",
+      "required_evidence": "ledger + controller runtime mrl/ listing at verification",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R752",
+      "text": "Initial queue contains only M0-T109; execute it exactly under its existing task contract and D-024 requirements, through implementation, correction, independent review (packet gates G0/G2/G3/G4/G5), DCV, acceptance, and durable handoff.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "M0-T109 gate records + DCV + accept + handoff commit",
+      "required_evidence": "project-control/gates/M0-T109-*, verification entry, handoff seq",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R753",
+      "text": "Before beginning, state whether M0-T109 alone can genuinely prove all seven live-loop facts; if not, identify the minimum sequence of existing real tasks needed and continue through that sequence without inventing a new stabilization campaign.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "coverage statement recorded in the continuation record before the first proof run",
+      "required_evidence": "M0-T109 continuation/proof-plan record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R754",
+      "text": "Across the next two or three real operational tasks, obtain durable evidence for every remaining local-autonomy capability: (1) a real Codex REVISE automatically returns actionable feedback to Fable; (2) Fable corrects and Codex re-reviews without the owner typing 'continue'; (3) an accepted task automatically advances to the next ready task; (4) the controller selects that next task from durable repository state; (5) a controlled interruption preserves state; (6) the run resumes correctly from its checkpoint; (7) the foreground owner view accurately shows task, stage, worker model, Codex verdict, pending owner decision, and final result.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "per-fact durable artifacts (audit/journal/run dirs/terminal transcript) mapped in a proof matrix",
+      "required_evidence": "proof-matrix record in project-control/reports/",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R755",
+      "text": "AUTHORIZATION: continue automatically through all safe authorized local work - including the bounded supervised proof runs for the identified task sequence - without interrupting the owner for routine engineering decisions, ordinary revisions, test failures, independent reviews, task transitions, session rotation, or context compaction; use fresh model sessions and durable checkpoints; the PERSISTENT loop start remains owner-typed.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "continuation session acts under this row; persistent loop never started by the session",
+      "required_evidence": "run records show orchestrator-launched bounded runs only; no persistent-loop start",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R756",
+      "text": "Safety boundaries retained throughout: worker exactly claude-fable-5 (never 5.1); Codex reviewer gpt-5.6-sol unless an already-authorized repository rule says otherwise; restricted tool surface, fail-closed behavior, bounded subagent accounting, process cleanup, immutable identity checks, circuit breakers kept; read-only subagents allowed but ONE writer for overlapping repository state; never weaken a guard to obtain a pass; no installed-controller/external-config/model-selection/cwd-guard change unless an authorized task specifically requires it; no fixed overall wall-clock deadline on the persistent loop (per-turn limits, per-task controls, safety stops, rotation remain); no push, PR, merge, deploy, production credentials, or PR #241 touch; no R595/Option-A activation and no R603-R605 decision on the owner's behalf.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "run manifests/argv prove model+surface; git/remote state proves no push/PR; config diffs empty",
+      "required_evidence": "run artifacts + git history at verification",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R757",
+      "text": "On any defect: preserve the evidence, reproduce the exact failure, trace the complete causal path, repair one bounded causal cluster, and run the complete affected verification wave once; never use repeated live launches as serial defect discovery.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "defect records follow the convergence method; launch counts bounded",
+      "required_evidence": "any defect assessment reports produced",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R758",
+      "text": "Stop only for a genuine owner-only gate: credentials, payment, production, legal approval, material scope expansion, GitHub activation, an explicit policy choice, or a blocker that cannot safely be resolved inside the accepted directive.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "session stops map to the enumerated gates only",
+      "required_evidence": "continuation records",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R759",
+      "text": "When every required local-autonomy proof passes: do NOT start the persistent loop; return exactly READY_FOR_PERSISTENT_LOCAL_ACTIVATION plus (1) one exact owner-copyable PowerShell activation command generated from live accepted identities with no fixed overall wall-clock limit, (2) exact single commands for status/pause/resume/stop, (3) the exact supported method for sending Codex new owner guidance mid-run or an honest not-implemented statement, (4) a plain-English post-activation explanation, (5) the exact owner-authorization statement later required for R595/Option-A and R603-R605.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "final session response structure + durable return record",
+      "required_evidence": "committed continuation return record + session response",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R760",
+      "text": "If the proofs do not converge within the next two or three real tasks: stop with BLOCKED_FOR_PERSISTENT_ACTIVATION plus one consolidated blocker list and one architecture-level viability decision; never begin another indefinite repair campaign.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T109"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "terminal-outcome discipline in the final response",
+      "required_evidence": "session response / committed blocker record if taken",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T109"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R761",
+      "text": "Create ONE small bounded ledger task (M0-T144) adding the repeated-failure convergence policy, changing exactly two paths: CLAUDE.md and .claude/skills/deficit-convergence/SKILL.md.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "task packet + commit name-status exactly the two paths",
+      "required_evidence": "M0-T144 packet + content commit",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R762",
+      "text": "The policy task must NOT modify runtime controller code, tests unrelated to skill discovery, model selection, GitHub configuration, or existing accepted evidence; no provider launch, no stabilization campaign, no provider canary, no program-wide regression campaign.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "commit diff scope + absence of new run dirs",
+      "required_evidence": "git history + controller runtime listing",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R763",
+      "text": "CLAUDE.md gains ONLY the concise mandatory trigger, verbatim: 'For repeated failures, commissioning failures, external CLI/provider incompatibilities, or conflicting evidence, load /deficit-convergence before editing. Do not use live reruns as serial discovery. Produce either verified closure or one consolidated blocker report.'",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "CLAUDE.md diff = the trigger text placement only",
+      "required_evidence": "content commit diff",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R764",
+      "text": "The deficit-convergence skill is narrowly triggered, contains the owner's 20 enumerated rules, states it does not apply to an ordinary isolated failure with an already-proven cause, and prohibits turning every normal task into a repo-wide audit.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "SKILL.md content review against the verbatim 20-rule list",
+      "required_evidence": "independent policy review report",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R765",
+      "text": "Validate skill discovery and frontmatter; conduct ONE independent review of the policy; commit the two-path content change once.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "discovery/frontmatter validation output + one review report + single content commit",
+      "required_evidence": "validation output captured in the M0-T144 report; review report; commit",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
+    },
+    {
+      "id": "D-024-R766",
+      "text": "Return-report requirement (policy task): return the exact changed files, the final skill trigger, the validation result, and the commit SHA; that report section ends with DEFICIT_CONVERGENCE_POLICY_INSTALLED.",
+      "source_ref": "source-051-amendment.md#verbatim-owner-directive",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M0-T144"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-03"
+      },
+      "dependencies": [],
+      "required_harness": "final session response section + durable M0-T144 report",
+      "required_evidence": "M0-T144 report + session response",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "tasks": [
+          "M0-T144"
+        ],
+        "prs": [],
+        "commits": [],
+        "paths": []
+      },
+      "reviewed_sha": "",
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 51
     }
   ]
 }
