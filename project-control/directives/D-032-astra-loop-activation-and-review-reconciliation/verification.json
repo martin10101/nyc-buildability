@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-032",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-scope directive bound to the non-ledger sentinel D-032-BOOTSTRAP (D-029/D-031 pattern); rows accrue as the activation transaction and review reconciliation produce durable evidence.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

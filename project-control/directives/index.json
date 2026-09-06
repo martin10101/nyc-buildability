@@ -453,7 +453,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-031-session-rotation-extension-750k/manifest.json"
+  },
+  {
+   "directive_id": "D-032",
+   "slug": "astra-loop-activation-and-review-reconciliation",
+   "title": "Owner directive 2026-09-05: (1) one role gets Codex running as a FULL-TIME persistent loop - main Codex agent = GPT-6 Astra (gpt-6-astra) at reasoning effort HIGH, updating the codex CLI if needed, done ASAP with owner-waived redundant re-checks; fires the D-024-R781 astra trigger and narrowly super",
+   "status": "active",
+   "issued_at": "2026-09-05",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-032-astra-loop-activation-and-review-reconciliation/manifest.json"
   }
  ],
- "updated_at": "2026-08-27T17:06:11+00:00"
+ "updated_at": "2026-09-06T03:51:16+00:00"
 }

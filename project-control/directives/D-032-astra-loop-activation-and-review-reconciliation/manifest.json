@@ -1,0 +1,77 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-032",
+ "version": 1,
+ "slug": "astra-loop-activation-and-review-reconciliation",
+ "title": "Owner directive 2026-09-05: (1) one role gets Codex running as a FULL-TIME persistent loop - main Codex agent = GPT-6 Astra (gpt-6-astra) at reasoning effort HIGH, updating the codex CLI if needed, done ASAP with owner-waived redundant re-checks; fires the D-024-R781 astra trigger and narrowly supersedes the owner-typed-only execution of D-024 R754/R772/R780 for this activation. (2) Reconcile the 2026-09-05 ChatGPT repository+competitor review PDF with current local work, verify findings A-E against current code, update the delivery plan using existing tasks, and return one consolidated assessment. All holds (PR #241, R595/Option-A, R603-R605) preserved.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-05",
+ "captured_at": "2026-09-06T03:51:16+00:00",
+ "created_at": "2026-09-06T03:51:16+00:00",
+ "updated_at": "2026-09-06T04:00:33+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-06T03:51:16+00:00",
+   "content_digest_sha256": "a6e70f9926305f996d937849c8fe93a2cdce28ad0b6fd0ffe9701343d11652d0"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "execute the owner-authorized activation transaction (R247 recert at unchanged content, M0-T146 acceptance, source_binding re-pin, codex CLI update, controller reinstall, gpt-6-astra@high runtime config, live confirm, first live limited-auto loop launch) and the read-only review reconciliation + consolidated assessment",
+  "excluded": "push/PR/merge/deploy; PR #241; publishing legal rules; new agent frameworks; changing GitHub visibility; R595/Option-A activation; R603-R605 decisions; resetting to review snapshots; unsupported legal corrections",
+  "session": "2026-09-05 activation session"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-06T03:51:16+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "verbatim capture at frozen base origin/main d8b3899f / ctl24 HEAD db7d561f; fires D-024-R781 (gpt-6-astra switch) with owner-chosen effort HIGH; owner authorizes orchestrator-executed activation ('you just have to get this done and power up the loop for the run'), narrowly superseding owner-typed-only execution of D-024 R754/R772/R780 for this activation only; M0-T146/M0-T109 intentionally NOT bound (already-gated tasks; D-032 rows ride the D-032-BOOTSTRAP sentinel; their own D-024 rows govern their acceptance)"
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner terminal message 2026-09-05 ordering the full-time Codex loop with gpt-6-astra at high effort, CLI update if needed, ASAP with minimal re-checking, plus the review reconciliation."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-032-R001",
+  "D-032-R002",
+  "D-032-R003",
+  "D-032-R004",
+  "D-032-R005",
+  "D-032-R006",
+  "D-032-R007",
+  "D-032-R008",
+  "D-032-R009",
+  "D-032-R010",
+  "D-032-R011",
+  "D-032-R012",
+  "D-032-R013",
+  "D-032-R014",
+  "D-032-R015",
+  "D-032-R016",
+  "D-032-R017",
+  "D-032-R018"
+ ],
+ "requirements_content_digest_sha256": "f0d1a4f5ba7e4b3dc34c9238ef80e14bb17e92c8136172b8a4fda0c324206cb7"
+}

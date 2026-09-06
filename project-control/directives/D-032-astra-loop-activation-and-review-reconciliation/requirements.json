@@ -1,0 +1,613 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-032",
+ "version": 1,
+ "requirement_count": 18,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-06T04:00:33+00:00",
+ "requirements": [
+  {
+   "id": "D-032-R001",
+   "text": "Dedicate one role to getting Codex up and running as a FULL-TIME persistent loop ('no more monkey busnnes'): activate the D-024 persistent local limited-auto loop (legacy ClaudeRunner/CodexReviewer path, --mode limited-auto --owner-enable-bounded-auto) for real queued work, ending the one-shot/preparation-only posture.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Loop launched with a durable run-id over a committed packet queue; run artifacts + audit.jsonl show live cycles; exit/report captured.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R002",
+   "text": "The MAIN Codex agent for the loop uses the new Codex model GPT-6 Astra (exact id gpt-6-astra, released 2026-09-03). This is the owner firing the D-024-R781 trigger ('switch the main reviewer to gpt-6-astra'), subject to the model being available on the owner's codex account; the R776 config-driven swap is the mechanism (model_selection.toml review_model).",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "model_selection.toml review_model = gpt-6-astra; config.toml codex allowed_models includes gpt-6-astra; a live bounded call confirms the account serves the model.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R003",
+   "text": "Reasoning effort for the main Codex loop agent is set to HIGH (owner: 'it also has difrint setting like high extra high etc i want to set it at high'). Runtime config review_reasoning_effort = 'high' (valid tier in CODEX_REASONING_EFFORT_TIERS); the M0-T146 ladder then gives astra@high -> astra@medium -> fallback-model@medium.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R002"
+   ],
+   "required_harness": "",
+   "required_evidence": "model_selection.toml review_reasoning_effort = 'high'; reviewer argv carries -c model_reasoning_effort=high on the next live review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R004",
+   "text": "Check whether the installed codex CLI already has the new model; if the CLI needs an update to use it, update the CLI (owner-authorized: 'codex might need to be update in th ecli if yes update it'). Installed at directive time: codex-cli 0.146.0 (predates gpt-6-astra).",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "codex --version before/after; npm registry version chosen recorded; post-update sanity check that the reviewer contract (exec, -c model_reasoning_effort tiers, --output-schema) still holds.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R005",
+   "text": "Speed + execution authority: 'the goel is to get this done asap u dont have to run 5 millon checks you just have to get this done and power up the loop for the run'. For THIS activation only, the owner authorizes the orchestrator to execute the full activation transaction end-to-end - R247 recert at the unchanged certified content, M0-T146 acceptance, source_binding re-pin, controller reinstall (update_controller_from_candidate.ps1 backup+install), runtime model/effort config, live model confirmation, and the FIRST live limited-auto loop launch - narrowly superseding the owner-typed-only execution posture of D-024 R754/R772/R780 and the terminal report's BLOCKER-1 for this activation. Gates already PASS at unchanged content identity remain valid; no permanent CLAUDE.md gate is waived; redundant re-review waves are waived by the owner.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R002",
+    "D-032-R003",
+    "D-032-R004"
+   ],
+   "required_harness": "",
+   "required_evidence": "Transaction log in the return report: recert evidence, acceptance record, re-pin commit, install evidence json, live confirm output, loop launch record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R006",
+   "text": "Reconcile the ChatGPT repository+competitor review dated 2026-09-05 (C:/Users/MLFLL/Downloads/NYC-Buildability-Review-and-Roadmap-2026-09-05.pdf) with current local work and incorporate the valid findings into the existing plan.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Consolidated assessment (R017) grounded in the PDF findings and current-code verification.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R007",
+   "text": "Snapshot precedence: the review used published snapshots (main d8b3899f, PR #241 4174a3b2, published control 6f5d12a6) which may lag local progress. Live git, task records, verification evidence and campaign continuity take precedence. Do NOT reset anything to match these snapshots or recreate completed work.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "No reset/rollback commits; assessment cites live identities where they diverge from snapshots.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R008",
+   "text": "Establish the current state first: verify repository root, branch, HEAD, worktrees, active tasks, applicable MCP policy; read AGENTS.md, CLAUDE.md, docs/SESSION_HANDOFF.md, the session-handoff profile and its required current-state references; run the existing read-only project-control and campaign-continuity status checks; reconcile previously reported M0-T107 and M0-T144 acceptance; determine the actual current status of M0-T109 and the active campaign.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Status outputs + reconciliation stated in the return report before plan changes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R009",
+   "text": "Preserve all existing owner holds, including PR #241 (never merge) and the applicable R595/Option-A and R603-R605 restrictions (GitHub lifecycle stays owner-only). Apply the deficit-convergence skill before edits when its actual trigger applies.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "No hold-violating action in the session record; R595/Option-A not activated; R603-R605 not decided; PR #241 untouched.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R010",
+   "text": "Verify finding A (live spatial integration) against current code: whether real source-backed spatial data now reaches the DEFAULT runtime path (services/api/app/api/v1/rule_evaluation.py default spatial provider; services/api/app/rules/integration.py professional-review outcome; scenario pilot dependency; apps/web/e2e/harness/fixture_api.py fixture injection). Fixture success alone does not establish live integration.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R006"
+   ],
+   "required_harness": "",
+   "required_evidence": "Current file/line + commit evidence with a confirmed/already-fixed/partly-resolved/contradicted/unverified classification.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R011",
+   "text": "Verify finding B (persistent customer workflow): production authentication/organization boundary, savable confirmations, database migrations, production review storage - establish what is now implemented, connected and proven.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R006"
+   ],
+   "required_harness": "",
+   "required_evidence": "Current file/line + commit evidence with classification.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R012",
+   "text": "Verify finding C (legal evidence and coverage): seven draft rule files, six legal snapshots without raw-HTML verification, only residential FAR integrated. Specifically investigate ZR 23-21: stored summary presents the single-dwelling-unit 0.60 equivalent-FAR provision without its table scope while the official HTML attached footnote 1 to the 0.75 R1/R2/R3 grouping. Preserve the original table and footnote relationships and prepare this for qualified review. Do NOT assume this proves the emitted R5 FAR wrong; NO unsupported legal correction.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R006"
+   ],
+   "required_harness": "",
+   "required_evidence": "Current evidence classification + a prepared qualified-review item preserving table/footnote relationships; no legal rule content changed by AI.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R013",
+   "text": "Verify finding D (document isolation): services/api/app/documents/isolation.py checked kernel capability presence while the reviewed extraction pipeline called the decoder directly. Determine where actual worker restrictions are installed and self-verified; capability detection is not proof of applied isolation.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R006"
+   ],
+   "required_harness": "",
+   "required_evidence": "Current file/line + commit evidence with classification.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R014",
+   "text": "Verify finding E (data and operations): (1) PLUTO live 26v2 vs reviewed fixtures 26v1 - check current source versions/compatibility; (2) Python audit failed on tooling pip 26.1.2 with a 26.2 update already on the control branch - reuse existing fixes; (3) web audit failed on an npm advisory-service 503 - distinguish vulnerabilities from unavailable audit services WITHOUT weakening gates; (4) check the browser 12-second timeout against backend retries; (5) GitHub reports public visibility despite 'private' descriptions - report intended-versus-actual; do NOT change visibility automatically.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R006"
+   ],
+   "required_harness": "",
+   "required_evidence": "Current evidence + classification per sub-item; no gate weakened; no visibility change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R015",
+   "text": "Update the delivery plan using EXISTING tasks: preserve both goals (dependable autonomous Codex loop AND useful buildability product); identify which remaining controller work actually blocks product delivery; map confirmed gaps to existing tasks BEFORE proposing new ones; sequence = real source integration and durable analysis revisions -> authentication/storage/review workflow -> exact legal evidence, applicability closure, qualified approval -> constrained building options, saved comparisons, evidence reports -> professional benchmarks and a paid customer pilot. The existing R5 pilot may be a bounded delivery phase while preserving the all-five-borough mission. The suggested 30/60/90-day schedule is provisional, not a commitment.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R010",
+    "D-032-R011",
+    "D-032-R012",
+    "D-032-R013",
+    "D-032-R014"
+   ],
+   "required_harness": "",
+   "required_evidence": "Dependency-ordered plan mapped to existing task ids in the return report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R016",
+   "text": "Differentiation: competitor research found Envelope, PropertyScout and others already advertise citations, massing or expert assistance. Test differentiation through reproducible results, explicit coverage, useful options and reduced reviewer effort.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R015"
+   ],
+   "required_harness": "",
+   "required_evidence": "Differentiation analysis in the return report tied to those four tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R017",
+   "text": "Return ONE consolidated assessment: findings classified as confirmed / already fixed / partly resolved / contradicted / unverified with current file/line and commit evidence; a dependency-ordered plan mapped to existing tasks; the next concrete deliverable and its acceptance criteria; genuine owner decisions and external dependencies, grouped together.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [
+    "D-032-R015",
+    "D-032-R016"
+   ],
+   "required_harness": "",
+   "required_evidence": "The consolidated assessment delivered to the owner (and preserved as a report artifact).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-032-R018",
+   "text": "Prohibitions: continue work already authorized by the current campaign; prepare concrete proposals before requesting any new authorization; the review is NOT permission to bypass gates, merge PR #241, deploy, publish legal rules, install a new agent framework, or abandon the active campaign.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-032-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-05"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "Session record shows none of the prohibited actions.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
