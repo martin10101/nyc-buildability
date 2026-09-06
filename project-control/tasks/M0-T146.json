@@ -45,14 +45,14 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Modifies the FROZEN supervisor (owner-authorized feature exception, cite D-024-R775); triggers R247 recertification + the >=1165-test freeze baseline. Live xhigh/luna acceptance is model-dependent (owner-gated live confirm). B-021 RESOLVED via Amendment 53."
   ],
   "blockers": [],
   "created_at": "2026-09-04T17:59:55.896049+00:00",
-  "updated_at": "2026-09-04T20:08:21.776559+00:00",
+  "updated_at": "2026-09-06T10:12:53.399126+00:00",
   "directive_refs": [
     {
       "directive_id": "D-024",
@@ -70,5 +70,7 @@
       "status": "awaiting_gate",
       "message": "CODE COMPLETE + ALL GATES PASS (G0/G2/G3/G5) + DCV 15 PASS/2 UNVERIFIABLE/0 FAIL. Codex reviewer max reasoning effort = xhigh (verified ceiling; enum-validated fail-closed), narrow D-004-R159 supersession for codex.review_reasoning_effort only (user-injected --effort flags still hard-denied; Claude effort untouched), fallback ladder sol@xhigh->sol@medium->fallback@medium with codex_effort_downgraded + model_fallback_engaged notifies, config-driven model+effort for one-command swap. Content 431018cf; reviewer suite 92 pass; freeze baseline 3633 pass/2 skip/0 fail; ruff clean; modularity no-failure; G5 no bypass across 15 config + 7 argv probes. FORMAL ACCEPTANCE COUPLED to the two owner-gated rows R772/R780 (UNVERIFIABLE): the R247 recertification at the new frozen identity, the controller reinstall (to pick up the code + runtime config review_reasoning_effort=xhigh + add gpt-5.6-luna to the allowlist), and the live confirmation that gpt-5.6-sol accepts xhigh. accept() dry-run blocks on exactly R772+R780 (correct). No live review launched; no push; controller unchanged. Owner runs the recert+reinstall+live-confirm to activate and unblock acceptance."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-06T10:12:53.399126+00:00"
 }

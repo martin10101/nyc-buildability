@@ -12295,10 +12295,10 @@
     }
    ],
    "reviewed_manifest_sha256": "6c35f7db2a0f698c4d1de78b16f2877bef9b62cf9a37560afdc684a8f985919a",
-   "reviewed_sha": "47ee3a04b46d02bed6af71c849b0793491270aa5",
+   "reviewed_sha": "0123ba3a385064040be5d1b53d4fa49bf7fbddd4",
    "verified_at": "2026-09-06T10:20:00+00:00",
    "verification_report": "project-control/reports/M0-T146-DCV-report.md",
-   "note": "17 PASS, 0 UNVERIFIABLE, 0 FAIL. Restamped at HEAD 47ee3a04; M0-T146 content byte-identical at HEAD (identity 6c35f7db = existing reviewed_manifest_sha256; three code blobs a489a45c/ce0719ff/df442258 and report 32260976 unchanged). R772 and R780 flip from UNVERIFIABLE to PASS: the owner-gated recert (3633 pass/0 fail at e0dd4a3a), controller reinstall (200-file byte-identical install from e0dd4a3a, comparison+manifest PASS), and live model confirm (gpt-6-astra@high live in model_selection.toml and audit) are now verified against primary artifacts under the D-024 amendment-54 narrow supersession. Live effort is owner-narrowed to HIGH at the config layer; the M0-T146 CODE xhigh-when-unset default is unchanged (R767 PASS)."
+   "note": "17 PASS, 0 UNVERIFIABLE, 0 FAIL. Restamped at HEAD 47ee3a04; M0-T146 content byte-identical at HEAD (identity 6c35f7db = existing reviewed_manifest_sha256; three code blobs a489a45c/ce0719ff/df442258 and report 32260976 unchanged). R772 and R780 flip from UNVERIFIABLE to PASS: the owner-gated recert (3633 pass/0 fail at e0dd4a3a), controller reinstall (200-file byte-identical install from e0dd4a3a, comparison+manifest PASS), and live model confirm (gpt-6-astra@high live in model_selection.toml and audit) are now verified against primary artifacts under the D-024 amendment-54 narrow supersession. Live effort is owner-narrowed to HIGH at the config layer; the M0-T146 CODE xhigh-when-unset default is unchanged (R767 PASS). Mechanical accept-time restamp to HEAD 0123ba3a (control-plane-only commit; material identity 6c35f7db unchanged)."
   }
  ],
  "updated_at": "2026-09-04T20:06:24+00:00"
