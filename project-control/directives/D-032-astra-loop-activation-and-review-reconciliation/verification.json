@@ -3,5 +3,19 @@
  "directive_id": "D-032",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-scope directive bound to the non-ledger sentinel D-032-BOOTSTRAP (D-029/D-031 pattern); rows accrue as the activation transaction and review reconciliation produce durable evidence.",
  "producer": "orchestrator",
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-032",
+   "task_id": "M0-T147",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "4715ad35505eac37a7b2296bbd16a240b9f23d91",
+   "reviewed_manifest_sha256": "50da1cf1868cf5223b61060f24914ec41692c6cb678d35154c0dba88f5dbe56c",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-06T16:35:00+00:00",
+   "note": "EMPTY-SET verification. M0-T147 cites D-032:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-032 requirements for this packet: all 18 D-032 requirements are applicability-scoped to task_ids [D-032-BOOTSTRAP] (verified 18/18; none with an empty task_ids wildcard), so none match task_id M0-T147. No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[] -- no OTHER active directive's requirement becomes applicable via M0-T147's allowed_paths. Row exists because accept() fail-closes when a cited directive has no task_verification row (mirrors the D-001/M0-T033 and D-001/M0-T145 empty-set precedents). Verifier != producer. Task substance: review-contract convergence -- packet-based verification for the no-exec codex-cli 0.153.4 sandbox (qualifying evidence = provider CLI drift per supervisor-freeze section 2; deficit-convergence closure of the 4x-reproduced ROTATE_SESSION review-environment failure). Gate evidence independently reproduced: G0 PASS; G3 PASS (round 1 at 3360cceb, delta PASS at dee758f4); G5 PASS (round 1 with required correction M-1 applied, delta PASS at dee758f4, no outstanding blocking corrections); full freeze suite 3635 passed / 2 skipped / 0 failed at dee758f4. Reviewed content identity = M0-T147 allowed_paths = 50da1cf1..., byte-identical between dee758f4 and the stamped HEAD. Mechanical accept-time restamp convention applies (identity stays 50da1cf1 while allowed_paths blobs are unchanged; fail-closed otherwise).",
+   "requirements": []
+  }
+ ]
 }
