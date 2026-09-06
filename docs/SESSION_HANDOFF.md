@@ -1,86 +1,77 @@
 # Session Handoff - NYC Buildability (current-only)
 
-**Authoritative state:** the `project-control/` ledger + git + CI. On resume, read it live -
+**Authoritative state:** the `project-control/` ledger + git + CI. On resume read it live -
 `python tools/project_control.py status` and `python -m tools.agent_supervisor.campaign_continuity
---status` - and reconcile against the remote: **origin may have advanced; do not trust any SHA here
-as still-current.** Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY:
-`context-budget` CI fails > ~4000 tok.
+--status` - and reconcile against the remote; no SHA here is guaranteed current. Orientation only;
+rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 83: Codex reviewer MAX effort built & reviewed (M0-T146); ONE owner decision pending (start the R247 recert+reinstall transaction now, or hold)
+## Handoff - seq 84: LOOP WENT LIVE under D-032; M0-T146 + M0-T147 ACCEPTED (159); closure run persistent-local-04 IN FLIGHT
 
-1. **Generated:** 2026-09-04 (UTC) via `/session-handoff` (reason: none given). Session did:
-   Amendments 48-53; M0-T107 accepted; M0-T144 accepted; M0-T109 + M0-T146 built+gated; B-021
-   raised+resolved.
-2. **Identity:** root/worktree `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `candidate/D-024-mrl-option-b` (LOCAL ONLY, no upstream), HEAD `2ad898c3`, origin
-   `github.com/martin10101/nyc-buildability` (PUBLIC), tree **CLEAN**. Installed controller =
-   frozen accepted `3f4cee86` (pinned in `tools/controller_update/source_binding.json`). Nothing
-   pushed; PR #241 untouched. No sub-agents running (all G3/G5/DCV reviewers returned).
-3. **Completed this session (durable):**
-   - **M0-T107 ACCEPTED** (156th, `9dcbdd09`): plugin-portability plan, after the FIRST successful
-     supervised journey (journey-m0t107-01: Fable COMPLETED + live Codex REVISE).
-   - **M0-T144 ACCEPTED** (157th, `892c9fe1`): deficit-convergence policy (CLAUDE.md principle 18
-     + `/deficit-convergence` skill).
-   - **M0-T109** (guard hardening) code + gates G0/G2/G3/G4/G5 + DCV done (content `7f075e37`);
-     **acceptance BLOCKED by D-024-R754** (owner-gated first live limited-auto run). awaiting_gate@95.
-     G5 found a pre-existing braced-var guard residual -> backlog **M0-T145**.
-   - **M0-T146** (Codex reviewer MAX effort) code + gates G0/G2/G3/G5 + DCV (15 PASS / 2
-     UNVERIFIABLE / 0 FAIL) done (content **`431018cf`**). Sets Codex to **xhigh** (`-c
-     model_reasoning_effort=xhigh`; verified ceiling - no literal "max" in codex-cli 0.146.0);
-     narrow D-004-R159 supersession for `codex.review_reasoning_effort` ONLY (user `--effort`
-     flags still hard-denied; Claude effort untouched, R783); fallback ladder
-     `sol@xhigh->sol@medium->gpt-5.6-luna@medium` + owner notifies; config-driven model+effort for
-     one-command swap. Reviewer suite 92 pass; **freeze baseline 3633/2/0**; ruff clean. B-021
-     (D-004-R159 conflict) raised then RESOLVED by owner ("go ahead"). awaiting_gate@95.
-   - **Persistent-loop terminal = BLOCKED_FOR_PERSISTENT_ACTIVATION**
-     (`project-control/reports/D-024-persistent-activation-terminal.md`): architecture VIABLE; the
-     one gate is the owner-typed FIRST live limited-auto autonomous run.
-4. **THE PENDING OWNER DECISION (exact next action):** the owner asked to activate M0-T146's
-   max-effort code live. This requires the full **R247 recertification transaction** (NOT a
-   2-line script), because the reinstall script installs only the *pinned certified* candidate
-   (`source_binding.json`, currently old `3f4cee86`). Ordered steps: **[orchestrator]** (a) R247
-   recert the M0-T146 candidate (suite already 3633/0-fail; + verify-controller + doctor + a fresh
-   G3/G4/DCV recert wave), (b) accept M0-T146 (resolves the R772/R780 coupling: recert = the
-   certification; reinstall+live are post-accept), (c) re-pin `source_binding.json` to the new
-   certified commit; **[owner]** (d) run `tools/controller_update/update_controller_from_candidate.ps1`
-   `-Phase backup` then `-Phase install`, (e) set `review_reasoning_effort = "xhigh"` in
-   `C:\SupervisorController\model_selection.toml` + add `gpt-5.6-luna` to `allowed_models` in
-   `config.toml`, (f) live-confirm Sol accepts xhigh. **I paused before (a)-(c)** (safety-critical
-   controller transaction; not to be rushed at a long session's tail) and asked the owner: **start
-   the recert transaction now as a focused run, or hold for a fresh session?** That answer is the
-   resume point. Mid-run owner<->Codex talk ALREADY works via a 2nd terminal:
-   `python -m tools.agent_supervisor codex new "..." --codex-executable <> --config <> --model-selection <>`.
-5. **Ledger:** accepted=**157** / awaiting_gate=11 (incl M0-T109, M0-T146) / backlog=18 (incl
-   M0-T145) / blocked=2 / rework=1 (M0-T133, re-gateable - M0-T136 resolved its modularity ceiling,
-   its checkpoint code already installed+live-proven) / in_progress=1. campaign_continuity rc 0.
-   Validator exit 0 at HEAD.
-6. **Standing restrictions (in force):** exact `claude-fable-5` worker + `gpt-5.6-sol` reviewer; no
-   push/PR/merge/deploy; PR #241 never; no controller/model-selection/cwd-guard edit unless an
-   authorized task requires it (M0-T146 is such a task, owner-authorized); supervisor commits cite
-   `D-024-R###`; no `name:` on producer spawns; never resume a TaskStop-killed producer; no bare
-   `git stash`; thin client; Bootstrap Gate 0 before writes; never execute owner-run scripts; the
-   first live limited-auto run + R595/Option-A + R603-R605 stay owner-only; expansion-planning hold.
-7. **Authoritative files:** `project-control/tasks/M0-T146.json` + `M0-T109.json`;
-   `project-control/reports/M0-T146-codex-max-effort.md` (+ `-G3/-G5/-DCV`),
-   `M0-T146-evidence-map.json`, `D-024-persistent-activation-terminal.md`,
-   `D-024-persistent-loop-proof-plan.md`; `project-control/directives/D-024-fable-codex-loop/`
-   (source-049..053-amendment.md, requirements.json, verification.json);
-   `project-control/blockers/B-021-*.json`; `tools/controller_update/source_binding.json`.
-   Stop conditions: owner-only gates (credentials/payment/legal/GitHub/live-run); ledger-vs-prose
-   contradiction (ledger wins).
+1. **Generated:** 2026-09-06 (UTC), session_01WBbzN5Rx17CBSjky5uKmnY, `/session-handoff` (no
+   reason given). Owner directive **D-032** captured (astra loop activation + review-PDF
+   reconciliation) + D-024 Amendment 54 (fires R781; narrow supersession of owner-typed-only
+   activation).
+2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
+   `candidate/D-024-mrl-option-b` (LOCAL, no upstream), HEAD `ea13931e`, origin
+   github.com/martin10101/nyc-buildability (PUBLIC), tree clean EXCEPT untracked
+   `.claude/agent-memory/qa-engineer/*` (reviewer self-memory; deliberately uncommitted).
+   Installed controller = certified `38773996` (MANIFEST VERIFIED; source_binding pinned).
+   codex-cli **0.153.4**; reviewer **gpt-6-astra@high** (model_selection.toml); worker
+   claude-fable-5 (settings xhigh).
+3. **Accepted this session:** **M0-T146** (158th; astra/effort code; DCV 17/17 at restamped HEAD)
+   and **M0-T147** (159th; deficit-convergence closure: codex 0.153.4 rejects ALL reviewer
+   execution -> packet-based review contract + `diff_content` git fact (`--no-ext-diff
+   --no-textconv`) + packet-wide injection immunization; G3+G5 two-round PASS at `dee758f4`;
+   suite 3635/2/0). Live-proven: limited-auto dispatch, valid checkpoints, live astra reviews,
+   auto-REVISE forward, 400k rotation, crash recovery.
+4. **IN FLIGHT (do not duplicate):** closure run **persistent-local-04** on M2-T020 (live spatial
+   provider; implementation COMPLETE in `wt-m2t020`, uncommitted) - background shell b822vs48a
+   (29-min cap). Expected: first content verdict under the new contract. On shell-kill/stop:
+   reconcile via `tools/controller_update/reconcile_dispatch_intent.py` if AMBIGUOUS_EFFECT,
+   answer `pending-approvals`, `clear-recovery`, relaunch SAME run-id with the start command in
+   `project-control/reports/D-032-activation-transaction.md` §3 shape (task-packet M2-T020,
+   wt-m2t020, branch task/M2-T020-live-spatial-provider, queue
+   `project-control/campaigns/D-032-product-queue-v2.json`, unit-timeout 1500, prompt embeds
+   starting_sha `09524d1830c32284f5add8f293d0db39c5a8c22e` verbatim - workers must never run git
+   for it). Budget breaker `consecutive_invalid_outputs=3` is durable per run-id -> on
+   budget_exhausted use a FRESH run-id.
+5. **Parked (dependency-orderd):** M0-T109 + M0-T145 acceptances blocked on D-024-R754 (live run
+   must prove fact 3 accept->auto-advance + fact 7 foreground view; DCV verdict recorded). M0-T145
+   fix is COMPLETE + triple-PASS on branch `bac01a56` (wt-m0t145) - **do NOT merge into candidate
+   until M0-T109 accepts** (merge moves M0-T109's content identity d597a4e2). M0-T025 revision
+   done in wt-m0t025 (uncommitted), needs a converging review cycle.
+6. **Review-PDF reconciliation DONE:** `project-control/reports/D-032-review-reconciliation.md`
+   (findings A-E classified w/ file:line; plan mapped to tasks; M2-T020 created+claimed as product
+   step 1). Owner queue: B-001 credentials, qualified zoning reviewer, R5 scope, PR #241 hold.
+7. **Follow-ups (tracked, unworked):** MRL sibling REVIEW_INSTRUCTIONS same false-exec premise
+   (G3 MEDIUM, path can't emit ROTATE_SESSION); G5 LOW-1 process.py capture-cap; standing-grant
+   ingestion unwired (hook-class edits never auto-approve); dispatch-intent + audit-fork operator
+   CLI verbs missing (scripts in tools/controller_update/ substitute); queue JSONs in campaigns/
+   trip continuity shape-validation (relocate AFTER run-04 ends; live run reads the v2 path);
+   audit chain forked evidence archived `audit.jsonl.forked-evidence-20260906-155339`; E1 PLUTO
+   26v2 fixture refresh; E5 stale-docs/private-premise re-exam; 5 reviewer agents still
+   opus-4.8/xhigh (owner may order Fable revert).
+8. **Standing restrictions:** no push/PR/merge/deploy; PR #241 never; R595/Option-A + R603-R605
+   owner-only; expansion hold; Bootstrap Gate 0; supervisor commits cite D-024-R###/qualifying
+   evidence; no bare git stash; never resume TaskStop-killed producers; thin client.
+9. **Authoritative files:** `project-control/tasks/{M0-T147,M2-T020,M0-T145,M0-T109}.json`;
+   `directives/D-032-*/` (source-001/002 + verification) + D-024 source-054;
+   `reports/D-032-activation-transaction.md`, `D-032-review-reconciliation.md`,
+   `M0-T147-review-contract-convergence.md` (+G3/G5), `M0-T145-guard-brace-residual.md` (+G3/G4/G5);
+   `tools/controller_update/source_binding.json`. Ledger wins over this prose.
 
 ## COPY INTO THE NEW SESSION
 
 Resume from durable evidence only. Confirm `git rev-parse --show-toplevel` =
 `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`, Bootstrap
-Gate 0 (cwd is that root, `/mcp` empty). Read `CLAUDE.md`, this file, and the M0-T146 report +
-`D-024-persistent-activation-terminal.md`; run `python tools/project_control.py status` (ledger
-wins). This session BUILT the Codex-reviewer max-effort change (M0-T146: code + G0/G2/G3/G5 + DCV
-PASS at content 431018cf; freeze baseline 3633/0-fail); B-021 resolved. **The exact next action is
-the owner's answer to a pending question: whether to start the R247 recertification+reinstall
-transaction now (orchestrator steps a-c in handoff item 4) so the max-effort code goes live, or
-hold it for a focused fresh session.** Do NOT: push/PR/merge, execute owner scripts, launch the
-first live limited-auto run, edit the controller/model-selection/cwd-guard outside an authorized
-task, re-pin source_binding.json to an unrecertified commit, or activate R595/Option-A / decide
-R603-R605. M0-T109 + M0-T146 acceptances are each coupled to their owner-gated rows (R754;
-R772/R780). Report READY TO RESUME or BLOCKED; stop for owner-only gates.
+Gate 0 (cwd = root, `/mcp` empty). Read `CLAUDE.md`, this file, `D-032-activation-transaction.md`,
+`D-032-review-reconciliation.md`; run `python tools/project_control.py status` (ledger wins).
+The Codex loop is LIVE under D-032 (owner-directed, classifier-permitting: allow rule
+`Bash(python -m tools.agent_supervisor *)` exists). EXACT NEXT ACTION: check run
+persistent-local-04's outcome (audit at
+`%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\audit.jsonl`; handoff item 4 has the full
+relaunch/recovery drill). On the first APPROVE + advancement: accept M2-T020 via the standard
+gate wave, then re-attest D-024-R754 (facts 3/7) -> accept M0-T109 -> merge `bac01a56` -> accept
+M0-T145. Then feed the next product task (auth/persistence chain, owner-gated on B-001). Do NOT:
+push/merge/PR #241, launch parallel supervisors (single-instance lock), rerun budget-exhausted
+run-ids, or bypass any gate. Report READY TO RESUME or BLOCKED.
