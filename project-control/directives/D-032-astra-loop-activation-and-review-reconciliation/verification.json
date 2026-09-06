@@ -8,7 +8,7 @@
    "directive_id": "D-032",
    "task_id": "M0-T147",
    "applicable_requirement_ids": [],
-   "reviewed_sha": "4715ad35505eac37a7b2296bbd16a240b9f23d91",
+   "reviewed_sha": "23cac3a2098a75d2bb697fcaf9f906cf866646c9",
    "reviewed_manifest_sha256": "50da1cf1868cf5223b61060f24914ec41692c6cb678d35154c0dba88f5dbe56c",
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
