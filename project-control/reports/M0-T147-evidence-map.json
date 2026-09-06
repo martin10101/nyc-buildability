@@ -1,0 +1,6 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T147",
+  "note": "Cited directive D-032 (ALL): the registry's applicable set for M0-T147 is EMPTY (all 18 D-032 requirements are sentinel-bound to task_ids ['D-032-BOOTSTRAP']); nothing is selectively omitted. Substantive obligations come from the packet objective (deficit-convergence closure of the reviewer environment-failure loop) and the supervisor-freeze qualifying-evidence duty (provider CLI drift, cited in packet + commit). Evidence: M0-T147-review-contract-convergence.md (probe + cluster + G2 self-checks + G5 corrections record), M0-T147-G3-report.md and M0-T147-G5-report.md (both PASS at reviewed identity dee758f4c455b72d1faf4bbac42a4b3980ed37fc), full freeze suite 3635 passed/2 skipped/0 failed at dee758f4.",
+  "requirements": {}
+}
