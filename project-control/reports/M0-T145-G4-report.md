@@ -1,8 +1,10 @@
-# M0-T145 G4 report (verbatim reviewer return)
+# M0-T145 G4 reports (verbatim reviewer returns, both rounds)
 
 Saved VERBATIM by the orchestrator from the qa-engineer agent-return channel (2026-09-06;
 transport entity-decoding only: `&gt;` → `>`, `&amp;` → `&`). Reviewer: independent
-qa-engineer (read-only). Reviewed SHA: 0671edd5a0be16848eaa2b7e7c80e7c50511b998.
+qa-engineer (read-only). ROUND 1 reviewed SHA 0671edd5 → PASS, later WITHDRAWN by the
+reviewer itself after the G3 regression finding; ROUND 2 (delta re-attestation, appended at
+the end of this file) reviewed SHA bac01a56 → **PASS** (authoritative).
 
 ---
 
@@ -113,3 +115,78 @@ None.
 ## Reviewer conclusion
 
 **PASS.** The braced-variable assignment-fronted nested-shell residual is genuinely closed against the real guard at frozen SHA `0671edd5`: the documented pytest command exits 0; my 27 independent probes and 3 independently reconstructed mutant teeth all match expectation; the Bash pack is behaviorally unchanged (source-gated and probe-confirmed); no pre-existing denial is lost; the guard docstring is honest about both the closure and the remaining unsafe-charset-name residual; modularity and ruff are clean. The authoritative per-requirement D-001 verdict is delegated to the separate directive-compliance-verifier gate. The orchestrator should record this G4 result; no rework required from this gate.
+
+---
+
+## ROUND 2 (delta re-attestation after G3 rework, reviewed bac01a56) — PASS
+
+# Gate Report (Delta Re-Attestation)
+
+- Gate ID: M0-T145-G4 (delta re-attestation)
+- Task ID: M0-T145
+- Reviewer: qa-engineer (independent G4; read-only)
+- Producer: supervised-loop-fable-worker; G3-rework apply by the orchestrator
+- Result: **PASS** (at the new identity `bac01a56`)
+- Prior reviewed identity `0671edd5`: **superseded** — my earlier PASS there is **withdrawn** (it carried a real regression I did not probe for; see below)
+- Clean environment/worktree used: yes — worktree `C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t145`, branch `task/M0-T145-brace-guard`. Loose ref `.git/refs/heads/task/M0-T145-brace-guard` = `bac01a561e20398d3606bd770703f8311a89e029`; reflog confirms `29f9ee7b → 0671edd5 → bac01a56 (G3 rework: assignment-scoped debrace)`. Python 3.11.9. No `project_control.py`/`git`/`gh` invoked.
+
+## What changed and why my prior PASS was wrong
+
+The G3 finding is correct and reproduces. At `0671edd5`, `_ps_normalize` debraced `${x}` → `$x` **globally**, before `_split_command_segments`. Because `{`/`}` are in `_SEGMENT_CHARS` (they double as segment separators), the global debrace deleted the braces and **glued** the following command token: `${x}powershell -enc …` → `$xpowershell -enc …` (a single non-shell token), which the guard then ALLOWED — whereas the PARENT guard split at the braces and DENIED it. Six brace-glued forms regressed. My earlier 27-probe set covered assignment forms, reads, residuals, and parity, but did **not** include the brace-glued-no-assignment vector, so I missed it. Recorded the review-method lesson to my agent memory.
+
+The rework (`bac01a56`) scopes the debrace to assignment position: `_PS_BRACED_VAR = re.compile(r"\$\{([A-Za-z0-9_:.\-]+)\}(?=\s*=(?!=))")`. The lookahead rewrites a braced name only when immediately followed by `=` (optionally spaced; not `==`), so every non-assignment `${...}` keeps its braces and its separator role — restoring the parent's denials for glued commands while retaining the assignment-fronted closure.
+
+## Steps independently executed (at `bac01a56`)
+
+1. Documented command: `python -m pytest tools/test_readonly_agent_guard_powershell.py -q` → **`1 passed in 18.26s`, exit 0**.
+2. Direct-run form → **`ALL CHECKS PASSED`, exit 0**, including the 10 braced-assign DENY rows, 6 no-FP ALLOW rows, the **6 new brace-glued DENY rows**, and all three M0-T145 mutant teeth.
+3. **Independent probe set, 35 probes** (my 27 unchanged + 8 new glued/edge), piped as PreToolUse JSON with `agent_type: "code-reviewer"` to the reworked guard → **`ALL PROBES MATCHED EXPECTATION`, exit 0**.
+4. **Independent mutant reconstruction, 4 teeth** (T2 literal updated to the lookahead form; new T4 = lookahead removal) → **`ALL MUTANT TEETH LOAD-BEARING`, exit 0**.
+5. `python tools/modularity_check.py --check` → **`failures 0`** (neither changed file among the 12 pre-existing warnings).
+6. `python -m ruff check <guard> <test>` → **`All checks passed!`, exit 0**.
+
+## Expected versus actual (delta-relevant probes)
+
+| Probe (my own) | Expected | Actual | Note |
+|---|---|---|---|
+| GD1 `${MyVar}powershell -enc QQBBAA==` (glued, no `=`) | DENY | DENY | Regression fixed; matches parent |
+| GD2 `${a.b}cmd /c whoami` (glued cmd) | DENY | DENY | |
+| GD3 `${x}${y}pwsh -e AAAA` (double-braced glued) | DENY | DENY | |
+| GD4 `${z}git push origin main` (glued git) | DENY | DENY | git-argv pass on braced segment |
+| GD5 `${q}start powershell -enc AAAA` (glued spawn alias) | DENY | DENY | |
+| GD6 `${x} =powershell -enc AAAA` (asymmetric-space assignment) | DENY | DENY | lookahead `\s*=` still fires |
+| GD7 `${x}=powershell -enc AAAA` (glued assignment) | DENY | DENY | |
+| GE1 `${x}==powershell -enc AAAA` (`==` not assignment) | ALLOW | ALLOW | boundary: `(?!=)` correctly declines; parity with parent |
+| A3 `Get-Content notes.md > ${null}` | ALLOW | ALLOW | now via `_PS_REDIRECT_TARGET_OK` brace form (not debrace); matches parent |
+| A5 `${env:PATH} -split ';' \| Select-String powershell` | ALLOW | ALLOW | braces intact, matches parent |
+| B2 Bash `${x} = powershell -enc AAAA` | ALLOW | ALLOW | Bash byte-identical (unchanged) |
+| R1/R2 unsafe-charset braced names | ALLOW | ALLOW | documented residual (unchanged) |
+| P2 `${cmd} = 'powershell'` | DENY | DENY | parity with bare form (unchanged) |
+| Mutant T4 (drop assignment lookahead) | mutant ALLOW / real DENY | mutant ALLOW / real DENY | **independently reproduces the G3 regression** |
+| Mutant T1/T2/T3 | mutant ALLOW / real DENY | mutant ALLOW / real DENY | all still load-bearing |
+
+All 35 probes and 4 mutants matched expectation.
+
+## Regression/security/provenance findings
+
+- **G3 regression is closed and stays closed under stress**: my six independent glued-form probes (distinct from the test's six) all DENY, matching the parent guard. The assignment-fronted closure is retained (D1–D12, braced-assign rows), and the lookahead's boundary is correct (`${x} =powershell` DENYs via `\s*=`; `${x}==powershell` ALLOWs via `(?!=)`, matching parent).
+- **The lookahead is load-bearing and the regression is real**: mutant T4 removes the lookahead (reverting to the global debrace of `0671edd5`) and `${x}powershell -enc` slips to ALLOW while the real guard DENYs — an independent, executable reproduction of the exact defect G3 found.
+- **No new false positives; parent-parity restored for non-assignment braces**: `> ${null}`, `${env:PATH} -split`, braced reads, and pipes now behave as the PARENT guard (braces preserved) rather than the debraced form. All A-series reads still ALLOW.
+- **Bash pack byte-unchanged** (`if powershell:` gating; B1–B4 confirm), **all prior denials preserved** (full suite green), **provenance honest** (guard docstring lines 520–526 document the G3 round-6 correction and the deleted-separator root cause; residual for unsafe-charset names retained).
+- **Modularity 0 failures; ruff clean.** The fix is a one-token regex change plus retained helper — no boundary/growth concerns.
+
+## Directive/requirement verification
+
+Unchanged from the base gate: D-001 (`ALL`, 136 reqs, every one scoped `task_ids: [M0-T023]`) — authoritative per-requirement verdict is delegated to the separate directive-compliance-verifier gate at the new frozen identity `bac01a56`. QA-observable substance R041 (directive-compliance-verifier stays in `READ_ONLY_AGENTS`, mutations denied) remains PASS — the change did not touch the roster or the read-only enforcement path.
+
+## Defects
+
+None at `bac01a56`. (The regression at the superseded `0671edd5` is resolved by this rework.)
+
+## Required rework
+
+None.
+
+## Reviewer conclusion
+
+**PASS at content identity `bac01a561e20398d3606bd770703f8311a89e029`.** My prior PASS at `0671edd5` is withdrawn — that commit carried the real, G3-found brace-glued regression. The rework's assignment-scoped lookahead closes it: verified by the documented command (exit 0), 35 independent probes including 8 glued/edge forms of my own (all matched), and 4 load-bearing mutant teeth (one of which independently reproduces the regression). Non-assignment brace behavior now matches the parent guard, the assignment-fronted closure and all prior denials are retained, Bash is byte-unchanged, and modularity/ruff are clean. The orchestrator should record this G4 result against `bac01a56`; no rework required.
