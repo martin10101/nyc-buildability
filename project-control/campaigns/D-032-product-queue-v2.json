@@ -1,0 +1,13 @@
+{
+  "schema": "owner_packet_queue/v1",
+  "authority": "D-032 Amendment 2 (owner 2026-09-06 continuous-build): product delivery queue. First product task = M2-T020 live spatial provider (review finding A closure). M0-T145 is deliberately excluded (hook-class edits are never auto-approved; the orchestrator completes it directly). Successor product tasks are appended here as their packets are readied.",
+  "tasks": [
+    {
+      "task_id": "M2-T020",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M2-T020.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m2t020",
+      "branch": "task/M2-T020-live-spatial-provider",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m2t020"
+    }
+  ]
+}
