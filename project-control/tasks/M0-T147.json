@@ -1,0 +1,68 @@
+{
+  "task_id": "M0-T147",
+  "title": "Review-contract convergence: packet-based verification for the no-exec codex 0.153.4 sandbox (deficit-convergence closure)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the repeated commissioning failure (every live gpt-6-astra review returns ROTATE_SESSION): the M0-T131-era review contract promises the reviewer that cwd-relative read-only commands work, but codex-cli 0.153.4 on Windows rejects ALL command execution under --sandbox read-only (probe 2026-09-06: git status --porcelain and a relative file read both 'rejected: blocked by policy'; exec tool is string-only and PowerShell-wrapped; no file-read tool). Fix as one bounded cluster: (1) evidence.py: add a digest-bound, truncation-bounded 'diff_content' git fact (git diff HEAD) so the packet carries the actual changed content the contract previously asked the reviewer to read live; (2) codex_reviewer.py REVIEW_INSTRUCTIONS: replace the measured-access and verification-split paragraphs - state the newly measured boundary (NO command execution; all worker-tree facts arrive as supervisor-collected digest-bound git.* sections incl. porcelain_status/changed_files/diff_summary/diff_content), direct a fully packet-based review, and prohibit ROTATE_SESSION for execution-rejection (that boundary is now by design); (3) update/add reviewer + evidence tests incl. positive, negative, and a load-bearing mutation row. No schema change; no new provider constraint; controller-enforced bounds unchanged.",
+  "business_reason": "D-032 R001/R005 (full-time loop): without this the loop can never reach APPROVE, R754 facts 3/7 can never be proven, and M0-T109/M0-T145 stay parked. Deficit-convergence closure of the 4x-reproduced ROTATE_SESSION environment failure.",
+  "inputs": [
+    "journal transitions 79/91 rotation_reason (verbatim reviewer environment-failure text)",
+    "probe evidence 2026-09-06: codex exec --sandbox read-only on 0.153.4/Windows rejects git status --porcelain and relative file reads ('blocked by policy'); string-only PowerShell-wrapped exec tool; no raw-argv or file-read path"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/evidence.py (diff_content git fact, digest+truncation bounded)",
+    "tools/agent_supervisor/codex_reviewer.py (REVIEW_INSTRUCTIONS rewritten for the no-exec measured boundary; packet-based verification split)",
+    "tools/test_agent_supervisor_reviewer.py + tools/test_agent_supervisor_evidence.py (updated/added rows incl. mutation)",
+    "project-control/reports/M0-T147-review-contract-convergence.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/evidence.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "tools/test_agent_supervisor_evidence.py",
+    "project-control/reports/M0-T147-review-contract-convergence.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/broker.py",
+    "tools/agent_supervisor/policy.py",
+    ".claude",
+    "services",
+    "apps",
+    "project-control/tasks",
+    "project-control/directives"
+  ],
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
+    "python -m pytest tools/test_agent_supervisor_evidence.py -q"
+  ],
+  "acceptance_scenarios": [
+    "S1: build_packet output for a checkpoint in a repo with modified files carries git.diff_content with the actual patch text, digest-bound, truncated per DEFAULT_SECTION_BYTES with a recorded truncation marker when oversized.",
+    "S2: REVIEW_INSTRUCTIONS contains no promise of command execution, names the packet git.* sections (incl. diff_content) as the sole worker-tree evidence, and instructs that execution-rejection is never grounds for ROTATE_SESSION/HALT_UNSAFE.",
+    "S3: mutation row - removing diff_content from GIT_FACT_COMMANDS (or the instructions' packet-only directive) turns a test RED.",
+    "S4: full reviewer + evidence suites green; no other supervisor module changed."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-06T16:19:57.552714+00:00",
+  "updated_at": "2026-09-06T16:19:57.715149+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-032",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-06T16:19:57.552714+00:00"
+}
