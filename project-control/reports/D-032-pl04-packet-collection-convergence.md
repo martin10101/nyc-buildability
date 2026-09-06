@@ -113,10 +113,27 @@ Out of scope (recorded, not expanded): MRL sibling REVIEW_INSTRUCTIONS false-exe
 premise (already-tracked follow-up); process.py capture-cap G5 LOW-1; queue-JSON
 continuity shape-validation relocation.
 
-## 7. Terminal verdict
+## 7. Terminal verdict: VERIFIED_CLOSED (2026-09-06, M0-T148 accepted — 160th)
 
-PENDING — recorded here when the repair is verified once at the frozen candidate
-(VERIFIED_CLOSED) or a consolidated blocker report replaces it. Until then no
-relaunch of the closure run (rule 20); the next launch after closure uses a FRESH
-run-id (durable breaker tally) and requires R247 recertification + source_binding
-re-pin + controller reinstall for the changed subtree.
+Closure matrix at the frozen candidate (task commit `53d642a1`, merged `7772626e`,
+accept HEAD `4bb2f8f4`):
+
+| Exit criterion | Evidence |
+|---|---|
+| Repair implements the full cluster | `untracked_content` + `task_packet` + `command_transcripts` sections wired via `collect_completeness`; REVIEW_INSTRUCTIONS truth-repaired (diff_content = TRACKED only) |
+| Reproduction closed (S6) | The §3 reproduction re-run against the repaired builder: 9/9 deliverable content probes present (was 0/9), task contract present, both documented pytest commands supervisor-executed with digest-bound transcripts, 7 sections, 95,707 B < 262,144 cap, no stop |
+| Focused + affected tests | 243 focused passed (orchestrator re-run); adjacent review-path 299 passed / 1 skipped (G3 reviewer re-run) |
+| One full regression at frozen candidate | 4231 passed / 3 skipped / 1 failed; the single failure (`test_two_active_directives_validate_and_coexist`) traced to backlog packet M0-T149's then-missing allowed_paths validated live mid-run (c17), NOT to the reviewed code; fixed in `4bb2f8f4`; full directive test file re-run: 120 passed |
+| Independent gates | G3 PASS (code-reviewer), G5 PASS (security-reviewer), G2 self-check, all at `7772626e`, content manifest `6723f8d8...` identical at 53d642a1/7772626e/HEAD |
+| Directive verification | DCV empty-set row recorded (reviewed_sha `4bb2f8f4`, resolver-derived 20/20 D-032 rows inapplicable, no selective citation across all 30 active directives) |
+| Residuals tracked, not expanded | G3 LOW-1 → backlog task M0-T149 (non-mutating command profile); G5 LOW-1/LOW-2 carried into the R247 recertification note below; LOW-3/LOW-4 informational |
+
+No further live rerun occurred before closure (rule 20 held). **Relaunch
+prerequisites now in force (R247):** the `tools/agent_supervisor` subtree changed,
+so before any next launch: recertify the new accepted candidate, re-pin
+`tools/controller_update/source_binding.json` via a reviewed commit, reinstall the
+controller, and use a FRESH run-id (the `consecutive_invalid_outputs`/revision
+breaker tallies are durable per run-id). Recertification note must retain G5
+LOW-1 (untracked-content outbound surface, git-ignore + redaction mitigated) and
+LOW-2 (documented-command execution of worker-authored test files at review time,
+containment mitigated).

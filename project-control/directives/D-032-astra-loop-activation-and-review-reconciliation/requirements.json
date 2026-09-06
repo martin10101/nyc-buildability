@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-032",
   "version": 1,
-  "requirement_count": 18,
+  "requirement_count": 20,
   "producer": "orchestrator",
   "updated_at": "2026-09-06T04:00:33+00:00",
   "requirements": [

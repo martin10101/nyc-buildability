@@ -1,21 +1,34 @@
 {
- "schema": "directive_verification/v2",
- "directive_id": "D-032",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-scope directive bound to the non-ledger sentinel D-032-BOOTSTRAP (D-029/D-031 pattern); rows accrue as the activation transaction and review reconciliation produce durable evidence.",
- "producer": "orchestrator",
- "task_verifications": [
-  {
-   "directive_id": "D-032",
-   "task_id": "M0-T147",
-   "applicable_requirement_ids": [],
-   "reviewed_sha": "23cac3a2098a75d2bb697fcaf9f906cf866646c9",
-   "reviewed_manifest_sha256": "50da1cf1868cf5223b61060f24914ec41692c6cb678d35154c0dba88f5dbe56c",
-   "producer": "orchestrator",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-06T16:35:00+00:00",
-   "note": "EMPTY-SET verification. M0-T147 cites D-032:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-032 requirements for this packet: all 18 D-032 requirements are applicability-scoped to task_ids [D-032-BOOTSTRAP] (verified 18/18; none with an empty task_ids wildcard), so none match task_id M0-T147. No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[] -- no OTHER active directive's requirement becomes applicable via M0-T147's allowed_paths. Row exists because accept() fail-closes when a cited directive has no task_verification row (mirrors the D-001/M0-T033 and D-001/M0-T145 empty-set precedents). Verifier != producer. Task substance: review-contract convergence -- packet-based verification for the no-exec codex-cli 0.153.4 sandbox (qualifying evidence = provider CLI drift per supervisor-freeze section 2; deficit-convergence closure of the 4x-reproduced ROTATE_SESSION review-environment failure). Gate evidence independently reproduced: G0 PASS; G3 PASS (round 1 at 3360cceb, delta PASS at dee758f4); G5 PASS (round 1 with required correction M-1 applied, delta PASS at dee758f4, no outstanding blocking corrections); full freeze suite 3635 passed / 2 skipped / 0 failed at dee758f4. Reviewed content identity = M0-T147 allowed_paths = 50da1cf1..., byte-identical between dee758f4 and the stamped HEAD. Mechanical accept-time restamp convention applies (identity stays 50da1cf1 while allowed_paths blobs are unchanged; fail-closed otherwise).",
-   "requirements": []
-  }
- ]
+  "schema": "directive_verification/v2",
+  "directive_id": "D-032",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-scope directive bound to the non-ledger sentinel D-032-BOOTSTRAP (D-029/D-031 pattern); rows accrue as the activation transaction and review reconciliation produce durable evidence.",
+  "producer": "orchestrator",
+  "task_verifications": [
+    {
+      "directive_id": "D-032",
+      "task_id": "M0-T147",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "23cac3a2098a75d2bb697fcaf9f906cf866646c9",
+      "reviewed_manifest_sha256": "50da1cf1868cf5223b61060f24914ec41692c6cb678d35154c0dba88f5dbe56c",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-06T16:35:00+00:00",
+      "note": "EMPTY-SET verification. M0-T147 cites D-032:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-032 requirements for this packet: all 18 D-032 requirements are applicability-scoped to task_ids [D-032-BOOTSTRAP] (verified 18/18; none with an empty task_ids wildcard), so none match task_id M0-T147. No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[] -- no OTHER active directive's requirement becomes applicable via M0-T147's allowed_paths. Row exists because accept() fail-closes when a cited directive has no task_verification row (mirrors the D-001/M0-T033 and D-001/M0-T145 empty-set precedents). Verifier != producer. Task substance: review-contract convergence -- packet-based verification for the no-exec codex-cli 0.153.4 sandbox (qualifying evidence = provider CLI drift per supervisor-freeze section 2; deficit-convergence closure of the 4x-reproduced ROTATE_SESSION review-environment failure). Gate evidence independently reproduced: G0 PASS; G3 PASS (round 1 at 3360cceb, delta PASS at dee758f4); G5 PASS (round 1 with required correction M-1 applied, delta PASS at dee758f4, no outstanding blocking corrections); full freeze suite 3635 passed / 2 skipped / 0 failed at dee758f4. Reviewed content identity = M0-T147 allowed_paths = 50da1cf1..., byte-identical between dee758f4 and the stamped HEAD. Mechanical accept-time restamp convention applies (identity stays 50da1cf1 while allowed_paths blobs are unchanged; fail-closed otherwise).",
+      "requirements": []
+    },
+    {
+      "directive_id": "D-032",
+      "task_id": "M0-T148",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "4bb2f8f459e90c7b96a1fd5996795f236a4917bb",
+      "reviewed_manifest_sha256": "6723f8d885641063b0ce0cf36a95008c626f64dce26fcbbd00da9b59a82e38fd",
+      "producer": "orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-06T20:07:21+00:00",
+      "note": "EMPTY-SET verification. M0-T148 cites D-032:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-032 requirements for this packet: all 20 D-032 requirements -- including the two Amendment-3 rows R019/R020 from source-003-amendment.md -- are applicability-scoped to task_ids [D-032-BOOTSTRAP] (verified 20/20; each _applicability_matches -> MATCH=False because task_id M0-T148 is not in the non-empty task_ids list; none carries an empty-task_ids wildcard). No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[]; a full sweep of all 30 active directives (D-001..D-032) yields zero requirements matching M0-T148 via its allowed_paths. Row exists because accept() fail-closes when a cited directive has no task_verification row (mirrors the D-032/M0-T147 and D-001/M0-T033 empty-set precedents). Verifier != producer (code producer = backend-engineer/orchestrator; this row produced by directive-compliance-verifier). Task substance: evidence-packet completeness repair closing the D-032-R020 convergence cluster -- untracked_content + task_packet + command_transcripts wired into the supervisor review packet; qualifying-evidence-backed supervisor change (AD-093). Directive integrity independently reproduced: D-032 active, zero errors; source digests match manifest (source-003 = c49efd41...); validate_directive_compliance.py --check exit 0. Gate evidence independently reproduced: G0 PASS (readiness @83594de2); G2 self-check PASS, G3 PASS (code-reviewer), G5 PASS (security-reviewer) all @7772626e with content_manifest_sha256 6723f8d8..., reviewers != producer, 7772626e ancestor of HEAD 4bb2f8f4, all four report files present. Reviewed content identity = M0-T148 allowed_paths at HEAD 4bb2f8f4 = 6723f8d8..., computed via directive_registry.frozen_git_identity (exclude/control-plane prefix 'project-control/', require_clean=True; the same helper reproduces the M0-T147 row's 50da1cf1... at 23cac3a2), byte-identical across the code commit 53d642a1, the gate sha 7772626e, and HEAD, and equal to the G2/G3/G5 gate manifest -- so the gated content is the stamped-HEAD content. Commit 53d642a1 touches only in-scope allowed_paths. Test evidence reproduced at HEAD: supervisor reviewer suite 117 passed, loop suite 126 passed (243 focused); test_project_control.py 23 groups + test_directive_reminder.py 12 tests pass; the single earlier full-lane-suite failure in tools/test_directive_compliance.py is attributed to M0-T149's then-missing allowed_paths (M0-T149 created in HEAD commit 4bb2f8f4 with resolvable allowed_paths) and is resolved -- test_real_registry_valid and validate_directive_compliance.py --check both pass at HEAD. Full test_directive_compliance.py file not run to completion in the verifier sandbox (>25 min git-subprocess timeout); the M0-T149-governing registry-validation subset was executed and passes, and the orchestrator's own full-file re-run at HEAD shows 120 passed. Mechanical accept-time restamp convention applies (identity stays 6723f8d8... while allowed_paths blobs are unchanged; fail-closed otherwise).",
+      "requirements": []
+    }
+  ]
 }
