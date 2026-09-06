@@ -32,8 +32,8 @@ FIXTURES = Path(__file__).parent / "agent_supervisor" / "fixtures"
 LIVE_FIXTURE = FIXTURES / "capability_probe_live_2026-08-25.json"
 # M0-T103 post-update record (claude 2.1.246): frozen historical upgrade pair.
 POST_FIXTURE = FIXTURES / "capability_probe_live_2026-08-26_m0t103_post_update.json"
-# Current record (claude 2.1.251, M0-T118): the live drift teeth target THIS.
-CURRENT_FIXTURE = FIXTURES / "capability_probe_live_2026-09-01_m0t132_2_1_252.json"
+# Current record (codex-cli 0.153.4, D-032 admission): the live drift teeth target THIS.
+CURRENT_FIXTURE = FIXTURES / "capability_probe_live_2026-09-06_d032_codex_0_153_4.json"
 MATRIX = FIXTURES / "capability_matrix_v1.json"
 
 
@@ -227,19 +227,22 @@ def test_live_reprobe_codex_version_matches_fixture(current):
     assert rec["first_line"] == current["body"]["probes"]["codex_version"]["first_line"]
 
 
-def test_current_fixture_records_2_1_252_masked_and_shaped(current, post):
-    """M0-T132 re-baseline invariant (D-024 Amendment 34, following the M0-T118 /
-    M0-T092 R149/R102 pattern): the current fixture freezes the deliberate 2.1.252
-    admission re-probed live at this build; codex is unchanged across it. 2.1.252 is
-    a benign patch bump (claude --help sha256 unchanged vs 2.1.251). Same masking/
-    shape contract as its predecessors; filename carries the consuming task id
-    (G3 ADV-1). The m0t118 (2.1.251) fixture stays committed as history."""
+def test_current_fixture_records_codex_0_153_4_masked_and_shaped(current, post):
+    """D-032 re-baseline invariant (owner-ordered codex CLI update for the
+    gpt-6-astra switch, D-032-R004 / D-024 source-054-amendment; following the
+    M0-T132 / M0-T118 / M0-T092 R149/R102 pattern): the current fixture freezes
+    the deliberate codex-cli 0.146.0 -> 0.153.4 admission re-probed live at this
+    build; claude is unchanged across it (still 2.1.252). Same masking/shape
+    contract as its predecessors; filename carries the consuming directive id
+    (G3 ADV-1). The m0t132 (2.1.252 / codex 0.146.0) fixture stays committed as
+    history."""
     assert (current["body"]["probes"]["claude_version"]["first_line"]
             == "2.1.252 (Claude Code)")
     assert (current["body"]["probes"]["codex_version"]["first_line"]
-            == post["body"]["probes"]["codex_version"]["first_line"]
+            == "codex-cli 0.153.4")
+    assert (post["body"]["probes"]["codex_version"]["first_line"]
             == "codex-cli 0.146.0")
-    assert "m0t132" in CURRENT_FIXTURE.name
+    assert "d032" in CURRENT_FIXTURE.name
     whole = json.dumps(current, sort_keys=True)
     for leak in (":\\\\Users\\\\", ":/Users/", "\\\\Users\\\\MLFLL", "MLFLL"):
         assert leak not in whole, f"unmasked path fragment {leak!r} in fixture"
