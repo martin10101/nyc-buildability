@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T147",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T147-review-contract-convergence.md",
+  "submitted_at": "2026-09-06T16:41:35.591461+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T147-evidence-map.json",
+  "content_manifest_sha256": "50da1cf1868cf5223b61060f24914ec41692c6cb678d35154c0dba88f5dbe56c",
+  "reviewed_sha": "cb0506052b6e06326634c07a3f99eaa063e4b4a9",
+  "applicable_requirements": [],
+  "updated_at": "2026-09-06T16:41:36.158984+00:00"
+}
