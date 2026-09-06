@@ -126,7 +126,10 @@ GIT_FACT_COMMANDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     # must carry the actual changed content the M0-T131-era contract asked it
     # to read live. Bounded by the standard truncation machinery like every
     # other collected fact; digest-bound like every other section.
-    ("diff_content", ("diff", "HEAD")),
+    # --no-ext-diff/--no-textconv (G5 LOW-2): the collection must show the
+    # REAL bytes regardless of any textconv/external-diff driver a git config
+    # file might name - the patch text is evidence, never a driver's opinion.
+    ("diff_content", ("diff", "--no-ext-diff", "--no-textconv", "HEAD")),
     ("ahead_behind", ("rev-list", "--left-right", "--count", "HEAD...origin/main")),
     ("detached", ("symbolic-ref", "--quiet", "HEAD")),
 )
