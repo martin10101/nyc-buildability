@@ -1,0 +1,73 @@
+{
+  "task_id": "M2-T020",
+  "title": "Wire real source-backed spatial evidence into the default runtime provider (live spatial integration)",
+  "task_type": "engineering",
+  "milestone_id": "M2",
+  "objective": "Close the review finding A / priority-1 product gap: the complete spatial engine + connector adapter (services/api/app/spatial/adapter.py compose_from_connectors, engine.py, and the three accepted connectors) exists with zero app/ callers while api/v1/rule_evaluation.py's default provider returns None, so every live evaluation fail-safes to professional review. Implement a real default spatial substrate provider that composes the existing adapters behind get_spatial_substrate_provider() with settings-gated enablement (default OFF for CI determinism; explicit env/settings flag turns the live path on), preserving every existing fail-safe: absent/conflicting/uncertain spatial evidence must still land in the documented fail-safe outcomes, never a fabricated substrate. No new spatial engine; no change to rules or thresholds; typed errors and provenance preserved. Add focused tests proving (1) provider OFF == current behavior byte-for-byte, (2) provider ON with injected connector doubles produces a real substrate through the default path, (3) connector failure/partial data still fail-safes. Keep changes modular per docs/CODE_MODULARITY_POLICY.md.",
+  "business_reason": "D-032 R015 step 1 (owner 2026-09-06 continuous-build amendment): first product deliverable of the delivery plan - real source integration on the default path; prerequisite for durable analyses and the R5 pilot MVP.",
+  "inputs": [
+    "services/api/app/spatial/adapter.py (compose_from_connectors - existing, accepted, currently uncalled)",
+    "services/api/app/api/v1/rule_evaluation.py (get_spatial_substrate_provider / _default_spatial_substrate returning None)",
+    "services/api/app/rules/integration.py (fail-safe outcomes - read-only reference, do not modify)",
+    "project-control/reports/D-032-review-reconciliation.md (finding A evidence)"
+  ],
+  "outputs": [
+    "services/api/app/spatial/live_provider.py (new: settings-gated default provider composing the existing adapters; explicit enable flag, default OFF)",
+    "services/api/app/api/v1/rule_evaluation.py (default provider delegates to the gated live provider)",
+    "services/api/tests/spatial/test_live_provider.py (new: OFF==current-behavior, ON-with-doubles real substrate, failure fail-safe)",
+    "project-control/reports/M2-T020-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/spatial/live_provider.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/tests/spatial/test_live_provider.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "project-control/reports/M2-T020-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules",
+    "services/api/app/connectors",
+    "services/api/app/spatial/engine.py",
+    "services/api/app/spatial/adapter.py",
+    "apps",
+    "packages",
+    ".claude",
+    "tools",
+    "project-control/tasks",
+    "project-control/directives"
+  ],
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/spatial -q",
+    "python -m pytest services/api/tests/api/test_rule_evaluation_api.py -q"
+  ],
+  "acceptance_scenarios": [
+    "S1 default-off parity: with the enable flag unset, get_spatial_substrate_provider() yields exactly the current None-substrate behavior and every existing rule_evaluation/spatial test passes unchanged.",
+    "S2 live path with doubles: with the flag enabled and connector doubles injected, a request through the DEFAULT provider (no dependency_overrides) produces a real spatial_intersection substrate that reaches integration.evaluate_property.",
+    "S3 fail-safe preserved: with the flag enabled and a connector raising/returning partial data, the outcome is the documented fail-safe (professional review / conditional), never a fabricated substrate, with typed error provenance.",
+    "S4 modularity: new module stays within thresholds; ruff clean; no import cycles."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-06T07:51:22.636200+00:00",
+  "updated_at": "2026-09-06T07:51:22.821708+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-032",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-06T07:51:22.636200+00:00"
+}

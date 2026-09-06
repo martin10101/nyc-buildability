@@ -10,7 +10,7 @@
  "issued_at": "2026-09-05",
  "captured_at": "2026-09-06T03:51:16+00:00",
  "created_at": "2026-09-06T03:51:16+00:00",
- "updated_at": "2026-09-06T04:00:33+00:00",
+ "updated_at": "2026-09-06T07:49:40+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "sources": [
@@ -20,9 +20,19 @@
    "sequence": 1,
    "recorded_at": "2026-09-06T03:51:16+00:00",
    "content_digest_sha256": "a6e70f9926305f996d937849c8fe93a2cdce28ad0b6fd0ffe9701343d11652d0"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-06T07:49:40+00:00",
+   "content_digest_sha256": "a93732f2e3d6eb3d1626cdf26d994300091e2360cb120cb5645286b14d07eb18"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [],
@@ -44,6 +54,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "verbatim capture at frozen base origin/main d8b3899f / ctl24 HEAD db7d561f; fires D-024-R781 (gpt-6-astra switch) with owner-chosen effort HIGH; owner authorizes orchestrator-executed activation ('you just have to get this done and power up the loop for the run'), narrowly superseding owner-typed-only execution of D-024 R754/R772/R780 for this activation only; M0-T146/M0-T109 intentionally NOT bound (already-gated tasks; D-032 rows ride the D-032-BOOTSTRAP sentinel; their own D-024 rows govern their acceptance)"
+  },
+  {
+   "at": "2026-09-06T07:49:40+00:00",
+   "actor": "orchestrator",
+   "action": "amendment-2-continuous-build",
+   "note": "owner 2026-09-06 mid-run: keep the loop going toward the built program (24h ambition); product-task creation + extended queue authorized; honest bound recorded (no uninterrupted 24h under certified posture; autostart stays R595-gated)"
   }
  ],
  "owner_approval": {
