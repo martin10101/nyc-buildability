@@ -1,0 +1,75 @@
+{
+  "task_id": "M0-T148",
+  "title": "Evidence-packet completeness repair: collect untracked deliverable contents, task contract, and supervisor-executed test transcripts (persistent-local-04 breaker convergence)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the D-032-R020 convergence cluster (project-control/reports/D-032-pl04-packet-collection-convergence.md): wire three missing evidence classes into the supervisor review packet so the packet-based contract's completeness promise becomes true. (1) evidence.py collects untracked_content (bounded, digest-bound contents of every ?? porcelain path, per-section byte bound, explicit truncation records, count cap fail-visible) and task_packet (the task contract via read_file). (2) loop.py _collect wires both in and adds command_transcripts: the packet-documented test commands executed by the supervisor via process.run in the worker worktree (argv, exit code, bounded output, digest). (3) codex_reviewer REVIEW_INSTRUCTIONS names the three new sections and removes the false 'diff_content carries every uncommitted change' premise (pure ASCII, deterministic; codex output schema unchanged). (4) review_packet guard compatibility + positive/negative/mutation tests; full supervisor suite re-baseline at the frozen candidate. Qualifying evidence (AD-093): reproduced defect (offline repro, convergence report section 3) + inability to complete authorized product task M2-T020 + live provider-boundary evidence (audit seq 53/66/78/88, breaker seq 92). Authority: D-032-R020 (source-003-amendment.md).",
+  "business_reason": "The first live content review under the M0-T147 contract can never APPROVE any task with new files: workers cannot commit (orchestrator-only git), so untracked deliverables are invisible to git diff HEAD and the reviewer correctly REVISEs until the breaker trips. Every queued product task is blocked until the packet carries the promised evidence.",
+  "inputs": [
+    "project-control/reports/D-032-pl04-packet-collection-convergence.md (frozen evidence + causal path + cluster)",
+    "project-control/reports/M0-T147-review-contract-convergence.md (certified contract being repaired)",
+    "project-control/directives/D-032-astra-loop-activation-and-review-reconciliation/source-003-amendment.md (authority)"
+  ],
+  "outputs": [
+    "tools/agent_supervisor/evidence.py (untracked_content + task_packet collection)",
+    "tools/agent_supervisor/loop.py (_collect wiring + command_transcripts)",
+    "tools/agent_supervisor/codex_reviewer.py (REVIEW_INSTRUCTIONS truth repair)",
+    "tools/test_agent_supervisor_reviewer.py / tools/test_agent_supervisor_loop.py (positive/negative/mutation coverage)",
+    "project-control/reports/M0-T148-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/evidence.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/agent_supervisor/review_packet.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "tools/test_agent_supervisor_loop.py",
+    "project-control/reports/M0-T148-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "S1 untracked collection: a worktree with N untracked files (incl. nested paths) yields packet section untracked_content with one digest-bound, byte-bounded entry per file; truncation recorded explicitly; a file over the per-section bound appears truncated WITH digest of full content; more files than the count cap -> explicit fail-visible record, never silent omission.",
+    "S2 task contract: the packet carries task_packet = the task's project-control/tasks/<id>.json content, digest-bound; a missing contract file appears in failed_collections, never as a silent gap.",
+    "S3 command transcripts: _collect executes exactly the packet-documented test commands via process.run in the worker worktree; the packet carries per-command argv, exit code, bounded stdout/stderr and digest; a failing or timing-out command appears with its real exit/timeout, never dropped.",
+    "S4 contract truthfulness: REVIEW_INSTRUCTIONS names untracked_content, task_packet, command_transcripts and no longer claims diff_content carries every uncommitted change; the instructions stay pure ASCII and deterministic; codex output schema unchanged.",
+    "S5 immunization: the new sections pass the review_packet injection guard; a hostile string inside an untracked file or transcript is neutralized exactly like diff_content (mutation test proves the guard is load-bearing).",
+    "S6 reproduction closure: the offline M2-T020 reproduction (convergence report section 3) re-run against the repaired builder now shows all three deliverables' content probes present and packet size within DEFAULT_PACKET_BYTES.",
+    "S7 regression: full supervisor suite green at the frozen candidate (re-baseline per supervisor-freeze rule); no worker-facing schema change."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Packet growth past DEFAULT_PACKET_BYTES on large deliverables -> bounded sections + explicit truncation, S1/S6 verify",
+    "Supervisor-executed tests add cycle latency -> bounded by process.run timeout; commands are packet-documented only",
+    "Any tools/agent_supervisor change re-triggers R247 recertification before relaunch (recorded in convergence report section 7)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-06T17:58:02.393330+00:00",
+  "updated_at": "2026-09-06T18:00:46.325985+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-032",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-06T17:58:02.393330+00:00",
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
+    "python -m pytest tools/test_agent_supervisor_loop.py -q"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t148"
+}
