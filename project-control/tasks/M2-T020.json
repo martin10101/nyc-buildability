@@ -54,14 +54,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-loop-fable-worker",
   "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-06T07:51:22.636200+00:00",
-  "updated_at": "2026-09-06T07:51:22.821708+00:00",
+  "updated_at": "2026-09-06T07:52:35.016818+00:00",
   "directive_refs": [
     {
       "directive_id": "D-032",
@@ -69,5 +69,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-06T07:51:22.636200+00:00"
+  "directive_regime_entered_at": "2026-09-06T07:51:22.636200+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m2t020"
 }
