@@ -36,8 +36,16 @@ for ($i = 1; $i -le $MaxLaunches; $i++) {
         --prompt "Full 40-character SHAs in every checkpoint SHA field (git rev-parse HEAD), never abbreviated. Use only packet-documented test commands; avoid PowerShell and undocumented shell commands. Follow the packet acceptance scenarios S1-S4 exactly: settings-gated live provider, default OFF, all fail-safes preserved." 2>&1 | Out-String
     Write-Host $out
 
-    if ($out -match 'single_instance|lock') { Write-Host 'previous run still holds the lock; waiting 120s...'; Start-Sleep -Seconds 120; $i--; continue }
+    if ($out -match 'could not be acquired|another supervisor instance') { Write-Host 'previous run still holds the lock; waiting 120s...'; Start-Sleep -Seconds 120; $i--; continue }
     if ($out -match 'stopped=rotate_session') { Write-Host 'clean rotation seam - relaunching fresh worker in 20s...'; Start-Sleep -Seconds 20; continue }
+    if ($out -match 'pending_requests|unsafe_or_drifted|stale_state') {
+        # Claude's watcher cleans these up between attempts; be patient (max ~2h of 5-min waits),
+        # counted separately from real launches. Each retry is just another refused start until
+        # the cleanup lands - no state is changed, nothing is bulldozed.
+        if (-not $script:patience) { $script:patience = 0 }
+        $script:patience++
+        if ($script:patience -le 24) { Write-Host ("cleanup needed (attempt {0}/24); waiting 300s for Claude's watcher..." -f $script:patience); Start-Sleep -Seconds 300; $i--; continue }
+    }
     Write-Host "`nRun ended on a condition that needs a human (or is simply done). Leave this output for Claude. Good night."
     break
 }
