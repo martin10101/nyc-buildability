@@ -1,5 +1,9 @@
 {
   "task_id": "M0-T025",
+  "documented_test_commands": [
+    "python -m pytest tools/test_directive_compliance.py -q",
+    "python tools/validate_directive_compliance.py --check"
+  ],
   "title": "Control-plane hardening: path containment for trusted checked-in requirements_file/verification_file references (LOW-1)",
   "task_type": "governance",
   "milestone_id": "M0",

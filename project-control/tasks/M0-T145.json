@@ -1,5 +1,8 @@
 {
   "task_id": "M0-T145",
+  "documented_test_commands": [
+    "python -m pytest tools/test_readonly_agent_guard_powershell.py -q"
+  ],
   "title": "readonly-guard residual: braced-variable assignment-fronted nested shell (M0-T109 G5 MEDIUM)",
   "task_type": "governance",
   "milestone_id": "M0",
