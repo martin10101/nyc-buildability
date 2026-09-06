@@ -1863,6 +1863,19 @@
    "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c",
    "reviewed_manifest_sha256": "a0f4aef4a2a42f4c08fe68300c52a4ec875d960a47b2f3c6da8646df3dd395ce",
    "note": "Empty-but-present: 0 D-001 requirements applicable to M0-T075 (confirmed by evaluate_task_refs and independently by the DCV run; the task's corrective scope binds D-018 rows only). Row present for coverage at reviewed_sha db82e0a. Producer (orchestrator) != verifier."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T145",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "47ee3a04b46d02bed6af71c849b0793491270aa5",
+   "reviewed_manifest_sha256": "99cd3433b32205540e863d67c83944dcf06b3612b50ec3a9056d3308febfb18f",
+   "producer": "supervised-loop-fable-worker",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-06T10:20:00+00:00",
+   "note": "EMPTY-SET verification. M0-T145 cites D-001:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-001 requirements for this packet: all 136 D-001 requirements carry applicability.task_ids == ['M0-T023'] (verified 136/136; none with an empty task_ids wildcard), so none match task_id M0-T145. No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[] -- no OTHER active directive's requirement becomes applicable via M0-T145's allowed_paths (.claude/hooks/readonly_agent_guard.py, tools/test_readonly_agent_guard_powershell.py, project-control/reports/M0-T145-guard-brace-residual.md). This row exists because accept() fail-closes when a cited directive has no task_verification row, independent of applicability (mirrors the D-001/M0-T033 empty-set precedent). Path-scoped content identity at HEAD = 99cd3433... = M0-T145 G2/G3/G4/G5 recorded content_manifest_sha256. Gate evidence: G2/G3/G4/G5 all PASS, reviewed at content identity bac01a561e20398d3606bd770703f8311a89e029 (reports M0-T145-G3/G4/G5-report.md); validate_directive_compliance.py --check exit 0. Verifier != producer. CAVEAT (integration state, not a D-001 finding): the reviewed brace-fix code at bac01a56 (guard blob 1d092652, marker _PS_BRACED_VAR) is NOT integrated into HEAD 47ee3a04 -- HEAD carries the pre-fix M0-T109 blobs (guard ad009d4f, test 0fd81db3) and the recorded gate content_manifest 99cd3433 reflects that un-integrated HEAD content; the orchestrator must reconcile the code integration before accepting M0-T145.",
+   "requirements": []
   }
  ],
  "updated_at": "2026-08-18T23:10:02+00:00"
