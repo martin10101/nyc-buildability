@@ -305,14 +305,48 @@ class ReviewStdinContractTests(ReviewerTestBase):
 
     def test_the_preamble_states_the_measured_boundary_and_the_split(self) -> None:
         text = rv.REVIEW_INSTRUCTIONS
-        # Removal-sensitive anchors: each phrase carries one load-bearing duty
-        # from the journey-4 fix; dropping any of them re-opens the defect.
-        self.assertIn("INSIDE your working directory", text)
-        self.assertIn("BLOCKED BY POLICY", text)
-        self.assertIn("cwd-relative", text)
+        # Removal-sensitive anchors (M0-T147 re-measured boundary): each phrase
+        # carries one load-bearing duty; dropping any of them re-opens either
+        # the journey-4 defect or the 0.153.4 ROTATE_SESSION environment-failure
+        # loop (runs persistent-local-01/02/03).
+        self.assertIn("YOUR MEASURED ACCESS on this host: NONE", text)
+        self.assertIn("rejects ALL command execution", text)
+        self.assertIn("NEVER grounds for ROTATE_SESSION or HALT_UNSAFE", text)
+        self.assertIn("git.diff_content", text)
         self.assertIn("verified_repo_head", text)
-        self.assertIn("NEVER return HALT_UNSAFE merely because", text)
         self.assertIn("UNTRUSTED WORKER OUTPUT", text)
+
+    def test_the_preamble_no_longer_promises_command_execution(self) -> None:
+        """M0-T147 negative anchors: the M0-T131-era promises that are FALSE on
+        codex-cli 0.153.4 (and caused every live review to ROTATE_SESSION) must
+        never reappear in the contract."""
+        text = rv.REVIEW_INSTRUCTIONS
+        self.assertNotIn("cwd-relative commands work", text)
+        self.assertNotIn("Bare, cwd-relative commands work", text)
+        self.assertNotIn("Verify WORKER-TREE facts LIVE", text)
+
+    def test_the_packet_carries_the_diff_content_fact(self) -> None:
+        """M0-T147 S1/S3: the diff_content collector is enumerated (mutation
+        tooth: removing it from GIT_FACT_COMMANDS turns this RED) and its
+        collected value flows into the packet's git section digest-bound."""
+        from tools.agent_supervisor import evidence as ev
+        names = [name for name, _tail in ev.GIT_FACT_COMMANDS]
+        self.assertIn("diff_content", names)
+        tail = dict(ev.GIT_FACT_COMMANDS)["diff_content"]
+        self.assertEqual(tuple(tail), ("diff", "HEAD"))
+        # read-only guard admits it (fail-closed if someone widens the tail)
+        ev.assert_read_only_git(tail)
+        patch_text = "diff --git a/x.py b/x.py\n+real change\n"
+        result = ev.CollectionResult(name="diff_content", ok=True, value=patch_text,
+                                     argv=("git", "diff", "HEAD"),
+                                     digest=ev.digest_of(patch_text))
+        built = ev.build_packet(run_id="r", task_id="t", checkpoint_id="c",
+                                checkpoint={"checkpoint_id": "c"},
+                                git_facts={"diff_content": result})
+        self.assertTrue(built.ok)
+        section = built.packet.sections["git"]["diff_content"]
+        self.assertEqual(section["value"], patch_text)
+        self.assertEqual(section["digest"], ev.digest_of(patch_text))
 
     def test_the_stdin_payload_is_deterministic_ascii(self) -> None:
         first = rv.review_stdin_payload(self.packet())

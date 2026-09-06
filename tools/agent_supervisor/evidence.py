@@ -121,6 +121,12 @@ GIT_FACT_COMMANDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("worktrees", ("worktree", "list", "--porcelain")),
     ("changed_files", ("diff", "--name-only", "HEAD")),
     ("diff_summary", ("diff", "--stat", "HEAD")),
+    # M0-T147 (provider CLI drift, codex 0.146.0 -> 0.153.4): the reviewer's
+    # sandbox can no longer execute ANY command on this host, so the packet
+    # must carry the actual changed content the M0-T131-era contract asked it
+    # to read live. Bounded by the standard truncation machinery like every
+    # other collected fact; digest-bound like every other section.
+    ("diff_content", ("diff", "HEAD")),
     ("ahead_behind", ("rev-list", "--left-right", "--count", "HEAD...origin/main")),
     ("detached", ("symbolic-ref", "--quiet", "HEAD")),
 )

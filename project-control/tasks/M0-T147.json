@@ -12,7 +12,7 @@
   "outputs": [
     "tools/agent_supervisor/evidence.py (diff_content git fact, digest+truncation bounded)",
     "tools/agent_supervisor/codex_reviewer.py (REVIEW_INSTRUCTIONS rewritten for the no-exec measured boundary; packet-based verification split)",
-    "tools/test_agent_supervisor_reviewer.py + tools/test_agent_supervisor_evidence.py (updated/added rows incl. mutation)",
+    "tools/test_agent_supervisor_reviewer.py (updated/added rows incl. mutation; evidence-collector coverage lives here)",
     "project-control/reports/M0-T147-review-contract-convergence.md"
   ],
   "dependencies": [],
@@ -20,7 +20,6 @@
     "tools/agent_supervisor/evidence.py",
     "tools/agent_supervisor/codex_reviewer.py",
     "tools/test_agent_supervisor_reviewer.py",
-    "tools/test_agent_supervisor_evidence.py",
     "project-control/reports/M0-T147-review-contract-convergence.md"
   ],
   "forbidden_paths": [
@@ -34,8 +33,7 @@
     "project-control/directives"
   ],
   "documented_test_commands": [
-    "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
-    "python -m pytest tools/test_agent_supervisor_evidence.py -q"
+    "python -m pytest tools/test_agent_supervisor_reviewer.py -q"
   ],
   "acceptance_scenarios": [
     "S1: build_packet output for a checkpoint in a repo with modified files carries git.diff_content with the actual patch text, digest-bound, truncated per DEFAULT_SECTION_BYTES with a recorded truncation marker when oversized.",
@@ -49,14 +47,14 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-06T16:19:57.552714+00:00",
-  "updated_at": "2026-09-06T16:19:57.715149+00:00",
+  "updated_at": "2026-09-06T16:20:58.665269+00:00",
   "directive_refs": [
     {
       "directive_id": "D-032",
@@ -64,5 +62,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-06T16:19:57.552714+00:00"
+  "directive_regime_entered_at": "2026-09-06T16:19:57.552714+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24"
 }
