@@ -1,35 +1,47 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "300000",
+    "BASH_MAX_TIMEOUT_MS": "1800000"
+  },
+  "permissions": {
+    "deny": [
+      "mcp__*"
+    ],
+    "allow": [
+      "Bash(python -m tools.agent_supervisor *)"
+    ]
+  },
   "model": "claude-fable-5",
-  "fallbackModel": ["claude-opus-4-8"],
-  "effortLevel": "xhigh",
-  "disableClaudeAiConnectors": true,
-  "allowedMcpServers": [],
-  "deniedMcpServers": [
-    { "serverName": "pencil" },
-    { "serverName": "supabase" },
-    { "serverName": "mysql" },
-    { "serverName": "sequential-thinking" },
-    { "serverName": "playwright" }
+  "fallbackModel": [
+    "claude-opus-4-8"
   ],
+  "enableAllProjectMcpServers": false,
   "disabledMcpjsonServers": [
     "supabase",
     "mysql",
     "sequential-thinking",
     "playwright"
   ],
-  "enableAllProjectMcpServers": false,
-  "permissions": {
-    "deny": ["mcp__*"]
-  },
-  "env": {
-    "BASH_DEFAULT_TIMEOUT_MS": "300000",
-    "BASH_MAX_TIMEOUT_MS": "1800000"
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "python -m tools.agent_supervisor.telemetry_statusline --journal .claude/telemetry/statusline_journal.jsonl"
-  },
+  "disableClaudeAiConnectors": true,
+  "allowedMcpServers": [],
+  "deniedMcpServers": [
+    {
+      "serverName": "pencil"
+    },
+    {
+      "serverName": "supabase"
+    },
+    {
+      "serverName": "mysql"
+    },
+    {
+      "serverName": "sequential-thinking"
+    },
+    {
+      "serverName": "playwright"
+    }
+  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -76,5 +88,10 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python -m tools.agent_supervisor.telemetry_statusline --journal .claude/telemetry/statusline_journal.jsonl"
+  },
+  "effortLevel": "xhigh"
 }
