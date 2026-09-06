@@ -2400,16 +2400,25 @@ class SupervisedLoop:
     def _collect(self, checkpoint: ClaudeCheckpoint) -> Any:
         git_facts = {}
         project_control = {}
+        task_packet, extra_sections = None, {}
         if self.collector is not None:
             git_facts = self.collector.collect_git_facts()
             project_control = self.collector.collect_project_control()
+            # M0-T148 (D-032-R020): untracked deliverables, the task contract and
+            # the supervisor's own test runs - the packet-collection gap that
+            # tripped run persistent-local-04. All collection lives in evidence.py.
+            task_packet, extra_sections = self.collector.collect_completeness(
+                self.config.task_id, git_facts,
+                self.authority.documented_test_commands)
         return self._build_packet(
             run_id=self.run_id,
             task_id=self.config.task_id,
             checkpoint_id=checkpoint.checkpoint_id,
             checkpoint=checkpoint.to_dict(),
+            task_packet=task_packet,
             git_facts=git_facts,
             project_control=project_control,
+            extra_sections=extra_sections,
             never_send=self.never_send)
 
     # -- approval -----------------------------------------------------------

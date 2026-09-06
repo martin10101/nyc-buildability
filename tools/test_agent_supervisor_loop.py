@@ -2413,5 +2413,92 @@ class BetweenCycleIntentStopTests(LoopTestBase):
         self.assertEqual(outcome.stopped, "owner_intent_graceful_stop")
 
 
+class PacketCompletenessWiringTests(LoopTestBase):
+    """M0-T148 (D-032-R020): _collect wires the three added evidence classes into
+    the packet the reviewer receives. A worker under orchestrator-only git cannot
+    commit, so its new deliverables (untracked_content), the task contract
+    (task_packet) and the supervisor's own test runs (command_transcripts) are
+    what content review had been missing. Collector runner is a fake - no real
+    git, no provider - but the untracked file and the contract are on disk so the
+    collector's read_file opens the real bytes."""
+
+    def _collector(self):
+        from tools.agent_supervisor.process import ProcessResult
+        from tools.agent_supervisor import evidence as ev
+        # a new deliverable the worker could never commit
+        (self.repo / "tools" / "agent_supervisor").mkdir(parents=True, exist_ok=True)
+        (self.repo / "tools" / "agent_supervisor" / "new_deliverable.py").write_text(
+            "def added():\n    return 42\n", encoding="utf-8")
+        (self.repo / "project-control" / "tasks").mkdir(parents=True, exist_ok=True)
+        (self.repo / "project-control" / "tasks" / "M0-T036.json").write_text(
+            json.dumps({"task_id": "M0-T036", "allowed_paths": ["tools/**"]}),
+            encoding="utf-8")
+
+        def runner(argv, **_kwargs):
+            tokens = list(argv)
+            if "status" in tokens:
+                out = "?? tools/agent_supervisor/new_deliverable.py\n"
+            else:
+                out = ""
+            return ProcessResult(argv=tuple(argv), returncode=0, stdout=out,
+                                 stderr="", duration_seconds=0.0)
+
+        return ev.EvidenceCollector(repo_root=str(self.repo), runner=runner)
+
+    def _loop_with_collector(self, reviewer):
+        return lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="shadow", task_id="M0-T036", stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=4, owner_touch_budget=2),
+            journal=self.journal, audit=self.audit, machine=self.machine,
+            authority=self.authority, runner=FakeRunner(run_result()),
+            reviewer=reviewer, run_id=self.run_id,
+            collector=self._collector(), head_sha=HEAD_SHA)
+
+    def test_the_reviewer_packet_carries_all_three_new_sections(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(len(reviewer.packets), 1)
+        sections = reviewer.packets[0]["sections"]
+        self.assertIn("untracked_content", sections)
+        self.assertIn("task_packet", sections)
+        self.assertIn("command_transcripts", sections)
+
+    def test_the_untracked_deliverable_content_and_digest_are_present(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        untracked = reviewer.packets[0]["sections"]["untracked_content"]
+        entry = untracked["tools/agent_supervisor/new_deliverable.py"]
+        self.assertTrue(entry["ok"])
+        self.assertIn("return 42", entry["value"])
+        self.assertTrue(entry["digest"])
+
+    def test_the_documented_test_command_was_executed_and_recorded(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        transcripts = reviewer.packets[0]["sections"]["command_transcripts"]
+        # the authority documents exactly one test command; it was run
+        self.assertEqual(len(transcripts), 1)
+        entry = next(iter(transcripts.values()))
+        self.assertTrue(entry["ok"])
+        self.assertEqual(entry["value"]["exit_code"], 0)
+
+    def test_the_task_contract_rides_digest_bound(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        task_packet = reviewer.packets[0]["sections"]["task_packet"]
+        self.assertTrue(task_packet["file"]["digest"])
+        self.assertIn("allowed_paths", task_packet["file"]["value"])
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main(verbosity=2)
