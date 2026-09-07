@@ -32,8 +32,12 @@
   ],
   "scope": {
     "kind": "workstream",
-    "task_ids": [],
-    "task_types": [],
+    "task_ids": [
+      "M0-T151"
+    ],
+    "task_types": [
+      "governance"
+    ],
     "allowed": "author ARCHITECTURE.md + .claude/skills/pr-review/SKILL.md under standard gates",
     "excluded": "supervisor code; gate/hold/policy changes; push/PR/merge/deploy; PR #241; anything owner-only"
   },
@@ -44,7 +48,7 @@
     "D-034-R003",
     "D-034-R004"
   ],
-  "requirements_content_digest_sha256": "087d6c296743352cf02df7a51a3798f389f7e56aa9240e0a7128428e04283089",
+  "requirements_content_digest_sha256": "610f4e612864b958164201f43955b6736d8f2a90b63217e6a234120c99474de5",
   "owner_approval": {
     "state": "approved",
     "approved_at": "2026-09-07T02:10:00+00:00",
@@ -59,6 +63,18 @@
       "event": "captured",
       "by": "orchestrator",
       "note": "verbatim capture + faithful transcription of the 9 screenshots; decomposed into R001-R004"
+    },
+    {
+      "at": "2026-09-07T02:20:00+00:00",
+      "event": "applicability_binding",
+      "by": "orchestrator",
+      "note": "bound R001-R004 to task M0-T151 via applicability.task_ids (governance-path claim requires an applicable set; conjunction binding per established mechanics)"
+    },
+    {
+      "at": "2026-09-07T02:25:00+00:00",
+      "event": "scope_binding",
+      "by": "orchestrator",
+      "note": "scope.task_types=[governance] + task_ids=[M0-T151] so covers_governance() recognizes the directive for the governance-path claim guard (s19)"
     }
   ]
 }
