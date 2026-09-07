@@ -19,3 +19,24 @@ EXIT: 0
   warn review_signal: tools/agent_supervisor/repair_gate.py - above the warning threshold; consider the module boundary before growing it further
   warn review_signal: tools/context_benchmark.py - above the warning threshold; consider the module boundary before growing it further
 EXIT: 0
+
+=== D-1 RECAPTURE (orchestrator, 2026-09-07T08:37:46Z): VERBATIM UNFILTERED modularity output ===
+The section-4 capture above piped through 'tail -5', dropping 8 of 13 warnings and the
+summary line (G3 observation D-1). Full verbatim output of the same command at the same
+frozen candidate cc25bdc1 follows; exit code appended.
+--- python tools/modularity_check.py --check ---
+selected 358 files; failures 0; warnings 13
+  warn symbol_ceiling: apps/web/src/lib/surveyReview/types.ts - many top-level symbols (approximate count); a signal, not a verdict
+  warn symbol_ceiling: services/api/app/connectors/mappluto_geometry_arcgis.py - many top-level symbols; a signal, not a verdict
+  warn symbol_ceiling: tools/agent_supervisor/cli.py - many top-level symbols; a signal, not a verdict
+  warn review_signal: tools/agent_supervisor/codex_reviewer.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/durable_state.py - above the warning threshold; consider the module boundary before growing it further
+  warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further
+  warn symbol_ceiling: tools/agent_supervisor/policy.py - many top-level symbols; a signal, not a verdict
+  warn review_signal: tools/agent_supervisor/process.py - above the warning threshold; consider the module boundary before growing it further
+  warn review_signal: tools/agent_supervisor/recovery_probes.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/refusal_bridge.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/repair_gate.py - above the warning threshold; consider the module boundary before growing it further
+  warn review_signal: tools/context_benchmark.py - above the warning threshold; consider the module boundary before growing it further
+EXIT: 0
