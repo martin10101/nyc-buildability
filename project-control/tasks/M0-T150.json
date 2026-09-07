@@ -1,0 +1,59 @@
+{
+  "task_id": "M0-T150",
+  "title": "D-033 design: supervisor-run gate waves and Tier-A acceptance (management-layer absorption plan)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Produce the reviewed design document satisfying D-033-R001 (supervisor-run gate waves: controller dispatches independent read-only reviewer sessions from durable state, records ledger gate records, preserves producer!=reviewer independence and gate classes), D-033-R002 (supervisor-run Tier-A acceptance: submit/gate/accept/queue-advance under ADR-006 preserving every accept() fail-closed precondition incl. DCV rows and content-identity stamps), and D-033-R008 (steady-state operator model: exception handling in short fresh sessions reading only durable state; no new dependence on long-lived chat context). The design must cover: state-machine extensions, reviewer session contracts (how a reviewer identity is spawned, its read-only enforcement, its verdict schema), evidence flow and digests, refusal/failure modes, the owner-gated default-OFF activation switch, machine-enforced separation of duties (D-033-R006 negative-test plan), and the staged R595 activation outline (stages, safeguards, rollback) feeding D-033-R004. Design only - no supervisor code changes in this task.",
+  "business_reason": "Owner directive D-033: the orchestrator chat session as management layer grows unbounded context and forces handoffs; the deterministic supervisor must absorb the mechanical Tier-A chain behind an owner-gated switch.",
+  "inputs": [
+    "project-control/directives/D-033-supervisor-management-layer/ (authority)",
+    "tools/agent_supervisor/loop.py, cli.py, policy.py (current state machine + broker)",
+    "tools/project_control.py (accept preconditions), tools/directive_registry.py (identity stamps)",
+    "docs/GATES_AND_CHECKPOINTS.md, docs/PROJECT_CONTROL_PROTOCOL.md, ADR-005/ADR-006",
+    "project-control/reports/D-032-pl04-packet-collection-convergence.md + M0-T148 reports (packet contract precedent)"
+  ],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md",
+    "project-control/reports/M0-T150-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "S1 completeness: the design covers every D-033-R001/R002/R008 element named in the objective (state-machine extensions, reviewer session contracts, evidence flow, refusal modes, default-OFF switch, separation-of-duties enforcement plan, staged-activation outline) with no TBD sections.",
+    "S2 invariants: for each of ADR-005's authority rules and each accept() fail-closed precondition, the design names the machine enforcement that preserves it under supervisor execution, plus the negative test that would catch its loss (D-033-R006).",
+    "S3 honesty about limits: the design explicitly lists what is NOT automatable (G6 qualified-human legal approval, owner-only actions, Tier D / Section 20) and how the controller refuses rather than degrades when it meets one.",
+    "S4 staged activation: the R595 package outline defines at least three stages with per-stage evidence requirements, rollback, and the exact owner activation command shape."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": "cloud-architect",
+  "reviewer_agents": [
+    "cloud-architect",
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-07T01:42:05.289854+00:00",
+  "updated_at": "2026-09-07T01:45:32.515207+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-033",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-07T01:42:05.289854+00:00",
+  "documented_test_commands": [],
+  "path_free_governance": true,
+  "path_free_justification": "Design-only task: both deliverables (docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md and the producer report) are NEW files that do not exist at contract time, so allowed_paths resolve to zero tracked blobs at HEAD. No production code is in scope; the content identity binds once the deliverables are committed and gated.",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t150"
+}
