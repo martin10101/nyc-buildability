@@ -3,5 +3,19 @@
   "directive_id": "D-033",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Workstream directive bound to the non-ledger sentinel D-033-BOOTSTRAP (D-029/D-031/D-032 pattern); rows accrue as planning/implementation tasks produce durable evidence.",
   "producer": "orchestrator",
-  "task_verifications": []
+  "task_verifications": [
+    {
+      "directive_id": "D-033",
+      "task_id": "M0-T150",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "7226d2957558ea991eb732f4807fd20c0d1a68eb",
+      "reviewed_manifest_sha256": "63fc7172a0866a84f768adad8ddef1bd672ebb206472f27f31a34371d0db04f0",
+      "producer": "cloud-architect/orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-07T02:45:00+00:00",
+      "note": "EMPTY-SET verification. M0-T150 cites D-033:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-033 requirements for this packet: all 8 D-033 requirements are applicability-scoped to task_ids ['D-033-BOOTSTRAP'] (verified 8/8; each _applicability_matches -> MATCH=False because task_id M0-T150 is not in the non-empty task_ids list; none carries an empty-task_ids wildcard). No selective citation: evaluate_task_refs returns ok=true with every set empty; a full sweep of all 32 active directives (D-001..D-034) yields zero requirements matching M0-T150 through its allowed_paths. Row exists because accept() fail-closes when a cited directive has no task_verification row (mirrors the D-032/M0-T147, M0-T148, and M2-T020 empty-set precedents). Verifier != producer (design produced by cloud-architect; control-plane records by orchestrator; this row produced by directive-compliance-verifier). PATH-FREE HANDLING: M0-T150 declares path_free_governance:true (both deliverables NEW files); at G0 readiness (9b03da5f) allowed_paths resolved to zero tracked blobs (deterministic empty-set hash e3b0c442...); once committed (f36958c4, integrated 98dac03f) the identity binds: reviewed_manifest_sha256 = 63fc7172..., reproduced via directive_registry.frozen_git_identity and byte-identical across 05f4f655, c0ae3b2d, 98dac03f, e0363275 and the verification HEAD 7226d295 (require_clean=True, err=None) - the gated content equals the stamped-HEAD content. Directive integrity reproduced: D-033 active, zero errors; source digest 33039a69.. + requirements digest 234466d5.. match manifest; validate --check exit 0. Gate evidence reproduced: G0/G2/G3/G5 all PASS; G3 code-reviewer + G5 security-reviewer independent, both != producer cloud-architect, content_manifest 63fc7172; all report files present/non-empty. Commit f36958c4 touches EXACTLY the two allowed_paths and no tools/agent_supervisor path. Deliverable docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md exists at HEAD (586 lines, sections 1-9 + S1-S4 mapping). Task substance: design-only management-layer absorption plan; no supervisor code changed. Prohibited-action evidence: status awaiting_gate at verification, active_tasks only, no merge/deploy, PR #241 untouched. Mechanical accept-time restamp convention applies (identity stays 63fc7172 while allowed_paths blobs unchanged; fail-closed otherwise).",
+      "requirements": []
+    }
+  ]
 }

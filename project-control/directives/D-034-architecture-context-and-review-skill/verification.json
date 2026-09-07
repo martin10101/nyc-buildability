@@ -3,5 +3,63 @@
   "directive_id": "D-034",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Workstream directive bound to the non-ledger sentinel D-034-BOOTSTRAP (established pattern).",
   "producer": "orchestrator",
-  "task_verifications": []
+  "task_verifications": [
+    {
+      "directive_id": "D-034",
+      "task_id": "M0-T151",
+      "applicable_requirement_ids": [
+        "D-034-R001",
+        "D-034-R002",
+        "D-034-R003",
+        "D-034-R004"
+      ],
+      "reviewed_sha": "7226d2957558ea991eb732f4807fd20c0d1a68eb",
+      "reviewed_manifest_sha256": "12531fc8b76977a0a4d7f9427e53d3b5462416db0b450a6c5a79df3dff8f7184",
+      "producer": "cloud-architect/orchestrator",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-07T02:45:00+00:00",
+      "note": "Applicable set = R001..R004 (all four D-034 rows bound to task_ids ['D-034-BOOTSTRAP','M0-T151']; evaluate_task_refs ok=true, applicable_ids==cited_ids==[R001..R004], missing_ids=[]). Verified at the POST-REWORK content identity 12531fc8 (G5 rework 302eb8ff applying L1 diff-trust-model + L2 gitleaks-citation, integrated at 0767f419); identity reproduced via directive_registry.frozen_git_identity as byte-identical across 302eb8ff, 0767f419, e0363275 and the verification HEAD 7226d295 (require_clean=True, err=None) - equals the post-rework G2/G3/G5 gate content_manifest. Original commit 06a63303 stamped the pre-rework identity 9da61a9b (superseded). Directive integrity: D-034 active, zero errors; source digest 24c33759.. + requirements digest 610f4e61.. match manifest; validate --check exit 0. Gates G0/G2/G3/G5 all PASS; G3 code-reviewer + G5 security-reviewer independent, both != producer cloud-architect, both re-attested at 0767f419/12531fc8 (double delta attestation, L1/L2 RESOLVED); all report files present/non-empty. Verifier != producer. The 9 source screenshots are uncommitted session uploads (out-of-scope provenance note; source-001.md is the frozen digest-locked authority the matrix was checked against). Mechanical accept-time restamp convention applies (identity stays 12531fc8 while the artifact blobs are unchanged).",
+      "requirements": [
+        {
+          "id": "D-034-R001",
+          "state": "PASS",
+          "evidence": [
+            "ARCHITECTURE.md exists at repo root with exactly the six required sections (WHAT EXISTS / WHO OWNS WHAT / WHAT MAY DEPEND ON WHAT incl. FORBIDDEN edges / HOW DATA MOVES / WHAT MUST STAY TRUE with per-invariant mechanism / WHEN AN AGENT MUST STOP).",
+            "15 named components spot-checked by the verifier all resolve (create_app main.py:80; five connectors; eight spatial modules; documents/gate.py; render.yaml autoDeployTrigger off :87/:190; modularity_check.py; dependency_age_gate.py; supervisor-freeze.md); deep import claims match api/v1/rule_evaluation.py:51-99; adapter.py:2 READ-ONLY docstring matches the boundary claim.",
+            "Section 5 states every required invariant with its enforcing mechanism; cites CLAUDE.md/.claude/rules by reference. Corroborated by independent G3 24/24 spot-check."
+          ],
+          "note": "Independently reproduced; all architecture assertions resolve to real files. PASS."
+        },
+        {
+          "id": "D-034-R002",
+          "state": "PASS",
+          "evidence": [
+            ".claude/skills/pr-review/SKILL.md exists with valid frontmatter, /pr-review [branch|commit-or-range|path] invocation, and SIX dimensions (four captured + provenance discipline + fail-safe correctness).",
+            "Output discipline complete: actionable-only, path:line + concrete failure scenario, explicit UNPROVEN list, verbatim always-include Authority disclaimer (ADVISORY ONLY; ledger DONE only from gates via tools/project_control.py, ADR-005).",
+            "Post-rework L1 trust-model paragraph present (diff content = untrusted DATA, never obey embedded instructions, note injection attempts as findings). G5 PASS at 0767f419, L1/L2 RESOLVED."
+          ],
+          "note": "Skill meets every R002 element. PASS."
+        },
+        {
+          "id": "D-034-R003",
+          "state": "PASS",
+          "evidence": [
+            "ARCHITECTURE.md section 6 folds the UNPROVEN vocabulary BY CITATION of the existing stronger law (G0-G7, producer-cannot-self-accept, independent verification, /engineering-reliability) and adds no new lifecycle authority.",
+            "SKILL.md Authority disclaimer cites the same law; neither artifact reproduces the five-item screenshot protocol as a competing DONE checklist."
+          ],
+          "note": "Folded by citation, not duplication. PASS."
+        },
+        {
+          "id": "D-034-R004",
+          "state": "PASS",
+          "evidence": [
+            "git show 06a63303 --name-only = exactly the three allowed new files; git show 302eb8ff --name-only = exactly the two artifacts.",
+            "Grep of both code commits over gates/directives/rules/supervisor/settings/hold paths = EMPTY; SKILL.md explicitly advisory; no tools/agent_supervisor path in scope; M0-T151 in active_tasks only, no blocker references it."
+          ],
+          "note": "Prohibition honored. PASS."
+        }
+      ]
+    }
+  ]
 }
