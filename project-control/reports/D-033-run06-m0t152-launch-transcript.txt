@@ -1,0 +1,111 @@
+D-033-R009 continuation: committed foreground transcript of the M0-T152
+launch (queue v4 program, run persistent-local-06 budget lineage), executed by
+the orchestrator under the D-032-R021 standing launch delegation
+(session_01WBbzN5Rx17CBSjky5uKmnY, 2026-09-07 ~05:55Z).
+
+Context: run-06's v3 program is complete (M0-T025 astra COMPLETE + advanced;
+M0-T149 produced, gated through rework v2, staged for acceptance). The journal
+was cleared from PAUSED_RECOVERY to PREFLIGHT by an audited clear-recovery at
+~05:53Z. This launch runs the single queue-v4 task M0-T152 (D-033 T-A
+gate-wave engine; G5 F1/F2 blocking scenarios) with the honest single-task
+shape: --task-packet + --max-tasks 1, no --packet-queue (avoids the DL-1
+duplication shape recorded in D-032-loop-defect-lane-20260907.md).
+
+Exact launch command (Bash allow rule, single-quoted Windows paths verified
+against the 9aca7075 runtime key):
+
+python -m tools.agent_supervisor start \
+  --mode limited-auto --owner-enable-bounded-auto \
+  --checkout 'C:\SupervisorController' \
+  --claude-executable 'C:\Users\MLFLL\.local\bin\claude.exe' \
+  --codex-executable 'C:\Users\MLFLL\AppData\Roaming\npm\codex.cmd' \
+  --config 'C:\Program Files\SupervisorConfig\config.toml' \
+  --model-selection 'C:\SupervisorController\model_selection.toml' \
+  --manifest 'C:\Users\MLFLL\AppData\Local\NYCBuildabilitySupervisor\ctl24-activation\controller_manifest.json' \
+  --task-packet 'C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\project-control\tasks\M0-T152.json' \
+  --repo 'C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t152' \
+  --worktree 'C:\Users\MLFLL\Downloads\nyc-zoning\wt-m0t152' \
+  --branch task/M0-T152-gate-wave-engine \
+  --max-tasks 1 --max-cycles 10 --unit-timeout 1500 \
+  --run-id persistent-local-06
+
+Live stdout/stderr of that command follows verbatim below this line.
+================================================================================
+mode:            limited-auto
+classification:  UNSAFE_OR_DRIFTED (unsafe_or_drifted)
+next state:      PAUSED_RECOVERY
+resume permitted:False (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)
+reason:          integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+
+NOT DISPATCHED. the pre-dispatch classification is UNSAFE_OR_DRIFTED (unsafe_or_drifted); a run never starts over an unresolved recovery condition. integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+no provider was contacted.
+
+REFUSED (unsafe, exit 11): unsafe_or_drifted
+integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+  classification: UNSAFE_OR_DRIFTED
+  failed_probes: ['task_authority', 'pending_requests', 'config_identity']
+  failed_steps: ['controller_manifest', 'task_authority', 'pending_requests']
+  missing_steps: []
+  pending_effect_ids: []
+  recovery_reason_code: unsafe_or_drifted
+================================================================================
+[Ordering note: the DEFICIT-CONVERGENCE CLOSURE block below was written after
+BOTH refusals; it is placed here by an edit anchored between them. Chronology:
+refusal 1 (run-id 06) -> operator correction -> refusal 2 (run-id 07) ->
+closure analysis -> relaunch 3.]
+================================================================================
+DEFICIT-CONVERGENCE CLOSURE (2026-09-07 ~06:20Z, /deficit-convergence): the
+second refusal reproduced identically, so launches stopped and the complete
+causal cluster was traced from the probe code (recovery_probes.py,
+probe_control_plane.py, cli.py:2966-2999). THREE distinct causes, all now
+repaired and individually verified:
+  1. pending_requests: one unanswered queued ask from the dead M0-T149 unit
+     (ask_97789703..., 04:42:47Z; not listed by pending-approvals, which reads
+     the broker store). DENIED (digest be59193d...); owner_unanswered_asks now
+     empty.
+  2. task_authority: the ledger copy under --repo (wt-m0t152 @ 9ee7d057,
+     pre-claim) said 'backlog' while the packet says 'claimed'
+     (ledger_status_mismatch). Packet copy synced blob-identical to ctl24 HEAD
+     (7b3fc44d) and committed in wt-m0t152 (0e067b6a; M0-T025 sync precedent).
+  3. controller_manifest/config_identity: verify_manifest_with_config binds
+     PACKAGE_ROOT - the RUNNING tools/agent_supervisor package, i.e. the
+     launch cwd. ctl24's subtree matched the certified manifest until the
+     M0-T149 rework merge (7804bc03) changed policy.py/evidence.py; every
+     ctl24-cwd launch now fails manifest verification BY DESIGN until the R247
+     recert+reinstall lands. Repair: launch from wt-controller-src (clean,
+     detached at certified a5886dab); verify-controller from that cwd passes
+     ("controller verified, including the external config.toml binding").
+The run-id note in the earlier correction was a wrong hypothesis: the fresh
+id did not change the probe results; the three causes above are the real
+cluster. The relaunch below (run-id persistent-local-07, cwd
+wt-controller-src, same arguments otherwise) is the ONE rerun justified by
+the completed closure matrix.
+================================================================================
+OPERATOR CORRECTION (2026-09-07 ~06:00Z): the refusal above is CORRECT
+controller behavior, not a defect - the first attempt reused
+--run-id persistent-local-06 for a NEW program (M0-T152), and run-identity
+revalidation rightly drifted on task_authority / pending_requests /
+config_identity against the completed v3 program's recorded bindings. Per the
+controller's run-identity doc ("a genuinely NEW run needs a NEW id") and the
+campaign pattern (runs 01..06 = one id per program), the relaunch below uses
+the fresh id persistent-local-07. Same command otherwise; journal was left at
+PREFLIGHT (no second clear needed). Live stdout/stderr of the corrected
+launch follows.
+================================================================================
+mode:            limited-auto
+classification:  UNSAFE_OR_DRIFTED (unsafe_or_drifted)
+next state:      PAUSED_RECOVERY
+resume permitted:False (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)
+reason:          integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+
+NOT DISPATCHED. the pre-dispatch classification is UNSAFE_OR_DRIFTED (unsafe_or_drifted); a run never starts over an unresolved recovery condition. integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+no provider was contacted.
+
+REFUSED (unsafe, exit 11): unsafe_or_drifted
+integrity, authority, identity, repository, toolchain, auth, or policy no longer matches: revalidation failed for ['controller_manifest', 'task_authority', 'pending_requests']. Pausing synchronously and preserving evidence (S11.5)
+  classification: UNSAFE_OR_DRIFTED
+  failed_probes: ['task_authority', 'pending_requests', 'config_identity']
+  failed_steps: ['controller_manifest', 'task_authority', 'pending_requests']
+  missing_steps: []
+  pending_effect_ids: []
+  recovery_reason_code: unsafe_or_drifted
