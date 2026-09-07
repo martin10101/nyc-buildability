@@ -1,0 +1,20 @@
+{
+  "schema": "owner_packet_queue/v1",
+  "authority": "D-032 continuous-build queue v3 (orchestrator, 2026-09-07): R754-closure multi-task run. Task 1 = M0-T025 (registry path-containment revision COMPLETE in wt-m0t025, needs the converging review cycle - highest likelihood of an acceptance-class terminal verdict) then auto-advance (successor dispatch) to task 2 = M0-T149 (non-mutating command profile, M0-T148 G3 LOW-1 follow-up, AD-093 demonstrated-security-risk evidence). Documented commands on both tasks are transcript-cap-safe (<300s); M0-T025's full test_directive_compliance.py suite remains a mandatory orchestrator gate-wave step. Supersedes v2 (M2-T020 ACCEPTED 161st).",
+  "tasks": [
+    {
+      "task_id": "M0-T025",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T025.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t025",
+      "branch": "task/M0-T025-path-containment",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t025"
+    },
+    {
+      "task_id": "M0-T149",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T149.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t149",
+      "branch": "task/M0-T149-command-profile",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t149"
+    }
+  ]
+}

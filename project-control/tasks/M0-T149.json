@@ -24,18 +24,18 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-loop-fable-worker",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-06T18:43:50.202197+00:00",
-  "updated_at": "2026-09-06T18:43:50.398924+00:00",
+  "updated_at": "2026-09-07T01:12:38.578310+00:00",
   "directive_refs": [
     {
       "directive_id": "D-032",
@@ -43,5 +43,12 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-06T18:43:50.202197+00:00"
+  "directive_regime_entered_at": "2026-09-06T18:43:50.202197+00:00",
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
+    "python -m pytest tools/test_agent_supervisor_policy.py -q",
+    "python -m ruff check tools/agent_supervisor/evidence.py tools/agent_supervisor/policy.py tools/test_agent_supervisor_reviewer.py tools/test_agent_supervisor_policy.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t149"
 }
