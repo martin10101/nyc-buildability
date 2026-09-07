@@ -1,0 +1,21 @@
+M0-T152 documented commands at frozen candidate cc25bdc15e4e982259a71f6903f370e6d1d8adf9 (orchestrator G2 capture, 2026-09-07T08:26:28Z)
+worktree: C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t152 @ cc25bdc15e4e982259a71f6903f370e6d1d8adf9, status: 0 dirty
+=== 1. pytest gate_wave ===
+...............................................................          [100%]
+63 passed in 0.70s
+EXIT: 0
+=== 2. pytest loop ===
+........................................................................ [ 56%]
+.......................................................                  [100%]
+127 passed in 25.34s
+EXIT: 0
+=== 3. ruff ===
+All checks passed!
+EXIT: 0
+=== 4. modularity ===
+  warn review_signal: tools/agent_supervisor/process.py - above the warning threshold; consider the module boundary before growing it further
+  warn review_signal: tools/agent_supervisor/recovery_probes.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/refusal_bridge.py - above the justification threshold; record a cohesion justification in review
+  warn review_signal: tools/agent_supervisor/repair_gate.py - above the warning threshold; consider the module boundary before growing it further
+  warn review_signal: tools/context_benchmark.py - above the warning threshold; consider the module boundary before growing it further
+EXIT: 0
