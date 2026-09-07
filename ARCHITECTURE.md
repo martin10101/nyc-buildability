@@ -169,8 +169,10 @@ Each invariant names the mechanism that makes it hold (not honor-system):
   provenance referential integrity; a material value with no provenance record is a
   defect (`CLAUDE.md` P2; `.claude/rules/backend-api.md`).
 - **Secrets are server-side only.** -> env-scoped vars + hardened `.gitignore` +
-  gitleaks pre-commit hook; frontend gets only publishable `NEXT_PUBLIC_*`
-  (`.claude/rules/frontend-web.md`; ADR-004 item 4).
+  gitleaks pre-commit hook (developer-machine, via the global git template) with
+  GitHub secret scanning + push protection as the server-side backstop; frontend
+  gets only publishable `NEXT_PUBLIC_*` (`.claude/rules/frontend-web.md`;
+  ADR-004 item 4).
 - **Dependency security is fail-closed, incl. the 7-day age gate.** ->
   `services/api/scripts/dependency_age_gate.py` + committed-lockfile age gate; audits
   on every change, no agent waiver (`CLAUDE.md` P15; `.claude/rules/deployment.md`).
