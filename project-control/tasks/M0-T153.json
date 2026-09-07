@@ -36,18 +36,18 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-loop-fable-worker",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-07T08:40:04.929567+00:00",
-  "updated_at": "2026-09-07T08:40:05.129329+00:00",
+  "updated_at": "2026-09-07T08:54:31.140757+00:00",
   "directive_refs": [
     {
       "directive_id": "D-033",
@@ -64,5 +64,6 @@
   ],
   "notes": [
     "CHECKPOINT ENVELOPE CONTRACT (DL-2, proven on M0-T152 runs 08/09): in the final checkpoint JSON, starting_sha and current_sha MUST each be either the FULL 40-hex sha (git rev-parse HEAD in the worktree) or the empty string \"\" (controller enrichment fills empty envelope fields; any abbreviated sha is refused fail-closed). Same rule for branch/worktree: exact or empty."
-  ]
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t153"
 }
