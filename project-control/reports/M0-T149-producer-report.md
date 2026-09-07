@@ -37,9 +37,10 @@ claim rested on it.
   - `SUPERVISOR_EXECUTABLE_PYTHON_MODULES = frozenset({"pytest", "ruff",
     "unittest"})` - a closed `-m` set; an open `-m` would readmit
     `python -m pip install`.
-  - `_MUTATING_CHECKER_TOKENS = frozenset({"--fix", "--fix-only",
-    "--unsafe-fixes", "format"})` - the tokens that turn the admitted checkers
-    into writers (`ruff check --fix`, `ruff format`).
+  - `_MUTATING_CHECKER_TOKENS` - the tokens that turn the admitted checkers
+    into writers. (Superseded by the Rework section below, which adds
+    `--add-noqa`, `--output-file`, `-o`, and `clean`; the initial submission
+    carried only `--fix`/`--fix-only`/`--unsafe-fixes`/`format`.)
 - `supervisor_execution_refusal(command | CommandShape) -> str`: deterministic,
   fail-closed, returns `""` to admit or a reason code to refuse. Layered:
   (1) one clean metacharacter-free segment under the classifier's own
@@ -180,4 +181,120 @@ direction: previously granted approvals re-verify under the new rules).
   closed allowlist is a reviewed one-line diff under the standard gates.
 - `format` in `_MUTATING_CHECKER_TOKENS` matches the bare token anywhere in a
   ruff invocation (a path literally named `format` would be refused); the
-  fail-closed cost is accepted for simplicity and documented here.
+  fail-closed cost is accepted for simplicity and documented here. (`clean` is
+  added on the same basis - see Rework below.)
+
+## Rework (G3 C1 + G5 MED-1 / MED-2, 2026-09-07)
+
+Independent G3 (`M0-T149-G3-code-review.md`, F1/F2/F3/F5) and G5
+(`M0-T149-G5-security.md`, MED-1/MED-2/LOW-3, verdict FAIL) found reproducible
+bypasses of the "non-mutating" property this task exists to enforce. This
+bounded rework closes exactly that cluster; no other behavior changed.
+
+### What changed and why
+
+1. `_MUTATING_CHECKER_TOKENS` completed (G3-F1/F2, G5-MED-1). The denylist of
+   ruff argument tokens was incomplete, so source- and file-mutating ruff shapes
+   passed the profile:
+   - `--add-noqa` (G3-F1 / G5-MED-1) rewrites tracked source in place, the same
+     class as `--fix`.
+   - `--output-file` and `-o` (G3-F2) write a report file into the worktree
+     (`-o` was already treated as unsafe for git via
+     `UNSAFE_GIT_SUBCOMMAND_FLAGS`; the two are now consistent).
+   - `clean` (G3-F2) deletes the ruff cache; added as a bare token on the same
+     fail-closed-cost basis the existing `format` entry documents (a path
+     literally named `clean` would be refused - accepted for simplicity).
+
+   Corrected token set (closed):
+   `{--fix, --fix-only, --unsafe-fixes, --add-noqa, --output-file, -o, format,
+   clean}`. The in-source rationale comment was rewritten so its claim is
+   accurate, and the closure test now machine-checks that every one of these
+   tokens is in the set AND is refused (`mutating_checker_token:<token>`), so
+   the claim cannot drift.
+
+2. Fused `-m<module>` root cause fixed (G5-MED-2). The root cause was that
+   `_refuse_interpreter_target` **skipped unrecognized dash tokens**: a fused
+   token like `-mpip`/`-mcompileall`/`-mwebbrowser` began with `-`, was neither
+   the exact `-c` nor the exact `-m`, so the loop fell through to the next token
+   and the first `.py` positional then admitted the command - defeating the
+   whole module allowlist. The skip is replaced with fail-closed positive
+   handling of every dash token:
+   - exact `-m` keeps the space-form module handling;
+   - a fused `-m<module>` extracts the module name and routes it through the
+     SAME `SUPERVISOR_EXECUTABLE_PYTHON_MODULES` allowlist (shared helper
+     `_refuse_python_module`), so `-mpytest` admits exactly like `-m pytest`
+     while `-mpip`/`-mcompileall`/`-mpydoc`/`-mwebbrowser` are refused
+     `python_module_not_allowlisted:<module>`;
+   - `-c` and any fused `-c<code>` are refused `inline_python_code`;
+   - ANY OTHER dash token (fused or not: `-W`, `-X`, `-O`, `-B`, `-u`, ...) is
+     now refused with a typed reason `unrecognized_interpreter_flag:<token>`
+     rather than skipped.
+
+   This intentionally keeps the disclosed G3-F5 limitation: an
+   option-with-argument form such as `python -W ignore -m pytest ...` is refused
+   at the leading `-W` - fail-closed and fail-visible. No documented command
+   uses such a form. The function remains pure classification.
+
+3. POLICY_VERSION stays 1.1.0. The version has never shipped or installed
+   (supervisor is shadow-only, R595 not activated), so this rework is folded
+   into the same unreleased 1.1.0 rule change; no second bump is added. The
+   1.1.0 -> approval-digest binding described in the initial submission is
+   unchanged.
+
+4. Modularity claim corrected (G3-F3 / G5-LOW-3). The initial self-check block
+   above claimed `warnings 12 - identical warning set`; that is inaccurate. At
+   the reworked content `python tools/modularity_check.py --check` reports
+   `selected 357 files; failures 0; warnings 13`, and one of the 13 is a NEW
+   `symbol_ceiling: tools/agent_supervisor/policy.py` advisory
+   ("many top-level symbols; a signal, not a verdict"). The profile added 8
+   top-level symbols to policy.py across the original submission and this rework
+   (three constants, `_refuse_checker_tokens`, `_refuse_python_module`,
+   `_refuse_interpreter_target`, `supervisor_execution_refusal`, plus
+   `_ABSOLUTE_PATH_SHAPE`). Cohesion justification (per the modularity rule):
+   these symbols are one cohesive unit - the supervisor-execution profile for
+   documented commands - each a small single-purpose classifier that composes
+   into `supervisor_execution_refusal`; they share the module's existing
+   command-shape vocabulary (`parse_command`, `_program_name`,
+   `_is_destructive_segment`) and belong beside the tier engine they reuse.
+   `failures 0`: the gate passes; the warning is advisory only.
+
+### Tests added / changed for the rework
+
+- `tools/test_agent_supervisor_policy.py` (`SupervisorExecutionProfileTests`):
+  `test_the_add_noqa_source_writer_is_refused`,
+  `test_a_report_file_writing_ruff_arg_is_refused` (`--output-file` and `-o`),
+  `test_ruff_clean_is_refused`,
+  `test_a_fused_dash_m_module_is_refused_via_the_allowlist`
+  (pip/compileall/pydoc/webbrowser),
+  `test_a_fused_dash_c_is_refused_as_inline_code`,
+  `test_an_unrecognized_interpreter_flag_is_refused_not_skipped`
+  (`python -W ignore -m pytest ...` pins the G3-F5 limitation),
+  `test_a_fused_allowlisted_module_still_admits` (fused `-mpytest`/`-mruff`
+  admit, so the fix is not a blanket refusal),
+  `test_previously_admitted_real_shapes_still_admit` (positive regression),
+  and `test_the_mutating_checker_token_set_covers_every_known_writer`
+  (closure). The pre-existing `test_a_bare_or_targetless_interpreter_is_refused`
+  was updated: `python -u` now yields `unrecognized_interpreter_flag:-u`
+  (was skipped) - the intended MED-2 tightening.
+- `tools/test_agent_supervisor_reviewer.py`
+  (`NonMutatingExecutionProfileTests`): spy-runner proofs at the enforcement
+  point that `ruff check --add-noqa .` and fused `python -mcompileall foo.py`
+  are refused `non_mutating_profile_refused` and NEVER executed
+  (`self.ran == []`).
+
+### Rework self-check outputs (real, final content state)
+
+- `python -m pytest tools/test_agent_supervisor_policy.py -q` ->
+  `122 passed, 1 skipped` (was 113 passed, 1 skipped; +9 net new).
+- `python -m pytest tools/test_agent_supervisor_reviewer.py -q` ->
+  `125 passed` (was 123; +2 new).
+- `python -m ruff check tools/agent_supervisor/evidence.py
+  tools/agent_supervisor/policy.py tools/test_agent_supervisor_reviewer.py
+  tools/test_agent_supervisor_policy.py` -> `All checks passed!`
+- `python tools/modularity_check.py --check` -> `selected 357 files;
+  failures 0; warnings 13` (supersedes the "warnings 12" claim above; includes
+  the new advisory `symbol_ceiling: tools/agent_supervisor/policy.py`).
+
+evidence.py was not changed in this rework (the enforcement point was already
+correct; the fix is entirely in the classifier). Nothing outside the six
+allowed paths was touched.

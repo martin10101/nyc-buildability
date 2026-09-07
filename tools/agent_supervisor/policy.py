@@ -971,10 +971,18 @@ SUPERVISOR_EXECUTABLE_PYTHON_MODULES: frozenset[str] = frozenset({
     "pytest", "ruff", "unittest",
 })
 
-#: Bare tokens that turn the admitted checkers into WRITERS: `ruff check
-#: --fix` rewrites source in place and `ruff format` rewrites whole files.
+#: Tokens that turn the admitted checkers into WRITERS - refused so the profile
+#: stays non-mutating. `--fix`/`--fix-only`/`--unsafe-fixes`/`--add-noqa` all
+#: rewrite tracked source in place (`--add-noqa` inserts noqa suppressions);
+#: `--output-file`/`-o` write a report file into the worktree (the same reason
+#: `-o` is unsafe for git, UNSAFE_GIT_SUBCOMMAND_FLAGS). The bare verbs `format`
+#: (rewrites whole files) and `clean` (deletes the ruff cache) are matched as a
+#: token ANYWHERE in the argv, so a path literally named `format`/`clean` is
+#: refused too - a fail-closed cost accepted for simplicity and documented in
+#: the producer report.
 _MUTATING_CHECKER_TOKENS: frozenset[str] = frozenset({
-    "--fix", "--fix-only", "--unsafe-fixes", "format",
+    "--fix", "--fix-only", "--unsafe-fixes", "--add-noqa",
+    "--output-file", "-o", "format", "clean",
 })
 
 _ABSOLUTE_PATH_SHAPE = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
@@ -987,28 +995,58 @@ def _refuse_checker_tokens(rest: Sequence[str]) -> str:
     return ""
 
 
+def _refuse_python_module(module: str, remaining: Sequence[str]) -> str:
+    """Reason code when a `python -m <module>` target escapes the profile, else ''.
+
+    Shared by the space form (`-m pytest`) and the fused form (`-mpytest`) so
+    both route through the ONE closed module allowlist; a ruff module then also
+    passes its remaining args through the mutating-checker-token gate.
+    """
+    if module not in SUPERVISOR_EXECUTABLE_PYTHON_MODULES:
+        return f"python_module_not_allowlisted:{module or '(missing)'}"
+    if module == "ruff":
+        return _refuse_checker_tokens(remaining)
+    return ""
+
+
 def _refuse_interpreter_target(rest: Sequence[str]) -> str:
-    """Reason code when a python/py invocation escapes the profile, else ''."""
+    """Reason code when a python/py invocation escapes the profile, else ''.
+
+    Pure classification, fail-closed on every dash token so no unknown switch
+    can shuttle the parser past the target check (the G5-MED-2 root cause was
+    skipping unrecognized dash tokens): `-c` and any fused `-c<code>` are inline
+    code; `-m` (space form) and the fused `-m<module>` form BOTH route the module
+    through the closed `SUPERVISOR_EXECUTABLE_PYTHON_MODULES` allowlist, so
+    `-mpip`/`-mcompileall`/`-mwebbrowser` are refused exactly like `-m pip`; ANY
+    OTHER interpreter flag (fused or not: `-W`, `-X`, `-O`, `-B`, `-u`, ...) is
+    refused with a typed reason rather than skipped. The first non-dash token is
+    the script target and must be a repository-relative .py path. Documented
+    limitation (G3-F5): an option-with-argument form such as `-W ignore -m ...`
+    is refused at the leading `-W` - fail-closed and fail-visible; no documented
+    command uses one.
+    """
     tokens = list(rest)
     for index, token in enumerate(tokens):
-        if token == "-c":
-            return "inline_python_code"
-        if token == "-m":
-            module = tokens[index + 1] if index + 1 < len(tokens) else ""
-            if module not in SUPERVISOR_EXECUTABLE_PYTHON_MODULES:
-                return f"python_module_not_allowlisted:{module or '(missing)'}"
-            if module == "ruff":
-                return _refuse_checker_tokens(tokens[index + 2:])
-            return ""
-        if not token.startswith("-"):
-            # The first positional token is the target. Only a repository-
-            # relative .py script is recognized; anything else fails closed.
-            if not token.lower().endswith(".py"):
-                return f"unrecognized_interpreter_target:{token}"
-            if _ABSOLUTE_PATH_SHAPE.match(token) or \
-                    ".." in token.replace("\\", "/").split("/"):
-                return f"script_outside_repository:{token}"
-            return ""
+        if token.startswith("-"):
+            if token.startswith("-c"):
+                return "inline_python_code"
+            if token == "-m":
+                module = tokens[index + 1] if index + 1 < len(tokens) else ""
+                return _refuse_python_module(module, tokens[index + 2:])
+            if token.startswith("-m"):
+                # Fused `-m<module>` (e.g. `-mpytest`): the module name is fused
+                # onto the switch. Route it through the SAME allowlist so the
+                # fused form can never bypass what the space form refuses.
+                return _refuse_python_module(token[2:], tokens[index + 1:])
+            return f"unrecognized_interpreter_flag:{token}"
+        # The first positional token is the target. Only a repository-relative
+        # .py script is recognized; anything else fails closed.
+        if not token.lower().endswith(".py"):
+            return f"unrecognized_interpreter_target:{token}"
+        if _ABSOLUTE_PATH_SHAPE.match(token) or \
+                ".." in token.replace("\\", "/").split("/"):
+            return f"script_outside_repository:{token}"
+        return ""
     return "interpreter_without_test_target"
 
 
