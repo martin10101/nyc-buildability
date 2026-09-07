@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T150",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T150-G3-design-review.md",
+  "reviewed_at": "2026-09-07T02:09:50.857407+00:00",
+  "content_manifest_sha256": "63fc7172a0866a84f768adad8ddef1bd672ebb206472f27f31a34371d0db04f0",
+  "reviewed_sha": "c0ae3b2d8bf1a4c94ef648eae8c90a4cb4463d0b",
+  "updated_at": "2026-09-07T02:09:51.114513+00:00"
+}

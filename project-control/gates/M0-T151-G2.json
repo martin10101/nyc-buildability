@@ -5,8 +5,17 @@
   "role": "self_check",
   "result": "PASS",
   "report_file": "project-control/reports/M0-T151-G2-selfcheck.md",
-  "reviewed_at": "2026-09-07T02:08:31.459469+00:00",
-  "content_manifest_sha256": "9da61a9b2016c29d2b946f4c8e651bbe1ed2a63ef56ede0bfb16f43ac06b5111",
-  "reviewed_sha": "05f4f655aeb51fbfa8331f02dec2c22c14328060",
-  "updated_at": "2026-09-07T02:08:31.787703+00:00"
+  "reviewed_at": "2026-09-07T02:15:16.880735+00:00",
+  "content_manifest_sha256": "12531fc8b76977a0a4d7f9427e53d3b5462416db0b450a6c5a79df3dff8f7184",
+  "reviewed_sha": "0767f419e48bcfba8b12cb1ce9417d1b367168b1",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T151-G2-selfcheck.md",
+      "reviewed_at": "2026-09-07T02:08:31.459469+00:00"
+    }
+  ],
+  "updated_at": "2026-09-07T02:15:17.240257+00:00"
 }
