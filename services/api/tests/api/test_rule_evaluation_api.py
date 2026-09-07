@@ -33,8 +33,10 @@ the producer report).
 from __future__ import annotations
 
 import json
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import jsonschema
 import pytest
@@ -45,6 +47,7 @@ from app.api.v1 import rule_evaluation as rule_eval_module
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
+from app.connectors.mappluto_geometry_arcgis import CRS_STAMP, analyze_lot_geometry
 from app.connectors.pluto_soda import (
     SOURCE_ID,
     TransportFailure,
@@ -52,6 +55,7 @@ from app.connectors.pluto_soda import (
     TransportTimeout,
     fetch_by_bbl,
 )
+from app.connectors.ztldb_soda import UpstreamError as ZtldbUpstreamError
 from app.main import app
 from app.rules import RuleRegistry
 from app.rules import coverage as cov
@@ -63,6 +67,11 @@ from app.rules.response import (
     validate_rule_evaluation_document,
 )
 from app.rules.snapshots import SnapshotStore
+from app.spatial import live_provider as live_provider_module
+from app.spatial.live_provider import (
+    LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR,
+    LiveSpatialFetchers,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
@@ -664,3 +673,235 @@ def test_as14_health_endpoint_unaffected(client):
     response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
+
+# ==========================================================================
+# M2-T020 - settings-gated LIVE spatial provider behind the DEFAULT seam.
+# S1 parity: live flag off -> the DEFAULT provider (no dependency override) is
+# byte-identical to the recorded absent-substrate fail-safe, with ZERO
+# connector calls. S2: flag on + connector doubles -> a real engine substrate
+# flows through the DEFAULT provider into evaluate_property. S3: a live
+# connector failure -> the SAME documented fail-safe document, never a 500.
+# ==========================================================================
+
+SPATIAL_FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures"
+_R32_X, _R32_Y = 997482.04, 163293.94  # interior probe of the real ZF03 polygon
+
+
+def _uninstall_substrate_override() -> None:
+    """Route the request through the route's DEFAULT spatial provider."""
+    app.dependency_overrides.pop(get_spatial_substrate_provider, None)
+
+
+def _live_lot_double(bbl: str, correlation_id: str):
+    """LotGeometryResult-shaped double: a square deep inside the real R3-2
+    polygon, assessed by the accepted MapPLUTO geometry validator."""
+    half = 25.0
+    ring = [
+        [_R32_X - half, _R32_Y - half],
+        [_R32_X - half, _R32_Y + half],
+        [_R32_X + half, _R32_Y + half],
+        [_R32_X + half, _R32_Y - half],
+        [_R32_X - half, _R32_Y - half],
+    ]
+    assessment = analyze_lot_geometry({"rings": [ring]}, crs=dict(CRS_STAMP))
+    return SimpleNamespace(
+        outcome="single_feature",
+        geometry=assessment,
+        review_required=False,
+        requested_bbl=bbl,
+        area_sq_ft=assessment.area_sq_ft,
+        retrieved_at="2026-09-06T00:00:00Z",
+        normalized_digest="digest-live-lot",
+        source_data_last_edited="2026-07-01T00:00:00Z",
+        crs=dict(CRS_STAMP),
+    )
+
+
+def _live_layer_double(label: str):
+    """LayerQueryResult-shaped double carrying the REAL ZF03 nyzd polygon,
+    relabelled to the queried district label (test data in a double)."""
+    doc = json.loads(
+        (SPATIAL_FIXTURE_DIR / "zoning_features" / "ZF03_query_nyzd_single_R3-2.json")
+        .read_text(encoding="utf-8")
+    )
+    features = json.loads(doc["response_body_raw"])["features"]
+    for feature in features:
+        feature["attributes"]["ZONEDIST"] = label
+    return SimpleNamespace(
+        layer="nyzd",
+        features=features,
+        object_id_field="OBJECTID",
+        normalized_digest="digest-live-zf03",
+        retrieved_at="2026-09-06T00:00:00Z",
+        source_data_last_edited="2026-07-01T00:00:00Z",
+        exceeded_transfer_limit=False,
+    )
+
+
+def _live_ztldb_double(label: str):
+    return SimpleNamespace(
+        status="ok",
+        zoning_assignment={
+            "zoning_districts": [
+                {"position": 1, "column": "zoning_district_1", "value": label}
+            ],
+            "commercial_overlays": [],
+            "special_districts": [],
+            "limited_height_district": None,
+        },
+        dataset_version="rows-2026-09-01",
+        source_freshness={"rows_updated_at": "2026-09-01T00:00:00Z"},
+    )
+
+
+class RecordingLiveFetchers:
+    """Recording spies around the live-fetcher doubles. Call lists are asserted
+    AFTER the request returns: the provider's fail-safe ``except`` swallows any
+    AssertionError raised inside a fetcher, so an exploding guard cannot prove
+    non-invocation, but a recorded call cannot be hidden. ``ztldb`` optionally
+    overrides the ZTLDB fetcher (e.g. with a raiser) while still being recorded.
+    """
+
+    def __init__(self, *, label: str = "R5", ztldb=None):
+        self.lot_calls: list = []
+        self.ztldb_calls: list = []
+        self.layer_calls: list = []
+        self._label = label
+        self._ztldb = ztldb  # optional (bbl, cid) callable override
+
+    def suite(self) -> LiveSpatialFetchers:
+        def fetch_lot(bbl, cid):
+            self.lot_calls.append((bbl, cid))
+            return _live_lot_double(bbl, cid)
+
+        def fetch_ztldb(bbl, cid):
+            self.ztldb_calls.append((bbl, cid))
+            if self._ztldb is not None:
+                return self._ztldb(bbl, cid)
+            return _live_ztldb_double(self._label)
+
+        def fetch_district_layer(layer, field, value, cid):
+            self.layer_calls.append((layer, field, value, cid))
+            return _live_layer_double(value)
+
+        return LiveSpatialFetchers(
+            fetch_lot=fetch_lot,
+            fetch_ztldb=fetch_ztldb,
+            fetch_district_layer=fetch_district_layer,
+        )
+
+
+def test_m2t020_s1_flag_off_default_seam_matches_absent_substrate_byte_for_byte(
+    client, monkeypatch
+):
+    enable_flag(monkeypatch)
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    # Recording spies (working doubles): if a defect invoked them while the
+    # flag is off, the count assertions below fail AND the composed substrate
+    # would break the byte-parity assertion. Counts are checked AFTER the
+    # request returns, so the provider's fail-safe except cannot hide a call.
+    recording = RecordingLiveFetchers()
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(None)  # the recorded pre-M2-T020 default behavior
+    baseline = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    _uninstall_substrate_override()  # now the route uses its DEFAULT provider
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    live_default = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The body carries no volatile field (AS-3 determinism), so parity is exact.
+    assert json.dumps(live_default, sort_keys=True) == json.dumps(baseline, sort_keys=True)
+    assert live_default["fail_safe_reason"] == "spatial_intersection_absent"
+    # Zero connector calls with the flag off, asserted after both requests.
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m2t020_s2_flag_on_live_substrate_reaches_evaluation_via_default_seam(
+    client, monkeypatch, rule_eval_validator
+):
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingLiveFetchers(label="R5")
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()  # DEFAULT provider; no dependency override
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+
+    # Each connector was consulted exactly once, and every call carried the
+    # SAME correlation id the response advertises (provenance binding).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    assert recording.lot_calls == [(BBL, correlation_id)]
+    assert recording.layer_calls == [("nyzd", "ZONEDIST", "R5", correlation_id)]
+
+    # The engine-composed substrate reached evaluate_property: a confident R5
+    # district and the GEOMETRIC lot area drive a full conditional draft trace.
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["zoning_district"] == "R5"
+    assert doc["lot_area_source"] == "spatial_intersection.pairs[].lot_area_sq_ft"
+    assert doc["spatial_uncertainty"]["base_district_candidates"][0][
+        "district_label"
+    ] == "R5"
+    assert len(doc["evaluations"]) == 1
+    assert doc["evaluations"][0]["outputs"]["max_residential_far"] == 1.5
+    assert "verified" not in set(_coverage_values(doc))
+
+
+def test_m2t020_s3_live_connector_failure_is_absent_substrate_fail_safe(
+    client, monkeypatch, rule_eval_validator, caplog
+):
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+
+    # The message is a CANARY: it must never reach a log line or the response.
+    def _raising_ztldb(bbl, cid):
+        raise ZtldbUpstreamError("canary-upstream-detail", correlation_id=cid)
+
+    recording = RecordingLiveFetchers(ztldb=_raising_ztldb)
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # documented fail-safe, never a 500
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    assert doc["evaluations"] == []
+
+    # Short-circuit asserted AFTER the request returned: the failing ZTLDB call
+    # happened exactly once and the later connectors were never consulted (an
+    # in-call exploding guard would have been swallowed by the fail-safe except).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+    # The typed failure is logged payload-only: error CLASS + the SAME
+    # correlation id the response advertises, never the exception text.
+    lines = [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "app.spatial.live_provider"
+        and "fail_safe" in record.getMessage()
+    ]
+    assert len(lines) == 1
+    assert "event=connector_error" in lines[0]
+    assert "error_type=UpstreamError" in lines[0]
+    assert f"correlation_id={correlation_id}" in lines[0]
+    assert "canary-upstream-detail" not in lines[0]
+    assert "canary-upstream-detail" not in response.text
