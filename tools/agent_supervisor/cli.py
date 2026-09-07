@@ -224,7 +224,7 @@ from .recovery import (
     set_emergency_stop,
     set_manual_pause,
 )
-from . import gate_wave, refusals
+from . import accept_engine, refusals
 from .codex_channel_cli import register_codex_channel_verbs
 from .telegram_sink_cli import register_telegram_verbs
 from .operator_channel_cli import (
@@ -2927,14 +2927,16 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     first_prompt = args.prompt if launch is not None else orientation_mod.oriented_first_prompt(
         args.prompt, packet, turn_budget, run_id=run_id, worktree=str(worktree),
         branch=args.branch, stage=args.stage, allowed_paths=authority.allowed_paths)
-    # M0-T152 (D-033-R001/R003, seam I1): run the launch and, ONLY under the
-    # per-launch owner enable (gated by name at cmd_start and re-asserted
-    # inside the helper), the post-COMPLETE gate-wave stage. With the flag
-    # absent this call IS `loop.run(first_prompt).to_dict()` - no enable
-    # record, no journal or audit append, no gate_wave machinery (S1). The
-    # stage records gates only - acceptance, queue advance, and integration
-    # stay with the orchestrator (D-033-R005).
-    return gate_wave.run_with_post_complete_stage(
+    # M0-T152/M0-T153 (D-033-R001/R002/R003, seams I1+I3): run the launch and,
+    # ONLY under the per-launch owner enables (gated by name at cmd_start and
+    # re-asserted inside the helpers), the post-COMPLETE stages. With both
+    # flags absent this call IS `loop.run(first_prompt).to_dict()` - no enable
+    # record, no journal or audit append, no gate_wave or accept_engine
+    # machinery. With only the wave flag, gates are recorded and acceptance
+    # stays with the orchestrator; the acceptance stage additionally requires
+    # its own owner enable and a green wave. Queue advance, commits, and
+    # integration remain with the orchestrator either way (T-C; D-033-R005).
+    return accept_engine.run_with_post_complete_stage(
         args, loop, first_prompt, packet=packet, reviewer=reviewer,
         collector=collector, journal=journal, audit=audit, run_id=run_id,
         repo_root=str(repo), worker_worktree=str(worktree),
@@ -2954,12 +2956,14 @@ def cmd_start(args: argparse.Namespace) -> int:
     if gate is not None:
         seal_owner_gate_refusal(args, gate, AUDIT_FILENAME)
         return emit_refusal(args, gate)
-    # M0-T152 (D-033-R003; F6): the managed gate-wave enable is refused BY NAME
-    # unless this launch carries the owner-gated capability that can host it;
-    # a refusal is sealed in the hash-chained audit log (the C6 shape).
-    wave_gate = gate_wave.managed_wave_start_gate(args, seal_audit=AUDIT_FILENAME)
-    if wave_gate is not None:
-        return emit_refusal(args, wave_gate)
+    # M0-T152/M0-T153 (D-033-R002/R003; F6): each D-033 stage enable (gate
+    # waves, then managed acceptance - which additionally requires the wave
+    # enable) is refused BY NAME unless this launch carries the owner-gated
+    # capability that can host it; refusals are sealed in the hash-chained
+    # audit log (the C6 shape). One consolidated wiring line (M0-T153).
+    stage_gate = accept_engine.stage_start_gate(args, seal_audit=AUDIT_FILENAME)
+    if stage_gate is not None:
+        return emit_refusal(args, stage_gate)
     # M0-T136 (D-024-R557): `--launch-manifest` is THE canonical entrance when
     # present - it supplies every dispatch input (typed flags that disagree are
     # refused, not preferred) and is verified at PREFLIGHT in `_run_loop`.
@@ -3369,7 +3373,7 @@ def build_parser() -> argparse.ArgumentParser:
              "downgrade, or model can set it, and it weakens no other gate - the run still "
              "passes the live pre-dispatch probes, the containment precondition, the "
              "policy tiers, and every circuit breaker")
-    gate_wave.add_owner_switch_argument(start)
+    accept_engine.register_stage_switches(start)
     start.add_argument(
         "--run-wall-clock-seconds", type=float, default=None,
         help="the OWNER-SET wall-clock budget for this run, in seconds. OMIT IT FOR AN "

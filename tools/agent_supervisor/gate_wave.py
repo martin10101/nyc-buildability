@@ -546,13 +546,19 @@ def admit_verdict_file(dispatch: GateDispatch, path: str, *,
     return resolved
 
 
-def verify_verdict_report(bound: BoundVerdict) -> dict[str, Any]:
+def verify_verdict_report(bound: BoundVerdict, *,
+                          worker_worktree: str = "") -> dict[str, Any]:
     """Re-read the stored transcript and prove it is the bound verdict.
 
     Tamper check: the stored body digest must recompute, and the stored verdict
-    digest must equal the bound one. Any mismatch fails closed.
+    digest must equal the bound one. Any mismatch fails closed. G3 M0-T152
+    advisory D-2 (closed by M0-T153): this read-back runs INSIDE the live wave
+    path - between writing the transcript and recording the gate - so a
+    verdict file altered or replaced after write can never back a gate record;
+    `worker_worktree` rides through to `admit_verdict_file`'s plant check.
     """
-    path = admit_verdict_file(bound.dispatch, bound.dispatch.output_path)
+    path = admit_verdict_file(bound.dispatch, bound.dispatch.output_path,
+                              worker_worktree=worker_worktree)
     try:
         body = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError) as exc:
@@ -774,8 +780,16 @@ def write_g2_report(repo_root: str, task_id: str, run_id: str,
             "note": "controller-run G2 self-check capture (D-033-R001); G2 is "
                     "recorded by the reserved orchestrator label and can never "
                     "satisfy an independent gate (project_control.py:1086/1214)"}
+    # G5 M0-T152 advisory L1 (closed by M0-T153): command transcripts are
+    # worker-influenced output and this report is a COMMITTED ledger artifact,
+    # so the body passes through `redact_structure` before it is persisted -
+    # the same discipline every sealed review record already applies.
+    redacted = redact_structure(body)
+    stored = redacted.value
+    stored["redaction_count"] = redacted.count
+    stored["redaction_labels"] = list(redacted.labels)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(body, indent=2, sort_keys=True,
+    path.write_text(json.dumps(stored, indent=2, sort_keys=True,
                                ensure_ascii=False), encoding="utf-8")
     return rel
 
@@ -983,6 +997,11 @@ def run_gate_wave(*, packet: Mapping[str, Any], checkpoint_id: str, run_id: str,
             rel = ""
             try:
                 write_verdict_report(bound, record)
+                # G3 D-2 (M0-T152 advisory, closed here): read the stored
+                # transcript BACK and prove it is the bound verdict before any
+                # ledger write - a post-write tamper parks the wave.
+                verify_verdict_report(bound,
+                                      worker_worktree=deps.worker_worktree)
                 rel = transcribe_ledger_report(deps.repo_root, bound, record)
                 deps.recorder.record_gate(bound, report_file=rel, sha=sha)
             except GateWaveError as exc:

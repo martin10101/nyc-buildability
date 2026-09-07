@@ -24,7 +24,15 @@ proven, keyed to the acceptance scenarios and the G5 M0-T150 conditions:
   record (with the mutation half), records the durable enable before the
   launch, waves only a COMPLETE run, and the switch registers store_true /
   default-off on the REAL `start` parser with refusals sealed in the
-  hash-chained audit log.
+  hash-chained audit log;
+* G5 M0-T152 advisory L1 (closed by M0-T153) - the PERSISTED G2 report is
+  redacted before write (a secret in a command transcript never lands in the
+  committed ledger artifact), with the mutation partner proving the
+  redact-before-persist call is load-bearing;
+* G3 M0-T152 advisory D-2 (closed by M0-T153) - the LIVE wave path re-reads
+  the stored verdict transcript between write and gate recording, so a
+  post-write tamper parks the wave before any ledger write, with the
+  mutation partner proving the read-back is load-bearing.
 """
 from __future__ import annotations
 
@@ -34,6 +42,7 @@ import json
 import pathlib
 import sys
 import tempfile
+import types
 import unittest
 from unittest import mock
 
@@ -979,6 +988,110 @@ class CliSeamTests(Base):
                          [gw.ENABLE_EVENT])
         self.assertEqual(self.recorded, [])
         self.assertFalse((self.tmp / "project-control").exists())
+
+
+# --------------------------------------------------------------------------
+# G5 M0-T152 advisory L1 (closed by M0-T153) - redact BEFORE persist
+# --------------------------------------------------------------------------
+
+
+class G2ReportRedactionTests(Base):
+    """The persisted G2 report is a COMMITTED ledger artifact built from
+    worker-influenced command output; write_g2_report must pass the whole body
+    through redact_structure before a single byte lands on disk."""
+
+    SECRET = "sk-ant-api03-fixture0123456789fixture"
+
+    def secret_capture(self) -> gw.G2Capture:
+        def leaking(argv, cwd=None, env=None, timeout=None):
+            return ProcessResult(
+                argv=(), returncode=0,
+                stdout=f"export ANTHROPIC_API_KEY={self.SECRET}",
+                stderr="", duration_seconds=0.01)
+        return gw.capture_g2(self.collector(leaking),
+                             ["python -m pytest tools -q"])
+
+    def test_the_persisted_g2_report_is_redacted_before_write(self) -> None:
+        rel = gw.write_g2_report(str(self.tmp), TASK, RUN,
+                                 self.secret_capture())
+        raw = (self.tmp / rel).read_text(encoding="utf-8")
+        self.assertNotIn(self.SECRET, raw)
+        self.assertIn("[REDACTED:", raw)
+        body = json.loads(raw)
+        self.assertGreaterEqual(body["redaction_count"], 1)
+        self.assertIn("anthropic_key", body["redaction_labels"])
+        # The report still carries its evidentiary structure post-redaction.
+        self.assertEqual(body["gate_id"], "G2")
+        self.assertEqual(body["capture"]["result"], "PASS")
+
+    def test_MUTATION_removing_the_redact_call_persists_the_secret(self) -> None:
+        # L1 mutation partner: with redact_structure replaced by an identity
+        # pass, the SAME capture persists the raw secret into the ledger
+        # artifact - proving the redact-before-persist call is load-bearing.
+        identity = types.SimpleNamespace
+        with mock.patch.object(gw, "redact_structure",
+                               lambda body: identity(value=body, count=0,
+                                                     labels=())):
+            rel = gw.write_g2_report(str(self.tmp), TASK, "run-mutation",
+                                     self.secret_capture())
+        self.assertIn(self.SECRET,
+                      (self.tmp / rel).read_text(encoding="utf-8"))
+
+
+# --------------------------------------------------------------------------
+# G3 M0-T152 advisory D-2 (closed by M0-T153) - live read-back in the wave
+# --------------------------------------------------------------------------
+
+
+class LiveVerdictTamperTests(Base):
+    """A verdict transcript altered AFTER write but BEFORE gate recording must
+    park the live wave: verify_verdict_report runs inside run_gate_wave between
+    the write and the ledger write, so a forged file can never back a gate."""
+
+    def tampering_writer(self):
+        real = gw.write_verdict_report
+
+        def write_then_tamper(bound, record):
+            path = pathlib.Path(real(bound, record))
+            body = json.loads(path.read_text(encoding="utf-8"))
+            body["bound_verdict"]["result"] = "PASS"  # forge FAIL -> PASS
+            path.write_text(json.dumps(body, sort_keys=True),
+                            encoding="utf-8")
+            return str(path)
+        return write_then_tamper
+
+    def run_tampered_wave(self) -> gw.WaveResult:
+        # REVISE maps to FAIL, so the forged PASS is a REAL byte change.
+        return gw.run_gate_wave(packet=task_packet(), checkpoint_id=CP,
+                                run_id=RUN,
+                                deps=self.deps(FakeReviewer("REVISE")),
+                                owner_enabled=True)
+
+    def test_a_post_write_tamper_parks_the_live_wave(self) -> None:
+        with mock.patch.object(gw, "write_verdict_report",
+                               self.tampering_writer()):
+            result = self.run_tampered_wave()
+        self.assertEqual(result.status, gw.PARKED)
+        self.assertIn("verdict_tampered", result.reason)
+        gates = [argv[argv.index("--gate-id") + 1] for argv in self.recorded]
+        self.assertEqual(gates, ["G2"])  # the forged G3 never reached gate()
+
+    def test_MUTATION_removing_the_read_back_records_past_the_tamper(self) -> None:
+        # D-2 mutation partner: with the live read-back deleted, the SAME
+        # tampered wave sails on - the G3 gate records from in-memory state
+        # while the stored transcript is the forged PASS, exactly the
+        # undetected divergence the read-back exists to catch.
+        with mock.patch.object(gw, "write_verdict_report",
+                               self.tampering_writer()), \
+             mock.patch.object(gw, "verify_verdict_report",
+                               lambda bound, worker_worktree="": {}):
+            result = self.run_tampered_wave()
+        self.assertEqual(result.status, gw.REWORK)
+        gates = [argv[argv.index("--gate-id") + 1] for argv in self.recorded]
+        self.assertEqual(gates, ["G2", "G3"])
+        stored = json.loads(next(
+            self.out_dir.glob("verdict-*.json")).read_text(encoding="utf-8"))
+        self.assertEqual(stored["bound_verdict"]["result"], "PASS")
 
 
 if __name__ == "__main__":
