@@ -1,82 +1,90 @@
 # Session Handoff - NYC Buildability (current-only)
 
 **Authoritative state:** the `project-control/` ledger + git + CI. On resume read it live -
-`python tools/project_control.py status` and `python -m tools.agent_supervisor.campaign_continuity
---status` - and reconcile; no SHA here is guaranteed current. Orientation only; rules/gates live in
-`CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
+`python tools/project_control.py status` - and reconcile; no SHA here is guaranteed current.
+Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 85: LOOP LIVE IN THE OWNER'S OWN WINDOW; 163 accepted; overnight monitor + relaunch duty
+## Handoff - seq 86: LOOP LIVE (run-07/M0-T152) BUT SESSION-BOUND; keep it NONSTOP; 2 tasks staged for acceptance
 
-1. **Generated:** 2026-09-07 ~04:10Z, session_01WBbzN5Rx17CBSjky5uKmnY, `/session-handoff` (no
-   reason given; owner wants the loop running ALL NIGHT - D-033-R009).
+1. **Generated:** 2026-09-07 ~06:10Z, session_01WBbzN5Rx17CBSjky5uKmnY, `/session-handoff`.
+   Reason (verbatim): "I need to handoff the session i want next season to make sure loop works nonstop".
 2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `candidate/D-024-mrl-option-b` (LOCAL, no push), HEAD `47ed3379`, origin PUBLIC. Dirty: ONLY
-   untracked `.claude/agent-memory/qa-engineer/*` (deliberate). Installed controller = certified
-   `a5886dab` (subtree `850841ab`, manifest VERIFIED, recert 3772/2/0).
-3. **LOOP IS LIVE (external - do NOT duplicate):** run `persistent-local-06` launched BY THE OWNER
-   in their own PowerShell window ~04:02Z (supervisor pid 21280; immune to this session). Queue v3:
-   M0-T025 (revision done, converging review; wt-m0t025 contract copy SYNCED to the trimmed
-   commands) -> auto-advance -> M0-T149. max-tasks 2, max-cycles 10, unit-timeout 1500. Audit chain
-   is FRESH (fork of 2026-09-07 repaired; forked evidence archived
-   `audit.jsonl.forked-evidence-20260907-033630`). Monitor read-only:
-   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\audit.jsonl`.
-4. **Standing launch permission EXISTS:** user-settings allow rule
-   `Bash(python -m tools.agent_supervisor start*)` - the orchestrator relaunches runs itself
-   (owner delegation captured D-032-R021; D-033-R009 = loop runs whenever queued work exists,
-   work routes through the loop by default, no in-session producing/reviewing the loop can carry).
-   Launch shape MUST include `--task-packet <ledger json path>` AND `--repo <worker worktree>`
-   (task_authority probe reads the ledger under --repo). On kill/AMBIGUOUS_EFFECT:
-   `tools/controller_update/reconcile_dispatch_intent.py`, deny stale asks (pending-approvals ->
-   deny id digest), remove stale supervisor.lock, relaunch same run-id. NEVER run audit-writing
-   operator verbs (deny/graceful-stop/clear) against a LIVE run - it forked the chain once
-   (defect-lane item). Session background shells get killed by owner Esc - the loop now survives
-   that (external); only the watcher dies (re-arm on wake).
-5. **Accepted this session (159->163):** M0-T148 (160th, packet-completeness repair; convergence
-   D-032-R020 VERIFIED_CLOSED - reports/D-032-pl04-packet-collection-convergence.md), M2-T020
-   (161st, FIRST loop-delivered product task, live astra CONTINUE), M0-T150 (162nd, D-033
-   management-layer design - docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md; G5 conditions F1-F7 in
-   reports/M0-T150-G5-security.md, F1/F2 HIGH BLOCKING for implementation), M0-T151 (163rd,
-   ARCHITECTURE.md + /pr-review skill, live in the harness).
-6. **R754 still OPEN (M0-T109 + M0-T145 parked):** independent re-attestation FAILED my over-claim
-   (reports/D-024-R754-proof-matrix.md + verifier addendum): capabilities 1/2/4/5/6 verified;
-   missing = fact 3 (acceptance-class verdict + cross_task_dispatch successor=True, needs run-06's
-   multi-task queue) + fact 7 (committed foreground transcript - the owner's window is untranscribed;
-   capture the NEXT launch via Start-Transcript or commit equivalent durable view output). On
-   closure: re-attest -> accept M0-T109 -> merge branch `bac01a56` (wt-m0t145) -> accept M0-T145.
-7. **Queue v4 READY:** M0-T152 (D-033 T-A gate-wave engine, contracted+claimed to wt-m0t152 @
-   9ee7d057, F1/F2 as blocking scenarios S2/S3, qualifying evidence D-033-R001/R003/R007). After
-   run-06 ends: process results (M0-T025 gate wave REQUIRES the full
-   `pytest tools/test_directive_compliance.py -q` ~27min - never a documented command; killed run
-   must be re-run), accept per standard gates + DCV rows (empty-set precedents in D-032/D-033/D-034
-   verification.json), then relaunch with queue v4. T-B/T-C contracted after T-A lands.
-8. **Directives this session:** D-032 Am3 (R019/R020 monitor+converge: DONE) + Am4 (R021 launch
-   delegation); D-033 captured (design accepted; Am2 R009 full-time rule; impl T-A queued); D-034
-   captured + DELIVERED. All registry-validated (exit 0).
-9. **Follow-ups:** M0-T149 (non-mutating command profile) in queue v3 slot 2; audit-write-race +
-   packet-reads-frozen-worktree-copy defects for the loop-improvement lane; owner items parked:
-   B-001 credentials (blocks product auth/persistence chain), 5 reviewer agents still opus-4.8
-   (Fable revert on owner order), R595 staged activation decision comes after T-A/T-B/T-C.
-10. **Standing restrictions:** no push/PR/merge/deploy; PR #241 never; autostart + R595/Option-A +
-    R603-R605 owner-only; expansion hold; Bootstrap Gate 0; supervisor commits cite qualifying
-    evidence; no bare git stash; never resume TaskStop-killed producers; thin client.
-11. **Authoritative files:** `project-control/tasks/{M0-T025,M0-T149,M0-T152,M0-T109,M0-T145}.json`;
-    `campaigns/D-032-product-queue-{v3,v4}.json`; `directives/{D-032,D-033,D-034}-*/`;
-    `reports/{D-024-R754-proof-matrix,M0-T150-G5-security,D-032-pl04-packet-collection-convergence}.md`;
-    `docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md`. Ledger wins over this prose.
+   `candidate/D-024-mrl-option-b` (LOCAL, no push), HEAD `2194cf5a` at write (handoff commit
+   follows), origin PUBLIC. Dirty: ONLY untracked `.claude/agent-memory/qa-engineer/*` (deliberate).
+3. **LOOP IS LIVE BUT FRAGILE:** run `persistent-local-07` (task M0-T152, D-033 T-A gate-wave
+   engine; --max-tasks 1 --max-cycles 10 --unit-timeout 1500) launched 06:01Z, supervisor pid
+   26720 — **a background shell of THIS session; it likely DIES when this session ends.**
+   NONSTOP DUTY (owner reason + D-033-R009): successor's FIRST action = check
+   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\supervisor.lock` pid liveness.
+   If dead: deny stale asks in BOTH stores (`pending-approvals` verb AND journal `queued_asks`
+   where answered empty — two different stores, DL trap), `clear-recovery` if PAUSED_RECOVERY,
+   then relaunch SAME run-id `persistent-local-07` with the EXACT command at the END of
+   `project-control/reports/D-033-run06-m0t152-launch-transcript.txt` — **cwd MUST be
+   `C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src` (certified a5886dab)**: ctl24-cwd
+   launches FAIL manifest verification while the unrecertified M0-T149 rework sits merged
+   (`verify_manifest_with_config` binds the RUNNING package = launch cwd). Standing allow rule
+   `Bash(python -m tools.agent_supervisor start*)`. NEVER run audit-writing operator verbs
+   against a LIVE run. When run-07 parks: process M0-T152 results (standard gates), contract
+   T-B/T-C, keep the loop fed.
+4. **M0-T025 STAGED for acceptance (164th):** awaiting_gate at 56db6a17 (frozen 20f7651c).
+   On file: G3 PASS, G5 PASS, DCV PASS, full suite **126 passed exit 0**
+   (`reports/M0-T025-full-suite-20f7651c.txt`). G4 (control-plane-verifier) was IN FLIGHT at
+   handoff — if `reports/M0-T025-G4-integration.md` is ABSENT, re-dispatch G4 (verify captured
+   suite evidence vs wt-m0t025 @ 20f7651c, validator exit 0, additive-narrowing regression).
+   Then record gates G2(reviewer=orchestrator)/G3/G4/G5, record the D-002 empty-set row VERBATIM
+   from `reports/M0-T025-DCV.md` ("Exact attested" section; restamp reviewed_sha to accept-time
+   HEAD only if blobs e1168304/d649b6fe/940ad7dd/805ddc84 unchanged, identity 598fc256), accept.
+5. **M0-T149 STAGED for acceptance (165th):** awaiting_gate at rework v2 `45b0572c`/merged
+   `7804bc03` (lineage: v1 ed04c4bb → G5 FAIL MED-1/MED-2 → rework → delta re-attestations G3/G5/
+   DCV ALL PASS). G2/G3/G5 gates + D-032 empty-set row RECORDED. Remaining: (a) v2 full
+   supervisor-suite baseline — was RUNNING at handoff into
+   `wt-m0t149/project-control/reports/M0-T149-supervisor-suite-45b0572c.log` (expect ~3705
+   passed/0 failed; known flake `test_parallel_requests_never_exceed_limits` passes in isolation
+   = contention artifact, re-run quiet if it fails; commit log as .txt); (b) mechanical
+   reviewed_sha restamp (identity 6906f500 must reproduce via frozen_git_identity, else fail
+   closed); then accept.
+6. **R754 ROUND-2 FAIL (do not re-litigate):** the requirement's NAMED verifier
+   (`reports/M0-T109-R754-closure-DCV.md`) holds facts 3+7 OPEN — the capability must FIRE
+   unattended (single-boot verdict→advance→dispatch over a SUCCESSORS-ONLY multi-task queue,
+   zero owner touches) + a controller-written six-field foreground artifact. The same-day
+   ci-evidence-verifier ALL-SEVEN table attests artifact AUTHENTICITY only; the named verifier's
+   row state governs (recorded in D-024 verification.json + requirements.json, manifest digest
+   re-recorded, validator exit 0). M0-T109 + M0-T145 (branch bac01a56) STAY PARKED. Plan the
+   closing evidence into the T-B/T-C multi-task queue after M0-T152 lands.
+7. **Loop defect lane** (`reports/D-032-loop-defect-lane-20260907.md`): DL-1 queue files must be
+   SUCCESSORS-ONLY (first task rides --task-packet; a duplicate starves the successor via
+   max-tasks); DL-2 worker wrote abbreviated starting_sha → checkpoint refused (fail-closed;
+   forward full-sha requirement + failure reason = lane candidates). Launch traps proven tonight:
+   packet copy under --repo must be the synced CLAIMED blob (task_authority reads that ledger);
+   wt-m0t152 synced at 0e067b6a.
+8. **Directives:** none captured tonight; all work ran under D-032-R021 (launch delegation),
+   D-033-R009 (full-time loop), D-001 regime. Owner told push needs a directive (Am40 local-only
+   stands; GitHub intentionally stale). Quiet-mode monitoring: report only major loop breaks.
+9. **Standing restrictions:** no push/PR/merge/deploy; PR #241 never; R595/autostart/Option-A
+   owner-only; expansion hold; Bootstrap Gate 0; supervisor commits cite D-024-R###/AD-093; no
+   bare git stash; never resume TaskStop-killed producers; thin client; R247 recert+reinstall
+   required before the M0-T149 profile code is ever INSTALLED (installed controller a5886dab
+   unaffected and still certified).
+10. **Authoritative files:** `project-control/tasks/{M0-T025,M0-T149,M0-T152,M0-T109,M0-T145}.json`;
+    `reports/{M0-T025-DCV,M0-T149-DCV-delta,M0-T109-R754-closure-DCV,D-032-loop-defect-lane-20260907}.md`;
+    `reports/D-033-run06-m0t152-launch-transcript.txt`; `campaigns/D-032-product-queue-v4.json`.
+    Ledger wins over this prose.
 
 ## COPY INTO THE NEW SESSION
 
 Resume from durable evidence only. Confirm `git rev-parse --show-toplevel` =
 `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`, Bootstrap
 Gate 0 (cwd = root, `/mcp` empty). Read `CLAUDE.md`, this file, then run
-`python tools/project_control.py status` (ledger wins). THE LOOP MAY BE LIVE in the owner's own
-PowerShell window (run persistent-local-06; check supervisor.lock pid liveness + audit tail at
-`%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\audit.jsonl`) - NEVER launch a second
-instance while the lock pid is alive. EXACT NEXT ACTION: monitor that run; when it parks, process
-its results (handoff items 6-7: M0-T025 gate wave incl. the ~27-min full directive-compliance
-suite, M0-T149, R754 closure chain -> M0-T109 -> merge bac01a56 -> M0-T145), then relaunch with
-queue v4 (M0-T152) under the standing allow rule `Bash(python -m tools.agent_supervisor start*)`
-- include `--task-packet <ledger json>` and `--repo <worker worktree>`; capture a committed
-transcript of the launch for R754 fact 7. Work routes through the loop by default (D-033-R009).
-Do NOT: push/merge/PR #241, run audit-writing operator verbs against a live run, document the
-full suite as a packet command, or bypass any gate. Report READY TO RESUME or BLOCKED.
+`python tools/project_control.py status` (ledger wins). FIRST ACTION - KEEP THE LOOP NONSTOP
+(D-033-R009): check supervisor.lock pid liveness at
+`%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...`; if dead, deny stale asks (BOTH
+pending-approvals and journal queued_asks), clear-recovery if paused, and relaunch run-id
+persistent-local-07 with the exact command at the end of
+`project-control/reports/D-033-run06-m0t152-launch-transcript.txt`, cwd
+`C:\Users\MLFLL\Downloads\nyc-zoning\wt-controller-src` (NEVER ctl24-cwd until R247
+recert/reinstall lands). Arm a read-only break watcher. THEN: finish the two staged acceptances
+(handoff items 4-5: M0-T025 needs G4 report + gates + D-002 row + accept; M0-T149 needs the v2
+baseline log + restamp + accept), process run-07's M0-T152 results when it parks, contract
+T-B/T-C with a SUCCESSORS-ONLY multi-task queue designed to close R754 facts 3+7 (item 6). Do
+NOT: push/merge/PR #241, run audit-writing verbs against a live run, launch the supervisor from
+ctl24 cwd, or bypass any gate. Report READY TO RESUME or BLOCKED.
