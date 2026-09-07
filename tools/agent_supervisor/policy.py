@@ -53,7 +53,8 @@ from .process import EFFORT_ARGUMENT_PREFIXES, HARD_DENY_ARGUMENTS
 
 #: Bumped whenever a rule changes. Bound into every approval digest (S13.5) so a
 #: policy change invalidates approvals that were granted under the old rules.
-POLICY_VERSION = "1.0.0"
+#: 1.1.0: M0-T149 enforced non-mutating supervisor-execution profile.
+POLICY_VERSION = "1.1.0"
 
 # --------------------------------------------------------------------------
 # Tiers and outcomes
@@ -937,6 +938,111 @@ def validate_documented_test_commands(packet: Mapping[str, Any]) -> tuple[str, .
                               f"{where} duplicates an earlier entry")
         seen.add(entry)
     return tuple(raw)
+
+
+# --------------------------------------------------------------------------
+# Supervisor-execution profile for documented commands (M0-T149)
+# --------------------------------------------------------------------------
+#
+# Qualifying evidence AD-093: demonstrated security risk, M0-T148 G3 LOW-1.
+# M0-T148 made documented_test_commands an ACTIVE supervisor-side execution
+# surface (evidence.EvidenceCollector.run_command), but the admission validator
+# above deliberately admits ANY single clean metacharacter-free segment -
+# including mutating shapes like `git push origin b` or `rm -rf tools` -
+# because the field also serves worker-command shape matching. Until M0-T149,
+# only orchestrator authorship of the task packet kept such a command from
+# being EXECUTED at review time: convention, not guard. The profile below is
+# the guard. It is inspection-only (nothing in this module executes anything);
+# `evidence.run_command` refuses, fail-visibly, any command it rejects.
+
+#: The CLOSED set of programs the supervisor may execute for a documented test
+#: command. Grounded in every packet actually written (python-launched suites
+#: and checkers); extending it is a reviewed one-line diff, never a runtime
+#: decision. git is deliberately absent - collector git facts flow through
+#: `assert_read_only_git`, so a documented command never needs to run git and
+#: the M0-T148 "never git" property becomes machine-enforced here.
+SUPERVISOR_EXECUTABLE_TEST_PROGRAMS: frozenset[str] = frozenset({
+    "python", "python3", "py", "pytest", "ruff",
+})
+
+#: `python -m <module>` targets admissible on the execution channel. Closed
+#: for the same reason: an open `-m` would readmit `python -m pip install`.
+SUPERVISOR_EXECUTABLE_PYTHON_MODULES: frozenset[str] = frozenset({
+    "pytest", "ruff", "unittest",
+})
+
+#: Bare tokens that turn the admitted checkers into WRITERS: `ruff check
+#: --fix` rewrites source in place and `ruff format` rewrites whole files.
+_MUTATING_CHECKER_TOKENS: frozenset[str] = frozenset({
+    "--fix", "--fix-only", "--unsafe-fixes", "format",
+})
+
+_ABSOLUTE_PATH_SHAPE = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
+
+
+def _refuse_checker_tokens(rest: Sequence[str]) -> str:
+    for token in rest:
+        if token.lower() in _MUTATING_CHECKER_TOKENS:
+            return f"mutating_checker_token:{token}"
+    return ""
+
+
+def _refuse_interpreter_target(rest: Sequence[str]) -> str:
+    """Reason code when a python/py invocation escapes the profile, else ''."""
+    tokens = list(rest)
+    for index, token in enumerate(tokens):
+        if token == "-c":
+            return "inline_python_code"
+        if token == "-m":
+            module = tokens[index + 1] if index + 1 < len(tokens) else ""
+            if module not in SUPERVISOR_EXECUTABLE_PYTHON_MODULES:
+                return f"python_module_not_allowlisted:{module or '(missing)'}"
+            if module == "ruff":
+                return _refuse_checker_tokens(tokens[index + 2:])
+            return ""
+        if not token.startswith("-"):
+            # The first positional token is the target. Only a repository-
+            # relative .py script is recognized; anything else fails closed.
+            if not token.lower().endswith(".py"):
+                return f"unrecognized_interpreter_target:{token}"
+            if _ABSOLUTE_PATH_SHAPE.match(token) or \
+                    ".." in token.replace("\\", "/").split("/"):
+                return f"script_outside_repository:{token}"
+            return ""
+    return "interpreter_without_test_target"
+
+
+def supervisor_execution_refusal(command: str | CommandShape) -> str:
+    """Reason code refusing a documented command from supervisor EXECUTION, else ''.
+
+    Deterministic and fail closed. Empty string means the command fits the
+    non-mutating profile: one clean metacharacter-free segment whose program is
+    on the closed test-runner allowlist, whose `python -m` module (if any) is
+    on the closed module allowlist, whose script target (if any) is a
+    repository-relative .py path, carrying no inline code and no mutating
+    checker token, and classifying as non-destructive under the same
+    `_is_destructive_segment` the tier engine uses. This constrains what the
+    supervisor ITSELF runs (evidence.run_command); admission of the field
+    (`validate_documented_test_commands`) and worker-command classification
+    (`_auto_test_command`) are separate surfaces and are unchanged.
+    """
+    shape = command if isinstance(command, CommandShape) else parse_command(command)
+    if (shape.parse_error or not shape.tokens or shape.has_substitution
+            or shape.has_metacharacter or len(shape.segments) != 1):
+        return "unrunnable_command"
+    segment = shape.segments[0]
+    destructive = _is_destructive_segment(segment)
+    if destructive:
+        return f"destructive_segment:{destructive}"
+    program = _program_name(segment[0])
+    if program not in SUPERVISOR_EXECUTABLE_TEST_PROGRAMS:
+        return f"program_not_allowlisted:{program}"
+    rest = list(segment[1:])
+    if program in ("python", "python3", "py"):
+        return _refuse_interpreter_target(rest)
+    if program == "ruff":
+        return _refuse_checker_tokens(rest)
+    return ""
 
 
 @dataclasses.dataclass(frozen=True)
