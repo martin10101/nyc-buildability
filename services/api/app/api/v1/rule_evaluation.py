@@ -62,6 +62,7 @@ from app.rules.response import (
     serialize_rule_evaluation,
     validate_rule_evaluation_document,
 )
+from app.spatial.live_provider import default_live_substrate
 
 __all__ = ["get_spatial_substrate_provider", "router"]
 
@@ -75,12 +76,15 @@ router = APIRouter(prefix="/api/v1", tags=["rule-evaluation"])
 #
 # The evaluator needs the M2-T013 lot/zoning spatial-intersection substrate to
 # derive a confident base-zoning district. That substrate is server-side data,
-# not something a caller may supply. Today no accepted spatial connector is wired
-# into this internal endpoint, so the trusted DEFAULT supplies None: the
-# evaluator then fails safe (professional_review_required, spatial absent) - an
-# honest "no confident district" rather than a guessed one. A future accepted
-# spatial connector plugs in HERE without touching the route, and tests override
-# this dependency with recorded substrate fixtures (mirroring get_pluto_fetcher).
+# not something a caller may supply. The trusted DEFAULT delegates to the
+# settings-gated live provider (task M2-T020): with LIVE_SPATIAL_PROVIDER_ENABLED
+# unset (the default everywhere, including CI) it supplies None exactly as
+# before - the evaluator fails safe (professional_review_required, spatial
+# absent), an honest "no confident district" rather than a guessed one. With the
+# explicit flag on, the accepted connectors + M2-T013 engine compose a real
+# substrate server-side, and EVERY failure/partial input still yields None
+# (app.spatial.live_provider fail-safe contract). Tests override this dependency
+# with recorded substrate fixtures (mirroring get_pluto_fetcher).
 # ---------------------------------------------------------------------------
 
 # (canonical_bbl, correlation_id) -> the M2-T013 substrate (LotIntersectionRecord
@@ -89,12 +93,13 @@ SpatialSubstrateProvider = Callable[[str, str], object | None]
 
 
 def _default_spatial_substrate(canonical_bbl: str, correlation_id: str) -> object | None:
-    return None
+    return default_live_substrate(canonical_bbl, correlation_id)
 
 
 def get_spatial_substrate_provider() -> SpatialSubstrateProvider:
     """Dependency returning the server-side spatial-substrate provider (override
-    point for tests). The default yields no substrate -> honest fail-safe."""
+    point for tests). The default is the settings-gated live provider: flag off
+    (the default) yields no substrate -> honest fail-safe."""
     return _default_spatial_substrate
 
 
