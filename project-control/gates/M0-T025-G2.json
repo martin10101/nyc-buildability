@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T025",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T025-orchestrator-evidence.md",
+  "reviewed_at": "2026-09-07T06:16:22.968366+00:00",
+  "content_manifest_sha256": "598fc256aeecfb33bfc3b2b5081f559d1f95f660c4ac08141709e547f2036d09",
+  "reviewed_sha": "c7e57229a3d55fd6da309531facdab540f22a7c7",
+  "updated_at": "2026-09-07T06:16:23.340713+00:00"
+}
