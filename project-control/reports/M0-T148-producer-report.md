@@ -203,8 +203,19 @@ behavior here.
 ## Invariants held
 
 - Collector git usage stays read-only: `assert_read_only_git` untouched; the new
-  `run_command` runs documented TEST commands (already policy-admitted), never
-  git, via `process.run` argv arrays with `assert_argv_safe`.
+  `run_command` runs documented TEST commands (already policy-admitted) via
+  `process.run` argv arrays with `assert_argv_safe`. [Corrected by M0-T149 per
+  G3 LOW-1: as originally written here, "never git" was convention, not guard -
+  `validate_documented_test_commands` admits ANY single clean metacharacter-free
+  segment, including `git push origin b` or `rm -rf tools`, and only
+  orchestrator authorship of the packet kept such a command from executing.
+  M0-T149 added the enforced non-mutating supervisor-execution profile
+  (`policy.supervisor_execution_refusal`: closed test-runner allowlist without
+  git, closed `python -m` module allowlist, destructive-segment reuse, no
+  inline code, no out-of-repository scripts, no mutating checker tokens), which
+  `run_command` now applies fail-visibly (`non_mutating_profile_refused`)
+  before executing anything - so never-git/never-mutating is machine-enforced
+  at the execution channel, not assumed from packet authorship.]
 - Pure-ASCII source in all four production files (evidence/codex_reviewer/
   review_packet 0 non-ASCII; loop.py's 4 non-ASCII are pre-existing em-dashes in
   unrelated comments, none in the edited region).

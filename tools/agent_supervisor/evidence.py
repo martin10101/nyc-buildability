@@ -34,6 +34,7 @@ from .policy import (
     UNSAFE_GIT_GLOBAL_OPTIONS,
     UNSAFE_GIT_SUBCOMMAND_FLAGS,
     parse_command,
+    supervisor_execution_refusal,
 )
 from .process import ProcessResult, assert_argv_safe, minimal_env
 from .process import run as run_process
@@ -474,7 +475,10 @@ class EvidenceCollector:
         The command string is tokenized by the classifier's own parser (the sole
         source of truth for what a documented command is) and refused here unless
         it is one clean, metacharacter-free segment - the same shape the policy
-        layer admitted. It runs via ``process.run`` (argv array, never a shell)
+        layer admitted - AND it fits the enforced non-mutating supervisor-
+        execution profile (``policy.supervisor_execution_refusal``, M0-T149):
+        a closed test-runner allowlist that excludes git and every destructive
+        or mutating shape. It runs via ``process.run`` (argv array, never a shell)
         with ``cwd`` = the worker worktree. A non-zero exit is the command's REAL
         outcome and is recorded as an ``ok`` transcript carrying that exit code;
         a timeout is recorded with ``timed_out=True`` and its partial transcript
@@ -487,6 +491,15 @@ class EvidenceCollector:
             return _failure(command, "unrunnable_command",
                             "the documented command does not tokenize as one "
                             "clean metacharacter-free segment")
+        # M0-T149 (AD-093, G3 LOW-1): the enforced non-mutating profile. Being
+        # documented in the task packet is admission, not execution authority;
+        # a command outside the closed test-runner profile is refused here,
+        # fail-visibly, before anything runs.
+        refusal = supervisor_execution_refusal(shape)
+        if refusal:
+            return _failure(command, "non_mutating_profile_refused",
+                            "the documented command is outside the enforced "
+                            f"non-mutating supervisor-execution profile: {refusal}")
         try:
             checked = assert_argv_safe(list(shape.tokens))
         except Exception as exc:

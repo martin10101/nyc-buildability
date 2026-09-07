@@ -1398,6 +1398,83 @@ class CommandTranscriptTests(unittest.TestCase):
         self.assertNotEqual(first.digest, third.digest)
 
 
+class NonMutatingExecutionProfileTests(unittest.TestCase):
+    """M0-T149 (AD-093, M0-T148 G3 LOW-1): `run_command` enforces the closed
+    non-mutating supervisor-execution profile. Being documented in the task
+    packet is admission, never execution authority - a mutating shape is
+    refused fail-visibly BEFORE anything runs, so the review-time execution
+    channel no longer relies on packet authorship alone (guard, not
+    convention)."""
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.root = pathlib.Path(self._tmp.name).resolve()
+        self.ran: list[tuple[str, ...]] = []
+
+    def spy_runner(self, argv, **_kwargs):
+        self.ran.append(tuple(argv))
+        return ProcessResult(argv=tuple(argv), returncode=0, stdout="ok",
+                             stderr="", duration_seconds=0.0)
+
+    def collector(self) -> ev.EvidenceCollector:
+        return ev.EvidenceCollector(repo_root=str(self.root),
+                                    runner=self.spy_runner)
+
+    def test_git_push_the_low1_reproducer_is_refused_never_executed(self) -> None:
+        result = self.collector().run_command("git push origin b")
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error_category, "non_mutating_profile_refused")
+        self.assertIn("program_not_allowlisted:git", result.detail)
+        self.assertEqual(self.ran, [], "a refused command must never be executed")
+
+    def test_recursive_delete_is_refused_never_executed(self) -> None:
+        result = self.collector().run_command("rm -rf tools")
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error_category, "non_mutating_profile_refused")
+        self.assertIn("destructive_segment:", result.detail)
+        self.assertEqual(self.ran, [])
+
+    def test_a_mutating_python_module_is_refused_never_executed(self) -> None:
+        result = self.collector().run_command("python -m pip install requests")
+        self.assertFalse(result.ok)
+        self.assertIn("python_module_not_allowlisted:pip", result.detail)
+        self.assertEqual(self.ran, [])
+
+    def test_an_admitted_documented_suite_still_executes(self) -> None:
+        result = self.collector().run_command("python -m pytest tools/x.py -q")
+        self.assertTrue(result.ok)
+        self.assertEqual(result.value["exit_code"], 0)
+        self.assertEqual(self.ran,
+                         [("python", "-m", "pytest", "tools/x.py", "-q")])
+
+    def test_a_refusal_is_fail_visible_in_the_transcripts_section(self) -> None:
+        transcripts = self.collector().collect_command_transcripts(
+            ("git push origin b", "python -m pytest tools/x.py -q"))
+        section = ev.results_section(transcripts)
+        self.assertFalse(section["git push origin b"]["ok"])
+        self.assertEqual(section["git push origin b"]["error_category"],
+                         "non_mutating_profile_refused")
+        self.assertTrue(section["python -m pytest tools/x.py -q"]["ok"])
+
+    def test_the_profile_guard_is_load_bearing(self) -> None:
+        # Mutation proof: widening the closed program allowlist to include git
+        # is the ONLY change needed for run_command to execute `git status` -
+        # so the allowlist, not an accident of plumbing, is what blocks it.
+        from unittest import mock
+        widened = pol.SUPERVISOR_EXECUTABLE_TEST_PROGRAMS | {"git"}
+        with mock.patch.object(pol, "SUPERVISOR_EXECUTABLE_TEST_PROGRAMS",
+                               widened):
+            mutated = self.collector().run_command("git status")
+        self.assertTrue(mutated.ok, "the widened profile must reach execution")
+        self.assertEqual(self.ran, [("git", "status")])
+        self.ran.clear()
+        guarded = self.collector().run_command("git status")
+        self.assertFalse(guarded.ok)
+        self.assertEqual(guarded.error_category, "non_mutating_profile_refused")
+        self.assertEqual(self.ran, [])
+
+
 class PacketContractTruthfulnessTests(unittest.TestCase):
     """S4: REVIEW_INSTRUCTIONS name the three sections and drop the false claim."""
 

@@ -1193,5 +1193,123 @@ class ExternalEffectTests(unittest.TestCase):
         self.assertEqual(decision.tier, pol.ASK)
 
 
+class SupervisorExecutionProfileTests(unittest.TestCase):
+    """M0-T149 (AD-093, M0-T148 G3 LOW-1): the enforced non-mutating profile
+    for supervisor-EXECUTED documented test commands. Empty string admits;
+    any reason code refuses. Pure classification - nothing here executes."""
+
+    def refusal(self, command: str) -> str:
+        return pol.supervisor_execution_refusal(command)
+
+    # -- positive: every documented-command shape this repository writes ----
+
+    def test_the_real_documented_suite_shapes_are_admitted(self) -> None:
+        for command in (
+                "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
+                "python -m pytest tools/test_a.py tools/test_b.py -q",
+                "python -m ruff check tools/agent_supervisor/policy.py",
+                "python tools/modularity_check.py --check",
+                "python tools/validate_directive_compliance.py --check",
+                "python -m unittest discover tools",
+                "pytest -q",
+                "ruff check .",
+        ):
+            self.assertEqual(self.refusal(command), "", command)
+
+    def test_a_command_shape_object_is_accepted_directly(self) -> None:
+        shape = pol.parse_command("python -m pytest tools/test_x.py -q")
+        self.assertEqual(pol.supervisor_execution_refusal(shape), "")
+
+    def test_the_profile_is_deterministic(self) -> None:
+        for command in ("python -m pytest tools/x.py -q", "git push origin b"):
+            self.assertEqual(self.refusal(command), self.refusal(command))
+
+    # -- negative: the G3 LOW-1 reproducers and their whole families --------
+
+    def test_git_push_the_low1_reproducer_is_refused(self) -> None:
+        self.assertEqual(self.refusal("git push origin b"),
+                         "program_not_allowlisted:git")
+
+    def test_git_is_refused_even_in_read_only_form(self) -> None:
+        # Collector git facts flow through assert_read_only_git; a documented
+        # command never needs to run git, so the channel refuses ALL git.
+        self.assertEqual(self.refusal("git status"),
+                         "program_not_allowlisted:git")
+
+    def test_recursive_delete_the_low1_reproducer_is_refused(self) -> None:
+        self.assertTrue(self.refusal("rm -rf tools")
+                        .startswith("destructive_segment:"))
+        self.assertTrue(self.refusal("del /s tools")
+                        .startswith("destructive_segment:"))
+
+    def test_a_plain_delete_is_refused(self) -> None:
+        self.assertTrue(self.refusal("rm tools/x.py")
+                        .startswith("destructive_segment:"))
+
+    def test_mutating_and_network_programs_are_refused(self) -> None:
+        for command in ("npm test", "pip install requests", "gh pr merge 1",
+                        "powershell.exe -NoProfile -File tools/run.ps1",
+                        "node tools/x.js", "curl example.com", "make test"):
+            self.assertTrue(self.refusal(command)
+                            .startswith("program_not_allowlisted:"), command)
+
+    def test_program_name_evasion_is_normalized(self) -> None:
+        self.assertEqual(self.refusal("GIT.EXE push origin b"),
+                         "program_not_allowlisted:git")
+        self.assertEqual(self.refusal("Python.EXE -m pip install x"),
+                         "python_module_not_allowlisted:pip")
+
+    def test_a_mutating_python_module_is_refused(self) -> None:
+        self.assertEqual(self.refusal("python -m pip install requests"),
+                         "python_module_not_allowlisted:pip")
+        self.assertEqual(self.refusal("python -m venv env"),
+                         "python_module_not_allowlisted:venv")
+        self.assertEqual(self.refusal("python -m"),
+                         "python_module_not_allowlisted:(missing)")
+
+    def test_inline_python_code_is_refused(self) -> None:
+        self.assertEqual(self.refusal("python -c print"), "inline_python_code")
+
+    def test_an_out_of_repository_script_is_refused(self) -> None:
+        self.assertTrue(self.refusal("python C:/temp/evil.py")
+                        .startswith("script_outside_repository:"))
+        self.assertTrue(self.refusal("python /etc/evil.py")
+                        .startswith("script_outside_repository:"))
+        self.assertTrue(self.refusal("python tools/../.claude/evil.py")
+                        .startswith("script_outside_repository:"))
+
+    def test_a_bare_or_targetless_interpreter_is_refused(self) -> None:
+        self.assertEqual(self.refusal("python"), "interpreter_without_test_target")
+        self.assertEqual(self.refusal("python -u"), "interpreter_without_test_target")
+        self.assertTrue(self.refusal("python setup.cfg")
+                        .startswith("unrecognized_interpreter_target:"))
+
+    def test_a_mutating_checker_token_is_refused(self) -> None:
+        self.assertEqual(self.refusal("python -m ruff check --fix tools"),
+                         "mutating_checker_token:--fix")
+        self.assertEqual(self.refusal("ruff format tools"),
+                         "mutating_checker_token:format")
+        self.assertEqual(self.refusal("ruff check --unsafe-fixes ."),
+                         "mutating_checker_token:--unsafe-fixes")
+
+    def test_unclean_shapes_stay_unrunnable(self) -> None:
+        for command in ("", "pytest -q && git push origin b",
+                        "python x.py | sh", "echo $(rm -rf tools)"):
+            self.assertEqual(self.refusal(command), "unrunnable_command", command)
+
+    # -- closure: the allowlists are closed sets that never widen silently --
+
+    def test_the_allowlists_are_closed_and_exclude_every_mutator(self) -> None:
+        self.assertIsInstance(pol.SUPERVISOR_EXECUTABLE_TEST_PROGRAMS, frozenset)
+        self.assertIsInstance(pol.SUPERVISOR_EXECUTABLE_PYTHON_MODULES, frozenset)
+        for program in sorted(pol.DELETE_VERBS | {
+                "git", "gh", "npm", "npx", "pip", "node", "bash", "sh", "cmd",
+                "powershell", "pwsh", "curl", "wget", "claude", "codex"}):
+            self.assertNotIn(program, pol.SUPERVISOR_EXECUTABLE_TEST_PROGRAMS)
+            self.assertNotEqual(self.refusal(f"{program} anything"), "", program)
+        for module in ("pip", "ensurepip", "venv", "http.server", "pip._internal"):
+            self.assertNotIn(module, pol.SUPERVISOR_EXECUTABLE_PYTHON_MODULES)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
