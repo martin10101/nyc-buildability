@@ -1,7 +1,7 @@
 {
   "schema": "directive_requirements/v1",
   "directive_id": "D-033",
-  "requirement_count": 8,
+  "requirement_count": 9,
   "requirements": [
     {
       "id": "D-033-R001",
@@ -267,6 +267,38 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R009",
+      "text": "OPERATING RULE (owner 2026-09-07): the loop runs whenever queued work exists; the orchestrator contracts new work INTO the loop queue by default and stops in-session producing/reviewing anything the loop can carry; in-session dispatch is reserved for what the loop cannot yet do (ledger actions pending D-033 implementation, exceptions/convergences, owner-boundary items); the D-033 implementation tasks are queued through the loop; launch friction (per-launch permission, closed autostart gate) is surfaced to the owner, never silently absorbed as in-session work.",
+      "source_ref": "source-002-amendment.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Queue files show new work routed to the loop; session records show in-session dispatch only for the reserved categories.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 2
     }
   ]
 }
