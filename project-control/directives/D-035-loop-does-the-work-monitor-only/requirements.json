@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-035",
  "version": 1,
- "requirement_count": 4,
+ "requirement_count": 6,
  "producer": "orchestrator",
- "updated_at": "2026-09-07T06:34:01+00:00",
+ "updated_at": "2026-09-07T06:43:46+00:00",
  "requirements": [
   {
    "id": "D-035-R001",
@@ -137,6 +137,74 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 1
+  },
+  {
+   "id": "D-035-R005",
+   "text": "Overnight window (owner asleep): keep the supervisor loop RUNNING for approximately 8 hours from issuance (2026-09-07 ~06:41Z to ~14:41Z). Concretely: keep the armed break watcher live; on any observed loop stop, INVESTIGATE the break cause first (read the journal/run budget/exit reason; on a recurring failure apply /deficit-convergence before relaunching - never blind-rerun into the same wall) and then restart per D-035-R002; when a run parks with its program complete, process the results through the standard gates and immediately feed the loop its next program (T-B/T-C successors-only queue per D-035-R003) so the loop is never idle for lack of contracted work; the session stays resident for the window (a session end would kill the session-bound supervisor with no owner present to relaunch), and the D-010 ~400k rotation seam, if reached mid-window, is landed at the first clean seam AFTER the window unless context is genuinely near exhaustion (D-028/D-031 owner-sleep precedent). All gates, holds, Tier D stops, and the no-push/no-PR-241 restrictions unchanged.",
+   "source_ref": "source-002-amendment.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-035-R002"
+   ],
+   "required_harness": "",
+   "required_evidence": "supervisor journal shows continuous run coverage across the window (runs started/parked/relaunched); watcher events and relaunch records for any breaks; no idle gap caused by missing contracted work",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 2
+  },
+  {
+   "id": "D-035-R006",
+   "text": "Overnight ask handling (bounded operator delegation, derived from 'the codex loop [does] all the work' + the owner being asleep): the orchestrator answers broker asks so the loop does not stall for 8 hours, under these HARD bounds - approve-once ONLY (never a standing grant, never enabling or broadening limited-auto), ONLY for a request whose target paths are entirely inside the ACTIVE packet's allowed_paths and whose action is the packet's own contracted work, each approval on the FRESH ask's own digest after reading the ask verbatim; anything outside packet scope, any Tier D / Section 20 class (credentials, payment, production approval, legal sign-off, push/merge/PR #241), and any genuine contradiction is DENIED or left for the owner with the loop otherwise kept alive. Every overnight answer is recorded (ask id, digest, decision, reason) in the morning report.",
+   "source_ref": "source-002-amendment.md#verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-035-R005"
+   ],
+   "required_harness": "",
+   "required_evidence": "journal queued_asks/approval records for the window each match an in-scope packet path; morning report lists every answered ask with digest and reason",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 2
   }
  ]
 }

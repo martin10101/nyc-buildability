@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-035",
- "version": 1,
+ "version": 2,
  "slug": "loop-does-the-work-monitor-only",
  "title": "Owner directive 2026-09-07: the codex loop does all the work (including reviewing and pushing, under the staged D-033/R595 activation path); the main session only monitors and powers the loop back up when it shuts down; sessions rotate at the ~400k-token seam. Conduct-only directive bound to the non-ledger sentinel D-035-BOOTSTRAP (D-029/D-031 pattern).",
  "status": "active",
@@ -10,7 +10,7 @@
  "issued_at": "2026-09-07",
  "captured_at": "2026-09-07T06:34:01+00:00",
  "created_at": "2026-09-07T06:34:01+00:00",
- "updated_at": "2026-09-07T06:34:01+00:00",
+ "updated_at": "2026-09-07T06:45:22+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "6c0ca91506e6831f82d2ec8ebda493c0a87e0392",
  "sources": [
@@ -20,9 +20,19 @@
    "sequence": 1,
    "recorded_at": "2026-09-07T06:34:01+00:00",
    "content_digest_sha256": "2be29d90ac435d0ef47e8193fc9c699321a9bb5b09b7629d6607b7aa98197a58"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-09-07T06:43:46+00:00",
+   "content_digest_sha256": "cef1361002eb7f8d816c4fb4c8a9b0829063ef4c0f279841c6c20d1504f2ca2a",
+   "amends": "source-001.md"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [],
@@ -44,6 +54,18 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "verbatim capture; issued mid-turn while the loop was live and the M0-T025 acceptance was in flight. Between issuance and capture the loop broke (run-07 DL-2 checkpoint refusal) and was restored as run-08 per R002 - the capture commit follows the restoration, loop-first by the directive's own priority. The push/review element is recorded as owner intent bound to the existing D-033 staged R595 activation path; no hold lifted, no activation performed."
+  },
+  {
+   "at": "2026-09-07T06:41:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "source-002 verbatim capture (owner going to sleep, 8-hour loop window ~06:41Z-14:41Z); adds R005 (continuous overnight coverage, session resident, rotation landed after the window) and R006 (approve-once answers strictly inside the active packet's allowed_paths; everything else denied/parked; every answer reported in the morning). Loop state at capture: run persistent-local-08 live, supervisor 13352 / worker 7000."
+  },
+  {
+   "at": "2026-09-07T06:43:46+00:00",
+   "actor": "orchestrator",
+   "action": "capture-correction",
+   "note": "pre-activation assembly: owner's second same-exchange message ('if u see the loop stop investigat and start it up again') added to source-002 verbatim; R005 sharpened with the explicit investigate-before-restart step; amendments field normalized to the filename list the validator requires."
   }
  ],
  "owner_approval": {
@@ -57,7 +79,9 @@
   "D-035-R001",
   "D-035-R002",
   "D-035-R003",
-  "D-035-R004"
+  "D-035-R004",
+  "D-035-R005",
+  "D-035-R006"
  ],
- "requirements_content_digest_sha256": "b9f3803079104f88ef11d2c3eae0cd9f038380cce99e75089223f8648e323d76"
+ "requirements_content_digest_sha256": "4aa9438e36e69a4cb93b9466e2b0e2776c3ad43dea588d4648075a1e203b57ec"
 }
