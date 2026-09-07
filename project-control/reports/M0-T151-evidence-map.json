@@ -1,0 +1,16 @@
+{
+  "task_id": "M0-T151",
+  "cited_refs": [
+    {
+      "directive_id": "D-034",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "requirements": {
+    "D-034-R001": "ARCHITECTURE.md at repo root, six sections, claim->file verification table in the producer report; gated at merged HEAD.",
+    "D-034-R002": ".claude/skills/pr-review/SKILL.md with the six review dimensions, actionable-only + UNPROVEN output discipline, advisory disclaimer; S5 trial run on real diff f12e828c in the producer report.",
+    "D-034-R003": "Both artifacts cite the existing gate law (CLAUDE.md, /engineering-reliability, gates) for evidence-before-DONE; no parallel checklist introduced.",
+    "D-034-R004": "No gate/hold/policy file modified; diff touches only the three new files (git show 06a63303 --stat)."
+  },
+  "note": "Frozen candidate 06a63303; all four D-034 rows applicable to M0-T151 by explicit task_ids binding."
+}

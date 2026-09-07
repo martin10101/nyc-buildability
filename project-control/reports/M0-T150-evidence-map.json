@@ -1,0 +1,11 @@
+{
+  "task_id": "M0-T150",
+  "cited_refs": [
+    {
+      "directive_id": "D-033",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "requirements": {},
+  "note": "Applicable set re-derived at verification (D-033 rows bind to D-033-BOOTSTRAP). Design deliverable for R001/R002/R008."
+}
