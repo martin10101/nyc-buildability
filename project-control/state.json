@@ -1,7 +1,7 @@
 {
   "project_status": "active",
   "current_milestone": "M4",
-  "last_checkpoint": "CP-M0-T148-submit",
+  "last_checkpoint": "CP-M2-T020-submit",
   "accepted_tasks": [
     "M0-T000",
     "M0-T001",
@@ -190,5 +190,5 @@
     "M0-T133-G3",
     "M0-T133-G4"
   ],
-  "updated_at": "2026-09-06T20:10:56.623054+00:00"
+  "updated_at": "2026-09-07T00:24:42.441931+00:00"
 }
