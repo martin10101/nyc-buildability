@@ -55,7 +55,12 @@
     "G5"
   ],
   "producer_agent": "supervised-loop-fable-worker",
-  "reviewer_agents": [],
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
   "status": "claimed",
   "progress_percent": 10,
   "risks": [],
