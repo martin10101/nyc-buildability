@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-037",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns rows. Verified when M0-T155 is gated and accepted.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

@@ -1,0 +1,65 @@
+{
+  "task_id": "M0-T155",
+  "title": "Reviewer proportionality: REVISE only for real gate/acceptance failures (D-037)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Add a proportionality/blocking-threshold rule to the supervisor reviewer instruction (tools/agent_supervisor/prompts/codex_review.md) so the Codex/Astra reviewer reserves REVISE (which forces a full worker redo) for genuine violations of the current stage's acceptance criteria or a real gate (correctness, safety, contract/back-compat, failing tests, or the repo's hard CI rules: modularity size, security, dependency-security). Minor non-blocking issues become a recorded non-blocking advisory + COMPLETE for the stage, not a redo; each REVISE must name which acceptance criterion or gate it blocks on. Add a reviewer-decision test proving a minor non-blocker maps to COMPLETE-with-advisory and a real gate failure maps to REVISE. Weaken NO real gate; HALT_UNSAFE/STOP_FOR_OWNER/read-only discipline unchanged; the consecutive-revision breaker stays as the backstop. Freeze-rule task; recert before the running controller uses it.",
+  "business_reason": "D-037: prevent the reviewer from looping the worker on minimum fixes without weakening real gates.",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/prompts/codex_review.md (proportionality/blocking-threshold rule: REVISE only for a named acceptance-criterion or gate failure; minor non-blockers -> COMPLETE + recorded advisory; each REVISE names the gate/criterion it blocks on)",
+    "tools/test_agent_supervisor_reviewer.py (reviewer-decision tests: a minor non-blocker maps to COMPLETE-with-advisory; a real gate failure maps to REVISE; the per-REVISE named-gate requirement is present)",
+    "project-control/reports/M0-T155-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/prompts/codex_review.md",
+    "tools/agent_supervisor/codex_reviewer.py",
+    "tools/test_agent_supervisor_reviewer.py",
+    "project-control/reports/M0-T155-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "any change that weakens a real gate (correctness/safety/contract/tests/modularity/security/dependency-security)",
+    "HALT_UNSAFE / STOP_FOR_OWNER semantics, read-only reviewer discipline, the consecutive-revision breaker",
+    "any product/runtime code (services/**, apps/**, packages/**), other tasks' paths",
+    "live edits to the running controller install without recertification"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-07T18:22:49.215247+00:00",
+  "updated_at": "2026-09-07T18:22:49.984781+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-037",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-07T18:22:49.215247+00:00",
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_reviewer.py -q",
+    "python -m pytest tools/test_agent_supervisor_codex_channel.py -q",
+    "python -m ruff check tools/agent_supervisor/codex_reviewer.py tools/test_agent_supervisor_reviewer.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "notes": [
+    "The distinguisher is OBJECTIVE, not the model's gut feeling: for each finding the reviewer must name the specific automated gate (failing test, modularity size, security, dependency-security) or the specific written acceptance criterion it violates; if it can name one -> REVISE (full deep analysis unchanged), if it cannot -> non-blocking advisory + COMPLETE. Real blockers still get full scrutiny; only the disposition of gate-free nits changes.",
+    "CHECKPOINT ENVELOPE CONTRACT (DL-2): starting_sha/current_sha are FULL 40-hex or empty; documented commands run via the Bash tool VERBATIM (no wrappers).",
+    "FREEZE-RULE task: cite the qualifying evidence in packet + commit; recertify before the running controller uses the new prompt."
+  ]
+}

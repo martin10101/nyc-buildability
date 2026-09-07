@@ -513,7 +513,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-036-model-fallback-and-autostart-activation/manifest.json"
+  },
+  {
+   "directive_id": "D-037",
+   "slug": "reviewer-proportionality",
+   "title": "Owner directive 2026-09-07: reviewer proportionality - REVISE only for real gate/acceptance failures, minor polish passes as done-with-advisory (real gates stay blocking).",
+   "status": "active",
+   "issued_at": "2026-09-07",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-037-reviewer-proportionality/manifest.json"
   }
  ],
- "updated_at": "2026-09-07T15:35:40+00:00"
+ "updated_at": "2026-09-07T18:32:49+00:00"
 }
