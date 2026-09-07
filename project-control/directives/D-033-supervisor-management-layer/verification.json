@@ -1,0 +1,7 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-033",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Workstream directive bound to the non-ledger sentinel D-033-BOOTSTRAP (D-029/D-031/D-032 pattern); rows accrue as planning/implementation tasks produce durable evidence.",
+  "producer": "orchestrator",
+  "task_verifications": []
+}

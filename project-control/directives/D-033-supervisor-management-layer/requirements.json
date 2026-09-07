@@ -1,0 +1,272 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-033",
+  "requirement_count": 8,
+  "requirements": [
+    {
+      "id": "D-033-R001",
+      "text": "PLAN supervisor-run gate waves: a reviewed design for the controller dispatching independent read-only reviewer sessions (G2 evidence capture, G3/G4/G5-class reviews) from durable repository state, recording verdicts as ledger gate records, while preserving producer-not-reviewer independence and the existing gate classes (G2 self-check never satisfies an independent gate).",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "Design document under docs/ or project-control/reports/, independently reviewed before implementation.",
+      "required_evidence": "Reviewed design document naming the state machine extensions, reviewer session contracts, evidence flow, and failure modes.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R002",
+      "text": "PLAN supervisor-run acceptance: a reviewed design for the controller executing the Tier-A ledger chain (submit, gate recording, accept, queue advance) under ADR-006, preserving every accept() fail-closed precondition (all required gates PASS, dependencies accepted, zero open blockers, directive verification rows at the reviewed content identity, producer-not-verifier).",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [
+        "D-033-R001"
+      ],
+      "required_harness": "Same design document or companion; independent review before implementation.",
+      "required_evidence": "Reviewed design covering acceptance preconditions, identity stamps, DCV-row production, and refusal paths.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R003",
+      "text": "IMPLEMENT the planned capability behind an owner-gated activation switch that is DEFAULT OFF, in the supervisor lane under the standard gates (G0/G2/G3/G5 minimum) with the suite re-baseline the freeze rule requires; no behavior change to existing modes while the switch is off.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [
+        "D-033-R001",
+        "D-033-R002"
+      ],
+      "required_harness": "Standard controlled tasks with acceptance scenarios incl. negative/mutation proof that switch-off equals today's behavior.",
+      "required_evidence": "Accepted implementation tasks; recertified controller candidate.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R004",
+      "text": "PRESENT the staged R595 activation package to the owner: stages (e.g. gate-wave-only, then acceptance, then queue advance), per-stage safeguards, rollback, evidence requirements, and the exact owner activation command per stage. Presentation only.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [
+        "D-033-R003"
+      ],
+      "required_harness": "Owner-facing package document; stop after presenting.",
+      "required_evidence": "Package document in project-control/reports/ plus session record of presentation.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R005",
+      "text": "PROHIBITION: nothing in this directive activates automated merging, acceptance, or continuation. The R595/Option-A gate, its activation path, and every existing owner hold (PR #241, no push/deploy, Tier D / Section 20 hard stops, expansion hold) remain unchanged and owner-only.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Session and ledger records show no activation and no hold change.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R006",
+      "text": "PRESERVATION: the implementation must keep separation of duties machine-enforced - a producer identity can never record its own independent gate or accept its own task; the codex reviewer never gains ledger-write or integration authority; qualified-human legal approvals (G6) and owner-only actions are never automatable.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "Negative tests proving the enforcement paths fail closed.",
+      "required_evidence": "Tests plus design sections demonstrating each enforcement.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R007",
+      "text": "PROCESS AUTHORIZATION: a D-033 requirement ID is qualifying evidence (AD-093 class: a requirement explicitly listed in an owner directive) for tools/agent_supervisor changes this directive mandates - the same transparent freeze-rule recognition D-024 received via M0-T086; cite the specific D-033-R number in both task packet and commit message. The defect-only lane, gates, and suite-baseline duty stand unchanged for everything else.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Freeze-rule recognition amendment recorded in .claude/rules/supervisor-freeze.md via a reviewed commit.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-033-R008",
+      "text": "MOTIVATION (evidence row): the purpose is eliminating orchestrator-session context growth and session-handoff burden for steady-state operation; the design must let exception handling (convergences, blockers, owner escalations) occur in short fresh sessions reading only durable state, and must not introduce any new dependence on long-lived chat context.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-033-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [
+        "D-033-R001"
+      ],
+      "required_harness": "",
+      "required_evidence": "Design document section demonstrating the steady-state operator model.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    }
+  ]
+}

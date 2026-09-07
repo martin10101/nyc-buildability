@@ -1,0 +1,68 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-033",
+  "version": 1,
+  "slug": "supervisor-management-layer",
+  "title": "Owner directive 2026-09-07: plan and implement supervisor-run gate waves and acceptance, and present the staged R595 activation package. Activation itself stays owner-only; all holds preserved.",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-07",
+  "captured_at": "2026-09-07T01:30:00+00:00",
+  "created_at": "2026-09-07T01:30:00+00:00",
+  "updated_at": "2026-09-07T01:30:00+00:00",
+  "channel": "owner_terminal_prompt",
+  "frozen_baseline_sha": "f2f7963e8c21c161784b5b698434be54b5c71ef8",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-07T01:30:00+00:00",
+      "content_digest_sha256": "33039a694294daa0e2177dc335fc99f5112ee29209a7765a4e39ce13aa1295f7"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "workstream",
+    "task_ids": [],
+    "task_types": [],
+    "allowed": "plan + implement supervisor-run gate waves and acceptance behind an owner-gated default-OFF switch; present the staged R595 activation package",
+    "excluded": "activating R595/Option-A or any automated merge/acceptance; push/PR/merge/deploy; PR #241; credentials/payments/legal; Tier D / Section 20; expansion-pack work"
+  },
+  "requirements_file": "requirements.json",
+  "locked_requirement_ids": [
+    "D-033-R001",
+    "D-033-R002",
+    "D-033-R003",
+    "D-033-R004",
+    "D-033-R005",
+    "D-033-R006",
+    "D-033-R007",
+    "D-033-R008"
+  ],
+  "requirements_content_digest_sha256": "234466d5d6a01e869169d95ffad3fc38370ff1c8308e915dda0d5cf9abd7eade",
+  "audit_log": [
+    {
+      "at": "2026-09-07T01:30:00+00:00",
+      "event": "captured",
+      "by": "orchestrator",
+      "note": "verbatim capture of the owner directive line; decomposed into R001-R008"
+    }
+  ],
+  "owner_approval": {
+    "state": "approved",
+    "approved_at": "2026-09-07T01:30:00+00:00",
+    "channel": "owner_terminal_prompt",
+    "note": "verbatim owner directive line typed in the orchestrator session; capture performed immediately under /directive-compliance"
+  },
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null
+}
