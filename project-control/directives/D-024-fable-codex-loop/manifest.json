@@ -1396,7 +1396,7 @@
     "D-024-R783"
   ],
   "requirements_id_digest_sha256": "6fc07a7bfe0bd87c963fed8b3525ec8825d5b98b0d42248379336a308d66f6ca",
-  "requirements_content_digest_sha256": "f3a0b1fa3f6703d83d5038aff50c25c073f3d4b1e298ff5bdb8b5038fe2508f5",
+  "requirements_content_digest_sha256": "a44ca4d67069b42c350f5571cae17620a3f1c81a16ef4bc9205abdcada453d7f",
   "final_reviewed_sha": null,
   "final_reviewed_manifest_sha256": null,
   "audit_log": [
@@ -1715,6 +1715,11 @@
       "actor": "orchestrator",
       "action": "amendment-54-astra-activation",
       "detail": "Owner 2026-09-05 fires R781 (gpt-6-astra main reviewer) at effort HIGH, authorizes codex CLI update, and narrowly supersedes owner-typed-only execution of R754/R772/R780 + terminal BLOCKER-1 for this activation (orchestrator-executed recert/accept/re-pin/reinstall/config/live-confirm/loop-launch). Full verbatim + requirement rows: D-032 (sentinel-bound)."
+    },
+    {
+      "at": "2026-09-07T05:34:44+00:00",
+      "actor": "orchestrator",
+      "event": "D-024-R754 second-round independent verification recorded (directive-compliance-verifier, the requirement's named independent_verifier, at HEAD f64ea5f1): verdict FAIL - R754 stays pending/UNVERIFIABLE. Facts 1/2/4/5/6 stand; fact 3 open (advancement decision zero-touch at run-06 audit seq 49->53, but successor dispatch seq 58 was owner-mediated via the queue-v3b repair relaunch - no single-run unattended advance); fact 7 open (transcript commit 3618caee is self-attested orchestrator stdout showing only the PAUSED_RECOVERY refusal tail). requirements.json R754 row status_reason/reviewed_sha updated and verification.json M0-T109 row restamped (identity d597a4e2 unchanged) accordingly; report project-control/reports/M0-T109-R754-closure-DCV.md. Requirement text, ids, and sources untouched - metadata-only update, digest re-recorded per the round-1 bb71b2ef precedent. M0-T109/M0-T145 remain parked."
     }
   ]
 }

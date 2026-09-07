@@ -2,11 +2,11 @@
   "task_id": "M0-T149",
   "producer_agent": "supervised-loop-fable-worker",
   "report_file": "project-control/reports/M0-T149-producer-report.md",
-  "submitted_at": "2026-09-07T04:56:37.985258+00:00",
+  "submitted_at": "2026-09-07T05:27:29.136990+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M0-T149-evidence-map.json",
-  "content_manifest_sha256": "d6a2e753f5f8480da493e9f4bf55fa4c01a1f565ca73b5824aa9cfebefee781d",
-  "reviewed_sha": "f1e6de26048a0edeb5ac56e203341ae088ae71f5",
+  "content_manifest_sha256": "6906f5002978d858a312849f67bb58cb6cb1a64d076e7965be7aa5a3d4098fdb",
+  "reviewed_sha": "7804bc03551ae8ddc7b3fa2661150ecac66f1a10",
   "applicable_requirements": [],
-  "updated_at": "2026-09-07T04:56:39.151459+00:00"
+  "updated_at": "2026-09-07T05:27:31.371956+00:00"
 }

@@ -62,3 +62,10 @@ before the next start against this checkout, and per the M0-T149 producer
 report's recertification note the changed controller subtree requires R247
 recert + reinstall before the NEW code is ever installed (the currently
 installed certified controller a5886dab is unaffected).
+
+*Correction (2026-09-07, per the R754 closure DCV provenance note): the
+completing checkpoint the chain records at seq 51/53 is
+`M0-T025-2026-09-07-handoff-unit-01` (the cycle-2 unit), not
+`M0-T025-persistent-local-06-u01-cp1` (the cycle-1 checkpoint, seq 34) named
+in this report's earlier prose and in the queue-v3b authority text. The chain
+is authoritative; the prose naming above is superseded by this note.*
