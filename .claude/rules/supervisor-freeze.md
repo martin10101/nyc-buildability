@@ -40,6 +40,16 @@ directive's captured requirement ID as qualifying evidence … amend or supersed
 transparently under this directive's authority"); this amendment changes nothing else — the
 defect-only lane, gates, R595 prerequisite, and suite-baseline duty below stand unchanged.
 
+**D-033 recognition (amendment 2026-09-07, task M0-T152):** a requirement explicitly listed in
+owner directive **D-033** (the captured supervisor-management-layer directive,
+`project-control/directives/D-033-supervisor-management-layer/`) is equally qualifying evidence.
+Cite the specific captured `D-033-R###` requirement ID in **both** the task packet and the commit
+message, exactly as section 3 requires. Authorized by D-033-R007 ("a D-033 requirement ID is
+qualifying evidence (AD-093 class: a requirement explicitly listed in an owner directive) for
+tools/agent_supervisor changes this directive mandates - the same transparent freeze-rule
+recognition D-024 received via M0-T086"); this amendment changes nothing else - the defect-only
+lane, gates, R595 prerequisite, and suite-baseline duty below stand unchanged.
+
 ## 3. Evidence-citation duty
 
 Every new supervisor task must cite the qualifying evidence (from §2) that authorizes it in

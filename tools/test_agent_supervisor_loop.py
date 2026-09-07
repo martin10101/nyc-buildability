@@ -291,6 +291,26 @@ class ModeTests(LoopTestBase):
             with self.assertRaises(lp.LoopError):
                 lp.LoopConfig(mode="shadow", task_id="t", stage="s", **kwargs)
 
+    def test_the_managed_wave_switch_never_reaches_loop_config(self) -> None:
+        # M0-T152 rework (D-033-R003; G5 M0-T150 F6): the first increment put
+        # an `owner_enabled_managed_gate_waves` field (with a by-name refusal)
+        # on LoopConfig, and cli._run_loop DID supply it from the operator
+        # flag - the field was wired, not dead. The rework removed the field
+        # AND its CLI wiring together: enforcement now lives at the CLI seam -
+        # `gate_wave.managed_wave_start_gate` gates `cmd_start` by name and
+        # `gate_wave.run_with_post_complete_stage` re-asserts it (both proven,
+        # with mutation halves, in tools/test_agent_supervisor_gate_wave.py).
+        # LoopConfig deliberately carries NO wave field, so no loop
+        # construction path - any mode, any kwargs - can observe or enable the
+        # stage (S1 OFF==today at this boundary). Reintroducing the field here
+        # fails this test.
+        self.assertNotIn(
+            "owner_enabled_managed_gate_waves",
+            {field.name for field in dataclasses.fields(lp.LoopConfig)})
+        with self.assertRaises(TypeError):
+            lp.LoopConfig(mode="shadow", task_id="M0-T036", stage="phase4",
+                          owner_enabled_managed_gate_waves=True)  # type: ignore[call-arg]
+
 
 # --------------------------------------------------------------------------
 # One full cycle
