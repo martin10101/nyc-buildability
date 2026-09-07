@@ -109,3 +109,19 @@ integrity, authority, identity, repository, toolchain, auth, or policy no longer
   missing_steps: []
   pending_effect_ids: []
   recovery_reason_code: unsafe_or_drifted
+mode:            limited-auto
+classification:  SAFE_CHECKPOINT (safe_no_auto_resume)
+next state:      PREFLIGHT
+resume permitted:False (this start IS the explicit operator start; the per-launch enable is honored by the mode gate, not by recovery)
+reason:          the last action has a verified after-effect and every invariant matches, but limited-auto was NOT already owner-enabled, so recovery does not resume by itself: it re-runs preflight and waits for an explicit operator start (S11.5). Recovery never enables or broadens limited-auto
+
+DISPATCHED in limited-auto mode. cycles=1 final_state=PAUSED_RECOVERY stopped=no_valid_checkpoint
+forwarded message ids: (none)
+owner touches counted: 1 of budget 2 (within budget: True)
+the budget is a measurement and authorizes nothing.
+run budget: UNLIMITED (no owner wall-clock limit), elapsed 1135.3s
+
+REFUSED (unsafe, exit 11): no_valid_checkpoint
+the unattended run stopped on 'no_valid_checkpoint' and cannot resolve it without a human
+  cycles: 1
+  final_state: PAUSED_RECOVERY
