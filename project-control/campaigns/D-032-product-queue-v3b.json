@@ -1,0 +1,13 @@
+{
+  "schema": "owner_packet_queue/v1",
+  "authority": "D-032 continuous-build queue v3b (orchestrator 2026-09-07, under D-032-R021 launch delegation + D-033-R009 full-time loop): SUCCESSORS-ONLY repair of queue v3 for the persistent-local-06 relaunch. run_task_queue (tools/agent_supervisor/next_task.py:806-841) takes task 1 from the owner-typed --task-packet and treats every --packet-queue entry as a SUCCESSOR; queue v3 duplicated M0-T025 as its first entry, so after M0-T025's COMPLETE advancement (audit seq 53, 2026-09-07T04:27:59Z, checkpoint M0-T025-persistent-local-06-u01-cp1, astra verdict COMPLETE) the duplicate consumed the second --max-tasks slot as already_advanced and the run parked at max_tasks_reached WITHOUT dispatching M0-T149 - a launch-shape defect recorded for the loop-improvement lane; v3 is preserved unchanged as its evidence. v3b lists ONLY the successor M0-T149. Relaunch shape: --task-packet M0-T025.json (durable advancement record -> counts 1, never re-run) + this queue + --max-tasks 2, same --run-id persistent-local-06 (resumes the durable run budget), so M0-T149 dispatches with successor=true (R754 fact 3 evidence). M0-T025's orchestrator gate wave (incl. the full pytest tools/test_directive_compliance.py -q suite, never a packet-documented command) is unchanged and mandatory.",
+  "tasks": [
+    {
+      "task_id": "M0-T149",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T149.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t149",
+      "branch": "task/M0-T149-command-profile",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t149"
+    }
+  ]
+}
