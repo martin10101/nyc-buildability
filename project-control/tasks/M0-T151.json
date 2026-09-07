@@ -1,0 +1,52 @@
+{
+  "task_id": "M0-T151",
+  "title": "D-034: ARCHITECTURE.md (six-question context) + repo-local /pr-review skill",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement D-034-R001..R004: (1) repo-root ARCHITECTURE.md answering exactly the six captured questions for THIS system (what exists; who owns what; what may depend on what incl. explicit FORBIDDEN paths; how data moves with provenance; what must stay true - the invariants incl. AI-never-calculates, deterministic-code-never-guesses-sources, fail-safe-never-fabricates, orchestrator-only git/ledger; when an agent must STOP: boundary-breaking tasks stop-explain-impact-smallest-change), concise, only what is hard to infer safely, consistent with CLAUDE.md and path-scoped rules WITHOUT duplicating them; (2) .claude/skills/pr-review/SKILL.md - /pr-review [branch|target] reviewing a diff for code quality, test adequacy, security, and contract/backward compatibility PLUS repo-specific provenance discipline and fail-safe correctness, output = only actionable problems each with code pointer + failure scenario, unverifiable items explicitly UNPROVEN, and a closing citation that ledger DONE comes only from gates/evidence (never from this skill); (3) both artifacts cite the existing evidence-before-DONE law rather than duplicating it.",
+  "business_reason": "Owner directive D-034 (captured practice screenshots): make architectural intent explicit instead of forcing agents to infer it; give every session a repo-tuned review skill.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "ARCHITECTURE.md",
+    ".claude/skills/pr-review/SKILL.md",
+    "project-control/reports/M0-T151-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "S1 six questions: ARCHITECTURE.md has exactly the six sections, each answering ONLY what is hard to infer safely; every named component/flow/boundary verifiably exists in the repo (reviewer spot-checks); no duplication of CLAUDE.md or path-scoped rule text.",
+    "S2 forbidden paths + invariants: the dependency section documents the real forbidden edges (e.g. frontend never touches Supabase service keys; connectors never write the ledger; workers never run git; AI never computes legal values) and the invariants section states each with its enforcing mechanism.",
+    "S3 stop conditions: the STOP section gives the exact stop-explain-impact-smallest-change protocol and names the boundary classes that trigger it.",
+    "S4 skill correctness: /pr-review skill reviews an arbitrary diff target for the six dimensions (4 captured + provenance + fail-safe), demands only-actionable output with code pointers and failure scenarios, marks unverifiable items UNPROVEN, and explicitly disclaims ledger authority (advisory; gates decide DONE).",
+    "S5 trial run: the producer report contains one real trial invocation of the skill instructions against a recent real diff (e.g. commit f12e828c) demonstrating the output discipline."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-07T01:54:14.704606+00:00",
+  "updated_at": "2026-09-07T01:54:14.866026+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-034",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-07T01:54:14.704606+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "All three deliverables are NEW files not present at contract time; no production code in scope; identity binds once committed and gated."
+}
