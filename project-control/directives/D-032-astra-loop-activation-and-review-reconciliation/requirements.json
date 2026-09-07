@@ -2,7 +2,7 @@
   "schema": "directive_requirements/v1",
   "directive_id": "D-032",
   "version": 1,
-  "requirement_count": 20,
+  "requirement_count": 21,
   "producer": "orchestrator",
   "updated_at": "2026-09-06T04:00:33+00:00",
   "requirements": [
@@ -674,6 +674,38 @@
       "status_reason": "",
       "evidence_paths": [],
       "amendment_sequence": 3
+    },
+    {
+      "id": "D-032-R021",
+      "text": "AUTHORIZATION: the owner delegates the persistent-local-06 launch (queue v3, fresh run-id) to the orchestrator - the verbal per-launch enable for --owner-enable-bounded-auto for THIS run; the machine permission classifier remains the boundary (a block returns the command to the owner); the committed full-stdout launch/run transcript serves as the R754 fact-7 foreground-view artifact.",
+      "source_ref": "source-004-amendment.md#verbatim",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-032-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Launch executed (or classifier block reported); transcript committed under project-control/reports/.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 4
     }
   ]
 }

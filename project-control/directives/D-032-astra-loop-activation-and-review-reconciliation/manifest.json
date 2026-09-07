@@ -10,7 +10,7 @@
   "issued_at": "2026-09-05",
   "captured_at": "2026-09-06T03:51:16+00:00",
   "created_at": "2026-09-06T03:51:16+00:00",
-  "updated_at": "2026-09-06T17:50:00+00:00",
+  "updated_at": "2026-09-07T02:45:00+00:00",
   "channel": "owner_terminal_prompt",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "sources": [
@@ -36,11 +36,20 @@
       "amends": "source-001.md",
       "recorded_at": "2026-09-06T17:50:00+00:00",
       "content_digest_sha256": "c49efd4128b3dfea7cadeedcc3ac1280a474a53eb1239e94e12867a4dbb90968"
+    },
+    {
+      "file": "source-004-amendment.md",
+      "kind": "amendment",
+      "sequence": 4,
+      "amends": "source-001.md",
+      "recorded_at": "2026-09-07T02:45:00+00:00",
+      "content_digest_sha256": "3912bae02123b838dadacd490b7ce1a60eecba7f2498c0a29bd3ad163fc145ab"
     }
   ],
   "amendments": [
     "source-002-amendment.md",
-    "source-003-amendment.md"
+    "source-003-amendment.md",
+    "source-004-amendment.md"
   ],
   "supersedes": [],
   "superseded_by": null,
@@ -98,7 +107,8 @@
     "D-032-R017",
     "D-032-R018",
     "D-032-R019",
-    "D-032-R020"
+    "D-032-R020",
+    "D-032-R021"
   ],
-  "requirements_content_digest_sha256": "ceb1a97f7a2f43ecd0aeae69fa64bf63b40151d16276b9dc705f4a65d6b854d5"
+  "requirements_content_digest_sha256": "e5ebf70c052a7c5c1590158976ef37cae946ec25146c3610766797e04220789c"
 }
