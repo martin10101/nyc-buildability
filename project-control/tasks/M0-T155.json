@@ -31,18 +31,18 @@
     "G3",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-loop-fable-worker",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-07T18:22:49.215247+00:00",
-  "updated_at": "2026-09-07T18:22:49.984781+00:00",
+  "updated_at": "2026-09-07T18:45:39.835654+00:00",
   "directive_refs": [
     {
       "directive_id": "D-037",
@@ -61,5 +61,6 @@
     "The distinguisher is OBJECTIVE, not the model's gut feeling: for each finding the reviewer must name the specific automated gate (failing test, modularity size, security, dependency-security) or the specific written acceptance criterion it violates; if it can name one -> REVISE (full deep analysis unchanged), if it cannot -> non-blocking advisory + COMPLETE. Real blockers still get full scrutiny; only the disposition of gate-free nits changes.",
     "CHECKPOINT ENVELOPE CONTRACT (DL-2): starting_sha/current_sha are FULL 40-hex or empty; documented commands run via the Bash tool VERBATIM (no wrappers).",
     "FREEZE-RULE task: cite the qualifying evidence in packet + commit; recertify before the running controller uses the new prompt."
-  ]
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t155"
 }
