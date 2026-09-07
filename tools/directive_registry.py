@@ -398,6 +398,30 @@ def _within(child: Path, parent: Path) -> bool:
         return False
 
 
+def resolve_contained_ref(base_dir: Path, ref) -> tuple[Path | None, str | None]:
+    """Resolve a manifest file reference strictly INSIDE `base_dir` (LOW-1 /
+    M0-T025). These references are trusted, checked-in registry data, but they
+    must still name a file within the directive's own directory: absolute or
+    drive/rooted paths, '..' traversal, and non-string values are rejected with
+    a clear reason, and a final _within() resolve guards residual escapes
+    (symlinks, redundant separators). Returns (resolved_path, None) on success
+    or (None, reason) on rejection; callers fail closed on rejection. Shared by
+    the registry loader and the validator so they can never diverge."""
+    if not isinstance(ref, str) or not ref.strip():
+        return None, f"file reference must be a non-empty string, got {ref!r}"
+    p = Path(ref)
+    if p.is_absolute() or p.drive or p.root:
+        return None, (f"absolute file reference {ref!r} is rejected; it must stay "
+                      f"inside the directive's own directory")
+    if ".." in p.parts:
+        return None, (f"file reference {ref!r} contains '..' traversal and is "
+                      f"rejected; it must stay inside the directive's own directory")
+    resolved = base_dir / p
+    if not _within(resolved, base_dir):
+        return None, f"file reference {ref!r} resolves outside the directive's own directory"
+    return resolved, None
+
+
 class Directive:
     """One directive's loaded records plus any integrity errors found on load."""
 
@@ -511,23 +535,25 @@ class DirectiveRegistry:
                     f"{d.directive_id}: source {src.get('file')!r} digest mismatch "
                     f"(manifest {declared}, actual {actual}) -- silent rewrite of an "
                     f"active source is prohibited")
-        # Load requirements + verification.
-        rfile = d.dir_path / (d.manifest.get("requirements_file") or "requirements.json")
-        vfile = d.dir_path / (d.manifest.get("verification_file") or "verification.json")
-        if rfile.exists():
-            try:
-                d.requirements = _load_json(rfile)
-            except (ValueError, OSError) as e:
-                d.errors.append(f"{d.directive_id}: requirements.json invalid: {e}")
-        else:
-            d.errors.append(f"{d.directive_id}: requirements.json missing")
-        if vfile.exists():
-            try:
-                d.verification = _load_json(vfile)
-            except (ValueError, OSError) as e:
-                d.errors.append(f"{d.directive_id}: verification.json invalid: {e}")
-        else:
-            d.errors.append(f"{d.directive_id}: verification.json missing")
+        # Load requirements + verification. LOW-1 (M0-T025): the manifest's
+        # requirements_file / verification_file must resolve INSIDE the directive's
+        # own directory; a rejected reference leaves the record unloaded, so every
+        # consumer fails closed exactly like a missing file (is_active -> False,
+        # evaluate_task_refs -> invalid ref).
+        for key, default, attr in (
+                ("requirements_file", "requirements.json", "requirements"),
+                ("verification_file", "verification.json", "verification")):
+            ref = d.manifest.get(key) or default
+            fpath, why = resolve_contained_ref(d.dir_path, ref)
+            if fpath is None:
+                d.errors.append(f"{d.directive_id}: {key} containment: {why}")
+            elif not fpath.exists():
+                d.errors.append(f"{d.directive_id}: {default} missing")
+            else:
+                try:
+                    setattr(d, attr, _load_json(fpath))
+                except (ValueError, OSError) as e:
+                    d.errors.append(f"{d.directive_id}: {default} invalid: {e}")
 
     # ---- accessors -----------------------------------------------------
 
@@ -1312,10 +1338,14 @@ def _hash_manifest_entries(entries: list) -> str:
     entries = sorted(entries)
     h = hashlib.sha256()
     for rel, mode, gtype, value in entries:
-        h.update(rel.encode("utf-8")); h.update(b"\0")
-        h.update(mode.encode("ascii")); h.update(b"\0")
-        h.update(gtype.encode("ascii")); h.update(b"\0")
-        h.update(value.encode("ascii")); h.update(b"\n")
+        h.update(rel.encode("utf-8"))
+        h.update(b"\0")
+        h.update(mode.encode("ascii"))
+        h.update(b"\0")
+        h.update(gtype.encode("ascii"))
+        h.update(b"\0")
+        h.update(value.encode("ascii"))
+        h.update(b"\n")
     return h.hexdigest()
 
 

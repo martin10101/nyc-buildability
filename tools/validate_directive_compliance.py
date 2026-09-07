@@ -480,12 +480,19 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
         # control-plane tree, so the reviewed matrix body (each row's text/evidence/
         # classification) is protected here instead. Any edit to requirements.json after
         # activation changes this digest -> a visible, CI-caught failure.
-        rfile_path = d.dir_path / (m.get("requirements_file") or "requirements.json")
+        # LOW-1 / M0-T025: resolve the reference through the shared containment
+        # guard so the digest is never computed over a file outside the
+        # directive's own directory (the registry loader rejects the same
+        # reference on load; both sides share resolve_contained_ref).
+        rfile_path, rfile_why = dr.resolve_contained_ref(
+            d.dir_path, m.get("requirements_file") or "requirements.json")
+        if rfile_path is None:
+            errors.append(f"c2 {w} requirements_file containment: {rfile_why}")
         declared_body = m.get("requirements_content_digest_sha256")
         if not declared_body:
             errors.append(f"c14 {w} manifest missing requirements_content_digest_sha256 "
                           f"(the reviewed requirement bodies would be unprotected)")
-        elif rfile_path.exists():
+        elif rfile_path is not None and rfile_path.exists():
             actual_body = hashlib.sha256(rfile_path.read_bytes()).hexdigest()
             if actual_body != declared_body:
                 errors.append(f"c14 {w} requirements.json content digest mismatch "

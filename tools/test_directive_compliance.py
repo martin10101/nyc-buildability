@@ -9,7 +9,8 @@ missing/omitted requirement, invented requirement, amendment-not-in-matrix, sour
 rewritten without hash change, unsupported NOT_APPLICABLE, evidence path missing,
 wrong-directive reference, two concurrent directives, stale verification, producer
 self-verification, completion-claim-with-unresolved, selective citation, and the
-path-scoped content-manifest identity.
+path-scoped content-manifest identity. Also covers the LOW-1 / M0-T025 path
+containment of manifest requirements_file/verification_file references.
 """
 from __future__ import annotations
 
@@ -194,6 +195,93 @@ class NegativeValidatorTests(unittest.TestCase):
         self._has(self.fx.validate(), "frozen_baseline_sha")
 
 
+class PathContainmentTests(unittest.TestCase):
+    """LOW-1 / M0-T025: manifest requirements_file / verification_file must resolve
+    INSIDE the directive's own directory. Escaping references (absolute paths or
+    '..' traversal) are rejected with a clear containment error and fail closed
+    exactly like a missing file; the current in-directory references still pass."""
+
+    def setUp(self):
+        self.fx = Fixture()
+
+    def tearDown(self):
+        self.fx.close()
+
+    def _has(self, errors, needle):
+        self.assertTrue(any(needle in e for e in errors),
+                        f"expected an error containing {needle!r}; got:\n" + "\n".join(errors))
+
+    # ---- the shared guard itself (used by both the resolver and the validator) ----
+
+    def test_guard_accepts_plain_and_nested_relative_refs(self):
+        base = self.fx.root / D1
+        for ref in ("requirements.json", "sub/requirements.json"):
+            p, why = dr.resolve_contained_ref(base, ref)
+            self.assertIsNone(why, why)
+            self.assertEqual(p, base / ref)
+
+    def test_guard_rejects_traversal_absolute_and_malformed_refs(self):
+        base = self.fx.root / D1
+        for ref in ("../other/requirements.json", "a/../../x.json",
+                    str((self.fx.tmp / "outside.json").resolve()),
+                    "/rooted/requirements.json", "", None, 42):
+            p, why = dr.resolve_contained_ref(base, ref)
+            self.assertIsNone(p, f"{ref!r} must be rejected")
+            self.assertTrue(why, f"{ref!r} rejection must carry a reason")
+
+    # ---- AS-1 negative: an escaping reference is REJECTED by the validator ----
+
+    def test_as1_requirements_file_traversal_rejected(self):
+        # The escaping target EXISTS and is a byte-identical copy of the real
+        # requirements, so the only defect is the escaping reference itself.
+        shutil.copyfile(self.fx.d1("requirements.json"),
+                        self.fx.tmp / "outside-requirements.json")
+        m = self.fx.manifest()
+        m["requirements_file"] = "../../outside-requirements.json"
+        self.fx.set_manifest(m)
+        errs = self.fx.validate()
+        self._has(errs, "requirements_file containment")
+        self._has(errs, "'..' traversal")
+
+    def test_as1_verification_file_absolute_path_rejected(self):
+        outside = self.fx.tmp / "outside-verification.json"
+        shutil.copyfile(self.fx.d1("verification.json"), outside)
+        m = self.fx.manifest()
+        m["verification_file"] = str(outside.resolve())
+        self.fx.set_manifest(m)
+        errs = self.fx.validate()
+        self._has(errs, "verification_file containment")
+        self._has(errs, "absolute file reference")
+
+    # ---- AS-1 fail-closed: the resolver takes the same route as a missing file ----
+
+    def test_as1_registry_fails_closed_on_escaping_ref(self):
+        shutil.copyfile(self.fx.d1("requirements.json"),
+                        self.fx.tmp / "outside-requirements.json")
+        m = self.fx.manifest()
+        m["requirements_file"] = "../../outside-requirements.json"
+        self.fx.set_manifest(m)
+        reg = dr.load_registry(self.fx.root)
+        d = reg.get("D-001")
+        self.assertTrue(any("requirements_file containment" in e for e in d.errors), d.errors)
+        self.assertEqual(d.requirements, {}, "an escaping reference must never be loaded")
+        self.assertFalse(d.is_active, "a containment error must deactivate the directive")
+        ev = reg.evaluate_task_refs(_read(REAL_TASKS / "M0-T023.json"))
+        self.assertFalse(ev["ok"])
+        self.assertTrue(any("integrity errors" in r for r in ev["invalid_refs"]),
+                        ev["invalid_refs"])
+
+    # ---- AS-2 positive: the unmodified in-directory references pass unchanged ----
+
+    def test_as2_in_directory_refs_still_pass(self):
+        errs = self.fx.validate()
+        self.assertEqual(errs, [], "\n".join(errs))
+        reg = dr.load_registry(self.fx.root)
+        self.assertNotEqual(reg.directives, {})
+        for d in reg.directives.values():
+            self.assertEqual(d.errors, [], f"{d.directive_id}: {d.errors}")
+
+
 class ResolverTests(unittest.TestCase):
     def setUp(self):
         self.reg = dr.load_registry(REAL_REGISTRY)
@@ -344,6 +432,7 @@ class ContentManifestTests(unittest.TestCase):
         m2 = dr.content_manifest(["a/y.txt", "a/x.py"], root=self.tmp)  # different order/spec
         # Same set of files -> same identity regardless of how the paths were listed
         # (this is why merge/rebase/squash of identical content does not invalidate it).
+        self.assertEqual(m2, m1)
         self.assertEqual(dr.content_manifest(["a"], root=self.tmp), m1)
         self.assertNotEqual(m1, "")
 
@@ -392,14 +481,14 @@ class ClaudeMdSectionTests(unittest.TestCase):
 
     def _section_lines(self):
         text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8").splitlines()
-        start = next((i for i, l in enumerate(text)
-                      if l.strip() == "## Owner-directive compliance"), None)
+        start = next((i for i, line in enumerate(text)
+                      if line.strip() == "## Owner-directive compliance"), None)
         self.assertIsNotNone(start, "CLAUDE.md must contain the 'Owner-directive compliance' section")
         body = []
-        for l in text[start + 1:]:
-            if l.startswith("## "):
+        for line in text[start + 1:]:
+            if line.startswith("## "):
                 break
-            body.append(l)
+            body.append(line)
         # drop trailing blank lines
         while body and not body[-1].strip():
             body.pop()
@@ -526,13 +615,16 @@ class GitContentIdentityTests(unittest.TestCase):
         try:
             _init_repo(a)
             (a / "f.txt").write_bytes(b"alpha\nbeta\n")  # LF
-            _git(a, "add", "-A"); _git(a, "commit", "-q", "-m", "x")
+            _git(a, "add", "-A")
+            _git(a, "commit", "-q", "-m", "x")
             idA, _, _ = dr.git_tree_manifest(a, "HEAD", ["f.txt"])
             _init_repo(b)
             (b / ".gitattributes").write_bytes(b"f.txt text eol=lf\n")
-            _git(b, "add", "-A"); _git(b, "commit", "-q", "-m", "attrs")
+            _git(b, "add", "-A")
+            _git(b, "commit", "-q", "-m", "attrs")
             (b / "f.txt").write_bytes(b"alpha\r\nbeta\r\n")  # CRLF -> normalized to LF blob
-            _git(b, "add", "-A"); _git(b, "commit", "-q", "-m", "x")
+            _git(b, "add", "-A")
+            _git(b, "commit", "-q", "-m", "x")
             idB, _, _ = dr.git_tree_manifest(b, "HEAD", ["f.txt"])
             self.assertEqual(idA, idB, "LF vs CRLF checkout with identical canonical content -> identical identity")
         finally:
@@ -807,7 +899,7 @@ class MultiTaskVerificationTests(unittest.TestCase):
         self.assertTrue(any("no task_verification row" in r for r in a))
 
     def test_r141_validator_flags_per_task_self_verification(self):
-        reg = self._reg(verA="orchestrator")
+        self._reg(verA="orchestrator")  # fixture side effect only; return value unused
         errs = vdc.validate(self.tmp / "directives", REAL_TASKS)
         self.assertTrue(any("per-task separation" in e for e in errs))
 
