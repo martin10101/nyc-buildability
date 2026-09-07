@@ -42,8 +42,13 @@
   ],
   "scope": {
     "kind": "workstream",
-    "task_ids": [],
-    "task_types": [],
+    "task_ids": [
+      "M0-T150",
+      "M0-T152"
+    ],
+    "task_types": [
+      "governance"
+    ],
     "allowed": "plan + implement supervisor-run gate waves and acceptance behind an owner-gated default-OFF switch; present the staged R595 activation package",
     "excluded": "activating R595/Option-A or any automated merge/acceptance; push/PR/merge/deploy; PR #241; credentials/payments/legal; Tier D / Section 20; expansion-pack work"
   },
@@ -59,13 +64,19 @@
     "D-033-R008",
     "D-033-R009"
   ],
-  "requirements_content_digest_sha256": "04abcec80eb856a96442967f73defdd4d07936e8c0d3c5295ea9c86190f27193",
+  "requirements_content_digest_sha256": "82f36c4bee2c206870040ac48f74c7ef3380fe09eec22dc6c2dc27145d492853",
   "audit_log": [
     {
       "at": "2026-09-07T01:30:00+00:00",
       "event": "captured",
       "by": "orchestrator",
       "note": "verbatim capture of the owner directive line; decomposed into R001-R008"
+    },
+    {
+      "at": "2026-09-07T03:45:00+00:00",
+      "event": "applicability_binding",
+      "by": "orchestrator",
+      "note": "bound R001/R003/R005/R006/R007 to M0-T152 (T-A) + scope for the governance-path claim guard"
     }
   ],
   "owner_approval": {

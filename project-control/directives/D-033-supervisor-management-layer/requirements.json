@@ -11,7 +11,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-033-BOOTSTRAP"
+          "D-033-BOOTSTRAP",
+          "M0-T152"
         ],
         "task_types": [],
         "milestones": [],
@@ -77,7 +78,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-033-BOOTSTRAP"
+          "D-033-BOOTSTRAP",
+          "M0-T152"
         ],
         "task_types": [],
         "milestones": [],
@@ -146,7 +148,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-033-BOOTSTRAP"
+          "D-033-BOOTSTRAP",
+          "M0-T152"
         ],
         "task_types": [],
         "milestones": [],
@@ -178,7 +181,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-033-BOOTSTRAP"
+          "D-033-BOOTSTRAP",
+          "M0-T152"
         ],
         "task_types": [],
         "milestones": [],
@@ -210,7 +214,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-033-BOOTSTRAP"
+          "D-033-BOOTSTRAP",
+          "M0-T152"
         ],
         "task_types": [],
         "milestones": [],

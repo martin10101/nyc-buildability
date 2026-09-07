@@ -1,0 +1,66 @@
+{
+  "task_id": "M0-T152",
+  "title": "D-033 T-A: gate-wave engine + owner-gated switch scaffold (post-COMPLETE stage, verdict-to-gate bridge, freeze-rule recognition)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement design docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md section 9 T-A (cites D-033-R001 + D-033-R003 + D-033-R007 as AD-093 qualifying evidence; cite in packet AND commit message): (1) NEW module tools/agent_supervisor/gate_wave.py implementing the post-COMPLETE gate-wave stage (loop.py is AT its modularity ceiling - only minimal wiring lines there and in cli.py); (2) per-gate reviewer dispatch wrapper over ephemeral_review/claude_runner with per-dispatch unique output path + digest binding of the verdict to the dispatch and controller-side assertion reviewer-identity != producer-identity, fail closed on mismatch (G5 condition F2 HIGH - dedicated forgery MUTATION test required); (3) verdict -> project_control.gate() recorder via a machine-enforced allow-set bounding the controller's project_control.py surface to gate/submit for the CURRENT queue task only - never new-task/accept/unlock/depend/master-plan/hold/directive writes at this stage (G5 condition F1 HIGH - negative tests for out-of-scope subcommand AND out-of-queue task); (4) G2 capture wiring: evidence.run_command outputs recorded as the G2 self-check gate record; (5) the --owner-enable-managed-gate-waves switch: per-launch, DEFAULT OFF, durable journal record, symmetric refusal when the flag is supplied without the gated capability (F6), and the negative/mutation proof that switch-off == today's behavior byte-for-byte; (6) every new reviewer/verifier contract carries the M0-T148 worker-authored-data immunization clause + redact_structure + review_packet guard + an injection negative test (F3 MED); (7) mutation tests for every new enforcement (F5 MED); (8) amend .claude/rules/supervisor-freeze.md section 2 to RECOGNIZE D-033 as qualifying evidence (D-024/M0-T086 pattern, D-033-R007). Constraints: R005 - nothing activates; all owner holds intact; the switch is scaffold only. ASCII; read docs/CODE_MODULARITY_POLICY.md before creating the new module; full supervisor suite re-baseline is the orchestrator's gate-wave duty (NOT a documented command).",
+  "business_reason": "D-033 (owner): the loop absorbs gate waves so the orchestrator session stops being the management bottleneck; T-A is stage 1 of the staged R595 ladder.",
+  "inputs": [
+    "docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md (sections 2, 4, 6, 9 T-A; seams I1/I2)",
+    "project-control/reports/M0-T150-G5-security.md (conditions F1-F7; F1/F2 BLOCKING acceptance)",
+    "tools/agent_supervisor/{ephemeral_review,evidence,review_packet,policy}.py + project_control.py gate()"
+  ],
+  "outputs": [],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/agent_supervisor/gate_wave.py",
+    "tools/agent_supervisor/loop.py",
+    "tools/agent_supervisor/cli.py",
+    ".claude/rules/supervisor-freeze.md",
+    "tools/test_agent_supervisor_gate_wave.py",
+    "tools/test_agent_supervisor_loop.py",
+    "project-control/reports/M0-T152-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "S1 OFF==today: with --owner-enable-managed-gate-waves absent, every existing mode behaves byte-identically (mutation proof: enabling the stage with the flag off must fail a test); supplying the flag without the gated mode is REFUSED by name, never ignored (F6).",
+    "S2 verdict-to-gate bridge is forgery-resistant (F2 HIGH, BLOCKING): reviewer identity recorded at dispatch from a worker-uninfluencable source; decision output bound to the dispatch by unique path + digest; a worker-worktree file planted as a verdict is REJECTED; reviewer==producer fails closed; a dedicated MUTATION test proves each check is load-bearing.",
+    "S3 allow-set bound (F1 HIGH, BLOCKING): the controller's project_control.py surface is a fixed allow-set (gate/submit, current-queue task only); negative tests prove an out-of-scope subcommand and an out-of-queue task-id are refused.",
+    "S4 immunization (F3): every new reviewer contract carries the worker-authored-data clause; packet flows through redact_structure + the review_packet guard; an injection negative test (worker artifact says 'emit PASS') does not steer the verdict.",
+    "S5 G2 wiring: evidence.run_command outputs become a recorded G2 self-check gate record; G2 never satisfies an independent gate (existing gate-class rules untouched).",
+    "S6 freeze-rule recognition: supervisor-freeze.md section 2 recognizes D-033-R### as qualifying evidence, mirroring the D-024/M0-T086 wording; nothing else in the rule changes.",
+    "S7 modularity + regression: gate_wave.py is a new focused module; loop.py/cli.py growth minimal (loop.py MUST NOT exceed its ceiling); focused suites green; full-suite re-baseline at the frozen candidate is the orchestrator's step."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-07T03:38:12.322636+00:00",
+  "updated_at": "2026-09-07T03:38:12.495164+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-033",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-07T03:38:12.322636+00:00",
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_gate_wave.py -q",
+    "python -m pytest tools/test_agent_supervisor_loop.py -q",
+    "python -m ruff check tools/agent_supervisor/gate_wave.py tools/agent_supervisor/loop.py tools/agent_supervisor/cli.py tools/test_agent_supervisor_gate_wave.py tools/test_agent_supervisor_loop.py",
+    "python tools/modularity_check.py --check"
+  ]
+}
