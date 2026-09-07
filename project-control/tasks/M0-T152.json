@@ -43,12 +43,12 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-07T03:38:12.322636+00:00",
-  "updated_at": "2026-09-07T03:40:41.302965+00:00",
+  "updated_at": "2026-09-07T08:52:33.826915+00:00",
   "directive_refs": [
     {
       "directive_id": "D-033",
@@ -66,5 +66,7 @@
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t152",
   "notes": [
     "CHECKPOINT ENVELOPE CONTRACT (DL-2 closure, orchestrator 2026-09-07): in the final checkpoint JSON, starting_sha and current_sha MUST each be either the FULL 40-hex sha (from `git rev-parse HEAD`, run in the worktree) or the empty string \"\" - the controller fills authoritative values for empty envelope fields (M0-T133 enrichment) and REFUSES any abbreviated sha fail-closed, destroying the unit's transport envelope. Prior refusals of this exact shape: run persistent-local-06 journal seq 196 (worker sent 'bb71b2ef') and run persistent-local-07 journal seq 200 (worker sent '0e067b6a'). The same rule applies to branch/worktree: supply exactly or leave empty. Your prior unit's work is preserved uncommitted->now committed on this task branch; verify and complete it rather than restarting from scratch, then checkpoint with a conforming envelope."
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-07T08:52:33.826915+00:00"
 }

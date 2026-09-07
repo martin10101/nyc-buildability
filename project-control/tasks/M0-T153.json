@@ -1,0 +1,68 @@
+{
+  "task_id": "M0-T153",
+  "title": "D-033 T-B: supervisor acceptance engine + independent-verifier seam (switch-gated, DEFAULT OFF)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Implement the D-033 design's T-B slice (docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md): independent verifier-session dispatch; verification-row transcription (worst-of dedup, 64k ceiling) into the directive verification file; controller accept() invocation preserving every precondition; producer!=verifier and self-check-never-satisfies mutation tests; content-identity re-stamp on HEAD drift (design item I3). Also close the two T-A advisories routed here: G5 L1 (run the G2 report body through redact_structure before write_g2_report persists it) and G3 D-2 (wire admit_verdict_file/verify_verdict_report read-back verification into the live wave path, or document them as deliberate defense-in-depth surface). Behind the same owner-gated DEFAULT-OFF switch discipline as T-A; no behavior change while off; cites D-033-R002 and D-033-R006 as qualifying evidence (freeze-rule section 3; D-033 recognition amendment landed via M0-T152). Depends on T-A (M0-T152).",
+  "business_reason": "D-033-R002/R006: supervisor-run acceptance is the second stage of the owner's management layer; eliminates orchestrator-session acceptance burden once R595-activated.",
+  "inputs": [],
+  "outputs": [
+    "tools/agent_supervisor/accept_engine.py (independent verifier-session dispatch; row transcription worst-of dedup under the 64k ceiling; accept() invocation preserving every precondition; identity re-stamp on HEAD drift)",
+    "tools/agent_supervisor/gate_wave.py (T-A advisory closures: G5 L1 redact-before-persist in write_g2_report; G3 D-2 live read-back verification or recorded rationale)",
+    "tools/test_agent_supervisor_accept_engine.py (producer!=verifier + self-check-never-satisfies mutation tests; precondition-preservation negatives)",
+    "project-control/reports/M0-T153-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T152"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/accept_engine.py",
+    "tools/agent_supervisor/gate_wave.py",
+    "tools/agent_supervisor/cli.py",
+    "tools/test_agent_supervisor_accept_engine.py",
+    "tools/test_agent_supervisor_gate_wave.py",
+    "project-control/reports/M0-T153-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/agent_supervisor/loop.py (at its modularity ceiling; new stage must be a new module)",
+    "any product/runtime code (services/**, apps/**, packages/**)",
+    ".claude/** except nothing (freeze-rule amendment already landed via M0-T152), .github/**, other tasks' paths",
+    "project-control/directives/** (append-only registry; DCV rows are transcribed by the orchestrator)"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-07T08:40:04.929567+00:00",
+  "updated_at": "2026-09-07T08:40:05.129329+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-033",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-07T08:40:04.929567+00:00",
+  "documented_test_commands": [
+    "python -m pytest tools/test_agent_supervisor_accept_engine.py -q",
+    "python -m pytest tools/test_agent_supervisor_gate_wave.py -q",
+    "python -m ruff check tools/agent_supervisor/accept_engine.py tools/agent_supervisor/gate_wave.py tools/agent_supervisor/cli.py tools/test_agent_supervisor_accept_engine.py tools/test_agent_supervisor_gate_wave.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "notes": [
+    "CHECKPOINT ENVELOPE CONTRACT (DL-2, proven on M0-T152 runs 08/09): in the final checkpoint JSON, starting_sha and current_sha MUST each be either the FULL 40-hex sha (git rev-parse HEAD in the worktree) or the empty string \"\" (controller enrichment fills empty envelope fields; any abbreviated sha is refused fail-closed). Same rule for branch/worktree: exact or empty."
+  ]
+}
