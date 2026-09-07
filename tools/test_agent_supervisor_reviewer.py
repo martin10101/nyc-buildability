@@ -1457,6 +1457,24 @@ class NonMutatingExecutionProfileTests(unittest.TestCase):
                          "non_mutating_profile_refused")
         self.assertTrue(section["python -m pytest tools/x.py -q"]["ok"])
 
+    def test_the_add_noqa_source_writer_is_refused_never_executed(self) -> None:
+        # G3-F1 / G5-MED-1 at the enforcement point: `ruff check --add-noqa`
+        # would rewrite worker-tree source; it is refused before execution.
+        result = self.collector().run_command("ruff check --add-noqa .")
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error_category, "non_mutating_profile_refused")
+        self.assertIn("mutating_checker_token:--add-noqa", result.detail)
+        self.assertEqual(self.ran, [])
+
+    def test_a_fused_dash_m_module_is_refused_never_executed(self) -> None:
+        # G5-MED-2 at the enforcement point: the fused `-m<module>` form no
+        # longer bypasses the module allowlist, so it never reaches execution.
+        result = self.collector().run_command("python -mcompileall foo.py")
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error_category, "non_mutating_profile_refused")
+        self.assertIn("python_module_not_allowlisted:compileall", result.detail)
+        self.assertEqual(self.ran, [])
+
     def test_the_profile_guard_is_load_bearing(self) -> None:
         # Mutation proof: widening the closed program allowlist to include git
         # is the ONLY change needed for run_command to execute `git status` -

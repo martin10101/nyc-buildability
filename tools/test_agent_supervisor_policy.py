@@ -1280,7 +1280,10 @@ class SupervisorExecutionProfileTests(unittest.TestCase):
 
     def test_a_bare_or_targetless_interpreter_is_refused(self) -> None:
         self.assertEqual(self.refusal("python"), "interpreter_without_test_target")
-        self.assertEqual(self.refusal("python -u"), "interpreter_without_test_target")
+        # `-u` is now handled positively as an unrecognized interpreter flag
+        # (fail-closed) rather than skipped past the target check (G5-MED-2).
+        self.assertEqual(self.refusal("python -u"),
+                         "unrecognized_interpreter_flag:-u")
         self.assertTrue(self.refusal("python setup.cfg")
                         .startswith("unrecognized_interpreter_target:"))
 
@@ -1291,6 +1294,66 @@ class SupervisorExecutionProfileTests(unittest.TestCase):
                          "mutating_checker_token:format")
         self.assertEqual(self.refusal("ruff check --unsafe-fixes ."),
                          "mutating_checker_token:--unsafe-fixes")
+
+    def test_the_add_noqa_source_writer_is_refused(self) -> None:
+        # G3-F1 / G5-MED-1: `ruff check --add-noqa` rewrites tracked source in
+        # place (inserts noqa suppression comments); it is the class of --fix.
+        self.assertEqual(self.refusal("ruff check --add-noqa ."),
+                         "mutating_checker_token:--add-noqa")
+        self.assertEqual(self.refusal("python -m ruff check --add-noqa tools"),
+                         "mutating_checker_token:--add-noqa")
+
+    def test_a_report_file_writing_ruff_arg_is_refused(self) -> None:
+        # G3-F2: `--output-file`/`-o` write a report file into the worktree.
+        self.assertEqual(self.refusal("ruff check --output-file out.txt ."),
+                         "mutating_checker_token:--output-file")
+        self.assertEqual(self.refusal("ruff check -o out.txt ."),
+                         "mutating_checker_token:-o")
+
+    def test_ruff_clean_is_refused(self) -> None:
+        # G3-F2: `ruff clean` deletes the ruff cache - a mutation.
+        self.assertEqual(self.refusal("ruff clean"),
+                         "mutating_checker_token:clean")
+
+    def test_a_fused_dash_m_module_is_refused_via_the_allowlist(self) -> None:
+        # G5-MED-2 root cause: the fused `-m<module>` form must route through
+        # the SAME module allowlist as the space form, not be skipped.
+        self.assertEqual(self.refusal("python -mpip install requests"),
+                         "python_module_not_allowlisted:pip")
+        self.assertEqual(self.refusal("python -mcompileall foo.py"),
+                         "python_module_not_allowlisted:compileall")
+        self.assertEqual(self.refusal("python -mpydoc -w tools/x.py"),
+                         "python_module_not_allowlisted:pydoc")
+        self.assertEqual(self.refusal("python -mwebbrowser http://h/x.py"),
+                         "python_module_not_allowlisted:webbrowser")
+
+    def test_a_fused_dash_c_is_refused_as_inline_code(self) -> None:
+        self.assertEqual(self.refusal("python -cprint(1) tools/x.py"),
+                         "inline_python_code")
+
+    def test_an_unrecognized_interpreter_flag_is_refused_not_skipped(self) -> None:
+        # Pinned limitation (G3-F5): option-with-argument forms are refused at
+        # the leading flag - fail-closed and fail-visible, never skipped.
+        self.assertEqual(self.refusal("python -W ignore -m pytest tools/x.py"),
+                         "unrecognized_interpreter_flag:-W")
+
+    def test_a_fused_allowlisted_module_still_admits(self) -> None:
+        # The fused form must not become a blanket refusal: an allowlisted
+        # fused module admits exactly as the space form does.
+        self.assertEqual(self.refusal("python -mpytest tools/x.py -q"), "")
+        self.assertEqual(self.refusal("python -mruff check ."), "")
+
+    def test_previously_admitted_real_shapes_still_admit(self) -> None:
+        # Positive regression guard for the interpreter-flag tightening.
+        for command in (
+                "python -m pytest tools/x.py -q",
+                "python -m ruff check .",
+                "python -m unittest discover tools",
+                "pytest -q",
+                "ruff check .",
+                "python tools/x.py --check",
+        ):
+            self.assertEqual(self.refusal(command), "", command)
 
     def test_unclean_shapes_stay_unrunnable(self) -> None:
         for command in ("", "pytest -q && git push origin b",
@@ -1309,6 +1372,16 @@ class SupervisorExecutionProfileTests(unittest.TestCase):
             self.assertNotEqual(self.refusal(f"{program} anything"), "", program)
         for module in ("pip", "ensurepip", "venv", "http.server", "pip._internal"):
             self.assertNotIn(module, pol.SUPERVISOR_EXECUTABLE_PYTHON_MODULES)
+
+    def test_the_mutating_checker_token_set_covers_every_known_writer(self) -> None:
+        # The checker-token set is closed and includes every known ruff writer;
+        # each is refused fail-visibly. Keeps the in-source claim machine-checked.
+        self.assertIsInstance(pol._MUTATING_CHECKER_TOKENS, frozenset)
+        for token in ("--fix", "--fix-only", "--unsafe-fixes", "--add-noqa",
+                      "--output-file", "-o", "format", "clean"):
+            self.assertIn(token, pol._MUTATING_CHECKER_TOKENS, token)
+            self.assertEqual(self.refusal(f"ruff check {token}"),
+                             f"mutating_checker_token:{token}", token)
 
 
 if __name__ == "__main__":

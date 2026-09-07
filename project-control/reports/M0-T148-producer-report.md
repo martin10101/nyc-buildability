@@ -211,11 +211,15 @@ behavior here.
   orchestrator authorship of the packet kept such a command from executing.
   M0-T149 added the enforced non-mutating supervisor-execution profile
   (`policy.supervisor_execution_refusal`: closed test-runner allowlist without
-  git, closed `python -m` module allowlist, destructive-segment reuse, no
-  inline code, no out-of-repository scripts, no mutating checker tokens), which
-  `run_command` now applies fail-visibly (`non_mutating_profile_refused`)
-  before executing anything - so never-git/never-mutating is machine-enforced
-  at the execution channel, not assumed from packet authorship.]
+  git, closed `python -m` module allowlist including its fused `-m<module>`
+  form, destructive-segment reuse, no inline code, no out-of-repository
+  scripts, and a mutating-checker-token gate), which `run_command` now applies
+  fail-visibly (`non_mutating_profile_refused`) before executing anything.
+  Never-git is machine-enforced at the execution channel; every mutating shape
+  the profile enumerates is excluded by these layered fail-closed checks rather
+  than assumed from packet authorship. The profile constrains programs, modules
+  and argument shapes, not repository content, so this is defense-in-depth over
+  a closed enumerated surface, not an absolute never-mutating guarantee.]
 - Pure-ASCII source in all four production files (evidence/codex_reviewer/
   review_packet 0 non-ASCII; loop.py's 4 non-ASCII are pre-existing em-dashes in
   unrelated comments, none in the edited region).
