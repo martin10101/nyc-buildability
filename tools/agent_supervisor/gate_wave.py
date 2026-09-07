@@ -183,6 +183,26 @@ class ManagedGateWavesRefused(GateWaveError):
 # --------------------------------------------------------------------------
 
 
+def add_owner_switch_argument(parser: Any) -> None:
+    """Register the owner switch on `start` (cli.py's wiring is this ONE call).
+
+    Lives here so the flag string, its help contract, and the F6 gate that
+    reads it are one module: ``MANAGED_WAVE_FLAG`` can never drift from the
+    argument the CLI actually parses, and cli.py carries no second copy.
+    """
+    parser.add_argument(
+        MANAGED_WAVE_FLAG, action="store_true",
+        help="M0-T152 (D-033-R003): the owner's EXPLICIT per-launch enable for the "
+             "post-COMPLETE managed gate-wave stage (stage 1 of the D-033 ladder: the "
+             "controller runs the required gate reviews and records gate records; "
+             "acceptance, queue advance, and integration stay with the orchestrator). "
+             "DEFAULT OFF: without it every mode behaves byte-identically to today, and "
+             "supplying it without the owner-gated bounded capability (--mode limited-auto "
+             "plus --owner-enable-bounded-auto) is a STRUCTURED refusal by name (G5 "
+             "M0-T150 F6), never a silent ignore. The enable is recorded durably in the "
+             "journal and the audit chain; it weakens no other gate or hold (D-033-R005)")
+
+
 def assert_wave_enabled(owner_enabled: bool) -> None:
     """THE load-bearing switch check (S1). Every wave entry point calls it.
 
@@ -194,14 +214,17 @@ def assert_wave_enabled(owner_enabled: bool) -> None:
         raise ManagedGateWavesRefused()
 
 
-def managed_wave_start_gate(args: Any) -> refusals.Refusal | None:
+def managed_wave_start_gate(args: Any,
+                            seal_audit: str = "") -> refusals.Refusal | None:
     """The F6 symmetric refusal at `start`, mirroring `bounded_mode_gate`.
 
     None means "not refused". The flag names a capability that only the
     owner-gated bounded launch can host (mode ``limited-auto`` with
     ``--owner-enable-bounded-auto``); supplied anywhere else it is refused BY
     NAME rather than ignored, so a stray flag can never sit unnoticed in a
-    scheduled task's argv.
+    scheduled task's argv. When ``seal_audit`` names the audit-log filename, a
+    refusal is additionally sealed in the hash-chained audit log here (the C6
+    shape), so the caller stays a single wiring line.
     """
     enabled = bool(getattr(args, "owner_enable_managed_gate_waves", False))
     if not enabled:
@@ -211,7 +234,7 @@ def managed_wave_start_gate(args: Any) -> refusals.Refusal | None:
              and bool(getattr(args, "owner_enable_bounded_auto", False)))
     if gated:
         return None
-    return refusals.refusal(
+    item = refusals.refusal(
         refusals.REFUSED_MODE,
         reason_code="managed_waves_without_gated_mode",
         message=(f"{MANAGED_WAVE_FLAG} was supplied for mode {mode!r} without the "
@@ -223,6 +246,9 @@ def managed_wave_start_gate(args: Any) -> refusals.Refusal | None:
         detail={"mode": mode, "owner_enable_input": MANAGED_WAVE_FLAG,
                 "requires": [f"--mode {MODE_LIMITED_AUTO}",
                              "--owner-enable-bounded-auto"]})
+    if seal_audit:
+        seal_wave_refusal(args, item, seal_audit)
+    return item
 
 
 def seal_wave_refusal(args: Any, item: refusals.Refusal,
@@ -1038,3 +1064,36 @@ def post_complete_stage(*, run: Mapping[str, Any], packet: Mapping[str, Any],
                 "reason": "the run did not end at COMPLETE; no wave ran"}
     journal.set_state(f"managed_gate_waves/last_wave/{run_id}", result.to_dict())
     return {"entered": True, **result.to_dict()}
+
+
+def run_with_post_complete_stage(args: Any, loop: Any, first_prompt: str, *,
+                                 packet: Mapping[str, Any], reviewer: Any,
+                                 collector: EvidenceCollector, journal: Any,
+                                 audit: Any, run_id: str, repo_root: str,
+                                 worker_worktree: str,
+                                 checkout: str) -> dict[str, Any]:
+    """The ONE wiring line `cli._run_loop` calls in place of `loop.run(...)`.
+
+    OFF==today (S1): with the flag absent this is exactly
+    ``loop.run(first_prompt).to_dict()`` - no enable record, no journal or
+    audit append, no gate_wave machinery touched. With the flag present it
+    re-asserts the owner-gated capability HERE (defense in depth behind the
+    `cmd_start` gate: a caller that reaches the loop with the flag but without
+    the gated capability is refused by name, never silently waved -
+    MUTATION-TESTED), writes the durable enable record, runs the launch, and
+    then runs the post-COMPLETE stage.
+    """
+    enabled = bool(getattr(args, "owner_enable_managed_gate_waves", False))
+    if enabled:
+        item = managed_wave_start_gate(args)
+        if item is not None:
+            raise GateWaveError(item.reason_code, item.message)
+        record_enable(journal, audit, run_id)
+    run = loop.run(first_prompt).to_dict()
+    if enabled:
+        run["managed_gate_wave"] = post_complete_stage(
+            run=run, packet=packet, reviewer=reviewer, collector=collector,
+            journal=journal, audit=audit, run_id=run_id, repo_root=repo_root,
+            worker_worktree=worker_worktree, checkout=checkout,
+            runtime_base=getattr(args, "runtime_base", None))
+    return run

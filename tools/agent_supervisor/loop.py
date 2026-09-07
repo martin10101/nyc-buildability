@@ -310,13 +310,6 @@ class LoopConfig:
     #: so no configuration default, parse error, migration, or downgrade reaches
     #: the mode - and every existing caller is byte-for-byte unchanged.
     owner_enabled_bounded_auto: bool = False
-    #: M0-T152 (D-033-R003): the owner's EXPLICIT per-launch enable for the
-    #: post-COMPLETE managed gate-wave stage (gate_wave.py). Set to True ONLY by
-    #: the `--owner-enable-managed-gate-waves` operator flag (cli.py). Default
-    #: False means the stage is never entered and every existing mode is
-    #: byte-for-byte unchanged; the flag without the owner-gated bounded
-    #: capability is refused by name below (G5 M0-T150 F6), never ignored.
-    owner_enabled_managed_gate_waves: bool = False
 
     def __post_init__(self) -> None:
         if self.mode == MODE_LIMITED_AUTO and not self.owner_enabled_bounded_auto:
@@ -336,17 +329,6 @@ class LoopConfig:
                 f"the bounded-mode owner enable was supplied for mode {self.mode!r}, which "
                 f"is not owner-gated; an enable that does not name the mode it enables is "
                 f"refused rather than ignored")
-        # M0-T152 (D-033-R003; G5 M0-T150 F6): the managed gate-wave enable is
-        # refused BY NAME unless this launch carries the owner-gated bounded
-        # capability that can host the stage - symmetric with the check above.
-        if self.owner_enabled_managed_gate_waves and not (
-                self.mode in OWNER_GATED_MODES and self.owner_enabled_bounded_auto):
-            raise LoopError(
-                "managed_waves_without_gated_mode",
-                f"the managed gate-wave owner enable was supplied for mode {self.mode!r} "
-                f"without the owner-gated bounded capability (limited-auto plus the "
-                f"bounded-auto owner enable); an enable that does not name a capability "
-                f"able to host it is refused rather than ignored")
         if not isinstance(self.max_cycles, int) or self.max_cycles < 1:
             raise LoopError("bad_max_cycles", "max_cycles must be a positive integer bound")
         if not isinstance(self.owner_touch_budget, int) or self.owner_touch_budget < 0:

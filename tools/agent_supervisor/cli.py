@@ -224,8 +224,7 @@ from .recovery import (
     set_emergency_stop,
     set_manual_pause,
 )
-from . import gate_wave
-from . import refusals
+from . import gate_wave, refusals
 from .codex_channel_cli import register_codex_channel_verbs
 from .telegram_sink_cli import register_telegram_verbs
 from .operator_channel_cli import (
@@ -2884,13 +2883,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             # --owner-enable-bounded-auto. Without it `LoopConfig` refuses
             # mode="limited-auto" by name, exactly as it always has.
             owner_enabled_bounded_auto=bool(
-                getattr(args, "owner_enable_bounded_auto", False)),
-            # M0-T152 (D-033-R003): the owner's EXPLICIT per-launch enable for
-            # the post-COMPLETE managed gate-wave stage, set ONLY by
-            # --owner-enable-managed-gate-waves. Default False keeps every
-            # existing mode byte-for-byte unchanged (S1).
-            owner_enabled_managed_gate_waves=bool(
-                getattr(args, "owner_enable_managed_gate_waves", False))),
+                getattr(args, "owner_enable_bounded_auto", False))),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
@@ -2900,8 +2893,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         context_rotation_threshold=context_rotation_threshold,
         # D-004-R751/R758: the FIXED preference chain, straight out of the
         # IMMUTABLE controller config. Owner-editable only; never a runtime value.
-        model_chain=config.model_chain,
-        model_available=model_available,
+        model_chain=config.model_chain, model_available=model_available,
         resource_sampler=resource_sampler,
         # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
         # D-010 source-028): the WORKER-layer Fable->Opus turnover seam. M0-T056
@@ -2912,8 +2904,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         # without it worker_controller is None and the seam is record-intent-only,
         # byte-identical to the pre-activation path. Every non-exhaustion path is
         # unchanged either way.
-        worker_turnover=worker_turnover_integration,
-        guardrail_bridge=guardrail_bridge,
+        worker_turnover=worker_turnover_integration, guardrail_bridge=guardrail_bridge,
         # M0-T079: the durable run budget. It also carries the breaker tallies
         # across a crash-resume, so a restarted run cannot earn back model calls,
         # external writes, or restarts it has already spent.
@@ -2936,22 +2927,18 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     first_prompt = args.prompt if launch is not None else orientation_mod.oriented_first_prompt(
         args.prompt, packet, turn_budget, run_id=run_id, worktree=str(worktree),
         branch=args.branch, stage=args.stage, allowed_paths=authority.allowed_paths)
-    # M0-T152 (D-033-R001/R003, seam I1): the post-COMPLETE gate-wave stage.
-    # Reached ONLY under the per-launch owner enable (already gated by name at
-    # cmd_start); with the flag absent this block is dead and the launch is
-    # byte-identical to today (S1). The stage records gates only - acceptance,
-    # queue advance, and integration stay with the orchestrator (D-033-R005).
-    wave_enabled = bool(getattr(args, "owner_enable_managed_gate_waves", False))
-    if wave_enabled:
-        gate_wave.record_enable(journal, audit, run_id)
-    run = loop.run(first_prompt).to_dict()
-    if wave_enabled:
-        run["managed_gate_wave"] = gate_wave.post_complete_stage(
-            run=run, packet=packet, reviewer=reviewer, collector=collector,
-            journal=journal, audit=audit, run_id=run_id, repo_root=str(repo),
-            worker_worktree=str(worktree), checkout=str(checkout),
-            runtime_base=getattr(args, "runtime_base", None))
-    return run
+    # M0-T152 (D-033-R001/R003, seam I1): run the launch and, ONLY under the
+    # per-launch owner enable (gated by name at cmd_start and re-asserted
+    # inside the helper), the post-COMPLETE gate-wave stage. With the flag
+    # absent this call IS `loop.run(first_prompt).to_dict()` - no enable
+    # record, no journal or audit append, no gate_wave machinery (S1). The
+    # stage records gates only - acceptance, queue advance, and integration
+    # stay with the orchestrator (D-033-R005).
+    return gate_wave.run_with_post_complete_stage(
+        args, loop, first_prompt, packet=packet, reviewer=reviewer,
+        collector=collector, journal=journal, audit=audit, run_id=run_id,
+        repo_root=str(repo), worker_worktree=str(worktree),
+        checkout=str(checkout))
 
 
 def cmd_start(args: argparse.Namespace) -> int:
@@ -2968,10 +2955,10 @@ def cmd_start(args: argparse.Namespace) -> int:
         seal_owner_gate_refusal(args, gate, AUDIT_FILENAME)
         return emit_refusal(args, gate)
     # M0-T152 (D-033-R003; F6): the managed gate-wave enable is refused BY NAME
-    # unless this launch carries the owner-gated capability that can host it.
-    wave_gate = gate_wave.managed_wave_start_gate(args)
+    # unless this launch carries the owner-gated capability that can host it;
+    # a refusal is sealed in the hash-chained audit log (the C6 shape).
+    wave_gate = gate_wave.managed_wave_start_gate(args, seal_audit=AUDIT_FILENAME)
     if wave_gate is not None:
-        gate_wave.seal_wave_refusal(args, wave_gate, AUDIT_FILENAME)
         return emit_refusal(args, wave_gate)
     # M0-T136 (D-024-R557): `--launch-manifest` is THE canonical entrance when
     # present - it supplies every dispatch input (typed flags that disagree are
@@ -3382,17 +3369,7 @@ def build_parser() -> argparse.ArgumentParser:
              "downgrade, or model can set it, and it weakens no other gate - the run still "
              "passes the live pre-dispatch probes, the containment precondition, the "
              "policy tiers, and every circuit breaker")
-    start.add_argument(
-        "--owner-enable-managed-gate-waves", action="store_true",
-        help="M0-T152 (D-033-R003): the owner's EXPLICIT per-launch enable for the "
-             "post-COMPLETE managed gate-wave stage (stage 1 of the D-033 ladder: the "
-             "controller runs the required gate reviews and records gate records; "
-             "acceptance, queue advance, and integration stay with the orchestrator). "
-             "DEFAULT OFF: without it every mode behaves byte-identically to today, and "
-             "supplying it without the owner-gated bounded capability (--mode limited-auto "
-             "plus --owner-enable-bounded-auto) is a STRUCTURED refusal by name (G5 "
-             "M0-T150 F6), never a silent ignore. The enable is recorded durably in the "
-             "journal and the audit chain; it weakens no other gate or hold (D-033-R005)")
+    gate_wave.add_owner_switch_argument(start)
     start.add_argument(
         "--run-wall-clock-seconds", type=float, default=None,
         help="the OWNER-SET wall-clock budget for this run, in seconds. OMIT IT FOR AN "

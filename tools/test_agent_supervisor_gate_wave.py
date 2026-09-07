@@ -17,7 +17,14 @@ proven, keyed to the acceptance scenarios and the G5 M0-T150 conditions:
 * S5 - G2 is controller-run command capture recorded with the reserved
   orchestrator label; a failing/timed-out command is FAIL, never success;
 * S7 - the wave engine walks a real gate set, parks on G6/BLOCKED/UNAVAILABLE,
-  stops on FAIL, and never accepts or advances anything.
+  stops on FAIL, and never accepts or advances anything;
+* the CLI seam - `run_with_post_complete_stage` (the one call cli._run_loop
+  makes) is flag-off byte-identical to `loop.run(...).to_dict()` with zero
+  wave touches, refuses an ungated flag BEFORE the launch or any enable
+  record (with the mutation half), records the durable enable before the
+  launch, waves only a COMPLETE run, and the switch registers store_true /
+  default-off on the REAL `start` parser with refusals sealed in the
+  hash-chained audit log.
 """
 from __future__ import annotations
 
@@ -123,6 +130,40 @@ class SpyJournal:
 
     def set_state(self, key: str, value) -> None:
         self.state[key] = value
+
+
+class FakeLoopResult:
+    """The `.to_dict()` surface `run_with_post_complete_stage` reads."""
+
+    def __init__(self, body: dict) -> None:
+        self.body = body
+
+    def to_dict(self) -> dict:
+        return self.body
+
+
+class FakeLoop:
+    """Stands in for the assembled loop at the CLI seam.
+
+    Records the prompt it ran and, when given a SpyJournal, a snapshot of the
+    journal state AT run time - so a test can prove the durable enable record
+    exists BEFORE the launch executes (crash-resume disclosure, design 6.1).
+    """
+
+    def __init__(self, final_state: str = "COMPLETE", journal=None) -> None:
+        self.final_state = final_state
+        self.prompts: list[str] = []
+        self.returned: list[dict] = []
+        self.journal_at_run: dict | None = None
+        self._journal = journal
+
+    def run(self, first_prompt: str) -> FakeLoopResult:
+        self.prompts.append(first_prompt)
+        if self._journal is not None:
+            self.journal_at_run = dict(self._journal.state)
+        body = {"final_state": self.final_state, "cycles": 1}
+        self.returned.append(body)
+        return FakeLoopResult(body)
 
 
 def process_ok(stdout: str = "ok") -> ProcessResult:
@@ -266,9 +307,11 @@ class SwitchTests(Base):
             {"mode": "supervised", "owner_enable_bounded_auto": True},
             {"mode": "limited-auto"},  # bounded enable absent
         ):
-            args = argparse.Namespace(owner_enable_managed_gate_waves=True,
-                                      owner_enable_bounded_auto=False, **{
-                                          k: v for k, v in kwargs.items()})
+            values: dict[str, object] = {
+                "owner_enable_managed_gate_waves": True,
+                "owner_enable_bounded_auto": False}
+            values.update(kwargs)
+            args = argparse.Namespace(**values)
             item = gw.managed_wave_start_gate(args)
             self.assertIsNotNone(item, kwargs)
             self.assertEqual(item.reason_code, "managed_waves_without_gated_mode")
@@ -293,6 +336,73 @@ class SwitchTests(Base):
         self.assertEqual(stored["flag"], gw.MANAGED_WAVE_FLAG)
         self.assertEqual(audit.events[0][0], gw.ENABLE_EVENT)
         self.assertEqual(record["run_id"], RUN)
+
+    def test_the_switch_registers_store_true_with_default_off(self) -> None:
+        # S1/F6 registration contract: the ONE helper cli.py calls registers
+        # exactly MANAGED_WAVE_FLAG, absent -> False (DEFAULT OFF), present ->
+        # True, under the attribute name every gate reads via getattr.
+        parser = argparse.ArgumentParser()
+        gw.add_owner_switch_argument(parser)
+        self.assertFalse(parser.parse_args([]).owner_enable_managed_gate_waves)
+        self.assertTrue(parser.parse_args([gw.MANAGED_WAVE_FLAG])
+                        .owner_enable_managed_gate_waves)
+
+    def test_the_real_cli_start_parser_carries_the_switch(self) -> None:
+        # The ACTUAL boundary: build_parser()'s `start` subparser must carry
+        # the flag (default OFF) - dropping the add_owner_switch_argument
+        # wiring line in cli.py fails this test.
+        from tools.agent_supervisor import cli
+        parser = cli.build_parser()
+        subparsers = next(a for a in parser._actions
+                          if isinstance(a, argparse._SubParsersAction))
+        start = subparsers.choices["start"]
+        actions = {opt: a for a in start._actions for opt in a.option_strings}
+        self.assertIn(gw.MANAGED_WAVE_FLAG, actions)
+        action = actions[gw.MANAGED_WAVE_FLAG]
+        self.assertIs(action.default, False)
+        self.assertIs(action.const, True)
+        self.assertEqual(action.dest, "owner_enable_managed_gate_waves")
+
+    def test_an_ungated_refusal_is_sealed_in_the_hash_chained_audit_log(self) -> None:
+        # F6 durable auditing (the C6 shape, wired at cmd_start via
+        # seal_audit=AUDIT_FILENAME): an attempted managed-wave launch without
+        # the gated capability leaves a tamper-evident refusal record.
+        from tools.agent_supervisor.audit_log import AuditLog
+        from tools.agent_supervisor.durable_state import runtime_dir_for
+        checkout = self.tmp / "checkout"
+        checkout.mkdir()
+        args = argparse.Namespace(owner_enable_managed_gate_waves=True,
+                                  owner_enable_bounded_auto=False,
+                                  mode="shadow", checkout=str(checkout),
+                                  runtime_base=str(self.tmp / "rtbase"))
+        item = gw.managed_wave_start_gate(args, seal_audit="audit.jsonl")
+        self.assertIsNotNone(item)
+        log = AuditLog(runtime_dir_for(checkout,
+                                       base=args.runtime_base) / "audit.jsonl")
+        records = [r for r in log.read_all()
+                   if r["event_type"] == gw.REFUSAL_EVENT]
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["decision"], "refuse")
+        self.assertEqual(records[0]["policy_result"],
+                         "managed_waves_without_gated_mode")
+        self.assertTrue(log.verify_chain().ok)
+
+    def test_a_gated_launch_and_an_absent_flag_seal_no_refusal(self) -> None:
+        # The seal is refusal-only: an admitted or flag-less launch leaves no
+        # audit file at all.
+        checkout = self.tmp / "checkout"
+        checkout.mkdir()
+        common = {"checkout": str(checkout),
+                  "runtime_base": str(self.tmp / "rtbase")}
+        gated = argparse.Namespace(owner_enable_managed_gate_waves=True,
+                                   owner_enable_bounded_auto=True,
+                                   mode="limited-auto", **common)
+        self.assertIsNone(gw.managed_wave_start_gate(gated,
+                                                     seal_audit="audit.jsonl"))
+        absent = argparse.Namespace(mode="shadow", **common)
+        self.assertIsNone(gw.managed_wave_start_gate(absent,
+                                                     seal_audit="audit.jsonl"))
+        self.assertFalse((self.tmp / "rtbase").exists())
 
 
 # --------------------------------------------------------------------------
@@ -401,9 +511,13 @@ class DispatchBindingTests(Base):
         self.assertEqual(ctx.exception.code, "verdict_path_occupied")
 
     def test_a_tampered_stored_verdict_fails_verification(self) -> None:
+        # The modeled attack: a stored FAIL verdict edited into a PASS after
+        # transcription. The rewrite MUST change bytes for the tamper to be
+        # real, so the fixture verdict is a REVISE->FAIL, never already-PASS.
         dispatch = self.dispatch()
-        record = self.record_for(dispatch)
+        record = self.record_for(dispatch, "REVISE")
         bound = gw.bind_verdict(dispatch, record)
+        self.assertEqual(bound.result, "FAIL")
         gw.write_verdict_report(bound, record)
         self.assertEqual(gw.verify_verdict_report(bound)["bound_verdict"]
                          ["verdict_digest"], bound.verdict_digest)
@@ -743,6 +857,128 @@ class WaveEngineTests(Base):
         self.assertEqual(result.status, gw.WAVE_COMPLETE)
         self.assertEqual(audit.events[0][0], gw.WAVE_FINISHED_EVENT)
         self.assertEqual(audit.events[0][1]["policy_result"], gw.WAVE_COMPLETE)
+
+
+# --------------------------------------------------------------------------
+# The CLI seam - run_with_post_complete_stage (S1/F6 at the actual boundary)
+# --------------------------------------------------------------------------
+
+
+class CliSeamTests(Base):
+    """`run_with_post_complete_stage`, the ONE call cli._run_loop makes."""
+
+    def seam(self, args, loop, *, packet=None, reviewer=None, collector=None,
+             journal=None, audit=None):
+        return gw.run_with_post_complete_stage(
+            args, loop, "PROMPT",
+            packet=task_packet() if packet is None else packet,
+            reviewer=reviewer if reviewer is not None else MustNotRun(),
+            collector=collector if collector is not None else MustNotRun(),
+            journal=journal if journal is not None else MustNotRun(),
+            audit=audit if audit is not None else MustNotRun(),
+            run_id=RUN, repo_root=str(self.tmp),
+            worker_worktree=str(self.tmp / "wt"),
+            checkout=str(self.tmp / "checkout"))
+
+    def gated_args(self) -> argparse.Namespace:
+        return argparse.Namespace(owner_enable_managed_gate_waves=True,
+                                  owner_enable_bounded_auto=True,
+                                  mode="limited-auto",
+                                  runtime_base=str(self.tmp / "rtbase"))
+
+    def ungated_args(self) -> argparse.Namespace:
+        return argparse.Namespace(owner_enable_managed_gate_waves=True,
+                                  owner_enable_bounded_auto=False,
+                                  mode="shadow",
+                                  runtime_base=str(self.tmp / "rtbase"))
+
+    def test_flag_off_is_exactly_the_loop_run_and_touches_nothing(self) -> None:
+        # S1 OFF==today at the ACTUAL boundary: with the flag absent the seam
+        # returns the loop's OWN to_dict object, unmodified and unwrapped;
+        # packet/reviewer/collector/journal/audit are MustNotRun tripwires, so
+        # a single wave-side touch (an enable record, an audit append, any
+        # gate_wave machinery) is a hard failure.
+        loop = FakeLoop("COMPLETE")
+        result = self.seam(argparse.Namespace(), loop, packet=MustNotRun())
+        self.assertIs(result, loop.returned[0])
+        self.assertEqual(result, {"final_state": "COMPLETE", "cycles": 1})
+        self.assertNotIn("managed_gate_wave", result)
+        self.assertEqual(loop.prompts, ["PROMPT"])
+        self.assertEqual(list(self.out_dir.glob("**/*")), [])
+        self.assertFalse((self.tmp / "project-control").exists())
+
+    def test_flag_on_ungated_refuses_before_the_launch_or_enable_record(self) -> None:
+        # F6 defense in depth behind cmd_start: the seam re-asserts the gated
+        # capability BEFORE the launch executes and BEFORE any durable enable
+        # record exists - a refusal leaves no trace of an enable.
+        journal, audit, loop = SpyJournal(), SpyAudit(), FakeLoop("COMPLETE")
+        with self.assertRaises(gw.GateWaveError) as ctx:
+            self.seam(self.ungated_args(), loop, journal=journal, audit=audit)
+        self.assertEqual(ctx.exception.code, "managed_waves_without_gated_mode")
+        self.assertEqual(loop.prompts, [])
+        self.assertEqual(journal.state, {})
+        self.assertEqual(audit.events, [])
+
+    def test_MUTATION_removing_the_reassert_lets_an_ungated_flag_enable(self) -> None:
+        # F5/F6 mutation half of the test above: with the seam's re-assert
+        # deleted, the SAME ungated call records the enable and runs the
+        # launch - the normal refusal assertion fails, proving the re-assert
+        # is load-bearing.
+        journal, audit = SpyJournal(), SpyAudit()
+        loop = FakeLoop("HALTED", journal=journal)
+        with mock.patch.object(gw, "managed_wave_start_gate",
+                               lambda args, seal_audit="": None):
+            run = self.seam(self.ungated_args(), loop, journal=journal,
+                            audit=audit)
+        self.assertEqual(loop.prompts, ["PROMPT"])
+        self.assertTrue(journal.state[gw.ENABLE_STATE_KEY]["enabled"])
+        self.assertEqual(audit.events[0][0], gw.ENABLE_EVENT)
+        self.assertIn("managed_gate_wave", run)
+
+    def test_enabled_complete_run_dispatches_the_wave_and_journals_it(self) -> None:
+        # The full ON path end to end: durable enable BEFORE the launch, the
+        # launch itself, then the post-COMPLETE wave - gates recorded through
+        # the allow-set recorder, the result journaled and audit-chained.
+        journal, audit = SpyJournal(), SpyAudit()
+        loop = FakeLoop("COMPLETE", journal=journal)
+        real = gw.ControlPlaneRecorder
+        recorded = self.recorded
+
+        def spying_recorder(**kwargs):
+            kwargs.setdefault("runner", spy_runner(recorded))
+            return real(**kwargs)
+
+        with mock.patch.object(gw, "ControlPlaneRecorder", spying_recorder):
+            run = self.seam(self.gated_args(), loop,
+                            reviewer=FakeReviewer("PASS"),
+                            collector=self.collector(),
+                            journal=journal, audit=audit)
+        self.assertIn(gw.ENABLE_STATE_KEY, loop.journal_at_run)
+        wave = run["managed_gate_wave"]
+        self.assertTrue(wave["entered"])
+        self.assertEqual(wave["status"], gw.WAVE_COMPLETE)
+        gates = [argv[argv.index("--gate-id") + 1] for argv in recorded]
+        self.assertEqual(gates, ["G2", "G3", "G5"])
+        self.assertIn(f"managed_gate_waves/last_wave/{RUN}", journal.state)
+        self.assertEqual([event for event, _ in audit.events],
+                         [gw.ENABLE_EVENT, gw.WAVE_FINISHED_EVENT])
+
+    def test_enabled_non_complete_run_suppresses_the_wave(self) -> None:
+        # A run that did not end at COMPLETE never waves, even fully enabled:
+        # reviewer/collector are MustNotRun tripwires, no gate record builds,
+        # and the journal carries the enable but NO last_wave entry.
+        journal, audit = SpyJournal(), SpyAudit()
+        loop = FakeLoop("PAUSED_RECOVERY", journal=journal)
+        run = self.seam(self.gated_args(), loop, journal=journal, audit=audit)
+        self.assertEqual(run["managed_gate_wave"]["entered"], False)
+        self.assertIn("did not end at COMPLETE",
+                      run["managed_gate_wave"]["reason"])
+        self.assertIn(gw.ENABLE_STATE_KEY, journal.state)
+        self.assertNotIn(f"managed_gate_waves/last_wave/{RUN}", journal.state)
+        self.assertEqual([event for event, _ in audit.events],
+                         [gw.ENABLE_EVENT])
+        self.assertEqual(self.recorded, [])
+        self.assertFalse((self.tmp / "project-control").exists())
 
 
 if __name__ == "__main__":
