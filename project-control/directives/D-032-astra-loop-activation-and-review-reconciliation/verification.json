@@ -47,7 +47,7 @@
       "directive_id": "D-032",
       "task_id": "M0-T149",
       "applicable_requirement_ids": [],
-      "reviewed_sha": "7804bc03551ae8ddc7b3fa2661150ecac66f1a10",
+      "reviewed_sha": "50b63165f66c39a72f37988e9b049b1cad2dc9f1",
       "reviewed_manifest_sha256": "6906f5002978d858a312849f67bb58cb6cb1a64d076e7965be7aa5a3d4098fdb",
       "producer": "supervised-loop-fable-worker/orchestrator",
       "verifier": "directive-compliance-verifier",

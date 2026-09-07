@@ -4,7 +4,7 @@
 `python tools/project_control.py status` - and reconcile; no SHA here is guaranteed current.
 Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 86: LOOP LIVE (run-07/M0-T152) BUT SESSION-BOUND; keep it NONSTOP; 2 tasks staged for acceptance
+## Handoff - seq 86: LOOP LIVE (run-07/M0-T152) BUT SESSION-BOUND; keep it NONSTOP; M0-T149 ACCEPTED (164th), M0-T025 staged
 
 1. **Generated:** 2026-09-07 ~06:10Z, session_01WBbzN5Rx17CBSjky5uKmnY, `/session-handoff`.
    Reason (verbatim): "I need to handoff the session i want next season to make sure loop works nonstop".
@@ -34,15 +34,12 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
    Then record gates G2(reviewer=orchestrator)/G3/G4/G5, record the D-002 empty-set row VERBATIM
    from `reports/M0-T025-DCV.md` ("Exact attested" section; restamp reviewed_sha to accept-time
    HEAD only if blobs e1168304/d649b6fe/940ad7dd/805ddc84 unchanged, identity 598fc256), accept.
-5. **M0-T149 STAGED for acceptance (165th):** awaiting_gate at rework v2 `45b0572c`/merged
-   `7804bc03` (lineage: v1 ed04c4bb → G5 FAIL MED-1/MED-2 → rework → delta re-attestations G3/G5/
-   DCV ALL PASS). G2/G3/G5 gates + D-032 empty-set row RECORDED. Remaining: (a) v2 full
-   supervisor-suite baseline — was RUNNING at handoff into
-   `wt-m0t149/project-control/reports/M0-T149-supervisor-suite-45b0572c.log` (expect ~3705
-   passed/0 failed; known flake `test_parallel_requests_never_exceed_limits` passes in isolation
-   = contention artifact, re-run quiet if it fails; commit log as .txt); (b) mechanical
-   reviewed_sha restamp (identity 6906f500 must reproduce via frozen_git_identity, else fail
-   closed); then accept.
+5. **M0-T149 ACCEPTED (164th) before session close:** rework v2 `45b0572c` (lineage: v1 ed04c4bb
+   → G5 FAIL MED-1/MED-2 → rework → delta re-attestations G3/G5/DCV ALL PASS); v2 baseline
+   **3695 passed/2 skipped/0 failed** (`reports/M0-T149-supervisor-suite-45b0572c.txt`; v1's
+   single failure confirmed contention flake); D-032 row restamped at identity 6906f500;
+   accepted at ledger. NOTE: the new profile code is NOT installed — R247 recert + reinstall +
+   re-record-manifest is a follow-up before any ctl24-cwd launch or install of the new policy.
 6. **R754 ROUND-2 FAIL (do not re-litigate):** the requirement's NAMED verifier
    (`reports/M0-T109-R754-closure-DCV.md`) holds facts 3+7 OPEN — the capability must FIRE
    unattended (single-boot verdict→advance→dispatch over a SUCCESSORS-ONLY multi-task queue,
