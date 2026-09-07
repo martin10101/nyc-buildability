@@ -63,5 +63,8 @@
     "python -m ruff check tools/agent_supervisor/gate_wave.py tools/agent_supervisor/loop.py tools/agent_supervisor/cli.py tools/test_agent_supervisor_gate_wave.py tools/test_agent_supervisor_loop.py",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t152"
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t152",
+  "notes": [
+    "CHECKPOINT ENVELOPE CONTRACT (DL-2 closure, orchestrator 2026-09-07): in the final checkpoint JSON, starting_sha and current_sha MUST each be either the FULL 40-hex sha (from `git rev-parse HEAD`, run in the worktree) or the empty string \"\" - the controller fills authoritative values for empty envelope fields (M0-T133 enrichment) and REFUSES any abbreviated sha fail-closed, destroying the unit's transport envelope. Prior refusals of this exact shape: run persistent-local-06 journal seq 196 (worker sent 'bb71b2ef') and run persistent-local-07 journal seq 200 (worker sent '0e067b6a'). The same rule applies to branch/worktree: supply exactly or leave empty. Your prior unit's work is preserved uncommitted->now committed on this task branch; verify and complete it rather than restarting from scratch, then checkpoint with a conforming envelope."
+  ]
 }
