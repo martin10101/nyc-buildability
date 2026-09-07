@@ -1,0 +1,6 @@
+{
+  "task_id": "M0-T149",
+  "schema": "evidence_map/v1",
+  "requirements": {},
+  "note": "evaluate_task_refs at submit (registry at merged HEAD f1e6de26): ok=true, applicable_ids=[] - the cited D-032:ALL binds no requirement rows to this governance task under the conjunction semantics. Per the empty-set precedent the D-032 verification.json still receives a task row for M0-T149 before acceptance. Producer evidence: project-control/reports/M0-T149-producer-report.md; qualifying evidence AD-093 (M0-T148 G3 LOW-1); supervisor-freeze suite baseline log lands as M0-T149-supervisor-suite-ed04c4bb.log."
+}
