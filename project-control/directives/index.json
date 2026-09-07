@@ -477,6 +477,18 @@
       "superseded_by": null,
       "manifest": "D-033-supervisor-management-layer/manifest.json",
       "affected_tasks": []
+    },
+    {
+      "directive_id": "D-034",
+      "slug": "architecture-context-and-review-skill",
+      "title": "Owner directive 2026-09-07: implement the captured practices - repo-root ARCHITECTURE.md (six-question architecture context incl. forbidden paths, invariants, stop conditions) and a repo-local /pr-review skill (code quality, test adequacy, security, compatibility; actionable-only, UNPROVEN-marked). Evidence-before-DONE folds in by citing the existing stronger gate law.",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-034-architecture-context-and-review-skill/manifest.json"
     }
   ],
   "updated_at": "2026-09-06T03:51:16+00:00"

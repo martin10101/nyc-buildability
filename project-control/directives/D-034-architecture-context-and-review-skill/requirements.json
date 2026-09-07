@@ -1,0 +1,138 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-034",
+  "requirement_count": 4,
+  "requirements": [
+    {
+      "id": "D-034-R001",
+      "text": "Create ARCHITECTURE.md at the repository root answering the six questions from the captured practice for THIS system: (1) what exists - the high-level map (Next.js frontend, FastAPI services, connectors, deterministic rules engine, spatial substrate, Supabase, Render, the project-control plane, the agent supervisor); (2) who owns what; (3) what may depend on what, including explicitly documented FORBIDDEN paths; (4) how data moves - the critical flows with provenance; (5) what must stay true - the architectural invariants (AI never calculates, deterministic code never guesses sources, secrets server-side, fail-safe never fabricates, orchestrator-only git/ledger); (6) when an agent must STOP (boundary-breaking tasks: stop, explain conflict, show impact, propose smallest change). Not a file tour; only what is hard to infer safely; consistent with CLAUDE.md and the path-scoped rules without duplicating them.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-034-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "Independent review (G3) verifies every statement against the actual code/ledger; no invented components.",
+      "required_evidence": "ARCHITECTURE.md at repo root, gated and accepted.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-034-R002",
+      "text": "Create the repo-local review skill .claude/skills/pr-review/SKILL.md invocable as /pr-review [branch|<target>]: reviews a diff for the four captured dimensions tuned to THIS repository - code quality (complexity, duplication, abstractions, modularity policy), test adequacy (do tests cover the changed behavior; recording-spy/negative/mutation standards), security (trust boundaries, unsafe inputs, secret/provenance leaks, dependency policy), backward/contract compatibility (API contracts, schemas, provenance chains, accepted-task immutability) - plus the repo-specific dimensions: provenance discipline and fail-safe correctness. Output discipline verbatim from the captured practice: only actionable problems, each pointing to the relevant code with the failure scenario; anything unverifiable explicitly marked UNPROVEN.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-034-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "Skill text review + a trial invocation on a real recent diff.",
+      "required_evidence": ".claude/skills/pr-review/SKILL.md, gated and accepted; trial-run transcript in the producer report.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-034-R003",
+      "text": "Fold the evidence-before-DONE vocabulary (REQUIREMENT / TEST / REGRESSION / DIFF / UNPROVEN) into the two new artifacts BY CITATION of the existing stronger law (gates, producer-cannot-self-accept, independent verification, UNVERIFIABLE status, /engineering-reliability) - never as a duplicate second checklist that could drift from the ledger rules.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-034-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [
+        "D-034-R001",
+        "D-034-R002"
+      ],
+      "required_harness": "",
+      "required_evidence": "The artifacts cite the existing mechanisms; no new parallel completion protocol introduced.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-034-R004",
+      "text": "PROHIBITION: nothing in this directive weakens or bypasses any existing gate, hold, or policy; the new skill is advisory review tooling and never substitutes for /run-quality-gate or any ledger gate; no supervisor code is in scope.",
+      "source_ref": "source-001.md#verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-034-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-07"
+      },
+      "dependencies": [],
+      "required_harness": "",
+      "required_evidence": "Session and ledger records show no gate/hold change.",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    }
+  ]
+}
