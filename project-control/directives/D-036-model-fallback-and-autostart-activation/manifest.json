@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-036",
+ "version": 1,
+ "slug": "model-fallback-and-autostart-activation",
+ "title": "Owner directive 2026-09-07: arm the worker model fallback (claude-opus-4-8, xhigh where effort is lawfully configurable, ONLY on weekly quota exhaustion, auto switch-back to Fable when it is actually available / normally Thursday 9 PM) and install autostart (boot + per-deadline wake + weekly Thursday task, each retrying every 4 minutes up to 50 times until the loop runs). Conduct/config directive bound to sentinel D-036-BOOTSTRAP.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-07",
+ "captured_at": "2026-09-07T15:35:40+00:00",
+ "created_at": "2026-09-07T15:35:40+00:00",
+ "updated_at": "2026-09-07T15:35:40+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "b062b847b6e39ffa4e1cb1c75074aa2a8cc07972",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-07T15:35:40+00:00",
+   "content_digest_sha256": "78120655c1a00a9788e500b087a02d7994154f9230d1f06bfa1ffbd688519769"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "edit model_selection.toml claude.fallback_models to [claude-opus-4-8]; install the controller-planned boot/wake/weekly scheduled tasks with the owner-ordered PT4M x50 restart policy; record every act in the D-035 watch report; contract the controller-side XML retry support as a follow-up supervisor task",
+  "excluded": "any change to the immutable config.toml or the controller code outside the freeze lane; writing any effort key into supervisor config (D-004-R159 stands, sole M0-T146 exception unchanged); R595/Option-A live-merge activation (still owner-only, still staged); reviewer model pins (reviews wait for Fable per the certified design); push/PR #241",
+  "session": "session_01WBbzN5Rx17CBSjky5uKmnY (2026-09-07) and successors until superseded"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-07T15:35:40+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "verbatim capture at frozen baseline b062b847b6e3; controller chain semantics verified read-only before capture (steps down ONLY on quota_exhausted; returns to pin at next available seam via launch probe; chain ids restricted to the owner allowlist which already contains claude-opus-4-8). Autostart XML verified via autostart-plan (fixed action, digest-bound); restart policy is an OS-settings delta the owner explicitly ordered."
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner terminal message 2026-09-07 ('ok do it but ...' with the three numbered conditions), following the orchestrator's built-vs-armed reconciliation."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-036-R001",
+  "D-036-R002",
+  "D-036-R003"
+ ],
+ "requirements_content_digest_sha256": "34a8c516eb48ace12d976c1e840812eb8c20b486a6b87ad69d2d311cc82a72c1"
+}

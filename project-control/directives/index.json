@@ -501,7 +501,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-035-loop-does-the-work-monitor-only/manifest.json"
+  },
+  {
+   "directive_id": "D-036",
+   "slug": "model-fallback-and-autostart-activation",
+   "title": "Owner directive 2026-09-07: arm worker model fallback (opus-4-8 only on weekly quota exhaustion, auto switch-back to Fable) + install autostart (boot/wake/weekly tasks, 4-min x50 retry). Conduct/config (sentinel D-036-BOOTSTRAP).",
+   "status": "active",
+   "issued_at": "2026-09-07",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-036-model-fallback-and-autostart-activation/manifest.json"
   }
  ],
- "updated_at": "2026-09-07T06:34:01+00:00"
+ "updated_at": "2026-09-07T15:35:40+00:00"
 }
