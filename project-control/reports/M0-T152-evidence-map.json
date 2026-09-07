@@ -1,0 +1,34 @@
+{
+  "task_id": "M0-T152",
+  "schema": "evidence_map/v1",
+  "produced_by": "orchestrator (assembling supervised-loop-fable-worker unit evidence per the unit-5 handoff)",
+  "content_identity": "frozen candidate cc25bdc15e4e982259a71f6903f370e6d1d8adf9 on task/M0-T152-gate-wave-engine (26c973ea unit-1 product + 09fdea16 unit-2..5 rework + cc25bdc1 S6 amendment)",
+  "requirements": {
+    "D-033-R001": [
+      "docs/SUPERVISOR_MANAGEMENT_LAYER_DESIGN.md (reviewed design, accepted via M0-T150; gate-wave stage, reviewer-session contracts, evidence flow, failure modes)",
+      "tools/agent_supervisor/gate_wave.py at cc25bdc1 (the implemented engine: dispatch minting, reviewer contracts, verdict binding, recorder; producer-report section 2.1 coverage map GW-01..GW-08)",
+      "project-control/reports/M0-T152-producer-report.md sections 2-4"
+    ],
+    "D-033-R003": [
+      "gate_wave.py --owner-enable-managed-gate-waves switch, DEFAULT OFF (switch check gate_wave.py:206-214; add_owner_switch_argument; assert_wave_enabled; sealed refusal)",
+      "OFF==today proof: SwitchTests + CliSeamTests (test_agent_supervisor_gate_wave.py T-02/T-07 incl. two switch mutations) + LoopConfig TypeError pin (test_agent_supervisor_loop.py:294-312)",
+      "project-control/reports/M0-T152-documented-commands-cc25bdc1.txt (4/4 documented commands exit 0 at the frozen candidate)",
+      "project-control/reports/M0-T152-supervisor-suite-cc25bdc1.txt (suite re-baseline 3726 passed, 2 skipped, 0 failed, exit 0 - freeze-rule section 4 duty)"
+    ],
+    "D-033-R005": [
+      "Switch scaffold-only, DEFAULT OFF; no activation path exercised (producer report section 6: no hold activated; R595/Option-A untouched; PR #241 untouched)",
+      "S1/F6 evidence: absent flag = byte-identical behavior; flag without gated mode REFUSED BY NAME (T-02 sealed refusal chain)",
+      "Independent G5 security review at cc25bdc1 (reports/M0-T152-G5-security.md) covering the no-new-authority surface"
+    ],
+    "D-033-R006": [
+      "S2/F2 forgery resistance: reviewer identity from worker-uninfluencable source; dispatch path+digest binding; planted-verdict rejection; reviewer==producer fails closed (gate_wave.py GW-03/GW-04; DispatchBindingTests T-03 incl. two forgery mutations)",
+      "S3/F1 recorder allow-set: fixed project_control.py surface (gate/submit, current-queue task only) with out-of-scope and out-of-queue refusal tests (GW-05, T-04 incl. two mutations)",
+      "Independent G3 code review at cc25bdc1 (reports/M0-T152-G3-code-review.md) verifying each mutation test is load-bearing"
+    ],
+    "D-033-R007": [
+      "Task packet cites D-033-R001/R003/R007 (objective + directive_refs)",
+      "Commit messages 09fdea16 and cc25bdc1 cite D-033-R001, D-033-R003, D-033-R007 (freeze-rule section 3 duty)",
+      "S6 freeze-rule recognition amendment applied at cc25bdc1 (.claude/rules/supervisor-freeze.md D-033 recognition paragraph; orchestrator-authored per the R007 registry entry naming producer=orchestrator; routed through the M0-T152 independent gate wave = the 'reviewed commit')"
+    ]
+  }
+}
