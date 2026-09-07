@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-035",
+ "version": 1,
+ "slug": "loop-does-the-work-monitor-only",
+ "title": "Owner directive 2026-09-07: the codex loop does all the work (including reviewing and pushing, under the staged D-033/R595 activation path); the main session only monitors and powers the loop back up when it shuts down; sessions rotate at the ~400k-token seam. Conduct-only directive bound to the non-ledger sentinel D-035-BOOTSTRAP (D-029/D-031 pattern).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-07",
+ "captured_at": "2026-09-07T06:34:01+00:00",
+ "created_at": "2026-09-07T06:34:01+00:00",
+ "updated_at": "2026-09-07T06:34:01+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "6c0ca91506e6831f82d2ec8ebda493c0a87e0392",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-07T06:34:01+00:00",
+   "content_digest_sha256": "2be29d90ac435d0ef47e8193fc9c699321a9bb5b09b7629d6607b7aa98197a58"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "monitor-and-feed posture: keep the supervisor loop alive and fed (run-08 M0-T152 now; T-B/T-C successors-only queue next), restart on death per the established procedure, rotate at ~400k seams, and plan the queue to close R754 facts 3+7 so the loop can take over reviewing/pushing under R595 activation",
+  "excluded": "activating R595 / autostart / Option-A (owner-only), lifting the Am40 local-only push hold, main-session pushes/merges/PR #241, hand-executing loop-eligible work in the main session, running audit-writing verbs against a live run, launching the supervisor from ctl24 cwd before R247 recert/reinstall",
+  "session": "session_01WBbzN5Rx17CBSjky5uKmnY (2026-09-07) and successor sessions until the owner supersedes"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-07T06:34:01+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "verbatim capture; issued mid-turn while the loop was live and the M0-T025 acceptance was in flight. Between issuance and capture the loop broke (run-07 DL-2 checkpoint refusal) and was restored as run-08 per R002 - the capture commit follows the restoration, loop-first by the directive's own priority. The push/review element is recorded as owner intent bound to the existing D-033 staged R595 activation path; no hold lifted, no activation performed."
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner mid-turn terminal message 2026-09-07 (verbatim in source-001.md), issued while the loop was live and the orchestrator was executing the staged acceptances."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-035-R001",
+  "D-035-R002",
+  "D-035-R003",
+  "D-035-R004"
+ ],
+ "requirements_content_digest_sha256": "b9f3803079104f88ef11d2c3eae0cd9f038380cce99e75089223f8648e323d76"
+}

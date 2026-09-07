@@ -1,0 +1,142 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-035",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-07T06:34:01+00:00",
+ "requirements": [
+  {
+   "id": "D-035-R001",
+   "text": "Loop-first work posture: the codex/supervisor loop does the work; the main session only monitors. Every piece of work the certified supervisor loop can currently perform (producing, unit execution, supervisor-run reviewing per D-033) flows through the loop, never through main-session hand-execution. The main session restricts itself to: monitoring the loop, restarting it, contracting/feeding task queues, and the control-plane actions that ADR-005 reserves to the orchestrator (recording gates, acceptance, git/gh) until the D-033 R595 activation transfers them.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "supervisor journal shows units executed by the loop; main-session transcript shows monitoring/feeding only (no hand-implementation of loop-eligible work)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-035-R002",
+   "text": "Nonstop duty (restates D-033-R009): if the loop shuts down, power it back up immediately. Established procedure: verify supervisor.lock pid liveness; deny stale asks in BOTH stores (pending-approvals/deny verbs WITH --checkout C:\\SupervisorController, AND journal queued_asks); clear-recovery if PAUSED_RECOVERY; relaunch from the certified cwd (wt-controller-src at certified a5886dab until the R247 recert/reinstall lands - never ctl24 cwd before that); keep a read-only break watcher armed. Never run audit-writing operator verbs against a LIVE run.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "break-watcher armed each session; on any loop death, a relaunch recorded with the denied-asks and clear-recovery evidence",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-035-R003",
+   "text": "Owner intent on loop scope: the loop's work includes reviewing and pushing anything that needs to be done. Interpretation bound (recorded, not silently applied): supervisor-run gate waves/acceptance and live GitHub effects (push/merge) remain behind the D-033 staged R595 activation path, which stays owner-only, and the Am40 local-only push hold stands until the owner activates or lifts it; this requirement therefore directs planning - the T-B/T-C successor queue must be designed to close the remaining activation facts (R754 facts 3 and 7) so the loop can take over reviewing and pushing under its own certified authority. This row does not itself activate R595, lift Am40, or authorize main-session pushes.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-035-R001"
+   ],
+   "required_harness": "",
+   "required_evidence": "T-B/T-C queue contracted with R754-facts-3+7 closure as an explicit design goal; R595 activation package kept staged for the owner",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-035-R004",
+   "text": "Rotation: sessions rotate at the approximately-400,000-token seam (restates the D-010 R113/R114 rotate-at-~400k-at-a-clean-seam ceiling; the D-031 750k grant was one-session-only and does not apply). 'And so on' = the established mechanics: land at a clean seam, produce the session handoff, and the successor session keeps the loop nonstop (rotation continues the loop, it never just stops it).",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-035-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-035-R002"
+   ],
+   "required_harness": "",
+   "required_evidence": "session handoffs produced at ~400k seams; successor sessions re-verify loop liveness as their first action",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
