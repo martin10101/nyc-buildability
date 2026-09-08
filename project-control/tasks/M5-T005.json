@@ -1,0 +1,74 @@
+{
+  "task_id": "M5-T005",
+  "title": "Deterministic practical-usable-range derivation from explicit typed assumptions (contract-free service function; consumes the scenario document; never touches the canonical draft cap; never Verified)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add a pure, deterministic, OFFLINE service function that derives an ILLUSTRATIVE practical-usable-range (min/point/max) from a preliminary scenario document PLUS its explicitly-declared typed assumptions (e.g. utilization_factor, efficiency_ratio), WITHOUT ever mutating or recomputing the canonical draft_zoning_floor_area_cap_sq_ft and WITHOUT inferring any missing envelope constraint. This is the first optimization-side brick under M5 and it fills the Compare UI's currently-empty practical-usable-range. HARD BOUNDARIES: (1) contract-free - return a NEW separate derived object from a new module services/api/app/scenario/derive.py; do NOT edit packages/contracts/** or any canonical schema, do NOT edit builder.py/models.py/constants.py/contract.py (consume READ-ONLY). (2) The canonical cap is transported verbatim and is NEVER the derived range; the derived range is clearly a function of the cap x explicitly-declared factors, labelled illustrative/derived, never gross/net/sellable/feasible/buildable, never Verified (coverage tops out at conditional). (3) With NO assumptions the derived range == the raw cap (no hidden utilization/efficiency/optimization default is ever applied - prove it). (4) Fail closed on malformed/non-finite/negative/out-of-domain factors (NaN/Inf/wrong-type) - typed outcome, no crash, no NaN/negative output; deterministic byte-identical output for identical input. (5) Preserve provenance/needs_review lineage; emit the not_verified_disclaimer discipline. Wire the new function through services/api/app/scenario/__init__.py exports only. TOOL DISCIPLINE: orient with Read/Grep/Glob; do NOT use Bash for git/ls/cat/find; only WRITE files inside allowed_paths and RUN the documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "M5 scenario/optimization-engine depth (D-038-R003 menu), no-credentials + locally pytest-testable + not G6-acceptance-blocked (pure derived math, no new legal rule) - the acceptable backend work the owner chose 2026-09-08 while M5-T004 UI is parked. Directly fills the parked Compare UI's 'practical usable range cannot be derived yet' with an honest, explicit-assumption-only derived range.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T003"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_derive.py",
+    "project-control/reports/M5-T005-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    "project-control/** (except services/api/... and the own producer report above)",
+    ".claude/** (except own agent-memory)"
+  ],
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 raw-cap passthrough (no hidden default): a preliminary R5 document with NO assumptions -> the derived practical-usable-range equals the raw draft cap exactly (min==point==max==draft_zoning_floor_area_cap_sq_ft, e.g. 15000); test proves no utilization/efficiency/optimization factor is silently applied; the cap field itself is byte-identical to the input.",
+    "AS-2 explicit-factor derivation: a document + explicitly-declared typed assumptions (e.g. utilization_factor=0.8, efficiency_ratio) -> range endpoints are a deterministic, documented function of the CANONICAL cap x the declared factors (e.g. 15000*0.8=12000), surfaced as a clearly-labelled DERIVED/illustrative figure; the canonical draft_zoning_floor_area_cap_sq_ft is transported VERBATIM and never replaced by the derived range.",
+    "AS-3 fail-closed on bad factors: NaN / +/-Inf / negative / zero / non-numeric / out-of-domain assumption -> typed fail-closed outcome (no crash, no NaN/negative/Inf in output, no partial range); the canonical cap is never mutated.",
+    "AS-4 no-cap document: a no_scenario / unsupported document (no cap) -> NO derived range; a typed 'not derivable' outcome with a visible reason, never a fabricated number.",
+    "AS-5 determinism: identical (document, assumptions) input -> byte-identical derived output (endpoints, labels, reasons, provenance).",
+    "AS-6 never-Verified + honest labelling: exhaustive check that no derived field == 'verified'; the derived range is never labelled gross/net/sellable/feasible area or a buildable envelope; needs_review + not_verified_disclaimer lineage preserved end-to-end.",
+    "AS-7 contract-free + read-only + offline: zero modification to packages/contracts/** or builder.py/models.py/constants.py/contract.py; the input scenario document is consumed READ-ONLY and re-validates unchanged via validate_scenario_document; runs fully offline with fixtures (no Supabase, no Geoclient, no network) - D-038-R004."
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-08T17:24:29.281797+00:00",
+  "updated_at": "2026-09-08T17:28:55.908027+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T17:24:29.281797+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t005"
+}

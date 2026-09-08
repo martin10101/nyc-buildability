@@ -10,7 +10,7 @@
  "issued_at": "2026-09-08",
  "captured_at": "2026-09-08T05:14:41+00:00",
  "created_at": "2026-09-08T05:14:41+00:00",
- "updated_at": "2026-09-08T14:52:30+00:00",
+ "updated_at": "2026-09-08T17:26:00+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "ebe4eaf63ef5d04120608230a5147d97ad658e3a",
  "sources": [
@@ -50,6 +50,12 @@
    "actor": "orchestrator",
    "action": "applicability_appended",
    "note": "Contracted the second product task M5-T004 (Compare/Step-3 UI in apps/web consuming the accepted M5-T003 scenario endpoint; offline/fixtures, no creds) and appended it to the applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's own contracted-tasks mechanism ('further product tasks are appended as contracted'). No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from a237.. baseline to the new requirements.json bytes. Verification for R003/R004 wrt M5-T004 is produced by the independent verifier at M5-T004 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T17:26:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "Contracted the third product task M5-T005 (deterministic practical-usable-range derivation from explicit typed assumptions; contract-free service function under services/api/app/scenario/; pure-Python offline, no Supabase/Geoclient, not G6-acceptance-blocked) and appended it to the applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism ('further product tasks are appended as contracted'). Owner directive 2026-09-08: park M5-T004 UI acceptance (frontend test-green unobtainable offline + no-push hold) and keep the loop building acceptable no-creds backend work. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to f0e09ea0. Verification for R003/R004 wrt M5-T005 is produced by the independent verifier at M5-T005 accept time (not yet built)."
   }
  ],
  "owner_approval": {
@@ -68,5 +74,5 @@
   "D-038-R006",
   "D-038-R007"
  ],
- "requirements_content_digest_sha256": "3ae5a298359f81c45a7adc93d9137b2c3fad9554ff9612fbfd41941b20503050"
+ "requirements_content_digest_sha256": "f0e09ea0abf63aa21d7be5c57fda79cc54c90115422cb1885a3f566c866fb2bc"
 }

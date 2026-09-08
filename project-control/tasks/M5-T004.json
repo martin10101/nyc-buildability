@@ -69,8 +69,8 @@
     "visual-quality-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 90,
   "risks": [
     "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
     "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
@@ -92,7 +92,7 @@
   },
   "blockers": [],
   "created_at": "2026-09-08T14:51:49.592393+00:00",
-  "updated_at": "2026-09-08T15:50:05.501101+00:00",
+  "updated_at": "2026-09-08T17:04:27.145854+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -101,5 +101,21 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-08T14:51:49.592393+00:00",
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t004"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t004",
+  "progress_log": [
+    {
+      "at": "2026-09-08T16:54:41.131816+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Loop run persistent-local-20 built M5-T004 to UNIT_COMPLETE (audit seq 27 claude_unit_completed); supervisor released lock cleanly (--max-tasks 1). Orchestrator committed the producer output (frontend-engineer) at a0bec4eb on task/M5-T004-compare-ui: Compare Step-3 route + 5 components + 3 scenario-* libs + AS-1..AS-8 tests + narrow ConfirmScreen rewire; no dep/config changes; gitleaks clean. Offline/fixtures, no Supabase/Geoclient (D-038-R004 by design). NEXT: independent gate wave (G1/G3/G4/G5 + visual/human-journey) then accept. ACCEPTANCE PARKED PENDING OWNER DECISION: executed frontend test-green (npm --prefix apps/web run test/typecheck/test:e2e) is not obtainable in-session (thin-client has no apps/web/node_modules; no-push hold D-038-R006 blocks CI) - same wall that parked M5-T002."
+    },
+    {
+      "at": "2026-09-08T17:04:27.145854+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "OWNER DECISION 2026-09-08: PARK M5-T004 acceptance. Local frontend test-run declined (thin-client/no-local-npm policy upheld); the only path to executed frontend-green is pushing the full 838-commit candidate line to CI (publishes the entire local-only build), which the owner declined to keep GitHub intentionally stale. M5-T004 stays committed-but-unaccepted at a0bec4eb (like M5-T002 parked on G6) until an acceptable frontend-test path exists. Loop re-pointed to acceptable no-creds backend work (scenario/optimization-engine depth) per D-038-R003 menu + D-038-R004 no-creds constraint. Not abandoned; resumes when a frontend-green path is available."
+    }
+  ]
 }
