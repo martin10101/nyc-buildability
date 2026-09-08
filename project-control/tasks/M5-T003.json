@@ -60,8 +60,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Surfacing a recomputed cap instead of the verbatim trace value (AS-1 guards this).",
     "Flag-off leaking route existence via a distinguishable status (AS-6 guards this).",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-08T05:30:58.984668+00:00",
-  "updated_at": "2026-09-08T05:34:02.191949+00:00",
+  "updated_at": "2026-09-08T06:57:53.377630+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -87,5 +87,21 @@
     "forbidden:packages/contracts/": "consume scenario.schema.json read-only; no contract change this task",
     "forbidden:apps/web/": "Compare UI is the SEPARATE next task; backend endpoint + tests only here"
   },
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t003"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t003",
+  "progress_log": [
+    {
+      "at": "2026-09-08T06:46:34.852702+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Producer edits complete (scenario endpoint + AS-1..AS-7); committed by orchestrator at aaf088a0 (producer broker-blocked from git)."
+    },
+    {
+      "at": "2026-09-08T06:46:42.439859+00:00",
+      "agent": "backend-engineer",
+      "percent": 95,
+      "status": "self_check",
+      "message": "Self-check: orchestrator-captured green evidence (27/27 scenario, 107 adjacent, 111 config/flag/rule_eval, ruff clean, modularity 0 failures) at commit 9cae874f."
+    }
+  ]
 }
