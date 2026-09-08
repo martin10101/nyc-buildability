@@ -12,14 +12,27 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["D-038-BOOTSTRAP"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
+   "applicability": {
+    "task_ids": [
+     "D-038-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
    "dependencies": [],
    "required_harness": "",
    "required_evidence": "supervisor lock pid alive + journal current_state fresh; watcher armed; on death, drill record + relaunch evidence",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -31,14 +44,27 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "prohibition",
    "binding": true,
-   "applicability": {"task_ids": ["D-038-BOOTSTRAP"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
+   "applicability": {
+    "task_ids": [
+     "D-038-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
    "dependencies": [],
    "required_harness": "",
    "required_evidence": "loop launch args (--task-packet) point at a PRODUCT task packet, not an M0 self-infra packet; M0-T155 not launched as the active build target",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -50,14 +76,34 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["M5-T003", "M5-T004", "M5-T005", "M5-T006", "M5-T007"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
-   "dependencies": ["D-038-R002"],
+   "applicability": {
+    "task_ids": [
+     "M5-T003",
+     "M5-T004",
+     "M5-T005",
+     "M5-T006",
+     "M5-T007",
+     "M5-T008"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
+   "dependencies": [
+    "D-038-R002"
+   ],
    "required_harness": "",
    "required_evidence": "a contracted product task packet (G0) whose scope is user-facing/domain product, with acceptance scenarios; loop pointed at it",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -69,14 +115,34 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "prohibition",
    "binding": true,
-   "applicability": {"task_ids": ["M5-T003", "M5-T004", "M5-T005", "M5-T006", "M5-T007"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
-   "dependencies": ["D-038-R003"],
+   "applicability": {
+    "task_ids": [
+     "M5-T003",
+     "M5-T004",
+     "M5-T005",
+     "M5-T006",
+     "M5-T007",
+     "M5-T008"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
+   "dependencies": [
+    "D-038-R003"
+   ],
    "required_harness": "",
    "required_evidence": "task packet declares no Supabase/Geoclient dependency; acceptance scenarios run with fixtures / public connectors only",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -88,14 +154,27 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "decision",
    "binding": false,
-   "applicability": {"task_ids": ["D-038-BOOTSTRAP"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
+   "applicability": {
+    "task_ids": [
+     "D-038-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
    "dependencies": [],
    "required_harness": "",
    "required_evidence": "handoff records the Supabase/Geoclient unlock as the next-session credential ask",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -107,14 +186,27 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "prohibition",
    "binding": true,
-   "applicability": {"task_ids": ["D-038-BOOTSTRAP"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
+   "applicability": {
+    "task_ids": [
+     "D-038-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
    "dependencies": [],
    "required_harness": "",
    "required_evidence": "no push/merge performed; loop launched from wt-controller-src; gates unchanged",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -126,14 +218,29 @@
    "source_ref": "source-001.md#verbatim",
    "classification": "return",
    "binding": true,
-   "applicability": {"task_ids": ["D-038-BOOTSTRAP"], "task_types": [], "milestones": [], "paths": [], "lifecycle_events": [], "effective_date": "2026-09-08"},
-   "dependencies": ["D-038-R003"],
+   "applicability": {
+    "task_ids": [
+     "D-038-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-08"
+   },
+   "dependencies": [
+    "D-038-R003"
+   ],
    "required_harness": "",
    "required_evidence": "return report naming the contracted product task, loop run-id/pid, and the credential carry-forward",
    "producer": "orchestrator",
    "independent_verifier": "control-plane-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],

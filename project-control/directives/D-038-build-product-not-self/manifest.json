@@ -3,7 +3,7 @@
  "directive_id": "D-038",
  "version": 1,
  "slug": "build-product-not-self",
- "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT (software) \u2014 no more building itself (supervisor self-infrastructure). This session: skip credentials (owner declined Supabase B-001 / Geoclient B-004), pivot the loop OFF the M0 self-tooling line and onto unblocked product engineering (UI screens, deterministic rule families, scenario/optimization). Gates and holds unchanged.",
+ "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT (software) — no more building itself (supervisor self-infrastructure). This session: skip credentials (owner declined Supabase B-001 / Geoclient B-004), pivot the loop OFF the M0 self-tooling line and onto unblocked product engineering (UI screens, deterministic rule families, scenario/optimization). Gates and holds unchanged.",
  "status": "active",
  "lifecycle_state": "active",
  "issued_by": "owner",
@@ -86,5 +86,5 @@
   "D-038-R006",
   "D-038-R007"
  ],
- "requirements_content_digest_sha256": "e6111fbf1df41e05eeb164393fc9db872f3c6b80202c62db318fd7e79c22ca3d"
+ "requirements_content_digest_sha256": "128c0b9f9a93ca1ec66ccafd756fcff2d9eaa83fed8b619bc60e4ed0207263c0"
 }

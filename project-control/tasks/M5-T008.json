@@ -1,0 +1,75 @@
+{
+  "task_id": "M5-T008",
+  "title": "Deterministic single-assumption sensitivity/what-if analysis over an explicit value grid (contract-free; consumes derive.py; named variable, stable order, transparent response; never invents values, never Verified)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add a pure, deterministic, OFFLINE service function (new module services/api/app/scenario/sensitivity.py) that computes a single-variable SENSITIVITY / what-if response: it varies ONE explicitly-named assumption across an EXPLICIT caller-provided list of values, runs each through the accepted derive_practical_usable_range READ-ONLY, and returns an ordered response (the illustrative usable-area point + transparent breakdown per value) for the Compare/Evidence UX. HARD BOUNDARIES: (1) Explicit-only: it varies ONLY the caller-provided explicit values for the named variable and NEVER invents/fabricates a value, scenario, assumption, or alternative; empty values -> a single baseline point of the raw scenario (or a typed empty result), never a fabricated point. (2) Named variable: the output NAMES the varied variable and the response metric; no response point is emitted without naming what varied. (3) Response uses ONLY already-surfaced numbers (the derived range / canonical draft cap transported verbatim) - never recompute a legal/cap value, never a hidden weight; each point carries the value + derived point + transparent COMPONENTS. (4) TOTAL, STABLE order: identical input -> byte-identical output; a documented deterministic order/tie-break so points never reorder run-to-run. (5) Fail closed: a no_scenario/unsupported document, a malformed/non-finite variable spec, or a malformed values list -> a typed outcome (empty + visible reason, or invalid), no crash, strict-JSON-safe (no NaN/Inf/negative). (6) Coverage never rises above conditional; no field == verified; needs_review + not_verified_disclaimer preserved; response is ILLUSTRATIVE (from the draft cap), never Verified/feasible. (7) Contract-free: only sensitivity.py + its export in __init__.py + its test file; consume derive.py / the scenario document READ-ONLY; do NOT edit builder.py/models.py/constants.py/contract.py/derive.py or packages/contracts/**; deterministic, no I/O, no Supabase/Geoclient/network. TOOL DISCIPLINE: orient with Read/Grep/Glob; do NOT use Bash for git/ls/cat/find; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "M5 scenario/optimization-engine DEPTH (D-038-R003 menu); the next substantial no-creds backend feature under the owner 'keep building offline' plan. Delivers the single-variable sensitivity/what-if response the Compare/Evidence UX needs. Pure-Python, locally pytest-testable, not G6-blocked (deterministic illustrative math over explicit assumptions, no new legal rule). Builds on accepted derive.py (M5-T005/M5-T006) and ranking.py (M5-T007).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T007"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_sensitivity.py",
+    "project-control/reports/M5-T008-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/ranking.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 deterministic stable ordering: identical (scenario document, variable, values) -> byte-identical ordered response; a documented TOTAL order (explicit value order, with a deterministic secondary key for equal values) means points never reorder run-to-run. Test asserts json.dumps equality across input reorderings/duplicates.",
+    "AS-2 transparent named-variable response: the response NAMES the varied variable and the response metric; every response point carries the tried value, its derived illustrative usable-area point, and the transparent COMPONENTS (which already-surfaced numbers produced it); no point is emitted without naming what varied; no hidden weight (test proves the point is a documented function of the surfaced numbers only).",
+    "AS-3 explicit-values-only, never fabricates: the analysis varies ONLY the caller-provided explicit values for the named variable (each built into an assumption-set and run through derive_practical_usable_range); it never invents a value/scenario/assumption/alternative. Empty values -> a single baseline point of the raw scenario (or a typed empty result), NEVER a fabricated point. A value whose derive() returns not_derivable is flagged/kept in place, never given a fabricated point.",
+    "AS-4 fail-closed on bad input: a no_scenario/unsupported scenario document, an unknown/malformed/non-finite variable spec, or a malformed values list -> a typed outcome (empty response + visible reason, or invalid), no crash, strict-JSON-safe (json.dumps allow_nan=False succeeds; no NaN/Inf/negative), never a fabricated point.",
+    "AS-5 never up-labels / never Verified: coverage never rises above conditional; exhaustive check no field == 'verified'; needs_review + not_verified_disclaimer preserved on the response output; points labelled ILLUSTRATIVE (derived from the draft cap), never a Verified/feasible response.",
+    "AS-6 read-only consumption, no legal recompute: the scenario document + derive.py outputs are consumed READ-ONLY (input byte-unchanged after analysis; no aliasing); response points use only already-surfaced numbers (derived range / canonical cap transported verbatim), never recompute a legal/cap value.",
+    "AS-7 contract-free + offline + full regression: zero modification to packages/contracts/** or builder.py/models.py/constants.py/contract.py/derive.py/ranking.py; runs fully offline with fixtures (no Supabase/Geoclient/network - socket-blockable); the ENTIRE scenario suite (python -m pytest services/api/tests/scenario) stays green with the new sensitivity tests added and zero regression."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-08T23:43:16.014671+00:00",
+  "updated_at": "2026-09-08T23:46:01.708331+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T23:43:16.014671+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t008"
+}
