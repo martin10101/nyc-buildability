@@ -9,6 +9,10 @@ calculation, inferring any envelope constraint, or ever being Verified.
 Public API:
 
 - :func:`build_scenario` - the deterministic builder.
+- :func:`derive_practical_usable_range` - the contract-free, offline derivation of
+  an illustrative practical-usable-range (min/point/max) from a scenario document
+  plus its explicitly-declared typed assumptions (task M5-T005). It transports the
+  canonical cap verbatim, never Verified.
 - :func:`validate_scenario_document` / :class:`ScenarioContractError` - strict
   offline validation against the bundled canonical schema.
 - :class:`ConstraintCompleteness`, :class:`ScenarioKind`, :class:`DataCompleteness`
@@ -30,18 +34,28 @@ from .contract import (
     assert_scenario_not_verified,
     validate_scenario_document,
 )
+from .derive import (
+    DERIVED_RANGE_LABEL,
+    RECOGNIZED_FACTOR_TYPES,
+    DerivedRangeKind,
+    derive_practical_usable_range,
+)
 from .models import ConstraintCompleteness, DataCompleteness, ScenarioKind
 
 __all__ = [
     "CAP_OUTPUT_NAME",
+    "DERIVED_RANGE_LABEL",
     "ConstraintCompleteness",
     "DataCompleteness",
     "DRAFT_CAP_LABEL",
+    "DerivedRangeKind",
     "NOT_VERIFIED_DISCLAIMER",
+    "RECOGNIZED_FACTOR_TYPES",
     "SCENARIO_CONTRACT_VERSION",
     "ScenarioContractError",
     "ScenarioKind",
     "assert_scenario_not_verified",
     "build_scenario",
+    "derive_practical_usable_range",
     "validate_scenario_document",
 ]
