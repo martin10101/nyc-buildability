@@ -23,25 +23,26 @@
   ],
   "dependencies": [],
   "allowed_paths": [
-    "apps/web/src/app/property/compare/",
-    "apps/web/src/components/compare/",
-    "apps/web/src/lib/",
+    "apps/web/src/app/property/compare/**",
+    "apps/web/src/components/compare/**",
+    "apps/web/src/lib/scenario-*",
+    "apps/web/src/lib/validate-scenario.ts",
     "apps/web/src/components/confirm/ConfirmScreen.tsx",
     "project-control/reports/M5-T004-producer-report.md"
   ],
   "forbidden_paths": [
-    "services/",
-    "packages/contracts/",
-    "supabase/",
-    ".claude/",
-    "tools/",
+    "services/**",
+    "packages/contracts/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
     "apps/web/src/lib/api.ts",
     "apps/web/src/lib/contract.ts",
     "apps/web/src/lib/contract-matrix.ts",
     "apps/web/src/lib/validate-profile.ts",
     "apps/web/src/lib/bounded.ts",
-    "apps/web/src/components/property/",
-    "apps/web/src/components/confirm/__tests__/"
+    "apps/web/src/components/property/**",
+    "apps/web/src/components/confirm/__tests__/**"
   ],
   "acceptance_scenarios": [
     "AS-1 preliminary cap render (M5-T003 AS-1 fixture BBL 1000010100, 200 preliminary): Compare renders a ranked scenario card whose draft residential FAR floor-area cap is shown VERBATIM from the endpoint body (test asserts the rendered value === the body value; the client NEVER recomputes it), labelled draft/needs_review, with the optimized objective + score breakdown; the cap is never displayed as certain by color alone (a text label is always present).",
@@ -83,7 +84,7 @@
   ],
   "test_evidence_capture_note": "documented_test_commands obey the closed command profile (M0-T149: one clean segment each, no chaining/cd/comments), so `--prefix apps/web` stands in for `cd apps/web`. Mapping: run test = vitest unit/component (AS-1..AS-8, jest-axe); run typecheck = tsc --noEmit (contract types); run test:e2e = Playwright vs apps/web/e2e/harness/fixture_api.py (committed-official-fixture API; OFFLINE, no Supabase/Geoclient - proves D-038-R004). Prereq `npm ci` runs once in CI (job 'web-e2e', .github/workflows/ci.yml). THIN-CLIENT (owner PC ~7GB, docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md): apps/web/node_modules is NOT installed locally and 'no local npm' is standing policy, so the loop worker cannot run these directly; frontend green evidence is CI- or orchestrator-captured at gate time (M5-T003 evidence-capture division of labor). The worker DELIVERS code + tests and must never claim green it did not run.",
   "path_notes": {
-    "apps/web/src/lib/": "allowed for NEW scenario-* files (scenario-api.ts, scenario contract-matrix/validate/coverage helpers); the existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify.",
+    "apps/web/src/lib/": "NAME new lib files so they AUTO-APPROVE: allowed globs are apps/web/src/lib/scenario-* and apps/web/src/lib/validate-scenario.ts ONLY (e.g. scenario-api.ts, scenario-contract.ts, scenario-contract-matrix.ts, scenario-coverage.ts, validate-scenario.ts). The existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify. A differently-named lib file will defer for approval.",
     "apps/web/src/components/confirm/ConfirmScreen.tsx": "NARROW edit only: replace the 'steps 3-4 arrive later' dead-end with a labelled route to Compare; do not restructure the Confirm screen or its tests.",
     "forbidden:services/": "the scenario endpoint + backend are ACCEPTED (M5-T003); consume over HTTP/fixtures only, never change backend.",
     "forbidden:packages/contracts/": "consume scenario.schema.json + generated/scenario.ts read-only; no contract change this task.",
