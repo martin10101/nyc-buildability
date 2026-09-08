@@ -4,96 +4,70 @@
 `python tools/project_control.py status` - and reconcile; no SHA here is guaranteed current.
 Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 87: LOOP LIVE + DETACHED (run-18 / M0-T153 on opus); watcher is session-bound; M0-T152 ACCEPTED (166th)
+## Handoff - seq 88: LOOP PIVOTED TO PRODUCT (D-038). Run persistent-local-19 / task M5-T003 on opus.
 
-1. **Generated:** 2026-09-08 ~04:56Z, session_01WBbzN5Rx17CBSjky5uKmnY, `/session-handoff`.
-   Reason (verbatim): "" (owner invoked after "i am back online").
-2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch
-   `candidate/D-024-mrl-option-b`, HEAD `6fb3516b`, origin PUBLIC (never push secrets). Tree CLEAN
-   except deliberate untracked `.claude/agent-memory/qa-engineer/*`. Accepted tasks: **166**.
+1. **Generated:** 2026-09-08 ~06:00Z, session_01WBbzN5Rx17CBSjky5uKmnY. Reason: owner directive
+   "run the codex loop nonstop and build the software - no more building itself."
+2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`,
+   HEAD `62aec042`, origin PUBLIC. Accepted tasks: **166** (unchanged; M5-T003 in flight).
 
-3. **LOOP IS LIVE AND DETACHED (survives session end):** run `persistent-local-18` (task M0-T153),
-   supervisor pid 4896, launched via PowerShell **`Start-Process`** (hidden, detached) - NOT a
-   background bash child, so it outlives this session. **The restart-on-death WATCHER is
-   session-bound** and dies with this session. NONSTOP DUTY (D-035-R002 / D-033-R009): successor's
-   FIRST action = confirm loop liveness (lock pid at
-   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\supervisor.lock`) and **re-arm a read-only
-   break watcher** (pid + journal `current_state`). On any death, run the DRILL: read
-   `run_budget/persistent-local-<n>` exit_reason; answer/deny asks
-   (`... --checkout C:\SupervisorController`, in-packet only per D-035-R006); reconcile intent if
-   AMBIGUOUS_EFFECT (`recovery.reconcile_dispatch_intent` - read-only evidence first, no CLI verb);
-   `clear-recovery` if PAUSED; `resume-after-answer` (+ commit a digest-bound snapshot) if
-   WAIT_FOR_OWNER; **fresh run-id if budget_exhausted**; relaunch **DETACHED via Start-Process**,
-   cwd `wt-controller-src` (certified a5886dab), NEVER ctl24-cwd. NEVER run audit-writing operator
-   verbs against a LIVE run (forked the audit chain today; repaired via
-   `tools/controller_update/repair_forked_audit_chain.py`).
+3. **LOOP IS LIVE + DETACHED on a PRODUCT task (D-038):** run `persistent-local-19`, task **M5-T003**
+   (scenario endpoint), supervisor **pid 12124** (lock at
+   `%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\supervisor.lock`, token 01dd3f567d86697c),
+   worker on **opus-4-8**. Launched via `Start-Process` from cwd `wt-controller-src`, repo `wt-m5t003`,
+   branch `task/M5-T003-scenario-endpoint`, `--max-tasks 1 --max-cycles 10`. NONSTOP DUTY: a session-
+   bound watcher polls the pid; on death **relaunch DETACHED run-id `persistent-local-20`** via the
+   saved script `scratchpad/relaunch_m5t003.ps1` (or autostart-launch.ps1 pattern), NEVER ctl24-cwd.
 
-4. **MODEL - Fable weekly-exhausted; worker MANUALLY PINNED to opus-4-8:** Fable 5 hit its weekly
-   cap today. Auto-fallback does NOT actuate (the live launch-probe seam is not wired - built-but-
-   ungapped, D-036 gap; even with `--authorize-turnover-actuation` on every launch it safe-stops on
-   an unprobed candidate). So `C:\SupervisorController\model_selection.toml` is set
-   `model="claude-opus-4-8"`, `fallback_models=[]` (D-036-R002 manual actuation, same as 2026-08-09).
-   **REVERT to `model="claude-fable-5"`, `fallback_models=["claude-opus-4-8"]` when Fable returns
-   (normally Thursday 9 PM local, D-036-R001).** opus is choppy on the big task: it drops the
-   checkpoint ~every 3rd cycle (`no_valid_checkpoint`), forcing restarts (runs 15/16/17) - work is
-   preserved on-branch each time; just restart.
+4. **D-038 (owner 2026-09-08) - THE STEERING DIRECTIVE:** build the PRODUCT, no more supervisor self-
+   infrastructure. Owner **declined credentials this session** (Supabase B-001 / Geoclient B-004 =
+   deferred, NOT refused - they remain the real unlock for end-to-end product; surface first next
+   session). Loop pivoted OFF the M0 self-tooling line. Records: `project-control/directives/D-038-*`,
+   validate --check exit 0. `M0-T153` (accept-engine) + `M0-T155` (reviewer proportionality) are
+   self-infra, now **DE-PRIORITIZED (preserved on wt-m0t153/wt-m0t155 branches, NOT deleted)**.
 
-5. **CURRENT TASK M0-T153 (D-033 T-B acceptance engine)** - claimed, in progress at
-   `wt-m0t153` (branch `task/M0-T153-accept-engine`, ~cc4972fd). ~1200 LOC engine + ~1500 LOC tests
-   built; grinding through review polish - the astra reviewer has returned **~38 REVISE vs 2
-   COMPLETE** (the over-revise problem the owner flagged). Seven orchestrator span artifacts
-   (`M0-T153-span-*.md`, UNTRACKED on purpose so the collector carries them) close the packet
-   evidence gap. When it reaches COMPLETE: standard T-B gate wave (G0/G2/G3/G5 + DCV), accept, then
-   the loop's next task is the STAGED M0-T155.
+5. **CURRENT TASK M5-T003 (product):** `GET /api/v1/properties/{bbl}/scenario` exposing the already-
+   built `app/scenario/build_scenario` (flag-gated INTERNAL_SCENARIO_ENABLED, contract-validated
+   scenario@1.0.0, OFFLINE via injected PLUTO+substrate seams - NO Supabase/Geoclient). AS-1..AS-7.
+   Claimed, wt-m5t003 @ 62aec042. When COMPLETE: standard T-B gate wave (G0/G3/G4/G5 + DCV), accept as
+   DRAFT engineering (published/G6 deferred like the M4 chain). **NEXT product task = Compare (Step 3)
+   UI** consuming this endpoint (the Confirm screen dead-ends at "steps 3-4 arrive later").
 
-6. **M0-T155 STAGED (D-037 reviewer proportionality = the fix for #5's churn):** G0 PASS + CLAIMED,
-   worktree `wt-m0t155` (branch `task/M0-T155-reviewer-proportionality`), packet synced. Runs when
-   M0-T153 parks (owner said bump ahead; done without interrupting near-done work). Adds an OBJECTIVE
-   rule to `prompts/codex_review.md`: REVISE only when it NAMES a failing gate/acceptance criterion;
-   minor nits -> advisory + COMPLETE; real gates unchanged. **Takes effect on the live reviewer only
-   after a controller recert** - bundle that recert with the acceptance-engine's (one owner-gated step).
+6. **MODEL - Fable weekly-exhausted; worker PINNED opus-4-8** (`C:\SupervisorController\model_selection.toml`).
+   REVERT to `model="claude-fable-5"` when Fable returns (Thursday 9 PM local, D-036-R001). opus drops
+   the checkpoint ~every 3rd cycle -> run may exit needing restart; work preserved on-branch, just relaunch.
 
-7. **Directives captured today (all committed, validate --check exit 0):** D-035 (8-hour overnight
-   monitor-only + restart-on-death; sentinel D-035-BOOTSTRAP), D-036 (arm fallback + autostart;
-   sentinel D-036-BOOTSTRAP), D-037 (reviewer proportionality -> M0-T155). Records under
-   `project-control/directives/`.
+7. **LOOP TASK-SWITCH DRILL (learned this session - a mid-unit kill trips 3 recovery gates in order):**
+   after killing the old run to switch tasks: (a) `deny <req> <digest>` every stale pending ASK
+   (pending-approvals) - clears `pending_requests`; (b) `git -C <new-worktree> reset --hard <candidate
+   HEAD that CONTAINS the new task packet>` - the `task_authority` probe reads
+   `<--repo>/project-control/tasks/<id>.json` and FAILS if the worktree base predates the packet;
+   (c) reconcile the crashed-mid-unit dispatch intent via `recovery.reconcile_dispatch_intent(journal)`
+   (no CLI verb; run scratchpad/reconcile_intent.py after read-only evidence) - clears `AMBIGUOUS_EFFECT`.
+   Then `start` reaches SAFE_CHECKPOINT + run_budget_started. **LAUNCH BUG:** the `--config
+   "C:\Program Files\SupervisorConfig\config.toml"` path has a SPACE - it MUST be quoted inside the
+   Start-Process arg array or PowerShell splits it (autostart-launch.ps1 has the same latent bug - fix
+   when installing autostart).
 
-8. **AUTOSTART - owner elevated run pending (D-036-R003):** `schtasks` needs admin (I can't
-   self-elevate). Ready: wrapper `C:\SupervisorController\autostart-launch.ps1` (relaunches the loop
-   detached only if not already up; update its ACTIVE-TASK block as the loop advances) + installer
-   `project-control/reports/D-036-install-autostart-ADMIN.ps1` (owner runs elevated -> Boot/logon +
-   Weekly-Thu-9PM tasks, RestartInterval 4 min x50 until running). Not installed yet.
+8. **Standing restrictions (unchanged):** no push/PR/merge (local-only; GitHub stale); NEVER merge
+   PR #241; R595 / autostart-activation / continuous-mode owner-only; supervisor SHADOW; expansion
+   hold; Bootstrap Gate 0 (cwd=root, `/mcp` empty); supervisor commits cite D-024-R###/AD-093; no bare
+   git stash; thin client; R247 recert before NEW supervisor code to the running controller; launch
+   ONLY from wt-controller-src cwd; NEVER audit-writing operator verbs against a LIVE run.
 
-9. **Follow-ups to contract (freeze-lane, gated):** (a) wire the live launch-probe seam so auto-
-   fallback AND auto-return actually fire; (b) fix `install-autostart --kind boot` invalid-XML bug
-   (DeleteExpiredTaskAfter/EndBoundary); (c) M0-T155 (staged); (d) consider an opus checkpoint-
-   reliability fix if the ~3rd-cycle drops persist.
-
-10. **Standing restrictions (unchanged):** no push/PR/merge (Am40 local-only; GitHub intentionally
-    stale; push needs a directive); NEVER merge PR #241; R595 / autostart-activation / continuous-
-    mode owner-only; supervisor SHADOW until owner activates; expansion hold; Bootstrap Gate 0 (cwd =
-    root, `/mcp` empty); supervisor commits cite D-024-R###/AD-093; no bare git stash; thin client;
-    R247 recert+reinstall before any NEW supervisor code is installed to the running controller;
-    launch supervisor ONLY from wt-controller-src cwd.
-
-11. **Authoritative files:** `project-control/tasks/{M0-T152,M0-T153,M0-T155}.json`;
-    `project-control/directives/{D-035,D-036,D-037}-*/`; `reports/D-035-overnight-20260907.md`
-    (E0-E11 event log), `reports/D-036-execution-status.md`, `reports/M0-T153-*` + span files.
-    Ledger + campaign records win over this prose.
+9. **Autostart:** owner elevated install still pending (D-036-R003); `autostart-launch.ps1` ACTIVE-TASK
+   block updated to M5-T003. **Follow-ups (freeze-lane, gated):** wire live launch-probe seam (auto-
+   fallback/return); fix install-autostart boot invalid-XML; the config-path quoting bug (item 7).
 
 ## COPY INTO THE NEW SESSION
 
-Resume from durable evidence only. Confirm `git rev-parse --show-toplevel` =
-`C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`, Bootstrap Gate 0
-(cwd = root, `/mcp` empty). Read `CLAUDE.md`, `docs/SESSION_HANDOFF.md`, then run
-`python tools/project_control.py status` (ledger wins). FIRST ACTION - KEEP THE LOOP NONSTOP: the
-loop is DETACHED and likely still running (run `persistent-local-18`, supervisor lock at
-`%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...`); confirm the lock pid is alive and RE-ARM a
-read-only break watcher (the prior watcher died with the old session). On any loop death run the
-drill in handoff item 3 and relaunch DETACHED via PowerShell Start-Process from cwd
-`wt-controller-src` (NEVER ctl24), run-id `persistent-local-19`. Worker is on opus-4-8 (Fable weekly-
-exhausted; revert to Fable Thursday 9 PM, item 4). THEN: process M0-T153 through its T-B gate wave
-when it reaches COMPLETE, then the loop advances to the STAGED M0-T155 (reviewer proportionality).
-Autostart install is an owner elevated action (item 8). Do NOT: push/merge/PR #241, run audit-writing
-verbs against a live run, launch the supervisor from ctl24 cwd, install new supervisor code without
-R247 recert, or bypass any gate. Report READY TO RESUME or BLOCKED.
+Resume from durable evidence only. Bootstrap Gate 0 (root cwd, `/mcp` empty), branch
+`candidate/D-024-mrl-option-b`. Read `CLAUDE.md`, this handoff, `python tools/project_control.py status`
+(ledger wins). FIRST ACTION - KEEP THE LOOP NONSTOP: confirm supervisor pid alive (lock at
+`...NYCBuildabilitySupervisor\9aca7075...`) and re-arm a read-only break watcher. On death, relaunch
+DETACHED (run-id `persistent-local-20`) from `wt-controller-src` via `scratchpad/relaunch_m5t003.ps1`,
+applying the task-switch drill (item 7) only if switching tasks. The loop builds PRODUCT now (D-038):
+M5-T003 scenario endpoint -> then Compare (Step 3) UI. Worker on opus-4-8 (revert to Fable Thursday).
+Do NOT: push/merge/PR #241, build supervisor self-infra as the loop target, run audit verbs against a
+live run, launch from ctl24-cwd, install new supervisor code without R247 recert, bypass any gate.
+Report READY TO RESUME or BLOCKED.
