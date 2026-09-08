@@ -1,4 +1,4 @@
-"""Internal feature-flag configuration (task M4-T005 phase 2).
+"""Internal feature-flag configuration (task M4-T005 phase 2; M5-T003).
 
 Fail-safe environment flags for internal/dev-only endpoints. The single rule:
 an ABSENT or UNKNOWN value resolves to DISABLED. A production deploy that never
@@ -17,7 +17,9 @@ from collections.abc import Mapping
 
 __all__ = [
     "INTERNAL_RULE_EVAL_ENABLED_ENV_VAR",
+    "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
     "internal_rule_eval_enabled",
+    "internal_scenario_enabled",
 ]
 
 # Env var gating the internal GET /properties/{bbl}/rule-evaluation endpoint.
@@ -25,20 +27,40 @@ __all__ = [
 # on every deployed service) so there is ONE source of truth for the flag name.
 INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED"
 
+# Env var gating the internal GET /properties/{bbl}/scenario endpoint (task
+# M5-T003). Same fail-safe posture and default-off semantics as the
+# rule-evaluation flag; a distinct name so the two internal endpoints are
+# enabled independently.
+INTERNAL_SCENARIO_ENABLED_ENV_VAR = "INTERNAL_SCENARIO_ENABLED"
+
 # The closed set of tokens that mean "enabled". Anything not in this set - unset,
 # empty, "0", "false", "off", or an unrecognized value - is DISABLED (fail safe).
 _TRUE_TOKENS = frozenset({"1", "true", "yes", "on"})
 
 
-def internal_rule_eval_enabled(env: Mapping[str, str] | None = None) -> bool:
-    """Whether the internal rule-evaluation endpoint is enabled.
-
-    Reads the flag from ``env`` (defaults to ``os.environ``) each call, so a
-    test can flip it with ``monkeypatch.setenv`` without rebuilding the app.
-    Returns True ONLY for an explicit true token; absent/empty/unknown -> False.
-    """
+def _flag_enabled(env_var: str, env: Mapping[str, str] | None) -> bool:
+    """Whether ``env_var`` holds an explicit true token in ``env`` (defaults to
+    ``os.environ``). Absent/empty/unknown -> False (fail safe). Read each call so
+    a test can flip it with ``monkeypatch.setenv`` without rebuilding the app."""
     source = os.environ if env is None else env
-    raw = source.get(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR)
+    raw = source.get(env_var)
     if raw is None:
         return False
     return raw.strip().lower() in _TRUE_TOKENS
+
+
+def internal_rule_eval_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal rule-evaluation endpoint is enabled.
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False.
+    """
+    return _flag_enabled(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, env)
+
+
+def internal_scenario_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the internal scenario endpoint is enabled (task M5-T003).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False
+    (fail safe), so the route is unreachable unless explicitly turned on.
+    """
+    return _flag_enabled(INTERNAL_SCENARIO_ENABLED_ENV_VAR, env)
