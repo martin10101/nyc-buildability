@@ -94,6 +94,53 @@
      "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T006",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "817815cc9f8205fba152d3e4b684b0b036ab56f0",
+   "reviewed_manifest_sha256": "32ae53308b99c836ada360d75f3e09616cf3d7ea0953e1d841bf0552fb9a0268",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-08T20:05:00+00:00",
+   "note": "Independent DCV at HEAD 817815cc (candidate fast-forwarded to it; worktree wt-m5t006 clean, not pushed). Verifier (directive-compliance-verifier) != producer (scenario-optimization-engineer, run persistent-local-22) != orchestrator. git show --stat 817815cc: parent b0d39ad6, exactly 3 files, all allowed_paths (derive.py, test_scenario_derive.py, producer report), no forbidden path. Whole-registry applicable sweep for M5-T006 = exactly R003+R004 (R001/R002/R005/R006/R007 bind sentinel D-038-BOOTSTRAP); directive_refs D-038:ALL so selective-citation guard satisfied; no producer-report<->code drift (line refs verified). Gates G0/G1/G3/G4/G5 all PASS at 817815cc; reviewers code-reviewer/qa-engineer/security-reviewer each independent != producer; tests reproduced 124 passed (48+22 hardening) on Python 3.11.9 incl. a socket-blocked offline run (70 derive tests). G5 PASS with one NEW pre-existing non-blocking LOW (SEC-L1: >4300-digit integer echo crashes repr/str before truncation, direct-call-only, not reachable via build_scenario) routed to a fast-follow. DRAFT engineering; published/G6 legal acceptance out of scope (M5-T003/M5-T005 precedent).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/scenario/derive.py:282 defines pure derive_practical_usable_range; module docstring 'Deterministic OFFLINE derivation of an ILLUSTRATIVE practical-usable-range' - scenario/optimization-engine PRODUCT domain, NOT M0 self-infra; milestone M5, task_type backend",
+      "packet project-control/tasks/M5-T006.json allowed_paths all product code (derive.py + tests/scenario/test_scenario_derive.py + own report), forbidden_paths include packages/contracts/**, tools/**, .claude/**, apps/web/**",
+      "G0 packet project-control/gates/M5-T006-G0.json result='PASS' (report M5-T006-G0-intake.md)",
+      "AS-1..AS-6 map to real tests in services/api/tests/scenario/test_scenario_derive.py (test_m5t006_low1_* malformed-cap, _as2_* golden byte-identity, _low2_* deepcopy is-identity, _low3_* bounded echo, _as5_* never-Verified, _as6_* determinism)",
+      "reproduced python -m pytest services/api/tests/scenario -q -> 124 passed (22 new m5t006 tests); connection-blocked derive run -> 70 passed offline"
+     ],
+     "note": "M5-T006 is genuine PRODUCT/optimization-engine engineering (defense-in-depth hardening of the accepted derive.py), a PASS G0 packet with executable, passing acceptance scenarios AS-1..AS-6.",
+     "verified_at": "2026-09-08T20:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "817815cc9f8205fba152d3e4b684b0b036ab56f0"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "derive.py imports (lines 41-47): __future__ annotations, copy, math, typing.Any, .constants (DRAFT_CAP_LABEL, NOT_VERIFIED_DISCLAIMER) - no network/storage/env/file/subprocess import (copy added for LOW-2 deepcopy)",
+      "grep -niE 'supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|open(|subprocess|.connect(' over derive.py -> NO MATCHES",
+      "pure dict->dict function, no persistence/network/address-resolution; scenario document consumed READ-ONLY (test_m5t006_low2_* assert document==snapshot after mutating derived)",
+      "offline proof: socket.socket connect/connect_ex/create_connection/getaddrinfo monkey-patched to raise -> 70 passed, no network; standard run 124 passed",
+      "packet documented_test_commands = 'python -m pytest services/api/tests/scenario' (fixtures only, no cloud)"
+     ],
+     "note": "derive.py stays a pure, deterministic, fully offline function; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only. Confirmed by import inspection, negative grep, connection-blocked run (70 passed).",
+     "verified_at": "2026-09-08T20:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "817815cc9f8205fba152d3e4b684b0b036ab56f0"
+    }
+   ]
   }
  ]
 }
