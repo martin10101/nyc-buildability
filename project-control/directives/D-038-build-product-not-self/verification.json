@@ -1,7 +1,52 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-038",
- "authority_note": "Producer (orchestrator) never verifies; control-plane-verifier / directive-compliance-verifier own rows. R001/R002/R006 verify against loop launch args + control-plane state; R003/R004 verify when the product task packet is created and bound; R007 on return.",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Steering directive; loop-governance requirements (R001/R002/R005/R006/R007) bind the non-ledger sentinel D-038-BOOTSTRAP. Product-task rows accrue as tasks produce durable evidence; M5-T003 is the first.",
  "producer": "orchestrator",
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T003",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "813e1642da817fd9d6f71f65ed748d3dea50e33b",
+   "reviewed_manifest_sha256": "937de404a45bf443a16e2ed009a18c54dd687280983235b3e3f43a4f4dfe2a88",
+   "producer": "backend-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-08T07:05:57+00:00",
+   "note": "DCV at HEAD 813e1642 / material identity 937de404 (reproduced: frozen_git_identity over allowed_paths, clean, err=None; the four code/test blobs git-identical to producer aaf088a0; git diff aaf088a0..HEAD = control-plane only, no code drift; whole-registry applicable sweep = exactly R003+R004; R001/R002/R005/R006/R007 bind sentinel D-038-BOOTSTRAP, not applicable). Producer field: the M5-T003 work was produced by the supervised codex loop worker (run persistent-local-19) and committed by the orchestrator under its worktree commit duty; requirements' registry producer = orchestrator. Full verbatim DCV report: reports/M5-T003-DCV.md. Gates G0/G1/G3/G4/G5 all PASS at 813e1642 (G0 base ebe4eaf6); reviewers code-reviewer/qa-engineer/security-reviewer/data-contract-verifier each independent != producer. Tests reproduced 27/27 on Python 3.11.9 (CI=3.12, push held; M5-T003 files 3.11-compatible; tests/documents PEP-695 out of scope). DRAFT engineering; published/G6 legal acceptance deferred.",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/api/v1/scenario.py:160-167 defines GET /api/v1/properties/{bbl}/scenario exposing the deterministic build_scenario buildability engine (scenario.py:79,289); milestone M5, task_type backend, allowed_paths all product code, forbidden_paths include .claude/ tools/ supabase/ - a domain/user-facing feature (unblocks the Compare UI), NOT the M0 supervisor/control-plane line",
+      "project-control/gates/M5-T003-G0.json result=PASS (administrative, reviewer=orchestrator) - the G0 packet",
+      "AS-1..AS-7 in services/api/tests/api/test_scenario_api.py map to test_as1_..test_as7_; DCV independently ran pytest -v -> 27 passed on git-identical code (AS-1 verbatim-cap, AS-2 split-lot no_scenario, AS-3 no_match 404, AS-4 typed errors, AS-5 matrix==rule-eval route, AS-6 flag-off 404, AS-7 offline)"
+     ],
+     "note": "M5-T003 is genuine PRODUCT engineering (scenario endpoint exposing the buildability engine), a G0 packet with executable, passing acceptance scenarios.",
+     "verified_at": "2026-09-08T07:05:57+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "813e1642da817fd9d6f71f65ed748d3dea50e33b"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "grep -i supabase over services/api/app = docstring/deployment comments only (main.py:7-8, scenario.py:9), no runtime import/call; read-only GET, no persistence write; scenario.py imports (scenario.py:54-80) have no Supabase in the dependency graph",
+      "no live Geoclient: handler takes bbl path param only (scenario.py:161), no address->BBL resolution; grep -i geoclient = comment/schema-description only",
+      "permitted public seams: get_pluto_fetcher -> PLUTO SODA (properties.py:136-138), get_spatial_substrate_provider -> GIS/MapPLUTO substrate flag-off = no substrate (rule_evaluation.py:99-103) - both R004-permitted",
+      "test_as7_confident_path_is_fully_offline deletes SOCRATA_APP_TOKEN + runs on committed fixtures; test_as6_disabled_request_performs_no_dependency_io uses landmine seams; DCV reproduced 27/27 offline, no network"
+     ],
+     "note": "Builds and verifies with NO Supabase and NO live Geoclient; only injected public-connector seams + committed fixtures.",
+     "verified_at": "2026-09-08T07:05:57+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "813e1642da817fd9d6f71f65ed748d3dea50e33b"
+    }
+   ]
+  }
+ ]
 }
