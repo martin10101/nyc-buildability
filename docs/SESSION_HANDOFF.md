@@ -6,8 +6,14 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
 
 ## Handoff - seq 90: M5-T004 (Compare Step-3 UI) loop LIVE + building autonomously (run persistent-local-20).
 
-1. **Generated:** 2026-09-08 ~16:31Z, session ctl24 (resume of seq-89), after relaunching the loop on the
-   next product feature per D-038.
+1. **Generated:** 2026-09-08 ~16:34Z via `/session-handoff` (owner-invoked, reason ""), session ctl24
+   (resume of seq-89), after relaunching the loop on the next product feature per D-038.
+   **CAMPAIGN NOTE:** `campaign_continuity --status` still points at the STALE D-024 next-action
+   [M0-T136] (MRL Tranche B **self-infra**); D-038 pivoted the loop OFF self-infra onto PRODUCT, so the
+   ledger + D-038 win over that prose (do NOT resume M0-T136 as the loop target). The D-032 campaign
+   json files are pre-existing INVALID records (ignore). Loop mode = R595-authorized (owner 2026-08-29,
+   D-024 Amendment 9 R250-R260): `limited-auto` + `--owner-enable-bounded-auto` (+ D-036 turnover-actuation
+   on the owner-pinned launcher; worker model pinned so turnover is inert).
 2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`,
    HEAD `1c8945be` (control-plane only; local-only, GitHub intentionally stale, origin/main d8b3899f).
    **Accepted tasks: 167** (M5-T003 scenario endpoint, unchanged). M5-T004 is `claimed`, NOT accepted.
@@ -23,7 +29,12 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
    AUTO-APPROVE, and (b) packet TOOL-DISCIPLINE text telling the worker to orient with Read/Grep/Glob and
    NEVER use Bash/git (undocumented shell STALLS the worker on an operator ASK; the worker does NOT self-adapt
    in 0.4.0-phase4). Result: 0 pending asks, writes auto-approving. **Do NOT answer asks against a LIVE run**
-   (forks the audit chain). A read-only big-breaks-only watcher is armed (loop-close/crash/freeze only).
+   (forks the audit chain; repair = `ctl24/tools/controller_update/repair_forked_audit_chain.py`, run-down only).
+   A read-only big-breaks-only watcher was armed this session (`scratchpad/loop_break_watcher_quiet.sh`) but
+   Monitors are **SESSION-BOUND and die when this session ends** - the DETACHED loop (Start-Process) survives,
+   so the **successor MUST re-arm the watcher**. At this handoff: supervisor **pid 22088 ALIVE**, worker
+   writing M5-T004 (compare components + `apps/web/src/lib/scenario-*.ts`), UNCOMMITTED in `wt-m5t004`
+   (partial build; the orchestrator commits at gate, never mid-unit).
 5. **EXACT NEXT ACTION:** the loop runs `--max-tasks 1` -> it builds M5-T004 to UNIT_COMPLETE then STOPS
    (the watcher pings "LOOP CLOSED"). On that: (a) commit the worker's `wt-m5t004` output to the candidate
    line; (b) run the gate wave G1/G3/G4/G5 (code, qa, security, +visual-quality/human-journey for UI) as
