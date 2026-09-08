@@ -1,0 +1,103 @@
+{
+  "task_id": "M5-T004",
+  "title": "Compare (Step 3) UI: apps/web Compare route + components consuming GET /api/v1/properties/{bbl}/scenario (offline/fixtures; no credentials)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Build the Step-3 Compare screen in apps/web consuming the accepted scenario endpoint (GET /api/v1/properties/{bbl}/scenario, scenario@1.0.0) through a NEW hardened typed client mirroring src/lib/api.ts (documented (HTTP status, body state) matrix classification; runtime contract-validate every 200 body BEFORE render; bounded/allowlisted reflected text + correlation id; AbortController/timeout). Render per docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md Step 3: max preliminary development potential, practical usable range, ranked scenario cards, objective + score breakdown, coverage labels (verified/conditional/review-required/conflict/unsupported - never encode certainty by color alone), main opportunity + main risk, one clear next action. Rewire the ConfirmScreen 'Next step' dead-end (steps 3-4 arrive later) to route to Compare. OFFLINE: consume committed fixtures / the flag-gated endpoint only; NO Supabase, NO Geoclient, NO backend change. Progressive disclosure, plain language first, accessible. Draft engineering (needs_review labels surfaced verbatim from the endpoint body, never recomputed in the client).",
+  "business_reason": "Owner directive D-038 (2026-09-08): build the PRODUCT. The scenario endpoint (M5-T003) is exposed but has NO UI and the Confirm screen dead-ends at 'steps 3-4 arrive later'. This delivers the Compare screen - the first user-facing scenario results - a demonstrable no-credential product increment on the live candidate line.",
+  "inputs": [
+    "services/api/app/api/v1/scenario.py (READ-ONLY; the accepted M5-T003 endpoint this UI consumes: GET /api/v1/properties/{bbl}/scenario, the exact (HTTP status, state) matrix, flag-off 404, correlation id)",
+    "packages/contracts/schemas/v1/scenario.schema.json + packages/contracts/generated/scenario.ts (READ-ONLY; scenario@1.0.0 - the contract to runtime-validate and render)",
+    "apps/web/src/lib/api.ts + src/lib/contract-matrix.ts + src/lib/bounded.ts + src/lib/validate-profile.ts (READ-ONLY TEMPLATE: hardened typed client pattern - matrix classification, bounded/allowlisted reflected text, runtime contract validation before render, AbortController)",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx (the 'Next step' dead-end at line ~378 to rewire to Compare) + src/components/property/CoverageBadge.tsx/CoverageLegend.tsx (READ-ONLY; reuse the coverage-label vocabulary)",
+    "apps/web/e2e/harness/fixture_api.py (READ-ONLY; committed-official-fixture API server for offline e2e - proves no-credential path) + the M5-T003 committed fixtures",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md §13"
+  ],
+  "outputs": [
+    "apps/web/src/app/property/compare/page.tsx (Step 3 Compare route)",
+    "apps/web/src/components/compare/CompareScreen.tsx + ranked scenario card / coverage-label / opportunity-risk subcomponents",
+    "apps/web/src/lib/scenario-api.ts (NEW hardened typed client for GET /properties/{bbl}/scenario) + scenario contract-matrix/validate helpers",
+    "apps/web/src/components/compare/__tests__/*.test.tsx (vitest + RTL; AS-1..AS-8)",
+    "the ConfirmScreen 'Next step' rewire to route to Compare",
+    "project-control/reports/M5-T004-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/app/property/compare/",
+    "apps/web/src/components/compare/",
+    "apps/web/src/lib/",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx",
+    "project-control/reports/M5-T004-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "packages/contracts/",
+    "supabase/",
+    ".claude/",
+    "tools/",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/contract-matrix.ts",
+    "apps/web/src/lib/validate-profile.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/components/property/",
+    "apps/web/src/components/confirm/__tests__/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 preliminary cap render (M5-T003 AS-1 fixture BBL 1000010100, 200 preliminary): Compare renders a ranked scenario card whose draft residential FAR floor-area cap is shown VERBATIM from the endpoint body (test asserts the rendered value === the body value; the client NEVER recomputes it), labelled draft/needs_review, with the optimized objective + score breakdown; the cap is never displayed as certain by color alone (a text label is always present).",
+    "AS-2 no_scenario / professional-review fixture (M5-T003 AS-2 body, scenario_kind no_scenario): the screen renders a visible reason + review-required label + preserved share ranges (never collapsed) and NO cap, and remains usable (an informative result, never an error page).",
+    "AS-3 coverage labels: verified / conditional / review-required / conflict / unsupported each render with a distinct TEXT label (not color-only) and the 8 MISSING envelope families from coverage_matrix are visibly listed as gaps.",
+    "AS-4 contract-safety (mirrors src/lib/api.ts S2/S3): every 200 body is runtime-validated against scenario@1.0.0 BEFORE any render; a body whose (HTTP status, state) pair is outside the documented matrix, or that fails validation, renders a distinct bounded error outcome carrying only the allowlisted correlation id - nothing partially rendered.",
+    "AS-5 flag-off / upstream failure / timeout: the generic 404 (INTERNAL_SCENARIO_ENABLED off) and the documented source_unavailable/rate_limited/timeout/schema_drift states each render a recoverable, non-leaking state with the correlation id; never a raw stack, secret, or invented scenario.",
+    "AS-6 navigation: the Confirm 'Next step' dead-end now routes to the Compare screen for the confirmed BBL with one clear next action; forward and back navigation preserve the analysis; the control is keyboard-reachable and labelled.",
+    "AS-7 offline / no-credentials (proves D-038-R004): AS-1..AS-6 run entirely under vitest with mocked/fixture endpoint responses (committed M5-T003 fixtures) and/or the Playwright e2e against apps/web/e2e/harness/fixture_api.py - NO network, NO Supabase, NO Geoclient.",
+    "AS-8 accessibility: outcome is announced to assistive tech (aria-live), focus is managed on step transition, headings are semantic, and no material state is encoded by color alone (jest-axe / RTL assertions)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "visual-quality-reviewer",
+    "human-journey-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
+    "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
+    "Rendering a body before contract validation, or routing by state alone rather than the (status,state) pair (AS-4 guards this).",
+    "Editing the read-only property client/templates or the built contract (forbidden_paths guard)."
+  ],
+  "documented_test_commands": [
+    "cd apps/web && npm ci --no-audit --no-fund && npm run test   # vitest unit/component (AS-1..AS-8, jest-axe); CI job 'web-e2e' in .github/workflows/ci.yml",
+    "cd apps/web && npm run typecheck                             # tsc --noEmit (contract types)",
+    "cd apps/web && npm run test:e2e                              # Playwright vs apps/web/e2e/harness/fixture_api.py (committed-official-fixture API; OFFLINE, no creds - proves D-038-R004)"
+  ],
+  "test_evidence_capture_note": "Thin-client (owner PC ~7GB free, docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md): apps/web/node_modules is NOT installed locally and 'no local npm' is standing policy, so the loop worker's sandbox cannot run vitest/Playwright directly. Frontend green evidence is captured by CI or by an orchestrator-run ephemeral install at gate time (M5-T003 evidence-capture division of labor, .claude/rules/project-control.md). The worker DELIVERS the code + tests; it must not claim green it did not run.",
+  "path_notes": {
+    "apps/web/src/lib/": "allowed for NEW scenario-* files (scenario-api.ts, scenario contract-matrix/validate/coverage helpers); the existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify.",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx": "NARROW edit only: replace the 'steps 3-4 arrive later' dead-end with a labelled route to Compare; do not restructure the Confirm screen or its tests.",
+    "forbidden:services/": "the scenario endpoint + backend are ACCEPTED (M5-T003); consume over HTTP/fixtures only, never change backend.",
+    "forbidden:packages/contracts/": "consume scenario.schema.json + generated/scenario.ts read-only; no contract change this task.",
+    "offline": "consume the flag-gated endpoint / committed fixtures only; NO Supabase, NO Geoclient, NO new connector."
+  },
+  "blockers": [],
+  "created_at": "2026-09-08T14:51:49.592393+00:00",
+  "updated_at": "2026-09-08T14:51:49.842503+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T14:51:49.592393+00:00"
+}

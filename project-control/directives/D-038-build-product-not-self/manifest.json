@@ -10,7 +10,7 @@
  "issued_at": "2026-09-08",
  "captured_at": "2026-09-08T05:14:41+00:00",
  "created_at": "2026-09-08T05:14:41+00:00",
- "updated_at": "2026-09-08T05:27:58+00:00",
+ "updated_at": "2026-09-08T14:52:30+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "ebe4eaf63ef5d04120608230a5147d97ad658e3a",
  "sources": [
@@ -44,6 +44,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Verbatim owner prompt + two AskUserQuestion decisions (skip credentials; build unblocked product). Read-only diagnosis verified: product foundation dammed behind owner-only credentials (B-001 Supabase, B-004 Geoclient) + legal sign-off (B-010/G6), which is WHY the loop turned to M0 self-infra (M0-T036..T155). Pivot = orchestrator contracts a no-credential product task and re-points the one-task-per-launch loop. Specific product task id to be bound on packet creation."
+  },
+  {
+   "at": "2026-09-08T14:52:30+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "Contracted the second product task M5-T004 (Compare/Step-3 UI in apps/web consuming the accepted M5-T003 scenario endpoint; offline/fixtures, no creds) and appended it to the applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's own contracted-tasks mechanism ('further product tasks are appended as contracted'). No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from a237.. baseline to the new requirements.json bytes. Verification for R003/R004 wrt M5-T004 is produced by the independent verifier at M5-T004 accept time (not yet built)."
   }
  ],
  "owner_approval": {
@@ -62,5 +68,5 @@
   "D-038-R006",
   "D-038-R007"
  ],
- "requirements_content_digest_sha256": "2a2ae1868ba49d2de7ad21546de1538343630fcc2325b56369f007aac721404e"
+ "requirements_content_digest_sha256": "3ae5a298359f81c45a7adc93d9137b2c3fad9554ff9612fbfd41941b20503050"
 }
