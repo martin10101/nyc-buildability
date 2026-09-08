@@ -41,6 +41,12 @@ from .derive import (
     derive_practical_usable_range,
 )
 from .models import ConstraintCompleteness, DataCompleteness, ScenarioKind
+from .ranking import (
+    RANKING_LABEL,
+    RankingKind,
+    RankingObjective,
+    rank_scenario_assumption_sets,
+)
 
 __all__ = [
     "CAP_OUTPUT_NAME",
@@ -50,12 +56,16 @@ __all__ = [
     "DRAFT_CAP_LABEL",
     "DerivedRangeKind",
     "NOT_VERIFIED_DISCLAIMER",
+    "RANKING_LABEL",
     "RECOGNIZED_FACTOR_TYPES",
     "SCENARIO_CONTRACT_VERSION",
+    "RankingKind",
+    "RankingObjective",
     "ScenarioContractError",
     "ScenarioKind",
     "assert_scenario_not_verified",
     "build_scenario",
     "derive_practical_usable_range",
+    "rank_scenario_assumption_sets",
     "validate_scenario_document",
 ]
