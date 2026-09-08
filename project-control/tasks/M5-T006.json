@@ -1,0 +1,72 @@
+{
+  "task_id": "M5-T006",
+  "title": "derive.py hardening: strict-JSON-safe malformed-cap transport + no-alias assumption copy + bounded reason echo (G5 LOW-1/LOW-2/LOW-3 fast-follow)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the three G5 LOW findings on the accepted services/api/app/scenario/derive.py, additively and deterministically, WITHOUT changing any already-correct behaviour or the canonical cap VALUE. (LOW-1) In the not_derivable/invalid_assumption outcomes, transport canonical_cap_sq_ft only when it is finite; when the incoming cap is NaN/+/-Inf/negative, surface canonical_cap_sq_ft as null with a reason noting a malformed cap, so the output is ALWAYS strict-JSON-safe (json.dumps(out, allow_nan=False) never raises and no NaN/Inf/negative number ever appears in the output) even when derive() is called DIRECTLY with a malformed document (not via build_scenario). Add a strict-JSON-safety test over non-finite/negative injected caps. Do NOT alter the DERIVED-outcome cap transport (build_scenario always yields a positive-finite-or-None cap) - only the fail-closed outcomes are guarded. (LOW-2) In _copy_assumption, deepcopy the value/unit/rationale so an UNAPPLIED assumption carrying a nested-mutable value is never aliased to the input document; correct the docstring so it no longer over-claims 'never aliases the input' unless it is now literally true; prove with a test that mutating the derived object never reaches back into the scenario document. (LOW-3) Bound the length of any raw input echoed via repr()/str() into reason strings to a reasonable cap (e.g. truncate with an ellipsis) so a pathological 100k-char input cannot bloat a reason. HARD BOUNDARIES: contract-free (only derive.py + its test file); never edit builder.py/models.py/constants.py/contract.py or packages/contracts/**; the canonical cap VALUE is still transported verbatim on the DERIVED path and never recomputed; never emit verified; deterministic byte-identical output for identical input; every pre-existing derive + scenario test still passes. TOOL DISCIPLINE: orient with Read/Grep/Glob; do NOT use Bash for git/ls/cat/find; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "Closes the 3 LOW defense-in-depth findings from the M5-T005 G5 security review (strict-JSON-safety gap on a directly-called malformed cap, an input-aliasing gap + a false docstring claim, and an unbounded reason echo) BEFORE further optimization work builds on derive.py - keeps the accepted scenario module strict-JSON-safe and its docstrings honest. Non-blocking (all three unreachable via the trusted build_scenario pipeline) but low-cost to close; disciplined review->fix->accept cycle.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T005"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/tests/scenario/test_scenario_derive.py",
+    "project-control/reports/M5-T006-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/__init__.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 strict-JSON-safe malformed cap (LOW-1): calling derive() DIRECTLY with a document whose draft_zoning_floor_area_cap_sq_ft is NaN / +Inf / -Inf / negative -> a not_derivable outcome whose canonical_cap_sq_ft is null (not the malformed number) with a reason noting the malformed cap; json.dumps(out, allow_nan=False) SUCCEEDS and no NaN/Inf/negative number appears anywhere in the output.",
+    "AS-2 DERIVED-path cap transport unchanged: a normal build_scenario document (positive-finite cap) still transports canonical_cap_sq_ft VERBATIM (value + type, e.g. int stays int); the no-assumptions passthrough and factor-derivation results are byte-identical to M5-T005 behaviour (no regression to the correct path).",
+    "AS-3 no-alias unapplied assumption (LOW-2): an UNAPPLIED assumption carrying a nested-mutable value ({\"nested\":[...]}) yields a derived object whose value is NOT the same object as the input (`is` is False); mutating the derived nested value never changes the input scenario document; the _copy_assumption docstring's aliasing claim is now literally true.",
+    "AS-4 bounded reason echo (LOW-3): a pathological large raw input (e.g. a 100k-char factor value or scenario_kind) echoed into a reason string is truncated to a bounded length (with an ellipsis marker), so no reason string grows unbounded.",
+    "AS-5 canonical cap value + never-Verified preserved: on the DERIVED path the cap value is never recomputed/relabelled; no output field == 'verified'; needs_review + not_verified_disclaimer lineage preserved.",
+    "AS-6 determinism + full regression: identical input -> byte-identical output; the ENTIRE scenario suite (python -m pytest services/api/tests/scenario) stays green with the new hardening tests added and zero regression to the pre-existing derive/contract/foundation tests."
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-08T18:50:28.838694+00:00",
+  "updated_at": "2026-09-08T18:53:32.837034+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T18:50:28.838694+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t006"
+}
