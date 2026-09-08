@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T007",
+  "reviewed_sha": "1f938f4a7b174c0338c0ecdb2ef0c6b14bdba436",
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/ranking.py rank_scenario_assumption_sets - deterministic OFFLINE scenario/optimization-engine PRODUCT code (milestone M5, task_type backend), NOT M0 self-infra; consumes derive_practical_usable_range READ-ONLY; fills the Compare UI ranked scenario cards + score breakdown",
+      "G0 packet PASS; AS-1..AS-7 map to real tests in test_scenario_ranking.py; reproduced 49 ranking / 173 scenario-suite passed; DCV evaluate_task_refs applicable={R003,R004}, cited=D-038:ALL, missing=[] (selective-citation guard satisfied)"
+    ],
+    "D-038-R004": [
+      "ranking.py imports __future__/copy/json/math/enum/typing/.constants/.derive only; negative grep supabase|geoclient|requests|httpx|socket|urllib|aiohttp|boto3|psycopg|sqlalchemy|os.environ|getenv|open(|subprocess|.connect( -> NO MATCHES",
+      "pure dict->dict offline function; socket-monkeypatched pytest run -> 49 passed (no network attempted); fixtures only (build_scenario + _support.py), no Supabase / no live Geoclient; no deferred credentials"
+    ]
+  }
+}
