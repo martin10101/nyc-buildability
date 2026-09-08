@@ -1,0 +1,74 @@
+{
+  "task_id": "M5-T007",
+  "title": "Deterministic scenario ranking/scoring over explicit assumption-sets (contract-free; consumes derive.py; named objective, stable order, transparent breakdown; never invents scenarios, never Verified)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add a pure, deterministic, OFFLINE service function (new module services/api/app/scenario/ranking.py) that ranks a set of EXPLICITLY-declared assumption-sets for one scenario document and returns an ORDERED list of scored candidates for the Compare UI's 'ranked cards + score breakdown'. HARD BOUNDARIES (AI-boundary + honesty): (1) It ranks ONLY the caller-provided explicit assumption-sets - each fed through the accepted derive_practical_usable_range to get an illustrative range - and NEVER invents, fabricates, or adds a scenario/assumption/alternative (the deterministic engine still emits one scenario; ranking orders explicit variants only). An empty assumption-set list -> a single-candidate ranking of the raw scenario (or a typed empty result), never a fabricated alternative. (2) The OBJECTIVE is an EXPLICIT caller input (e.g. an enum like maximize_illustrative_usable_area) defined in ranking.py (contract-free, do NOT edit models.py); a 'best'/top candidate is NEVER shown without NAMING that objective (docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md). (3) Scores are computed ONLY from already-surfaced numbers (the derived range / the canonical draft cap transported verbatim) - never recompute a legal value, never a hidden weight; each candidate carries its objective (named) + score + the transparent score COMPONENTS. (4) TOTAL, STABLE tie-break: identical input -> byte-identical ordered output; ties resolved by a documented deterministic secondary key so ordering never varies. (5) Fail closed: a no_scenario/unsupported document, a malformed/non-finite objective, or a malformed assumption-set -> a typed outcome (empty ranking + visible reason, or invalid), no crash, strict-JSON-safe (no NaN/Inf/negative), never a fabricated score. (6) Coverage never rises above conditional; no field == verified; needs_review + not_verified_disclaimer preserved end-to-end; scores are ILLUSTRATIVE (from the draft cap), never presented as a Verified/feasible ranking. (7) Contract-free: only ranking.py + its export in __init__.py + its test file; consume derive.py / build_scenario / the scenario document READ-ONLY; do NOT edit builder.py/models.py/constants.py/contract.py/derive.py or packages/contracts/**. Deterministic, no I/O, no Supabase/Geoclient/network. TOOL DISCIPLINE: orient with Read/Grep/Glob; do NOT use Bash for git/ls/cat/find; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "M5 scenario/optimization-engine DEPTH (D-038-R003 menu) and the next substantial no-creds backend feature the owner chose 2026-09-08 ('keep building offline'). Delivers the 'ranked scenario cards + optimized-objective score breakdown' the Compare UI (M5-T004, parked) is designed to show but has no data for. Pure-Python, locally pytest-testable, not G6-blocked (deterministic illustrative math over explicit assumptions, no new legal rule). Builds on the accepted derive.py (M5-T005/M5-T006).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T006"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_ranking.py",
+    "project-control/reports/M5-T007-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/derive.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 deterministic stable ordering: identical (scenario document, objective, assumption_sets) -> byte-identical ordered output; a documented TOTAL tie-break (score desc, then a deterministic secondary key) means equal-score candidates never reorder run-to-run. Test asserts json.dumps equality across input reorderings.",
+    "AS-2 transparent named-objective score breakdown: every ranked candidate carries the NAMED objective (the explicit caller input, e.g. maximize_illustrative_usable_area), its score, and the score COMPONENTS (which already-surfaced numbers produced it); no 'best'/top candidate is emitted without the objective named; no hidden weight (test proves score is a documented function of the surfaced numbers only).",
+    "AS-3 explicit-assumption-only, never fabricates: ranking orders ONLY the caller-provided explicit assumption-sets (each run through derive_practical_usable_range); it never invents a scenario/assumption/alternative. Empty assumption_sets -> a single-candidate ranking of the raw scenario (or a typed empty result), NEVER a fabricated alternative. A candidate whose derive() returns not_derivable is ranked last / flagged, never given a fabricated score.",
+    "AS-4 fail-closed on bad input: a no_scenario/unsupported scenario document, an unknown/malformed/non-finite objective, or a malformed assumption-set -> a typed outcome (empty ranking + visible reason, or invalid), no crash, strict-JSON-safe (json.dumps allow_nan=False succeeds; no NaN/Inf/negative), never a fabricated score.",
+    "AS-5 never up-labels / never Verified: coverage never rises above conditional; exhaustive check no field == 'verified'; needs_review + not_verified_disclaimer preserved on the ranking output; scores labelled ILLUSTRATIVE (derived from the draft cap), never a Verified/feasible ranking.",
+    "AS-6 read-only consumption, no legal recompute: the scenario document + derive.py outputs are consumed READ-ONLY (input byte-unchanged after ranking; no aliasing); scores use only already-surfaced numbers (derived range / canonical cap transported verbatim), never recompute a legal/cap value.",
+    "AS-7 contract-free + offline + full regression: zero modification to packages/contracts/** or builder.py/models.py/constants.py/contract.py/derive.py; runs fully offline with fixtures (no Supabase/Geoclient/network - socket-blockable); the ENTIRE scenario suite (python -m pytest services/api/tests/scenario) stays green with the new ranking tests added and zero regression."
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-08T20:14:20.321387+00:00",
+  "updated_at": "2026-09-08T20:17:04.878996+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T20:14:20.321387+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t007"
+}
