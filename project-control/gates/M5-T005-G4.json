@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T005",
+  "gate_id": "G4",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T005-G4-integration-regression.md",
+  "reviewed_at": "2026-09-08T18:43:13.080133+00:00",
+  "content_manifest_sha256": "48fb7a96f107f22f21ba86c8276b1f2ad692be8f8c7b19aeee4d5a23f4d2ee46",
+  "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103",
+  "updated_at": "2026-09-08T18:43:13.510365+00:00"
+}

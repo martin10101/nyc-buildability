@@ -47,6 +47,53 @@
      "reviewed_sha": "813e1642da817fd9d6f71f65ed748d3dea50e33b"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T005",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103",
+   "reviewed_manifest_sha256": "48fb7a96f107f22f21ba86c8276b1f2ad692be8f8c7b19aeee4d5a23f4d2ee46",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-08T18:40:00+00:00",
+   "note": "DCV at HEAD cdd7165d (candidate fast-forwarded to the reviewed SHA). Independent verifier (directive-compliance-verifier) != producer (scenario-optimization-engineer, run persistent-local-21) != orchestrator. Reproduced: worktree clean at cdd7165d; producer commit touches only the 4 allowed_paths files, no forbidden path; whole-registry applicable sweep for M5-T005 = exactly R003+R004 (R001/R002/R005/R006/R007 bind sentinel D-038-BOOTSTRAP); directive_refs D-038:ALL so selective-citation guard satisfied; no producer-report<->code drift. Gates G0/G1/G3/G4/G5 all PASS at cdd7165d; reviewers code-reviewer/qa-engineer/security-reviewer each independent != producer; tests reproduced 102 passed (48 new derive tests) on Python 3.11.9, incl. a socket-blocked offline run. Security G5 PASS with 3 LOW non-blocking defense-in-depth findings (unreachable via the trusted build_scenario pipeline), routed to a fast-follow hardening task. DRAFT engineering; published/G6 legal acceptance out of scope (M5-T003 precedent).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/scenario/derive.py:190 defines pure derive_practical_usable_range(scenario_document); module docstring 'First optimization-side brick under M5: fills the Compare UI's empty practical usable range' - scenario/optimization-engine PRODUCT domain logic, NOT M0 supervisor/control-plane self-infra",
+      "packet project-control/tasks/M5-T005.json: milestone_id='M5', task_type='backend', allowed_paths all product code (services/api/app/scenario/{derive.py,__init__.py}+tests), forbidden_paths include packages/contracts/**, tools/**, .claude/** - no supabase/self-infra path in scope",
+      "G0 packet project-control/gates/M5-T005-G0.json result='PASS' (report M5-T005-G0-intake.md) - contracted G0 with executable acceptance scenarios",
+      "AS-1..AS-7 in the packet map to real tests in services/api/tests/scenario/test_scenario_derive.py (test_as1_..no_hidden_default, test_as2_* x3, test_as3_* 10-param, test_as4_* + degenerate, test_as5_* + order, test_as6_* 2-param, test_as7_* x3) + RT-1..RT-7 regression",
+      "reproduced pytest tests/scenario -q -> 102 passed in 0.77s (Python 3.11.9); test_scenario_derive.py alone -> 48 passed"
+     ],
+     "note": "M5-T005 is genuine PRODUCT/optimization-engine engineering (new derive.py deriving an illustrative practical-usable-range), a PASS G0 packet with executable, passing acceptance scenarios AS-1..AS-7. Not M0 self-infra.",
+     "verified_at": "2026-09-08T18:40:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "derive.py complete import set (lines 33-38): from __future__ import annotations, import math, from typing import Any, from .constants import DRAFT_CAP_LABEL, NOT_VERIFIED_DISCLAIMER - no network/storage/env/file import",
+      "grep -i 'supabase|geoclient|requests|httpx|socket|urllib|aiohttp|boto3|psycopg|sqlalchemy|os.environ|getenv|open(|Path(|.connect(|subprocess' over derive.py -> no matches",
+      "derive_practical_usable_range is a pure dict->dict function: no persistence write, no address->BBL resolution, no I/O; scenario document consumed READ-ONLY (test_as7 asserts document==snapshot and re-validates unchanged)",
+      "offline proof: ran test_scenario_derive.py with socket.socket monkey-patched to raise 'NETWORK ACCESS ATTEMPTED' -> 48 passed, no network error; standard tests/scenario run 102 passed with no live dependency",
+      "packet declares no Supabase/Geoclient dependency; documented_test_commands = 'python -m pytest services/api/tests/scenario' (fixtures only, no cloud)"
+     ],
+     "note": "derive.py is a pure, deterministic, fully offline function; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only. Confirmed by import inspection, negative grep, and a socket-blocked test run.",
+     "verified_at": "2026-09-08T18:40:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103"
+    }
+   ]
   }
  ]
 }
