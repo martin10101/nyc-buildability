@@ -11,7 +11,7 @@
     "apps/web/src/lib/api.ts + src/lib/contract-matrix.ts + src/lib/bounded.ts + src/lib/validate-profile.ts (READ-ONLY TEMPLATE: hardened typed client pattern - matrix classification, bounded/allowlisted reflected text, runtime contract validation before render, AbortController)",
     "apps/web/src/components/confirm/ConfirmScreen.tsx (the 'Next step' dead-end at line ~378 to rewire to Compare) + src/components/property/CoverageBadge.tsx/CoverageLegend.tsx (READ-ONLY; reuse the coverage-label vocabulary)",
     "apps/web/e2e/harness/fixture_api.py (READ-ONLY; committed-official-fixture API server for offline e2e - proves no-credential path) + the M5-T003 committed fixtures",
-    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md §13"
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md \u00a713"
   ],
   "outputs": [
     "apps/web/src/app/property/compare/page.tsx (Step 3 Compare route)",
@@ -68,8 +68,8 @@
     "visual-quality-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
     "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
@@ -91,7 +91,7 @@
   },
   "blockers": [],
   "created_at": "2026-09-08T14:51:49.592393+00:00",
-  "updated_at": "2026-09-08T14:51:49.842503+00:00",
+  "updated_at": "2026-09-08T15:50:05.501101+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -99,5 +99,6 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-08T14:51:49.592393+00:00"
+  "directive_regime_entered_at": "2026-09-08T14:51:49.592393+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t004"
 }
