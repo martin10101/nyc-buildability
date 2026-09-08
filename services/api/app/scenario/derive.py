@@ -6,9 +6,14 @@ by ``tests/scenario/test_scenario_derive.py``):
 
 * Contract-free: returns a NEW derived object; never edits builder/models/constants/
   contract or any canonical schema; consumes ``scenario`` READ-ONLY.
-* The canonical cap is transported VERBATIM (original type/value) on every outcome and is
-  never the derived range; a SEPARATE float view is used for arithmetic only, so the
-  transported cap is never coerced and no silent int->float precision loss occurs.
+* The canonical cap is transported VERBATIM (original type/value) on the DERIVED path
+  (where ``build_scenario`` always yields a positive-finite cap) and is never the derived
+  range; a SEPARATE float view is used for arithmetic only, so the transported cap is
+  never coerced and no silent int->float precision loss occurs. On a FAIL-CLOSED outcome a
+  malformed cap (NaN/+-Inf/negative/float-overflowing) is surfaced as ``null`` instead, so
+  the output is ALWAYS strict-JSON-safe even when derive() is called directly with a
+  malformed document (``json.dumps(out, allow_nan=False)`` never raises; no NaN/Inf/
+  negative number is ever emitted).
 * No hidden default: with no declared factor the endpoints are the cap verbatim
   (min==point==max==cap); no utilization/efficiency/optimization factor is ever silently
   applied. Only when a factor IS applied is the cap converted to float for the product.
@@ -19,7 +24,10 @@ by ``tests/scenario/test_scenario_derive.py``):
 * Fail closed on malformed/non-finite/negative/zero/out-of-domain/non-numeric factors, a
   malformed ``assumptions`` container (present but not a list), or a non-dict entry: a
   typed outcome with reasons, no crash, no NaN/negative/Inf, never a partial range, cap
-  never mutated.
+  never mutated (and a malformed cap surfaced as ``null``). Any raw input echoed into a
+  reason string is length-bounded AND the aggregate unapplied-key echo is count-bounded
+  with an explicit truncation marker, so neither a single pathological value NOR a
+  pathological NUMBER of declared assumptions can bloat a reason.
 * Never Verified: ``coverage_status`` can never be ``verified`` on ANY outcome; an
   incoming ``verified`` (defended against, though a scenario must never carry it) is
   capped to ``conditional``.
@@ -32,6 +40,7 @@ declared; fabricating an uncertainty band would be a hidden assumption and is fo
 
 from __future__ import annotations
 
+import copy
 import math
 from typing import Any
 
@@ -108,6 +117,76 @@ def _as_dict(value: Any) -> dict:
     return value if isinstance(value, dict) else {}
 
 
+# --- Defense-in-depth hardening (G5 LOW-1 / LOW-2 / LOW-3) ---
+
+
+#: Max characters of any RAW input echoed via repr()/str() into a reason string (LOW-3),
+#: so a pathological (e.g. 100k-char) value cannot bloat an outcome's reasons. Every reason
+#: prefix is a fixed constant, so bounding the echoed value keeps the whole reason bounded.
+_REASON_ECHO_LIMIT = 120
+_REASON_ECHO_TRUNCATION_MARKER = "...(truncated)"
+
+#: Max number of distinct unapplied-assumption keys individually echoed into the aggregate
+#: "surfaced but NOT applied" reason (LOW-3). Each key is already per-value length-bounded
+#: by ``_bounded_echo``; bounding the echoed COUNT as well means the aggregate reason cannot
+#: grow unbounded with the NUMBER of unapplied assumptions (a list of 100k short keys would
+#: otherwise produce a ~megabyte reason even though every individual key is short). Beyond
+#: this many keys an explicit "(+N more ... truncated)" marker replaces the tail. Chosen
+#: generously so an ordinary handful of unapplied assumptions still renders in full,
+#: byte-identically to the prior behaviour.
+_REASON_KEY_LIST_LIMIT = 12
+
+
+def _bounded_echo(rendered: str, limit: int = _REASON_ECHO_LIMIT) -> str:
+    """An already repr()/str()-rendered raw value, truncated to a bounded length with an
+    explicit ellipsis marker (LOW-3). Deterministic; never raises."""
+    if len(rendered) <= limit:
+        return rendered
+    return rendered[:limit] + _REASON_ECHO_TRUNCATION_MARKER
+
+
+def _bounded_key_list_echo(
+    unapplied: list[dict], limit: int = _REASON_KEY_LIST_LIMIT
+) -> str:
+    """Comma-joined echo of unapplied-assumption keys, bounded in BOTH dimensions (LOW-3):
+    each key is individually length-bounded by ``_bounded_echo`` AND the NUMBER of keys
+    echoed is capped at ``limit``, with an explicit ``"...(+N more ... truncated)"`` marker
+    standing in for the remainder. An ordinary short list (``<= limit`` keys) renders exactly
+    as the plain comma-joined echo, so ordinary reasons are byte-identical to the prior
+    behaviour; only a pathological many-key list is truncated. Together the two bounds put a
+    FIXED upper bound on the whole reason string regardless of how many assumptions are
+    declared. Deterministic; never raises."""
+    echoed = [_bounded_echo(str(a.get("key"))) for a in unapplied[:limit]]
+    joined = ", ".join(echoed)
+    remainder = len(unapplied) - limit
+    if remainder > 0:
+        joined += f", ...(+{remainder} more unapplied key(s) truncated)"
+    return joined
+
+
+def _is_number(value: Any) -> bool:
+    """True only for a real numeric (int/float), never a bool."""
+    return isinstance(value, int | float) and not isinstance(value, bool)
+
+
+def _json_safe_cap(cap_raw: Any) -> Any:
+    """The canonical cap as carried on a FAIL-CLOSED outcome, guaranteed strict-JSON-safe
+    (LOW-1). A finite, non-negative number is transported VERBATIM (exact value/type);
+    a NaN/+-Inf/negative or float-overflowing number is surfaced as ``None`` so the output
+    never emits a NaN/Inf/negative value; a non-number (``None``/``str``/``bool``) passes
+    through and any other container type is nulled defensively. The DERIVED path never uses
+    this — its cap is always positive-finite and is transported verbatim there."""
+    if _is_number(cap_raw):
+        try:
+            as_float = float(cap_raw)
+        except (OverflowError, ValueError):
+            return None
+        return cap_raw if (math.isfinite(as_float) and as_float >= 0.0) else None
+    if cap_raw is None or isinstance(cap_raw, str | bool):
+        return cap_raw
+    return None
+
+
 def _factor_type(assumption: dict) -> str | None:
     """Recognized factor type of an assumption, else ``None`` (matches
     ``assumption_type`` first, then ``key``)."""
@@ -118,14 +197,16 @@ def _factor_type(assumption: dict) -> str | None:
 
 
 def _copy_assumption(assumption: dict) -> dict:
-    """Fresh fixed-shape copy of a declared assumption (never aliases the input, so the
-    derived object can be mutated downstream without touching the scenario)."""
+    """Fresh fixed-shape DEEP copy of a declared assumption (LOW-2). Every carried field is
+    deep-copied, so the copy NEVER aliases the input: a nested-mutable value/unit/rationale
+    (or key) in an applied OR unapplied assumption cannot be reached by mutating the derived
+    object, keeping derive() strictly read-only on the scenario document."""
     return {
-        "key": assumption.get("key"),
-        "assumption_type": assumption.get("assumption_type"),
-        "value": assumption.get("value"),
-        "unit": assumption.get("unit"),
-        "rationale": assumption.get("rationale"),
+        "key": copy.deepcopy(assumption.get("key")),
+        "assumption_type": copy.deepcopy(assumption.get("assumption_type")),
+        "value": copy.deepcopy(assumption.get("value")),
+        "unit": copy.deepcopy(assumption.get("unit")),
+        "rationale": copy.deepcopy(assumption.get("rationale")),
     }
 
 
@@ -158,18 +239,29 @@ def _base_document(scenario_document: dict) -> dict:
 
 def _not_derivable(scenario_document: dict, reason: str, canonical_cap: Any) -> dict:
     """Typed 'no derived range' outcome (no cap, or a declared factor failed closed). No
-    fabricated number; the canonical cap is transported VERBATIM (original value/type)."""
+    fabricated number; the canonical cap is transported strict-JSON-safe: a finite,
+    non-negative cap VERBATIM (original value/type), a malformed (NaN/+-Inf/negative/
+    float-overflowing) cap as ``null`` with an added reason (LOW-1)."""
+    safe_cap = _json_safe_cap(canonical_cap)
+    reasons = [reason]
+    if safe_cap is None and _is_number(canonical_cap):
+        reasons.append(
+            "MALFORMED CAP: the incoming canonical draft_zoning_floor_area_cap_sq_ft was "
+            "not a strict-JSON-safe finite, non-negative number (NaN, +/-Inf, negative, "
+            "or out of representable range); it is surfaced as null so the output never "
+            "emits a NaN/Inf/negative value."
+        )
     document = {
         "derived_kind": DerivedRangeKind.NOT_DERIVABLE,
         "derivable": False,
         "practical_usable_range": None,
-        "canonical_cap_sq_ft": canonical_cap,
+        "canonical_cap_sq_ft": safe_cap,
         "cap_label": scenario_document.get("cap_label"),
         "applied_factors": [],
         "unapplied_assumptions": [],
         "factor_product": None,
         "label": DERIVED_RANGE_LABEL,
-        "reasons": [reason],
+        "reasons": reasons,
         "not_derivable_reason": reason,
     }
     document.update(_base_document(scenario_document))
@@ -221,7 +313,8 @@ def derive_practical_usable_range(scenario_document: Any) -> dict:
             (
                 "NOT DERIVABLE: the scenario carries no positive canonical "
                 "draft_zoning_floor_area_cap_sq_ft "
-                f"(scenario_kind={kind!r}); no practical-usable-range is fabricated."
+                f"(scenario_kind={_bounded_echo(repr(kind))}); no practical-usable-range "
+                "is fabricated."
             ),
             cap_raw,
         )
@@ -271,8 +364,9 @@ def derive_practical_usable_range(scenario_document: Any) -> dict:
                 (
                     "FAIL-CLOSED: declared factor "
                     f"{factor_type!r} has an out-of-domain or non-finite value "
-                    f"{assumption.get('value')!r} (must be a finite number in (0, 1]); "
-                    "no range is derived and the canonical cap is untouched."
+                    f"{_bounded_echo(repr(assumption.get('value')))} (must be a finite "
+                    "number in (0, 1]); no range is derived and the canonical cap is "
+                    "untouched."
                 ),
                 cap_raw,
             )
@@ -370,7 +464,7 @@ def derive_practical_usable_range(scenario_document: Any) -> dict:
         reasons.append(
             "Declared assumption(s) not recognized as usable-range factors were "
             "surfaced but NOT applied: "
-            + ", ".join(str(a.get("key")) for a in unapplied)
+            + _bounded_key_list_echo(unapplied)
             + "."
         )
 

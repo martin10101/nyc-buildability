@@ -19,6 +19,7 @@ import pytest
 
 from app.scenario import (
     DERIVED_RANGE_LABEL,
+    DRAFT_CAP_LABEL,
     NOT_VERIFIED_DISCLAIMER,
     RECOGNIZED_FACTOR_TYPES,
     DerivedRangeKind,
@@ -605,3 +606,395 @@ def test_rt7_genuinely_unrepresentable_product_is_not_a_successful_zero():
     # Canonical cap transported verbatim + untouched.
     assert derived["canonical_cap_sq_ft"] == cap == 15000.0
     assert document["draft_zoning_floor_area_cap_sq_ft"] == 15000.0
+
+
+# ===========================================================================
+# M5-T006 hardening pack (G5 LOW-1 / LOW-2 / LOW-3 fast-follow). These prove
+# the defense-in-depth hardening added on top of the accepted M5-T005 derive:
+# strict-JSON-safe malformed-cap transport, no-alias assumption copies, and a
+# bounded reason echo. They map to the M5-T006 acceptance scenarios AS-1..AS-6.
+# ===========================================================================
+
+
+# --- LOW-1 (AS-1): a malformed cap is surfaced as null, output strict-JSON-safe. ---
+
+
+@pytest.mark.parametrize(
+    "bad_cap",
+    [
+        float("nan"),
+        float("inf"),
+        float("-inf"),
+        -5,  # negative int
+        -0.5,  # negative float
+        10**400,  # positive but not representable as a finite float
+    ],
+)
+def test_m5t006_low1_malformed_cap_nulled_and_json_safe(bad_cap):
+    """AS-1: a NaN/+-Inf/negative/float-overflowing cap injected DIRECTLY yields a
+    not_derivable outcome whose canonical_cap_sq_ft is null (never the malformed number);
+    json.dumps(out, allow_nan=False) succeeds and no NaN/Inf/negative number appears."""
+    document = _preliminary_document()
+    document["draft_zoning_floor_area_cap_sq_ft"] = bad_cap
+
+    derived = derive_practical_usable_range(document)
+
+    assert derived["derivable"] is False
+    assert derived["derived_kind"] == DerivedRangeKind.NOT_DERIVABLE
+    assert derived["practical_usable_range"] is None
+    # The malformed cap is surfaced as null, NOT transported verbatim.
+    assert derived["canonical_cap_sq_ft"] is None
+    # A reason explicitly notes the malformed cap.
+    assert any("MALFORMED CAP" in reason for reason in derived["reasons"])
+
+    # Strict-JSON-safe end to end: never raises; no NaN/Inf/negative number anywhere.
+    serialized = json.dumps(derived, allow_nan=False)
+    for number in _all_numbers(json.loads(serialized)):
+        assert math.isfinite(number)
+        assert number >= 0
+
+
+def test_m5t006_low1_direct_call_malformed_document_is_json_safe():
+    """AS-1: derive() called DIRECTLY (not via build_scenario) on a bare malformed
+    document is still strict-JSON-safe (proves the guarantee does not depend on the
+    trusted pipeline)."""
+    derived = derive_practical_usable_range(
+        {"draft_zoning_floor_area_cap_sq_ft": float("nan")}
+    )
+    assert derived["derivable"] is False
+    assert derived["canonical_cap_sq_ft"] is None
+    serialized = json.dumps(derived, allow_nan=False)
+    for number in _all_numbers(json.loads(serialized)):
+        assert math.isfinite(number) and number >= 0
+
+
+def test_m5t006_low1_zero_cap_transported_verbatim_not_nulled():
+    """AS-1 boundary: a zero cap is finite and non-negative, so it is NOT treated as
+    malformed — it is transported verbatim (only NaN/+-Inf/negative/overflow are nulled)."""
+    document = _preliminary_document()
+    document["draft_zoning_floor_area_cap_sq_ft"] = 0  # not positive -> not_derivable
+
+    derived = derive_practical_usable_range(document)
+
+    assert derived["derivable"] is False
+    assert derived["derived_kind"] == DerivedRangeKind.NOT_DERIVABLE
+    assert derived["canonical_cap_sq_ft"] == 0  # verbatim, not nulled
+    assert not any("MALFORMED CAP" in reason for reason in derived["reasons"])
+    json.dumps(derived, allow_nan=False)  # strict-JSON safe
+
+
+# --- AS-2: the DERIVED-path cap transport is UNCHANGED by the hardening. ---
+
+
+def test_m5t006_as2_derived_path_cap_transport_unchanged():
+    """AS-2: a normal positive-finite build_scenario cap still transports verbatim on the
+    DERIVED path; the no-assumptions passthrough is byte-identical to M5-T005 behaviour."""
+    document = _preliminary_document()
+    cap = document["draft_zoning_floor_area_cap_sq_ft"]
+    assert cap == 15000.0
+
+    derived = derive_practical_usable_range(document)
+    range_ = derived["practical_usable_range"]
+
+    assert derived["derived_kind"] == DerivedRangeKind.DERIVED
+    assert derived["canonical_cap_sq_ft"] == cap == 15000.0
+    assert json.dumps(derived["canonical_cap_sq_ft"]) == json.dumps(cap)
+    assert range_["min"] == range_["point"] == range_["max"] == cap
+
+
+# --- AS-2 full-output GOLDEN baseline: the ENTIRE DERIVED-path json.dumps output is
+# pinned to an explicit expected object, so the hardening is proven to leave the
+# ordinary DERIVED path byte-for-byte unchanged (substantiates the report's
+# "byte-equivalent to M5-T005" claim for inputs that do not trip the LOW-3 aggregate
+# echo bound). The long labels/disclaimer are the module's own published constants; the
+# derive-authored strings (note + reasons) are pinned verbatim. ---
+
+_GOLDEN_POINT_ESTIMATE_NOTE = (
+    "Point estimate: min == point == max. No uncertainty spread is invented; "
+    "the range widens only when explicit low/high uncertainty is declared."
+)
+_GOLDEN_DERIVED_REASON = (
+    "DERIVED (illustrative): practical-usable-range = canonical draft "
+    "zoning-floor-area cap x the explicitly-declared typed factor(s). "
+    "The canonical cap is transported verbatim and is never replaced by the "
+    "derived range. NOT a buildable envelope; NOT Verified."
+)
+_GOLDEN_NO_FACTOR_REASON = (
+    "No usable-range factor was declared; the range equals the raw cap "
+    "exactly (no utilization / efficiency / optimization default applied)."
+)
+
+
+def test_m5t006_as2_no_assumptions_full_output_golden_baseline():
+    """AS-2: the COMPLETE no-assumptions DERIVED output equals an explicit golden object,
+    byte-for-byte (json.dumps identical, including key order). Any drift in the DERIVED
+    path — structure, field order, labels, reasons, or the verbatim cap — fails this test,
+    substantiating full-output baseline byte-equivalence rather than a per-field spot check."""
+    document = _preliminary_document()
+    assert document["draft_zoning_floor_area_cap_sq_ft"] == 15000.0
+
+    derived = derive_practical_usable_range(document)
+
+    expected = {
+        "derived_kind": "derived_practical_usable_range",
+        "derivable": True,
+        "practical_usable_range": {
+            "min": 15000.0,
+            "point": 15000.0,
+            "max": 15000.0,
+            "unit": "square_feet",
+            "is_point_estimate": True,
+            "note": _GOLDEN_POINT_ESTIMATE_NOTE,
+        },
+        "canonical_cap_sq_ft": 15000.0,
+        "cap_label": DRAFT_CAP_LABEL,
+        "applied_factors": [],
+        "unapplied_assumptions": [],
+        "factor_product": 1.0,
+        "label": DERIVED_RANGE_LABEL,
+        "reasons": [_GOLDEN_DERIVED_REASON, _GOLDEN_NO_FACTOR_REASON],
+        "not_derivable_reason": None,
+        "coverage_status": "conditional",
+        "needs_review": True,
+        "not_verified_disclaimer": NOT_VERIFIED_DISCLAIMER,
+    }
+
+    assert derived == expected
+    # Byte-for-byte (this also pins key ORDER, which value-equality does not).
+    assert json.dumps(derived) == json.dumps(expected)
+
+
+def test_m5t006_as2_single_factor_full_output_golden_baseline():
+    """AS-2: the COMPLETE single-recognized-factor DERIVED output equals an explicit golden
+    object, byte-for-byte. Proves the factor-derivation path (cap x declared factor, applied
+    factor echoed, cap transported verbatim) is unchanged by the hardening."""
+    document = _preliminary_document(assumptions=[_factor("utilization_factor", 0.8)])
+
+    derived = derive_practical_usable_range(document)
+
+    expected = {
+        "derived_kind": "derived_practical_usable_range",
+        "derivable": True,
+        "practical_usable_range": {
+            "min": 12000.0,
+            "point": 12000.0,
+            "max": 12000.0,
+            "unit": "square_feet",
+            "is_point_estimate": True,
+            "note": _GOLDEN_POINT_ESTIMATE_NOTE,
+        },
+        "canonical_cap_sq_ft": 15000.0,
+        "cap_label": DRAFT_CAP_LABEL,
+        "applied_factors": [
+            {
+                "key": "utilization_factor",
+                "assumption_type": "utilization_factor",
+                "value": 0.8,
+                "unit": "ratio",
+                "rationale": "illustrative explicit assumption",
+            }
+        ],
+        "unapplied_assumptions": [],
+        "factor_product": 0.8,
+        "label": DERIVED_RANGE_LABEL,
+        "reasons": [_GOLDEN_DERIVED_REASON],
+        "not_derivable_reason": None,
+        "coverage_status": "conditional",
+        "needs_review": True,
+        "not_verified_disclaimer": NOT_VERIFIED_DISCLAIMER,
+    }
+
+    assert derived == expected
+    assert json.dumps(derived) == json.dumps(expected)
+
+
+# --- LOW-2 (AS-3): an unapplied nested-mutable value is never aliased to the input. ---
+
+
+def test_m5t006_low2_unapplied_nested_value_not_aliased():
+    """AS-3: an UNAPPLIED assumption carrying a nested-mutable value yields a derived
+    object whose value is a fresh copy (`is` is False); mutating the derived nested value
+    never reaches back into the scenario document."""
+    nested = {"nested": [1, 2, 3]}
+    document = _preliminary_document(
+        assumptions=[_factor("target_unit_count", nested, key="target_unit_count")]
+    )
+    snapshot = copy.deepcopy(document)
+
+    derived = derive_practical_usable_range(document)
+    unapplied = derived["unapplied_assumptions"][0]
+
+    # Not the same object as the input, but equal by value.
+    assert unapplied["value"] is not document["assumptions"][0]["value"]
+    assert unapplied["value"] == nested
+
+    # Mutating the derived nested value never changes the input scenario document.
+    unapplied["value"]["nested"].append(999)
+    assert document == snapshot
+    assert document["assumptions"][0]["value"] == {"nested": [1, 2, 3]}
+
+
+def test_m5t006_low2_deepcopy_protects_nested_rationale_direct_call():
+    """AS-3: derive() is contract-free and may be called DIRECTLY on a document whose
+    APPLIED factor carries a nested-mutable rationale (build_scenario coerces rationale to a
+    string, but a direct caller need not). _copy_assumption deep-copies every field, so
+    mutating the derived copy never reaches back into the input document."""
+    document = {
+        "draft_zoning_floor_area_cap_sq_ft": 15000.0,
+        "assumptions": [
+            {
+                "key": "utilization_factor",
+                "assumption_type": "utilization_factor",
+                "value": 0.8,
+                "unit": "ratio",
+                "rationale": {"note": ["explicit", "assumption"]},
+            }
+        ],
+    }
+    snapshot = copy.deepcopy(document)
+
+    derived = derive_practical_usable_range(document)
+    applied = derived["applied_factors"][0]
+
+    assert derived["derived_kind"] == DerivedRangeKind.DERIVED  # 0.8 is applied
+    # The derived copy is a fresh object, not aliased to the input's nested rationale.
+    assert applied["rationale"] is not document["assumptions"][0]["rationale"]
+    applied["rationale"]["note"].append("mutated")
+    assert document == snapshot  # input document never mutated
+
+
+# --- LOW-3 (AS-4): raw input echoed into a reason string is length-bounded. ---
+
+
+def test_m5t006_low3_scenario_kind_echo_is_bounded():
+    """AS-4: a pathological 100k-char scenario_kind echoed into the not_derivable reason is
+    truncated (with a marker); the reason does not grow unbounded."""
+    document = _preliminary_document()
+    document["draft_zoning_floor_area_cap_sq_ft"] = None  # -> not derivable, echoes kind
+    document["scenario_kind"] = "x" * 100_000
+
+    derived = derive_practical_usable_range(document)
+
+    joined = " ".join(derived["reasons"])
+    assert len(joined) < 2_000  # bounded, nowhere near 100k
+    assert "truncated" in joined
+
+
+def test_m5t006_low3_factor_value_echo_is_bounded():
+    """AS-4: a 100k-char non-numeric factor value echoed into the fail-closed reason is
+    truncated; the reason stays bounded."""
+    document = _preliminary_document()
+    document["assumptions"] = [_factor("utilization_factor", "0." + "9" * 100_000)]
+
+    derived = derive_practical_usable_range(document)
+
+    assert derived["derived_kind"] == DerivedRangeKind.INVALID_ASSUMPTION
+    joined = " ".join(derived["reasons"])
+    assert len(joined) < 2_000
+    assert "truncated" in joined
+
+
+def test_m5t006_low3_unapplied_key_echo_is_bounded():
+    """AS-4: a 100k-char unapplied-assumption key echoed into the surfaced-but-not-applied
+    reason is truncated; the reason stays bounded (the full key still lives in the data
+    field, which is legitimate — only the reason echo is bounded)."""
+    huge_key = "k" * 100_000
+    document = _preliminary_document(
+        assumptions=[_factor("target_unit_count", 0.5, key=huge_key)]
+    )
+
+    derived = derive_practical_usable_range(document)
+
+    assert derived["derivable"] is True  # unrecognized -> surfaced, range == cap
+    joined = " ".join(derived["reasons"])
+    assert len(joined) < 2_000
+    assert "truncated" in joined
+    # The untruncated key remains available in the structured data field.
+    assert derived["unapplied_assumptions"][0]["key"] == huge_key
+
+
+def test_m5t006_low3_many_unapplied_keys_reason_has_fixed_upper_bound():
+    """AS-4 (aggregate bound): MANY distinct unapplied-assumption keys must not bloat the
+    reason. Each key is already per-value length-bounded, but without an aggregate bound N
+    short keys would still concatenate into an ~N*len reason (a 20k-key list -> ~360k-char
+    reason). The aggregate echo caps the NUMBER of keys echoed with an explicit truncation
+    marker, so the COMPLETE reason has a FIXED upper bound independent of how many
+    assumptions are declared, while the full key set stays available in the structured
+    unapplied_assumptions data (only the reason echo is bounded)."""
+
+    def _derive_with(n):
+        keys = [f"unapplied-{i:06d}" for i in range(n)]
+        document = _preliminary_document(
+            assumptions=[_factor("target_unit_count", 0.5, key=k) for k in keys]
+        )
+        return derive_practical_usable_range(document), keys
+
+    fixed_reason_bound = 2_000  # nowhere near an unbounded N*len(key) echo (~360k for 20k)
+    small_n, large_n = 64, 20_000
+    small, small_keys = _derive_with(small_n)
+    large, large_keys = _derive_with(large_n)
+
+    for derived, keys in ((small, small_keys), (large, large_keys)):
+        assert derived["derivable"] is True  # unrecognized -> surfaced, range == cap
+        reason = next(r for r in derived["reasons"] if "surfaced but NOT applied" in r)
+        # The complete reason (and the whole joined reason block) is bounded.
+        assert len(reason) < fixed_reason_bound
+        assert len(" ".join(derived["reasons"])) < fixed_reason_bound
+        # An explicit truncation marker stands in for the omitted tail.
+        assert "truncated" in reason
+        assert "more unapplied key(s) truncated" in reason
+        # Not every key is echoed: the last-sorted key is omitted from the reason ...
+        assert keys[-1] not in reason
+        # ... but the FULL, untruncated key set remains in the structured data field.
+        assert [a["key"] for a in derived["unapplied_assumptions"]] == sorted(keys)
+
+    # The bound is FIXED, not merely small: a ~300x larger key count changes the reason
+    # length only by the digit-count of the remainder marker (a handful of chars).
+    small_reason = next(r for r in small["reasons"] if "surfaced but NOT applied" in r)
+    large_reason = next(r for r in large["reasons"] if "surfaced but NOT applied" in r)
+    assert abs(len(large_reason) - len(small_reason)) <= 8
+
+
+# --- AS-5 / AS-6: never-Verified preserved + determinism with the hardening. ---
+
+
+def test_m5t006_as5_never_verified_preserved_on_malformed_cap():
+    """AS-5: even a malformed-cap not_derivable outcome carries no 'verified' value and
+    preserves the needs_review + not_verified_disclaimer lineage."""
+    document = _preliminary_document()
+    document["coverage_status"] = "verified"
+    document["draft_zoning_floor_area_cap_sq_ft"] = float("-inf")
+
+    derived = derive_practical_usable_range(document)
+
+    assert "verified" not in _all_strings(derived)
+    assert derived["coverage_status"] == "conditional"
+    assert derived["needs_review"] is True
+    assert derived["not_verified_disclaimer"] == document["not_verified_disclaimer"]
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda d: d.__setitem__("draft_zoning_floor_area_cap_sq_ft", float("nan")),
+        lambda d: d.__setitem__("scenario_kind", "x" * 100_000),
+        lambda d: d.__setitem__(
+            "assumptions", [_factor("target_unit_count", 0.5, key="k" * 100_000)]
+        ),
+        lambda d: d.__setitem__(
+            "assumptions",
+            [_factor("target_unit_count", 0.5, key=f"u-{i:05d}") for i in range(5_000)],
+        ),
+    ],
+)
+def test_m5t006_as6_determinism_with_hardening(mutate):
+    """AS-6: identical (hardened) input -> byte-identical output across the hardened paths
+    (malformed cap, bounded kind echo, single bounded unapplied-key echo, and the aggregate
+    many-key bounded echo)."""
+    first = _preliminary_document()
+    mutate(first)
+    second = _preliminary_document()
+    mutate(second)
+    assert json.dumps(derive_practical_usable_range(first)) == json.dumps(
+        derive_practical_usable_range(second)
+    )
