@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-038",
+ "authority_note": "Producer (orchestrator) never verifies; control-plane-verifier / directive-compliance-verifier own rows. R001/R002/R006 verify against loop launch args + control-plane state; R003/R004 verify when the product task packet is created and bound; R007 on return.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

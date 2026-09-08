@@ -1,0 +1,91 @@
+{
+  "task_id": "M5-T003",
+  "title": "Scenario endpoint: GET /api/v1/properties/{bbl}/scenario \u2014 expose the built deterministic scenario builder (flag-gated, contract-validated, offline via injected PLUTO+substrate seams; no credentials)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Expose the already-built deterministic scenario builder (services/api/app/scenario/build_scenario) via a NEW read-only, flag-gated endpoint GET /api/v1/properties/{bbl}/scenario. Rebuild the property profile + rule-evaluation server-side over the SAME injected seams the accepted rule_evaluation endpoint uses (get_pluto_fetcher + get_spatial_substrate_provider; NO Supabase, NO Geoclient), run build_scenario, validate the body against scenario@1.0.0, and return the documented (HTTP status, analysis state) matrix mirroring services/api/app/api/v1/rule_evaluation.py. Flag-gated via a new INTERNAL_SCENARIO_ENABLED config (include_in_schema=False; flag-off returns a generic 404 indistinguishable from an unmounted path). Offline API + contract tests via committed official fixtures. Draft engineering (needs_review; scenario values surfaced verbatim from the trace, never recomputed; published acceptance deferred to G6/legal like the M4 chain).",
+  "business_reason": "Owner directive D-038 (2026-09-08): build the PRODUCT, not supervisor self-infrastructure. The scenario engine is fully built and tested but exposed NOWHERE; this endpoint makes it usable and unblocks the Compare (Step 3) UI - a demonstrable, no-credential product increment on the live candidate line.",
+  "inputs": [
+    "services/api/app/scenario/builder.py::build_scenario + contract.py::validate_scenario_document (READ-ONLY; the deterministic engine to expose)",
+    "services/api/app/api/v1/rule_evaluation.py (READ-ONLY template: seam injection, (status,state) matrix, flag+include_in_schema=False pattern, correlation id)",
+    "services/api/app/api/v1/properties.py + the get_pluto_fetcher / get_spatial_substrate_provider seams (READ-ONLY; the offline injection points)",
+    "packages/contracts/schemas/v1/scenario.schema.json (scenario@1.0.0) + app/_contract_schemas/v1/ bundle (READ-ONLY; validation target)",
+    "services/api/tests/api/test_rule_evaluation_api.py + committed official fixtures (READ-ONLY; the offline fixture harness to mirror)",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md, docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md \u00a713 (scenario contract; deterministic coverage; AI never up-labels)"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/scenario.py (GET /api/v1/properties/{bbl}/scenario, flag-gated, include_in_schema=False)",
+    "INTERNAL_SCENARIO_ENABLED flag in services/api/app/config.py + registration in services/api/app/main.py",
+    "services/api/tests/api/test_scenario_api.py (AS-1..AS-7)",
+    "project-control/reports/M5-T003-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/main.py",
+    "services/api/app/config.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "project-control/reports/M5-T003-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/properties.py",
+    "packages/contracts/",
+    "apps/web/",
+    "supabase/",
+    ".claude/",
+    "tools/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 confident R5 cap (fixture BBL 1000010100): 200 + a scenario@1.0.0 body whose draft residential FAR floor-area cap is surfaced VERBATIM from the rule_evaluation trace (test asserts surfaced value == trace value, never locally recomputed); cap_label present; coverage_matrix lists all 8 envelope families as MISSING; never labelled verified.",
+    "AS-2 split-lot / no-scenario fixture: yields the fail-closed no_scenario / professional-review outcome with a visible reason and share RANGES preserved (never collapsed); no cap surfaced.",
+    "AS-3 no-match BBL: returns the documented not-found (HTTP status, analysis state) pair that mirrors the rule_evaluation route's matrix; correlation id present; no invented body.",
+    "AS-4 upstream failure / malformed BBL: fail-closed to the documented error state; no partial or invented scenario is ever emitted.",
+    "AS-5 contract: every 200 scenario body passes validate_scenario_document (scenario@1.0.0); the full set of (HTTP status, analysis state) pairs equals the rule_evaluation route's documented matrix.",
+    "AS-6 flag-off: with INTERNAL_SCENARIO_ENABLED unset/false the route returns a generic 404 indistinguishable from an unmounted path (never a revealing 403/501) and is absent from the OpenAPI schema (include_in_schema=False).",
+    "AS-7 offline / no-credentials (proves D-038-R004): AS-1..AS-6 all run under the injected PLUTO fetcher + spatial-substrate seams over committed fixtures with NO network, NO Supabase, NO Geoclient - via FastAPI TestClient."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Surfacing a recomputed cap instead of the verbatim trace value (AS-1 guards this).",
+    "Flag-off leaking route existence via a distinguishable status (AS-6 guards this).",
+    "Accidentally editing the built scenario builder or the contract (forbidden_paths guard)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-08T05:30:58.984668+00:00",
+  "updated_at": "2026-09-08T05:34:02.191949+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T05:30:58.984668+00:00",
+  "path_notes": {
+    "services/api/app/api/v1/scenario.py": "NEW router; mirror rule_evaluation.py structure + (HTTP status, analysis state) matrix + correlation id",
+    "services/api/app/main.py": "register the scenario router next to rule_evaluation, guarded by the flag; no other change",
+    "services/api/app/config.py": "add INTERNAL_SCENARIO_ENABLED (mirror INTERNAL_RULE_EVAL_ENABLED; default off/fail-safe)",
+    "services/api/tests/api/test_scenario_api.py": "NEW; mirror tests/api/test_rule_evaluation_api.py; reuse _pair/_substrate fixtures; AS-1..AS-7",
+    "forbidden:services/api/app/scenario/": "builder/contract/models are BUILT+TESTED; consume read-only import only, NEVER modify",
+    "forbidden:packages/contracts/": "consume scenario.schema.json read-only; no contract change this task",
+    "forbidden:apps/web/": "Compare UI is the SEPARATE next task; backend endpoint + tests only here"
+  },
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t003"
+}

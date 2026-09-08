@@ -525,7 +525,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-037-reviewer-proportionality/manifest.json"
+  },
+  {
+   "directive_id": "D-038",
+   "slug": "build-product-not-self",
+   "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT - no more building itself (supervisor self-infrastructure). Skip credentials this session; pivot the loop onto unblocked product engineering. Gates and holds unchanged.",
+   "status": "active",
+   "issued_at": "2026-09-08",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-038-build-product-not-self/manifest.json"
   }
  ],
- "updated_at": "2026-09-07T18:32:49+00:00"
+ "updated_at": "2026-09-08T05:24:55+00:00"
 }

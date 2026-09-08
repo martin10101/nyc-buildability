@@ -1,0 +1,66 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-038",
+ "version": 1,
+ "slug": "build-product-not-self",
+ "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT (software) \u2014 no more building itself (supervisor self-infrastructure). This session: skip credentials (owner declined Supabase B-001 / Geoclient B-004), pivot the loop OFF the M0 self-tooling line and onto unblocked product engineering (UI screens, deterministic rule families, scenario/optimization). Gates and holds unchanged.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-08",
+ "captured_at": "2026-09-08T05:14:41+00:00",
+ "created_at": "2026-09-08T05:14:41+00:00",
+ "updated_at": "2026-09-08T05:27:58+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "ebe4eaf63ef5d04120608230a5147d97ad658e3a",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-08T05:14:41+00:00",
+   "content_digest_sha256": "a237dd50672e4745aff5dc5b19cf79506252a0ff0742184576f99b29f7962212"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "engineering",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "keep the loop alive nonstop; contract ONE unblocked product task packet (G0) that needs no Supabase/Geoclient (UI screen, deterministic rule family, or scenario/optimization increment); stop the current M0-T153 self-infra run cleanly; relaunch the loop DETACHED from wt-controller-src pointed at the product packet; de-prioritize M0-T155 self-infra behind product",
+  "excluded": "deleting/reverting self-infra work; skipping gates or self-accepting; pushing/merging (incl. PR #241); activating R595 / continuous mode / autostart; installing new supervisor code without R247 recert; launching the supervisor from ctl24-cwd; lifting the expansion-planning hold; requiring credentials the owner declined this session",
+  "session": "2026-09-08 onward"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-08T05:14:41+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Verbatim owner prompt + two AskUserQuestion decisions (skip credentials; build unblocked product). Read-only diagnosis verified: product foundation dammed behind owner-only credentials (B-001 Supabase, B-004 Geoclient) + legal sign-off (B-010/G6), which is WHY the loop turned to M0 self-infra (M0-T036..T155). Pivot = orchestrator contracts a no-credential product task and re-points the one-task-per-launch loop. Specific product task id to be bound on packet creation."
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner issued the directive and selected both decisions, 2026-09-08."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-038-R001",
+  "D-038-R002",
+  "D-038-R003",
+  "D-038-R004",
+  "D-038-R005",
+  "D-038-R006",
+  "D-038-R007"
+ ],
+ "requirements_content_digest_sha256": "2a2ae1868ba49d2de7ad21546de1538343630fcc2325b56369f007aac721404e"
+}
