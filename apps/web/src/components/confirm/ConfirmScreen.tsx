@@ -377,11 +377,18 @@ function ConfirmCard({ profile }: { profile: PropertyProfile }) {
       <section className="card next-action" data-testid="confirm-next-action">
         <h2 className="section-title">Next step</h2>
         <p className="section-note">
-          Rule evaluation and scenario comparison (steps 3–4) arrive with
-          the rules and scenario milestones; this build does not pretend to
-          run them.
+          Continue to the preliminary scenario comparison (Step 3) for this
+          property. It is draft engineering only — never a Verified
+          determination — and this build does not pretend otherwise.
         </p>
-        <Link className="primary-button next-action-link" href="/property">
+        <Link
+          className="primary-button next-action-link"
+          href={`/property/compare?bbl=${encodeURIComponent(profile.identity.bbl)}`}
+          data-testid="confirm-next-compare"
+        >
+          Compare preliminary scenario
+        </Link>{" "}
+        <Link className="next-action-link" href="/property">
           Back to property lookup
         </Link>
       </section>
