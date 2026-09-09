@@ -47,6 +47,13 @@ from .ranking import (
     RankingObjective,
     rank_scenario_assumption_sets,
 )
+from .sensitivity import (
+    SENSITIVITY_LABEL,
+    SENSITIVITY_RESPONSE_METRIC,
+    SensitivityKind,
+    SensitivityVariable,
+    analyze_scenario_sensitivity,
+)
 
 __all__ = [
     "CAP_OUTPUT_NAME",
@@ -59,10 +66,15 @@ __all__ = [
     "RANKING_LABEL",
     "RECOGNIZED_FACTOR_TYPES",
     "SCENARIO_CONTRACT_VERSION",
+    "SENSITIVITY_LABEL",
+    "SENSITIVITY_RESPONSE_METRIC",
     "RankingKind",
     "RankingObjective",
     "ScenarioContractError",
     "ScenarioKind",
+    "SensitivityKind",
+    "SensitivityVariable",
+    "analyze_scenario_sensitivity",
     "assert_scenario_not_verified",
     "build_scenario",
     "derive_practical_usable_range",
