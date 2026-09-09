@@ -1,0 +1,16 @@
+{
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/breakeven.py: new M5 backend product engine find_scenario_threshold — deterministic scenario break-even/threshold finder over an explicit bounded candidate domain; scenario/optimization-engine PRODUCT domain (NOT M0 self-infra); additive facade export in services/api/app/scenario/__init__.py",
+      "Contracted G0 packet project-control/gates/M5-T011-G0.json result=PASS; required_gates G0/G1/G3/G4/G5 all PASS at reviewed_sha 14ae88cc (reviewers code-reviewer G1, qa-engineer G3, ci-evidence-verifier recorded as code-reviewer G4, security-reviewer G5 — each independent != producer scenario-optimization-engineer)",
+      "AS-1..AS-7 map to real passing tests in services/api/tests/scenario/test_scenario_breakeven.py; reproduced python -m pytest services/api/tests/scenario -> 388 passed (65 breakeven + 323 pre-existing, 0 regress); python tools/modularity_check.py --check EXIT 0",
+      "Canonical cap transported VERBATIM from derive_practical_usable_range (consumed READ-ONLY); crossing reported as the HONEST grid bracket (no invented interpolated crossing); monotonicity-honest (typed non_monotonic flag on multiple crossings); never Verified (NOT_VERIFIED_DISCLAIMER, coverage capped to conditional); DCV D-038-R003 PASS at 14ae88cc (project-control/reports/M5-T011-DCV-rereview.md)",
+      "G5 security FAIL at bbf3267f (uncaught RecursionError on ~500-deep nested candidate via redundant copy.deepcopy) was FIXED (14ae88cc: deepcopy removed, echo built from fresh _json_safe output; import copy removed) and re-gated PASS; RED/GREEN test added (test_as5_deeply_nested_candidate_is_bounded_and_json_safe)"
+    ],
+    "D-038-R004": [
+      "breakeven.py imports only stdlib (json, math, enum, typing) + .derive + .constants + ._json_safety (import copy removed in the fix); negative grep supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|subprocess over the changed files (module + transitive) -> none in the call path",
+      "Pure dict->dict function: no persistence write, no network, no address->BBL resolution; derive consumed READ-ONLY, input scenario document not mutated or aliased into output (test_as7_inputs_are_byte_unchanged_and_not_aliased)",
+      "Offline proof: socket-blocked run completes (test_as7_runs_fully_offline_socket_blocked); deeply-nested candidates yield a typed max_depth-bounded fail-closed row and json.dumps(result, allow_nan=False) never raises; full suite 388 passed on committed fixtures; packet dependencies=[M5-T010] only; no deferred credentials; DCV D-038-R004 PASS at 14ae88cc"
+    ]
+  }
+}

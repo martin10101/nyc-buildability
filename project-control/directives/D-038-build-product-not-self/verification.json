@@ -314,6 +314,50 @@
      "reviewed_sha": "ea08f504ea4b52cc93062a74a9c125e5133c4b7b"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T011",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "14ae88cc82d4630b8f9d9c22b2ca8857532c48f4",
+   "reviewed_manifest_sha256": "d3c0697ae50cec879a0110e3e863601bb67ac44e1f42515d6be123e8652bee41",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-09T06:20:00+00:00",
+   "note": "Independent DCV RE-VERIFIED at HEAD 14ae88cc after a G5 security rework (candidate fast-forwarded from task/M5-T011-breakeven; wt-m5t011 clean, not pushed). Verifier (directive-compliance-verifier) != producer (scenario-optimization-engineer, build loop run persistent-local-27) != orchestrator. HISTORY: producer output committed bbf3267f (loop closed on the consecutive_revision_loops circuit breaker at cycle 4 - the normal astra-demanding safety pause, NOT a crash; work complete). Full gate wave at bbf3267f = G1/G3/G4 PASS + DCV PASS, but G5 FAIL (BLOCKING-1: breakeven.py:344 copy.deepcopy(generated) raised an uncaught RecursionError on a ~500-deep nested candidate, violating AS-4 'never an unhandled raise' / AS-5 'json.dumps never raises for ANY input'). Producer (scenario-optimization-engineer, direct dispatch) applied G5's exact remediation: removed the redundant recursive deepcopy (echo built directly from the already-fresh _json_safe output) + removed the now-unused import copy; no sys.setrecursionlimit; added RED/GREEN deep-nesting test coverage (test_as5_deeply_nested_candidate_is_bounded_and_json_safe, dict/list 600 & 5000 deep - RED: RecursionError escapes pre-fix; GREEN: typed fail-closed row post-fix). Fix committed 14ae88cc (exactly 2 files: breakeven.py, test_scenario_breakeven.py; +73/-3; no forbidden path). ALL gates RE-GATED at 14ae88cc: G5 PASS (re-review confirmed the RecursionError is gone at 500-10000 depth, no new defect), G1/G3/G4 delta-re-attested PASS, DCV PASS. evaluate: applicable set = exactly {R003,R004}; directive_refs D-038:ALL; requirements_content_digest 37035a7d unchanged; source digest unchanged; locked_requirement_ids unchanged; validate_directive_compliance --check EXIT 0. 388 scenario tests (65 breakeven incl 4 new deep-nesting + 323 pre-existing UNCHANGED, 0 regress) Py3.11.9 incl a socket-blocked offline run; modularity_check --check EXIT 0 (breakeven.py 776 wc-l = non-blocking review_signal warn, single cohesive responsibility). Non-blocking backlog: G3 LOW-1 (non_monotonic >=2 boundary not pinned by a 2-crossing test), G5 LOW-2 (whole-result belt-and-suspenders re-sanitize), G1/G3 LOW (file-size watch, AS-3 substring check), and the producer report M5-T011-producer-report.md is stale by exactly the two-line fix (DCV: no code<->report drift beyond the fix; refresh recommended in a follow-up). DRAFT engineering; published/G6 out of scope (M5-T003/T005/T006/T007/T008/T009/T010 precedent).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/scenario/breakeven.py:611 find_scenario_threshold - deterministic OFFLINE scenario break-even/threshold finder, M5 backend PRODUCT domain (NOT M0 self-infra); additive facade export __init__.py (THRESHOLD_LABEL, ThresholdKind, ThresholdResponseMetric, ThresholdVariable, find_scenario_threshold); consumes derive READ-ONLY",
+      "packet M5-T011.json product-only allowed_paths, required_gates G0/G1/G3/G4/G5, acceptance AS-1..AS-7; G0 intake project-control/gates/M5-T011-G0.json result=PASS; all G1/G3/G4/G5 PASS at 14ae88cc (reviewers != producer)",
+      "AS-1..AS-7 map to real tests in services/api/tests/scenario/test_scenario_breakeven.py (test_as1_*..test_as7_* + deep-nesting regression, 65 items); reproduced python -m pytest services/api/tests/scenario -> 388 passed (65 breakeven + 323 pre-existing, 0 regress); modularity_check --check EXIT 0",
+      "crossing reported as the HONEST grid bracket (lower/upper candidate + metric values + direction), no invented interpolated crossing (midpoint is is_estimate/verified:false); monotonicity-honest (typed non_monotonic flag, first crossing reported); canonical cap transported VERBATIM; NOT_VERIFIED_DISCLAIMER stamped; coverage verified->conditional"
+     ],
+     "note": "M5-T011 is genuine PRODUCT/optimization-engine engineering (deterministic break-even/threshold finder completing the derive/sensitivity/ranking/comparison toolkit), a PASS-G0 packet with executable, passing acceptance scenarios AS-1..AS-7; G5 BLOCKING-1 fixed + re-gated PASS.",
+     "verified_at": "2026-09-09T06:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "14ae88cc82d4630b8f9d9c22b2ca8857532c48f4"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "breakeven.py imports (:36-49) = __future__ annotations, json, math, enum.Enum, typing.Any, ._json_safety (_json_safe), .constants (NOT_VERIFIED_DISCLAIMER), .derive (RECOGNIZED_FACTOR_TYPES, DerivedRangeKind, derive_practical_usable_range) - no network/storage/env/file/subprocess (import copy removed in the fix)",
+      "negative grep supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|subprocess|import os over breakeven.py + transitive deps (derive/_json_safety/constants) -> only matches breakeven.py:32 (docstring) + derive.py:43 (pre-existing stdlib copy, offline-irrelevant); no network/storage in the call path",
+      "pure dict->dict; derive consumed READ-ONLY (input byte-unchanged, not aliased); offline: socket-blocked run completes, deeply-nested candidate yields typed max_depth-bounded fail-closed row + json.dumps(allow_nan=False) never raises; full suite 388 passed on fixtures; packet dependencies=[M5-T010] only; no deferred credentials"
+     ],
+     "note": "breakeven.py stays a pure, deterministic, fully offline function; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only. Confirmed by import inspection, negative grep (module + transitive), and a socket-blocked run.",
+     "verified_at": "2026-09-09T06:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "14ae88cc82d4630b8f9d9c22b2ca8857532c48f4"
+    }
+   ]
   }
  ]
 }
