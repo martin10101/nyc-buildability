@@ -62,6 +62,7 @@ import math
 from enum import Enum
 from typing import Any
 
+from ._json_safety import _json_safe, _unsafe_marker
 from .constants import NOT_VERIFIED_DISCLAIMER
 from .derive import DerivedRangeKind, derive_practical_usable_range
 
@@ -167,158 +168,6 @@ def _positive_finite_float(value: Any) -> float | None:
     if result is None or result <= 0.0:
         return None
     return result
-
-
-# --- Strict-JSON-safety sanitizer for emitted echoes (fail-closed on malformed values) ---
-
-
-#: Max characters of a malformed value's repr surfaced in its typed placeholder marker, so a
-#: pathological value (e.g. a 400-digit int) cannot bloat the output.
-_UNSAFE_REPR_LIMIT = 120
-
-
-def _bounded_repr(rendered: str) -> str:
-    """An already-rendered repr truncated to a bounded length with an explicit marker."""
-    if len(rendered) <= _UNSAFE_REPR_LIMIT:
-        return rendered
-    return rendered[:_UNSAFE_REPR_LIMIT] + "...(truncated)"
-
-
-#: Max bit length of an integer whose EXACT decimal repr is small and safe to surface. A larger
-#: integer is described by magnitude (sign + bit length) instead of decimal-expanded, because a
-#: full decimal expansion is both unbounded work and, past CPython's int->str conversion ceiling
-#: (4300 digits by default), a ``ValueError`` - so an UNGUARDED ``repr`` of an arbitrarily large
-#: integer would raise and crash the sanitizer. 256 bits is ~77 decimal digits: comfortably under
-#: ``_UNSAFE_REPR_LIMIT`` and vastly under the interpreter's conversion ceiling.
-_INT_DECIMAL_SAFE_BITS = 256
-
-
-def _safe_scalar_repr(value: Any) -> str:
-    """A deterministic, bounded textual rendering of ``value`` that NEVER triggers CPython's
-    integer string-conversion limit and NEVER embeds a non-deterministic object address:
-
-    * ``bool`` / ``float`` -> ``repr`` (always short and safe: ``True``, ``nan``, ``-0.5`` ...).
-    * ``int`` -> its exact decimal ``repr`` when small (``bit_length <= _INT_DECIMAL_SAFE_BITS``),
-      else a magnitude descriptor ``int(sign=..., bit_length=...)`` - so an arbitrarily large
-      integer is DESCRIBED, never decimal-expanded (which would be unbounded work and, past the
-      interpreter's ceiling, a ``ValueError``).
-    * anything else -> ``<TypeName>`` (its type only; NEVER ``repr``, whose default for an
-      arbitrary object embeds a transient id and would break byte-identical determinism)."""
-    if isinstance(value, bool):
-        return repr(value)
-    if isinstance(value, int):
-        if value.bit_length() <= _INT_DECIMAL_SAFE_BITS:
-            return repr(value)
-        return f"int(sign={'-' if value < 0 else '+'}, bit_length={value.bit_length()})"
-    if isinstance(value, float):
-        return repr(value)
-    return f"<{type(value).__name__}>"
-
-
-def _unsafe_marker(kind: str, value: Any) -> dict:
-    """A TYPED, strict-JSON-safe placeholder standing in for a malformed emitted value, so a
-    caller's malformed assumption value is surfaced HONESTLY (typed) yet never echoed RAW.
-    Numeric kinds carry a deterministic, bounded, decimal-repr-SAFE rendering
-    (:func:`_safe_scalar_repr`, so an arbitrarily large integer is described by magnitude rather
-    than decimal-expanded and can never raise CPython's int->str limit); an ``unsupported``
-    object carries only its (deterministic) type name - never its ``repr``, which can embed a
-    non-deterministic object id and break byte-identical determinism."""
-    marker = {
-        "unsafe_value_removed": True,
-        "unsafe_kind": kind,
-        "unsafe_value_type": type(value).__name__,
-    }
-    if kind != "unsupported":
-        marker["unsafe_value_repr"] = _bounded_repr(_safe_scalar_repr(value))
-    return marker
-
-
-#: Reserved prefix for the synthesized replacement of a dict key that is NOT strict-JSON-safe
-#: (an arbitrary object, or a non-finite / float-overflowing numeric key). The token carries a
-#: deterministic bounded descriptor of the rejected key - never an object address - so the
-#: emitted output is byte-identical run-to-run; :func:`_json_safe_mapping` positionally
-#: de-collides two distinct rejected keys that render to the same token.
-_UNSAFE_KEY_TOKEN_PREFIX = "__unsafe_key__"
-
-
-def _unsafe_key_token(key: Any) -> str:
-    """Deterministic, strict-JSON-safe replacement string for a dict key that cannot be a JSON
-    object key. Built from :func:`_safe_scalar_repr`, so an arbitrary object surfaces its TYPE
-    only (never its address-bearing ``repr``) and an arbitrarily large integer surfaces its
-    MAGNITUDE (never an unguarded decimal expansion) - the token neither raises nor varies
-    run-to-run."""
-    return f"{_UNSAFE_KEY_TOKEN_PREFIX}:{_bounded_repr(_safe_scalar_repr(key))}"
-
-
-def _safe_key(key: Any) -> Any:
-    """A dict key guaranteed safe for ``json.dumps(..., allow_nan=False)``: a
-    ``str``/``None``/``bool`` verbatim; a FINITE ``int``/``float`` verbatim (json coerces the
-    latter to a string key); a non-finite / float-overflowing numeric key or ANY other type ->
-    a deterministic typed :func:`_unsafe_key_token`. An arbitrary object key is therefore NEVER
-    rendered through its address-bearing ``repr`` (which would leak a transient id and break
-    byte-identical determinism) and an arbitrarily large integer key is NEVER decimal-expanded
-    (which would raise past CPython's int->str ceiling), so no key can make ``json.dumps``
-    raise or the output non-deterministic."""
-    if isinstance(key, str) or key is None or isinstance(key, bool):
-        return key
-    if isinstance(key, int | float):
-        try:
-            as_float = float(key)
-        except (OverflowError, ValueError):
-            return _unsafe_key_token(key)
-        return key if math.isfinite(as_float) else _unsafe_key_token(key)
-    return _unsafe_key_token(key)
-
-
-def _json_safe(value: Any) -> Any:
-    """A recursive, strict-JSON-safe rendering of ``value`` (insertion order preserved): a
-    NaN/+-Inf/negative/float-overflowing number or a non-JSON-serializable object becomes a
-    typed :func:`_unsafe_marker`; ``dict``/``list``/``tuple`` are walked (tuples emit as
-    lists); a finite non-negative number, ``bool``, ``None`` and ``str`` pass through. The
-    result contains no NaN/Inf/negative number and no non-serializable value, so
-    ``json.dumps(result, allow_nan=False)`` never raises. Never mutates ``value`` (it builds
-    fresh containers), so the caller's input stays byte-unchanged."""
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, int | float):
-        try:
-            as_float = float(value)
-        except (OverflowError, ValueError):
-            return _unsafe_marker("overflow", value)
-        if math.isnan(as_float):
-            return _unsafe_marker("nan", value)
-        if math.isinf(as_float):
-            return _unsafe_marker("infinity", value)
-        if as_float < 0.0:
-            return _unsafe_marker("negative", value)
-        return value
-    if value is None or isinstance(value, str):
-        return value
-    if isinstance(value, dict):
-        return _json_safe_mapping(value)
-    if isinstance(value, list | tuple):
-        return [_json_safe(item) for item in value]
-    return _unsafe_marker("unsupported", value)
-
-
-def _json_safe_mapping(value: dict) -> dict:
-    """Strict-JSON-safe rendering of a mapping (insertion order preserved): each key is made
-    JSON-safe by :func:`_safe_key` and each value recursively by :func:`_json_safe`. Two
-    DISTINCT source keys that collapse to the SAME safe key (e.g. two different rejected objects
-    that both render to one typed token) are de-collided with a deterministic ``#N`` positional
-    suffix, so a rejected key never SILENTLY overwrites another; insertion order is deterministic
-    so the suffixes are deterministic too. Never raises (keys are already safe)."""
-    out: dict = {}
-    for key, item in value.items():
-        safe_key = _safe_key(key)
-        if safe_key in out:
-            base = safe_key if isinstance(safe_key, str) else _unsafe_key_token(key)
-            suffix = 1
-            while f"{base}#{suffix}" in out:
-                suffix += 1
-            safe_key = f"{base}#{suffix}"
-        out[safe_key] = _json_safe(item)
-    return out
 
 
 # --- Never-Verified lineage carried onto every outcome ---
@@ -436,7 +285,32 @@ def _build_candidate(
     assumption VALUE (NaN/+-Inf/negative/float-overflowing/non-serializable) is surfaced as a
     typed marker and never echoed raw. The returned core is therefore already strict-JSON-safe
     (and its ``assumption_set`` is exactly the bytes the tie-break key will order on)."""
-    echo = copy.deepcopy(assumption_set)
+    try:
+        echo = copy.deepcopy(assumption_set)
+    except Exception:
+        # L1 defense-in-depth: a non-deepcopyable assumption value (e.g. a lock or generator,
+        # whose deepcopy raises TypeError/RuntimeError) fails CLOSED to a typed not-scorable
+        # candidate instead of crashing the ranking. The echo is a typed, address-free marker
+        # (never the raw value); derive is not called (it needs a usable copy). Strict-JSON-safe
+        # and deterministic like every other candidate.
+        return _json_safe(
+            {
+                "objective": objective.value,
+                "objective_label": _OBJECTIVE_LABELS[objective],
+                "assumption_set": _unsafe_marker("undeepcopyable", assumption_set),
+                "scorable": False,
+                "score": None,
+                "score_components": None,
+                "derived_kind": None,
+                "not_scorable_reason": (
+                    "The assumption-set could not be safely copied (a non-deepcopyable value, "
+                    "e.g. a lock or generator); flagged not-scorable and ranked LAST "
+                    "(fail-closed, no fabricated score)."
+                ),
+                "label": CANDIDATE_LABEL,
+                "derived": None,
+            }
+        )
     candidate_document = {**scenario_document, "assumptions": echo}
     derived = derive_practical_usable_range(candidate_document)
 

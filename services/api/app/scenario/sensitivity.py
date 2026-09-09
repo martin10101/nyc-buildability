@@ -47,11 +47,11 @@ Hard boundaries (AI-boundary + honesty; also enforced by
   aliasing - the response echoes DEEP COPIES, so the caller's inputs are byte-unchanged after
   analysis.
 
-NOTE ON THE JSON-SAFETY SANITIZER: the strict-JSON-safety helpers below intentionally mirror
-those in the sibling ``ranking`` module. This task's allowed paths are ``sensitivity.py`` + its
-export + its test only, so a shared ``scenario/_json_safety.py`` cannot be introduced here; a
-future decomposition task should extract the common sanitizer. Keeping a self-contained copy is
-preferred to importing another module's private helpers.
+NOTE ON THE JSON-SAFETY SANITIZER: the strict-JSON-safety sanitizer this module applies to its
+emitted echoes lives in the shared internal module ``scenario/_json_safety.py`` (extracted from
+the copies formerly duplicated here and in ``ranking`` - M5-T009). This module imports
+:func:`app.scenario._json_safety._json_safe`; the rendering is byte-identical to the former
+in-module copy for every JSON-representable input.
 """
 
 from __future__ import annotations
@@ -62,6 +62,7 @@ import math
 from enum import Enum
 from typing import Any
 
+from ._json_safety import _json_safe
 from .constants import NOT_VERIFIED_DISCLAIMER
 from .derive import (
     RECOGNIZED_FACTOR_TYPES,
@@ -199,133 +200,6 @@ def _positive_finite_float(value: Any) -> float | None:
     return result
 
 
-# --- Strict-JSON-safety sanitizer for emitted echoes (fail-closed on malformed values). ---
-# Mirrors ranking.py's sanitizer (see the module note); scope forbids a shared module here.
-
-
-#: Max characters of a malformed value's repr surfaced in its typed placeholder marker.
-_UNSAFE_REPR_LIMIT = 120
-
-#: Max bit length of an integer whose EXACT decimal repr is small and safe to surface. A larger
-#: integer is described by magnitude, because a full decimal expansion is unbounded work and,
-#: past CPython's int->str ceiling (4300 digits), raises ``ValueError`` - which would crash an
-#: unguarded ``repr``. 256 bits is ~77 decimal digits: under ``_UNSAFE_REPR_LIMIT`` and far
-#: under the interpreter's ceiling.
-_INT_DECIMAL_SAFE_BITS = 256
-
-#: Reserved prefix for the deterministic replacement of a dict key that is not strict-JSON-safe.
-_UNSAFE_KEY_TOKEN_PREFIX = "__unsafe_key__"
-
-
-def _bounded_repr(rendered: str) -> str:
-    """An already-rendered repr truncated to a bounded length with an explicit marker."""
-    if len(rendered) <= _UNSAFE_REPR_LIMIT:
-        return rendered
-    return rendered[:_UNSAFE_REPR_LIMIT] + "...(truncated)"
-
-
-def _safe_scalar_repr(value: Any) -> str:
-    """A deterministic, bounded textual rendering of ``value`` that NEVER triggers CPython's
-    integer string-conversion limit and NEVER embeds a non-deterministic object address:
-    ``bool``/``float`` -> ``repr``; ``int`` -> exact decimal ``repr`` when small, else a magnitude
-    descriptor; anything else -> ``<TypeName>`` (its type only, never an address-bearing repr)."""
-    if isinstance(value, bool):
-        return repr(value)
-    if isinstance(value, int):
-        if value.bit_length() <= _INT_DECIMAL_SAFE_BITS:
-            return repr(value)
-        return f"int(sign={'-' if value < 0 else '+'}, bit_length={value.bit_length()})"
-    if isinstance(value, float):
-        return repr(value)
-    return f"<{type(value).__name__}>"
-
-
-def _unsafe_marker(kind: str, value: Any) -> dict:
-    """A TYPED, strict-JSON-safe placeholder standing in for a malformed emitted value, so a
-    caller's malformed value is surfaced HONESTLY (typed) yet never echoed RAW. Numeric kinds
-    carry a deterministic, bounded, decimal-repr-SAFE rendering; an ``unsupported`` object carries
-    only its (deterministic) type name - never its address-bearing ``repr``."""
-    marker = {
-        "unsafe_value_removed": True,
-        "unsafe_kind": kind,
-        "unsafe_value_type": type(value).__name__,
-    }
-    if kind != "unsupported":
-        marker["unsafe_value_repr"] = _bounded_repr(_safe_scalar_repr(value))
-    return marker
-
-
-def _unsafe_key_token(key: Any) -> str:
-    """Deterministic, strict-JSON-safe replacement string for a dict key that cannot be a JSON
-    object key. Built from :func:`_safe_scalar_repr`, so an arbitrary object surfaces its TYPE
-    only and a huge integer surfaces its MAGNITUDE - the token neither raises nor varies
-    run-to-run."""
-    return f"{_UNSAFE_KEY_TOKEN_PREFIX}:{_bounded_repr(_safe_scalar_repr(key))}"
-
-
-def _safe_key(key: Any) -> Any:
-    """A dict key guaranteed safe for ``json.dumps(..., allow_nan=False)``: a ``str``/``None``/
-    ``bool`` verbatim; a FINITE ``int``/``float`` verbatim; a non-finite/float-overflowing numeric
-    key or ANY other type -> a deterministic typed :func:`_unsafe_key_token`."""
-    if isinstance(key, str) or key is None or isinstance(key, bool):
-        return key
-    if isinstance(key, int | float):
-        try:
-            as_float = float(key)
-        except (OverflowError, ValueError):
-            return _unsafe_key_token(key)
-        return key if math.isfinite(as_float) else _unsafe_key_token(key)
-    return _unsafe_key_token(key)
-
-
-def _json_safe(value: Any) -> Any:
-    """A recursive, strict-JSON-safe rendering of ``value`` (insertion order preserved): a
-    NaN/+-Inf/negative/float-overflowing number or a non-JSON-serializable object becomes a typed
-    :func:`_unsafe_marker`; ``dict``/``list``/``tuple`` are walked (tuples emit as lists); a finite
-    non-negative number, ``bool``, ``None`` and ``str`` pass through. The result contains no
-    NaN/Inf/negative number and no non-serializable value, so ``json.dumps(result,
-    allow_nan=False)`` never raises. Never mutates ``value`` (it builds fresh containers)."""
-    if isinstance(value, bool):
-        return value
-    if isinstance(value, int | float):
-        try:
-            as_float = float(value)
-        except (OverflowError, ValueError):
-            return _unsafe_marker("overflow", value)
-        if math.isnan(as_float):
-            return _unsafe_marker("nan", value)
-        if math.isinf(as_float):
-            return _unsafe_marker("infinity", value)
-        if as_float < 0.0:
-            return _unsafe_marker("negative", value)
-        return value
-    if value is None or isinstance(value, str):
-        return value
-    if isinstance(value, dict):
-        return _json_safe_mapping(value)
-    if isinstance(value, list | tuple):
-        return [_json_safe(item) for item in value]
-    return _unsafe_marker("unsupported", value)
-
-
-def _json_safe_mapping(value: dict) -> dict:
-    """Strict-JSON-safe rendering of a mapping (insertion order preserved): each key is made
-    JSON-safe by :func:`_safe_key` and each value recursively by :func:`_json_safe`. Two DISTINCT
-    source keys that collapse to the SAME safe key are de-collided with a deterministic ``#N``
-    positional suffix, so a rejected key never SILENTLY overwrites another."""
-    out: dict = {}
-    for key, item in value.items():
-        safe_key = _safe_key(key)
-        if safe_key in out:
-            base = safe_key if isinstance(safe_key, str) else _unsafe_key_token(key)
-            suffix = 1
-            while f"{base}#{suffix}" in out:
-                suffix += 1
-            safe_key = f"{base}#{suffix}"
-        out[safe_key] = _json_safe(item)
-    return out
-
-
 # --- Never-Verified lineage carried onto every outcome ---
 
 
@@ -424,9 +298,20 @@ def _build_point(
         raw_for_sort: Any = _BASELINE
         safe_value: Any = None
         generated: list = []
+        tried_echo: Any = None  # never emitted for a baseline point (value/tried_value = None)
     else:
         raw_for_sort = tried
         safe_value = _json_safe(tried)
+        # L1 defense-in-depth: the RAW tried value is echoed (value / tried_value) via a deep
+        # copy so the output never aliases the caller's input. A non-deepcopyable value (e.g. a
+        # lock or generator, whose deepcopy raises TypeError/RuntimeError) fails CLOSED to the
+        # already-computed strict-JSON-safe rendering (safe_value) instead of crashing; because
+        # the echo is passed through _json_safe anyway, this is byte-identical to the deep copy
+        # for every JSON-representable value.
+        try:
+            tried_echo = copy.deepcopy(tried)
+        except Exception:
+            tried_echo = safe_value
         generated = [
             {
                 "key": variable.value,
@@ -458,7 +343,7 @@ def _build_point(
             response_point = point_value
             components = {
                 "variable": variable.value,
-                "tried_value": None if is_baseline else copy.deepcopy(tried),
+                "tried_value": None if is_baseline else tried_echo,
                 "is_baseline": is_baseline,
                 "illustrative_usable_area_sq_ft": point_value,
                 "canonical_cap_sq_ft": derived.get("canonical_cap_sq_ft"),
@@ -480,7 +365,7 @@ def _build_point(
         {
             "variable": variable.value,
             "variable_label": _VARIABLE_LABELS[variable],
-            "value": None if is_baseline else copy.deepcopy(tried),
+            "value": None if is_baseline else tried_echo,
             "is_baseline": is_baseline,
             "assumption_set": echo,
             "derivable": derivable,
