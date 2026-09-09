@@ -22,6 +22,13 @@ Public API:
 
 from __future__ import annotations
 
+from .breakeven import (
+    THRESHOLD_LABEL,
+    ThresholdKind,
+    ThresholdResponseMetric,
+    ThresholdVariable,
+    find_scenario_threshold,
+)
 from .builder import build_scenario
 from .comparison import (
     COMPARISON_LABEL,
@@ -90,4 +97,9 @@ __all__ = [
     "COMPARISON_METRIC_KEYS",
     "ComparisonKind",
     "compare_scenario_assumption_sets",
+    "THRESHOLD_LABEL",
+    "ThresholdKind",
+    "ThresholdResponseMetric",
+    "ThresholdVariable",
+    "find_scenario_threshold",
 ]
