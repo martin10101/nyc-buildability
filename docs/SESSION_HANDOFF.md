@@ -4,12 +4,13 @@
 `python tools/project_control.py status` - and reconcile; no SHA here is guaranteed current.
 Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 92: M5-T007 + M5-T008 ACCEPTED (171); M5-T009 BUILT (loop closed 03:52Z), AWAITING ACCEPT.
+## Handoff - seq 92: M5-T007 + M5-T008 + M5-T009 ACCEPTED (172); loop DOWN at a clean seam, no active work.
 
-1. **Generated:** 2026-09-09 03:23Z via `/session-handoff` (owner-invoked, reason ""), session
-   `01WBbzN5Rx17CBSjky5uKmnY`. Loop is a DETACHED process that SURVIVES this session.
+1. **Generated:** 2026-09-09 04:16Z via `/session-handoff` (owner-invoked, reason ""; owner then said
+   "finish it" -> M5-T009 was gate-waved + ACCEPTED before landing), session `01WBbzN5Rx17CBSjky5uKmnY`.
+   No loop is running now (clean stop); no sub-agents active.
 2. **Identity:** root `C:\Users\MLFLL\Downloads\nyc-zoning\ctl24`, branch `candidate/D-024-mrl-option-b`,
-   HEAD `457455f9` (local-only; GitHub intentionally stale, origin/main d8b3899f). **Accepted: 171.**
+   HEAD `5f82495e` (local-only; GitHub intentionally stale, origin/main d8b3899f). **Accepted: 172.**
    Dirty tree: ONLY `.claude/agent-memory/qa-engineer/{MEMORY.md,feedback_probe_...md}` (pre-existing
    untracked, NOT this session's work - leave them).
 3. **NEW OPERATING MODEL this session (owner directive):** owner pushed back on hand-run acceptance,
@@ -21,28 +22,30 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
    DEFAULT-OFF and RECORDS gates only (never accepts), and activation is an owner-typed decision
    (R131/R132) still OPEN. Deferred (it's the self-infra we paused for product). See memory
    `d038-product-pivot`.
-4. **THIS SESSION delivered 2 product features (full T-B gate wave + DCV each, all PASS, reviewers != producer):**
+4. **THIS SESSION delivered 3 product features (full T-B gate wave + DCV each, all PASS, reviewers != producer):**
    - **M5-T007 ACCEPTED (170th)** - deterministic scenario RANKING (`services/api/app/scenario/ranking.py`
      `rank_scenario_assumption_sets`; contract-free, consumes derive.py READ-ONLY). Reviewed `1f938f4a`,
      accept `213f3430`. Run persistent-local-23 (1st run failed no_valid_checkpoint/empty = transient
-     opus drop; retry healthy: 5 unit_completed + circuit-breaker stop). 173 scenario tests green.
+     opus drop; retry healthy). 173 scenario tests green.
    - **M5-T008 ACCEPTED (171st)** - deterministic single-assumption SENSITIVITY/what-if
      (`services/api/app/scenario/sensitivity.py` `analyze_scenario_sensitivity`; contract-free, offline).
-     Reviewed `24780f26`, accept `d379d36b`. Run persistent-local-24 (cleanest yet: UNIT_COMPLETE, NO
-     over-revision). **222 scenario tests green** (49 new). Worker did NOT author a producer report ->
-     orchestrator recorded the producer-output report itself (acceptable; reviewers verify independently).
-5. **M5-T009 BUILT - loop CLOSED 03:52:01Z (SUCCESS, run persistent-local-25, worker opus-4-8), NOW DOWN**
-   = behavior-NEUTRAL extraction of the strict-JSON-safety sanitizer DUPLICATED (~120 lines) across
-   ranking.py + sensitivity.py into a shared `services/api/app/scenario/_json_safety.py` + closing the
-   G5 L1 (deepcopy-of-non-deepcopyable raise) / L2 (cycle-depth RecursionError) gaps in the one change
-   (per modularity law #16 + explicit G1/G5 reviewer recommendation; existing 49+49 tests forbidden to
-   edit / must pass unchanged = byte-identical). Packet `457455f9`, worktree `wt-m5t009` (branch
-   `task/M5-T009-json-safety`), status=claimed/10. directive_refs D-038:ALL, appended to R003/R004.
-   Close was healthy (4 claude_unit_completed + astra revise cycles, then clean stop; NO
-   no_valid_checkpoint). **wt-m5t009 has the produced files UNCOMMITTED, awaiting accept:** new
-   `_json_safety.py` + `tests/scenario/test_json_safety.py`, and `ranking.py` + `sensitivity.py`
-   modified (rewired to import the shared sanitizer). **SUCCESSOR's FIRST ACTION = gate+accept M5-T009**
-   (item 7 drill); the loop is already down (no live watcher needed for THIS close). pid 15940 is dead.
+     Reviewed `24780f26`, accept `d379d36b`. Run persistent-local-24. **222 scenario tests** (49 new).
+     Worker did NOT author a producer report -> orchestrator recorded the producer-output report itself.
+   - **M5-T009 ACCEPTED (172nd)** - behavior-NEUTRAL extraction of the strict-JSON-safety sanitizer
+     (duplicated ~120 lines in ranking.py + sensitivity.py) into shared
+     `services/api/app/scenario/_json_safety.py` + closed the G5 L1 (deepcopy) / L2 (cycle-depth) gaps
+     (per modularity law #16 + G1/G5 recommendation). Reviewed `3b298474`, accept `5f82495e`. Run
+     persistent-local-25. **252 scenario tests** (30 new json_safety; the 49+49 ranking/sensitivity tests
+     EMPTY-diff / byte-identical = behavior-neutral proven). Single-source-of-truth; DoS eliminated (not
+     relocated) via `_MAX_JSON_SAFE_DEPTH=500`. Gate wave had 2 transient reviewer-agent connection
+     failures (G1+DCV) - RE-DISPATCHED fresh, both PASS (an aliasing concern the dead G1 raised was
+     re-checked and confirmed BENIGN).
+5. **LOOP IS DOWN at a CLEAN SEAM - no active work, no next feature contracted.** persistent-local-25
+   (M5-T009) closed 03:52Z and M5-T009 is now ACCEPTED. The owner invoked `/session-handoff` then "finish
+   it" (both LANDING signals), so this session did NOT contract/launch M5-T010. The invisible-operator
+   OPERATING MODEL (item 3) still stands: the SUCCESSOR may CONTINUE the cycle by contracting the next
+   sensible offline/no-creds feature + relaunching (item 7 to contract, item 8 to relaunch), OR hold if
+   the owner wants to stay stopped. No loop pid, no lock, no watcher running.
 6. **SUB-AGENTS / WATCHER:** all M5-T008 gate reviewers (5) COMPLETED and reconciled. The read-only
    big-breaks watcher (`scratchpad/loop_break_watcher_quiet.sh`, run persistent-local-25) was armed via
    Monitor but **Monitors are SESSION-BOUND and DIE with this session - the successor MUST re-arm it**
@@ -87,9 +90,10 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
     owner-only = credentials/payment/production/legal (Tier D / Section 20).
 
 ## Validation (this session)
-- `python -m pytest services/api/tests/scenario` -> **222 passed** (M5-T008 accept baseline; M5-T009 in flight).
+- `python -m pytest services/api/tests/scenario` -> **252 passed** (M5-T009 accept baseline; 30 json_safety
+  + 49+49 ranking/sensitivity byte-identical unchanged; 0 regress).
 - `python tools/validate_directive_compliance.py --check` -> **EXIT 0** (after each D-038 append + row).
-- gitleaks pre-commit clean on every commit (213f3430, d379d36b, 457455f9, ...).
+- gitleaks pre-commit clean on every commit (213f3430, d379d36b, 457455f9, 5f82495e, ...).
 
 ## Authoritative files (smallest set)
 `CLAUDE.md`; `docs/SESSION_HANDOFF.md`; `project-control/state.json` + `tasks/M5-T009.json`;
@@ -102,17 +106,21 @@ Resume from durable evidence only. Bootstrap Gate 0 (root cwd = `C:\Users\MLFLL\
 `/mcp` empty), branch `candidate/D-024-mrl-option-b`. Verify repo root/worktree/branch/HEAD before any write.
 Read `CLAUDE.md`, this handoff, and memory `d038-product-pivot` + `loop-relaunch-mechanics`; then `python
 tools/project_control.py status` (ledger + git win over any prose, incl. the stale D-024 campaign pointer).
-**171 accepted; M5-T007 (ranking) + M5-T008 (sensitivity) accepted this session.** OPERATING MODEL =
-"invisible operator" (owner directive): the DETACHED loop builds feature->feature; you run gate+accept
-SILENTLY and surface only a one-line result per feature + genuine breaks; pick sensible next offline/no-creds
-features and keep going without asking. **M5-T009 is already BUILT and the loop is DOWN** (closed 03:52Z,
-SUCCESS): your FIRST ACTION is to gate+accept it - `wt-m5t009` holds the uncommitted files (new
-`_json_safety.py` + `test_json_safety.py`; `ranking.py`+`sensitivity.py` rewired). Commit wt-m5t009 output,
-cherry-pick to candidate = reviewed SHA, run the gate wave (G1/G3/G5 + G4 + DCV, reviewers != producer), ACCEPT
-(item 7 drill = 172nd). THEN contract the next feature + relaunch (item 8 drill, run persistent-local-26) and
-re-arm the read-only big-breaks watcher (Monitors die with the session; set RUN to the new run-id). AS-1
-demands ranking/sensitivity outputs stay BYTE-IDENTICAL (the existing 49+49 tests must pass unchanged) - verify
-that in the gate wave. Worker opus-4-8 (revert Fable Thu 9PM).
+**172 accepted; M5-T007 (ranking) + M5-T008 (sensitivity) + M5-T009 (shared _json_safety extraction) accepted
+this session.** OPERATING MODEL = "invisible operator" (owner directive): the DETACHED loop builds
+feature->feature; you run gate+accept SILENTLY and surface only a one-line result per feature + genuine breaks;
+pick sensible next offline/no-creds features and keep going without asking. **The loop is DOWN at a CLEAN SEAM -
+no active work, nothing awaiting accept, no next feature contracted** (owner landed via /session-handoff + "finish
+it"). To CONTINUE the invisible-operator cycle: contract the next sensible offline/no-creds optimization-engine
+feature (item 7 = new-task -> edit fields -> append task_id to D-038 R003/R004 applicability + resync digest +
+audit note -> G0 -> claim -> commit -> git worktree add), relaunch the loop (item 8 = down-run recovery
+[deny stale asks + reconcile_dispatch_intent + clear-recovery] + `scratchpad/relaunch_m5t009.ps1` pattern with a
+NEW run-id persistent-local-26 + fix $Branch by hand), and re-arm the read-only big-breaks watcher via Monitor
+(set RUN to the new run-id). OR hold if the owner wants to stay stopped - confirm intent first if unsure. Worker
+opus-4-8 (revert Fable Thu 9PM). Candidate next-feature ideas (all offline/contract-free): scenario COMPARISON/
+delta for the Compare UI; break-even/threshold finder; expose ranking/sensitivity via the scenario API (M5-T003
+pattern). Backlog from this session's LOWs: negative-numeric dict key verbatim (benign), _json_safe_mapping now
+test-only (prunable).
 Do NOT: push/merge/PR #241, activate continuous/autostart or install supervisor code (owner-only, R247 recert),
 answer worker asks against a live run, run audit-writing verbs vs a live run, launch from ctl24-cwd, change
 model_selection.toml, bypass any gate, or require the deferred credentials. Report READY TO RESUME or BLOCKED.
