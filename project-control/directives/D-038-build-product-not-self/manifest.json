@@ -74,6 +74,12 @@
    "actor": "orchestrator",
    "action": "applicability_appended",
    "note": "M5-T007 ACCEPTED (170th) via full T-B gate wave + DCV. Owner directive 2026-09-08 ('run it invisibly, now' - keep the loop building feature->feature, orchestrator gates+accepts silently). Contracted the next product task M5-T008 (deterministic single-assumption sensitivity/what-if analysis over an EXPLICIT value grid; contract-free new sensitivity.py consuming the accepted derive.py READ-ONLY; named variable+metric, total stable order, transparent per-point breakdown; never invents values, never Verified; pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to 128c0b9f. Verification for R003/R004 wrt M5-T008 produced by the independent verifier at M5-T008 accept time."
+  },
+  {
+   "at": "2026-09-09T02:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T008 ACCEPTED (171st) via full T-B gate wave + DCV. Contracted M5-T009 (behavior-neutral extraction of the duplicated strict-JSON-safety sanitizer from ranking.py+sensitivity.py into a shared services/api/app/scenario/_json_safety.py + closing the G5 L1 deepcopy / L2 cycle-depth defense-in-depth gaps; per permanent modularity law + reviewer recommendation; contract-free, offline) and appended it to applicability.task_ids of D-038-R003 and D-038-R004. No requirement id added/removed/renumbered; no source text changed; requirements_content_digest_sha256 resynced to 84ab4118. Verification produced by the independent verifier at M5-T009 accept time."
   }
  ],
  "owner_approval": {
@@ -92,5 +98,5 @@
   "D-038-R006",
   "D-038-R007"
  ],
- "requirements_content_digest_sha256": "128c0b9f9a93ca1ec66ccafd756fcff2d9eaa83fed8b619bc60e4ed0207263c0"
+ "requirements_content_digest_sha256": "84ab4118298b935010ff955d5c838feed90d117b9969abd0a6796555d876481b"
 }

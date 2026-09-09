@@ -1,0 +1,78 @@
+{
+  "task_id": "M5-T009",
+  "title": "Extract shared strict-JSON-safety sanitizer for the scenario optimization engine (behavior-neutral) + close deepcopy/cycle defense-in-depth gaps",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Behavior-NEUTRAL decomposition + defense-in-depth hardening of the scenario optimization engine. Extract the strict-JSON-safety sanitizer currently DUPLICATED (~120 lines) in ranking.py and sensitivity.py (_json_safe, _json_safe_mapping, _safe_key, _safe_scalar_repr, _unsafe_marker, _unsafe_key_token, _bounded_repr and their constants) into ONE new shared internal module services/api/app/scenario/_json_safety.py; rewire ranking.py and sensitivity.py to IMPORT from it (deleting their private copies). In the SAME bounded change close the two G5-flagged non-blocking defense-in-depth gaps (unreachable via JSON today, but correctness debt): (L1) wrap the raw-value copy.deepcopy call sites (ranking.py echo of assumption_set; sensitivity.py tried-value copy) in try/except so a non-deepcopyable value (lock/generator) yields a typed not-scorable/marker outcome instead of raising; (L2) add a cycle/seen-set + max-depth bound to the recursive _json_safe in the shared module so a cyclic or pathologically-deep value yields a typed marker instead of RecursionError. HARD BOUNDARIES: (1) BEHAVIOR-NEUTRAL for every JSON-representable input - ranking.py and sensitivity.py public outputs stay BYTE-IDENTICAL to before; ALL existing tests in test_scenario_ranking.py and test_scenario_sensitivity.py still pass UNCHANGED (do not edit those two test files). (2) The new L1/L2 guards ADD safe behavior only (a previously-raising non-JSON input now returns a typed marker) - no existing assertion changes. (3) Public API of ranking.py and sensitivity.py and the app.scenario facade are UNCHANGED (_json_safety is an internal underscore module, not exported; do NOT edit __init__.py). (4) Contract-free: do NOT touch derive.py/builder.py/models.py/constants.py/contract.py or packages/contracts/**; deterministic, offline, no I/O. (5) Fail-closed + strict-JSON-safe behavior preserved (json.dumps allow_nan=False never raises; no NaN/Inf/negative; no object-address leak; deterministic byte-identical). (6) Net line reduction from de-duplication; new module is a single cohesive responsibility with focused unit tests (test_json_safety.py) covering the sanitizer surface AND the new L1/L2 guards. TOOL DISCIPLINE: orient with Read/Grep/Glob; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "Permanent modularity law (CLAUDE.md #16) + explicit G1/G5 reviewer recommendation on M5-T007/T008: the strict-JSON-safety sanitizer is duplicated ~120 lines across ranking.py and sensitivity.py; consolidate BEFORE adding more feature modules (each would re-duplicate it). Closes the accumulated non-blocking G5 LOWs (L1 non-deepcopyable raise, L2 cycle/depth RecursionError) across the engine in one bounded change. Behavior-neutral, offline, not G6-blocked.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T008"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/_json_safety.py",
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/tests/scenario/test_json_safety.py",
+    "project-control/reports/M5-T009-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_ranking.py",
+    "services/api/tests/scenario/test_scenario_sensitivity.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 behavior-neutral (byte-identical): ranking.py and sensitivity.py public outputs are BYTE-IDENTICAL to before the extraction for every JSON-representable input; the ENTIRE existing test_scenario_ranking.py (49 items) and test_scenario_sensitivity.py (49 items) pass UNCHANGED (those two test files are NOT edited - forbidden_paths).",
+    "AS-2 single source of truth: the strict-JSON-safety sanitizer (_json_safe, _json_safe_mapping, _safe_key, _safe_scalar_repr, _unsafe_marker, _unsafe_key_token, _bounded_repr + constants) exists ONCE in services/api/app/scenario/_json_safety.py; ranking.py and sensitivity.py import it and no longer define private copies (grep shows no duplicate def in the two consumers).",
+    "AS-3 L1 deepcopy guard closed: a non-deepcopyable assumption value (e.g. threading.Lock, a generator, or an object whose __deepcopy__ raises), supplied to rank_scenario_assumption_sets or analyze_scenario_sensitivity, yields a typed not-scorable/marker outcome and does NOT raise (was: TypeError/RuntimeError). Tested for BOTH consumers.",
+    "AS-4 L2 cycle/depth guard closed: a cyclic (self-referential list/dict) or pathologically-deep value routed through the shared _json_safe yields a typed marker and does NOT raise RecursionError; bounded by a documented max depth / seen-set. Tested in test_json_safety.py.",
+    "AS-5 determinism + fail-closed preserved: json.dumps(result, allow_nan=False) never raises; no NaN/Inf/negative emitted; no object-address (' at 0x') leak; identical inputs -> byte-identical output (unchanged from the pre-extraction guarantee).",
+    "AS-6 full regression + modularity: python -m pytest services/api/tests/scenario stays green (>=222 items incl. the new test_json_safety.py; 0 regression); python tools/modularity_check.py --check passes; net SLOC reduction across ranking.py+sensitivity.py from de-duplication (the new shared module is smaller than the two removed copies combined).",
+    "AS-7 contract-free + offline: zero modification to derive.py/builder.py/models.py/constants.py/contract.py/__init__.py or packages/contracts/**; the app.scenario public facade is unchanged (public API of ranking/sensitivity intact); runs fully offline (no Supabase/Geoclient/network - socket-blockable); _json_safety.py imports only stdlib."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-09T02:42:40.519445+00:00",
+  "updated_at": "2026-09-09T02:45:09.529918+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-09T02:42:40.519445+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t009"
+}
