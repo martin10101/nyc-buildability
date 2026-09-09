@@ -4,7 +4,7 @@
 `python tools/project_control.py status` - and reconcile; no SHA here is guaranteed current.
 Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget` CI fails > ~4000 tok.
 
-## Handoff - seq 92: M5-T007 + M5-T008 ACCEPTED (171); INVISIBLE-OPERATOR loop LIVE building M5-T009.
+## Handoff - seq 92: M5-T007 + M5-T008 ACCEPTED (171); M5-T009 BUILT (loop closed 03:52Z), AWAITING ACCEPT.
 
 1. **Generated:** 2026-09-09 03:23Z via `/session-handoff` (owner-invoked, reason ""), session
    `01WBbzN5Rx17CBSjky5uKmnY`. Loop is a DETACHED process that SURVIVES this session.
@@ -31,14 +31,18 @@ Orientation only; rules/gates live in `CLAUDE.md`. CURRENT-ONLY: `context-budget
      Reviewed `24780f26`, accept `d379d36b`. Run persistent-local-24 (cleanest yet: UNIT_COMPLETE, NO
      over-revision). **222 scenario tests green** (49 new). Worker did NOT author a producer report ->
      orchestrator recorded the producer-output report itself (acceptable; reviewers verify independently).
-5. **LOOP IS LIVE (run persistent-local-25, pid 15940, DETACHED, worker opus-4-8) building M5-T009** =
-   behavior-NEUTRAL extraction of the strict-JSON-safety sanitizer DUPLICATED (~120 lines) across
+5. **M5-T009 BUILT - loop CLOSED 03:52:01Z (SUCCESS, run persistent-local-25, worker opus-4-8), NOW DOWN**
+   = behavior-NEUTRAL extraction of the strict-JSON-safety sanitizer DUPLICATED (~120 lines) across
    ranking.py + sensitivity.py into a shared `services/api/app/scenario/_json_safety.py` + closing the
    G5 L1 (deepcopy-of-non-deepcopyable raise) / L2 (cycle-depth RecursionError) gaps in the one change
    (per modularity law #16 + explicit G1/G5 reviewer recommendation; existing 49+49 tests forbidden to
    edit / must pass unchanged = byte-identical). Packet `457455f9`, worktree `wt-m5t009` (branch
    `task/M5-T009-json-safety`), status=claimed/10. directive_refs D-038:ALL, appended to R003/R004.
-   Find live pid: lock at `%LOCALAPPDATA%\NYCBuildabilitySupervisor\9aca7075...\supervisor.lock`.
+   Close was healthy (4 claude_unit_completed + astra revise cycles, then clean stop; NO
+   no_valid_checkpoint). **wt-m5t009 has the produced files UNCOMMITTED, awaiting accept:** new
+   `_json_safety.py` + `tests/scenario/test_json_safety.py`, and `ranking.py` + `sensitivity.py`
+   modified (rewired to import the shared sanitizer). **SUCCESSOR's FIRST ACTION = gate+accept M5-T009**
+   (item 7 drill); the loop is already down (no live watcher needed for THIS close). pid 15940 is dead.
 6. **SUB-AGENTS / WATCHER:** all M5-T008 gate reviewers (5) COMPLETED and reconciled. The read-only
    big-breaks watcher (`scratchpad/loop_break_watcher_quiet.sh`, run persistent-local-25) was armed via
    Monitor but **Monitors are SESSION-BOUND and DIE with this session - the successor MUST re-arm it**
@@ -101,12 +105,14 @@ tools/project_control.py status` (ledger + git win over any prose, incl. the sta
 **171 accepted; M5-T007 (ranking) + M5-T008 (sensitivity) accepted this session.** OPERATING MODEL =
 "invisible operator" (owner directive): the DETACHED loop builds feature->feature; you run gate+accept
 SILENTLY and surface only a one-line result per feature + genuine breaks; pick sensible next offline/no-creds
-features and keep going without asking. **Loop is LIVE building M5-T009** (shared _json_safety.py extraction +
-L1/L2 guards), run persistent-local-25 pid 15940 (lock under checkout `9aca7075...`). **Re-arm the read-only
-big-breaks watcher (Monitors die with the session; set RUN=persistent-local-25).** On the next LOOP CLOSED:
-if wt-m5t009 has files + a valid checkpoint -> commit, cherry-pick to candidate, gate wave + DCV, ACCEPT (item
-7 drill), then contract the next feature + relaunch (item 8 drill, new run-id); if it FAILED
-no_valid_checkpoint/empty AGAIN -> STOP, `/deficit-convergence`. Worker opus-4-8 (revert Fable Thu 9PM).
+features and keep going without asking. **M5-T009 is already BUILT and the loop is DOWN** (closed 03:52Z,
+SUCCESS): your FIRST ACTION is to gate+accept it - `wt-m5t009` holds the uncommitted files (new
+`_json_safety.py` + `test_json_safety.py`; `ranking.py`+`sensitivity.py` rewired). Commit wt-m5t009 output,
+cherry-pick to candidate = reviewed SHA, run the gate wave (G1/G3/G5 + G4 + DCV, reviewers != producer), ACCEPT
+(item 7 drill = 172nd). THEN contract the next feature + relaunch (item 8 drill, run persistent-local-26) and
+re-arm the read-only big-breaks watcher (Monitors die with the session; set RUN to the new run-id). AS-1
+demands ranking/sensitivity outputs stay BYTE-IDENTICAL (the existing 49+49 tests must pass unchanged) - verify
+that in the gate wave. Worker opus-4-8 (revert Fable Thu 9PM).
 Do NOT: push/merge/PR #241, activate continuous/autostart or install supervisor code (owner-only, R247 recert),
 answer worker asks against a live run, run audit-writing verbs vs a live run, launch from ctl24-cwd, change
 model_selection.toml, bypass any gate, or require the deferred credentials. Report READY TO RESUME or BLOCKED.
