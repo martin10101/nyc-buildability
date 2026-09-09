@@ -1,0 +1,81 @@
+{
+  "task_id": "M5-T012",
+  "title": "Expose the deterministic scenario optimization toolkit (sensitivity / ranking / comparison / threshold) via the internal flag-gated scenario API",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Make the accepted, offline scenario optimization toolkit REACHABLE by a client. Deliver ONE new route module services/api/app/api/v1/scenario_analysis.py that exposes the four ACCEPTED engine functions (analyze_scenario_sensitivity M5-T008, rank_scenario_assumption_sets M5-T007, compare_scenario_assumption_sets M5-T010, find_scenario_threshold M5-T011) as four internal, feature-flag-gated POST endpoints under the SAME posture as the accepted M5-T003 scenario route: POST /api/v1/properties/{bbl}/scenario/sensitivity, /scenario/ranking, /scenario/comparison, /scenario/threshold. THE SECURITY HEART (this is the whole reason the task is shaped this way): the M5-T003 route accepts NO body precisely so an untrusted caller can never inject the FACTS a scenario rests on. These endpoints DO need caller input - but only ILLUSTRATIVE ANALYSIS PARAMETERS (named assumption sets, a variable name, an explicit ordered candidate domain, a response-metric name, a numeric target, an objective). The scenario document itself - and therefore the canonical max_residential_floor_area_sq_ft cap, the coverage/verification status and every other FACT - is ALWAYS rebuilt SERVER-SIDE from the bbl path parameter over the SAME trusted injected seams the accepted routes use (get_pluto_fetcher -> build_property_profile -> evaluate_property -> serialize_rule_evaluation -> build_scenario, with get_spatial_substrate_provider). The body is NEVER a source of facts: a body key that would supply or override a profile, a rule_evaluation, a scenario document, a cap value, or a coverage/verification status is REJECTED with a typed 422, never merged. BOUNDED INPUT: every body dimension has an explicit documented cap (max named assumption sets, max candidate-domain length, max assumption keys, max container nesting depth, max string length); exceeding a cap is a typed 422 with a reason - never an unhandled raise, never an unbounded scan, never a RecursionError (this dogfoods the M5-T009/M5-T011 fail-closed lessons at the untrusted edge). ROUTE POSTURE (mirror M5-T003 exactly): registered ALWAYS but reachable ONLY when INTERNAL_SCENARIO_ENABLED is an explicit true token - absent/empty/unknown yields a generic 404 byte-indistinguishable from an unmounted path, leaking no hint the feature exists; include_in_schema=False so nothing appears in the OpenAPI document regardless of the flag; X-Correlation-ID on every response; errors carry no traceback, path, secret or internal string; a module-level STATUS_STATE_MATRIX is the single source of truth for every emitted (HTTP status, state) pair and introduces no pair the accepted scenario route does not already emit. A legitimate no-scenario / unsupported / professional-review outcome stays a NORMAL 200 typed result, never an error. NO NEW LOGIC IN THE ROUTE: it performs no independent legal calculation and no engine maths - it rebuilds, validates, adapts the request into the engine function's documented arguments, calls the engine READ-ONLY, and returns its typed result verbatim inside a thin envelope. The canonical cap is transported VERBATIM; no response is ever marked Verified; NOT_VERIFIED_DISCLAIMER is present; every 200 body survives json.dumps(body, allow_nan=False) with no NaN/Inf and no object-address leak. SCOPE DISCIPLINE: import the engine ONLY through the accepted public facade app.scenario; do NOT modify any services/api/app/scenario module, app/api/v1/scenario.py, rule_evaluation.py, properties.py, app/config.py (REUSE the existing internal_scenario_enabled flag - no new flag), or packages/contracts. services/api/app/main.py is touched ADDITIVELY ONLY (one import + one include_router + a mirroring comment; every existing registration and its order unchanged). Focused tests in services/api/tests/api/test_scenario_analysis_api.py cover AS-1..AS-8 fully offline via the injected seams (no network / Supabase / Geoclient). TOOL DISCIPLINE: orient with Read/Grep/Glob; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "D-038-R003 positive product deliverable and the bridge the toolkit has been missing. Five gated engine modules (derive -> sensitivity -> ranking -> comparison -> breakeven) are accepted but reachable ONLY from Python: no client, and specifically not the parked Compare (Step-3) UI M5-T004, can call them. This task turns the offline toolkit into an actual product surface over the same trusted server-side seams and the same fail-safe flag as the accepted M5-T003 endpoint, and it does the hard part properly - defining the untrusted-input boundary so a caller supplies ASSUMPTIONS but never FACTS. Contract-free, fully offline, no Supabase/Geoclient, not G6-blocked (no new legal rule; the canonical cap is transported verbatim and nothing is ever Verified). It is also the natural landing pad for the owner's incoming Supabase and NYC API credentials: once they arrive the seams behind these endpoints go live without re-shaping the surface.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T003",
+    "M5-T011"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "project-control/reports/M5-T012-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/**",
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/properties.py",
+    "services/api/app/config.py",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/connectors/**",
+    "services/api/tests/scenario/**",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_properties_v1.py",
+    "packages/contracts/**",
+    "apps/web/**",
+    "supabase/**",
+    "tools/**"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 four analysis endpoints over server-rebuilt facts: POST /api/v1/properties/{bbl}/scenario/sensitivity, /scenario/ranking, /scenario/comparison and /scenario/threshold each (a) rebuild the property profile, its rule_evaluation and the scenario document SERVER-SIDE from the bbl path parameter over the SAME injected seams the accepted M5-T003 route uses (get_pluto_fetcher -> build_property_profile -> evaluate_property -> serialize_rule_evaluation -> build_scenario, get_spatial_substrate_provider), (b) call the corresponding ACCEPTED engine function READ-ONLY through the public app.scenario facade (analyze_scenario_sensitivity, rank_scenario_assumption_sets, compare_scenario_assumption_sets, find_scenario_threshold), and (c) return that typed engine result inside a thin 200 envelope. Zero engine modules are modified and the route performs no independent legal calculation and no engine maths of its own.",
+    "AS-2 untrusted-input boundary - assumptions yes, FACTS never: the request body may carry ONLY illustrative analysis parameters (named assumption sets, variable name, ordered candidate domain, response-metric name, numeric target, objective). A body that supplies or attempts to override a fact - a property_profile, a rule_evaluation, a scenario document, a max_residential_floor_area_sq_ft / cap value, or a coverage / verification / Verified status - is REJECTED with a typed 422 carrying a reason and is NEVER merged into the server-rebuilt document. A test proves an injected cap value cannot change the cap echoed in the response: the cap is the server-rebuilt canonical one, transported VERBATIM.",
+    "AS-3 flag-gated fail-safe, no OpenAPI leak: with INTERNAL_SCENARIO_ENABLED absent, empty, or any non-true token, every one of the four endpoints returns a generic 404 byte-indistinguishable from FastAPI's default for an unmounted path (no header, body, or timing hint that the feature exists); with the flag explicitly true they serve. All four routes are registered include_in_schema=False and never appear in the OpenAPI document regardless of the flag value. The existing app/config.py flag helper is REUSED - config.py is not modified and no new flag is introduced.",
+    "AS-4 documented status/state matrix + honest non-errors: a module-level STATUS_STATE_MATRIX enumerates every (HTTP status, state) pair the module can emit, every emission path in the module is a member of it, and it introduces no pair beyond those the accepted scenario route already emits. A legitimate no-scenario / unsupported / professional-review-required outcome is a NORMAL 200 typed result, never an error. Every response carries X-Correlation-ID, and no error body contains a traceback, filesystem path, secret, or internal implementation string.",
+    "AS-5 bounded input, fail-closed at the untrusted edge: explicit documented caps on max named assumption sets, max candidate-domain length, max assumption keys per set, max container nesting depth and max string length. Exceeding any cap yields a typed 422 with a reason. Deeply-nested (>=500 levels), oversized, cyclic-shaped or otherwise malformed bodies produce a typed 422 and NEVER an unhandled raise, a RecursionError, a hang, or an unbounded scan. No ZeroDivisionError / NaN / Inf reaches a response.",
+    "AS-6 strict-JSON-safe + never Verified: every 200 body passes json.dumps(body, allow_nan=False) without raising for every tested input; no NaN/Inf; no object-address (' at 0x') leak; NOT_VERIFIED_DISCLAIMER is present in each analysis response and no response is marked Verified; the canonical cap and any engine-supplied disclaimer are transported verbatim from the server-rebuilt scenario document.",
+    "AS-7 additive registration + offline + facade-only imports: services/api/app/main.py is touched ADDITIVELY ONLY (one import + one include_router call + a comment mirroring the M5-T003 registration) with every existing registration, its order and the rest of the file unchanged; scenario_analysis.py imports the engine ONLY via the public app.scenario facade (plus the existing route seams it reuses) and modifies no scenario module; the whole test suite runs fully OFFLINE through the injected fetcher/substrate seams with no network, Supabase or Geoclient access (a socket-blockable test passes).",
+    "AS-8 full regression + modularity: python -m pytest services/api/tests/api and python -m pytest services/api/tests/scenario both stay green with 0 regression (the pre-existing test files are NOT edited; the 388 scenario tests and the existing api tests pass unchanged), and python tools/modularity_check.py --check passes with scenario_analysis.py a single cohesive route-adapter responsibility."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-09T20:07:18.362076+00:00",
+  "updated_at": "2026-09-09T20:13:08.096766+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-09T20:07:18.362076+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/api",
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t012"
+}
