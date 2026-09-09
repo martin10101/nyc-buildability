@@ -227,6 +227,49 @@
      "reviewed_sha": "24780f2683dafd41b895fa2d1668814a19a6b3e4"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T009",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "3b298474d34979f0e5fe0be5f951432b612e2e47",
+   "reviewed_manifest_sha256": "000421f7551bc8267994470bb939c3126c40dad88f60e42433e6363def0aa352",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-09T04:13:43+00:00",
+   "note": "Independent DCV at HEAD 3b298474 (candidate cherry-picked from task/M5-T009-json-safety 987038f4; wt-m5t009 clean, not pushed - branch has no upstream). Verifier != producer (scenario-optimization-engineer, run persistent-local-25) != orchestrator. git show --stat 3b298474: parent bacb24a7, exactly 5 files all allowed_paths (_json_safety.py new 318, ranking.py + sensitivity.py rewired to import it, test_json_safety.py new 30 items, producer report), no forbidden path (derive.py/__init__.py/builder/models/constants/contract/packages/contracts/** unchanged; the two existing test files test_scenario_{ranking,sensitivity}.py EMPTY-diff = behavior-neutral oracle). evaluate_task_refs: applicable={R003,R004}, cited=D-038:ALL, missing=[], selective-citation guard satisfied; other 5 reqs BOOTSTRAP-scoped N/A. source + requirements digests match; audit_log has the M5-T009 append; validate_directive_compliance --check EXIT=0. Gates G0/G1/G3/G4/G5 all PASS at 3b298474; reviewers code-reviewer/qa-engineer/security-reviewer + ci-evidence-verifier each independent != producer; 252 scenario tests (30 new json_safety + 98 frozen ranking/sensitivity UNCHANGED = byte-identical behavior-neutral, proven by empty diff + 19/25-case differential; 0 regress) Py3.11.9. Behavior-neutral extraction to single-source-of-truth (ranking._json_safe IS sensitivity._json_safe IS _json_safety._json_safe; zero duplicate defs). Closed the M5-T007/T008 G5 LOWs: L1 (non-deepcopyable -> typed marker no raise, both consumers) + L2 (iterative _json_safe + path-scoped cycle set + _MAX_JSON_SAFE_DEPTH=500; DoS eliminated not relocated - whole-output json.dumps(allow_nan=False) stays safe, load-bearing per monkeypatch test). Non-blocking notes -> backlog: whole-change net SLOC +77 (consumers -239, L2 machinery + docstrings added; AS-6 testable clause 'net reduction across the two consumers' holds); negative-numeric dict key passes verbatim (pre-existing benign); _json_safe_mapping now test-only (prunable). DRAFT engineering; published/G6 out of scope (M5-T003/T005/T006/T007/T008 precedent). Aliasing concern (shared tried_echo in sensitivity) verified BENIGN by G1 probe (rendered through one _json_safe -> distinct fresh containers, input byte-unchanged).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "_json_safety.py (318 lines, single cohesive sanitizer) - scenario/optimization-engine PRODUCT code (milestone M5, backend), NOT M0 self-infra; consumers rewired ranking.py:65 + sensitivity.py:65 from ._json_safety import ...; zero duplicate sanitizer defs remain (grep)",
+      "packet M5-T009.json product-only allowed_paths, required_gates incl G0, acceptance AS-1..AS-7; G0 PASS",
+      "reproduced python -m pytest services/api/tests/scenario -> 252 passed (30 new json_safety + 98 frozen ranking/sensitivity UNCHANGED); single-source-of-truth test ranking._json_safe is _json_safe; L1/L2 tests pass; modularity_check --check failures 0"
+     ],
+     "note": "M5-T009 is genuine PRODUCT/optimization-engine engineering (behavior-neutral sanitizer decomposition + L1/L2 hardening), PASS-G0 packet with executable, passing acceptance scenarios.",
+     "verified_at": "2026-09-09T04:13:43+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3b298474d34979f0e5fe0be5f951432b612e2e47"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "_json_safety.py imports only stdlib: __future__ annotations, math, typing.Any - no sys/network/storage/env/file/subprocess",
+      "negative grep supabase|geoclient|requests|httpx|urllib|socket|os.environ|getenv|subprocess|import os over the 4 changed source+test files -> zero matches (only stdlib import sys in test_json_safety.py for setrecursionlimit, offline)",
+      "pure/deterministic/offline; derive.py + canonical contract untouched; fixtures only (build_scenario + _support.py), no Supabase/Geoclient; offline suite 252 passed; no deferred credentials"
+     ],
+     "note": "_json_safety.py + rewired consumers stay pure, deterministic, fully offline; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only.",
+     "verified_at": "2026-09-09T04:13:43+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3b298474d34979f0e5fe0be5f951432b612e2e47"
+    }
+   ]
   }
  ]
 }

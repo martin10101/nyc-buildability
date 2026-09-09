@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T009",
+  "reviewed_sha": "3b298474d34979f0e5fe0be5f951432b612e2e47",
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/_json_safety.py - behavior-neutral extraction of the strict-JSON-safety sanitizer shared by ranking.py + sensitivity.py (scenario/optimization-engine PRODUCT code, milestone M5, backend); code-quality/hardening improvement of the accepted engine, NOT M0 self-infra",
+      "G0 packet PASS; AS-1..AS-7 executable; reproduced 252 scenario tests (30 new json_safety + existing 49+49 ranking/sensitivity PASS UNCHANGED = byte-identical behavior-neutral); test_scenario_ranking.py/test_scenario_sensitivity.py diff over parent EMPTY"
+    ],
+    "D-038-R004": [
+      "_json_safety.py imports only stdlib (math, typing); negative grep supabase|geoclient|requests|httpx|urllib|socket|os.environ|getenv|subprocess over changed files -> NONE",
+      "pure/deterministic/offline; derive.py + canonical contract untouched; fixtures only, no Supabase/Geoclient; documented cmd python -m pytest services/api/tests/scenario; no deferred credentials"
+    ]
+  }
+}
