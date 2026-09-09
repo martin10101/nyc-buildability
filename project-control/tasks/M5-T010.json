@@ -60,12 +60,12 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-09T04:26:04.139103+00:00",
-  "updated_at": "2026-09-09T04:30:23.731478+00:00",
+  "updated_at": "2026-09-09T05:32:30.576171+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -77,5 +77,16 @@
   "documented_test_commands": [
     "python -m pytest services/api/tests/scenario"
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t010"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t010",
+  "progress_log": [
+    {
+      "at": "2026-09-09T05:32:10.211772+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "M5-T010 built by loop persistent-local-26 (unit_completed; checkpoint refused on abbreviated-SHA field-mismatch, work intact). Producer output committed ea08f504; gate wave G1/G3/G4/G5 + DCV all PASS at reviewed_sha; moving to submit."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-09T05:32:30.576171+00:00"
 }

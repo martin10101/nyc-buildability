@@ -270,6 +270,50 @@
      "reviewed_sha": "3b298474d34979f0e5fe0be5f951432b612e2e47"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T010",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "ea08f504ea4b52cc93062a74a9c125e5133c4b7b",
+   "reviewed_manifest_sha256": "b673b0fc75afa2946a29c13744ea1cbbf420651893a3213c91317315ce459918",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-09T04:55:00+00:00",
+   "note": "Independent DCV at HEAD ea08f504 (candidate fast-forwarded to the producer commit from task/M5-T010-comparison; wt-m5t010 clean, not pushed - branch has no upstream). Verifier (directive-compliance-verifier) != producer (scenario-optimization-engineer, build loop run persistent-local-26) != orchestrator. git show --name-only ea08f504: exactly 4 files all allowed_paths (comparison.py new 601, __init__.py additive facade +10/-0, test_scenario_comparison.py new 71 items, producer report), no forbidden path (derive/builder/models/constants/contract/ranking/sensitivity/_json_safety.py or packages/contracts/** unchanged; the four existing scenario test files unedited). Applicability sweep = exactly {R003,R004} (R001/R002/R005/R006/R007 bind sentinel D-038-BOOTSTRAP); directive_refs D-038:ALL so selective-citation guard satisfied. requirements_content_digest_sha256 2e904ad6 matches; source digest a237dd50 unchanged; locked_requirement_ids unchanged; audit_log has the M5-T010 applicability_appended entry; validate_directive_compliance --check EXIT 0. Gates G0/G1/G3/G4/G5 all PASS at ea08f504; reviewers code-reviewer/qa-engineer/security-reviewer + ci-evidence-verifier each independent != producer; 323 scenario tests (71 new comparison + 252 pre-existing UNCHANGED, 0 regress) Py3.11.9 incl. a socket-blocked offline run; modularity_check --check EXIT 0. G3 mutation-verified (5/5 mutations caught: delta-sign, percent-denominator, order-dependent baseline, dropped not-derivable set, inf-not-marker). Non-blocking LOWs -> backlog: G1 cosmetic __all__ append-order (not alphabetical) + design note on content-key-smallest not-derivable baseline (compliant, fails closed per AS-4) + nested derived disclaimer echo (derive.py out-of-scope) + producer-report git-hash-object digest nit; G5 L-1 (metrics/baseline_metrics/delta baseline_value/set_value emitted verbatim gated by _finite_float rather than _json_safe - currently airtight, no reachable violation). Note: build loop reached claude_unit_completed (returncode 0) but the controller refused the checkpoint on an abbreviated starting_sha field-mismatch (c62bb930 vs full c62bb93077c... - same commit); work product intact on correct base, orchestrator committed it per the worktree-commit duty; checkpoint is a controller resume artifact, not acceptance evidence. DRAFT engineering; published/G6 legal acceptance out of scope (M5-T003/T005/T006/T007/T008/T009 precedent).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "services/api/app/scenario/comparison.py:465 compare_scenario_assumption_sets - deterministic OFFLINE scenario comparison/delta engine, M5 backend PRODUCT domain (NOT M0 self-infra); additive facade export __init__.py (COMPARISON_LABEL, COMPARISON_METRIC_KEYS, ComparisonKind, compare_scenario_assumption_sets); consumes derive READ-ONLY",
+      "packet M5-T010.json product-only allowed_paths, required_gates G0/G1/G3/G4/G5, acceptance AS-1..AS-7; G0 intake project-control/gates/M5-T010-G0.json result=PASS",
+      "AS-1..AS-7 map to real tests in services/api/tests/scenario/test_scenario_comparison.py (test_as1_*..test_as7_* + rework tests, 71 items); reproduced python -m pytest services/api/tests/scenario -> 323 passed (71 new + 252 pre-existing, 0 regress); modularity_check --check EXIT 0",
+      "canonical cap transported VERBATIM (derive.canonical_cap_sq_ft == comparison baseline_metrics.canonical_cap_sq_ft, byte/type equal); assert_scenario_not_verified PASS; incoming coverage_status verified -> conditional + needs_review=True; NOT_VERIFIED_DISCLAIMER stamped unconditionally"
+     ],
+     "note": "M5-T010 is genuine PRODUCT/optimization-engine engineering (deterministic scenario comparison/delta backing the Compare Step-3 UI), a PASS-G0 packet with executable, passing acceptance scenarios AS-1..AS-7.",
+     "verified_at": "2026-09-09T04:55:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "ea08f504ea4b52cc93062a74a9c125e5133c4b7b"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "comparison.py imports (lines 59-67) = __future__ annotations, json, math, typing.Any, ._json_safety (_json_safe), .constants (NOT_VERIFIED_DISCLAIMER), .derive (DerivedRangeKind, derive_practical_usable_range) - no network/storage/env/file/subprocess import",
+      "negative grep supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|subprocess over comparison.py -> NO MATCHES; transitive grep over all services/api/app/scenario/*.py -> no file matches (whole call path offline)",
+      "pure dict->dict; derive consumed READ-ONLY (input document not mutated/aliased); offline proof: socket.socket/create_connection monkeypatched to raise -> compare runs to completion, json.dumps(result, allow_nan=False) OK, no ' at 0x' leak; full suite 323 passed on fixtures; packet dependencies=[M5-T009] only; no deferred credentials"
+     ],
+     "note": "comparison.py stays a pure, deterministic, fully offline function; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only. Confirmed by import inspection, negative grep (module + transitive), and a socket-blocked run.",
+     "verified_at": "2026-09-09T04:55:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "ea08f504ea4b52cc93062a74a9c125e5133c4b7b"
+    }
+   ]
   }
  ]
 }
