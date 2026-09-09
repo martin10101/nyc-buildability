@@ -35,7 +35,6 @@ Guarantees (all also enforced by ``tests/scenario/test_scenario_breakeven.py``):
 
 from __future__ import annotations
 
-import copy
 import json
 import math
 from enum import Enum
@@ -332,7 +331,15 @@ def _build_candidate(
     non-negative finite number) yields a not-derivable row with a reason, never a fabricated metric.
     Returns ``(raw_candidate, row core)``; the raw value is used ONLY for ordering / midpoint."""
     safe_value = _json_safe(candidate)
-    generated = [
+    # ``_json_safe`` already returns a FRESH structure (never aliasing the caller's input) whose
+    # nesting is bounded to ``_MAX_JSON_SAFE_DEPTH``, so this assumption list is built directly from
+    # it and needs no further copy. A prior ``copy.deepcopy`` here was redundant for read-only
+    # safety and, being RECURSIVE (~2 frames/level), overflowed the interpreter recursion limit on a
+    # ~500-deep sanitized candidate - reintroducing the exact stack-dependence the iterative
+    # sanitizer exists to avoid. ``derive`` reads assumptions strictly read-only (it deep-copies
+    # each field internally via ``_copy_assumption`` and rejects a non-numeric factor value before
+    # touching it), so it never mutates this shared ``echo``.
+    echo = [
         {
             "key": variable.value,
             "assumption_type": variable.value,
@@ -341,7 +348,6 @@ def _build_candidate(
             "rationale": _CANDIDATE_RATIONALE,
         }
     ]
-    echo = copy.deepcopy(generated)
     candidate_document = {**scenario_document, "assumptions": echo}
     derived = derive_practical_usable_range(candidate_document)
 

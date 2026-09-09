@@ -510,6 +510,70 @@ def test_as5_uses_shared_sanitizer_not_a_local_duplicate():
     assert "def _safe_scalar" not in _BREAKEVEN_SOURCE
 
 
+def _nested_dict(depth: int) -> dict:
+    """A dict nested ``depth`` levels deep: ``{'n': {'n': {...}}}``."""
+    root: dict = {}
+    node = root
+    for _ in range(depth):
+        child: dict = {}
+        node["n"] = child
+        node = child
+    return root
+
+
+def _nested_list(depth: int) -> list:
+    """A list nested ``depth`` levels deep: ``[[[...]]]``."""
+    root: list = []
+    node = root
+    for _ in range(depth):
+        child: list = []
+        node.append(child)
+        node = child
+    return root
+
+
+@pytest.mark.parametrize(
+    "deep_value",
+    [
+        pytest.param(_nested_dict(600), id="dict_600_deep"),
+        pytest.param(_nested_list(600), id="list_600_deep"),
+        pytest.param(_nested_dict(5000), id="dict_5000_deep"),
+        pytest.param(_nested_list(5000), id="list_5000_deep"),
+    ],
+)
+def test_as5_deeply_nested_candidate_is_bounded_and_json_safe(deep_value):
+    """A deeply-nested dict/list candidate must NEVER crash the finder. The shared iterative
+    sanitizer bounds nesting to a fixed depth (a typed ``max_depth`` marker for anything deeper)
+    BEFORE any recursive Python work touches the value, so the finder yields a typed not-derivable
+    row for the nested candidate and ``json.dumps(result, allow_nan=False)`` never raises. This is
+    the regression guard for the removed recursive ``copy.deepcopy`` that overflowed the interpreter
+    recursion limit on a ~500-deep sanitized candidate (G5 BLOCKING-1 / LOW-1)."""
+    document = _preliminary_document()
+
+    # AS-4 "never an unhandled raise": a ~500+-deep candidate previously escaped a RecursionError
+    # out of find_scenario_threshold; it must now return a typed scan outcome.
+    result = find_scenario_threshold(document, VAR, 13000, [deep_value, 0.9])
+    assert result["threshold_kind"] in _SCANNED_KINDS
+    assert result["candidate_count"] == 2
+    assert result["derivable_count"] == 1  # only the 0.9 candidate derives
+
+    # AS-5 "json.dumps(result, allow_nan=False) never raises for ANY input".
+    _strict_json_safe(result)
+    serialized = json.dumps(result, allow_nan=False)
+    assert "max_depth" in serialized  # the over-deep candidate was bounded, not descended into
+    assert "unsafe_value_removed" in serialized
+
+    # The nested candidate is a typed not-derivable row - never a fabricated metric.
+    not_derivable = [c for c in result["candidates"] if not c["derivable"]]
+    assert len(not_derivable) == 1
+    assert not_derivable[0]["not_derivable_reason"]
+    assert not_derivable[0]["metric_value"] is None
+
+    # Deterministic run-to-run (byte-identical), like the other AS-5 pathological cases.
+    again = find_scenario_threshold(_preliminary_document(), VAR, 13000, [deep_value, 0.9])
+    assert serialized == json.dumps(again, allow_nan=False)
+
+
 # ---------------------------------------------------------------------------
 # AS-6 consumes derive READ-ONLY (no recompute); regression is the full suite run.
 # ---------------------------------------------------------------------------
