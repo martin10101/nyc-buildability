@@ -1,0 +1,81 @@
+{
+  "task_id": "M5-T010",
+  "title": "Deterministic scenario comparison/delta for the scenario optimization engine (contract-free, offline)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Deliver the deterministic, offline scenario COMPARISON/DELTA engine that backs the Compare (Step 3) UI: a new contract-free service module services/api/app/scenario/comparison.py exposing a public function compare_scenario_assumption_sets(scenario_document, assumption_sets) that, given ONE scenario document plus TWO OR MORE explicitly-declared, named assumption-sets, returns a single typed comparison document. For each assumption-set it echoes the derived outcome by calling the ACCEPTED derive_practical_usable_range READ-ONLY (never re-deriving or independently recalculating anything), then computes a BASELINE-RELATIVE delta for each numeric metric (practical-usable-range min/point/max and the canonical draft cap): the absolute difference and the percent difference versus the baseline set, plus a transparent per-field breakdown naming which metric moved and by how much. The canonical cap is transported VERBATIM from derive; comparison never performs an independent legal calculation and the comparison document is NEVER Verified (carries NOT_VERIFIED_DISCLAIMER). HARD BOUNDARIES: (1) Deterministic + total stable ordering: identical inputs in ANY set order produce BYTE-IDENTICAL output; sets are ordered by a documented stable content key with the baseline first. (2) Never invents: no assumption-set, metric, or value is fabricated; a not-derivable set yields a TYPED not-comparable marker (not a raise); a percent delta against a zero/None/absent baseline metric yields a typed not-computable marker (no ZeroDivisionError, no NaN/Inf). (3) Typed-error + degenerate handling: fewer than two sets, a malformed/non-numeric metric, or a not-derivable baseline yields a typed invalid/empty result carrying a reason, never an unhandled raise. (4) Strict-JSON-safe + fail-closed: json.dumps(result, allow_nan=False) never raises; no NaN/Inf; no negative-where-invalid; no object-address leak; identical inputs -> byte-identical. The sanitizer MUST be the SHARED services/api/app/scenario/_json_safety.py module (import it; do NOT re-duplicate or re-implement it - that is exactly the duplication M5-T009 removed). (5) Contract-free + offline: consume derive.py READ-ONLY; do NOT modify derive.py/builder.py/models.py/constants.py/contract.py/ranking.py/sensitivity.py/_json_safety.py or packages/contracts/**; comparison.py imports only stdlib + .derive + .constants + ._json_safety; no Supabase/Geoclient/network/persistence/file/subprocess I/O. (6) Public facade: add ONE additive export of the new public function (and its typed vocabulary/labels) to services/api/app/scenario/__init__.py; the existing exports and their order are otherwise UNCHANGED. Focused unit tests in services/api/tests/scenario/test_scenario_comparison.py cover AS-1..AS-7. TOOL DISCIPLINE: orient with Read/Grep/Glob; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "D-038-R003 positive product deliverable + the natural next optimization-engine increment after ranking (M5-T007) and sensitivity (M5-T008): the Compare (Step 3) UI (M5-T004, committed and parked) needs a deterministic side-by-side comparison/delta of named assumption-sets to render. Contract-free, pure-Python, fully offline (no Supabase/Geoclient), consuming the accepted derive.py READ-ONLY and dogfooding the shared _json_safety.py extracted in M5-T009. Not G6-acceptance-blocked (no new legal rule; transports the canonical cap verbatim, never Verified).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T009"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/comparison.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_comparison.py",
+    "project-control/reports/M5-T010-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/app/scenario/_json_safety.py",
+    "services/api/tests/scenario/test_scenario_ranking.py",
+    "services/api/tests/scenario/test_scenario_sensitivity.py",
+    "services/api/tests/scenario/test_scenario_derive.py",
+    "services/api/tests/scenario/test_json_safety.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 comparison document: given a scenario_document plus >=2 explicitly-declared NAMED assumption-sets, compare_scenario_assumption_sets returns a typed comparison document with (a) base lineage (scenario identity + bounded coverage status), (b) a per-set echo of the derived practical-usable-range obtained by calling derive_practical_usable_range READ-ONLY, and (c) a baseline-relative delta for each numeric metric (usable-range min/point/max + canonical draft cap): absolute difference AND percent difference vs the baseline set, with a transparent per-field breakdown. The canonical cap is transported VERBATIM (byte-equal to derive's cap echo); comparison performs no independent legal recalculation.",
+    "AS-2 deterministic + total stable order: identical inputs supplied in ANY assumption-set order produce BYTE-IDENTICAL output; sets are ordered by a documented stable content key with the baseline first; a documented tie-break makes the order total (no reliance on dict insertion or float equality).",
+    "AS-3 never invents / never Verified: no assumption-set, metric, or value is fabricated or inferred; the comparison document carries NOT_VERIFIED_DISCLAIMER and is never marked Verified (assert_scenario_not_verified-style holds); a set whose derivation is not-derivable yields a TYPED not-comparable marker in that set's row rather than being dropped or raising.",
+    "AS-4 typed-error + degenerate handling: fewer than two assumption-sets, a malformed/non-numeric metric, or a not-derivable BASELINE yields a typed invalid/empty result carrying a machine-readable reason (never an unhandled raise); a percent delta computed against a zero, None, or absent baseline metric yields a typed not-computable marker (no ZeroDivisionError, no NaN, no Inf).",
+    "AS-5 strict-JSON-safe + fail-closed via the SHARED sanitizer: json.dumps(result, allow_nan=False) never raises for any input; no NaN/Inf; no negative-where-invalid; no object-address (' at 0x') leak; comparison.py imports and uses services/api/app/scenario/_json_safety.py (grep shows it does NOT define or re-duplicate the sanitizer functions).",
+    "AS-6 full regression + modularity: python -m pytest services/api/tests/scenario stays green (>=252 pre-existing + the new test_scenario_comparison.py items; 0 regression - the existing ranking/sensitivity/derive/json_safety test files are NOT edited); python tools/modularity_check.py --check passes; comparison.py is a single cohesive responsibility importing derive READ-ONLY and _json_safety.",
+    "AS-7 contract-free + offline: zero modification to derive.py/builder.py/models.py/constants.py/contract.py/ranking.py/sensitivity.py/_json_safety.py or packages/contracts/**; services/api/app/scenario/__init__.py is touched ADDITIVELY ONLY (one new public export; existing exports + order unchanged); comparison.py imports only stdlib + .derive + .constants + ._json_safety and runs fully offline (no Supabase/Geoclient/network; socket-blockable test passes)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-09T04:26:04.139103+00:00",
+  "updated_at": "2026-09-09T04:30:23.731478+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-09T04:26:04.139943+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t010"
+}
