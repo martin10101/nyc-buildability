@@ -68,6 +68,12 @@
    "actor": "orchestrator",
    "action": "applicability_appended",
    "note": "M5-T006 ACCEPTED (169th) via full T-B gate wave + DCV (G5 surfaced one NEW pre-existing non-blocking LOW SEC-L1, tracked as backlog not another micro-hardening). Owner directive 2026-09-08 ('keep building offline'): pivot the loop off the derive.py hardening-spiral onto a SUBSTANTIAL feature. Contracted the fifth product task M5-T007 (deterministic scenario ranking/scoring over EXPLICIT assumption-sets; contract-free new ranking.py consuming the accepted derive.py; named-objective + stable order + transparent breakdown; never invents scenarios, never Verified; pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered; no source text changed; requirements_content_digest_sha256 resynced to e6111fbf. Verification for R003/R004 wrt M5-T007 produced by the independent verifier at M5-T007 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T23:47:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T007 ACCEPTED (170th) via full T-B gate wave + DCV. Owner directive 2026-09-08 ('run it invisibly, now' - keep the loop building feature->feature, orchestrator gates+accepts silently). Contracted the next product task M5-T008 (deterministic single-assumption sensitivity/what-if analysis over an EXPLICIT value grid; contract-free new sensitivity.py consuming the accepted derive.py READ-ONLY; named variable+metric, total stable order, transparent per-point breakdown; never invents values, never Verified; pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to 128c0b9f. Verification for R003/R004 wrt M5-T008 produced by the independent verifier at M5-T008 accept time."
   }
  ],
  "owner_approval": {

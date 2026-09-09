@@ -54,12 +54,12 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-08T23:43:16.014671+00:00",
-  "updated_at": "2026-09-08T23:46:01.708331+00:00",
+  "updated_at": "2026-09-09T02:39:36.815768+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -71,5 +71,16 @@
   "documented_test_commands": [
     "python -m pytest services/api/tests/scenario"
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t008"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t008",
+  "progress_log": [
+    {
+      "at": "2026-09-09T02:37:54.366823+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "M5-T008 sensitivity producer output committed at 24780f26; gate wave G1/G3/G4/G5 + DCV all PASS; moving to submit."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-09T02:39:36.815768+00:00"
 }

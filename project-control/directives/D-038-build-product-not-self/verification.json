@@ -184,6 +184,49 @@
      "reviewed_sha": "1f938f4a7b174c0338c0ecdb2ef0c6b14bdba436"
     }
    ]
+  },
+  {
+   "directive_id": "D-038",
+   "task_id": "M5-T008",
+   "applicable_requirement_ids": [
+    "D-038-R003",
+    "D-038-R004"
+   ],
+   "reviewed_sha": "24780f2683dafd41b895fa2d1668814a19a6b3e4",
+   "reviewed_manifest_sha256": "e863b240047ec886fa14c4af87210a901b0bfb21a0a63889a1a070a4a34bd0a3",
+   "producer": "scenario-optimization-engineer/orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-09T02:37:54+00:00",
+   "note": "Independent DCV at HEAD 24780f26 (candidate cherry-picked from task/M5-T008-sensitivity 3358c712; worktree wt-m5t008 clean, not pushed - branch has no upstream). Verifier != producer (scenario-optimization-engineer, run persistent-local-24) != orchestrator. git show --stat 24780f26: parent 1915336e, exactly 4 files all allowed_paths (sensitivity.py new 705, __init__.py facade additive, test_scenario_sensitivity.py new 49 items, producer report), no forbidden path (derive.py/ranking.py/builder.py/models.py/constants.py/contract.py/packages/contracts/** unchanged). evaluate_task_refs: applicable={R003,R004}, cited=D-038:ALL, missing=[], selective-citation guard satisfied; repo-wide sweep attaches no other requirement (backend/M5). requirements_content_digest_sha256 128c0b9f matches; locked_requirement_ids unchanged; source digest unchanged. Gates G0/G1/G3/G4/G5 all PASS at 24780f26; reviewers code-reviewer/qa-engineer/security-reviewer + ci-evidence-verifier each independent != producer; tests reproduced 222 passed (49 sensitivity + 173 pre-existing, 0 regress) Py3.11.9, determinism byte-identical across value orders. G1/G5 PASS with non-blocking LOWs -> backlog (shared-sanitizer decomposition: extract scenario/_json_safety.py used by derive/ranking/sensitivity + wrap raw-value deepcopy try/except + add _json_safe cycle/depth guard, closing G5 L1/L2; all unreachable via JSON input, baseline-consistent). Note: producer report is orchestrator-recorded (worker reached UNIT_COMPLETE without authoring one). validate_directive_compliance --check EXIT=0. DRAFT engineering; published/G6 legal acceptance out of scope (M5-T003/T005/T006/T007 precedent).",
+   "requirements": [
+    {
+     "id": "D-038-R003",
+     "state": "PASS",
+     "evidence": [
+      "sensitivity.py:585 analyze_scenario_sensitivity pure deterministic OFFLINE optimization-engine PRODUCT code (milestone M5, task_type backend), consumes derive READ-ONLY; additive facade export __init__.py:50-56; NOT M0 self-infra",
+      "packet M5-T008.json product-only allowed_paths, required_gates G0/G1/G3/G4/G5, acceptance AS-1..AS-7; G0 intake result=PASS",
+      "AS-1..AS-7 map to real tests in test_scenario_sensitivity.py (25 funcs); reproduced python -m pytest services/api/tests/scenario -> 222 passed (49 sensitivity)"
+     ],
+     "note": "M5-T008 is genuine PRODUCT/optimization-engine engineering (deterministic single-variable sensitivity over derive.py), PASS-G0 packet with executable, passing acceptance scenarios.",
+     "verified_at": "2026-09-09T02:37:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "24780f2683dafd41b895fa2d1668814a19a6b3e4"
+    },
+    {
+     "id": "D-038-R004",
+     "state": "PASS",
+     "evidence": [
+      "sensitivity.py:57-70 imports = __future__, copy, json, math, enum.Enum, typing.Any, .constants (NOT_VERIFIED_DISCLAIMER), .derive - no network/storage/env/file/subprocess",
+      "grep supabase|geoclient|requests|httpx|urllib|socket|psycopg|boto3|credential|os.environ|getenv|subprocess over both new files -> NONE",
+      "pure dict->dict; derive consumed READ-ONLY; offline: full suite 222 passed in <1s with in-repo fixtures (build_scenario + tests/scenario/_support.py), no Supabase/Geoclient; documented cmd python -m pytest services/api/tests/scenario; no deferred credentials"
+     ],
+     "note": "sensitivity.py stays a pure, deterministic, fully offline function; builds AND verifies with NO Supabase and NO live Geoclient - fixtures only.",
+     "verified_at": "2026-09-09T02:37:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "24780f2683dafd41b895fa2d1668814a19a6b3e4"
+    }
+   ]
   }
  ]
 }

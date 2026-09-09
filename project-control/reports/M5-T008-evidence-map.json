@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T008",
+  "reviewed_sha": "24780f2683dafd41b895fa2d1668814a19a6b3e4",
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/sensitivity.py analyze_scenario_sensitivity - deterministic OFFLINE scenario/optimization-engine PRODUCT code (milestone M5, task_type backend), NOT M0 self-infra; consumes derive_practical_usable_range READ-ONLY; delivers the single-variable sensitivity/what-if response for the Compare/Evidence UX",
+      "G0 packet PASS; AS-1..AS-7 map to real tests in test_scenario_sensitivity.py (25 funcs -> 49 items); reproduced 222 scenario-suite passed (173 pre-existing + 49 new); DCV evaluate_task_refs applicable={R003,R004}, cited=D-038:ALL, missing=[]"
+    ],
+    "D-038-R004": [
+      "sensitivity.py imports __future__/copy/json/math/enum/typing/.constants/.derive only; negative grep supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|open(|subprocess -> NO MATCHES",
+      "pure dict->dict offline function; fixtures only (build_scenario + _support.py), no Supabase / no live Geoclient; no deferred credentials; documented cmd python -m pytest services/api/tests/scenario"
+    ]
+  }
+}
