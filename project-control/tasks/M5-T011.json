@@ -1,0 +1,83 @@
+{
+  "task_id": "M5-T011",
+  "title": "Deterministic scenario break-even / threshold finder for the optimization engine (contract-free, offline)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Deliver a deterministic, offline break-even / threshold FINDER completing the scenario optimization toolkit (derive -> sensitivity -> ranking -> comparison -> THRESHOLD). New contract-free service module services/api/app/scenario/breakeven.py exposing a public function find_scenario_threshold(scenario_document, variable, target) that answers a single honest question: over an EXPLICIT, documented, bounded search domain of candidate values for one named assumption VARIABLE, at which candidate value does a named derived RESPONSE METRIC (a practical-usable-range field: min/point/max sq ft) first MEET-OR-CROSS a caller-supplied numeric TARGET? It works by a DETERMINISTIC bounded SCAN: for each candidate value in the explicit ordered domain it builds a candidate assumption-set, calls the ACCEPTED derive_practical_usable_range READ-ONLY, reads the response metric, and detects the FIRST adjacent grid interval where the metric crosses the target. It reports the crossing as the HONEST bracketing interval (the two adjacent candidate values + their derived metric values + the crossing direction) plus a per-candidate breakdown; it MUST NOT invent an interpolated sub-grid 'exact' crossing value as if it were derived (report only the explicit grid bracket; any convenience midpoint, if included at all, is explicitly labeled illustrative/estimate and never Verified). HARD BOUNDARIES: (1) Never invents / never Verified: no candidate value, metric, or crossing is fabricated; the result carries NOT_VERIFIED_DISCLAIMER and is never marked Verified; the canonical cap is transported verbatim from derive; comparison/threshold performs no independent legal calculation. (2) Deterministic + total stable order: identical inputs produce BYTE-IDENTICAL output; candidates evaluated in a documented stable order over the explicit domain. (3) Monotonicity-honest: do NOT assume monotonicity; report the FIRST crossing found by the ordered scan and set a typed flag if the metric is non-monotonic across the domain (multiple crossings) so the caller is not misled; if the target is already met at the first candidate, or never met anywhere in-domain, return a typed already-met / no-crossing-in-domain marker (not a raise). (4) Typed-error + degenerate handling: an unknown variable, a non-numeric/absent target, an empty or malformed domain, or a not-derivable scenario yields a typed invalid/empty result carrying a reason, never an unhandled raise; no ZeroDivisionError / NaN / Inf. (5) Strict-JSON-safe + fail-closed: json.dumps(result, allow_nan=False) never raises; no NaN/Inf; no object-address leak; the sanitizer MUST be the SHARED services/api/app/scenario/_json_safety.py module (import it; do NOT re-duplicate it). (6) Contract-free + offline: consume derive.py READ-ONLY; do NOT modify derive.py/builder.py/models.py/constants.py/contract.py/ranking.py/sensitivity.py/comparison.py/_json_safety.py or packages/contracts/**; breakeven.py imports only stdlib + .derive + .constants + ._json_safety (it MAY import a public typed vocabulary from a sibling engine module read-only if one fits, but must not edit it); no Supabase/Geoclient/network/persistence/file/subprocess I/O. (7) Public facade: add ONE additive export of the new public function (+ its typed vocabulary/labels) to services/api/app/scenario/__init__.py; existing exports + order otherwise UNCHANGED. Focused unit tests in services/api/tests/scenario/test_scenario_breakeven.py cover AS-1..AS-7. TOOL DISCIPLINE: orient with Read/Grep/Glob; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "D-038-R003 positive product deliverable completing the offline optimization toolkit: derive (point) -> sensitivity (grid) -> ranking (objective) -> comparison (delta) -> break-even/threshold (solve 'what value of X first achieves target Y'). A concrete, high-value analyst query ('minimum lot area / FAR to reach N sq ft usable'). Contract-free, pure-Python, fully offline (no Supabase/Geoclient), consuming the accepted derive.py READ-ONLY and dogfooding the shared _json_safety.py. Not G6-acceptance-blocked (no new legal rule; transports the canonical cap verbatim, never Verified).",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T010"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/breakeven.py",
+    "services/api/app/scenario/__init__.py",
+    "services/api/tests/scenario/test_scenario_breakeven.py",
+    "project-control/reports/M5-T011-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/app/scenario/comparison.py",
+    "services/api/app/scenario/_json_safety.py",
+    "services/api/tests/scenario/test_scenario_ranking.py",
+    "services/api/tests/scenario/test_scenario_sensitivity.py",
+    "services/api/tests/scenario/test_scenario_derive.py",
+    "services/api/tests/scenario/test_scenario_comparison.py",
+    "services/api/tests/scenario/test_json_safety.py",
+    "packages/contracts/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**",
+    "apps/web/**",
+    "tools/**",
+    ".claude/** (except own agent-memory)"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 threshold result: given a scenario_document, a named variable, an explicit ordered candidate domain, a named response metric, and a numeric target, find_scenario_threshold returns a typed result with (a) base lineage (scenario identity + bounded coverage status), (b) a per-candidate breakdown echoing the derived response-metric value obtained by calling derive_practical_usable_range READ-ONLY, and (c) the FIRST crossing as an HONEST bracketing interval (lower/upper candidate values + their metric values + crossing direction). The canonical cap is transported VERBATIM; no independent legal recalculation.",
+    "AS-2 deterministic + total stable order: identical inputs produce BYTE-IDENTICAL output; candidates are evaluated/reported in a documented stable order over the explicit domain; no reliance on dict insertion or float equality.",
+    "AS-3 never invents / never Verified: no candidate/metric/crossing is fabricated; the result carries NOT_VERIFIED_DISCLAIMER and is never marked Verified; the crossing is reported as the explicit grid bracket (no interpolated sub-grid value presented as derived; any convenience midpoint is explicitly labeled illustrative/estimate).",
+    "AS-4 monotonicity-honest + degenerate handling: target already met at the first candidate -> typed already-met marker; target never met in-domain -> typed no-crossing-in-domain marker; a non-monotonic metric across the domain (multiple crossings) sets a typed non-monotonic flag and still reports the FIRST crossing; unknown variable / non-numeric or absent target / empty or malformed domain / not-derivable scenario -> typed invalid/empty result with a reason. No unhandled raise; no ZeroDivisionError / NaN / Inf.",
+    "AS-5 strict-JSON-safe + fail-closed via the SHARED sanitizer: json.dumps(result, allow_nan=False) never raises for any input; no NaN/Inf; no object-address (' at 0x') leak; breakeven.py imports and uses services/api/app/scenario/_json_safety.py (grep shows it does NOT define or re-duplicate the sanitizer functions).",
+    "AS-6 full regression + modularity: python -m pytest services/api/tests/scenario stays green (>=323 pre-existing + the new test_scenario_breakeven.py items; 0 regression - the existing derive/sensitivity/ranking/comparison/json_safety test files are NOT edited); python tools/modularity_check.py --check passes; breakeven.py is a single cohesive responsibility importing derive READ-ONLY and _json_safety.",
+    "AS-7 contract-free + offline: zero modification to derive.py/builder.py/models.py/constants.py/contract.py/ranking.py/sensitivity.py/comparison.py/_json_safety.py or packages/contracts/**; services/api/app/scenario/__init__.py is touched ADDITIVELY ONLY (one new public export; existing exports + order unchanged); breakeven.py imports only stdlib + .derive + .constants + ._json_safety (+ optionally a public sibling vocabulary, read-only) and runs fully offline (no Supabase/Geoclient/network; socket-blockable test passes)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-09T05:37:03.299419+00:00",
+  "updated_at": "2026-09-09T05:40:18.485206+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-09T05:37:03.299419+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t011"
+}
