@@ -23,6 +23,12 @@ Public API:
 from __future__ import annotations
 
 from .builder import build_scenario
+from .comparison import (
+    COMPARISON_LABEL,
+    COMPARISON_METRIC_KEYS,
+    ComparisonKind,
+    compare_scenario_assumption_sets,
+)
 from .constants import (
     CAP_OUTPUT_NAME,
     DRAFT_CAP_LABEL,
@@ -80,4 +86,8 @@ __all__ = [
     "derive_practical_usable_range",
     "rank_scenario_assumption_sets",
     "validate_scenario_document",
+    "COMPARISON_LABEL",
+    "COMPARISON_METRIC_KEYS",
+    "ComparisonKind",
+    "compare_scenario_assumption_sets",
 ]
