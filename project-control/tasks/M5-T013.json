@@ -1,0 +1,83 @@
+{
+  "task_id": "M5-T013",
+  "title": "Evidence / provenance endpoint: surface the assembled evidence trail behind a property's rule evaluation, verbatim and honestly, over the internal flag-gated API",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Deliver the EVIDENCE VIEW the product has never had: one new route module services/api/app/api/v1/evidence.py serving GET /api/v1/properties/{bbl}/evidence, which assembles and returns the provenance trail ALREADY present in the accepted documents so a user can see WHERE every number came from and WHAT is and is not legally settled. It rebuilds the property profile and its rule_evaluation SERVER-SIDE from the bbl path parameter over the SAME trusted injected seams the accepted routes use (get_pluto_fetcher -> build_property_profile -> evaluate_property -> serialize_rule_evaluation, with get_spatial_substrate_provider), then assembles a versioned evidence document from what those documents already carry: every profile provenance record (provenance_id, source/dataset identity, retrieval timestamp and whatever the closed provenance record holds), every rule citation with its own provenance from the rule_evaluation trace, the input provenance for the evaluated inputs, and an explicit per-claim DRAFT-vs-Verified status. DELIBERATELY BODY-LESS, and that is a design decision rather than an omission: this endpoint takes NO request body and no query parameter other than the bbl path parameter, so it has NO untrusted-input surface at all. M5-T012 had to accept a body and the gate wave found two blocking defects in exactly that boundary; this endpoint needs no caller input, so it must not invent one. THE HARD RULE - TRANSPORT, NEVER INTERPRET: the route performs NO legal interpretation, NO new rule evaluation, NO recomputation and NO summarisation that could change meaning. Every material value (citation text, section reference, cap value, source id, retrieval date) is transported VERBATIM from the accepted profile / rule_evaluation documents. It adds no new legal rule, so it is NOT G6-blocked. Nothing is marked Verified unless the underlying accepted document says so, and then only carried verbatim; NOT_VERIFIED_DISCLAIMER is present whenever the trail is draft. HONEST ABOUT GAPS: a source that is absent, stale, or unavailable is reported as a TYPED marker carrying a reason (not_available / not_applicable / professional_review_required), never silently omitted and never invented. A property with a thin or conflicting evidence trail is a NORMAL 200 typed document, never an error - the user must be able to see that the evidence is thin, which is itself the answer. ROUTE POSTURE, mirroring the accepted M5-T003 / rule-evaluation routes exactly: registered ALWAYS but reachable ONLY when the EXISTING internal_rule_eval_enabled flag is an explicit true token (REUSE it - services/api/app/config.py must NOT be modified and NO new flag may be introduced), else a generic 404 byte-indistinguishable from an unmounted path carrying no correlation header and leaking no hint the feature exists; include_in_schema=False so it never appears in the OpenAPI document; X-Correlation-ID on every non-disabled response; a module-level STATUS_STATE_MATRIX that is the single source of truth for every emitted (HTTP status, state) pair and introduces no pair the accepted rule-evaluation route does not already emit; no error body carrying a traceback, filesystem path, secret, env var name, or internal string. FAIL-CLOSED, APPLYING M5-T012's GATE FINDINGS UP FRONT rather than waiting to be told: (a) EVERY emission path - the rebuild stage, the assembly stage and the final serialisation - sits inside an exception guard, so no unhandled raise can ever escape as an untyped text/plain 500 (M5-T012's G1/G5 HIGH-1 was precisely an unguarded final stage); (b) the response must survive BOTH json.dumps(doc, allow_nan=False) AND json.dumps(doc, ensure_ascii=False, allow_nan=False).encode('utf-8') without raising, because those two disagree about unpaired surrogates and the renderer uses the second - that exact disagreement was M5-T012's G5 BLOCKING-1; (c) no NaN/Inf, no object-address (' at 0x') leak, no ZeroDivisionError. SCOPE DISCIPLINE: read the profile, rules and scenario packages READ-ONLY and modify none of them; do not touch services/api/app/api/v1/{properties,rule_evaluation,scenario,scenario_analysis}.py, app/config.py, or packages/contracts/**. services/api/app/main.py is touched ADDITIVELY ONLY (one import + one include_router + a mirroring comment; every existing registration and its order unchanged). Tests in services/api/tests/api/test_evidence_api.py cover AS-1..AS-8 fully offline through the injected seams (no network, no Supabase, no Geoclient). TOOL DISCIPLINE: orient with Read/Grep/Glob; only WRITE files in allowed_paths and RUN documented_test_commands; the orchestrator commits at the gate.",
+  "business_reason": "D-038-R003 positive product deliverable, and the one named in the pivot plan that has never been built (Compare UI -> Evidence view -> rule families). The product's entire credibility rests on a claim it currently cannot show: that every number is traceable to an official source and that nothing is presented as legally settled when it is not. The provenance data already exists - closed provenance records in the profile, per-citation provenance in the rule_evaluation trace, input provenance for the evaluated inputs - and no API surface exposes any of it, so a user sees conclusions with no way to audit them. This endpoint turns the existing trail into something a reviewer, a client, or an expediter can actually inspect, and it is the surface that makes the DRAFT-not-Verified posture legible instead of a disclaimer nobody can check. Offline, BBL-based over already-accepted public connectors, fixture-tested, needing none of the deferred credentials (D-038-R004), and NOT G6-blocked because it adds no legal rule and transports existing citations verbatim. It is also body-less by design, which keeps the untrusted-input surface that cost M5-T012 two blocking defects at exactly zero.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M5-T003"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/evidence.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_evidence_api.py",
+    "project-control/reports/M5-T013-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/config.py",
+    "services/api/app/api/v1/properties.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/scenario/**",
+    "services/api/app/spatial/**",
+    "services/api/app/connectors/**",
+    "services/api/app/resilience/**",
+    "services/api/tests/api/test_properties_v1.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "services/api/tests/scenario/**",
+    "packages/contracts/**",
+    "apps/web/**",
+    "supabase/**",
+    "tools/**"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 evidence document over server-rebuilt facts: GET /api/v1/properties/{bbl}/evidence rebuilds the property profile and its rule_evaluation SERVER-SIDE from the bbl path parameter over the SAME injected seams the accepted M5-T003 route uses (get_pluto_fetcher -> build_property_profile -> evaluate_property -> serialize_rule_evaluation, get_spatial_substrate_provider) and returns a versioned 200 evidence document containing (a) every profile provenance record, (b) every rule citation together with its own provenance from the rule_evaluation trace, (c) the input provenance for the evaluated inputs, and (d) a per-claim DRAFT-vs-Verified status. A test asserts each emitted source id, citation string and retrieval timestamp is byte-equal to the value in the rebuilt document it came from.",
+    "AS-2 transport, never interpret: the route performs no legal interpretation, no rule evaluation, no recomputation and no meaning-changing summarisation. Every material value is transported VERBATIM. A test proves the canonical cap and every citation text in the evidence document are byte-identical to the values in the rebuilt rule_evaluation document, and that the module contains no arithmetic on, or rewriting of, a legal value. No new legal rule is introduced (the task is therefore not G6-blocked).",
+    "AS-3 body-less, zero untrusted-input surface: the endpoint accepts ONLY the bbl path parameter - no request body, no query parameter. A test asserts a request carrying a body is not given meaning by the handler (the body cannot influence the response) and that no non-GET method is served. A malformed BBL is a typed (422, validation_error) with no connector call, exactly as the accepted routes behave.",
+    "AS-4 flag-gated fail-safe, no OpenAPI leak, existing flag reused: unless the EXISTING internal_rule_eval_enabled flag is an explicit true token, the endpoint returns a generic 404 byte-indistinguishable from FastAPI's default for an unmounted path - identical body AND headers, no X-Correlation-ID - for absent, empty and unknown flag values; with the flag explicitly true it serves. The route is registered include_in_schema=False and never appears in /openapi.json regardless of the flag, and the OpenAPI document is byte-identical with the flag off and on. services/api/app/config.py is NOT modified and no new flag exists.",
+    "AS-5 documented status/state matrix + honest non-errors: a module-level STATUS_STATE_MATRIX enumerates every (HTTP status, state) pair the module can emit, every emission path is a member of it, and it introduces no pair beyond those the accepted rule-evaluation route already emits. A thin, conflicting, unsupported or professional-review-required evidence trail is a NORMAL 200 typed document carrying a typed reason - never an error, never silently omitted, never invented. Every non-disabled response carries X-Correlation-ID, and no error body contains a traceback, filesystem path, secret, env var name or internal implementation string. A test drives every documented pair and asserts the emitted set equals the matrix.",
+    "AS-6 fail-closed serialisation (carrying M5-T012's gate findings forward up front): EVERY stage - rebuild, assembly and final serialisation - sits inside an exception guard, so no unhandled raise escapes as an untyped text/plain 500; a test forces a raise in each stage and asserts a typed JSON 500 with a state in the matrix and a correlation id. The response survives BOTH json.dumps(doc, allow_nan=False) AND json.dumps(doc, ensure_ascii=False, allow_nan=False).encode('utf-8') without raising - the two disagree about unpaired surrogates and the renderer uses the second - with no NaN/Inf, no object-address (' at 0x') leak and no ZeroDivisionError for any rebuilt document the injected seams can produce, including one carrying unpaired-surrogate or non-finite content.",
+    "AS-7 never Verified unless the source says so: no claim in the evidence document is marked Verified unless the underlying accepted document marks it Verified, and then only transported verbatim; where the trail is draft, NOT_VERIFIED_DISCLAIMER is present. The never-Verified assertion is scoped to SERVER-AUTHORED content and states that scope explicitly (per the M5-T012 reviewer finding that a blanket token scan is falsifiable and that free-prose claims cannot be caught by value equality - document the limit rather than chase it). Verification-status keys are compared case-insensitively.",
+    "AS-8 additive registration, offline, and full regression: services/api/app/main.py is touched ADDITIVELY ONLY (one import + one include_router + a mirroring comment) with every existing registration, its order and the rest of the file unchanged; the profile, rules and scenario packages are imported READ-ONLY and modified nowhere (their diffs are empty); the suite runs fully OFFLINE through the injected fetcher/substrate seams with no network, Supabase or Geoclient access (an egress-seam landmine test, recording as well as raising, asserts zero egress); python -m pytest services/api/tests/api and python -m pytest services/api/tests/scenario both stay green with 0 regression (pre-existing test files NOT edited), and python tools/modularity_check.py --check passes with evidence.py a single cohesive assemble-and-serialise responsibility."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-10T03:34:07.331946+00:00",
+  "updated_at": "2026-09-10T03:40:52.215745+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-10T03:34:07.331946+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/api",
+    "python -m pytest services/api/tests/scenario"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t013"
+}
