@@ -21,8 +21,10 @@ coverage/verification status and every other FACT - is ALWAYS rebuilt SERVER-SID
 The request body is NEVER a source of facts: it is merged into the ENGINE arguments only, never
 into the server-rebuilt document, and a body key that would supply or override a profile, a
 rule_evaluation, a scenario document, a cap value, or a coverage/verification status is REJECTED
-with a typed 422 (see :data:`FORBIDDEN_FACT_KEYS`). The cap echoed in the response is therefore
-the server-rebuilt canonical one, transported VERBATIM.
+with a typed 422 AT ANY DEPTH (see :data:`FORBIDDEN_FACT_KEYS`) - not merely at the top level,
+because the engines echo a caller's assumption dict VERBATIM into their result, so a fact-shaped
+object nested inside an assumption-set would be reflected in a 200 body. The cap echoed in the
+response is therefore the server-rebuilt canonical one, transported VERBATIM.
 
 BOUNDED INPUT (fail-closed at the untrusted edge).
 Every body dimension has an explicit documented cap - :data:`MAX_BODY_BYTES`,
@@ -32,6 +34,10 @@ typed 422 with a reason. Oversized, deeply-nested (>= a few hundred levels), or 
 malformed bodies are a typed 422 - never an unhandled raise, a ``RecursionError``, a hang, or an
 unbounded scan (the structural walk is ITERATIVE and every collection is length-checked before it
 reaches an engine). This dogfoods the M5-T009/M5-T011 fail-closed lessons at the untrusted edge.
+Body strings must also be ENCODABLE TEXT: a JSON escape can carry an unpaired surrogate
+(``"\\ud800"`` - pure-ASCII request bytes, under every documented cap) which Starlette's
+renderer cannot encode, so such a string is a typed 422 here rather than an unhandled
+``UnicodeEncodeError`` at render time.
 
 ROUTE POSTURE (mirrors M5-T003 exactly).
 Registered ALWAYS but reachable ONLY when ``INTERNAL_SCENARIO_ENABLED`` is an explicit true
@@ -39,7 +45,11 @@ token (:func:`app.config.internal_scenario_enabled`, REUSED - no new flag); abse
 yields a generic 404 byte-indistinguishable from an unmounted path, leaking no hint the feature
 exists. All four routes are ``include_in_schema=False`` so nothing appears in the OpenAPI document
 regardless of the flag. Every non-disabled response carries ``X-Correlation-ID``; no error body
-carries a traceback, filesystem path, secret, or internal implementation string.
+carries a traceback, filesystem path, secret, or internal implementation string. BOTH stages that
+can raise - the trusted server-side rebuild AND the untrusted-input-driven engine call plus
+envelope build - sit inside the same generic-500 guard, so no path can escape as Starlette's
+plain-text 500 (which would carry no state, no correlation id, and a pair outside
+:data:`STATUS_STATE_MATRIX`).
 
 NO NEW LOGIC IN THE ROUTE.
 It performs no independent legal calculation and no engine maths: it rebuilds the scenario,
@@ -48,7 +58,9 @@ engine READ-ONLY through the public :mod:`app.scenario` facade, and returns its 
 verbatim inside a thin envelope. A legitimate no-scenario / unsupported / professional-review /
 empty / invalid analysis outcome stays a NORMAL 200 typed result, never an error. Nothing is ever
 marked Verified; the canonical :data:`app.scenario.NOT_VERIFIED_DISCLAIMER` is present on every
-analysis response; every 200 body survives ``json.dumps(body, allow_nan=False)``.
+analysis response; every 200 body is proven serializable with the SAME encoder settings the
+renderer uses (``json.dumps(body, ensure_ascii=False, allow_nan=False).encode("utf-8")``) before
+it is sent, so the pre-send check and the renderer can never disagree about what is encodable.
 
 The exact set of emitted (HTTP status, state) pairs is the single source of truth
 :data:`STATUS_STATE_MATRIX` below; it EQUALS the accepted scenario route's documented matrix and
@@ -61,6 +73,7 @@ from __future__ import annotations
 import json
 import logging
 import uuid
+from collections.abc import Callable
 from typing import Any
 
 from fastapi import APIRouter, Depends, Request
@@ -132,11 +145,14 @@ MAX_ASSUMPTION_SETS = 50  # named assumption-sets (ranking / comparison)
 MAX_CANDIDATE_DOMAIN_LENGTH = 256  # sensitivity `values` / threshold `domain`
 MAX_ASSUMPTIONS_PER_SET = 64  # assumption dicts within a single assumption-set
 
-# Top-level body keys that would supply or OVERRIDE a server-rebuilt FACT. Their
-# presence is a typed 422: a caller supplies assumptions, never facts. (Facts can
-# only enter a scenario through the trusted server rebuild; the engines merge the
-# body into `assumptions` only, never into the scenario document, so this guard is
-# belt-and-suspenders honesty at the untrusted edge - AS-2.)
+# Body keys that would supply or OVERRIDE a server-rebuilt FACT. Their presence
+# AT ANY DEPTH is a typed 422: a caller supplies assumptions, never facts. Facts can
+# only enter a scenario through the trusted server rebuild - the engines merge the
+# body into `assumptions` only, never into the scenario document, so the authoritative
+# cap is not forgeable either way - but the engines DO echo a caller's assumption dict
+# verbatim into their result, so a nested fact-shaped key would be reflected in a 200
+# body and read as a fact. Rejecting at every depth keeps AS-2 (no fact override) and
+# AS-6 (nothing marked Verified) honest, not merely unforgeable.
 FORBIDDEN_FACT_KEYS: frozenset[str] = frozenset(
     {
         "profile",
@@ -260,13 +276,56 @@ def _internal_contract_error_500(correlation_id: str) -> JSONResponse:
 # ---------------------------------------------------------------------------
 
 
+def _fact_injection_error(injected: list[str], correlation_id: str) -> JSONResponse:
+    """Typed (422, "validation_error") for a body that supplies or OVERRIDES a server-rebuilt
+    FACT. Reuses the documented pair and names the offending keys in ``detail.rejected_keys``."""
+    return _validation_error(
+        "request body may carry only illustrative analysis parameters; it may not supply "
+        "or override facts (a profile, rule_evaluation, scenario, cap value, or "
+        "coverage/verification status)",
+        correlation_id,
+        detail={"rejected_keys": injected},
+    )
+
+
+def _string_boundary_error(value: str, label: str, correlation_id: str) -> JSONResponse | None:
+    """Typed 422 when a body string (a value or a dict KEY) breaks a documented string
+    boundary: longer than :data:`MAX_STRING_LENGTH`, or not ENCODABLE TEXT.
+
+    Encodability is a real boundary, not a theoretical one. ``json.loads`` accepts the escape
+    ``"\\ud800"`` - an UNPAIRED SURROGATE - from 21 pure-ASCII request bytes, under every
+    documented cap. ``json.dumps`` with ``ensure_ascii=True`` happily re-escapes it, but
+    Starlette's renderer uses ``ensure_ascii=False`` + ``.encode("utf-8")``, which RAISES
+    ``UnicodeEncodeError``. Letting one through therefore produced a framework text/plain 500
+    with no ``state``, no ``X-Correlation-ID`` and a (500, None) pair outside
+    :data:`STATUS_STATE_MATRIX`. It is the caller's malformed input, so it is rejected here -
+    before any engine, any echo, and any renderer."""
+    if len(value) > MAX_STRING_LENGTH:
+        return _validation_error(
+            f"{label} exceeds the maximum length of {MAX_STRING_LENGTH}", correlation_id
+        )
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError:
+        return _validation_error(
+            "request body contains a string that is not encodable text "
+            "(an unpaired surrogate)",
+            correlation_id,
+        )
+    return None
+
+
 def _structural_error(body: dict, correlation_id: str) -> JSONResponse | None:
-    """ITERATIVELY enforce :data:`MAX_NESTING_DEPTH` and :data:`MAX_STRING_LENGTH` across the
-    WHOLE parsed body (keys and values). The body is already bounded by
+    """ITERATIVELY enforce :data:`MAX_NESTING_DEPTH`, :data:`MAX_STRING_LENGTH`, string
+    ENCODABILITY and the :data:`FORBIDDEN_FACT_KEYS` boundary across the WHOLE parsed body -
+    every value and every dict KEY, at EVERY depth. The body is already bounded by
     :data:`MAX_BODY_BYTES`, so this explicit-stack walk visits a bounded number of nodes and
     NEVER recurses (no ``RecursionError``) and never scans unboundedly. Returns a typed 422 on
     the first violation, else ``None``. JSON is a tree (``json.loads`` cannot produce a cycle),
-    so no cycle guard is needed; the walk is finite regardless."""
+    so no cycle guard is needed; the walk is finite regardless.
+
+    The body object itself is the first node popped, so a top-level fact key is still reported
+    before any nested or structural violation - the documented precedence is unchanged."""
     stack: list[tuple[Any, int]] = [(body, 1)]
     while stack:
         node, depth = stack.pop()
@@ -276,18 +335,18 @@ def _structural_error(body: dict, correlation_id: str) -> JSONResponse | None:
                 correlation_id,
             )
         if isinstance(node, str):
-            if len(node) > MAX_STRING_LENGTH:
-                return _validation_error(
-                    f"a string value exceeds the maximum length of {MAX_STRING_LENGTH}",
-                    correlation_id,
-                )
+            string_error = _string_boundary_error(node, "a string value", correlation_id)
+            if string_error is not None:
+                return string_error
         elif isinstance(node, dict):
+            injected = sorted(FORBIDDEN_FACT_KEYS & {k for k in node if isinstance(k, str)})
+            if injected:
+                return _fact_injection_error(injected, correlation_id)
             for key, value in node.items():
-                if isinstance(key, str) and len(key) > MAX_STRING_LENGTH:
-                    return _validation_error(
-                        f"a key exceeds the maximum length of {MAX_STRING_LENGTH}",
-                        correlation_id,
-                    )
+                if isinstance(key, str):
+                    string_error = _string_boundary_error(key, "a key", correlation_id)
+                    if string_error is not None:
+                        return string_error
                 stack.append((value, depth + 1))
         elif isinstance(node, list):
             for item in node:
@@ -345,18 +404,10 @@ async def _prepare_request(
             correlation_id,
         )
 
-    # 5. Reject any top-level key that would supply or override a FACT.
-    injected = sorted(FORBIDDEN_FACT_KEYS & set(body.keys()))
-    if injected:
-        return _validation_error(
-            "request body may carry only illustrative analysis parameters; it may not supply "
-            "or override facts (a profile, rule_evaluation, scenario, cap value, or "
-            "coverage/verification status)",
-            correlation_id,
-            detail={"rejected_keys": injected},
-        )
-
-    # 6. Structural caps (iterative depth + string length across the whole body).
+    # 5. One iterative walk enforces the WHOLE untrusted-body boundary at EVERY depth:
+    #    fact-key injection, nesting depth, string length, and string encodability. A single
+    #    walk (rather than a top-level key check plus a separate structural pass) is why a
+    #    fact-shaped object nested inside an assumption-set cannot slip through.
     structural = _structural_error(body, correlation_id)
     if structural is not None:
         return structural
@@ -520,9 +571,15 @@ def _finish(
 ) -> JSONResponse:
     """Wrap the engine ``result`` VERBATIM in a thin envelope and return a 200. The canonical
     cap and coverage status are transported VERBATIM from the SERVER-rebuilt scenario document;
-    the canonical not-verified disclaimer is always present and nothing is ever Verified. The
-    envelope is proven strict-JSON-safe (``json.dumps(..., allow_nan=False)``) before send; a
-    non-JSON-safe body would be an internal defect, never a partial 200."""
+    the canonical not-verified disclaimer is always present and nothing is ever Verified.
+
+    The envelope is proven serializable before send WITH THE SAME ENCODER SETTINGS THE RENDERER
+    USES - ``json.dumps(..., ensure_ascii=False, allow_nan=False).encode("utf-8")``. Validating
+    with ``ensure_ascii=True`` while Starlette renders with ``ensure_ascii=False`` made the two
+    disagree: an unpaired surrogate passed validation and then raised ``UnicodeEncodeError``
+    inside the renderer. ``UnicodeEncodeError`` subclasses ``ValueError``, so the existing
+    handler maps it to the documented (500, "internal_contract_error") pair. A non-serializable
+    body is an internal defect, never a partial 200 and never a framework text/plain 500."""
     envelope = {
         "analysis": analysis,
         "bbl": canonical_bbl,
@@ -534,7 +591,7 @@ def _finish(
         "result": result,
     }
     try:
-        json.dumps(envelope, allow_nan=False)
+        json.dumps(envelope, ensure_ascii=False, allow_nan=False).encode("utf-8")
     except (ValueError, TypeError):
         logger.error(
             "scenario_analysis_v1 json_safety_error analysis=%s correlation_id=%s",
@@ -545,11 +602,40 @@ def _finish(
     return _json(200, envelope, correlation_id)
 
 
+def _guarded_analysis(
+    analysis: str,
+    canonical_bbl: str,
+    scenario_document: dict,
+    correlation_id: str,
+    engine_call: Callable[[], Any],
+) -> JSONResponse:
+    """Call the engine and build the envelope inside the SAME generic-500 guard the trusted
+    rebuild stage uses. Both halves are driven by UNTRUSTED input - the engine receives the
+    caller's analysis parameters, and ``_finish`` serializes whatever the engine returned from
+    them - so leaving this stage bare while guarding the trusted rebuild was the asymmetry
+    backwards. An unexpected defect here now honors the documented (500, "internal_error") pair
+    with an ``X-Correlation-ID`` instead of escaping as Starlette's plain-text 500 (no state, no
+    correlation id, a pair outside :data:`STATUS_STATE_MATRIX`, full traceback logged). The
+    engine is still called READ-ONLY through the public :mod:`app.scenario` facade; the callable
+    only defers the call so it lands inside the guard."""
+    try:
+        result = engine_call()
+        return _finish(analysis, canonical_bbl, scenario_document, result, correlation_id)
+    except Exception:
+        logger.error(
+            "scenario_analysis_v1 unexpected_error stage=analysis analysis=%s correlation_id=%s",
+            analysis,
+            correlation_id,
+        )
+        return _internal_error_500(correlation_id)
+
+
 # ---------------------------------------------------------------------------
 # The four endpoints. Each: flag-gate -> mint correlation id -> validate BBL +
 # untrusted body -> field caps -> rebuild scenario server-side -> call the engine
-# READ-ONLY via the app.scenario facade -> return its typed result in a thin
-# envelope. No independent legal calculation and no engine maths live here.
+# READ-ONLY via the app.scenario facade inside the generic-500 guard -> return its
+# typed result in a thin envelope. No independent legal calculation and no engine
+# maths live here.
 # ---------------------------------------------------------------------------
 
 
@@ -582,8 +668,15 @@ async def post_sensitivity(
     if scenario is None:
         return error if error is not None else _internal_error_500(correlation_id)
 
-    result = analyze_scenario_sensitivity(scenario, body.get("variable"), body.get("values"))
-    return _finish("sensitivity", canonical_bbl, scenario, result, correlation_id)
+    return _guarded_analysis(
+        "sensitivity",
+        canonical_bbl,
+        scenario,
+        correlation_id,
+        lambda: analyze_scenario_sensitivity(
+            scenario, body.get("variable"), body.get("values")
+        ),
+    )
 
 
 @router.post("/properties/{bbl}/scenario/ranking", include_in_schema=False)
@@ -615,10 +708,15 @@ async def post_ranking(
     if scenario is None:
         return error if error is not None else _internal_error_500(correlation_id)
 
-    result = rank_scenario_assumption_sets(
-        scenario, body.get("objective"), body.get("assumption_sets")
+    return _guarded_analysis(
+        "ranking",
+        canonical_bbl,
+        scenario,
+        correlation_id,
+        lambda: rank_scenario_assumption_sets(
+            scenario, body.get("objective"), body.get("assumption_sets")
+        ),
     )
-    return _finish("ranking", canonical_bbl, scenario, result, correlation_id)
 
 
 @router.post("/properties/{bbl}/scenario/comparison", include_in_schema=False)
@@ -650,8 +748,13 @@ async def post_comparison(
     if scenario is None:
         return error if error is not None else _internal_error_500(correlation_id)
 
-    result = compare_scenario_assumption_sets(scenario, body.get("assumption_sets"))
-    return _finish("comparison", canonical_bbl, scenario, result, correlation_id)
+    return _guarded_analysis(
+        "comparison",
+        canonical_bbl,
+        scenario,
+        correlation_id,
+        lambda: compare_scenario_assumption_sets(scenario, body.get("assumption_sets")),
+    )
 
 
 @router.post("/properties/{bbl}/scenario/threshold", include_in_schema=False)
@@ -689,11 +792,16 @@ async def post_threshold(
     if response_metric is None:
         response_metric = ThresholdResponseMetric.USABLE_RANGE_POINT
 
-    result = find_scenario_threshold(
+    return _guarded_analysis(
+        "threshold",
+        canonical_bbl,
         scenario,
-        body.get("variable"),
-        body.get("target"),
-        body.get("domain"),
-        response_metric=response_metric,
+        correlation_id,
+        lambda: find_scenario_threshold(
+            scenario,
+            body.get("variable"),
+            body.get("target"),
+            body.get("domain"),
+            response_metric=response_metric,
+        ),
     )
-    return _finish("threshold", canonical_bbl, scenario, result, correlation_id)
