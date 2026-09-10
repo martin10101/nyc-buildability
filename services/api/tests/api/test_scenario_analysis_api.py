@@ -28,7 +28,9 @@ Coverage of the acceptance scenarios:
 
 from __future__ import annotations
 
+import http.client
 import json
+import os
 import socket
 from datetime import UTC, datetime
 from pathlib import Path
@@ -52,6 +54,7 @@ from app.config import (
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
 )
+from app.connectors import pluto_soda
 from app.connectors.pluto_soda import (
     TransportFailure,
     TransportResponse,
@@ -59,6 +62,7 @@ from app.connectors.pluto_soda import (
     fetch_by_bbl,
 )
 from app.main import app
+from app.resilience import transport as resilience_transport
 from app.scenario import NOT_VERIFIED_DISCLAIMER
 from app.scenario.contract import ScenarioContractError
 
@@ -710,16 +714,103 @@ def test_as7_engine_calls_use_the_public_facade():
 
 
 def test_as7_full_analysis_runs_fully_offline(client, monkeypatch):
-    # No credential is read and no real socket is opened: blocking socket.socket does not break
-    # the in-process request, proving the analysis path touches no network / Supabase / Geoclient.
-    monkeypatch.delenv("SOCRATA_APP_TOKEN", raising=False)
+    """AS-7 offline guarantee, asserted at the EGRESS SEAM.
+
+    Rework note: the first version of this test replaced ``socket.socket`` globally, which
+    DEADLOCKED the whole api suite - Starlette's ``TestClient`` drives the ASGI app through an
+    anyio blocking portal, and that portal's event-loop wakeup needs ``socket.socket`` for its
+    own ``socket.socketpair()`` (on Windows a real AF_INET localhost pair), so the portal thread
+    could never service the request and the main thread waited on it forever. Blocking socket
+    CONSTRUCTION is therefore the wrong seam; egress is asserted where it actually happens, at
+    places the portal never touches:
+
+    * ``pluto_soda._OPENER`` - the accepted monkeypatch seam the connector opens URLs through
+      (the same seam tests/api/test_properties_v1.py already uses), plus the shared
+      ``app.resilience.transport.DEFAULT_OPENER`` any other connector would fall back to;
+    * ``http.client.HTTP(S)Connection.connect`` - every stdlib/urllib/httpx-style client's
+      single socket-connect choke point;
+    * ``socket.create_connection`` - the lower-level outbound connect helper those use.
+
+    Each landmine RECORDS the attempt as well as raising, so ``egress == []`` still fails even
+    if a connector translates the raise into a typed transport error instead of propagating it.
+    Positively: the injected fixture fetcher and substrate are proven to be the only sources
+    consulted, and no Socrata credential exists to read or reaches an outbound header.
+    """
+    monkeypatch.delenv(pluto_soda.APP_TOKEN_ENV_VAR, raising=False)
     enable_flag(monkeypatch)
-    install_confident()
 
-    def _no_socket(*args, **kwargs):
-        raise AssertionError("network access attempted during an analysis request")
+    egress: list[str] = []
 
-    monkeypatch.setattr(socket, "socket", _no_socket)
+    def _landmine(label: str):
+        def _attempt(*args, **kwargs):
+            egress.append(label)
+            raise AssertionError(f"network egress attempted during an analysis request: {label}")
+
+        return _attempt
+
+    class _LandmineOpener:
+        """Stand-in for the no-redirect urllib opener: opening anything at all is egress."""
+
+        handlers: tuple = ()
+
+        def __init__(self) -> None:
+            self.open = _landmine("urllib opener.open")
+
+    monkeypatch.setattr(pluto_soda, "_OPENER", _LandmineOpener())
+    monkeypatch.setattr(resilience_transport, "DEFAULT_OPENER", _LandmineOpener())
+    monkeypatch.setattr(
+        http.client.HTTPConnection, "connect", _landmine("http.client.HTTPConnection.connect")
+    )
+    monkeypatch.setattr(
+        http.client.HTTPSConnection, "connect", _landmine("http.client.HTTPSConnection.connect")
+    )
+    monkeypatch.setattr(socket, "create_connection", _landmine("socket.create_connection"))
+
+    # The ONLY two sources this request may consult, each recording that it was used.
+    consulted: list[str] = []
+    outbound_headers: list[dict] = []
+
+    class RecordingTransport(FakeTransport):
+        def __call__(self, url: str, headers: dict, timeout: float) -> TransportResponse:
+            outbound_headers.append(dict(headers))
+            return super().__call__(url, headers, timeout)
+
+    def _recording_fetcher_provider():
+        def fetch(bbl: str, correlation_id: str):
+            consulted.append("pluto_fetcher")
+            return fetch_by_bbl(
+                bbl,
+                transport=RecordingTransport([fixture_response("F01_single_lot_normal.json")]),
+                sleep=lambda s: None,
+                clock=FIXED_CLOCK,
+                correlation_id=correlation_id,
+            )
+
+        return fetch
+
+    substrate = confident_r5_substrate()
+
+    def _recording_substrate_provider():
+        def provide(canonical_bbl: str, correlation_id: str):
+            consulted.append("spatial_substrate")
+            return substrate
+
+        return provide
+
+    app.dependency_overrides[get_pluto_fetcher] = _recording_fetcher_provider
+    app.dependency_overrides[get_spatial_substrate_provider] = _recording_substrate_provider
+
     response = client.post(url("comparison"), json=COMPARISON_BODY)
+
+    # The offline guarantee: not one egress attempt on any real outbound path.
+    assert egress == []
     assert response.status_code == 200
     assert response.json()["result"]["comparison_kind"] == "scenario_assumption_set_comparison"
+
+    # ... and the answer was built from the injected fixture seams, nothing else.
+    assert sorted(set(consulted)) == ["pluto_fetcher", "spatial_substrate"]
+    assert outbound_headers, "the fixture transport must have been exercised"
+
+    # No credential was available to read, and none was placed on an outbound header.
+    assert pluto_soda.APP_TOKEN_ENV_VAR not in os.environ
+    assert all("x-app-token" not in {key.lower() for key in h} for h in outbound_headers)
