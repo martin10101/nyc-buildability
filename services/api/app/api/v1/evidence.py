@@ -19,12 +19,24 @@ SERVER-SIDE over the SAME injected seams the accepted routes use
 (``get_pluto_fetcher`` -> ``build_property_profile`` -> ``evaluate_property`` ->
 ``serialize_rule_evaluation``, with ``get_spatial_substrate_provider``), then
 ASSEMBLES a versioned ``evidence`` @ 1.0.0 document from what those already-
-validated documents carry: every profile provenance record, every rule citation
-with its own source-snapshot provenance, the input provenance for the evaluated
-inputs, and a per-claim DRAFT-vs-Verified status. Every material value is
-transported VERBATIM (a deep copy); nothing is recomputed, re-evaluated,
-rewritten, or summarised in a meaning-changing way. It adds NO new legal rule
-(not G6-blocked).
+validated documents carry. Every material value is transported VERBATIM (a deep
+copy); nothing is recomputed, re-evaluated, rewritten, or summarised in a
+meaning-changing way. It adds NO new legal rule (not G6-blocked).
+
+WHOLE-TRAIL TRANSPORT, NOTHING HAND-PICKED (gate rework, G1 BLOCKING-1). The
+document carries EVERY field of the rebuilt ``rule_evaluation`` root, EVERY field
+of each ``evaluation_trace``, and EVERY field of ``evaluated_input`` - by deep copy
+of the whole sub-document, never by re-keying a chosen subset. The first version
+hand-picked 14 of the root's 20 required keys and 7 of each trace's 19, which
+silently dropped the qualifications that make a figure honest: ``exceptions_applied``
+(a higher FAR may apply under ZR 23-21), ``notes`` ("NOT an evidence-based
+determination"), ``computation_steps`` (the derivation), ``rule_release`` (including
+``verified_eligible``), ``rule_conflict``, and the root's district / lot-area /
+spatial context. Presenting a QUALIFIED figure as UNQUALIFIED in the one surface
+built to audit it is the opposite of this endpoint's purpose, so the assembler now
+transports the whole trail and :data:`_RELOCATED_SOURCE_FIELDS` documents - IN THE
+RESPONSE - the only two source fields that live under a different key here. Nothing
+is excluded; a relocation is declared, never silent.
 
 BODY-LESS by design: only the ``bbl`` path parameter, so the untrusted-input
 surface is exactly zero (M5-T012 accepted a body and the gate wave found two
@@ -140,6 +152,19 @@ _GAP_NOT_AVAILABLE = "not_available"
 _GAP_NOT_APPLICABLE = "not_applicable"
 _GAP_PROFESSIONAL_REVIEW = "professional_review_required"
 _GAP_DATA_CONFLICT = "data_conflict"
+
+# The ONLY two rule_evaluation root fields that appear in this document under a
+# different key, and where each one went. They are RELOCATED, never omitted: the
+# traces are enriched with a per-claim status so they live under `rule_citations`,
+# and `evaluated_input` is lifted to the document root for direct addressing. This
+# mapping is emitted IN THE RESPONSE (`source_field_routing`) so a consumer can
+# verify mechanically that no source field was dropped, and the test pack asserts
+# key-set equality against the source contract through it. If a field ever must be
+# genuinely excluded, it belongs here with a documented reason - never dropped.
+_RELOCATED_SOURCE_FIELDS: dict[str, str] = {
+    "evaluations": "rule_citations",
+    "evaluated_input": "evaluated_input",
+}
 
 _VERIFICATION_SCOPE_NOTE = (
     "Verification status in this document is SERVER-AUTHORED and derived solely "
@@ -257,6 +282,22 @@ def _gap_markers(profile: dict, rule_evaluation: dict) -> list[dict]:
         gaps.append(
             {"kind": _GAP_DATA_CONFLICT, "subject": "coverage", "reason": coverage}
         )
+    # A typed same-family rule conflict gets its OWN marker carrying the whole
+    # competing-rules object verbatim (G1 HIGH-1). The engine deliberately preserves
+    # `rule_conflict` for reviewers (app.rules.integration._conflict_result): it names
+    # WHICH rules compete, over which outputs, and each one's effective window. A
+    # generic professional_review_required marker loses exactly that, so the reviewer
+    # would be told a human is needed without being told what to look at.
+    conflict = rule_evaluation.get("rule_conflict")
+    if isinstance(conflict, dict) and conflict.get("conflict"):
+        gaps.append(
+            {
+                "kind": _GAP_DATA_CONFLICT,
+                "subject": "rule_conflict",
+                "reason": conflict.get("note"),
+                "detail": copy.deepcopy(conflict),
+            }
+        )
     if coverage == "professional_review_required" or rule_evaluation.get("needs_review"):
         gaps.append(
             {
@@ -286,30 +327,29 @@ def assemble_evidence_document(
     """Assemble the versioned evidence document from the ALREADY-validated profile
     and rule_evaluation. Every material value is transported VERBATIM (a deep copy
     of the source sub-structure); nothing is recomputed, re-evaluated, rewritten,
-    or summarised in a meaning-changing way."""
-    evaluated_input = rule_evaluation["evaluated_input"]
+    summarised in a meaning-changing way, or SILENTLY OMITTED.
 
-    rule_citations: list[dict] = []
-    for trace in rule_evaluation.get("evaluations", []):
-        rule_citations.append(
-            {
-                "rule_id": trace["rule_id"],
-                "rule_version": trace["rule_version"],
-                "family": trace["family"],
-                "rule_status": trace["rule_status"],
-                # Transported verbatim from the rebuilt rule_evaluation trace.
-                "coverage_status": trace["coverage_status"],
-                # SERVER-AUTHORED, derived only by echoing the source coverage.
-                "claim_verification_status": _verification_status(
-                    trace["coverage_status"]
-                ),
-                # The canonical outputs (incl. any max_residential_floor_area cap)
-                # and the citations WITH their own source-snapshot provenance, both
-                # transported verbatim - a material value never leaves without it.
-                "outputs": copy.deepcopy(trace["outputs"]),
-                "citations": copy.deepcopy(trace["citations"]),
-            }
-        )
+    The whole trail travels: each citation group is the ENTIRE evaluation_trace plus
+    one server-authored ``claim_verification_status``, ``source_coverage`` is the
+    ENTIRE rule_evaluation root minus only the two sub-documents that this document
+    addresses under their own keys (:data:`_RELOCATED_SOURCE_FIELDS`, emitted as
+    ``source_field_routing``), and ``evaluated_input`` is the entire sub-document.
+    Because every source field is deep-copied wholesale rather than re-keyed, a
+    future field added to the source contract flows through automatically instead of
+    being dropped until someone notices."""
+    rule_citations: list[dict] = [
+        # The ENTIRE trace verbatim - outputs, citations AND every qualification that
+        # makes the outputs honest (exceptions_applied, notes, computation_steps,
+        # rule_release, uncertainty, determination, applicability, input_validation,
+        # effective_window, evaluated_inputs, data_completeness) - plus the single
+        # server-authored per-claim status. `claim_verification_status` is not a key of
+        # the closed evaluation_trace contract, so it cannot shadow a transported field.
+        {
+            **copy.deepcopy(trace),
+            "claim_verification_status": _verification_status(trace["coverage_status"]),
+        }
+        for trace in rule_evaluation.get("evaluations", [])
+    ]
 
     return {
         "contract_version": EVIDENCE_CONTRACT_VERSION,
@@ -322,33 +362,23 @@ def assemble_evidence_document(
         # The permanent honest disclaimer, transported verbatim (present while draft).
         "not_verified_disclaimer": rule_evaluation["not_verified_disclaimer"],
         "verification_scope_note": _VERIFICATION_SCOPE_NOTE,
-        # The rule_evaluation's own machine-readable outcome fields, verbatim - the
-        # single source of the coverage / review / fail-safe posture the evidence
-        # trail is honest about.
+        # WHERE each relocated source root field lives in this document, emitted so a
+        # consumer can mechanically prove nothing was dropped (see the module docstring).
+        "source_field_routing": dict(_RELOCATED_SOURCE_FIELDS),
+        # The ENTIRE rule_evaluation root verbatim, minus only the two relocated
+        # sub-documents above: the coverage / review / fail-safe posture AND the
+        # district, lot area and its source, the spatial context and its uncertainty,
+        # the typed rule_conflict, and the source contract version. Deep-copied
+        # wholesale, so nothing is hand-picked and nothing can be silently dropped.
         "source_coverage": {
-            "coverage_status": rule_evaluation["coverage_status"],
-            "coverage_source": rule_evaluation["coverage_source"],
-            "data_completeness": copy.deepcopy(rule_evaluation["data_completeness"]),
-            "needs_review": rule_evaluation["needs_review"],
-            "professional_review_required": rule_evaluation[
-                "professional_review_required"
-            ],
-            "fail_safe": rule_evaluation["fail_safe"],
-            "fail_safe_reason": copy.deepcopy(rule_evaluation["fail_safe_reason"]),
-            "rule_lifecycle_statuses": copy.deepcopy(
-                rule_evaluation["rule_lifecycle_statuses"]
-            ),
-            "reasons": copy.deepcopy(rule_evaluation["reasons"]),
-            "family_coverage": copy.deepcopy(rule_evaluation["family_coverage"]),
+            key: copy.deepcopy(value)
+            for key, value in rule_evaluation.items()
+            if key not in _RELOCATED_SOURCE_FIELDS
         },
         # Which profile provenance records back each evaluated input, BY REFERENCE
-        # exactly as the accepted rule_evaluation carries them - transported verbatim.
-        "evaluated_input": {
-            "bbl": evaluated_input["bbl"],
-            "profile_contract_version": evaluated_input["profile_contract_version"],
-            "input_fingerprint": evaluated_input["input_fingerprint"],
-            "input_provenance": copy.deepcopy(evaluated_input["input_provenance"]),
-        },
+        # exactly as the accepted rule_evaluation carries them - the whole
+        # sub-document, transported verbatim.
+        "evaluated_input": copy.deepcopy(rule_evaluation["evaluated_input"]),
         # Every profile provenance record, verbatim (source id, dataset identity,
         # retrieval timestamp, and whatever else the closed record already carries).
         "profile_provenance": copy.deepcopy(profile["provenance"]),

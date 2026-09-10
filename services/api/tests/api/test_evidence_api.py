@@ -11,6 +11,21 @@ AS-3 body-less (body ignored, non-GET 405, malformed BBL 422 pre-fetch); AS-4 fl
 set + thin trail is a normal typed 200; AS-6 fail-closed serialisation (typed 500 per stage, both
 json.dumps forms); AS-7 never Verified unless the source says so (server-authored scope); AS-8
 additive registration (evidence LAST), egress-seam landmine (zero egress), existing routes intact.
+
+Gate-wave rework (G1/G3/G5). The first pack asserted over PROJECTIONS - hand-picked field lists -
+so it passed while the document silently dropped 18 required source-contract fields. Every
+transport assertion here is now TOTAL rather than sampled:
+
+* KEY-SET equality against the source contract's own bundled schema, so an omission fails
+  (G1 BLOCKING-1);
+* WHOLE-SUBTREE byte-equality of every transported sub-document within one build (G3 H-1);
+* ``_stable_view`` compares the ENTIRE document with only the one empirically-volatile leaf key
+  masked, instead of ~12 hand-picked fields (G3 H-1);
+* the never-Verified check WALKS the document instead of enumerating four paths (G3 H-3);
+* the route's own FastAPI view is asserted to expose no query parameter and no body (G3 H-4);
+* the fetch-stage guard is driven (G3 H-2);
+* the two pure classifiers are unit-tested directly, reaching the outcomes no available fixture
+  can produce (G3 H-5), including the typed ``rule_conflict`` gap (G1 HIGH-1).
 """
 
 from __future__ import annotations
@@ -29,6 +44,8 @@ from app.api.v1 import evidence as evidence_module
 from app.api.v1.evidence import (
     EVIDENCE_CONTRACT_VERSION,
     STATUS_STATE_MATRIX,
+    _completeness_marker,
+    _gap_markers,
     _verification_status,
     assemble_evidence_document,
 )
@@ -52,7 +69,11 @@ from app.main import app
 from app.profile.builder import build_property_profile
 from app.resilience import transport as resilience_transport
 from app.rules.integration import evaluate_property
-from app.rules.response import RuleEvaluationContractError, serialize_rule_evaluation
+from app.rules.response import (
+    RuleEvaluationContractError,
+    _load_bundled_schema,
+    serialize_rule_evaluation,
+)
 
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
 FIXED_CLOCK = lambda: datetime(2026, 7, 16, 12, 0, 0, tzinfo=UTC)  # noqa: E731
@@ -248,11 +269,31 @@ def _rebuild_with_substrate(substrate, fixture: str = "F01_single_lot_normal.jso
     return profile, rule_eval
 
 
-# Deterministic identity projections. A rebuilt profile provenance record embeds a per-build
-# observation_id derived from that request's random correlation id, so full-record equality is
-# only stable WITHIN one build (proven in test_as8_direct_assembly_is_pure_transport). Across two
-# independent rebuilds the DETERMINISTIC fields AS-1 names - source id, retrieval timestamp,
-# citation string/section/snapshot - are what must transport unchanged.
+# ---------------------------------------------------------------------------
+# The SOURCE contract this document must carry IN FULL (G1 BLOCKING-1). Loaded from the app's OWN
+# bundled schema - the very copy app.rules.response validates the rebuilt document against - so
+# the assertion is anchored to the CONTRACT, not to whatever the assembler happens to emit: a
+# field added to the source contract and then dropped by the assembler fails here too.
+# ---------------------------------------------------------------------------
+_RULE_EVAL_SCHEMA = _load_bundled_schema("rule_evaluation.schema.json")
+ROOT_REQUIRED = frozenset(_RULE_EVAL_SCHEMA["required"])
+TRACE_REQUIRED = frozenset(_RULE_EVAL_SCHEMA["$defs"]["evaluation_trace"]["required"])
+EVALUATED_INPUT_REQUIRED = frozenset(_RULE_EVAL_SCHEMA["$defs"]["evaluated_input"]["required"])
+
+# The single server-authored key added to each transported trace. It is deliberately NOT a key of
+# the closed evaluation_trace contract, so it cannot shadow a transported field.
+SERVER_AUTHORED_CLAIM_KEY = "claim_verification_status"
+
+# Per-request-volatile leaf keys. A rebuilt profile provenance record embeds an observation_id
+# derived from that request's random correlation id. Probed empirically: across two identical
+# requests this is the ONLY differing leaf anywhere in the document (67 occurrences, all under
+# profile_provenance), so EVERYTHING else can be compared byte-for-byte.
+_VOLATILE_LEAF_KEYS = frozenset({"observation_id"})
+
+
+# Deterministic identity projections, used only where two INDEPENDENT builds are compared (their
+# observation_ids legitimately differ). Within one build, full byte-equality is asserted instead -
+# see test_as8_direct_assembly_is_pure_transport.
 def _prov_identity(record) -> tuple:
     return (record["source_id"], record["retrieved_at"], record.get("dataset_version"))
 
@@ -261,16 +302,38 @@ def _cit_identity(citation) -> tuple:
     return (citation["snapshot_id"], citation["section"], citation["quote"])
 
 
-# The server-authored verification-status fields (never Verified unless the source says so). Free
-# prose transported inside a citation quote is DELIBERATELY out of scope (AS-7 / M5-T012 finding).
-def _server_authored_statuses(document) -> list[str]:
-    statuses = [
-        document["overall_verification_status"],
-        document["source_coverage"]["coverage_status"],
-    ]
-    statuses += [c["claim_verification_status"] for c in document["rule_citations"]]
-    statuses += [c["coverage_status"] for c in document["rule_citations"]]
-    return statuses
+# Keys that ASSERT a verification state, found by WALKING the document (G3 H-3: the previous
+# helper enumerated four paths, so a NEW server-authored `verified: True` - at the top level or
+# nested per citation group - was invisible to AS-7). Free prose transported inside a citation
+# quote / note / description may itself contain the word "Verified"; that is DELIBERATELY out of
+# scope and documented on the response in `verification_scope_note` (a blanket token scan is
+# falsifiable, and transported prose is never a server-authored status - AS-7 / M5-T012 finding).
+_VERIFICATION_CLAIM_KEYS = frozenset(
+    {
+        "verified",
+        "is_verified",
+        "verification",
+        "verification_status",
+        "claim_verification_status",
+        "overall_verification_status",
+        "coverage_status",
+        "verified_eligible",
+    }
+)
+
+
+def _verification_claims(node, path="$"):
+    """Yield ``(path, key, value)`` for EVERY verification-claim key anywhere in the document, at
+    any depth - so a claim added in a new place is caught rather than missed by an enumeration."""
+    if isinstance(node, dict):
+        for key, value in node.items():
+            child = f"{path}.{key}"
+            if key in _VERIFICATION_CLAIM_KEYS:
+                yield child, key, value
+            yield from _verification_claims(value, child)
+    elif isinstance(node, list):
+        for index, item in enumerate(node):
+            yield from _verification_claims(item, f"{path}[{index}]")
 
 
 # ==========================================================================
@@ -278,7 +341,11 @@ def _server_authored_statuses(document) -> list[str]:
 # ==========================================================================
 
 
-def test_as1_evidence_document_carries_the_whole_trail_verbatim(client, monkeypatch):
+def test_as1_deterministic_provenance_and_citations_transport_byte_equal(client, monkeypatch):
+    # (Renamed: this test compares an independent rebuild, so it asserts the DETERMINISTIC
+    # fields. The "whole trail" claim is carried by
+    # test_as1_document_carries_every_source_contract_field and by the whole-subtree equality in
+    # test_as8_direct_assembly_is_pure_transport - G3 H-1.)
     enable_flag(monkeypatch)
     install_confident()
     response = client.get(EVIDENCE_URL)
@@ -333,6 +400,80 @@ def test_as1_evidence_document_carries_the_whole_trail_verbatim(client, monkeypa
     )
 
 
+def test_as1_document_carries_every_source_contract_field(client, monkeypatch):
+    """G1 BLOCKING-1 regression, asserted as KEY-SET EQUALITY against the source contract.
+
+    The first version hand-picked 14 of the rule_evaluation root's 20 required keys and 7 of each
+    evaluation_trace's 19, silently dropping 18 contract fields. Key-set equality is the assertion
+    a projection CANNOT satisfy, so a future omission fails here instead of shipping. It is driven
+    off the app's own bundled schema, so a field ADDED to the source contract and then dropped by
+    the assembler also fails."""
+    enable_flag(monkeypatch)
+    install_confident()
+    doc = client.get(EVIDENCE_URL).json()
+    _, baseline_rule_eval = _rebuild_with_substrate(confident_r5_substrate())
+
+    # (1) The relocation map is DECLARED in the response, and each target key really exists - so
+    #     "relocated, not omitted" is verifiable by a consumer, not just asserted in prose.
+    routing = doc["source_field_routing"]
+    assert routing == {"evaluations": "rule_citations", "evaluated_input": "evaluated_input"}
+    for source_key, document_key in routing.items():
+        assert document_key in doc, f"{source_key} routed to a key the document lacks"
+
+    # (2) The root: every required source field is present, either in source_coverage or at the
+    #     declared relocation target. Equality both ways - nothing dropped, nothing invented.
+    assert set(doc["source_coverage"]) | set(routing) == ROOT_REQUIRED
+    assert set(doc["source_coverage"]) | set(routing) == set(baseline_rule_eval)
+
+    # (3) Every citation group is the WHOLE evaluation_trace plus exactly one server-authored key.
+    assert doc["rule_citations"]
+    for group in doc["rule_citations"]:
+        assert set(group) == TRACE_REQUIRED | {SERVER_AUTHORED_CLAIM_KEY}
+
+    # (4) The evaluated_input sub-document, in full.
+    assert set(doc["evaluated_input"]) == EVALUATED_INPUT_REQUIRED
+
+    # (5) And the same holds for every trace the engine actually produced.
+    for group, trace in zip(doc["rule_citations"], baseline_rule_eval["evaluations"], strict=True):
+        assert set(group) - {SERVER_AUTHORED_CLAIM_KEY} == set(trace)
+
+
+def test_as1_the_qualifications_that_make_the_cap_honest_travel_with_it(client, monkeypatch):
+    """BLOCKING-1 in domain terms rather than key-sets. The F01 trail presents a 15000.0 sq ft
+    cap; the qualifications that make that figure honest must travel WITH it. Dropping them
+    rendered a QUALIFIED figure as UNQUALIFIED in the one surface built to audit it."""
+    enable_flag(monkeypatch)
+    install_confident()
+    doc = client.get(EVIDENCE_URL).json()
+    group = doc["rule_citations"][0]
+
+    assert group["outputs"]["max_residential_floor_area_sq_ft"] == TRACE_CAP
+
+    # The documented exception: a HIGHER residential FAR may apply under ZR 23-21, so the cap is
+    # conditional. Dropping this presented a conditional cap as settled.
+    assert group["exceptions_applied"]
+    assert any("23-21" in json.dumps(entry) for entry in group["exceptions_applied"])
+
+    # The honest note that this is not an evidence-based determination.
+    assert group["notes"]
+    assert any("not" in str(note).lower() for note in group["notes"])
+
+    # The derivation behind the number (lot area x FAR), carried rather than summarised away.
+    assert group["computation_steps"]
+    assert any(step.get("result") == TRACE_CAP for step in group["computation_steps"])
+
+    # The G6 approval state travels too - the reader can see this is not Verified-eligible yet.
+    assert group["rule_release"]["verified_eligible"] is False
+
+    # Root-level context the figure depends on, and the typed conflict slot.
+    assert doc["source_coverage"]["zoning_district"] == "R5"
+    assert doc["source_coverage"]["lot_area_sq_ft"] == 10000.0
+    assert doc["source_coverage"]["lot_area_source"]
+    assert "rule_conflict" in doc["source_coverage"]
+    assert "spatial_context" in doc["source_coverage"]
+    assert "spatial_uncertainty" in doc["source_coverage"]
+
+
 # ==========================================================================
 # AS-2 - transport, never interpret.
 # ==========================================================================
@@ -379,27 +520,22 @@ def test_as2_module_does_no_arithmetic_or_reevaluation(client, monkeypatch):
 # ==========================================================================
 
 
-def _stable_view(doc) -> dict:
-    """A projection excluding per-request-volatile ids (correlation-derived observation_ids) so
-    two independent builds can be compared for BODY influence rather than inherent randomness."""
-    return {
-        "keys": sorted(doc),
-        "bbl": doc["bbl"],
-        "contract_version": doc["contract_version"],
-        "overall_verification_status": doc["overall_verification_status"],
-        "evidence_completeness": doc["evidence_completeness"],
-        "coverage_status": doc["source_coverage"]["coverage_status"],
-        "caps": [
-            g["outputs"].get("max_residential_floor_area_sq_ft") for g in doc["rule_citations"]
-        ],
-        "provenance_ids": sorted(_prov_identity(r) for r in doc["profile_provenance"]),
-        "citations": sorted(
-            _cit_identity(c) for g in doc["rule_citations"] for c in g["citations"]
-        ),
-        "input_fingerprint": doc["evaluated_input"]["input_fingerprint"],
-        "input_provenance": doc["evaluated_input"]["input_provenance"],
-        "gaps": doc["gaps"],
-    }
+def _stable_view(doc):
+    """The WHOLE document with only the per-request-volatile leaves masked, so two independent
+    builds can be compared for BODY influence rather than inherent randomness.
+
+    G3 H-1: the previous version projected ~12 hand-picked fields, so a mutation anywhere else in
+    the document was invisible to every test that compared stable views. Masking exactly one
+    empirically-determined volatile leaf key (:data:`_VOLATILE_LEAF_KEYS`) lets the comparison be
+    total instead."""
+    if isinstance(doc, dict):
+        return {
+            key: "<volatile>" if key in _VOLATILE_LEAF_KEYS else _stable_view(value)
+            for key, value in doc.items()
+        }
+    if isinstance(doc, list):
+        return [_stable_view(item) for item in doc]
+    return doc
 
 
 def test_as3_request_body_cannot_influence_the_response(client, monkeypatch):
@@ -425,6 +561,33 @@ def test_as3_request_body_cannot_influence_the_response(client, monkeypatch):
     assert bodied.status_code == 200
     assert _stable_view(bodied.json()) == _stable_view(clean)
     assert "1000000000" not in bodied.text
+
+
+def test_as3_route_declares_no_query_parameter_and_no_body():
+    """G3 H-4: AS-3's "no query parameter" half was untested - adding a `terse: bool = False`
+    parameter that strips `profile_provenance` shipped green. Assert the route's OWN FastAPI view:
+    the only declared parameter is the `bbl` path param, and there is no body field. The two
+    Depends seams are checked too, so a query parameter cannot enter through a dependency."""
+    route = next(
+        r
+        for r in app.routes
+        if getattr(r, "path", None) == "/api/v1/properties/{bbl}/evidence"
+    )
+    assert sorted(route.methods) == ["GET"]
+
+    dependant = route.dependant
+    assert [param.name for param in dependant.path_params] == ["bbl"]
+    assert dependant.query_params == []
+    assert dependant.body_params == []
+    assert dependant.header_params == []
+    assert dependant.cookie_params == []
+    assert route.body_field is None
+
+    # The injected seams are server-side providers: neither may introduce a caller-facing param.
+    assert len(dependant.dependencies) == 2
+    for sub_dependency in dependant.dependencies:
+        assert sub_dependency.query_params == []
+        assert sub_dependency.body_params == []
 
 
 @pytest.mark.parametrize("method", ["post", "put", "patch", "delete"])
@@ -653,6 +816,34 @@ def test_as6_rebuild_stage_raise_is_typed_internal_error_500(raw_client, monkeyp
     assert 'File "' not in response.text
 
 
+def test_as6_fetch_stage_raise_is_typed_internal_error_500(raw_client, monkeypatch):
+    """G3 H-2: the FETCH stage has its own generic-500 guard (for anything the injected fetcher
+    raises that is NOT a typed PlutoConnectorError), and removing that guard stayed green because
+    no test drove it. An unexpected fetcher exception must honor the documented typed pair with a
+    correlation id, never escape as an untyped text/plain ASGI 500, and never leak."""
+    enable_flag(monkeypatch)
+
+    def exploding_fetcher(bbl, correlation_id):
+        raise RuntimeError("secret-internal-path C:\\hostile\r\n::fetch boom")
+
+    app.dependency_overrides[get_pluto_fetcher] = lambda: exploding_fetcher
+    app.dependency_overrides[get_spatial_substrate_provider] = lambda: (
+        lambda canonical_bbl, correlation_id: confident_r5_substrate()
+    )
+
+    response = raw_client.get(EVIDENCE_URL)
+    assert response.status_code == 500
+    assert response.headers["content-type"].startswith("application/json")
+    body = response.json()
+    assert body["state"] == "internal_error"
+    assert (500, "internal_error") in STATUS_STATE_MATRIX
+    assert body["correlation_id"] == response.headers["X-Correlation-ID"]
+    assert "hostile" not in response.text
+    assert "secret-internal-path" not in response.text
+    assert "Traceback" not in response.text
+    assert 'File "' not in response.text
+
+
 def test_as6_assembly_stage_raise_is_typed_internal_error_500(raw_client, monkeypatch):
     enable_flag(monkeypatch)
     install_confident()
@@ -727,10 +918,24 @@ def test_as7_no_server_authored_claim_is_verified(client, monkeypatch):
     install_confident()
     doc = client.get(EVIDENCE_URL).json()
 
-    # SERVER-AUTHORED verification-status fields are never 'verified' (case-insensitive), and the
-    # honest disclaimer is present while draft. The scope is stated explicitly on the document.
-    for status in _server_authored_statuses(doc):
-        assert str(status).strip().lower() != "verified"
+    # EVERY verification-claim key anywhere in the document (a WALK, not an enumeration) must
+    # deny verification: never boolean True, never the status string 'verified'.
+    claims = list(_verification_claims(doc))
+    assert claims, "the walk must actually reach the verification-claim fields"
+    for path, _key, value in claims:
+        assert value is not True, f"a verification state is ASSERTED at {path}"
+        assert str(value).strip().lower() != "verified", f"'verified' claimed at {path}"
+
+    # The walk really does reach the top-level, per-group and deeply-nested claim fields - so a
+    # new `verified: True` in any of those places would have been caught above.
+    reached = {key for _path, key, _value in claims}
+    assert {
+        "overall_verification_status",
+        "claim_verification_status",
+        "coverage_status",
+        "verified_eligible",
+    } <= reached, reached
+
     assert doc["overall_verification_status"] == "draft"
     assert doc["not_verified_disclaimer"]
     assert "server-authored" in doc["verification_scope_note"].lower()
@@ -868,11 +1073,220 @@ def test_as8_direct_assembly_is_pure_transport(client, monkeypatch):
     rule_eval = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
 
     document = assemble_evidence_document(profile, rule_eval, bbl=BBL)
+
+    # WHOLE-SUBTREE byte-equality (G3 H-1), not a hand-picked sample of fields. Within ONE build
+    # every id is stable, so each transported sub-document must be byte-equal to its source. This
+    # single block is what makes a joined `source_coverage.reasons`, an emptied
+    # `data_completeness` / `family_coverage` / `rule_lifecycle_statuses`, a wrong
+    # `evaluated_input.bbl` or `profile_contract_version`, or a dropped group `rule_version` /
+    # `family` FAIL - each of those mutations previously survived because ~60% of the emitted
+    # document was unasserted.
+    routing = document["source_field_routing"]
+    assert document["source_coverage"] == {
+        key: value for key, value in rule_eval.items() if key not in routing
+    }
+    assert document["evaluated_input"] == rule_eval["evaluated_input"]
     assert document["profile_provenance"] == profile["provenance"]
-    assert document["evaluated_input"]["input_provenance"] == rule_eval["evaluated_input"][
-        "input_provenance"
-    ]
-    assert document["source_coverage"]["coverage_status"] == rule_eval["coverage_status"]
     assert document["not_verified_disclaimer"] == rule_eval["not_verified_disclaimer"]
+
+    assert len(document["rule_citations"]) == len(rule_eval["evaluations"])
+    for group, trace in zip(document["rule_citations"], rule_eval["evaluations"], strict=True):
+        assert group == {
+            **trace,
+            "claim_verification_status": _verification_status(trace["coverage_status"]),
+        }
+
+    # Transport is by DEEP COPY, never an alias into the source documents: mutating the assembled
+    # document must not reach back into the rebuilt rule_evaluation.
+    document["source_coverage"]["reasons"].append("mutated")
+    assert "mutated" not in rule_eval["reasons"]
+
     # Serialisation-safe by construction.
+    evidence_module._assert_json_safe(document)
+
+
+# ==========================================================================
+# AS-5 (continued) - the two PURE classifiers, unit-tested directly.
+#
+# G3 H-5: every substrate reachable from this suite yields
+# professional_review_required, so `complete` / `thin` / `conflicting` and the
+# not_applicable / data_conflict / rule_conflict gaps are UNREACHABLE through the
+# route. Calling the pure functions directly is both the only way to reach them and
+# the honest place to test a pure classifier - no fixtures, no runtime, no network.
+# ==========================================================================
+
+
+def _synthetic_rule_eval(**overrides) -> dict:
+    """A minimal rule_evaluation-shaped dict for unit-testing the classifiers. Only the fields
+    the two classifiers read are present; `overrides` drives each documented outcome."""
+    base = {
+        "coverage_status": "conditional",
+        "coverage_source": "rule_engine",
+        "data_completeness": "complete",
+        "needs_review": False,
+        "professional_review_required": False,
+        "fail_safe": False,
+        "fail_safe_reason": None,
+        "rule_lifecycle_statuses": ["needs_review"],
+        "reasons": [],
+        "evaluations": [{"rule_id": "ZR-23-21", "coverage_status": "conditional"}],
+        "rule_conflict": None,
+    }
+    base.update(overrides)
+    return base
+
+
+_HAS_PROVENANCE = {"provenance": [{"source_id": "nyc-dcp-mappluto-arcgis"}]}
+
+
+@pytest.mark.parametrize(
+    ("overrides", "expected"),
+    [
+        ({}, "complete"),
+        ({"coverage_status": "data_conflict"}, "conflicting"),
+        ({"coverage_status": "professional_review_required"}, "professional_review_required"),
+        ({"needs_review": True}, "professional_review_required"),
+        ({"fail_safe": True}, "thin"),
+        ({"coverage_status": "unsupported"}, "thin"),
+        ({"coverage_status": "not_applicable"}, "thin"),
+        ({"evaluations": []}, "thin"),
+    ],
+)
+def test_as5_completeness_marker_classifies_every_documented_outcome(overrides, expected):
+    # Reaches `complete`, `thin` and `conflicting` - none of which any available fixture can
+    # produce - so the classifier's full documented vocabulary is covered, not just one value.
+    assert _completeness_marker(_synthetic_rule_eval(**overrides)) == expected
+
+
+@pytest.mark.parametrize(
+    ("overrides", "expected_kind", "expected_subject"),
+    [
+        (
+            {"fail_safe": True, "fail_safe_reason": "rule_conflict_detected"},
+            "not_available",
+            "rule_evaluation",
+        ),
+        ({"evaluations": []}, "not_available", "evaluation_trace"),
+        ({"coverage_status": "data_conflict"}, "data_conflict", "coverage"),
+        (
+            {"coverage_status": "professional_review_required"},
+            "professional_review_required",
+            "coverage",
+        ),
+        ({"needs_review": True}, "professional_review_required", "coverage"),
+        ({"coverage_status": "unsupported"}, "not_applicable", "coverage"),
+        ({"coverage_status": "not_applicable"}, "not_applicable", "coverage"),
+    ],
+)
+def test_as5_gap_markers_name_every_documented_gap(overrides, expected_kind, expected_subject):
+    markers = _gap_markers(_HAS_PROVENANCE, _synthetic_rule_eval(**overrides))
+    assert any(
+        marker["kind"] == expected_kind and marker["subject"] == expected_subject
+        for marker in markers
+    ), markers
+    for marker in markers:
+        assert "reason" in marker  # a typed marker ALWAYS carries a reason
+
+
+def test_as5_missing_profile_provenance_is_a_named_gap():
+    markers = _gap_markers({"provenance": []}, _synthetic_rule_eval())
+    assert any(
+        marker["subject"] == "profile_provenance" and marker["kind"] == "not_available"
+        for marker in markers
+    )
+    # A complete trail with provenance present names no provenance gap.
+    clean = _gap_markers(_HAS_PROVENANCE, _synthetic_rule_eval())
+    assert not [m for m in clean if m["subject"] == "profile_provenance"]
+    assert clean == []
+
+
+_CONFLICT = {
+    "conflict": True,
+    "family": "residential_far",
+    "as_of_date": "2026-07-16",
+    "competing_output_names": ["max_residential_far"],
+    "competing_rules": [
+        {
+            "rule_id": "ZR-23-21-A",
+            "rule_version": "1.0.0",
+            "effective_from": "2020-01-01",
+            "effective_to": None,
+            "output_names": ["max_residential_far"],
+        },
+        {
+            "rule_id": "ZR-23-21-B",
+            "rule_version": "2.0.0",
+            "effective_from": "2024-01-01",
+            "effective_to": None,
+            "output_names": ["max_residential_far"],
+        },
+    ],
+    "note": "two same-family rules are simultaneously effective",
+}
+
+
+def _conflict_rule_eval() -> dict:
+    """The shape app.rules.integration._conflict_result produces: fail-closed, no evaluations,
+    professional review required, and the typed rule_conflict object preserved for reviewers."""
+    return _synthetic_rule_eval(
+        coverage_status="professional_review_required",
+        needs_review=True,
+        professional_review_required=True,
+        fail_safe=True,
+        fail_safe_reason="rule_conflict_detected",
+        evaluations=[],
+        rule_conflict=_CONFLICT,
+    )
+
+
+def test_as1_rule_conflict_gets_its_own_gap_marker_naming_the_competing_rules():
+    """G1 HIGH-1 (BLOCKING-2) regression. `rule_conflict` is the typed object the engine
+    DELIBERATELY preserves for reviewers (app.rules.integration._conflict_result): it names WHICH
+    rules compete, over which outputs, and each one's effective window. It was dropped from the
+    document and `_gap_markers` had no branch for it, so a genuine conflict surfaced only as a
+    generic professional_review_required - the reviewer was told a human is needed without being
+    told what to look at."""
+    markers = _gap_markers(_HAS_PROVENANCE, _conflict_rule_eval())
+
+    conflict_markers = [m for m in markers if m["subject"] == "rule_conflict"]
+    assert len(conflict_markers) == 1, markers
+    marker = conflict_markers[0]
+    assert marker["kind"] == "data_conflict"
+    assert marker["reason"] == _CONFLICT["note"]
+
+    # The WHOLE typed object travels, so the reviewer sees exactly what competes.
+    assert marker["detail"] == _CONFLICT
+    assert [r["rule_id"] for r in marker["detail"]["competing_rules"]] == [
+        "ZR-23-21-A",
+        "ZR-23-21-B",
+    ]
+    # Deep copy, never an alias into the source document.
+    assert marker["detail"] is not _CONFLICT
+
+    # The generic markers still fire as well - the conflict marker ADDS information, it does not
+    # replace the posture markers.
+    kinds = {m["kind"] for m in markers}
+    assert "professional_review_required" in kinds
+
+
+def test_as1_assembled_document_carries_rule_conflict_and_its_gap():
+    """The same defect at the document level: a conflict document must carry the typed object at
+    the root AND name it as a gap."""
+    rule_eval = _conflict_rule_eval()
+    rule_eval["not_verified_disclaimer"] = "Not a Verified zoning determination."
+    rule_eval["evaluated_input"] = {
+        "bbl": BBL,
+        "profile_contract_version": "1.0.0",
+        "input_fingerprint": "fingerprint",
+        "input_provenance": {},
+    }
+
+    document = assemble_evidence_document(_HAS_PROVENANCE, rule_eval, bbl=BBL)
+
+    assert document["source_coverage"]["rule_conflict"] == _CONFLICT
+    assert document["source_coverage"]["rule_conflict"] is not _CONFLICT
+    assert any(gap["subject"] == "rule_conflict" for gap in document["gaps"])
+    assert document["evidence_completeness"] == "professional_review_required"
+    # Honest and never Verified, and serialisation-safe.
+    assert document["overall_verification_status"] == "draft"
     evidence_module._assert_json_safe(document)
