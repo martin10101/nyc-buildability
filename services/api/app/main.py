@@ -28,6 +28,7 @@ import os
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
@@ -133,6 +134,13 @@ def create_app() -> FastAPI:
     # unknown -> disabled (fail safe). Reuses the same flag. See
     # app.api.v1.scenario_analysis.
     application.include_router(scenario_analysis_v1_router)
+    # Internal, feature-flag-gated EVIDENCE / provenance endpoint (task M5-T013).
+    # SAME posture as the scenario / rule-evaluation routes above - ALWAYS
+    # registered but unreachable (generic 404, no OpenAPI entry) unless the
+    # EXISTING INTERNAL_RULE_EVAL_ENABLED flag is an explicit true token (it
+    # surfaces that route's trail verbatim, so it reuses that flag and adds no new
+    # one); absent/unknown -> disabled (fail safe). See app.api.v1.evidence.
+    application.include_router(evidence_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
