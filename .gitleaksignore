@@ -16,3 +16,16 @@ tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:gener
 tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:23
 tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:24
 tools/agent_supervisor/fixtures/hook_events_live_2026-08-27_m0t105_c1.json:generic-api-key:25
+
+# M5-T013 G3 gate report (review evidence, frozen): the two flagged values are
+# the literal pytest FUNCTION NAME "as8_direct_assembly" inside a markdown
+# mutation-matrix table. The generic-api-key rule fires because the preceding
+# cell lists the test "as1_key_sets" - a "key"-containing identifier followed by
+# another identifier reads to the rule as key=value. No credential, no entropy
+# secret: verified by running gitleaks without --redact, which printed the match
+# as exactly "as8_direct_assembly". The report is immutable gate evidence for the
+# M5-T013 acceptance (G3 re-attestation at reviewed_sha 209b9548), so the table
+# must keep the real test names rather than be reworded to appease a scanner.
+# Audited by the orchestrator 2026-09-10 under M5-T013.
+project-control/reports/M5-T013-G3-rereview.md:generic-api-key:136
+project-control/reports/M5-T013-G3-rereview.md:generic-api-key:137
