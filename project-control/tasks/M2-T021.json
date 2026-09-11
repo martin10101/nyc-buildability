@@ -109,11 +109,11 @@
     "data-contract-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-11T19:30:23.159795+00:00",
-  "updated_at": "2026-09-11T23:21:49.358522+00:00",
+  "updated_at": "2026-09-11T23:33:51.180893+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
