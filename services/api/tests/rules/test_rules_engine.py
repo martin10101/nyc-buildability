@@ -335,8 +335,16 @@ def test_exception_applies_and_does_not(registry):
     standard = registry.evaluate(R5_RULE_ID, _std("R5", 5000))
     ids_standard = {e["id"] for e in standard.trace.exceptions_applied}
     assert "qualifying_residential_site" not in ids_standard
-    # the documented single-DU-cap limitation is always recorded
-    assert "single_dwelling_unit_equivalent_far_cap" in ids_standard
+    # M4-T009 / AS-9: the ZR 23-21 footnote-1 0.60 single-dwelling-unit cap is scoped
+    # to the FIRST table row (R1/R2/R3) only (byte-verified recapture, commit
+    # 17e8eb78), so R5 no longer carries it - it moved to r1-r2-r3-residential-far.
+    assert "single_dwelling_unit_equivalent_far_cap" not in ids_standard
+    r1 = registry.evaluate(
+        "r1-r2-r3-residential-far",
+        {"zoning_district": "R1-2A", "lot_area_sq_ft": 5000, "site_class": "standard_zoning_lot"},
+    )
+    ids_r1 = {e["id"] for e in r1.trace.exceptions_applied}
+    assert "single_dwelling_unit_equivalent_far_cap" in ids_r1
 
 
 def test_citation_and_rule_version_and_effective_date_assertions(registry):

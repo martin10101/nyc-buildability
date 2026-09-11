@@ -1,0 +1,89 @@
+{
+  "rule_id": "r1-r2-r3-residential-far",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_far",
+  "title": "R1/R2/R3 residence districts (first ZR 23-21 table row) - maximum residential floor area ratio (standard zoning lots)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r1_r12_residential_far.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard zoning lots in the FIRST row of the ZR 23-21 table: R1-2A, R1-1, R1-2, R2A, R2, R3A, R3X, R3-1 and R3-2 (standard-zoning-lot FAR 0.75; qualifying-residential-sites FAR 1.00). NOT a Verified determination - a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-zoning-lot FAR and the resulting maximum residential floor area from the lot area; the higher qualifying-residential-sites FAR is surfaced as a conditional alternative (never silently applied), and the ZR 23-21 footnote-1 single-dwelling-unit equivalent-FAR cap of 0.60 - which the byte-verified recapture (commit 17e8eb78) proved is attached to THIS first table row's standard value only - is surfaced as a documented limitation. effective_from is the section's Last Amended date (2024-12-05): evaluating as_of an earlier date yields a visible not-effective outcome rather than applying today's values to a period this draft does not represent.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-21",
+      "section": "23-21",
+      "quote": "MAXIMUM FLOOR AREA RATIO FOR R1-R5 DISTRICTS. R1-2A, R1-1, R1-2, R2A, R2, R3A, R3X, R3-1, R3-2 | Standard zoning lots 0.75(footnote 1) | Qualifying residential sites 1.00",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "The residence district governing the lot (or the portion under evaluation). District SCOPE is enforced by applicability (in_set the first ZR 23-21 table row), NOT by an input domain enum: a district outside this row is a visible not_applicable, never an invalid input. An uncertain M2-T013 geometric assignment is passed via spatial_context and downgrades coverage."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area in square feet; must be strictly positive. A zero/negative/non-finite value is rejected fail-closed (professional_review_required, no computed value)."},
+    {"name": "site_class", "type": "string", "required": false, "enum": ["standard_zoning_lot", "qualifying_residential_site"], "description": "Whether the lot is a standard zoning lot or a 'qualifying residential site'. When absent, the qualifying-site alternative is surfaced as conditional (not decided)."}
+  ],
+  "outputs": [
+    {"name": "max_residential_far", "type": "number", "unit": "far", "description": "Maximum residential floor area ratio for a standard zoning lot in the district (ZR 23-21 first-row standard value 0.75)."},
+    {"name": "max_residential_floor_area_sq_ft", "type": "number", "unit": "square_feet", "description": "Maximum residential floor area = lot area x FAR."}
+  ],
+  "parameters": [
+    {"name": "standard_far_by_district", "value": {"R1-2A": 0.75, "R1-1": 0.75, "R1-2": 0.75, "R2A": 0.75, "R2": 0.75, "R3A": 0.75, "R3X": 0.75, "R3-1": 0.75, "R3-2": 0.75}, "citation_ref": "zr-23-21", "note": "Standard-zoning-lot maximum residential FAR (0.75) for every district in the first ZR 23-21 table row. Candidate values pending raw-HTML verification and G6 approval."},
+    {"name": "qualifying_far_by_district", "value": {"R1-2A": 1.0, "R1-1": 1.0, "R1-2": 1.0, "R2A": 1.0, "R2": 1.0, "R3A": 1.0, "R3X": 1.0, "R3-1": 1.0, "R3-2": 1.0}, "citation_ref": "zr-23-21", "note": "Qualifying-residential-sites maximum residential FAR (1.00) for the first ZR 23-21 table row. SURFACED as the conditional alternative (see the qualifying_residential_site exception), never applied by this rule: whether a lot is a qualifying residential site is a separate legal determination. Provenance-linked here so the value is byte-checkable against the snapshot; it is deliberately not consumed by a computation step so the standard value is the only computed result."}
+  ],
+  "applicability": {
+    "op": "in_set",
+    "input": "zoning_district",
+    "values": ["R1-2A", "R1-1", "R1-2", "R2A", "R2", "R3A", "R3X", "R3-1", "R3-2"]
+  },
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param_select": {"map": "standard_far_by_district", "key_input": "zoning_district"}}], "note": "Select the standard-zoning-lot maximum residential FAR for the district (ZR 23-21 first row = 0.75)."},
+      {"id": "floor_area", "op": "multiply", "args": [{"input": "lot_area_sq_ft"}, {"step": "far"}], "note": "Maximum residential floor area = lot area (sq ft) x FAR."}
+    ],
+    "outputs": {
+      "max_residential_far": {"step": "far"},
+      "max_residential_floor_area_sq_ft": {"step": "floor_area"}
+    }
+  },
+  "exceptions": [
+    {
+      "id": "qualifying_residential_site",
+      "description": "A higher maximum residential floor area ratio (the qualifying-residential-sites value 1.00 per ZR 23-21) applies to zoning lots that are 'qualifying residential sites'. Whether a specific lot qualifies is a separate legal determination and is not decided by this rule; when the site class is unknown or qualifying, the result is conditional and the higher FAR may apply.",
+      "condition": {"not": {"op": "equals", "input": "site_class", "value": "standard_zoning_lot"}},
+      "effect": "conditional_alternative",
+      "citation_ref": "zr-23-21",
+      "note": "Surfaced, never collapsed: the standard-lot FAR is reported with an explicit conditional flag that a qualifying-site FAR (1.00) may govern."
+    },
+    {
+      "id": "single_dwelling_unit_equivalent_far_cap",
+      "description": "For standard zoning lots with a lot area of 4,000 square feet or more, the residential floor area associated with any single dwelling unit may not exceed an equivalent floor area ratio of 0.60 (ZR 23-21 footnote 1). The byte-verified recapture (commit 17e8eb78) proved footnote 1 is attached to this first table row's standard value ONLY; it does NOT apply to R2X, R4, R5 or their variants. Applying this cap requires per-dwelling-unit inputs this rule does not model.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-23-21"
+    }
+  ],
+  "special_district_interactions": [
+    {
+      "id": "special_purpose_district_modifier",
+      "description": "Special Purpose Districts (ZR Articles VIII-XIV) and other mapped overlays may modify residence-district floor area. When a mapped special district applies, its provisions govern and must be evaluated by the corresponding special rule; this general rule does not apply the modification.",
+      "interaction_point": "residential_far",
+      "special_rule_stub": "special-district-far-modifier (not yet implemented)",
+      "citation_ref": null
+    }
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage is downgraded to professional_review_required (or data_conflict) and the geometric uncertainty is recorded in the trace."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "Only the standard-zoning-lot residential FAR is computed; the qualifying-residential-site FAR (1.00) and the per-single-dwelling-unit 0.60 equivalent-FAR cap are surfaced (conditional / documented limitation), not computed.",
+    "Special Purpose District and other overlay modifications are not applied."
+  ]
+}
