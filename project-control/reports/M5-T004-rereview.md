@@ -103,6 +103,20 @@ The `pair_class` omission reads as absence **only because** the authoritative re
 
 ---
 
+### DCV final sign-off at `9b417875` — two rulings
+
+**The `"in effect {from} to {to}"` restructure fully closes the finding, and the producer's diagnosis was better than DCV's own.** DCV flagged the slot filler; the *frame* was the actual defect. `"in effect {from} to {to}"` is a predicate about the **rule**, so it asserts legal effect whatever fills the slots — `"end not stated"` left the claim standing and merely made it vaguer. `"recorded effective dates: from X, to Y"` is a predicate about the **document**. That is the same attributive move as "this document records N rule families" in `PracticalRangeBlock`, already ruled faithful. *"Effective dates"* is the contract's own vocabulary (`effective_from`/`effective_to`) and *"recorded"* scopes it to the record. **DCV correcting itself:** it called the `"present"` fix a reclassification and stopped one level too early; this is where it completes.
+
+**"More than one draft rule is simultaneously in effect over the same output" (`NoScenarioBlock.tsx:63`) — RULED ACCEPTABLE, kept.** The deciding test is whether a sentence asserts something the document does not state or glosses something it does. The committed fixture's own provenance note reads *"two same-family rules simultaneously in effect for the same output"* — verified verbatim. The UI sentence near-restates the server's words, which is glossing a recorded state, the same class as `CONSTRAINT_STATE_LABELS`. `?? "present"` was categorically different: `effective_to: null` meant the document said **nothing** and the UI filled the slot with a positive temporal claim. Glossing a stated fact and filling an unstated one are different acts; only the second is in the defect class.
+
+**STRUCK FROM THE RECORD, at DCV's insistence:** the producer offered as supporting evidence that *"the accepted sibling `RuleEvaluationResult.tsx:52` uses the same sentence."* **That is not a justification and must not stand as one.** An authored temporal claim is live on that same sibling (§C1 below) — it is the thing this packet just opened a follow-up against, not a reference standard. The fixture-note argument is sufficient and decisive alone; the sibling argument adds nothing and would have been actively misleading had the fixture-note argument been absent.
+
+*Caveat recorded, not a change request:* the sentence is fixed copy restating what today's fixture note happens to say. A future conflict whose provenance note does not characterise the rules as simultaneously in effect would turn it into a client assertion — the same latent shape as the hard-coded prose fixed one block over. It stays acceptable because the "or sources disagree" disjunction covers the uncharacterised case and it is section-level framing rather than a per-rule claim. Attributing it would make it bulletproof.
+
+**Third instance of the invisible coupling.** `effective_from`/`effective_to` live inside `constraints[].provenance.competing_rules[]`, which the generic `provenanceLeaves` walk renders unconditionally regardless of this block. That is now the third time `NoScenarioBlock`'s rendering has been safe **because of the generic walk rather than its own code** (`pair_class`, now these dates). Narrowing `provenanceLeaves` later silently degrades this file without touching it.
+
+---
+
 ## Items carried out of this packet (not defects in it)
 
 1. **Live defect on an ACCEPTED screen.** `RuleEvaluationResult.tsx:251` renders `{rule.effective_from ?? "unknown start"} to {rule.effective_to ?? "present"}` — the same authored temporal claim, plus the same `??` empty-string half-blindness. Outside `allowed_paths` (`components/property/**` is in `forbidden_paths`), so the producer correctly left it. Recorded in `docs/MVP_AGENDA.md` §C1.
