@@ -333,12 +333,16 @@ def test_as4_malformed_assumption_sets_container_is_invalid(bad_container):
     _strict_json_safe(result)
 
 
-@pytest.mark.parametrize("bad_set", ["notalist", 7, {"not": "a list"}, [42], [{"malformed": True}, "x"]])
+@pytest.mark.parametrize(
+    "bad_set", ["notalist", 7, {"not": "a list"}, [42], [{"malformed": True}, "x"]]
+)
 def test_as4_malformed_individual_set_is_flagged_not_scorable_no_crash(bad_set):
     """A malformed assumption-set among the list fails closed at the candidate level (derive's
     own guard), never crashes and never gets a fabricated score."""
     document = _preliminary_document()
-    result = rank_scenario_assumption_sets(document, OBJ, [bad_set, [_factor("utilization_factor", 0.8)]])
+    result = rank_scenario_assumption_sets(
+        document, OBJ, [bad_set, [_factor("utilization_factor", 0.8)]]
+    )
     assert result["ranking_kind"] == RankingKind.RANKED
     assert result["candidate_count"] == 2
     flagged = result["candidates"][-1]
@@ -349,7 +353,9 @@ def test_as4_malformed_individual_set_is_flagged_not_scorable_no_crash(bad_set):
 
 def test_as4_degenerate_document_is_typed_no_crash():
     for degenerate in ({}, None, "notadoc", 5):
-        result = rank_scenario_assumption_sets(degenerate, OBJ, [[_factor("utilization_factor", 0.8)]])
+        result = rank_scenario_assumption_sets(
+            degenerate, OBJ, [[_factor("utilization_factor", 0.8)]]
+        )
         # No positive cap -> typed EMPTY; never a crash, always strict-JSON-safe.
         assert result["ranking_kind"] == RankingKind.EMPTY
         _strict_json_safe(result)

@@ -32,7 +32,6 @@ from app.scenario.comparison import _metric_delta
 
 from . import _support as S
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -160,7 +159,9 @@ def test_as1_comparison_document_shape_and_baseline_relative_deltas():
 
     # (b) a per-set echo of the derived practical-usable-range obtained by calling derive READ-ONLY.
     for row, assumptions in zip(
-        result["sets"], [[], [_factor("utilization_factor", 0.8)], [_factor("efficiency_ratio", 0.6)]]
+        result["sets"],
+        [[], [_factor("utilization_factor", 0.8)], [_factor("efficiency_ratio", 0.6)]],
+        strict=False,
     ):
         expected = derive_practical_usable_range({**document, "assumptions": assumptions})
         assert row["derived"] == expected
@@ -277,7 +278,8 @@ def test_as3_not_derivable_nonbaseline_set_is_marked_not_dropped():
     document = _preliminary_document()
     sets = [
         _named("a_good", []),  # baseline (smallest key), derivable
-        _named("z_bad", [_factor("utilization_factor", 1.5)]),  # out of (0,1] -> derive fails closed
+        # out of (0,1] -> derive fails closed
+        _named("z_bad", [_factor("utilization_factor", 1.5)]),
     ]
     result = compare_scenario_assumption_sets(document, sets)
     assert result["comparison_kind"] == ComparisonKind.COMPARED
@@ -491,7 +493,10 @@ def test_as5_uses_shared_sanitizer_and_does_not_reimplement_it():
 
 def test_as6_inputs_are_byte_unchanged_and_not_aliased():
     document = _preliminary_document()
-    sets = [_named("a", [_factor("utilization_factor", 0.8)]), _named("b", [_factor("efficiency_ratio", 0.5)])]
+    sets = [
+        _named("a", [_factor("utilization_factor", 0.8)]),
+        _named("b", [_factor("efficiency_ratio", 0.5)]),
+    ]
     document_before = json.dumps(document)
     sets_before = json.dumps(sets)
 
@@ -528,7 +533,8 @@ def test_as6_consumes_derive_readonly_no_recompute():
 
 def test_as7_module_imports_only_allowed_dependencies():
     """comparison.py imports only stdlib + .derive + .constants + ._json_safety (contract-free):
-    no builder/models/contract/ranking/sensitivity, no packages.contracts, no network/persistence."""
+    no builder/models/contract/ranking/sensitivity, no packages.contracts, no
+    network/persistence."""
     source = inspect.getsource(comparison_module)
     forbidden = (
         "from .builder",
@@ -573,7 +579,9 @@ def test_as7_output_is_strict_json_safe_on_every_path():
     document = _preliminary_document()
     sets = [
         _named("a_raw", []),
-        _named("b_two_factors", [_factor("utilization_factor", 0.8), _factor("efficiency_ratio", 0.5)]),
+        _named(
+            "b_two_factors", [_factor("utilization_factor", 0.8), _factor("efficiency_ratio", 0.5)]
+        ),
         _named("c_bad", [_factor("utilization_factor", 1.5)]),  # not-comparable row
         _named("d_note", [_factor("note", 0.9)]),  # unrecognized -> raw cap, still comparable
     ]
@@ -764,9 +772,10 @@ def test_rework_missing_assumptions_baseline_is_typed_invalid():
 
 
 # ---------------------------------------------------------------------------
-# AS-3 (rework): the canonical NOT_VERIFIED_DISCLAIMER is stamped on EVERY public outcome, regardless
-# of an empty / whitespace / arbitrary / missing / non-string input document disclaimer. A caller can
-# never suppress or replace the honesty warning on a contract-free, never-Verified comparison.
+# AS-3 (rework): the canonical NOT_VERIFIED_DISCLAIMER is stamped on EVERY public outcome,
+# regardless of an empty / whitespace / arbitrary / missing / non-string input document
+# disclaimer. A caller can never suppress or replace the honesty warning on a contract-free,
+# never-Verified comparison.
 # ---------------------------------------------------------------------------
 
 

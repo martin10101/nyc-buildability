@@ -99,7 +99,8 @@ class SensitivityVariable(str, Enum):
 
 
 class SensitivityKind:
-    """Typed outcome of a sensitivity analysis (string values serialize straight into the object)."""
+    """Typed outcome of a sensitivity analysis (string values serialize straight into the
+    object)."""
 
     #: At least one response point was produced; points are ordered by tried value.
     ANALYZED = "sensitivity_response"
@@ -119,7 +120,8 @@ SENSITIVITY_RESPONSE_METRIC_LABEL = (
     "product(applied factors), transported from derive_practical_usable_range verbatim."
 )
 
-# Mandatory honest label on a sensitivity response (illustrative / from the draft cap, never Verified).
+# Mandatory honest label on a sensitivity response (illustrative / from the draft cap,
+# never Verified).
 SENSITIVITY_LABEL = (
     "ILLUSTRATIVE single-variable sensitivity / what-if response: ONE explicitly-named "
     "assumption varied across the caller's EXPLICIT list of values, each point computed ONLY "

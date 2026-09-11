@@ -176,7 +176,9 @@ def _positive_finite_float(value: Any) -> float | None:
 def _bounded_coverage_status(scenario_document: Any) -> str | None:
     """Coverage status carried onto an outcome, never-Verified enforced: an incoming
     ``verified`` (any case) -> ``conditional``; a non-string is not fabricated (``None``)."""
-    coverage_status = scenario_document.get("coverage_status") if isinstance(scenario_document, dict) else None
+    coverage_status = (
+        scenario_document.get("coverage_status") if isinstance(scenario_document, dict) else None
+    )
     if not isinstance(coverage_status, str):
         return None
     if coverage_status.strip().lower() == "verified":
@@ -187,7 +189,11 @@ def _bounded_coverage_status(scenario_document: Any) -> str | None:
 def _base_lineage(scenario_document: Any) -> dict:
     """Lineage every outcome carries: bounded (never-Verified) coverage_status, needs_review,
     and the preserved not_verified_disclaimer."""
-    disclaimer = scenario_document.get("not_verified_disclaimer") if isinstance(scenario_document, dict) else None
+    disclaimer = (
+        scenario_document.get("not_verified_disclaimer")
+        if isinstance(scenario_document, dict)
+        else None
+    )
     return {
         "coverage_status": _bounded_coverage_status(scenario_document),
         "needs_review": True,

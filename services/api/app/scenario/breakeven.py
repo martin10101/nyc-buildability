@@ -532,7 +532,9 @@ def _scan_crossings(
     bracket objects in scan order, and the ``(raw_candidate, row)`` pairs that derived a metric."""
     derivable_rows = [(raw, row) for raw, row in ordered if row["derivable"]]
     crossings: list[dict] = []
-    for (raw_lower, lower), (raw_upper, upper) in zip(derivable_rows, derivable_rows[1:]):
+    for (raw_lower, lower), (raw_upper, upper) in zip(
+        derivable_rows, derivable_rows[1:], strict=False
+    ):
         if lower["meets_target"] != upper["meets_target"]:
             crossings.append(
                 _crossing_object(lower, upper, raw_lower, raw_upper, target_echo, metric_name)

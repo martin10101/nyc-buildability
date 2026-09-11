@@ -124,9 +124,11 @@ _METRIC_LABELS: dict[str, str] = {
 COMPARISON_LABEL = (
     "ILLUSTRATIVE scenario comparison: two or more explicitly-declared NAMED assumption-sets "
     "compared side-by-side for ONE scenario. Each set's derived illustrative practical-usable-area "
-    "range is echoed from derive_practical_usable_range and its numeric metrics are delta'd against "
+    "range is echoed from derive_practical_usable_range and its numeric metrics are "
+    "delta'd against "
     "the baseline set (absolute + percent). The canonical draft cap (ZR 23-21) is transported "
-    "VERBATIM; NO independent legal calculation is performed. NOT gross, net, sellable, or feasible "
+    "VERBATIM; NO independent legal calculation is performed. NOT gross, net, sellable, "
+    "or feasible "
     "floor area; NOT a buildable envelope; NOT an optimization over invented sets. Draft "
     "(needs_review); requires professional review; NOT Verified."
 )
@@ -365,7 +367,8 @@ def _metric_delta(metric_key: str, baseline_value: Any, set_value: Any) -> dict:
 
     Both differences are computed from finite floats and are re-checked finite, so the emitted
     delta is ALWAYS a finite number (it may be NEGATIVE - a legitimate reduction) and never NaN /
-    Inf; a delta is therefore emitted directly, not through the non-negative-only :func:`_json_safe`.
+    Inf; a delta is therefore emitted directly, not through the non-negative-only
+    :func:`_json_safe`.
     A missing / non-finite baseline OR set value -> a typed not-computable marker (no delta
     fabricated). A percent delta against a ZERO baseline metric -> a typed not-computable percent
     marker (no ``ZeroDivisionError``, no Inf) while the absolute delta is still reported."""
@@ -570,7 +573,8 @@ def compare_scenario_assumption_sets(
     reasons = [
         (
             "COMPARED (illustrative): the explicitly-declared named assumption-sets ordered by a "
-            "stable content key (baseline first), each set's derived illustrative usable-area range "
+            "stable content key (baseline first), each set's derived illustrative usable-area "
+            "range "
             "echoed from derive_practical_usable_range and its numeric metrics delta'd against the "
             "baseline. The canonical draft cap is transported verbatim; no legal value is "
             "recomputed and no set is invented."
@@ -578,8 +582,10 @@ def compare_scenario_assumption_sets(
     ]
     if comparable_count < len(ordered):
         reasons.append(
-            "One or more NON-baseline assumption-sets did not produce a derived illustrative range; "
-            "those rows are flagged not-comparable and KEPT IN ORDER, never dropped and never given "
+            "One or more NON-baseline assumption-sets did not produce a derived illustrative "
+            "range; "
+            "those rows are flagged not-comparable and KEPT IN ORDER, never dropped and never "
+            "given "
             "a fabricated delta."
         )
 

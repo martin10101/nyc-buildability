@@ -329,7 +329,8 @@ def test_max_depth_bound_is_a_fixed_constant_not_derived_from_the_recursion_limi
     # Same fixed bound under a 4x-higher limit and under the default limit: NOT limit-derived.
     assert depth_high == depth_default == _MAX_JSON_SAFE_DEPTH
     # Bounded output serializes with allow_nan=False (json.dumps recurses per level; the bound keeps
-    # it in range) - asserted directly to avoid the recursive _all_numbers walk over a 500-deep value.
+    # it in range) - asserted directly to avoid the recursive _all_numbers walk over a 500-deep
+    # value.
     assert '"unsafe_kind": "max_depth"' in json.dumps(result_default, allow_nan=False)
 
 
@@ -339,7 +340,11 @@ def test_shared_but_acyclic_reference_is_not_a_false_cycle():
     byte-identical to the pre-guard sanitizer."""
     shared = {"k": 1, "n": [2, 3]}
     result = _json_safe([shared, shared, {"nested": shared}])
-    assert result == [{"k": 1, "n": [2, 3]}, {"k": 1, "n": [2, 3]}, {"nested": {"k": 1, "n": [2, 3]}}]
+    assert result == [
+        {"k": 1, "n": [2, 3]},
+        {"k": 1, "n": [2, 3]},
+        {"nested": {"k": 1, "n": [2, 3]}},
+    ]
 
 
 # ---------------------------------------------------------------------------

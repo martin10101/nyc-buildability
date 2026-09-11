@@ -154,7 +154,8 @@ def test_as2_names_variable_and_metric_and_transparent_components():
     # The variable AND the response metric are NAMED on the response.
     assert result["variable"] == VAR.value == "utilization_factor"
     assert result["variable_label"]
-    assert result["response_metric"] == SENSITIVITY_RESPONSE_METRIC == "illustrative_usable_area_sq_ft"
+    assert result["response_metric"] == SENSITIVITY_RESPONSE_METRIC
+    assert SENSITIVITY_RESPONSE_METRIC == "illustrative_usable_area_sq_ft"
     assert result["response_metric_label"]
 
     for point in result["points"]:
