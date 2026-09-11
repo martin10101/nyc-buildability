@@ -167,3 +167,73 @@ TypeScript program over the scenario lib layer (zero diagnostics; that layer has
 and a transpile-and-run harness exercising the validator, the bounding pass and the display readers
 against the four committed fixtures plus adversarial bodies (31 assertions, 0 failures). That harness is
 the producer's own scratch tooling, NOT the project suite — CI remains the only authority.
+
+---
+
+# REWORK ADDENDUM 2 (post-acceptance-wave corrections, `f9736660` … `c666ef87`+)
+
+The five-reviewer wave PASSED the rework at `527528ae` (5-0). Everything below is a
+correction raised by a reviewer AFTER that pass, or by the orchestrator relaying one. Each
+was landed as its own commit so the gate trail stays legible.
+
+| Commit | What it corrects |
+|---|---|
+| `f9736660` | the 256 KiB response guard did not fail closed; `constraints[].unit` / `assumptions[].unit` unbounded |
+| `22b80eae` | silent identifier alteration (HIGH, latent); the hard-coded practical-range families; two over-strict validator fields; missing `aria-live`; untested error boundary |
+| `f8ec0f11` | "The value above is a draft zoning-floor-area cap only" asserted a value on the three branches that state none exists |
+| `c666ef87` | empty-but-present strings rendering as invisible elements (6 sites); `"present"` substituted for an absent rule end date |
+| this commit | the SENTENCE around those dates still characterised a draft rule as in effect |
+
+## R8. Two corrections to reasoning recorded in this file and in the earlier addendum
+
+**1. `Content-Length` bounds the COMPRESSED transfer, not what gets parsed (G5).**
+Addendum 1 and the code comment in `scenario-api.ts` presented the header check as
+"sufficient", and a bounded streaming read as merely the *more permissive* alternative.
+That is backwards and the record should say so. `Content-Length` is the on-the-wire byte
+count AFTER content encoding, and `.json()` decompresses transparently — so a 256 KiB gzip
+body can expand to hundreds of megabytes and still be parsed in full. `response.body`
+yields DECODED bytes, so a streaming counter measures post-decompression size and is
+therefore strictly STRONGER than the header check, not a softer fallback. The precondition
+is unchanged (an actor controlling the response), so it is not being fixed now; it belongs
+with the auth carry-forwards, and whoever picks it up should not have to re-derive this.
+
+**2. The guard survives a cross-origin condition nobody flagged (G4).**
+Failing closed on an absent `Content-Length` would have broken every real browser request
+if that header were unreadable cross-origin. It is readable: `Content-Length` is
+CORS-safelisted, and the harness listing only `X-Correlation-ID` in `expose_headers` ADDS
+to the safelist rather than replacing it. There is no GZip middleware in the stack, and
+`notFoundResponse()` was updated to carry the header so the flag-off path still classifies.
+Recorded because it would have passed every test and failed every real request.
+
+## R9. Divergences from accepted siblings, deliberate, carried forward
+
+- `RuleEvaluationResult.tsx:251` still renders `effective_to ?? "present"`. Compare no
+  longer does. That file is outside `allowed_paths`; the same authored temporal claim is
+  live on an accepted screen and wants a follow-up.
+- `lib/coverage.ts` glosses `unsupported` as "the platform detected a data problem", while
+  the scenario contract means "the district or rule family is not implemented". Annotated
+  at the render site (`CoverageMatrixSection.tsx`) rather than rewritten, same reason.
+
+## R10. One piece of rendered prose examined and deliberately KEPT
+
+`NoScenarioBlock.tsx:63` — "More than one draft rule is simultaneously in effect over the
+same output" — was re-examined when the `effective_to` claim was removed three lines below
+it. It is NOT the same defect class and it stays. It renders only when the document records
+a `competing_rules` conflict; the server's own provenance note on the committed fixture
+reads "two same-family rules simultaneously in effect for the same output"; and the
+accepted sibling uses the same sentence. It glosses a server-recorded state, the way
+`CONSTRAINT_STATE_LABELS` glosses an enum — it does not fill in a value the document
+declined to state, which is what `?? "present"` did.
+
+## R11. Verification honesty (unchanged)
+
+`apps/web/node_modules` is still absent; **the three documented test commands were NOT run
+and no green is claimed.** G4 has since confirmed the two `TS2339` diagnostics in the
+class-component test are artifacts of the producer's own typed stub — `@types/react`
+19.2.17 is in `package.json` and the lockfile — so `web` is unaffected. What the producer
+executed offline, reproducibly: `tools/modularity_check.py --check` (385 files, 0 failures,
+16 warnings — the G4 baseline, none of them these files), a strict-mode TypeScript program
+over the scenario lib layer (zero diagnostics; that layer has no external imports, so the
+check is complete), and three transpile-and-run harnesses over the four committed fixtures
+plus adversarial bodies (74 assertions, 0 failures). Those harnesses are producer scratch
+tooling, NOT the project suite. CI remains the only authority.

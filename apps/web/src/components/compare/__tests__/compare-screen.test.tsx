@@ -401,21 +401,43 @@ describe("Compare screen — absence is stated, never rendered as an empty eleme
     const competing = await screen.findByTestId("scenario-competing-rules");
     expect(competing).toHaveTextContent("rule id not stated");
     expect(competing).toHaveTextContent("version not stated");
-    expect(competing).toHaveTextContent("start not stated");
+    expect(competing).toHaveTextContent("from not stated");
   });
 
-  it("NEVER substitutes 'present' for an absent rule end date", async () => {
-    // The committed conflict fixture carries effective_to: null on both
-    // competing rules. Rendering that as "present" asserts the draft rule is in
-    // legal effect right now — an authored legal claim no source here supports,
-    // and worse in this block than elsewhere: these are COMPETING rules, and
-    // saying both run "to present" edges towards asserting both currently
-    // govern, which is exactly what this block refuses to do.
+  it("reports recorded dates and NEVER characterises a draft rule as in effect", async () => {
+    // Two halves. Substituting "present" for an absent end date asserts the
+    // rule is in force right now when the document said nothing. But the
+    // SENTENCE was the other half: "in effect {from} to {to}" frames the pair
+    // as a live range whatever fills the slots, so "in effect 2024-12-05 to end
+    // not stated" still read as a rule currently running. Whether a draft rule
+    // is in legal effect is a determination this platform never makes — and
+    // these are COMPETING rules, so characterising both as in effect edges
+    // towards asserting both currently govern, which is what this block exists
+    // to refuse.
     renderCompare(jsonResponse(conflictScenarioBody(), 200));
 
     const competing = await screen.findByTestId("scenario-competing-rules");
-    expect(competing).toHaveTextContent("end not stated");
-    expect(competing).not.toHaveTextContent("to present");
+    // The committed fixture carries effective_from 2024-12-05 and
+    // effective_to: null on both competing rules.
+    expect(competing).toHaveTextContent("recorded effective dates");
+    expect(competing).toHaveTextContent("from 2024-12-05");
+    expect(competing).toHaveTextContent("to not stated");
+    expect(competing).not.toHaveTextContent("present");
+    expect(competing).not.toHaveTextContent("in effect");
+  });
+
+  it("says so plainly when a competing rule records no dates at all", async () => {
+    const body = conflictScenarioBody();
+    const constraints = body.constraints as Record<string, unknown>[];
+    const provenance = constraints[0].provenance as Record<string, unknown>;
+    const rules = provenance.competing_rules as Record<string, unknown>[];
+    rules[0].effective_from = null;
+    rules[0].effective_to = null;
+    renderCompare(jsonResponse(body, 200));
+
+    const competing = await screen.findByTestId("scenario-competing-rules");
+    // Not "from not stated, to not stated" twice over.
+    expect(competing).toHaveTextContent("no effective dates are recorded for this rule");
   });
 
   it("labels an empty district label and omits an empty pair classification", async () => {
