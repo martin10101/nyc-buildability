@@ -154,68 +154,16 @@ services:
   # ---------------------------------------------------------------------------
 
   # ---------------------------------------------------------------------------
-  # 3) Next.js frontend web service (ADDED 2026-07-16 per ADR-004; owner
-  #    decision 2026-07-14: frontend served from Render, Vercel dropped).
-  #    Render's official guide deploys "a full Next.js app with server-side
-  #    logic" as a WEB SERVICE - language Node, build `yarn; yarn build` (npm
-  #    equivalents fine), start `yarn start`
-  #    (docs/research/render-nextjs-previews-2026-07-16.md section 1;
-  #    https://render.com/docs/deploy-nextjs-app, retrieved 2026-07-16).
-  #    Build-cache note: Render does not persist .next/cache between builds by
-  #    default; an optional build script can save/restore it via
-  #    $XDG_CACHE_HOME (same source) - later optimization, not required.
-  #    Previews: NONE initially (ADR-004 preview strategy; multi-service
-  #    preview environments are Pro-plan-gated - research file section 2).
-  #    Rollback: web services are rollback-eligible without rebuild
-  #    (ADR-003 R1 as amended by ADR-004 / R2).
+  # 3) Next.js frontend web service `nycdf-web` — WITHHELD (owner Render setup,
+  #    2026-09-11). The frontend still carries the CRITICAL Next.js RCE
+  #    (GHSA-p293-qw3h-jr36; docs/MVP_AGENDA.md B5/I) and the standing rule is
+  #    "no hosted demo before this". A Blueprint creation deploys every service
+  #    it declares, so declaring nycdf-web here would stand the vulnerable app
+  #    up on a public URL. Same precedent as the removed worker/cron services
+  #    above: RESTORATION IS OWED, not optional — the change that lands the
+  #    authorized Next.js upgrade MUST restore this block in the same change.
+  #    Full prior block content (ADR-004 rationale, npm build/start commands,
+  #    NEXT_PUBLIC_* envVars, autoDeployTrigger "off") is preserved in git
+  #    history immediately before this commit.
   # ---------------------------------------------------------------------------
-  - type: web
-    name: nycdf-web
-    runtime: node
-    rootDir: apps/web
-    # Plan: free web services spin down after 15 minutes of inactivity
-    # (https://render.com/docs/free, retrieved 2026-07-14) - unacceptable for
-    # a client-facing frontend at launch, so `starter` is the declared target.
-    # ADR-002 section 6 sequences when paid plans are actually activated;
-    # nothing deploys or bills from this file alone (ADR-004 flags the new
-    # paid instance for owner visibility).
-    plan: starter
-    # Same region as the API for co-location (see nycdf-api note above).
-    region: oregon
-    # Production: no platform auto-deploy; deploys only via this service's
-    # secret deploy hook from the Actions pipeline, after migrations + human
-    # approval - identical model to nycdf-api (ADR-003 D1 as amended, D2/D5;
-    # DEPLOY TRIGGER POLICY above). "off" quoted per blueprint spec (research
-    # file section 3).
-    autoDeployTrigger: "off"
-    # npm equivalents of the official guide's yarn commands (research file
-    # section 1), matched to apps/web/package.json scripts (build=`next
-    # build`, start=`next start`; package-lock.json is committed, so `npm ci`
-    # is deterministic). Reconcile only if apps/web tooling changes.
-    buildCommand: "npm ci && npm run build"
-    startCommand: "npm run start"
-    # Zero-downtime deploy gating: Render treats 2xx/3xx within 5s as healthy
-    # (https://render.com/docs/health-checks, retrieved 2026-07-14). The root
-    # page of the Next.js app serves as the health endpoint.
-    healthCheckPath: /
-    envVars:
-      # PUBLISHABLE VALUES ONLY (apps/web/.env.example security boundary):
-      # NEXT_PUBLIC_* variables are compiled into the public browser bundle.
-      # The Supabase SERVICE-ROLE key, database URLs, deploy hooks, and every
-      # other privileged credential must NEVER appear on this service
-      # (PRD 14.3/17; ADR-002 section 3). Values are environment-scoped and
-      # entered per Render environment at Blueprint/service creation.
-      - key: NEXT_PUBLIC_SUPABASE_URL
-        sync: false
-      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        sync: false  # anon/publishable key only - safe because RLS enforces access
-      # API wiring decision (task M0-T015; resolves M2-T001 G3 defect D8):
-      # the frontend calls the API CROSS-ORIGIN at this base URL, paired with
-      # the API's exact-origin CORS allowlist (API_CORS_ALLOWED_ORIGINS on
-      # nycdf-api = this service's URL). Chosen over a same-origin proxy
-      # because apps/web already consumes NEXT_PUBLIC_API_BASE_URL (M2-T001,
-      # apps/web/.env.example) and a proxy would add a second hop + moving
-      # part with no security gain (no credential is hidden by proxying — the
-      # value is a publishable URL compiled into the browser bundle).
-      - key: NEXT_PUBLIC_API_BASE_URL
-        sync: false
+
