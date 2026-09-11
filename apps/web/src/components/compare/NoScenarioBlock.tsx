@@ -26,6 +26,24 @@ import type { Scenario } from "@/lib/scenario-contract";
  * that shows a number dropped it).
  */
 
+/**
+ * Absence, for a value read out of the weakly-typed `provenance` blob.
+ *
+ * Every reader in scenario-display.ts runs its result through `boundedText`,
+ * which yields the EMPTY STRING for a value that is present but cleans to
+ * nothing (whitespace, control characters). So `null` is not the only absence
+ * these fields can carry, and `?? "…"` catches only half of it — the other half
+ * rendered as an invisible empty element, which reads as "the screen chose not
+ * to show this" rather than "the document did not state it". Same failure as
+ * the empty `<code>` in ScenarioCard, one file over.
+ *
+ * `absent` is always a statement about the DOCUMENT, never a value: it marks
+ * that nothing was stated, and never stands in for something that was.
+ */
+function stated(value: string | null, absent: string): string {
+  return value === null || value === "" ? absent : value;
+}
+
 function RuleConflictBlock({ document }: { document: Scenario }) {
   const conflicts = ruleConflicts(document);
   const conflictingConstraints = document.constraints.filter(
@@ -85,10 +103,21 @@ function RuleConflictBlock({ document }: { document: Scenario }) {
             <ul className="missing-list" data-testid="scenario-competing-rules">
               {conflict.competingRules.map((rule, ruleIndex) => (
                 <li key={`rule-${conflictIndex}-${ruleIndex}`}>
-                  <code>{rule.ruleId ?? "rule id not stated"}</code> (
-                  {rule.ruleVersion ?? "version not stated"}) — in effect{" "}
-                  {rule.effectiveFrom ?? "start not stated"} to{" "}
-                  {rule.effectiveTo ?? "present"}
+                  <code>{stated(rule.ruleId, "rule id not stated")}</code> (
+                  {stated(rule.ruleVersion, "version not stated")}) — in effect{" "}
+                  {stated(rule.effectiveFrom, "start not stated")} to{" "}
+                  {/* NEVER "present". An absent end date is the document
+                      declining to state one; rendering it as "present" asserts
+                      that this draft rule is in legal effect RIGHT NOW, which no
+                      source here says — an authored legal claim on a
+                      legal-provenance screen, and the same class as
+                      `minor_portion` defaulting to false. It is worse than it
+                      looks in this block specifically: these are COMPETING
+                      rules, and saying both run "to present" edges towards
+                      asserting both currently govern, which is the one thing
+                      this block exists to refuse. A reader who needs the end
+                      date must go to the source, and now they will. */}
+                  {stated(rule.effectiveTo, "end not stated")}
                   {rule.outputNames.length > 0
                     ? ` · emits ${rule.outputNames.join(", ")}`
                     : ""}
@@ -113,7 +142,7 @@ function ShareRangeBlock({ document }: { document: Scenario }) {
       <ul className="missing-list" data-testid="scenario-share-ranges">
         {candidates.map((candidate, index) => (
           <li key={`candidate-${index}`} data-testid="scenario-share-range">
-            <strong>{candidate.districtLabel ?? "Unlabelled district"}</strong>
+            <strong>{stated(candidate.districtLabel, "district not stated")}</strong>
             {": "}
             share range min {formatValue(candidate.shareMin)} / point{" "}
             {formatValue(candidate.sharePoint)} / max{" "}
@@ -123,7 +152,7 @@ function ShareRangeBlock({ document }: { document: Scenario }) {
               : candidate.minorPortion === false
                 ? " (not a minor portion)"
                 : " (minor portion not stated)"}
-            {candidate.pairClass !== null ? (
+            {candidate.pairClass !== null && candidate.pairClass !== "" ? (
               <span className="section-note">
                 {" "}
                 (classification: <code>{candidate.pairClass}</code>)

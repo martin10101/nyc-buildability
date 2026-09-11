@@ -31,6 +31,22 @@ import type { Scenario, ScenarioCitation } from "@/lib/scenario-contract";
  * TEXT, never as links: no server string is ever placed in an href.
  */
 
+/**
+ * Absence for a citation field. These are validated as strings, so `null` is
+ * impossible — but `snapshot_id`, `section` and `quote` are all `checkString`
+ * (empty-permitting, deliberately: they are propagated from the rule record and
+ * the schemas set no `minLength`), and free text additionally passes through
+ * `boundedText`, which yields empty for a value that cleans to nothing.
+ *
+ * An empty one rendered as an invisible `<code></code>` or an empty `<dd>` —
+ * the citation backing the only material number on the screen, silently showing
+ * nothing. "Last amended" in this same list already states its absence; these
+ * three were the inconsistency.
+ */
+function citationText(value: string, absent: string): string {
+  return value === "" ? absent : value;
+}
+
 function CitationBlock({
   citation,
   index,
@@ -43,12 +59,12 @@ function CitationBlock({
     <dl data-testid={`scenario-citation-${index}`}>
       <dt>Snapshot</dt>
       <dd>
-        <code>{citation.snapshot_id}</code>
+        <code>{citationText(citation.snapshot_id, "snapshot id not stated")}</code>
       </dd>
       <dt>Section</dt>
-      <dd>{citation.section}</dd>
+      <dd>{citationText(citation.section, "not stated")}</dd>
       <dt>Quote</dt>
-      <dd>{citation.quote}</dd>
+      <dd>{citationText(citation.quote, "no quoted text was carried")}</dd>
       <dt>Last amended</dt>
       <dd>
         {typeof citation.last_amended === "string" && citation.last_amended !== ""

@@ -364,6 +364,79 @@ describe("Compare screen — AS-2 no_scenario / professional review", () => {
   });
 });
 
+describe("Compare screen — absence is stated, never rendered as an empty element", () => {
+  it("labels an empty citation snapshot_id, section and quote", async () => {
+    // All three are checkString (empty-permitting, deliberately — they are
+    // propagated from the rule record and the schemas set no minLength), so an
+    // empty one reached an invisible <code></code> / empty <dd> on the citation
+    // backing the only material number on the screen.
+    const body = preliminaryScenarioBody();
+    const provenance = body.cap_provenance as Record<string, unknown>;
+    const citation = (provenance.citations as Record<string, unknown>[])[0];
+    citation.snapshot_id = "";
+    citation.section = "";
+    citation.quote = "";
+    renderCompare(jsonResponse(body, 200));
+
+    const block = await screen.findByTestId("scenario-citation-0");
+    expect(block).toHaveTextContent("snapshot id not stated");
+    expect(block).toHaveTextContent("no quoted text was carried");
+    // "Last amended" already stated its absence; the others now match it.
+    expect(block).toHaveTextContent("not stated");
+  });
+
+  it("treats an EMPTY competing-rule field as absent, not just a null one", async () => {
+    // `asStringOrNull` runs every provenance string through boundedText, which
+    // yields "" for a value that cleans to nothing — so `?? "…"` caught only
+    // half of absence and the other half rendered blank.
+    const body = conflictScenarioBody();
+    const constraints = body.constraints as Record<string, unknown>[];
+    const provenance = constraints[0].provenance as Record<string, unknown>;
+    const rules = provenance.competing_rules as Record<string, unknown>[];
+    rules[0].rule_id = "   ";
+    rules[0].rule_version = "";
+    rules[0].effective_from = "";
+    renderCompare(jsonResponse(body, 200));
+
+    const competing = await screen.findByTestId("scenario-competing-rules");
+    expect(competing).toHaveTextContent("rule id not stated");
+    expect(competing).toHaveTextContent("version not stated");
+    expect(competing).toHaveTextContent("start not stated");
+  });
+
+  it("NEVER substitutes 'present' for an absent rule end date", async () => {
+    // The committed conflict fixture carries effective_to: null on both
+    // competing rules. Rendering that as "present" asserts the draft rule is in
+    // legal effect right now — an authored legal claim no source here supports,
+    // and worse in this block than elsewhere: these are COMPETING rules, and
+    // saying both run "to present" edges towards asserting both currently
+    // govern, which is exactly what this block refuses to do.
+    renderCompare(jsonResponse(conflictScenarioBody(), 200));
+
+    const competing = await screen.findByTestId("scenario-competing-rules");
+    expect(competing).toHaveTextContent("end not stated");
+    expect(competing).not.toHaveTextContent("to present");
+  });
+
+  it("labels an empty district label and omits an empty pair classification", async () => {
+    const body = professionalReviewScenarioBody();
+    const constraints = body.constraints as Record<string, unknown>[];
+    const provenance = constraints[2].provenance as Record<string, unknown>;
+    const candidates = provenance.base_district_candidates as Record<string, unknown>[];
+    candidates[0].district_label = "";
+    candidates[0].pair_class = "";
+    renderCompare(jsonResponse(body, 200));
+
+    const ranges = await screen.findByTestId("scenario-share-ranges");
+    expect(ranges).toHaveTextContent("district not stated");
+    // An empty classification is omitted rather than rendered as an empty
+    // "(classification: )" with nothing inside it.
+    expect(ranges).not.toHaveTextContent("classification: )");
+    // The second candidate is untouched, so the block still works normally.
+    expect(ranges).toHaveTextContent("R6");
+  });
+});
+
 describe("Compare screen — AS-3 coverage labels + full matrix + missing-family gaps", () => {
   it("renders every coverage status as a distinct TEXT label and lists the 8 missing families", async () => {
     renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
