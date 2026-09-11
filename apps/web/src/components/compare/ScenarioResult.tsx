@@ -38,6 +38,17 @@ import { ScenarioReasons } from "./ScenarioReasons";
  * not. It narrows the claim rather than asserting a fact about this property,
  * so it is safe as fixed copy.
  *
+ * It is phrased "a draft zoning-floor-area cap is … where this screen shows
+ * one" rather than "THE VALUE ABOVE is …" for a reason. This block mounts on
+ * every branch, and on a `no_scenario` or `unsupported` document there is no
+ * value above — the card immediately preceding it says "no maximum can be
+ * stated". The earlier phrasing therefore asserted that a value existed on
+ * exactly the branches where none did: the packet's own defect class in
+ * miniature, prose claiming something the document does not support. Gating the
+ * sentence on a non-null cap was the alternative, and it is worse — it would
+ * delete the definitional framing from the branches where a reader has the most
+ * need of it. Wording that is true on every branch beats a conditional.
+ *
  * The second is not, and used to be hard-coded: "the rule families that would
  * bound a real envelope (height, setbacks, lot coverage, street wall, and
  * others) are still missing" was a client-authored factual claim, true only
@@ -55,9 +66,9 @@ function PracticalRangeBlock({ document }: { document: Scenario }) {
     <section className="card" data-testid="scenario-practical-range">
       <h2 className="section-title">Practical usable range</h2>
       <p>
-        The value above is a draft <em>zoning-floor-area cap</em> only — it is
-        not gross, net, sellable, or feasible area, and it is not a buildable
-        envelope.
+        A draft <em>zoning-floor-area cap</em> is not gross, net, sellable, or
+        feasible area, and it is not a buildable envelope — where this screen
+        shows one, that is all it is.
       </p>
       {blocking.length === 0 ? (
         <p data-testid="scenario-practical-range-no-blockers">

@@ -30,6 +30,14 @@ function renderCompare(response: Response, bbl: string = FIXTURE_BBL) {
   return render(<CompareScreen bbl={bbl} fetchImpl={stubFetch(response)} />);
 }
 
+/** The three branches that state NO cap. Anything the screen says on these
+ * must not presuppose that a value exists. */
+const CAPLESS_BRANCHES: Array<[string, () => Record<string, unknown>]> = [
+  ["no_scenario", professionalReviewScenarioBody],
+  ["data_conflict", conflictScenarioBody],
+  ["unsupported", unsupportedScenarioBody],
+];
+
 /** Every framing a response can arrive with that does not declare a body size
  * this client is willing to read. All of them must reject before `.json()`. */
 const UNREADABLE_CONTENT_LENGTHS: Array<[string, string | null]> = [
@@ -215,6 +223,43 @@ describe("Compare screen — the practical-range claim is read from the document
     const block = await screen.findByTestId("scenario-practical-range");
     expect(block).toHaveTextContent("not a buildable envelope");
     expect(block).toHaveTextContent("zoning-floor-area cap");
+  });
+
+  // This block mounts on every branch, and the card immediately above it on
+  // these branches says "no maximum can be stated" — so "The value above is a
+  // draft zoning-floor-area cap only" asserted the existence of a value
+  // precisely where there was none. Prose claiming what the document does not
+  // support is this packet's own defect class.
+  for (const [kind, build] of CAPLESS_BRANCHES) {
+    it(`never claims a value exists on the ${kind} branch, where none can be stated`, async () => {
+      renderCompare(jsonResponse(build(), 200));
+
+      await screen.findByTestId("scenario-no-scenario");
+      const block = screen.getByTestId("scenario-practical-range");
+      expect(block).not.toHaveTextContent("The value above");
+      expect(block).not.toHaveTextContent("value above is");
+      // The definitional framing survives — this is exactly the branch where a
+      // reader most needs to know what a cap is not, so gating the sentence on
+      // a non-null cap would have been the worse of the two fixes.
+      expect(block).toHaveTextContent("not a buildable envelope");
+      expect(block).toHaveTextContent("zoning-floor-area cap");
+      // And the preceding card really does say no maximum can be stated.
+      expect(screen.getByTestId("scenario-no-scenario")).toHaveTextContent(
+        "no maximum can be stated",
+      );
+      expect(screen.queryByTestId("scenario-cap-value")).toBeNull();
+    });
+  }
+
+  it("keeps the reconciling clause that ties the 5 blockers to the 8 gaps", async () => {
+    // Three counts appear on one screen — 5 envelope blockers named here, the
+    // full 11-family matrix, and 8 missing families below (three are missing
+    // but non-blocking: parking_loading, use_group_overlay, density_bonuses).
+    // This clause is what makes those reconcile for a reader; it is
+    // load-bearing, not decoration.
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    const blockers = await screen.findByTestId("scenario-practical-range-blockers");
+    expect(blockers).toHaveTextContent("listed with the other gaps below");
   });
 });
 
