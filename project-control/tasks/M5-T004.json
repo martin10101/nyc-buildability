@@ -11,7 +11,7 @@
     "apps/web/src/lib/api.ts + src/lib/contract-matrix.ts + src/lib/bounded.ts + src/lib/validate-profile.ts (READ-ONLY TEMPLATE: hardened typed client pattern - matrix classification, bounded/allowlisted reflected text, runtime contract validation before render, AbortController)",
     "apps/web/src/components/confirm/ConfirmScreen.tsx (the 'Next step' dead-end at line ~378 to rewire to Compare) + src/components/property/CoverageBadge.tsx/CoverageLegend.tsx (READ-ONLY; reuse the coverage-label vocabulary)",
     "apps/web/e2e/harness/fixture_api.py (READ-ONLY; committed-official-fixture API server for offline e2e - proves no-credential path) + the M5-T003 committed fixtures",
-    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md \u00a713"
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md Â§13"
   ],
   "outputs": [
     "apps/web/src/app/property/compare/page.tsx (Step 3 Compare route)",
@@ -28,7 +28,11 @@
     "apps/web/src/lib/scenario-*",
     "apps/web/src/lib/validate-scenario.ts",
     "apps/web/src/components/confirm/ConfirmScreen.tsx",
-    "project-control/reports/M5-T004-producer-report.md"
+    "project-control/reports/M5-T004-producer-report.md",
+    "apps/web/src/app/globals.css",
+    "apps/web/src/app/property/error.tsx",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/e2e/compare-journey.spec.ts"
   ],
   "forbidden_paths": [
     "services/**",
@@ -83,13 +87,11 @@
     "npm --prefix apps/web run test:e2e"
   ],
   "test_evidence_capture_note": "documented_test_commands obey the closed command profile (M0-T149: one clean segment each, no chaining/cd/comments), so `--prefix apps/web` stands in for `cd apps/web`. Mapping: run test = vitest unit/component (AS-1..AS-8, jest-axe); run typecheck = tsc --noEmit (contract types); run test:e2e = Playwright vs apps/web/e2e/harness/fixture_api.py (committed-official-fixture API; OFFLINE, no Supabase/Geoclient - proves D-038-R004). Prereq `npm ci` runs once in CI (job 'web-e2e', .github/workflows/ci.yml). THIN-CLIENT (owner PC ~7GB, docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md): apps/web/node_modules is NOT installed locally and 'no local npm' is standing policy, so the loop worker cannot run these directly; frontend green evidence is CI- or orchestrator-captured at gate time (M5-T003 evidence-capture division of labor). The worker DELIVERS code + tests and must never claim green it did not run.",
-  "path_notes": {
-    "apps/web/src/lib/": "NAME new lib files so they AUTO-APPROVE: allowed globs are apps/web/src/lib/scenario-* and apps/web/src/lib/validate-scenario.ts ONLY (e.g. scenario-api.ts, scenario-contract.ts, scenario-contract-matrix.ts, scenario-coverage.ts, validate-scenario.ts). The existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify. A differently-named lib file will defer for approval.",
-    "apps/web/src/components/confirm/ConfirmScreen.tsx": "NARROW edit only: replace the 'steps 3-4 arrive later' dead-end with a labelled route to Compare; do not restructure the Confirm screen or its tests.",
-    "forbidden:services/": "the scenario endpoint + backend are ACCEPTED (M5-T003); consume over HTTP/fixtures only, never change backend.",
-    "forbidden:packages/contracts/": "consume scenario.schema.json + generated/scenario.ts read-only; no contract change this task.",
-    "offline": "consume the flag-gated endpoint / committed fixtures only; NO Supabase, NO Geoclient, NO new connector."
-  },
+  "path_notes": [
+    "{'apps/web/src/lib/': 'NAME new lib files so they AUTO-APPROVE: allowed globs are apps/web/src/lib/scenario-* and apps/web/src/lib/validate-scenario.ts ONLY (e.g. scenario-api.ts, scenario-contract.ts, scenario-contract-matrix.ts, scenario-coverage.ts, validate-scenario.ts). The existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify. A differently-named lib file will defer for approval.', 'apps/web/src/components/confirm/ConfirmScreen.tsx': \"NARROW edit only: replace the 'steps 3-4 arrive later' dead-end with a labelled route to Compare; do not restructure the Confirm screen or its tests.\", 'forbidden:services/': 'the scenario endpoint + backend are ACCEPTED (M5-T003); consume over HTTP/fixtures only, never change backend.', 'forbidden:packages/contracts/': 'consume scenario.schema.json + generated/scenario.ts read-only; no contract change this task.', 'offline': 'consume the flag-gated endpoint / committed fixtures only; NO Supabase, NO Geoclient, NO new connector.'}",
+    "2026-09-11 orchestrator amendment: allowed_paths widened for the post-gate-wave rework. globals.css (G3-4/G4 MEDIUM-5: .status-label and .section-subtitle resolve to no rule in any of the three stylesheets; the producer could not fix this in the original scope). app/property/error.tsx (G5: no error boundary exists under /property, only /dashboard, so a non-string in unvalidated cap_provenance throws after validation passes and blanks the route). e2e/harness/fixture_api.py + e2e/compare-journey.spec.ts (G3-3b/G4 MEDIUM-6: the harness enables INTERNAL_RULE_EVAL_ENABLED not INTERNAL_SCENARIO_ENABLED and no spec visits /property/compare, so no browser can reach this screen anywhere in the repo; G3 owes step 3 of 8 and CI is the only place it can be discharged). rule-evaluation.ts deliberately NOT added - the transport-shell clone (G4 HIGH-1) is a separate orchestrator-scoped task, not this rework.",
+    "2026-09-11 RATIFICATION (G4 re-review MEDIUM). The widening above was made in the working copy BEFORE the rework was dispatched but was NOT COMMITTED until after the re-review flagged it. Orchestrator error, not a producer violation: the producer was told these four paths were in scope and worked to that instruction, and disclosed all four in its report. Every reviewer correctly read the 6-path committed packet and reported fixture_api.py, compare-journey.spec.ts, globals.css and error.tsx as outside allowed_paths. None was ever in forbidden_paths, so no prohibition was breached. Ratified explicitly here rather than letting acceptance imply it, so the next task inherits an accurate scope record. NOTE for the inputs field: fixture_api.py is labelled READ-ONLY there and was modified anyway - that label is now stale and is superseded by this amendment, because browser coverage of /property/compare is impossible without enabling INTERNAL_SCENARIO_ENABLED in the harness."
+  ],
   "blockers": [],
   "created_at": "2026-09-08T14:51:49.592393+00:00",
   "updated_at": "2026-09-11T03:04:35.563891+00:00",
