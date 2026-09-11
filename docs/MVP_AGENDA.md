@@ -233,7 +233,11 @@ Found by the M2-T021 gate wave (2026-09-11).
   plus `\n` can split a log record and forge a follow-on line. Fixed with `re.fullmatch` in the
   new `geoclient_address.py`; the SAME pattern ships in three accepted connectors —
   `mappluto_geometry_arcgis.py:314`, `zoning_features_arcgis.py:266`, `ztldb_soda.py:345` — plus
-  the unbounded `repr()` fallback. Small packet: fullmatch + length-cap all three, mirror tests.
+  the unbounded `repr()` fallback, **and in the shared retry engine itself**
+  (G5 re-review N2): `app/resilience/transport.py` `_RETRY_AFTER_SAFE_RE` + `sanitize_retry_after`
+  pass an in-charset value with a trailing newline through VERBATIM and have an uncapped `repr()`
+  fallback — load-bearing for every connector on the jittered `Retry-After` path. Small packet:
+  fullmatch + length-cap all three connectors AND the shared engine, mirror tests.
 - **Carry-forwards from the M2-T021 wave, owed to the consuming packets:** GRC `50`/`75` are
   documented alternative-carrying classes but classify as plain `rejected` with suggestions
   dropped (needs a recorded fixture before widening — capture task); Geoclient outcomes carry
@@ -241,7 +245,9 @@ Found by the M2-T021 gate wave (2026-09-11).
   `raw_fields`) — every consumer must escape on render; the connector emits an
   `AddressResolution`, not `source_fact`-shaped facts — the endpoint packet that consumes it
   must map to the contract and prove consumability; no natural GRC `01` (warning) or
-  multi-suggestion capture exists yet.
+  multi-suggestion capture exists yet; `AnalysisBudget.analysis_id` is UNVALIDATED caller text
+  echoed into the budget-exhaustion error payload (G5 re-review N3) — the consuming packet must
+  never derive it from untrusted input.
 
 ---
 
@@ -367,7 +373,10 @@ B-002 is therefore exercised for the API only.
   fallback key offline; it is stored nowhere.
 - **OWNER DIRECTIVE (2026-09-11, live session, verbatim): "go ahead with the address entry
   connector."** Given after the J1 capture and its why-explanation; discharged as task M2-T021.
-  Recorded here so citations to this directive resolve to a control-plane document.
+  Recorded here so citations to this directive resolve to a control-plane document. Transcribed
+  by the orchestrator during the M2-T021 rework (`eb6a15f8`), after the first-round G3 gate
+  objected to the then-uncited quote (G3 re-review N5: an agent-transcribed quotation must say
+  who wrote it down and when).
   NOTE for §B2 (wide-street): the recorded response carries `streetWidth` / `streetWidthMaximum`
   per address — Geoclient itself is a candidate street-width source; evaluate when scoping that
   task. Fallback key held offline by the owner, never stored anywhere.
