@@ -1,0 +1,136 @@
+{
+  "task_id": "M2-T021",
+  "title": "Geoclient v2 address-resolution connector (address -> canonical address + BBL + BIN + coordinates) with recorded fixtures and provenance",
+  "task_type": "connector",
+  "milestone_id": "M2",
+  "objective": "Build the Geoclient v2 /address connector in services/api/app/connectors: resolve house number + street + (borough or zip) to the city-canonical address, BBL, BIN and coordinates, with TYPED outcomes for success, success-with-warnings, ambiguity (suggestions surfaced, never guessed), rejection/not-found, auth failure and source-unavailable; BOTH Geosupport sub-call return codes checked on every response (returnCode1e AND returnCode1a - many locations are valid for only one); every emitted fact carries provenance (source id, endpoint, request params WITHOUT the key, retrieval timestamp, both GRC codes); an injected fetch seam so the entire test suite runs offline against recorded fixtures; subscription-key hygiene throughout (env-read at call time, header-only, never stored, never logged, never in errors - leak-absence tested). NO API endpoint and NO UI in this packet - follow-up packets consume the connector.",
+  "business_reason": "Address entry is the single biggest client-demo improvement on the owner working list (docs/MVP_AGENDA.md B3 / A2 item 4): users type a street address instead of a ten-digit BBL. The foundation is already recorded and committed: fixture G01 (the User Guide documented-example address, HTTP 200, both sub-calls 00, 171 fields, key-absence verified) at services/api/tests/fixtures/geoclient/, captured per section J1 with the owner subscription key now live on both the owner machine and Render.",
+  "inputs": [
+    "services/api/tests/fixtures/geoclient/G01_address_documented_example.json (recorded 2026-09-11, both sub-calls 00, sha256 recorded in the fixture)",
+    "docs/research/M0-T002-geoclient-address-resolution.md (endpoints, auth header, GRC semantics sections 2.2/2.3/2.7)",
+    "existing connector patterns: services/api/app/connectors/pluto_soda.py (typed errors, SOURCE_ID, provenance emission), bbl.py (normalization)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/geoclient_address.py",
+    "services/api/tests/connectors/test_geoclient_address.py",
+    "additional recorded fixtures under services/api/tests/fixtures/geoclient/ (ambiguity, rejection; constructed adversarial variants clearly labeled)",
+    "docs/research/source-registry-drafts/geoclient.json",
+    "project-control/reports/M2-T021-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/connectors/**",
+    "services/api/app/connectors",
+    "services/api/tests/connectors/**",
+    "services/api/tests/connectors",
+    "services/api/tests/fixtures/geoclient/**",
+    "services/api/tests/fixtures/geoclient",
+    "docs/research/source-registry-drafts/geoclient.json",
+    "project-control/reports/M2-T021-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/api/**",
+    "services/api/app/main.py",
+    "services/api/app/config.py",
+    "services/api/app/rules/**",
+    "services/api/app/scenario/**",
+    "render.yaml",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "normal",
+      "input": "resolve(house_number='314', street='w 100 st', borough='manhattan') against the recorded G01 fixture via the injected fetch seam",
+      "expected": "typed SUCCESS outcome; bbl '1018887502', bin '1057093', normalized street name, zipCode '10025', latitude/longitude transported VERBATIM as strings/numbers exactly as the source emitted them (no reformatting, no float coercion of identifiers); provenance on the outcome carries source_id, endpoint path, request params WITHOUT any key, retrieval timestamp, and BOTH GRC codes; a test asserts equality against values LOADED FROM THE FIXTURE, never restated as literals (M5-T004 tautology lesson)"
+    },
+    {
+      "id": "S2",
+      "case": "both_sub_calls_checked",
+      "input": "a fixture variant (constructed from G01, clearly labeled constructed) where geosupportReturnCode='00' but geosupportReturnCode2='42' with message2 populated",
+      "expected": "NEVER a clean success: the outcome is typed success-with-warnings or rejection per the documented GRC table, and carries both codes and both messages; a test asserts that checking only the first sub-call code cannot produce a clean success (research doc section 2.7: many locations are valid for only one of the two sub-calls)"
+    },
+    {
+      "id": "S3",
+      "case": "ambiguity",
+      "input": "a recorded (preferred) or constructed-and-labeled fixture with GRC 'EE' (street not recognized, similar names returned) and one with GRC '11' (not recognized, no similar names)",
+      "expected": "typed AMBIGUOUS outcome for EE carrying the source's suggestion list verbatim; typed NOT_FOUND for 11; the connector NEVER picks a suggestion itself - selection is the caller's (ultimately the user's) decision; the GRC and reason code are surfaced on the outcome"
+    },
+    {
+      "id": "S4",
+      "case": "rejection_not_found",
+      "input": "a recorded or constructed-and-labeled fixture for an out-of-range house number (GRC > 01 reject class)",
+      "expected": "typed NOT_FOUND/REJECTED outcome carrying the GRC, reason code and source message verbatim; no fabricated candidate; no exception escapes as an unhandled error"
+    },
+    {
+      "id": "S5",
+      "case": "transport_and_auth_failures",
+      "input": "injected fetch raising timeout; injected HTTP 401 and 403 responses; injected HTTP 500; injected malformed (non-JSON) body",
+      "expected": "typed SOURCE_TIMEOUT / AUTH_FAILED / SOURCE_UNAVAILABLE / MALFORMED_RESPONSE outcomes matching the existing connector error taxonomy; the AUTH_FAILED message NEVER contains the key value; no retry storm (at most the bounded retry policy the existing connectors use); every failure path is fail-closed - no partial facts emitted"
+    },
+    {
+      "id": "S6",
+      "case": "key_hygiene",
+      "input": "connector configured with a fake sentinel key via the seam; exercise success, ambiguity and every failure path",
+      "expected": "the sentinel NEVER appears in any emitted fact, outcome field, exception string, repr, or captured log record (leak-absence test pattern per services/api/tests/connectors/test_pluto_soda.py); the key is read at call time from GEOCLIENT_SUBSCRIPTION_KEY and sent ONLY as the Ocp-Apim-Subscription-Key header; a missing key yields a typed KEY_MISSING outcome without attempting a network call"
+    },
+    {
+      "id": "S7",
+      "case": "offline_and_fixture_integrity",
+      "input": "the full test module run with no network access",
+      "expected": "every test passes offline through the injected seam; a test asserts the G01 fixture's stored response_sha256 matches the sha256 of its response_body_raw (drift detection); no test or module import performs network I/O"
+    },
+    {
+      "id": "S8",
+      "case": "transport_honesty",
+      "input": "the G01 fixture's 171-field response processed by the connector",
+      "expected": "absent fields are never fabricated (Geoclient omits nulls - absence of a key is not evidence of absence of data, and the connector must not invent defaults); an unknown/unrecognized GRC value fails CLOSED as a typed UNRECOGNIZED_STATUS outcome, never as success; identifier-like fields (bbl, bin, street codes) stay STRINGS end to end - no numeric coercion (the PLUTO decimal-BBL lesson)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "data-contract-verifier"
+  ],
+  "status": "ready",
+  "progress_percent": 5,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-11T19:30:23.159795+00:00",
+  "updated_at": "2026-09-11T19:31:59.411729+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-11T19:30:23.159795+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/connectors/test_geoclient_address.py -q",
+    "python -m pytest services/api/tests/connectors -q",
+    "ruff check services/api/app/connectors services/api/tests/connectors",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "allowed_paths lists BOTH the ** glob and the plain directory for each scope on purpose: policy.py path_matches needs the glob, directive_registry.git_tree_manifest needs the plain directory (measured 2026-09-11, M4-T009 contract).",
+    "Additional LIVE fixture captures (ambiguity, rejection) are permitted from the owner machine holding the key, KB-scale and polite (rate limits officially UNKNOWN per research doc section 2.4); every live capture records the request URL WITHOUT the key, http status, retrieval timestamp and response sha256, and is verified key-absent before commit, exactly like G01. Constructed adversarial fixture variants must be clearly labeled constructed.",
+    "The subscription key exists in exactly two places (owner machine env; Render dashboard) and must never appear in any file in this repository."
+  ]
+}
