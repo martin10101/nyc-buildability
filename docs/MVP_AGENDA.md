@@ -329,9 +329,14 @@ owner to confirm Blueprint **Auto Sync = No**. The service URL is PRIVATE STAGIN
 has no auth, internal flags are unset (sensitive routes 404), do not share the URL.
 B-002 is therefore exercised for the API only.
 
-- **`GEOCLIENT_SUBSCRIPTION_KEY` — owner HAS the key (2026-09-10); on Render since 2026-09-11.**
-  Still outstanding: the LOCAL step (§J1) — the key on the owner's machine for one recorded
-  live call, which is what actually unblocks building the address-entry connector.
+- **`GEOCLIENT_SUBSCRIPTION_KEY` — DONE end to end (2026-09-11).** On Render, AND on the owner's
+  machine (§J1 executed): the first recorded live call landed as
+  `services/api/tests/fixtures/geoclient/G01_address_documented_example.json` — the User Guide's
+  own documented example address, both Geosupport sub-calls `00`, 171 fields, key-absence
+  verified before commit. The address-entry connector task is now unblocked for contracting.
+  NOTE for §B2 (wide-street): the recorded response carries `streetWidth` / `streetWidthMaximum`
+  per address — Geoclient itself is a candidate street-width source; evaluate when scoping that
+  task. Fallback key held offline by the owner, never stored anywhere.
 - Supabase token — unblocks all persistence and auth (B-001). Note: **the API currently has no
   authentication at all**, which is why every route is flag-gated internal-only.
 - Authorize the Next.js RCE upgrade.
