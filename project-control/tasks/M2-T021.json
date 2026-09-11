@@ -108,12 +108,12 @@
     "security-reviewer",
     "data-contract-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-11T19:30:23.159795+00:00",
-  "updated_at": "2026-09-11T19:32:28.678677+00:00",
+  "updated_at": "2026-09-11T20:00:18.361416+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -133,5 +133,14 @@
     "Additional LIVE fixture captures (ambiguity, rejection) are permitted from the owner machine holding the key, KB-scale and polite (rate limits officially UNKNOWN per research doc section 2.4); every live capture records the request URL WITHOUT the key, http status, retrieval timestamp and response sha256, and is verified key-absent before commit, exactly like G01. Constructed adversarial fixture variants must be clearly labeled constructed.",
     "The subscription key exists in exactly two places (owner machine env; Render dashboard) and must never appear in any file in this repository."
   ],
-  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t021"
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t021",
+  "progress_log": [
+    {
+      "at": "2026-09-11T20:00:18.361416+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "Gate wave at d4cdbe79: G1 FAIL (14 findings, 3 blocking: hand-authored fixture retrieval timestamps provably post-dating their commit; AttributeError escape on non-string house_number/street; os.environ branch zero-covered), G4 FAIL (18 findings, 5 blocking: sub-call attribution swap-proof gap on symmetric fixtures; env path never executed; zip contract untested; leak harvest lacks positive control and can pass vacuously; emitted URL uses quote_plus while all fixtures recorded %20), G3 PASS with 4 blocking record corrections (evidence-map overstatements: capture attribution, an uncited owner-directive quote, an unsupported key date with B-004 still open, an inflated all-36-tests enumeration - the M5-T004 pattern caught again), G5 PASS with 4 blocking bounding corrections (newline-tolerant sanitizers, unbounded repr fallback, unbounded top_level_keys, unbounded caller input; key containment itself verified CLOSED across a 19-row leak-surface table). Also from G3: D-038 R003/R004 applicability computed EMPTY for this task (task_ids lists are M5-only) - reconcile via owner-gated amendment, not argument. Rework proceeding as one bounded change: code fixes incl. URL encoding aligned to the recorded fixtures, jittered Retry-After retry policy, injectable clock, budget threading, deep-copied raw_fields, digest_canonicalization in provenance; true capture timestamps with stated basis; evidence-map rewrite; B-004 record update; the full test battery the coverage table demands. Wave-wide sanitizer newline defect in three sibling connectors recorded as a follow-up."
+    }
+  ]
 }
