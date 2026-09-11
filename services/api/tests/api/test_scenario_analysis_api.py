@@ -1289,11 +1289,27 @@ def test_as6_non_json_safe_engine_result_is_typed_500(raw_client, monkeypatch):
 # ==========================================================================
 
 
+def _flattened_route_list(application):
+    """``app.routes`` with included routers expanded, registration order preserved.
+
+    fastapi>=0.139 (starlette>=1.0) records each ``include_router`` call as one
+    ``_IncludedRouter`` entry (``path`` is ``None``) whose ``original_router.routes``
+    holds the prefixed ``APIRoute`` objects; older versions flatten them into
+    ``app.routes`` directly. Expanding included routers in place preserves the
+    registration order the assertions below pin, and is a no-op on the old layout.
+    """
+    flat = []
+    for route in application.routes:
+        inner = getattr(getattr(route, "original_router", None), "routes", None)
+        flat.extend(inner if inner is not None else [route])
+    return flat
+
+
 def test_as7_analysis_routes_are_registered_last_and_in_order():
     """G3 C7: reordering the ``include_router`` calls in ``app.main`` survived every test. The
     claim being defended is ADDITIVE registration - the four analysis routes are appended
     AFTER every pre-existing router, in the documented order - so pin both."""
-    paths = [getattr(route, "path", None) for route in app.routes]
+    paths = [getattr(route, "path", None) for route in _flattened_route_list(app)]
     expected = [f"/api/v1/properties/{{bbl}}/scenario/{analysis}" for analysis in ANALYSES]
 
     # Each analysis route is registered exactly once, in the documented order.

@@ -563,6 +563,22 @@ def test_as3_request_body_cannot_influence_the_response(client, monkeypatch):
     assert "1000000000" not in bodied.text
 
 
+def _flattened_route_list(application):
+    """``app.routes`` with included routers expanded, registration order preserved.
+
+    fastapi>=0.139 (starlette>=1.0) records each ``include_router`` call as one
+    ``_IncludedRouter`` entry (``path`` is ``None``) whose ``original_router.routes``
+    holds the prefixed ``APIRoute`` objects; older versions flatten them into
+    ``app.routes`` directly. Expanding included routers in place preserves the
+    registration order the AS-8 assertions pin, and is a no-op on the old layout.
+    """
+    flat = []
+    for route in application.routes:
+        inner = getattr(getattr(route, "original_router", None), "routes", None)
+        flat.extend(inner if inner is not None else [route])
+    return flat
+
+
 def test_as3_route_declares_no_query_parameter_and_no_body():
     """G3 H-4: AS-3's "no query parameter" half was untested - adding a `terse: bool = False`
     parameter that strips `profile_provenance` shipped green. Assert the route's OWN FastAPI view:
@@ -570,7 +586,7 @@ def test_as3_route_declares_no_query_parameter_and_no_body():
     Depends seams are checked too, so a query parameter cannot enter through a dependency."""
     route = next(
         r
-        for r in app.routes
+        for r in _flattened_route_list(app)
         if getattr(r, "path", None) == "/api/v1/properties/{bbl}/evidence"
     )
     assert sorted(route.methods) == ["GET"]
@@ -958,7 +974,7 @@ def test_as7_verification_status_only_echoes_the_source_case_insensitively():
 
 
 def test_as8_evidence_route_is_registered_last_and_after_the_pre_existing_routes():
-    paths = [getattr(route, "path", None) for route in app.routes]
+    paths = [getattr(route, "path", None) for route in _flattened_route_list(app)]
     evidence_path = "/api/v1/properties/{bbl}/evidence"
     assert paths.count(evidence_path) == 1
     evidence_index = paths.index(evidence_path)
