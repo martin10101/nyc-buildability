@@ -14,6 +14,7 @@ import {
   professionalReviewScenarioBody,
   stateResponse,
   stubFetch,
+  unmeasuredResponse,
   unsupportedScenarioBody,
 } from "./scenario-fixtures";
 
@@ -28,6 +29,16 @@ afterEach(() => {
 function renderCompare(response: Response, bbl: string = FIXTURE_BBL) {
   return render(<CompareScreen bbl={bbl} fetchImpl={stubFetch(response)} />);
 }
+
+/** Every framing a response can arrive with that does not declare a body size
+ * this client is willing to read. All of them must reject before `.json()`. */
+const UNREADABLE_CONTENT_LENGTHS: Array<[string, string | null]> = [
+  ["over the accepted body size", String(512 * 1024)],
+  ["absent entirely (chunked framing)", null],
+  ["non-numeric", "abc"],
+  ["blank", ""],
+  ["signed", "-1"],
+];
 
 describe("Compare screen — AS-1 preliminary cap render (verbatim, never recomputed)", () => {
   it("renders the draft cap VERBATIM from the body with objective + draft label", async () => {
@@ -471,18 +482,60 @@ describe("fetchScenario — offline client hardening (AS-4/AS-5 unit coverage)",
     expect(outcome.kind === "unexpected_response" && outcome.httpStatus).toBe(500);
   });
 
-  it("rejects a response that declares more than the accepted body size", async () => {
-    const oversized = new Response(JSON.stringify({ state: "internal_error" }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": String(512 * 1024),
-      },
-    });
+  it("accepts a response that declares a readable body size", async () => {
+    // The positive control for the guard below: a well-formed Content-Length
+    // within budget must NOT be rejected. Every other test in this file relies
+    // on it, so it is asserted once directly.
     const outcome = await fetchScenario(FIXTURE_BBL, {
-      fetchImpl: stubFetch(oversized),
+      fetchImpl: stubFetch(jsonResponse(preliminaryScenarioBody(), 200)),
+    });
+    expect(outcome.kind).toBe("scenario");
+  });
+
+  // The guard must reject anything that is not a plain digit string within
+  // budget. An earlier version rejected only a header that was present AND over
+  // budget, so an actor controlling the response could drop the header
+  // (chunked) and walk past it at zero cost — and `Number(null)` is 0, which is
+  // finite, so the absent case never even reached the comparison.
+  for (const [label, contentLength] of UNREADABLE_CONTENT_LENGTHS) {
+    it(`FAILS CLOSED and parses nothing when Content-Length is ${label}`, async () => {
+      const outcome = await fetchScenario(FIXTURE_BBL, {
+        fetchImpl: stubFetch(unmeasuredResponse(contentLength)),
+      });
+      expect(outcome.kind).toBe("unexpected_response");
+      // Rejected BEFORE parsing: no state is echoed, because the body was
+      // never read.
+      expect(
+        outcome.kind === "unexpected_response" && outcome.receivedState,
+      ).toBeNull();
+    });
+  }
+
+  it("fails closed even when the unmeasured body would otherwise be a valid scenario", async () => {
+    // The dangerous case: a document that WOULD pass validation still never
+    // reaches the validator, because its framing was not declared.
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(unmeasuredResponse(null, preliminaryScenarioBody(), 200)),
     });
     expect(outcome.kind).toBe("unexpected_response");
+  });
+
+  it("bounds a unit label without silently rewriting it", async () => {
+    const body = preliminaryScenarioBody();
+    const constraints = body.constraints as Record<string, unknown>[];
+    // A unit the token allowlist would quietly mangle to "sqft", and one that
+    // is genuinely over the 64-character cap.
+    constraints[0].unit = "sq ft";
+    constraints[1].unit = "z".repeat(200);
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(jsonResponse(body, 200)),
+    });
+    expect(outcome.kind).toBe("scenario");
+    if (outcome.kind !== "scenario") return;
+    expect(outcome.document.constraints[0].unit).toBe("sq ft");
+    expect(outcome.document.constraints[1].unit).toBe(
+      `${"z".repeat(64)}… [truncated]`,
+    );
   });
 
   it("reports a rejected oversized ARRAY rather than silently truncating it", async () => {

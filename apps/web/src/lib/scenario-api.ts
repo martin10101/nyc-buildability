@@ -262,15 +262,32 @@ export async function fetchScenario(
 
     const correlationId = boundedToken(response.headers.get("X-Correlation-ID"));
 
-    // SIZE BOUND BEFORE PARSE (G5 finding 1). A response that DECLARES more
-    // than the budget is refused without reading it, so `.json()` never parses
-    // megabytes and the validator never walks the result. A body arriving with
-    // no Content-Length (chunked) cannot be pre-measured without a streaming
-    // reader, which would be a new dependency; the array bounds in
-    // scenario-contract.ts and the string bounds in scenario-bounds.ts are the
-    // backstop for that case.
-    const declaredLength = Number(response.headers.get("Content-Length"));
-    if (Number.isFinite(declaredLength) && declaredLength > MAX_RESPONSE_BYTES) {
+    // SIZE BOUND BEFORE PARSE (G5 finding 1), FAILING CLOSED.
+    //
+    // The response must DECLARE a length this client is willing to read before
+    // a single byte is parsed. Absent, blank, non-numeric, signed, or over
+    // budget all REJECT into `unexpected_response`; only a plain digit string
+    // within MAX_RESPONSE_BYTES proceeds.
+    //
+    // Failing closed is the whole point of the check. An earlier version
+    // rejected only a header that was present AND over budget, which stopped a
+    // misbehaving server but not a hostile one: an actor controlling the
+    // response also controls its framing, so chunked transfer-encoding (no
+    // Content-Length at all) walked straight past it at zero cost — and
+    // `Number(null)` is 0, which is finite, so the absent case did not even
+    // reach the comparison. A prior comment here claimed pre-measuring a
+    // chunked body would need a new dependency; that was wrong —
+    // `response.body.getReader()` is standard in the browser and in undici. A
+    // bounded streaming read remains the more permissive option if a chunked
+    // producer ever appears; rejecting is the stricter one and costs nothing
+    // today, because Starlette's JSONResponse (every path in
+    // services/api/app/api/v1/scenario.py) always sets Content-Length.
+    const declaredLengthHeader = response.headers.get("Content-Length");
+    const declaredLength =
+      declaredLengthHeader !== null && /^[0-9]+$/.test(declaredLengthHeader.trim())
+        ? Number(declaredLengthHeader.trim())
+        : Number.NaN;
+    if (!Number.isFinite(declaredLength) || declaredLength > MAX_RESPONSE_BYTES) {
       return {
         kind: "unexpected_response",
         httpStatus: response.status,

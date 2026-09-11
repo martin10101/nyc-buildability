@@ -30,7 +30,6 @@
  *     They are instead made safe by TYPE: the validator now pins them to
  *     number | string | boolean | null, which closes the object-into-the-DOM
  *     path G5 finding 2 identified (format.ts JSON.stringify) at the source.
- *   - `constraints[].unit`: attached to a material value; same reasoning.
  *   - `evaluated_input.bbl`: the document's own identity, compared against the
  *     requested BBL to surface a mismatch. Sanitizing it could turn a real
  *     mismatch into an apparent match — the opposite of the honesty this
@@ -84,6 +83,25 @@ function identifier(value: string): string {
   return boundedToken(value, MAX_TOKEN_LENGTH) ?? "";
 }
 
+/**
+ * Unit-label bound: control-stripped and capped at the same 64 characters as a
+ * machine identifier, but through `boundedText` rather than `boundedToken`.
+ *
+ * A unit renders raw beside a legal value, so it needed a bound — but it is NOT
+ * safe to put through the token allowlist. `boundedToken` keeps only
+ * [A-Za-z0-9._-] and drops the rest SILENTLY, so `"sq ft"` would render as
+ * `"sqft"` and `"m³"` as `"m"` — a quietly rewritten unit attached to a number,
+ * which is the same defect class as a quietly dropped field. `boundedText`
+ * delivers the identical 64-character cap and the same control-character
+ * stripping, and when it does shorten, it says so with TRUNCATION_MARKER.
+ *
+ * `null` stays `null`: "no unit recorded" and "a unit that bounded to empty"
+ * are different statements, and the renderers distinguish them.
+ */
+function unitLabel(value: string | null): string | null {
+  return value === null ? null : boundedText(value, "", MAX_TOKEN_LENGTH);
+}
+
 function boundCitation(citation: ScenarioCitation): ScenarioCitation {
   return {
     ...citation,
@@ -118,6 +136,7 @@ export function boundScenarioDocument(document: Scenario): Scenario {
     constraints: document.constraints.map((constraint) => ({
       ...constraint,
       key: identifier(constraint.key),
+      unit: unitLabel(constraint.unit),
       note: freeText(constraint.note),
     })),
     cap_label: document.cap_label === null ? null : freeText(document.cap_label),
@@ -136,6 +155,7 @@ export function boundScenarioDocument(document: Scenario): Scenario {
       ...assumption,
       key: identifier(assumption.key),
       assumption_type: freeText(assumption.assumption_type),
+      unit: unitLabel(assumption.unit),
       rationale: freeText(assumption.rationale),
     })),
     reasons: document.reasons.map(freeText),
