@@ -108,12 +108,12 @@
     "security-reviewer",
     "data-contract-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-11T19:30:23.159795+00:00",
-  "updated_at": "2026-09-11T23:33:51.180893+00:00",
+  "updated_at": "2026-09-11T23:53:37.991402+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -163,5 +163,7 @@
       "status": "rework",
       "message": "ORCHESTRATOR SCOPE RULING (G1 re-review N3 / G3 re-review N1, recorded here per .claude/rules/project-control.md - the packet progress_log is the packet record, never a hand-edit): the three eb6a15f8 paths outside allowed_paths (docs/MVP_AGENDA.md, project-control/blockers/B-004-geoclient-subscription-key.json, project-control/reports/M2-T021-evidence-map.json) were ORCHESTRATOR ledger/agenda/record writes under ADR-005 record authority, pre-announced in the 430773eb progress_log - not producer scope creep; allowed_paths is NOT widened (widening would move directive applicability under the selective-citation guard for no benefit). CORRECTIVE PRACTICE from this round forward, restoring the d4cdbe79 precedent G3 cited: producer material (connector, tests, fixtures, registry draft, producer report) commits SEPARATELY from orchestrator record writes (evidence map, blockers, agenda, ledger), so every producer commit satisfies allowed_paths on its face and the evidence-map ZERO-files claim stays verifiable per-commit. The pending correction cluster will land as two commits on this pattern."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-11T23:53:37.991402+00:00"
 }
