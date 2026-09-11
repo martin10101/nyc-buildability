@@ -1,0 +1,15 @@
+{
+  "task_id": "M5-T004",
+  "producer_agent": "frontend-engineer",
+  "report_file": "project-control/reports/M5-T004-rereview.md",
+  "submitted_at": "2026-09-11T04:34:14.678718+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T004-evidence-map.json",
+  "content_manifest_sha256": "9f57ea9e886ef1909fd6f6260877c5e560e3b8af4740d7a9a0ef16cf97692c67",
+  "reviewed_sha": "9b4178755facda932c19c893d4ff2710a0f0d86a",
+  "applicable_requirements": [
+    "D-038-R003",
+    "D-038-R004"
+  ],
+  "updated_at": "2026-09-11T04:34:15.581110+00:00"
+}

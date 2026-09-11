@@ -73,8 +73,8 @@
     "visual-quality-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
     "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
@@ -94,7 +94,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-08T14:51:49.592393+00:00",
-  "updated_at": "2026-09-11T04:34:15.583887+00:00",
+  "updated_at": "2026-09-11T05:11:10.078748+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -140,5 +140,7 @@
       "status": "self_check",
       "message": "Rework complete and re-verified 5-0 at 9b417875. Submitting for acceptance."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-11T05:11:10.078748+00:00"
 }
