@@ -172,6 +172,37 @@ Action: attach this to the packet that first passes `assumptions`, before it is 
 
 ---
 
+## C3. Snapshot digest-convention divergence — blocks M4-T009's test path and one CI test
+
+Found 2026-09-11 while syncing the runtime ZR snapshot bundle (the sync itself was CI-required:
+the bundle was missing `zr-23-22` and carried a stale pre-recapture `zr-23-21`).
+
+- The two September captures (`zr-23-21` recapture at `17e8eb78`, `zr-23-22` at `23ca629d`) wrote
+  `content_digest_sha256` = sha256 over the **whole canonical-JSON record** (compact, sorted, minus
+  the digest field). Verified by recomputation: both match that convention exactly.
+- The runtime loader (`services/api/app/rules/snapshots.py::load_snapshot_file`) and **all five
+  older snapshots** define the same field as sha256 over `verbatim_excerpt` alone. Every file
+  declares the same `zr_section_snapshot/v1` schema — the semantics changed without a version bump.
+- Consequence: `SnapshotStore` fail-closes (`SnapshotError: content_digest_sha256 mismatch`) on
+  both September snapshots. `tests/rules/test_zr_snapshot_bundle.py::test_default_store_resolves_to_packaged_location`
+  is red in CI once the bundle is synced, and **M4-T009's own test suite uses the validating
+  loader**, so the in-flight loop's acceptance path is blocked until this is resolved.
+- **The captures themselves are sound**: the archived raw HTML (session scratchpad) authenticates
+  byte-for-byte against the recorded `raw_html_sha256` for both sections, and every FAR value in
+  both structured tables (4 + 25) appears verbatim in that authenticated HTML. Nothing legal is in
+  question — this is a checksum-convention defect, not a fidelity defect.
+- Note the whole-record convention is *stronger* (it covers `table` and `footnotes`, where the
+  legal values live; the v1 excerpt-only digest covers neither) — arguably what v2 *should* be.
+
+Decision needed (owner or a directed packet): either (a) conform the two snapshots to their
+declared v1 schema — recompute `content_digest_sha256` = sha256(excerpt), preserving the original
+whole-record digest in `notes[]` so nothing is silently lost — or (b) version the schema: bump the
+new captures to `zr_section_snapshot/v2` and teach the loader both conventions. (a) is a two-line
+evidence correction; (b) is an engine change with its own review. Either way, M4-T009's rule
+citations (authored against the current stored digests) must be reconciled at integration.
+
+---
+
 ## D. Flags the program should surface but currently cannot
 
 Each is a separate mapped data source. None currently connected.

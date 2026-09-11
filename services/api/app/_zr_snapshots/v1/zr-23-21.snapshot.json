@@ -11,51 +11,95 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-21",
-    "retrieved_at": "2026-07-21T00:00:00Z",
+    "retrieved_at": "2026-09-11T00:00:00Z",
+    "http_status": 200,
+    "response_bytes": 120170,
+    "raw_html_sha256": "6a3b0e60e6ff8b4795aff9da34985bfac5b8e8b0dc4df4ba0500ae0dc302beb4",
+    "last_amended_machine_readable": "2024-12-05T12:00:00Z",
+    "last_amended_display": "12/5/2024",
     "document_currency_banner": null,
     "document_currency_banner_note": "The dedicated section page did not expose the site-wide currency banner in this capture. Per the accepted M1-T004 ZR research (docs/research/zoning-resolution-2026-07-16.md), the site banner read 'All text changes approved by the city council as of May 20, 2026' on 2026-07-16; the banner value for THIS retrieval is unconfirmed and is a needs_review item.",
-    "section_last_amended": "2024-12-05",
-    "section_last_amended_source_text": "Last Amended 12/5/2024",
-    "capture_method": "ai_assisted_webfetch_markdown_summary",
-    "raw_html_verified": false,
-    "verification_required": "This excerpt was captured via an AI-summarized markdown conversion of the official page, NOT a raw-HTML byte capture. Per M1-T004 research section 5.5, URL/text claims and table cells MUST be confirmed against raw HTML before any downstream 'verified' labeling. A qualified zoning professional (G6) must confirm the governing section, the table values, and the applicability of 'qualifying residential sites' before any rule citing this snapshot is published/Verified."
+    "supersedes_capture": {
+      "retrieved_at": "2026-07-21T00:00:00Z",
+      "prior_content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+      "reason": "prior capture was PARTIAL - 4 R5-only rows under an R1-R5 title"
+    }
   },
-  "verbatim_excerpt": "23-21 Floor Area Regulations for R1 Through R5 Districts\n\nIn the districts indicated, the maximum residential floor area ratio shall be as set forth in the following table. Separate maximum residential floor area ratios are set forth for standard zoning lots and zoning lots that are qualifying residential sites.\n\nFor standard zoning lots with a lot area of 4,000 square feet or more, the maximum residential floor area associated with any single dwelling unit shall not exceed an equivalent floor area ratio of 0.60.",
+  "verbatim_excerpt": "23-21 Floor Area Regulations for R1 Through R5 Districts\n\nIn the districts indicated, the maximum #residential# #floor area ratio# shall be as set forth in the following table. Separate maximum #residential# #floor area ratios# are set forth for standard #zoning lots# and #zoning lots# that are #qualifying residential sites#.\n\nMAXIMUM FLOOR AREA RATIO FOR R1-R5 DISTRICTS\n\n[table - see structured `table` field]\n\n1 For standard #zoning lots# with a #lot area# of 4,000 square feet or more, the maximum #residential# #floor area# associated with any single #dwelling unit# shall not exceed an equivalent #floor area ratio# of 0.60.",
   "table": {
+    "caption": "MAXIMUM FLOOR AREA RATIO FOR R1-R5 DISTRICTS",
     "columns": [
       "District",
       "Standard zoning lots",
       "Qualifying residential sites"
     ],
+    "row_count": 5,
     "rows": [
       {
-        "district": "R5A",
+        "districts": [
+          "R1-2A",
+          "R1-1",
+          "R1-2",
+          "R2A",
+          "R2",
+          "R3A",
+          "R3X",
+          "R3-1",
+          "R3-2"
+        ],
+        "standard_zoning_lots": "0.75",
+        "qualifying_residential_sites": "1.00",
+        "value_footnotes": {
+          "standard_zoning_lots": "1"
+        }
+      },
+      {
+        "districts": [
+          "R2X"
+        ],
+        "standard_zoning_lots": "1.00",
+        "qualifying_residential_sites": "1.00"
+      },
+      {
+        "districts": [
+          "R4A",
+          "R4B",
+          "R4",
+          "R4-1"
+        ],
+        "standard_zoning_lots": "1.00",
+        "qualifying_residential_sites": "1.50"
+      },
+      {
+        "districts": [
+          "R5A",
+          "R5B",
+          "R5"
+        ],
         "standard_zoning_lots": "1.50",
         "qualifying_residential_sites": "2.00"
       },
       {
-        "district": "R5B",
-        "standard_zoning_lots": "1.50",
-        "qualifying_residential_sites": "2.00"
-      },
-      {
-        "district": "R5",
-        "standard_zoning_lots": "1.50",
-        "qualifying_residential_sites": "2.00"
-      },
-      {
-        "district": "R5D",
+        "districts": [
+          "R5D"
+        ],
         "standard_zoning_lots": "2.00",
         "qualifying_residential_sites": "2.00"
       }
-    ],
-    "table_note": "R5A, R5B and R5 share a single '1.50 / 2.00' row in the source table; reproduced here as three explicit district rows for machine indexing. Raw-HTML confirmation of the exact cell grouping is a needs_review item."
+    ]
   },
-  "content_digest_sha256": "4b6dd1f5e966b1e533f56f01e77a7d0e1db7b0fe1e4ae7927a12b9bc83e868d7",
+  "footnotes": {
+    "1": "For standard #zoning lots# with a #lot area# of 4,000 square feet or more, the maximum #residential# #floor area# associated with any single #dwelling unit# shall not exceed an equivalent #floor area ratio# of 0.60."
+  },
   "extraction_status": "extracted_draft",
   "notes": [
-    "Captured for M4-T001 as the governing-source candidate for the R5 residential FAR draft rule.",
-    "'Qualifying residential sites' is a conditional/eligibility program (higher FAR). Determining whether a given lot qualifies is a separate legal determination and is NOT decided by this snapshot or by any agent.",
-    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
-  ]
+    "RECAPTURED 2026-09-11 FROM RAW HTML. The prior capture (retrieved 2026-07-21 for the M4-T001 R5 pilot) was PARTIAL: it carried only 4 rows, all R5 variants, under a section title reading 'R1 Through R5 Districts'. R1, R2, R2X, R3, R4 and every letter variant were absent. This capture carries all 5 printed rows covering all 18 districts.",
+    "DEFECT FOUND BY THIS RECAPTURE - footnote 1 scope was misattributed. Verified at the byte level: the source markup is 0.75<sup>1</sup>, i.e. footnote 1 is attached to the STANDARD value of the FIRST ROW ONLY (R1-2A, R1-1, R1-2, R2A, R2, R3A, R3X, R3-1, R3-2). No other row carries any superscript. The 0.60 single-dwelling-unit equivalent-FAR cap therefore does NOT apply to R2X, R4, R4A, R4B, R4-1, R5, R5A, R5B or R5D.",
+    "CONSEQUENCE for existing draft work: the prior snapshot rendered footnote 1 as a standalone body paragraph rather than a row-scoped footnote, and services/api/app/rules/rulesets/r5_residential_far.rule.json consequently carries exception 'single_dwelling_unit_equivalent_far_cap' (effect documented_limitation, citation_ref zr-23-21) on the R5 family, where the source does not impose it. The rule is status needs_review and the exception is a SURFACED LIMITATION, not a computed value, so no number is wrong - but it over-warns on every R5 result with a caveat the law does not attach there. To be corrected when the R1-R12 FAR family is authored. M4-T001 is awaiting_gate, not accepted, so this is draft engineering and no accepted artifact is affected.",
+    "'Qualifying residential sites' is a conditional/eligibility program (higher FAR). Whether a given lot qualifies is a separate legal determination and is NOT decided by this snapshot or by any agent.",
+    "Unlike ZR 23-22, NO row in this table is conditioned on #wide street# proximity, and no district appears twice. Every R1-R5 district is a flat lookup once footnote 1's scope is respected.",
+    "CROSS-CHECK: the owner supplied an independent PDF of this section generated by https://zr.planning.nyc.gov on 2026-09-10. All 5 rows, all values, the footnote and the 12/5/2024 amendment date match this HTML capture exactly.",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule with G6 qualified-human legal approval."
+  ],
+  "content_digest_sha256": "c145bb6d139929e0a3a67d31454c5f1c177a17bd25ec385f497886660bdcedc2"
 }
