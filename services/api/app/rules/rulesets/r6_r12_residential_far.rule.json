@@ -1,0 +1,83 @@
+{
+  "rule_id": "r6-r12-residential-far",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_far",
+  "title": "R6 through R12 residence districts (flat ZR 23-22 rows) - maximum residential floor area ratio (standard residences)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r1_r12_residential_far.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard residences in the FLAT (non-wide-street-conditional) R6 through R12 districts of the ZR 23-22 table. This rule covers every ZR 23-22 district whose standard value is a single table lookup; the four districts that ZR 23-22 footnote 1 conditions on wide-street proximity (R6, R7-1, R7-2, R8) are handled by a separate rule (r6-r7-r8-wide-street-conditional-far) and are intentionally excluded here. NOT a Verified determination - a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-residences FAR and the resulting maximum residential floor area from the lot area; the higher qualifying-affordable-housing / qualifying-senior-housing FAR (the ZR 23-22 second column) is surfaced as a conditional alternative (never silently applied). effective_from is the section's Last Amended date (2024-12-05): evaluating as_of an earlier date yields a visible not-effective outcome.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-22",
+      "section": "23-22",
+      "quote": "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS. Separate maximum residential floor area ratios are set forth for zoning lots containing standard residences and zoning lots containing qualifying affordable housing or qualifying senior housing.",
+      "last_amended": "2024-12-05"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "The residence district governing the lot (or the portion under evaluation). District SCOPE is enforced by applicability (in_set the flat ZR 23-22 rows), NOT by an input domain enum: a district outside this set - including the wide-street-conditional R6/R7-1/R7-2/R8 handled by their own rule - is a visible not_applicable. An uncertain M2-T013 geometric assignment is passed via spatial_context and downgrades coverage."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area in square feet; must be strictly positive. A zero/negative/non-finite value is rejected fail-closed (professional_review_required, no computed value)."},
+    {"name": "housing_program", "type": "string", "required": false, "enum": ["standard_residence", "qualifying_affordable_housing", "qualifying_senior_housing"], "description": "Whether the lot contains standard residences or qualifying affordable / qualifying senior housing (the two ZR 23-22 columns). When absent, the qualifying-housing alternative is surfaced as conditional (not decided) - whether a development qualifies is a separate legal determination."}
+  ],
+  "outputs": [
+    {"name": "max_residential_far", "type": "number", "unit": "far", "description": "Maximum residential floor area ratio for standard residences in the district (ZR 23-22 first column)."},
+    {"name": "max_residential_floor_area_sq_ft", "type": "number", "unit": "square_feet", "description": "Maximum residential floor area = lot area x FAR."}
+  ],
+  "parameters": [
+    {"name": "standard_far_by_district", "value": {"R6A": 3.0, "R6-1": 3.0, "R7B": 3.0, "R6B": 2.0, "R6D": 2.5, "R6-2": 2.5, "R7A": 4.0, "R7D": 4.66, "R7X": 5.0, "R7-3": 5.0, "R8A": 6.02, "R8X": 6.02, "R8B": 4.0, "R9A": 7.52, "R9": 7.52, "R9D": 9.0, "R9X": 9.0, "R9-1": 9.0, "R10A": 10.0, "R10X": 10.0, "R10": 10.0, "R11": 12.0, "R12": 15.0}, "citation_ref": "zr-23-22", "note": "Standard-residences maximum residential FAR (ZR 23-22 first column) for every flat R6-R12 district. Candidate values pending raw-HTML verification and G6 approval."},
+    {"name": "qualifying_far_by_district", "value": {"R6A": 3.9, "R6-1": 3.9, "R7B": 3.9, "R6B": 2.4, "R6D": 3.0, "R6-2": 3.0, "R7A": 5.01, "R7D": 5.6, "R7X": 6.0, "R7-3": 6.0, "R8A": 7.2, "R8X": 7.2, "R8B": 4.8, "R9A": 9.02, "R9": 9.02, "R9D": 10.8, "R9X": 10.8, "R9-1": 10.8, "R10A": 12.0, "R10X": 12.0, "R10": 12.0, "R11": 15.0, "R12": 18.0}, "citation_ref": "zr-23-22", "note": "Qualifying affordable-housing / qualifying senior-housing maximum residential FAR (ZR 23-22 second column). SURFACED as the conditional alternative (see the qualifying_housing exception), never applied by this rule: whether a development qualifies is a separate legal determination. Provenance-linked here so the value is byte-checkable against the snapshot; deliberately not consumed by a computation step."}
+  ],
+  "applicability": {
+    "op": "in_set",
+    "input": "zoning_district",
+    "values": ["R6A", "R6-1", "R7B", "R6B", "R6D", "R6-2", "R7A", "R7D", "R7X", "R7-3", "R8A", "R8X", "R8B", "R9A", "R9", "R9D", "R9X", "R9-1", "R10A", "R10X", "R10", "R11", "R12"]
+  },
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param_select": {"map": "standard_far_by_district", "key_input": "zoning_district"}}], "note": "Select the standard-residences maximum residential FAR for the district (ZR 23-22 first column)."},
+      {"id": "floor_area", "op": "multiply", "args": [{"input": "lot_area_sq_ft"}, {"step": "far"}], "note": "Maximum residential floor area = lot area (sq ft) x FAR."}
+    ],
+    "outputs": {
+      "max_residential_far": {"step": "far"},
+      "max_residential_floor_area_sq_ft": {"step": "floor_area"}
+    }
+  },
+  "exceptions": [
+    {
+      "id": "qualifying_housing",
+      "description": "A higher maximum residential floor area ratio (the ZR 23-22 second column) applies to zoning lots containing qualifying affordable housing or qualifying senior housing. The full per-district qualifying FAR (matching the qualifying_far_by_district parameter, each value byte-verified against the snapshot) is: R6A 3.90, R6-1 3.90, R7B 3.90, R6B 2.40, R6D 3.00, R6-2 3.00, R7A 5.01, R7D 5.60, R7X 6.00, R7-3 6.00, R8A 7.20, R8X 7.20, R8B 4.80, R9A 9.02, R9 9.02, R9D 10.80, R9X 10.80, R9-1 10.80, R10A 12.00, R10X 12.00, R10 12.00, R11 15.00, R12 18.00. Whether a development qualifies is a separate legal determination and is not decided by this rule; when the housing program is unknown or qualifying, the result is conditional and the higher FAR may apply.",
+      "condition": {"not": {"op": "equals", "input": "housing_program", "value": "standard_residence"}},
+      "effect": "conditional_alternative",
+      "citation_ref": "zr-23-22",
+      "note": "Surfaced, never collapsed: the standard-residences FAR is reported with an explicit conditional flag that a qualifying-housing FAR may govern."
+    }
+  ],
+  "special_district_interactions": [
+    {
+      "id": "special_purpose_district_modifier",
+      "description": "Special Purpose Districts (ZR Articles VIII-XIV) and other mapped overlays may modify residence-district floor area. When a mapped special district applies, its provisions govern and must be evaluated by the corresponding special rule; this general rule does not apply the modification.",
+      "interaction_point": "residential_far",
+      "special_rule_stub": "special-district-far-modifier (not yet implemented)",
+      "citation_ref": null
+    }
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage is downgraded to professional_review_required (or data_conflict) and the geometric uncertainty is recorded in the trace."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "Only the standard-residences residential FAR is computed; the qualifying affordable / senior housing FAR (ZR 23-22 second column) is surfaced (conditional), not computed.",
+    "The four wide-street-conditional districts R6, R7-1, R7-2 and R8 are out of scope for this rule and are handled by r6-r7-r8-wide-street-conditional-far.",
+    "Special Purpose District and other overlay modifications are not applied."
+  ]
+}

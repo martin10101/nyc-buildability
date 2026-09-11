@@ -13,7 +13,7 @@
     "independent_review": "pending",
     "qualified_human_approval": "pending"
   },
-  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard zoning lots in R5, R5A, R5B and R5D districts, per NYC Zoning Resolution section 23-21. NOT a Verified determination: it is a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-zoning-lot FAR and the resulting maximum residential floor area from the lot area; the higher 'qualifying residential sites' FAR and the single-dwelling-unit equivalent-FAR cap are surfaced as a conditional alternative and a documented limitation rather than silently applied or ignored. effective_from is the section's Last Amended date (2024-12-05): evaluating as_of a date before it yields a visible not-effective outcome rather than applying today's values to a period this draft does not represent.",
+  "description": "DRAFT extraction (needs_review) of the maximum residential floor area ratio for standard zoning lots in R5, R5A, R5B and R5D districts, per NYC Zoning Resolution section 23-21. NOT a Verified determination: it is a candidate representation awaiting raw-HTML source verification and G6 qualified-human legal approval. The engine computes the standard-zoning-lot FAR and the resulting maximum residential floor area from the lot area; the higher 'qualifying residential sites' FAR is surfaced as a conditional alternative rather than silently applied or ignored. The ZR 23-21 footnote-1 0.60 single-dwelling-unit equivalent-FAR cap does NOT apply to the R5 family: the byte-verified recapture (commit 17e8eb78) proved footnote 1 is scoped to the first table row's standard value only (R1/R2/R3), so this rule no longer carries it - it is attached to r1-r2-r3-residential-far instead, keeping the whole R1-R12 family consistent with one source reading. effective_from is the section's Last Amended date (2024-12-05): evaluating as_of a date before it yields a visible not-effective outcome rather than applying today's values to a period this draft does not represent.",
   "citations": [
     {
       "snapshot_id": "zr-23-21",
@@ -37,6 +37,12 @@
       "value": {"R5": 1.5, "R5A": 1.5, "R5B": 1.5, "R5D": 2.0},
       "citation_ref": "zr-23-21",
       "note": "Standard-zoning-lot maximum residential FAR by district from the ZR 23-21 table (R5/R5A/R5B = 1.50; R5D = 2.00). Candidate values pending raw-HTML verification and G6 approval."
+    },
+    {
+      "name": "qualifying_far_by_district",
+      "value": {"R5": 2.0, "R5A": 2.0, "R5B": 2.0, "R5D": 2.0},
+      "citation_ref": "zr-23-21",
+      "note": "Qualifying-residential-sites maximum residential FAR (ZR 23-21 second column) for the R5 rows: 2.00 for R5, R5A, R5B and R5D. SURFACED as the conditional alternative (see the qualifying_residential_site exception), never applied by this rule: whether a lot is a qualifying residential site is a separate legal determination. Provenance-linked here so the material alternative is byte-checkable against the snapshot; deliberately not consumed by a computation step, so the standard value stays the only computed result and no R5 standard FAR value changes."
     }
   ],
   "applicability": {
@@ -67,18 +73,11 @@
   "exceptions": [
     {
       "id": "qualifying_residential_site",
-      "description": "A higher maximum residential FAR (up to 2.00 for R5/R5A/R5B per ZR 23-21) applies to zoning lots that are 'qualifying residential sites'. Whether a specific lot qualifies is a separate legal determination and is not decided by this rule; when the site class is unknown or qualifying, the result is conditional and the higher FAR may apply.",
+      "description": "A higher maximum residential FAR - the qualifying-residential-sites value 2.00 for R5, R5A, R5B and R5D per ZR 23-21 (see the qualifying_far_by_district parameter) - applies to zoning lots that are 'qualifying residential sites'. Whether a specific lot qualifies is a separate legal determination and is not decided by this rule; when the site class is unknown or qualifying, the result is conditional and the higher FAR may apply.",
       "condition": {"not": {"op": "equals", "input": "site_class", "value": "standard_zoning_lot"}},
       "effect": "conditional_alternative",
       "citation_ref": "zr-23-21",
       "note": "Surfaced, never collapsed: the standard-lot FAR is reported with an explicit conditional flag that a qualifying-site FAR may govern."
-    },
-    {
-      "id": "single_dwelling_unit_equivalent_far_cap",
-      "description": "For standard zoning lots with a lot area of 4,000 square feet or more, the residential floor area associated with any single dwelling unit may not exceed an equivalent FAR of 0.60 (ZR 23-21). Applying this cap requires per-dwelling-unit inputs this rule does not model.",
-      "condition": null,
-      "effect": "documented_limitation",
-      "citation_ref": "zr-23-21"
     }
   ],
   "special_district_interactions": [
@@ -97,7 +96,7 @@
   },
   "limitations": [
     "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
-    "Only the standard-zoning-lot residential FAR is computed; the qualifying-residential-site FAR and the per-single-dwelling-unit 0.60 equivalent-FAR cap are surfaced (conditional / documented limitation), not computed.",
+    "Only the standard-zoning-lot residential FAR is computed; the qualifying-residential-site FAR is surfaced (conditional), not computed. The ZR 23-21 footnote-1 0.60 single-dwelling-unit equivalent-FAR cap does not apply to the R5 family and is intentionally absent (it is attached to r1-r2-r3-residential-far).",
     "Special Purpose District and other overlay modifications are not applied."
   ]
 }

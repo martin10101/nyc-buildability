@@ -180,6 +180,22 @@ def registry() -> RuleRegistry:
     return RuleRegistry().load()
 
 
+def _applicable_trace(result) -> dict:
+    """The single family evaluation trace whose applicability held.
+
+    Since M4-T009 the residential_far family spans the whole R1-R12 table, so a
+    property's ``evaluations`` list carries one applicable trace (the rule that
+    governs the lot's district) plus not_applicable traces for the other district
+    groups. The integration contract selects the applicable one; there is exactly
+    one because the family's per-district applicability sets are disjoint.
+    """
+    applicable = [t for t in result.evaluations if t["applicability_outcome"]]
+    assert len(applicable) == 1, (
+        f"expected exactly one applicable residential_far trace, got {len(applicable)}"
+    )
+    return applicable[0]
+
+
 # --------------------------------------------------------------------------
 # RI-S1 - confident path carries the R5 FAR result, conditional, full trace.
 # --------------------------------------------------------------------------
@@ -195,8 +211,9 @@ def test_ri_s1_confident_r5_carries_far_result_conditional_with_citations(regist
     assert result.fail_safe is False
     assert result.coverage_source == "rule_evaluator"
 
-    assert len(result.evaluations) == 1
-    trace = result.evaluations[0]
+    # exactly one residential_far rule applies to an R5 lot (the family now spans R1-R12)
+    assert sum(t["applicability_outcome"] for t in result.evaluations) == 1
+    trace = _applicable_trace(result)
     assert trace["outputs"] == {
         "max_residential_far": 1.5,
         "max_residential_floor_area_sq_ft": 15000.0,
@@ -218,7 +235,7 @@ def test_ri_s1_confident_r5_carries_far_result_conditional_with_citations(regist
 def test_ri_s1_r5d_far_value(registry):
     result = ri.evaluate_property(_confident_profile("R5D", area=5000.0), registry=registry)
     assert result.zoning_district == "R5D"
-    assert result.evaluations[0]["outputs"] == {
+    assert _applicable_trace(result)["outputs"] == {
         "max_residential_far": 2.0,
         "max_residential_floor_area_sq_ft": 10000.0,
     }
@@ -236,7 +253,7 @@ def test_ri_s1_lot_area_falls_back_to_spatial_pair_when_geometry_absent(registry
     result = ri.evaluate_property(profile, registry=registry)
     assert result.lot_area_sq_ft == 8000.0
     assert result.lot_area_source == "spatial_intersection.pairs[].lot_area_sq_ft"
-    assert result.evaluations[0]["outputs"]["max_residential_floor_area_sq_ft"] == 12000.0
+    assert _applicable_trace(result)["outputs"]["max_residential_floor_area_sq_ft"] == 12000.0
 
 
 # --------------------------------------------------------------------------
@@ -380,7 +397,7 @@ def test_ri_s4_result_carries_coverage_needs_review_and_disclaimer(registry):
     # no field anywhere equals verified
     assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(result.as_dict())
     # the evaluated rule is a draft (agent-authorable), never published
-    assert result.evaluations[0]["rule_status"] == "needs_review"
+    assert _applicable_trace(result)["rule_status"] == "needs_review"
 
 
 def test_ri_s4_fail_safe_result_also_honest(registry):
@@ -533,7 +550,7 @@ def test_c1_confident_base_with_commercial_overlay_pair(registry):
     result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
     assert result.zoning_district == "R5"
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
-    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    assert _applicable_trace(result)["outputs"]["max_residential_far"] == 1.5
     candidates = result.spatial_uncertainty["base_district_candidates"]
     assert [c["district_label"] for c in candidates] == ["R5"]  # overlay excluded
     assert all("pair_class" in c for c in candidates)  # consumer can filter neighbours
@@ -555,8 +572,9 @@ def test_c2_confident_district_but_missing_lot_area_no_value(registry):
     assert result.lot_area_sq_ft is None
     assert result.fail_safe is False               # went through the confident path
     assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
-    assert result.evaluations[0]["outputs"] == {}  # no computed value
-    assert result.evaluations[0]["data_completeness"] == cov.COMPLETENESS_MISSING_CRITICAL
+    _trace = _applicable_trace(result)
+    assert _trace["outputs"] == {}  # no computed value
+    assert _trace["data_completeness"] == cov.COMPLETENESS_MISSING_CRITICAL
 
 
 @pytest.mark.parametrize("district", ["R5A", "R5B"])
@@ -565,7 +583,7 @@ def test_c3_r5a_r5b_variants_far_1_5(registry, district):
     result = ri.evaluate_property(_confident_profile(district), registry=registry)
     assert result.zoning_district == district
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
-    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    assert _applicable_trace(result)["outputs"]["max_residential_far"] == 1.5
 
 
 def test_f1_confident_class_but_professional_review_required_fails_safe(registry):

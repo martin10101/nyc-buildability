@@ -436,7 +436,9 @@ def test_fh2_real_r5_integration_unchanged_no_conflict_field(registry):
     assert result.fail_safe is False
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
     assert result.zoning_district == "R5"
-    assert result.evaluations[0]["outputs"]["max_residential_floor_area_sq_ft"] == 15000.0
+    # the residential_far family spans R1-R12 (M4-T009); select the applicable rule
+    applicable = next(t for t in result.evaluations if t["applicability_outcome"])
+    assert applicable["outputs"]["max_residential_floor_area_sq_ft"] == 15000.0
     # as_dict now carries the additive rule_conflict key (None on the happy path).
     assert result.as_dict()["rule_conflict"] is None
     json.dumps(result.export(), allow_nan=False)
@@ -450,4 +452,5 @@ def test_fh2_real_r5_integration_with_as_of_after_effective_from(registry):
     )
     assert result.rule_conflict is None
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
-    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    applicable = next(t for t in result.evaluations if t["applicability_outcome"])
+    assert applicable["outputs"]["max_residential_far"] == 1.5
