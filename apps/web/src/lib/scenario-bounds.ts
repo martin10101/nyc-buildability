@@ -9,16 +9,26 @@
  * server-controlled fields (every `constraints[].note`, every
  * `assumptions[].rationale`, the full citation block) onto the screen.
  *
- * THE TWO RULES, AND WHY THEY DIFFER
+ * THE THREE RULES, AND WHY THEY DIFFER
  *
- *   ARRAYS  reject (scenario-contract.ts, MAX_DOCUMENT_ARRAY_LENGTH = 64).
- *   STRINGS truncate, explicitly (here, MAX_REFLECTED_TEXT_LENGTH = 600 and
- *           TRUNCATION_MARKER, both already established by bounded.ts).
+ *   ARRAYS      reject (scenario-contract.ts, MAX_DOCUMENT_ARRAY_LENGTH = 64).
+ *   FREE TEXT   truncate, VISIBLY (here, MAX_REFLECTED_TEXT_LENGTH = 600 and
+ *               TRUNCATION_MARKER, both already established by bounded.ts).
+ *   IDENTIFIERS reject (scenario-contract.ts `checkTokenRepresentable`).
  *
  * Truncating an array would SILENTLY DROP contract content — exactly the defect
  * class this packet was failed for — so an over-long array is rejected as a
- * contract problem instead. Truncating a string is visible: bounded.ts:16-17
- * already establishes that a truncated string carries "… [truncated]".
+ * contract problem instead.
+ *
+ * Free text truncates because that truncation ANNOUNCES ITSELF: bounded.ts:16-17
+ * establishes that a shortened string carries "… [truncated]". That guarantee
+ * is a property of `boundedText` ALONE, and an earlier revision of this file
+ * over-claimed it for the whole module. `boundedToken` shortens and strips
+ * SILENTLY — no marker, and a fully-stripped value becomes empty — so it can
+ * never be the last word on an identifier. It is now preceded by a validator
+ * check that rejects any value it would alter, which makes every `identifier()`
+ * call below a proven no-op rather than a quiet rewrite of a pointer to legal
+ * authority.
  *
  * WHAT IS DELIBERATELY *NOT* BOUNDED, and why. Everything excluded below is a
  * MATERIAL value, and the frontend never transforms a material value:
@@ -74,13 +84,33 @@ function freeText(value: string): string {
   return boundedText(value, "", MAX_REFLECTED_TEXT_LENGTH);
 }
 
+/** Rendered in place of an identifier this client cannot display faithfully.
+ * Unreachable while the validator runs first — kept because a silent blank is
+ * the one outcome an identifier field must never produce, and a defence that
+ * only works when nothing upstream is broken is not a defence. */
+export const UNREPRESENTABLE_IDENTIFIER = "(identifier not representable)";
+
 /**
- * Machine-identifier bound: allowlisted charset, truncated at 64. `null` (no
- * safe character survived) renders as the empty string rather than an invented
- * placeholder.
+ * Machine-identifier bound: allowlisted charset, capped at 64.
+ *
+ * This is now a BACKSTOP, not the control. `checkTokenRepresentable` rejects
+ * the whole document during validation if this call would change anything, so
+ * by the time it runs it is a proven no-op — which is what lets an identifier
+ * be trusted as a pointer to the record it names.
+ *
+ * If it ever does fire, it says so: a value with no surviving character
+ * renders as an explicit "not representable" rather than a blank, because a
+ * blank reads as "the document did not state one" and would un-do the
+ * non-empty guarantee the validator established for it.
  */
 function identifier(value: string): string {
-  return boundedToken(value, MAX_TOKEN_LENGTH) ?? "";
+  // An EMPTY identifier is representable — it is empty. `cap_provenance.rule_id`
+  // and `.rule_version` are propagated from the trace and may legitimately
+  // arrive empty (the validator deliberately permits it rather than turning a
+  // defective rule record into a total outage), so emptiness must survive as
+  // emptiness and be labelled by the renderer, not relabelled here.
+  if (value === "") return "";
+  return boundedToken(value, MAX_TOKEN_LENGTH) ?? UNREPRESENTABLE_IDENTIFIER;
 }
 
 /**

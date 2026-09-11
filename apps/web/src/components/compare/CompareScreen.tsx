@@ -107,7 +107,18 @@ export function CompareScreen({
         </p>
       </header>
       {loading ? (
-        <section className="card" data-testid="compare-loading">
+        // aria-live matches LoadingStages.tsx:34-41, the loading region the
+        // accepted Property and Confirm screens use — without it a screen-reader
+        // user got silence between submitting and the outcome, on the one screen
+        // whose request can take twelve seconds. It cannot double-announce: the
+        // persistent OutcomeAnnouncer above is deliberately empty while
+        // `loading` is true (see `announcement`), so exactly one of the two
+        // regions ever has content.
+        <section
+          className="card"
+          aria-live="polite"
+          data-testid="compare-loading"
+        >
           <h2
             className="section-title"
             tabIndex={-1}

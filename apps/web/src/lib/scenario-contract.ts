@@ -69,6 +69,7 @@ import {
   checkOptionalBoundedArray,
   checkRequiredScalar,
   checkString,
+  checkTokenRepresentable,
   isNonEmptyString,
   isRecord,
 } from "./scenario-contract-checks";
@@ -274,7 +275,17 @@ function checkEvaluatedInput(problems: Problems, value: unknown): void {
     "evaluated_input.profile_contract_version",
     value.profile_contract_version,
   );
+  checkTokenRepresentable(
+    problems,
+    "evaluated_input.profile_contract_version",
+    value.profile_contract_version,
+  );
   checkNonEmptyString(
+    problems,
+    "evaluated_input.rule_evaluation_contract_version",
+    value.rule_evaluation_contract_version,
+  );
+  checkTokenRepresentable(
     problems,
     "evaluated_input.rule_evaluation_contract_version",
     value.rule_evaluation_contract_version,
@@ -304,6 +315,7 @@ function checkConstraints(problems: Problems, value: unknown): void {
     }
     checkNoUnknownKeys(problems, path, constraint, CONSTRAINT_KEYS);
     checkNonEmptyString(problems, `${path}.key`, constraint.key);
+    checkTokenRepresentable(problems, `${path}.key`, constraint.key);
     checkEnum(problems, `${path}.state`, constraint.state, CONSTRAINT_STATES);
     // The schema pins `value` to number | string | boolean | null. Before this
     // check it was accepted as "key exists", so an OBJECT reached format.ts and
@@ -352,6 +364,7 @@ function checkAssumptions(problems: Problems, value: unknown): void {
     }
     checkNoUnknownKeys(problems, path, assumption, ASSUMPTION_KEYS);
     checkNonEmptyString(problems, `${path}.key`, assumption.key);
+    checkTokenRepresentable(problems, `${path}.key`, assumption.key);
     checkString(problems, `${path}.assumption_type`, assumption.assumption_type);
     // Schema-required and previously unchecked (G4 finding 2, "structural").
     checkRequiredScalar(problems, `${path}.value`, assumption, "value");
@@ -379,6 +392,7 @@ function checkCoverageMatrix(problems: Problems, value: unknown): void {
     }
     checkNoUnknownKeys(problems, path, row, COVERAGE_MATRIX_ROW_KEYS);
     checkNonEmptyString(problems, `${path}.constraint_family`, row.constraint_family);
+    checkTokenRepresentable(problems, `${path}.constraint_family`, row.constraint_family);
     checkString(problems, `${path}.governs`, row.governs);
     checkEnum(
       problems,
@@ -422,6 +436,7 @@ function checkCitations(problems: Problems, path: string, value: unknown): void 
     }
     checkNoUnknownKeys(problems, itemPath, citation, CITATION_KEYS);
     checkString(problems, `${itemPath}.snapshot_id`, citation.snapshot_id);
+    checkTokenRepresentable(problems, `${itemPath}.snapshot_id`, citation.snapshot_id);
     checkString(problems, `${itemPath}.section`, citation.section);
     checkString(problems, `${itemPath}.quote`, citation.quote);
     if (!isRecord(citation.provenance)) {
@@ -450,12 +465,27 @@ function checkCitations(problems: Problems, path: string, value: unknown): void 
  * section 19), so a non-null cap with a null provenance is a contract
  * violation, not a tolerated shape.
  *
- * NOTE (recorded divergence): the schema types `note` as a bare `string`, so
- * `note: ""` is schema-valid while this check requires it non-empty. That
- * strictness is the explicit G4/G1 rework instruction; it is defence-in-depth
- * against a server defect and is recorded in the producer report so the
- * orchestrator can relax it to `checkString` if a legitimately empty note ever
- * needs to ship.
+ * STRICTNESS IS SPLIT BY PROVENANCE OF THE FIELD, on G1's trace of the
+ * producer side:
+ *
+ *   - `output_name` and `note` are CONSTANT-SOURCED in the builder, so an empty
+ *     one is unreachable without a code change and rejecting it costs nothing.
+ *     `output_name` in particular is the field
+ *     .claude/rules/frontend-web.md:13 exists for — never show a maximum
+ *     without naming the optimized objective — so it stays non-empty.
+ *   - `rule_id` and `rule_version` are PROPAGATED from the rule_evaluation
+ *     trace (services/api/app/scenario/builder.py:171-172), and both schemas
+ *     type them as bare strings with no `minLength`, so the server's own
+ *     jsonschema gate would ship an empty one. Requiring them non-empty here
+ *     turned a defective rule record into a TOTAL OUTAGE — a validation-failure
+ *     card instead of a cap with valid citations — which is strictly worse for
+ *     the reader than a cap whose rule id is visibly blank. They are
+ *     `checkString` (first reported as a divergence in this file's earlier
+ *     revision; G1 traced it and the relaxation is the resolution).
+ *
+ * All four are additionally checked for DISPLAY REPRESENTABILITY, which is a
+ * different question from emptiness: an empty identifier bounds to empty and so
+ * is unaltered, while `zr:23-21` would be quietly rewritten and is rejected.
  */
 function checkCapProvenance(
   problems: Problems,
@@ -476,10 +506,13 @@ function checkCapProvenance(
     return;
   }
   checkNoUnknownKeys(problems, "cap_provenance", value, CAP_PROVENANCE_KEYS);
-  checkNonEmptyString(problems, "cap_provenance.rule_id", value.rule_id);
-  checkNonEmptyString(problems, "cap_provenance.rule_version", value.rule_version);
+  checkString(problems, "cap_provenance.rule_id", value.rule_id);
+  checkString(problems, "cap_provenance.rule_version", value.rule_version);
   checkNonEmptyString(problems, "cap_provenance.output_name", value.output_name);
   checkNonEmptyString(problems, "cap_provenance.note", value.note);
+  checkTokenRepresentable(problems, "cap_provenance.rule_id", value.rule_id);
+  checkTokenRepresentable(problems, "cap_provenance.rule_version", value.rule_version);
+  checkTokenRepresentable(problems, "cap_provenance.output_name", value.output_name);
   checkEnum(problems, "cap_provenance.rule_status", value.rule_status, CAP_RULE_STATUSES);
   checkCitations(problems, "cap_provenance.citations", value.citations);
 }

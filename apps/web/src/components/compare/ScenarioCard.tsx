@@ -92,9 +92,20 @@ export function ScenarioCard({
           <div className="confirm-row">
             <dt>Rule</dt>
             <dd>
-              <code>{provenance.rule_id}</code> (version{" "}
-              <code>{provenance.rule_version}</code>, status{" "}
-              <code>{provenance.rule_status}</code>)
+              {/* `rule_id` and `rule_version` are propagated from the trace and
+                  the contract types them as bare strings, so the validator
+                  permits an empty one rather than failing the whole screen over
+                  a defective rule record. An empty one must still READ as
+                  absent: an empty <code> element is invisible, which is the
+                  silent-absence failure this packet exists to prevent. */}
+              <code>{provenance.rule_id === "" ? "id not stated" : provenance.rule_id}</code>{" "}
+              (version{" "}
+              <code>
+                {provenance.rule_version === ""
+                  ? "not stated"
+                  : provenance.rule_version}
+              </code>
+              , status <code>{provenance.rule_status}</code>)
             </dd>
           </div>
           <div className="confirm-row">

@@ -16,6 +16,8 @@
  * ScenarioValidationFailureState. Any future check must keep this property.
  */
 
+import { MAX_TOKEN_LENGTH, boundedToken } from "./bounded";
+
 /**
  * Maximum length accepted for ANY array carried by a scenario document — the
  * one shared constant required by the G5 bounding spec. 64 entries is a
@@ -169,6 +171,46 @@ export function checkRequiredScalar(
     )
   ) {
     problems.add(path, "must be a number, string, boolean, or null");
+  }
+}
+
+/**
+ * A machine identifier must survive display bounding UNCHANGED, or the document
+ * is rejected.
+ *
+ * `boundedToken` keeps only [A-Za-z0-9._-] and cuts at MAX_TOKEN_LENGTH, and —
+ * unlike `boundedText` — it does BOTH silently: no truncation marker, and a
+ * value with no surviving character becomes empty. Applied to the nine
+ * identifier fields, that meant contract-legal ids could reach the screen
+ * quietly altered: `zr:23-21` rendering as `zr23-21`, and `zr:23-21` and
+ * `zr/23-21` — two DISTINCT snapshots — collapsing onto the same displayed
+ * string. Those ids are the pointers to the legal authority behind the cap, and
+ * `cap_provenance.rule_version` is what tells a reader WHICH version of a rule
+ * produced a number. A quietly different identifier misstates the record it
+ * points to, which is the silent-alteration cousin of the silent omission this
+ * packet was failed for, and it contradicts bounded.ts:16-17 — that module's
+ * own rule that truncation is never silent.
+ *
+ * So the difference is raised HERE, as a contract problem, instead of being
+ * applied there. The check is deliberately identity, not a charset test: it
+ * compares the bounded form against the source, so it stays correct if the
+ * allowlist or the cap ever changes. An EMPTY identifier bounds to empty and is
+ * therefore unaltered — emptiness is a separate question, and the per-field
+ * `checkNonEmptyString` / `checkString` callers decide it.
+ *
+ * A non-string is ignored here; the caller's own type check reports that.
+ */
+export function checkTokenRepresentable(
+  problems: Problems,
+  path: string,
+  value: unknown,
+): void {
+  if (typeof value !== "string") return;
+  if ((boundedToken(value, MAX_TOKEN_LENGTH) ?? "") !== value) {
+    problems.add(
+      path,
+      `is a machine identifier this client cannot display without altering it (allowed characters A-Z a-z 0-9 . _ - , at most ${MAX_TOKEN_LENGTH}); a quietly rewritten identifier would misstate the record it points to`,
+    );
   }
 }
 

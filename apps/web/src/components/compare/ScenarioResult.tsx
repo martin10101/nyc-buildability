@@ -2,7 +2,7 @@ import Link from "next/link";
 import { boundedText } from "@/lib/bounded";
 import { completenessDisplay, coverageDisplay } from "@/lib/coverage";
 import { formatValue } from "@/lib/format";
-import { SCENARIO_KIND_LABELS } from "@/lib/scenario-display";
+import { SCENARIO_KIND_LABELS, envelopeBlockingGaps } from "@/lib/scenario-display";
 import type { Scenario } from "@/lib/scenario-contract";
 import { CoverageMatrixSection } from "./CoverageMatrixSection";
 import { NoScenarioBlock } from "./NoScenarioBlock";
@@ -31,23 +31,52 @@ import { ScenarioReasons } from "./ScenarioReasons";
  * branch; only the cap card and the no-scenario block are branch-specific.
  */
 
-/** Block 2: the honest practical-usable-range disclosure. The cap is a draft
- * zoning-floor-area cap, NOT gross/net/sellable/feasible area or a buildable
- * envelope, so a practical usable range cannot be derived — because the
- * buildable-envelope families are MISSING (see coverage gaps). */
-function PracticalRangeBlock() {
+/**
+ * Block 2: the honest practical-usable-range disclosure.
+ *
+ * The first sentence is DEFINITIONAL — what a zoning-floor-area cap is and is
+ * not. It narrows the claim rather than asserting a fact about this property,
+ * so it is safe as fixed copy.
+ *
+ * The second is not, and used to be hard-coded: "the rule families that would
+ * bound a real envelope (height, setbacks, lot coverage, street wall, and
+ * others) are still missing" was a client-authored factual claim, true only
+ * because the builder happens to emit those families as missing today. M4-T006
+ * (R5 height and setbacks) is already in flight. On the day an envelope family
+ * ships, that sentence would have become FALSE on a legal-adjacent screen, with
+ * nothing in the suite able to detect it — the same client-prose-substituting-
+ * for-server-truth defect this packet originally failed for, rebuilt one
+ * paragraph to the left. It is now read from `coverage_matrix`, which carries
+ * `blocks_buildable_envelope` for precisely this question.
+ */
+function PracticalRangeBlock({ document }: { document: Scenario }) {
+  const blocking = envelopeBlockingGaps(document);
   return (
     <section className="card" data-testid="scenario-practical-range">
       <h2 className="section-title">Practical usable range</h2>
       <p>
-        A practical usable range (gross, net, sellable, or feasible floor area,
-        or a buildable envelope) cannot be derived yet. The value above is a
-        draft <em>zoning-floor-area cap</em> only — it is not gross, net,
-        sellable, or feasible area, and it is not a buildable envelope. The rule
-        families that would bound a real envelope (height, setbacks, lot
-        coverage, street wall, and others) are still missing; they are listed as
-        gaps below.
+        The value above is a draft <em>zoning-floor-area cap</em> only — it is
+        not gross, net, sellable, or feasible area, and it is not a buildable
+        envelope.
       </p>
+      {blocking.length === 0 ? (
+        <p data-testid="scenario-practical-range-no-blockers">
+          This document records no rule family as both missing and blocking a
+          buildable envelope. That is not the same as a practical usable range
+          being available: the platform states only what the scenario document
+          carries, and this document carries no such range. Nothing on this
+          screen infers one.
+        </p>
+      ) : (
+        <p data-testid="scenario-practical-range-blockers">
+          No practical usable range can be stated, because this document records{" "}
+          {blocking.length}{" "}
+          {blocking.length === 1 ? "rule family" : "rule families"} that would
+          bound a buildable envelope as still missing:{" "}
+          {blocking.map((row) => row.constraint_family).join(", ")}. They are
+          listed with the other gaps below.
+        </p>
+      )}
     </section>
   );
 }
@@ -222,7 +251,7 @@ export function ScenarioResult({
 
       {/* Document-level: mounted on EVERY branch. */}
       <ScenarioReasons document={document} />
-      <PracticalRangeBlock />
+      <PracticalRangeBlock document={document} />
       <ScenarioAssumptions document={document} />
       <ScenarioConstraints document={document} />
       <IntegrityCheckBlock document={document} />

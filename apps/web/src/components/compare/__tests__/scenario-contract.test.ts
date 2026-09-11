@@ -114,6 +114,101 @@ describe("validateScenarioDocument — cap_provenance is validated, not assumed"
   });
 });
 
+describe("validateScenarioDocument — identifiers must survive display unaltered", () => {
+  // boundedToken strips everything outside [A-Za-z0-9._-] and cuts at 64, BOTH
+  // silently. Applied to the nine identifier fields that meant a contract-legal
+  // id could reach the screen quietly rewritten — and `zr:23-21` and `zr/23-21`,
+  // two DISTINCT snapshots, collapsing onto one displayed string. These are the
+  // pointers to the legal authority behind the cap.
+  it.each([
+    ["a colon", "zr:23-21"],
+    ["a slash", "zr/23-21"],
+    ["a plus", "1.0.0+build.5"],
+    ["a space", "zr 23-21"],
+    ["only unrepresentable characters", "::::"],
+    ["more than 64 characters", "z".repeat(65)],
+  ])("rejects a citation snapshot_id containing %s", (_case, snapshotId) => {
+    const body = preliminaryScenarioBody();
+    const provenance = body.cap_provenance as Record<string, unknown>;
+    (provenance.citations as Record<string, unknown>[])[0].snapshot_id = snapshotId;
+    expect(
+      problemsFor(body).some((p) => p.startsWith("cap_provenance.citations[0].snapshot_id")),
+    ).toBe(true);
+  });
+
+  it("rejects an altered rule_version rather than displaying a different one", () => {
+    const body = preliminaryScenarioBody();
+    (body.cap_provenance as Record<string, unknown>).rule_version = "1.0.0+build.5";
+    expect(
+      problemsFor(body).some((p) => p.startsWith("cap_provenance.rule_version")),
+    ).toBe(true);
+  });
+
+  it("rejects an altered constraint key and coverage family", () => {
+    const body = preliminaryScenarioBody();
+    (body.constraints as Record<string, unknown>[])[0].key = "residential far cap";
+    (body.coverage_matrix as Record<string, unknown>[])[0].constraint_family =
+      "residential/far";
+    const problems = problemsFor(body);
+    expect(problems.some((p) => p.startsWith("constraints[0].key"))).toBe(true);
+    expect(problems.some((p) => p.startsWith("coverage_matrix[0].constraint_family"))).toBe(
+      true,
+    );
+  });
+
+  it("names no offending value in the problem, only the client's own rule", () => {
+    const body = preliminaryScenarioBody();
+    (body.cap_provenance as Record<string, unknown>).rule_id = "SECRET:MARKER";
+    for (const problem of problemsFor(body)) {
+      expect(problem).not.toContain("SECRET");
+    }
+  });
+
+  it("treats an EMPTY identifier as representable — emptiness is a separate question", () => {
+    // Otherwise the representability check would silently re-impose the
+    // non-empty rule that rule_id / rule_version were deliberately relaxed out
+    // of, and a defective rule record would still black out the screen.
+    const body = preliminaryScenarioBody();
+    const provenance = body.cap_provenance as Record<string, unknown>;
+    provenance.rule_id = "";
+    provenance.rule_version = "";
+    expect(validate(body).ok).toBe(true);
+  });
+});
+
+describe("validateScenarioDocument — strictness follows where the field comes from", () => {
+  it("accepts an empty rule_id / rule_version: a defective rule record is not an outage", () => {
+    // Both are propagated from the rule_evaluation trace and both schemas type
+    // them as bare strings with no minLength, so the server's own jsonschema
+    // gate would ship an empty one. Rejecting here replaced a cap carrying
+    // valid citations with a validation-failure card — strictly worse for the
+    // reader than a visibly blank rule id.
+    const body = preliminaryScenarioBody();
+    (body.cap_provenance as Record<string, unknown>).rule_id = "";
+    expect(validate(body).ok).toBe(true);
+
+    const body2 = preliminaryScenarioBody();
+    (body2.cap_provenance as Record<string, unknown>).rule_version = "";
+    expect(validate(body2).ok).toBe(true);
+  });
+
+  it("still rejects an empty output_name: it is constant-sourced and names the objective", () => {
+    // .claude/rules/frontend-web.md:13 — never show a maximum without naming
+    // the optimized objective.
+    const body = preliminaryScenarioBody();
+    (body.cap_provenance as Record<string, unknown>).output_name = "";
+    expect(
+      problemsFor(body).some((p) => p.startsWith("cap_provenance.output_name")),
+    ).toBe(true);
+  });
+
+  it("still rejects an empty note: also constant-sourced, so empty is unreachable", () => {
+    const body = preliminaryScenarioBody();
+    (body.cap_provenance as Record<string, unknown>).note = "";
+    expect(problemsFor(body).some((p) => p.startsWith("cap_provenance.note"))).toBe(true);
+  });
+});
+
 describe("validateScenarioDocument — the remaining depth holes", () => {
   it("rejects needs_review: false (the schema pins it true)", () => {
     const body = preliminaryScenarioBody();

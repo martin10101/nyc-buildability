@@ -173,6 +173,68 @@ describe("Compare screen — the whole document renders on the branch that shows
   });
 });
 
+describe("Compare screen — the practical-range claim is read from the document", () => {
+  it("names the envelope-blocking families the MATRIX records, not a hard-coded list", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+
+    const blockers = await screen.findByTestId("scenario-practical-range-blockers");
+    // The preliminary fixture marks 5 families both missing and
+    // blocks_buildable_envelope.
+    expect(blockers).toHaveTextContent("5 rule families");
+    expect(blockers).toHaveTextContent("height_limit");
+    expect(blockers).toHaveTextContent("special_districts_overlays");
+    // parking_loading is missing but does NOT block an envelope — a hard-coded
+    // sentence could not make that distinction.
+    expect(blockers).not.toHaveTextContent("parking_loading");
+  });
+
+  it("changes what it says when the SERVER stops reporting those families as missing", async () => {
+    // The regression the hard-coded prose could never fail on: M4-T006 (R5
+    // height and setbacks) is in flight, and the day an envelope family ships,
+    // "height, setbacks, lot coverage, street wall … are still missing" becomes
+    // a false statement on a legal-adjacent screen.
+    const body = preliminaryScenarioBody();
+    const matrix = body.coverage_matrix as Record<string, unknown>[];
+    for (const row of matrix) {
+      if (row.blocks_buildable_envelope === true) {
+        row.rule_status_today = "draft";
+      }
+    }
+    renderCompare(jsonResponse(body, 200));
+
+    await screen.findByTestId("scenario-practical-range-no-blockers");
+    expect(screen.queryByTestId("scenario-practical-range-blockers")).toBeNull();
+    // And it still refuses to imply a usable range exists.
+    expect(screen.getByTestId("scenario-practical-range")).toHaveTextContent(
+      "Nothing on this screen infers one",
+    );
+  });
+
+  it("keeps the definitional disclaimer on both branches", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    const block = await screen.findByTestId("scenario-practical-range");
+    expect(block).toHaveTextContent("not a buildable envelope");
+    expect(block).toHaveTextContent("zoning-floor-area cap");
+  });
+});
+
+describe("Compare screen — a blank rule identifier reads as absent, not as nothing", () => {
+  it("labels an empty rule_id and rule_version rather than rendering invisible code elements", async () => {
+    const body = preliminaryScenarioBody();
+    const provenance = body.cap_provenance as Record<string, unknown>;
+    provenance.rule_id = "";
+    provenance.rule_version = "";
+    renderCompare(jsonResponse(body, 200));
+
+    // The cap still renders — a defective rule record is not an outage.
+    const cap = await screen.findByTestId("scenario-cap-value");
+    expect(cap.textContent).toBe("15,000");
+    const objective = screen.getByTestId("scenario-objective");
+    expect(objective).toHaveTextContent("id not stated");
+    expect(objective).toHaveTextContent("not stated");
+  });
+});
+
 describe("Compare screen — AS-2 no_scenario / professional review", () => {
   it("shows the reason + review label + preserved share ranges and NO cap, as an informative result", async () => {
     renderCompare(jsonResponse(professionalReviewScenarioBody(), 200));
@@ -422,6 +484,21 @@ describe("Compare screen — AS-8 accessibility (announcement + focus + text lab
       const active = document.activeElement as HTMLElement | null;
       expect(active?.getAttribute("data-outcome-heading")).not.toBeNull();
     });
+  });
+
+  it("announces the loading region, matching the Property and Confirm screens", async () => {
+    // LoadingStages.tsx:34-41 carries aria-live for Property and Confirm; the
+    // Compare loading region had none, so a screen-reader user got silence
+    // between submitting and the outcome on the one screen whose request can
+    // take twelve seconds.
+    const neverResolves = (() => new Promise<Response>(() => {})) as unknown as typeof fetch;
+    render(<CompareScreen bbl={FIXTURE_BBL} fetchImpl={neverResolves} />);
+
+    const loading = await screen.findByTestId("compare-loading");
+    expect(loading).toHaveAttribute("aria-live", "polite");
+    // Exactly one region has content: the outcome announcer stays empty while
+    // loading, so the two can never double-announce.
+    expect(screen.getByTestId("compare-announcer").textContent).toBe("");
   });
 
   it("moves focus to the failure title on an error outcome", async () => {

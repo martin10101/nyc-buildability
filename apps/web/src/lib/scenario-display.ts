@@ -71,6 +71,29 @@ export function missingCoverageGaps(document: Scenario): CoverageMatrixRow[] {
   return document.coverage_matrix.filter((row) => row.rule_status_today === "missing");
 }
 
+/**
+ * The missing families the DOCUMENT ITSELF marks as blocking a buildable
+ * envelope.
+ *
+ * This exists so the practical-usable-range block can state which families are
+ * missing instead of hard-coding them. The prose there used to name "height,
+ * setbacks, lot coverage, street wall, and others" as a client-authored fact —
+ * true only for as long as the builder happened to emit exactly those as
+ * missing. M4-T006 (R5 height and setbacks) is already in flight; the day an
+ * envelope family ships, that sentence becomes a FALSE claim on a
+ * legal-adjacent screen with no test able to notice. Reading the two server
+ * fields the contract provides for exactly this question removes the failure
+ * mode rather than scheduling it.
+ *
+ * This is selection and display, not derivation: no value is computed, and the
+ * rows are surfaced with the server's own `constraint_family` strings.
+ */
+export function envelopeBlockingGaps(document: Scenario): CoverageMatrixRow[] {
+  return document.coverage_matrix.filter(
+    (row) => row.rule_status_today === "missing" && row.blocks_buildable_envelope,
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Safe readers for the weakly-typed (`unknown | null`) constraint.provenance
 // sub-objects the backend attaches. Each returns a narrow, display-ready view
