@@ -1,0 +1,189 @@
+{
+  "snapshot_id": "zr-23-22",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-22",
+  "section_title": "Floor Area Regulations for R6 Through R12 Districts",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+    "retrieved_at": "2026-09-11T00:00:00Z",
+    "http_status": 200,
+    "response_bytes": 131701,
+    "raw_html_sha256": "031bbacb817f090d8b3913946a9338f900bf37413483730b472ced795d63957f",
+    "last_amended_machine_readable": "2024-12-05T12:00:00Z",
+    "last_amended_display": "12/5/2024",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The dedicated section page did not expose the site-wide currency banner in this capture, matching the zr-23-21 capture behaviour. The per-section machine-readable <time datetime> stamp WAS present and is recorded above."
+  },
+  "verbatim_excerpt": "23-22 Floor Area Regulations for R6 Through R12 Districts\n\nIn the districts indicated, the maximum #residential# #floor area ratio# shall be as set forth in the following table. Separate maximum #residential# #floor area ratios# are set forth for #zoning lots# containing standard #residences# and #zoning lots# containing #qualifying affordable housing# or #qualifying senior housing#.\n\nMAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS\n\n[table - see structured `table` field]\n\n1 For #zoning lots#, or portions thereof, located within 100 feet of a #wide street#\n\n2 Outside of #Mandatory Inclusionary Housing areas#, for #zoning lots#, or portions thereof, located within 100 feet of a #wide street#, containing #UAP developments# or #qualifying senior housing#",
+  "table": {
+    "caption": "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS",
+    "columns": [
+      "District",
+      "Standard residences",
+      "Qualifying affordable housing or qualifying senior housing"
+    ],
+    "row_count": 16,
+    "rows": [
+      {
+        "districts": [
+          "R6A",
+          "R6",
+          "R6-1",
+          "R7B"
+        ],
+        "standard_residences": "3.00",
+        "qualifying_affordable_or_senior_housing": "3.90",
+        "district_footnotes": {
+          "R6": "1"
+        }
+      },
+      {
+        "districts": [
+          "R6"
+        ],
+        "standard_residences": "2.20",
+        "qualifying_affordable_or_senior_housing": "3.90"
+      },
+      {
+        "districts": [
+          "R6B"
+        ],
+        "standard_residences": "2.00",
+        "qualifying_affordable_or_senior_housing": "2.40"
+      },
+      {
+        "districts": [
+          "R6D",
+          "R6-2"
+        ],
+        "standard_residences": "2.50",
+        "qualifying_affordable_or_senior_housing": "3.00"
+      },
+      {
+        "districts": [
+          "R7A",
+          "R7-1",
+          "R7-2"
+        ],
+        "standard_residences": "4.00",
+        "qualifying_affordable_or_senior_housing": "5.01",
+        "district_footnotes": {
+          "R7-1": "1",
+          "R7-2": "1"
+        }
+      },
+      {
+        "districts": [
+          "R7-1",
+          "R7-2"
+        ],
+        "standard_residences": "3.44",
+        "qualifying_affordable_or_senior_housing": "5.01"
+      },
+      {
+        "districts": [
+          "R7D"
+        ],
+        "standard_residences": "4.66",
+        "qualifying_affordable_or_senior_housing": "5.60"
+      },
+      {
+        "districts": [
+          "R7X",
+          "R7-3"
+        ],
+        "standard_residences": "5.00",
+        "qualifying_affordable_or_senior_housing": "6.00"
+      },
+      {
+        "districts": [
+          "R8A",
+          "R8X",
+          "R8"
+        ],
+        "standard_residences": "6.02",
+        "qualifying_affordable_or_senior_housing": "7.20"
+      },
+      {
+        "districts": [
+          "R8"
+        ],
+        "standard_residences": "7.20",
+        "qualifying_affordable_or_senior_housing": "8.64",
+        "value_footnotes": {
+          "standard_residences": "1",
+          "qualifying_affordable_or_senior_housing": "2"
+        }
+      },
+      {
+        "districts": [
+          "R8B"
+        ],
+        "standard_residences": "4.00",
+        "qualifying_affordable_or_senior_housing": "4.80"
+      },
+      {
+        "districts": [
+          "R9A",
+          "R9"
+        ],
+        "standard_residences": "7.52",
+        "qualifying_affordable_or_senior_housing": "9.02"
+      },
+      {
+        "districts": [
+          "R9D",
+          "R9X",
+          "R9-1"
+        ],
+        "standard_residences": "9.00",
+        "qualifying_affordable_or_senior_housing": "10.80"
+      },
+      {
+        "districts": [
+          "R10A",
+          "R10X",
+          "R10"
+        ],
+        "standard_residences": "10.00",
+        "qualifying_affordable_or_senior_housing": "12.00"
+      },
+      {
+        "districts": [
+          "R11"
+        ],
+        "standard_residences": "12.00",
+        "qualifying_affordable_or_senior_housing": "15.00"
+      },
+      {
+        "districts": [
+          "R12"
+        ],
+        "standard_residences": "15.00",
+        "qualifying_affordable_or_senior_housing": "18.00"
+      }
+    ]
+  },
+  "footnotes": {
+    "1": "For #zoning lots#, or portions thereof, located within 100 feet of a #wide street#",
+    "2": "Outside of #Mandatory Inclusionary Housing areas#, for #zoning lots#, or portions thereof, located within 100 feet of a #wide street#, containing #UAP developments# or #qualifying senior housing#"
+  },
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as the governing-source candidate for the R6-R12 residential FAR draft rule family.",
+    "SUPERSCRIPT PLACEMENT VERIFIED AT THE BYTE LEVEL from the raw HTML, not inferred: row 1 carries R6<sup>1</sup> (the marker is on R6 only, NOT on R6A, R6-1 or R7B); row 5 carries R7-1<sup>1</sup> and R7-2<sup>1</sup>; on the R8 row the markers sit on the VALUES (7.20<sup>1</sup>, 8.64<sup>2</sup>), not on the district label.",
+    "CONSEQUENCE - four districts are NOT a flat lookup. R6, R7-1, R7-2 and R8 each appear TWICE in this table with different values: the higher value applies only within 100 feet of a #wide street# (footnote 1), the lower value otherwise. R6 3.00 vs 2.20; R7-1/R7-2 4.00 vs 3.44; R8 7.20 vs 6.02. Footnote 1 says 'or portions thereof', so a single lot can be split between both values and the result is a geometry computation, NOT a table lookup. A rule citing this snapshot MUST NOT return the higher value without a wide-street determination.",
+    "#wide street# is defined in ZR 12-10 and is already captured in this repo at docs/research/zr-snapshots/v1/zr-12-10.snapshot.json: 'A wide street is a street that is 75 feet or more in width. A narrow street is a street that is less than 75 feet in width.'",
+    "The footnote-2 condition on the R8 qualifying value is COMPOUND - outside a Mandatory Inclusionary Housing area AND within 100 feet of a wide street AND containing UAP developments or qualifying senior housing. None of those three are determined here.",
+    "'Qualifying affordable housing' and 'qualifying senior housing' are conditional/eligibility programs (higher FAR). Whether a given lot or development qualifies is a separate legal determination and is NOT decided by this snapshot or by any agent.",
+    "CROSS-CHECK: the owner supplied an independent PDF of this section generated by https://zr.planning.nyc.gov on 9/10/2026. All 16 rows, all values, both footnotes and the 12/5/2024 amendment date match this HTML capture exactly. Two independent official channels agree.",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule with G6 qualified-human legal approval."
+  ],
+  "content_digest_sha256": "116b1ae510d19c59a77f3174dec2ae1319d7ff7def60ba90e0612fd1dca61416"
+}
