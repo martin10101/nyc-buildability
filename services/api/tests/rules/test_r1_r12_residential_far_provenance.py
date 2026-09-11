@@ -362,7 +362,9 @@ def _assert_exception_citation_resolves(registry, rule_id: str, exc: dict) -> No
     trace = registry.evaluate(
         rule_id, {"zoning_district": district, "lot_area_sq_ft": 1_000}
     ).export()
-    resolved = {c["snapshot_id"]: c["provenance"]["content_digest_sha256"] for c in trace["citations"]}
+    resolved = {
+        c["snapshot_id"]: c["provenance"]["content_digest_sha256"] for c in trace["citations"]
+    }
     assert resolved[ref] == _snapshot_raw(ref)["content_digest_sha256"]
 
 
@@ -387,7 +389,9 @@ def _registry_over(ruleset_dir: Path) -> RuleRegistry:
 # ---- AS-6 positive: by-id selection, effect, citation, association ----------
 
 @pytest.mark.parametrize("rule_id", list(_FLAT_RULES))
-def test_as6_flat_rules_surface_qualifying_by_id_effect_citation_association(registry, rule_id) -> None:
+def test_as6_flat_rules_surface_qualifying_by_id_effect_citation_association(
+    registry, rule_id
+) -> None:
     """For each flat rule and EACH applicable district: the qualifying second-column
     alternative is surfaced through the exception SELECTED BY ID (not a text scan),
     with effect ``conditional_alternative`` and a resolvable citation; the district's
@@ -477,7 +481,9 @@ def test_as6_negative_deleting_qualifying_exception_removes_flat_surfacing(tmp_p
     assert _applied_by_id(trace, "qualifying_housing") == []
 
 
-def test_as6_negative_deleting_qualifying_exception_on_r8_is_not_masked_by_wide_street_720(tmp_path) -> None:
+def test_as6_negative_deleting_qualifying_exception_on_r8_is_not_masked_by_wide_street_720(
+    tmp_path,
+) -> None:
     """R8 DISCRIMINATOR: delete the qualifying_housing exception from the wide-street
     rule and evaluate R8. The qualifying surfacing is gone - but a NAIVE text search
     for "7.20" STILL passes, because R8's wide-street standard alternative repeats

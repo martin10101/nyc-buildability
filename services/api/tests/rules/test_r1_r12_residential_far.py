@@ -379,7 +379,11 @@ def test_as7_no_family_result_is_ever_verified(registry) -> None:
 def test_as7_before_effective_from_is_not_effective(registry) -> None:
     result = registry.evaluate(
         "r6-r12-residential-far",
-        {"zoning_district": "R10", "lot_area_sq_ft": 5_000, "housing_program": "standard_residence"},
+        {
+            "zoning_district": "R10",
+            "lot_area_sq_ft": 5_000,
+            "housing_program": "standard_residence",
+        },
         as_of_date="2020-01-01",
     )
     trace = result.export()
@@ -393,7 +397,9 @@ def test_as7_before_effective_from_is_not_effective(registry) -> None:
 # --------------------------------------------------------------------------
 
 def test_as8_family_uses_only_existing_primitives() -> None:
-    known_effects = {"conditional_alternative", "documented_limitation", "professional_review_required"}
+    known_effects = {
+        "conditional_alternative", "documented_limitation", "professional_review_required"
+    }
     for rule_id in _ALL_FAR_RULES:
         doc = _rule_doc(rule_id)
         assert doc["applicability"]["op"] == "in_set"
