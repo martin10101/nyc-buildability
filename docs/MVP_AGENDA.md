@@ -127,6 +127,51 @@ diagnosis (deployment correctness), the other three CI failures.
 
 ---
 
+## C1. Live defect on an ALREADY-ACCEPTED screen — authored legal claim
+
+Found during the M5-T004 rework (2026-09-11) by fixing the same defect in new code.
+
+- `apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx:251` renders
+  `{rule.effective_from ?? "unknown start"} to {rule.effective_to ?? "present"}`.
+- **"present" is an authored temporal claim.** It asserts the rule is in effect *now* when the
+  document said nothing. Same class as `minor_portion` defaulting to `false` (already fixed to
+  tri-state) and the `"The value above…"` clause (fixed in M5-T004).
+- `??` also catches only `null`, not `""`, so a value that cleans to empty renders blank.
+- Compare (M5-T004) is now **stricter than rule-evaluation on the same field** — the inconsistency
+  is the tell.
+- This is on an accepted screen, not a draft one. `RuleEvaluationResult.tsx` was outside M5-T004's
+  `allowed_paths`, so the producer correctly did not touch it.
+
+Action: small packet. Apply the `stated()` helper pattern from
+`apps/web/src/components/compare/NoScenarioBlock.tsx:22-40` and replace `"present"` with
+`"end not stated"`. Check the file for the same `??`-on-provenance pattern elsewhere while there.
+
+---
+
+## C2. Dormant landmine — fires on whatever packet turns scenario assumptions ON
+
+Found by G1 during the M5-T004 re-review (2026-09-11). **Not a defect today. It becomes a
+full-screen outage the moment the feature it guards is used.**
+
+- `assumptions[].key` is **caller-supplied and passed through verbatim**. `_normalize_assumptions`
+  (`services/api/app/scenario/builder.py:199-202`) accepts any non-empty string as a key with no
+  charset normalization.
+- The reworked client validator now enforces token-representability on that field
+  (`apps/web/src/lib/scenario-contract.ts:367`). A key like `utilization factor` or `far:bonus` is a
+  **schema-valid document the client rejects outright** — the whole screen goes to a
+  validation-failure card.
+- It is dormant only because `services/api/app/api/v1/scenario.py:289` calls `build_scenario(profile,
+  rule_evaluation)` without the keyword-only `assumptions` argument, so the list is always empty.
+- **The parameter exists precisely to be used** — the contract states "Preliminary scenarios vary ONLY
+  via explicit typed assumptions (no hidden utilization/optimization defaults)." So the first feature
+  that varies a scenario by assumption trips this.
+- **Fix belongs server-side: normalize assumption keys at the source.** Do NOT relax the client check
+  — the representability guarantee is what stops a silently-rewritten identifier reaching the screen.
+
+Action: attach this to the packet that first passes `assumptions`, before it is written.
+
+---
+
 ## D. Flags the program should surface but currently cannot
 
 Each is a separate mapped data source. None currently connected.

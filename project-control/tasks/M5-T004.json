@@ -11,7 +11,7 @@
     "apps/web/src/lib/api.ts + src/lib/contract-matrix.ts + src/lib/bounded.ts + src/lib/validate-profile.ts (READ-ONLY TEMPLATE: hardened typed client pattern - matrix classification, bounded/allowlisted reflected text, runtime contract validation before render, AbortController)",
     "apps/web/src/components/confirm/ConfirmScreen.tsx (the 'Next step' dead-end at line ~378 to rewire to Compare) + src/components/property/CoverageBadge.tsx/CoverageLegend.tsx (READ-ONLY; reuse the coverage-label vocabulary)",
     "apps/web/e2e/harness/fixture_api.py (READ-ONLY; committed-official-fixture API server for offline e2e - proves no-credential path) + the M5-T003 committed fixtures",
-    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md Â§13"
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md \u00c2\u00a713"
   ],
   "outputs": [
     "apps/web/src/app/property/compare/page.tsx (Step 3 Compare route)",
@@ -73,8 +73,8 @@
     "visual-quality-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
     "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
@@ -94,7 +94,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-08T14:51:49.592393+00:00",
-  "updated_at": "2026-09-11T03:04:35.563891+00:00",
+  "updated_at": "2026-09-11T04:34:15.583887+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -132,6 +132,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "AMENDMENT to the gate-wave record (2026-09-11). Two reviewer-initiated corrections on re-examination, both narrowing severity; verdicts unchanged (G1/G3/G4/DCV FAIL, G5 PASS). (1) G1 finding 9 WITHDRAWN as stated and corrected HIGH->MEDIUM: needs_review:false does NOT make the DRAFT label vanish. ScenarioCard.tsx:47-49 is an unconditional static prefix ('Draft maximum residential zoning floor-area cap:') that no server field can switch off, plus three surviving signals (cap_label :61-65, not_verified_disclaimer ScenarioResult.tsx:173-175, page header CompareScreen.tsx:103-107). Only the additional inline label at :55-59 is conditional. AS-1 is PASS. The same claim in the DCV report's AS-1 section is superseded. (2) G3 finding 3(a) WITHDRAWN: 'no test was ever executed' was wrong - compare-screen.test.tsx runs under npm run test at ci.yml:96 in the web-e2e job and passed. 3(b) stands and is sharper: none of the 18 Playwright specs navigate to /property/compare, and fixture_api.py enables INTERNAL_RULE_EVAL_ENABLED not INTERNAL_SCENARIO_ENABLED, so no browser can reach this screen anywhere in the repo. Fold the harness flag + a compare-journey.spec.ts into the rework. G3 recommends not holding the FAIL on it. NEW: G5 rules the array/string bounding MUST land in the same rework, with a concrete spec (arrays reject at 64; free text truncate at 600 via existing MAX_REFLECTED_TEXT_LENGTH; identifiers truncate at 64 via boundedToken; 256 KiB Content-Length reject; cap_provenance per-field type checks) - called on cost and coherence, NOT because the rework creates a live vulnerability; findings stay MEDIUM. Also new: no error boundary exists under /property (only /dashboard), so a non-string in unvalidated cap_provenance throws 'Objects are not valid as a React child' AFTER validation passes and blanks the route. G4 confirms G3's CSS finding as MEDIUM not CRITICAL (undifferentiated, not invisible) and notes globals.css is outside allowed_paths, so the producer could not have fixed it. G1 final audit: 17 schema top-level properties vs 17 TS, zero drift; 20 fields dropped at render (19 required, 1 optional)."
+    },
+    {
+      "at": "2026-09-11T04:34:14.377373+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "self_check",
+      "message": "Rework complete and re-verified 5-0 at 9b417875. Submitting for acceptance."
     }
   ]
 }
