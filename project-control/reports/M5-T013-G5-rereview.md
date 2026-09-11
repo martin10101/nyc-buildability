@@ -182,7 +182,7 @@ shares and the coverage note; `input_validation` = `{valid: true, invalid_inputs
 ### 4.4 Seven-canary credential test (probe R1a)
 
 With `SOCRATA_APP_TOKEN`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_DB_URL` (a fake
-`postgres://u:p@h/db`), `GEOCLIENT_SUBSCRIPTION_KEY`, `ANTHROPIC_API_KEY`, `SENTRY_DSN` and
+`postgres://u:p@h/db`), `GEOCLIENT_SUBSCRIPTION_KEY`, `ANTHROPIC_API_KEY`, `SENTRY_DSN` and <!-- secretscan:allow fake canary postgres://u:p@h/db, the seven-canary disclosure test's own fixture value; single-character placeholders, not a credential -->
 `API_CORS_ALLOWED_ORIGINS` all set to canary values:
 
 ```
