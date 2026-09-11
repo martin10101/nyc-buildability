@@ -30,7 +30,8 @@
       "identifiers": "bbl, buildingIdentificationNumber and street codes are STRINGS and are transported verbatim (never numerically coerced)",
       "coordinates": "latitude/longitude are JSON numbers (decimal degrees); x/yCoordinate are NY-Long Island State Plane strings; blockface-level coordinates are approximations (research section 2.6)",
       "reflected_input_warning": "Response message fields and suggestion names ECHO the caller's typed input back (fixture G02's message quotes the misspelled street verbatim). The connector transports them unsanitized by design; every consumer must escape them on render and never log them verbatim.",
-      "empty_string_rule": "An empty-string source value is preserved verbatim by the connector (data, not absence); only an OMITTED field maps to null/None."
+      "empty_string_rule": "An empty-string source value is preserved verbatim by the connector (data, not absence); only an OMITTED field maps to null/None.",
+      "type_drift_rule": "A canonical field the source carried with a DRIFTED type (a numeric bbl, a string latitude) is surfaced as None on the canonical field - never coerced - while the drifted value is preserved verbatim in raw_fields. On the canonical field alone, None means 'omitted OR drifted'; consumers needing the distinction must consult raw_fields. Recorded here per G1/G3 re-review (the rule was previously pinned only by test)."
     },
     "data_currency": "Bounded by the Geosupport release loaded on the server; /v2/version reports the live Geosupport version (research section 2.8) - candidate health-check endpoint, not yet consumed",
     "recorded_fixtures": [

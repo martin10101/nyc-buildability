@@ -160,12 +160,13 @@ def test_s1_resolved_fields_are_loaded_from_the_fixture_never_literals():
     assert type(res.zip_code) is str
     assert type(res.latitude) is type(addr["latitude"])
     assert type(res.longitude) is type(addr["longitude"])
-    # The whole address object rides along verbatim...
+    # The whole address object rides along verbatim. (Its deep copy is
+    # deliberately NOT asserted here: every recorded value is a scalar and
+    # the connector's own parse dies at return, so no external assertion can
+    # observe the copy — the prior mutation assertion could not fail and was
+    # removed rather than replaced with another tautology; G1/G3 re-review
+    # N1/N2. The copy is labeled defense-in-depth at the dataclass field.)
     assert res.raw_fields == addr
-    # ...as an independent copy: caller mutation cannot reach the connector's
-    # parsed state (G3 finding 10).
-    res.raw_fields["bbl"] = "MUTATED"
-    assert _fixture_address(G01)["bbl"] == addr["bbl"]
     # Caller-echo fields (G4 finding 15).
     assert res.house_number_in == "314"
     assert res.street_in == "w 100 st"
@@ -596,8 +597,20 @@ def test_s5_request_budget_is_consumed_per_attempt_and_typed_on_exhaustion():
 
 @pytest.mark.parametrize(
     "body",
-    ["this is not json", '{"weird": 1}', '{"address": "not a dict"}', "[]"],
-    ids=["nonjson", "wrongkeys", "addressnotdict", "array"],
+    [
+        "this is not json",
+        '{"weird": 1}',
+        '{"address": "not a dict"}',
+        "[]",
+        # CONSTRUCTED hostile body, depth 600: json.loads's C scanner accepts
+        # nesting this deep while pure-Python deepcopy/canonicalization blow
+        # the recursion limit. Before the guard this ESCAPED as an untyped
+        # RecursionError (G5 re-review N1); whichever layer breaks first on
+        # a given interpreter, the outcome must be the typed error.
+        '{"address": {"geosupportReturnCode": "00", '
+        '"geosupportReturnCode2": "00", "a": ' + "[" * 600 + "]" * 600 + "}}",
+    ],
+    ids=["nonjson", "wrongkeys", "addressnotdict", "array", "deepnest600"],
 )
 def test_s5_malformed_200_bodies_fail_closed(body):
     with pytest.raises(MalformedResponseError):

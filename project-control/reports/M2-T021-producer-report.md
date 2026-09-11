@@ -136,3 +136,52 @@ gate reports quote it):
 `pytest tests/connectors/test_geoclient_address.py -q` → 98 passed;
 `pytest tests/connectors -q` → full pack green (count in the re-review evidence);
 `ruff check` clean on both files; secret scan and modularity re-run before submit.
+
+---
+
+## Round-2 correction addendum (re-review wave at eb6a15f8; reports at project-control/reports/M2-T021-G{1,3,4,5}-rereview.md)
+
+Producer-material corrections in this commit, one bounded change (ENGINEERING_RELIABILITY_STANDARD
+§2/§3/§7 applied; the record-side corrections land in a SEPARATE orchestrator commit per the
+scope ruling in the packet progress_log):
+
+1. **G5 N1 (BLOCKING) — uncaught `RecursionError` on a hostile deep-nested 200 body.**
+   `copy.deepcopy(address)` and `canonical_json_digest(parsed)` now run under a typed guard:
+   `RecursionError` → `MalformedResponseError` ("body nested too deeply to process"),
+   `from None` deliberately so no body-laden recursion frames ride the traceback (§7; the
+   parallel non-JSON branch uses the same suppression). New parametrize case `deepnest600`
+   in `test_s5_malformed_200_bodies_fail_closed` names the defect.
+   **Red/green record (§3.1, §3.4):** with the fix reverted to the eb6a15f8 connector,
+   `python -m pytest services/api/tests/connectors/test_geoclient_address.py -q -k deepnest600`
+   → `FAILED ... RecursionError: maximum recursion depth exceeded` (1 failed, 98 deselected);
+   with the fix restored → full module `99 passed`. The case asserts the typed error whichever
+   layer breaks first on a given interpreter, so it cannot rot if recursion limits differ.
+
+2. **G1 N1 / G3 N2 (BLOCKING) — the deep-copy test assertion could not fail.**
+   Removed, not replaced with another tautology. G3's own analysis is adopted as the ruling
+   basis: every recorded `address` value is a scalar and the connector's parse dies at return,
+   so NO externally observable property depends on the copy today — G1's suggested replacement
+   assertions (digest stability after mutation; second-call comparison) are equally vacuous,
+   because `provenance["response_digest"]` is a stored string no post-construction mutation can
+   alter and each call re-parses the body fresh. The deep copy stays in the code labeled
+   defense-in-depth at the dataclass field and in the module docstring (G3 N2's stated clean
+   repair). This is an assertion-honesty deletion, not a test weakening: the assertion proved
+   nothing, and the S1 test still pins `res.raw_fields == addr`.
+
+3. **G1 N2 / G3 N6 (BLOCKING) — type-drift-to-None documented only in a test.**
+   The rule is now stated in all three consumer-facing places: the `AddressResolution`
+   docstring (canonical `None` means "omitted OR drifted"; drifted value verbatim in
+   `raw_fields`; never coerced), the module docstring's honesty rules beside null-omission and
+   empty-string, and the registry record (`response_semantics.type_drift_rule`). Behavior
+   unchanged; `test_s8_type_drift_is_never_coerced` already pins it.
+
+Self-checks after round 2 (producer-run; CI remains the authority):
+`pytest services/api/tests/connectors/test_geoclient_address.py -q` → **99 passed**;
+`pytest services/api/tests/connectors -q` → **438 passed**;
+`ruff check services/api/app/connectors services/api/tests/connectors` → All checks passed;
+`python tools/modularity_check.py --check` → exit 0; secret scan → PASS, no findings.
+
+NOT changed here, deliberately: the LOW/non-blocking observations (G1 N4–N7, G4 N1–N7,
+G5 N4–N6, G3 N3-residue) stay recorded in the preserved re-review reports and MVP_AGENDA C4
+carry-forwards for the consuming packets; widening this correction past the blocking set would
+trade a bounded, reviewable delta for scope creep.

@@ -53,7 +53,12 @@ retrieved 2026-07-14 unless noted):
   per response. Absence of a key is NOT evidence of absence of data, and
   this connector never fabricates a value for an absent field. An
   empty-string source value is likewise preserved verbatim (it is data, not
-  absence).
+  absence). **Type drift** is the third honesty rule: a canonical field the
+  source carried with a DRIFTED type (a numeric ``bbl``, a string
+  ``latitude``) is surfaced as ``None`` on the canonical field — never
+  coerced — while the drifted value stays verbatim in ``raw_fields``. On the
+  canonical field alone, ``None`` therefore means "omitted OR drifted";
+  consult ``raw_fields`` when the distinction matters.
 - **Rate limits** (section 2.4): officially UNKNOWN. Retries are bounded and
   use the shared jittered policy, which honors an upstream ``Retry-After``
   within ``retry_after_cap``.
@@ -67,8 +72,9 @@ retry on 429/5xx/timeout/network only, one optional
 TRANSPORT, NEVER INTERPRET: canonical fields are surfaced verbatim as the
 source emitted them (identifiers stay strings; coordinates stay the source's
 JSON numbers, so an integer stays ``int``); the full response ``address``
-object rides along in ``raw_fields`` (a deep copy, so caller mutation cannot
-invalidate the outcome's own digest); suggestion selection is ALWAYS the
+object rides along in ``raw_fields`` (a deep copy, defense-in-depth: the
+caller receives an independent object, never the connector's own parse);
+suggestion selection is ALWAYS the
 caller's decision. CAUTION for consumers: ``grc_message``/``grc2_message``,
 ``suggestions`` and ``raw_fields`` are UNSANITIZED source text that reflects
 caller input back (fixture G02's message quotes the user's typed street) —
@@ -291,11 +297,16 @@ RESOLUTION_STATUSES = (
 class AddressResolution:
     """Typed resolution outcome.
 
-    Canonical fields are ``None`` when the source omitted them (null
-    omission — never fabricated); an empty-string source value is preserved
-    as ``""``. Identifier fields (``bbl``, ``bin``, street codes) are strings
-    verbatim; ``latitude``/``longitude`` are the source's JSON numbers
-    verbatim (an integer stays ``int``).
+    Canonical fields are ``None`` in exactly two cases: the source OMITTED
+    the field (null omission — never fabricated), or the source carried it
+    with a DRIFTED type (a non-string identifier, a non-number coordinate) —
+    drift is never coerced onto the canonical field; the drifted value is
+    preserved verbatim in ``raw_fields``. ``None`` alone does not
+    distinguish the two — consult ``raw_fields`` when that matters. An
+    empty-string source value is preserved as ``""``. Identifier fields
+    (``bbl``, ``bin``, street codes) are strings verbatim;
+    ``latitude``/``longitude`` are the source's JSON numbers verbatim (an
+    integer stays ``int``).
 
     NOTE (deliberate, per the two-sub-call model): canonical fields may be
     POPULATED on non-``resolved`` statuses — e.g. a ``not_found`` outcome
@@ -332,9 +343,13 @@ class AddressResolution:
     # EE similar-name suggestions, verbatim, in source slot order. Selection
     # is the caller's (ultimately the user's) decision — never made here.
     suggestions: list[dict] = field(default_factory=list)
-    # The ENTIRE response "address" object (deep copy — caller mutation can
-    # never invalidate provenance["response_digest"]). Unsanitized source
-    # text; see the module docstring's consumer caution.
+    # The ENTIRE response "address" object. Deep copy as defense-in-depth —
+    # the caller gets an independent object, never the connector's own
+    # parse. Recorded values are all scalars today, so no external assertion
+    # can observe the copy (G1/G3 re-review N1/N2: the prior test claiming
+    # to pin it was vacuous and is removed, not replaced with another
+    # tautology). Unsanitized source text; see the module docstring's
+    # consumer caution.
     raw_fields: dict = field(default_factory=dict)
     provenance: dict = field(default_factory=dict)
 
@@ -680,6 +695,22 @@ def resolve_address(
     grc2 = address.get("geosupportReturnCode2")
     status = _classify(grc, grc2)
 
+    # A hostile 200 body can nest deeply enough that json.loads's C scanner
+    # accepts it while the pure-Python deepcopy/canonicalization here blow
+    # the recursion limit. That is a malformed response and stays inside the
+    # typed taxonomy (G5 re-review N1); `from None` drops the body-laden
+    # recursion frames so no hostile content rides the traceback.
+    try:
+        raw_fields = copy.deepcopy(address)
+        response_digest = canonical_json_digest(parsed)
+    except RecursionError:
+        raise MalformedResponseError(
+            "Geoclient returned HTTP 200 with a body nested too deeply "
+            "to process",
+            correlation_id=correlation_id,
+            detail={"url": url, "body_chars": len(response.body)},
+        ) from None
+
     outcome = AddressResolution(
         status=status,
         correlation_id=correlation_id,
@@ -701,7 +732,7 @@ def resolve_address(
         grc2_reason=_string_or_none(address, "reasonCode2"),
         grc2_message=_string_or_none(address, "message2"),
         suggestions=_extract_suggestions(address) if status == "ambiguous" else [],
-        raw_fields=copy.deepcopy(address),
+        raw_fields=raw_fields,
         provenance={
             "source_id": SOURCE_ID,
             "endpoint": ENDPOINT_URL,
@@ -712,7 +743,7 @@ def resolve_address(
             "geosupport_return_code2": grc2 if isinstance(grc2, str) else None,
             "reason_code": _string_or_none(address, "reasonCode"),
             "reason_code2": _string_or_none(address, "reasonCode2"),
-            "response_digest": canonical_json_digest(parsed),
+            "response_digest": response_digest,
             "digest_canonicalization": CANONICALIZATION_SPEC,
             "correlation_id": correlation_id,
         },
