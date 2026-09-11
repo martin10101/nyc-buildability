@@ -55,14 +55,14 @@
 # instantiated [confirm at first use - ADR-002 "Items requiring verification"
 # item 1; a single render.yaml cannot carry per-environment trigger values].
 
-# Preview environments: create per-PR copies of these services only when a PR
-# explicitly opts in (manual generation), to avoid surprise billing. Previews
-# are billed at the base-service rate; sync:false env vars are NOT copied into
-# previews and must be provided or moved to an env group if previews need them.
-# Source: https://render.com/docs/preview-environments (retrieved 2026-07-14).
-previews:
-  generation: manual
-  expireAfterDays: 3
+# Preview environments: REMOVED 2026-09-11 (owner Render setup). The Hobby
+# workspace rejects any Blueprint carrying a `previews:` block ("Preview
+# Environments are not available for Hobby workspaces"), and the block only
+# existed to force manual generation — which is also the effective behavior
+# with no block at all on a Hobby workspace. If the workspace is ever upgraded
+# and previews are wanted, restore from git history (was: generation: manual,
+# expireAfterDays: 3; source https://render.com/docs/preview-environments,
+# retrieved 2026-07-14).
 
 services:
   # ---------------------------------------------------------------------------
