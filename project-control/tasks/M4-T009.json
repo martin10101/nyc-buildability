@@ -1,0 +1,89 @@
+{
+  "task_id": "M4-T009",
+  "title": "R1-R12 residential FAR draft rule family (flat districts) from the committed ZR 23-21 / 23-22 snapshots",
+  "task_type": "rule_engineering",
+  "milestone_id": "M4",
+  "objective": "Author the maximum residential floor-area-ratio draft rules for every R1-R12 district whose value is a FLAT table lookup, transcribed from the two committed source snapshots (zr-23-21, zr-23-22) using the existing r5_residential_far.rule.json structure and the existing rules engine. NO engine changes. The four wide-street conditional districts (R6, R7-1, R7-2, R8) are IN SCOPE only to return the CONSERVATIVE (lower) value with an explicit conditional flag - never the higher value - because footnote 1 requires a wide-street determination that does not exist yet.",
+  "business_reason": "Today the platform answers on R5 lots only and returns unsupported for most of New York City, which is the gap between a product and a lookup tool. The two governing sources are captured, byte-verified and cross-checked against an independently generated owner PDF, so this is transcription against an in-repo source with zero invention surface.",
+  "inputs": [],
+  "outputs": [],
+  "dependencies": [
+    "M4-T001"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/rulesets/**",
+    "services/api/tests/rules/**",
+    "services/api/app/rules/rulesets",
+    "services/api/tests/rules",
+    "project-control/reports/M4-T009-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/rules/engine.py",
+    "services/api/app/api/**",
+    "services/api/app/scenario/**"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 SOURCE FIDELITY (byte-exact, no transcription drift): every FAR value in every authored rule is byte-identical to the corresponding value in the committed snapshot it cites - docs/research/zr-snapshots/v1/zr-23-21.snapshot.json for R1-R5, zr-23-22.snapshot.json for R6-R12. A test asserts this by LOADING THE SNAPSHOT AND COMPARING, never by restating the number as a literal in the test (a test that hardcodes the same value the rule hardcodes proves nothing - see the M5-T004 G1/DCV finding on tautological assertions).",
+    "AS-2 COMPLETE COVERAGE, COMPUTED NOT ASSERTED: a test enumerates every district appearing in both snapshots' table rows and asserts that each one is either (a) covered by an authored rule, or (b) named in an explicit documented exclusion list with a reason. The count is asserted. A district that is silently absent from both is a FAILURE. This exists because the prior zr-23-21 snapshot sat for seven weeks holding 4 R5-only rows under an R1-R5 title and nothing detected it.",
+    "AS-3 CONSERVATIVE ON CONDITIONALS: for the four wide-street districts - R6, R7-1, R7-2, R8 - the rule returns the LOWER value (R6 2.20, R7-1/R7-2 3.44, R8 6.02) and attaches an explicit conditional alternative naming the higher value, the ZR 23-22 footnote-1 condition, and the fact that a wide-street determination is NOT performed. A test asserts the higher value (3.00 / 4.00 / 7.20) is NEVER the returned result for these districts. Overstating an R8 lot by 20% is the single worst output this family can produce.",
+    "AS-4 FOOTNOTE SCOPE IS RESPECTED: the ZR 23-21 footnote-1 0.60 single-dwelling-unit equivalent-FAR cap is attached ONLY to the districts in the first table row (R1-2A, R1-1, R1-2, R2A, R2, R3A, R3X, R3-1, R3-2) whose standard value carries the marker. A test asserts it is ABSENT from R2X, R4, R4A, R4B, R4-1, R5, R5A, R5B and R5D. The existing r5_residential_far.rule.json carries this exception wrongly; do not copy that error forward.",
+    "AS-5 EVERY RULE CARRIES ITS CITATION: each authored rule has citations[] naming the snapshot_id it was transcribed from, the section number, and the last_amended date 2024-12-05, matching the snapshot. A material value may never be surfaced without its citation (scenario.schema.json, PRD section 19). A test asserts every rule's citation resolves to a snapshot file that exists on disk and whose content_digest_sha256 matches what the rule records.",
+    "AS-6 SECOND COLUMN SURFACED, NEVER APPLIED: the qualifying-affordable-housing / qualifying-senior-housing value (23-22) and the qualifying-residential-sites value (23-21) are surfaced as a CONDITIONAL ALTERNATIVE exactly as r5_residential_far.rule.json does, never silently applied and never silently dropped. Whether a lot qualifies is a separate legal determination this rule does not make. A test asserts both the standard and the conditional value are present in the evaluation output for at least one district per source.",
+    "AS-7 STATUS AND HONESTY LABELS: every authored rule carries status needs_review, release.independent_review pending, release.qualified_human_approval pending, and effective_from 2024-12-05. A test asserts no rule in the family is marked published, verified, or approved. Evaluating as_of a date before effective_from yields a visible not-effective outcome, never today's values applied to a period the draft does not represent.",
+    "AS-8 NO ENGINE CHANGE, NO NEW DEPENDENCY: the rules engine is untouched (services/api/app/rules/engine.py is in forbidden_paths) and package requirements are unchanged. The family runs on the existing param_select / in_set / conditional_alternative primitives that r5_residential_far.rule.json already uses. python -m pytest services/api/tests/rules passes, and python tools/modularity_check.py --check exits 0.",
+    "AS-9 CORRECT THE EXISTING R5 PILOT IN THE SAME FAMILY: services/api/app/rules/rulesets/r5_residential_far.rule.json currently carries exception 'single_dwelling_unit_equivalent_far_cap' (the 0.60 per-dwelling-unit cap) on the R5 family. The zr-23-21 recapture (commit 17e8eb78) proved at the byte level that ZR 23-21 footnote 1 is attached to the FIRST TABLE ROW's standard value only (R1-2A, R1-1, R1-2, R2A, R2, R3A, R3X, R3-1, R3-2) and to no other row. REMOVE that exception from the R5 rule and attach it to the R1/R2/R3 rule instead, so the whole R1-R12 family is consistent with one source reading. A test asserts the R5 evaluation output no longer carries it and the R1/R2/R3 output does. Do not change any R5 FAR VALUE - 1.50/1.50/1.50/2.00 are correct and byte-verified against the snapshot."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "data-contract-verifier",
+    "human-journey-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "TRANSCRIPTION DRIFT is the primary risk: ~30 districts of hand-copied decimals. Mitigated by AS-1 requiring tests to load the snapshot rather than restate the value.",
+    "COPYING THE KNOWN DEFECT FORWARD: r5_residential_far.rule.json carries the footnote-1 0.60 cap on the R5 family, where the source does not impose it (see the zr-23-21 recapture commit 17e8eb78). Reuse its STRUCTURE, not that exception. AS-4 exists to catch this.",
+    "OVERREACHING ON THE CONDITIONALS: R6/R7-1/R7-2/R8 must return the lower value. The higher value is not authorable until a wide-street determination exists."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-11T03:51:47.534578+00:00",
+  "updated_at": "2026-09-11T03:54:27.158541+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": [
+        "D-038-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-11T03:51:47.534578+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m4t009",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/rules",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "allowed_paths use ** globs deliberately: a trailing-slash directory never matches under policy.py path_matches, which is what silently defers every worker write. r5_residential_far.rule.json is in forbidden_paths so the existing accepted-shape pilot cannot be edited by this packet - read it as the template, author new files alongside it.",
+    "r5_residential_far.rule.json is deliberately IN scope (removed from forbidden_paths): the rulesets/** allow-glob would have won over a forbidden entry anyway, and AS-9 requires editing it. Its FAR values must not change - only the misattributed footnote-1 exception moves.",
+    "DUAL-FORM allowed_paths, deliberate and load-bearing. Two different matchers govern this list and they want OPPOSITE forms. (1) policy.py path_matches decides whether a worker file-write auto-approves; a trailing-slash or bare directory is NO match there, so every write would defer as 'outside allowed_paths' and the loop would look busy while building nothing. It needs ** globs. (2) directive_registry.git_tree_manifest backs the content-identity stamp via `git ls-tree -r <commit> -- <paths>`; a /** pathspec matches ZERO objects there (measured: 0 vs 7 for the plain directory), which trips the empty-identity guard and refuses the gate. It needs plain paths. Listing BOTH forms satisfies both. Recorded because a packet that satisfies only one fails silently in opposite directions."
+  ]
+}
