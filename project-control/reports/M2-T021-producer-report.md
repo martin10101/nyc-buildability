@@ -76,3 +76,63 @@ parametrized fail-closed, valid-shape unknown code → rejected, identifier type
 - Warning-class fixtures (GRC 01) are covered by constructed variants only — no natural 01
   address was captured; the classification table is exercised, the exact 01 wire shape is not.
 - CI has not run on this branch; the suite above ran locally on Python 3.11 (CI runs 3.12).
+
+---
+
+## Rework addendum (2026-09-11, after the G1/G3/G4/G5 wave at d4cdbe79)
+
+**Corrections to this report's own claims** (the original text above is preserved because the
+gate reports quote it):
+
+- "~500 lines incl. documentation" was wrong: the module was **572** lines at review; the
+  reworked module is larger still (the corrections below). (G1/G3/G4.)
+- "S6 exercises ... every failure path" overstated: the original harvest covered six paths and
+  omitted 403/429/500/network. The reworked harvest covers all of them WITH positive controls
+  (sentinel proven present in the auth header per run, non-raising paths fail the test,
+  captured log records proven non-empty, `caplog.text` harvested). (G4 finding 4, G5 finding 6.)
+- "connector and transport loggers both captured at DEBUG" was wrong: the shared engine logs
+  through the connector's logger; the second `set_level` was inert and is removed. (G5-6, G4-4.)
+- The original fixture `retrieval_timestamp_utc` values in G02/G03 (and G01's earlier value)
+  were **hand-authored estimates presented as recorded times** — G1 finding 1, proven
+  mechanically. Corrected to the filesystem write times of the raw capture files, with the
+  basis and the original error disclosed inside each fixture.
+
+**What the rework changed** (one bounded change, all four reports' blocking findings):
+
+- Typed input validation: non-string and over-length `house_number`/`street`/`borough`/`zip`
+  raise `InvalidInputError` before any I/O (G1-2, G5-C4).
+- Sanitizers hardened: `fullmatch` everywhere a `$` anchor let a trailing newline through
+  (G5-C1, G1-12), `repr()` fallback length-capped (G5-C2), malformed-shape key reporting
+  capped at 20 with an explicit truncation marker (G5-C3).
+- URL encoding aligned to the recorded captures: `quote_via=quote` (`%20`), with a test
+  asserting the constructed URL is byte-identical to each fixture's recorded `request_url`
+  (G4-5).
+- Suggestion extraction no longer trusts the declared count in either direction: all slots up
+  to the bound are walked and every populated one surfaced (G1-4, G4-6).
+- Retry policy switched to the shared jittered `Retry-After`-honoring policy used by every
+  M2-wave sibling, with `backoff_cap`/`retry_after_cap`/`rng` parameters (G1-5); optional
+  `AnalysisBudget` threading with a typed `RequestBudgetExceededError` (G1-9).
+- Provenance carries `digest_canonicalization` alongside the digest (G3-5); `raw_fields` is a
+  deep copy so caller mutation cannot invalidate the digest (G3-10); empty-string source
+  values are preserved verbatim rather than reinterpreted as absence (G3-6); injectable
+  `clock` seam, stamped after the successful parse (G1-6); coordinate annotations match the
+  verbatim-number behavior (G3-13/G1-14); `RESOLUTION_STATUSES` exported and pinned by test
+  (G1-8); `_OPENER` no-op indirection removed, default transport resolved at call time so the
+  seam stays monkeypatchable (G1-13).
+- Deliberate non-changes, documented instead of coded: the GRC alias fields remain
+  unconsulted (fail-closed; module docstring, G1-10); GRC `50`/`75` remain in the reject
+  class pending a recorded fixture (disclosed in docstring, registry and MVP_AGENDA C4;
+  G3-8/9); an absent second sub-call code remains fail-closed `unrecognized_status`
+  (docstring + test; G3-12, G5-7).
+- Test pack rebuilt: **98 collected tests** (was 36), including the sub-call swap-proof alias
+  assertions on all three recorded fixtures plus an asymmetric constructed variant (G4-1), the
+  real `os.environ` read with an at-call-time rotation proof (G4-2/G1-3), the zip request form
+  (G4-3), the disagreement matrix (G1-7), provenance on all six statuses (G3-7), refused-3xx /
+  404 / 400 / network-failure / Retry-After / budget paths (G4-8/9, G1-5/9), type-drift and
+  empty-string honesty cases (G4-12, G3-6), and a module-wide socket guard making network I/O
+  mechanically impossible (G4-16).
+
+**Self-checks after rework** (same discipline: producer-run, CI remains the authority):
+`pytest tests/connectors/test_geoclient_address.py -q` → 98 passed;
+`pytest tests/connectors -q` → full pack green (count in the re-review evidence);
+`ruff check` clean on both files; secret scan and modularity re-run before submit.

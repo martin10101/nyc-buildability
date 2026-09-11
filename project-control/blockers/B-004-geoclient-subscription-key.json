@@ -1,7 +1,9 @@
 {
   "blocker_id": "B-004",
   "title": "NYC Geoclient v2 subscription key missing",
-  "status": "open",
+  "status": "resolved",
+  "resolved_at": "2026-09-11T18:46:43Z",
+  "resolution": "Owner obtained the key from the NYC API Developers Portal (two keys issued; the fallback is held offline by the owner and stored nowhere else) and provisioned it in both required places on 2026-09-11: the owner machine's user environment (GEOCLIENT_SUBSCRIPTION_KEY, verified present) and the Render dashboard for nycdf-api (sync:false, entered at Blueprint creation). The documented test was executed exactly as specified: GET /v2/address with the documented sample params and the Ocp-Apim-Subscription-Key header returned HTTP 200 JSON with bbl and bin fields, recorded as fixture services/api/tests/fixtures/geoclient/G01_address_documented_example.json (both Geosupport sub-calls 00; key-absence in the recorded body machine-verified). resolved_at is the G01 capture's own timestamp. Official rate limits REMAIN UNCONFIRMED - the owner has not recorded the portal subscription page's displayed quotas; carried in the source-registry record (docs/research/source-registry-drafts/geoclient.json rate_limits) as officially UNKNOWN.",
   "affects": ["M1 resolve-address connector", "contract-test fixtures F1-F14 (docs/research/M0-T002-geoclient-address-resolution.md)"],
   "detail": "Geoclient v2 requires a free subscription key from the NYC API Developers Portal. Research (M0-T002) is complete without it; live fixture capture and official rate-limit confirmation are blocked.",
   "exact_human_action": "Sign up at https://api-portal.nyc.gov/, subscribe to product 'Geoclient User' selecting 'Geoclient - v2', copy the key from Profile -> Subscriptions -> Show, record the rate limits displayed on the subscription page, and provide the key as GEOCLIENT_SUBSCRIPTION_KEY in the harness secret store.",

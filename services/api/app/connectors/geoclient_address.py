@@ -1,4 +1,5 @@
-"""Geoclient v2 ``/address`` connector (task M2-T021).
+"""Geoclient v2 ``/address`` connector (task M2-T021; reworked after the
+G1/G3/G4/G5 gate wave at d4cdbe79).
 
 Resolves a NYC street address (house number + street + borough-or-zip) to the
 city-canonical address, BBL, BIN and coordinates through the official
@@ -10,48 +11,73 @@ retrieved 2026-07-14 unless noted):
 - **Base URL** (section 2.2): ``https://api.nyc.gov/geoclient/v2``; the
   ``/address`` endpoint proxies Geosupport Function 1B. Params:
   ``houseNumber`` (required), ``street`` (required), ``borough`` (required if
-  ``zip`` not given), ``zip`` (required if ``borough`` not given).
+  ``zip`` not given), ``zip`` (required if ``borough`` not given). Query
+  values are percent-encoded (``%20`` for spaces) — the encoding the three
+  recorded fixtures were captured with, asserted by test against the
+  fixtures' own ``request_url``.
 - **Auth** (section 2.3): subscription key in the
   ``Ocp-Apim-Subscription-Key`` HTTP header (the documented method; the
   undocumented query-string alternative is deliberately NOT used so the key
-  never appears in any URL). The key is read at call time from the
+  never appears in any URL). The key is read AT CALL TIME from the
   ``GEOCLIENT_SUBSCRIPTION_KEY`` environment variable, sent ONLY as that
   header, and never stored, logged, echoed in errors, or embedded in
-  provenance.
+  provenance. NOTE: the injected ``transport`` callable receives the headers
+  dict INCLUDING the key — that is what makes offline testing possible, and
+  it means any future instrumenting/caching transport wrapper is itself a
+  key-handling surface and must be reviewed as one.
 - **Status model** (section 2.7): HTTP status covers the service; the
   geocoding outcome lives in Geosupport return codes (GRC) INSIDE a 200
   response. ``/address`` is TWO sub-calls and BOTH must be checked:
-  ``geosupportReturnCode``/``reasonCode``/``message`` (alias
-  ``returnCode1e``/``reasonCode1e``) and ``geosupportReturnCode2``/
-  ``reasonCode2``/``message2`` (alias ``returnCode1a``/``reasonCode1a``).
-  "There are a significant number of locations where data is valid and/or
-  available for only one of these two sub-function calls." GRC semantics
-  (User Guide Table 4 + UPG Appendix 4): ``00`` success; ``01`` success with
-  warnings; ``EE`` street not recognized WITH similar-name suggestions
-  (returned as ``streetName1..N``/``streetCode1..N`` with
-  ``numberOfStreetCodesAndNamesInList`` — shape recorded live in fixture
-  G02); ``11`` not recognized, no similar names; every other code is the
-  documented reject/error class (e.g. ``42`` ADDRESS NUMBER OUT OF RANGE,
-  recorded live in fixture G03).
+  ``geosupportReturnCode``/``reasonCode``/``message`` and
+  ``geosupportReturnCode2``/``reasonCode2``/``message2``. The documented
+  aliases ``returnCode1e``/``returnCode1a`` (and reason/message
+  counterparts) are DELIBERATELY not consulted: every recorded response
+  carries both forms with identical values, the primary names are the
+  documented canonical ones, and a hypothetical alias-only response fails
+  CLOSED as ``unrecognized_status`` rather than being half-guessed.
+  GRC semantics (User Guide Table 4 + UPG Appendix 4): ``00`` success;
+  ``01`` success with warnings; ``EE`` street not recognized WITH
+  similar-name suggestions (shape recorded live in fixture G02); ``11`` not
+  recognized, no similar names; every other code is classified into the
+  documented reject/error class here. KNOWN NARROWING, disclosed: UPG
+  Appendix 4 also documents ``50`` and ``75`` as alternative-carrying
+  classes; this connector classifies them ``rejected`` and does not extract
+  their alternatives, because no recorded fixture pins their response shape.
+  A follow-up capture task may widen ``_GRC_AMBIGUOUS`` with evidence.
+- **Sub-call asymmetry**: "a significant number of locations" are valid for
+  only ONE of the two sub-calls. Whether Geoclient omits the second code in
+  such responses is NOT established by any fixture; if it ever does, this
+  connector fails CLOSED (``unrecognized_status``) rather than guessing.
+  Both codes are always surfaced so the caller can distinguish the cases.
 - **Null omission** (section 2.5 / fixture G01): Geoclient omits null fields
-  per response. Absence of a key is NOT evidence of absence of data, and this
-  connector never fabricates a value for an absent field.
-- **Rate limits** (section 2.4): officially UNKNOWN. The retry budget here is
-  bounded and small; live fixture captures are single KB-scale requests.
+  per response. Absence of a key is NOT evidence of absence of data, and
+  this connector never fabricates a value for an absent field. An
+  empty-string source value is likewise preserved verbatim (it is data, not
+  absence).
+- **Rate limits** (section 2.4): officially UNKNOWN. Retries are bounded and
+  use the shared jittered policy, which honors an upstream ``Retry-After``
+  within ``retry_after_cap``.
 
 Transport: the shared hardened stack (:mod:`app.resilience.transport`) —
 bounded body read, NO redirect following (the redirect refusal is what keeps
 the subscription key from ever being re-sent to a redirect target), bounded
-retry on 429/5xx/timeout/network only.
+retry on 429/5xx/timeout/network only, one optional
+:class:`~app.resilience.budget.AnalysisBudget` unit consumed per attempt.
 
 TRANSPORT, NEVER INTERPRET: canonical fields are surfaced verbatim as the
 source emitted them (identifiers stay strings; coordinates stay the source's
-JSON numbers); the full response ``address`` object rides along verbatim in
-``raw_fields``; suggestion selection is ALWAYS the caller's decision.
+JSON numbers, so an integer stays ``int``); the full response ``address``
+object rides along in ``raw_fields`` (a deep copy, so caller mutation cannot
+invalidate the outcome's own digest); suggestion selection is ALWAYS the
+caller's decision. CAUTION for consumers: ``grc_message``/``grc2_message``,
+``suggestions`` and ``raw_fields`` are UNSANITIZED source text that reflects
+caller input back (fixture G02's message quotes the user's typed street) —
+escape on render and never log them verbatim.
 """
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import os
@@ -61,26 +87,26 @@ import uuid
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from random import Random
 from typing import NoReturn
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
-from app.connectors.pluto_soda import canonical_json_digest
+from app.connectors.pluto_soda import CANONICALIZATION_SPEC, canonical_json_digest
+from app.resilience.budget import AnalysisBudget
 from app.resilience.transport import (
-    DEFAULT_OPENER,
     Transport,
     TransportResponse,
-    fixed_exponential_delay,
+    jittered_retry_after_delay,
     request_with_retry,
     standard_retry_hooks,
-)
-from app.resilience.transport import (
-    urllib_transport as _shared_urllib_transport,
+    urllib_transport,
 )
 
 __all__ = [
     "ENDPOINT_URL",
     "KEY_ENV_VAR",
     "KEY_HEADER",
+    "RESOLUTION_STATUSES",
     "SOURCE_ID",
     "AddressResolution",
     "AuthFailedError",
@@ -89,6 +115,7 @@ __all__ = [
     "KeyMissingError",
     "MalformedResponseError",
     "RateLimitedError",
+    "RequestBudgetExceededError",
     "SourceTimeoutError",
     "SourceUnavailableError",
     "resolve_address",
@@ -105,32 +132,51 @@ KEY_HEADER = "Ocp-Apim-Subscription-Key"
 DEFAULT_TIMEOUT_SECONDS = 10.0
 DEFAULT_MAX_ATTEMPTS = 3
 DEFAULT_BACKOFF_BASE_SECONDS = 0.5
+DEFAULT_BACKOFF_CAP_SECONDS = 30.0
+DEFAULT_RETRY_AFTER_CAP_SECONDS = 120.0
+
+# Caller-input length caps (G5 C4): fail closed before any I/O so oversized
+# input can never inflate retry logs, error payloads, or upstream quota use.
+# Geosupport house numbers and street names are short; these are generous.
+MAX_HOUSE_NUMBER_CHARS = 32
+MAX_STREET_CHARS = 120
+MAX_BOROUGH_CHARS = 32
+MAX_ZIP_CHARS = 16
 
 # GRC classes per User Guide Table 4 / UPG Appendix 4 (research section 2.7).
+# See the module docstring for the disclosed 50/75 narrowing.
 _GRC_SUCCESS = frozenset({"00"})
 _GRC_WARNING = frozenset({"01"})
 _GRC_AMBIGUOUS = frozenset({"EE"})
 _GRC_NOT_FOUND = frozenset({"11"})
-# A GRC is two characters, digits or uppercase letters, per every observed and
-# documented value. Anything outside this SHAPE is unrecognized and fails
-# closed (packet S8); anything of valid shape outside the sets above is the
-# documented reject/error class ("GRC > 01 = reject/error").
-_GRC_SHAPE_RE = re.compile(r"^[0-9A-Z]{2}$")
+# A GRC is exactly two characters, digits or uppercase letters, per every
+# observed and documented value. fullmatch, so a trailing newline is invalid
+# shape (fail closed), not a match.
+_GRC_SHAPE_RE = re.compile(r"[0-9A-Z]{2}")
 
-# Bound on how many streetName<i>/streetCode<i> suggestion slots are walked,
-# whatever numberOfStreetCodesAndNamesInList claims (hostile-count guard).
+# Bound on how many streetName<i>/streetCode<i> suggestion slots are walked.
+# The response's declared count (numberOfStreetCodesAndNamesInList) is NOT
+# trusted in either direction (G1 finding 4): the walk always covers all
+# slots up to this bound and surfaces every populated one; the declared
+# count remains available verbatim in raw_fields.
 _MAX_SUGGESTIONS = 32
 
-# Sanitizer for untrusted response text embedded in ERROR detail payloads
-# (M2-wave _safe_text pattern). Outcome fields carry source text verbatim —
-# they are data for the caller; error details reach logs.
-_SAFE_TEXT_RE = re.compile(r"^[A-Za-z0-9 .,:;'\"()\[\]/?_%=-]{1,300}$")
+# Sanitizer for untrusted response text embedded in ERROR detail payloads and
+# log lines (M2-wave _safe_text pattern, hardened per G5 C1/C2): fullmatch so
+# a trailing newline cannot split a log record, and the repr() fallback is
+# length-capped so a hostile value cannot inflate a record.
+_SAFE_TEXT_MAX_CHARS = 300
+_SAFE_TEXT_RE = re.compile(r"[A-Za-z0-9 .,:;'\"()\[\]/?_%=-]{1,300}")
+
+# Cap on how many response top-level keys a malformed-shape error reports
+# (G5 C3): enough to diagnose drift, never an amplification surface.
+_MAX_REPORTED_KEYS = 20
 
 
 def _safe_text(value: object) -> str:
-    if isinstance(value, str) and _SAFE_TEXT_RE.match(value):
+    if isinstance(value, str) and _SAFE_TEXT_RE.fullmatch(value):
         return value
-    return repr(value)
+    return repr(value)[:_SAFE_TEXT_MAX_CHARS]
 
 
 # ---------------------------------------------------------------------------
@@ -161,7 +207,8 @@ class GeoclientConnectorError(Exception):
 
 
 class InvalidInputError(GeoclientConnectorError):
-    """Caller input rejected before any network attempt."""
+    """Caller input rejected (type, presence, or length) before any network
+    attempt."""
 
     error_type = "invalid_input"
 
@@ -206,33 +253,28 @@ class MalformedResponseError(GeoclientConnectorError):
     error_type = "malformed_response"
 
 
-# ---------------------------------------------------------------------------
-# Transport seam (same accepted monkeypatch shape as the sibling connectors).
-# ---------------------------------------------------------------------------
+class RequestBudgetExceededError(GeoclientConnectorError):
+    """The caller-supplied per-analysis upstream request budget is exhausted
+    (one unit per attempt, consumed before I/O by the shared engine)."""
 
-_OPENER = DEFAULT_OPENER
-
-
-def urllib_transport(url: str, headers: dict[str, str], timeout: float) -> TransportResponse:
-    """Default stdlib transport via the shared hardened implementation
-    (bounded read, no redirect following — the subscription key header is
-    never re-sent to a redirect target)."""
-    return _shared_urllib_transport(url, headers, timeout, opener=_OPENER)
+    error_type = "request_budget_exceeded"
 
 
 # ---------------------------------------------------------------------------
 # Result contract
 # ---------------------------------------------------------------------------
 
-#: Outcome statuses, exhaustive:
+#: Outcome statuses, exhaustive. ``_classify`` can return nothing else, and a
+#: test pins that.
 #: - ``resolved``: both sub-call GRCs are 00.
 #: - ``resolved_with_warnings``: both GRCs in {00, 01}, at least one 01; the
-#:   warning messages are surfaced.
+#:   warning messages are surfaced on ``grc_message``/``grc2_message``.
 #: - ``ambiguous``: a GRC is EE — the source returned similar-name
 #:   suggestions, surfaced verbatim; the connector NEVER picks one.
 #: - ``not_found``: a GRC is 11 (not recognized, no similar names).
-#: - ``rejected``: any other valid-shape GRC (the documented reject/error
-#:   class, e.g. 42 ADDRESS NUMBER OUT OF RANGE).
+#: - ``rejected``: every other valid-shape GRC (the documented reject/error
+#:   class, e.g. 42 ADDRESS NUMBER OUT OF RANGE; also 50/75 — see the
+#:   disclosed narrowing in the module docstring).
 #: - ``unrecognized_status``: a GRC of invalid shape or absent — fail closed,
 #:   never success.
 RESOLUTION_STATUSES = (
@@ -247,10 +289,22 @@ RESOLUTION_STATUSES = (
 
 @dataclass
 class AddressResolution:
-    """Typed resolution outcome. Canonical fields are ``None`` when the
-    source omitted them (null omission — never fabricated). Identifier
-    fields (``bbl``, ``bin``, street codes) are strings verbatim;
-    ``latitude``/``longitude`` are the source's JSON numbers verbatim."""
+    """Typed resolution outcome.
+
+    Canonical fields are ``None`` when the source omitted them (null
+    omission — never fabricated); an empty-string source value is preserved
+    as ``""``. Identifier fields (``bbl``, ``bin``, street codes) are strings
+    verbatim; ``latitude``/``longitude`` are the source's JSON numbers
+    verbatim (an integer stays ``int``).
+
+    NOTE (deliberate, per the two-sub-call model): canonical fields may be
+    POPULATED on non-``resolved`` statuses — e.g. a ``not_found`` outcome
+    whose one valid sub-call still carried a ``bbl``, or a ``rejected``
+    outcome that still normalized the street name. The status, both GRC
+    codes and both messages are always surfaced so the caller can tell these
+    cases apart; consumers must branch on ``status``, never on field
+    presence.
+    """
 
     status: str
     correlation_id: str
@@ -266,8 +320,8 @@ class AddressResolution:
     street_name_normalized: str | None = None
     borough_name: str | None = None
     zip_code: str | None = None
-    latitude: float | None = None
-    longitude: float | None = None
+    latitude: float | int | None = None
+    longitude: float | int | None = None
     # Geosupport status, BOTH sub-calls, verbatim.
     grc: str | None = None
     grc_reason: str | None = None
@@ -275,11 +329,12 @@ class AddressResolution:
     grc2: str | None = None
     grc2_reason: str | None = None
     grc2_message: str | None = None
-    # EE similar-name suggestions, verbatim, in source order. Selection is
-    # the caller's (ultimately the user's) decision — never made here.
+    # EE similar-name suggestions, verbatim, in source slot order. Selection
+    # is the caller's (ultimately the user's) decision — never made here.
     suggestions: list[dict] = field(default_factory=list)
-    # The ENTIRE response "address" object, verbatim (transport honesty:
-    # 171 fields on the G01 fixture; callers take what they need).
+    # The ENTIRE response "address" object (deep copy — caller mutation can
+    # never invalidate provenance["response_digest"]). Unsanitized source
+    # text; see the module docstring's consumer caution.
     raw_fields: dict = field(default_factory=dict)
     provenance: dict = field(default_factory=dict)
 
@@ -288,16 +343,21 @@ class AddressResolution:
 # Internals
 # ---------------------------------------------------------------------------
 
+def _utc_now() -> datetime:
+    return datetime.now(UTC)
+
+
 def _rfc3339(moment: datetime) -> str:
     return moment.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _classify(grc: object, grc2: object) -> str:
     """Map the GRC pair to an outcome status. BOTH sub-calls always count
-    (packet S2): a clean success requires BOTH codes to be 00."""
+    (packet S2): a clean success requires BOTH codes to be exactly ``"00"``,
+    and a missing or shape-invalid code on EITHER side fails closed."""
     codes = (grc, grc2)
     shaped = [
-        c for c in codes if isinstance(c, str) and _GRC_SHAPE_RE.match(c)
+        c for c in codes if isinstance(c, str) and _GRC_SHAPE_RE.fullmatch(c)
     ]
     if len(shaped) != 2:
         return "unrecognized_status"
@@ -313,19 +373,17 @@ def _classify(grc: object, grc2: object) -> str:
 
 
 def _extract_suggestions(address: Mapping) -> list[dict]:
-    """EE similar-name list: ``streetName1..N``/``streetCode1..N`` with
-    ``numberOfStreetCodesAndNamesInList`` (shape recorded live, fixture G02).
-    The declared count is untrusted: it is bounds-clamped, and slots are also
-    walked past a missing index only up to the clamp. Entries are verbatim;
-    a slot with no street name is skipped, never fabricated."""
-    declared = address.get("numberOfStreetCodesAndNamesInList")
-    try:
-        count = int(str(declared))
-    except (TypeError, ValueError):
-        count = _MAX_SUGGESTIONS
-    count = max(0, min(count, _MAX_SUGGESTIONS))
+    """EE similar-name list: ``streetName1..N``/``streetCode1..N`` (shape
+    recorded live, fixture G02). The response's declared count
+    (``numberOfStreetCodesAndNamesInList``) is untrusted in BOTH directions
+    and is not consulted (G1 finding 4: trusting it downward would silently
+    discard suggestions the source actually returned): every slot up to
+    ``_MAX_SUGGESTIONS`` is walked, populated slots are surfaced verbatim in
+    slot order, empty or missing slots are skipped, and a slot with a name
+    but no code carries only the name. The declared count itself remains
+    available verbatim in ``raw_fields``."""
     suggestions: list[dict] = []
-    for i in range(1, count + 1):
+    for i in range(1, _MAX_SUGGESTIONS + 1):
         name = address.get(f"streetName{i}")
         if not isinstance(name, str) or not name:
             continue
@@ -338,17 +396,55 @@ def _extract_suggestions(address: Mapping) -> list[dict]:
 
 
 def _string_or_none(address: Mapping, key: str) -> str | None:
+    """Verbatim string transport: absent or non-string -> None; an
+    empty-string SOURCE VALUE is preserved as ``""`` (it is data, not
+    absence — the mirror image of the fabrication rule)."""
     value = address.get(key)
-    return value if isinstance(value, str) and value != "" else None
+    return value if isinstance(value, str) else None
 
 
-def _number_or_none(address: Mapping, key: str) -> float | None:
+def _number_or_none(address: Mapping, key: str) -> float | int | None:
+    """Verbatim number transport. bool is an int subclass; a boolean here
+    would be malformed, not a coordinate — treated as absent rather than
+    coerced. A string number is NOT parsed (transport, never interpret);
+    it remains available verbatim in raw_fields."""
     value = address.get(key)
-    # bool is an int subclass; a boolean here would be malformed, not a
-    # coordinate — treat it as absent rather than coercing.
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return value
     return None
+
+
+def _validated_input(
+    value: object, *, name: str, max_chars: int, required: bool, correlation_id: str
+) -> str | None:
+    """Type-, presence- and length-check one caller input (G1 finding 2 and
+    G5 C4): every rejection is a typed InvalidInputError BEFORE any network
+    attempt; no value content is echoed into the error."""
+    if value is None:
+        stripped = ""
+    elif isinstance(value, str):
+        stripped = value.strip()
+    else:
+        raise InvalidInputError(
+            f"{name} must be a string, got {type(value).__name__}",
+            correlation_id=correlation_id,
+            detail={"param": name, "received_type": type(value).__name__},
+        )
+    if not stripped:
+        if required:
+            raise InvalidInputError(
+                f"{name} is required",
+                correlation_id=correlation_id,
+                detail={"param": name},
+            )
+        return None
+    if len(stripped) > max_chars:
+        raise InvalidInputError(
+            f"{name} exceeds the {max_chars}-character bound",
+            correlation_id=correlation_id,
+            detail={"param": name, "length": len(stripped), "max_chars": max_chars},
+        )
+    return stripped
 
 
 def _request(
@@ -359,11 +455,20 @@ def _request(
     timeout: float,
     max_attempts: int,
     backoff_base: float,
+    backoff_cap: float,
+    retry_after_cap: float,
+    rng: Random,
     sleep: Callable[[float], None],
+    wall_clock: Callable[[], datetime],
     correlation_id: str,
+    budget: AnalysisBudget | None,
 ) -> TransportResponse:
-    """Bounded retry on 429/5xx/timeout/network failure only; 401/403 raise
-    AuthFailedError immediately (never retried, never body-echoed)."""
+    """Bounded retry on 429/5xx/timeout/network failure only, using the
+    shared M1-T009 jittered policy (honors upstream ``Retry-After`` within
+    ``retry_after_cap``; jitter decorrelates concurrent retries). 401/403
+    raise AuthFailedError immediately (never retried, never body-echoed);
+    every other unexpected status — refused 3xx redirects included — raises
+    SourceUnavailableError."""
 
     def _raise_for_unexpected_status(response: TransportResponse) -> NoReturn:
         if response.status in (401, 403):
@@ -409,10 +514,32 @@ def _request(
             ),
             include_reason_kind=True,
             raise_for_unexpected_status=_raise_for_unexpected_status,
+            budget_error=RequestBudgetExceededError,
         ),
-        compute_delay=fixed_exponential_delay(backoff_base),
+        compute_delay=jittered_retry_after_delay(
+            backoff_base=backoff_base,
+            backoff_cap=backoff_cap,
+            retry_after_cap=retry_after_cap,
+            rng=rng,
+            wall_clock=wall_clock,
+        ),
         sleep=sleep,
+        budget=budget,
     )
+
+
+def _malformed_shape_detail(url: str, parsed: object) -> dict:
+    """Bounded diagnosis of a 200 body without the documented shape (G5 C3):
+    at most ``_MAX_REPORTED_KEYS`` sanitized key names, each length-capped,
+    with an explicit truncation marker — never an amplification surface."""
+    if not isinstance(parsed, dict):
+        return {"url": url, "body_shape": _safe_text(type(parsed).__name__)}
+    keys = sorted(map(_safe_text, parsed.keys()))
+    detail: dict = {"url": url, "top_level_keys": keys[:_MAX_REPORTED_KEYS]}
+    if len(keys) > _MAX_REPORTED_KEYS:
+        detail["top_level_keys_truncated"] = True
+        detail["top_level_key_count"] = len(keys)
+    return detail
 
 
 # ---------------------------------------------------------------------------
@@ -430,37 +557,49 @@ def resolve_address(
     timeout: float = DEFAULT_TIMEOUT_SECONDS,
     max_attempts: int = DEFAULT_MAX_ATTEMPTS,
     backoff_base: float = DEFAULT_BACKOFF_BASE_SECONDS,
+    backoff_cap: float = DEFAULT_BACKOFF_CAP_SECONDS,
+    retry_after_cap: float = DEFAULT_RETRY_AFTER_CAP_SECONDS,
+    rng: Random | None = None,
     sleep: Callable[[float], None] = time.sleep,
+    clock: Callable[[], datetime] = _utc_now,
     env: Mapping[str, str] | None = None,
+    budget: AnalysisBudget | None = None,
 ) -> AddressResolution:
     """Resolve one address through Geoclient v2 ``/address``.
 
     ``borough`` or ``zip_code`` is required (endpoint contract, research
     section 2.2). The subscription key comes from ``key`` or, when ``None``,
     from the ``GEOCLIENT_SUBSCRIPTION_KEY`` environment variable AT CALL
-    TIME; a missing key raises :class:`KeyMissingError` before any network
-    attempt. The key is sent only as the ``Ocp-Apim-Subscription-Key``
-    header and appears nowhere in the returned outcome, its provenance, any
-    error, or any log line.
+    TIME (never captured at import); an explicitly passed empty/whitespace
+    ``key`` does NOT fall back to the environment. A missing key raises
+    :class:`KeyMissingError` before any network attempt. The key is sent
+    only as the ``Ocp-Apim-Subscription-Key`` header and appears nowhere in
+    the returned outcome, its provenance, any error, or any log line.
 
     Geocoding outcomes (success / warnings / ambiguous / not found /
     rejected / unrecognized) RETURN an :class:`AddressResolution`; transport,
-    auth and input failures RAISE typed :class:`GeoclientConnectorError`
-    subclasses.
+    auth, budget and input failures RAISE typed
+    :class:`GeoclientConnectorError` subclasses.
     """
     correlation_id = uuid.uuid4().hex
 
-    house_number_in = (house_number or "").strip()
-    street_in = (street or "").strip()
-    borough_in = borough.strip() if isinstance(borough, str) and borough.strip() else None
-    zip_in = zip_code.strip() if isinstance(zip_code, str) and zip_code.strip() else None
-    if not house_number_in or not street_in:
-        raise InvalidInputError(
-            "house_number and street are both required",
-            correlation_id=correlation_id,
-            detail={"house_number_present": bool(house_number_in),
-                    "street_present": bool(street_in)},
-        )
+    house_number_in = _validated_input(
+        house_number, name="house_number", max_chars=MAX_HOUSE_NUMBER_CHARS,
+        required=True, correlation_id=correlation_id,
+    )
+    street_in = _validated_input(
+        street, name="street", max_chars=MAX_STREET_CHARS,
+        required=True, correlation_id=correlation_id,
+    )
+    borough_in = _validated_input(
+        borough, name="borough", max_chars=MAX_BOROUGH_CHARS,
+        required=False, correlation_id=correlation_id,
+    )
+    zip_in = _validated_input(
+        zip_code, name="zip_code", max_chars=MAX_ZIP_CHARS,
+        required=False, correlation_id=correlation_id,
+    )
+    assert house_number_in is not None and street_in is not None  # noqa: S101
     if borough_in is None and zip_in is None:
         raise InvalidInputError(
             "either borough or zip_code is required (Geoclient /address "
@@ -469,9 +608,12 @@ def resolve_address(
             detail={},
         )
 
-    source = os.environ if env is None else env
-    resolved_key = key if key is not None else source.get(KEY_ENV_VAR)
-    resolved_key = resolved_key.strip() if isinstance(resolved_key, str) else None
+    if key is not None:
+        resolved_key: str | None = key.strip() if isinstance(key, str) else None
+    else:
+        source = os.environ if env is None else env
+        raw_key = source.get(KEY_ENV_VAR)
+        resolved_key = raw_key.strip() if isinstance(raw_key, str) else None
     if not resolved_key:
         raise KeyMissingError(
             f"no Geoclient subscription key available: pass key= or set the "
@@ -486,18 +628,32 @@ def resolve_address(
         params["borough"] = borough_in
     if zip_in is not None:
         params["zip"] = zip_in
-    url = f"{ENDPOINT_URL}?{urlencode(params)}"
+    # quote_via=quote: percent-encoding (%20 for spaces), the exact encoding
+    # the recorded fixtures' request_url fields were captured with (G4
+    # finding 5); default urlencode would emit '+', which no fixture
+    # documents as accepted by the gateway.
+    url = f"{ENDPOINT_URL}?{urlencode(params, quote_via=quote)}"
     headers = {"Accept": "application/json", KEY_HEADER: resolved_key}
+
+    # Resolved at CALL time (not bound as a parameter default) so the seam
+    # stays monkeypatchable and the no-network guard tests stay meaningful.
+    if transport is None:
+        transport = urllib_transport
 
     response = _request(
         url,
-        transport=transport if transport is not None else urllib_transport,
+        transport=transport,
         headers=headers,
         timeout=timeout,
         max_attempts=max_attempts,
         backoff_base=backoff_base,
+        backoff_cap=backoff_cap,
+        retry_after_cap=retry_after_cap,
+        rng=rng if rng is not None else Random(),
         sleep=sleep,
+        wall_clock=clock,
         correlation_id=correlation_id,
+        budget=budget,
     )
 
     try:
@@ -506,22 +662,20 @@ def resolve_address(
         raise MalformedResponseError(
             "Geoclient returned HTTP 200 with a non-JSON body",
             correlation_id=correlation_id,
-            detail={"url": url, "body_bytes": len(response.body)},
+            detail={"url": url, "body_chars": len(response.body)},
         ) from None
     if not isinstance(parsed, dict) or not isinstance(parsed.get("address"), dict):
         raise MalformedResponseError(
             "Geoclient returned HTTP 200 without the documented "
             "{'address': {...}} shape",
             correlation_id=correlation_id,
-            detail={
-                "url": url,
-                "top_level_keys": sorted(map(_safe_text, parsed.keys()))
-                if isinstance(parsed, dict) else _safe_text(type(parsed).__name__),
-            },
+            detail=_malformed_shape_detail(url, parsed),
         )
     address: dict = parsed["address"]
 
-    retrieved_at = _rfc3339(datetime.now(UTC))
+    # Stamped AFTER the successful parse, deliberately: retrieved_at
+    # describes the response the outcome carries, not an attempt.
+    retrieved_at = _rfc3339(clock())
     grc = address.get("geosupportReturnCode")
     grc2 = address.get("geosupportReturnCode2")
     status = _classify(grc, grc2)
@@ -547,7 +701,7 @@ def resolve_address(
         grc2_reason=_string_or_none(address, "reasonCode2"),
         grc2_message=_string_or_none(address, "message2"),
         suggestions=_extract_suggestions(address) if status == "ambiguous" else [],
-        raw_fields=address,
+        raw_fields=copy.deepcopy(address),
         provenance={
             "source_id": SOURCE_ID,
             "endpoint": ENDPOINT_URL,
@@ -559,6 +713,7 @@ def resolve_address(
             "reason_code": _string_or_none(address, "reasonCode"),
             "reason_code2": _string_or_none(address, "reasonCode2"),
             "response_digest": canonical_json_digest(parsed),
+            "digest_canonicalization": CANONICALIZATION_SPEC,
             "correlation_id": correlation_id,
         },
     )

@@ -23,12 +23,14 @@
     },
     "status_model": {
       "http": "200 = request reached Geoclient regardless of geocoding outcome; 400 missing required parameter; 401/403 key problems; 404 bad URL; 500 internal (research section 2.7)",
-      "geocoding": "Geosupport return codes INSIDE the 200 body; /address is TWO sub-calls and BOTH must be checked (geosupportReturnCode/returnCode1e AND geosupportReturnCode2/returnCode1a). 00 success; 01 success with warnings; EE street-not-recognized WITH similar-name suggestions (streetName1..N / streetCode1..N / numberOfStreetCodesAndNamesInList - shape recorded live in fixture G02); 11 not recognized, no similar names; every other code is the documented reject/error class (42 ADDRESS NUMBER OUT OF RANGE recorded live in fixture G03)."
+      "geocoding": "Geosupport return codes INSIDE the 200 body; /address is TWO sub-calls and BOTH must be checked (geosupportReturnCode/returnCode1e AND geosupportReturnCode2/returnCode1a). 00 success; 01 success with warnings; EE street-not-recognized WITH similar-name suggestions (streetName1..N / streetCode1..N / numberOfStreetCodesAndNamesInList - shape recorded live in fixture G02); 11 not recognized, no similar names. KNOWN NARROWING (disclosed per the M2-T021 G3 gate): UPG Appendix 4 also documents GRC 50 ('invalid street name for this location', reason code = number of valid alternatives) and 75 ('DUPLICATE ADDRESS - USE pseudo-streetname1 OR 2') as alternative-carrying classes; the consuming connector classifies every code outside {00,01,EE,11} - 50 and 75 included - into the reject/error class and extracts no alternatives from them, because no recorded fixture pins their response shape (42 ADDRESS NUMBER OUT OF RANGE is the recorded reject example, fixture G03). Widening requires a capture task (MVP_AGENDA C4)."
     },
     "response_semantics": {
       "null_omission": "Geoclient omits null fields per response - absence of a key is not evidence of absence of data; the G01 fixture carries 171 populated fields (research section 2.5)",
       "identifiers": "bbl, buildingIdentificationNumber and street codes are STRINGS and are transported verbatim (never numerically coerced)",
-      "coordinates": "latitude/longitude are JSON numbers (decimal degrees); x/yCoordinate are NY-Long Island State Plane strings; blockface-level coordinates are approximations (research section 2.6)"
+      "coordinates": "latitude/longitude are JSON numbers (decimal degrees); x/yCoordinate are NY-Long Island State Plane strings; blockface-level coordinates are approximations (research section 2.6)",
+      "reflected_input_warning": "Response message fields and suggestion names ECHO the caller's typed input back (fixture G02's message quotes the misspelled street verbatim). The connector transports them unsanitized by design; every consumer must escape them on render and never log them verbatim.",
+      "empty_string_rule": "An empty-string source value is preserved verbatim by the connector (data, not absence); only an OMITTED field maps to null/None."
     },
     "data_currency": "Bounded by the Geosupport release loaded on the server; /v2/version reports the live Geosupport version (research section 2.8) - candidate health-check endpoint, not yet consumed",
     "recorded_fixtures": [

@@ -224,6 +224,27 @@ still stands.
 
 ---
 
+## C4. Wave-wide sanitizer newline defect + M2-T021 carry-forwards
+
+Found by the M2-T021 gate wave (2026-09-11).
+
+- **The `$`-anchored `_SAFE_TEXT_RE` pattern lets a single trailing newline through `re.match`**
+  (Python's `$` matches before a trailing newline), so a hostile upstream value of safe charset
+  plus `\n` can split a log record and forge a follow-on line. Fixed with `re.fullmatch` in the
+  new `geoclient_address.py`; the SAME pattern ships in three accepted connectors —
+  `mappluto_geometry_arcgis.py:314`, `zoning_features_arcgis.py:266`, `ztldb_soda.py:345` — plus
+  the unbounded `repr()` fallback. Small packet: fullmatch + length-cap all three, mirror tests.
+- **Carry-forwards from the M2-T021 wave, owed to the consuming packets:** GRC `50`/`75` are
+  documented alternative-carrying classes but classify as plain `rejected` with suggestions
+  dropped (needs a recorded fixture before widening — capture task); Geoclient outcomes carry
+  UNSANITIZED source text that reflects caller input (`grc_message`, `suggestions`,
+  `raw_fields`) — every consumer must escape on render; the connector emits an
+  `AddressResolution`, not `source_fact`-shaped facts — the endpoint packet that consumes it
+  must map to the contract and prove consumability; no natural GRC `01` (warning) or
+  multi-suggestion capture exists yet.
+
+---
+
 ## D. Flags the program should surface but currently cannot
 
 Each is a separate mapped data source. None currently connected.
@@ -336,11 +357,17 @@ owner to confirm Blueprint **Auto Sync = No**. The service URL is PRIVATE STAGIN
 has no auth, internal flags are unset (sensitive routes 404), do not share the URL.
 B-002 is therefore exercised for the API only.
 
-- **`GEOCLIENT_SUBSCRIPTION_KEY` — DONE end to end (2026-09-11).** On Render, AND on the owner's
-  machine (§J1 executed): the first recorded live call landed as
+- **`GEOCLIENT_SUBSCRIPTION_KEY` — DONE end to end (2026-09-11); blocker B-004 RESOLVED.** On
+  Render, AND on the owner's machine (§J1 executed: the owner provisioned the key and authorized
+  the capture; the orchestrator ran the recorded GET). First recorded live call:
   `services/api/tests/fixtures/geoclient/G01_address_documented_example.json` — the User Guide's
   own documented example address, both Geosupport sub-calls `00`, 171 fields, key-absence
-  verified before commit. The address-entry connector task is now unblocked for contracting.
+  verified before commit. Key first recorded as in the owner's possession on 2026-09-11 (no
+  earlier acquisition date is documented anywhere in the tree). The owner holds a second,
+  fallback key offline; it is stored nowhere.
+- **OWNER DIRECTIVE (2026-09-11, live session, verbatim): "go ahead with the address entry
+  connector."** Given after the J1 capture and its why-explanation; discharged as task M2-T021.
+  Recorded here so citations to this directive resolve to a control-plane document.
   NOTE for §B2 (wide-street): the recorded response carries `streetWidth` / `streetWidthMaximum`
   per address — Geoclient itself is a candidate street-width source; evaluate when scoping that
   task. Fallback key held offline by the owner, never stored anywhere.
