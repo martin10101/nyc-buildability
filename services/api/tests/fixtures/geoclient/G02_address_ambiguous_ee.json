@@ -1,0 +1,13 @@
+{
+  "fixture_id": "G02",
+  "title": "G02 ambiguity - misspelled street returns GRC EE with a similar-name suggestion",
+  "endpoint": "GET https://api.nyc.gov/geoclient/v2/address",
+  "request_url": "https://api.nyc.gov/geoclient/v2/address?houseNumber=314&street=w%20100%20sreet&borough=manhattan",
+  "auth": "Ocp-Apim-Subscription-Key header; the key is NOT stored in this fixture, the URL, or anywhere in the repository",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-09-11T19:55:00Z",
+  "capture_method": "live GET by the M2-T021 producer from the owner machine holding the subscription key (packet path note; MVP_AGENDA J1 protocol), single KB-scale request; key-absence in body verified programmatically before commit",
+  "response_sha256": "6e7c6e35db17c922dd8d34e231ef5a613d229704887804cb7154f225ca76a906",
+  "notes": "Deliberately misspelled street (w 100 sreet) to record the REAL EE response shape: both sub-call GRCs EE, reasonCode 1, message quoting the input and suggesting WEST 100 STREET, suggestions carried as streetName1/streetCode1 with numberOfStreetCodesAndNamesInList=01. This is the fixture that pins the suggestion-list field names so the connector never guesses them.",
+  "response_body_raw": "{\"address\":{\"boroughCode1In\":\"1\",\"crossStreetNamesFlagIn\":\"E\",\"firstBoroughName\":\"MANHATTAN\",\"firstStreetNameNormalized\":\"WEST  100 SREET\",\"geosupportFunctionCode\":\"1B\",\"geosupportReturnCode\":\"EE\",\"geosupportReturnCode2\":\"EE\",\"houseNumber\":\"314\",\"houseNumberIn\":\"314\",\"houseNumberSortFormat\":\"000314000AA\",\"message\":\"'W 100 SREET' NOT RECOGNIZED. IS IT 'WEST  100 STREET'?\",\"message2\":\"'W 100 SREET' NOT RECOGNIZED. IS IT 'WEST  100 STREET'?\",\"numberOfStreetCodesAndNamesInList\":\"01\",\"reasonCode\":\"1\",\"reasonCode1a\":\"1\",\"reasonCode1e\":\"1\",\"reasonCode2\":\"1\",\"returnCode1a\":\"EE\",\"returnCode1e\":\"EE\",\"streetCode1\":\"13577001\",\"streetName1\":\"WEST  100 STREET\",\"streetName1In\":\"W 100 SREET\",\"workAreaFormatIndicatorIn\":\"C\"}}"
+}

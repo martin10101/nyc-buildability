@@ -1,0 +1,46 @@
+[
+  {
+    "source_id": "nyc-oti-geoclient-v2",
+    "agency": "NYC Office of Technology and Innovation (OTI); Geosupport by NYC Department of City Planning (DCP)",
+    "name": "Geoclient v2 — official NYC geocoding API (Geosupport proxy) behind the NYC API Developers Portal",
+    "official_url": "https://api.nyc.gov/geoclient/v2",
+    "source_type": "official_api_gateway_rest",
+    "endpoints_used": {
+      "/address": "Geosupport Function 1B: house number + street + (borough | zip) -> canonical address, BBL, BIN, coordinates, political/administrative attributes. Params houseNumber (required), street (required), borough (required if zip absent), zip (required if borough absent). Evidence: docs/research/M0-T002-geoclient-address-resolution.md section 2.2 (User Guide Table 1 + section 3, retrieved 2026-07-14); base URL from the maintainer's geoclient-examples README."
+    },
+    "authentication": {
+      "required": true,
+      "method": "subscription key in the Ocp-Apim-Subscription-Key HTTP header (documented method). The undocumented query-string alternative is deliberately not used so the key never appears in a URL.",
+      "key_env_var": "GEOCLIENT_SUBSCRIPTION_KEY",
+      "key_storage": "owner machine user environment + Render dashboard (sync:false) ONLY; never in the repository, fixtures, logs, errors, or provenance",
+      "evidence": "docs/research/M0-T002-geoclient-address-resolution.md section 2.3 (Geoclient User Guide sections 7/7.1, retrieved 2026-07-14)"
+    },
+    "rate_limits": {
+      "official": "UNKNOWN - no rate limit stated in the User Guide or any publicly accessible portal page (research section 2.4, retrieved 2026-07-14); Azure APIM products typically carry quotas visible after portal sign-in",
+      "third_party_unverified": "2,500 requests/minute and 500,000/day claimed by a non-official repository - treat as unverified",
+      "throttle_signal": "HTTP 429 assumed via the APIM gateway; the connector retries 429 within a small bounded budget only",
+      "connector_posture": "single KB-scale requests; live fixture captures are hand-counted and polite"
+    },
+    "status_model": {
+      "http": "200 = request reached Geoclient regardless of geocoding outcome; 400 missing required parameter; 401/403 key problems; 404 bad URL; 500 internal (research section 2.7)",
+      "geocoding": "Geosupport return codes INSIDE the 200 body; /address is TWO sub-calls and BOTH must be checked (geosupportReturnCode/returnCode1e AND geosupportReturnCode2/returnCode1a). 00 success; 01 success with warnings; EE street-not-recognized WITH similar-name suggestions (streetName1..N / streetCode1..N / numberOfStreetCodesAndNamesInList - shape recorded live in fixture G02); 11 not recognized, no similar names; every other code is the documented reject/error class (42 ADDRESS NUMBER OUT OF RANGE recorded live in fixture G03)."
+    },
+    "response_semantics": {
+      "null_omission": "Geoclient omits null fields per response - absence of a key is not evidence of absence of data; the G01 fixture carries 171 populated fields (research section 2.5)",
+      "identifiers": "bbl, buildingIdentificationNumber and street codes are STRINGS and are transported verbatim (never numerically coerced)",
+      "coordinates": "latitude/longitude are JSON numbers (decimal degrees); x/yCoordinate are NY-Long Island State Plane strings; blockface-level coordinates are approximations (research section 2.6)"
+    },
+    "data_currency": "Bounded by the Geosupport release loaded on the server; /v2/version reports the live Geosupport version (research section 2.8) - candidate health-check endpoint, not yet consumed",
+    "recorded_fixtures": [
+      "services/api/tests/fixtures/geoclient/G01_address_documented_example.json (happy path, both GRCs 00, the User Guide documented example address)",
+      "services/api/tests/fixtures/geoclient/G02_address_ambiguous_ee.json (GRC EE with similar-name suggestion, recorded live 2026-09-11)",
+      "services/api/tests/fixtures/geoclient/G03_address_rejected_42.json (GRC 42 ADDRESS NUMBER OUT OF RANGE, recorded live 2026-09-11)"
+    ],
+    "consuming_connector": "services/api/app/connectors/geoclient_address.py (task M2-T021)",
+    "known_limitations": [
+      "v1 is deprecated with an unpublished deactivation date; only v2 is used",
+      "attribute availability varies by location; many locations are valid for only one of the two /address sub-calls",
+      "streetWidth in the /address response is the PAVED width (LION), not the mapped legal street width - killed for ZR wide-street use by docs/research/street-width-source-pilot-2026-09-11.md; advisory only"
+    ]
+  }
+]

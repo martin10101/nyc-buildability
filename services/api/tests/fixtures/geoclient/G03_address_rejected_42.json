@@ -1,0 +1,13 @@
+{
+  "fixture_id": "G03",
+  "title": "G03 rejection - out-of-range house number returns GRC 42 ADDRESS NUMBER OUT OF RANGE",
+  "endpoint": "GET https://api.nyc.gov/geoclient/v2/address",
+  "request_url": "https://api.nyc.gov/geoclient/v2/address?houseNumber=99999&street=w%20100%20st&borough=manhattan",
+  "auth": "Ocp-Apim-Subscription-Key header; the key is NOT stored in this fixture, the URL, or anywhere in the repository",
+  "http_status": 200,
+  "retrieval_timestamp_utc": "2026-09-11T19:55:00Z",
+  "capture_method": "live GET by the M2-T021 producer from the owner machine holding the subscription key (packet path note; MVP_AGENDA J1 protocol), single KB-scale request; key-absence in body verified programmatically before commit",
+  "response_sha256": "675d9bd92a952bfc878598ee4cccdf9c4d23ad493dd93d65db1a647a15cbc3d7",
+  "notes": "House number 99999 on a real street records the REAL reject-class response: both sub-call GRCs 42, message ADDRESS NUMBER OUT OF RANGE, street still normalized (firstStreetNameNormalized WEST 100 STREET) - proof that a reject response still carries partial data that must be transported, never promoted to success.",
+  "response_body_raw": "{\"address\":{\"boroughCode1In\":\"1\",\"crossStreetNamesFlagIn\":\"E\",\"firstBoroughName\":\"MANHATTAN\",\"firstStreetCode\":\"13577001010\",\"firstStreetNameNormalized\":\"WEST  100 STREET\",\"geosupportFunctionCode\":\"1B\",\"geosupportReturnCode\":\"42\",\"geosupportReturnCode2\":\"42\",\"houseNumber\":\"99999\",\"houseNumberIn\":\"99999\",\"houseNumberSortFormat\":\"099999000AA\",\"message\":\"ADDRESS NUMBER OUT OF RANGE\",\"message2\":\"ADDRESS NUMBER OUT OF RANGE\",\"returnCode1a\":\"42\",\"returnCode1e\":\"42\",\"streetName1In\":\"W 100 ST\",\"workAreaFormatIndicatorIn\":\"C\"}}"
+}
