@@ -56,8 +56,8 @@
     "data-contract-verifier",
     "human-journey-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 85,
   "risks": [
     "TRANSCRIPTION DRIFT is the primary risk: ~30 districts of hand-copied decimals. Mitigated by AS-1 requiring tests to load the snapshot rather than restate the value.",
     "COPYING THE KNOWN DEFECT FORWARD: r5_residential_far.rule.json carries the footnote-1 0.60 cap on the R5 family, where the source does not impose it (see the zr-23-21 recapture commit 17e8eb78). Reuse its STRUCTURE, not that exception. AS-4 exists to catch this.",
@@ -65,7 +65,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-11T03:51:47.534578+00:00",
-  "updated_at": "2026-09-11T03:54:27.158541+00:00",
+  "updated_at": "2026-09-11T06:48:35.557680+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -85,5 +85,14 @@
     "allowed_paths use ** globs deliberately: a trailing-slash directory never matches under policy.py path_matches, which is what silently defers every worker write. r5_residential_far.rule.json is in forbidden_paths so the existing accepted-shape pilot cannot be edited by this packet - read it as the template, author new files alongside it.",
     "r5_residential_far.rule.json is deliberately IN scope (removed from forbidden_paths): the rulesets/** allow-glob would have won over a forbidden entry anyway, and AS-9 requires editing it. Its FAR values must not change - only the misattributed footnote-1 exception moves.",
     "DUAL-FORM allowed_paths, deliberate and load-bearing. Two different matchers govern this list and they want OPPOSITE forms. (1) policy.py path_matches decides whether a worker file-write auto-approves; a trailing-slash or bare directory is NO match there, so every write would defer as 'outside allowed_paths' and the loop would look busy while building nothing. It needs ** globs. (2) directive_registry.git_tree_manifest backs the content-identity stamp via `git ls-tree -r <commit> -- <paths>`; a /** pathspec matches ZERO objects there (measured: 0 vs 7 for the plain directory), which trips the empty-identity guard and refuses the gate. It needs plain paths. Listing BOTH forms satisfies both. Recorded because a packet that satisfies only one fails silently in opposite directions."
+  ],
+  "progress_log": [
+    {
+      "at": "2026-09-11T06:48:35.557680+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer output LANDED at ae117874 on task/M4-T009-r1r12-far (loop runs 30-33, Opus, limited-auto). Every run ended on checkpoint transport, never on the work: run 30 unit-timeout 1500s; runs 31 and 33 the worker wrote abbreviated starting_sha and the controller refused fail-closed per S14 (2 of 5 checkpoints). Resolved per the evidence-capture division of labor by orchestrator out-of-loop verification: snapshot base repaired first at 3c46f923 (bundle sync + C3 v1 digest/provenance conformance, from candidate 48cd58a5+a8b82a43 - the branch base was missing zr-23-22 from the runtime bundle entirely, so no run could ever have gone green); then scope verified (all 11 paths inside allowed_paths), services/api tests/rules 359 passed 0 failed, ruff clean after five E501 wraps (197156b9). Producer report honestly marks AS-5 UNRESOLVED: rules do not yet record citation content_digest_sha256; the representation decision it routed to the orchestrator is now available - C3 resolved the digest convention as v1 sha256(verbatim_excerpt), corrected in the base - so a small follow-up unit should add the digest to citations[] plus the AS-5 comparison test before the gate wave. Branch unpushed; gates NOT run."
+    }
   ]
 }
