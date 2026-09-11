@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { coverageDisplay } from "@/lib/coverage";
+import { boundedText } from "@/lib/bounded";
+import { completenessDisplay, coverageDisplay } from "@/lib/coverage";
 import { formatValue } from "@/lib/format";
-import {
-  baseDistrictCandidates,
-  findConstraint,
-  SCENARIO_KIND_LABELS,
-} from "@/lib/scenario-display";
+import { SCENARIO_KIND_LABELS } from "@/lib/scenario-display";
 import type { Scenario } from "@/lib/scenario-contract";
 import { CoverageMatrixSection } from "./CoverageMatrixSection";
+import { NoScenarioBlock } from "./NoScenarioBlock";
+import { ScenarioAssumptions } from "./ScenarioAssumptions";
 import { ScenarioCard } from "./ScenarioCard";
+import { IntegrityCheckBlock, ScenarioConstraints } from "./ScenarioConstraints";
+import { ScenarioProvenance } from "./ScenarioProvenance";
+import { ScenarioReasons } from "./ScenarioReasons";
 
 /**
  * Success document renderer for the Compare (Step 3) screen (task M5-T004).
@@ -16,67 +18,18 @@ import { ScenarioCard } from "./ScenarioCard";
  * Renders the honesty-preserving Step-3 blocks from PRODUCT_FLOW §"Step 3 —
  * Compare": maximum preliminary development potential, the practical-usable-
  * range disclosure, the ranked scenario card (or the no_scenario reason +
- * preserved share ranges), the optimized objective + score breakdown, the
- * coverage labels + rule gaps, the main opportunity + main risk, and one clear
- * next action. Every value comes from the validated document; nothing is
+ * preserved share ranges), the optimized objective, the constraint breakdown,
+ * the coverage labels + rule gaps, the main opportunity + main risk, and one
+ * clear next action. Every value comes from the validated document; nothing is
  * computed, ranked, or invented in the client.
+ *
+ * COMPOSITION IS THE FIX (M5-T004 rework). The two branches used to be
+ * DISJOINT — `reasons` rendered only on the no_scenario side, `constraints` and
+ * `integrity_check` only on the preliminary side — so NEITHER branch ever
+ * showed the whole document (G4-4, DCV-5/10). Everything that belongs to the
+ * document rather than to one branch is now mounted here, once, for every
+ * branch; only the cap card and the no-scenario block are branch-specific.
  */
-
-/** Block 1 for a no_scenario / unsupported document: an INFORMATIVE "no
- * maximum can be stated" block with the reasons — never an error. Also carries
- * block 3 (review label + preserved share ranges), which the ScenarioCard
- * carries for the preliminary case. */
-function NoScenarioBlock({ document }: { document: Scenario }) {
-  const candidates = baseDistrictCandidates(findConstraint(document, "zoning_district"));
-  return (
-    <section className="card" data-testid="scenario-no-scenario">
-      <h3 className="section-title">
-        {SCENARIO_KIND_LABELS[document.scenario_kind]} — no maximum can be stated
-      </h3>
-      <p>
-        No draft maximum development potential could be stated for this property.
-        This is an informative result from the deterministic engine, not an
-        error: the reasons below explain what stopped a scenario, and any
-        preserved ranges are shown rather than collapsed into a single value.
-      </p>
-      {document.professional_review_required ? (
-        <p className="status-label" data-testid="scenario-review-required">
-          Professional review required before any reliance.
-        </p>
-      ) : null}
-
-      <h4 className="section-subtitle">Why no scenario was produced</h4>
-      <ul className="missing-list" data-testid="scenario-reasons">
-        {document.reasons.map((reason) => (
-          <li key={reason}>{reason}</li>
-        ))}
-      </ul>
-
-      {candidates.length > 0 ? (
-        <>
-          <h4 className="section-subtitle">
-            Preserved base-district share ranges (never collapsed)
-          </h4>
-          <ul className="missing-list" data-testid="scenario-share-ranges">
-            {candidates.map((candidate, index) => (
-              <li
-                key={`${candidate.districtLabel ?? "district"}-${index}`}
-                data-testid="scenario-share-range"
-              >
-                <strong>{candidate.districtLabel ?? "Unlabelled district"}</strong>
-                {": "}
-                share range min {formatValue(candidate.shareMin)} / point{" "}
-                {formatValue(candidate.sharePoint)} / max{" "}
-                {formatValue(candidate.shareMax)}
-                {candidate.minorPortion ? " (minor portion)" : ""}
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </section>
-  );
-}
 
 /** Block 2: the honest practical-usable-range disclosure. The cap is a draft
  * zoning-floor-area cap, NOT gross/net/sellable/feasible area or a buildable
@@ -85,7 +38,7 @@ function NoScenarioBlock({ document }: { document: Scenario }) {
 function PracticalRangeBlock() {
   return (
     <section className="card" data-testid="scenario-practical-range">
-      <h3 className="section-title">Practical usable range</h3>
+      <h2 className="section-title">Practical usable range</h2>
       <p>
         A practical usable range (gross, net, sellable, or feasible floor area,
         or a buildable envelope) cannot be derived yet. The value above is a
@@ -99,14 +52,112 @@ function PracticalRangeBlock() {
   );
 }
 
+/**
+ * The identity binding. Before the rework the heading printed the BBL from the
+ * `?bbl=` URL parameter and `document.evaluated_input.bbl` was never read, so a
+ * document returned for a DIFFERENT property was indistinguishable on screen —
+ * an authored identity on a legally sensitive page (DCV CRITICAL-2, G1-7). The
+ * shipped test demonstrated it live: it rendered `bbl="1000010100"` over
+ * fixtures that all state `evaluated_input.bbl = "1000477501"`, and nothing
+ * detected it.
+ *
+ * The document's own BBL is now the identity shown, a null is stated as "not
+ * stated" (the RuleEvaluationResult.tsx:87 precedent), and a disagreement is
+ * SURFACED rather than papered over.
+ */
+function IdentityMismatchNotice({
+  evaluatedBbl,
+  requestedBbl,
+}: {
+  evaluatedBbl: string | null;
+  requestedBbl: string;
+}) {
+  if (evaluatedBbl === null) {
+    return (
+      <p className="status-label" data-testid="scenario-bbl-not-stated">
+        This document does not state which BBL it was evaluated for. It was
+        requested for BBL {requestedBbl}, but that is this screen&apos;s request,
+        not the document&apos;s own claim.
+      </p>
+    );
+  }
+  if (evaluatedBbl === requestedBbl) return null;
+  return (
+    <p className="status-label" data-testid="scenario-bbl-mismatch">
+      IDENTITY MISMATCH — this scenario states it was evaluated for BBL{" "}
+      {evaluatedBbl}, but it was requested for BBL {requestedBbl}. Do not treat
+      anything below as describing BBL {requestedBbl}. Both values are shown;
+      nothing has been reconciled.
+    </p>
+  );
+}
+
+function ScenarioSummary({
+  document,
+  requestedBbl,
+}: {
+  document: Scenario;
+  requestedBbl: string;
+}) {
+  const coverage = coverageDisplay(document.coverage_status);
+  const completeness = completenessDisplay(document.data_completeness);
+  const evaluatedBbl =
+    document.evaluated_input.bbl === null
+      ? null
+      : boundedText(document.evaluated_input.bbl, "");
+  return (
+    <section className="card" data-testid="scenario-summary">
+      {/* Success-outcome focus target (mirrors ConfirmCard). */}
+      <h2 className="section-title" tabIndex={-1} data-outcome-heading>
+        Step 3 — Preliminary comparison for BBL{" "}
+        <span data-testid="scenario-heading-bbl">
+          {evaluatedBbl === null || evaluatedBbl === "" ? "not stated" : evaluatedBbl}
+        </span>
+      </h2>
+      <IdentityMismatchNotice
+        evaluatedBbl={evaluatedBbl === "" ? null : evaluatedBbl}
+        requestedBbl={requestedBbl}
+      />
+
+      {/* The document's OWN completeness verdict. It is `missing_critical` in
+          every committed fixture, including the one that produces the 15,000 sq
+          ft cap — and before the rework this screen showed the milder coverage
+          gloss and never the critical one, on the exact page carrying its most
+          quantified claim (G1-3, G3-1, DCV-3). */}
+      <div
+        className="completeness-banner"
+        role="status"
+        data-testid="scenario-completeness"
+      >
+        <p className="completeness-headline">
+          {completeness.headline} (<code>{completeness.value}</code>)
+        </p>
+        <p>{completeness.gloss}</p>
+      </div>
+
+      <p className="section-note" data-testid="scenario-coverage-status">
+        Coverage label: <code>{coverage.symbol} {coverage.value}</code> —{" "}
+        {coverage.gloss}
+      </p>
+      <p className="section-note" data-testid="scenario-kind">
+        Scenario kind: <code>{document.scenario_kind}</code> —{" "}
+        {SCENARIO_KIND_LABELS[document.scenario_kind]}
+      </p>
+      <p className="section-note" data-testid="scenario-disclaimer">
+        {document.not_verified_disclaimer}
+      </p>
+    </section>
+  );
+}
+
 /** Block 7: main opportunity + main risk, both derived from document fields. */
 function OpportunityRiskBlock({ document }: { document: Scenario }) {
   const cap = document.draft_zoning_floor_area_cap_sq_ft;
   return (
     <section className="card" data-testid="scenario-opportunity-risk">
-      <h3 className="section-title">Main opportunity and main risk</h3>
+      <h2 className="section-title">Main opportunity and main risk</h2>
       <div data-testid="scenario-opportunity">
-        <h4 className="section-subtitle">Main opportunity</h4>
+        <h3 className="section-subtitle">Main opportunity</h3>
         <p>
           {cap !== null
             ? `A draft residential zoning floor-area cap of ${formatValue(
@@ -116,7 +167,7 @@ function OpportunityRiskBlock({ document }: { document: Scenario }) {
         </p>
       </div>
       <div data-testid="scenario-risk">
-        <h4 className="section-subtitle">Main risk</h4>
+        <h3 className="section-subtitle">Main risk</h3>
         <p>{document.not_verified_disclaimer}</p>
         {document.professional_review_required ? (
           <p className="status-label">
@@ -132,7 +183,7 @@ function OpportunityRiskBlock({ document }: { document: Scenario }) {
 function NextActionBlock({ bbl }: { bbl: string }) {
   return (
     <section className="card next-action" data-testid="scenario-next-action">
-      <h3 className="section-title">Next step</h3>
+      <h2 className="section-title">Next step</h2>
       <p className="section-note">
         Evidence and provenance for every value shown here (Step 4) arrive with
         a later milestone; this build does not pretend to run it.
@@ -158,31 +209,25 @@ export function ScenarioResult({
   bbl: string;
 }) {
   const isPreliminary = document.scenario_kind === "preliminary";
-  const coverage = coverageDisplay(document.coverage_status);
   return (
     <div data-testid="scenario-result">
-      <section className="card" data-testid="scenario-summary">
-        {/* Success-outcome focus target (mirrors ConfirmCard). */}
-        <h2 className="section-title" tabIndex={-1} data-outcome-heading>
-          Step 3 — Preliminary comparison for BBL {bbl}
-        </h2>
-        <p className="section-note" data-testid="scenario-coverage-status">
-          Coverage label: <code>{coverage.symbol} {coverage.value}</code> —{" "}
-          {coverage.gloss}
-        </p>
-        <p className="section-note" data-testid="scenario-disclaimer">
-          {document.not_verified_disclaimer}
-        </p>
-      </section>
+      <ScenarioSummary document={document} requestedBbl={bbl} />
 
+      {/* Branch-specific: the cap card, or the informative no-maximum block. */}
       {isPreliminary ? (
         <ScenarioCard document={document} rank={1} />
       ) : (
         <NoScenarioBlock document={document} />
       )}
 
+      {/* Document-level: mounted on EVERY branch. */}
+      <ScenarioReasons document={document} />
       <PracticalRangeBlock />
+      <ScenarioAssumptions document={document} />
+      <ScenarioConstraints document={document} />
+      <IntegrityCheckBlock document={document} />
       <CoverageMatrixSection document={document} />
+      <ScenarioProvenance document={document} requestedBbl={bbl} />
       <OpportunityRiskBlock document={document} />
       <NextActionBlock bbl={bbl} />
     </div>

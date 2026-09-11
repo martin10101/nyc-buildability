@@ -1,5 +1,5 @@
 import { formatValue } from "@/lib/format";
-import { CONSTRAINT_STATE_LABELS, SCENARIO_KIND_LABELS } from "@/lib/scenario-display";
+import { SCENARIO_KIND_LABELS } from "@/lib/scenario-display";
 import type { Scenario } from "@/lib/scenario-contract";
 
 /**
@@ -12,15 +12,26 @@ import type { Scenario } from "@/lib/scenario-contract";
  * transported VERBATIM from the endpoint body:
  *
  *  - the draft zoning-floor-area cap value and its cap_label (the client never
- *    recomputes the cap — AS-1),
+ *    recomputes the cap — AS-1), and
  *  - the optimized objective NAMED from cap_provenance.output_name (the UI rule
- *    forbids showing a "best"/max value without naming the objective),
- *  - the score/constraint breakdown (each constraint value + state + note), and
- *  - the platform's own integrity_check record surfaced verbatim (the client
- *    does not verify anything itself).
+ *    at .claude/rules/frontend-web.md:13 forbids showing a "best"/max value
+ *    without naming the objective).
+ *
+ * That naming guarantee is now ENFORCED rather than asserted: before the rework
+ * the validator checked `cap_provenance` only as "object or null" before
+ * casting, so a body carrying `cap_provenance: {"note":"tbd"}` rendered a
+ * 15,000 sq ft maximum with an EMPTY objective name and an empty rule id — and
+ * because `{}` is truthy, it took the populated branch rather than the honest
+ * "no cap provenance" fallback (G4 finding 2). scenario-contract.ts now
+ * type-checks all six fields and refuses a non-null cap with a null provenance.
+ *
+ * The constraint breakdown and the integrity check used to live here too, which
+ * is exactly why the no_scenario branch lost them; they are now in
+ * ScenarioConstraints, mounted by ScenarioResult on every branch.
  *
  * A needs_review / draft text label always accompanies the cap so certainty is
- * never implied by color or a friendly word alone.
+ * never implied by color or a friendly word alone. The prefix at the top of the
+ * cap line is UNCONDITIONAL — no server field can switch it off.
  */
 export function ScenarioCard({
   document,
@@ -33,9 +44,10 @@ export function ScenarioCard({
   const provenance = document.cap_provenance;
   return (
     <section className="card" data-testid={`scenario-card-${rank}`}>
-      <h3 className="section-title">
-        Scenario {rank}: {SCENARIO_KIND_LABELS[document.scenario_kind]}
-      </h3>
+      <h2 className="section-title">
+        Scenario {rank}: {SCENARIO_KIND_LABELS[document.scenario_kind]} (
+        <code>{document.scenario_kind}</code>)
+      </h2>
       <p className="section-note">
         This is the single preliminary scenario the deterministic engine
         produced. No additional or ranked alternatives are invented.
@@ -65,8 +77,8 @@ export function ScenarioCard({
         ) : null}
       </div>
 
-      {/* --- Objective + score / constraint breakdown (block 4) ---------- */}
-      <h4 className="section-subtitle">Optimized objective and score breakdown</h4>
+      {/* --- Objective + rule that produced the cap (block 4) ------------- */}
+      <h3 className="section-subtitle">Optimized objective and the rule behind it</h3>
       {provenance ? (
         <dl className="confirm-grid" data-testid="scenario-objective">
           <div className="confirm-row">
@@ -85,52 +97,22 @@ export function ScenarioCard({
               <code>{provenance.rule_status}</code>)
             </dd>
           </div>
-          {provenance.note ? (
-            <div className="confirm-row">
-              <dt>Note</dt>
-              <dd className="section-note">{provenance.note}</dd>
-            </div>
-          ) : null}
+          <div className="confirm-row">
+            <dt>Note</dt>
+            <dd className="section-note">{provenance.note}</dd>
+          </div>
         </dl>
       ) : (
         <p className="section-note">
-          No cap provenance is attached to this scenario.
+          No cap provenance is attached to this scenario, so no objective can be
+          named — and no cap is shown, because the contract forbids surfacing a
+          material value without its provenance.
         </p>
       )}
-
-      <h4 className="section-subtitle">Constraints used in this scenario</h4>
-      <ul className="missing-list" data-testid="scenario-constraints">
-        {document.constraints.map((constraint) => (
-          <li key={constraint.key} data-testid={`scenario-constraint-${constraint.key}`}>
-            <strong>{constraint.key}</strong>:{" "}
-            <span className="fact-value">{formatValue(constraint.value)}</span>
-            {constraint.unit ? (
-              <span className="fact-units"> {constraint.unit}</span>
-            ) : null}{" "}
-            <span className="section-note">
-              ({CONSTRAINT_STATE_LABELS[constraint.state]}; completeness:{" "}
-              <code>{constraint.data_completeness}</code>)
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      {/* --- Platform integrity check, surfaced verbatim ----------------- */}
-      <h4 className="section-subtitle">Platform integrity check</h4>
-      <p className="section-note" data-testid="scenario-integrity">
-        {document.integrity_check.performed
-          ? `Performed — recompute ${
-              document.integrity_check.agreed === true
-                ? "agreed with"
-                : document.integrity_check.agreed === false
-                  ? "did NOT agree with"
-                  : "result unrecorded against"
-            } the canonical trace value.`
-          : "Not performed for this scenario."}{" "}
-        {document.integrity_check.note}
-      </p>
-      <p className="failure-meta">
-        Method: <code>{document.integrity_check.method}</code>
+      <p className="section-note">
+        The full citation chain for this number — snapshot, section, quoted
+        text, source, retrieval and verification status — is in the evaluated
+        input and provenance disclosure below.
       </p>
     </section>
   );

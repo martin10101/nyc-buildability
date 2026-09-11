@@ -55,7 +55,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
-from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
+from app.config import (
+    INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
+    INTERNAL_SCENARIO_ENABLED_ENV_VAR,
+)
 from app.connectors.pluto_soda import (
     TransportFailure,
     TransportResponse,
@@ -248,6 +251,18 @@ def build_app():
     # frontend spec still proves the browser issues no request when the surface
     # is not opted in, regardless of this server-side flag.
     os.environ[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR] = "1"
+    # M5-T004 rework: enable the internal SCENARIO endpoint's server flag for
+    # this test process too. Until now the harness enabled only the
+    # rule-evaluation flag, so GET /api/v1/properties/{bbl}/scenario returned
+    # the flag-off generic 404 and NO BROWSER COULD REACH /property/compare
+    # anywhere in the repository — which is why G3 could not discharge its
+    # browser-walkthrough step and no Playwright spec covered the screen.
+    # Same seams as the rule-evaluation route: the scenario endpoint rebuilds
+    # the profile and the rule evaluation server-side through get_pluto_fetcher
+    # and get_spatial_substrate_provider, both already overridden below, so
+    # enabling the flag is all that is required — no new mock and no new
+    # fixture. Test process only; unset in production, where the route 404s.
+    os.environ[INTERNAL_SCENARIO_ENABLED_ENV_VAR] = "1"
     app.dependency_overrides[get_pluto_fetcher] = lambda: harness_fetcher
     app.dependency_overrides[get_spatial_substrate_provider] = (
         lambda: harness_substrate_provider

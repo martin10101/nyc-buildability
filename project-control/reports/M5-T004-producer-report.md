@@ -79,3 +79,91 @@ a follow-up to extend the harness with `INTERNAL_SCENARIO_ENABLED` + scenario BB
   (`docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md`).
 - Read-only templates (`api.ts`, `contract-matrix.ts`, `bounded.ts`, `validate-profile.ts`,
   `components/property/**`) were imported, never modified (forbidden_paths respected).
+
+---
+
+# REWORK ADDENDUM (gate wave at `84815a76`: G1 FAIL, G3 FAIL, G4 FAIL, DCV FAIL, G5 PASS-with-binding-spec)
+
+**Reworked by:** a producer that did NOT author the original packet. **Base:** `0c810887` (control head
+carrying the five gate reports). Sections 0–4 above describe the PRE-rework delivery and are left intact
+as the historical record; everything below supersedes them where they conflict.
+
+## R1. The core defect and what fixed it
+
+The transport was never wrong — DCV traced 515 leaves and found **0 authored legal/numeric values**, and
+the cap is byte-faithful. The defect was **silent projection at the render layer**: 19 schema-required
+fields never reached the screen, and the two render branches were disjoint so neither ever showed the
+whole document. The fix is composition, not new presentation: everything belonging to the DOCUMENT
+rather than to one branch is now mounted once in `ScenarioResult` for every branch, converging on the
+accepted sibling `components/rule-evaluation/RuleEvaluationResult.tsx` (read-only; not edited).
+
+| Dropped field | Now rendered at |
+|---|---|
+| `contract_version` | `ScenarioProvenance.tsx` (`scenario-contract-version`) |
+| `data_completeness` (top level) | `ScenarioResult.tsx` via the existing `completenessDisplay()`, in the `completeness-banner` treatment the property screen uses |
+| `evaluated_input` (all 4 leaves) | `ScenarioProvenance.tsx` |
+| `assumptions[]` (all 5 leaves) | `ScenarioAssumptions.tsx`, **with an explicit statement when empty** — every committed fixture carries zero assumptions, so that IS the shipped path |
+| `cap_provenance.citations` (all leaves) | `ScenarioProvenance.tsx`, collapsed `<details>` mirroring `RuleEvaluationResult.tsx:107-150` |
+| `constraints[].note` | `ScenarioConstraints.tsx` |
+| `constraints[].provenance` | `ScenarioConstraints.tsx`, via the generic `provenanceLeaves()` walk |
+| `integrity_check.tolerance` | `ScenarioConstraints.tsx` (`scenario-integrity-tolerance`) |
+| `reasons` (dropped on preliminary) | `ScenarioReasons.tsx`, mounted on **both** branches |
+| `constraints` + `integrity_check` (dropped on no_scenario/unsupported) | hoisted into `ScenarioResult.tsx` |
+| `coverage_matrix` (silently filtered to `missing` rows) | full matrix + the gap list, `CoverageMatrixSection.tsx` |
+
+`constraints[].provenance` is typed `unknown` by the contract, so it is rendered by a GENERIC leaf walk
+rather than a hand-listed subset — a hand-listed subset is exactly what dropped `review_reasons`,
+`coverage_note`, `lot_overall_class` and `pair_class`. Both the width and the strings of that walk are
+bounded, and every bound it applies is DISCLOSED on screen.
+
+## R2. Identity bound to the document (DCV CRITICAL-2 / G1-7)
+
+`ScenarioResult.tsx` now heads the result with `document.evaluated_input.bbl` (null → "not stated", the
+`RuleEvaluationResult.tsx:87` precedent) and renders an explicit IDENTITY MISMATCH block when the
+document disagrees with the requested BBL — both values shown, nothing reconciled. The test fixtures and
+props were corrected to agree (`FIXTURE_BBL = "1000477501"`, which is what all four committed fixtures
+state), and the disagreement the old suite shipped silently is now its own asserted test case.
+
+## R3. Conflict path wired (G1-6 / G3-7 / G4-3 / DCV-6)
+
+`ruleConflict()` had zero consumers repo-wide while the UI printed "both values are shown, nothing was
+resolved" twice and showed neither. `scenario-display.ts` adds `ruleConflicts(document)` (scans EVERY
+constraint, not only `residential_far_cap`), and `NoScenarioBlock.tsx` renders the competing output
+names, the competing rules with versions and effective dates, and the conflicting constraint VALUES.
+
+## R4. Validator depth (G4-2, G5-1/3, G1-9)
+
+`scenario-contract.ts` + the new `scenario-contract-checks.ts` (modularity split; the public import
+surface is unchanged by a compatibility re-export):
+`checkCapProvenance` type-checks all six fields and **requires `cap_provenance !== null` whenever the cap
+is non-null**; `citations` element shapes are checked; `assumptions[].value`/`.unit` are checked;
+`constraints[].value` and `assumptions[].value` are pinned to the schema's scalar union (closing the
+object-into-the-DOM path); unknown keys are rejected at every object level; `needs_review` is pinned to
+`true`. All 37+ problem messages remain static literals — no byte of a rejected body can reach the DOM.
+
+## R5. G5 bounding spec (implemented as written)
+
+`MAX_DOCUMENT_ARRAY_LENGTH = 64`, one shared constant, **REJECT** for every document array (exactly 64
+accepted, 65 rejected); free text **TRUNCATES** at the existing `MAX_REFLECTED_TEXT_LENGTH` with the
+existing `TRUNCATION_MARKER` (new `scenario-bounds.ts`); identifiers truncate at `MAX_TOKEN_LENGTH` via
+`boundedToken`; a 256 KiB `Content-Length` check runs before `.json()`. **No dependency added.**
+Material values (the cap, every number, `constraints[].value`, `evaluated_input.bbl`) are deliberately
+NOT transformed — the file documents each exclusion and why.
+
+## R6. Also delivered
+
+`.status-label` and `.section-subtitle` defined in `globals.css` (the caution now outweighs the number it
+qualifies, by weight + a left rule, never by color alone); `app/property/error.tsx` route error boundary
+(digest only, never `error.message`); `e2e/harness/fixture_api.py` enables `INTERNAL_SCENARIO_ENABLED`;
+`e2e/compare-journey.spec.ts` adds five browser journeys — the first anywhere in the repo that reach
+`/property/compare`.
+
+## R7. Verification honesty (unchanged policy)
+
+`apps/web/node_modules` is still absent; **the three documented test commands were NOT run and no green
+is claimed.** What WAS executed offline, and is reproducible: `tools/modularity_check.py --check`
+(377 files, 0 failures, 16 warnings — the G4 baseline, none of them these files), a full strict-mode
+TypeScript program over the scenario lib layer (zero diagnostics; that layer has no external imports),
+and a transpile-and-run harness exercising the validator, the bounding pass and the display readers
+against the four committed fixtures plus adversarial bodies (31 assertions, 0 failures). That harness is
+the producer's own scratch tooling, NOT the project suite — CI remains the only authority.

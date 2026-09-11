@@ -23,7 +23,15 @@
  *      distinct `validation_failure` carrying only a bounded problem list —
  *      nothing partially rendered.
  *   3. All reflected server text is length-capped and control-stripped; the
- *      correlation id is token-allowlisted.
+ *      correlation id is token-allowlisted. This holds on BOTH paths: the
+ *      failure path bounds its reflected strings inline below, and the SUCCESS
+ *      path is bounded by boundScenarioDocument (src/lib/scenario-bounds.ts)
+ *      before the document leaves this module — see that file for the two
+ *      rules (arrays reject, strings truncate explicitly) and for the material
+ *      values that are deliberately never transformed.
+ *   5. The raw body is size-bounded BEFORE it is parsed: a response declaring
+ *      more than MAX_RESPONSE_BYTES is rejected into `unexpected_response`
+ *      rather than parsed and walked.
  *   4. Requests are cancellable (AbortController) and time-bounded; a
  *      superseded request resolves to `aborted`, a timeout to the recoverable
  *      `client_timeout`.
@@ -38,6 +46,7 @@
 
 import { apiBaseUrl } from "./api";
 import { boundedText, boundedToken } from "./bounded";
+import { MAX_RESPONSE_BYTES, boundScenarioDocument } from "./scenario-bounds";
 import { type Scenario, validateScenarioDocument } from "./scenario-contract";
 
 /** Default request budget; kept below the Playwright test timeout so the
@@ -253,6 +262,23 @@ export async function fetchScenario(
 
     const correlationId = boundedToken(response.headers.get("X-Correlation-ID"));
 
+    // SIZE BOUND BEFORE PARSE (G5 finding 1). A response that DECLARES more
+    // than the budget is refused without reading it, so `.json()` never parses
+    // megabytes and the validator never walks the result. A body arriving with
+    // no Content-Length (chunked) cannot be pre-measured without a streaming
+    // reader, which would be a new dependency; the array bounds in
+    // scenario-contract.ts and the string bounds in scenario-bounds.ts are the
+    // backstop for that case.
+    const declaredLength = Number(response.headers.get("Content-Length"));
+    if (Number.isFinite(declaredLength) && declaredLength > MAX_RESPONSE_BYTES) {
+      return {
+        kind: "unexpected_response",
+        httpStatus: response.status,
+        receivedState: null,
+        correlationId,
+      };
+    }
+
     let body: unknown = null;
     try {
       body = await response.json();
@@ -295,7 +321,14 @@ export async function fetchScenario(
           correlationId,
         };
       }
-      return { kind: "scenario", document: validation.document, correlationId };
+      // Bound the reflected SUCCESS-path strings before the document can
+      // reach a renderer, so the module-header guarantee holds on this path
+      // too. Material values are never transformed — see scenario-bounds.ts.
+      return {
+        kind: "scenario",
+        document: boundScenarioDocument(validation.document),
+        correlationId,
+      };
     }
 
     // (404, null): generic Not Found — the feature is disabled or unmounted.

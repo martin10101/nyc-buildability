@@ -4,9 +4,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { CompareScreen } from "@/components/compare/CompareScreen";
 import { ConfirmScreen } from "@/components/confirm/ConfirmScreen";
 import { fetchScenario } from "@/lib/scenario-api";
-import { formatValue } from "@/lib/format";
 import { baseProfile } from "@/test-support/fixtures";
 import {
+  FIXTURE_BBL,
   conflictScenarioBody,
   jsonResponse,
   notFoundResponse,
@@ -14,6 +14,7 @@ import {
   professionalReviewScenarioBody,
   stateResponse,
   stubFetch,
+  unsupportedScenarioBody,
 } from "./scenario-fixtures";
 
 // AS-7: every test drives the screen with an INJECTED fetch (or a stubbed
@@ -24,25 +25,22 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-const PRELIMINARY_BBL = "1000010100";
-
-function renderCompare(response: Response) {
-  return render(
-    <CompareScreen bbl={PRELIMINARY_BBL} fetchImpl={stubFetch(response)} />,
-  );
+function renderCompare(response: Response, bbl: string = FIXTURE_BBL) {
+  return render(<CompareScreen bbl={bbl} fetchImpl={stubFetch(response)} />);
 }
 
 describe("Compare screen — AS-1 preliminary cap render (verbatim, never recomputed)", () => {
-  it("renders the draft cap VERBATIM from the body with objective + breakdown + draft label", async () => {
+  it("renders the draft cap VERBATIM from the body with objective + draft label", async () => {
     const body = preliminaryScenarioBody();
     renderCompare(jsonResponse(body, 200));
 
     const capNode = await screen.findByTestId("scenario-cap-value");
-    // The rendered cap === the endpoint body value, formatted for display only
-    // (the client transports it; it never recomputes far * lot_area).
-    const bodyCap = body.draft_zoning_floor_area_cap_sq_ft as number;
-    expect(bodyCap).toBe(15000);
-    expect(capNode.textContent).toBe(formatValue(bodyCap));
+    expect(body.draft_zoning_floor_area_cap_sq_ft).toBe(15000);
+    // A LITERAL, not `formatValue(bodyCap)`. The previous assertion called the
+    // same formatter the component calls, so a rounding or grouping regression
+    // moved both sides together and the test still passed — it could not detect
+    // the display-magnitude regression it existed to guard (DCV AS-1, G4-7).
+    expect(capNode.textContent).toBe("15,000");
 
     // Certainty is never by color alone — an explicit draft/needs_review label.
     expect(screen.getByTestId("scenario-draft-label")).toBeInTheDocument();
@@ -56,10 +54,111 @@ describe("Compare screen — AS-1 preliminary cap render (verbatim, never recomp
     expect(screen.getByTestId("scenario-cap-label")).toHaveTextContent(
       "DRAFT maximum residential ZONING-FLOOR-AREA CAP",
     );
+  });
 
-    // Score breakdown surfaces the constraints + the platform integrity check.
-    expect(screen.getByTestId("scenario-constraints")).toBeInTheDocument();
-    expect(screen.getByTestId("scenario-integrity")).toBeInTheDocument();
+  it("renders a FRACTIONAL cap without rounding it away", async () => {
+    // 15,000 has no fractional part, so even a literal assertion on the shipped
+    // fixture cannot catch a rounding regression. This case can: any rounding
+    // introduced between the body and the DOM changes this string.
+    const body = preliminaryScenarioBody();
+    body.draft_zoning_floor_area_cap_sq_ft = 12345.678;
+    renderCompare(jsonResponse(body, 200));
+
+    const capNode = await screen.findByTestId("scenario-cap-value");
+    expect(capNode.textContent).toBe("12,345.678");
+  });
+
+  it("binds the heading identity to the DOCUMENT, not to the URL parameter", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    await screen.findByTestId("scenario-result");
+    expect(screen.getByTestId("scenario-heading-bbl")).toHaveTextContent(FIXTURE_BBL);
+    expect(screen.queryByTestId("scenario-bbl-mismatch")).toBeNull();
+    expect(screen.getByTestId("scenario-evaluated-bbl")).toHaveTextContent(FIXTURE_BBL);
+  });
+});
+
+describe("Compare screen — identity disagreement is surfaced, never papered over", () => {
+  it("reports a MISMATCH when the document was evaluated for another BBL", async () => {
+    // Exactly the disagreement the pre-rework suite shipped silently: the
+    // screen requested 1000010100 while every fixture states 1000477501.
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200), "1000010100");
+
+    const mismatch = await screen.findByTestId("scenario-bbl-mismatch");
+    expect(mismatch).toHaveTextContent(FIXTURE_BBL);
+    expect(mismatch).toHaveTextContent("1000010100");
+    expect(mismatch).toHaveTextContent("IDENTITY MISMATCH");
+    // The document's own identity heads the result — never the URL's.
+    expect(screen.getByTestId("scenario-heading-bbl")).toHaveTextContent(FIXTURE_BBL);
+  });
+
+  it("states an absent document BBL explicitly rather than substituting the URL's", async () => {
+    const body = preliminaryScenarioBody();
+    (body.evaluated_input as Record<string, unknown>).bbl = null;
+    renderCompare(jsonResponse(body, 200));
+
+    await screen.findByTestId("scenario-bbl-not-stated");
+    expect(screen.getByTestId("scenario-heading-bbl")).toHaveTextContent("not stated");
+    expect(screen.getByTestId("scenario-evaluated-bbl")).toHaveTextContent("not stated");
+  });
+});
+
+describe("Compare screen — the whole document renders on the branch that shows a number", () => {
+  it("states the document's own data_completeness beside the cap", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+
+    const completeness = await screen.findByTestId("scenario-completeness");
+    // The preliminary fixture — the one producing 15,000 — is missing_critical.
+    expect(completeness).toHaveTextContent("missing_critical");
+    expect(completeness).toHaveTextContent("Critical official inputs are missing");
+  });
+
+  it("renders `reasons` on the preliminary branch (they used to drop there)", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+
+    const reasons = await screen.findByTestId("scenario-reasons");
+    expect(reasons).toHaveTextContent("NOT a buildable envelope");
+    expect(reasons).toHaveTextContent("verbatim");
+  });
+
+  it("renders every constraint note, the provenance, the assumptions statement and the tolerance", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    await screen.findByTestId("scenario-constraints");
+
+    // constraints[].note is schema-required and carries the anti-inference
+    // warning that the state label does NOT carry.
+    expect(screen.getByTestId("scenario-constraint-note-height_limit")).toHaveTextContent(
+      "MUST NOT be inferred, defaulted, or estimated",
+    );
+    // constraints[].provenance reaches the screen leaf by leaf.
+    const provenance = screen.getByTestId("scenario-constraint-provenance-lot_area");
+    expect(provenance).toHaveTextContent("nyc-dcp-lot-geometry");
+    expect(provenance).toHaveTextContent("26v1");
+
+    // An EMPTY assumptions array is stated, not silently omitted — every
+    // committed fixture carries zero assumptions, so this IS the shipped path.
+    expect(screen.getByTestId("scenario-assumptions-empty")).toHaveTextContent(
+      "No assumptions are declared",
+    );
+
+    // integrity_check.tolerance: the method string is uninterpretable without it.
+    expect(screen.getByTestId("scenario-integrity-tolerance")).toHaveTextContent("0.000001");
+  });
+
+  it("renders contract_version, the evaluated input and the cap citations", async () => {
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+    await screen.findByTestId("scenario-provenance");
+
+    expect(screen.getByTestId("scenario-contract-version")).toHaveTextContent("1.0.0");
+    expect(screen.getByTestId("scenario-input-fingerprint")).toHaveTextContent(
+      "sha256:c499fc3c",
+    );
+
+    // The material number is never surfaced without its citation (PRD s19).
+    const citation = screen.getByTestId("scenario-citation-0");
+    expect(citation).toHaveTextContent("23-21");
+    expect(citation).toHaveTextContent("maximum residential floor area ratio");
+    expect(citation).toHaveTextContent("nyc-dcp-zoning-resolution-portal");
+    expect(citation).toHaveTextContent("extracted_draft");
   });
 });
 
@@ -88,17 +187,66 @@ describe("Compare screen — AS-2 no_scenario / professional review", () => {
     // Both candidate districts are present.
     expect(ranges).toHaveTextContent("R5");
     expect(ranges).toHaveTextContent("R6");
+    // The qualifier explaining WHY the share is uncertain renders too.
+    expect(ranges).toHaveTextContent("boundary_uncertain");
   });
 
-  it("also renders the data-conflict no_scenario fixture as an informative result", async () => {
+  it("keeps the constraints and the integrity check on the no_scenario branch", async () => {
+    // Before the rework this branch dropped ALL 11 constraints and the whole
+    // integrity record: 0 of 96 constraint leaves rendered (DCV-5, G4-4).
+    renderCompare(jsonResponse(professionalReviewScenarioBody(), 200));
+
+    await screen.findByTestId("scenario-constraints");
+    expect(screen.getByTestId("scenario-constraint-lot_area")).toHaveTextContent("10,000");
+    expect(screen.getByTestId("scenario-integrity")).toBeInTheDocument();
+    expect(screen.getByTestId("scenario-integrity-tolerance")).toBeInTheDocument();
+
+    // The escalation's own stated reasons reach the screen.
+    const districtProvenance = screen.getByTestId(
+      "scenario-constraint-provenance-zoning_district",
+    );
+    expect(districtProvenance).toHaveTextContent("split_lot");
+    expect(districtProvenance).toHaveTextContent("lot spans two base districts");
+  });
+
+  it("shows the COMPETING RULES on the data-conflict fixture, as its own gloss promises", async () => {
+    // The screen printed "both values are shown, nothing was resolved" twice
+    // while showing neither, because ruleConflict() had zero consumers
+    // repo-wide (G1-6, G3-7, G4-3, DCV-6).
     renderCompare(jsonResponse(conflictScenarioBody(), 200));
+
     await screen.findByTestId("scenario-no-scenario");
-    expect(screen.getByTestId("scenario-reasons")).toBeInTheDocument();
+    const conflict = screen.getByTestId("scenario-rule-conflict");
+    expect(conflict).toHaveTextContent("max_residential_floor_area_sq_ft");
+
+    const competing = screen.getByTestId("scenario-competing-rules");
+    expect(competing).toHaveTextContent("r5-residential-far");
+    expect(competing).toHaveTextContent("0.1.0-draft");
+    expect(competing).toHaveTextContent("r5-residential-far-alt");
+    expect(competing).toHaveTextContent("0.2.0-draft");
+
+    // And the conflicting VALUES the gloss promises are shown.
+    expect(screen.getByTestId("scenario-conflicting-values")).toHaveTextContent("R5");
     expect(screen.queryByTestId("scenario-cap-value")).toBeNull();
+  });
+
+  it("renders the unsupported-family fixture as an honest, complete result", async () => {
+    // unsupported_family.json has been committed and unused since M5-T003, so
+    // the `unsupported` branch had never been rendered by anything.
+    renderCompare(jsonResponse(unsupportedScenarioBody(), 200));
+
+    const block = await screen.findByTestId("scenario-no-scenario");
+    expect(block).toHaveTextContent("Not supported yet");
+    expect(block).toHaveTextContent("unsupported");
+    expect(screen.queryByTestId("scenario-cap-value")).toBeNull();
+    // The whole document still renders on this branch.
+    expect(screen.getByTestId("scenario-constraints")).toBeInTheDocument();
+    expect(screen.getByTestId("scenario-reasons")).toBeInTheDocument();
+    expect(screen.getByTestId("coverage-matrix-all")).toBeInTheDocument();
   });
 });
 
-describe("Compare screen — AS-3 coverage labels + missing-family gaps", () => {
+describe("Compare screen — AS-3 coverage labels + full matrix + missing-family gaps", () => {
   it("renders every coverage status as a distinct TEXT label and lists the 8 missing families", async () => {
     renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
 
@@ -127,6 +275,24 @@ describe("Compare screen — AS-3 coverage labels + missing-family gaps", () => 
       "blocks a buildable envelope",
     );
   });
+
+  it("renders the FULL 11-row matrix, not only the 8 missing rows", async () => {
+    // Only `missing` rows rendered before the rework: the draft R5 row that
+    // actually produced the number, and both out_of_scope rows, were filtered
+    // out with no disclosure of the total (DCV-7).
+    renderCompare(jsonResponse(preliminaryScenarioBody(), 200));
+
+    const matrix = await screen.findByTestId("coverage-matrix-all");
+    const rows = matrix.querySelectorAll('[data-testid^="coverage-row-"]');
+    expect(rows.length).toBe(11);
+    expect(matrix).toHaveTextContent("out_of_scope");
+    expect(screen.getByTestId("coverage-row-residential_far_cap")).toHaveTextContent(
+      "draft",
+    );
+    // The two out_of_scope families were filtered out entirely before.
+    expect(matrix).toHaveTextContent("higher_density_bulk_tower");
+    expect(matrix).toHaveTextContent("gross_to_net_efficiency_yield");
+  });
 });
 
 describe("Compare screen — AS-4 contract safety (validate before render; bounded errors)", () => {
@@ -139,6 +305,19 @@ describe("Compare screen — AS-4 contract safety (validate before render; bound
     expect(screen.queryByTestId("scenario-cap-value")).toBeNull();
     // The allowlisted correlation id is carried.
     expect(screen.getByTestId("scenario-correlation-id")).toBeInTheDocument();
+  });
+
+  it("refuses a cap whose provenance cannot name the optimized objective", async () => {
+    // The exact G4 finding 2 body: a plausible 200 that passed validation and
+    // rendered a 15,000 sq ft maximum with an EMPTY objective name and an
+    // empty rule id, because `{}` is truthy and took the populated branch.
+    const body = preliminaryScenarioBody();
+    body.cap_provenance = { note: "tbd" };
+    renderCompare(jsonResponse(body, 200));
+
+    await screen.findByTestId("scenario-validation-failure");
+    expect(screen.queryByTestId("scenario-cap-value")).toBeNull();
+    expect(screen.queryByTestId("scenario-objective-name")).toBeNull();
   });
 
   it("renders unexpected_response for a (status, state) pair outside the documented matrix", async () => {
@@ -189,7 +368,7 @@ describe("Compare screen — AS-5 flag-off / upstream / recoverable states", () 
         : jsonResponse(preliminaryScenarioBody(), 200);
     }) as unknown as typeof fetch;
 
-    render(<CompareScreen bbl={PRELIMINARY_BBL} fetchImpl={mutableFetch} />);
+    render(<CompareScreen bbl={FIXTURE_BBL} fetchImpl={mutableFetch} />);
     fireEvent.click(await screen.findByRole("button", { name: "Retry compare" }));
     await screen.findByTestId("scenario-result");
     expect(screen.getByTestId("scenario-cap-value")).toBeInTheDocument();
@@ -212,7 +391,7 @@ describe("Compare screen — AS-6 navigation (Confirm rewire + analysis-preservi
     const confirmLink = nextAction.querySelector('a[href^="/property/confirm"]');
     expect(confirmLink).toHaveAttribute(
       "href",
-      `/property/confirm?bbl=${PRELIMINARY_BBL}`,
+      `/property/confirm?bbl=${FIXTURE_BBL}`,
     );
   });
 });
@@ -253,7 +432,7 @@ describe("fetchScenario — offline client hardening (AS-4/AS-5 unit coverage)",
         );
       })) as unknown as typeof fetch;
 
-    const outcome = await fetchScenario(PRELIMINARY_BBL, {
+    const outcome = await fetchScenario(FIXTURE_BBL, {
       fetchImpl: hangingFetch,
       timeoutMs: 5,
     });
@@ -263,7 +442,7 @@ describe("fetchScenario — offline client hardening (AS-4/AS-5 unit coverage)",
   it("resolves to aborted when the caller's signal is already aborted", async () => {
     const controller = new AbortController();
     controller.abort();
-    const outcome = await fetchScenario(PRELIMINARY_BBL, {
+    const outcome = await fetchScenario(FIXTURE_BBL, {
       fetchImpl: stubFetch(jsonResponse(preliminaryScenarioBody(), 200)),
       signal: controller.signal,
     });
@@ -271,9 +450,65 @@ describe("fetchScenario — offline client hardening (AS-4/AS-5 unit coverage)",
   });
 
   it("classifies a documented preliminary 200 body as a validated scenario", async () => {
-    const outcome = await fetchScenario(PRELIMINARY_BBL, {
+    const outcome = await fetchScenario(FIXTURE_BBL, {
       fetchImpl: stubFetch(jsonResponse(preliminaryScenarioBody(), 200)),
     });
     expect(outcome.kind).toBe("scenario");
+  });
+
+  it("BLOCKING REGRESSION: an HTTP 500 carrying state=no_match is NEVER a no-match result", async () => {
+    // The owner-directed adversarial pair recorded at
+    // packages/contracts/fixtures/client_regression/http500_state_no_match.json
+    // and named blocking at lib/contract-matrix.ts:12-17. scenario-api.ts
+    // reimplements the very pair check that defends against it, and nothing
+    // drove the pair through fetchScenario (G4-7).
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(
+        stateResponse(500, "no_match", { bbl: "5999999999" }),
+      ),
+    });
+    expect(outcome.kind).toBe("unexpected_response");
+    expect(outcome.kind === "unexpected_response" && outcome.httpStatus).toBe(500);
+  });
+
+  it("rejects a response that declares more than the accepted body size", async () => {
+    const oversized = new Response(JSON.stringify({ state: "internal_error" }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": String(512 * 1024),
+      },
+    });
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(oversized),
+    });
+    expect(outcome.kind).toBe("unexpected_response");
+  });
+
+  it("reports a rejected oversized ARRAY rather than silently truncating it", async () => {
+    const body = preliminaryScenarioBody();
+    body.reasons = Array.from({ length: 65 }, (_, index) => `reason ${index}`);
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(jsonResponse(body, 200)),
+    });
+    expect(outcome.kind).toBe("validation_failure");
+    expect(
+      outcome.kind === "validation_failure" &&
+        outcome.problems.some((problem) => problem.startsWith("reasons:")),
+    ).toBe(true);
+  });
+
+  it("truncates an over-long free-text string EXPLICITLY instead of dropping it", async () => {
+    const body = preliminaryScenarioBody();
+    const constraints = body.constraints as Record<string, unknown>[];
+    constraints[0].note = "x".repeat(900);
+    const outcome = await fetchScenario(FIXTURE_BBL, {
+      fetchImpl: stubFetch(jsonResponse(body, 200)),
+    });
+    expect(outcome.kind).toBe("scenario");
+    if (outcome.kind !== "scenario") return;
+    const note = outcome.document.constraints[0].note;
+    expect(note.endsWith("… [truncated]")).toBe(true);
+    expect(note.length).toBe(600 + "… [truncated]".length);
   });
 });
