@@ -201,6 +201,20 @@ new captures to `zr_section_snapshot/v2` and teach the loader both conventions. 
 evidence correction; (b) is an engine change with its own review. Either way, M4-T009's rule
 citations (authored against the current stored digests) must be reconciled at integration.
 
+**RESOLUTION — (a) executed 2026-09-11 by the orchestrator.** CI at `48cd58a5` revealed the true
+blast radius once the bundle was synced: ~245 tests red (89 failed + 156 errors) across the entire
+rules-engine surface, with the scenario API turning `SnapshotError` into typed 500s — far beyond
+the one predicted test, and blocking M4-T009's acceptance path. Both digests recomputed to the v1
+convention; the original whole-record values preserved verbatim in each snapshot's `notes[]`.
+The same repair exposed a SECOND v1-shape drift in the recapture: `source.section_last_amended`
+(read by the loader into citation provenance) had been renamed to `last_amended_machine_readable`/
+`_display`, so provenance carried `None`; restored additively, new fields kept. After both fixes:
+`tests/rules` + `tests/scenario` 716 passed locally, full 3.11-runnable suite 1692 passed (the
+`tests/documents` subset needs CI's 3.12 for PEP 695 syntax). **(b) remains open** as a deliberate
+`zr_section_snapshot/v2` upgrade — the whole-record digest covers `table`/`footnotes` where the
+legal values live, and excerpt-only does not. M4-T009 citation reconciliation at integration
+still stands.
+
 ---
 
 ## D. Flags the program should surface but currently cannot
