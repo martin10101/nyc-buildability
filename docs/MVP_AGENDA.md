@@ -75,6 +75,13 @@ diagnosis (deployment correctness), the other three CI failures.
    - Affects **R6, R7-1, R7-2, R8**. Their higher FAR applies only within 100 ft of a wide street,
      and applies to *portions* of a lot — a geometry computation, not a lookup.
    - Blocked on a wide-street determination (street width + lot geometry) that does not exist yet.
+   - **SOURCE CANDIDATE CONFIRMED by pilot 2026-09-11**
+     (`docs/research/street-width-source-pilot-2026-09-11.md`): the **DCM Street Center Line**
+     dataset (SODA `g6zj-tzgn`) carries the Official City Map's mapped widths per segment WITH
+     geometry — verified against four famous streets. Geoclient's `streetWidth` is the PAVED
+     width (30 vs the mapped 60 on the same street) and is KILLED for legal use — advisory flag
+     at most. Remaining before use: full truth-set validation, the connector task, the geometry
+     task; conservative lower-value behavior stays until then.
    - Until it exists these districts must return the lower value with an explicit conditional flag.
      Never the higher value.
    - Est: separate feature; size unknown until the street-width source is chosen.
