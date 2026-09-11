@@ -317,7 +317,21 @@ we caught a bonus or condition PLUTO ignores, or we have a bug. Both are worth k
 
 ## I. Owner actions outstanding
 
-- **`GEOCLIENT_SUBSCRIPTION_KEY` — owner HAS the key (2026-09-10).** Setup steps in §J.
+**RENDER PROVISIONED 2026-09-11 (owner-driven session).** Blueprint created from branch
+`candidate/D-024-mrl-option-b` on a Hobby workspace. `nycdf-api` is LIVE (starter, oregon),
+health check green at `/api/v1/health`. `ENVIRONMENT=staging`; `GEOCLIENT_SUBSCRIPTION_KEY`
+entered in the Render dashboard (primary key; the fallback key is held offline by the owner,
+never stored on Render); every other declared var left blank (nothing reads them yet).
+`nycdf-web` was WITHHELD from `render.yaml` (`23817a9f`) pending the authorized Next.js RCE
+fix — restoration owed in that change. The `previews:` block was removed (`5202583d`) —
+Hobby workspaces reject Blueprints that declare previews. `autoDeployTrigger` stays off;
+owner to confirm Blueprint **Auto Sync = No**. The service URL is PRIVATE STAGING: the API
+has no auth, internal flags are unset (sensitive routes 404), do not share the URL.
+B-002 is therefore exercised for the API only.
+
+- **`GEOCLIENT_SUBSCRIPTION_KEY` — owner HAS the key (2026-09-10); on Render since 2026-09-11.**
+  Still outstanding: the LOCAL step (§J1) — the key on the owner's machine for one recorded
+  live call, which is what actually unblocks building the address-entry connector.
 - Supabase token — unblocks all persistence and auth (B-001). Note: **the API currently has no
   authentication at all**, which is why every route is flag-gated internal-only.
 - Authorize the Next.js RCE upgrade.
