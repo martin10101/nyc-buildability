@@ -101,19 +101,19 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer/orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "data-contract-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-11T19:30:23.159795+00:00",
-  "updated_at": "2026-09-11T19:31:59.411729+00:00",
+  "updated_at": "2026-09-11T19:32:28.678677+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -132,5 +132,6 @@
     "allowed_paths lists BOTH the ** glob and the plain directory for each scope on purpose: policy.py path_matches needs the glob, directive_registry.git_tree_manifest needs the plain directory (measured 2026-09-11, M4-T009 contract).",
     "Additional LIVE fixture captures (ambiguity, rejection) are permitted from the owner machine holding the key, KB-scale and polite (rate limits officially UNKNOWN per research doc section 2.4); every live capture records the request URL WITHOUT the key, http status, retrieval timestamp and response sha256, and is verified key-absent before commit, exactly like G01. Constructed adversarial fixture variants must be clearly labeled constructed.",
     "The subscription key exists in exactly two places (owner machine env; Render dashboard) and must never appear in any file in this repository."
-  ]
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m2t021"
 }
