@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-12T07:51:39+00:00",
  "created_at": "2026-09-12T07:51:39+00:00",
- "updated_at": "2026-09-12T12:50:00+00:00",
+ "updated_at": "2026-09-12T14:00:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "6ec7b631286497414bf16b390e60937729c48839",
@@ -62,6 +62,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M5-T019 (flag unification: web adopts INTERNAL_RULE_EVAL_ENABLED) to D-040-R002 by appending the task id to applicability.task_ids (append-only). Requirements digest resynced 27d6d1b8 -> a3fc9d01 (sha256_text_artifact)."
+  },
+  {
+   "at": "2026-09-12T14:00:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M5-T020 (R001 server half: MapPLUTO lot-outline 4326 transport + route + contract) to D-040-R001 by appending the task id to applicability.task_ids (append-only). Requirements digest resynced a3fc9d01 -> a4145aeb (sha256_text_artifact)."
   }
  ],
  "owner_approval": {
@@ -79,5 +85,5 @@
   "D-040-R005",
   "D-040-R006"
  ],
- "requirements_content_digest_sha256": "a3fc9d011c55a2d5f87cce5041eb7d5ace284ddbbdfdeba009a1c33c06ecb9cc"
+ "requirements_content_digest_sha256": "a4145aeb7b8c7cd2000da261c806347a49d9afaaabe0dd384193afc90537023a"
 }

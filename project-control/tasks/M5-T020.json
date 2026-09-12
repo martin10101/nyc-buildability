@@ -1,0 +1,153 @@
+{
+  "task_id": "M5-T020",
+  "title": "D-040-R001 server half: MapPLUTO lot-outline 4326 transport + flag-gated lot-geometry route + contract",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Expose the accepted MapPLUTO parcel geometry to the web as a display-only EPSG:4326 GeoJSON lot outline: a NEW focused transport module querying the FeatureServer with f=geojson outSR=4326 (the authoritative 2263 connector stays byte-immutable), a body-less flag-gated GET /api/v1/properties/{bbl}/lot-geometry route with the typed outcomes surfaced honestly (condo-unit no-feature, multiple-features review, invalid-geometry), a new closed lot_geometry contract in both schema copies + generated TS, live-captured recorded-official 4326 fixtures (never invented bytes), and the pluto-mappluto source-registry draft updated to cover the outline usage.",
+  "business_reason": "D-040-R001 released the expansion hold for exactly this increment; the confirm card's lot-outline placeholder needs real geometry, and the web task (MapLibre) consumes this route.",
+  "inputs": [
+    "project-control/reports/D-040-R001-mappluto-research.md (THE research deliverable this packet pins: live FeatureServer facts - f=geojson + outSR=4326 supported, maxRecordCount 2000, keyless; condo unit lots 1001-6999 carry NO polygon, billing 7501-7599 carry the merged polygon; multipolygons + holes occur; +/-20ft accuracy is the source's own statement; attribution NYC DCP)",
+    "project-control/directives/D-040-scoped-unblocks/requirements.json (D-040-R001: the lot-outline increment ONLY; expansion-hold section 2.1 releases exactly this)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py (READ-ONLY, BYTE-IMMUTABLE: reuse its normalize_bbl discipline, SERVICE_ROOT/LAYER_NAME constants, typed-outcome vocabulary (no_feature/multiple_features/review_required/invalid_geometry), _condo_classification semantics, and the DCP disclaimer - by IMPORT, never by edit)",
+    "services/api/tests/fixtures/mappluto_geometry/MANIFEST.json + the MPG01-MPG07 fixtures (the recorded-official capture pattern + the canonical BBL set to re-capture in 4326 form: Empire State single lot, condo billing + unit, Governors Island holes, Queens multipolygon)",
+    "services/api/app/api/v1/evidence.py + scenario.py (the body-less flag-gated route posture: INTERNAL_RULE_EVAL_ENABLED via app.config helper, generic 404 when off, include_in_schema=False, X-Correlation-ID, injected fetch seam for offline tests)",
+    "packages/contracts/schemas/v1/scenario.schema.json + packages/contracts/scripts/generate_ts_types.py (the closed-contract + two-copy + generated-TS pattern; the generator run for the new lot_geometry type)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (the M2-T009 source-registry posture: draft + connector SOURCE_ID self-declaration; update the draft to cover the 4326 outline usage - do not invent a new registry mechanism)",
+    ".claude/rules/geospatial.md + docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (spatial rules; thin-client: fixtures small, no bulk datasets)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/mappluto_lot_outline.py (NEW focused module: builds the f=geojson&outSR=4326 query for one normalized BBL, parses/validates the GeoJSON response into a typed display-only outline envelope with the four honest outcomes + condo classification + source provenance + accuracy note; the authoritative 2263 module is NEVER edited or re-routed)",
+    "services/api/app/api/v1/lot_geometry.py (NEW route: GET /api/v1/properties/{bbl}/lot-geometry, body-less, flag-gated INTERNAL_RULE_EVAL_ENABLED, generic 404 off, include_in_schema=False, X-Correlation-ID, injected fetch seam, typed outcomes to honest HTTP shapes - never a silent first-pick, never a fabricated outline)",
+    "services/api/app/main.py (additive mount only)",
+    "packages/contracts/schemas/v1/lot_geometry.schema.json + services/api/app/_contract_schemas/v1/lot_geometry.schema.json (NEW closed contract, byte-identical copies) + packages/contracts/generated/lot_geometry.ts (via the repo generator) + packages/contracts/fixtures/valid/lot_geometry/** (contract fixtures)",
+    "services/api/tests/fixtures/mappluto_lot_outline/** (LIVE-CAPTURED f=geojson&outSR=4326 responses for the canonical BBL set, verbatim bytes + MANIFEST.json with capture procedure/URLs/timestamps - recorded-official, never invented)",
+    "services/api/tests/connectors/test_mappluto_lot_outline.py + services/api/tests/api/test_lot_geometry_api.py (offline via the injected seam + recorded fixtures)",
+    "docs/research/source-registry-drafts/pluto-mappluto.json (draft updated: 4326 outline usage, outSR parameter, display-only caveat)",
+    "project-control/reports/M5-T020-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/connectors/mappluto_lot_outline.py",
+    "services/api/app/api/v1/lot_geometry.py",
+    "services/api/app/main.py",
+    "packages/contracts/schemas/v1/lot_geometry.schema.json",
+    "services/api/app/_contract_schemas/v1/lot_geometry.schema.json",
+    "packages/contracts/generated/lot_geometry.ts",
+    "packages/contracts/fixtures/valid/lot_geometry",
+    "services/api/tests/fixtures/mappluto_lot_outline",
+    "services/api/tests/connectors/test_mappluto_lot_outline.py",
+    "services/api/tests/api/test_lot_geometry_api.py",
+    "docs/research/source-registry-drafts/pluto-mappluto.json",
+    "project-control/reports/M5-T020-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/connectors/pluto_soda.py",
+    "services/api/app/scenario/**",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/spatial/**",
+    "services/api/app/config.py",
+    "apps/web/**",
+    "packages/contracts/schemas/v1/scenario.schema.json",
+    "packages/contracts/generated/scenario.ts",
+    "tools/**",
+    ".github/**",
+    "render.yaml",
+    "package.json",
+    "requirements*.txt",
+    "pyproject.toml",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "single_lot_outline_200",
+      "input": "flag on + a recorded single-lot fixture BBL (Empire State class) via the injected seam",
+      "expected": "200 with a contract-valid document: typed outcome single_lot; GeoJSON geometry in EPSG:4326 lng/lat (coordinates in plausible NYC lng/lat ranges, asserted fixture-derived); bbl echoed canonical; condo classification; source provenance (source_id nyc-dcp-mappluto-arcgis, endpoint, dataset Version field, capture/retrieval metadata); display_only true; accuracy note stating the +/-20ft source tolerance; NYC DCP attribution string; X-Correlation-ID header"
+    },
+    {
+      "id": "S2",
+      "case": "typed_outcomes_honest",
+      "input": "recorded fixtures: condo UNIT lot (no polygon), condo BILLING lot (merged polygon), multiple-features response, invalid/empty geometry",
+      "expected": "condo unit -> typed no-outline outcome with the honest reason (never a blank or fabricated shape); billing lot -> outline with condo classification surfaced (merged-complex caveat); multiple_features -> review posture, NEVER a silent first-pick; invalid geometry -> typed error outcome; every outcome contract-valid and JSON-renderer-parity safe"
+    },
+    {
+      "id": "S3",
+      "case": "route_posture",
+      "input": "flag off; malformed bbl; body-less discipline",
+      "expected": "flag off -> generic 404 {detail: Not Found} with no correlation leak of internals; invalid bbl -> typed 422 via normalize_bbl discipline (no injection into the query URL - assert the URL builder rejects/never interpolates raw input); GET only, no body consumed; include_in_schema False"
+    },
+    {
+      "id": "S4",
+      "case": "authoritative_2263_untouched",
+      "input": "git diff over the forbidden connector + the digest/identity surface",
+      "expected": "mappluto_geometry_arcgis.py byte-unchanged (forbidden path); no area or dimension computed from 4326 coordinates anywhere in the new code (grep-provable); display_only marker present on every outcome; existing connector tests all still green"
+    },
+    {
+      "id": "S5",
+      "case": "recorded_official_fixtures",
+      "input": "the fixture set + MANIFEST",
+      "expected": "each fixture is verbatim live-captured bytes from the public FeatureServer (f=geojson&outSR=4326) with MANIFEST entries recording exact URL, capture timestamp, sha256, and BBL; the capture procedure is documented and re-runnable; no fixture byte was derived or invented; tests run fully OFFLINE via the injected seam"
+    },
+    {
+      "id": "S6",
+      "case": "contract_and_regression",
+      "input": "the full suites + both schema copies + generated TS + modularity",
+      "expected": "both lot_geometry schema copies byte-identical, closed (additionalProperties false), fully specified; generated TS from the repo generator (drift jobs green); every outcome survives json.dumps(allow_nan=False) AND json.dumps(ensure_ascii=False, allow_nan=False).encode('utf-8'); ALL existing api + connectors suites pass unchanged; python tools/modularity_check.py --check EXIT 0"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "inventing 4326 bytes (deriving from 2263 fixtures) would violate the recorded-official rule - fixtures MUST be live-captured; the endpoint is keyless/public so capture is feasible",
+    "outSR=4326 service-side reprojection output shape must be validated, never assumed (coordinate order lng/lat, CRS member semantics in GeoJSON output)",
+    "the display-only boundary: any area/dimension math from 4326 coords is a defect (the authoritative 2263 path owns measurement)",
+    "condo unit lots return empty results - the honest no-outline outcome must be typed, never an error-shaped 500 or a fabricated shape",
+    "two-copy contract + generated TS must move together (CI drift jobs fail closed)",
+    "first genuinely new external query shape since M2-T009: URL construction must reuse the injection-proof normalize_bbl discipline"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T13:37:49.369507+00:00",
+  "updated_at": "2026-09-12T13:41:23.806248+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T13:37:49.369507+00:00",
+  "path_notes": "MODULARITY: the 2183-line authoritative connector is BYTE-IMMUTABLE (forbidden); the 4326 transport is a NEW focused module that imports its public names (normalize_bbl, constants, outcome vocabulary) - never a copy-paste fork and never an edit; the route is its own module per the M5-T012 precedent; main.py additive only. DISPLAY-ONLY DISCIPLINE (the research's critical constraint): the 4326 geometry is TRANSPORT FOR DISPLAY - the envelope carries display_only=true, the +/-20ft accuracy note, and NYC DCP attribution; NO area/dimension computation from 4326 coordinates anywhere; the authoritative 2263 canonical path, digests, and provenance are untouched (its module is forbidden). RECORDED-OFFICIAL FIXTURES: capture live f=geojson&outSR=4326 bytes from the keyless public FeatureServer for the canonical BBL set; NEVER derive/invent 4326 bytes from the 2263 fixtures. SOURCE REGISTRY: reuse the M2-T009 posture (draft + SOURCE_ID self-declaration); update the existing draft, do not build new registry infrastructure. FLAG: reuse internal_rule_eval_enabled via the existing app.config helper import - config.py is forbidden (no new flag).",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/connectors",
+    "python -m pytest services/api/tests/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "wt-m5t020",
+  "progress_log": [
+    {
+      "at": "2026-09-12T13:41:23.796614+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; bound to D-040-R001 (digest a3fc9d01->a4145aeb); backend-engineer dispatch next; MapLibre admission + web rendering are follow-on packets"
+    }
+  ]
+}
