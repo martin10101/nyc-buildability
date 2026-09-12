@@ -1,0 +1,202 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-040",
+ "version": 1,
+ "requirement_count": 6,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-12T07:54:36+00:00",
+ "requirements": [
+  {
+   "id": "D-040-R001",
+   "text": "Release the expansion-planning hold SCOPED to the address-flow lot-outline increment ONLY (design-spec Packet 3: the MapPLUTO parcel-geometry connector plus lot-outline rendering on the address confirm card, MapLibre GL JS per .claude/rules/3d-ui-expansion.md). Record the scoped release in .claude/rules/expansion-agent-dispatch-hold.md section 2 citing D-040. Everything else under that hold (3D massing, the 19-task expansion pack, GDS proposals P1-P8, master-plan changes on the pack's instruction) REMAINS HELD.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "read .claude/rules/expansion-agent-dispatch-hold.md section 2 for the scoped-release text",
+   "required_evidence": "hold file amended with the D-040-scoped carve-out; no non-Packet-3 expansion task contracted",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-040-R002",
+   "text": "Feature-flag unification is AUTHORIZED as ordinary gated work: reconcile the frontend flag env var (INTERNAL_RULE_EVAL_UI + ?ruleeval=on) with the backend INTERNAL_RULE_EVAL_ENABLED per the design spec's one-flag intent (M5-T015 G5 F-1). Deploy-affecting: the task packet must name the owner-visible deployment step (Render env var change) as a return item.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "task packet for the unification cites D-040:D-040-R002",
+   "required_evidence": "contracted task with gates; owner return-note listing the env var change to apply on Render",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-040-R003",
+   "text": "The directive-registry digest normalization (the standing control-plane CI red: CRLF digest divergence on D-032/033/034/038 sources) is AUTHORIZED as ordinary gated control-plane work. Constraint: source files are IMMUTABLE - normalization must fix the digest computation/recorded digests via the append-only/audit-log mechanisms, never by editing committed source-*.md content.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "control-plane CI job green at the fix head; validator EXIT 0",
+   "required_evidence": "contracted task with gates; control-plane job green; no source-*.md content edit in the diff",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-040-R004",
+   "text": "PROHIBITION PRESERVED: the Next.js security upgrade (npm-audit red / RCE fix) remains NOT authorized. No dependency change, no hosted web deploy.",
+   "source_ref": "source-001.md#owner-message-2-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "npm audit job state; apps/web/package.json diff",
+   "required_evidence": "package.json/package-lock.json untouched by any D-040 work",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-040-R005",
+   "text": "PROHIBITION PRESERVED: no Supabase/cloud-credential work until the owner provides credentials (owner indicated the next day). Credentials enter ONLY via environment/deployment dashboard, never chat or files.",
+   "source_ref": "source-001.md#owner-message-1-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "grep for supabase credentials in diffs",
+   "required_evidence": "no credential material anywhere; B-001 remains the gate",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-040-R006",
+   "text": "CLARIFICATION OF RECORD: G6 qualified-human legal review is UNCHANGED by this directive - it is not unlockable by instruction; rules remain DRAFT/needs_review until a qualified human reviews and approves (Section 20 / Tier D).",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-040-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "M4 chain acceptance state; rule statuses",
+   "required_evidence": "no rule promoted past needs_review under D-040",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

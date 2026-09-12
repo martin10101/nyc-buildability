@@ -24,6 +24,17 @@ on their instruction. This notice supersedes those passages by owner directive 2
 Accepted work stands at the ledger's count; nothing in the expansion pack alters accepted
 tasks.
 
+### 2.1 Scoped release — lot-outline increment ONLY (owner directive D-040, 2026-09-12)
+
+The owner released this hold for EXACTLY ONE increment: the address-flow lot-outline work
+(address-entry design spec "Packet 3") — the MapPLUTO parcel-geometry connector plus
+lot-outline rendering on the address confirm card, using MapLibre GL JS per the technical
+rules in `.claude/rules/3d-ui-expansion.md`. That work may now be contracted and executed
+under the normal gated process (ledger `M<x>-T<n>` IDs, citing
+`D-040:D-040-R001`). **Everything else in this section remains SUSPENDED** — 3D massing,
+the 19-task pack, the 9 contracts, GDS P1–P8, and any master-plan change on the pack's
+instruction. Record: `project-control/directives/D-040-scoped-unblocks/`.
+
 ## 3. TASK-ID CONVENTION
 
 Pack task IDs (`3D-xxx` / `UI-xxx` / `COMP-xxx`) are workstream labels only. Ledger tasks
