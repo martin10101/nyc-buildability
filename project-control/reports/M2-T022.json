@@ -2,11 +2,11 @@
   "task_id": "M2-T022",
   "producer_agent": "backend-engineer/orchestrator",
   "report_file": "project-control/reports/M2-T022-producer-report.md",
-  "submitted_at": "2026-09-12T02:36:01.156278+00:00",
+  "submitted_at": "2026-09-12T02:57:45.821364+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M2-T022-evidence-map.json",
-  "content_manifest_sha256": "5eedf45298f951dcfbb51ba076c91a0af02dd6d452ecf27bb4171cc9397a3cc8",
-  "reviewed_sha": "8da312ffec93c17fbb4641f1207b9a9c4bff2b5c",
+  "content_manifest_sha256": "e514efca64306598c4a1ed2322d034a83f30b1c7dc46ba3c6805a1b8a855fc5d",
+  "reviewed_sha": "803d5606c26e4552abd8f9f9493a01cfc138f21d",
   "applicable_requirements": [],
-  "updated_at": "2026-09-12T02:36:01.795428+00:00"
+  "updated_at": "2026-09-12T02:57:46.479796+00:00"
 }

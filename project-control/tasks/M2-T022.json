@@ -123,8 +123,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "rework",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Key leakage through a new HTTP surface: S4's leak-absence harvest with positive controls is the control; the connector's own hygiene is necessary but not sufficient once HTTP error handlers exist.",
     "Fabricating a selection on ambiguity: S2 pins that suggestions transport verbatim and no fact is emitted until a human chooses.",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T02:17:39.284529+00:00",
-  "updated_at": "2026-09-12T02:53:58.341384+00:00",
+  "updated_at": "2026-09-12T02:57:46.483573+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
