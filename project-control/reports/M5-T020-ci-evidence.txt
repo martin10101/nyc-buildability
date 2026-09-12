@@ -1,0 +1,27 @@
+M5-T020 CI evidence (captured by the orchestrator)
+
+Producer material: 683b6095 (base a5e5e408; ff onto candidate). CI head: 6f091098
+(producer material + progress record).
+
+Run 34698587781 (head 6f091098), completed 2026-09-12:
+  api (ruff + pytest)                     SUCCESS  (the new connector + route packs run here)
+  contracts (JSON Schema validation)      SUCCESS  (7 new lot_geometry valid fixtures validate)
+  contracts-typegen (TS drift)            SUCCESS  (NOTE: hardcoded file list does NOT yet
+    cover lot_geometry.ts - green means no regression to existing artifacts; the new file's
+    generation fidelity is enforced in-suite + by review; follow-up task recommended by the
+    producer to wire the generator entrypoint)
+  contracts-schema-bundle (drift)         SUCCESS  (same coverage note for the new schema)
+  control-plane                           SUCCESS
+  web / web-e2e                           SUCCESS  (no web change in this task)
+  ONLY failing job: web-dependency-security (owner-gated Next.js item, D-040-R004; no
+  package file touched by this task).
+
+Local (orchestrator pre-gate validation, primary checkout at the producer material):
+  python -m pytest services/api/tests/connectors   486 passed (incl. the new outline pack)
+  python -m pytest services/api/tests/api          417 passed (incl. the new route pack)
+  python tools/modularity_check.py --check         EXIT 0
+(Producer's worktree runs match: 486 / 417 / 67 new-pack / modularity EXIT 0 / ruff clean /
+sync_contract_schemas --check OK / generate_ts_types --check OK; S4 proof: git diff over
+mappluto_geometry_arcgis.py + config.py vs the packet base is EMPTY - the authoritative
+2263 connector is byte-unchanged. Known pre-existing 3.11-only contracts test failure
+(PEP 695 in accepted M2-T015 code) passes on CI 3.12 - see the producer report.)
