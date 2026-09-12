@@ -121,7 +121,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 85,
   "risks": [
     "builder.py is over the modularity WARN threshold - the wire-in must stay bounded; any drift of logic into builder.py is a G1 correction",
     "closed two-copy contract: missing the mirror schema copy breaks endpoint validation invisibly locally",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T10:16:09.122370+00:00",
-  "updated_at": "2026-09-12T11:44:09.008613+00:00",
+  "updated_at": "2026-09-12T11:44:40.455118+00:00",
   "directive_refs": [
     {
       "directive_id": "D-041",
@@ -185,6 +185,13 @@
       "percent": 75,
       "status": "awaiting_gate",
       "message": "Wave results: G1 PASS (zero corrections, advisories A1-A4), G5 PASS (LOW-1/LOW-2 advisories), G4 PASS WITH BLOCKING CORRECTIONS per gate-verdict semantics: C1 = vacant-lot test (bldgarea==0.0 -> computed, value==cap; kills the _nonnegative->_positive mutant M15), C2 = fractional-remainder test (e.g. bldgarea = cap-4999.5 -> unrounded value 4999.5; kills the round() mutant M16). Both are test-only additions in services/api/tests/scenario/test_unused_floor_area.py (allowed_paths). ONE bounded correction commit + same-reviewer delta attestations before gate recording + accept. Executing after M5-T018 G4 returns (single rework pass across the whole wave)."
+    },
+    {
+      "at": "2026-09-12T11:44:35.825488+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "G4 blocking corrections C1/C2 were applied at ae38a169 and DISCHARGED via same-reviewer delta attestations (G4 empirical mutant re-run); transitioning through rework for the resubmit identity restamp"
     }
   ]
 }
