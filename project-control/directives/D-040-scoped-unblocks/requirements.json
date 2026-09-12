@@ -78,7 +78,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-040-BOOTSTRAP"
+     "D-040-BOOTSTRAP",
+     "M0-T156"
     ],
     "task_types": [],
     "milestones": [],

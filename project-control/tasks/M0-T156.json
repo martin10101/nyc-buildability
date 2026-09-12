@@ -1,7 +1,7 @@
 {
   "task_id": "M0-T156",
   "title": "Directive-registry digest normalization (CRLF/LF) - retire the control-plane CI red",
-  "task_type": "control-plane",
+  "task_type": "governance",
   "milestone_id": "M0",
   "objective": "Make every directive-registry content digest line-ending-independent (sha256 over CRLF-to-LF-normalized bytes) in the shared computation sites (directive_registry.sha256_file for c2 source digests; validate_directive_compliance.py requirements-content c14 + migration-manifest checks), then re-stamp the six stale manifest digest values (D-032 source-004-amendment + requirements, D-033 source-002-amendment + requirements, D-034 requirements, D-038 requirements) to their LF-normalized values via append-only manifest edits + audit_log entries citing D-040:D-040-R003. Source files IMMUTABLE - zero byte changes to any source-*.md or requirements.json. Local validator EXIT 0 stays; the CI control-plane job (LF checkout) goes green - the standing red retires.",
   "business_reason": "D-040-R003 (owner 2026-09-12) authorizes this as ordinary gated control-plane work. The red has masked the control-plane job since the digests were recorded over local CRLF bytes while CI checks out LF; every push wastes a required check and the red hides genuine future control-plane regressions.",
@@ -95,14 +95,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Normalization masking real tampering: AS-5 is the control - only CR bytes may be forgiven.",
     "Manifest rewrite collateral: the manifests are CRLF-on-disk with specific indent; a JSON round-trip that reformats unrelated bytes breaks AS-4 byte-preservation and could flip OTHER digests - edit surgically, assert byte-identical round-trip outside the intended fields (the scratchpad/append_d038_m5t012.py pattern).",
@@ -111,13 +111,17 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T08:12:39.027322+00:00",
-  "updated_at": "2026-09-12T08:12:39.216061+00:00",
+  "updated_at": "2026-09-12T08:19:11.511734+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
       "requirement_ids": [
         "D-040-R003"
       ]
+    },
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
     }
   ],
   "directive_regime_version": "1.0",
@@ -136,5 +140,15 @@
     "python tools/test_directive_reminder.py",
     "python tools/test_readonly_agent_guard.py",
     "CI 'control-plane' job on the pushed head (ubuntu/LF checkout - the executable authority for the LF side)"
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-09-12T08:19:11.511734+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Claimed after G0 PASS, D-040-R003 applicability append (digest 0399f470->27d6d1b8, audit-logged), task_type corrected to governance + D-001:ALL cited for s19 governance coverage (D-001 scope.paths names the three tools files; its 136 reqs stay non-applicable by task_ids conjunction - evaluate_task_refs ok=true, applicable=cited=[D-040-R003]). Production order: read the full digest paths; ONE normalization primitive (CRLF->LF + lone-CR decision) at the c2/c14/mig sites; extend test_directive_compliance.py (AS-1 red/green, AS-5 tamper); re-stamp the six manifest digests to the CI-reported LF actuals via byte-preserving edits + ASCII audit entries; run the 5 local commands; one push; CI control-plane green; then the G1/G4/G5 wave."
+    }
   ]
 }
