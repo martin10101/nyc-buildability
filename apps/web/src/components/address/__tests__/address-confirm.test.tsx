@@ -312,6 +312,17 @@ describe("S5 — provenance disclosure", () => {
     // HOST only — never the full endpoint URL.
     expect(body).toContain("api.nyc.gov");
     expect(body).not.toContain("https://api.nyc.gov");
+    // Retrieval timestamp: rendered via boundedToken, which drops the
+    // ":"/"+" of the fixture's ISO value — assert the bounded clause so a
+    // dropped retrieved-at line fails here.
+    const boundedRetrievedAt = doc.provenance.retrieved_at.replace(
+      /[^A-Za-z0-9._-]/g,
+      "",
+    );
+    expect(body).toContain(`retrieved ${boundedRetrievedAt}`);
+    // The in-disclosure Geosupport return-code line carries BOTH codes
+    // (distinct from the warnings block's warning-grc-message element).
+    expect(body).toContain(`Geosupport return codes: ${doc.grc} / ${doc.grc2}`);
     expect(body).toContain(doc.provenance.response_digest);
     // The connector's own correlation id, labeled distinctly, is NOT the
     // HTTP reference id.
