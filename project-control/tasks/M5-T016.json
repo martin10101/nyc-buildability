@@ -1,0 +1,167 @@
+{
+  "task_id": "M5-T016",
+  "title": "Address Confirm card + ZoLa deep-link + handoff (address-entry Packet 2)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Replace the M5-T015 resolved stub with the thin Address Confirm card (canonical address large, BBL, ZoLa deep-link built ONLY from a client-re-validated canonical BBL, lot-outline honesty placeholder, collapsed provenance disclosure with the not-verified posture), the 'Continue with this lot' handoff to /property/confirm?bbl=<canonical>, and the 'Not my property' return to entry; extract the outcome cards into their own module per the G3 F4 concurrence.",
+  "business_reason": "Completes the address front door (MVP_AGENDA A2 rows 3-4, B3-4): an analyst can now go address -> confirmed lot -> the existing BBL property flow without typing a BBL; the ZoLa link exposes the authoritative parcel outline the platform honestly does not draw yet.",
+  "inputs": [
+    "docs/design/address-entry-confirm-design-spec.md (sections 1, 2-resolved, 3-ZoLa rule, 4, 5, 6-Packet-2 are this packet's requirement text)",
+    "docs/design/zola-deeplink-url-confirmation.md (the confirmed ZoLa URL research: use https://zola.planning.nyc.gov/bbl/<10-digit-canonical-bbl>; SPA always answers 200 so the CLIENT-side validateBblInput gate is the only guard; condo/billing-lot caveat)",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx + AddressForm.tsx + SuggestionChooser.tsx (the accepted Packet-1 surface: the resolved stub to replace, the cards to extract)",
+    "apps/web/src/lib/address-api.ts (the view to extend ADDITIVELY for provenance/source_facts display fields)",
+    "apps/web/src/lib/bbl.ts (validateBblInput - the client re-validation authority for the ZoLa/handoff hrefs; READ-ONLY import)",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx + app/property/confirm (the handoff target contract: /property/confirm?bbl=<canonical>; READ-ONLY)",
+    "apps/web/src/lib/format.ts urlHost + existing ProvenanceDisclosure/provenance-details idiom (reuse patterns)",
+    "project-control/reports/M5-T015-producer-report.md section 8 (the deferred-with-concurrence items this packet discharges: card extraction, hostile-resolved fixture, per-state body-copy assertions) and M5-T015-G5.md F-1 (flag-name divergence - REPORT-ONLY owner note, not a code change here)",
+    "services/api/app/api/v1/address_resolution.py (_success_document provenance/source_facts shapes; READ-ONLY)"
+  ],
+  "outputs": [
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/AddressOutcomeCards.tsx (extraction of the Packet-1 outcome/error cards; behavior-neutral)",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx (slimmed host; resolved routes to the Confirm card)",
+    "apps/web/src/lib/address-api.ts (ADDITIVE view extension: provenance endpoint host + request params + source_facts display entries)",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx (extended: routing, extraction-neutrality, carried assertions)",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx (the Confirm-card pack incl. adversarial href scenarios)",
+    "project-control/reports/M5-T016-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T015"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/AddressOutcomeCards.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/AddressForm.tsx",
+    "apps/web/src/components/address/SuggestionChooser.tsx",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/lib/address-api.ts",
+    "project-control/reports/M5-T016-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/lib/bbl.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/announce.ts",
+    "apps/web/src/components/property/**",
+    "apps/web/src/components/compare/**",
+    "apps/web/src/components/confirm/**",
+    "apps/web/src/app/**",
+    "apps/web/e2e/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "packages/**",
+    "services/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "resolved_routes_to_confirm_card",
+      "input": "resolved and resolved_with_warnings fixture documents (recorded-response-shaped)",
+      "expected": "the Packet-1 stub is GONE; the Address Confirm card renders: canonical address LARGE (section-title scale), BBL, the warnings block (for the warnings variant) ABOVE the Continue button and never gating; one dominant action ('Continue with this lot'); 'Not my property' secondary; the data-outcome-heading focus contract preserved"
+    },
+    {
+      "id": "S2",
+      "case": "zola_link_only_from_revalidated_bbl",
+      "input": "a valid fixture BBL; an invalid-checksum/short BBL; a HOSTILE string in canonical.bbl (attribute-breaking payload)",
+      "expected": "valid: exactly one ZoLa anchor with href === 'https://zola.planning.nyc.gov/bbl/' + canonical (the CONFIRMED /bbl convenience route per docs/design/zola-deeplink-url-confirmation.md), target=_blank rel='noopener noreferrer', built ONLY after validateBblInput passes client-side; invalid/hostile: NO ZoLa anchor at all + the honest absence copy ('the city's map link needs a valid BBL, which this result did not provide') - reflected text can NEVER reach an href (asserted by scanning every anchor's href for the payload); the ZoLa host string is a module constant, never concatenated from response data"
+    },
+    {
+      "id": "S3",
+      "case": "handoff_carries_only_canonical_bbl",
+      "input": "valid resolved fixture; hostile canonical.bbl fixture",
+      "expected": "'Continue with this lot' is a real link to /property/confirm?bbl=<canonical> (encodeURIComponent; only when validateBblInput passes) - asserted href equality from the fixture value; hostile/invalid BBL: NO continue link, honest copy pointing at the BBL lookup instead (never a dead end); nothing else from the document leaks into the query string"
+    },
+    {
+      "id": "S4",
+      "case": "not_my_property_returns_to_entry",
+      "input": "resolved fixture, then the 'Not my property' action",
+      "expected": "the result clears back to idle (card unmounts), the form values are RETAINED for editing, focus moves to the street input, the announcer does not announce a phantom outcome, and no fetch fires"
+    },
+    {
+      "id": "S5",
+      "case": "provenance_disclosure_and_not_verified_posture",
+      "input": "resolved fixture with full provenance + 2 source_facts; a fixture with source_facts_not_emitted_reason",
+      "expected": "a collapsed-by-default details ('Where this came from', provenance-details idiom) containing: source id, endpoint HOST (urlHost, never the full URL with params), retrieval timestamp, both GRCs, the connector correlation id labeled DISTINCTLY from the HTTP reference id, response digest, bounded request params as escaped key/value text, and source_facts rows (original field name, original value, normalized value - escaped/bounded); the not-verified posture line verbatim from spec section 4; confidence 1.0 NEVER rendered as a verified/coverage badge (assert the words 'Verified'/'verified badge' absent); withheld-facts reason shown verbatim when present"
+    },
+    {
+      "id": "S6",
+      "case": "render_safety_extended",
+      "input": "hostile payloads in canonical.street_name_normalized, borough_name, provenance.request_params values, source_facts original_value, AND canonical.bbl",
+      "expected": "everything renders as inert escaped text (element-absence sweep + textContent presence); the ONLY anchors on the resolved screen are the ZoLa link (validated-BBL-only), the Continue link (validated-BBL-only), and #bbl-input; no reflected value in any href/src/style/attribute; source-scan: no dangerouslySetInnerHTML in the new/changed files; the hostile-RESOLVED fixture discharges the M5-T015 G5 F-2 carried item"
+    },
+    {
+      "id": "S7",
+      "case": "extraction_is_behavior_neutral",
+      "input": "the outcome/error cards moved from AddressResolutionScreen.tsx to AddressOutcomeCards.tsx (G3 F4 concurrence)",
+      "expected": "every Packet-1 test still passes with at most import-path changes (assert NO assertion text weakened - reviewers diff the test module); AddressResolutionScreen.tsx drops below the 600-SLOC modularity warn threshold; the failure-primitive clones (FailureTitle/Meta/RetryButton) move with the cards, byte-preserved; per-state body-copy assertions added for the retryable generic states (the M5-T015 G4 finding-3 carried item)"
+    },
+    {
+      "id": "S8",
+      "case": "no_new_deps_or_tokens_ci_green",
+      "input": "git diff of the unit; CI web + web-e2e on the pushed head",
+      "expected": "package.json/lockfile untouched; only existing CSS tokens (the lot-outline placeholder uses section-note copy per spec section 6: outline honesty text pointing at ZoLa); import-specifier allowlist extended to the new files; lint+typecheck+build green; whole web suite green - CI is the executable authority (thin client)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer/orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "Reflected text reaching the two NEW href contexts (ZoLa + Continue): S2/S3/S6 adversarial fixtures are the control; any anchor built from unvalidated data is a FAIL.",
+    "Extraction regressing Packet-1 behavior: S7 pins test-module neutrality; reviewers diff assertions.",
+    "Provenance disclosure leaking the full request URL (params include caller-typed text in a URL-ish display context): show HOST only + bounded key/value TEXT rows.",
+    "CI-loop cost: walk the spec tables + carried findings exhaustively before the first push (the M5-T015 arc needed exactly one mechanics re-push - aim for zero)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T06:47:05.994657+00:00",
+  "updated_at": "2026-09-12T06:51:51.431866+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T06:47:05.994657+00:00",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the ONLY executable verification (thin client per docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md)"
+  ],
+  "path_notes": [
+    "EXACT-FILE allowed_paths. bbl.ts/bounded.ts/announce.ts/api.ts and all property/confirm/compare/app trees are FORBIDDEN: validateBblInput and the primitives are consumed read-only; the handoff TARGET (/property/confirm) already exists and is not touched. A genuine need to change a shared lib or page is a STOP-and-rescope.",
+    "address-api.ts edits are ADDITIVE view-model extension only (provenance endpoint host via urlHost-style parsing, bounded request-param pairs, bounded source_facts display entries); existing outcome discrimination and bounding must be byte-preserved except where a field is added.",
+    "The ZoLa URL uses the CONFIRMED /bbl/<canonical> convenience route (docs/design/zola-deeplink-url-confirmation.md). The host+path prefix is a module constant. The href is built ONLY from a validateBblInput-passing canonical BBL (belt-and-suspenders over normalize_bbl); rel='noopener noreferrer' target='_blank'.",
+    "AddressForm.tsx/SuggestionChooser.tsx are in scope ONLY for extraction-related import adjustments if needed; no behavior change (S7 pins neutrality).",
+    "OWNER NOTE carried in the report (not code): M5-T015 G5 F-1 - the frontend flag env var (INTERNAL_RULE_EVAL_UI) differs from the backend's INTERNAL_RULE_EVAL_ENABLED; spec section 6 wanted one flag. Renaming is deploy-affecting - surface to the owner, do not change env wiring in this packet.",
+    "Packet 3 (real lot outline / MapLibre) stays ON THE OWNER-REVIEW EXPANSION HOLD - the placeholder copy must not grow any map/geometry code."
+  ],
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-09-12T06:51:51.431866+00:00",
+      "agent": "frontend-engineer/orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Claimed after G0 admin PASS. Production order (CI-loop cost, aim zero re-pushes): re-read the spec sections 2-resolved/3/4 + the ZoLa confirmation + ConfirmScreen handoff contract + validateBblInput signature IN FULL; extend the two test modules FIRST walking S1-S8 and every carried finding (hostile-resolved fixture, per-state body copy, extraction neutrality); then AddressOutcomeCards extraction (byte-preserving moves), AddressConfirmCard, screen routing, additive address-api view fields; ONE push; CI web/web-e2e authority; then the G1/G3(human-journey)/G4/G5 wave."
+    }
+  ]
+}
