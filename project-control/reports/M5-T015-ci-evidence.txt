@@ -22,6 +22,26 @@ Run: CI 34675912878 (push of 6787445e), completed 2026-09-12
     control-plane            FAILURE  (digest-normalization decision, owner-gated)
   All other jobs (api, contracts, modularity, exact-production-install, etc.): SUCCESS.
 
+POST-WAVE CORRECTION HEAD (appended after the four-gate wave + delta attestations):
+
+Head: 9edfbc7331cfeb69eb810c330cc0e62c7e9a806f (correction commit for G3 F1/F2/F3 + G1 D1/D2/D3)
+Run: CI 34677835271 (push of 9edfbc73), completed 2026-09-12
+
+  web (lint + typecheck + build)                      SUCCESS  job 103510783744  completed 2026-09-12T06:20:32Z
+  web-e2e (vitest + Playwright vs recorded fixtures)  SUCCESS  job 103510783693  completed 2026-09-12T06:23:33Z
+
+  vitest summary (from job 103510783693 log):
+    src/components/address/__tests__/address-resolution.test.tsx  (32 tests)  PASSED
+      (31 prior cases + the new suggestion-pick focus test; heading-level pins,
+       754-char raw-vs-bounded discrimination, and the invalid_input edit
+       affordance assertions ride inside existing cases)
+    Test Files  27 passed (27)
+
+  Only failing jobs: the same two pre-existing owner-gated reds
+  (web-dependency-security; control-plane). All others SUCCESS.
+  This is the run the four gate recordings and the delta attestations anchor to
+  (G1's execution caveat satisfied: fresh CI green at the corrected head).
+
 RED half (M5-T014 posture): recorded externally on the FIRST push head 6097c8cb, run 34675738338 —
   web FAILED with exactly one typecheck error (TS2339 retry_after on the test fixture's inferred
   spread type) and web-e2e FAILED with exactly one test (the S6 source-scan: ERR_INVALID_URL_SCHEME,
