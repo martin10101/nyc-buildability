@@ -7,9 +7,12 @@ Run 34698587781 (head 6f091098), completed 2026-09-12:
   api (ruff + pytest)                     SUCCESS  (the new connector + route packs run here)
   contracts (JSON Schema validation)      SUCCESS  (7 new lot_geometry valid fixtures validate)
   contracts-typegen (TS drift)            SUCCESS  (NOTE: hardcoded file list does NOT yet
-    cover lot_geometry.ts - green means no regression to existing artifacts; the new file's
-    generation fidelity is enforced in-suite + by review; follow-up task recommended by the
-    producer to wire the generator entrypoint)
+    cover lot_geometry.ts - green means no regression to existing artifacts. CORRECTION per
+    G4 BLOCKING-2: at submit time no in-suite TS check existed; the G4-required correction
+    a3d59e03 ADDED the load-bearing in-suite structural drift guard
+    (test_s6_generated_ts_covers_every_schema_key_enum_and_const) - every schema property/
+    enum/const token must appear in the committed TS. Full generator wiring remains the
+    recommended follow-up before the web packet consumes lot_geometry.ts)
   contracts-schema-bundle (drift)         SUCCESS  (same coverage note for the new schema)
   control-plane                           SUCCESS
   web / web-e2e                           SUCCESS  (no web change in this task)
@@ -25,3 +28,8 @@ sync_contract_schemas --check OK / generate_ts_types --check OK; S4 proof: git d
 mappluto_geometry_arcgis.py + config.py vs the packet base is EMPTY - the authoritative
 2263 connector is byte-unchanged. Known pre-existing 3.11-only contracts test failure
 (PEP 695 in accepted M2-T015 code) passes on CI 3.12 - see the producer report.)
+
+Corrected head (G4 corrections BLOCKING-1+2, test-only commit a3d59e03):
+  connector pack 51 passed + api pack 19 passed (70 total incl. the LOT05 holes
+  assertions and the TS structural guard); full connectors 488, api 418; ruff clean.
+  Delta attestations from the SAME three reviewers appended to the gate reports.
