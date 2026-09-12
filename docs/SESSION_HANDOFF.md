@@ -5,15 +5,28 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 103: 189 accepted; C1 DONE + D-040-R002 flag unification DONE (M5-T019); R001 lot-outline packets next (research complete)
+## Handoff - seq 104: 190 accepted; R001 SERVER half DONE (M5-T020 lot-geometry route); MapLibre admission + web rendering remain
 
-Generated 2026-09-12 ~09:40 ET by the same orchestrator session (seq-102 continuation). Root
+Generated 2026-09-12 ~10:50 ET by the same orchestrator session (seq-103 continuation). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`8dbcee54` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
+`2b8a6619` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 189.** NEW since seq 102: **M5-T019 (189th, D-040-R002 flag unification)**
+1. **Accepted = 190.** NEW since seq 103: **M5-T020 (190th, D-040-R001 SERVER half)** ACCEPTED -
+   display-only EPSG:4326 MapPLUTO lot-outline transport (new focused module importing the
+   BYTE-IMMUTABLE 2263 connector's discipline; no measurement from 4326 coords) + body-less
+   flag-gated GET /api/v1/properties/{bbl}/lot-geometry (typed outcomes: single_lot /
+   no_outline condo-unit / multiple_features-review never-first-pick / invalid_geometry) +
+   NEW closed lot_geometry contract (both copies byte-identical + generated TS with an
+   in-suite structural drift guard) + 6 LIVE-CAPTURED f=geojson&outSR=4326 fixtures (G1
+   re-fetched LOT01's manifest URL live: byte-for-byte match) + 2 documented synthetics.
+   Arc: G1(data-contract)/G4/G5 PASS; G4 required corrections (LOT05 holes assertions +
+   TS guard, a3d59e03) discharged w/ empirical mutant kills; DCV row at 3c11a701 (identity
+   ee2d7b2a; SERVER half verified - R001 stays OPEN at directive level until the web half);
+   accept 2b8a6619. Follow-up backlog: generator/CI wiring for lot_geometry.ts BEFORE the
+   web packet consumes it; transport resilience (G5 LOW-1..4); G4 A1-A6.
+   Seq-103 recap: **M5-T019 (189th, D-040-R002 flag unification)**
    ACCEPTED end-to-end - the web rule-evaluation flag now reads the canonical
    INTERNAL_RULE_EVAL_ENABLED (design-spec section 6 one-flag intent; M5-T015 G5 F-1
    formally CLOSED); semantics byte-preserved, old name pinned inert by a guard test;
@@ -65,20 +78,19 @@ Generated 2026-09-12 ~09:40 ET by the same orchestrator session (seq-102 continu
 
 ## NEXT ACTION (in order)
 
-1. D-040-R001 lot outline - research IS COMPLETE and preserved at
-   `project-control/reports/D-040-R001-mappluto-research.md`. Contract as three packets:
-   (a) SERVER: 4326-GeoJSON emission path (f=geojson&outSR=4326 or reproject) WITHOUT
-   touching the authoritative 2263 provenance/digest discipline in
-   mappluto_geometry_arcgis.py + a public flag-gated route by BBL + additive geometry
-   contract + the missing source_registry record for nyc-dcp-mappluto-arcgis; typed
-   outcomes (no_feature condo-unit / multiple_features / review_required /
-   invalid_geometry) surfaced honestly. (b) DEPENDENCY: /dependency-security admission of
-   maplibre-gl@6.7.0 (newest age-gate-passing version as of 2026-09-12; Snyk clean;
-   BSD-3-Clause; CVE-2026-85061 fixed in 6.4.1; enumerate ALL transitive deps from the
-   lockfile, each must pass age+advisory+pin+integrity; G5 provenance review). (c) WEB:
-   confirm-card outline replacing the lot-outline-placeholder (AddressConfirmCard.tsx
-   :141-145) with MapLibre per the 3d-ui rule; MultiPolygon/holes/condo-empty handled;
-   ZoLa link + approximate-outline (+/-20ft) copy kept.
+1. R001 remaining: (a) DEPENDENCY: /dependency-security admission of maplibre-gl@6.7.0
+   (age-gate-passing as of 2026-09-12; Snyk clean; BSD-3-Clause; CVE-2026-85061 fixed in
+   6.4.1). THIN-CLIENT LOCKFILE CONSTRAINT: no local npm - the package-lock entries
+   (maplibre + ALL transitives, each age+advisory+pin+integrity-checked) must be built
+   from npm-registry metadata over HTTPS and PROVEN by the CI web job (npm ci fails
+   closed on a bad lock) + web-dependency-security machine gates; G5 provenance review
+   required. NOTE the standing web-dependency-security red (Next.js, owner-gated) stays
+   red - the job output must show the maplibre entries passing their checks. Wire the
+   lot_geometry.ts generator/CI drift coverage in or before this packet. (b) WEB:
+   confirm-card outline replacing lot-outline-placeholder (AddressConfirmCard.tsx
+   :141-145) with MapLibre per the 3d-ui rule, consuming the ACCEPTED
+   /lot-geometry route + lot_geometry.ts; MultiPolygon/holes/condo-empty/review honest
+   states; ZoLa link + approximate-outline (+/-20ft) copy kept; G3 in the wave.
 2. Owner return items outstanding: credentials (Supabase B-001 + Geoclient B-004 - the real
    end-to-end unlock), Next.js upgrade authorization (retires the last CI red), Render
    env-var rename (with R002), G6 legal sign-off (M4 chain).
@@ -104,13 +116,13 @@ contract for future UI work) · `.claude/rules/expansion-agent-dispatch-hold.md`
 
 ## COPY INTO THE NEW SESSION
 
-resume from handoff seq 103: work from durable repository evidence. Verify root/branch/HEAD
+resume from handoff seq 104: work from durable repository evidence. Verify root/branch/HEAD
 (expect C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 on candidate/D-024-mrl-option-b), Bootstrap
 Gate 0, read CLAUDE.md + docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`,
-reconcile vs live git/CI (origin may have advanced; ledger and CI win). 189 accepted; C1 +
-D-040 R003/R002 all done. Execute NEXT-ACTION item 1: the three R001 lot-outline packets
-(server 4326 route -> maplibre-gl@6.7.0 dependency admission -> web outline), each via
-/start-controlled-task citing D-040:D-040-R001, pinning
-project-control/reports/D-040-R001-mappluto-research.md, normal gates. Report READY TO RESUME
-or BLOCKED before changing anything. Stop only for owner-only items (credentials/payments/
-legal, PR #241, Next.js upgrade/deploy, Supabase, G6).
+reconcile vs live git/CI (origin may have advanced; ledger and CI win). 190 accepted; C1 +
+D-040 R003/R002 + R001-server all done. Execute NEXT-ACTION item 1: maplibre-gl@6.7.0
+dependency admission (/dependency-security; thin-client lockfile-from-registry-metadata,
+CI-proven) then the web outline packet, both citing D-040:D-040-R001, pinning the research
++ the accepted M5-T020 route/contract. Report READY TO RESUME or BLOCKED before changing
+anything. Stop only for owner-only items (credentials/payments/legal, PR #241, Next.js
+upgrade/deploy, Supabase, G6).
