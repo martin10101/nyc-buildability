@@ -5,87 +5,83 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 99: 184 accepted; M5-T016 (address Packet 2) BUILT + PUSHED, CI in flight; wave next
+## Handoff - seq 100: 185 accepted; M5-T016 ACCEPTED end-to-end; D-040 scoped-unblock queue next (R003 -> R002 -> R001)
 
-Generated 2026-09-12 ~03:15 ET by session `5967607e-525a-430f-b258-e908e6db62e6` (owner ran
-`/session-handoff`, no reason stated). Root `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch
-`candidate/D-024-mrl-option-b`, HEAD `49bd086b` **pushed** (a handoff/state commit follows).
-Dirty at generation: `project-control/state.json` (timestamp-only, committed with this handoff);
-untracked `.claude/agent-memory/qa-engineer/*` + `scratchpad/` (left per policy). `main` untouched
-at `d8b3899f`. PR #241 OPEN — NEVER merge.
+Generated 2026-09-12 ~04:10 ET by the resumed orchestrator session (seq-99 continuation). Root
+`C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
+`c7170914` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 184.** This session landed SEVEN acceptances (177→184): M2-T021, M4-T010, M4-T009,
-   M4-T011, M2-T022, M5-T014, **M5-T015** (address-entry UI Packet 1, full arc: 4-gate wave →
-   required-correction rework → delta attestations → DCV → accept `c9c4ce16`). Owner decision
-   D-039 removed the M4-T010/T009 dependency edge to G6-parked M4-T001; the G6 hold is UNTOUCHED.
-2. **M5-T016 (address Packet 2) — claimed, producer material PUSHED, CI UNCONFIRMED.** Ledger 70%
-   `in_progress`. Packet `ffaa85dc` (G0 PASS admin); producer commit `65d72bfd`; progress record
-   `49bd086b` = HEAD. Built: `AddressConfirmCard` (ZoLa link via the CONFIRMED
-   `https://zola.planning.nyc.gov/bbl/<canonical>` route — research preserved at
-   `docs/design/zola-deeplink-url-confirmation.md`; both hrefs built ONLY from
-   `validateBblInput`-passing BBL; provenance disclosure with endpoint HOST only + not-verified
-   posture); `AddressOutcomeCards` extraction (screen now 264 lines, modularity warn gone);
-   additive `address-api` view fields; 10-test confirm pack + strengthened resolution pack
-   (per-state body copy, hostile-resolved + hostile-BBL fixtures). Carried M5-T015 findings
-   discharged in-code except G5 F-1 (flag-name divergence `INTERNAL_RULE_EVAL_UI` vs
-   `INTERNAL_RULE_EVAL_ENABLED`) — a report-only OWNER note (deploy-affecting rename).
-3. **CI on `49bd086b` was IN PROGRESS at handoff** (run visible via
-   `gh run list --branch candidate/D-024-mrl-option-b --workflow CI --limit 1`). The session's CI
-   monitor died with the session — CHECK IT LIVE FIRST. Expected: everything green except the two
-   standing owner-gated reds (web-dependency-security = npm audit/Next.js RCE authorization;
-   control-plane = CRLF digest normalization decision).
-4. **Campaign-continuity tool fails closed** (exit 1: legacy D-032 records invalid — pre-existing;
-   the active D-024 record's NEXT is STALE vs the D-038 product queue). Per the profile: fall back
-   to the ledger + git; do not hand-edit campaign records.
-5. Sub-agents: NONE live. This session's four M5-T015 reviewers, the DCV verifier, and the ZoLa
-   researcher all completed and their returns are preserved under `project-control/reports/` and
-   `docs/design/`. Spawn FRESH reviewers for the M5-T016 wave.
+1. **Accepted = 185.** M5-T016 (address Packet 2: Confirm card + ZoLa /bbl deep-link + handoff)
+   ACCEPTED end-to-end this session: CI evidence at first-execution-green 49bd086b -> submit
+   069c3d40/ed110e6a -> four-gate wave (G1/G3/G5 PASS; G4 PASS w/ required correction C1) ->
+   C1 one-bounded test-only correction b1129f34 (S5 asserts bounded retrieved-at clause +
+   in-disclosure GRC line) -> delta attestations from the SAME four reviewers (all PASS; C1
+   DISCHARGED) -> gate records fd8832d9 (identity f85bc9e8) -> resubmit restamp 6ec7b631 ->
+   independent DCV PASS/ROW-SUFFICES + a5694aea restamp -> accepted c7170914. All reports,
+   attestations, and the DCV live under `project-control/reports/M5-T016-*`.
+2. **D-040 captured (owner scoped unblocks, commit a5694aea by the prior session; validator
+   EXIT 0; all six requirements bind sentinel D-040-BOOTSTRAP).** Owner verbatim: "Ok lets
+   unblock all beside the next js and superbase that needs me." Governs the queue NOW:
+   - **R003** directive-digest normalization (kills the standing control-plane CI red;
+     source-*.md IMMUTABLE - append-only mechanisms only).
+   - **R002** feature-flag unification (INTERNAL_RULE_EVAL_UI vs INTERNAL_RULE_EVAL_ENABLED,
+     the M5-T015 G5 F-1 note; deploy-affecting - packet must name the Render env-var change
+     as an owner return item).
+   - **R001** SCOPED expansion-hold release: address-flow lot-outline increment ONLY
+     (design-spec Packet 3: MapPLUTO parcel-geometry connector + lot outline on the confirm
+     card, MapLibre GL JS; official-source research FIRST). Hold rule §2.1. Everything else
+     under the expansion hold stays SUSPENDED.
+   - Still owner-gated (R004/R005): Next.js upgrade/deploy; Supabase/credentials (owner said
+     credentials tomorrow). R006: G6 unchanged. Suggested order R003 -> R002 -> R001.
+3. **CI churn note:** the owner pushed docs commits (MVP_ARCHITECT_REVIEW_QA.md parts 1-4,
+   incl. the Part 4 gap list awaiting owner triage) from a parallel session during the arc;
+   cancel-in-progress preempted supervisor-bridge twice (documented in
+   M5-T016-ci-evidence.txt - NOT a failure; web+web-e2e completed green first). The two
+   standing owner-gated reds remain: web-dependency-security (Next.js RCE - D-040 R004 keeps
+   it owner-gated) and control-plane (digest normalization - now UNBLOCKED as D-040 R003).
+4. Prior session (ctl24-8e) went dormant on repo work after the D-040 capture; this session
+   owns the ledger. Campaign-continuity tool still fails closed - use the ledger.
+5. Sub-agents: the four M5-T016 reviewers + the DCV verifier completed; returns preserved
+   verbatim under `project-control/reports/`. Spawn FRESH agents for new work.
 
 ## NEXT ACTION (in order)
 
-1. Confirm CI on `49bd086b`: if `web` + `web-e2e` green → capture
-   `project-control/reports/M5-T016-ci-evidence.txt` (mirror the M5-T015 file: run id, job ids,
-   vitest counts, the two owner-gated reds noted), write the empty-applicable evidence map
-   (`M5-T016-evidence-map.json`, `{"requirements": {}}` + note), commit, `submit` at that HEAD,
-   push. If red: fix bounded (test-mechanics posture: 1 repair commit max, then re-CI).
-2. Dispatch the four-reviewer wave at the pushed head: G1 code-reviewer, G3
-   **human-journey-reviewer** (the packet's roster — Packet 2 carries the journey walkthrough),
-   G4 qa-engineer, G5 security-reviewer. Reviewer briefs: packet S1–S8 +
-   `M5-T016-producer-report.md` §2–4 (href discipline is the core risk) + the ZoLa research doc.
-3. Then the proven M5-T015 flow: preserve reports verbatim → corrections (if any) as ONE bounded
-   commit + delta attestations → record gates ONCE at live HEAD → `awaiting_gate→rework→resubmit`
-   restamp if producer content moved after submit → independent DCV (empty-applicable expected) →
-   accept → handoff/memory update.
-4. After M5-T016: next queue item per the ledger (nothing else mid-flight). Packet 3 (lot
-   outline/MapLibre) stays on the owner-review expansion hold — do not plan it.
+1. Contract D-040-R003 (digest normalization) via /start-controlled-task citing
+   `D-040:D-040-R003`: reproduce the control-plane CI red locally-in-CI-terms first, fix via
+   append-only mechanism (source-*.md immutable), CI green = the red retired.
+2. Then R002 (flag unification; small; Render env-var rename = owner return item).
+3. Then R001 (Packet 3 lot outline): official-source-researcher on MapPLUTO FIRST (house
+   connector law), then packet(s) for connector + confirm-card outline under normal gates.
+4. Owner priority beyond the trio: NOT yet given - candidate backlog is
+   docs/MVP_ARCHITECT_REVIEW_QA.md Part 4 (owner has it for triage). Do not self-assign
+   beyond D-040 scope.
 
 ## STANDING RESTRICTIONS (unchanged)
 
-NEVER merge PR #241. Supervisor frozen/SHADOW-ONLY (changes need cited D-024-R###). Expansion hold
-(`.claude/rules/expansion-agent-dispatch-hold.md`). No bare `git stash`. No new packages
-(dependency policy; no waiver of advisories ever). No hosted web deploy before the Next.js RCE fix
-(owner-gated). API URL private; Geoclient key ONLY in owner env + Render dashboard. Thin client
-(no local node_modules/DBs/bulk data; CI is the executable authority for apps/web). G6 on M4-T001
-= owner-only Section 20/Tier D. Stop-and-ask only for credentials/payments/legal (D-008).
-Bootstrap Gate 0 before any write: cwd must BE this worktree root; `/mcp` must report no servers.
+NEVER merge PR #241. Supervisor frozen/SHADOW-ONLY (changes need cited D-024-R###). Expansion
+hold except the §2.1 lot-outline release. No bare `git stash`. No new packages without
+/dependency-security admission (MapLibre for R001 WILL need G5 provenance review + age gate).
+No hosted web deploy before the Next.js RCE fix (owner-gated). API URL private; Geoclient key
+ONLY in owner env + Render dashboard. Thin client. G6 on M4-T001 = owner-only. Stop-and-ask
+only for credentials/payments/legal (D-008). Bootstrap Gate 0 before any write.
 
 ## AUTHORITATIVE FILES (smallest set)
 
-`project-control/state.json` + `tasks/M5-T016.json` (live task truth) · `tasks/M5-T015.json` +
-`reports/M5-T015-*` (the completed-arc pattern) · `reports/M5-T016-producer-report.md` +
-`reports/M5-T016-G0.md` · `docs/design/address-entry-confirm-design-spec.md` +
-`docs/design/zola-deeplink-url-confirmation.md` · `CLAUDE.md` · this file.
+`project-control/state.json` + `directives/D-040-scoped-unblocks/` (the new queue) ·
+`tasks/M5-T016.json` + `reports/M5-T016-*` (the completed-arc pattern incl. DCV restamp) ·
+`docs/design/address-entry-confirm-design-spec.md` (Packet 3 sections for R001) ·
+`.claude/rules/expansion-agent-dispatch-hold.md` §2.1 · `CLAUDE.md` · this file.
 
 ## COPY INTO THE NEW SESSION
 
-resume from handoff seq 99: work from durable repository evidence, not assumptions about the prior
-conversation. Verify root/branch/HEAD (`git rev-parse --show-toplevel`, expect
-C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 on candidate/D-024-mrl-option-b), Bootstrap Gate 0
-(cwd = worktree root, /mcp empty), read CLAUDE.md + docs/SESSION_HANDOFF.md, run
-`python tools/project_control.py status`, reconcile handoff vs live git/CI (ledger and CI win;
-origin may have advanced). Campaign tool fails closed — use the ledger. Then execute the handoff's
-NEXT-ACTION list starting at item 1 (M5-T016 CI check → evidence → submit → four-reviewer wave).
-Report READY TO RESUME or BLOCKED before changing anything. Stop only for owner-only items
-(credentials/payments/legal/PR #241/expansion hold/G6).
+resume from handoff seq 100: work from durable repository evidence. Verify root/branch/HEAD
+(expect C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 on candidate/D-024-mrl-option-b), Bootstrap
+Gate 0, read CLAUDE.md + docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`,
+reconcile vs live git/CI (origin may have advanced; ledger and CI win). 185 accepted; M5-T016
+done. Execute the D-040 queue from NEXT-ACTION item 1 (R003 digest normalization -> R002 flag
+unification -> R001 lot-outline Packet 3 with MapPLUTO research first), each via
+/start-controlled-task citing its D-040 requirement, normal gates. Report READY TO RESUME or
+BLOCKED before changing anything. Stop only for owner-only items (credentials/payments/legal,
+PR #241, Next.js upgrade/deploy, Supabase, G6).
