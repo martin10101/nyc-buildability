@@ -439,6 +439,121 @@ plus any missing rows.*
 
 ---
 
+## Part 5 — How the program is organized (a plain-language tour)
+
+Think of the program as an office building. Each floor has one job and is not allowed to do the
+others' jobs. That separation is the most important design decision in the system.
+
+- **Floor 1 — the storefront (`apps/web`).** Everything a person sees and touches. Each screen
+  piece is its own file (the address form, the match chooser, the confirm card, the traffic-cop
+  that decides which to show). Small toolboxes handle the phone line to the back office, the
+  "safety gloves" for anything the outside world sends, and the announcer for blind users. A test
+  file sits next to every screen, like a fire extinguisher next to every stove. **House rule: the
+  storefront may not do math.** It only displays what the back office says — so a wrong number can
+  only ever come from one place.
+- **Floor 2 — the back office (`services/api`).** The brain. Its departments: **connectors** (the
+  clerks who call the city and write answers down word-for-word, with date/time and a receipt
+  number — forbidden from interpreting; a strange answer stops the line); **rules** (the law
+  library — each rule stapled to the exact sentence of law it came from, plus the tamper-evident
+  fingerprint); **scenario** (the calculators: cap, sensitivity, break-even — official inputs
+  only); **api/v1** (the service windows the storefront asks questions at). Tests mirror
+  everything.
+- **Floor 3 — the shared dictionary (`packages/contracts`).** The storefront and back office
+  agree on exactly what every word means. Breaking the dictionary sets off automatic alarms.
+- **Floor 4 — the filing room (`project-control`).** Every task's paper trail: what was asked,
+  who built it, which independent reviewers checked it, what they found, when it was accepted.
+  The owner's instructions are stored word-for-word. Nothing important lives in anyone's memory.
+- **Floor 5 — the manuals (`docs`).** Design plans, policies, session handoffs, this document.
+- **The basement (`tools`, `.claude/rules`).** The machinery that runs the project itself, plus
+  house rules that load automatically per work area.
+- **The inspection line (CI).** Every change triggers thousands of automatic checks — tests,
+  security scans, size checks, dictionary checks. Nothing lands without passing.
+
+Why divided this way: (1) small pieces can be truly checked; (2) lies get caught at the borders —
+screens can't calculate and clerks can't interpret, so blame always has one address; (3) any piece
+can be replaced without breaking the rest.
+
+## Part 6 — What will make a professional shrug, and what will make them lean in
+
+**Honest premise: almost every raw fact in the MVP is publicly look-up-able.** The value is not
+the data; it is the work done on the data, with receipts.
+
+The shrug list ("I could get this myself"): the zoning district name (ZoLa), lot area / year
+built / building size (PLUTO), address-to-lot, the ZoLa link itself.
+
+The lean-in list ("I can't get this anywhere"):
+1. **The math, done, with the receipt stapled on** — the draft cap computed and tied to the exact
+   sentence of law, fingerprinted. Compresses an hour of careful cross-referencing into a second
+   and shows its work. No public tool does the math.
+2. **The honesty layer** — "this fact is missing", "these sources disagree", "ask a lawyer".
+   Public tools never confess what they don't know; professionals get burned by that constantly.
+3. **"How fragile is this number?"** — the sensitivity view; judgment support no public tool
+   offers.
+4. **"How much MORE can I build?"** — remaining development rights as one clear line. The
+   ingredients exist in the MVP; the explicit line is gap-list item C1 — OWNER-APPROVED
+   2026-09-12 (directive D-041) and queued for build.
+5. **The paper trail as a service** — source, date, law text, reference number: protection the
+   professional can pass to their own client.
+
+The sentence the demo aims for: *"ZoLa tells me what zone I'm in. This tells me what I can do
+with the lot — and proves it."*
+
+## Part 7 — 20 more yes/no questions (the build itself) — Q56–Q75
+
+**Q56.** Is the screen part ever allowed to do zoning math? **No** — screens display; the brain
+calculates.
+**Q57.** Is every screen, calculator, and city-clerk in its own file with one job? **Yes** —
+machine-enforced size/responsibility checks.
+**Q58.** If every screen were deleted, would the zoning brain still work? **Yes** — the back
+office stands alone.
+**Q59.** Can two parts share code nobody reviewed? **No.**
+**Q60.** Does every piece have tests sitting next to it? **Yes** — thousands run on every change.
+**Q61.** Can code reach users before an independent reviewer approves it? **No** — builder is
+never approver.
+**Q62.** Do the storefront and back office speak through one agreed dictionary? **Yes** — with
+automatic alarms on breakage.
+**Q63.** If the city changes its data shape, does the program quietly adapt? **No** — it stops
+and flags; quiet adapting is how tools start lying.
+**Q64.** Is there a drawer with every big owner decision saved word-for-word? **Yes.**
+**Q65.** Could a new team reconstruct why everything was built from the files alone? **Yes.**
+**Q66.** Can the program answer "where did this number come from" down to the sentence of law?
+**Yes**, for every implemented rule.
+**Q67.** Is any raw MVP data secret or exclusive? **No** — official public data; the value is the
+work done on it.
+**Q68.** Will the district name alone impress an architect? **No** — shrug list.
+**Q69.** Is "how much more can I build" one clear line today? **No** — approved (D-041), not yet
+built.
+**Q70.** Does the program ever secretly pick "the best" option? **No** — every optimization names
+its objective.
+**Q71.** Do saved accounts instantly exist when Supabase plugs in? **No** — keys unlock building
+it, through the same reviewed process.
+**Q72.** Did the owner's unblocked items enter the queue? **Yes** — under full review like
+everything else.
+**Q73.** Is any part a black box even to the builders? **No** — deterministic, logged, reviewable.
+**Q74.** Ready to show an architect for feedback? **Yes** — that is exactly what it is ready for.
+**Q75.** Ready to sell today? **No** — rules are draft until legal sign-off and it is not publicly
+deployed; both paths run through the owner.
+
+## Part 8 — Candid notes to the owner (recorded at the owner's request)
+
+1. **The moat is not the data.** Anyone can wrap ZoLa in a prettier screen. The defensible asset
+   is the rules engine with receipts plus the honesty discipline. Weigh the backlog that way.
+2. **C1 is the demo-maker** — small work, existing inputs, the line a professional leans in for.
+   (Owner approved 2026-09-12; captured as D-041.)
+3. **Start the G6 lawyer conversation now, in parallel.** It is the slowest item on the map, a
+   relationship with lead time, and nothing technical substitutes for it.
+4. **Show the real architect the current MVP now** — this document exists for that conversation;
+   real feedback will re-order the backlog better than any internal plan.
+5. **Decide who the customer is** (developer / architect / broker) before the product grows a
+   personality; it shapes copy, priorities, and reports.
+6. **The repository is public** — plans, strategy, and decisions included (no secrets; machines
+   check every commit). As this nears a business, "competitors can read the roadmap" deserves a
+   deliberate five minutes.
+7. **Keep the "does the program lie?" instinct.** Demanding sources, refusing guesses, keeping
+   humans over legal judgment — that discipline IS the product.
+
+---
+
 *End of Q&A. Feedback from professional reviewers — wrong emphasis, missing questions, answers
 that don't match professional expectations — should go back to the owner for triage into the
 project's tracked backlog.*

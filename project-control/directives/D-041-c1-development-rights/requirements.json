@@ -1,0 +1,106 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-041",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-12T08:18:53+00:00",
+ "requirements": [
+  {
+   "id": "D-041-R001",
+   "text": "Implement gap-list C1: the explicit remaining-development-rights output - existing built floor area vs the draft residential FAR cap, rendered as its own clearly labeled line (e.g. 'approximately X sq ft of unused DRAFT floor area') under the standard draft-label + per-fact provenance discipline. The over-built case (existing area exceeds the draft cap, i.e. a negative remainder) must render HONESTLY as its own explicit statement and route to the professional-review flag - never clamped to zero, never hidden. Missing inputs (no existing-area fact, no applicable FAR rule) render as the standard missing/unsupported treatment, never estimated. Contract as normal gated ledger task(s) citing D-041:D-041-R001.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-041-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "acceptance scenarios covering: normal remainder, over-built negative remainder, missing existing-area fact, missing/unsupported FAR rule; fixture-derived assertions",
+   "required_evidence": "accepted ledger task(s) with the four-case scenario pack; CI green; DCV row",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-041-R002",
+   "text": "PRIORITY: C1 is the owner's top product priority (approved in direct response to the 'Do C1 next' recommendation). The D-040 authorizations (R003 digest normalization, R002 flag unification, R001 lot-outline increment) remain in force; the active orchestrator decides the exact interleaving of C1 with that trio, treating C1 as first among product work.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-041-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "ledger ordering of contracted tasks",
+   "required_evidence": "C1 task contracted without waiting for the full D-040 trio to finish",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-041-R003",
+   "text": "SCOPE LIMIT PRESERVED: this approval covers gap-list item C1 ONLY. Every other Part 4 gap-list item (including C2 grandfathered-flag as a separate feature, C3, all of B, all of E) remains a candidate awaiting owner triage. D-040's prohibitions (Next.js, Supabase-before-credentials) and R006 (G6 unchanged) are untouched.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-041-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "ledger contents vs the gap list",
+   "required_evidence": "no non-C1 gap-list item contracted citing D-041",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

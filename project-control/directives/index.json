@@ -561,7 +561,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-040-scoped-unblocks/manifest.json"
+  },
+  {
+   "directive_id": "D-041",
+   "slug": "c1-development-rights",
+   "title": "Owner 2026-09-12: gap-list C1 APPROVED - explicit remaining-development-rights line (existing built area vs draft FAR cap, honest over-built handling), owner's top product priority; C1 only, all other gap-list items stay candidates.",
+   "status": "active",
+   "issued_at": "2026-09-12",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-041-c1-development-rights/manifest.json"
   }
  ],
- "updated_at": "2026-09-12T07:51:39+00:00"
+ "updated_at": "2026-09-12T08:18:53+00:00"
 }
