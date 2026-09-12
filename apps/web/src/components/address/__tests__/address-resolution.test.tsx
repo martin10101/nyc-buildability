@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
@@ -518,13 +519,18 @@ describe("S5 — documented error matrix", () => {
   });
 
   it("rate_limited surfaces a present bounded retry_after and omits the line when absent", async () => {
-    const withHint = errorDoc("rate_limited", { retry_after: "120" });
-    stubFetchOnce(jsonResponse(withHint, 503));
+    // Single-source hint value: injected into the fixture AND asserted, so
+    // the two sides cannot drift (TS: the errorDoc spread does not surface
+    // extra keys on the inferred error type, so the value lives here).
+    const retryAfterHint = "120";
+    stubFetchOnce(
+      jsonResponse(errorDoc("rate_limited", { retry_after: retryAfterHint }), 503),
+    );
     render(<AddressResolutionScreen />);
     fillAndSubmit();
     await screen.findByTestId("address-error-rate_limited");
     expect(screen.getByTestId("retry-after").textContent).toContain(
-      String(withHint.error.retry_after),
+      retryAfterHint,
     );
 
     cleanup();
@@ -634,29 +640,33 @@ describe("S6 — hostile reflected text renders inert", () => {
   });
 
   it("source scan: no dangerouslySetInnerHTML in any new file; suggestion keys are array indexes; imports stay within the existing module set", () => {
+    // Paths resolve from the vitest root (apps/web — the CI job's
+    // working-directory), NOT from import.meta.url: under the jsdom
+    // environment vitest serves modules from a non-file scheme, so a
+    // URL-relative read throws ERR_INVALID_URL_SCHEME.
     const sources: Record<string, string> = {
       "AddressResolutionScreen.tsx": readFileSync(
-        new URL("../AddressResolutionScreen.tsx", import.meta.url),
+        resolve(process.cwd(), "src/components/address/AddressResolutionScreen.tsx"),
         "utf8",
       ),
       "AddressForm.tsx": readFileSync(
-        new URL("../AddressForm.tsx", import.meta.url),
+        resolve(process.cwd(), "src/components/address/AddressForm.tsx"),
         "utf8",
       ),
       "SuggestionChooser.tsx": readFileSync(
-        new URL("../SuggestionChooser.tsx", import.meta.url),
+        resolve(process.cwd(), "src/components/address/SuggestionChooser.tsx"),
         "utf8",
       ),
       "address-api.ts": readFileSync(
-        new URL("../../../lib/address-api.ts", import.meta.url),
+        resolve(process.cwd(), "src/lib/address-api.ts"),
         "utf8",
       ),
       "announce.ts": readFileSync(
-        new URL("../../../lib/announce.ts", import.meta.url),
+        resolve(process.cwd(), "src/lib/announce.ts"),
         "utf8",
       ),
       "PropertyLookup.tsx": readFileSync(
-        new URL("../../property/PropertyLookup.tsx", import.meta.url),
+        resolve(process.cwd(), "src/components/property/PropertyLookup.tsx"),
         "utf8",
       ),
     };
