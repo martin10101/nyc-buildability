@@ -5,15 +5,23 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 102: 188 accepted; D-041 C1 DELIVERED END-TO-END (M5-T017 server + M5-T018 web); D-040 queue next (R002 -> R001)
+## Handoff - seq 103: 189 accepted; C1 DONE + D-040-R002 flag unification DONE (M5-T019); R001 lot-outline packets next (research complete)
 
-Generated 2026-09-12 ~08:35 ET by the same orchestrator session (seq-101 continuation). Root
+Generated 2026-09-12 ~09:40 ET by the same orchestrator session (seq-102 continuation). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`94807b28` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
+`8dbcee54` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 188.** The owner's TOP product priority (D-041 C1) is DONE both halves:
+1. **Accepted = 189.** NEW since seq 102: **M5-T019 (189th, D-040-R002 flag unification)**
+   ACCEPTED end-to-end - the web rule-evaluation flag now reads the canonical
+   INTERNAL_RULE_EVAL_ENABLED (design-spec section 6 one-flag intent; M5-T015 G5 F-1
+   formally CLOSED); semantics byte-preserved, old name pinned inert by a guard test;
+   G1/G4/G5 all PASS zero corrections; DCV row at a8acf33b; accept 8dbcee54.
+   **OWNER RETURN ITEM (R002 deploy clause):** IF the owner ever set INTERNAL_RULE_EVAL_UI
+   in a Render dashboard (web service - currently withheld from render.yaml), rename it to
+   INTERNAL_RULE_EVAL_ENABLED; the API service env is unchanged; no repo file needs edits.
+2. **C1 recap (seq 102).** The owner's TOP product priority (D-041 C1) is DONE both halves:
    - **M5-T017 (187th, server):** `unused_draft_zoning_floor_area` section on every scenario
      document - draft FAR cap MINUS PLUTO existing built floor area, cap verbatim, states
      computed/over_built/not_computable, honest negative preserved + routed to professional
@@ -59,13 +67,21 @@ Generated 2026-09-12 ~08:35 ET by the same orchestrator session (seq-101 continu
 
 ## NEXT ACTION (in order)
 
-1. Contract D-040-R002 (flag unification) via /start-controlled-task citing
-   `D-040:D-040-R002`: unify INTERNAL_RULE_EVAL_UI / INTERNAL_RULE_EVAL_ENABLED; the Render
-   dashboard env-var rename is an owner return item the packet must name explicitly.
-2. Then D-040-R001 (Packet-3 lot outline): official-source-researcher on MapPLUTO first,
-   then connector + confirm-card outline packets under normal gates; MapLibre admission via
-   /dependency-security + G5 provenance review + 7-day age gate before any package lands.
-3. Owner return items outstanding: credentials (Supabase B-001 + Geoclient B-004 - the real
+1. D-040-R001 lot outline - research IS COMPLETE and preserved at
+   `project-control/reports/D-040-R001-mappluto-research.md`. Contract as three packets:
+   (a) SERVER: 4326-GeoJSON emission path (f=geojson&outSR=4326 or reproject) WITHOUT
+   touching the authoritative 2263 provenance/digest discipline in
+   mappluto_geometry_arcgis.py + a public flag-gated route by BBL + additive geometry
+   contract + the missing source_registry record for nyc-dcp-mappluto-arcgis; typed
+   outcomes (no_feature condo-unit / multiple_features / review_required /
+   invalid_geometry) surfaced honestly. (b) DEPENDENCY: /dependency-security admission of
+   maplibre-gl@6.7.0 (newest age-gate-passing version as of 2026-09-12; Snyk clean;
+   BSD-3-Clause; CVE-2026-85061 fixed in 6.4.1; enumerate ALL transitive deps from the
+   lockfile, each must pass age+advisory+pin+integrity; G5 provenance review). (c) WEB:
+   confirm-card outline replacing the lot-outline-placeholder (AddressConfirmCard.tsx
+   :141-145) with MapLibre per the 3d-ui rule; MultiPolygon/holes/condo-empty handled;
+   ZoLa link + approximate-outline (+/-20ft) copy kept.
+2. Owner return items outstanding: credentials (Supabase B-001 + Geoclient B-004 - the real
    end-to-end unlock), Next.js upgrade authorization (retires the last CI red), Render
    env-var rename (with R002), G6 legal sign-off (M4 chain).
 
