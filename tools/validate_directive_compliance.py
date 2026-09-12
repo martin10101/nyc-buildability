@@ -259,7 +259,7 @@ def _validate_migration_manifest(registry_root: Path, active_directives) -> list
         rec = d.manifest.get("migration_manifest_sha256")
         if rec:
             recorded = rec
-            actual = hashlib.sha256(mm_path.read_bytes()).hexdigest()
+            actual = dr.sha256_text_artifact(mm_path)
             if actual != recorded:
                 errors.append(f"mig content hash {actual[:12]}.. != {d.directive_id} "
                               f"manifest.migration_manifest_sha256 {str(recorded)[:12]}.. "
@@ -493,7 +493,7 @@ def validate(registry_root: Path = DIRECTIVES_DIR, tasks_dir: Path = TASKS_DIR) 
             errors.append(f"c14 {w} manifest missing requirements_content_digest_sha256 "
                           f"(the reviewed requirement bodies would be unprotected)")
         elif rfile_path is not None and rfile_path.exists():
-            actual_body = hashlib.sha256(rfile_path.read_bytes()).hexdigest()
+            actual_body = dr.sha256_text_artifact(rfile_path)
             if actual_body != declared_body:
                 errors.append(f"c14 {w} requirements.json content digest mismatch "
                               f"(manifest {declared_body[:12]}.. actual {actual_body[:12]}..): "

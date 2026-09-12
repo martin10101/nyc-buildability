@@ -10,7 +10,7 @@
   "issued_at": "2026-09-07",
   "captured_at": "2026-09-07T02:10:00+00:00",
   "created_at": "2026-09-07T02:10:00+00:00",
-  "updated_at": "2026-09-07T02:10:00+00:00",
+  "updated_at": "2026-09-12T08:40:00+00:00",
   "channel": "owner_terminal_prompt",
   "frozen_baseline_sha": "20f6c81e53fdde6e02bd090bf59f5b1339b1eab6",
   "sources": [
@@ -48,7 +48,7 @@
     "D-034-R003",
     "D-034-R004"
   ],
-  "requirements_content_digest_sha256": "610f4e612864b958164201f43955b6736d8f2a90b63217e6a234120c99474de5",
+  "requirements_content_digest_sha256": "dfab73c0878833b91c5543bedb38c2bc5ec597068d45ec3959563f6503a31e5c",
   "owner_approval": {
     "state": "approved",
     "approved_at": "2026-09-07T02:10:00+00:00",
@@ -75,6 +75,12 @@
       "event": "scope_binding",
       "by": "orchestrator",
       "note": "scope.task_types=[governance] + task_ids=[M0-T151] so covers_governance() recognizes the directive for the governance-path claim guard (s19)"
+    },
+    {
+      "at": "2026-09-12T08:40:00+00:00",
+      "actor": "orchestrator",
+      "action": "digest_normalization_restamp",
+      "note": "M0-T156 (D-040-R003) digest normalization: registry text-artifact digests are now computed over CRLF-to-LF-normalized bytes (directive_registry.sha256_text_artifact; adopted at the c2 source check, the c14 requirements-body check and the migration-manifest check), so one recorded digest verifies on both a Windows CRLF working tree and the CI LF checkout (.gitattributes eol=lf). This entry re-stamps THIS manifest's affected digest value(s) from the legacy CRLF-bytes value to the normalized value - the underlying source/requirements CONTENT is byte-identical (sources immutable per D-040-R003); only the recorded representation-dependent hash changes. Tamper detection is unchanged: any content edit still fails c2/c14 (test_directive_compliance.LineEndingNormalizationTest). Re-stamped: requirements.json 610f4e61 -> dfab73c0."
     }
   ]
 }

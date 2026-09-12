@@ -10,7 +10,7 @@
   "issued_at": "2026-09-07",
   "captured_at": "2026-09-07T01:30:00+00:00",
   "created_at": "2026-09-07T01:30:00+00:00",
-  "updated_at": "2026-09-07T02:55:00+00:00",
+  "updated_at": "2026-09-12T08:40:00+00:00",
   "channel": "owner_terminal_prompt",
   "frozen_baseline_sha": "f2f7963e8c21c161784b5b698434be54b5c71ef8",
   "sources": [
@@ -27,7 +27,7 @@
       "sequence": 2,
       "amends": "source-001.md",
       "recorded_at": "2026-09-07T02:55:00+00:00",
-      "content_digest_sha256": "0e0ed336a5fd6ef5faebffffea4f25c8124f8711af1b4b7bd219a016468d5930"
+      "content_digest_sha256": "d0ae01b4f9cf6bcb91ed5652d212d32d68cd09ca4bfe7fe509e6d754112506bf"
     }
   ],
   "amendments": [
@@ -64,7 +64,7 @@
     "D-033-R008",
     "D-033-R009"
   ],
-  "requirements_content_digest_sha256": "82f36c4bee2c206870040ac48f74c7ef3380fe09eec22dc6c2dc27145d492853",
+  "requirements_content_digest_sha256": "d287694397350dfe0ca50d2c45063996c866821671b35d2f80889c0333af2fd5",
   "audit_log": [
     {
       "at": "2026-09-07T01:30:00+00:00",
@@ -77,6 +77,12 @@
       "event": "applicability_binding",
       "by": "orchestrator",
       "note": "bound R001/R003/R005/R006/R007 to M0-T152 (T-A) + scope for the governance-path claim guard"
+    },
+    {
+      "at": "2026-09-12T08:40:00+00:00",
+      "actor": "orchestrator",
+      "action": "digest_normalization_restamp",
+      "note": "M0-T156 (D-040-R003) digest normalization: registry text-artifact digests are now computed over CRLF-to-LF-normalized bytes (directive_registry.sha256_text_artifact; adopted at the c2 source check, the c14 requirements-body check and the migration-manifest check), so one recorded digest verifies on both a Windows CRLF working tree and the CI LF checkout (.gitattributes eol=lf). This entry re-stamps THIS manifest's affected digest value(s) from the legacy CRLF-bytes value to the normalized value - the underlying source/requirements CONTENT is byte-identical (sources immutable per D-040-R003); only the recorded representation-dependent hash changes. Tamper detection is unchanged: any content edit still fails c2/c14 (test_directive_compliance.LineEndingNormalizationTest). Re-stamped: source-002-amendment.md 0e0ed336 -> d0ae01b4; requirements.json 82f36c4b -> d2876943."
     }
   ],
   "owner_approval": {

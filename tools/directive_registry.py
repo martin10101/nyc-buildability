@@ -387,6 +387,27 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def normalize_text_artifact_bytes(data: bytes) -> bytes:
+    """Canonicalize line endings before hashing a registry TEXT artifact
+    (source-*.md, requirements.json, the migration manifest) — M0-T156,
+    authorized by D-040-R003. CRLF and lone CR both become LF, so the digest
+    identifies CONTENT independent of the checkout's line-ending
+    representation: .gitattributes pins `eol=lf`, so CI checkouts hold LF
+    while local Windows working trees may hold CRLF, and a digest recorded
+    over one representation must verify against the other. Every other byte
+    difference still changes the digest — normalization forgives
+    representation, never content (the tamper checks c2/c14 keep their
+    teeth; see test_directive_compliance.LineEndingNormalizationTest)."""
+    return data.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
+def sha256_text_artifact(path: Path) -> str:
+    """Line-ending-normalized digest for registry text artifacts. NOT used for
+    the content-manifest identity (frozen identities are git-canonical or
+    recorded over exact manifest entries and must not shift)."""
+    return sha256_bytes(normalize_text_artifact_bytes(path.read_bytes()))
+
+
 def _within(child: Path, parent: Path) -> bool:
     """True iff `child` resolves to a path inside `parent` (path-containment guard,
     defense-in-depth). A '../' or absolute registry-internal path value therefore
@@ -529,7 +550,7 @@ class DirectiveRegistry:
             if not fpath.exists():
                 d.errors.append(f"{d.directive_id}: source file {src.get('file')!r} missing")
                 continue
-            actual = sha256_file(fpath)
+            actual = sha256_text_artifact(fpath)
             if actual != declared:
                 d.errors.append(
                     f"{d.directive_id}: source {src.get('file')!r} digest mismatch "

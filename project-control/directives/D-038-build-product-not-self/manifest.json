@@ -10,7 +10,7 @@
  "issued_at": "2026-09-08",
  "captured_at": "2026-09-08T05:14:41+00:00",
  "created_at": "2026-09-08T05:14:41+00:00",
- "updated_at": "2026-09-10T03:40:00+00:00",
+ "updated_at": "2026-09-12T08:40:00+00:00",
  "channel": "owner_terminal_prompt",
  "frozen_baseline_sha": "ebe4eaf63ef5d04120608230a5147d97ad658e3a",
  "sources": [
@@ -104,6 +104,12 @@
    "actor": "orchestrator",
    "action": "applicability_appended",
    "note": "M5-T012 ACCEPTED (175th) via a full T-B gate wave + DCV at reviewed_sha 12fda82f, material identity e5c95c27, accept commit b3fa1736 - the session's second GATE-FAIL -> REWORK -> re-attest -> accept arc and the most productive one yet. Orchestrator PRE-GATE validation caught a deadlocking AS-7 test (socket.socket replaced globally vs Starlette TestClient's anyio portal) that made a packet-documented command never terminate; then the wave returned G1 FAIL + G5 FAIL with three BLOCKING defects - an unpaired surrogate causing an unhandled UnicodeEncodeError on all four endpoints because _finish validated with ensure_ascii=True while Starlette renders with ensure_ascii=False (the validator and renderer disagreed about what is encodable, so strict-JSON-safe-before-send was FALSE), FORBIDDEN_FACT_KEYS enforced top-level only so a nested fact object was echoed in a 200 body, and the engine call plus _finish sitting outside any exception guard while the TRUSTED rebuild stage was guarded. All fixed in one pass and re-attested PASS by all five reviewers, each reproducing the fixes from the code rather than the producer's report. Now contracting the next product task M5-T013 (EVIDENCE / PROVENANCE ENDPOINT: new services/api/app/api/v1/evidence.py serving GET /api/v1/properties/{bbl}/evidence, assembling the provenance trail ALREADY present in the accepted documents - profile closed-provenance records, per-citation provenance from the rule_evaluation trace, input provenance, and a per-claim DRAFT-vs-Verified status - transported VERBATIM with NO legal interpretation, no new rule evaluation and no recomputation, so it is NOT G6-blocked; DELIBERATELY BODY-LESS so the untrusted-input surface that cost M5-T012 two blocking defects is exactly zero; honest about gaps via typed not_available / not_applicable / professional_review_required markers rather than silent omission or invention; reusing the EXISTING internal_rule_eval_enabled flag with config.py forbidden so no new flag or credential surface appears; and carrying M5-T012's gate findings forward UP FRONT as acceptance criteria - every stage exception-guarded so no untyped 500 can escape, and the response required to survive BOTH json.dumps(allow_nan=False) AND json.dumps(ensure_ascii=False, allow_nan=False).encode('utf-8') since those two disagree about unpaired surrogates and the renderer uses the second) and appended it to applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism. This is the Evidence view named in the original pivot plan (Compare UI -> Evidence view -> rule families) and never built: the provenance data exists but no API surface exposes any of it, so a user sees conclusions with no way to audit them. WHY NOT THE GEOCLIENT CONNECTOR: B-004's research (M0-T002) is complete and the address->BBL connector is the obvious credential-unlock task, but section 8 of that research is explicitly a fixture plan 'to capture once credentials exist' - F14's response shape is recorded as UNKNOWN - so building it now would mean INVENTING response bytes for a recorded-official fixture, which this codebase never does. It is therefore genuinely credential-gated and is first in line the moment the owner supplies GEOCLIENT_SUBSCRIPTION_KEY. No requirement id added, removed or renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from 32f8d252 to f62c6fc8. Verification for R003/R004 wrt M5-T013 produced by the independent verifier at M5-T013 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-12T08:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "digest_normalization_restamp",
+   "note": "M0-T156 (D-040-R003) digest normalization: registry text-artifact digests are now computed over CRLF-to-LF-normalized bytes (directive_registry.sha256_text_artifact; adopted at the c2 source check, the c14 requirements-body check and the migration-manifest check), so one recorded digest verifies on both a Windows CRLF working tree and the CI LF checkout (.gitattributes eol=lf). This entry re-stamps THIS manifest's affected digest value(s) from the legacy CRLF-bytes value to the normalized value - the underlying source/requirements CONTENT is byte-identical (sources immutable per D-040-R003); only the recorded representation-dependent hash changes. Tamper detection is unchanged: any content edit still fails c2/c14 (test_directive_compliance.LineEndingNormalizationTest). Re-stamped: requirements.json f62c6fc8 -> 0e9de4cc."
   }
  ],
  "owner_approval": {
@@ -122,5 +128,5 @@
   "D-038-R006",
   "D-038-R007"
  ],
- "requirements_content_digest_sha256": "f62c6fc8cec2497af0d6170d232559df79544fe06239f44b80bea1bea0f39f0b"
+ "requirements_content_digest_sha256": "0e9de4cc2c2979140dc4d3b555b5add31877e2c88c8855df9edf45ad194c9b34"
 }
