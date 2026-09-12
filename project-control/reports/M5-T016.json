@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T016",
+  "producer_agent": "frontend-engineer/orchestrator",
+  "report_file": "project-control/reports/M5-T016-producer-report.md",
+  "submitted_at": "2026-09-12T07:14:48.528501+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T016-evidence-map.json",
+  "content_manifest_sha256": "8add6d7ba5f77a4674b214e19f62b77f6779df8f2e58fff048be44e2c2cfec52",
+  "reviewed_sha": "069c3d405ccfba445f6fc72163348cc8e9f8a60b",
+  "applicable_requirements": [],
+  "updated_at": "2026-09-12T07:14:49.496501+00:00"
+}
