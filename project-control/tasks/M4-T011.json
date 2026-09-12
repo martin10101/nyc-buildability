@@ -1,0 +1,111 @@
+{
+  "task_id": "M4-T011",
+  "title": "Family-expansion consumer-test adaptation: applicable-trace selection in the four tests/api modules",
+  "task_type": "qa",
+  "milestone_id": "M4",
+  "objective": "Adapt the six failing tests in services/api/tests/api/{test_evidence_api,test_rule_evaluation_api,test_scenario_api,test_scenario_analysis_api}.py to the five-member residential_far family that M4-T009 landed: replace single-member assumptions (evaluations[0], len(evaluations)==1, rule_citations[0]) with applicable-trace selection (the trace/group whose applicability_outcome is true - the same idiom the M4-T009 wave already applied to the tests/rules siblings), keeping EVERY value assertion unchanged (behavior-neutral de-brittling; the caps, coverage statuses, citations and provenance expectations stay byte-identical). NO production code change - app/rules/integration.py and app/scenario/builder.py already select applicable traces correctly (verified before contracting). The RED evidence already exists: CI run 34664497740 api job 6 failed/2956 passed at 032dffe7, duplicated in exact-production-install, reproduced locally (6 failed/365 passed in tests/api).",
+  "business_reason": "The R1-R12 family (M4-T009, gate wave PASS 4-0) cannot be accepted while the api CI job is red from unadapted downstream consumer tests; production behavior is proven correct, so the fix is exactly the test-selection adaptation the family's own packet applied inside its scope but could not apply to tests/api (outside its allowed_paths).",
+  "inputs": [
+    "CI run 34664497740 api-job failure list (the six failing tests; RED evidence)",
+    "project-control/tasks/M4-T009.json + project-control/reports/M4-T009-G4.md (the tests/rules applicable-trace adaptation idiom this packet mirrors)",
+    "services/api/app/rules/integration.py (family evaluation: all members evaluated, applicable traces aggregate)",
+    "services/api/app/scenario/builder.py (_find_residential_far_trace - production applicable-trace selection)"
+  ],
+  "outputs": [
+    "services/api/tests/api/test_evidence_api.py (adapted)",
+    "services/api/tests/api/test_rule_evaluation_api.py (adapted)",
+    "services/api/tests/api/test_scenario_api.py (adapted)",
+    "services/api/tests/api/test_scenario_analysis_api.py (adapted)",
+    "project-control/reports/M4-T011-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/tests/api/test_evidence_api.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "project-control/reports/M4-T011-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/**",
+    "services/api/tests/rules/**",
+    "services/api/tests/connectors/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "red_green_on_the_recorded_failures",
+      "input": "the six CI-failing tests, before and after the adaptation",
+      "expected": "BEFORE (already recorded at 032dffe7): exactly those six fail with the single-member assumptions. AFTER: python -m pytest services/api/tests/api -q passes completely (371 = 365 + 6)."
+    },
+    {
+      "id": "S2",
+      "case": "value_assertions_unchanged",
+      "input": "git diff of the four modules",
+      "expected": "every expected VALUE (caps 15000.0/TRACE_CAP, coverage statuses, citation/section texts, provenance refs, disclaimer expectations) is byte-identical before and after; the diff changes only trace/group SELECTION (applicable-trace helpers) and the count assertion's form"
+    },
+    {
+      "id": "S3",
+      "case": "selection_is_by_applicability_never_by_position",
+      "input": "the adapted selection helpers",
+      "expected": "selection keys on applicability_outcome is True (or, for evidence rule_citations groups, the group provably tied to the applicable trace), asserts EXACTLY ONE applicable residential_far trace, and fails loudly (not silently index-0) if zero or multiple apply"
+    },
+    {
+      "id": "S4",
+      "case": "count_assertion_survives_family_growth",
+      "input": "the adapted count assertion in test_rule_evaluation_api",
+      "expected": "the evaluations count is asserted against the document's own family_coverage rule list (or equivalent in-document source), never a hardcoded 5 that rots on the next family expansion"
+    },
+    {
+      "id": "S5",
+      "case": "no_production_change_no_other_test_change",
+      "input": "git diff of the unit; python -m pytest services/api/tests -q; ruff check services/api/tests/api",
+      "expected": "only the four named modules + producer report change; the full services/api suite passes locally (2962 = 2956 + 6); ruff clean; modularity exit 0"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Silent value drift disguised as selection change: S2 exists to force a value-identical diff.",
+    "A hardcoded family size (5) that rots on the next expansion: S4 forbids it."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T01:42:57.387697+00:00",
+  "updated_at": "2026-09-12T01:42:57.565453+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T01:42:57.387697+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/api -q",
+    "python -m pytest services/api/tests -q",
+    "ruff check services/api/tests/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "EXACT-FILE allowed_paths: the four modules M4-T009's family expansion broke plus this packet's report. services/api/app/** is FORBIDDEN on purpose - production selection logic was verified correct before contracting; if the producer finds a real production defect while adapting, that is a STOP-and-report, never an in-scope fix.",
+    "Sequencing: M4-T009 sits awaiting_gate with its wave reports preserved; its gates are recorded and it is accepted only after this packet turns the api + exact-production-install jobs green (excluding the pre-existing web-e2e/npm/control-plane decision-pending reds). This packet is then accepted after it."
+  ]
+}
