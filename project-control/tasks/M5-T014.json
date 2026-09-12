@@ -69,15 +69,15 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Weakening disguised as repair: S3 forbids deleting/relaxing any of the three assertions; the fix adds a fixture-derived date, it never changes an expectation to match broken output.",
     "Inventing a date literal: S2 requires the effective_to to be DERIVED from the sibling rule's fixture value."
   ],
   "blockers": [],
   "created_at": "2026-09-12T04:31:01.207471+00:00",
-  "updated_at": "2026-09-12T04:32:37.755367+00:00",
+  "updated_at": "2026-09-12T04:34:34.170291+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
