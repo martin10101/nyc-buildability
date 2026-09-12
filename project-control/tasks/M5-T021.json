@@ -80,7 +80,7 @@
     "security-reviewer"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 60,
   "risks": [
     "a fix version younger than 7 days fails the age gate - fail closed and record; do not waiver",
     "the js-yaml override currently BLOCKS its own fix; bumping the override to a non-fixed or too-young version re-fails the audit",
@@ -90,7 +90,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T23:32:55.119379+00:00",
-  "updated_at": "2026-09-12T23:35:52.463448+00:00",
+  "updated_at": "2026-09-12T23:44:25.144728+00:00",
   "directive_refs": [
     {
       "directive_id": "D-042",
@@ -113,6 +113,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed; bound to D-042-R001 (digest 7fd8d5c2->2a1b8b0c); registry research in flight; package.json edit + workflow dispatch next"
+    },
+    {
+      "at": "2026-09-12T23:44:25.144728+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Pins landed (d62a779e + 3cd3b93c) + bot lock d83bcfe5 via generate-lockfile run 34726113984 SUCCESS (first run 34726060266 failed closed on the preserved browserslist resolution - the negative proof). Tree advisory-free at every severity for the first time. Pushing the report to trigger the decisive CI run."
     }
   ]
 }
