@@ -102,7 +102,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Normalization masking real tampering: AS-5 is the control - only CR bytes may be forgiven.",
     "Manifest rewrite collateral: the manifests are CRLF-on-disk with specific indent; a JSON round-trip that reformats unrelated bytes breaks AS-4 byte-preservation and could flip OTHER digests - edit surgically, assert byte-identical round-trip outside the intended fields (the scratchpad/append_d038_m5t012.py pattern).",
@@ -111,7 +111,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T08:12:39.027322+00:00",
-  "updated_at": "2026-09-12T09:26:50.850595+00:00",
+  "updated_at": "2026-09-12T09:48:50.817711+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
