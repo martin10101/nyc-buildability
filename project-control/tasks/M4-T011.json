@@ -81,15 +81,15 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Silent value drift disguised as selection change: S2 exists to force a value-identical diff.",
     "A hardcoded family size (5) that rots on the next expansion: S4 forbids it."
   ],
   "blockers": [],
   "created_at": "2026-09-12T01:42:57.387697+00:00",
-  "updated_at": "2026-09-12T01:58:26.840204+00:00",
+  "updated_at": "2026-09-12T02:13:59.934318+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -116,6 +116,15 @@
       "percent": 10,
       "status": "claimed",
       "message": "Claimed after G0 PASS at the packet commit. RED already recorded (CI 34664497740: 6 failed/2956 passed; local: 6 failed/365 passed in tests/api). Production selection verified correct before contracting. Adaptation begins."
+    },
+    {
+      "at": "2026-09-12T02:12:19.428678+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "G4 INDEPENDENCE CONFIRMED (DCV Warning B answered on the record): the G4 gate review was performed by a SEPARATE independent qa-engineer subagent invocation - read-only per ADR-005, spawned after submission, produced none of the change, returned the verbatim report preserved at project-control/reports/M4-T011-G4.md - while the producer label 'qa-engineer/orchestrator' denotes the orchestrator-executed production under the packet's producer role (distinct invocations, recorded in this session's transcript and task journal). The role-name overlap is label-level only; producer and reviewer were different agents. Also executed the DCV's registry repairs before acceptance: D-039 c5 (sentinel task_verifications row removed; the R001-R005 bootstrap verification stands as the committed report D-039-verification.md) and c15 (scope.task_ids emptied); validate_directive_compliance --check EXIT 0 restored."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-12T02:13:59.934318+00:00"
 }

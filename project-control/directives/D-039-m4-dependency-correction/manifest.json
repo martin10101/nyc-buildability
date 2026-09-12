@@ -10,7 +10,7 @@
  "issued_at": "2026-09-11",
  "captured_at": "2026-09-12T00:58:46+00:00",
  "created_at": "2026-09-12T00:58:46+00:00",
- "updated_at": "2026-09-12T01:02:06+00:00",
+ "updated_at": "2026-09-12T02:10:43+00:00",
  "channel": "interactive_ask_user_question",
  "frozen_baseline_sha": "0f92a5f0317d19e449d255859e9c056e3ded8ba0",
  "sources": [
@@ -32,10 +32,7 @@
  ],
  "scope": {
   "kind": "ledger_correction",
-  "task_ids": [
-   "M4-T010",
-   "M4-T009"
-  ],
+  "task_ids": [],
   "task_types": [],
   "allowed": "set dependencies=[] on the two named packets; record rationale via CLI progress; proceed to standard-accept M4-T010 and to the M4-T009 AS-5 unit + wave",
   "prohibited": "accepting M4-T001; publishing or promoting any rule past needs_review; touching the M4-T002..T006 parked queue; using this directive as a gate or verification shortcut"
@@ -52,6 +49,12 @@
    "actor": "orchestrator",
    "action": "corrected",
    "note": "affected_tasks emptied per the D-038 precedent and validator c14: the two corrected packets are named in scope.task_ids and the title; per-task verification rows accrue only for tasks that bind D-039 refs, which these already-claimed/gated packets deliberately do not (sentinel binding, see capture note)."
+  },
+  {
+   "at": "2026-09-12T02:10:43+00:00",
+   "actor": "orchestrator",
+   "action": "corrected",
+   "note": "Validator repairs surfaced by the independent DCV: (c5) removed the D-039-BOOTSTRAP task_verifications row - sentinel ids are not task-shaped; the R001-R005 bootstrap verification stands as the committed report D-039-verification.md; (c15) emptied scope.task_ids (M4-T010 accepted citing D-038 only; M4-T009 about to be) - the two corrected packets stay named in the title and this audit log, mirroring the affected_tasks precedent."
   }
  ],
  "owner_approval": {
