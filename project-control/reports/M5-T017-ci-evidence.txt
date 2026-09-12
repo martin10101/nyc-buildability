@@ -44,3 +44,10 @@ Local (orchestrator pre-gate validation, primary checkout at the producer materi
 (Producer's own runs from the worktree match: 422 / 398 / EXIT 0; plus ruff clean and
 packages/contracts/scripts/tests 29 passed - see M5-T017-producer-report.md section
 "Verification evidence".)
+
+Corrected head (G4 corrections C1+C2, test-only commit ae38a169):
+  Run 34691559695 (head ae38a169), completed 2026-09-12: api (ruff + pytest) SUCCESS
+  job 103547593912 (424 scenario incl. the two new mutation guards); web / web-e2e /
+  control-plane SUCCESS; ONLY red = owner-gated web-dependency-security. Delta
+  attestations from the SAME three reviewers (G1/G4/G5) appended verbatim to the gate
+  reports; G4 empirically re-ran mutants M15/M16 - both KILLED, Findings 1-2 DISCHARGED.

@@ -25,3 +25,8 @@ disclosed this and verified by source reasoning (fidelity table vs the schema $d
 red->green trace per failing test). Orchestrator-runnable check:
   python tools/modularity_check.py --check   failures 0, EXIT 0 (394 files;
   scenario-contract.ts not flagged; UnusedFloorAreaSection.tsx a focused module)
+
+Final pre-accept head note: run 34691559695 at ae38a169 (an M5-T017 test-only commit;
+M5-T018 material unchanged) - web SUCCESS, web-e2e SUCCESS again; only red = owner-gated
+web-dependency-security. M5-T018's five allowed_path files remain byte-identical to
+1b2495da at every later head.

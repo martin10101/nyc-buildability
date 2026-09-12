@@ -4,10 +4,11 @@
   "requirements": {
     "D-041-R001": [
       "services/api/app/scenario/unused_floor_area.py at 45f63efb (the deterministic derivation: cap-verbatim minus usable bldgarea; states computed/over_built/not_computable; typed reasons; per-input provenance; ZR 12-10 zoning_lot_extent machine-readable assumption; precise-noun label + scope note constants)",
-      "services/api/tests/scenario/test_unused_floor_area.py at 45f63efb (the required four-case harness: S1 normal remainder, S2 over-built negative preserved + section AND root professional-review routing, S4a/S4b missing/unusable existing-area, S5 no-draft-FAR-cap across all no-cap paths; plus S3 zero boundary, S6 contract/JSON-renderer-parity/precise-noun; fixture-derived assertions)",
+      "services/api/tests/scenario/test_unused_floor_area.py at 45f63efb + G4-correction guards at ae38a169 (the required four-case harness: S1 normal remainder, S2 over-built negative preserved + section AND root professional-review routing, S4a/S4b missing/unusable existing-area, S5 no-draft-FAR-cap across all no-cap paths; plus S3 zero boundary, S6 contract/JSON-renderer-parity/precise-noun; fixture-derived assertions)",
       "project-control/reports/M5-T017-producer-report.md (per-file build, exact section field schema, PRR-widening consumer analysis, S1-S6 test mapping, real verification output, disclosed+ratified mechanical scope expansion)",
       "project-control/reports/M5-T017-ci-evidence.txt (CI green: api+contracts+typegen+bundle+modularity+control-plane at 08bf965b; combined C1 head 44048007 run 34690484292 ALL jobs SUCCESS except owner-gated web-dependency-security; defect-convergence record for the two transient reds)",
-      "packages/contracts/schemas/v1/scenario.schema.json + services/api/app/_contract_schemas/v1/scenario.schema.json at 45f63efb (the new REQUIRED closed section in BOTH copies, byte-identical - enforced by test_s6_both_schema_copies_are_byte_identical and the CI drift jobs)"
+      "packages/contracts/schemas/v1/scenario.schema.json + services/api/app/_contract_schemas/v1/scenario.schema.json at 45f63efb (the new REQUIRED closed section in BOTH copies, byte-identical - enforced by test_s6_both_schema_copies_are_byte_identical and the CI drift jobs)",
+      "project-control/reports/M5-T017-G1.md / -G4.md / -G5.md (three PASS gate reports + verbatim delta attestations at ae38a169; G4 Findings 1-2 DISCHARGED with empirical mutant kills)"
     ]
   }
 }
