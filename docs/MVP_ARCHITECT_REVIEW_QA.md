@@ -363,6 +363,82 @@ screening aid — not an appraisal, not a lender-grade pro forma, and not invest
 
 ---
 
+## Part 4 — Gap list: what the MVP still needs (candidate backlog for OWNER TRIAGE)
+
+Compiled 2026-09-12 from Parts 1–3 and the live project state. **Status of this list: candidates
+only.** Nothing here is planned, contracted, or authorized by this document; items marked
+OWNER-GATED or ON HOLD require an explicit owner action before anyone may even plan them. Order
+within each group is a suggested priority, not a decision.
+
+### A. Zoning-rule coverage (buildable under the normal task/gate process)
+
+1. **Height/setback rule families beyond R5** — R1–R4 and R6–R12, one cited, tested,
+   independently reviewed family at a time (the R5 pilot proved the pattern). Unlocks: a real
+   envelope picture per district instead of FAR-only.
+2. **Geometry-dependent rule mechanics** — street-width-dependent height limits, sky-exposure
+   planes, permitted obstructions/overhangs. Depends on new data inputs (street width, parcel
+   geometry — see B1/B2); rules and inputs should be sequenced together.
+3. **Contextual and bonus programs** — Quality Housing/contextual variants, inclusionary-housing
+   style bonuses. Materially changes caps; high professional value; needs careful legal sourcing.
+4. **Special purpose districts and waterfront zoning** — large, self-contained rule bodies;
+   candidates for later waves after the citywide base is broad.
+
+### B. Data connectors (each needs a source-registry record, fixtures, contract tests)
+
+1. **Parcel geometry (MapPLUTO)** — the footprint/outline data. Prerequisite for the drawn lot
+   outline (D1) and for geometry-dependent rules (A2). *The outline UI itself is ON HOLD — see D1
+   — but the geometry connector is also independently useful for rule inputs.*
+2. **Street width / mapped-street data** — required by A2's street-width rules.
+3. **DOB records** — permits, violations, certificates of occupancy. Directly requested in the
+   professional review (F3): "what has the city already said about this building?"
+4. **Landmark / historic-district status** — a binary that changes everything about a project;
+   cheap to surface once connected.
+
+### C. Professional-workflow output (what an architect asked for in this review)
+
+1. **Explicit remaining-development-rights math** — existing built floor area vs. the draft cap,
+   shown as its own labeled line ("approximately X sq ft of unused draft floor area"), with the
+   same draft/provenance discipline. Most of the inputs already exist in the profile today.
+2. **Grandfathered/over-built flag** — when the existing building already exceeds the current
+   draft cap, say so explicitly and route it to the professional-review flag (counsel question,
+   never a program conclusion).
+3. **Condo/billing-lot honesty note** — surface the known caveat (some condo billing lots
+   resolve oddly and may not display on ZoLa) directly on the confirm card when it applies.
+
+### D. OWNER-GATED / ON HOLD (require an owner decision before any planning)
+
+1. **Drawn parcel outline + map view (address Packet 3)** — ON THE OWNER-REVIEW EXPANSION HOLD.
+   Feasible and designed (F1), but the hold must be lifted first. Also depends on B1.
+2. **3D massing / envelope visualization** — same expansion hold; later tier of the same
+   decision.
+3. **G6 qualified legal review of the draft rule families** — the single step that turns DRAFT
+   rules into published ones. Owner-only (Section 20 hard stop). Until then, every number stays
+   DRAFT — correctly.
+4. **Public deployment** — blocked on the owner-authorized Next.js security-fix upgrade (the
+   standing npm-audit red) and a deployment posture decision; includes deciding when the
+   internal feature flags (rule evaluation, address search, evidence) come off.
+5. **Durable cloud storage / accounts (Supabase, blocker B-001)** — owner credentials required.
+   Unlocks saved lookups, user accounts, persisted scenarios — the "come back tomorrow" workflow
+   a professional expects.
+6. **Feature-flag unification** — frontend `INTERNAL_RULE_EVAL_UI` vs backend
+   `INTERNAL_RULE_EVAL_ENABLED` (security review's carried note). Deploy-affecting rename; small,
+   but owner-scheduled.
+7. **Control-plane digest normalization** — the second standing CI red; an internal bookkeeping
+   decision with no user-facing effect.
+
+### E. Adjacent professional expectations (surfaced by this review; not yet scoped)
+
+1. **Shareable report/export** — a professional will eventually want to hand a client a document,
+   not a screen. Known product direction; not yet scoped as tasks.
+2. **Saved searches / portfolio view** — depends on D5 (storage) landing first.
+
+*Reading guide for the reviewer: groups A–C proceed under the project's normal independent-review
+process once prioritized; group D items each wait on a specific owner action; group E is
+direction, not commitment. The right output of your review is a priority order over A–C and E,
+plus any missing rows.*
+
+---
+
 *End of Q&A. Feedback from professional reviewers — wrong emphasis, missing questions, answers
 that don't match professional expectations — should go back to the owner for triage into the
 project's tracked backlog.*
