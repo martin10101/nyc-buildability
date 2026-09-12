@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T014",
+  "title": "Repair the compare-screen empty-from assertion: exercise the mixed-date branch the label lives in",
+  "task_type": "qa",
+  "milestone_id": "M5",
+  "objective": "Fix the single failing web test (apps/web/src/components/compare/__tests__/compare-screen.test.tsx, 'treats an EMPTY competing-rule field as absent, not just a null one'): the test blanks rules[0].effective_from on a fixture rule whose effective_to is ALREADY absent, so the accepted component's DELIBERATE both-absent collapse ('no effective dates are recorded for this rule' - endorsed by the adjacent passing test and the component's own G-wave comment) renders instead of the per-slot 'from not stated' label the assertion expects. Preserve the test's intent (an empty STRING labels as not-stated) by deriving a real effective_to for rules[0] from the sibling rule's fixture date (never an invented literal), so the empty-string FROM renders through the per-slot branch and the assertion becomes correct and meaningful. TEST-ONLY: no component change (the component behavior is accepted M5-T004 design); no other test touched. Verification is CI-ONLY (thin client has no node_modules): the web-e2e job turning green (vitest 390/390) is the executable proof.",
+  "business_reason": "This is the last non-owner-gated CI red: web-e2e has failed on exactly this assertion since M5-T004 was accepted (post-acceptance discovery - follow-up task per house rule, never reopening accepted work). Repairing it makes web-e2e green so the upcoming address-entry/confirm-screen UI packet gets clean execution proof, leaving only the two genuinely owner-gated reds (npm audit RCE authorization; control-plane digest normalization decision).",
+  "inputs": [
+    "CI run 34669078475 web-e2e failure output (the complete vitest DOM diff: expected 'from not stated', received the both-absent collapsed phrase - the RED evidence, red on every run since M5-T004)",
+    "apps/web/src/components/compare/__tests__/compare-screen.test.tsx (the failing test and its docstring intent)",
+    "apps/web/src/components/compare/NoScenarioBlock.tsx (the ACCEPTED component design: isAbsent treats null and empty string alike; both-absent collapses to 'no effective dates are recorded for this rule' - read-only, do not change)",
+    "apps/web/src/lib/scenario-display.ts (asStringOrNull/boundedText - read-only context)"
+  ],
+  "outputs": [
+    "apps/web/src/components/compare/__tests__/compare-screen.test.tsx (the one test repaired)",
+    "project-control/reports/M5-T014-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/components/compare/__tests__/compare-screen.test.tsx",
+    "project-control/reports/M5-T014-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/**/*.tsx",
+    "apps/web/src/lib/**",
+    "apps/web/e2e/**",
+    "packages/**",
+    "services/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "red_already_recorded",
+      "input": "the CI history at 032dffe7..e40c87c4 (web-e2e job)",
+      "expected": "the exact assertion (line ~404, 'from not stated') fails with the both-absent collapsed phrase in the received DOM - the RED is externally recorded on every run; no local red run is possible (thin client, no node_modules)"
+    },
+    {
+      "id": "S2",
+      "case": "intent_preserving_repair",
+      "input": "the edited test",
+      "expected": "rules[0] gains a REAL effective_to DERIVED from the sibling rule's fixture date (rules[1].effective_from - never an invented literal), so the empty-string effective_from now exercises the per-slot branch; the 'from not stated' assertion becomes correct AND meaningful (it fails again if the component stops labeling empty-string dates); the docstring records why"
+    },
+    {
+      "id": "S3",
+      "case": "no_other_change",
+      "input": "git diff of the unit",
+      "expected": "exactly one test function edited in one file (+ the producer report); no component, lib, e2e, or sibling test change; no assertion deleted or weakened - the three existing expectations all remain"
+    },
+    {
+      "id": "S4",
+      "case": "ci_is_the_green",
+      "input": "the web-e2e job on the pushed head",
+      "expected": "vitest 390/390 (389 + the repaired one), Playwright unchanged; web-e2e GREEN for the first time since the M5-T004 acceptance; the api and other jobs unaffected"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Weakening disguised as repair: S3 forbids deleting/relaxing any of the three assertions; the fix adds a fixture-derived date, it never changes an expectation to match broken output.",
+    "Inventing a date literal: S2 requires the effective_to to be DERIVED from the sibling rule's fixture value."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T04:31:01.207471+00:00",
+  "updated_at": "2026-09-12T04:31:02.026667+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T04:31:01.215887+00:00",
+  "documented_test_commands": [
+    "CI web-e2e job on the pushed head (vitest + Playwright) - the ONLY executable verification; the thin client has no node_modules by policy (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md)"
+  ],
+  "path_notes": [
+    "TEST-ONLY by design: the component's both-absent collapse is accepted M5-T004 behavior explicitly endorsed by the adjacent passing test; changing the component would reopen accepted work (forbidden - post-acceptance discovery goes through this follow-up task instead).",
+    "allowed_paths lists the plain file paths (exact files satisfy both matchers).",
+    "Verification is CI-only: local vitest cannot run on the thin client. The producer pushes and the CI web-e2e job is the red/green authority (the RED half is already recorded by months of runs)."
+  ]
+}
