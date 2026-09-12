@@ -1,0 +1,520 @@
+<title>Buildability Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+  :root{
+    --paper:#FAF8F4; --card:#FFFFFF; --ink:#1C2B45; --ink-soft:#5A6B85;
+    --line:#E4E1D8; --accent:#C57F17; --accent-deep:#A4690F; --accent-soft:#F7EAD2;
+    --ok:#2E7D4F; --warn:#B04A0F; --unknown:#8A93A3; --paper-deep:#F1EDE4;
+    --sans:'Archivo',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --serif:'Source Serif 4',Georgia,'Times New Roman',serif;
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:light}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+       font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .demo-band{background:var(--ink);color:#EDE9DF;font-size:12.5px;letter-spacing:.02em;
+    text-align:center;padding:7px 14px}
+  .demo-band strong{color:#F2C879;font-weight:600}
+  header.app{display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:14px 22px;border-bottom:1px solid var(--line);background:var(--card)}
+  .wordmark{font-weight:800;font-size:17px;letter-spacing:-.01em}
+  .wordmark small{display:block;font-weight:500;font-size:10.5px;letter-spacing:.14em;
+    color:var(--ink-soft)}
+  nav.views{display:flex;gap:4px;flex-wrap:wrap}
+  nav.views button{font:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);
+    background:none;border:none;border-radius:7px;padding:7px 12px;cursor:pointer}
+  nav.views button:hover{background:var(--paper-deep);color:var(--ink)}
+  nav.views button[aria-current="true"]{background:var(--accent-soft);color:var(--accent-deep)}
+  nav.views button:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px}
+  main{max-width:1120px;margin:0 auto;padding:26px 20px 80px}
+  [hidden]{display:none!important}
+
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.09em;
+    color:var(--ink-soft);background:var(--paper-deep);border-radius:999px;padding:5px 12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;
+    font-weight:600;font-size:15px;border-radius:9px;padding:12px 22px;cursor:pointer;
+    border:1px solid transparent;text-decoration:none}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent-deep)}
+  .btn.ghost{background:none;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{background:var(--paper-deep)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .meta{font-size:12.5px;color:var(--ink-soft)}
+  .meta code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;
+    background:var(--paper-deep);border-radius:5px;padding:2px 6px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+  h1,h2,h3{line-height:1.15;text-wrap:balance;margin:0}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- Search view ---------- */
+  #view-search{display:flex;flex-direction:column;align-items:center;gap:34px;padding-top:6vh}
+  .search-card{width:min(660px,100%);padding:34px 30px}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.16em;color:var(--ink-soft)}
+  .search-card h1{font-size:clamp(30px,6vw,44px);font-weight:800;letter-spacing:-.02em;
+    margin:10px 0 22px}
+  .search-row{display:flex;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;
+    background:var(--card)}
+  .search-row:focus-within{border-color:var(--accent)}
+  .search-row input{flex:1;min-width:0;border:none;font:inherit;font-size:16.5px;
+    padding:14px 16px;background:none;color:var(--ink)}
+  .search-row input::placeholder{color:#9AA3B5}
+  .search-row input:focus{outline:none}
+  .search-row button{border:none;background:var(--accent);color:#fff;font-size:20px;
+    padding:0 22px;cursor:pointer}
+  .search-row button:hover{background:var(--accent-deep)}
+  .bbl-link{display:inline-block;margin-top:14px;font-size:14px;color:var(--ink-soft)}
+  .trust{display:flex;gap:34px;flex-wrap:wrap;justify-content:center}
+  .trust span{font-size:13.5px;color:var(--ink-soft)}
+  .trust b{color:var(--ink);font-weight:600}
+
+  /* resolving interstitial */
+  #view-resolving{display:flex;justify-content:center;padding-top:12vh}
+  .resolving-card{width:min(480px,100%);text-align:center;padding:38px 28px}
+  .spinner{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--accent);
+    border-radius:50%;margin:0 auto 16px;animation:spin .9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+
+  /* ---------- Verdict view ---------- */
+  .verdict-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:22px}
+  @media (max-width:840px){.verdict-grid{grid-template-columns:1fr}}
+  .map-card{padding:0;overflow:hidden;position:relative;min-height:320px}
+  .map-card svg{display:block;width:100%;height:100%;min-height:320px}
+  .map-chip{position:absolute;top:14px;left:14px;background:var(--card);
+    border:1px solid var(--line);border-radius:8px;padding:6px 11px;font-size:12.5px;
+    font-weight:600;box-shadow:0 1px 4px rgba(28,43,69,.08)}
+  .hero-num{font-size:clamp(40px,7vw,60px);font-weight:800;letter-spacing:-.025em;margin:14px 0 2px}
+  .hero-label{font-size:16.5px;color:var(--ink-soft)}
+  .verdict-sentence{margin:14px 0 20px;font-size:15.5px;color:var(--ink)}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  @media (max-width:560px){.stats{grid-template-columns:1fr}}
+  .stat{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+  .stat .k{font-size:12px;color:var(--ink-soft)}
+  .stat .v{font-size:19px;font-weight:700;margin-top:2px}
+  .check-title{font-size:17px;font-weight:700;margin:26px 0 4px}
+  ul.checklist{list-style:none;margin:0;padding:0}
+  ul.checklist li{display:flex;align-items:center;gap:12px;padding:11px 2px;
+    border-bottom:1px solid var(--line);font-size:14.5px}
+  ul.checklist li:last-child{border-bottom:none}
+  .flag{flex:0 0 auto;font-size:10px;font-weight:700;letter-spacing:.08em;border-radius:6px;
+    padding:4px 8px;min-width:64px;text-align:center}
+  .flag.found{background:var(--ink);color:#F3EFE6}
+  .flag.none{background:none;border:1px solid var(--line);color:var(--ink-soft)}
+  .flag.unknown{background:none;border:1px dashed var(--unknown);color:var(--unknown)}
+  .flag.review{background:var(--warn);color:#FBEFE6}
+  ul.checklist .why{margin-left:auto;font-size:12px;color:var(--ink-soft);text-align:right}
+  .verdict-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .vintage{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+
+  /* ---------- Analysis view ---------- */
+  .analysis-grid{display:grid;grid-template-columns:170px minmax(0,1fr);gap:22px}
+  @media (max-width:760px){.analysis-grid{grid-template-columns:1fr}
+    .rail{display:flex;overflow-x:auto;gap:2px;padding-bottom:6px}}
+  .rail{font-size:12.5px;font-weight:700;letter-spacing:.07em}
+  .rail button{display:block;width:100%;text-align:left;font:inherit;color:var(--ink-soft);
+    background:none;border:none;border-left:3px solid transparent;padding:9px 12px;cursor:pointer;
+    white-space:nowrap}
+  @media (max-width:760px){.rail button{width:auto;border-left:none;border-bottom:3px solid transparent}}
+  .rail button:hover{color:var(--ink)}
+  .rail button[aria-current="true"]{color:var(--accent-deep);border-color:var(--accent);
+    background:var(--accent-soft);border-radius:0 8px 8px 0}
+  @media (max-width:760px){.rail button[aria-current="true"]{border-radius:8px 8px 0 0}}
+  .facts{display:flex;flex-direction:column;gap:14px}
+  .fact .rule{font-size:13.5px;color:var(--ink-soft);font-weight:600}
+  .fact .value{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:2px 0}
+  .fact .plain{font-size:14.5px;margin:2px 0 12px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+    color:var(--ink-soft);background:var(--paper-deep);border:1px solid var(--line);
+    border-radius:7px;padding:4px 9px;cursor:help}
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+  .lawtext{font-family:var(--serif);font-size:17.5px;line-height:1.6;border-left:3px solid var(--accent);
+    padding:4px 0 4px 18px;margin:10px 0 14px;max-width:62ch}
+  .calc{border:1px dashed var(--line);border-radius:9px;padding:12px 16px;font-size:14px;
+    margin:6px 0 12px}
+  .calc .num{font-weight:700}
+  details.fp{margin-top:6px}
+  details.fp summary{cursor:pointer;font-size:12.5px;color:var(--ink-soft)}
+  details.fp p{font-size:13px;color:var(--ink-soft);max-width:60ch}
+  .placeholder-card{border-style:dashed;color:var(--ink-soft);font-size:14.5px}
+
+  /* ---------- Compare view ---------- */
+  .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .lot-card{padding:16px;cursor:pointer;transition:border-color .12s}
+  .lot-card:hover{border-color:var(--accent)}
+  .lot-card.best{border:2px solid var(--accent)}
+  .lot-thumb{height:86px;border-radius:8px;background:var(--paper-deep);margin-bottom:12px;
+    display:flex;align-items:center;justify-content:center}
+  .lot-card .addr{font-weight:700;font-size:15px}
+  .lot-card .boro{font-size:11px;letter-spacing:.12em;color:var(--ink-soft);font-weight:600}
+  .lot-card .big{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:8px 0 0}
+  .lot-card .biglabel{font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+  .mini{font-size:12.5px;border-top:1px solid var(--line);padding:6px 0;display:flex;
+    justify-content:space-between;gap:10px}
+  .mini b{font-weight:700}
+  .status{margin-top:12px;font-size:12px;font-weight:700;border-radius:8px;padding:7px 10px;
+    text-align:center}
+  .status.clear{background:#E8F2EA;color:var(--ok)}
+  .status.review{background:#F9EBDD;color:var(--warn)}
+  .status.gaps{background:var(--paper-deep);color:var(--unknown)}
+
+  /* ---------- Report view ---------- */
+  .sheet-wrap{display:flex;justify-content:center}
+  .sheet{width:min(720px,100%);background:#fff;border:1px solid var(--line);border-radius:6px;
+    box-shadow:0 8px 30px rgba(28,43,69,.10);padding:44px 46px;font-family:var(--serif)}
+  @media (max-width:600px){.sheet{padding:26px 20px}}
+  .sheet .rhead{display:flex;justify-content:space-between;align-items:start;gap:14px;
+    border-bottom:3px solid var(--accent);padding-bottom:14px}
+  .sheet .rhead h2{font-size:24px;font-weight:600;letter-spacing:.01em}
+  .draftbox{font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.12em;
+    border:1.5px solid var(--ink);padding:5px 10px;white-space:nowrap}
+  .sheet .addr{font-size:19px;margin:18px 0 2px}
+  .sheet .sub{font-family:var(--sans);font-size:11px;letter-spacing:.14em;color:var(--ink-soft)}
+  .verdict-box{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    padding:20px 22px;margin:20px 0}
+  .verdict-box .n{font-size:38px;font-weight:600}
+  .verdict-box .l{font-size:15px;color:var(--ink-soft)}
+  table.rt{width:100%;border-collapse:collapse;font-size:14.5px}
+  table.rt th{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;color:var(--ink-soft);
+    text-align:left;font-weight:700;padding:6px 8px;border-bottom:1px solid var(--ink)}
+  table.rt td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.rt td.v{font-weight:600;white-space:nowrap}
+  table.rt td.c{font-family:var(--sans);font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+  .sheet h3{font-size:17px;font-weight:600;margin:24px 0 8px}
+  .sheet ul.checklist li{font-family:var(--sans);font-size:13.5px}
+  .rfoot{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    border-top:1px solid var(--line);margin-top:26px;padding-top:12px;
+    font-family:var(--sans);font-size:11.5px;color:var(--ink-soft)}
+  .report-actions{display:flex;justify-content:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);
+    color:#F3EFE6;font-size:13.5px;border-radius:9px;padding:10px 18px;opacity:0;
+    pointer-events:none;transition:opacity .2s}
+  .toast.show{opacity:1}
+  footer.legal{max-width:1120px;margin:0 auto;padding:0 20px 40px;font-size:12px;
+    color:var(--ink-soft)}
+</style>
+
+<div class="demo-band"><strong>Design prototype</strong> — sample data only, not a live lookup. Nothing on this page is legal advice.</div>
+
+<header class="app">
+  <div class="wordmark">NYC Buildability<small>ZONING FEASIBILITY · PROTOTYPE</small></div>
+  <nav class="views" aria-label="Prototype screens">
+    <button data-goto="search" aria-current="true">Search</button>
+    <button data-goto="verdict">Verdict</button>
+    <button data-goto="analysis">Full analysis</button>
+    <button data-goto="compare">Compare lots</button>
+    <button data-goto="report">Report</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ SEARCH ============ -->
+  <section id="view-search" aria-label="Address search">
+    <div class="card search-card">
+      <div class="eyebrow">NYC ZONING FEASIBILITY</div>
+      <h1>What can you build?</h1>
+      <form id="search-form" class="search-row">
+        <input id="addr" type="text" placeholder="120 Broadway, Manhattan" aria-label="Street address">
+        <button type="submit" aria-label="Resolve address">→</button>
+      </form>
+      <a class="bbl-link" href="#" onclick="return toast('The BBL form stays available in the product — this prototype follows the address path.')">Look up by tax lot (BBL)</a>
+    </div>
+    <div class="trust">
+      <span><b>Official city data</b> · nothing scraped, nothing guessed</span>
+      <span><b>Every number cited</b> · down to the sentence of law</span>
+      <span><b>Draft</b> · verify with a professional before filing</span>
+    </div>
+  </section>
+
+  <!-- ============ RESOLVING ============ -->
+  <section id="view-resolving" hidden aria-label="Resolving">
+    <div class="card resolving-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h2 style="font-size:19px">Resolving address…</h2>
+      <p class="meta">Asking the city's Geoclient service for the official record. Nothing is guessed on this side.</p>
+    </div>
+  </section>
+
+  <!-- ============ VERDICT ============ -->
+  <section id="view-verdict" hidden aria-label="Verdict">
+    <div class="verdict-grid">
+      <div class="card map-card">
+        <span class="map-chip">Block 47 · Lot 7501</span>
+        <svg viewBox="0 0 420 400" role="img" aria-label="Simplified lot map with the subject parcel highlighted">
+          <rect width="420" height="400" fill="#F4F1EA"/>
+          <g fill="#E7E3D8">
+            <rect x="-30" y="18" width="180" height="96" transform="rotate(-8 60 60)"/>
+            <rect x="200" y="-10" width="150" height="120" transform="rotate(-8 260 50)"/>
+            <rect x="320" y="150" width="160" height="110" transform="rotate(-8 380 200)"/>
+            <rect x="-20" y="180" width="150" height="120" transform="rotate(-8 50 240)"/>
+            <rect x="60" y="300" width="190" height="120" transform="rotate(-8 150 360)"/>
+            <rect x="290" y="300" width="150" height="110" transform="rotate(-8 360 350)"/>
+          </g>
+          <g stroke="#FFFFFF" stroke-width="26">
+            <line x1="-20" y1="150" x2="440" y2="86"/>
+            <line x1="-20" y1="300" x2="440" y2="236"/>
+            <line x1="180" y1="-20" x2="240" y2="420"/>
+          </g>
+          <polygon points="196,150 268,140 280,224 208,234" fill="#F2DFB4" stroke="#C57F17" stroke-width="3.5"/>
+          <circle cx="238" cy="187" r="5" fill="#C57F17"/>
+        </svg>
+      </div>
+      <div class="card">
+        <span class="pill">DRAFT — NOT LEGAL ADVICE</span>
+        <div class="hero-num num">41,248 <span style="font-size:.45em;font-weight:700">sq ft</span></div>
+        <div class="hero-label">Unused development rights (draft)</div>
+        <p class="verdict-sentence">This lot likely supports more floor area. Two items need review before relying on the number.</p>
+        <div class="stats num">
+          <div class="stat"><div class="k">Max floor area (draft)</div><div class="v">61,248 sq ft</div></div>
+          <div class="stat"><div class="k">Built today (official)</div><div class="v">20,000 sq ft</div></div>
+          <div class="stat"><div class="k">Max height (draft)</div><div class="v">65 ft</div></div>
+        </div>
+        <h2 class="check-title">What could change this</h2>
+        <ul class="checklist">
+          <li><span class="flag found">FOUND</span> Commercial overlay C2-4 <span class="why">changes ground-floor rules</span></li>
+          <li><span class="flag none">NONE</span> Split zoning lot <span class="why">checked, not present</span></li>
+          <li><span class="flag unknown">UNKNOWN</span> Landmark status <span class="why">not yet checked</span></li>
+          <li><span class="flag review">REVIEW</span> Existing building near limit <span class="why">professional review flagged</span></li>
+        </ul>
+        <div class="verdict-actions">
+          <button class="btn primary" data-goto="analysis">Open full analysis</button>
+          <button class="btn ghost" data-goto="search">Not my property</button>
+        </div>
+        <p class="meta vintage">Data: PLUTO release 26v2 · Geoclient v2 · law text releases matched Jun 2026<br>
+        Reference id <code>ref-7f3a9c04</code> — quote it to support; it finds this exact lookup in the logs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ANALYSIS ============ -->
+  <section id="view-analysis" hidden aria-label="Full analysis">
+    <div class="analysis-grid">
+      <div class="rail" role="tablist" aria-label="Analysis sections">
+        <button data-sec="summary">SUMMARY</button>
+        <button data-sec="zoning">ZONING</button>
+        <button data-sec="far" aria-current="true">FAR</button>
+        <button data-sec="height">HEIGHT</button>
+        <button data-sec="setbacks">SETBACKS</button>
+        <button data-sec="units">UNITS</button>
+        <button data-sec="sources">SOURCES</button>
+      </div>
+      <div>
+        <div class="facts" id="sec-far">
+          <div class="card fact">
+            <div class="rule">Residential floor area ratio (FAR)</div>
+            <div class="value num">4.0</div>
+            <p class="plain">Applies to this R8B lot under the Quality Housing program.</p>
+            <span class="chip" title="The rule stores a SHA-256 fingerprint of the exact law text it was reviewed against. If the text ever changes, the rule refuses to load instead of computing on drifted law."><span class="dot" aria-hidden="true"></span> ZR 23-152 · law text matched · eff. Jun 2024</span>
+          </div>
+          <div class="card fact">
+            <div class="rule">Maximum zoning floor area</div>
+            <div class="value num">61,248 sq ft</div>
+            <p class="plain">Lot area multiplied by the residential FAR — arithmetic, not judgment.</p>
+            <div class="calc num">15,312 sq ft <span style="color:var(--ink-soft)">(lot area, PLUTO 26v2)</span> × 4.0 <span style="color:var(--ink-soft)">(FAR, ZR 23-152)</span> = <span class="num">61,248 sq ft</span></div>
+            <span class="chip"><span class="dot" aria-hidden="true"></span> calculation shown · both inputs cited</span>
+          </div>
+          <div class="card fact">
+            <div class="rule">Applicable zoning text</div>
+            <p class="lawtext">“In R8 Districts, the maximum floor area ratio shall be as set forth in the following table, provided that for residential buildings, the provisions of Section 23-154 (Quality Housing buildings) shall apply.”</p>
+            <span class="chip" title="Fingerprint of this exact excerpt matches the captured official source."><span class="dot" aria-hidden="true"></span> ZR 23-152 · law text matched · eff. Jun 2024</span>
+            <details class="fp">
+              <summary>What does “law text matched” mean?</summary>
+              <p>When this rule was built, the exact sentence of the Zoning Resolution it relies on was captured and sealed with a digital fingerprint. Every time the system starts, it re-checks the seal. If the law text changed — an amendment, a correction, anything — the rule refuses to run until a human re-reviews it. No answer is safer than an answer computed on law that shifted.</p>
+            </details>
+          </div>
+        </div>
+
+        <div class="facts" id="sec-summary" hidden>
+          <div class="card fact">
+            <div class="rule">The verdict in one place</div>
+            <div class="value num">41,248 sq ft unused (draft)</div>
+            <p class="plain">Maximum draft floor area 61,248 sq ft, minus 20,000 sq ft standing today. Two review flags are open — see the checklist on the Verdict screen.</p>
+            <span class="chip"><span class="dot" aria-hidden="true"></span> every input cited on its own card</span>
+          </div>
+        </div>
+
+        <div class="facts" id="sec-zoning" hidden>
+          <div class="card fact">
+            <div class="rule">Zoning district</div>
+            <div class="value">R8B</div>
+            <p class="plain">Contextual high-density residential district; commercial overlay C2-4 present along the avenue frontage.</p>
+            <span class="chip"><span class="dot" aria-hidden="true"></span> PLUTO 26v2 · retrieved 2026-09-12</span>
+          </div>
+        </div>
+
+        <div class="facts" id="sec-height" hidden>
+          <div class="card placeholder-card">Height &amp; setback cards arrive with the next rule families (R5 exists today; R8B height rules are on the roadmap). This section will use the exact same cited-card format — nothing will be shown uncited.</div>
+        </div>
+        <div class="facts" id="sec-setbacks" hidden>
+          <div class="card placeholder-card">Setback cards arrive with the height/setback rule family for this district. Until then this section stays honestly empty rather than estimated.</div>
+        </div>
+        <div class="facts" id="sec-units" hidden>
+          <div class="card placeholder-card">Unit-count cards (density factor math) arrive with a later rule increment. No estimate is shown in the meantime.</div>
+        </div>
+
+        <div class="facts" id="sec-sources" hidden>
+          <div class="card fact">
+            <div class="rule">Where every number came from</div>
+            <p class="plain" style="margin-top:8px">Lot &amp; building facts — <b>NYC Dept. of City Planning PLUTO</b>, release 26v2 · retrieved 2026-09-12<br>
+            Address resolution — <b>NYC Geoclient v2</b> (official) · reference <span class="meta"><code>conn-4b21</code></span><br>
+            Zoning rules — <b>NYC Zoning Resolution</b>, captured text with fingerprints, releases matched Jun 2026</p>
+            <p class="plain" style="color:var(--ink-soft)">This is an official data match, transported exactly as received. It has not been through the platform's qualified legal review — every value stays <b>draft</b> until it has.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPARE ============ -->
+  <section id="view-compare" hidden aria-label="Compare lots">
+    <h2 style="font-size:20px;margin-bottom:4px">Screening four candidate lots</h2>
+    <p class="meta" style="margin:0 0 16px">Identical card structure so the eye compares instantly. Statuses describe what was <em>checked</em> — never a compliance verdict.</p>
+    <div class="compare-grid num">
+      <div class="card lot-card" data-goto="verdict" role="button" tabindex="0">
+        <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="44,14 76,10 82,52 50,56" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
+        <div class="addr">120 Broadway</div><div class="boro">MANHATTAN</div>
+        <div class="big">41,248 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="mini"><span>Max floor area</span><b>61,248</b></div>
+        <div class="mini"><span>Built today</span><b>20,000</b></div>
+        <div class="mini"><span>Review flags</span><b>2</b></div>
+        <div class="status review">Computed · 2 review flags</div>
+      </div>
+      <div class="card lot-card best" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+        <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="30,40 52,12 86,18 80,58 36,60" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
+        <div class="addr">345 East 14th Street</div><div class="boro">MANHATTAN</div>
+        <div class="big">112,400 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="mini"><span>Max floor area</span><b>180,000</b></div>
+        <div class="mini"><span>Built today</span><b>67,600</b></div>
+        <div class="mini"><span>Review flags</span><b>0</b></div>
+        <div class="status clear">Computed · 0 flags in checked items</div>
+      </div>
+      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+        <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="46,16 78,20 74,54 42,50" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
+        <div class="addr">987 Atlantic Avenue</div><div class="boro">BROOKLYN</div>
+        <div class="big">18,750 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="mini"><span>Max floor area</span><b>38,200</b></div>
+        <div class="mini"><span>Built today</span><b>19,450</b></div>
+        <div class="mini"><span>Review flags</span><b>1</b></div>
+        <div class="status review">Computed · 1 review flag</div>
+      </div>
+      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+        <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="36,20 84,14 88,44 56,60 34,48" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
+        <div class="addr">2501 Jerome Avenue</div><div class="boro">BRONX</div>
+        <div class="big">9,800 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="mini"><span>Max floor area</span><b>28,300</b></div>
+        <div class="mini"><span>Built today</span><b>18,500</b></div>
+        <div class="mini"><span>Unknowns</span><b>1</b></div>
+        <div class="status gaps">Data gap — 1 item unknown</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section id="view-report" hidden aria-label="Report preview">
+    <div class="sheet-wrap">
+      <div class="sheet">
+        <div class="rhead">
+          <h2>Zoning Feasibility Brief</h2>
+          <span class="draftbox">DRAFT</span>
+        </div>
+        <p class="addr">120 Broadway, Manhattan · Block 47, Lot 7501</p>
+        <p class="sub">NEW YORK, NY · PREPARED 2026-09-12</p>
+        <div class="verdict-box num">
+          <span class="n">41,248 sq ft</span>
+          <span class="l">Unused development rights (draft)</span>
+        </div>
+        <table class="rt num">
+          <thead><tr><th>Item</th><th>Value</th><th>Source / citation</th></tr></thead>
+          <tbody>
+            <tr><td>Zoning district</td><td class="v">R8B</td><td class="c">PLUTO 26v2</td></tr>
+            <tr><td>Lot area (tax lot)</td><td class="v">15,312 sq ft</td><td class="c">PLUTO 26v2</td></tr>
+            <tr><td>Residential FAR</td><td class="v">4.0</td><td class="c">ZR 23-152 · matched Jun 2024</td></tr>
+            <tr><td>Max floor area (draft)</td><td class="v">61,248 sq ft</td><td class="c">calc: lot × FAR</td></tr>
+            <tr><td>Built today (official)</td><td class="v">20,000 sq ft</td><td class="c">PLUTO 26v2</td></tr>
+            <tr><td>Unused rights (draft)</td><td class="v">41,248 sq ft</td><td class="c">calc: max − built</td></tr>
+            <tr><td>Max building height (draft)</td><td class="v">65 ft</td><td class="c">ZR 23-633 · matched Jun 2024</td></tr>
+          </tbody>
+        </table>
+        <h3>What could change this</h3>
+        <ul class="checklist">
+          <li><span class="flag found">FOUND</span> Commercial overlay C2-4 — ground-floor rules apply</li>
+          <li><span class="flag none">NONE</span> Split zoning lot — checked, not present</li>
+          <li><span class="flag unknown">UNKNOWN</span> Landmark status — not yet checked</li>
+          <li><span class="flag review">REVIEW</span> Existing building near limit — professional review flagged</li>
+        </ul>
+        <div class="rfoot">
+          <span>Every value cites its source. Verify with a licensed professional before filing.</span>
+          <span>ref-7f3a9c04</span>
+        </div>
+      </div>
+    </div>
+    <div class="report-actions">
+      <button class="btn primary" disabled>Download PDF</button>
+      <span class="meta" style="align-self:center">PDF export arrives with a later increment — shown here so the deliverable is visible.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="legal">
+  Design prototype for NYC Buildability. All values are sample data with consistent arithmetic (61,248 − 20,000 = 41,248); no live city lookup occurs on this page. In the product, every rule is DRAFT until qualified legal review, and nothing is ever labeled “verified” or “compliant.”
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+  var views = ["search","resolving","verdict","analysis","compare","report"];
+  function show(name){
+    views.forEach(function(v){
+      document.getElementById("view-"+v).hidden = (v !== name);
+    });
+    document.querySelectorAll("nav.views button").forEach(function(b){
+      if (b.dataset.goto === name) b.setAttribute("aria-current","true");
+      else b.removeAttribute("aria-current");
+    });
+    window.scrollTo({top:0});
+  }
+  document.querySelectorAll("[data-goto]").forEach(function(el){
+    el.addEventListener("click", function(){ show(el.dataset.goto); });
+    el.addEventListener("keydown", function(e){
+      if ((e.key === "Enter" || e.key === " ") && el.getAttribute("role") === "button"){
+        e.preventDefault(); show(el.dataset.goto);
+      }
+    });
+  });
+  document.querySelectorAll("[data-toast]").forEach(function(el){
+    el.addEventListener("click", function(){ toast(el.dataset.toast); });
+    el.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); toast(el.dataset.toast); }
+    });
+  });
+  document.getElementById("search-form").addEventListener("submit", function(e){
+    e.preventDefault();
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    show("resolving");
+    setTimeout(function(){ show("verdict"); }, reduce ? 120 : 850);
+  });
+  var toastTimer = null;
+  function toast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+    return false;
+  }
+  // Analysis rail
+  var secs = ["summary","zoning","far","height","setbacks","units","sources"];
+  document.querySelectorAll(".rail button").forEach(function(b){
+    b.addEventListener("click", function(){
+      secs.forEach(function(s){
+        document.getElementById("sec-"+s).hidden = (s !== b.dataset.sec);
+      });
+      document.querySelectorAll(".rail button").forEach(function(x){ x.removeAttribute("aria-current"); });
+      b.setAttribute("aria-current","true");
+    });
+  });
+</script>
