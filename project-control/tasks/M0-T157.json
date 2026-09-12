@@ -1,0 +1,80 @@
+{
+  "task_id": "M0-T157",
+  "title": "Resolver-test fixture repair: derive the nonexistent directive id (hardcoded D-042 broke when the real D-042 was captured)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Fix test_s12_wrong_directive_reference_fails_closed in tools/test_directive_compliance.py: replace the hardcoded 'D-042' (which the owner's real D-042 capture made EXIST, breaking the test's nonexistence premise and failing the control-plane CI job) with an id DERIVED from the live registry (max registered D-nnn + 500, asserted absent) so the fixture can never collide with a future capture. One test function; no production logic.",
+  "business_reason": "The control-plane CI job must return green; the collision class (hardcoded future directive ids in fixture tests) is closed by derivation.",
+  "inputs": [
+    "tools/test_directive_compliance.py :285-294 (ResolverTests.test_s12 - the hardcoded 'D-042' at :291)",
+    "CI run 34726200121 control-plane job 103640653970 (the failure: assertTrue(any('does not exist'...)) - D-042 now exists)",
+    "project-control/directives/D-042-nextjs-15-5-24-upgrade/ (the capture that made D-042 real - IMMUTABLE, read-only context)"
+  ],
+  "outputs": [
+    "tools/test_directive_compliance.py (the one test function, fixture-derived nonexistent id + absence assertion)",
+    "project-control/reports/M0-T157-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/test_directive_compliance.py",
+    "project-control/reports/M0-T157-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/project_control.py",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "services/**",
+    "apps/**",
+    "packages/**",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "derived_id_fails_closed",
+      "input": "the live registry (42 directives incl. the new D-042)",
+      "expected": "the test derives an id provably absent (assertNotIn), evaluate_task_refs returns ok=False with a 'does not exist' invalid_ref, and the test passes against the CURRENT registry; no hardcoded future id remains in the function"
+    },
+    {
+      "id": "S2",
+      "case": "regression",
+      "input": "the ResolverTests class + control-plane CI",
+      "expected": "ResolverTests green locally; the control-plane CI job returns SUCCESS at the fix head; no other test or production file changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "the derivation must not assume id format beyond D-<digits> (guard with isdigit filter)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T23:52:23.338381+00:00",
+  "updated_at": "2026-09-12T23:52:39.834169+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T23:52:23.338381+00:00",
+  "path_notes": "GOVERNANCE-PATH task (s19: task_type=governance + D-001:ALL citation, the M0-T151..156 precedent). One-function test edit; the resolver itself is untouched (forbidden). The derivation (max existing D-nnn + 500, assertNotIn before use) closes the whole hardcoded-future-id collision class.",
+  "documented_test_commands": [
+    "python tools/test_directive_compliance.py ResolverTests -v",
+    "control-plane CI job at the fix head"
+  ],
+  "worktree": "primary-checkout"
+}

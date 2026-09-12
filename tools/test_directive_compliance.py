@@ -288,7 +288,15 @@ class ResolverTests(unittest.TestCase):
         self.task = _read(REAL_TASKS / "M0-T023.json")
 
     def test_s12_wrong_directive_reference_fails_closed(self):
-        t = dict(self.task, directive_refs=[{"directive_id": "D-042", "requirement_ids": "ALL"}])
+        # M0-T157: derive an id provably ABSENT from the live registry (the
+        # previous hardcoded "D-042" broke the day the real D-042 directive
+        # was captured). max-registered + 500 can never collide with a
+        # future capture as the registry grows.
+        numbers = [int(d.split("-")[1]) for d in self.reg.directives
+                   if len(d.split("-")) > 1 and d.split("-")[1].isdigit()]
+        missing = "D-%03d" % (max(numbers) + 500)
+        self.assertNotIn(missing, self.reg.directives)
+        t = dict(self.task, directive_refs=[{"directive_id": missing, "requirement_ids": "ALL"}])
         ev = self.reg.evaluate_task_refs(t)
         self.assertFalse(ev["ok"])
         self.assertTrue(any("does not exist" in r for r in ev["invalid_refs"]))
