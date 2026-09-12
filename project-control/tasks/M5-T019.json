@@ -1,0 +1,122 @@
+{
+  "task_id": "M5-T019",
+  "title": "D-040-R002 flag unification: web adopts INTERNAL_RULE_EVAL_ENABLED (design-spec one-flag intent)",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Rename the frontend rule-evaluation env flag INTERNAL_RULE_EVAL_UI to the canonical backend name INTERNAL_RULE_EVAL_ENABLED per design-spec section 6, closing the M5-T015 G5 F-1 divergence. Token semantics and the two-factor gate (env flag AND ?ruleeval=on) are byte-preserved; only the env-var NAME changes. Owner return item: any Render dashboard env for the (currently withheld) web service must use INTERNAL_RULE_EVAL_ENABLED - no repo deployment file carries either flag today (verified).",
+  "business_reason": "D-040-R002 authorized unification; a split flag name makes the endpoint's flag-off 404 reachable under misconfiguration (G5 F-1).",
+  "inputs": [
+    "project-control/directives/D-040-scoped-unblocks/requirements.json (D-040-R002: unification authorized; the packet MUST name the Render env-var change as an owner return item)",
+    "docs/design/address-entry-confirm-design-spec.md section 6, line ~118 (the normative one-flag intent: both surfaces behind INTERNAL_RULE_EVAL_ENABLED)",
+    "project-control/reports/M5-T015-G5.md lines 52-54 (the F-1 finding this closes: split names make the endpoint's flag-off 404 reachable under misconfiguration)",
+    "apps/web/src/lib/rule-evaluation.ts (:54-95 - INTERNAL_RULE_EVAL_UI_ENV_VAR const :75, token set :74, ruleEvaluationFlagEnabled :80, two-factor ruleEvaluationSurfaceEnabled :88-95; deliberate non-NEXT_PUBLIC posture :54-60 must survive)",
+    "apps/web/playwright.config.ts :61 (the webServer env block - the only CI-reachable place setting the old name)",
+    "apps/web/src/lib/__tests__/rule-evaluation.test.ts :57 (the one test literal), apps/web/e2e/rule-evaluation.spec.ts :11 + rule-evaluation-flag-off.spec.ts :8 + apps/web/src/app/property/page.tsx :18 (comment-only refs)",
+    "apps/web/e2e/harness/fixture_api.py :253 (already sets INTERNAL_RULE_EVAL_ENABLED for the fixture API process - after the rename the SAME name flows through both processes, the intended outcome; READ-ONLY context, not in scope)",
+    "VERIFIED ABSENT (no edit needed, cite as evidence): render.yaml has neither flag (web service block withheld entirely :156-168); .github/workflows set neither; both .env.example files omit them deliberately"
+  ],
+  "outputs": [
+    "apps/web/src/lib/rule-evaluation.ts (const + doc comments renamed; token semantics and the two-factor gate byte-preserved)",
+    "apps/web/playwright.config.ts (webServer env key renamed)",
+    "apps/web/src/lib/__tests__/rule-evaluation.test.ts (literal updated; no assertion weakened; add one guard asserting the OLD name is no longer read)",
+    "comment-only updates: apps/web/src/app/property/page.tsx, apps/web/e2e/rule-evaluation.spec.ts, apps/web/e2e/rule-evaluation-flag-off.spec.ts",
+    "project-control/reports/M5-T019-producer-report.md (incl. the owner return note verbatim)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/playwright.config.ts",
+    "apps/web/src/lib/__tests__/rule-evaluation.test.ts",
+    "apps/web/src/app/property/page.tsx",
+    "apps/web/e2e/rule-evaluation.spec.ts",
+    "apps/web/e2e/rule-evaluation-flag-off.spec.ts",
+    "project-control/reports/M5-T019-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "packages/**",
+    "render.yaml",
+    ".github/**",
+    "apps/web/e2e/harness/**",
+    "apps/web/src/components/**",
+    "apps/web/src/lib/scenario-contract.ts",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "rename_complete_and_exclusive",
+      "input": "grep of apps/web for both names after the change",
+      "expected": "ruleEvaluationFlagEnabled reads INTERNAL_RULE_EVAL_ENABLED; the string INTERNAL_RULE_EVAL_UI appears NOWHERE in apps/web source/config/tests (historical project-control reports excluded); a new unit test pins that setting the OLD name does NOT enable the flag (the misconfiguration F-1 described is now inert on the web side)"
+    },
+    {
+      "id": "S2",
+      "case": "semantics_byte_preserved",
+      "input": "the existing unit-test matrix (token set {1,true,yes,on}, trim+lowercase, absent/empty/unknown -> false) + the two-factor gate",
+      "expected": "every existing assertion passes with only the name literal changed - no assertion weakened, deleted, or loosened; ruleEvaluationSurfaceEnabled still requires env flag AND ?ruleeval=on; the flag stays server-side-only (no NEXT_PUBLIC_, never inlined into the client bundle)"
+    },
+    {
+      "id": "S3",
+      "case": "e2e_both_processes_one_name",
+      "input": "CI web-e2e job (Playwright webServer env renamed; fixture API already exports INTERNAL_RULE_EVAL_ENABLED)",
+      "expected": "rule-evaluation.spec.ts AND rule-evaluation-flag-off.spec.ts pass with ONE flag name flowing through both the Next process and the fixture-API process - the design-spec one-flag intent demonstrated end-to-end; web (lint+typecheck+build) job green"
+    },
+    {
+      "id": "S4",
+      "case": "owner_return_note",
+      "input": "the producer report",
+      "expected": "an explicit OWNER RETURN NOTE section stating the exact Render action (rename INTERNAL_RULE_EVAL_UI -> INTERNAL_RULE_EVAL_ENABLED wherever the owner set it in a Render dashboard; API service unchanged) and the verified fact that no repo deployment file needs edits"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "a missed rename site leaves the flag half-split (S1's exclusive-grep + old-name-inert test guard this)",
+    "semantics drift during rename (S2 pins the full token matrix + two-factor gate)",
+    "accidental NEXT_PUBLIC_ exposure would inline the flag into the client bundle - forbidden",
+    "the fixture-API harness is out of scope; it already uses the canonical name (no edit)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T12:34:18.631064+00:00",
+  "updated_at": "2026-09-12T12:37:02.856173+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T12:34:18.631064+00:00",
+  "path_notes": "MODULARITY: pure rename inside the existing focused module; no structural change; no file approaches any threshold. DIRECTION OF UNIFICATION: the API name INTERNAL_RULE_EVAL_ENABLED is canonical (design-spec section 6); the API side changes NOTHING (services/api forbidden). The non-NEXT_PUBLIC server-side-only posture is deliberate and must survive the rename. OWNER RETURN ITEM (D-040-R002 obligation, name it in the producer report AND the acceptance note): no repo deployment file or workflow carries either flag, and render.yaml's web service block is withheld - so the only deployment action is: IF the owner has set INTERNAL_RULE_EVAL_UI in any Render dashboard (web service, when it exists), rename that env var to INTERNAL_RULE_EVAL_ENABLED; the API service's existing flag name is unchanged.",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client, no local npm)"
+  ],
+  "worktree": "wt-m5t019",
+  "progress_log": [
+    {
+      "at": "2026-09-12T12:37:02.856173+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; bound to D-040-R002 (digest 27d6d1b8->a3fc9d01); frontend-engineer dispatch next"
+    }
+  ]
+}
