@@ -84,8 +84,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "a missed rename site leaves the flag half-split (S1's exclusive-grep + old-name-inert test guard this)",
     "semantics drift during rename (S2 pins the full token matrix + two-factor gate)",
@@ -94,7 +94,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T12:34:18.631064+00:00",
-  "updated_at": "2026-09-12T12:41:39.092938+00:00",
+  "updated_at": "2026-09-12T12:48:41.820393+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
