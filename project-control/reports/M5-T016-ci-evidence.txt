@@ -1,0 +1,35 @@
+M5-T016 CI evidence (captured by the orchestrator; thin client — CI is the executable authority
+per docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md and the packet's documented_test_commands)
+
+Head under test: 49bd086b9e48ff99f08672c311c8a0c0e2a09f88
+  (producer material 65d72bfd + progress record 49bd086b; the progress record touched only
+   project-control. apps/web content is byte-identical from 65d72bfd through the current
+   branch head ec88b183 — `git diff 65d72bfd..ec88b183 -- apps/web` is empty; the two
+   commits after 49bd086b are the seq-99 handoff/state commit and a docs-only Q&A commit)
+
+Run: CI 34679638323 (push of 49bd086b), completed 2026-09-12
+  https://github.com/martin10101/nyc-buildability/actions/runs/34679638323
+
+  web (lint + typecheck + build)                      SUCCESS  job 103515732369  completed 2026-09-12T07:02:22Z
+  web-e2e (vitest + Playwright vs recorded fixtures)  SUCCESS  job 103515732438  completed 2026-09-12T07:03:51Z
+
+  vitest summary (from job 103515732438 log):
+    src/components/address/__tests__/address-resolution.test.tsx  (32 tests)  PASSED
+      (the Packet-1 pack carried forward: resolved-path cases updated to the new Confirm-card
+       routing + mechanical testid retargets; extraction neutrality per S7)
+    src/components/address/__tests__/address-confirm.test.tsx      (11 tests)  PASSED
+      (the new Confirm-card pack incl. the S2/S3/S6 adversarial href scenarios)
+    Test Files  28 passed (28)
+    (27 pre-existing web test files still green + the new address-confirm module —
+     whole-suite green per S8; no behavioral regression at the whole-suite level)
+
+  Only failing jobs on the run — BOTH pre-existing and owner-gated, unrelated to this task:
+    web-dependency-security  FAILURE  (npm-audit / Next.js RCE fix awaiting owner authorization)
+    control-plane            FAILURE  (CRLF digest-normalization decision, owner-gated)
+  All other jobs (api, contracts, contracts-schema-bundle, contracts-typegen, modularity,
+  exact-production-install, api-lock-verify, api-tooling-lock-verify, context-pipeline,
+  context-index-a1, code-graph, model-routing, product-map, supervisor-bridge): SUCCESS.
+
+  First-execution note (M5-T014/M5-T015 posture): this run is the FIRST CI execution of the
+  producer material — web and web-e2e were green on the first push, zero repair commits
+  (the M5-T015 arc needed one test-mechanics repair; this packet hit the aim-for-zero target).
