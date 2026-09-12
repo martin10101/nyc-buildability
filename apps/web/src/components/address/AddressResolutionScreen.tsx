@@ -437,9 +437,11 @@ const ADDRESS_ERROR_COPY: Record<
 function AddressErrorCard({
   outcome,
   onRetry,
+  onEditAddress,
 }: {
   outcome: AddressErrorOutcome;
   onRetry: () => void;
+  onEditAddress: () => void;
 }) {
   const copy = ADDRESS_ERROR_COPY[outcome.state];
   return (
@@ -464,7 +466,20 @@ function AddressErrorCard({
       <p className="failure-meta">
         Failure type: <code>{outcome.state}</code> (HTTP {outcome.httpStatus})
       </p>
-      {copy.retry ? <RetryButton onRetry={onRetry} /> : null}
+      {copy.retry ? (
+        <RetryButton onRetry={onRetry} />
+      ) : outcome.state === "invalid_input" ? (
+        // G3 F3: the one error whose fix is on the user's side points back
+        // at the form (spec section-2 "edit and resubmit" posture).
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={onEditAddress}
+          data-testid="edit-address"
+        >
+          Edit the address
+        </button>
+      ) : null}
       <Meta correlationId={outcome.correlationId} />
     </section>
   );
@@ -625,6 +640,9 @@ export function AddressResolutionScreen() {
       // street_name VERBATIM as the new street; same house number, same
       // borough/zip. The form mirrors the pick so what was submitted is
       // visible (and editable) in the street field.
+      // G3 F2: the "Use this address" button unmounts with the ambiguous
+      // card, so the loading card takes focus — same rule as retry.
+      setRetryFocus(true);
       setValues((current) => ({ ...current, street: rawStreetName }));
       void runResolve({ ...base, street: rawStreetName });
     },
@@ -670,7 +688,13 @@ export function AddressResolutionScreen() {
             return <UnrecognizedStatusCard outcome={outcome} onRetry={retry} />;
         }
       case "error":
-        return <AddressErrorCard outcome={outcome} onRetry={retry} />;
+        return (
+          <AddressErrorCard
+            outcome={outcome}
+            onRetry={retry}
+            onEditAddress={editAddress}
+          />
+        );
       case "network_error":
         return (
           <AddressNetworkErrorCard message={outcome.message} onRetry={retry} />
@@ -701,7 +725,12 @@ export function AddressResolutionScreen() {
     <div data-testid="address-resolution-screen">
       <OutcomeAnnouncer message={announcement} testId="address-outcome-announcer" />
       <section className="card">
-        <h2 className="section-title">Address lookup</h2>
+        {/* h1: the address surface is the page's primary lookup whenever it
+            is mounted (G3 F1 — the document outline must not open on an h2;
+            PropertyLookup demotes its own heading when the flag is on). */}
+        <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
+          Address lookup
+        </h1>
         <p className="section-note">
           Enter a street address and the city&apos;s official Geoclient
           service resolves it to a tax lot. The city&apos;s service — not

@@ -229,6 +229,10 @@ describe("S1 — flag posture (off: today's UI, no address surface, no fetch)", 
     expect(screen.getByTestId("address-disabled-copy")).toBeInTheDocument();
     expect(screen.queryByTestId("address-resolution-screen")).toBeNull();
     expect(screen.queryByTestId("address-form")).toBeNull();
+    // Flag off: the BBL card keeps the page's original h1.
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Property lookup" }),
+    ).toBeInTheDocument();
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -241,6 +245,17 @@ describe("S1 — flag posture (off: today's UI, no address surface, no fetch)", 
     expect(screen.queryByTestId("address-disabled-copy")).toBeNull();
     // The BBL form is still fully present alongside it.
     expect(screen.getByLabelText("BBL")).toBeInTheDocument();
+    // G3 F1: the mounted address surface owns the page's single h1 and the
+    // BBL card demotes to h2 — the document outline never opens on an h2.
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Address lookup" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Property lookup" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { level: 1, name: "Property lookup" }),
+    ).toBeNull();
     // Mounting alone fires nothing.
     expect(fetchSpy).not.toHaveBeenCalled();
   });
@@ -499,6 +514,9 @@ describe("S5 — documented error matrix", () => {
     expect(screen.getByTestId("invalid-input-message").textContent).toBe(
       body.error.message,
     );
+    // G3 F3: the one user-fixable error points back at the form.
+    fireEvent.click(screen.getByTestId("edit-address"));
+    expect(document.activeElement).toBe(screen.getByLabelText("Street"));
   });
 
   it("server-side key problems NEVER blame the user", async () => {
@@ -614,9 +632,14 @@ describe("S6 — hostile reflected text renders inert", () => {
     ).toBeUndefined();
   });
 
-  it("a hostile suggestion name renders as text, and picking it sends the RAW name only to the fetch seam", async () => {
+  it("a hostile suggestion name renders as BOUNDED text, and picking it sends the RAW name verbatim to the fetch seam", async () => {
+    // raw ≠ bounded BY CONSTRUCTION (G1 D2): the 700-char tail forces
+    // boundedText to truncate the DISPLAY, so this test discriminates the
+    // verbatim re-query from a bounded one — a mutant that re-queries with
+    // the bounded display string fails the seam equality below.
+    const longHostileName = HOSTILE_SUGGESTION + "Y".repeat(700);
     const doc = ambiguousDoc();
-    doc.suggestions[1] = { street_name: HOSTILE_SUGGESTION };
+    doc.suggestions[1] = { street_name: longHostileName };
     const fetchSpy = stubFetchOnce(
       jsonResponse(doc, 200),
       jsonResponse(notFoundDoc(), 200),
@@ -626,16 +649,19 @@ describe("S6 — hostile reflected text renders inert", () => {
 
     await screen.findByTestId("address-ambiguous");
     expect(container.querySelectorAll("iframe")).toHaveLength(0);
-    expect(
-      screen.getByTestId("suggestion-chooser").textContent,
-    ).toContain(HOSTILE_SUGGESTION);
+    const chooserText = screen.getByTestId("suggestion-chooser").textContent ?? "";
+    // The hostile prefix is visible (inert, under the display cap)…
+    expect(chooserText).toContain(HOSTILE_SUGGESTION);
+    // …but the DISPLAY is bounded: the full raw string never renders.
+    expect(chooserText).not.toContain(longHostileName);
 
     fireEvent.click(screen.getByTestId("suggestion-option-1"));
     fireEvent.click(screen.getByTestId("use-suggestion"));
     await screen.findByTestId("address-not-found");
-    // Verbatim re-query (URL-encoded transport, decoded here for equality).
+    // Verbatim re-query (URL-encoded transport, decoded here for equality):
+    // the FULL raw name, not the truncated display form.
     expect(requestUrl(fetchSpy, 1).searchParams.get("street")).toBe(
-      HOSTILE_SUGGESTION,
+      longHostileName,
     );
   });
 
@@ -777,6 +803,29 @@ describe("S7 — state-machine integrity", () => {
     );
     slow.resolve(jsonResponse(errorDoc("timeout"), 504));
     await screen.findByTestId("address-error-timeout");
+  });
+
+  it("a suggestion pick moves focus to the resolving card while the re-query is in flight (never body)", async () => {
+    // G3 F2: the "Use this address" button unmounts with the ambiguous
+    // card, so the loading card must take focus — same rule as retry.
+    const slow = deferred<Response>();
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse(ambiguousDoc(), 200))
+      .mockReturnValueOnce(slow.promise);
+    vi.stubGlobal("fetch", fetchSpy);
+    render(<AddressResolutionScreen />);
+    fillAndSubmit();
+
+    await screen.findByTestId("address-ambiguous");
+    fireEvent.click(screen.getByTestId("suggestion-option-0"));
+    fireEvent.click(screen.getByTestId("use-suggestion"));
+    const resolving = await screen.findByTestId("address-resolving");
+    await waitFor(() =>
+      expect(document.activeElement).toBe(resolving.querySelector("h2")),
+    );
+    slow.resolve(jsonResponse(resolvedDoc(), 200));
+    await screen.findByTestId("address-resolved");
   });
 
   it("the announcer speaks each arrival exactly once: cleared while resolving, set on arrival, re-set for an identical retry outcome", async () => {

@@ -97,3 +97,39 @@ Packet 2: AddressConfirmCard, ZoLa deep-link (exact URL shape to confirm), `/pro
 handoff, provenance disclosure. Packet 3 (real lot outline / MapLibre): ON THE OWNER-REVIEW
 EXPANSION HOLD — not planned, not started. `source_facts`/`provenance` render nowhere in Packet 1
 (the client maps counts/ids for Packet 2's disclosure).
+
+## 8. Post-wave corrections (appended after the four-gate wave; original sections above unedited)
+
+The wave returned G1/G4/G5 PASS and G3 PASS with required corrections. One bounded correction
+commit addresses every blocking item plus the cheap recommended ones:
+
+**Corrections of record in THIS report (G1 D1, D3):**
+- §3.2's containment claim was overstated: `rawStreetName` reaches TWO sinks — the fetch seam
+  (URLSearchParams) AND the controlled street `<input value>` via `onPickSuggestion`'s
+  `setValues`. The second is a safe context (React assigns the DOM `.value` property; no HTML or
+  attribute-markup serialization — G5 §4 reached the same judgment independently), and the
+  round-trip echo re-renders through `textOrNull` bounding. The claim "goes ONLY to the fetch
+  seam" is hereby corrected to "fetch seam + controlled street-input value (safe
+  property-assignment context); never a render."
+- §5's stats were wrong: `AddressResolutionScreen.tsx` was 725 raw lines (not 687 — that number
+  was a pre-edit count), and the test module holds 24 `it`/`it.each` blocks expanding to 31
+  cases (not "20 tests"). The CI evidence's 31 was correct throughout.
+
+**Code/test corrections applied (commit follows this report edit):**
+- G3 F1 (REQUIRED): heading order fixed — `AddressResolutionScreen` now renders its intro
+  heading as the page h1, and `PropertyLookup` demotes "Property lookup" to h2 ONLY when
+  `ruleEvalEnabled` (flag-off h1 byte-identical). New S1 assertions pin the levels both ways.
+- G3 F2: `onPickSuggestion` now sets `retryFocus`, so a suggestion pick moves focus to the
+  resolving card instead of dropping to `<body>`; new S7 test proves it with a hung re-query.
+- G3 F3: the `invalid_input` card now carries the "Edit the address" affordance (focuses the
+  street input) — the spec's "points at the field / edit and resubmit" posture; asserted in S5.
+- G1 D2: the hostile-suggestion fixture now carries a 700-char tail so raw ≠ bounded — the
+  display is asserted truncated while the fetch seam receives the FULL raw name, making the
+  verbatim-re-query mutant actually killable.
+
+**Deferred with the reviewers' concurrence (advisory, carried to Packet 2):** G3 F4 (extract
+outcome cards to their own module when Packet 2 grows the flow), G3 F5 (dual primary buttons —
+transitional until resolved routes to Confirm), G5 F-1 (frontend `INTERNAL_RULE_EVAL_UI` vs
+backend `INTERNAL_RULE_EVAL_ENABLED` naming divergence — surface to the owner with Packet 2),
+G5 F-2 / G4 F3 (hostile-resolved-card fixture and per-state body-copy assertions when the error
+matrix is next touched).

@@ -264,9 +264,19 @@ export function PropertyLookup({
           endpoint's flag-off 404 is unreachable from this UI). */}
       {ruleEvalEnabled ? <AddressResolutionScreen /> : null}
       <section className="card">
-        <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
-          Property lookup
-        </h1>
+        {/* M5-T015 (G3 F1): with the address surface mounted above, that
+            surface owns the page's h1 and this card demotes to h2 so the
+            document outline stays ordered; flag off renders the original
+            h1 byte-identically. */}
+        {ruleEvalEnabled ? (
+          <h2 className="section-title" style={{ fontSize: "1.4rem" }}>
+            Property lookup
+          </h2>
+        ) : (
+          <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
+            Property lookup
+          </h1>
+        )}
         <p className="section-note">
           Enter a 10-digit BBL (borough–block–lot) to retrieve the official
           property profile.
