@@ -67,6 +67,41 @@
     }
    ],
    "note": "Independent DCV of M5-T019 (D-040-R002 web flag unification: web adopts canonical INTERNAL_RULE_EVAL_ENABLED). Both clauses reproduced from primary evidence at HEAD a8acf33b (source read + repo-wide grep of the exclusive rename, config.py:28 name match, design-spec section 6, render.yaml/.github/.env.example verified-absent, git frozen-identity diff over the 7 allowed_paths, validator EXIT 0, in-memory accept dry-run reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (frontend-engineer). reviewed_sha stamped at verified HEAD a8acf33b; it may be mechanically re-stamped to accept-time HEAD while the task's allowed_paths diff vs its frozen material (b30f709c, base b119edf1) stays empty; computed material identity bf156d465d6a7c1e39f1b4cd19b5ad8baf7a5bd804081b6781a34eed29cfe110 is unchanged while those allowed_paths are unchanged."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T020",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "3c11a701c0c951d111b78e7b97e421bb342456d0",
+   "reviewed_manifest_sha256": "ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T15:12:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "SERVER INCREMENT of the scoped lot-outline release. RESEARCH-FIRST: project-control/reports/D-040-R001-mappluto-research.md first committed 4bd7d894 (2026-09-12 08:48:40) PREDATES the packet-contracting commit a5e5e408 (09:41:24); present at HEAD. Packet inputs[0] pins it.",
+      "SCOPE EXACTLY LOT-OUTLINE: git diff --stat a5e5e408..3c11a701 = ONLY the 12 allowed_paths + control-plane files; project-control/master_plan.json untouched; NO 3D-massing / 19-task-pack / GDS P1-P8 / MASTER_EXECUTION_PLAN artifact anywhere in the diff. reg.evaluate_task_refs: ok=True, applicable==cited==[D-040-R001], reasons=[] (no uncited-but-applicable requirement).",
+      "CONNECTOR: services/api/app/connectors/mappluto_lot_outline.py@3c11a701 (NEW, +596) builds f=geojson&outSR=4326 via the immutable 2263 connector's imported normalize_bbl/constants/outcome vocabulary; display_only + accuracy_note + attribution + EPSG:4326 on every outcome (22 hits); NO measurement (no import shapely, no real .area/.length -- every measurement grep hit is a prohibition comment); confirmed by test_module_computes_no_area_and_does_not_import_shapely.",
+      "ROUTE: services/api/app/api/v1/lot_geometry.py@3c11a701 (NEW, +244) GET /properties/{bbl}/lot-geometry, include_in_schema=False (:162), flag-gated on internal_rule_eval_enabled (:172) -> generic 404 {detail:Not Found} (:114) when off, X-Correlation-ID (:106); config.py forbidden+byte-unchanged; main.py additive router mount only.",
+      "CONTRACT: packages/contracts/schemas/v1/lot_geometry.schema.json and services/api/app/_contract_schemas/v1/lot_geometry.schema.json BYTE-IDENTICAL (git hash-object both = e0b34bb1d55795b92431b9b106190f25149ffb0b), closed (additionalProperties:false x6); packages/contracts/generated/lot_geometry.ts present with in-suite structural drift guard (empirically fails on enum removal).",
+      "FIXTURES: MANIFEST.json sha256 recomputed by verifier for 3 fixtures -- LOT01 9e5e1261..., LOT05(holes) 859bacb7..., LOT06(multipolygon) 28a79e78... -- all match response_body_sha256; 6 raw live-captured + 2 documented synthetic negatives (LOT80/LOT96, derived_from LOT01, M2-T009 precedent); no 4326 byte derived from 2263.",
+      "PRESERVED PROHIBITIONS: R004 git diff a5e5e408..3c11a701 -- apps/web package.json package-lock requirements*.txt pyproject.toml = EMPTY; R005 credential scan (supabase|service_role|secret_key|api_key|bearer|token=) over work-product diff = zero hits (MANIFEST authentication=none/keyless); R006 .claude/rules + services/api/app/rules untouched, no rule promoted; S4 mappluto_geometry_arcgis.py + config.py byte-unchanged (empty diff).",
+      "HARNESS: python tools/validate_directive_compliance.py --check EXIT 0; the two new packs = 70 passed; full services/api/tests/connectors+api = 906 passed; modularity_check --check EXIT 0. GATES G0/G1/G4/G5 PASS (project-control/gates/M5-T020-*.json; reviewers data-contract-verifier/qa-engineer/security-reviewer all != producer backend-engineer); G1/G4/G5 recorded at content identity ee2d7b2a...; G4 PASS-with-corrections BLOCKING-1/2 discharged by test-only a3d59e03 (+69/-3) + 7a4897b7 via same-reviewer delta attestations with empirical mutant kills. CI run 34698587781@6f091098 all green except owner-gated web-dependency-security (D-040-R004 preserved).",
+      "FROZEN IDENTITY: git diff a3d59e03..3c11a701 over the 12 allowed_paths = EMPTY (post-correction commits are control-plane-only). Computed material identity ee2d7b2a...e23e077 (pc._task_git_identity, reviewed_sha=None -> HEAD 3c11a701) == submit-record content_manifest_sha256 (reports/M5-T020.json:8) == G1/G4/G5 gate content_manifest_sha256. Negative controls: (a) stale reviewed_sha 7d548dd7 fails closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) row injected in-memory at HEAD -> reasons=[] deferrals=[].",
+      "OPEN WEB HALF: MapLibre GL JS dependency admission + apps/web lot-outline rendering are correctly deferred to follow-on packet(s) (producer report section 8; packet business_reason). D-040-R001 therefore remains OPEN at the directive level until the web-rendering half lands; THIS row verifies the SERVER increment only, which is fully satisfied."
+     ],
+     "verified_at": "2026-09-12T15:12:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3c11a701c0c951d111b78e7b97e421bb342456d0"
+    }
+   ],
+   "note": "Independent DCV of M5-T020 (D-040-R001 SERVER increment: MapPLUTO display-only EPSG:4326 lot-outline transport + flag-gated GET /properties/{bbl}/lot-geometry route + closed lot_geometry contract). Every obligation reproduced from primary evidence at HEAD 3c11a701: research-first timing (git first-commit vs packet), full-diff scope containment, byte-identical schema copies (git hash-object), 3 recomputed fixture sha256s, forbidden-path immutability, validator EXIT 0, 70 new-pack + 906 regression tests, in-memory accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (backend-engineer). reviewed_sha stamped at verified HEAD 3c11a701; it may be mechanically re-stamped to accept-time HEAD while this task's allowed_paths diff vs its frozen material (a3d59e03; producer 683b6095, base a5e5e408) stays empty; computed material identity ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077 is unchanged while those 12 allowed_paths are unchanged. SCOPE NOTE: this row verifies the SERVER half only; D-040-R001 stays open at directive level until the follow-on web-rendering (MapLibre) packet lands and is independently verified."
   }
  ]
 }
