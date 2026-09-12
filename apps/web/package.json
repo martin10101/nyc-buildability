@@ -15,7 +15,7 @@
     "depage:test": "node --test scripts/tests/*.test.mjs"
   },
   "dependencies": {
-    "next": "15.5.21",
+    "next": "15.5.24",
     "react": "19.1.2",
     "react-dom": "19.1.2"
   },
@@ -33,13 +33,14 @@
     "eslint-config-next": "15.5.21",
     "jsdom": "26.1.0",
     "typescript": "5.9.3",
-    "vitest": "3.2.7"
+    "vitest": "4.1.11"
   },
   "overrides": {
     "postcss": "8.5.23",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "brace-expansion": "1.1.18",
-    "js-yaml": "4.3.1",
-    "nanoid": "3.3.18"
+    "js-yaml": "4.3.2",
+    "nanoid": "3.3.18",
+    "baseline-browser-mapping": "2.11.21"
   }
 }
