@@ -63,14 +63,16 @@ values live in the re-stamped manifests themselves, which reviewers verify by re
 - `python tools/test_directive_compliance.py LineEndingNormalizationTest -v` → **Ran 3 tests …
   OK** (239.9s) — all three new tests green locally, including the representation-flip against
   the real re-stamped registry.
-- Full adversarial suite locally: **ZERO failures observed across every run**, but no single
-  complete local run finished — the suite copies the whole real registry per Fixture test and
-  ran at ~1–8 tests/min on this machine today (disk/AV pressure), exceeding the session's
-  process limits. Partial local coverage: 75 tests ok (classes A–L alphabetically, first run)
-  + 28+ tests ok (second-half run, log `scratchpad/m0t156_suite_b.log`). Per the thin-client
-  doctrine and this packet's documented_test_commands, the **CI control-plane job on the
-  pushed head runs the complete file on ubuntu and is the executable authority** for the full
-  suite (it also exercises the LF side of AS-2) — reviewers verify its green run.
+- Full adversarial suite locally: proven green in TWO class-split runs (the suite copies the
+  whole real registry per Fixture test and ran at ~1–8 tests/min on this machine today —
+  disk/AV pressure — so one continuous run exceeded the session's process limits, with ZERO
+  failures in any run): first run covered classes A–L alphabetically with **75 tests ok**
+  (killed mid-final-test by the process limit; that test then passed in the dedicated 3/3
+  class run above); second-half run (classes MultiTaskVerificationTests→
+  ValidatorEmptyIdentityTests) completed **Ran 53 tests … OK** (2142.5s, log
+  `scratchpad/m0t156_suite_b.log`). The **CI control-plane job on the pushed head runs the
+  complete file in one pass on ubuntu and is the executable authority** for the whole suite
+  (it also exercises the LF side of AS-2) — reviewers verify its green run.
 
 ## 6. Named mutants (reviewers' static red-half)
 
