@@ -5,7 +5,7 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 104: 190 accepted; R001 SERVER half DONE (M5-T020 lot-geometry route); MapLibre admission + web rendering remain
+## Handoff - seq 104 (amended): 190 accepted; R001 SERVER half DONE; web half BLOCKED on owner Next.js authorization (B-022) - ALL non-owner-gated D-040/D-041 work COMPLETE
 
 Generated 2026-09-12 ~10:50 ET by the same orchestrator session (seq-103 continuation). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
@@ -78,19 +78,24 @@ Generated 2026-09-12 ~10:50 ET by the same orchestrator session (seq-103 continu
 
 ## NEXT ACTION (in order)
 
-1. R001 remaining: (a) DEPENDENCY: /dependency-security admission of maplibre-gl@6.7.0
-   (age-gate-passing as of 2026-09-12; Snyk clean; BSD-3-Clause; CVE-2026-85061 fixed in
-   6.4.1). THIN-CLIENT LOCKFILE CONSTRAINT: no local npm - the package-lock entries
-   (maplibre + ALL transitives, each age+advisory+pin+integrity-checked) must be built
-   from npm-registry metadata over HTTPS and PROVEN by the CI web job (npm ci fails
-   closed on a bad lock) + web-dependency-security machine gates; G5 provenance review
-   required. NOTE the standing web-dependency-security red (Next.js, owner-gated) stays
-   red - the job output must show the maplibre entries passing their checks. Wire the
-   lot_geometry.ts generator/CI drift coverage in or before this packet. (b) WEB:
-   confirm-card outline replacing lot-outline-placeholder (AddressConfirmCard.tsx
-   :141-145) with MapLibre per the 3d-ui rule, consuming the ACCEPTED
-   /lot-geometry route + lot_geometry.ts; MultiPolygon/holes/condo-empty/review honest
-   states; ZoLa link + approximate-outline (+/-20ft) copy kept; G3 in the wave.
+1. **BLOCKED - OWNER RETURN ITEM (B-022, root-caused 2026-09-12).** The R001 web half
+   (MapLibre admission + rendering) CANNOT proceed: the committed web tree carries
+   7 npm advisories (1 CRITICAL Next.js RCE GHSA-p293-qw3h-jr36/GHSA-2xp9-vwfh-vxw4
+   whose vulnerable range 9.5.6-canary.0 - 15.5.23 NOW COVERS the pinned 15.5.21 -
+   the owner's previously-prepared fix version is itself vulnerable; patched line
+   starts 15.5.24 - plus browserslist x2 + js-yaml high, vitest + baseline-browser-
+   mapping + 1 moderate). Policy section G is whole-tree/any-severity/fail-closed/
+   no-waiver, and the sanctioned thin-client lockfile path (generate-lockfile.yml)
+   proves the lock with the SAME blocking audit before the bot commits - so NO
+   lockfile change (incl. maplibre-gl) can land until the owner authorizes the
+   Next.js upgrade past 15.5.23 (D-040-R004). ONE LINE from the owner unblocks it;
+   the full resolution path is in project-control/blockers/B-022-*.json (upgrade
+   authorization is separate from the still-held hosted-deploy authorization).
+   After unblock: dependency-repair + maplibre admission task -> generate-lockfile
+   dispatch (bot pushes don't trigger CI - empty-commit follow-up) -> G5 provenance
+   review -> then the web-rendering packet (AddressConfirmCard placeholder
+   :141-145, MapLibre per the 3d-ui rule, honest MultiPolygon/holes/condo states,
+   G3 in the wave; wire the lot_geometry.ts generator/CI drift coverage there).
 2. Owner return items outstanding: credentials (Supabase B-001 + Geoclient B-004 - the real
    end-to-end unlock), Next.js upgrade authorization (retires the last CI red), Render
    env-var rename (with R002), G6 legal sign-off (M4 chain).

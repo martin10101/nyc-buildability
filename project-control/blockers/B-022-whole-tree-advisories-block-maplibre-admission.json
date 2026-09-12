@@ -1,0 +1,27 @@
+{
+ "blocker_id": "B-022",
+ "title": "7 npm advisories in the committed web tree (1 CRITICAL Next.js RCE covering the currently-pinned 15.5.21, 3 high, 3 moderate) fail the whole-tree advisory-free rule closed, blocking ANY lockfile change - including the maplibre-gl@6.7.0 admission the D-040-R001 web half needs; the Next.js upgrade is owner-gated (D-040-R004)",
+ "status": "open",
+ "created_at": "2026-09-12T15:40:00+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "D-040-R001 web half (MapLibre admission + confirm-card lot-outline rendering) - the FINAL open increment of the D-040 queue; the accepted server half M5-T020 (190th) is unaffected and live behind the flag",
+  "web-dependency-security CI job - the single standing red on candidate/D-024-mrl-option-b"
+ ],
+ "detail": "Root-caused 2026-09-12 from web-dependency-security job 103547594072 (run 34691559695), failing step 7 'Blocking npm audit (--audit-level=low)': npm audit reports 7 vulnerabilities (3 moderate, 3 high, 1 critical). CRITICAL: Next.js Unauthenticated RCE GHSA-p293-qw3h-jr36 + GHSA-2xp9-vwfh-vxw4, vulnerable range 9.5.6-canary.0 - 15.5.23 - the committed pin next@15.5.21 (package.json AND package-lock.json, the owner's previously-prepared M0-T019 security tree) is NOW INSIDE the vulnerable range; the patched 15.x line starts at 15.5.24. HIGH: browserslist GHSA-c83g-rgw3-j3cx + GHSA-73wf-gq98-2v4g, js-yaml GHSA-2883-xcg3-v3hh. MODERATE: vitest GHSA-82fw-gwwq-j7x9, baseline-browser-mapping GHSA-w5vr-8v7q-w6rv, +1. Policy .claude/ORCHESTRATION_POLICY.md section G is whole-tree, any-severity, fail-closed, no agent waiver. The sanctioned thin-client lockfile path (.github/workflows/generate-lockfile.yml, workflow_dispatch) PROVES the fresh lock with the same blocking audit BEFORE the bot commits - so while the tree carries any advisory, no lock (with or without maplibre-gl) can land. The maplibre-gl@6.7.0 admission (itself Snyk-clean, BSD-3-Clause, age-gate-passing per project-control/reports/D-040-R001-mappluto-research.md Part C) is therefore mechanically blocked behind the Next.js upgrade, which D-040-R004 reserves to the owner ('beside the next js ... that needs me').",
+ "owner_action_required": "Authorize the Next.js upgrade past the vulnerable range (>= 15.5.24 in the 15.x line, subject to the 7-day age gate at admission time) - one line from the owner suffices; the orchestrator then executes as ordinary gated work: bump the package.json pins, dispatch the generate-lockfile workflow on the branch (it regenerates + proves the lock advisory-free/integrity/age before committing; min-release-age=7 resolves the browserslist/js-yaml/vitest/baseline-browser-mapping fixes in the same pass), add maplibre-gl@6.7.0 in the same regeneration or a follow-up one, then the gated web-rendering packet. NOTE: this is upgrade authorization only - the separate hosted-deploy authorization (no hosted web deploy before the RCE fix) remains its own owner decision.",
+ "resolution_path": [
+  "1. Owner authorizes the Next.js upgrade (D-040-R004 release for the upgrade; deploy authorization can stay held).",
+  "2. Orchestrator contracts the dependency-repair + maplibre-admission task citing D-040:D-040-R001 (+ the upgrade authorization directive when captured): edit apps/web/package.json (next >= 15.5.24 exact-pin per the age gate at that date; maplibre-gl 6.7.0 or the newest age-gate-passing version then), dispatch generate-lockfile.yml on candidate/D-024-mrl-option-b.",
+  "3. The workflow proves the lock (npm ci integrity + blocking audit all severities + committed-lock age gate + npm CLI advisory) before the bot commits; note GITHUB_TOKEN bot pushes do not trigger CI - follow with an empty-commit or next push so ci.yml validates the head.",
+  "4. G5 provenance review of the new package (maplibre-gl + transitive tree from the generated lock) + normal gates; DCV; accept.",
+  "5. Then the web-rendering packet (confirm-card outline consuming the ACCEPTED M5-T020 route + lot_geometry.ts) closes D-040-R001."
+ ],
+ "evidence": [
+  "web-dependency-security job 103547594072 step 7 failure; npm audit report: '7 vulnerabilities (3 moderate, 3 high, 1 critical)'; 'next 9.5.6-canary.0 - 15.5.23 ... Severity: critical ... GHSA-p293-qw3h-jr36 / GHSA-2xp9-vwfh-vxw4'",
+  "apps/web/package.json dependencies.next == 15.5.21; package-lock.json node_modules/next.version == 15.5.21 (inside the vulnerable range)",
+  ".github/workflows/generate-lockfile.yml steps: blocking npm audit (all severities) BEFORE the bot commit - fail-closed by design",
+  "project-control/reports/D-040-R001-mappluto-research.md Part C (maplibre-gl@6.7.0 admission facts: age-gate-passing as of 2026-09-12, Snyk clean, BSD-3-Clause, CVE-2026-85061 fixed in 6.4.1)"
+ ],
+ "notes": "No waiver is possible or requested (policy section G: no agent waiver, warning-only prohibited). The D-040 queue is otherwise COMPLETE: R003 (M0-T156), R002 (M5-T019), R001 server half (M5-T020) all accepted; D-041 C1 delivered end-to-end (M5-T017+M5-T018). This blocker gates only the final web half of R001."
+}
