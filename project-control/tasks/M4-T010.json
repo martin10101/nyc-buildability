@@ -1,0 +1,120 @@
+{
+  "task_id": "M4-T010",
+  "title": "Rule-citation content-digest binding: additive schema property + fail-closed loader verification",
+  "task_type": "rule_engineering",
+  "milestone_id": "M4",
+  "objective": "Add the OPTIONAL content_digest_sha256 property to rule_definition.schema.json citations[] items (64-char lowercase hex, additive - every existing committed rule stays valid) and teach dsl.py::_check_refs to verify, fail-closed at LOAD, that a citation carrying the field matches the resolved snapshot's stored content_digest_sha256 (DSLError naming the rule id and snapshot id on mismatch; absent field loads exactly as before). NO engine change, NO evaluator change, NO new dependency. This is the schema/loader prerequisite the M4-T009 producer report section 4.4 routed to the orchestrator so M4-T009 AS-5 (rules RECORD their citation digest) can be closed without weakening; digest convention is the C3-resolved v1 = sha256(verbatim_excerpt).",
+  "business_reason": "M4-T009 AS-5 requires every authored rule to RECORD the content digest of the snapshot it was transcribed from, so transcription provenance is bound at the rule file, not only resolved at runtime; the current schema forbids the field (additionalProperties false) and the loader never compares it. Without this unit the R1-R12 FAR family cannot satisfy AS-5 and its gate wave cannot run.",
+  "inputs": [
+    "project-control/tasks/M4-T009.json (AS-5 text - the criterion this unit enables)",
+    "project-control/reports/M4-T009-producer-report.md section 4 item 4 (the routed schema/loader scope decision; do not weaken AS-5)",
+    "services/api/app/rules/schemas/v1/rule_definition.schema.json (current citations[] contract, additionalProperties false)",
+    "services/api/app/rules/dsl.py (_check_refs - the owning boundary for fail-closed reference validation at load)",
+    "services/api/app/_zr_snapshots/v1/zr-23-21.snapshot.json and zr-23-22.snapshot.json (content_digest_sha256 = sha256(verbatim_excerpt), v1 convention per the C3 resolution in docs/MVP_AGENDA.md)"
+  ],
+  "outputs": [
+    "services/api/app/rules/schemas/v1/rule_definition.schema.json (additive optional citations[].content_digest_sha256)",
+    "services/api/app/rules/dsl.py (_check_refs digest verification, fail-closed)",
+    "services/api/tests/rules/test_rule_citation_digest.py (new focused test module)",
+    "project-control/reports/M4-T010-producer-report.md"
+  ],
+  "dependencies": [
+    "M4-T001"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/schemas/v1/rule_definition.schema.json",
+    "services/api/app/rules/dsl.py",
+    "services/api/tests/rules/test_rule_citation_digest.py",
+    "project-control/reports/M4-T010-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/rules/engine.py",
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/api/**",
+    "services/api/app/scenario/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "additive_backward_compatibility",
+      "input": "every committed services/api/app/rules/rulesets/*.rule.json validated against the updated schema and loaded via load_rule_file with the default snapshot store",
+      "expected": "all existing rules (count asserted, currently 11) validate and load unchanged - none carries the new field yet, and absence is legal; the schema change is purely additive"
+    },
+    {
+      "id": "S2",
+      "case": "matching_digest_loads",
+      "input": "a CONSTRUCTED rule document (clearly labeled) whose citation carries content_digest_sha256 equal to the cited committed snapshot's stored digest, loaded through build_rule_definition",
+      "expected": "loads successfully; the recorded digest is byte-equal to the snapshot's stored content_digest_sha256, which the test independently recomputes as sha256(verbatim_excerpt) - LOADED FROM THE SNAPSHOT, never restated as a literal (M5-T004 tautology lesson)"
+    },
+    {
+      "id": "S3",
+      "case": "mismatched_digest_fails_closed_at_load",
+      "input": "the same constructed rule with one hex character of the recorded digest flipped",
+      "expected": "DSLError raised AT LOAD, message naming the rule id, the snapshot id, and both digests' disagreement class; the rule never becomes evaluable; the assertion matches the mismatch message specifically so a schema-shape rejection cannot satisfy it"
+    },
+    {
+      "id": "S4",
+      "case": "malformed_digest_rejected_by_schema",
+      "input": "constructed citations carrying uppercase hex, 63-char, 65-char, and non-hex values",
+      "expected": "each is rejected by schema validation (pattern ^[0-9a-f]{64}$) before any snapshot comparison runs"
+    },
+    {
+      "id": "S5",
+      "case": "missing_snapshot_still_fails_first",
+      "input": "a constructed rule citing a nonexistent snapshot_id while carrying a digest",
+      "expected": "the existing SnapshotError path still raises (resolution precedes digest comparison); the digest check introduces no new resolution path"
+    },
+    {
+      "id": "S6",
+      "case": "no_engine_change_no_new_dependency",
+      "input": "git diff of the unit; python -m pytest services/api/tests/rules; python tools/modularity_check.py --check",
+      "expected": "engine.py and all rulesets untouched; requirements unchanged; full rules suite passes; modularity exit 0"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "data-contract-verifier",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Silent weakening: the mismatch test could pass vacuously against a schema-shape rejection; S3 requires matching the mismatch message specifically.",
+    "Back-compat break: a required (rather than optional) property or a wrong pattern would invalidate the 11 committed rules; S1 asserts the full enumeration loads."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-11T23:59:47.259471+00:00",
+  "updated_at": "2026-09-11T23:59:47.444530+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-11T23:59:47.259471+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/rules",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "allowed_paths are EXACT FILES (no globs) deliberately: M4-T009 remains open holding services/api/tests/rules/** and services/api/app/rules/rulesets/**; this packet's only test file is the new test_rule_citation_digest.py, which M4-T009's landed output does not contain, and the two tasks are executed SEQUENTIALLY (M4-T010 produced and gated while M4-T009 awaits its AS-5 unit), so no parallel writer ever shares a file. Exact file paths satisfy both matchers (policy.py path_matches and git_tree_manifest ls-tree) without the dual-form listing.",
+    "rulesets/** is FORBIDDEN here on purpose: the family rules adopt the digest inside M4-T009 (its AS-5 unit), keeping each packet's material scope disjoint.",
+    "Digest convention is FROZEN by the C3 resolution: content_digest_sha256 = sha256(verbatim_excerpt), already true of every committed v1 snapshot; this unit compares against the snapshot's STORED digest and never recomputes rule-side."
+  ]
+}
