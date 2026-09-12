@@ -247,6 +247,18 @@ def _coverage_values(node):
             yield from _coverage_values(item)
 
 
+def _applicable_trace(rule_eval: dict) -> dict:
+    """The SINGLE applicable residential_far trace. The family evaluates every
+    member (visible not_applicable for the others), so positional selection
+    rots as the family grows; exactly-one is asserted so zero or several
+    applicable members fails loudly (M4-T011)."""
+    applicable = [
+        t for t in rule_eval["evaluations"] if t["applicability_outcome"] is True
+    ]
+    assert len(applicable) == 1, sorted(t["rule_id"] for t in applicable)
+    return applicable[0]
+
+
 # ==========================================================================
 # AS-3 - flag ON, confident supported family -> 200 schema-valid draft.
 # ==========================================================================
@@ -274,9 +286,12 @@ def test_as3_confident_supported_family_is_200_draft(client, monkeypatch, rule_e
     assert doc["family_coverage"]["coverage_status"] == cov.COVERAGE_CONDITIONAL
 
     # A full draft trace: citations + computation steps + spatial_uncertainty.
+    # Every family member is evaluated (visible not_applicable for the non-R5
+    # rules); the count follows the document's own family list so it never
+    # rots as the family grows (M4-T011).
     assert doc["zoning_district"] == "R5"
-    assert len(doc["evaluations"]) == 1
-    trace = doc["evaluations"][0]
+    assert len(doc["evaluations"]) == len(doc["family_coverage"]["rule_ids"])
+    trace = _applicable_trace(doc)
     assert trace["citations"] and trace["computation_steps"]
     assert trace["outputs"]["max_residential_far"] == 1.5
     assert doc["spatial_uncertainty"]["base_district_candidates"][0]["district_label"] == "R5"
@@ -851,8 +866,8 @@ def test_m2t020_s2_flag_on_live_substrate_reaches_evaluation_via_default_seam(
     assert doc["spatial_uncertainty"]["base_district_candidates"][0][
         "district_label"
     ] == "R5"
-    assert len(doc["evaluations"]) == 1
-    assert doc["evaluations"][0]["outputs"]["max_residential_far"] == 1.5
+    assert len(doc["evaluations"]) == len(doc["family_coverage"]["rule_ids"])
+    assert _applicable_trace(doc)["outputs"]["max_residential_far"] == 1.5
     assert "verified" not in set(_coverage_values(doc))
 
 

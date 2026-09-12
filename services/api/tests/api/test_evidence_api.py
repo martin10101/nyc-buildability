@@ -294,6 +294,30 @@ _VOLATILE_LEAF_KEYS = frozenset({"observation_id"})
 # Deterministic identity projections, used only where two INDEPENDENT builds are compared (their
 # observation_ids legitimately differ). Within one build, full byte-equality is asserted instead -
 # see test_as8_direct_assembly_is_pure_transport.
+def _applicable_trace(rule_eval: dict) -> dict:
+    """The SINGLE applicable residential_far trace. The family evaluates every
+    member (visible not_applicable for the others), so positional selection
+    rots as the family grows; exactly-one is asserted so zero or several
+    applicable members fails loudly (M4-T011)."""
+    applicable = [
+        t for t in rule_eval["evaluations"] if t["applicability_outcome"] is True
+    ]
+    assert len(applicable) == 1, sorted(t["rule_id"] for t in applicable)
+    return applicable[0]
+
+
+def _applicable_group(doc: dict) -> dict:
+    """The single rule_citations group whose transported trace is the
+    APPLICABLE evaluation (each group is the whole trace verbatim plus
+    claim_verification_status, so applicability_outcome travels with it;
+    M4-T011)."""
+    applicable = [
+        g for g in doc["rule_citations"] if g["applicability_outcome"] is True
+    ]
+    assert len(applicable) == 1, sorted(g["rule_id"] for g in applicable)
+    return applicable[0]
+
+
 def _prov_identity(record) -> tuple:
     return (record["source_id"], record["retrieved_at"], record.get("dataset_version"))
 
@@ -445,7 +469,7 @@ def test_as1_the_qualifications_that_make_the_cap_honest_travel_with_it(client, 
     enable_flag(monkeypatch)
     install_confident()
     doc = client.get(EVIDENCE_URL).json()
-    group = doc["rule_citations"][0]
+    group = _applicable_group(doc)
 
     assert group["outputs"]["max_residential_floor_area_sq_ft"] == TRACE_CAP
 
@@ -486,10 +510,10 @@ def test_as2_cap_and_citations_are_byte_identical_to_the_trace(client, monkeypat
 
     install_confident()
     rule_eval = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
-    trace_cap = rule_eval["evaluations"][0]["outputs"]["max_residential_floor_area_sq_ft"]
+    trace_cap = _applicable_trace(rule_eval)["outputs"]["max_residential_floor_area_sq_ft"]
 
     # The canonical cap is transported VERBATIM (never recomputed).
-    evidence_cap = doc["rule_citations"][0]["outputs"]["max_residential_floor_area_sq_ft"]
+    evidence_cap = _applicable_group(doc)["outputs"]["max_residential_floor_area_sq_ft"]
     assert evidence_cap == trace_cap == TRACE_CAP
 
     # Every citation text and its section reference are byte-identical to the trace's.

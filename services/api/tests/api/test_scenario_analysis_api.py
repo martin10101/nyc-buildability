@@ -264,6 +264,18 @@ def split_lot_substrate():
 # --------------------------------------------------------------------------
 
 
+def _applicable_trace(rule_eval: dict) -> dict:
+    """The SINGLE applicable residential_far trace. The family evaluates every
+    member (visible not_applicable for the others), so positional selection
+    rots as the family grows; exactly-one is asserted so zero or several
+    applicable members fails loudly (M4-T011)."""
+    applicable = [
+        t for t in rule_eval["evaluations"] if t["applicability_outcome"] is True
+    ]
+    assert len(applicable) == 1, sorted(t["rule_id"] for t in applicable)
+    return applicable[0]
+
+
 def _assumption(factor: str, value):
     return {
         "key": factor,
@@ -540,7 +552,7 @@ def test_as1_cap_equals_rule_evaluation_trace_value_verbatim(client, monkeypatch
 
     install_confident()
     rule_eval = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
-    trace_cap = rule_eval["evaluations"][0]["outputs"]["max_residential_floor_area_sq_ft"]
+    trace_cap = _applicable_trace(rule_eval)["outputs"]["max_residential_floor_area_sq_ft"]
     assert envelope["scenario_cap_sq_ft"] == trace_cap == TRACE_CAP
 
 
