@@ -4,5 +4,71 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-041 requirements bind the non-ledger sentinel D-041-BOOTSTRAP (D-038/D-039/D-040 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this directive cite D-041:<requirement ids> and verify through their own DCV rows in the usual way.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-041",
+   "task_id": "M5-T017",
+   "applicable_requirement_ids": [
+    "D-041-R001"
+   ],
+   "reviewed_sha": "0819aa20beaad21e3545630bcc1b88ebadebbc07",
+   "reviewed_manifest_sha256": "6c4c827755b609dd61328c070261a9fb3cf5e5a0741bef94aff295418a440a98",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T12:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-041-R001",
+     "state": "PASS",
+     "evidence": [
+      "OUTPUT: services/api/app/scenario/unused_floor_area.py@0819aa20 build_unused_floor_area_section computes value=cap-existing_area UNROUNDED (:312) with cap consumed verbatim; own labeled line via _section (label=C.UNUSED_FLOOR_AREA_LABEL, constants.py:47-52 'Unused draft zoning floor area (FAR-derived)...', no forbidden noun).",
+      "HONEST NEGATIVE -> REVIEW, NEVER CLAMPED/HIDDEN: value<0 -> state OVER_BUILT, negative preserved, section professional_review_required=True + over_built_statement (:324-334); builder.py:328-330 ORs section flag into document-root professional_review_required; section placed at builder.py:342.",
+      "MISSING INPUTS -> TYPED NOT_COMPUTABLE, NEVER ESTIMATED: no_draft_far_cap (:243), missing_existing_building_area (:277), existing_building_area_unusable w/ coverage_status echoed (:296); value None in each.",
+      "required_harness: verifier reran python -m pytest services/api/tests/scenario/test_unused_floor_area.py -q -> 26 passed (S1 normal, S2 over-built negative+root/section PRR, S4a/S4b missing/unusable, S5 no-cap all paths, S3 zero-boundary, S6 dual-schema byte-identity/JSON-parity/forbidden-noun, G4 vacant-lot + fractional-unrounded guards).",
+      "required_evidence: CI run 34690484292@44048007 and corrected run 34691559695@ae38a169 -> api/web/web-e2e/control-plane SUCCESS, only red owner-gated web-dependency-security (verifier corroborated via gh run view). control-plane job runs the directive suite (.github/workflows/ci.yml:432-446).",
+      "FROZEN IDENTITY: git log 45f63efb..HEAD over the 17 allowed_paths = only the disclosed test-only ae38a169 (1 file test_unused_floor_area.py, +39 lines); no other drift. Computed identity 6c4c8277 == submit-record content_manifest_sha256 (reports/M5-T017.json:8).",
+      "GATES: G0/G1/G4/G5 all PASS (reviewers orchestrator/code-reviewer/qa-engineer/security-reviewer, all != producer); G4 corrections C1/C2 discharged via same-reviewer delta attestations + empirical mutant kills.",
+      "INTEGRITY: python tools/validate_directive_compliance.py --check EXIT 0; test_project_control.py (23 groups) + test_directive_reminder.py (12 tests) EXIT 0 (verifier)."
+     ],
+     "verified_at": "2026-09-12T12:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0819aa20beaad21e3545630bcc1b88ebadebbc07"
+    }
+   ],
+   "note": "Independent DCV of M5-T017 (D-041-R001 server C1 unused_draft_zoning_floor_area section). All obligations reproduced from primary evidence at HEAD 0819aa20 (source read, 26/26 pytest rerun, gh-corroborated CI, git frozen-identity diff, in-memory accept dry-run reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (scenario-optimization-engineer). reviewed_sha stamped at verified HEAD 0819aa20; it may be mechanically re-stamped to accept-time HEAD while the task's allowed_paths diff vs its frozen material (45f63efb + disclosed ae38a169) stays empty; computed material identity 6c4c8277 is unchanged while those allowed_paths are unchanged."
+  },
+  {
+   "directive_id": "D-041",
+   "task_id": "M5-T018",
+   "applicable_requirement_ids": [
+    "D-041-R001"
+   ],
+   "reviewed_sha": "0819aa20beaad21e3545630bcc1b88ebadebbc07",
+   "reviewed_manifest_sha256": "5ff176da6ef62d99cdff44fcae4965d979cdf5c00a3e3442f644328b75434c92",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T12:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-041-R001",
+     "state": "PASS",
+     "evidence": [
+      "RENDER: apps/web/src/components/compare/UnusedFloorAreaSection.tsx@0819aa20 renders the C1 line as its own labeled line - document label/scope_note verbatim, value + 'square feet' unit, DRAFT discipline (:92-142); over_built shows formatValue(value) negative (never clamped/hidden) + over_built_statement verbatim + review notice in role=status region (:149-181); not_computable = 'No supported estimate', no number, typed reason in plain language (:183-204).",
+      "MIRROR VALIDATOR: apps/web/src/lib/scenario-contract.ts@0819aa20 makes unused_draft_zoning_floor_area a REQUIRED closed key (SCENARIO_KEYS:219; checkUnusedFloorArea fails 'required object is missing' when absent :592; invoked :781) with closed inner-shape/enum/inputs checks mirror-faithful to schema $defs.",
+      "required_harness: apps/web/src/components/compare/__tests__/unused-floor-area.test.tsx S1 validator fidelity incl. negatives (missing section, unknown inner key, bad state/reason enums, NaN, top-level unknown key), S2 computed (5,000 fixture-derived), S3 over-built (-5,000 preserved + accessible review), S4 all three not_computable reasons. Thin client cannot run vitest locally; CI-proven web-e2e SUCCESS (RED at 08bf965b -> GREEN at 44048007), verifier corroborated via gh run view.",
+      "required_evidence: gated ledger task citing D-041:D-041-R001 (tasks/M5-T018.json:102-108); CI runs 34690484292@44048007 + 34691559695@ae38a169 web/web-e2e SUCCESS, only red owner-gated web-dependency-security.",
+      "FROZEN IDENTITY: git log 1b2495da..HEAD over the 3 allowed_paths = only ee05ad17 (own producer report); no code drift. Computed identity 5ff176da == submit-record content_manifest_sha256 (reports/M5-T018.json:8).",
+      "GATES: G0/G1/G3/G4/G5 all PASS (reviewers orchestrator/code-reviewer/human-journey-reviewer/qa-engineer/security-reviewer, all != producer).",
+      "INTEGRITY: python tools/validate_directive_compliance.py --check EXIT 0; test_project_control.py (23 groups) + test_directive_reminder.py (12 tests) EXIT 0 (verifier)."
+     ],
+     "verified_at": "2026-09-12T12:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "0819aa20beaad21e3545630bcc1b88ebadebbc07"
+    }
+   ],
+   "note": "Independent DCV of M5-T018 (D-041-R001 web C1 mirror validator + Compare rendering). All obligations reproduced from primary evidence at HEAD 0819aa20 (source read of validator + component + test cases, gh-corroborated web-e2e red->green, git frozen-identity diff, in-memory accept dry-run reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (frontend-engineer). reviewed_sha stamped at verified HEAD 0819aa20; it may be mechanically re-stamped to accept-time HEAD while the task's allowed_paths diff vs its frozen material (1b2495da) stays empty; computed material identity 5ff176da is unchanged while those allowed_paths are unchanged."
+  }
+ ]
 }
