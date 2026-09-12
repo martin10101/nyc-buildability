@@ -1,0 +1,149 @@
+{
+  "task_id": "M5-T015",
+  "title": "Address entry UI: form, resolution outcomes, and the full error matrix (design-spec Packet 1)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Implement Packet 1 of docs/design/address-entry-confirm-design-spec.md: replace PropertyLookup's disabled address input with the address-entry flow behind the existing INTERNAL_RULE_EVAL_ENABLED server-prop (flag off = today's BBL-only form unchanged, the address surface never mounts and never fetches). New: AddressForm (house number + street + native borough select or zip), address-api.ts (fetch + discriminated outcome mapping onto the endpoint's document_kind/status/error_type contract), AddressResolutionScreen (a PropertyLookup-clone state machine: AbortController + monotonic requestSeq + OutcomeAnnouncer + data-outcome-heading focus + retryFocus + D5 last-good-result survivorship), SuggestionChooser (caller_selects honored literally: verbatim escaped suggestions in source slot order, NO default selection, keyboard radio-group, re-resolve on pick using the chosen suggestion's street_name verbatim as the new street input), and every outcome/error treatment from the spec's section 2 tables (both GRCs visible on not_found/rejected; warnings beside results; unrecognized_status honest; every STATUS_STATE_MATRIX error state with user-language copy, correlation id, retry only where safe incl. bounded retry_after; server-side key failures never blame the user). Resolved routes to a STUB handoff (the Confirm card is Packet 2). Render-safety per the spec's section 3 checklist: JSX text nodes + boundedText everywhere reflected text renders; no dangerouslySetInnerHTML; no reflected value in any attribute/URL context. No new npm dependency; no new CSS tokens beyond reuse.",
+  "business_reason": "Top client-demo item (MVP_AGENDA B3/A2 row 4): users type a street address instead of a ten-digit BBL. The whole backend is accepted (connector 178th, endpoint 182nd); this packet is the first user-facing consumer, built to the preserved design spec.",
+  "inputs": [
+    "docs/design/address-entry-confirm-design-spec.md (the preserved design spec; sections 1-3, 5, 6-Packet-1 are this packet's requirement text)",
+    "services/api/app/api/v1/address_resolution.py (the endpoint contract: document_kind discriminator, status family, STATUS_STATE_MATRIX, unsanitized_reflected_input escape checklist, two correlation ids)",
+    "apps/web/src/components/property/PropertyLookup.tsx + FailureState.tsx (the state machine, failure idioms, and the disabled address input this packet replaces)",
+    "apps/web/src/lib/bounded.ts + apps/web/src/lib/announce.ts (reflection hardening; announcements to extend)",
+    "apps/web/src/components/compare/__tests__/ (house test idioms: fixture bodies, hostile-reflected-input patterns, findByTestId conventions)"
+  ],
+  "outputs": [
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/AddressForm.tsx",
+    "apps/web/src/components/address/SuggestionChooser.tsx",
+    "apps/web/src/lib/address-api.ts",
+    "apps/web/src/lib/announce.ts (extended)",
+    "apps/web/src/components/property/PropertyLookup.tsx (address surface mounted behind the flag prop)",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "project-control/reports/M5-T015-producer-report.md"
+  ],
+  "dependencies": [
+    "M2-T022"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/AddressForm.tsx",
+    "apps/web/src/components/address/SuggestionChooser.tsx",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "apps/web/src/lib/address-api.ts",
+    "apps/web/src/lib/announce.ts",
+    "apps/web/src/components/property/PropertyLookup.tsx",
+    "project-control/reports/M5-T015-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/compare/**",
+    "apps/web/src/components/confirm/**",
+    "apps/web/e2e/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/src/app/**",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/bounded.ts",
+    "packages/**",
+    "services/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "flag_posture",
+      "input": "PropertyLookup rendered with the flag prop off, then on",
+      "expected": "off: today's BBL-only form renders byte-equivalently (existing PropertyLookup tests still pass unchanged), the address surface never mounts and no address fetch can fire; on: the address form renders alongside/above the BBL form per the spec, replacing the disabled 'not yet available' input"
+    },
+    {
+      "id": "S2",
+      "case": "resolved_routes_to_stub_handoff",
+      "input": "a fixture-shaped resolved document (values from a recorded-response-shaped fixture body, never literals)",
+      "expected": "the resolved state renders the canonical address + BBL with a stub 'Continue' affordance explicitly marked as the Packet-2 handoff point; resolved_with_warnings additionally renders the warning text beside the result (role=status), never hidden and never gating"
+    },
+    {
+      "id": "S3",
+      "case": "ambiguous_caller_selects_literally",
+      "input": "an ambiguous document with 3+ suggestions incl. a gap and a codeless slot (shaped per the connector contract)",
+      "expected": "suggestions render verbatim (escaped, bounded) in source slot order as a labeled radio-group with NO default selection and no visual pre-highlight; 'Use this address' is disabled until an active user choice; on pick the flow re-resolves with the chosen suggestion's street_name verbatim as the new street input (same house number, same borough/zip) - asserted at the fetch seam; keyboard-only selection works"
+    },
+    {
+      "id": "S4",
+      "case": "visible_honest_non_success",
+      "input": "not_found, rejected, and an unrecognized_status document",
+      "expected": "each is a visible outcome card: not_found/rejected show BOTH GRC codes and both messages (escaped) with 'edit the address' + 'look up by BBL instead' recovery affordances; unrecognized_status shows the honest not-recognized copy + the raw status via boundedToken + correlation id; nothing coerced, nothing silent"
+    },
+    {
+      "id": "S5",
+      "case": "error_matrix_complete",
+      "input": "every documented (status,state) error pair from the endpoint's STATUS_STATE_MATRIX driven through the fetch seam (invalid_input, key_missing, auth_failed, rate_limited with and without a bounded retry_after, source_unavailable, timeout, malformed_response, internal_error), plus a not-emitted assertion for the unreachable request_budget_exceeded",
+      "expected": "each renders its spec-table treatment: user-language title/body, correlation id via the FailureState Meta idiom (data-testid=correlation-id), retry ONLY where the spec says (none for invalid_input/key_missing), server-side key problems never blaming the user, retry_after surfaced when present; one scenario per pair"
+    },
+    {
+      "id": "S6",
+      "case": "render_safety_hostile_fixture",
+      "input": "hostile reflected text (script/markup/attribute-breaking payloads) in input_echo.street, grc_message, and a suggestion name",
+      "expected": "everything renders as inert escaped text (asserted via textContent equality AND absence of any injected element/attribute in the container); no reflected value reaches any href/src/style/attribute; no dangerouslySetInnerHTML anywhere in the new files (source-scan assertion); React index keys for suggestions"
+    },
+    {
+      "id": "S7",
+      "case": "state_machine_integrity",
+      "input": "a superseded request (second submit before the first resolves) and a repeat identical submit after success",
+      "expected": "the superseded response renders nothing (monotonic requestSeq guard); the last good result survives a no-op resubmit (the PropertyLookup D5 behavior); focus moves to data-outcome-heading on every outcome change; the OutcomeAnnouncer announces each arrival exactly once"
+    },
+    {
+      "id": "S8",
+      "case": "no_new_dependencies_or_tokens",
+      "input": "git diff of the unit; the CI web (lint+typecheck+build) and web-e2e jobs",
+      "expected": "package.json/package-lock.json untouched (forbidden); no new CSS token classes beyond reuse (spec section 5); lint+typecheck+build green; all existing web tests still pass plus the new module - CI is the executable authority (thin client, no local vitest)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "visual-quality-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The platform choosing for the user: S3's no-preselection + disabled-until-choice assertions are the control; any default selection is a FAIL.",
+    "Reflected text reaching an attribute context: S6's hostile fixture + source-scan; the ZoLa link (the one URL context) is deliberately NOT in this packet.",
+    "Flag leak: S1 pins that flag-off renders today's UI byte-equivalently and fires no fetch.",
+    "CI-loop cost: every defect costs a full CI cycle; the producer must walk the spec tables exhaustively before the first push."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T05:07:01.079318+00:00",
+  "updated_at": "2026-09-12T05:07:01.813749+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T05:07:01.080666+00:00",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the ONLY executable verification (thin client per docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md)"
+  ],
+  "path_notes": [
+    "EXACT-FILE allowed_paths. apps/web/src/app/** and api.ts/bounded.ts are FORBIDDEN: the flag already reaches PropertyLookup as a server prop, the address flow gets its own address-api.ts, and the shared reflection primitives are consumed read-only. If production genuinely needs a page or shared-lib change, that is a STOP-and-rescope, never a silent widening.",
+    "announce.ts is deliberately IN scope (the spec names it: extend announcementForOutcome for the new statuses) - the edit must be additive (existing announcements byte-unchanged).",
+    "PropertyLookup.tsx is IN scope for exactly one purpose: mounting the flag-gated address surface in place of the disabled input; its BBL state machine must not change behavior (S1 pins existing tests unchanged).",
+    "The suggestion re-resolution contract (S3) is pinned from the connector: a suggestion is {street_name, optional street_code}; re-resolve with street = street_name verbatim. street_code is display/provenance only in this packet.",
+    "Verification is CI-only. The RED half of any behavior proof is the vitest run on the FIRST push where a deliberate assertion-first commit is impractical; instead every scenario names its mutant (no-preselection, seq-guard, escape) and reviewers verify mutant-killing statically - the M5-T014 posture."
+  ]
+}
