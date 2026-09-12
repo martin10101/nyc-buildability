@@ -1,0 +1,138 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-042",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-12T23:26:26+00:00",
+ "requirements": [
+  {
+   "id": "D-042-R001",
+   "text": "Upgrade apps/web next pin from 15.5.21 to EXACTLY 15.5.24 (same maintenance line; no 16.x migration) and regenerate the lockfile, clearing ALL remaining npm advisories in the same admission wave (whole-tree advisory-free at every severity, per docs/DEPENDENCY_SECURITY_POLICY.md: exact pins, registry integrity match, 7-day age gate, G5 review, full CI green incl. the web-dependency-security job). This authorization narrows D-040-R004's prohibition for exactly this upgrade; D-040-R004 otherwise stands (no other Next.js change, no deploy).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-042-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "npm audit whole-tree result; lockfile diff; age-gate script output; CI run at the fix head",
+   "required_evidence": "accepted ledger task citing D-042:D-042-R001; web-dependency-security job GREEN (the last standing CI red retired)",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-042-R002",
+   "text": "Upon the tree becoming advisory-free, blocker B-022's blocking condition is discharged: the maplibre-gl@6.7.0 admission for the D-040-R001 lot-outline web half MAY proceed under its own G5 provenance review and age gate. Resolve/annotate B-022 through the normal blocker mechanism.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-042-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "B-022 record state; MapLibre admission task refs",
+   "required_evidence": "B-022 resolved with the advisory-free evidence; MapLibre admission proceeds under D-040-R001",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-042-R003",
+   "text": "PROHIBITION PRESERVED: no hosted/public web deployment is authorized by this directive - deployment remains a separate owner decision.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-042-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "deploy configuration/host state",
+   "required_evidence": "no public deploy performed under D-042 authority",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-042-R004",
+   "text": "SCOPE LIMIT: 15.5.24 exactly; no major-version (16.x) migration under this directive. Supabase/credentials and G6 remain unchanged. After this one-time gate is discharged, future dependency security bumps follow the standing dependency-security policy without per-instance owner authorization, except where that policy itself requires the owner (age-gate waivers).",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-042-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "package.json pin; subsequent dependency-task refs",
+   "required_evidence": "pin equals 15.5.24; no 16.x change cites D-042",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

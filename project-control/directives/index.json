@@ -573,7 +573,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-041-c1-development-rights/manifest.json"
+  },
+  {
+   "directive_id": "D-042",
+   "slug": "nextjs-15-5-24-upgrade",
+   "title": "Owner 2026-09-12: Next.js security upgrade AUTHORIZED - pin 15.5.21 -> exactly 15.5.24 with whole-tree advisory clearance (narrows D-040-R004 for this upgrade); unblocks B-022/MapLibre chain; deploy stays owner-gated; no 16.x.",
+   "status": "active",
+   "issued_at": "2026-09-12",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-042-nextjs-15-5-24-upgrade/manifest.json"
   }
  ],
- "updated_at": "2026-09-12T08:18:53+00:00"
+ "updated_at": "2026-09-12T23:26:26+00:00"
 }

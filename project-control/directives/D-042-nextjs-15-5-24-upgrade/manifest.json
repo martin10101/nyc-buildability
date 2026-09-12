@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-042",
+ "version": 1,
+ "slug": "nextjs-15-5-24-upgrade",
+ "title": "Owner 2026-09-12: Next.js security upgrade AUTHORIZED - pin 15.5.21 -> exactly 15.5.24 with whole-tree advisory clearance (narrows D-040-R004 for this upgrade); unblocks B-022/MapLibre chain; deploy stays owner-gated; no 16.x.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-12",
+ "captured_at": "2026-09-12T23:26:26+00:00",
+ "created_at": "2026-09-12T23:26:26+00:00",
+ "updated_at": "2026-09-12T23:26:26+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "b4c5505277cb8cd3551ac6982e5705725235c49d",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the proposed authorization line verbatim in the live session 2026-09-12 ET after reviewing the researched advisory basis and the download-safety chain (source-001.md)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-042-R001",
+  "D-042-R002",
+  "D-042-R003",
+  "D-042-R004"
+ ],
+ "requirements_content_digest_sha256": "7fd8d5c2f008b923a75024d678902342b6f37424d9a467fc3dcb10f68dbc835b",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-12T23:26:26+00:00",
+   "content_digest_sha256": "24cf0661400c58680784a04153d39b05e32d1c02fe25c497d017ceb825d6309c"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "dependency_security_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "one bounded dependency task: next 15.5.21 -> 15.5.24 exact + whole-tree advisory clearance under the full dependency-security machinery; then the MapLibre admission chain per D-040-R001",
+  "prohibited": "any 16.x migration; any hosted/public deploy; Supabase/credential work before the owner provides credentials; promoting rules past needs_review; merging PR #241"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-12T23:26:26+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from interactive chat; researched basis and scope notes in source-001.md; narrows D-040-R004 for exactly this upgrade"
+  }
+ ]
+}
