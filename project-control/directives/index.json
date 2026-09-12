@@ -537,7 +537,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-038-build-product-not-self/manifest.json"
+  },
+  {
+   "directive_id": "D-039",
+   "slug": "m4-dependency-correction",
+   "title": "Owner decision 2026-09-11: correct the mis-chained M4-T001 dependency on M4-T010/M4-T009 (deps=[], T007/T008 precedent); accept M4-T010 then continue to the M4-T009 AS-5 unit + wave; G6 hold on M4-T001 untouched.",
+   "status": "active",
+   "issued_at": "2026-09-11",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-039-m4-dependency-correction/manifest.json"
   }
  ],
- "updated_at": "2026-09-08T05:24:55+00:00"
+ "updated_at": "2026-09-12T01:02:06+00:00"
 }

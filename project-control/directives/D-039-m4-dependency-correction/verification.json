@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-039",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Ledger-correction directive; all requirements bind the non-ledger sentinel D-039-BOOTSTRAP, so no per-task rows accrue - the independent verifier records one bootstrap verification confirming R001-R005 against the tree after the correction executes.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

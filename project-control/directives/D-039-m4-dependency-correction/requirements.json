@@ -1,0 +1,170 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-039",
+ "version": 1,
+ "requirement_count": 5,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-12T00:58:46+00:00",
+ "requirements": [
+  {
+   "id": "D-039-R001",
+   "text": "Set dependencies=[] on task packet M4-T010 (was ['M4-T001']).",
+   "source_ref": "source-001.md#owners-answer-verbatim-selection",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-039-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "read project-control/tasks/M4-T010.json dependencies field",
+   "required_evidence": "packet dependencies == []; correction commit in git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-039-R002",
+   "text": "Set dependencies=[] on task packet M4-T009 (was ['M4-T001']).",
+   "source_ref": "source-001.md#owners-answer-verbatim-selection",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-039-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "read project-control/tasks/M4-T009.json dependencies field",
+   "required_evidence": "packet dependencies == []; correction commit in git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-039-R003",
+   "text": "Record the correction rationale in BOTH packets' progress logs via the CLI progress verb (never a hand-edited log): the M4-T007/M4-T008 deps=[] precedent under the owner directive 2026-07-21 recorded in M4-T001's progress_log ('Engine foundation is integrated and available for downstream product tasks per owner directive'), and that the G6 protection lives in rule status (needs_review, never published), not in chaining engineering acceptance to the parked legal spine.",
+   "source_ref": "source-001.md#owners-answer-verbatim-selection",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-039-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "read both packets' progress_log entries",
+   "required_evidence": "one progress_log entry per packet naming D-039, the precedent, and the untouched G6 hold",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-039-R004",
+   "text": "Sequencing: after the correction, accept M4-T010 (through its already-recorded gates + the independent D-038 verification row re-anchored by the independent verifier), then continue to the M4-T009 AS-5 unit + its full gate wave. Standard gates, DCV independence, and accept preconditions unchanged - this directive authorizes the dependency correction only, never a gate or verification shortcut.",
+   "source_ref": "source-001.md#owners-answer-verbatim-selection",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-039-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "ledger order of accept events",
+   "required_evidence": "M4-T010 accepted before M4-T009 work concludes; all standard evidence present",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-039-R005",
+   "text": "PROHIBITION / HOLD PRESERVED: the G6 qualified-human legal-approval hold on M4-T001 is untouched. M4-T001 is NOT accepted, no rule leaves needs_review or is published, and the parked M4-T002..T006 queue is unchanged by this directive.",
+   "source_ref": "source-001.md#owners-answer-verbatim-selection",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-039-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "read M4-T001 status + rule statuses + M4-T002..T006 statuses",
+   "required_evidence": "M4-T001 still awaiting_gate with accepted_at null; every ruleset status still needs_review; M4-T002..T006 statuses unchanged",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

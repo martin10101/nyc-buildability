@@ -7,9 +7,7 @@
   "business_reason": "Today the platform answers on R5 lots only and returns unsupported for most of New York City, which is the gap between a product and a lookup tool. The two governing sources are captured, byte-verified and cross-checked against an independently generated owner PDF, so this is transcription against an in-repo source with zero invention surface.",
   "inputs": [],
   "outputs": [],
-  "dependencies": [
-    "M4-T001"
-  ],
+  "dependencies": [],
   "allowed_paths": [
     "services/api/app/rules/rulesets/**",
     "services/api/tests/rules/**",
@@ -65,7 +63,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-11T03:51:47.534578+00:00",
-  "updated_at": "2026-09-11T06:48:35.557680+00:00",
+  "updated_at": "2026-09-12T01:04:27.678402+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -93,6 +91,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "Producer output LANDED at ae117874 on task/M4-T009-r1r12-far (loop runs 30-33, Opus, limited-auto). Every run ended on checkpoint transport, never on the work: run 30 unit-timeout 1500s; runs 31 and 33 the worker wrote abbreviated starting_sha and the controller refused fail-closed per S14 (2 of 5 checkpoints). Resolved per the evidence-capture division of labor by orchestrator out-of-loop verification: snapshot base repaired first at 3c46f923 (bundle sync + C3 v1 digest/provenance conformance, from candidate 48cd58a5+a8b82a43 - the branch base was missing zr-23-22 from the runtime bundle entirely, so no run could ever have gone green); then scope verified (all 11 paths inside allowed_paths), services/api tests/rules 359 passed 0 failed, ruff clean after five E501 wraps (197156b9). Producer report honestly marks AS-5 UNRESOLVED: rules do not yet record citation content_digest_sha256; the representation decision it routed to the orchestrator is now available - C3 resolved the digest convention as v1 sha256(verbatim_excerpt), corrected in the base - so a small follow-up unit should add the digest to citations[] plus the AS-5 comparison test before the gate wave. Branch unpushed; gates NOT run."
+    },
+    {
+      "at": "2026-09-12T01:04:27.678402+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "D-039 R002/R003 executed (owner decision 2026-09-11, captured verbatim at project-control/directives/D-039-m4-dependency-correction/): dependencies corrected ['M4-T001'] -> []. Same basis as M4-T010's correction, one bounded change across both mis-chained packets: the M4-T007/M4-T008 deps=[] precedent under the owner directive 2026-07-21 in M4-T001's progress_log; this packet's own AS-7 asserts every rule stays needs_review and never published, so the G6-class protection lives in rule status, not in chaining engineering acceptance to the parked legal spine. The G6 hold on M4-T001 and the M4-T002..T006 parked queue are UNTOUCHED (D-039 R005). Without this correction the handoff's own plan (this task -> accepted after the AS-5 unit + wave) was mechanically impossible."
     }
   ]
 }
