@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T020",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T020-G4.md",
+  "reviewed_at": "2026-09-12T14:37:30.208233+00:00",
+  "content_manifest_sha256": "ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077",
+  "reviewed_sha": "91bf79f812486e92623a505de45c66089d77d453",
+  "updated_at": "2026-09-12T14:37:30.979403+00:00"
+}
