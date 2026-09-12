@@ -631,6 +631,60 @@ willingness-to-pay as much as those two.
 
 ---
 
+## Part 10 — Design lessons locked in (2026-09-12; from the three-way research + owner review)
+
+Sources: `docs/design/competitor-report-presentation-research.md` (two research passes),
+`docs/design/astra-presentation-research.md` (owner-supplied Codex research),
+`docs/design/ui-inspiration/` (mockups + corrections README), and the owner's live review of the
+clickable prototype (`docs/design/ui-prototype.html`, kept in sync with the published artifact).
+These are the rules the future production UI must follow.
+
+### For the PROGRAM (the engine)
+
+1. **State the zoning-lot assumption on every result** — "treats the selected tax lot as the
+   whole zoning lot" (ZR §12-10: tax lot ≠ zoning lot; recorded agreements can merge lots).
+   Preferably a machine-readable assumption field, not just display copy.
+2. **Five-tag status on every value:** Reported / Calculated / Assumed / Not assessed (shown as
+   NOT CHECKED) / Needs review. "Not assessed" is never rendered as zero.
+3. **Missing rule or input ⇒ "no supported estimate"** for that item — never a manufactured
+   number.
+4. **Name the computation precisely** — a FAR-only result is a *zoning floor-area* figure, never
+   "maximum buildable area"; zoning floor area, gross building area, net area, and remaining
+   capacity stay distinct terms.
+5. **Frozen snapshots** — a saved/shared result keeps its date, inputs, and rule versions; an
+   edited assumption produces a new marked result and retains the original.
+6. **Merged-lot behavior:** single lot in a possible merger ⇒ review flag pointing at the
+   recorded agreement (ACRIS); over-built-vs-own-FAR is the standing clue detector. Assemblage =
+   user-asserted multi-lot selection tagged ASSUMED (gap-list E3); ACRIS agreement check is
+   gap-list B5.
+
+### For the WEBSITE (screens + report)
+
+1. **Hero number first with its honest name and a one-line scope** ("FAR calculation only ·
+   height, yards, building shape not assessed · treats this tax lot as the whole zoning lot").
+2. **Report page 1 is the decision summary** — answer, formula, warnings; no decorative cover
+   (competitor sample buries its answer on page 13 of 16).
+3. **Every number opens its evidence** — exact record, law section with date, retrieval date,
+   link to the exact page (never a vendor homepage; never ZoLa for a non-ZoLa value).
+4. **Two warning kinds kept separate:** open questions on checked items vs items not checked at
+   all; the ASSUMED single-zoning-lot row leads the checklist.
+5. **No "verified"/"compliant"/PASS columns/scores** — only the five tags; digest checks read as
+   "text matched" (mechanism, not vouching).
+6. **PRELIMINARY, small, on every report page** — trade-standard phrasing ("Preliminary zoning
+   analysis. Subject to verification and DOB review."), stated once per surface, never shouted.
+7. **Screen, share view, and PDF render the same frozen snapshot.**
+8. **No decorative 3D** — massing appears only when geometry was actually computed.
+9. **Map stays subordinate** to the number; professional register throughout (no tutorial copy,
+   no scare banners, plain words — owner corrections of 2026-09-12).
+10. **Validate before locking:** number-first vs map-first is a hypothesis — test with real NYC
+    architects on their own lots; if a user calls the draft "approved," the design failed.
+
+*Status: all ten website rules are already applied in the clickable prototype (artifact label
+`astra-lessons-applied`); program items 1 and 4 were handed to the build session for the C1
+packet; the rest enter packets as their features are contracted.*
+
+---
+
 *End of Q&A. Feedback from professional reviewers — wrong emphasis, missing questions, answers
 that don't match professional expectations — should go back to the owner for triage into the
 project's tracked backlog.*
