@@ -265,32 +265,32 @@ describe("S1 — flag posture (off: today's UI, no address surface, no fetch)", 
  * S2 — resolved routes to the stub handoff
  * ================================================================ */
 
-describe("S2 — resolved / resolved_with_warnings", () => {
-  it("renders the canonical address + BBL from the fixture with an explicit Packet-2 stub", async () => {
+describe("S2 — resolved / resolved_with_warnings (M5-T016: routes to the Confirm card)", () => {
+  it("routes resolved to the Address Confirm card — the Packet-1 stub is gone", async () => {
     const doc = resolvedDoc();
     stubFetchOnce(jsonResponse(doc, 200));
     render(<AddressResolutionScreen />);
     fillAndSubmit();
 
-    const card = await screen.findByTestId("address-resolved");
+    const card = await screen.findByTestId("address-confirm-card");
     // Fixture-derived, never retyped: the BBL shown IS the body's BBL.
     expect(screen.getByTestId("resolved-bbl").textContent).toBe(
       doc.canonical.bbl,
     );
-    expect(screen.getByTestId("resolved-address").textContent).toContain(
+    expect(screen.getByTestId("confirm-address").textContent).toContain(
       doc.canonical.street_name_normalized,
     );
-    expect(screen.getByTestId("resolved-address").textContent).toContain(
+    expect(screen.getByTestId("confirm-address").textContent).toContain(
       doc.canonical.borough_name,
     );
-    // The stub handoff is explicit about being the Packet-2 boundary: the
-    // Continue affordance exists, is inert, and says why.
-    const stub = screen.getByTestId("stub-continue");
-    expect(stub).toBeDisabled();
-    expect(screen.getByTestId("address-resolved-stub")).toBeInTheDocument();
-    // No warnings block on a clean resolve.
-    expect(screen.queryByTestId("address-warnings")).toBeNull();
-    expect(card.textContent).toContain("resolved to a single lot");
+    // The Packet-1 stub no longer exists anywhere.
+    expect(screen.queryByTestId("stub-continue")).toBeNull();
+    expect(screen.queryByTestId("address-resolved-stub")).toBeNull();
+    expect(screen.queryByTestId("address-resolved")).toBeNull();
+    // The dominant action is the real handoff (deep assertions live in
+    // address-confirm.test.tsx).
+    expect(screen.getByTestId("confirm-continue")).toBeInTheDocument();
+    expect(card.textContent).toContain("Is this the right lot?");
   });
 
   it("resolved_with_warnings renders the warning text beside the result (role=status), never hidden and never gating", async () => {
@@ -299,7 +299,7 @@ describe("S2 — resolved / resolved_with_warnings", () => {
     render(<AddressResolutionScreen />);
     fillAndSubmit();
 
-    await screen.findByTestId("address-resolved");
+    await screen.findByTestId("address-confirm-card");
     const warnings = screen.getByTestId("address-warnings");
     expect(warnings).toHaveAttribute("role", "status");
     // Both source messages verbatim (escaped), fixture-derived.
@@ -309,11 +309,11 @@ describe("S2 — resolved / resolved_with_warnings", () => {
     expect(screen.getByTestId("warning-grc2-message").textContent).toBe(
       doc.grc2_message,
     );
-    // Warnings never gate: the result and its stub affordance still render.
+    // Warnings never gate: the result and the real Continue still render.
     expect(screen.getByTestId("resolved-bbl").textContent).toBe(
       doc.canonical.bbl,
     );
-    expect(screen.getByTestId("stub-continue")).toBeInTheDocument();
+    expect(screen.getByTestId("confirm-continue")).toBeInTheDocument();
   });
 });
 
@@ -369,7 +369,7 @@ describe("S3 — ambiguous suggestions (caller_selects, literally)", () => {
     expect(screen.getByTestId("use-suggestion")).not.toBeDisabled();
     fireEvent.click(screen.getByTestId("use-suggestion"));
 
-    await screen.findByTestId("address-resolved");
+    await screen.findByTestId("address-confirm-card");
     expect(fetchSpy).toHaveBeenCalledTimes(2);
     const first = requestUrl(fetchSpy, 0);
     const second = requestUrl(fetchSpy, 1);
@@ -465,23 +465,27 @@ describe("S4 — not_found, rejected, unrecognized_status", () => {
  * ================================================================ */
 
 /** Every documented (HTTP, state) pair the endpoint can emit, with the
- * spec-table retry posture. request_budget_exceeded is exercised
- * separately below (documented-unreachable). */
-const ERROR_MATRIX: Array<[string, number, boolean]> = [
-  ["invalid_input", 422, false],
-  ["key_missing", 503, false],
-  ["auth_failed", 502, true],
-  ["rate_limited", 503, true],
-  ["source_unavailable", 503, true],
-  ["timeout", 504, true],
-  ["malformed_response", 502, true],
-  ["internal_error", 500, true],
+ * spec-table retry posture and a DISTINCTIVE body-copy phrase per state
+ * (M5-T016, the M5-T015 G4 finding-3 carried item: a copy transposition
+ * between same-HTTP states must fail). invalid_input's body is the
+ * connector's own message (asserted in its dedicated test) so it carries
+ * null here. request_budget_exceeded is exercised separately below
+ * (documented-unreachable). */
+const ERROR_MATRIX: Array<[string, number, boolean, string | null]> = [
+  ["invalid_input", 422, false, null],
+  ["key_missing", 503, false, "missing its own access credential"],
+  ["auth_failed", 502, true, "refused the platform's credential"],
+  ["rate_limited", 503, true, "temporarily limited the platform's requests"],
+  ["source_unavailable", 503, true, "could not be reached after several attempts"],
+  ["timeout", 504, true, "did not respond in time"],
+  ["malformed_response", 502, true, "not in a form the platform could read"],
+  ["internal_error", 500, true, "unexpected internal error"],
 ];
 
 describe("S5 — documented error matrix", () => {
   it.each(ERROR_MATRIX)(
     "%s (HTTP %i) renders its typed card, correlation id, and retry=%s",
-    async (state, httpStatus, retryable) => {
+    async (state, httpStatus, retryable, bodySnippet) => {
       const body = errorDoc(state);
       stubFetchOnce(jsonResponse(body, httpStatus));
       render(<AddressResolutionScreen />);
@@ -492,6 +496,11 @@ describe("S5 — documented error matrix", () => {
       expect(screen.getByTestId("correlation-id").textContent).toBe(HTTP_CID);
       // The typed pair is stated on the card.
       expect(card.textContent).toContain(`HTTP ${httpStatus}`);
+      // The state's OWN body copy renders (kills a copy transposition
+      // between states sharing an HTTP status).
+      if (bodySnippet !== null) {
+        expect(card.textContent).toContain(bodySnippet);
+      }
       // Retry ONLY where the spec table says retrying can help.
       const retryButton = screen.queryByRole("button", {
         name: "Retry address lookup",
@@ -675,6 +684,14 @@ describe("S6 — hostile reflected text renders inert", () => {
         resolve(process.cwd(), "src/components/address/AddressResolutionScreen.tsx"),
         "utf8",
       ),
+      "AddressOutcomeCards.tsx": readFileSync(
+        resolve(process.cwd(), "src/components/address/AddressOutcomeCards.tsx"),
+        "utf8",
+      ),
+      "AddressConfirmCard.tsx": readFileSync(
+        resolve(process.cwd(), "src/components/address/AddressConfirmCard.tsx"),
+        "utf8",
+      ),
       "AddressForm.tsx": readFileSync(
         resolve(process.cwd(), "src/components/address/AddressForm.tsx"),
         "utf8",
@@ -701,11 +718,13 @@ describe("S6 — hostile reflected text renders inert", () => {
     }
     // React keys for suggestions are the array index, never the string.
     expect(sources["SuggestionChooser.tsx"]).toContain("<li key={index}>");
-    // S8 (module half): the new modules import ONLY app-internal paths,
-    // relative siblings, or react — no new package can sneak in via an
-    // import (package.json itself is forbidden to this task).
+    // S8 (module half): the address modules import ONLY app-internal paths,
+    // relative siblings, react, or next/link (the handoff Link) — no new
+    // package can sneak in via an import (package.json itself is forbidden).
     for (const name of [
       "AddressResolutionScreen.tsx",
+      "AddressOutcomeCards.tsx",
+      "AddressConfirmCard.tsx",
       "AddressForm.tsx",
       "SuggestionChooser.tsx",
       "address-api.ts",
@@ -717,6 +736,7 @@ describe("S6 — hostile reflected text renders inert", () => {
       for (const specifier of specifiers) {
         expect(
           specifier === "react" ||
+            specifier === "next/link" ||
             specifier.startsWith("@/") ||
             specifier.startsWith("./"),
           `${name} imports ${specifier}`,
@@ -747,7 +767,7 @@ describe("S7 — state-machine integrity", () => {
     fillAndSubmit({ street: "FIRST STREET" });
     fillAndSubmit({ street: "SECOND STREET" });
 
-    await screen.findByTestId("address-resolved");
+    await screen.findByTestId("address-confirm-card");
     // The late first response must change nothing.
     slow.resolve(jsonResponse(slowDoc, 200));
     await waitFor(() =>
@@ -764,7 +784,7 @@ describe("S7 — state-machine integrity", () => {
     const fetchSpy = stubFetchOnce(jsonResponse(doc, 200));
     render(<AddressResolutionScreen />);
     fillAndSubmit();
-    await screen.findByTestId("address-resolved");
+    await screen.findByTestId("address-confirm-card");
 
     // Blank both driving fields: the submit affordance goes inert…
     fireEvent.change(screen.getByLabelText("House number"), {
@@ -775,7 +795,7 @@ describe("S7 — state-machine integrity", () => {
     // …and even a programmatic submit is a no-op (guard, not validation).
     fireEvent.submit(screen.getByTestId("address-form"));
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId("address-resolved")).toBeInTheDocument();
+    expect(screen.getByTestId("address-confirm-card")).toBeInTheDocument();
   });
 
   it("focus moves to the outcome heading on arrival, and to the resolving card on retry", async () => {
@@ -825,7 +845,7 @@ describe("S7 — state-machine integrity", () => {
       expect(document.activeElement).toBe(resolving.querySelector("h2")),
     );
     slow.resolve(jsonResponse(resolvedDoc(), 200));
-    await screen.findByTestId("address-resolved");
+    await screen.findByTestId("address-confirm-card");
   });
 
   it("the announcer speaks each arrival exactly once: cleared while resolving, set on arrival, re-set for an identical retry outcome", async () => {

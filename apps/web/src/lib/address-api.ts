@@ -72,6 +72,23 @@ export interface SuggestionView {
   streetCode: string | null;
 }
 
+/** One bounded provenance request-param pair (M5-T016; display text only —
+ * NEVER re-assembled into a URL; the endpoint is shown as HOST only). */
+export interface RequestParamView {
+  key: string;
+  value: string;
+}
+
+/** One source fact, bounded for the provenance disclosure (M5-T016).
+ * `confidence` is deliberately NOT mapped: 1.0 means "deterministically
+ * retrieved", and must never surface as a verified/coverage badge
+ * (design spec section 4). */
+export interface SourceFactView {
+  fieldName: string;
+  originalValue: string | null;
+  normalizedValue: string | null;
+}
+
 /** Bounded display view of a 200 address_resolution document. */
 export interface AddressDocumentView {
   /** RAW status string for branching (contract rule); bound for display
@@ -98,11 +115,17 @@ export interface AddressDocumentView {
   suggestions: SuggestionView[];
   sourceFactsCount: number;
   sourceFactsNotEmittedReason: string | null;
+  /** Bounded display rows for the Packet-2 provenance disclosure. */
+  sourceFacts: SourceFactView[];
   provenance: {
     sourceId: string | null;
     retrievedAt: string | null;
     connectorCorrelationId: string | null;
     responseDigest: string | null;
+    /** HOST of the connector endpoint only — the full URL (which carries
+     * request params) is never surfaced as a URL. */
+    endpointHost: string | null;
+    requestParams: RequestParamView[];
   };
 }
 
@@ -185,6 +208,27 @@ function textOrNull(value: unknown): string | null {
   return bounded === "" ? null : bounded;
 }
 
+/** Bounded display for a source-fact value that may legitimately be a
+ * non-string JSON scalar (numbers from the source). Objects/arrays are an
+ * honest null — never stringified into the disclosure. */
+function scalarOrNull(value: unknown): string | null {
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  return textOrNull(value);
+}
+
+/** HOST of a connector endpoint URL, for display only. Parse failure is an
+ * honest null — the raw string never renders as a URL-ish value. */
+function hostOrNull(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  try {
+    return boundedToken(new URL(value).host, 64);
+  } catch {
+    return null;
+  }
+}
+
 function documentView(record: Record<string, unknown>): AddressDocumentView {
   const status = typeof record.status === "string" ? record.status : "";
   const echo = asRecord(record.input_echo) ?? {};
@@ -231,13 +275,47 @@ function documentView(record: Record<string, unknown>): AddressDocumentView {
       ? record.source_facts.length
       : 0,
     sourceFactsNotEmittedReason: textOrNull(record.source_facts_not_emitted_reason),
+    sourceFacts: sourceFactViews(record.source_facts),
     provenance: {
       sourceId: boundedToken(provenance.source_id, 64),
       retrievedAt: boundedToken(provenance.retrieved_at, 40),
       connectorCorrelationId: boundedToken(provenance.correlation_id, 64),
       responseDigest: textOrNull(provenance.response_digest),
+      endpointHost: hostOrNull(provenance.endpoint),
+      requestParams: requestParamViews(provenance.request_params),
     },
   };
+}
+
+function requestParamViews(value: unknown): RequestParamView[] {
+  const record = asRecord(value);
+  if (record === null) return [];
+  const pairs: RequestParamView[] = [];
+  for (const [key, raw] of Object.entries(record)) {
+    if (typeof raw !== "string") continue;
+    pairs.push({
+      key: boundedText(key, "(unprintable key)", 64),
+      value: boundedText(raw, "(blank)"),
+    });
+  }
+  return pairs;
+}
+
+function sourceFactViews(value: unknown): SourceFactView[] {
+  if (!Array.isArray(value)) return [];
+  const facts: SourceFactView[] = [];
+  for (const entry of value) {
+    const fact = asRecord(entry);
+    if (fact === null) continue;
+    const fieldName = boundedToken(fact.original_field_name, 64);
+    if (fieldName === null) continue;
+    facts.push({
+      fieldName,
+      originalValue: scalarOrNull(fact.original_value),
+      normalizedValue: scalarOrNull(fact.normalized_value),
+    });
+  }
+  return facts;
 }
 
 export async function resolveAddress(
