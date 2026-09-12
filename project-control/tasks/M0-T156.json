@@ -1,0 +1,140 @@
+{
+  "task_id": "M0-T156",
+  "title": "Directive-registry digest normalization (CRLF/LF) - retire the control-plane CI red",
+  "task_type": "control-plane",
+  "milestone_id": "M0",
+  "objective": "Make every directive-registry content digest line-ending-independent (sha256 over CRLF-to-LF-normalized bytes) in the shared computation sites (directive_registry.sha256_file for c2 source digests; validate_directive_compliance.py requirements-content c14 + migration-manifest checks), then re-stamp the six stale manifest digest values (D-032 source-004-amendment + requirements, D-033 source-002-amendment + requirements, D-034 requirements, D-038 requirements) to their LF-normalized values via append-only manifest edits + audit_log entries citing D-040:D-040-R003. Source files IMMUTABLE - zero byte changes to any source-*.md or requirements.json. Local validator EXIT 0 stays; the CI control-plane job (LF checkout) goes green - the standing red retires.",
+  "business_reason": "D-040-R003 (owner 2026-09-12) authorizes this as ordinary gated control-plane work. The red has masked the control-plane job since the digests were recorded over local CRLF bytes while CI checks out LF; every push wastes a required check and the red hides genuine future control-plane regressions.",
+  "inputs": [
+    "project-control/directives/D-040-scoped-unblocks/source-001.md + requirements.json R003 (the authorizing requirement text; constraint: source files IMMUTABLE, append-only mechanisms only)",
+    "CI run 34681382456 control-plane job 103520545751 log (the authoritative failure list: exactly 6 digest mismatches with their LF-normalized 'actual' values - D-032 source-004-amendment 3704add2.., D-032 requirements d8158188.., D-033 source-002-amendment d0ae01b4.., D-033 requirements d2876943.., D-034 requirements dfab73c0.., D-038 requirements 0e9de4cc..)",
+    "tools/directive_registry.py (sha256_file ~:386 used by the c2 source-digest check ~:525-532; READ the whole digest path before editing)",
+    "tools/validate_directive_compliance.py (requirements_content_digest_sha256 c14 check ~:491-496; migration_manifest_sha256 check ~:259-268)",
+    "tools/test_directive_compliance.py (the adversarial test suite the CI control-plane job runs; extend, never weaken)",
+    ".gitattributes (pins directives text eol=lf - WHY CI bytes are LF while local disk is CRLF) + the recorded byte-format trap: local directives manifests/requirements are CRLF on disk",
+    "project-control/directives/{D-032-astra-loop-activation-and-review-reconciliation,D-033-supervisor-management-layer,D-034-architecture-context-and-review-skill,D-038-build-product-not-self}/manifest.json (the six digest values to re-stamp + audit_log to append; CRLF on disk, indent conventions preserved byte-for-byte outside the intended edits)"
+  ],
+  "outputs": [
+    "tools/directive_registry.py (normalized digest computation for registry text artifacts)",
+    "tools/validate_directive_compliance.py (same normalization at its digest sites)",
+    "tools/test_directive_compliance.py (extended: CRLF/LF equivalence red/green + tamper-still-detected adversarial case)",
+    "project-control/directives/D-032-astra-loop-activation-and-review-reconciliation/manifest.json (2 digest re-stamps + audit_log entry)",
+    "project-control/directives/D-033-supervisor-management-layer/manifest.json (2 digest re-stamps + audit_log entry)",
+    "project-control/directives/D-034-architecture-context-and-review-skill/manifest.json (1 digest re-stamp + audit_log entry)",
+    "project-control/directives/D-038-build-product-not-self/manifest.json (1 digest re-stamp + audit_log entry)",
+    "project-control/reports/M0-T156-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/test_directive_compliance.py",
+    "project-control/directives/D-032-astra-loop-activation-and-review-reconciliation/manifest.json",
+    "project-control/directives/D-033-supervisor-management-layer/manifest.json",
+    "project-control/directives/D-034-architecture-context-and-review-skill/manifest.json",
+    "project-control/directives/D-038-build-product-not-self/manifest.json",
+    "project-control/reports/M0-T156-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "project-control/directives/**/source-*.md",
+    "project-control/directives/**/requirements.json",
+    "project-control/directives/**/verification.json",
+    "project-control/directives/index.json",
+    "project-control/directives/schema/**",
+    "tools/project_control.py",
+    "tools/agent_supervisor/**",
+    ".github/**",
+    ".gitattributes",
+    "apps/**",
+    "services/**",
+    "packages/**",
+    "project-control/tasks/**",
+    "project-control/gates/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "case": "digest_is_line_ending_independent",
+      "input": "identical registry-artifact content in CRLF and in LF byte form (test fixtures for a source-*.md and a requirements.json)",
+      "expected": "the normalized digest function returns the SAME sha256 for both forms, equal to the sha256 of the LF bytes; RED/GREEN proof required - with the normalization removed (or bypassed), the new test FAILS. Lone-CR (classic-Mac) bytes are also normalized or explicitly rejected - documented either way."
+    },
+    {
+      "id": "AS-2",
+      "case": "real_registry_green_both_representations",
+      "input": "the actual project-control/directives tree - locally (CRLF manifests/requirements on disk) and in CI (LF checkout per .gitattributes)",
+      "expected": "python tools/validate_directive_compliance.py --check EXIT 0 locally AND the CI control-plane job passes on the pushed head (the standing red retires). CI is the executable authority for the LF side."
+    },
+    {
+      "id": "AS-3",
+      "case": "restamps_match_lf_actuals",
+      "input": "the six re-stamped manifest digest values",
+      "expected": "each equals sha256(LF-normalized bytes) of its file, and each matches the 'actual' value the failing CI log reported (prefixes 3704add2 / d8158188 / d0ae01b4 / d2876943 / dfab73c0 / 0e9de4cc) - asserted in the producer report with the full 64-hex values."
+    },
+    {
+      "id": "AS-4",
+      "case": "sources_immutable_append_only",
+      "input": "git diff of the unit over project-control/directives/**",
+      "expected": "ZERO byte changes to any source-*.md, amendment, requirements.json, verification.json, or index.json; the ONLY directive-tree changes are the six digest-field values + one append-only audit_log entry per touched manifest (citing D-040:D-040-R003, ASCII-only note); locked_requirement_ids and every other manifest field byte-preserved."
+    },
+    {
+      "id": "AS-5",
+      "case": "tampering_still_detected",
+      "input": "adversarial fixtures: (a) a source with one CONTENT character changed (not line endings); (b) a requirements.json with one requirement body edited",
+      "expected": "c2/c14 digest mismatch errors still raised - normalization forgives ONLY line-ending representation, never content; test proves the guard did not weaken."
+    },
+    {
+      "id": "AS-6",
+      "case": "whole_control_plane_suite_green",
+      "input": "the five CI control-plane commands run locally: test_project_control.py, validate_directive_compliance.py --check, test_directive_compliance.py, test_directive_reminder.py, test_readonly_agent_guard.py (+ test_agent_dispatch_guard.py)",
+      "expected": "all EXIT 0 locally (stdlib-only, Windows/CRLF side) and the CI control-plane job green on the pushed head (ubuntu/LF side); no other CI job regresses."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Normalization masking real tampering: AS-5 is the control - only CR bytes may be forgiven.",
+    "Manifest rewrite collateral: the manifests are CRLF-on-disk with specific indent; a JSON round-trip that reformats unrelated bytes breaks AS-4 byte-preservation and could flip OTHER digests - edit surgically, assert byte-identical round-trip outside the intended fields (the scratchpad/append_d038_m5t012.py pattern).",
+    "Hidden seventh digest: any digest site not normalized (or any additional stale value) resurfaces the red in CI - the pushed-head control-plane job is the only complete proof (AS-2/AS-6).",
+    "requirements_id_digest_sha256 is computed over a joined-string, not file bytes - do NOT touch it; migration_manifest digest currently passes both sides (LF on disk) - normalization must keep it passing."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T08:12:39.027322+00:00",
+  "updated_at": "2026-09-12T08:12:39.216061+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T08:12:39.027322+00:00",
+  "path_notes": [
+    "Governance authorization: D-040:D-040-R003 verbatim - 'source files are IMMUTABLE - normalization must fix the digest computation/recorded digests via the append-only/audit-log mechanisms, never by editing committed source-*.md content.'",
+    "tools/project_control.py is FORBIDDEN (no CLI changes needed); tools/agent_supervisor/** frozen (D-024).",
+    "Producer = orchestrator (control-plane precedent); reviewers G1 code-reviewer, G4 qa-engineer, G5 security-reviewer - no UI, no G3.",
+    "audit_log entries and commit messages ASCII-only (Bash heredoc non-ASCII trap).",
+    "documented_test_commands are runnable locally (stdlib-only) AND mirrored by the CI control-plane job - both sides must pass (AS-2/AS-6)."
+  ],
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/test_directive_compliance.py",
+    "python tools/test_project_control.py",
+    "python tools/test_directive_reminder.py",
+    "python tools/test_readonly_agent_guard.py",
+    "CI 'control-plane' job on the pushed head (ubuntu/LF checkout - the executable authority for the LF side)"
+  ]
+}
