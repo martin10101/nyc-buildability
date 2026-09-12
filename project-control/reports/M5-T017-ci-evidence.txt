@@ -1,0 +1,46 @@
+M5-T017 CI evidence (captured by the orchestrator)
+
+Producer material: 45f63efb (single commit, base 462c8ad1; ff onto candidate).
+Packet + ratification commits: 462c8ad1 (contract+claim), 08bf965b (scope ratification:
+4 contract fixtures + generated scenario.ts into allowed_paths, disclosed by the producer).
+
+Run 34689359382 (head 08bf965b - M5-T017 material alone), completed 2026-09-12:
+  api (ruff + pytest)                          SUCCESS  job 103541794625
+  contracts (JSON Schema validation)           SUCCESS  job 103541794643
+  contracts-typegen (TS drift, byte-identical) SUCCESS  job 103541794684
+  contracts-schema-bundle (drift)              SUCCESS  job 103541794698
+  modularity                                   SUCCESS  job 103541794709
+  control-plane                                SUCCESS  job 103541794730
+  web (lint + typecheck + build)               SUCCESS  job 103541794598
+  Failures on this run and their resolution (defect-convergence inventory, recorded in the
+  M5-T017 progress log before any fix):
+    web-e2e FAILURE job 103541794599 - REAL cross-layer coupling: the hand-written web
+      mirror validator (apps/web/src/lib/scenario-contract.ts) rejects the new REQUIRED
+      contract key; the web compare tests import the four shared updated fixtures. Resolved
+      by contracting + landing M5-T018 (the C1 web half) - see run 34690484292 below.
+    supervisor-bridge FAILURE job 103541794589 - MRL descendant-proof assertion on a
+      surface this task never touched; SUCCESS on run 34689797818 at 6919dab2 with
+      byte-identical tools/ content = environmental flake, not a regression.
+    web-dependency-security FAILURE - owner-gated (Next.js RCE; D-040-R004), unrelated.
+
+Run 34689797818 (head 6919dab2 - M5-T018 packet only, same M5-T017 material):
+  supervisor-bridge SUCCESS (flake resolution data point); api/contracts/control-plane/
+  modularity/web all SUCCESS; only web-e2e (the known coupling) + owner-gated
+  web-dependency-security red.
+
+Run 34690484292 (head 44048007 - COMBINED C1 head: M5-T017 + M5-T018), completed 2026-09-12:
+  api (ruff + pytest)                          SUCCESS
+  web (lint + typecheck + build)               SUCCESS
+  web-e2e (vitest + Playwright)                SUCCESS  <- the coupling resolved
+  contracts / contracts-typegen / contracts-schema-bundle  SUCCESS
+  control-plane                                SUCCESS
+  supervisor-bridge                            SUCCESS
+  ONLY failing job: web-dependency-security (owner-gated, D-040-R004 preserved).
+
+Local (orchestrator pre-gate validation, primary checkout at the producer material):
+  python -m pytest services/api/tests/scenario   422 passed
+  python -m pytest services/api/tests/api        398 passed
+  python tools/modularity_check.py --check       failures 0, EXIT 0
+(Producer's own runs from the worktree match: 422 / 398 / EXIT 0; plus ruff clean and
+packages/contracts/scripts/tests 29 passed - see M5-T017-producer-report.md section
+"Verification evidence".)

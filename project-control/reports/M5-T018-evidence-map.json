@@ -1,0 +1,13 @@
+{
+  "task_id": "M5-T018",
+  "note": "Cited D-041:D-041-R001, APPLICABLE via the append-only applicability bind (digest 7d32c881->1589a0df, audit-logged). evaluate_task_refs: ok=true, applicable == cited == [D-041-R001].",
+  "requirements": {
+    "D-041-R001": [
+      "apps/web/src/components/compare/UnusedFloorAreaSection.tsx at 1b2495da (the C1 line rendered as its OWN labeled line: document label/scope_note verbatim through boundedText; over_built renders the document's explicit statement + needs-professional-review presentation with the negative value preserved; not_computable renders the standard no-supported-estimate treatment with the typed reason - never a number, never zero)",
+      "apps/web/src/lib/scenario-contract.ts at 1b2495da (mirror-faithful validator: the new key REQUIRED, closed inner shape structurally checked field-by-field per the schema $defs incl. tsc-proven enum arrays - the trust boundary that had rejected the section now validates it exactly)",
+      "apps/web/src/components/compare/__tests__/unused-floor-area.test.tsx + scenario-fixtures.ts local variants at 1b2495da (S1 validator fidelity incl. negatives, S2 computed render fixture-derived, S3 over-built honest render + accessibility, S4 all three not_computable reasons; shared contract fixtures untouched)",
+      "project-control/reports/M5-T018-producer-report.md (fidelity table vs schema $defs, per-state render behavior, S1-S5 mapping, disclosed thin-client verification limitation)",
+      "project-control/reports/M5-T018-ci-evidence.txt (RED->GREEN: web-e2e red at 08bf965b without this material, SUCCESS at combined head 44048007 run 34690484292; web build SUCCESS; only owner-gated red remains)"
+    ]
+  }
+}

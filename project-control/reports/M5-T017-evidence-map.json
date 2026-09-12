@@ -1,0 +1,13 @@
+{
+  "task_id": "M5-T017",
+  "note": "Cited D-041:D-041-R001, APPLICABLE via the append-only applicability bind (digest 6800ebea->7d32c881, audit-logged). evaluate_task_refs: ok=true, applicable == cited == [D-041-R001].",
+  "requirements": {
+    "D-041-R001": [
+      "services/api/app/scenario/unused_floor_area.py at 45f63efb (the deterministic derivation: cap-verbatim minus usable bldgarea; states computed/over_built/not_computable; typed reasons; per-input provenance; ZR 12-10 zoning_lot_extent machine-readable assumption; precise-noun label + scope note constants)",
+      "services/api/tests/scenario/test_unused_floor_area.py at 45f63efb (the required four-case harness: S1 normal remainder, S2 over-built negative preserved + section AND root professional-review routing, S4a/S4b missing/unusable existing-area, S5 no-draft-FAR-cap across all no-cap paths; plus S3 zero boundary, S6 contract/JSON-renderer-parity/precise-noun; fixture-derived assertions)",
+      "project-control/reports/M5-T017-producer-report.md (per-file build, exact section field schema, PRR-widening consumer analysis, S1-S6 test mapping, real verification output, disclosed+ratified mechanical scope expansion)",
+      "project-control/reports/M5-T017-ci-evidence.txt (CI green: api+contracts+typegen+bundle+modularity+control-plane at 08bf965b; combined C1 head 44048007 run 34690484292 ALL jobs SUCCESS except owner-gated web-dependency-security; defect-convergence record for the two transient reds)",
+      "packages/contracts/schemas/v1/scenario.schema.json + services/api/app/_contract_schemas/v1/scenario.schema.json at 45f63efb (the new REQUIRED closed section in BOTH copies, byte-identical - enforced by test_s6_both_schema_copies_are_byte_identical and the CI drift jobs)"
+    ]
+  }
+}

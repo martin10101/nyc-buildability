@@ -1,0 +1,27 @@
+M5-T018 CI evidence (captured by the orchestrator)
+
+Producer material: 1b2495da (implementation + tests) + ee05ad17 (producer report), base
+6919dab2; ff onto candidate; progress commit 44048007 = the CI head under test.
+
+Run 34690484292 (head 44048007 - combined C1 head), completed 2026-09-12:
+  web (lint + typecheck + build)     SUCCESS  <- tsc/eslint authority for the thin client
+  web-e2e (vitest + Playwright)      SUCCESS  <- THE task's executable authority: the three
+    suites red at 08bf965b (compare-screen, compare-entry, scenario-contract - run
+    34689359382 job 103541794599, TestingLibraryElementError on scenario-* testids after
+    the mirror validator rejected the new required key) are green again at the combined
+    head, plus the NEW unused-floor-area.test.tsx S1-S4 pack runs green in the same job.
+  api / contracts / contracts-typegen / contracts-schema-bundle / control-plane /
+  supervisor-bridge / modularity      ALL SUCCESS
+  ONLY failing job: web-dependency-security (owner-gated Next.js item, D-040-R004
+  preserved; unrelated).
+
+RED -> GREEN proof shape: same suites, executed by the same CI job, red at 08bf965b
+(without the web half) and green at 44048007 (with it); the only web-side diff between
+those heads is M5-T018's material (6 files, all inside allowed_paths) plus ledger records.
+
+Local (thin client - no node_modules, npm prohibited): web suites are NOT locally
+executable by policy (docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md); the producer
+disclosed this and verified by source reasoning (fidelity table vs the schema $defs +
+red->green trace per failing test). Orchestrator-runnable check:
+  python tools/modularity_check.py --check   failures 0, EXIT 0 (394 files;
+  scenario-contract.ts not flagged; UnusedFloorAreaSection.tsx a focused module)
