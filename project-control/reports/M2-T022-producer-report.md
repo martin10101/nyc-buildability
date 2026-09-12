@@ -72,3 +72,57 @@ passed; `python tools/modularity_check.py --check` -> exit 0.
   the connector contract; the warning text travels in grc_message beside the facts).
 - No request_url on facts: recomposing the URL endpoint-side would re-derive rather than
   transport; endpoint + request_params travel verbatim inside provenance instead.
+
+---
+
+## Rework addendum (gate wave at ec4b75dc: G1 FAIL / G3 FAIL / G4 FAIL / G5 PASS; reports at project-control/reports/M2-T022-G{1,3,4,5}.md)
+
+One bounded change covering every blocking finding plus the cheap LOWs:
+
+1. **G1 HIGH-1 (production resolver signature) — FIXED with a revert-proof.** `_default_resolver`
+   now takes `(house_number, street, *, borough=None, zip_code=None)` — the ROUTE's exact call
+   contract — and forwards positionally+keyword to `resolve_address` (still NO budget, NO
+   transport: C4 duty 3 preserved at the production seam). The prior `**kwargs`-only form
+   rejected the route's positional call, 500ing every real request, masked because every test
+   override accepted positionals — the masked-seam failure class the packet's own risks named,
+   which the G1 reviewer caught by clearing the overrides. NEW TEST
+   `test_s1_production_wiring_default_resolver_reaches_the_connector`: dependency_overrides
+   CLEARED, the module-global `resolve_address` monkeypatched with a recorder driving the real
+   connector — production wiring exercised end to end, forwarding fidelity + empty extra-kwargs
+   asserted. **Revert-proof (§3.4):** with the route reverted to the ec4b75dc form the new test
+   FAILS (1 failed, 26 deselected — recorded); restored, the pack passes. (The G1 report's own
+   end-to-end reproduction at ec4b75dc is the independent red.)
+2. **G3 BLOCKING (input_echo missing from the escape contract) — FIXED.**
+   `_REFLECTED_INPUT_WARNING.fields` now leads with `input_echo` and additionally names the
+   street/borough `source_facts[]` original/normalized values (the reviewer's secondary note).
+   NEW TEST `test_s6_input_echo_is_a_named_reflected_surface`: hostile `<script>` street +
+   `7<b>7` house number arrive byte-exact in `input_echo` AND `input_echo` +
+   `source_facts[]`-prefixed entries are asserted present in the warning's field list.
+   **CORRECTION OF THIS REPORT'S OWN FALSE CLAIM:** the original text above says the warning
+   "names every reflected surface" — that was FALSE at review time (input_echo was omitted);
+   the sentence is retracted, not rewritten, and the property is now enforced by test rather
+   than claimed in prose.
+3. **G4 B1 (E501) — line wrapped; the finding's ruff-outcome claim CORRECTED with captured
+   executable evidence.** The 107-char line is now wrapped (raw-length conformance). However
+   the orchestrator-captured evidence at project-control/reports/M2-T022-ruff-evidence.txt
+   (ruff 0.13.0, CI cwd + config) shows ruff PASSED on that line all along: ruff's E501 exempts
+   lines whose overflow past the limit contains no whitespace (the URL token). The documented
+   ruff command never failed and this report's "ruff clean" self-check was TRUE; G4's B1
+   inferred the failure statically under its no-execution discipline. Recorded per the
+   evidence-capture division of labor; the wrap removes the ambiguity class entirely.
+4. **G1 LOW-1/LOW-2 — matrix corrected.** `(503, "request_budget_exceeded")` added as a
+   documented UNREACHABLE-BY-CONSTRUCTION pair (the connector-error handler would emit it at
+   the default 503 if a budget were ever introduced — the prior comment wrongly credited the
+   generic 500 guard); matrix prose now says "every TYPED pair" with the flag-off generic 404
+   explicitly outside the typed space. Matrix set-equality test updated (10 pairs).
+
+Self-checks after rework: pack **27 passed** (25 + 2 new); `pytest services/api/tests/api -q`
+-> **398 passed**; whole suite `--ignore=tests/documents` -> **1858 passed, 1 failed** (the
+recorded local-3.11 PEP-695 artifact, unchanged); CI-style whole-tree `ruff check .` from
+services/api -> All checks passed; `modularity_check --check` -> exit 0; gitleaks staged scan
+clean. G5's PASS surfaces re-touched by this rework: the warning-field list (extended, never
+narrowed) and the resolver signature (no new key/branch surface) — flagged for the G5 delta.
+
+NOT changed, deliberately: G4's non-blocking observations 1-3 (source-scan supplementarity,
+the undriven unreachable pair, construction-tied digest assertions) and G5's O1/O2 accepted
+observations stay as recorded reviewer judgments.

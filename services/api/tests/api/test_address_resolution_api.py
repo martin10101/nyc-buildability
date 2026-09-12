@@ -28,6 +28,7 @@ from fastapi.testclient import TestClient
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+from app.api.v1 import address_resolution as address_resolution_module
 from app.api.v1.address_resolution import (
     ADDRESS_RESOLUTION_CONTRACT_VERSION,
     DATASET_VERSION,
@@ -257,6 +258,56 @@ def test_s1_resolved_transports_fixture_values_and_valid_source_facts(
     assert calls[0]["extra_kwargs"] == {}
 
 
+def test_s1_production_wiring_default_resolver_reaches_the_connector(
+    client, monkeypatch
+):
+    """G1 HIGH-1 regression pin: the REAL get_address_resolver() dependency (NO
+    override) must accept the route's positional call and reach
+    resolve_address. The module-global resolve_address is monkeypatched with a
+    recorder that drives the real connector over the fixture transport, so
+    production wiring (route -> _default_resolver -> resolve_address) is
+    exercised end to end. Before the rework this returned 500 on EVERY real
+    request (the **kwargs-only default rejected the positional call), masked
+    because every override accepted positionals."""
+    enable_flag(monkeypatch)
+    app.dependency_overrides.clear()  # PRODUCTION wiring - no seam override
+    fixture_body = load_fixture(G01)["response_body_raw"]
+    transport = RecordingTransport(TransportResponse(200, fixture_body))
+    recorded: dict = {}
+
+    def _recording_resolve_address(
+        house_number, street, *, borough=None, zip_code=None, **kwargs
+    ):
+        recorded.update(
+            house_number=house_number,
+            street=street,
+            borough=borough,
+            zip_code=zip_code,
+            extra=dict(kwargs),
+        )
+        return resolve_address(
+            house_number, street, borough=borough, zip_code=zip_code,
+            key=SENTINEL_KEY, transport=transport, sleep=_no_sleep,
+        )
+
+    monkeypatch.setattr(
+        address_resolution_module, "resolve_address", _recording_resolve_address
+    )
+    response = client.get(
+        URL, params={"house_number": "314", "street": "w 100 st", "borough": "manhattan"}
+    )
+    assert response.status_code == 200
+    assert response.json()["status"] == "resolved"
+    # The default resolver forwarded the route's inputs faithfully and added
+    # NOTHING (no budget, no transport - C4 duty 3 at the production seam).
+    assert recorded["house_number"] == "314"
+    assert recorded["street"] == "w 100 st"
+    assert recorded["borough"] == "manhattan"
+    assert recorded["zip_code"] is None
+    assert recorded["extra"] == {}
+    assert len(transport.calls) == 1
+
+
 # ---------------------------------------------------------------------------
 # S2 - ambiguity surfaces suggestions verbatim; never selects; no facts.
 # ---------------------------------------------------------------------------
@@ -358,7 +409,10 @@ _FAILURES = [
         AuthFailedError(
             "gateway rejected the subscription key",
             correlation_id="c-af",
-            detail={"http_status": 401, "url": "https://api.nyc.gov/geoclient/v2/address?houseNumber=314"},
+            detail={
+                "http_status": 401,
+                "url": "https://api.nyc.gov/geoclient/v2/address?houseNumber=314",
+            },
         ),
     ),
     (
@@ -527,6 +581,25 @@ def test_s6_recorded_reflected_message_travels_verbatim(client, monkeypatch):
     assert "escape on render" in warning["warning"]
 
 
+def test_s6_input_echo_is_a_named_reflected_surface(client, monkeypatch):
+    """G3 rework pin: input_echo transports raw caller-typed input verbatim
+    and MUST be named in the machine-readable escape contract - a consumer
+    escaping exactly the listed fields must be safe. The source_facts values
+    that carry the same reflected source text are named too."""
+    enable_flag(monkeypatch)
+    hostile = "<script>alert(1)</script>"
+    install_resolver_for_body(load_fixture(G01)["response_body_raw"])
+    response = client.get(
+        URL, params={"house_number": "7<b>7", "street": hostile, "borough": "manhattan"}
+    )
+    doc = response.json()
+    assert doc["input_echo"]["street"] == hostile  # byte-exact reflection
+    assert doc["input_echo"]["house_number"] == "7<b>7"
+    fields = doc["unsanitized_reflected_input"]["fields"]
+    assert "input_echo" in fields
+    assert any(field.startswith("source_facts[]") for field in fields)
+
+
 def test_s6_hostile_reflected_text_arrives_byte_exact_and_never_logged(
     client, monkeypatch, caplog
 ):
@@ -623,6 +696,10 @@ def test_matrix_documented_pairs_are_exactly_the_emitted_set():
         (503, "source_unavailable"),
         (504, "timeout"),
         (502, "malformed_response"),
+        # Unreachable by construction (no budget is ever passed - S8) but
+        # documented: the connector-error handler WOULD emit it at the default
+        # 503 if a budget were ever introduced (G1 LOW-1).
+        (503, "request_budget_exceeded"),
         (500, "internal_error"),
     }
     assert emitted == set(STATUS_STATE_MATRIX)

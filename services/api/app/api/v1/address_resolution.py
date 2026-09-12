@@ -73,9 +73,10 @@ response header from this module.
 
 NO REQUEST-DERIVED BUDGET (C4 duty 3). This endpoint passes NO
 ``AnalysisBudget`` to the connector at all, so no ``analysis_id`` can ever be
-derived from untrusted request input, and ``request_budget_exceeded`` cannot
-arise on this path (the generic 500 guard would still catch it typed if that
-ever changed).
+derived from untrusted request input, and ``request_budget_exceeded`` is
+unreachable by construction; it is nonetheless a documented matrix pair
+because the connector-error handler would emit it at the default 503 if a
+budget were ever introduced (G1 LOW-1 correction).
 
 RETRY-AFTER LOCAL GUARD (C4 known defect in the shared engine's
 ``sanitize_retry_after`` - still ``$``-anchored/uncapped there, fix scoped to
@@ -99,9 +100,10 @@ each sit inside a guard, so no unhandled raise escapes as an untyped
 text/plain 500; :func:`_assert_json_safe` runs both ``json.dumps`` forms
 (they disagree about unpaired surrogates) before send.
 
-``STATUS_STATE_MATRIX`` below is the single source of truth for every emitted
-(HTTP status, state) pair; states equal the connector taxonomy's
-``error_type`` values verbatim.
+``STATUS_STATE_MATRIX`` below is the single source of truth for every TYPED
+(HTTP status, state) pair this endpoint can emit; the flag-off generic 404
+deliberately sits outside the typed space. States equal the connector
+taxonomy's ``error_type`` values verbatim.
 """
 
 from __future__ import annotations
@@ -148,12 +150,16 @@ DATASET_VERSION = (
 
 # ---------------------------------------------------------------------------
 # EXACT (HTTP status, state) pair matrix - the single source of truth for every
-# emission path below. Every geocoding OUTCOME (resolved, resolved_with_
-# warnings, ambiguous, not_found, rejected, unrecognized_status) is a 200 with
-# the outcome in the body; non-200 states equal the connector taxonomy's
-# error_type strings verbatim. request_budget_exceeded is deliberately absent:
-# this endpoint passes no budget, so that failure cannot arise here (the
-# generic internal_error guard would still type it if that ever changed).
+# TYPED pair this endpoint can emit (the flag-off generic 404 deliberately sits
+# OUTSIDE the typed space: it is byte-indistinguishable from an unmounted
+# path). Every geocoding OUTCOME (resolved, resolved_with_warnings, ambiguous,
+# not_found, rejected, unrecognized_status) is a 200 with the outcome in the
+# body; non-200 states equal the connector taxonomy's error_type strings
+# verbatim. request_budget_exceeded is UNREACHABLE BY CONSTRUCTION (this
+# endpoint passes no budget - S8) but documented here because the
+# connector-error handler WOULD emit it at the default 503 if a budget were
+# ever introduced (G1 LOW-1: the prior comment wrongly claimed the generic
+# internal_error guard would catch it).
 # ---------------------------------------------------------------------------
 STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
     {
@@ -165,6 +171,7 @@ STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
         (503, "source_unavailable"),  # upstream outage after the retry budget
         (504, "timeout"),  # upstream timeout after the retry budget
         (502, "malformed_response"),  # upstream 200 outside the documented shape
+        (503, "request_budget_exceeded"),  # unreachable by construction (no budget)
         (500, "internal_error"),  # unexpected internal defect (fail-closed guard)
     }
 )
@@ -195,15 +202,21 @@ _FACT_FIELDS: tuple[tuple[str, str], ...] = (
 
 _FACT_STATUSES = frozenset({"resolved", "resolved_with_warnings"})
 
-# C4 duty 2: the response names its own unsanitized surfaces.
+# C4 duty 2: the response names its own unsanitized surfaces — EVERY one of
+# them (G3 rework: input_echo, the most direct caller-input reflection, and
+# the street/borough source_fact values were missing from this contract; a
+# consumer escaping exactly this list would have shipped input_echo raw).
 _REFLECTED_INPUT_WARNING = {
     "fields": [
+        "input_echo",
         "grc_message",
         "grc2_message",
         "suggestions",
         "canonical.street_name_normalized",
         "canonical.borough_name",
         "provenance.request_params",
+        "source_facts[].original_value (street/borough facts)",
+        "source_facts[].normalized_value (street/borough facts)",
     ],
     "warning": (
         "UNSANITIZED source text that reflects caller-typed input back "
@@ -225,10 +238,22 @@ _RETRY_AFTER_SAFE_RE = re.compile(r"[0-9A-Za-z ,:\-]{1,32}")
 AddressResolver = object  # documentation alias; the seam is duck-typed below
 
 
-def _default_resolver(**kwargs) -> AddressResolution:
-    # NO budget kwarg, ever (C4 duty 3); NO transport override in production -
-    # the connector resolves its default transport and env key at call time.
-    return resolve_address(**kwargs)
+def _default_resolver(
+    house_number: str,
+    street: str,
+    *,
+    borough: str | None = None,
+    zip_code: str | None = None,
+) -> AddressResolution:
+    """Production resolver: signature matches the ROUTE's call contract exactly
+    (positional house_number/street + keyword borough/zip_code — the G1 HIGH-1
+    rework; the prior **kwargs-only form rejected the route's positional call
+    and 500'd every real request, masked by positional-accepting test fakes).
+    NO budget kwarg, ever (C4 duty 3); NO transport override in production —
+    the connector resolves its default transport and env key at call time."""
+    return resolve_address(
+        house_number, street, borough=borough, zip_code=zip_code
+    )
 
 
 def get_address_resolver():
