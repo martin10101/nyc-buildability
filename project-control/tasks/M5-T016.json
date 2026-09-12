@@ -124,7 +124,7 @@
     "security-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "Reflected text reaching the two NEW href contexts (ZoLa + Continue): S2/S3/S6 adversarial fixtures are the control; any anchor built from unvalidated data is a FAIL.",
@@ -134,7 +134,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T06:47:05.994657+00:00",
-  "updated_at": "2026-09-12T07:47:23.610774+00:00",
+  "updated_at": "2026-09-12T07:47:41.830563+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
