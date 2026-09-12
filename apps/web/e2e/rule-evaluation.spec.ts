@@ -8,10 +8,11 @@ import { expectProfile, tabUntil } from "./helpers";
  * faithful M2-T013 substrate shapes the accepted phase-2 pack uses). NOT a
  * frontend mock.
  *
- * The frontend flag is enabled for this test server (INTERNAL_RULE_EVAL_UI=1,
+ * The flag is enabled for this test server (INTERNAL_RULE_EVAL_ENABLED=1,
  * playwright.config.ts) AND each journey opts in per request with `?ruleeval=on`
  * — so the surface renders here while every unrelated journey (no opt-in) stays
- * untouched. The server flag INTERNAL_RULE_EVAL_ENABLED is on in the harness.
+ * untouched. The SAME canonical INTERNAL_RULE_EVAL_ENABLED gates the API in the
+ * harness (design-spec section 6 one-flag intent; M5-T019 / D-040-R002).
  */
 
 /** Navigate to the Property screen WITH the rule-eval surface opted in, and

@@ -58,7 +58,7 @@ export default defineConfig({
       // browser. Non-public runtime flag, read server-side, never inlined into
       // the client bundle; unset in production so the route 404s by default.
       env: {
-        INTERNAL_RULE_EVAL_UI: "1",
+        INTERNAL_RULE_EVAL_ENABLED: "1",
         INTERNAL_OWNER_DASHBOARD_ENABLED: "1",
         INTERNAL_SURVEY_REVIEW_ENABLED: "1",
       },

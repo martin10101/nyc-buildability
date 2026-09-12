@@ -15,7 +15,7 @@ export const metadata: Metadata = {
  * disclaimer is rendered by the shared layout footer on every page.
  *
  * This is a Server Component, so it reads the non-public runtime flag
- * INTERNAL_RULE_EVAL_UI once per request (never inlined into the browser
+ * INTERNAL_RULE_EVAL_ENABLED once per request (never inlined into the browser
  * bundle) and passes a plain boolean into the client tree. When the flag is
  * off the rule-evaluation surface is never rendered and its fetch is never
  * issued (defense in depth; the endpoint is independently gated). A per-request

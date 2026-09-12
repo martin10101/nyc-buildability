@@ -51,13 +51,18 @@ export const DEFAULT_TIMEOUT_MS = 12_000;
 // The surface is OFF by default and is gated by TWO independent conditions,
 // both of which must hold:
 //
-//  1. ENVIRONMENT: the runtime, server-read variable INTERNAL_RULE_EVAL_UI
-//     holds an explicit true token. The name is intentionally NOT prefixed
-//     NEXT_PUBLIC_, so Next never inlines it into the browser bundle at build
-//     time and never leaks the flag or the endpoint to the client: the Server
-//     Component reads it once per request and passes a plain boolean into the
-//     client tree. Absent / empty / unknown -> disabled (fail safe), so a
-//     production deploy that never sets it keeps the surface unreachable.
+//  1. ENVIRONMENT: the runtime, server-read variable INTERNAL_RULE_EVAL_ENABLED
+//     holds an explicit true token. This is the SAME name the API service reads
+//     to gate the /rule-evaluation endpoint (services/api; e2e/harness fixture
+//     API) — the design-spec section 6 one-flag intent: both surfaces sit behind
+//     a single canonical INTERNAL_RULE_EVAL_ENABLED (M5-T019 / D-040-R002 closes
+//     the earlier split-name divergence recorded as the M5-T015 G5 F-1). The
+//     name is intentionally NOT prefixed NEXT_PUBLIC_, so Next never inlines it
+//     into the browser bundle at build time and never leaks the flag or the
+//     endpoint to the client: the Server Component reads it once per request and
+//     passes a plain boolean into the client tree. Absent / empty / unknown ->
+//     disabled (fail safe), so a production deploy that never sets it keeps the
+//     surface unreachable.
 //
 //  2. PER-REQUEST OPT-IN: the request explicitly asks for the surface via
 //     `?ruleeval=on`. Absent (or `off`) -> disabled. This second factor keeps
@@ -72,12 +77,15 @@ export const DEFAULT_TIMEOUT_MS = 12_000;
 // ---------------------------------------------------------------------------
 
 const TRUE_TOKENS: ReadonlySet<string> = new Set(["1", "true", "yes", "on"]);
-export const INTERNAL_RULE_EVAL_UI_ENV_VAR = "INTERNAL_RULE_EVAL_UI";
+/** Canonical, backend-unified flag name (design-spec section 6; D-040-R002):
+ * the API service reads the SAME INTERNAL_RULE_EVAL_ENABLED to gate its
+ * endpoint. Server-side only — deliberately NOT NEXT_PUBLIC_. */
+export const INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED";
 
 /** The env-level flag: an explicit true token enables it; absent / empty /
  * unknown -> disabled (fail safe). Read server-side only. */
 export function ruleEvaluationFlagEnabled(
-  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_UI_ENV_VAR],
+  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR],
 ): boolean {
   return typeof rawValue === "string" && TRUE_TOKENS.has(rawValue.trim().toLowerCase());
 }

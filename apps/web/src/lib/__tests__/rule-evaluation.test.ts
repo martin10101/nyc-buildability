@@ -54,7 +54,7 @@ describe("frontend flag — env gate", () => {
 });
 
 describe("frontend flag — surface gate (env AND opt-in)", () => {
-  const KEY = "INTERNAL_RULE_EVAL_UI";
+  const KEY = "INTERNAL_RULE_EVAL_ENABLED";
   let saved: string | undefined;
   beforeEach(() => {
     saved = process.env[KEY];
@@ -80,6 +80,24 @@ describe("frontend flag — surface gate (env AND opt-in)", () => {
     process.env[KEY] = "1";
     expect(ruleEvaluationSurfaceEnabled({ ruleeval: "on" })).toBe(true);
     expect(ruleEvaluationSurfaceEnabled({ ruleeval: ["on"] })).toBe(true);
+  });
+
+  // M5-T019 / D-040-R002: the flag name is now the canonical backend-unified
+  // INTERNAL_RULE_EVAL_ENABLED. Setting the retired split name
+  // INTERNAL_RULE_EVAL_UI must NOT enable the flag — the M5-T015 G5 F-1
+  // misconfiguration (env set under the old name) is now inert on the web side.
+  it("ignores the retired split name INTERNAL_RULE_EVAL_UI (F-1 now inert)", () => {
+    const OLD = "INTERNAL_RULE_EVAL_UI";
+    const savedOld = process.env[OLD];
+    delete process.env[KEY]; // canonical name absent
+    process.env[OLD] = "1"; // only the retired name is set
+    try {
+      expect(ruleEvaluationFlagEnabled()).toBe(false);
+      expect(ruleEvaluationSurfaceEnabled({ ruleeval: "on" })).toBe(false);
+    } finally {
+      if (savedOld === undefined) delete process.env[OLD];
+      else process.env[OLD] = savedOld;
+    }
   });
 });
 
