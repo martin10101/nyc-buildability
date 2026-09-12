@@ -1,0 +1,18 @@
+M5-T019 CI evidence (captured by the orchestrator)
+
+Producer material: b30f709c (single commit, base b119edf1; ff onto candidate).
+CI head under test: 634f1060 (producer material + progress record).
+
+Run 34694372457 (head 634f1060), completed 2026-09-12:
+  web (lint + typecheck + build)     SUCCESS  job 103555220114
+  web-e2e (vitest + Playwright)      SUCCESS  job 103555220174
+    - the renamed Playwright webServer env key (INTERNAL_RULE_EVAL_ENABLED) drove the
+      Next process while the fixture-API process exported the same canonical name:
+      rule-evaluation.spec.ts AND rule-evaluation-flag-off.spec.ts green with ONE flag
+      name through both processes (the design-spec section 6 one-flag intent, S3), and
+      the updated unit suite (incl. the new old-name-inert guard) green in the same job.
+  All other jobs SUCCESS. Only failing job: web-dependency-security (owner-gated
+  Next.js item, D-040-R004 preserved; unrelated).
+
+Local: thin client - web suites are CI-only by policy; the producer verified by source
+reasoning (grep transcript for the exclusive rename in the producer report).
