@@ -24,12 +24,14 @@ AS-5 - SOURCE-DIGEST BINDING, MATCHING *and* MISMATCHED CONTENT.
     it; (b) a silent re-capture (content changed + digest recomputed) yields a
     DIFFERENT digest than the family was authored against, so the drift is
     detectable; (c) stripping the citation provenance makes ``export`` fail
-    closed. A rule-FILE-recorded digest field (so a rule could carry its own
-    expected digest for LOAD-time checking) would need an additive property on
-    ``rule_definition.schema.json`` ``citations[]`` (currently
-    ``additionalProperties: false``) or a string-valued parameter (parameter
-    ``value`` objects are constrained to numbers) - both out of this task's
-    allowed paths and NOT made here. See the M4-T009 producer report.
+    closed. The rule-FILE-recorded half is now MADE: M4-T010 (accepted) added
+    the additive optional ``citations[].content_digest_sha256`` to
+    ``rule_definition.schema.json`` plus fail-closed LOAD-time verification in
+    ``dsl._check_refs``, and every family rule now RECORDS its snapshot digest
+    - ``test_as5_every_family_rule_records_its_snapshot_digest`` pins presence
+    and three-way equality, and the registry fixture (which loads every
+    ruleset through ``build_rule_definition``) would refuse a mismatched
+    recording at load. See the M4-T009 producer report round-2 addendum.
 
 AS-6 - SECOND COLUMN SURFACED FOR EVERY DISTRICT, NEVER APPLIED.
     For every applicable district the qualifying (second-column) alternative is
@@ -57,6 +59,7 @@ import pytest
 
 from app.rules import RuleRegistry
 from app.rules import coverage as cov
+from app.rules.dsl import DSLError
 from app.rules.models import ProvenanceError
 from app.rules.snapshots import SnapshotError, SnapshotStore
 
@@ -175,6 +178,30 @@ def test_as5_citations_resolve_on_disk_with_expected_dates() -> None:
             assert raw["source"]["last_amended_machine_readable"].startswith(_EFFECTIVE_FROM)
 
 
+def test_as5_every_family_rule_records_its_snapshot_digest() -> None:
+    """AS-5's rule-file half, enabled by M4-T010 (additive schema property +
+    fail-closed loader): every family rule's citation RECORDS
+    ``content_digest_sha256``, and the recorded value equals BOTH the committed
+    snapshot file's stored digest AND an independent recomputation
+    ``sha256(verbatim_excerpt)`` - loaded from the snapshot, never restated as
+    a literal. Before this unit the family recorded no digest (the producer
+    report marked AS-5 UNRESOLVED); this test FAILS on any family rule whose
+    citation omits the field or records a value the snapshot does not carry."""
+    for rule_id in _ALL_FAR_RULES:
+        for citation in _rule_doc(rule_id)["citations"]:
+            committed = _snapshot_raw(citation["snapshot_id"])
+            assert "content_digest_sha256" in citation, (
+                f"{rule_id}: citation for {citation['snapshot_id']} records no "
+                "content_digest_sha256"
+            )
+            recorded = citation["content_digest_sha256"]
+            assert recorded == committed["content_digest_sha256"], (
+                f"{rule_id}: recorded digest {recorded} != committed snapshot "
+                f"digest {committed['content_digest_sha256']}"
+            )
+            assert recorded == _sha256(committed["verbatim_excerpt"])
+
+
 def test_as5_matching_every_rule_binds_committed_snapshot_digest(registry) -> None:
     """MATCHING: for every rule, the digest the engine resolves into the exported
     trace equals BOTH the committed snapshot file's stored digest AND an independent
@@ -226,13 +253,16 @@ def test_as5_tampered_excerpt_without_digest_update_fails_closed(tmp_path) -> No
         RuleRegistry(_RULESET_DIR, snapshots=SnapshotStore(bad_dir)).load()
 
 
-def test_as5_silent_recapture_drift_is_detectable(tmp_path) -> None:
-    """MISMATCHED (b): a snapshot re-captured with DIFFERENT content and a correctly
-    recomputed digest loads (it is internally consistent), but its digest differs
-    from the digest the family was authored against - so a check comparing the
-    resolved digest to the committed expected digest detects the drift, and it is
-    not a self-comparison. The rule evaluated over the drifted store carries the
-    DRIFTED digest, never the committed one."""
+def test_as5_silent_recapture_drift_fails_closed_at_load(tmp_path) -> None:
+    """MISMATCHED (b), STRENGTHENED by the AS-5 unit: a snapshot re-captured with
+    DIFFERENT content and a correctly recomputed digest still loads as a STORE
+    (it is internally consistent, no SnapshotError) - but the family rules now
+    RECORD the digest they were authored against, so building the registry over
+    the drifted store REFUSES AT LOAD with the loader's mismatch DSLError
+    (M4-T010 `_check_refs`). Before this unit the drift was merely detectable
+    post-hoc by comparing the resolved digest to the committed one; now no rule
+    over drifted source content ever becomes evaluable. The match= is the
+    mismatch-specific form so a schema-shape rejection cannot satisfy it."""
     committed_digest = _snapshot_raw("zr-23-22")["content_digest_sha256"]
 
     def mutate(raw: dict) -> None:
@@ -246,15 +276,13 @@ def test_as5_silent_recapture_drift_is_detectable(tmp_path) -> None:
     drifted = store.get("zr-23-22").content_digest_sha256
     assert drifted != committed_digest, "drift must change the digest"
 
-    registry = RuleRegistry(_RULESET_DIR, snapshots=SnapshotStore(drift_dir)).load()
-    for rule_id in ("r6-r12-residential-far", _CONDITIONAL_RULE):
-        district = _rule_doc(rule_id)["applicability"]["values"][0]
-        trace = registry.evaluate(
-            rule_id, {"zoning_district": district, "lot_area_sq_ft": 1_000}
-        ).export()
-        resolved = trace["citations"][0]["provenance"]["content_digest_sha256"]
-        assert resolved == drifted
-        assert resolved != committed_digest
+    with pytest.raises(
+        DSLError,
+        match=r"records content_digest_sha256 .* but the snapshot on disk stores",
+    ) as excinfo:
+        RuleRegistry(_RULESET_DIR, snapshots=SnapshotStore(drift_dir)).load()
+    # The refusal names a zr-23-22-citing family rule and the drifted snapshot.
+    assert "zr-23-22" in str(excinfo.value)
 
 
 def test_as5_export_fails_closed_without_resolvable_digest(registry) -> None:

@@ -362,3 +362,42 @@ orchestrator (§2 AS-5, §4). Not weakened.
 | AS-7 status/honesty labels | ✅ | needs_review; review/approval pending; effective_from 2024-12-05 |
 | AS-8 no engine change / commands pass | ⚠️ modularity PASS (0 failures); pytest NOT confirmable locally (thin-client) + out-of-scope bundle drift — behavioral claims held pending CI/supervisor evidence (§3–§4) |
 | AS-9 correct R5 pilot | ✅ | cap moved R5 → r1-r2-r3; R5 values unchanged |
+
+---
+
+## AS-5 completion addendum (out-of-loop unit, produced by the orchestrator per the packet progress_log route)
+
+The §4.4 routed prerequisite landed and was ACCEPTED as **M4-T010** (additive optional
+`citations[].content_digest_sha256` on `rule_definition.schema.json` + fail-closed mismatch
+verification in `dsl._check_refs`; gates G0/G1/G3/G4 PASS 3-0; independent DCV row). AS-5's
+rule-file half is therefore no longer blocked, and this unit closes it (ENGINEERING_RELIABILITY
+§2/§3 applied):
+
+1. **All five family rules now RECORD their citation digest**: `content_digest_sha256` added to
+   the single citation of `r1_r2_r3_residential_far`, `r2x_r4_residential_far`,
+   `r5_residential_far` (zr-23-21, `b52771e6…`) and `r6_r12_residential_far`,
+   `r6_r7_r8_wide_street_conditional_far` (zr-23-22, `943b65f9…`) — values taken from the
+   committed snapshots (both trees byte-agree). No FAR value, quote, district set, exception or
+   any other field changed; the diffs are one added line per rule file.
+2. **New test** `test_as5_every_family_rule_records_its_snapshot_digest`: presence required on
+   every family rule + three-way equality (recorded == committed stored digest ==
+   sha256(verbatim_excerpt)), all loaded from the snapshot, never restated as literals.
+3. **`test_as5_silent_recapture_drift_is_detectable` STRENGTHENED (renamed
+   `…_fails_closed_at_load`), not weakened**: with the rules now recording their authored-against
+   digest, a silently re-captured (internally consistent) zr-23-22 store no longer merely yields
+   a *detectably different* resolved digest — building the registry over it REFUSES AT LOAD with
+   the M4-T010 mismatch `DSLError` (mismatch-specific `match=`, drifted snapshot named). The old
+   assertion body became unreachable behavior (the registry can no longer load over drifted
+   source content); the new assertion pins the strictly stronger property. Module docstring's
+   stale "NOT made here" AS-5 paragraph updated to match reality.
+4. **Red/green record (§3.1)**: RED — with the five rule files reverted to their pre-digest
+   committed state (git checkout HEAD -- rulesets/ at 12a6ed61) and the new test present,
+   `pytest tests/rules/...provenance.py -k records_its_snapshot_digest` → **1 failed**
+   (presence assertion, line 192), 16 deselected. GREEN — digests restored:
+   `pytest services/api/tests/rules` → **368 passed** (367 + 1 new; the drift test was rewritten
+   in place, not added). `ruff check` clean; `python tools/modularity_check.py --check` exit 0;
+   connectors regression `438 passed` (no cross-suite impact).
+
+AS-5 is now SATISFIED end-to-end: rules record the digest; the schema admits it; the loader
+fails closed on mismatch; presence + equality are pinned by test; and the drifted-store path is
+fail-closed at load. The packet's remaining path is the G1/G3/G4/G5 gate wave.
