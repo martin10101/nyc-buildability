@@ -111,8 +111,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "inventing 4326 bytes (deriving from 2263 fixtures) would violate the recorded-official rule - fixtures MUST be live-captured; the endpoint is keyless/public so capture is feasible",
     "outSR=4326 service-side reprojection output shape must be validated, never assumed (coordinate order lng/lat, CRS member semantics in GeoJSON output)",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T13:37:49.369507+00:00",
-  "updated_at": "2026-09-12T14:12:01.178704+00:00",
+  "updated_at": "2026-09-12T14:18:02.553555+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
