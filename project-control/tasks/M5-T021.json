@@ -1,0 +1,118 @@
+{
+  "task_id": "M5-T021",
+  "title": "D-042 Next.js 15.5.24 security upgrade + whole-tree advisory sweep (unblocks B-022)",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Pin apps/web next EXACTLY 15.5.21 -> 15.5.24 (same maintenance line, no 16.x) and clear ALL 7 npm advisories in one admission wave via the sanctioned generate-lockfile workflow (thin client: the GitHub runner regenerates and PROVES the lock - npm ci integrity, blocking whole-tree audit at every severity, committed-lock 7-day age gate, npm CLI advisory - before the bot commits). Package.json pin/override bumps driven by registry-verified fixed versions that each clear the age gate. Retires the LAST standing CI red (web-dependency-security) and discharges B-022's blocking condition.",
+  "business_reason": "Owner directive D-042 (captured 84caa347) narrows D-040-R004 for exactly this upgrade; the advisory-free tree unblocks the D-040-R001 MapLibre admission.",
+  "inputs": [
+    "project-control/directives/D-042-nextjs-15-5-24-upgrade/requirements.json (R001 the upgrade+sweep; R003 NO deploy; R004 exactly 15.5.24, no 16.x)",
+    "project-control/blockers/B-022-whole-tree-advisories-block-maplibre-admission.json (the blocking condition this discharges; resolution follows as D-042-R002 after acceptance)",
+    ".github/workflows/generate-lockfile.yml (the AUTHORITATIVE thin-client lockfile path: workflow_dispatch on the branch; pins npm 11.18.0; npm install --package-lock-only honoring .npmrc min-release-age=7 + save-exact; PROVES the lock - npm ci integrity, blocking audit all severities, committed-lock age gate, npm CLI advisory - BEFORE the bot commits; GITHUB_TOKEN bot pushes do NOT trigger ci.yml - empty-commit follow-up required)",
+    "apps/web/package.json (current pins: next 15.5.21, react/react-dom 19.1.2; overrides postcss 8.5.23 / sharp 0.35.3 / brace-expansion 1.1.18 / js-yaml 4.3.1 / nanoid 3.3.18; devDependencies incl. vitest)",
+    "CI job 103547594072 audit output (the 7 advisories: next CRITICAL GHSA-p293-qw3h-jr36 + GHSA-2xp9-vwfh-vxw4 range <=15.5.23; browserslist HIGH x2; js-yaml HIGH GHSA-2883-xcg3-v3hh - the 4.3.1 override BLOCKS the in-range fix and must be bumped; vitest MODERATE GHSA-82fw-gwwq-j7x9 'fix --force' - devDep bump; baseline-browser-mapping MODERATE; +1)",
+    "the registry research report (returned by the official-source-researcher this session; preserved to project-control/reports/M5-T021-registry-research.md): each bumped pin/override MUST be a registry-verified fixed version >= 7 complete days old",
+    "docs/DEPENDENCY_SECURITY_POLICY.md + .claude/ORCHESTRATION_POLICY.md section G (whole-tree, any-severity, fail-closed, no waiver) + .claude/rules/deployment.md (thin client: lockfile regeneration NEVER local)"
+  ],
+  "outputs": [
+    "apps/web/package.json (next -> 15.5.24 exact; js-yaml override bump; vitest devDep bump if required; any other pin/override the research names - each registry-verified and age-gate-passing; NOTHING else)",
+    "apps/web/package-lock.json (regenerated + proven + committed BY THE WORKFLOW BOT on this branch - part of this task's material)",
+    "project-control/reports/M5-T021-registry-research.md (the preserved research)",
+    "project-control/reports/M5-T021-producer-report.md (pin rationale per package w/ registry timestamps; the workflow-run + bot-commit + CI evidence; the advisory-free proof)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "project-control/reports/M5-T021-registry-research.md",
+    "project-control/reports/M5-T021-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/**",
+    "apps/web/e2e/**",
+    "apps/web/.npmrc",
+    "apps/web/next.config.ts",
+    "apps/web/next.config.js",
+    "apps/web/playwright.config.ts",
+    ".github/**",
+    "render.yaml",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "exact_pin_and_sweep",
+      "input": "the final package.json + regenerated lock",
+      "expected": "dependencies.next == '15.5.24' exactly; every other change is a minimal advisory-driven pin/override bump named in the producer report with its registry fixed-version + publish-timestamp (age >= 604800s) evidence; no unrelated version drift beyond what the regeneration resolves under min-release-age; no 16.x anywhere"
+    },
+    {
+      "id": "S2",
+      "case": "workflow_proven_lock",
+      "input": "the generate-lockfile workflow run on this branch",
+      "expected": "the run SUCCEEDS end-to-end: npm ci deterministic install (integrity + lock<->package.json), blocking npm audit EXIT 0 at --audit-level=low AND JSON total==0 across every severity, committed-lock age gate PASS, npm CLI advisory PASS - and only then the bot commit of package-lock.json lands on the branch"
+    },
+    {
+      "id": "S3",
+      "case": "ci_green_last_red_retired",
+      "input": "ci.yml on the post-lock head (empty-commit trigger after the bot push)",
+      "expected": "web-dependency-security SUCCESS - THE LAST STANDING CI RED RETIRED; web + web-e2e SUCCESS (the app builds and tests green on next 15.5.24); every other job green; the run is the first fully-green CI on the branch"
+    },
+    {
+      "id": "S4",
+      "case": "prohibitions_preserved",
+      "input": "the full task diff + host state",
+      "expected": "no deploy performed or configured (render.yaml/.github untouched - forbidden); no 16.x; no app-code change (apps/web/src untouched); Supabase/G6 untouched; the only writes are the two dependency files + the two reports"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "a fix version younger than 7 days fails the age gate - fail closed and record; do not waiver",
+    "the js-yaml override currently BLOCKS its own fix; bumping the override to a non-fixed or too-young version re-fails the audit",
+    "vitest bump may cross a breaking boundary ('fix --force') - web + web-e2e CI green is the proof the suites survive; if they break, the vitest bump becomes its own bounded correction",
+    "bot pushes do not trigger CI (empty-commit follow-up documented in the workflow notes)",
+    "next 15.5.24 could itself have a newer advisory - the blocking audit in the workflow is the authority; research verifies first"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T23:32:55.119379+00:00",
+  "updated_at": "2026-09-12T23:35:52.463448+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-042",
+      "requirement_ids": [
+        "D-042-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T23:32:55.119379+00:00",
+  "path_notes": "PRODUCER = ORCHESTRATOR (gh workflow dispatch is orchestrator-only authority; the package.json edit is a few registry-fact-driven pins). THIN CLIENT: the lockfile is NEVER generated locally - the generate-lockfile workflow on the GitHub runner is the authoritative path and PROVES the lock before its bot commits it; the bot commit is part of this task's material (allowed_paths includes package-lock.json). DEPLOY PROHIBITION (D-042-R003): no hosted/public deploy under this task - the upgrade lands on the branch only; render.yaml and workflows are forbidden paths. SCOPE (D-042-R004): next EXACTLY 15.5.24; no 16.x; react/react-dom untouched unless an advisory names them (none does per the audit). Every bumped version must carry registry publish-timestamp evidence >= 604800 seconds old; fail closed on ambiguity - if a fix version is too young, STOP and record it (no waiver exists).",
+  "documented_test_commands": [
+    "generate-lockfile workflow run (the lock-proof chain) + ci.yml web/web-e2e/web-dependency-security on the post-lock head - the executable authority (thin client)"
+  ],
+  "worktree": "primary-checkout",
+  "progress_log": [
+    {
+      "at": "2026-09-12T23:35:52.463448+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; bound to D-042-R001 (digest 7fd8d5c2->2a1b8b0c); registry research in flight; package.json edit + workflow dispatch next"
+    }
+  ]
+}

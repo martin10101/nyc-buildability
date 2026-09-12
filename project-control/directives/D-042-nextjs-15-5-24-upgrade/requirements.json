@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 4,
  "producer": "orchestrator",
- "updated_at": "2026-09-12T23:26:26+00:00",
+ "updated_at": "2026-09-12T16:05:00+00:00",
  "requirements": [
   {
    "id": "D-042-R001",
@@ -14,7 +14,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-042-BOOTSTRAP"
+     "D-042-BOOTSTRAP",
+     "M5-T021"
     ],
     "task_types": [],
     "milestones": [],

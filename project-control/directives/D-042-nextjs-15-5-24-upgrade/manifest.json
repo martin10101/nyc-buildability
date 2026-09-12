@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-12T23:26:26+00:00",
  "created_at": "2026-09-12T23:26:26+00:00",
- "updated_at": "2026-09-12T23:26:26+00:00",
+ "updated_at": "2026-09-12T16:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "b4c5505277cb8cd3551ac6982e5705725235c49d",
@@ -27,7 +27,7 @@
   "D-042-R003",
   "D-042-R004"
  ],
- "requirements_content_digest_sha256": "7fd8d5c2f008b923a75024d678902342b6f37424d9a467fc3dcb10f68dbc835b",
+ "requirements_content_digest_sha256": "2a1b8b0c9af099b862b12eba2362e26ad9a298578fc1f6e6304700f359080056",
  "sources": [
   {
    "file": "source-001.md",
@@ -58,6 +58,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from interactive chat; researched basis and scope notes in source-001.md; narrows D-040-R004 for exactly this upgrade"
+  },
+  {
+   "at": "2026-09-12T16:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M5-T021 (Next.js 15.5.24 upgrade + whole-tree advisory sweep) to D-042-R001 by appending the task id to applicability.task_ids (append-only). Requirements digest resynced 7fd8d5c2 -> 2a1b8b0c (sha256_text_artifact)."
   }
  ]
 }
