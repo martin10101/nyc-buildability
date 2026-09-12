@@ -4,9 +4,18 @@
   "reviewer": "security-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M2-T022-G5.md",
-  "reviewed_at": "2026-09-12T02:53:57.706658+00:00",
-  "content_manifest_sha256": "5eedf45298f951dcfbb51ba076c91a0af02dd6d452ecf27bb4171cc9397a3cc8",
-  "reviewed_sha": "20500039f9b277ed41a606b85aed8f3a9572f867",
-  "updated_at": "2026-09-12T02:53:58.080687+00:00"
+  "report_file": "project-control/reports/M2-T022-G5-delta.md",
+  "reviewed_at": "2026-09-12T03:17:52.587640+00:00",
+  "content_manifest_sha256": "e514efca64306598c4a1ed2322d034a83f30b1c7dc46ba3c6805a1b8a855fc5d",
+  "reviewed_sha": "3ce3b84ba7595b9bee4c353cea4b84778997ba26",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M2-T022-G5.md",
+      "reviewed_at": "2026-09-12T02:53:57.706658+00:00"
+    }
+  ],
+  "updated_at": "2026-09-12T03:17:53.775001+00:00"
 }
