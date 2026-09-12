@@ -39,13 +39,13 @@ Generated 2026-09-12 ~09:40 ET by the same orchestrator session (seq-102 continu
      same-reviewer delta attestations incl. an empirical mutant re-run; dual DCV rows at
      0819aa20 (identities 6c4c8277 / 5ff176da); accepts at 94807b28. Reports under
      `project-control/reports/M5-T017-*` and `M5-T018-*`.
-2. **CI:** combined-head runs 34690484292 (44048007) and 34691559695 (ae38a169) ALL green
+3. **CI:** combined-head runs 34690484292 (44048007) and 34691559695 (ae38a169) ALL green
    except the single owner-gated `web-dependency-security` (Next.js RCE, D-040-R004). The
    cross-layer lesson worth keeping: a REQUIRED key in the CLOSED scenario contract forces
    the hand-written web mirror validator + shared fixtures + generated TS to move in the SAME
    landing — M5-T017 alone turned web-e2e red; contracting M5-T018 restored green. Never let
    the server half merge without the web half.
-3. **Advisory backlog from the C1 wave (no task contracted; owner/orchestrator triage):**
+4. **Advisory backlog from the C1 + R002 waves (no task contracted; owner/orchestrator triage):**
    G5-T018 A1 central bounding of the section in scenario-bounds.ts; G1-T018 A1 hoist the two
    generic check primitives into scenario-contract-checks.ts; G1-T017 A2 web consuming the
    generated contract instead of a hand mirror; G4-T017 F3 coverage-set breadth pin;
@@ -54,15 +54,13 @@ Generated 2026-09-12 ~09:40 ET by the same orchestrator session (seq-102 continu
    decomposition; plus the M0-T156 wave advisories (bare-CR rejection, audit_log key drift,
    status_projection normalizer, migration-manifest flip test). G3-T018 A1: Step-4 evidence
    drawer must include the C1 inputs when built.
-4. **D-040 queue (owner-authorized, still standing): R002 then R001.** R002 = feature-flag
-   unification (INTERNAL_RULE_EVAL_UI vs INTERNAL_RULE_EVAL_ENABLED, the M5-T015 G5 F-1 note;
-   deploy-affecting - packet must name the Render env-var change as an OWNER RETURN ITEM).
-   R001 = Packet-3 lot outline ONLY (official-source research on MapPLUTO FIRST; MapLibre
-   needs /dependency-security admission + age gate; expansion-hold §2.1 releases only this).
-5. **Owner works in the SAME checkout in parallel** (docs commits landed mid-arc repeatedly).
+5. **D-040 queue remaining: R001 ONLY** (Packet-3 lot outline; expansion-hold §2.1 releases
+   only this increment; research complete - see NEXT ACTION). M5-T019 G4 advisories added to
+   the backlog: NEXT_PUBLIC posture regression assertion; env-absent e2e (structural).
+6. **Owner works in the SAME checkout in parallel** (docs commits landed mid-arc repeatedly).
    Verify foreign commits touch no in-flight allowed_paths; their pushes preempt in-flight CI
    (cancel-in-progress); hold pushes while a needed run is in flight.
-6. Do not self-assign beyond D-040/D-041 scope (Part-4 gap list awaits owner triage;
+7. Do not self-assign beyond D-040/D-041 scope (Part-4 gap list awaits owner triage;
    D-041-R003: no other gap-list item may cite D-041).
 
 ## NEXT ACTION (in order)
@@ -106,11 +104,13 @@ contract for future UI work) · `.claude/rules/expansion-agent-dispatch-hold.md`
 
 ## COPY INTO THE NEW SESSION
 
-resume from handoff seq 102: work from durable repository evidence. Verify root/branch/HEAD
+resume from handoff seq 103: work from durable repository evidence. Verify root/branch/HEAD
 (expect C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 on candidate/D-024-mrl-option-b), Bootstrap
 Gate 0, read CLAUDE.md + docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`,
-reconcile vs live git/CI (origin may have advanced; ledger and CI win). 188 accepted; D-041 C1
-done end-to-end. Execute NEXT-ACTION item 1: contract D-040-R002 (flag unification, Render
-env-var rename = owner return item) citing D-040:D-040-R002, normal gates; then R001 (MapPLUTO
-research first). Report READY TO RESUME or BLOCKED before changing anything. Stop only for
-owner-only items (credentials/payments/legal, PR #241, Next.js upgrade/deploy, Supabase, G6).
+reconcile vs live git/CI (origin may have advanced; ledger and CI win). 189 accepted; C1 +
+D-040 R003/R002 all done. Execute NEXT-ACTION item 1: the three R001 lot-outline packets
+(server 4326 route -> maplibre-gl@6.7.0 dependency admission -> web outline), each via
+/start-controlled-task citing D-040:D-040-R001, pinning
+project-control/reports/D-040-R001-mappluto-research.md, normal gates. Report READY TO RESUME
+or BLOCKED before changing anything. Stop only for owner-only items (credentials/payments/
+legal, PR #241, Next.js upgrade/deploy, Supabase, G6).
