@@ -1,0 +1,155 @@
+{
+  "task_id": "M2-T022",
+  "title": "Address-resolution API endpoint: NYC address to canonical address + BBL with source_fact provenance, over the internal flag-gated API",
+  "task_type": "backend",
+  "milestone_id": "M2",
+  "objective": "Expose the accepted M2-T021 Geoclient connector as GET /api/v1/address-resolution (house_number + street + borough-or-zip query params), flag-gated internal-only exactly like the sibling routes: call resolve_address with the environment key at call time (key never in config, logs, errors, or the response), transport the TYPED outcome honestly - resolved (canonical address, bbl, bin, coordinates, both GRCs), ambiguous (the source's suggestion list VERBATIM, selection always the caller's), not_found/rejected (visible outcome with both GRCs and messages, never silence), and typed failures (key-missing/auth/rate-limit/unavailable/malformed mapped to bounded HTTP payloads) - and discharge the MVP_AGENDA C4 endpoint duties: the resolved outcome's material facts (bbl, bin, canonical address fields, coordinates) are ADDITIONALLY emitted as source_fact-shaped records validating against packages/contracts/schemas/v1/source_fact.schema.json (READ-ONLY use of the existing schema - proving consumability, never forking a contract); the response documents grc_message/grc2_message/suggestions/raw-derived text as UNSANITIZED reflected input consumers must escape on render; no AnalysisBudget analysis_id is ever derived from request input. In-module contract version + response shape per the evidence.py house pattern; correlation id on every response and log line; NO UI in this packet (the confirm-screen/address-entry UI packet follows).",
+  "business_reason": "Address entry is the top client-demo item on the owner working list (docs/MVP_AGENDA.md B3 / A2 row 4): users type a street address instead of a ten-digit BBL. The connector (M2-T021, accepted 178th) resolves addresses but nothing serves it over the API; this endpoint is the missing middle between the connector and the address-entry UI, and it must prove the AddressResolution-to-source_fact mapping the C4 carry-forward owes.",
+  "inputs": [
+    "services/api/app/connectors/geoclient_address.py (the accepted M2-T021 connector: resolve_address signature, AddressResolution contract incl. the three honesty rules, typed error taxonomy, reflected-input caution)",
+    "services/api/tests/fixtures/geoclient/G01_address_documented_example.json, G02_address_ambiguous_ee.json, G03_address_rejected_42.json (recorded fixtures; offline test bodies)",
+    "docs/research/source-registry-drafts/geoclient.json (registry record: status model, response_semantics honesty rules, reflected_input_warning)",
+    "docs/MVP_AGENDA.md section C4 (the endpoint duties this packet discharges: source_fact mapping + consumability proof, escape-reflected-text, analysis_id never from untrusted input)",
+    "packages/contracts/schemas/v1/source_fact.schema.json (READ-ONLY: the contract the emitted facts must validate against)",
+    "services/api/app/api/v1/evidence.py + services/api/tests/api/test_evidence_api.py (the house endpoint pattern: flag gating, in-module contract version, correlation id, dependency-override test seams)"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/address_resolution.py",
+    "services/api/app/main.py (router registration only)",
+    "services/api/tests/api/test_address_resolution_api.py",
+    "project-control/reports/M2-T022-producer-report.md"
+  ],
+  "dependencies": [
+    "M2-T021"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/address_resolution.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_address_resolution_api.py",
+    "project-control/reports/M2-T022-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "docs/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "services/api/app/config.py",
+    "services/api/app/connectors/**",
+    "services/api/app/resilience/**",
+    "services/api/app/rules/**",
+    "services/api/app/profile/**",
+    "services/api/app/scenario/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/v1/properties.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/api/v1/evidence.py",
+    "services/api/tests/api/test_properties_v1.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "services/api/tests/api/test_evidence_api.py",
+    "services/api/tests/connectors/**",
+    "services/api/tests/rules/**",
+    "render.yaml",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "resolved_end_to_end",
+      "input": "GET the endpoint for the G01 address (314 / w 100 st / manhattan) with the connector's transport dependency-overridden to replay the recorded G01 body and a sentinel key in the (monkeypatched) environment",
+      "expected": "200; status 'resolved'; bbl/bin/canonical street/zip/coordinates equal values LOADED FROM THE FIXTURE (never restated as literals - M5-T004 rule); both GRCs and both messages present; a source_facts[] array whose every record VALIDATES against packages/contracts/schemas/v1/source_fact.schema.json (jsonschema in-test) and whose values are byte-equal to the outcome fields; provenance carries source id, endpoint, key-free request params, retrieval timestamp, response digest + canonicalization, correlation id; the response's correlation id equals the X-Correlation-ID header"
+    },
+    {
+      "id": "S2",
+      "case": "ambiguous_surfaces_suggestions_never_selects",
+      "input": "the recorded G02 (EE) body through the same seam",
+      "expected": "200; status 'ambiguous'; the suggestion list VERBATIM from the fixture in source slot order; NO source_facts emitted (no material fact exists until a human selects); no bbl fabricated; a machine-readable field states selection is the caller's decision"
+    },
+    {
+      "id": "S3",
+      "case": "rejected_not_found_visible",
+      "input": "the recorded G03 (42) body; plus a CONSTRUCTED not_found (11/11) variant clearly labeled",
+      "expected": "200 with a VISIBLE typed status (rejected / not_found), both GRCs + reason codes + messages transported, partial fields (e.g. normalized street) transported per the connector's populated-on-non-resolved contract, NO source_facts; never a silent empty 200, never a 5xx for a legitimate geocoding outcome"
+    },
+    {
+      "id": "S4",
+      "case": "typed_failure_mapping_bounded_and_key_free",
+      "input": "seams raising KeyMissingError, AuthFailedError, RateLimitedError (with retry_after), SourceUnavailableError, SourceTimeoutError, MalformedResponseError, InvalidInputError (oversized/mistyped params), RequestBudgetExceededError",
+      "expected": "each maps to a documented (status_code, error payload) pair - invalid input 422-class, key-missing/auth 502/503-class (the CLIENT is never blamed for a server-side key problem), rate-limited surfaces a bounded retry-after value, malformed/unavailable 502/503-class; every payload bounded, correlation id present, THE KEY VALUE IN NO PAYLOAD OR LOG (leak-absence harvest with positive controls across every failure path, pluto/geoclient test pattern); no upstream body text passes through unsanitized"
+    },
+    {
+      "id": "S5",
+      "case": "flag_gated_internal_only",
+      "input": "the endpoint with the internal flag unset; then set",
+      "expected": "unset: the route is absent/404s exactly like the sibling internal routes' gating behavior; set: serves. A test asserts the gating env var name follows the existing internal-route convention"
+    },
+    {
+      "id": "S6",
+      "case": "reflected_text_honesty_travels",
+      "input": "the G02 response (whose message echoes the typed street) plus a CONSTRUCTED variant whose message/suggestion carries HTML/script-looking text",
+      "expected": "the endpoint transports the text VERBATIM in the JSON body (transport, never interpret) AND the response carries the machine-readable unsanitized-reflected-input warning (C4 duty) naming the affected fields; the test asserts the hostile text arrives byte-exact (JSON-encoded) and appears in no log line or header"
+    },
+    {
+      "id": "S7",
+      "case": "offline_and_no_state",
+      "input": "the full test module with the module-wide socket guard (connector test pattern)",
+      "expected": "every test runs offline through injected seams; no real key read (sentinel + positive control); the endpoint holds no state and no cache; two identical requests produce two connector calls with distinct correlation ids"
+    },
+    {
+      "id": "S8",
+      "case": "no_analysis_budget_from_request_input",
+      "input": "source reading + a test asserting the endpoint's connector call",
+      "expected": "the endpoint never constructs an AnalysisBudget from ANY request-derived value (C4: analysis_id never from untrusted input) - either no budget is passed, or a server-authored constant identity is used; a test pins the call signature"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "data-contract-verifier",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Key leakage through a new HTTP surface: S4's leak-absence harvest with positive controls is the control; the connector's own hygiene is necessary but not sufficient once HTTP error handlers exist.",
+    "Fabricating a selection on ambiguity: S2 pins that suggestions transport verbatim and no fact is emitted until a human chooses.",
+    "Contract drift disguised as mapping: source_facts must validate against the EXISTING schema and stay byte-equal to outcome fields (S1)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T02:17:39.284529+00:00",
+  "updated_at": "2026-09-12T02:17:39.475617+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T02:17:39.284529+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/api -q",
+    "python -m pytest services/api/tests -q --ignore=services/api/tests/documents",
+    "ruff check services/api/app/api services/api/tests/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "EXACT-FILE allowed_paths per the M5-T013 endpoint template: one new route module, main.py for router registration ONLY, one new test module, the producer report. packages/contracts/** is FORBIDDEN: source_fact.schema.json is consumed READ-ONLY (validated against in tests), never edited - the C4 duty is proving the mapping onto the EXISTING contract.",
+    "The whole-suite documented command exists because of the M4-T009 lesson: a packet-local suite can be green while sibling consumers break; run services/api/tests (minus the 3.12-only documents modules locally; CI runs them) before submit.",
+    "The subscription key exists in exactly two places (owner machine env; Render dashboard) and must never appear in any file, response, header, or log; the endpoint reads it only via the connector's own call-time env read."
+  ]
+}
