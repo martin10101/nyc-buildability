@@ -247,6 +247,122 @@ are never the same identity.
 
 ---
 
+## Part 3 — Professional follow-up questions, round 1 (owner, 2026-09-12)
+
+**F1 (re Q25). Can the drawn parcel outline be added to the MVP and fully tested end to end?**
+Yes — it is technically feasible and already designed as the third increment of the address flow:
+the city's MapPLUTO parcel geometry (official DCP dataset) rendered with a standard map library,
+under the same connector/fixture/test/review discipline as everything else, and it can be tested
+end to end against recorded official geometry the same way the rest of the UI is. Two honest
+caveats: (1) it currently sits under an explicit owner-review hold on expansion work, so the owner
+must release that hold before it is planned or built — that hold, not difficulty, is why it is not
+in the MVP; (2) it needs a new data connector (parcel geometry), which is a real, bounded piece of
+work with its own review gates.
+
+**F2 (re Q24). How does the ZoLa link work — new tab? security risks? what if the city's site is
+down or errors?**
+Mechanics: the link is `https://zola.planning.nyc.gov/bbl/<10-digit BBL>` — ZoLa's own documented
+inbound route for exactly this purpose (verified against the city's published source code); ZoLa
+itself then shows that lot's view. The address part of the URL is a fixed constant; the only
+variable part is the 10-digit BBL, and only after it passes our own re-validation.
+New tab: yes — it opens in a new browser tab, with the `noopener noreferrer` protections, meaning
+the opened site cannot reach back and control our page (a known attack called tabnabbing) and our
+page's address is not leaked to it.
+Security posture: (1) no typed or echoed text can ever enter the link — only the validated
+digits; (2) it is a plain outbound link — we never embed or load ZoLa content inside our app, so
+nothing from their site executes in ours; (3) the residual risk is simply that it is an external
+government website we do not control.
+If the city's site is down or errors: the failure happens in the new tab, on the city's side —
+our app is unaffected and keeps working. One honest limitation: ZoLa is built so its server
+answers "OK" for almost any address path and reports problems inside its own page (for example,
+certain condo billing lots it cannot display) — so we cannot cheaply pre-check "will ZoLa show
+this lot?" before you click, and we deliberately do not pretend to.
+
+**F3 (re Q29). What existing-building data, and can an architect use it to redesign?**
+What the MVP returns today: the official citywide property record of what stands on the lot — the
+attributes in the documented feasibility field set, such as existing built floor area, stories,
+year built, building class, and unit counts — each with explicit units, a coverage status, and a
+source trail. Think "the city's data sheet for the building," not drawings.
+Can an architect redesign from it? It supports FEASIBILITY-stage judgments well: how much floor
+area exists versus the draft cap (i.e., what development rights remain), whether an existing
+building already exceeds today's draft cap (a likely grandfathered condition worth flagging to
+counsel), enlargement-versus-new-build framing, and unit-count context. It is NOT sufficient for
+actual redesign documents: there are no floor plans, sections, facades, structural data, interior
+layouts, or survey-grade dimensions — a licensed survey and site investigation remain necessary,
+exactly as they would with any data service.
+What a professional would reasonably expect next from a program like this (candidly, not all in
+the MVP): remaining-development-rights math shown explicitly, DOB permit/violation/certificate-of-
+occupancy history, landmark/historic-district status, and the parcel footprint. Those are known,
+tracked directions — feedback on their priority is exactly what this review is for.
+
+**F4 (re Q30). If a fact is missing, will it still show the other info?**
+Yes. Missing data never blanks the screen: everything that IS available renders normally; the
+missing items are listed by name in their own section; the completeness statement reflects the
+gap; and any calculation that NEEDS the missing fact is shown as blocked/unsupported with the
+reason, rather than silently computed. One missing fact degrades exactly the parts that depend on
+it, nothing more.
+
+**F5 (re Q34). Is all of R1–R12 built? Special zonings, waterfront? Sub-calculations like street
+width, overhangs?**
+Precisely: what exists is the BASE residential floor-area-ratio rule family for the R1–R12
+districts — implemented, machine-tested, citation-anchored, and DRAFT. What does NOT exist yet,
+and the output never pretends otherwise: special purpose districts, waterfront zoning, contextual
+and bonus programs (e.g., inclusionary housing), and the geometry-dependent computations — street-
+width-dependent height rules, sky-exposure planes, permitted obstructions/overhangs. Those need
+both new rule sets and, in some cases, new data inputs (street width and parcel geometry are data
+the MVP does not ingest yet). The architecture is deliberately built so each of these lands as its
+own bounded, cited, independently reviewed rule set; anything not implemented shows up as
+unsupported rather than guessed.
+
+**F6 (re Q35). Height/setback for the other districts besides R5?**
+Not yet. R5 was the pilot height/setback family; it proved the pattern (citations, deterministic
+evaluation, tests, independent review). FAR coverage is R1–R12; height/setback coverage is R5
+only today. The remaining districts are roadmap items that follow the identical pattern, one
+reviewed family at a time — breadth is added deliberately, never by loosening the discipline.
+
+**F7 (re Q38). Explain the legal-text fingerprint much better.**
+When a zoning rule is built, we store the exact text of the Zoning Resolution passage it relies
+on, and we compute a digital fingerprint of that exact text — a SHA-256 hash, which works like a
+tamper-evident seal: change even one character of the text and the fingerprint comes out
+completely different. That fingerprint is recorded inside the rule itself.
+Every time the system starts and loads its rules, it re-reads the stored legal text and recomputes
+the fingerprint. If the recomputed fingerprint does not match the recorded one — because the law
+was amended, our captured copy was updated, or anything corrupted the text — the rule registry
+REFUSES to load. It does not warn-and-continue, it does not fall back to the old understanding; it
+stops, and a human must re-review the rule against the changed text and re-approve it.
+The principle: no answer is safer than an answer computed on law that shifted underneath us.
+
+**F8 (re Q42). Where does the optimized number come from if the zoning laws "aren't built yet"?**
+The laws it uses ARE built — that is exactly what the R1–R12 draft FAR rules are. The draft cap is
+plain deterministic arithmetic: the lot's official area (from city data, with provenance) times
+the district's residential FAR (from the draft rule, which cites the exact Zoning Resolution text
+it encodes). "Draft" does not mean invented — it means engineered, machine-tested, and
+independently reviewed, but NOT yet signed off by a qualified legal reviewer; that is why every
+number carries the DRAFT label and its citation trail. And the program only optimizes within the
+rules it actually has: the named objective ("max residential floor area, sq ft") tells you exactly
+which quantity was maximized, and anything the rule set cannot support is declared unsupported
+instead of estimated.
+
+**F9 (re Q44). Explain sensitivity analysis better.**
+It answers the question: "how fragile is this number?" The engine re-runs the scenario with key
+inputs varied — for example, if the lot area were slightly different, or a disputed input took its
+other plausible value — and reports how much the result moves in each case. The output shows which
+inputs the answer is most sensitive to. For a professional, that is the difference between "this
+cap is robust" and "this cap hinges entirely on one uncertain fact — commission the survey before
+relying on it." Same rules apply as everywhere else: explicit inputs, draft labels, provenance,
+nothing hidden.
+
+**F10 (re Q45). What does break-even mean here?**
+Break-even is the point where a project stops losing money — where the value it creates equals
+what it costs. In the scenario engine it is a screening calculation: from a scenario's draft
+buildable area and a set of explicitly stated assumptions, it computes the threshold at which the
+scenario's economics cross from loss to viability — the "it must clear at least this bar, or it
+does not pencil" line. Every assumption is a visible, recorded input (never a hidden default), and
+the output carries the same draft/provenance discipline as everything else. It is an early
+screening aid — not an appraisal, not a lender-grade pro forma, and not investment advice.
+
+---
+
 *End of Q&A. Feedback from professional reviewers — wrong emphasis, missing questions, answers
 that don't match professional expectations — should go back to the owner for triage into the
 project's tracked backlog.*
