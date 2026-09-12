@@ -461,6 +461,26 @@ within each group is a suggested priority, not a decision.
 7. **Control-plane digest normalization** — the second standing CI red; an internal bookkeeping
    decision with no user-facing effect.
 
+### F. Build-tooling notes (owner Q&A 2026-09-12; developer tooling, NOT product features)
+
+1. **LSP (Language Server Protocol) — assessed, DEFERRED.** Would catch typing mistakes before
+   push (one such miss cost a CI round-trip on M5-T016 night), but the TypeScript server is
+   blind without a local `node_modules` (~0.5 GB), which the thin-client disk policy deliberately
+   excludes, and the local Python 3.11 would false-alarm on the repo's 3.12 syntax. Navigation
+   needs are already covered by the homegrown code-graph (D-005). Revisit if the disk constraint
+   lifts or CI wait times start dragging the loop; enabling it is an owner policy tweak + one
+   install.
+2. **Code-graph use by the Codex loop — status and why.** The loop does NOT automatically consult
+   `tools/code_graph`: (a) D-005 amendment 2 made graph use selective/advisory, and packets
+   pre-name exact files so producers rarely need discovery; (b) the Codex reviewer (Astra)
+   receives bounded text packets through the bridge — no shell — and the packet guard explicitly
+   forbids full-graph dumps (bulk-payload denylist in `review_packet.py`); (c) the D-006
+   auto-wiring idea predates the supervisor freeze (D-024), so it was never built. Known cost:
+   the M4-T009 cross-suite miss (consumers assuming a single-member rule family). Actions: NOW —
+   contracting checklist requires a who-consumes graph query for any task growing a shared
+   family/collection (orchestrator practice, no governance change); LATER (owner-gated) —
+   targeted graph excerpts in Astra review packets = a supervisor change under the D-024 freeze.
+
 ### E. Adjacent professional expectations (surfaced by this review; not yet scoped)
 
 1. **Shareable report/export** — a professional will eventually want to hand a client a document,
