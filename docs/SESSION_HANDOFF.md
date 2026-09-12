@@ -5,110 +5,62 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 97: 177 accepted; M4-T009 landed out-of-loop; Render API live; M2-T021 built+reworked, re-review IN FLIGHT
+## Handoff - seq 98: 184 accepted; address-entry Packet 1 (M5-T015) ACCEPTED end-to-end; Packet 2 next
 
-Generated 2026-09-11 ~16:30 ET by session `cc0c1f1f-17b8-46d0-973d-fb1f681d84d3` (owner ran
-`/session-handoff`, no reason stated). Root `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, worktree
-ctl24, branch `candidate/D-024-mrl-option-b`, HEAD `eb6a15f8` **pushed** (origin same; a ledger
-commit for this handoff follows it). Dirty: only untracked `.claude/agent-memory/qa-engineer/*`
-(reviewer-agent memory, left per policy) and `scratchpad/` (prior-session working files). Repo
-PUBLIC. `main` untouched at `d8b3899f`.
+Generated 2026-09-12 ~02:45 ET by session `5967607e-525a-430f-b258-e908e6db62e6` (context refresh
+checkpoint after the M5-T015 acceptance). Root `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch
+`candidate/D-024-mrl-option-b`, HEAD `c9c4ce16` **pushed** (origin same). Dirty: only untracked
+`.claude/agent-memory/qa-engineer/*` and `scratchpad/` (left per policy). `main` untouched at
+`d8b3899f`. PR #241 remains OPEN and MUST NOT be merged (owner hold).
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 177.** M5-T004 ACCEPTED this session (`49ac5206`): the independent DCV re-anchored
-   its D-038 row to the moved HEAD after accept refused fail-closed on a stale `reviewed_sha` —
-   row re-anchors, gates NEVER restamp; memory `verification-row-stale-anchor-reanchor` has the
-   pattern. Verifier's report at `project-control/reports/M5-T004-directive-verification.md`.
-2. **M4-T009 (R1-R12 FAR rules): producer output LANDED OUT-OF-LOOP**, ledger 85% `in_progress`.
-   Branch `task/M4-T009-r1r12-far` @ `197156b9` (wt-m4t009): loop runs 30/31/33 built it; every
-   run died on checkpoint TRANSPORT (timeout once; twice the worker abbreviated `starting_sha` —
-   controller refuses per S14), never on the work. 359 rules tests green on the repaired base.
-   Memory `loop-checkpoint-sha-transport-failure` records the resolution pattern. OWED before its
-   gate wave: a small AS-5 unit adding `content_digest_sha256` to each rule's `citations[]` + the
-   comparison test (the digest convention question is now answered — see 4). NO further loop runs
-   needed; supervisor is DOWN in PAUSED_RECOVERY (run 33), only matters if a new run is wanted
-   (then: `revoke-all` stale asks → `clear-recovery` → owner-run launch script).
-3. **CI transformed: 15/18 jobs green** (was: api dead at ruff, ~245 hidden failures). Fixed this
-   session: secret-scan (canary `secretscan:allow` pragmas), api 27 ruff errors, ZR snapshot
-   bundle sync, **C3 snapshot digest divergence** (September captures wrote whole-record digests;
-   v1 = sha256(excerpt); conformed with originals preserved in `notes[]`, second shape drift
-   `source.section_last_amended` restored), starlette-1.x route-enumeration tests
-   (`_flattened_route_list`). REMAINING 3 reds, all decision-pending (MVP_AGENDA): web-e2e (one
-   real M5-T004 assertion defect, `compare-screen.test.tsx:404` empty `from`), npm audit (7
-   vulns incl. the Next.js RCE — owner authorization), control-plane (directive-registry CRLF
-   digests D-032/033/034/038 — normalization decision). **CI on `eb6a15f8` UNCONFIRMED** at
-   handoff — check `gh run list` first.
-4. **Render PROVISIONED (owner-driven):** `nycdf-api` LIVE staging (starter/oregon, health
-   green); `nycdf-web` WITHHELD from render.yaml (`23817a9f`) pending the RCE fix (restoration
-   owed in that change); `previews:` removed (Hobby workspace rejects it). URL is PRIVATE (no
-   auth; flags unset). Owner to confirm Blueprint Auto Sync = No.
-5. **Geoclient END-TO-END; B-004 RESOLVED** (record updated with evidence): key on owner machine
-   + Render; fixtures G01 (documented example, 00/00), G02 (EE + suggestion), G03 (42 reject) —
-   timestamps corrected to raw-capture-file write times with basis stated (G1 finding 1: the
-   originals were hand-estimates; error disclosed in-fixture). **Street-width pilot**
-   (`docs/research/street-width-source-pilot-2026-09-11.md`): Geoclient `streetWidth` = PAVED
-   width, KILLED for the ZR 75-ft test; **DCM Street Center Line (SODA `g6zj-tzgn`) confirmed**
-   as the mapped-width candidate WITH per-segment geometry — B2's "source not chosen" blocker has
-   a verified answer.
-6. **M2-T021 (Geoclient address connector): built → 4-gate wave → reworked → RE-REVIEW IN
-   FLIGHT.** Ledger 80% `rework`. Wave at `d4cdbe79`: G1 FAIL / G3 PASS / G4 FAIL / G5 PASS —
-   reports verbatim at `project-control/reports/M2-T021-G{1,3,4,5}.md`; the wave caught the
-   ORCHESTRATOR fabricating fixture timestamps and four evidence-map overstatements (the
-   M5-T004 pattern again). Rework `eb6a15f8`: every blocking finding, one bounded change; 98
-   connector tests (was 36), 437 connectors green, ruff/modularity/secret-scan clean. **Four
-   re-review subagents (M2T021-G1/G3/G4/G5) are running**, instructed to write
-   `M2-T021-G{1,3,4,5}-rereview.md` into
-   `C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL/cc0c1f1f-17b8-46d0-973d-fb1f681d84d3/scratchpad/`
-   — healthy+bounded, not stopped; COLLECT FROM THOSE FILES (they survive session end). G3 also
-   found: D-038 R003/R004 `applicability.task_ids` are M5-only and the submission computed
-   applicable_requirements EMPTY for M2-T021 — reconcile via owner-gated D-038 amendment, not
-   argument. Note: `wt-m2t021` lags at `dc227c0a` (rework landed on candidate, M5-precedent).
-7. **MVP_AGENDA updated:** §I Render + Geoclient records + the OWNER DIRECTIVE line ("go ahead
-   with the address entry connector", verbatim, so citations resolve); C3 resolution; **C4 NEW**:
-   wave-wide `$`-anchor sanitizer newline defect in three accepted connectors
-   (`mappluto_geometry_arcgis.py:314`, `zoning_features_arcgis.py:266`, `ztldb_soda.py:345`) +
-   M2-T021 carry-forwards (GRC 50/75 capture task; consumers must escape reflected text;
-   endpoint packet must map to `source_fact`).
-8. **Campaign record divergence (disclosed):** `campaign_continuity --status` NEXT still points
-   at M0-T136 Tranche B (seq 71, 2026-09-01); the sessions since worked the product queue
-   task-by-task. Ledger + git win over the campaign prose; reconcile via `advance()` only.
-9. Five legacy `project-control/campaigns/D-032-*.json` records print INVALID (missing fields) —
-   pre-existing noise, untouched.
+1. **Accepted = 184.** This session (resumed from seq 97) landed SEVEN acceptances: M2-T021 (178,
+   geoclient connector rework), M4-T010 (179, citation digest schema+loader), M4-T009 (180, R1-R12
+   FAR rules + AS-5), M4-T011 (181, cross-suite consumer repairs), M2-T022 (182, address-resolution
+   API endpoint), M5-T014 (183, compare-screen test repair — web-e2e green for the first time since
+   M5-T004), **M5-T015 (184, address-entry UI Packet 1)**. The M4-T010/M4-T009 dependency edge to
+   G6-parked M4-T001 was removed by owner decision D-039 ("Correct both", T007/T008 precedent);
+   the G6 hold itself is UNTOUCHED.
+2. **M5-T015 arc (the current house pattern for a UI packet, reusable):** contract `428989b1` →
+   producer material `352aa9de` (address-api.ts pair-matrix client with rawStreetName verbatim
+   re-query member; AddressResolutionScreen PropertyLookup-clone machine + every spec-§2 card with
+   an honest Packet-2 stub; AddressForm connector-is-authority; SuggestionChooser caller_selects
+   literally; additive announce.ts; flag-gated PropertyLookup mount, flag-off byte-identical) →
+   one CI cycle fixed two test-mechanics defects `6787445e` → submit `9f679ff7` → four-reviewer
+   wave (G1/G4/G5 PASS; G3 PASS with REQUIRED F1 heading-order correction) → bounded correction
+   `9edfbc73` (F1 h1/h2 swap flag-conditional, F2 pick-focus, F3 invalid_input edit affordance,
+   G1-D2 754-char raw≠bounded discriminating fixture, report §8 corrections) → all four DELTA
+   attestations PASS → gates recorded `de3195d5` → awaiting_gate→rework→resubmit identity restamp
+   `e989db84` → DCV ROW-SUFFICES → ACCEPTED `c9c4ce16`. CI evidence: run 34677835271, web+web-e2e
+   SUCCESS, 32/32 address tests, 27/27 files. All reports incl. delta attestations preserved
+   verbatim under `project-control/reports/M5-T015-*`.
+3. **CI posture:** the ONLY red jobs are the two standing owner-gated ones — web-dependency-security
+   (npm audit / Next.js RCE fix awaiting owner authorization) and control-plane (directive-registry
+   CRLF digest normalization decision). Everything else green, including web-e2e.
+4. **Deferred-with-concurrence items for Packet 2** (recorded in M5-T015 producer report §8):
+   extract outcome cards from AddressResolutionScreen (it is 754 raw lines, modularity WARN-only);
+   G5 F-1 frontend `INTERNAL_RULE_EVAL_UI` vs backend `INTERNAL_RULE_EVAL_ENABLED` flag-name
+   divergence (surface to owner); hostile-resolved-card fixture + per-state body-copy assertions;
+   dual-primary-button hierarchy resolves when resolved routes to Confirm.
 
-## OWNER ITEMS OUTSTANDING
-Auto Sync = No confirm (Render Blueprint); portal rate-limit quotas for the registry record
-(B-004 resolution notes them UNCONFIRMED); Next.js RCE upgrade authorization; Supabase token
-(B-001); demo mode decision (local recommended); practitioner tricks list; D-038 amendment
-activation if the verifier requires one.
+## NEXT ACTION (in order)
 
-## NEXT ACTION (exact, in order)
-1. Check CI on `eb6a15f8` (`gh run list --branch candidate/D-024-mrl-option-b`).
-2. Collect the four re-review files from the scratchpad path in item 6; preserve verbatim to
-   `project-control/reports/M2-T021-G*-rereview.md`; record the four gates.
-3. If PASS 4-0: dispatch an INDEPENDENT directive-compliance verifier (never the orchestrator —
-   it co-produced) for the D-038 row, then `accept` M2-T021 (→178). If any FAIL: cluster and
-   rework as this session did.
-4. Then the M4-T009 AS-5 unit + its 5-gate wave (→179 path), then the address-resolution API
-   endpoint packet, then the confirm-screen/address-entry UI packet.
+1. **Contract M5-T016 = address Packet 2**: AddressConfirmCard (canonical address large, BBL, ZoLa
+   deep-link, lot-outline placeholder), "Continue with this lot" handoff to
+   `/property/confirm?bbl=<canonical>`, "Not my property" back to entry. BEFORE contracting:
+   confirm the exact ZoLa URL path shape (spec flagged assumption (a)); ZoLa href built ONLY from
+   client-re-validated `validateBblInput` canonical BBL — adversarial fixture required; provenance
+   disclosure (source_facts/provenance render sites) belongs here; human-journey walkthrough (G3)
+   belongs here. Design spec: `docs/design/address-entry-confirm-design-spec.md` §2/§4/§6-Packet-2.
+2. Then the seq-97 leftover queue continues per the ledger (nothing else is mid-flight).
 
-## Standing restrictions (unchanged)
-NEVER merge PR #241; supervisor frozen (changes need cited D-024-R###); expansion hold; Bootstrap
-Gate 0 before any write (cwd = this worktree root, `/mcp` empty/allowlisted); no bare `git stash`;
-no new packages outside `docs/DEPENDENCY_SECURITY_POLICY.md`; no hosted web deploy before the RCE
-fix; API URL stays private until auth; key never in chat/files/logs.
+## STANDING RESTRICTIONS (unchanged)
 
-## COPY INTO THE NEW SESSION
-
-Resume from durable evidence only. Bootstrap Gate 0: primary cwd must BE
-`C:\Users\MLFLL\Downloads\nyc-zoning\ctl24` and `/mcp` empty or allowlisted BEFORE any write.
-Verify root/worktree/branch/HEAD/origin live. Read `CLAUDE.md`, `docs/SESSION_HANDOFF.md` (seq
-97), `docs/MVP_AGENDA.md`; run `python tools/project_control.py status` and reconcile — **ledger
-+ git + CI win over all prose.** 177 accepted. M2-T021 sits in `rework` at 80% with its rework
-PUSHED at `eb6a15f8` and a four-reviewer RE-REVIEW in flight whose reports land as files in the
-old session's scratchpad (path in handoff item 6) — collect them, record gates, then independent
-directive verification, then accept; do not re-review yourself and do not accept without the
-independent D-038 row. M4-T009 is landed at 85% awaiting its small AS-5 unit + gate wave — do
-NOT relaunch the loop for it. CI on `eb6a15f8` was unconfirmed at handoff — check it first. Do
-NOT: merge PR #241, push/merge `main`, deploy `nycdf-web`, touch the supervisor without a cited
-D-024-R###, put any secret anywhere. Report `READY TO RESUME` or `BLOCKED`.
+NEVER merge PR #241. Supervisor frozen (changes need cited D-024-R###). Expansion hold
+(`.claude/rules/expansion-agent-dispatch-hold.md`) — Packet 3 lot outline / MapLibre must NOT be
+planned or started. No bare `git stash`. No new packages outside the dependency policy. No hosted
+web deploy before the Next.js RCE fix (owner-gated). API URL stays private. Geoclient key exists
+ONLY in owner env + Render dashboard. Thin client (no local node_modules/DBs/bulk data). G6 on
+M4-T001 = owner-only Section 20/Tier D hard stop. Stop-and-ask only for credentials/payments/legal
+sign-offs (D-008).
