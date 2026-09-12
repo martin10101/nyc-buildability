@@ -1,0 +1,32 @@
+M5-T015 CI evidence (captured by the orchestrator; thin client — CI is the executable authority
+per docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md and the packet's documented_test_commands)
+
+Head under test: 6787445e0efb98811d0e12de7e30571ad6c4aa6a
+  (producer material 352aa9de + progress record 6097c8cb + test-mechanics repair 6787445e;
+   the two production commits' apps/web content is byte-identical between 352aa9de and HEAD —
+   the repair touched only the test module)
+
+Run: CI 34675912878 (push of 6787445e), completed 2026-09-12
+
+  web (lint + typecheck + build)                      SUCCESS  job 103505647248  completed 2026-09-12T05:35:23Z
+  web-e2e (vitest + Playwright vs recorded fixtures)  SUCCESS  job 103505647356  completed 2026-09-12T05:37:23Z
+
+  vitest summary (from job 103505647356 log):
+    src/components/address/__tests__/address-resolution.test.tsx  (31 tests)  PASSED
+    Test Files  27 passed (27)
+    (all pre-existing web suites still green — S1's "existing PropertyLookup tests unchanged"
+     holds at the whole-suite level)
+
+  Only failing jobs on the run — BOTH pre-existing and owner-gated, unrelated to this task:
+    web-dependency-security  FAILURE  (npm-audit / Next.js RCE fix awaiting owner authorization)
+    control-plane            FAILURE  (digest-normalization decision, owner-gated)
+  All other jobs (api, contracts, modularity, exact-production-install, etc.): SUCCESS.
+
+RED half (M5-T014 posture): recorded externally on the FIRST push head 6097c8cb, run 34675738338 —
+  web FAILED with exactly one typecheck error (TS2339 retry_after on the test fixture's inferred
+  spread type) and web-e2e FAILED with exactly one test (the S6 source-scan: ERR_INVALID_URL_SCHEME,
+  import.meta.url is non-file under vitest's jsdom env); 420/421 tests passed on that first run —
+  every behavioral address test was green from the first execution. The repair commit 6787445e
+  changed the TEST MODULE ONLY (single-source retry_after const; resolve(process.cwd(), ...) reads).
+  Mutant-killing power is verified statically by reviewers against the named-mutant table in
+  project-control/reports/M5-T015-producer-report.md section 4.

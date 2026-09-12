@@ -1,0 +1,5 @@
+{
+  "task_id": "M5-T015",
+  "note": "D-038:ALL cited; the machine-applicable requirement set for M5-T015 is EMPTY (R001/R002/R005/R006/R007 bind the D-038-BOOTSTRAP sentinel; R003/R004 bind task_ids M5-T003..M5-T013, which exclude M5-T015 - the M5-T014 precedent). Voluntary substance for the un-cited-by-machine pair: R003 product work only (address-entry UI packet, zero self-infra); R004 offline vitest vs recorded-response-shaped fixtures, no live Geoclient, no Supabase. Executable evidence: project-control/reports/M5-T015-ci-evidence.txt (CI run 34675912878: web + web-e2e SUCCESS at 6787445e; 31/31 new tests, 27/27 web test files). Producer report: project-control/reports/M5-T015-producer-report.md.",
+  "requirements": {}
+}
