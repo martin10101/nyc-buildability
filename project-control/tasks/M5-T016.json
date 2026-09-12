@@ -124,8 +124,8 @@
     "security-reviewer",
     "human-journey-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Reflected text reaching the two NEW href contexts (ZoLa + Continue): S2/S3/S6 adversarial fixtures are the control; any anchor built from unvalidated data is a FAIL.",
     "Extraction regressing Packet-1 behavior: S7 pins test-module neutrality; reviewers diff assertions.",
@@ -134,7 +134,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T06:47:05.994657+00:00",
-  "updated_at": "2026-09-12T07:47:41.830563+00:00",
+  "updated_at": "2026-09-12T08:08:09.958954+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -177,5 +177,7 @@
       "status": "rework",
       "message": "Four-gate wave complete at frozen 65d72bfd (reports M5-T016-G1/G3/G4/G5.md preserved verbatim): G1 PASS (4 advisories), G3 PASS (4 advisories), G5 PASS (2 advisories), G4 PASS with REQUIRED CORRECTION C1 - BLOCKING for acceptance per gate-verdict semantics: the S5 confirm test never asserts the disclosure retrieval timestamp (AddressConfirmCard retrieved line) or the in-disclosure Geosupport return-code lines; add assertions that the disclosure contains the fixture retrieved_at value and both GRC codes. Correction = ONE bounded test-only commit inside allowed_paths, then CI re-run + delta attestations from all four reviewers + gate recordings at the corrected head + resubmit restamp."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-12T08:08:09.958954+00:00"
 }
