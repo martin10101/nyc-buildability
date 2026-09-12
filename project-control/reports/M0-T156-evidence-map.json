@@ -1,0 +1,11 @@
+{
+  "task_id": "M0-T156",
+  "note": "Cited D-040:D-040-R003 (APPLICABLE via the contracted-tasks applicability append, audit-logged) + D-001:ALL (governance coverage for the s19 guard; all 136 D-001 requirements bind by task_ids conjunction that excludes M0-T156, so the D-001 applicable subset is EMPTY - evaluate_task_refs: ok=true, applicable=cited=[D-040-R003]).",
+  "requirements": {
+    "D-040-R003": [
+      "project-control/reports/M0-T156-ci-evidence.txt (CI run 34685572048 at 012ba064: control-plane job 103531898219 SUCCESS - the standing red retired; whole test_directive_compliance.py green on the LF side; local CRLF side EXIT 0 across all five commands)",
+      "project-control/reports/M0-T156-producer-report.md (sections 2-6: normalization design, six re-stamps matching the CI-reported LF actuals, AS mapping, named mutants; sources IMMUTABLE - git diff over project-control/directives/** shows only the four manifest.json files changed: six digest values + updated_at + one append-only audit_log entry each)",
+      "tools/directive_registry.py + tools/validate_directive_compliance.py + tools/test_directive_compliance.py at 2bdae13f (the normalization primitive, its three adopted sites, and the AS-1/AS-2/AS-5 adversarial tests)"
+    ]
+  }
+}

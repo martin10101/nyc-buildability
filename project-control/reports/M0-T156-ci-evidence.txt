@@ -1,0 +1,38 @@
+M0-T156 CI evidence (captured by the orchestrator)
+
+Head under test: 012ba064ea29eab47f2e25135cc43b5ecc78512b
+  (producer material 2bdae13f + report-evidence finalization 012ba064; the tools/ and
+   manifest content is byte-identical between the two — 012ba064 touched only the
+   producer report)
+
+Run: CI 34685572048 (push of 012ba064), completed 2026-09-12
+  https://github.com/martin10101/nyc-buildability/actions/runs/34685572048
+
+  control-plane (workflow regression test, ADR-005)   SUCCESS  job 103531898219  completed 2026-09-12T09:23:58Z
+    — THE STANDING RED IS RETIRED. This job had failed on every run since the six
+      CRLF-recorded digests diverged from the LF checkout (last red: run 34685544374's
+      predecessors; e.g. run 34681382456 job 103520545751 listed exactly the six c2/c14
+      mismatches). It now runs the ENTIRE tools/test_directive_compliance.py in one pass
+      on ubuntu (the LF side of AS-2/AS-6) plus validate_directive_compliance.py --check
+      against the real registry — all green at the normalized computation + re-stamped
+      values.
+  supervisor-bridge                                   SUCCESS  job 103531898187  completed 2026-09-12T09:25:53Z
+  modularity                                          SUCCESS  job 103531898196  completed 2026-09-12T09:20:33Z
+
+  Only failing job on the run:
+    web-dependency-security  FAILURE  (npm-audit / Next.js RCE fix — owner-gated, D-040-R004
+      explicitly preserves this prohibition; unrelated to this task)
+  All other jobs: SUCCESS. This is the first run since the digest divergence began where
+  control-plane is green — 17/18 jobs green, the single red being the one owner-gated item.
+
+Local (Windows/CRLF side) evidence — the complementary representation:
+  validate_directive_compliance.py --check  EXIT 0 (CRLF working tree, normalized computation)
+  test_project_control.py                   EXIT 0 (all 23 groups)
+  test_directive_reminder.py                EXIT 0
+  test_readonly_agent_guard.py              EXIT 0
+  test_agent_dispatch_guard.py              EXIT 0
+  test_directive_compliance.py              green in two class-split runs (A–L: 75 ok;
+    M–V: Ran 53 tests OK in 2142.5s) + dedicated LineEndingNormalizationTest 3/3 OK
+    (239.9s); zero failures in any run; one continuous run exceeded local process limits
+    (registry copytree per Fixture test at ~1–8 tests/min under disk/AV pressure) — the CI
+    job above is the single-pass whole-suite authority.
