@@ -11,6 +11,7 @@ import { ScenarioCard } from "./ScenarioCard";
 import { IntegrityCheckBlock, ScenarioConstraints } from "./ScenarioConstraints";
 import { ScenarioProvenance } from "./ScenarioProvenance";
 import { ScenarioReasons } from "./ScenarioReasons";
+import { UnusedFloorAreaSection } from "./UnusedFloorAreaSection";
 
 /**
  * Success document renderer for the Compare (Step 3) screen (task M5-T004).
@@ -259,6 +260,11 @@ export function ScenarioResult({
       ) : (
         <NoScenarioBlock document={document} />
       )}
+
+      {/* C1 (D-041): the unused-draft-zoning-floor-area line sits directly under
+          the cap line and is present on EVERY branch (its own honest state per
+          document). */}
+      <UnusedFloorAreaSection document={document} />
 
       {/* Document-level: mounted on EVERY branch. */}
       <ScenarioReasons document={document} />

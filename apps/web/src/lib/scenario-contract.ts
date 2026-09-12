@@ -144,6 +144,28 @@ export const CAP_RULE_STATUSES = [
   "published",
 ] as const satisfies readonly CapProvenance["rule_status"][];
 
+/** The C1 unused-draft-zoning-floor-area section (D-041 / M5-T017). The
+ * generated module types the section inline on `Scenario`, so this alias is the
+ * one place its shape is named for the mirror validator. */
+export type UnusedFloorAreaSection = Scenario["unused_draft_zoning_floor_area"];
+
+/** The 3-value `unused_draft_zoning_floor_area.state` enum. */
+export const UNUSED_FLOOR_AREA_STATES = [
+  "computed",
+  "over_built",
+  "not_computable",
+] as const satisfies readonly UnusedFloorAreaSection["state"][];
+
+/** The 3 typed `not_computable_reason` values (the non-null branch of the
+ * enum-or-null field). */
+export const UNUSED_FLOOR_AREA_NOT_COMPUTABLE_REASONS = [
+  "missing_existing_building_area",
+  "existing_building_area_unusable",
+  "no_draft_far_cap",
+] as const satisfies readonly NonNullable<
+  UnusedFloorAreaSection["not_computable_reason"]
+>[];
+
 /** Two-way equality proof: `true` only when A and B are the same union. */
 type MutuallyEqual<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
 
@@ -160,6 +182,14 @@ export type ScenarioEnumAssertions = [
     (typeof COVERAGE_MATRIX_STATUSES)[number]
   >,
   MutuallyEqual<CapProvenance["rule_status"], (typeof CAP_RULE_STATUSES)[number]>,
+  MutuallyEqual<
+    UnusedFloorAreaSection["state"],
+    (typeof UNUSED_FLOOR_AREA_STATES)[number]
+  >,
+  MutuallyEqual<
+    NonNullable<UnusedFloorAreaSection["not_computable_reason"]>,
+    (typeof UNUSED_FLOOR_AREA_NOT_COMPUTABLE_REASONS)[number]
+  >,
 ];
 
 // ---------------------------------------------------------------------------
@@ -186,6 +216,7 @@ const SCENARIO_KEYS = [
   "reasons",
   "coverage_matrix",
   "integrity_check",
+  "unused_draft_zoning_floor_area",
   "_expected_failure",
 ] as const;
 
@@ -207,6 +238,40 @@ const CONSTRAINT_KEYS = [
 ] as const;
 
 const ASSUMPTION_KEYS = ["key", "assumption_type", "value", "unit", "rationale"] as const;
+
+/** The C1 section's closed key set (schema $defs/unused_draft_zoning_floor_area,
+ * additionalProperties:false). */
+const UNUSED_FLOOR_AREA_KEYS = [
+  "state",
+  "unused_draft_zoning_floor_area_sq_ft",
+  "unit",
+  "label",
+  "scope_note",
+  "formula",
+  "professional_review_required",
+  "over_built_statement",
+  "not_computable_reason",
+  "inputs",
+  "assumptions",
+] as const;
+
+/** The C1 `inputs` object closed key set (schema $defs/unused_floor_area_inputs). */
+const UNUSED_FLOOR_AREA_INPUTS_KEYS = [
+  "draft_zoning_floor_area_cap",
+  "existing_building_floor_area",
+] as const;
+
+/** `inputs.draft_zoning_floor_area_cap` closed key set. */
+const UNUSED_FLOOR_AREA_CAP_INPUT_KEYS = ["value_sq_ft", "unit", "provenance"] as const;
+
+/** `inputs.existing_building_floor_area` closed key set. */
+const UNUSED_FLOOR_AREA_EXISTING_INPUT_KEYS = [
+  "value_sq_ft",
+  "unit",
+  "coverage_status",
+  "provenance_ref",
+  "provenance",
+] as const;
 
 const COVERAGE_MATRIX_ROW_KEYS = [
   "constraint_family",
@@ -353,11 +418,15 @@ function checkProvenanceArrays(
   }
 }
 
-function checkAssumptions(problems: Problems, value: unknown): void {
-  const list = checkBoundedArray(problems, "assumptions", value);
+/** Validate an assumptions array. Parametrised on `arrayPath` because the same
+ * closed record shape ($defs/assumption) appears both at the scenario root
+ * (`assumptions`) and inside the C1 section
+ * (`unused_draft_zoning_floor_area.assumptions`). */
+function checkAssumptions(problems: Problems, arrayPath: string, value: unknown): void {
+  const list = checkBoundedArray(problems, arrayPath, value);
   if (!list) return;
   list.forEach((assumption, index) => {
-    const path = `assumptions[${index}]`;
+    const path = `${arrayPath}[${index}]`;
     if (!isRecord(assumption)) {
       problems.add(path, "must be an object");
       return;
@@ -423,6 +492,143 @@ function checkIntegrityCheck(problems: Problems, value: unknown): void {
   }
   checkString(problems, "integrity_check.method", value.method);
   checkString(problems, "integrity_check.note", value.note);
+}
+
+/** A JSON number-or-null that must be FINITE. The schema types every C1 value as
+ * `number | null` and states "Never NaN/Infinity (strict JSON)"; JSON.parse can
+ * never produce a non-finite number, but the validator takes `unknown`, so a
+ * caller-constructed NaN/Infinity is rejected here rather than reaching a
+ * `formatValue` that would render "NaN"/"Infinity" beside a legal figure. */
+function checkNullableFiniteNumber(
+  problems: Problems,
+  path: string,
+  value: unknown,
+): void {
+  if (!(value === null || (typeof value === "number" && Number.isFinite(value)))) {
+    problems.add(path, "must be a finite number or null");
+  }
+}
+
+/** A schema `type: ["object", "null"]` field. Arrays are excluded (`isRecord`
+ * matches JSON-schema `object`, not `array`). */
+function checkNullableObject(problems: Problems, path: string, value: unknown): void {
+  if (!(value === null || isRecord(value))) {
+    problems.add(path, "must be an object or null");
+  }
+}
+
+/** The closed `unused_draft_zoning_floor_area.inputs` object
+ * (schema $defs/unused_floor_area_inputs): the draft cap consumed verbatim and
+ * the existing built floor area, each with its per-input provenance. Recorded on
+ * every state, so a consumer always sees what was and was not available. */
+function checkUnusedFloorAreaInputs(
+  problems: Problems,
+  path: string,
+  value: unknown,
+): void {
+  if (!isRecord(value)) {
+    problems.add(path, "required object is missing or not an object");
+    return;
+  }
+  checkNoUnknownKeys(problems, path, value, UNUSED_FLOOR_AREA_INPUTS_KEYS);
+
+  const capPath = `${path}.draft_zoning_floor_area_cap`;
+  const capInput = value.draft_zoning_floor_area_cap;
+  if (!isRecord(capInput)) {
+    problems.add(capPath, "required object is missing or not an object");
+  } else {
+    checkNoUnknownKeys(problems, capPath, capInput, UNUSED_FLOOR_AREA_CAP_INPUT_KEYS);
+    checkNullableFiniteNumber(problems, `${capPath}.value_sq_ft`, capInput.value_sq_ft);
+    checkNullableString(problems, `${capPath}.unit`, capInput.unit);
+    checkNullableObject(problems, `${capPath}.provenance`, capInput.provenance);
+  }
+
+  const existingPath = `${path}.existing_building_floor_area`;
+  const existing = value.existing_building_floor_area;
+  if (!isRecord(existing)) {
+    problems.add(existingPath, "required object is missing or not an object");
+  } else {
+    checkNoUnknownKeys(
+      problems,
+      existingPath,
+      existing,
+      UNUSED_FLOOR_AREA_EXISTING_INPUT_KEYS,
+    );
+    checkNullableFiniteNumber(
+      problems,
+      `${existingPath}.value_sq_ft`,
+      existing.value_sq_ft,
+    );
+    checkNullableString(problems, `${existingPath}.unit`, existing.unit);
+    checkNullableString(
+      problems,
+      `${existingPath}.coverage_status`,
+      existing.coverage_status,
+    );
+    checkNullableString(
+      problems,
+      `${existingPath}.provenance_ref`,
+      existing.provenance_ref,
+    );
+    checkNullableObject(problems, `${existingPath}.provenance`, existing.provenance);
+  }
+}
+
+/**
+ * The C1 unused-draft-zoning-floor-area section (D-041), REQUIRED on every
+ * scenario document (schema $defs/unused_draft_zoning_floor_area,
+ * additionalProperties:false). Mirror-faithful to the closed inner shape: an
+ * unknown key anywhere fails, the state and typed-reason enums are pinned, the
+ * remainder value is a finite number or null (an over-built NEGATIVE is a legal
+ * value the validator must accept — it is never clamped here), and the closed
+ * `inputs` object and `assumptions` array are structurally checked. The section
+ * carries no cross-field state coupling beyond the schema (JSON Schema declares
+ * `value` as number-or-null on every state); the honest state coupling is the
+ * server's, surfaced verbatim.
+ */
+function checkUnusedFloorArea(problems: Problems, value: unknown): void {
+  const base = "unused_draft_zoning_floor_area";
+  if (!isRecord(value)) {
+    problems.add(base, "required object is missing or not an object");
+    return;
+  }
+  checkNoUnknownKeys(problems, base, value, UNUSED_FLOOR_AREA_KEYS);
+  checkEnum(problems, `${base}.state`, value.state, UNUSED_FLOOR_AREA_STATES);
+  checkNullableFiniteNumber(
+    problems,
+    `${base}.unused_draft_zoning_floor_area_sq_ft`,
+    value.unused_draft_zoning_floor_area_sq_ft,
+  );
+  checkNullableString(problems, `${base}.unit`, value.unit);
+  checkNonEmptyString(problems, `${base}.label`, value.label);
+  checkNonEmptyString(problems, `${base}.scope_note`, value.scope_note);
+  checkNullableString(problems, `${base}.formula`, value.formula);
+  checkBoolean(
+    problems,
+    `${base}.professional_review_required`,
+    value.professional_review_required,
+  );
+  checkNullableString(
+    problems,
+    `${base}.over_built_statement`,
+    value.over_built_statement,
+  );
+  // not_computable_reason: one of the three typed reasons, or null.
+  const reason = value.not_computable_reason;
+  const reasonOk =
+    reason === null ||
+    (typeof reason === "string" &&
+      (UNUSED_FLOOR_AREA_NOT_COMPUTABLE_REASONS as readonly string[]).includes(reason));
+  if (!reasonOk) {
+    problems.add(
+      `${base}.not_computable_reason`,
+      `must be null or one of the documented reasons (${UNUSED_FLOOR_AREA_NOT_COMPUTABLE_REASONS.join(
+        ", ",
+      )})`,
+    );
+  }
+  checkUnusedFloorAreaInputs(problems, `${base}.inputs`, value.inputs);
+  checkAssumptions(problems, `${base}.assumptions`, value.assumptions);
 }
 
 function checkCitations(problems: Problems, path: string, value: unknown): void {
@@ -568,10 +774,11 @@ export function validateScenarioDocument(body: unknown): ScenarioValidationResul
   }
   checkCapProvenance(problems, body.cap_provenance, typeof cap === "number");
 
-  checkAssumptions(problems, body.assumptions);
+  checkAssumptions(problems, "assumptions", body.assumptions);
   checkReasons(problems, body.reasons);
   checkCoverageMatrix(problems, body.coverage_matrix);
   checkIntegrityCheck(problems, body.integrity_check);
+  checkUnusedFloorArea(problems, body.unused_draft_zoning_floor_area);
 
   if (problems.list.length > 0) {
     return { ok: false, problems: problems.list };

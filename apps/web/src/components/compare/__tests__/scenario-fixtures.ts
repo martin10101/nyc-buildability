@@ -97,6 +97,129 @@ export function unsupportedScenarioBody(): Record<string, unknown> {
   return structuredClone(unsupportedFamily) as unknown as Record<string, unknown>;
 }
 
+// ---------------------------------------------------------------------------
+// C1 unused-draft-zoning-floor-area (D-041 / M5-T018) LOCAL document variants.
+//
+// The four SHARED contract fixtures all carry the section in its `not_computable`
+// / `missing_existing_building_area` (preliminary) or `no_draft_far_cap`
+// (the three no-scenario/unsupported) state — they are M5-T017's files and are
+// forbidden to edit here. The `computed` and `over_built` states have no shared
+// fixture, so they are constructed LOCALLY, derived from the preliminary
+// fixture's OWN draft cap (never an invented official value): the remainder is
+// the fixture cap minus a test-chosen existing built floor area.
+// ---------------------------------------------------------------------------
+
+type UnusedSection = Record<string, unknown>;
+
+/** A machine-readable ZR 12-10 zoning-lot-extent assumption, the same closed
+ * record shape as a scenario assumption. */
+function zoningLotExtentAssumption(): Record<string, unknown> {
+  return {
+    key: "zoning_lot_extent",
+    assumption_type: "zoning_lot_extent",
+    value: "tax_lot_is_zoning_lot",
+    unit: null,
+    rationale:
+      "The selected tax lot is treated as the zoning lot (ZR 12-10) for this floor-area difference.",
+  };
+}
+
+/**
+ * A `computed` C1 document: the preliminary fixture with a constructed
+ * `unused_draft_zoning_floor_area` whose value is the fixture's own draft cap
+ * (15,000) minus `existingSqFt`. With the default 10,000 the remainder is a
+ * positive 5,000; pass a larger existing area for `over_built`.
+ */
+export function computedUnusedFloorAreaBody(
+  existingSqFt = 10000,
+): Record<string, unknown> {
+  const body = preliminaryScenarioBody();
+  const base = body.unused_draft_zoning_floor_area as UnusedSection;
+  const capInput = (base.inputs as Record<string, UnusedSection>)
+    .draft_zoning_floor_area_cap;
+  const cap = capInput.value_sq_ft as number; // 15,000, from the fixture
+  const value = cap - existingSqFt; // DERIVED from the fixture cap, never retyped
+  body.unused_draft_zoning_floor_area = {
+    ...base,
+    state: "computed",
+    unused_draft_zoning_floor_area_sq_ft: value,
+    unit: "square_feet",
+    formula:
+      "unused = draft_zoning_floor_area_cap_sq_ft - existing_building_floor_area_sq_ft",
+    professional_review_required: false,
+    over_built_statement: null,
+    not_computable_reason: null,
+    inputs: {
+      draft_zoning_floor_area_cap: capInput,
+      existing_building_floor_area: {
+        value_sq_ft: existingSqFt,
+        unit: "square_feet",
+        coverage_status: "conditional",
+        provenance_ref: "prov-bldgarea",
+        provenance: {
+          provenance_id: "prov-bldgarea",
+          source_id: "nyc-dcp-pluto",
+          original_field_name: "bldgarea",
+        },
+      },
+    },
+    assumptions: [zoningLotExtentAssumption()],
+  };
+  return body;
+}
+
+/**
+ * An `over_built` C1 document: the existing built floor area (default 20,000)
+ * exceeds the fixture cap (15,000), so the remainder is a NEGATIVE 5,000. The
+ * section carries an explicit `over_built_statement` and forces
+ * professional-review at the section AND (per the schema OR) the document root.
+ */
+export function overBuiltUnusedFloorAreaBody(
+  existingSqFt = 20000,
+): Record<string, unknown> {
+  const body = computedUnusedFloorAreaBody(existingSqFt);
+  const base = body.unused_draft_zoning_floor_area as UnusedSection;
+  body.unused_draft_zoning_floor_area = {
+    ...base,
+    state: "over_built",
+    professional_review_required: true,
+    over_built_statement:
+      "The existing built floor area exceeds the draft residential zoning floor-area cap; the remainder is negative.",
+  };
+  // Schema: the document-root professional_review_required is the OR of the
+  // section flag and the rule-evaluation fail-safe trigger.
+  body.professional_review_required = true;
+  return body;
+}
+
+/**
+ * A `not_computable` C1 document carrying the given typed reason. The
+ * preliminary fixture already ships `missing_existing_building_area`; this
+ * constructs the other reasons (notably `existing_building_area_unusable`, which
+ * no shared fixture carries) from the same base.
+ */
+export function notComputableUnusedFloorAreaBody(
+  reason:
+    | "missing_existing_building_area"
+    | "existing_building_area_unusable"
+    | "no_draft_far_cap",
+): Record<string, unknown> {
+  const body = preliminaryScenarioBody();
+  const base = body.unused_draft_zoning_floor_area as UnusedSection;
+  body.unused_draft_zoning_floor_area = {
+    ...base,
+    state: "not_computable",
+    unused_draft_zoning_floor_area_sq_ft: null,
+    unit: null,
+    formula: null,
+    professional_review_required: false,
+    over_built_statement: null,
+    not_computable_reason: reason,
+    assumptions: [],
+  };
+  return body;
+}
+
 /** A fetch stub that always resolves to `response` (offline; no network). */
 export function stubFetch(response: Response): typeof fetch {
   return (async () => response.clone()) as unknown as typeof fetch;
