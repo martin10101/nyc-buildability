@@ -55,7 +55,7 @@
     "human-journey-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 90,
   "risks": [
     "TRANSCRIPTION DRIFT is the primary risk: ~30 districts of hand-copied decimals. Mitigated by AS-1 requiring tests to load the snapshot rather than restate the value.",
     "COPYING THE KNOWN DEFECT FORWARD: r5_residential_far.rule.json carries the footnote-1 0.60 cap on the R5 family, where the source does not impose it (see the zr-23-21 recapture commit 17e8eb78). Reuse its STRUCTURE, not that exception. AS-4 exists to catch this.",
@@ -63,7 +63,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-11T03:51:47.534578+00:00",
-  "updated_at": "2026-09-12T01:19:31.640240+00:00",
+  "updated_at": "2026-09-12T01:42:42.039353+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -98,6 +98,13 @@
       "percent": 85,
       "status": "in_progress",
       "message": "D-039 R002/R003 executed (owner decision 2026-09-11, captured verbatim at project-control/directives/D-039-m4-dependency-correction/): dependencies corrected ['M4-T001'] -> []. Same basis as M4-T010's correction, one bounded change across both mis-chained packets: the M4-T007/M4-T008 deps=[] precedent under the owner directive 2026-07-21 in M4-T001's progress_log; this packet's own AS-7 asserts every rule stays needs_review and never published, so the G6-class protection lives in rule status, not in chaining engineering acceptance to the parked legal spine. The G6 hold on M4-T001 and the M4-T002..T006 parked queue are UNTOUCHED (D-039 R005). Without this correction the handoff's own plan (this task -> accepted after the AS-5 unit + wave) was mechanically impossible."
+    },
+    {
+      "at": "2026-09-12T01:42:42.039353+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "CI at 032dffe7 surfaced the one gap the wave's briefed scope missed: 6 tests in 4 modules under services/api/tests/api (evidence, rule_evaluation, scenario, scenario_analysis) assume a SINGLE-member residential_far family (evaluations[0], len==1, rule_citations[0]) and fail now that the family has 5 members - the same defect class the loop adapted inside tests/rules but never applied to the api consumers; exact-production-install duplicates the same 6; web-e2e/npm/control-plane reds are the pre-existing known set. PRODUCTION IS CORRECT (verified: app/rules/integration.py aggregates applicable traces only; app/scenario/builder.py _find_residential_far_trace selects the first applicable trace) - the failures are test-side selection assumptions only. Convergence plan: follow-up packet M4-T011 adapts the four test modules with applicable-trace selection (value assertions unchanged), exact-file scope, G1/G4 review; the four PASS gate reports from this task's wave are preserved (M4-T009-G{1,3,4,5}.md) and its gates will be recorded once CI is green at the repaired head; acceptance order M4-T009 then M4-T011. RED evidence: api job 6 failed/2956 passed at run 34664497740, reproduced locally 6 failed/365 passed in tests/api."
     }
   ]
 }
