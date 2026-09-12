@@ -123,8 +123,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Key leakage through a new HTTP surface: S4's leak-absence harvest with positive controls is the control; the connector's own hygiene is necessary but not sufficient once HTTP error handlers exist.",
     "Fabricating a selection on ambiguity: S2 pins that suggestions transport verbatim and no fact is emitted until a human chooses.",
@@ -132,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T02:17:39.284529+00:00",
-  "updated_at": "2026-09-12T03:17:53.812751+00:00",
+  "updated_at": "2026-09-12T03:25:15.600916+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -168,5 +168,7 @@
       "status": "rework",
       "message": "Gate wave verdicts recorded at 20500039f9b277ed41a606b85aed8f3a9572f867 (reviews performed at ec4b75dc): G1 FAIL (HIGH-1 production resolver signature incompatible with the route's positional call - every real request 500s, masked by positional-accepting test overrides; LOW-1 matrix omits the connector-handler-reachable request_budget_exceeded pair + wrong comment; LOW-2 matrix wording). G3 FAIL (input_echo missing from the unsanitized_reflected_input escape contract - proven reflected-XSS hazard for contract-trusting consumers; false 'names every reflected surface' universal in the producer report; secondary: street/borough source_facts values carry the same reflected text). G4 FAIL (B1 E501 claim - FACTUALLY CORRECTED post-review by orchestrator-captured executable evidence at project-control/reports/M2-T022-ruff-evidence.txt: ruff 0.13.0 passes from the CI cwd because the E501 exemption covers no-whitespace overflow, so the documented command never failed and the producer ruff claim was true; the 107-char line is wrapped in rework regardless for the raw-length convention; G4's S1-S8 substance verification otherwise PASS incl. proven-non-vacuous jsonschema wiring). G5 PASS clean. REWORK as one bounded change: resolver signature fix + a production-wiring test (dependency_overrides cleared, module resolve_address monkeypatched); input_echo + source_facts reflected surfaces added to the warning + hostile input_echo test; matrix gains the documented-unreachable request_budget_exceeded pair with corrected comments and typed-pair wording; line wrap; producer-report correction addendum striking the false universal and recording the B1 evidence."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-12T03:25:15.600916+00:00"
 }
