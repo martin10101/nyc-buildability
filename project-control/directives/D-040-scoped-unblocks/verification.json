@@ -4,5 +4,38 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-040 requirements bind the non-ledger sentinel D-040-BOOTSTRAP, so no per-task rows accrue here (D-038/D-039 precedent; validator c5 forbids sentinel task_ids in task_verifications). Independent verification of the executed unblocks is recorded as committed reports; tasks contracted UNDER this directive cite D-040:<requirement ids> and verify through their own DCV rows in the usual way.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-040",
+   "task_id": "M0-T156",
+   "applicable_requirement_ids": [
+    "D-040-R003"
+   ],
+   "reviewed_sha": "16a2261eeca01356749d7147c407134f6f904717",
+   "reviewed_manifest_sha256": "73d2a7504119e1e8d640e7b0ce075649ecfeadfa44deea7ec6fc59ea04e568ce",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T10:45:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R003",
+     "state": "PASS",
+     "evidence": [
+      "SOURCES IMMUTABLE: git diff 2bdae13f~1..2bdae13f -- project-control/directives/** = ONLY the four manifest.json files (D-032/D-033/D-034/D-038); each changed exactly updated_at + the affected digest value(s) + one append-only digest_normalization_restamp audit_log entry; whole-commit scan finds zero edits to any source-*.md, amendment, requirements.json, verification.json, or index.json; locked_requirement_ids byte-preserved (AS-4).",
+      "FIX IN DIGEST COMPUTATION: tools/directive_registry.py@2bdae13f adds normalize_text_artifact_bytes (CRLF->LF, lone-CR->LF) + sha256_text_artifact, adopted at the c2 source-digest check; tools/validate_directive_compliance.py@2bdae13f adopts dr.sha256_text_artifact at the migration-manifest check and the c14 requirements-body check (three sites). sha256_file unchanged -> content-manifest raw-blob identity unchanged (identity 73d2a750 stable).",
+      "DIGESTS RECOMPUTED INDEPENDENTLY: sha256(CRLF->LF-normalized bytes) equals all six re-stamped manifest values exactly - 3704add2.., d8158188.., d0ae01b4.., d2876943.., dfab73c0.., 0e9de4cc..; raw CRLF hashes equal the retired values 3912bae0/e5ebf70c/0e0ed336/82f36c4b/610f4e61/f62c6fc8.",
+      "required_harness: python tools/validate_directive_compliance.py --check EXIT 0 reproduced by verifier on the CRLF working tree.",
+      "required_harness: CI run 34685572048 headSha 012ba064, control-plane job 103531898219 conclusion=success (gh run view corroborated); the only red is owner-gated web-dependency-security (D-040-R004 preserved).",
+      "tests: tools/test_directive_compliance.py LineEndingNormalizationTest -v = 3/3 OK (AS-1 load-bearing CRLF/LF/lone-CR equality + raw-hash inequality; AS-2 representation-flip clean; AS-5 content tamper still fails c2); test_project_control.py EXIT 0 (23 groups); test_directive_reminder.py EXIT 0.",
+      "gates G0/G1/G4/G5 all PASS (project-control/reports/M0-T156-G0.md,-G1.md,-G4.md,-G5.md); producer=orchestrator, reviewers code-reviewer/qa-engineer/security-reviewer (all != producer)."
+     ],
+     "verified_at": "2026-09-12T10:45:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "16a2261eeca01356749d7147c407134f6f904717"
+    }
+   ],
+   "note": "Independent DCV verification of M0-T156 (D-040-R003 registry-digest normalization). All D-040-R003 obligations reproduced from primary repository evidence at HEAD (git diff, digest recomputation, validator EXIT 0, gh-corroborated control-plane job success, reran adversarial tests). First real task_verification row in D-040 (per the authority_note: tasks contracted under D-040 verify through their own DCV rows). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at the verified HEAD 16a2261e; re-stamp to git rev-parse HEAD at accept if HEAD advances (identity 73d2a750 unchanged while the 8 allowed_paths are unchanged since 012ba064)."
+  }
+ ]
 }

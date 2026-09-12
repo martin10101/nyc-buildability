@@ -101,8 +101,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Normalization masking real tampering: AS-5 is the control - only CR bytes may be forgiven.",
     "Manifest rewrite collateral: the manifests are CRLF-on-disk with specific indent; a JSON round-trip that reformats unrelated bytes breaks AS-4 byte-preservation and could flip OTHER digests - edit surgically, assert byte-identical round-trip outside the intended fields (the scratchpad/append_d038_m5t012.py pattern).",
@@ -111,7 +111,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T08:12:39.027322+00:00",
-  "updated_at": "2026-09-12T09:48:50.817711+00:00",
+  "updated_at": "2026-09-12T10:09:52.106264+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -150,5 +150,7 @@
       "status": "claimed",
       "message": "Claimed after G0 PASS, D-040-R003 applicability append (digest 0399f470->27d6d1b8, audit-logged), task_type corrected to governance + D-001:ALL cited for s19 governance coverage (D-001 scope.paths names the three tools files; its 136 reqs stay non-applicable by task_ids conjunction - evaluate_task_refs ok=true, applicable=cited=[D-040-R003]). Production order: read the full digest paths; ONE normalization primitive (CRLF->LF + lone-CR decision) at the c2/c14/mig sites; extend test_directive_compliance.py (AS-1 red/green, AS-5 tamper); re-stamp the six manifest digests to the CI-reported LF actuals via byte-preserving edits + ASCII audit entries; run the 5 local commands; one push; CI control-plane green; then the G1/G4/G5 wave."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-12T10:09:52.106264+00:00"
 }
