@@ -33,3 +33,40 @@ Run: CI 34679638323 (push of 49bd086b), completed 2026-09-12
   First-execution note (M5-T014/M5-T015 posture): this run is the FIRST CI execution of the
   producer material — web and web-e2e were green on the first push, zero repair commits
   (the M5-T015 arc needed one test-mechanics repair; this packet hit the aim-for-zero target).
+
+POST-WAVE CORRECTION HEAD (appended after the four-gate wave + G4 C1 correction + delta attestations):
+
+Head: b1129f3402af19227098c686e23442bb7adf03b3 (C1 correction commit — test-only, +11 lines in
+  __tests__/address-confirm.test.tsx S5; production source byte-identical to reviewed 65d72bfd)
+Run: CI 34680826441 (push of b1129f34), 2026-09-12
+  https://github.com/martin10101/nyc-buildability/actions/runs/34680826441
+
+  web (lint + typecheck + build)                      SUCCESS  job 103519035458  completed 2026-09-12T07:29:27Z
+  web-e2e (vitest + Playwright vs recorded fixtures)  SUCCESS  job 103519035565  completed 2026-09-12T07:31:04Z
+
+  vitest summary (from job 103519035565 log):
+    src/components/address/__tests__/address-resolution.test.tsx  (32 tests)  PASSED
+    src/components/address/__tests__/address-confirm.test.tsx      (11 tests)  PASSED
+      (incl. the two new C1 assertions: bounded retrieved-at clause + in-disclosure GRC line)
+    Test Files  28 passed (28)
+
+  Failing jobs: the same two pre-existing owner-gated reds (web-dependency-security;
+  control-plane). All other jobs SUCCESS except supervisor-bridge, which was CANCELLED
+  (attempt 1 and a --job rerun attempt 2) — NOT a failure: the workflow's
+  concurrency group (ci-<ref>, cancel-in-progress: true) preempted the in-flight job when
+  the owner pushed docs-only commits 6a628d36 (07:33:09Z) and d861f2e5 (07:41:23Z)
+  (docs/MVP_ARCHITECT_REVIEW_QA.md parts 3-4; zero overlap with this packet). The attempt-2
+  log shows the suite at 93% with ALL tests passing when the cancel landed; the identical
+  tools/ content passed supervisor-bridge on run 34679638323 at 49bd086b (this packet
+  touches no tools/ path — supervisor-bridge is outside its surface).
+
+  This is the run the four gate recordings and the delta attestations anchor to (fresh CI
+  green for web + web-e2e at the corrected head; both jobs COMPLETED before the preemption).
+
+CONFIRMATION RUN at the owner's docs head (contains the identical packet content):
+
+Head: d861f2e5 (owner docs commits on top of b1129f34; apps/web byte-identical to b1129f34)
+Run: CI 34681382456 (push of d861f2e5), 2026-09-12
+  web SUCCESS, web-e2e SUCCESS (job 103520545727 log verified: resolution 32, confirm 11,
+  Test Files 28/28 — same totals); only reds again the two owner-gated jobs;
+  supervisor-bridge outcome recorded in the handoff once the run completes.
