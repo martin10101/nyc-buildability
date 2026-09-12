@@ -117,8 +117,8 @@
     "security-reviewer",
     "visual-quality-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The platform choosing for the user: S3's no-preselection + disabled-until-choice assertions are the control; any default selection is a FAIL.",
     "Reflected text reaching an attribute context: S6's hostile fixture + source-scan; the ZoLa link (the one URL context) is deliberately NOT in this packet.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T05:07:01.079318+00:00",
-  "updated_at": "2026-09-12T05:29:47.389621+00:00",
+  "updated_at": "2026-09-12T06:03:11.583016+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
