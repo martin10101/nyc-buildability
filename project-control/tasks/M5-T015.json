@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T05:07:01.079318+00:00",
-  "updated_at": "2026-09-12T06:03:11.583016+00:00",
+  "updated_at": "2026-09-12T06:16:48.036915+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -161,6 +161,13 @@
       "percent": 70,
       "status": "claimed",
       "message": "Producer material committed at 352aa9de (one bounded commit, all 8 allowed paths): address-api.ts pair-matrix client with rawStreetName verbatim re-query member; AddressResolutionScreen PropertyLookup-clone machine with every spec-section-2 outcome/error card and an explicit Packet-2 stub for resolved; AddressForm (connector-is-authority; submit deliberately NOT disabled in flight - supersession is a cloned-machine flow); SuggestionChooser caller_selects literally; additive announce.ts extension; PropertyLookup flag-gated mount (flag off = today's DOM byte-equivalent, no fetch possible). S1-S8 test pack: 20 tests incl. hostile reflected fixtures, full it.each error matrix, seq-guard/D5/focus/announce integrity, source scans (dangerouslySetInnerHTML absence, index keys, import-specifier allowlist). Contract keys re-verified against address_resolution.py and _extract_suggestions before coding, not recalled. Local checks: modularity_check failures 0; staged set == allowed_paths exactly. Self-review fixes disclosed in report section 6 (busy-disable removed, fixture null-typing, rawStreetName added). NEXT: single push; CI web + web-e2e are the executable authority; then the four-reviewer wave."
+    },
+    {
+      "at": "2026-09-12T06:16:48.036915+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "Gate wave complete at reviewed head 9f679ff7 (all four reports preserved verbatim, commit 3b96a2cd): G1 PASS (code-reviewer; 4 Minor advisories - D1 rawStreetName containment wording also covers the controlled street-input value which G5 judged a safe property-assignment context, D2 raw-vs-bounded re-query undiscriminated by fixtures, D3 producer-report stats wrong 725-not-687 lines / 31-not-20 cases, D4 CI-green must stay qualified by the two owner-gated reds). G3 PASS WITH REQUIRED CORRECTIONS (visual-quality-reviewer) - F1 BLOCKING: heading-order inversion on the flag-on page (address surface h2 precedes the page's only h1 at PropertyLookup 'Property lookup'); F2 Minor suggestion-pick focus drop to body during re-resolution; F3 Minor invalid_input card lacks the spec's points-at-the-field recovery affordance; F4/F5 advisory. G4 PASS (qa-engineer; 6 LOW/informational). G5 PASS (security-reviewer; 2 Minor - flag-name divergence noted for Packet 2, optional hostile-resolved fixture). Per gate-verdict semantics the G3 corrections are BLOCKING for acceptance: gates will be recorded ONLY after the bounded correction commit, CI green, and delta re-review attestations from the same reviewers at the post-correction head. Planned bounded correction (one producer commit, all inside allowed_paths): F1 heading fix (address intro heading to h1 when mounted; PropertyLookup 'Property lookup' demoted to h2 ONLY when ruleEvalEnabled so flag-off DOM stays byte-identical), F2 setRetryFocus(true) in onPickSuggestion, F3 edit-address affordance on the invalid_input card, G1-D2 discriminating long-suggestion fixture (raw!=bounded at the fetch seam), producer-report corrections appended as a new section (D1 wording, D3 stats)."
     }
   ]
 }
