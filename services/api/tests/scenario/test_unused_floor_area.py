@@ -205,6 +205,45 @@ def test_s3_zero_boundary_is_computed_not_over_built():
     assert section["assumptions"] == [C.zoning_lot_extent_assumption()]
 
 
+def test_s1_vacant_lot_zero_existing_area_is_usable_and_computed():
+    """G4 correction C1: an existing area of exactly 0.0 (a vacant lot) is a
+    USABLE input (_nonnegative_finite_float, deliberately not _positive_...)
+    and yields the C1 headline answer - the full draft cap as unused floor
+    area. Kills the one-character mutant that would reclassify a vacant lot
+    as existing_building_area_unusable."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    cap = S.trace_cap(rule_evaluation)
+    document = build_scenario(profile_with_bldgarea(0.0), rule_evaluation)
+    validate_scenario_document(document)
+
+    section = _section(document)
+    assert section["state"] == State.COMPUTED.value
+    assert section["unused_draft_zoning_floor_area_sq_ft"] == cap
+    assert section["not_computable_reason"] is None
+    assert section["inputs"]["existing_building_floor_area"]["value_sq_ft"] == 0.0
+    assert section["professional_review_required"] is False
+    assert document["professional_review_required"] is False
+
+
+def test_s1_fractional_remainder_is_unrounded():
+    """G4 correction C2: a fractional remainder survives verbatim - real caps
+    (FAR x lot area) and PLUTO bldgareas are frequently fractional, so a
+    round() introduced at the subtraction site must fail this test (the
+    integer-only fixtures elsewhere cannot discriminate it)."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    cap = S.trace_cap(rule_evaluation)
+    bldgarea = cap - 4999.5  # fractional remainder, exactly representable
+    document = build_scenario(profile_with_bldgarea(bldgarea), rule_evaluation)
+    validate_scenario_document(document)
+
+    section = _section(document)
+    assert section["state"] == State.COMPUTED.value
+    assert section["unused_draft_zoning_floor_area_sq_ft"] == cap - bldgarea
+    assert section["unused_draft_zoning_floor_area_sq_ft"] == 4999.5
+    # The discriminator: any rounding yields 5000.0, not 4999.5.
+    assert section["unused_draft_zoning_floor_area_sq_ft"] != round(cap - bldgarea)
+
+
 # ---------------------------------------------------------------------------
 # S4 - missing or unusable existing area -> typed not_computable, value null.
 # ---------------------------------------------------------------------------
