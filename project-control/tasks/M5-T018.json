@@ -1,0 +1,126 @@
+{
+  "task_id": "M5-T018",
+  "title": "C1 unused draft zoning floor area - web contract mirror + Compare rendering",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Teach the web scenario contract mirror validator the new required unused_draft_zoning_floor_area section (closed inner shape) and render the C1 line on the Compare screen per the research 3.1/3.3 honest-states design: precise-noun labeled line from the document's own label, over-built explicit statement + professional-review display, not_computable states as the standard no-supported-estimate treatment. Restores web-e2e green at the combined head with M5-T017.",
+  "business_reason": "M5-T017 (server C1) changed the closed scenario contract; the hand-written web mirror validator rejects the new key, so the deployed UI would refuse updated API documents. UI rendering is the owner-visible half of D-041 C1.",
+  "inputs": [
+    "project-control/directives/D-041-c1-development-rights/requirements.json (D-041-R001: own clearly labeled line; over-built renders HONESTLY as its own explicit statement + professional-review routing, never clamped/hidden; missing inputs = standard missing/unsupported treatment, never estimated)",
+    "docs/design/astra-presentation-research.md sections 3.1 (precise-noun rule; material assumptions directly beneath the number; DRAFT discipline), 3.2 (every quantity opens evidence; status language Reported/Calculated/Assumed/Not assessed/Needs review - no 'verified'), 3.3 (honest result states table: 'No supported estimate' for unresolved inputs)",
+    "services/api/app/scenario/unused_floor_area.py at 45f63efb (the section's authoritative field semantics) + the section schema in packages/contracts/schemas/v1/scenario.schema.json ($defs/unused_draft_zoning_floor_area + $defs/unused_floor_area_inputs - the closed shape the mirror must implement EXACTLY)",
+    "apps/web/src/lib/scenario-contract.ts (the hand-written closed-key mirror validator: SCENARIO_KEYS + checkNoUnknownKeys pattern; the new key must be REQUIRED and its inner shape structurally checked, mirror-faithful to the schema)",
+    "apps/web/src/components/compare/ScenarioResult.tsx + ScenarioCard.tsx (where draft_zoning_floor_area_cap_sq_ft + cap_label render verbatim today - the C1 line joins this surface)",
+    "apps/web/src/components/compare/__tests__/scenario-fixtures.ts (imports the four shared contract fixtures cross-package; computed/over_built variants do not exist as shared fixtures - build them as LOCAL document variants derived from preliminary_r5_cap plus a section constructed to the schema, never inventing official values)",
+    "apps/web/src/components/compare/__tests__/compare-screen.test.tsx + compare-entry.test.tsx + scenario-contract.test.ts (the suites currently red at 08bf965b - they must pass again WITHOUT weakening: the validator additions get their own negative tests)",
+    "project-control/reports/M5-T017-producer-report.md (section field schema, exact)"
+  ],
+  "outputs": [
+    "apps/web/src/lib/scenario-contract.ts (mirror update: unused_draft_zoning_floor_area REQUIRED in SCENARIO_KEYS-world with closed structural checks for every inner field, enum states, typed reasons, inputs object, assumptions records)",
+    "apps/web/src/components/compare/ScenarioResult.tsx and/or ScenarioCard.tsx + any small new focused component (the C1 line: document's own label rendered verbatim, value with unit, scope note, over_built statement + needs-professional-review presentation, not_computable = standard no-supported-estimate treatment with the typed reason surfaced honestly)",
+    "updated apps/web/src/components/compare/__tests__/ suites (green again; new tests for all four states + validator negative tests; no assertion weakened)",
+    "project-control/reports/M5-T018-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/scenario-contract.ts",
+    "apps/web/src/components/compare/**",
+    "project-control/reports/M5-T018-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/**",
+    "services/api/**",
+    "apps/web/src/lib/scenario-api.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/components/address/**",
+    "apps/web/src/components/confirm/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "tools/**",
+    ".github/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "validator_mirror_fidelity",
+      "input": "the four shared contract fixtures (which now carry the section) + locally built computed/over_built variants + negative documents (missing section; unknown extra key inside the section; bad state enum; NaN-shaped value)",
+      "expected": "valid documents validate clean; a document MISSING unused_draft_zoning_floor_area fails validation (required, mirror-faithful); unknown keys inside the section fail; invalid state/reason enums fail; the pre-existing unknown-top-level-key rejection still works (no weakening)"
+    },
+    {
+      "id": "S2",
+      "case": "computed_line_renders",
+      "input": "a computed-state document (cap and value from the fixture-derived variant)",
+      "expected": "the C1 line renders as its OWN labeled line: the document's label string verbatim, the exact value + square-feet unit (fixture-derived assertion, never retyped), the scope_note visible per research 3.1 (material assumption beneath the number); DRAFT discipline preserved; the existing cap line unchanged"
+    },
+    {
+      "id": "S3",
+      "case": "over_built_honest_render",
+      "input": "an over_built-state document (negative value, over_built_statement, section professional_review_required true)",
+      "expected": "the negative remainder renders honestly with the document's over_built_statement as its own explicit statement - never clamped to zero, never hidden, never restyled into a positive; a needs-professional-review presentation is visible; accessibility: the statement is exposed to assistive tech (not color-only)"
+    },
+    {
+      "id": "S4",
+      "case": "not_computable_standard_treatment",
+      "input": "the three not_computable reasons (missing_existing_building_area / existing_building_area_unusable / no_draft_far_cap) via the shared fixtures + a local variant",
+      "expected": "the line renders the standard no-supported-estimate treatment (research 3.3): no number, no invented zero, the typed reason surfaced in plain language derived from the document, the rest of the scenario render unchanged"
+    },
+    {
+      "id": "S5",
+      "case": "suites_green_no_weakening",
+      "input": "the full web suites at the combined head",
+      "expected": "compare-screen/compare-entry/scenario-contract suites pass again; every fix is a deliberate update (fixtures carrying the section, new assertions) - no assertion deleted or loosened to get green; CI web + web-e2e jobs SUCCESS"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "human-journey-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "mirror drift: the validator must implement the schema's closed inner shape exactly - a looser mirror silently accepts undocumented keys and a stricter one rejects real API documents",
+    "no local npm/node_modules on the thin client: web tests are only executable in CI - producer must reason from source and the CI feedback loop",
+    "shared-fixture coupling: the four contract fixtures are M5-T017's files (forbidden here) - computed/over_built test documents are built locally in scenario-fixtures.ts, never by editing the shared fixtures",
+    "wording discipline: render document strings verbatim; do not introduce forbidden nouns or verified/compliant language in JSX or test copy"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T10:54:43.625153+00:00",
+  "updated_at": "2026-09-12T10:57:41.962537+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-041",
+      "requirement_ids": [
+        "D-041-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T10:54:43.625153+00:00",
+  "path_notes": "MODULARITY: scenario-contract.ts grows by one section validator (mirror-faithful, same checkNoUnknownKeys idiom); rendering joins the existing ScenarioResult surface or a small focused child component - no new dumping ground. NO OVERLAP with M5-T017 (in flight, awaiting wave): its 17 allowed_paths are all under services/api/**, packages/contracts/**, and its own report - every one of them is FORBIDDEN here; the two tasks share zero writable paths. NAMING: the UI renders the document's OWN label/scope_note/statement strings verbatim - it never invents wording; 'maximum buildable area'/'remaining development rights'/'remaining capacity'/'verified'/'compliant' must not be introduced.",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client, no local npm)"
+  ],
+  "worktree": "wt-m5t018",
+  "progress_log": [
+    {
+      "at": "2026-09-12T10:57:41.962537+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; bound to D-041-R001 (digest 7d32c881->1589a0df); frontend-engineer dispatch next"
+    }
+  ]
+}
