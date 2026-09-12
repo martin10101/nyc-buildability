@@ -13,6 +13,37 @@ screen carries that disclaimer.
 How to use this document: read each question, form your own expectation, then check the answer and
 its one-line rationale. Disagreements or surprises are exactly the feedback we want.
 
+## Part 0 — How the owner's companion sessions work (read this first if you are the next session)
+
+This document is the running record of an owner ↔ orchestrator Q&A/strategy conversation that
+spans multiple chat sessions. The working model, set by the owner on 2026-09-12:
+
+- **Two sessions run side by side.** The BUILD session owns the ledger (`project-control/`), the
+  task queue, and `docs/SESSION_HANDOFF.md` — never touch any of those from a companion session.
+  The COMPANION session (this conversation's successor) does owner Q&A, strategy, valuation, and
+  planning discussions, and writes ONLY to this document (plus directive captures when the owner
+  decides something).
+- **Companion-session discipline** (learned, works): before any commit, check `git status` and
+  confirm the staging area is empty (the build session shares the working tree); stage EXACT
+  paths only; keep commits doc-only; never run `/session-handoff` (that file belongs to the build
+  session); when the owner makes a real decision, capture it as a directive
+  (`/directive-compliance`, D-040/D-041 are the recent templates) and notify the build session via
+  a cross-session message with the directive id and priorities.
+- **The conversation format:** rounds of yes/no questions with plain-language answers (numbering
+  continues — next is **Q76**), follow-up deep-dives appended as new Parts, and candid
+  bigger-picture feedback the owner has explicitly asked for ("don't be shy"). The owner asked for
+  simple, non-technical language throughout — short sentences, analogies, no jargon without an
+  immediate explanation.
+- **Open threads for the next session** (owner-requested, 2026-09-12): (1) deepen the valuation
+  discussion with LIVE market research — verify comparable-tool pricing (TestFit, UrbanForm,
+  Deepblocks, the former Envelope.city, PropertyShark-class data tools) before relying on the
+  Part 9 estimates; (2) the UI/design-system phase — research how dense-data feasibility tools
+  present information, then the design-spec → critique → implement path (incl. the question of
+  the Codex reviewer model "Astra" as a design critic or producer — see the build session's
+  governance constraints before promising anything); (3) Supabase credentials expected from the
+  owner ~2026-09-13 (they go to environment/dashboards only, NEVER chat or files); (4) prepping
+  the owner's demo conversation with a real architect using this document.
+
 ---
 
 ## Part 1 — Platform design and safety (20 questions)
@@ -551,6 +582,44 @@ deployed; both paths run through the owner.
    deliberate five minutes.
 7. **Keep the "does the program lie?" instinct.** Demanding sources, refusing guesses, keeping
    humans over legal judgment — that discipline IS the product.
+
+---
+
+## Part 9 — What is this worth? (orchestrator's estimate, 2026-09-12 — informed opinion, NOT
+market research; the next companion session should verify pricing live)
+
+**What the manual work costs today.** For a straightforward NYC lot, an architect or zoning
+consultant spends roughly **3–8 hours** on the first zoning pass: pull ZoLa/PLUTO, read the
+relevant Zoning Resolution sections, compute max FAR, existing area, remaining rights, check
+overlays, and write it up with citations. Complex lots (split zones, overlays, special districts)
+run **10–30+ hours**. NYC professional rates run roughly **$150–$300/hour**; a purchased
+preliminary zoning analysis for a small building commonly costs **$1,500–$5,000**.
+
+**Honest correction to the 5-unit vs 10-unit framing:** zoning-analysis time scales with the
+LOT's complexity, not the unit count. A 5-unit and a 10-unit on similar lots cost about the same
+analysis time. The right unit of value is **per lot screened**.
+
+**What the MVP + C1 saves per simple lot:** the data gathering, the FAR math with citations, the
+remaining-rights arithmetic, and the write-up skeleton — realistically **2–4 hours per lot**
+today (call it **$400–$1,000 of professional time**), growing toward most of the 3–8 hours as
+rule coverage widens (heights, yards, more districts). The compounding win is **screening
+volume**: evaluating 10 candidate lots is 30–80 manual hours versus an afternoon with the tool —
+kill the bad deals in minutes, spend the expensive hours only on survivors.
+
+**What that supports charging (anchors, to be verified live):** comparable property-data and
+zoning-feasibility tools have charged roughly **$50–$300 per user per month**, with
+generative-feasibility products (TestFit-class) reaching into the **thousands per seat per
+year**. Sensible posture for THIS product: at MVP (draft rules, pre-legal-review) it is a
+**screening tool with receipts** — pilot pricing around **$50–$150/user/month** (or ~$25–$75 per
+lot report) is defensible because one saved lot-screen pays for the month. After G6 legal review
+plus broader rule coverage, **$200–$500+/user/month** becomes defensible, and developer/brokerage
+teams price higher than solo architects. The pitch math: ~3 hours saved × $200/hour = **$600 of
+time per lot** against a ~$100/month subscription.
+
+**The two things that most move the price:** (1) G6 — a lawyer-reviewed rule set moves the
+product from "helpful screening" toward "relied-upon analysis"; (2) coverage breadth — every
+added rule family converts more of the manual hours. Nothing else on the roadmap moves
+willingness-to-pay as much as those two.
 
 ---
 
