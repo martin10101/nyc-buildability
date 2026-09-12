@@ -89,15 +89,15 @@
     "data-contract-verifier",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Silent weakening: the mismatch test could pass vacuously against a schema-shape rejection; S3 requires matching the mismatch message specifically.",
     "Back-compat break: a required (rather than optional) property or a wrong pattern would invalidate the 11 committed rules; S1 asserts the full enumeration loads."
   ],
   "blockers": [],
   "created_at": "2026-09-11T23:59:47.259471+00:00",
-  "updated_at": "2026-09-12T01:04:06.052293+00:00",
+  "updated_at": "2026-09-12T01:13:56.482668+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -131,5 +131,7 @@
       "status": "awaiting_gate",
       "message": "D-039 R001/R003 executed (owner decision 2026-09-11, captured verbatim at project-control/directives/D-039-m4-dependency-correction/): dependencies corrected ['M4-T001'] -> []. Basis: the M4-T007/M4-T008 deps=[] precedent under the owner directive 2026-07-21 recorded in M4-T001's own progress_log ('Engine foundation is integrated and available for downstream product tasks per owner directive'); the G6 protection lives in rule status (needs_review, never published), not in chaining engineering acceptance to the parked legal spine. The G6 hold on M4-T001 is UNTOUCHED (D-039 R005). Next per D-039 R004: independent verifier re-anchors the D-038 row, then accept."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-12T01:13:56.482668+00:00"
 }
