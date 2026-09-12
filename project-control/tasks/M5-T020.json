@@ -112,7 +112,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 85,
   "risks": [
     "inventing 4326 bytes (deriving from 2263 fixtures) would violate the recorded-official rule - fixtures MUST be live-captured; the endpoint is keyless/public so capture is feasible",
     "outSR=4326 service-side reprojection output shape must be validated, never assumed (coordinate order lng/lat, CRS member semantics in GeoJSON output)",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T13:37:49.369507+00:00",
-  "updated_at": "2026-09-12T14:37:32.092731+00:00",
+  "updated_at": "2026-09-12T14:37:34.616006+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -155,6 +155,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "Producer material landed at 683b6095 (ff): transport module + route + closed contract both copies + 6 live-captured + 2 documented-synthetic fixtures with MANIFEST + registry-draft update. Orchestrator pre-gate PASS: connectors 486, api 417, modularity EXIT 0. Producer disclosures: (1) TS-generator entrypoint not wired (outside allowed_paths; in-suite byte-identity enforced; follow-up recommended), (2) pre-existing 3.11-only contracts test failure (PEP 695, CI 3.12 green - known M2-T015 pattern), (3) minimal bounded fetch no-retry (internal flag-gated), (4) LOT80/LOT96 synthetic negatives per M2-T009 precedent. Pushing for CI."
+    },
+    {
+      "at": "2026-09-12T14:37:33.239568+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "G4 corrections applied (a3d59e03) and DISCHARGED via same-reviewer delta attestations (empirical mutant kills); transitioning through rework for the resubmit identity restamp"
     }
   ]
 }
