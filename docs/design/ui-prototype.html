@@ -265,6 +265,7 @@
       </div>
       <div class="card">
         <span class="pill">DRAFT — NOT LEGAL ADVICE</span>
+        <p class="meta" id="verdict-addr" style="margin:10px 0 0">Sample lot: 120 Broadway, Manhattan</p>
         <div class="hero-num num">41,248 <span style="font-size:.45em;font-weight:700">sq ft</span></div>
         <div class="hero-label">Unused development rights (draft)</div>
         <p class="verdict-sentence">This lot likely supports more floor area. Two items need review before relying on the number.</p>
@@ -494,6 +495,16 @@
   });
   document.getElementById("search-form").addEventListener("submit", function(e){
     e.preventDefault();
+    // Prototype honesty: every search shows the same SAMPLE lot. The real
+    // product resolves the typed address through the city's Geoclient
+    // service; this page deliberately has no connection to it.
+    var typed = document.getElementById("addr").value.trim();
+    var label = document.getElementById("verdict-addr");
+    if (typed) {
+      label.textContent = "You searched “" + typed + "” — this prototype always shows the SAMPLE lot (120 Broadway). The real product resolves your actual address.";
+    } else {
+      label.textContent = "Sample lot: 120 Broadway, Manhattan";
+    }
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     show("resolving");
     setTimeout(function(){ show("verdict"); }, reduce ? 120 : 850);
