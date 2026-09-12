@@ -84,7 +84,12 @@
   .map-card svg{display:block;width:100%;height:100%;min-height:320px}
   .map-chip{position:absolute;top:14px;left:14px;background:var(--card);
     border:1px solid var(--line);border-radius:8px;padding:6px 11px;font-size:12.5px;
-    font-weight:600;box-shadow:0 1px 4px rgba(28,43,69,.08)}
+    font-weight:600;box-shadow:0 1px 4px rgba(28,43,69,.08);color:var(--ink);
+    text-decoration:none}
+  .map-chip:hover{border-color:var(--accent)}
+  a.chip{text-decoration:none}
+  a.chip:hover{border-color:var(--accent);color:var(--accent-deep)}
+  .vintage a,.plain a{color:var(--ink);text-decoration-color:var(--accent)}
   .hero-num{font-size:clamp(40px,7vw,60px);font-weight:800;letter-spacing:-.025em;margin:14px 0 2px}
   .hero-label{font-size:16.5px;color:var(--ink-soft)}
   .verdict-sentence{margin:14px 0 20px;font-size:15.5px;color:var(--ink)}
@@ -197,7 +202,7 @@
     color:var(--ink-soft)}
 </style>
 
-<div class="demo-band"><strong>Design prototype</strong> — sample data only, not a live lookup. Nothing on this page is legal advice.</div>
+<div class="demo-band"><strong>Prototype</strong> · sample data · not a live lookup · not legal advice</div>
 
 <header class="app">
   <div class="wordmark">NYC Buildability<small>ZONING FEASIBILITY · PROTOTYPE</small></div>
@@ -221,12 +226,12 @@
         <input id="addr" type="text" placeholder="120 Broadway, Manhattan" aria-label="Street address">
         <button type="submit" aria-label="Resolve address">→</button>
       </form>
-      <a class="bbl-link" href="#" onclick="return toast('The BBL form stays available in the product — this prototype follows the address path.')">Look up by tax lot (BBL)</a>
+      <a class="bbl-link" href="#" onclick="return toast('In the product. Prototype follows the address path.')">Look up by tax lot (BBL)</a>
     </div>
     <div class="trust">
-      <span><b>Official city data</b> · nothing scraped, nothing guessed</span>
-      <span><b>Every number cited</b> · down to the sentence of law</span>
-      <span><b>Draft</b> · verify with a professional before filing</span>
+      <span><b>Official city data</b></span>
+      <span><b>Every number cited to the law</b></span>
+      <span><b>Draft — verify before filing</b></span>
     </div>
   </section>
 
@@ -235,7 +240,7 @@
     <div class="card resolving-card">
       <div class="spinner" aria-hidden="true"></div>
       <h2 style="font-size:19px">Resolving address…</h2>
-      <p class="meta">Asking the city's Geoclient service for the official record. Nothing is guessed on this side.</p>
+      <p class="meta">NYC Geoclient v2</p>
     </div>
   </section>
 
@@ -243,7 +248,7 @@
   <section id="view-verdict" hidden aria-label="Verdict">
     <div class="verdict-grid">
       <div class="card map-card">
-        <span class="map-chip">Block 47 · Lot 7501</span>
+        <a class="map-chip" href="https://zola.planning.nyc.gov/bbl/1000477501" target="_blank" rel="noopener noreferrer">Block 47 · Lot 7501 · ZoLa ↗</a>
         <svg viewBox="0 0 420 400" role="img" aria-label="Simplified lot map with the subject parcel highlighted">
           <rect width="420" height="400" fill="#F4F1EA"/>
           <g fill="#E7E3D8">
@@ -268,7 +273,7 @@
         <p class="meta" id="verdict-addr" style="margin:10px 0 0">Sample lot: 120 Broadway, Manhattan</p>
         <div class="hero-num num">41,248 <span style="font-size:.45em;font-weight:700">sq ft</span></div>
         <div class="hero-label">Unused development rights (draft)</div>
-        <p class="verdict-sentence">This lot likely supports more floor area. Two items need review before relying on the number.</p>
+        <p class="verdict-sentence">2 review flags open.</p>
         <div class="stats num">
           <div class="stat"><div class="k">Max floor area (draft)</div><div class="v">61,248 sq ft</div></div>
           <div class="stat"><div class="k">Built today (official)</div><div class="v">20,000 sq ft</div></div>
@@ -285,8 +290,11 @@
           <button class="btn primary" data-goto="analysis">Open full analysis</button>
           <button class="btn ghost" data-goto="search">Not my property</button>
         </div>
-        <p class="meta vintage">Data: PLUTO release 26v2 · Geoclient v2 · law text releases matched Jun 2026<br>
-        Reference id <code>ref-7f3a9c04</code> — quote it to support; it finds this exact lookup in the logs.</p>
+        <p class="meta vintage">
+          <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change" target="_blank" rel="noopener noreferrer">PLUTO 26v2</a> ·
+          <a href="https://api-portal.nyc.gov" target="_blank" rel="noopener noreferrer">Geoclient v2</a> ·
+          <a href="https://zoningresolution.planning.nyc.gov" target="_blank" rel="noopener noreferrer">ZR text</a> matched Jun 2026 ·
+          ref <code>ref-7f3a9c04</code></p>
       </div>
     </div>
   </section>
@@ -308,62 +316,60 @@
           <div class="card fact">
             <div class="rule">Residential floor area ratio (FAR)</div>
             <div class="value num">4.0</div>
-            <p class="plain">Applies to this R8B lot under the Quality Housing program.</p>
-            <span class="chip" title="The rule stores a SHA-256 fingerprint of the exact law text it was reviewed against. If the text ever changes, the rule refuses to load instead of computing on drifted law."><span class="dot" aria-hidden="true"></span> ZR 23-152 · law text matched · eff. Jun 2024</span>
+            <p class="plain">R8B, residential.</p>
+            <a class="chip" href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22" target="_blank" rel="noopener noreferrer"><span class="dot" aria-hidden="true"></span> ZR 23-22 ↗ · text matched</a>
           </div>
           <div class="card fact">
             <div class="rule">Maximum zoning floor area</div>
             <div class="value num">61,248 sq ft</div>
-            <p class="plain">Lot area multiplied by the residential FAR — arithmetic, not judgment.</p>
-            <div class="calc num">15,312 sq ft <span style="color:var(--ink-soft)">(lot area, PLUTO 26v2)</span> × 4.0 <span style="color:var(--ink-soft)">(FAR, ZR 23-152)</span> = <span class="num">61,248 sq ft</span></div>
-            <span class="chip"><span class="dot" aria-hidden="true"></span> calculation shown · both inputs cited</span>
+            <div class="calc num">15,312 sq ft <span style="color:var(--ink-soft)">(lot area, PLUTO 26v2)</span> × 4.0 <span style="color:var(--ink-soft)">(FAR, ZR 23-22)</span> = <span class="num">61,248 sq ft</span></div>
+            <span class="chip"><span class="dot" aria-hidden="true"></span> both inputs cited</span>
           </div>
           <div class="card fact">
             <div class="rule">Applicable zoning text</div>
-            <p class="lawtext">“In R8 Districts, the maximum floor area ratio shall be as set forth in the following table, provided that for residential buildings, the provisions of Section 23-154 (Quality Housing buildings) shall apply.”</p>
-            <span class="chip" title="Fingerprint of this exact excerpt matches the captured official source."><span class="dot" aria-hidden="true"></span> ZR 23-152 · law text matched · eff. Jun 2024</span>
+            <p class="lawtext">Excerpt of ZR 23-22 renders here — the table of maximum residential floor area ratios for R6 through R12 Districts. <em>(Illustrative; the product shows the captured text verbatim.)</em></p>
+            <a class="chip" href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22" target="_blank" rel="noopener noreferrer"><span class="dot" aria-hidden="true"></span> ZR 23-22 ↗ · text matched</a>
             <details class="fp">
-              <summary>What does “law text matched” mean?</summary>
-              <p>When this rule was built, the exact sentence of the Zoning Resolution it relies on was captured and sealed with a digital fingerprint. Every time the system starts, it re-checks the seal. If the law text changed — an amendment, a correction, anything — the rule refuses to run until a human re-reviews it. No answer is safer than an answer computed on law that shifted.</p>
+              <summary>“Text matched”</summary>
+              <p>Each rule stores a SHA-256 fingerprint of the law text it was reviewed against. On load, the fingerprint is re-checked; a mismatch stops the rule until a human re-reviews it.</p>
             </details>
           </div>
         </div>
 
         <div class="facts" id="sec-summary" hidden>
           <div class="card fact">
-            <div class="rule">The verdict in one place</div>
+            <div class="rule">Verdict</div>
             <div class="value num">41,248 sq ft unused (draft)</div>
-            <p class="plain">Maximum draft floor area 61,248 sq ft, minus 20,000 sq ft standing today. Two review flags are open — see the checklist on the Verdict screen.</p>
-            <span class="chip"><span class="dot" aria-hidden="true"></span> every input cited on its own card</span>
+            <div class="calc num">61,248 <span style="color:var(--ink-soft)">(max, draft)</span> − 20,000 <span style="color:var(--ink-soft)">(built, PLUTO)</span> = 41,248 sq ft · 2 review flags</div>
+            <span class="chip"><span class="dot" aria-hidden="true"></span> every input cited</span>
           </div>
         </div>
 
         <div class="facts" id="sec-zoning" hidden>
           <div class="card fact">
             <div class="rule">Zoning district</div>
-            <div class="value">R8B</div>
-            <p class="plain">Contextual high-density residential district; commercial overlay C2-4 present along the avenue frontage.</p>
-            <span class="chip"><span class="dot" aria-hidden="true"></span> PLUTO 26v2 · retrieved 2026-09-12</span>
+            <div class="value">R8B · C2-4 overlay</div>
+            <a class="chip" href="https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change" target="_blank" rel="noopener noreferrer"><span class="dot" aria-hidden="true"></span> PLUTO 26v2 ↗ · retrieved 2026-09-12</a>
           </div>
         </div>
 
         <div class="facts" id="sec-height" hidden>
-          <div class="card placeholder-card">Height &amp; setback cards arrive with the next rule families (R5 exists today; R8B height rules are on the roadmap). This section will use the exact same cited-card format — nothing will be shown uncited.</div>
+          <div class="card placeholder-card">R8B height rules: not yet implemented. Values appear only when a cited rule exists.</div>
         </div>
         <div class="facts" id="sec-setbacks" hidden>
-          <div class="card placeholder-card">Setback cards arrive with the height/setback rule family for this district. Until then this section stays honestly empty rather than estimated.</div>
+          <div class="card placeholder-card">R8B setback rules: not yet implemented. Values appear only when a cited rule exists.</div>
         </div>
         <div class="facts" id="sec-units" hidden>
-          <div class="card placeholder-card">Unit-count cards (density factor math) arrive with a later rule increment. No estimate is shown in the meantime.</div>
+          <div class="card placeholder-card">Unit-count rules: not yet implemented. No estimates shown.</div>
         </div>
 
         <div class="facts" id="sec-sources" hidden>
           <div class="card fact">
-            <div class="rule">Where every number came from</div>
-            <p class="plain" style="margin-top:8px">Lot &amp; building facts — <b>NYC Dept. of City Planning PLUTO</b>, release 26v2 · retrieved 2026-09-12<br>
-            Address resolution — <b>NYC Geoclient v2</b> (official) · reference <span class="meta"><code>conn-4b21</code></span><br>
-            Zoning rules — <b>NYC Zoning Resolution</b>, captured text with fingerprints, releases matched Jun 2026</p>
-            <p class="plain" style="color:var(--ink-soft)">This is an official data match, transported exactly as received. It has not been through the platform's qualified legal review — every value stays <b>draft</b> until it has.</p>
+            <div class="rule">Sources</div>
+            <p class="plain" style="margin-top:8px">Lot &amp; building facts — <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change" target="_blank" rel="noopener noreferrer"><b>DCP PLUTO 26v2</b> ↗</a> · retrieved 2026-09-12<br>
+            Address resolution — <a href="https://api-portal.nyc.gov" target="_blank" rel="noopener noreferrer"><b>NYC Geoclient v2</b> ↗</a> · ref <span class="meta"><code>conn-4b21</code></span><br>
+            Zoning rules — <a href="https://zoningresolution.planning.nyc.gov" target="_blank" rel="noopener noreferrer"><b>NYC Zoning Resolution</b> ↗</a> · text matched Jun 2026</p>
+            <p class="plain" style="color:var(--ink-soft)">Draft until qualified legal review.</p>
           </div>
         </div>
       </div>
@@ -372,8 +378,7 @@
 
   <!-- ============ COMPARE ============ -->
   <section id="view-compare" hidden aria-label="Compare lots">
-    <h2 style="font-size:20px;margin-bottom:4px">Screening four candidate lots</h2>
-    <p class="meta" style="margin:0 0 16px">Identical card structure so the eye compares instantly. Statuses describe what was <em>checked</em> — never a compliance verdict.</p>
+    <h2 style="font-size:20px;margin-bottom:16px">Four candidate lots</h2>
     <div class="compare-grid num">
       <div class="card lot-card" data-goto="verdict" role="button" tabindex="0">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="44,14 76,10 82,52 50,56" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
@@ -384,7 +389,7 @@
         <div class="mini"><span>Review flags</span><b>2</b></div>
         <div class="status review">Computed · 2 review flags</div>
       </div>
-      <div class="card lot-card best" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+      <div class="card lot-card best" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="30,40 52,12 86,18 80,58 36,60" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">345 East 14th Street</div><div class="boro">MANHATTAN</div>
         <div class="big">112,400 sq ft</div><div class="biglabel">unused rights (draft)</div>
@@ -393,7 +398,7 @@
         <div class="mini"><span>Review flags</span><b>0</b></div>
         <div class="status clear">Computed · 0 flags in checked items</div>
       </div>
-      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="46,16 78,20 74,54 42,50" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">987 Atlantic Avenue</div><div class="boro">BROOKLYN</div>
         <div class="big">18,750 sq ft</div><div class="biglabel">unused rights (draft)</div>
@@ -402,7 +407,7 @@
         <div class="mini"><span>Review flags</span><b>1</b></div>
         <div class="status review">Computed · 1 review flag</div>
       </div>
-      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired in this prototype.">
+      <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="36,20 84,14 88,44 56,60 34,48" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">2501 Jerome Avenue</div><div class="boro">BRONX</div>
         <div class="big">9,800 sq ft</div><div class="biglabel">unused rights (draft)</div>
@@ -433,11 +438,11 @@
           <tbody>
             <tr><td>Zoning district</td><td class="v">R8B</td><td class="c">PLUTO 26v2</td></tr>
             <tr><td>Lot area (tax lot)</td><td class="v">15,312 sq ft</td><td class="c">PLUTO 26v2</td></tr>
-            <tr><td>Residential FAR</td><td class="v">4.0</td><td class="c">ZR 23-152 · matched Jun 2024</td></tr>
+            <tr><td>Residential FAR</td><td class="v">4.0</td><td class="c">ZR 23-22 · text matched</td></tr>
             <tr><td>Max floor area (draft)</td><td class="v">61,248 sq ft</td><td class="c">calc: lot × FAR</td></tr>
             <tr><td>Built today (official)</td><td class="v">20,000 sq ft</td><td class="c">PLUTO 26v2</td></tr>
             <tr><td>Unused rights (draft)</td><td class="v">41,248 sq ft</td><td class="c">calc: max − built</td></tr>
-            <tr><td>Max building height (draft)</td><td class="v">65 ft</td><td class="c">ZR 23-633 · matched Jun 2024</td></tr>
+            <tr><td>Max building height (draft)</td><td class="v">65 ft</td><td class="c">ZR Art. II Ch. 3 (sample)</td></tr>
           </tbody>
         </table>
         <h3>What could change this</h3>
@@ -462,7 +467,7 @@
 </main>
 
 <footer class="legal">
-  Design prototype for NYC Buildability. All values are sample data with consistent arithmetic (61,248 − 20,000 = 41,248); no live city lookup occurs on this page. In the product, every rule is DRAFT until qualified legal review, and nothing is ever labeled “verified” or “compliant.”
+  Prototype · sample data (61,248 − 20,000 = 41,248) · no live lookup · all rules DRAFT until qualified legal review.
 </footer>
 
 <div class="toast" id="toast" role="status"></div>
@@ -501,7 +506,7 @@
     var typed = document.getElementById("addr").value.trim();
     var label = document.getElementById("verdict-addr");
     if (typed) {
-      label.textContent = "You searched “" + typed + "” — this prototype always shows the SAMPLE lot (120 Broadway). The real product resolves your actual address.";
+      label.textContent = "Searched: “" + typed + "” · showing sample lot (120 Broadway)";
     } else {
       label.textContent = "Sample lot: 120 Broadway, Manhattan";
     }
