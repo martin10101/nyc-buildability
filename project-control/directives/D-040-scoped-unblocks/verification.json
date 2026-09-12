@@ -36,6 +36,37 @@
     }
    ],
    "note": "Independent DCV verification of M0-T156 (D-040-R003 registry-digest normalization). All D-040-R003 obligations reproduced from primary repository evidence at HEAD (git diff, digest recomputation, validator EXIT 0, gh-corroborated control-plane job success, reran adversarial tests). First real task_verification row in D-040 (per the authority_note: tasks contracted under D-040 verify through their own DCV rows). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at the verified HEAD 16a2261e; re-stamp to git rev-parse HEAD at accept if HEAD advances (identity 73d2a750 unchanged while the 8 allowed_paths are unchanged since 012ba064)."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T019",
+   "applicable_requirement_ids": [
+    "D-040-R002"
+   ],
+   "reviewed_sha": "a8acf33b21a1491556a7354f102ac2d865e76dd6",
+   "reviewed_manifest_sha256": "bf156d465d6a7c1e39f1b4cd19b5ad8baf7a5bd804081b6781a34eed29cfe110",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T13:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R002",
+     "state": "PASS",
+     "evidence": [
+      "CLAUSE 1 (unify to canonical name): apps/web/src/lib/rule-evaluation.ts@a8acf33b :83 const INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = \"INTERNAL_RULE_EVAL_ENABLED\" and :88 the flag read process.env[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR] - byte-identical name to services/api/app/config.py:28 and design-spec section 6 (docs/design/address-entry-confirm-design-spec.md:118). Verifier repo-wide grep: INTERNAL_RULE_EVAL_UI survives in apps/web ONLY at rule-evaluation.test.ts:87/89/90 (inert-guard test literals; never an active read); NEXT_PUBLIC_*RULE_EVAL = no matches (server-side-only posture preserved).",
+      "CLAUSE 1 (semantics + second factor preserved): git diff b119edf1..b30f709c -- rule-evaluation.ts = only the env-var literal + doc comments; TRUE_TOKENS={1,true,yes,on}, .trim().toLowerCase(), the typeof-string absent/empty/unknown->false guard, and ruleEvaluationSurfaceEnabled's env-AND-?ruleeval=on two-factor gate (array-first coalescing) unchanged. New non-tautological guard rule-evaluation.test.ts:89-101 pins the retired name INTERNAL_RULE_EVAL_UI as inert (canonical deleted, only OLD set -> both helpers false); KEY literal updated :57; no assertion weakened/deleted.",
+      "CLAUSE 2 (owner return item): producer report M5-T019-producer-report.md:168-183 OWNER RETURN NOTE names the exact Render dashboard rename (INTERNAL_RULE_EVAL_UI -> INTERNAL_RULE_EVAL_ENABLED; API service unchanged). Verifier-confirmed facts: render.yaml carries neither flag (nycdf-web web-service block WITHHELD :156-168), no .github/** workflow sets either, both .env.example files omit both - no in-repo deployment file needs edits.",
+      "required_harness: task packet cites D-040:D-040-R002 (tasks/M5-T019.json:98-105); evaluate_task_refs ok=true, applicable==cited==[D-040-R002]. required_evidence: gates G0/G1/G4/G5 all PASS (reports/M5-T019-{G0,G1,G4,G5}.md; reviewers code-reviewer/qa-engineer/security-reviewer, all != producer frontend-engineer); CI run 34694372457@634f1060 web+web-e2e SUCCESS, only red owner-gated web-dependency-security (D-040-R004 preserved).",
+      "FROZEN IDENTITY: git log b30f709c..a8acf33b over the 7 allowed_paths = empty; all 5 intervening commits are project-control-only; git diff b30f709c..634f1060 -- apps/web empty (CI green binds to the frozen apps/web identity). Computed material identity bf156d46...cfe110 (pc._task_git_identity, reviewed_sha=None -> HEAD a8acf33b) == submit-record content_manifest_sha256 (reports/M5-T019.json:8).",
+      "INTEGRITY: python tools/validate_directive_compliance.py --check EXIT 0; test_project_control.py EXIT 0 (23 groups); test_directive_reminder.py EXIT 0 (12 tests). Source digest f9800941... = manifest sources[0]; applicability append audit-logged (27d6d1b8->a3fc9d01). Negative controls: (a) stale reviewed_sha fails closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) row injected in-memory -> reasons=[] deferrals=[]."
+     ],
+     "verified_at": "2026-09-12T13:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a8acf33b21a1491556a7354f102ac2d865e76dd6"
+    }
+   ],
+   "note": "Independent DCV of M5-T019 (D-040-R002 web flag unification: web adopts canonical INTERNAL_RULE_EVAL_ENABLED). Both clauses reproduced from primary evidence at HEAD a8acf33b (source read + repo-wide grep of the exclusive rename, config.py:28 name match, design-spec section 6, render.yaml/.github/.env.example verified-absent, git frozen-identity diff over the 7 allowed_paths, validator EXIT 0, in-memory accept dry-run reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (frontend-engineer). reviewed_sha stamped at verified HEAD a8acf33b; it may be mechanically re-stamped to accept-time HEAD while the task's allowed_paths diff vs its frozen material (b30f709c, base b119edf1) stays empty; computed material identity bf156d465d6a7c1e39f1b4cd19b5ad8baf7a5bd804081b6781a34eed29cfe110 is unchanged while those allowed_paths are unchanged."
   }
  ]
 }
