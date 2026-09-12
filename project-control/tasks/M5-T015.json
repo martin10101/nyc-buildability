@@ -118,7 +118,7 @@
     "visual-quality-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 85,
   "risks": [
     "The platform choosing for the user: S3's no-preselection + disabled-until-choice assertions are the control; any default selection is a FAIL.",
     "Reflected text reaching an attribute context: S6's hostile fixture + source-scan; the ZoLa link (the one URL context) is deliberately NOT in this packet.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T05:07:01.079318+00:00",
-  "updated_at": "2026-09-12T06:26:38.332460+00:00",
+  "updated_at": "2026-09-12T06:27:38.467545+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
@@ -168,6 +168,13 @@
       "percent": 85,
       "status": "awaiting_gate",
       "message": "Gate wave complete at reviewed head 9f679ff7 (all four reports preserved verbatim, commit 3b96a2cd): G1 PASS (code-reviewer; 4 Minor advisories - D1 rawStreetName containment wording also covers the controlled street-input value which G5 judged a safe property-assignment context, D2 raw-vs-bounded re-query undiscriminated by fixtures, D3 producer-report stats wrong 725-not-687 lines / 31-not-20 cases, D4 CI-green must stay qualified by the two owner-gated reds). G3 PASS WITH REQUIRED CORRECTIONS (visual-quality-reviewer) - F1 BLOCKING: heading-order inversion on the flag-on page (address surface h2 precedes the page's only h1 at PropertyLookup 'Property lookup'); F2 Minor suggestion-pick focus drop to body during re-resolution; F3 Minor invalid_input card lacks the spec's points-at-the-field recovery affordance; F4/F5 advisory. G4 PASS (qa-engineer; 6 LOW/informational). G5 PASS (security-reviewer; 2 Minor - flag-name divergence noted for Packet 2, optional hostile-resolved fixture). Per gate-verdict semantics the G3 corrections are BLOCKING for acceptance: gates will be recorded ONLY after the bounded correction commit, CI green, and delta re-review attestations from the same reviewers at the post-correction head. Planned bounded correction (one producer commit, all inside allowed_paths): F1 heading fix (address intro heading to h1 when mounted; PropertyLookup 'Property lookup' demoted to h2 ONLY when ruleEvalEnabled so flag-off DOM stays byte-identical), F2 setRetryFocus(true) in onPickSuggestion, F3 edit-address affordance on the invalid_input card, G1-D2 discriminating long-suggestion fixture (raw!=bounded at the fetch seam), producer-report corrections appended as a new section (D1 wording, D3 stats)."
+    },
+    {
+      "at": "2026-09-12T06:27:37.093372+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "rework",
+      "message": "Formal rework cycle for the wave's required corrections (already applied in 9edfbc73 and delta-attested PASS by all four reviewers; CI 34677835271 green at that head): G3 F1 heading order, F2 pick-focus, F3 invalid_input affordance, G1 D2 discriminating fixture, G1 D1/D3 report corrections. Entering rework solely to restamp the submit-time content identity at the corrected content, then resubmitting immediately."
     }
   ]
 }
