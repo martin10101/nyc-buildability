@@ -55,7 +55,7 @@
     "human-journey-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 90,
+  "progress_percent": 95,
   "risks": [
     "TRANSCRIPTION DRIFT is the primary risk: ~30 districts of hand-copied decimals. Mitigated by AS-1 requiring tests to load the snapshot rather than restate the value.",
     "COPYING THE KNOWN DEFECT FORWARD: r5_residential_far.rule.json carries the footnote-1 0.60 cap on the R5 family, where the source does not impose it (see the zr-23-21 recapture commit 17e8eb78). Reuse its STRUCTURE, not that exception. AS-4 exists to catch this.",
@@ -63,7 +63,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-11T03:51:47.534578+00:00",
-  "updated_at": "2026-09-12T01:42:42.039353+00:00",
+  "updated_at": "2026-09-12T01:58:25.468399+00:00",
   "directive_refs": [
     {
       "directive_id": "D-038",
