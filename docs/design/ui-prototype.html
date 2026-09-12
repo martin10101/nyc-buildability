@@ -202,7 +202,7 @@
     color:var(--ink-soft)}
 </style>
 
-<div class="demo-band"><strong>Prototype</strong> · sample data · not a live lookup · not legal advice</div>
+<div class="demo-band"><strong>Prototype</strong> · sample data</div>
 
 <header class="app">
   <div class="wordmark">NYC Buildability<small>ZONING FEASIBILITY · PROTOTYPE</small></div>
@@ -229,9 +229,7 @@
       <a class="bbl-link" href="#" onclick="return toast('In the product. Prototype follows the address path.')">Look up by tax lot (BBL)</a>
     </div>
     <div class="trust">
-      <span><b>Official city data</b></span>
-      <span><b>Every number cited to the law</b></span>
-      <span><b>Draft — verify before filing</b></span>
+      <span>Sources: <b>DCP PLUTO</b> · <b>Geoclient</b> · <b>NYC Zoning Resolution</b></span>
     </div>
   </section>
 
@@ -269,15 +267,15 @@
         </svg>
       </div>
       <div class="card">
-        <span class="pill">DRAFT — NOT LEGAL ADVICE</span>
+        <span class="pill">PRELIMINARY</span>
         <p class="meta" id="verdict-addr" style="margin:10px 0 0">Sample lot: 120 Broadway, Manhattan</p>
         <div class="hero-num num">41,248 <span style="font-size:.45em;font-weight:700">sq ft</span></div>
-        <div class="hero-label">Unused development rights (draft)</div>
+        <div class="hero-label">Unused development rights — preliminary</div>
         <p class="verdict-sentence">2 review flags open.</p>
         <div class="stats num">
-          <div class="stat"><div class="k">Max floor area (draft)</div><div class="v">61,248 sq ft</div></div>
-          <div class="stat"><div class="k">Built today (official)</div><div class="v">20,000 sq ft</div></div>
-          <div class="stat"><div class="k">Max height (draft)</div><div class="v">65 ft</div></div>
+          <div class="stat"><div class="k">Max floor area</div><div class="v">61,248 sq ft</div></div>
+          <div class="stat"><div class="k">Built today</div><div class="v">20,000 sq ft</div></div>
+          <div class="stat"><div class="k">Max height</div><div class="v">65 ft</div></div>
         </div>
         <h2 class="check-title">What could change this</h2>
         <ul class="checklist">
@@ -292,7 +290,7 @@
         </div>
         <p class="meta vintage">
           <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change" target="_blank" rel="noopener noreferrer">PLUTO 26v2</a> ·
-          <a href="https://api-portal.nyc.gov" target="_blank" rel="noopener noreferrer">Geoclient v2</a> ·
+          Geoclient v2 ·
           <a href="https://zoningresolution.planning.nyc.gov" target="_blank" rel="noopener noreferrer">ZR text</a> matched Jun 2026 ·
           ref <code>ref-7f3a9c04</code></p>
       </div>
@@ -327,11 +325,11 @@
           </div>
           <div class="card fact">
             <div class="rule">Applicable zoning text</div>
-            <p class="lawtext">Excerpt of ZR 23-22 renders here — the table of maximum residential floor area ratios for R6 through R12 Districts. <em>(Illustrative; the product shows the captured text verbatim.)</em></p>
+            <p class="lawtext">ZR 23-22 — the FAR table for R6 through R12 Districts — appears here as written. <em>(Placeholder in this prototype.)</em></p>
             <a class="chip" href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22" target="_blank" rel="noopener noreferrer"><span class="dot" aria-hidden="true"></span> ZR 23-22 ↗ · text matched</a>
             <details class="fp">
               <summary>“Text matched”</summary>
-              <p>Each rule stores a SHA-256 fingerprint of the law text it was reviewed against. On load, the fingerprint is re-checked; a mismatch stops the rule until a human re-reviews it.</p>
+              <p>Each rule stores a SHA-256 fingerprint of the law text it was reviewed against. On load the fingerprint is re-checked; a mismatch stops the rule until it is re-reviewed.</p>
             </details>
           </div>
         </div>
@@ -340,7 +338,7 @@
           <div class="card fact">
             <div class="rule">Verdict</div>
             <div class="value num">41,248 sq ft unused (draft)</div>
-            <div class="calc num">61,248 <span style="color:var(--ink-soft)">(max, draft)</span> − 20,000 <span style="color:var(--ink-soft)">(built, PLUTO)</span> = 41,248 sq ft · 2 review flags</div>
+            <div class="calc num">61,248 <span style="color:var(--ink-soft)">(max)</span> − 20,000 <span style="color:var(--ink-soft)">(built, PLUTO)</span> = 41,248 sq ft · 2 review flags</div>
             <span class="chip"><span class="dot" aria-hidden="true"></span> every input cited</span>
           </div>
         </div>
@@ -367,9 +365,9 @@
           <div class="card fact">
             <div class="rule">Sources</div>
             <p class="plain" style="margin-top:8px">Lot &amp; building facts — <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change" target="_blank" rel="noopener noreferrer"><b>DCP PLUTO 26v2</b> ↗</a> · retrieved 2026-09-12<br>
-            Address resolution — <a href="https://api-portal.nyc.gov" target="_blank" rel="noopener noreferrer"><b>NYC Geoclient v2</b> ↗</a> · ref <span class="meta"><code>conn-4b21</code></span><br>
+            Address resolution — <b>NYC Geoclient v2</b> · ref <span class="meta"><code>conn-4b21</code></span><br>
             Zoning rules — <a href="https://zoningresolution.planning.nyc.gov" target="_blank" rel="noopener noreferrer"><b>NYC Zoning Resolution</b> ↗</a> · text matched Jun 2026</p>
-            <p class="plain" style="color:var(--ink-soft)">Draft until qualified legal review.</p>
+            <p class="plain" style="color:var(--ink-soft)">Preliminary. Verify prior to filing.</p>
           </div>
         </div>
       </div>
@@ -383,7 +381,7 @@
       <div class="card lot-card" data-goto="verdict" role="button" tabindex="0">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="44,14 76,10 82,52 50,56" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">120 Broadway</div><div class="boro">MANHATTAN</div>
-        <div class="big">41,248 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="big">41,248 sq ft</div><div class="biglabel">unused rights — preliminary</div>
         <div class="mini"><span>Max floor area</span><b>61,248</b></div>
         <div class="mini"><span>Built today</span><b>20,000</b></div>
         <div class="mini"><span>Review flags</span><b>2</b></div>
@@ -392,16 +390,16 @@
       <div class="card lot-card best" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="30,40 52,12 86,18 80,58 36,60" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">345 East 14th Street</div><div class="boro">MANHATTAN</div>
-        <div class="big">112,400 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="big">112,400 sq ft</div><div class="biglabel">unused rights — preliminary</div>
         <div class="mini"><span>Max floor area</span><b>180,000</b></div>
         <div class="mini"><span>Built today</span><b>67,600</b></div>
         <div class="mini"><span>Review flags</span><b>0</b></div>
-        <div class="status clear">Computed · 0 flags in checked items</div>
+        <div class="status clear">Computed · 0 flags</div>
       </div>
       <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="46,16 78,20 74,54 42,50" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">987 Atlantic Avenue</div><div class="boro">BROOKLYN</div>
-        <div class="big">18,750 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="big">18,750 sq ft</div><div class="biglabel">unused rights — preliminary</div>
         <div class="mini"><span>Max floor area</span><b>38,200</b></div>
         <div class="mini"><span>Built today</span><b>19,450</b></div>
         <div class="mini"><span>Review flags</span><b>1</b></div>
@@ -410,7 +408,7 @@
       <div class="card lot-card" role="button" tabindex="0" data-toast="Sample card — only 120 Broadway is wired.">
         <div class="lot-thumb"><svg width="120" height="70" viewBox="0 0 120 70" aria-hidden="true"><rect width="120" height="70" fill="#F4F1EA"/><polygon points="36,20 84,14 88,44 56,60 34,48" fill="#F2DFB4" stroke="#C57F17" stroke-width="2.5"/></svg></div>
         <div class="addr">2501 Jerome Avenue</div><div class="boro">BRONX</div>
-        <div class="big">9,800 sq ft</div><div class="biglabel">unused rights (draft)</div>
+        <div class="big">9,800 sq ft</div><div class="biglabel">unused rights — preliminary</div>
         <div class="mini"><span>Max floor area</span><b>28,300</b></div>
         <div class="mini"><span>Built today</span><b>18,500</b></div>
         <div class="mini"><span>Unknowns</span><b>1</b></div>
@@ -425,13 +423,13 @@
       <div class="sheet">
         <div class="rhead">
           <h2>Zoning Feasibility Brief</h2>
-          <span class="draftbox">DRAFT</span>
+          <span class="draftbox">PRELIMINARY</span>
         </div>
         <p class="addr">120 Broadway, Manhattan · Block 47, Lot 7501</p>
         <p class="sub">NEW YORK, NY · PREPARED 2026-09-12</p>
         <div class="verdict-box num">
           <span class="n">41,248 sq ft</span>
-          <span class="l">Unused development rights (draft)</span>
+          <span class="l">Unused development rights — preliminary</span>
         </div>
         <table class="rt num">
           <thead><tr><th>Item</th><th>Value</th><th>Source / citation</th></tr></thead>
@@ -439,10 +437,10 @@
             <tr><td>Zoning district</td><td class="v">R8B</td><td class="c">PLUTO 26v2</td></tr>
             <tr><td>Lot area (tax lot)</td><td class="v">15,312 sq ft</td><td class="c">PLUTO 26v2</td></tr>
             <tr><td>Residential FAR</td><td class="v">4.0</td><td class="c">ZR 23-22 · text matched</td></tr>
-            <tr><td>Max floor area (draft)</td><td class="v">61,248 sq ft</td><td class="c">calc: lot × FAR</td></tr>
-            <tr><td>Built today (official)</td><td class="v">20,000 sq ft</td><td class="c">PLUTO 26v2</td></tr>
-            <tr><td>Unused rights (draft)</td><td class="v">41,248 sq ft</td><td class="c">calc: max − built</td></tr>
-            <tr><td>Max building height (draft)</td><td class="v">65 ft</td><td class="c">ZR Art. II Ch. 3 (sample)</td></tr>
+            <tr><td>Max floor area</td><td class="v">61,248 sq ft</td><td class="c">calc: lot × FAR</td></tr>
+            <tr><td>Built today</td><td class="v">20,000 sq ft</td><td class="c">PLUTO 26v2</td></tr>
+            <tr><td>Unused development rights</td><td class="v">41,248 sq ft</td><td class="c">calc: max − built</td></tr>
+            <tr><td>Max building height</td><td class="v">65 ft</td><td class="c">ZR Art. II Ch. 3 (sample)</td></tr>
           </tbody>
         </table>
         <h3>What could change this</h3>
@@ -453,7 +451,7 @@
           <li><span class="flag review">REVIEW</span> Existing building near limit — professional review flagged</li>
         </ul>
         <div class="rfoot">
-          <span>Every value cites its source. Verify with a licensed professional before filing.</span>
+          <span>Preliminary zoning analysis. Subject to verification and DOB review.</span>
           <span>ref-7f3a9c04</span>
         </div>
       </div>
@@ -467,7 +465,7 @@
 </main>
 
 <footer class="legal">
-  Prototype · sample data (61,248 − 20,000 = 41,248) · no live lookup · all rules DRAFT until qualified legal review.
+  Prototype with sample data (61,248 − 20,000 = 41,248). Preliminary analysis — verify prior to filing.
 </footer>
 
 <div class="toast" id="toast" role="status"></div>
