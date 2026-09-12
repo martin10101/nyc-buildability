@@ -1,0 +1,70 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "lot_outline",
+  "bbl": "1008350041",
+  "outcome": "single_lot",
+  "display_only": true,
+  "crs": "EPSG:4326",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -73.9867337745617,
+          40.7485748733075
+        ],
+        [
+          -73.9865562683706,
+          40.7488194320578
+        ],
+        [
+          -73.9863320054677,
+          40.7487258826194
+        ],
+        [
+          -73.9861464515882,
+          40.7489815223141
+        ],
+        [
+          -73.9847798066885,
+          40.7484114274971
+        ],
+        [
+          -73.9851428982454,
+          40.747911246297
+        ],
+        [
+          -73.9867337745617,
+          40.7485748733075
+        ]
+      ]
+    ]
+  },
+  "feature_count": 1,
+  "review_required": false,
+  "no_outline_reason": null,
+  "condo_classification": {
+    "classification": "standard_lot",
+    "condo_no": null,
+    "note": null
+  },
+  "lot_identity": {
+    "boro_code": 1,
+    "borough": "MN",
+    "block": 835,
+    "lot": 41,
+    "condo_no": null
+  },
+  "source": {
+    "source_id": "nyc-dcp-mappluto-arcgis",
+    "service_root": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services",
+    "layer": "MAPPLUTO",
+    "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-12T13:45:07Z"
+  },
+  "accuracy_note": "This is a DISPLAY-ONLY outline. The official NYC DCP source states plus-or-minus 20 ft horizontal accuracy, so the outline is approximate. No area, dimension, or other measurement is derived from these EPSG:4326 coordinates; authoritative measurement uses the EPSG:2263 (US survey feet) path only.",
+  "attribution": "NYC Department of City Planning (DCP), MapPLUTO",
+  "disclaimer": "Provided by NYC DCP for informational purposes only; DCP does not warranty completeness, accuracy, content, or fitness for any particular purpose or use. This is not a legal boundary survey.",
+  "notes": []
+}

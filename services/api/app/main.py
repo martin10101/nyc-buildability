@@ -30,6 +30,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.address_resolution import router as address_resolution_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
+from app.api.v1.lot_geometry import router as lot_geometry_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
@@ -150,6 +151,16 @@ def create_app() -> FastAPI:
     # out of the packet's scope, so it reuses that flag and adds no new one);
     # absent/unknown -> disabled (fail safe). See app.api.v1.address_resolution.
     application.include_router(address_resolution_v1_router)
+    # Internal, feature-flag-gated DISPLAY-ONLY LOT-GEOMETRY endpoint (task
+    # M5-T020, D-040-R001). SAME posture as the routes above - ALWAYS registered
+    # but unreachable (generic 404, no OpenAPI entry) unless the EXISTING
+    # INTERNAL_RULE_EVAL_ENABLED flag is an explicit true token (the lot outline
+    # is part of the same internal property flow and app.config is out of the
+    # packet's scope, so it reuses that flag and adds no new one); absent/unknown
+    # -> disabled (fail safe). Serves an approximate EPSG:4326 GeoJSON outline for
+    # the address confirm card; measurement stays owned by the EPSG:2263 path. See
+    # app.api.v1.lot_geometry.
+    application.include_router(lot_geometry_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:

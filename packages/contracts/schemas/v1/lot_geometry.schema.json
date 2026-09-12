@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/lot_geometry.schema.json",
+  "title": "Lot Outline (display-only EPSG:4326)",
+  "description": "v1 CLOSED contract for a DISPLAY-ONLY tax-lot outline (task M5-T020, D-040-R001). Deterministic transport of the official NYC DCP MapPLUTO parcel geometry, reprojected SERVER-SIDE by the ArcGIS FeatureServer to EPSG:4326 (WGS84 lng/lat GeoJSON, requested via outSR=4326) so a web map (MapLibre GL JS) can draw the outline. It is TRANSPORT FOR DISPLAY ONLY: display_only is always true, crs is always EPSG:4326, and NO area/dimension/measurement is derived from these degree coordinates anywhere - the authoritative EPSG:2263 (US survey feet) path (services/api/app/connectors/mappluto_geometry_arcgis.py) remains the sole owner of measurement, canonical geometry digests, and legal provenance and is NEVER edited or re-routed by this contract. The four typed outcomes are surfaced HONESTLY: single_lot (one feature, a Polygon or MultiPolygon outline); no_outline (zero features - a condominium UNIT lot 1001-6999 has no polygon of its own, or the BBL matched no lot - never a fabricated shape); multiple_features (more than one feature for one BBL - REVIEW REQUIRED, never a silent first-pick, geometry withheld); invalid_geometry (a feature whose geometry is null/empty/non-polygon - a typed outcome, never a 500). Every outcome carries the +/-20 ft source-accuracy note, NYC DCP attribution, the informational-purposes-only disclaimer, and the source provenance (source_id, endpoint URL, per-feature dataset Version, retrieval timestamp). coordinates are GeoJSON [longitude, latitude] pairs exactly as the official service emits them (verbatim, never re-rounded).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "document_kind",
+    "bbl",
+    "outcome",
+    "display_only",
+    "crs",
+    "geometry",
+    "feature_count",
+    "review_required",
+    "no_outline_reason",
+    "condo_classification",
+    "lot_identity",
+    "source",
+    "accuracy_note",
+    "attribution",
+    "disclaimer",
+    "notes"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published lot_geometry contract versions. 1.0.0 = M5-T020 initial display-only outline shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "document_kind": {
+      "type": "string",
+      "enum": ["lot_outline"],
+      "description": "Constant document discriminator."
+    },
+    "bbl": {
+      "$ref": "common.schema.json#/$defs/bbl",
+      "description": "The requested lot, echoed in canonical 10-digit form (derived ONLY from normalize_bbl; never interpolated from raw caller input)."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["single_lot", "no_outline", "multiple_features", "invalid_geometry"],
+      "description": "The typed outline outcome. single_lot = one feature with a valid Polygon/MultiPolygon outline. no_outline = zero features (condo unit lot with no polygon, or no lot for this BBL); see no_outline_reason. multiple_features = more than one feature for one BBL (REVIEW REQUIRED; geometry withheld, never a silent first-pick). invalid_geometry = a feature whose geometry is null/empty/non-polygon (typed, never an error)."
+    },
+    "display_only": {
+      "type": "boolean",
+      "enum": [true],
+      "description": "Always true. This outline is transport for DISPLAY ONLY; no measurement is derived from its EPSG:4326 coordinates. Measurement is owned solely by the authoritative EPSG:2263 path."
+    },
+    "crs": {
+      "type": "string",
+      "enum": ["EPSG:4326"],
+      "description": "The coordinate reference system of geometry.coordinates: always EPSG:4326 (WGS84 longitude/latitude degrees), obtained by the official service's outSR=4326 server-side reprojection and asserted against the response CRS member before any coordinate is transported."
+    },
+    "geometry": {
+      "description": "The GeoJSON outline geometry in EPSG:4326 lng/lat, present ONLY on a single_lot outcome; null on every other outcome (no fabricated or first-pick geometry ever travels). Coordinates are verbatim from the official service (never re-rounded here).",
+      "$ref": "#/$defs/outline_geometry"
+    },
+    "feature_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of official features the bounded query returned for this BBL (0 for no_outline, 1 for single_lot/invalid_geometry, >1 for multiple_features)."
+    },
+    "review_required": {
+      "type": "boolean",
+      "description": "True when a qualified human must resolve the outcome before it can be trusted (multiple_features). Deterministic, never an AI decision."
+    },
+    "no_outline_reason": {
+      "description": "On a no_outline outcome, the typed reason: condo_unit_lot_no_polygon (a condominium unit lot 1001-6999 carries no MapPLUTO polygon - resolve the billing BBL) or no_feature_for_bbl (the official service returned zero features for this BBL). null on every other outcome.",
+      "anyOf": [
+        { "type": "string", "enum": ["condo_unit_lot_no_polygon", "no_feature_for_bbl"] },
+        { "type": "null" }
+      ]
+    },
+    "condo_classification": {
+      "$ref": "#/$defs/condo_classification"
+    },
+    "lot_identity": {
+      "description": "Borough/block/lot identity transported verbatim from the returned feature's attributes on a single_lot outcome; null otherwise. Display context only; never used for measurement.",
+      "anyOf": [
+        { "$ref": "#/$defs/lot_identity" },
+        { "type": "null" }
+      ]
+    },
+    "source": {
+      "$ref": "#/$defs/source_provenance"
+    },
+    "accuracy_note": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The source's own +/-20 ft horizontal-accuracy statement plus the display-only boundary note (an outline is approximate; no measurement is derived from these coordinates)."
+    },
+    "attribution": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "NYC Department of City Planning (DCP) MapPLUTO attribution string, expected on any map display of this outline."
+    },
+    "disclaimer": {
+      "$ref": "common.schema.json#/$defs/non_empty_string",
+      "description": "The permanent DCP informational-purposes-only disclaimer; not a legal boundary survey."
+    },
+    "notes": {
+      "type": "array",
+      "description": "Human-readable notes for the outcome (condo semantics, review cause, invalid-geometry reason). Never a substitute for the machine-readable fields above.",
+      "items": { "type": "string" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid contract fixture (packages/contracts README convention). The builder NEVER emits this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false, and valid fixtures - which omit it - stay clean."
+    }
+  },
+  "$defs": {
+    "position": {
+      "type": "array",
+      "description": "A GeoJSON position: [longitude, latitude] in EPSG:4326 degrees, exactly two ordinates (this service emits 2D coordinates).",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "number" }
+    },
+    "linear_ring": {
+      "type": "array",
+      "description": "A closed GeoJSON linear ring (first and last positions equal): at least four positions.",
+      "minItems": 4,
+      "items": { "$ref": "#/$defs/position" }
+    },
+    "polygon_geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "description": "A GeoJSON Polygon: the first ring is the exterior boundary, any further rings are holes.",
+      "properties": {
+        "type": { "type": "string", "enum": ["Polygon"] },
+        "coordinates": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/linear_ring" }
+        }
+      }
+    },
+    "multipolygon_geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "coordinates"],
+      "description": "A GeoJSON MultiPolygon: an array of polygons (each an array of rings). Shoreline-clipped lots produce true multipolygons.",
+      "properties": {
+        "type": { "type": "string", "enum": ["MultiPolygon"] },
+        "coordinates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/linear_ring" }
+          }
+        }
+      }
+    },
+    "outline_geometry": {
+      "description": "A GeoJSON Polygon or MultiPolygon, or null when no outline is surfaced.",
+      "anyOf": [
+        { "$ref": "#/$defs/polygon_geometry" },
+        { "$ref": "#/$defs/multipolygon_geometry" },
+        { "type": "null" }
+      ]
+    },
+    "condo_classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "condo_no", "note"],
+      "description": "Condominium semantics mirrored VERBATIM from the authoritative connector's _condo_classification (research section 2.5): billing lots 7501-7599 carry the merged complex polygon; unit lots 1001-6999 carry no polygon of their own.",
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["standard_lot", "condo_billing_lot", "condo_unit_lot_query"]
+        },
+        "condo_no": {
+          "anyOf": [
+            { "type": "integer" },
+            { "type": "null" }
+          ]
+        },
+        "note": {
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "lot_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boro_code", "borough", "block", "lot", "condo_no"],
+      "description": "Borough/block/lot identity transported verbatim from the returned feature's attributes.",
+      "properties": {
+        "boro_code": {
+          "anyOf": [ { "type": "integer" }, { "type": "null" } ]
+        },
+        "borough": {
+          "anyOf": [ { "type": "string" }, { "type": "null" } ]
+        },
+        "block": {
+          "anyOf": [ { "type": "integer" }, { "type": "null" } ]
+        },
+        "lot": {
+          "anyOf": [ { "type": "integer" }, { "type": "null" } ]
+        },
+        "condo_no": {
+          "anyOf": [ { "type": "integer" }, { "type": "null" } ]
+        }
+      }
+    },
+    "source_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "service_root",
+        "layer",
+        "endpoint",
+        "dataset_version",
+        "retrieved_at"
+      ],
+      "description": "Provenance of the transported outline: the official DCP_GIS ArcGIS MapPLUTO feature service, the exact bounded query URL, the per-feature dataset release Version, and the retrieval timestamp.",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "enum": ["nyc-dcp-mappluto-arcgis"]
+        },
+        "service_root": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "layer": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "endpoint": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The exact bounded FeatureServer query URL (f=geojson&outSR=4326) this outline was transported from."
+        },
+        "dataset_version": {
+          "description": "The per-feature MapPLUTO release Version string (e.g. '26v2'); null when no feature was returned.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "retrieved_at": {
+          "$ref": "common.schema.json#/$defs/date_time",
+          "description": "RFC 3339 retrieval timestamp of the transport request."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"EPSG:4326"}},"features":[{"type":"Feature","id":8814,"geometry":null,"properties":{"OBJECTID":8814,"BBL":1008350041,"BoroCode":1,"Borough":"MN","Block":835,"Lot":41,"CondoNo":null,"Version":"26v2","Shape__Area":97113.6875,"Shape__Length":1421.8361825861425}}]}
