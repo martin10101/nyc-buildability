@@ -28,6 +28,7 @@ import os
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.address_resolution import router as address_resolution_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
@@ -141,6 +142,14 @@ def create_app() -> FastAPI:
     # surfaces that route's trail verbatim, so it reuses that flag and adds no new
     # one); absent/unknown -> disabled (fail safe). See app.api.v1.evidence.
     application.include_router(evidence_v1_router)
+    # Internal, feature-flag-gated ADDRESS-RESOLUTION endpoint (task M2-T022).
+    # SAME posture as the routes above - ALWAYS registered but unreachable
+    # (generic 404, no OpenAPI entry) unless the EXISTING
+    # INTERNAL_RULE_EVAL_ENABLED flag is an explicit true token (address entry
+    # is the entry step of the same internal property flow, and app.config is
+    # out of the packet's scope, so it reuses that flag and adds no new one);
+    # absent/unknown -> disabled (fail safe). See app.api.v1.address_resolution.
+    application.include_router(address_resolution_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
