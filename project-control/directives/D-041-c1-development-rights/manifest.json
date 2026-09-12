@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-12T08:18:53+00:00",
  "created_at": "2026-09-12T08:18:53+00:00",
- "updated_at": "2026-09-12T08:18:53+00:00",
+ "updated_at": "2026-09-12T11:35:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "a98d174db1438af012171aa2a68e8a649612581e",
@@ -26,7 +26,7 @@
   "D-041-R002",
   "D-041-R003"
  ],
- "requirements_content_digest_sha256": "6800ebea4dbd04d692d4cebb66d3fdfa5c8a55f3837df393ba5ec8f1229bdeb0",
+ "requirements_content_digest_sha256": "7d32c8818e547377b8a6032d53442ff5ff7cebc5888b7d61b4d3eb180cf8a2fc",
  "sources": [
   {
    "file": "source-001.md",
@@ -57,6 +57,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from interactive chat; C1 per docs/MVP_ARCHITECT_REVIEW_QA.md Part 4; doc Parts 5-8 appended in the same commit per the owner's 'Yes'"
+  },
+  {
+   "at": "2026-09-12T11:35:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M5-T017 (C1 unused draft zoning floor area section, server-side) to D-041-R001 by appending the task id to the requirement's applicability.task_ids (append-only; no requirement text, id, or classification changed). Requirements digest resynced 6800ebea -> 7d32c881 (normalized sha256_text_artifact)."
   }
  ]
 }

@@ -1,0 +1,157 @@
+{
+  "task_id": "M5-T017",
+  "title": "C1 unused draft zoning floor area (FAR-derived) - scenario document section",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Add the owner-approved gap-list C1 output server-side: a typed unused_draft_zoning_floor_area section on the scenario document computing draft FAR-derived cap MINUS PLUTO existing built floor area deterministically, with per-input provenance, precise-noun labeling, a machine-readable tax-lot-as-zoning-lot assumption (ZR 12-10), honest negative remainder routed to professional review, and typed not-computable states - never estimated, never clamped, never hidden.",
+  "business_reason": "D-041: C1 is the owner's top product priority; the first screen's honest hero answer needs the unused-floor-area line under the draft+provenance discipline.",
+  "inputs": [
+    "project-control/directives/D-041-c1-development-rights/requirements.json (D-041-R001 is THE requirement text: own labeled line, honest negative remainder -> professional-review flag, never clamped/hidden, missing inputs -> standard unsupported treatment, never estimated; four-case harness; R003 scope limit = C1 only)",
+    "docs/design/astra-presentation-research.md sections 3.1 (precise-noun rule: label what the engine computed, NEVER 'maximum buildable area'; keep zoning floor area / gross building area / remaining capacity distinct; ZR 12-10 tax-lot-vs-zoning-lot note), 3.2 ('Calculated' evidence row: formula, all inputs linked to evidence, unrounded value, units, calculation scope), 3.3 (honest result states table)",
+    "services/api/app/scenario/builder.py (_assemble :294-329 = the closed document shape; _cap_provenance :154-180; _profile_provenance_index :114-120 + _lot_area_provenance :123-151 = the provenance-resolution pattern to reuse; no-scenario paths incl. _no_scenario_professional_review :723 and _no_scenario_missing :824-845)",
+    "services/api/app/profile/builder.py (existing_building_facts built at :744; _fact_value shape {value, provenance_ref, coverage_status, units} at :311-323; BUILDING_FACT_COLUMNS :109-115 - bldgarea is the existing-built-area fact)",
+    "services/api/app/scenario/constants.py + services/api/app/scenario/models.py (DRAFT label discipline, DRAFT_COVERAGE_VALUES never-verified ceiling, ConstraintCompleteness states)",
+    "packages/contracts/schemas/v1/scenario.schema.json + services/api/app/_contract_schemas/v1/scenario.schema.json (CLOSED contract, additionalProperties false, two mirrored copies - BOTH must change together)",
+    "services/api/tests/scenario/test_scenario_foundation.py + test_scenario_contract.py (the document-shape and contract tests this section extends)",
+    "services/api/app/connectors/pluto_soda.py :167 (bldgarea typed number, square feet :203) + :201 (condo-lot reliability caveat - grounds the scope note)"
+  ],
+  "outputs": [
+    "services/api/app/scenario/unused_floor_area.py (NEW focused module: pure deterministic derivation of the unused_draft_zoning_floor_area section from property_profile + the cap fields; all logic lives here per the derive.py separate-module precedent)",
+    "services/api/app/scenario/builder.py (BOUNDED wire-in only: pass inputs to the new module and place its section in _assemble and in every no-scenario variant; target <= ~20 integration lines)",
+    "services/api/app/scenario/constants.py / models.py additions (precise-noun label constant, section state enum, typed not_computable reasons)",
+    "packages/contracts/schemas/v1/scenario.schema.json + services/api/app/_contract_schemas/v1/scenario.schema.json (new required root key unused_draft_zoning_floor_area, fully specified, both copies identical)",
+    "services/api/app/scenario/__init__.py facade export (additive)",
+    "services/api/tests/scenario/test_unused_floor_area.py (NEW: the D-041 four-case pack + boundary/contract/JSON-safety cases, fixture-derived assertions)",
+    "updated services/api/tests/scenario/test_scenario_foundation.py + test_scenario_contract.py + services/api/tests/api/test_scenario_api.py (deliberate shape updates ONLY - no weakening of existing assertions)",
+    "project-control/reports/M5-T017-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/scenario/unused_floor_area.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/models.py",
+    "services/api/app/scenario/__init__.py",
+    "packages/contracts/schemas/v1/scenario.schema.json",
+    "services/api/app/_contract_schemas/v1/scenario.schema.json",
+    "services/api/tests/scenario/test_unused_floor_area.py",
+    "services/api/tests/scenario/test_scenario_foundation.py",
+    "services/api/tests/scenario/test_scenario_contract.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "project-control/reports/M5-T017-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/comparison.py",
+    "services/api/app/scenario/breakeven.py",
+    "services/api/app/scenario/_json_safety.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/profile/**",
+    "services/api/app/rules/**",
+    "services/api/app/connectors/**",
+    "services/api/app/api/**",
+    "services/api/app/documents/**",
+    "apps/web/**",
+    "tools/**",
+    ".github/**",
+    ".gitattributes",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "package.json",
+    "package-lock.json",
+    "requirements*.txt",
+    "pyproject.toml"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "computed_normal_remainder",
+      "input": "profile fixture with usable bldgarea fact (coverage_status conditional, e.g. 10000 sq ft, provenance_ref resolvable) + scenario with draft cap (e.g. 25000 sq ft)",
+      "expected": "section state 'computed'; unused_draft_zoning_floor_area_sq_ft == 15000 EXACTLY (deterministic unrounded subtraction, unit square_feet); precise-noun label constant rendered verbatim ('unused draft zoning floor area (FAR-derived)' wording, DRAFT discipline); scope note states building geometry (height, yards, layout) NOT assessed by this calculation; formula recorded with BOTH inputs each carrying resolvable provenance (cap_provenance echo + bldgarea provenance resolved from provenance_ref via the root provenance[] array); machine-readable assumption record present: {key 'zoning_lot_extent', value = the selected tax lot is treated as the zoning lot, rationale citing NYC ZR 12-10} - a field in the document, not display text; validates against the updated schema"
+    },
+    {
+      "id": "S2",
+      "case": "over_built_honest_negative",
+      "input": "bldgarea 30000 sq ft > draft cap 25000 sq ft",
+      "expected": "section state 'over_built'; value == -5000 preserved NEGATIVE (assert < 0; never clamped to zero, never nulled, never absolute-valued, never hidden); an explicit own statement field names the over-built condition honestly (existing built floor area exceeds the draft cap); the section routes to professional review: section-level flag true AND the document root professional_review_required true; provenance + assumption + scope note identical discipline to S1"
+    },
+    {
+      "id": "S3",
+      "case": "zero_boundary",
+      "input": "bldgarea == draft cap exactly",
+      "expected": "state 'computed' with value == 0 (an honest zero is NOT over_built and NOT missing); label/scope/assumption discipline unchanged; no professional-review routing triggered by the zero itself"
+    },
+    {
+      "id": "S4",
+      "case": "missing_or_unusable_existing_area",
+      "input": "(a) profile without a bldgarea fact or with value null; (b) bldgarea present but coverage_status 'data_conflict' or 'unsupported'",
+      "expected": "state 'not_computable'; typed reason 'missing_existing_building_area' for (a), 'existing_building_area_unusable' for (b) with the fact's coverage_status echoed verbatim; value null - NEVER estimated, NEVER silently substituted; the standard missing/unsupported treatment, mirroring the honest-states table ('No supported estimate'); cap and the rest of the scenario document unchanged"
+    },
+    {
+      "id": "S5",
+      "case": "no_draft_far_cap",
+      "input": "every no-cap scenario path: missing critical inputs, professional-review fail-safe, integrity failure",
+      "expected": "the section is PRESENT on no-scenario documents too, state 'not_computable', typed reason 'no_draft_far_cap', value null; no subtraction attempted; existing no-scenario behavior otherwise byte-unchanged; never invents a number from a partial input"
+    },
+    {
+      "id": "S6",
+      "case": "contract_safety_regression",
+      "input": "the full updated suites + both schema copies + modularity check",
+      "expected": "BOTH schema copies updated identically (new required key fully specified, closed); every section state survives BOTH json.dumps(allow_nan=False) AND json.dumps(ensure_ascii=False, allow_nan=False).encode('utf-8') (renderer-parity rule from M5-T012); all pre-existing scenario + api tests pass with ONLY deliberate shape updates (no assertion weakened); python tools/modularity_check.py --check EXIT 0; never-Verified discipline intact - the new code introduces no 'verified'/'compliant' language and the surfaced cap value remains byte-verbatim from the trace"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "scenario-optimization-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "builder.py is over the modularity WARN threshold - the wire-in must stay bounded; any drift of logic into builder.py is a G1 correction",
+    "closed two-copy contract: missing the mirror schema copy breaks endpoint validation invisibly locally",
+    "root professional_review_required currently mirrors the rule-evaluation fail-safe; the over-built trigger widens its meaning - tests must pin BOTH triggers and the producer report must name downstream consumers (evidence endpoint mirror)",
+    "precise-noun rule is a hard boundary: 'maximum buildable area' / 'remaining development rights' / 'remaining capacity' must not appear as labels",
+    "bldgarea condo caveat (pluto_soda.py:201): reliability is surfaced via coverage_status echo + scope note, never suppressed and never silently corrected",
+    "the cap is consumed verbatim; no change to cap computation, derive.py, or any analysis module"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-12T10:16:09.122370+00:00",
+  "updated_at": "2026-09-12T10:21:17.848776+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-041",
+      "requirement_ids": [
+        "D-041-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-12T10:16:09.122370+00:00",
+  "path_notes": "MODULARITY ANSWERS (docs/CODE_MODULARITY_POLICY.md): (1) responsibility = deterministic derivation of the C1 unused-floor-area section, a scenario-document concern; (2) it goes in a NEW focused module unused_floor_area.py following the derive.py precedent - builder.py is 935 lines (over WARN 600) so it receives ONLY a thin wire-in, never the logic; (3) builder.py growth bounded to ~20 integration lines; constants/models additions are small; (4) no extraction required in this task; (5) public interface stable: build_scenario signature UNCHANGED, new pure function exported additively via the app.scenario facade; (6) boundary protected by test_unused_floor_area.py plus the foundation/contract shape tests; (7) python tools/modularity_check.py --check must pass before submission. CONTRACT NOTE: the scenario schema is CLOSED (additionalProperties false) and exists as TWO mirrored copies - the new required key must land in BOTH byte-consistently or endpoint validation breaks. NAMING NOTE (research 3.1 precise-noun rule, owner-approved wording): the section and value are named unused_draft_zoning_floor_area - NEVER 'maximum buildable area', 'remaining development rights', or 'remaining capacity'; the label constant must say what the engine computed, FAR-derived, geometry not assessed.",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario",
+    "python -m pytest services/api/tests/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "wt-m5t017",
+  "progress_log": [
+    {
+      "at": "2026-09-12T10:21:17.848776+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Packet contracted + G0 PASS + claimed; D-041-R001 bound via applicability append (digest 6800ebea->7d32c881); producer dispatch next"
+    }
+  ]
+}
