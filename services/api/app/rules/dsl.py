@@ -61,9 +61,19 @@ def _schema_validate(document: dict) -> None:
 def _check_refs(document: dict, snapshots: SnapshotStore) -> None:
     rule_id = document.get("rule_id", "<unknown>")
 
-    # citation snapshots resolve
+    # citation snapshots resolve; a RECORDED digest must match the snapshot's
+    # stored digest (M4-T010: transcription provenance bound at the rule file,
+    # fail-closed at load; absence of the field is legal).
     for citation in document["citations"]:
-        snapshots.get(citation["snapshot_id"])  # raises SnapshotError if missing
+        snap = snapshots.get(citation["snapshot_id"])  # raises SnapshotError if missing
+        recorded = citation.get("content_digest_sha256")
+        if recorded is not None and recorded != snap.content_digest_sha256:
+            raise DSLError(
+                f"rule {rule_id}: citation {citation['snapshot_id']!r} records "
+                f"content_digest_sha256 {recorded} but the snapshot on disk "
+                f"stores {snap.content_digest_sha256} - the rule was transcribed "
+                "against different snapshot content"
+            )
 
     # parameter citation_refs resolve; index parameters by name
     params = {}

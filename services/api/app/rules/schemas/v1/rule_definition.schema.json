@@ -39,7 +39,8 @@
           "snapshot_id": {"type": "string", "minLength": 1},
           "section": {"type": "string", "minLength": 1},
           "quote": {"type": "string", "minLength": 1},
-          "last_amended": {"type": ["string", "null"]}
+          "last_amended": {"type": ["string", "null"]},
+          "content_digest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         }
       }
     },
