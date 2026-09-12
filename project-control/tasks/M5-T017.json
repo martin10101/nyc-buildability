@@ -38,7 +38,12 @@
     "services/api/tests/scenario/test_scenario_foundation.py",
     "services/api/tests/scenario/test_scenario_contract.py",
     "services/api/tests/api/test_scenario_api.py",
-    "project-control/reports/M5-T017-producer-report.md"
+    "project-control/reports/M5-T017-producer-report.md",
+    "packages/contracts/fixtures/valid/scenario/no_scenario_conflict.json",
+    "packages/contracts/fixtures/valid/scenario/no_scenario_professional_review.json",
+    "packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json",
+    "packages/contracts/fixtures/valid/scenario/unsupported_family.json",
+    "packages/contracts/generated/scenario.ts"
   ],
   "forbidden_paths": [
     "services/api/app/scenario/derive.py",
@@ -116,7 +121,7 @@
     "security-reviewer"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 60,
   "risks": [
     "builder.py is over the modularity WARN threshold - the wire-in must stay bounded; any drift of logic into builder.py is a G1 correction",
     "closed two-copy contract: missing the mirror schema copy breaks endpoint validation invisibly locally",
@@ -127,7 +132,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T10:16:09.122370+00:00",
-  "updated_at": "2026-09-12T10:21:17.848776+00:00",
+  "updated_at": "2026-09-12T10:47:08.885730+00:00",
   "directive_refs": [
     {
       "directive_id": "D-041",
@@ -138,7 +143,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-12T10:16:09.122370+00:00",
-  "path_notes": "MODULARITY ANSWERS (docs/CODE_MODULARITY_POLICY.md): (1) responsibility = deterministic derivation of the C1 unused-floor-area section, a scenario-document concern; (2) it goes in a NEW focused module unused_floor_area.py following the derive.py precedent - builder.py is 935 lines (over WARN 600) so it receives ONLY a thin wire-in, never the logic; (3) builder.py growth bounded to ~20 integration lines; constants/models additions are small; (4) no extraction required in this task; (5) public interface stable: build_scenario signature UNCHANGED, new pure function exported additively via the app.scenario facade; (6) boundary protected by test_unused_floor_area.py plus the foundation/contract shape tests; (7) python tools/modularity_check.py --check must pass before submission. CONTRACT NOTE: the scenario schema is CLOSED (additionalProperties false) and exists as TWO mirrored copies - the new required key must land in BOTH byte-consistently or endpoint validation breaks. NAMING NOTE (research 3.1 precise-noun rule, owner-approved wording): the section and value are named unused_draft_zoning_floor_area - NEVER 'maximum buildable area', 'remaining development rights', or 'remaining capacity'; the label constant must say what the engine computed, FAR-derived, geometry not assessed.",
+  "path_notes": "MODULARITY ANSWERS (docs/CODE_MODULARITY_POLICY.md): (1) responsibility = deterministic derivation of the C1 unused-floor-area section, a scenario-document concern; (2) it goes in a NEW focused module unused_floor_area.py following the derive.py precedent - builder.py is 935 lines (over WARN 600) so it receives ONLY a thin wire-in, never the logic; (3) builder.py growth bounded to ~20 integration lines; constants/models additions are small; (4) no extraction required in this task; (5) public interface stable: build_scenario signature UNCHANGED, new pure function exported additively via the app.scenario facade; (6) boundary protected by test_unused_floor_area.py plus the foundation/contract shape tests; (7) python tools/modularity_check.py --check must pass before submission. CONTRACT NOTE: the scenario schema is CLOSED (additionalProperties false) and exists as TWO mirrored copies - the new required key must land in BOTH byte-consistently or endpoint validation breaks. NAMING NOTE (research 3.1 precise-noun rule, owner-approved wording): the section and value are named unused_draft_zoning_floor_area - NEVER 'maximum buildable area', 'remaining development rights', or 'remaining capacity'; the label constant must say what the engine computed, FAR-derived, geometry not assessed. RATIFIED SCOPE EXPANSION (orchestrator, 2026-09-12, pre-gate): the five contract artifacts above (4 valid fixtures + generated scenario.ts) are mechanically forced by making the new key required in the closed drift-guarded contract - producer disclosed the expansion honestly and the fixture edits add only the new not_computable/computed sections; ratified into allowed_paths so gates and material identity cover the full deliverable.",
   "documented_test_commands": [
     "python -m pytest services/api/tests/scenario",
     "python -m pytest services/api/tests/api",
@@ -152,6 +157,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "Packet contracted + G0 PASS + claimed; D-041-R001 bound via applicability append (digest 6800ebea->7d32c881); producer dispatch next"
+    },
+    {
+      "at": "2026-09-12T10:47:08.885730+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material landed at 45f63efb (ff onto candidate): new module + bounded 13-line builder wire-in + both schema copies + S1-S6 pack. Orchestrator pre-gate validation PASS: scenario 422 passed, api 398 passed, modularity EXIT 0, report evidence complete. RATIFIED disclosed mechanical scope expansion (4 valid fixtures + generated scenario.ts, forced by the required key in the closed drift-guarded contract) into allowed_paths (now 17). Push for CI next; then G1/G4/G5 wave."
     }
   ]
 }
