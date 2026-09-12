@@ -287,7 +287,10 @@ describe("S4 — Not my property", () => {
     expect(
       (screen.getByLabelText("House number") as HTMLInputElement).value,
     ).toBe("120");
-    expect(document.activeElement).toBe(streetInput);
+    // vitest 4 / newer jsdom applies effect-driven focus after a microtask
+    // flush; waitFor tolerates the timing without weakening the assertion
+    // (it still FAILS if the street input is never focused).
+    await waitFor(() => expect(document.activeElement).toBe(streetInput));
     // No phantom outcome announced; no new request fired.
     expect(announcer.textContent).toBe("");
     expect(fetchSpy).toHaveBeenCalledTimes(1);
