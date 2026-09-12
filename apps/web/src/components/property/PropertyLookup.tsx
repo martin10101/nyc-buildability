@@ -20,6 +20,7 @@ import { ProfessionalReviewPanel } from "./ProfessionalReviewPanel";
 import { UnsupportedSection } from "./UnsupportedSection";
 import { ZoningSection } from "./ZoningSection";
 import { RuleEvaluationPanel } from "@/components/rule-evaluation/RuleEvaluationPanel";
+import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 
 /**
  * Property screen state machine (tasks M2-T001/M2-T002). Purely
@@ -171,7 +172,10 @@ export function PropertyLookup({
 }: {
   /** Additive (M4-T005): render the draft rule-evaluation surface after a
    * successful profile. Defaults to false so existing behavior is unchanged and
-   * the surface (and its fetch) stay off unless the Server Component enabled it. */
+   * the surface (and its fetch) stay off unless the Server Component enabled it.
+   * M5-T015: the same flag now also mounts the address-entry surface above the
+   * BBL form (replacing the disabled address input). Off = today's BBL-only UI,
+   * byte-equivalent, and the address fetch can never fire. */
   ruleEvalEnabled?: boolean;
 } = {}) {
   const [bblInput, setBblInput] = useState("");
@@ -254,6 +258,11 @@ export function PropertyLookup({
   return (
     <div>
       <OutcomeAnnouncer message={announcement} />
+      {/* M5-T015: the address front door, mounted ONLY behind the flag. It
+          owns its own state machine, announcer, and fetch client; flag off
+          means it never mounts and no address request can fire (the
+          endpoint's flag-off 404 is unreachable from this UI). */}
+      {ruleEvalEnabled ? <AddressResolutionScreen /> : null}
       <section className="card">
         <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
           Property lookup
@@ -297,23 +306,28 @@ export function PropertyLookup({
             </p>
           ) : null}
         </div>
-        <div className="field-group" style={{ marginTop: "1rem" }}>
-          <label className="field-label" htmlFor="address-input">
-            Address (not yet available)
-          </label>
-          <input
-            id="address-input"
-            className="text-input"
-            disabled
-            placeholder="Address search is not available yet"
-            aria-describedby="address-hint"
-          />
-          <span className="field-hint" id="address-hint" data-testid="address-disabled-copy">
-            Address search requires the NYC Geoclient connector, whose
-            credentials are still pending. Until then, lookups work by BBL
-            only — this screen will not pretend to resolve addresses.
-          </span>
-        </div>
+        {/* M5-T015: with the flag ON the real address surface above replaces
+            this placeholder; with the flag OFF the block renders exactly as
+            before (S1 pins the flag-off DOM byte-equivalent). */}
+        {ruleEvalEnabled ? null : (
+          <div className="field-group" style={{ marginTop: "1rem" }}>
+            <label className="field-label" htmlFor="address-input">
+              Address (not yet available)
+            </label>
+            <input
+              id="address-input"
+              className="text-input"
+              disabled
+              placeholder="Address search is not available yet"
+              aria-describedby="address-hint"
+            />
+            <span className="field-hint" id="address-hint" data-testid="address-disabled-copy">
+              Address search requires the NYC Geoclient connector, whose
+              credentials are still pending. Until then, lookups work by BBL
+              only — this screen will not pretend to resolve addresses.
+            </span>
+          </div>
+        )}
       </section>
 
       {loadingBbl !== null ? (
