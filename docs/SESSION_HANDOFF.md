@@ -5,58 +5,60 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 100: 185 accepted; M5-T016 ACCEPTED end-to-end; D-040 scoped-unblock queue next (R003 -> R002 -> R001)
+## Handoff - seq 101: 186 accepted; M0-T156 (D-040-R003) ACCEPTED - control-plane CI red RETIRED; D-041 C1 is the product priority
 
-Generated 2026-09-12 ~04:10 ET by the resumed orchestrator session (seq-99 continuation). Root
+Generated 2026-09-12 ~06:15 ET by the same orchestrator session (seq-100 continuation). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`c7170914` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
+`c4dbe854` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 185.** M5-T016 (address Packet 2: Confirm card + ZoLa /bbl deep-link + handoff)
-   ACCEPTED end-to-end this session: CI evidence at first-execution-green 49bd086b -> submit
-   069c3d40/ed110e6a -> four-gate wave (G1/G3/G5 PASS; G4 PASS w/ required correction C1) ->
-   C1 one-bounded test-only correction b1129f34 (S5 asserts bounded retrieved-at clause +
-   in-disclosure GRC line) -> delta attestations from the SAME four reviewers (all PASS; C1
-   DISCHARGED) -> gate records fd8832d9 (identity f85bc9e8) -> resubmit restamp 6ec7b631 ->
-   independent DCV PASS/ROW-SUFFICES + a5694aea restamp -> accepted c7170914. All reports,
-   attestations, and the DCV live under `project-control/reports/M5-T016-*`.
-2. **D-040 captured (owner scoped unblocks, commit a5694aea by the prior session; validator
-   EXIT 0; all six requirements bind sentinel D-040-BOOTSTRAP).** Owner verbatim: "Ok lets
-   unblock all beside the next js and superbase that needs me." Governs the queue NOW:
-   - **R003** directive-digest normalization (kills the standing control-plane CI red;
-     source-*.md IMMUTABLE - append-only mechanisms only).
-   - **R002** feature-flag unification (INTERNAL_RULE_EVAL_UI vs INTERNAL_RULE_EVAL_ENABLED,
-     the M5-T015 G5 F-1 note; deploy-affecting - packet must name the Render env-var change
-     as an owner return item).
-   - **R001** SCOPED expansion-hold release: address-flow lot-outline increment ONLY
-     (design-spec Packet 3: MapPLUTO parcel-geometry connector + lot outline on the confirm
-     card, MapLibre GL JS; official-source research FIRST). Hold rule §2.1. Everything else
-     under the expansion hold stays SUSPENDED.
-   - Still owner-gated (R004/R005): Next.js upgrade/deploy; Supabase/credentials (owner said
-     credentials tomorrow). R006: G6 unchanged. Suggested order R003 -> R002 -> R001.
-3. **CI churn note:** the owner pushed docs commits (MVP_ARCHITECT_REVIEW_QA.md parts 1-4,
-   incl. the Part 4 gap list awaiting owner triage) from a parallel session during the arc;
-   cancel-in-progress preempted supervisor-bridge twice (documented in
-   M5-T016-ci-evidence.txt - NOT a failure; web+web-e2e completed green first). The two
-   standing owner-gated reds remain: web-dependency-security (Next.js RCE - D-040 R004 keeps
-   it owner-gated) and control-plane (digest normalization - now UNBLOCKED as D-040 R003).
-4. Prior session (ctl24-8e) went dormant on repo work after the D-040 capture; this session
-   owns the ledger. Campaign-continuity tool still fails closed - use the ledger.
-5. Sub-agents: the four M5-T016 reviewers + the DCV verifier completed; returns preserved
-   verbatim under `project-control/reports/`. Spawn FRESH agents for new work.
+1. **Accepted = 186.** M0-T156 (D-040-R003 directive-digest CRLF/LF normalization) ACCEPTED
+   end-to-end this session: normalization primitive `sha256_text_artifact` adopted at exactly
+   the three registry-integrity sites (c2 source / c14 requirements-body / migration-manifest;
+   `sha256_file` raw-identity path UNTOUCHED), six manifest digests re-stamped append-only with
+   audit_log entries, sources byte-immutable. **CI run 34685572048: control-plane job SUCCESS -
+   the standing red is RETIRED**; the ONLY red on the branch is owner-gated
+   web-dependency-security (Next.js RCE, D-040-R004). Arc: first-push CI green -> submit
+   (identity 73d2a750) -> G1/G4/G5 wave all PASS with ZERO required corrections -> gates at
+   3714c1a8 -> DCV rows (D-040 R003 PASS + D-001 empty-set) at 16a2261e -> accept c4dbe854.
+   Reports under `project-control/reports/M0-T156-*`.
+2. **D-041 captured (peer session, 2fa8c332): gap-list C1 is the owner's TOP product priority**
+   ("Yes but I approve c1 lets do it"). C1 = explicit remaining-development-rights line:
+   existing built floor area vs draft residential FAR cap, own labeled line, honest negative
+   remainder -> professional-review flag (never clamped/hidden), missing inputs -> standard
+   unsupported treatment (never estimated). Cite `D-041:D-041-R001`; four-case scenario pack
+   required (normal / over-built negative / missing existing-area / missing FAR rule). R003
+   scope limit: C1 ONLY - no other Part-4 gap-list item may cite D-041.
+3. **C1 design inputs (owner-supplied Codex research, `docs/design/astra-presentation-research.md`
+   at fd73a020) MUST fold into the packet:** (a) §3.1 precise-noun rule - label what the engine
+   computed (e.g. "unused draft zoning floor area (FAR-derived)"), never "maximum buildable
+   area"; scope note that geometry/height/yards are NOT assessed; (b) ZR 12-10 - carry the
+   explicit MACHINE-READABLE assumption "treats the selected tax lot as the zoning lot" in the
+   API document, not display-only; (c) §3.3 honest-result-states table feeds the scenario list.
+4. **D-040 queue after C1:** R002 flag unification (INTERNAL_RULE_EVAL_UI vs
+   INTERNAL_RULE_EVAL_ENABLED; Render env-var rename = owner return item), then R001 Packet-3
+   lot outline (official-source research on MapPLUTO FIRST; MapLibre needs /dependency-security
+   admission + age gate; hold rule §2.1 releases ONLY this increment).
+5. **Owner works in the SAME checkout in parallel** (docs/design commits kept landing mid-arc:
+   ui-prototype copy, the research doc, MVP_ARCHITECT_REVIEW_QA). Verify every foreign commit
+   touches nothing in an in-flight task's allowed_paths; their pushes preempt in-flight CI
+   (cancel-in-progress); HOLD pushes while a needed run is in flight.
+6. Non-blocking follow-up backlog from the M0-T156 wave (advisories only, no task yet): G5 F-1
+   bare-CR rejection hardening; G1 A1 manifest audit_log key drift vs schema; G1 A2
+   status_projection normalizer divergence; G4 LOW migration-manifest flip test.
 
 ## NEXT ACTION (in order)
 
-1. Contract D-040-R003 (digest normalization) via /start-controlled-task citing
-   `D-040:D-040-R003`: reproduce the control-plane CI red locally-in-CI-terms first, fix via
-   append-only mechanism (source-*.md immutable), CI green = the red retired.
-2. Then R002 (flag unification; small; Render env-var rename = owner return item).
-3. Then R001 (Packet 3 lot outline): official-source-researcher on MapPLUTO FIRST (house
-   connector law), then packet(s) for connector + confirm-card outline under normal gates.
-4. Owner priority beyond the trio: NOT yet given - candidate backlog is
-   docs/MVP_ARCHITECT_REVIEW_QA.md Part 4 (owner has it for triage). Do not self-assign
-   beyond D-040 scope.
+1. Contract D-041 C1 via /start-controlled-task citing `D-041:D-041-R001`: server-side
+   deterministic subtraction (draft FAR-derived cap MINUS PLUTO existing built floor area)
+   surfaced in the scenario document with per-fact provenance, the machine-readable
+   tax-lot-as-zoning-lot assumption, precise-noun labeling, and the four honest states
+   (terrain exploration for the packet may already be in flight - check).
+2. UI rendering of the C1 line (own labeled line + professional-review routing + missing
+   states) - same task or a follow-on packet, orchestrator's call per modularity.
+3. Then D-040 R002 (flag unification), then R001 (Packet 3, research first).
+4. Do not self-assign beyond D-040/D-041 scope (Part-4 gap list awaits owner triage).
 
 ## STANDING RESTRICTIONS (unchanged)
 
@@ -69,19 +71,22 @@ only for credentials/payments/legal (D-008). Bootstrap Gate 0 before any write.
 
 ## AUTHORITATIVE FILES (smallest set)
 
-`project-control/state.json` + `directives/D-040-scoped-unblocks/` (the new queue) ·
-`tasks/M5-T016.json` + `reports/M5-T016-*` (the completed-arc pattern incl. DCV restamp) ·
-`docs/design/address-entry-confirm-design-spec.md` (Packet 3 sections for R001) ·
-`.claude/rules/expansion-agent-dispatch-hold.md` §2.1 · `CLAUDE.md` · this file.
+`project-control/state.json` + `directives/D-041-c1-development-rights/` (the priority) +
+`directives/D-040-scoped-unblocks/` (the queue) · `docs/design/astra-presentation-research.md`
+§3.1/§3.3 (C1 output contract) · `tasks/M0-T156.json` + `reports/M0-T156-*` (latest full-arc
+pattern incl. DCV row shapes) · `.claude/rules/expansion-agent-dispatch-hold.md` §2.1 ·
+`CLAUDE.md` · this file.
 
 ## COPY INTO THE NEW SESSION
 
-resume from handoff seq 100: work from durable repository evidence. Verify root/branch/HEAD
+resume from handoff seq 101: work from durable repository evidence. Verify root/branch/HEAD
 (expect C:/Users/MLFLL/Downloads/nyc-zoning/ctl24 on candidate/D-024-mrl-option-b), Bootstrap
 Gate 0, read CLAUDE.md + docs/SESSION_HANDOFF.md, run `python tools/project_control.py status`,
-reconcile vs live git/CI (origin may have advanced; ledger and CI win). 185 accepted; M5-T016
-done. Execute the D-040 queue from NEXT-ACTION item 1 (R003 digest normalization -> R002 flag
-unification -> R001 lot-outline Packet 3 with MapPLUTO research first), each via
-/start-controlled-task citing its D-040 requirement, normal gates. Report READY TO RESUME or
-BLOCKED before changing anything. Stop only for owner-only items (credentials/payments/legal,
-PR #241, Next.js upgrade/deploy, Supabase, G6).
+reconcile vs live git/CI (origin may have advanced; ledger and CI win). 186 accepted; M0-T156
+done, control-plane red retired. Execute NEXT-ACTION item 1: contract D-041 C1
+(remaining-development-rights line) citing D-041:D-041-R001, folding in
+docs/design/astra-presentation-research.md §3.1 precise-noun labeling + ZR 12-10
+machine-readable tax-lot-as-zoning-lot assumption + §3.3 honest states; four-case scenario
+pack; normal gates. Then D-040 R002 -> R001. Report READY TO RESUME or BLOCKED before changing
+anything. Stop only for owner-only items (credentials/payments/legal, PR #241, Next.js
+upgrade/deploy, Supabase, G6).
