@@ -88,8 +88,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "mirror drift: the validator must implement the schema's closed inner shape exactly - a looser mirror silently accepts undocumented keys and a stricter one rejects real API documents",
     "no local npm/node_modules on the thin client: web tests are only executable in CI - producer must reason from source and the CI feedback loop",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T10:54:43.625153+00:00",
-  "updated_at": "2026-09-12T11:13:24.764026+00:00",
+  "updated_at": "2026-09-12T11:20:12.113225+00:00",
   "directive_refs": [
     {
       "directive_id": "D-041",
