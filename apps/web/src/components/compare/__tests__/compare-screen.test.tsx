@@ -396,6 +396,14 @@ describe("Compare screen — absence is stated, never rendered as an empty eleme
     rules[0].rule_id = "   ";
     rules[0].rule_version = "";
     rules[0].effective_from = "";
+    // The fixture rule's effective_to is null, so blanking effective_from put
+    // BOTH dates in the absent class and the component's deliberate collapse
+    // ("no effective dates are recorded for this rule" — asserted by the next
+    // test) rendered instead of the per-slot label this test exists to check.
+    // Give the rule a real end date DERIVED from the sibling rule's own
+    // fixture date (never an invented literal) so the empty-string FROM
+    // renders through the per-slot branch (M5-T014).
+    rules[0].effective_to = rules[1].effective_from as string;
     renderCompare(jsonResponse(body, 200));
 
     const competing = await screen.findByTestId("scenario-competing-rules");
