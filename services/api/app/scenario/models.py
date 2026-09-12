@@ -56,6 +56,45 @@ class ScenarioKind(str, Enum):
     UNSUPPORTED = "unsupported"
 
 
+class UnusedFloorAreaState(str, Enum):
+    """The typed state of the C1 unused-draft-zoning-floor-area section (D-041).
+
+    - ``COMPUTED``: both a positive draft cap and a usable existing built floor
+      area were present; the section carries the unrounded difference
+      (cap - existing built area) in square feet. A value of exactly zero is
+      ``COMPUTED`` (an honest zero remainder), never ``OVER_BUILT``.
+    - ``OVER_BUILT``: the difference is strictly NEGATIVE (existing built floor
+      area exceeds the draft cap). The negative value is preserved EXACTLY -
+      never clamped to zero, nulled, or absolute-valued - and the outcome routes
+      to professional review.
+    - ``NOT_COMPUTABLE``: a controlling input was absent or unusable; the value
+      is ``null`` and NEVER estimated. See :class:`UnusedFloorAreaNotComputableReason`.
+    """
+
+    COMPUTED = "computed"
+    OVER_BUILT = "over_built"
+    NOT_COMPUTABLE = "not_computable"
+
+
+class UnusedFloorAreaNotComputableReason(str, Enum):
+    """Typed reason a C1 unused-floor-area section is ``not_computable`` (D-041).
+
+    - ``MISSING_EXISTING_BUILDING_AREA``: no existing-building bldgarea fact, or
+      its value is null - nothing to subtract, and nothing is invented.
+    - ``EXISTING_BUILDING_AREA_UNUSABLE``: an existing-building bldgarea fact is
+      present but its coverage_status (echoed verbatim) makes it unusable for a
+      calculation (e.g. data_conflict / unsupported), or its value is not a
+      usable finite non-negative number.
+    - ``NO_DRAFT_FAR_CAP``: no positive draft residential FAR cap was surfaced
+      (every no-scenario / unsupported / fail-closed path); no subtraction is
+      attempted.
+    """
+
+    MISSING_EXISTING_BUILDING_AREA = "missing_existing_building_area"
+    EXISTING_BUILDING_AREA_UNUSABLE = "existing_building_area_unusable"
+    NO_DRAFT_FAR_CAP = "no_draft_far_cap"
+
+
 class DataCompleteness(str, Enum):
     """The PRD-section-12 data-completeness vocabulary (exactly three values).
 

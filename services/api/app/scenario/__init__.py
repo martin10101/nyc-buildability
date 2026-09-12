@@ -41,6 +41,7 @@ from .constants import (
     DRAFT_CAP_LABEL,
     NOT_VERIFIED_DISCLAIMER,
     SCENARIO_CONTRACT_VERSION,
+    UNUSED_FLOOR_AREA_LABEL,
 )
 from .contract import (
     ScenarioContractError,
@@ -53,7 +54,13 @@ from .derive import (
     DerivedRangeKind,
     derive_practical_usable_range,
 )
-from .models import ConstraintCompleteness, DataCompleteness, ScenarioKind
+from .models import (
+    ConstraintCompleteness,
+    DataCompleteness,
+    ScenarioKind,
+    UnusedFloorAreaNotComputableReason,
+    UnusedFloorAreaState,
+)
 from .ranking import (
     RANKING_LABEL,
     RankingKind,
@@ -67,6 +74,7 @@ from .sensitivity import (
     SensitivityVariable,
     analyze_scenario_sensitivity,
 )
+from .unused_floor_area import build_unused_floor_area_section
 
 __all__ = [
     "CAP_OUTPUT_NAME",
@@ -81,15 +89,19 @@ __all__ = [
     "SCENARIO_CONTRACT_VERSION",
     "SENSITIVITY_LABEL",
     "SENSITIVITY_RESPONSE_METRIC",
+    "UNUSED_FLOOR_AREA_LABEL",
     "RankingKind",
     "RankingObjective",
     "ScenarioContractError",
     "ScenarioKind",
     "SensitivityKind",
     "SensitivityVariable",
+    "UnusedFloorAreaNotComputableReason",
+    "UnusedFloorAreaState",
     "analyze_scenario_sensitivity",
     "assert_scenario_not_verified",
     "build_scenario",
+    "build_unused_floor_area_section",
     "derive_practical_usable_range",
     "rank_scenario_assumption_sets",
     "validate_scenario_document",

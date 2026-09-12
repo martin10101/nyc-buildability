@@ -44,6 +44,7 @@ from .models import (
     ScenarioKind,
     most_severe_completeness,
 )
+from .unused_floor_area import build_unused_floor_area_section
 
 __all__ = ["build_scenario"]
 
@@ -308,13 +309,26 @@ def _assemble(
     completeness = most_severe_completeness(
         [DataCompleteness(c["data_completeness"]) for c in constraints]
     )
+    # C1 (D-041): the unused-draft-zoning-floor-area section rides on EVERY
+    # document (preliminary + every no-scenario variant). All C1 logic lives in
+    # unused_floor_area.py; this is a bounded wire-in only. An over-built (negative)
+    # remainder forces the document root professional_review_required true (OR with
+    # the existing rule-evaluation fail-safe trigger).
+    unused_section = build_unused_floor_area_section(
+        property_profile=property_profile,
+        cap_value=cap_value,
+        cap_provenance=cap_provenance,
+    )
     document = {
         "contract_version": C.SCENARIO_CONTRACT_VERSION,
         "scenario_kind": scenario_kind.value,
         "coverage_status": coverage_status,
         "data_completeness": completeness.value,
         "needs_review": True,
-        "professional_review_required": professional_review_required,
+        "professional_review_required": (
+            professional_review_required
+            or unused_section["professional_review_required"]
+        ),
         "not_verified_disclaimer": C.NOT_VERIFIED_DISCLAIMER,
         "evaluated_input": _evaluated_input(rule_evaluation, property_profile),
         "constraints": constraints,
@@ -325,6 +339,7 @@ def _assemble(
         "reasons": reasons,
         "coverage_matrix": C.coverage_matrix_rows(),
         "integrity_check": integrity_check,
+        "unused_draft_zoning_floor_area": unused_section,
     }
     return document
 

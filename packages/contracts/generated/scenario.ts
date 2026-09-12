@@ -85,5 +85,31 @@ export interface Scenario {
   reasons: string[];
   coverage_matrix: CoverageMatrixRow[];
   integrity_check: IntegrityCheck;
+  unused_draft_zoning_floor_area: {
+    state: "computed" | "over_built" | "not_computable";
+    unused_draft_zoning_floor_area_sq_ft: number | null;
+    unit: string | null;
+    label: NonEmptyString;
+    scope_note: NonEmptyString;
+    formula: string | null;
+    professional_review_required: boolean;
+    over_built_statement: string | null;
+    not_computable_reason: ("missing_existing_building_area" | "existing_building_area_unusable" | "no_draft_far_cap") | null;
+    inputs: {
+      draft_zoning_floor_area_cap: {
+        value_sq_ft: number | null;
+        unit: string | null;
+        provenance: unknown | null;
+      };
+      existing_building_floor_area: {
+        value_sq_ft: number | null;
+        unit: string | null;
+        coverage_status: string | null;
+        provenance_ref: string | null;
+        provenance: unknown | null;
+      };
+    };
+    assumptions: ScenarioAssumption[];
+  };
   _expected_failure?: string;
 }

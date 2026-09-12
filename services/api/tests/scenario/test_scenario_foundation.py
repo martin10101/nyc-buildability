@@ -395,3 +395,33 @@ def test_as12_degenerate_empty_inputs_fail_closed_not_crash():
     validate_scenario_document(document)
     assert document["scenario_kind"] == ScenarioKind.NO_SCENARIO.value
     assert document["draft_zoning_floor_area_cap_sq_ft"] is None
+
+
+# ---------------------------------------------------------------------------
+# C1 shape update (M5-T017, D-041): every document - preliminary and every
+# no-scenario variant - carries the unused_draft_zoning_floor_area section. With
+# the minimal _support PROFILE (no bldgarea fact) the preliminary path is
+# not_computable/missing_existing_building_area and the no-cap paths are
+# not_computable/no_draft_far_cap; the full C1 behavior lives in
+# test_unused_floor_area.py. This only asserts the section is universally present.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "rule_evaluation_factory",
+    [
+        S.canonical_rule_evaluation,
+        S.unsupported_rule_evaluation,
+        S.conflict_rule_evaluation,
+        S.professional_review_rule_evaluation,
+        S.missing_lot_area_rule_evaluation,
+    ],
+)
+def test_unused_floor_area_section_present_on_every_document(rule_evaluation_factory):
+    document = build_scenario(S.profile(), rule_evaluation_factory())
+    validate_scenario_document(document)
+    section = document["unused_draft_zoning_floor_area"]
+    assert section["state"] in {"computed", "over_built", "not_computable"}
+    # The minimal profile carries no bldgarea, so nothing is ever computed here.
+    assert section["state"] == "not_computable"
+    assert section["unused_draft_zoning_floor_area_sq_ft"] is None

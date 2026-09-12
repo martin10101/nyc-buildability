@@ -339,6 +339,22 @@ def test_as1_confident_r5_cap_surfaces_trace_value_verbatim(client, monkeypatch)
     for family in MISSING_ENVELOPE_FAMILIES:
         assert _constraints_by_key(doc)[family]["state"] == "missing"
 
+    # C1 (M5-T017, D-041): the server-rebuilt profile (F01 bldgarea = 10000) plus
+    # the draft cap (15000) yields a COMPUTED unused-floor-area section of exactly
+    # 5000 sq ft, with the existing-area coverage_status echoed and the ZR 12-10
+    # assumption present. Values derived from the same trace cap + fixture bldgarea.
+    section = doc["unused_draft_zoning_floor_area"]
+    assert section["state"] == "computed"
+    assert section["unused_draft_zoning_floor_area_sq_ft"] == trace_cap - 10000.0 == 5000.0
+    assert section["unit"] == "square_feet"
+    assert section["inputs"]["draft_zoning_floor_area_cap"]["value_sq_ft"] == trace_cap
+    assert section["inputs"]["existing_building_floor_area"]["value_sq_ft"] == 10000.0
+    assert section["inputs"]["existing_building_floor_area"]["coverage_status"] == "conditional"
+    assert section["inputs"]["existing_building_floor_area"]["provenance"] is not None
+    assert [a["key"] for a in section["assumptions"]] == ["zoning_lot_extent"]
+    # A positive remainder does not itself force professional review.
+    assert doc["professional_review_required"] is False
+
 
 # ==========================================================================
 # AS-2 - split-lot: fail-closed no_scenario, share ranges preserved, no cap.
@@ -386,6 +402,13 @@ def test_as2_split_lot_is_no_scenario_ranges_preserved(client, monkeypatch):
     # rule_evaluation.spatial_uncertainty.review_reasons - a machine-readable,
     # visible review reason (not merely a boolean flag).
     assert SPLIT_LOT_REVIEW_REASON in district["provenance"]["review_reasons"]
+
+    # C1 (M5-T017, D-041): the section rides on this no-scenario document too, with
+    # no cap it is not_computable/no_draft_far_cap and never invents a number.
+    section = doc["unused_draft_zoning_floor_area"]
+    assert section["state"] == "not_computable"
+    assert section["not_computable_reason"] == "no_draft_far_cap"
+    assert section["unused_draft_zoning_floor_area_sq_ft"] is None
 
 
 # ==========================================================================

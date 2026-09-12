@@ -33,6 +33,76 @@ DRAFT_CAP_LABEL = (
     "(needs_review); requires professional review; NOT Verified."
 )
 
+# ---------------------------------------------------------------------------
+# C1 unused draft zoning floor area (D-041). Precise-noun labeling per
+# astra-presentation-research.md section 3.1: the label states EXACTLY what the
+# engine computed (a FAR-derived floor-area difference) and deliberately AVOIDS
+# the forbidden marketing nouns "maximum buildable area", "remaining development
+# rights", and "remaining capacity". No "verified"/"compliant" language appears
+# here; the never-Verified discipline lives in NOT_VERIFIED_DISCLAIMER at the
+# document root. Every string here is a CONSTANT emitted verbatim.
+# ---------------------------------------------------------------------------
+
+# Machine label for the section (the precise-noun wording, owner-approved).
+UNUSED_FLOOR_AREA_LABEL = (
+    "Unused draft zoning floor area (FAR-derived): the DRAFT residential "
+    "zoning-floor-area cap (ZR 23-21) minus the existing built floor area. A "
+    "zoning floor-area difference only, under the draft label and per-fact "
+    "provenance discipline."
+)
+
+# The scope note (a document field, not display text): geometry NOT assessed.
+UNUSED_FLOOR_AREA_SCOPE_NOTE = (
+    "Scope: this is a zoning floor-area difference only. Building geometry - "
+    "height, yards, setbacks, layout, lot coverage, open space - has NOT been "
+    "assessed by this calculation. It does not establish achievable floor area "
+    "or a buildable envelope, and the tax lot is treated as the zoning lot "
+    "(see the zoning_lot_extent assumption)."
+)
+
+# The honest explicit statement surfaced on an over-built (negative) remainder.
+UNUSED_FLOOR_AREA_OVER_BUILT_STATEMENT = (
+    "Over-built: the existing built floor area EXCEEDS the draft residential "
+    "zoning-floor-area cap, so the remainder is negative. The negative value is "
+    "preserved exactly - it is not clamped to zero, nulled, or hidden - and this "
+    "outcome routes to professional review."
+)
+
+# The recorded formula (a document field). Names the two inputs by document key.
+UNUSED_FLOOR_AREA_FORMULA = (
+    "unused_draft_zoning_floor_area_sq_ft = draft_zoning_floor_area_cap_sq_ft "
+    "- existing_building_floor_area_sq_ft"
+)
+
+# Existing-building coverage_status values a calculation may consume. Anything
+# else (data_conflict, unsupported, or an unrecognized status) is UNUSABLE and
+# fails closed to a typed not_computable outcome with the status echoed verbatim.
+USABLE_EXISTING_AREA_COVERAGE_STATUSES = frozenset({"conditional"})
+
+
+def zoning_lot_extent_assumption() -> dict:
+    """The machine-readable ZR 12-10 assumption record for the C1 section, shaped
+    like a scenario assumption ({key, assumption_type, value, unit, rationale}).
+
+    Returned as a FRESH dict each call so a caller can never mutate a shared
+    module constant. It is a DOCUMENT FIELD, never display text."""
+    return {
+        "key": "zoning_lot_extent",
+        "assumption_type": "zoning_lot_extent",
+        "value": "The selected tax lot is treated as the zoning lot.",
+        "unit": None,
+        "rationale": (
+            "NYC Zoning Resolution Section 12-10 defines the zoning lot; "
+            "resolving a BBL (a tax lot) does not by itself establish the "
+            "project's zoning-lot arrangement - adjacent tax lots may be merged "
+            "into, or excluded from, a single zoning lot by a recorded "
+            "declaration. Floor area is governed by the zoning lot, so this "
+            "difference assumes tax lot == zoning lot until a zoning-lot "
+            "arrangement is confirmed by a qualified professional."
+        ),
+    }
+
+
 # The permanent honest disclaimer stamped on every scenario, regardless of kind.
 NOT_VERIFIED_DISCLAIMER = (
     "DRAFT scenario - not a Verified determination. Assembled by deterministic "

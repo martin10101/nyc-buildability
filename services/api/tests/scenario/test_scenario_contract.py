@@ -205,6 +205,46 @@ def test_runtime_bundle_copy_is_byte_identical_to_canonical():
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# C1 shape update (M5-T017, D-041): the new required, fully-specified, closed
+# unused_draft_zoning_floor_area key (mirrored byte-identically into the runtime
+# bundle by test_runtime_bundle_copy_is_byte_identical_to_canonical above).
+# ---------------------------------------------------------------------------
+
+
+def test_unused_floor_area_is_required_fully_specified_and_closed():
+    schema = _load(SCENARIO_SCHEMA)
+    assert "unused_draft_zoning_floor_area" in schema["required"]
+    assert schema["properties"]["unused_draft_zoning_floor_area"] == {
+        "$ref": "#/$defs/unused_draft_zoning_floor_area"
+    }
+    section_def = schema["$defs"]["unused_draft_zoning_floor_area"]
+    assert section_def["type"] == "object"
+    assert section_def["additionalProperties"] is False
+    # State + not-computable reason enums are fully specified.
+    assert set(section_def["properties"]["state"]["enum"]) == {
+        "computed",
+        "over_built",
+        "not_computable",
+    }
+    reason = section_def["properties"]["not_computable_reason"]["anyOf"][0]["enum"]
+    assert set(reason) == {
+        "missing_existing_building_area",
+        "existing_building_area_unusable",
+        "no_draft_far_cap",
+    }
+    # The inputs sub-object is closed too.
+    assert schema["$defs"]["unused_floor_area_inputs"]["additionalProperties"] is False
+
+
+@pytest.mark.parametrize("fixture", VALID_FIXTURES, ids=lambda p: p.name)
+def test_valid_fixture_carries_unused_floor_area_section(fixture: Path):
+    instance = _load(fixture)
+    section = instance["unused_draft_zoning_floor_area"]
+    assert section["label"]
+    assert section["state"] in {"computed", "over_built", "not_computable"}
+
+
 def test_property_profile_and_rule_evaluation_contracts_untouched():
     profile = _load(SCHEMA_DIR / "property_profile.schema.json")
     assert profile["properties"]["profile_version"]["properties"]["contract_version"][

@@ -21,7 +21,8 @@
     "assumptions",
     "reasons",
     "coverage_matrix",
-    "integrity_check"
+    "integrity_check",
+    "unused_draft_zoning_floor_area"
   ],
   "properties": {
     "contract_version": {
@@ -99,6 +100,9 @@
     },
     "integrity_check": {
       "$ref": "#/$defs/integrity_check"
+    },
+    "unused_draft_zoning_floor_area": {
+      "$ref": "#/$defs/unused_draft_zoning_floor_area"
     },
     "_expected_failure": {
       "type": "string",
@@ -278,6 +282,138 @@
           "description": "Fixed description of the comparison method (e.g. 'abs(recomputed - canonical) <= tolerance * max(1, abs(canonical))')."
         },
         "note": { "type": "string" }
+      }
+    },
+    "unused_draft_zoning_floor_area": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The C1 unused-draft-zoning-floor-area section (D-041), present on EVERY scenario document (preliminary and every no_scenario/unsupported variant). It reports the draft residential zoning-floor-area cap MINUS the existing built floor area under the draft-label + per-fact-provenance discipline. Precise-noun labeling (astra-presentation-research.md 3.1): this is a FAR-derived floor-area DIFFERENCE, NEVER 'maximum buildable area', 'remaining development rights', or 'remaining capacity'; building geometry is not assessed. The over-built case (negative remainder) is preserved EXACTLY - never clamped, nulled, or hidden - and forces professional_review_required. Missing/unusable inputs yield a typed not_computable state with a null value, never an estimate.",
+      "required": [
+        "state",
+        "unused_draft_zoning_floor_area_sq_ft",
+        "unit",
+        "label",
+        "scope_note",
+        "formula",
+        "professional_review_required",
+        "over_built_statement",
+        "not_computable_reason",
+        "inputs",
+        "assumptions"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["computed", "over_built", "not_computable"],
+          "description": "UnusedFloorAreaState. 'computed' = a positive draft cap and a usable existing built floor area were present; the value is the unrounded difference (an exact zero is 'computed', an honest zero remainder). 'over_built' = the difference is strictly negative (existing area exceeds the draft cap); the negative value is preserved and routes to professional review. 'not_computable' = a controlling input was absent or unusable; value is null and never estimated."
+        },
+        "unused_draft_zoning_floor_area_sq_ft": {
+          "description": "The unrounded draft cap MINUS existing built floor area, in square feet. May be negative on 'over_built' (preserved exactly, never clamped/abs'd) and exactly zero on 'computed'. null on 'not_computable'. Never NaN/Infinity (strict JSON).",
+          "anyOf": [
+            { "type": "number" },
+            { "type": "null" }
+          ]
+        },
+        "unit": {
+          "description": "'square_feet' when a value is present, else null.",
+          "type": ["string", "null"]
+        },
+        "label": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The precise-noun label stating what the engine computed (a FAR-derived floor-area difference). It never uses 'maximum buildable area', 'remaining development rights', or 'remaining capacity', and introduces no 'verified'/'compliant' language."
+        },
+        "scope_note": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "A document field (not display text) stating that building geometry (height, yards, layout, lot coverage, ...) has NOT been assessed by this calculation and that the tax lot is treated as the zoning lot."
+        },
+        "formula": {
+          "description": "The recorded formula naming both document-key inputs, or null when no subtraction was performed (not_computable).",
+          "type": ["string", "null"]
+        },
+        "professional_review_required": {
+          "type": "boolean",
+          "description": "SECTION-level professional-review flag: true on 'over_built'. The document root professional_review_required is the OR of this flag and the rule-evaluation fail-safe trigger."
+        },
+        "over_built_statement": {
+          "description": "An explicit honest statement that the existing built floor area exceeds the draft cap; present only on 'over_built', else null.",
+          "type": ["string", "null"]
+        },
+        "not_computable_reason": {
+          "description": "Typed reason on 'not_computable', else null. 'missing_existing_building_area' = no bldgarea fact or a null value; 'existing_building_area_unusable' = a fact is present but its coverage_status (echoed under inputs.existing_building_floor_area.coverage_status) makes it unusable, or its value is not a usable finite non-negative number; 'no_draft_far_cap' = no positive draft residential FAR cap was surfaced.",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "missing_existing_building_area",
+                "existing_building_area_unusable",
+                "no_draft_far_cap"
+              ]
+            },
+            { "type": "null" }
+          ]
+        },
+        "inputs": {
+          "$ref": "#/$defs/unused_floor_area_inputs"
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "Machine-readable typed assumptions for the calculation (research 3.1). Carries the ZR 12-10 zoning_lot_extent assumption when a value was computed (computed/over_built); empty on not_computable. Same record shape as the scenario 'assumptions' entries.",
+          "items": { "$ref": "#/$defs/assumption" }
+        }
+      }
+    },
+    "unused_floor_area_inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Per-input provenance for the C1 calculation (research 3.2 'Calculated' row): the draft cap (consumed verbatim, provenance echoed from cap_provenance) and the existing built floor area (value, unit, coverage_status echoed verbatim, and provenance resolved from the fact's provenance_ref against the profile root provenance array). Recorded on every state so a consumer always sees what was and was not available.",
+      "required": ["draft_zoning_floor_area_cap", "existing_building_floor_area"],
+      "properties": {
+        "draft_zoning_floor_area_cap": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value_sq_ft", "unit", "provenance"],
+          "properties": {
+            "value_sq_ft": {
+              "description": "The canonical draft cap consumed VERBATIM (never recomputed), or null when no cap was surfaced.",
+              "anyOf": [
+                { "type": "number" },
+                { "type": "null" }
+              ]
+            },
+            "unit": { "type": ["string", "null"] },
+            "provenance": {
+              "description": "The scenario cap_provenance echoed verbatim, or null when no cap was surfaced.",
+              "type": ["object", "null"]
+            }
+          }
+        },
+        "existing_building_floor_area": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value_sq_ft", "unit", "coverage_status", "provenance_ref", "provenance"],
+          "properties": {
+            "value_sq_ft": {
+              "description": "The usable existing built floor area consumed in the subtraction, or null when absent/unusable.",
+              "anyOf": [
+                { "type": "number" },
+                { "type": "null" }
+              ]
+            },
+            "unit": { "type": ["string", "null"] },
+            "coverage_status": {
+              "description": "The existing-building bldgarea fact's coverage_status echoed VERBATIM (grounds the unusable/condo caveat), or null when no fact was present.",
+              "type": ["string", "null"]
+            },
+            "provenance_ref": {
+              "description": "The fact's provenance_ref, or null.",
+              "type": ["string", "null"]
+            },
+            "provenance": {
+              "description": "The provenance record resolved from provenance_ref against the profile root provenance array, or null when it does not resolve.",
+              "type": ["object", "null"]
+            }
+          }
+        }
       }
     }
   }
