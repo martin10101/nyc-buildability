@@ -424,6 +424,10 @@ within each group is a suggested priority, not a decision.
    professional review (F3): "what has the city already said about this building?"
 4. **Landmark / historic-district status** — a binary that changes everything about a project;
    cheap to surface once connected.
+5. **ACRIS zoning-lot-agreement check** (added 2026-09-12 from the merged-lot discussion) — query
+   the city's recorded-documents system for zoning-lot agreements touching the block/lot, turning
+   the "assumes tax lot = zoning lot" blind spot into a real warning with the document reference.
+   Official public data; few competitors do this well — a candidate signature feature.
 
 ### C. Professional-workflow output (what an architect asked for in this review)
 
@@ -462,6 +466,10 @@ within each group is a suggested priority, not a decision.
 1. **Shareable report/export** — a professional will eventually want to hand a client a document,
    not a screen. Known product direction; not yet scoped as tasks.
 2. **Saved searches / portfolio view** — depends on D5 (storage) landing first.
+3. **Assemblage mode** (added 2026-09-12 from the merged-lot discussion) — select multiple tax
+   lots, compute the combined draft floor area with an explicit "Assumed: these lots form one
+   zoning lot" tag. The single-lot-inside-a-merger case stays a professional-review flag (only
+   the recorded agreement can answer it).
 
 *Reading guide for the reviewer: groups A–C proceed under the project's normal independent-review
 process once prioritized; group D items each wait on a specific owner action; group E is
