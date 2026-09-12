@@ -347,3 +347,42 @@ def test_s6_bundled_schema_is_byte_identical_to_canonical():
     ).read_bytes()
     bundled = (BUNDLE / "lot_geometry.schema.json").read_bytes()
     assert bundled == canonical, "runtime-bundled lot_geometry schema diverged from canonical"
+
+
+def test_s6_generated_ts_covers_every_schema_key_enum_and_const():
+    """G4 correction BLOCKING-2: the contracts-typegen CI job's hardcoded list does
+    not yet cover lot_geometry.ts (generator wiring is a bound follow-up), so this
+    in-suite structural check is the load-bearing schema->TS drift guard until it
+    lands: every property name, enum string value, and const string literal in the
+    canonical schema must appear in the committed generated TS. A schema change
+    without regenerating the TS fails here."""
+    root = Path(__file__).resolve().parents[4]
+    schema = json.loads(
+        (root / "packages" / "contracts" / "schemas" / "v1" / "lot_geometry.schema.json")
+        .read_text(encoding="utf-8")
+    )
+    ts_text = (
+        root / "packages" / "contracts" / "generated" / "lot_geometry.ts"
+    ).read_text(encoding="utf-8")
+
+    missing: list[str] = []
+
+    def walk(node) -> None:
+        if isinstance(node, dict):
+            for key in node.get("properties", {}) or {}:
+                if key not in ts_text:
+                    missing.append(f"property {key!r}")
+            for value in node.get("enum", []) or []:
+                if isinstance(value, str) and f'"{value}"' not in ts_text:
+                    missing.append(f"enum value {value!r}")
+            const = node.get("const")
+            if isinstance(const, str) and f'"{const}"' not in ts_text:
+                missing.append(f"const {const!r}")
+            for child in node.values():
+                walk(child)
+        elif isinstance(node, list):
+            for child in node:
+                walk(child)
+
+    walk(schema)
+    assert not missing, f"generated lot_geometry.ts is missing schema tokens: {missing}"

@@ -161,10 +161,37 @@ def test_single_lot_coordinates_are_plausible_nyc_lnglat():
         assert NYC_LAT[0] < lat < NYC_LAT[1], f"lat {lat} out of NYC range"
 
 
-def test_geometry_is_verbatim_from_the_recorded_fixture():
-    raw = json.loads((FX / "LOT06_multipolygon_4142600001.geojson").read_text(encoding="utf-8"))
-    env = _build("4142600001", "LOT06_multipolygon_4142600001.geojson")
+@pytest.mark.parametrize(
+    "bbl,fixture",
+    [
+        ("4142600001", "LOT06_multipolygon_4142600001.geojson"),
+        ("1000010010", "LOT05_holes_1000010010.geojson"),
+    ],
+    ids=["LOT06_multipolygon", "LOT05_holes"],
+)
+def test_geometry_is_verbatim_from_the_recorded_fixture(bbl, fixture):
+    raw = json.loads((FX / fixture).read_text(encoding="utf-8"))
+    env = _build(bbl, fixture)
     assert env["geometry"] == raw["features"][0]["geometry"]  # byte-for-byte structural equality
+
+
+def test_holes_interior_rings_transport_verbatim():
+    """G4 correction BLOCKING-1: the holed Governors Island Polygon (LOT05) is the
+    fixture that PROVES interior rings survive transport - assert the ring
+    structure directly so a drop-interior-rings mutant fails here, not only in a
+    deep-equality that a refactor might narrow."""
+    raw_geom = json.loads(
+        (FX / "LOT05_holes_1000010010.geojson").read_text(encoding="utf-8")
+    )["features"][0]["geometry"]
+    env = _build("1000010010", "LOT05_holes_1000010010.geojson")
+    got = env["geometry"]
+    assert got["type"] == "Polygon"
+    # The recorded fixture carries one exterior ring plus interior rings (holes).
+    assert len(raw_geom["coordinates"]) >= 2, "fixture no longer holed - re-capture"
+    assert len(got["coordinates"]) == len(raw_geom["coordinates"])
+    # Every interior ring survives verbatim, position for position.
+    for ring_index, ring in enumerate(raw_geom["coordinates"]):
+        assert got["coordinates"][ring_index] == ring
 
 
 # ---------------------------------------------------------------------------
