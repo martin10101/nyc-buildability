@@ -46,13 +46,41 @@ Verbatim list: **R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A**.
   perimeter-wall height **max 25 ft** above the base plane; ridge/building height
   **max 35 ft** above the base plane.
 - Setback above the perimeter wall = sloping-plane geometry (apex points; sloping
-  planes ≤80° from the 25 ft plane up to the 35 ft ridge; §23-421 paragraphs a–g) =
-  **A2 gap**, surfaced as a documented limitation, never numeric.
+  planes rising to the 35 ft ridge; §23-421 paragraphs beyond this capture's readable
+  excerpt) = **A2 gap**, surfaced as a documented limitation, never numeric. The
+  "apex-point / ≤80°" detail and the "(a) through (g)" paragraph count are NOT read from
+  THIS in-task HTML capture (see the completeness note below); they are carried from the
+  preserved rules-engineer agent memory and the owner-verified record, named explicitly
+  in the corrected snapshot notes.
 - Out of scope from this same list: R1/R2 (bare group labels — **blocker B-023**,
   Section 20 / Tier D legal ruling pending) and R5A (accepted M4-T006 R5 pilot).
-- §23-421 special provision "In R1 and R2 Districts without a letter suffix … the
-  reference plane … may be located up to five feet above the base plane" applies
-  ONLY to R1/R2 — it does NOT touch R3/R4 (recorded, out of scope).
+- §23-421 paragraph (g) — the R1/R2-without-a-letter-suffix reference-plane provision —
+  is **NOT** content of this in-task capture. This HTML curl channel could NOT render it:
+  the zr.planning.nyc.gov HTML render is documented to lose Section 23-421(g) in text
+  extraction on both official mirrors across four attempts (`docs/ARCHITECT_REVIEW_QUESTIONS.md`
+  lines 48-51, owner-verified 2026-09-13); the figures below appear NOWHERE in this
+  capture's `verbatim_excerpt`. They are stated here only as a provenance-qualified
+  description drawn from two NAMED sources outside this capture — the owner-verified
+  record in `docs/ARCHITECT_REVIEW_QUESTIONS.md` (section A1/A3, approx. lines 40-56 and
+  88-90) and the preserved rules-engineer agent memory
+  (`.claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md`,
+  preserved in blocker B-023) — never as an in-task §23-421 quote. Per those
+  owner-verified-elsewhere sources: for R1 and R2 Districts WITHOUT a letter suffix, the
+  reference plane may be located up to 5 ft above the base plane where EITHER (a) the
+  zoning lot has an area of at least 9,500 sq ft AND a width of at least 100 ft, OR (b)
+  the lot has a slope (street-wall-line level to rear-wall-line level) of at least 5
+  percent. This provision does NOT touch R3/R4 and remains out of M4-T014 scope
+  (R1/R2 = blocker B-023).
+
+**Completeness note (owner directive, carried forward from the M4-T012 packet):** the
+rules pipeline must prove ZR §23-421 section completeness from an artifact that provably
+contains the full text (e.g. a print/PDF render) — never from HTML extraction alone,
+because the HTML render on `zr.planning.nyc.gov` is documented to lose paragraph (g) on
+both official mirrors across four attempts (`docs/ARCHITECT_REVIEW_QUESTIONS.md` lines
+48-51). This in-task capture is an HTML curl channel and therefore does NOT constitute
+that completeness proof. Full-text (print/PDF) verification of §23-421 is still owed
+before any rule citing snapshot `zr-23-421-r3-r4` (or the accepted pilot's `zr-23-421`)
+advances toward G6.
 
 ### §23-422 flat-roof envelope — opening district list + per-statement labels
 Verbatim list: **R3-2 R4 R4B R5 R5B R5D**. R3/R4-series members in scope: **R3-2, R4, R4B**.

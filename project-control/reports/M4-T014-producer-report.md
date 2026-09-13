@@ -153,3 +153,89 @@ the authority.
   or `docs/MVP_ARCHITECT_REVIEW_QA.md`. No DSL schema change (S2). `git status` shows exactly the 10
   new files listed above (3 rulesets + 3 canonical snapshots + 3 bundle snapshots + 1 test) — no
   forbidden path modified. Work left UNCOMMITTED in the worktree per instructions.
+
+---
+
+## Rework round 1 — surgical provenance correction (G3 supplemental ruling)
+
+**Trigger:** G3 was revised from PASS to FAIL on newly surfaced evidence
+(`project-control/reports/M4-T014-G3-supplemental-ruling.md`, orchestrator-preserved
+verbatim from the reviewer). A peer-verified tooling hazard, independently grounded by
+the reviewer in `docs/ARCHITECT_REVIEW_QUESTIONS.md` lines 48-51 (owner-verified
+2026-09-13), established that the zr.planning.nyc.gov HTML render LOSES §23-421
+paragraph (g) in text extraction on both official mirrors across four attempts. My
+`zr-23-421-r3-r4` snapshot's `capture_method` is exactly that HTML-curl channel, so it
+provably could not have read paragraph (g) — yet notes[1]/notes[2] asserted (g) content
+(the 5 ft reference-plane provision, the R1/R2-no-suffix scope, the "(a) through (g)"
+lettering, the apex-point/≤80° geometry) without naming a source that could actually see
+it, and `M4-T014-source-capture.md` lines 53-55 presented (g) text INSIDE quotation
+marks as though it were an in-task §23-421 quote. The true basis was always my prior-task
+agent memory (analogous to the torn-down `zr-r1-r2-height-setback-source-facts.md`,
+preserved in blocker B-023) — a legitimate basis, but it had to be NAMED, and the
+pseudo-verbatim quoting had to go (permanent principles 2 and 3: provenance and no
+guessed source meanings).
+
+**Correction applied (Option (b) of the ruling — keep the information, fix its
+provenance; NO rule-value change):**
+
+1. `docs/research/zr-snapshots/v1/zr-23-421-r3-r4.snapshot.json` (canonical) — rewrote
+   notes[1] and notes[2] to (i) state explicitly that this HTML capture channel could not
+   render §23-421 paragraphs (a)-(g) and that the excerpt deliberately stops before them;
+   (ii) attribute every (g)-content statement by name to the preserved rules-engineer
+   agent memory (`.claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md`,
+   preserved in blocker B-023) and the owner-verified record
+   (`docs/ARCHITECT_REVIEW_QUESTIONS.md`, section A1/A3) — never as content of this
+   capture; (iii) state the owner-verified (g) trigger conditions accurately (zoning lot
+   area ≥9,500 sq ft AND width ≥100 ft, OR slope ≥5% measured street-wall-line to
+   rear-wall-line — either condition sufficing, per the exact owner-verified wording in
+   `docs/ARCHITECT_REVIEW_QUESTIONS.md`) and marked owner-verified-elsewhere, not
+   captured here. `verbatim_excerpt` and `content_digest_sha256` were NOT touched;
+   recomputed `sha256(verbatim_excerpt)` still equals the stored digest
+   `68e4d147a351188ce0df06d8609b1c3766c76776e0a87482e04ac2cc9459e046` (verified below).
+   `services/api/app/_zr_snapshots/v1/zr-23-421-r3-r4.snapshot.json` (bundle) re-synced
+   byte-identical via `sync_zr_snapshots.py`.
+2. `project-control/reports/M4-T014-source-capture.md` — removed the quotation marks
+   around the (g) passage (former lines 53-55) and reframed it as a provenance-qualified
+   description citing the same two named sources; extended the adjacent sloping-plane/A2-gap
+   bullet with the same disclosure for internal consistency (it carried the same
+   unsourced "apex-point/≤80°"/"(a) through (g)" assertions); added a completeness note
+   that ZR §23-421 full-text (print/PDF) proof is owed before any rule citing this
+   snapshot advances toward G6 (carried forward from the M4-T012 packet, per owner
+   directive).
+3. This addendum.
+
+**Note on the trigger-condition phrasing:** the coordinator's forwarding message
+paraphrased the owner-verified conditions as "≥9,500 sq ft AND (≥100 ft width OR ≥5%
+slope)". Reading `docs/ARCHITECT_REVIEW_QUESTIONS.md` directly (lines ~48-56), the
+owner-verified text is "(1) zoning-lot area ≥9,500 sq ft AND width ≥100 ft; or (2) slope
+≥5% ... (either suffices)" — i.e. (area AND width) OR (slope), not area AND (width OR
+slope). I used the source document's exact grouping (consistent with the B-023 blocker's
+independent phrasing: "lot area of at least 9,500 square feet and lot width of at least
+100 feet; or ... a slope ... of at least five percent"), disclosed here in case the
+paraphrase reflected information I do not have access to.
+
+**Self-check (real output, rework round):**
+
+```
+$ python -c "recompute sha256(verbatim_excerpt) vs stored digest"
+recomputed: 68e4d147a351188ce0df06d8609b1c3766c76776e0a87482e04ac2cc9459e046
+stored    : 68e4d147a351188ce0df06d8609b1c3766c76776e0a87482e04ac2cc9459e046
+MATCH
+
+$ python services/api/scripts/sync_zr_snapshots.py && python services/api/scripts/sync_zr_snapshots.py --check
+synced 10 files (incl. zr-23-421-r3-r4.snapshot.json)
+OK: runtime-bundled ZR snapshots are byte-identical to the canonical source (10 file(s)).
+EXIT=0
+
+$ python -m pytest services/api/tests/rules -q
+458 passed in 7.31s
+```
+
+No test in `services/api/tests/rules/test_r3_r4_height.py` (or the rest of the suite)
+asserted the old note wording (grep for "apex-point", "paragraphs (a)", "reference
+plane", "large or sloped lots" across `services/api/tests` returned no matches), so no
+test expectation required a change. Only the two files named above were edited; no
+rule/parameter value, applicability, schema, engine, or test file changed. Work remains
+UNCOMMITTED in the worktree; no git write beyond the read-only `git fetch`/`git show`
+used to retrieve the ruling and `docs/ARCHITECT_REVIEW_QUESTIONS.md` from
+`origin/candidate/D-024-mrl-option-b` (both explicitly authorized, read-only, no working-tree effect).
