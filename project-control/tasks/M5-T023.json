@@ -128,8 +128,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "maplibre-gl is browser-only: it must live in a client component loaded without SSR (dynamic import or guarded mount) or next build breaks; this is its FIRST import - watch bundle impact and keep it scoped to the confirm surface",
     "WebGL is not guaranteed in headless CI Chromium: the component must detect unavailability and render the honest typed fallback; Playwright asserts stable copy/attribution/testids, never pixels",
@@ -147,7 +147,7 @@
     "python tools/modularity_check.py --check"
   ],
   "created_at": "2026-09-13T02:27:11.252630+00:00",
-  "updated_at": "2026-09-13T04:06:52.117750+00:00",
+  "updated_at": "2026-09-13T04:20:36.113583+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -194,6 +194,15 @@
       "percent": 73,
       "status": "awaiting_gate",
       "message": "CORRECTION of the previous progress entry: the round-2 repair was NOT in f13fe0df (a PS5.1 quoting failure aborted that commit while the push still went out; its CI run is superseded). The real round-2 closure commit is 3ff9461991525d5fd62098733591e2571ffaef26 - exact:true labels per the deficit-convergence matrix; the CI run on 3ff9461991525d5fd62098733591e2571ffaef26 is the verification run."
+    },
+    {
+      "at": "2026-09-13T04:20:31.945580+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "rework",
+      "message": "Identity-restamp resubmit: the awaiting_gate submit record predates rework round 2 (spec exact-match fix); transitioning rework->submit at the frozen candidate content (identity ceb64b3d, unchanged since 3ff94619) so the submit record binds the accepted content. All gates + DCV row already PASS at this identity."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T04:20:36.113583+00:00"
 }

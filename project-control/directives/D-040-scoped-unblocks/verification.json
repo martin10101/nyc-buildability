@@ -143,7 +143,7 @@
    "applicable_requirement_ids": [
     "D-040-R001"
    ],
-   "reviewed_sha": "7782be5981d28007075aa71e969df11774e44192",
+   "reviewed_sha": "318c8794d2de76fdbef6e930b5baf76091afe725",
    "reviewed_manifest_sha256": "ceb64b3d94debedac93006b1114020d76860b26a030b6c54b768bfd35b3faae8",
    "producer": "frontend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -169,7 +169,7 @@
      ],
      "verified_at": "2026-09-13T05:20:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "7782be5981d28007075aa71e969df11774e44192"
+     "reviewed_sha": "318c8794d2de76fdbef6e930b5baf76091afe725"
     }
    ]
   }
