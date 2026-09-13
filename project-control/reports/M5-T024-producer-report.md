@@ -126,6 +126,63 @@ Cross-checked against repo evidence:
 - No credential, key, or real URL in either file (D-043-R002). No dashboard action performed by any
   agent (D-043-R003). No public-launch content (D-043-R004).
 
+## Rework round 1 (G1 RC-1 blocking + G5 A1 advisory)
+
+Same scope (the two allowed files only), docs-only, same worktree, no git commands. Changes to
+`docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md`:
+
+**RC-1 (BLOCKING) — address flow was unreachable as written.** Verified in source: the address
+front door `<AddressResolutionScreen />` mounts **only** when the single `ruleEvalEnabled` boolean
+is true, which requires the env flag **AND** a per-request `?ruleeval=on` opt-in
+(`apps/web/src/lib/rule-evaluation.ts` lines 96-103 → `apps/web/src/app/property/page.tsx` line 30 →
+`apps/web/src/components/property/PropertyLookup.tsx` line 265 — the only mount). Plain `/property`
+shows only the numeric BBL form.
+
+1. **§9 reworked.** Added a "read before step 2" paragraph that introduces the opt-in URL
+   `<new-web-service-origin>/property?ruleeval=on` **before/with** the address step and states
+   explicitly that plain `/property` shows no address field and that this is **expected, not a
+   broken deploy**. Step 2 now navigates to the `?ruleeval=on` URL to reach the address field, with
+   an "if the address field is absent, you are on plain `/property`" recovery note. Cited the three
+   code locations above.
+2. **§2 step 1 updated.** Now states the `?ruleeval=on` opt-in gates **both** the address front door
+   **and** the draft rule-evaluation surface via the **same** `ruleEvalEnabled` boolean — not the
+   rule-eval surface alone — and that the env flag alone surfaces nothing on plain `/property`. Cited
+   `rule-evaluation.ts` 96-103, `property/page.tsx` 30, `PropertyLookup.tsx` 265.
+3. **§9 step 3 updated** to say the same two-factor gate mounts both surfaces (same citations).
+
+**A1 (advisory) — exposure note ordering.** The honest-exposure note physically followed the
+API-flag step. Reordered for strict linear-reader safety: the exposure note is now **§5 ("READ THIS
+BEFORE §6")** and the CORS + API-flag step is now **§6**. Content unchanged (G5 judged it complete);
+only position + numbering moved.
+
+**Renumbering map (only these two moved; everything else unchanged):**
+
+| Before | After | Section |
+|---|---|---|
+| §5 | §6 | Set CORS + the internal flag on `nycdf-api` |
+| §6 | §5 | Honest exposure note |
+
+Cross-references updated to match: §0 ("See §5 before turning the internal flag on"), §4 ("needed
+for the CORS entry in §6" / "must exist before §6" / "§6 rationale"), old §5 step 2 note now reads
+"You already read the exposure consequence in §5", §5 heading "READ THIS BEFORE §6". §9 CORS
+references now point to §6 step 1. Grep audit of all `§5`/`§6` occurrences confirmed consistency.
+
+**Fresh privacy grep (reworked checklist):**
+
+```
+$ grep -rni 'onrender' docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md
+$                                             # (no matches; exit=1)
+
+$ grep -rnoE 'https?://[a-zA-Z0-9.-]+' docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md | sort -u
+135:http://127.0.0.1                          # documented local default only
+
+$ grep -rniE 'sk-|bearer |api[_-]?key *=|token *=|password *=|-----BEGIN' docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md
+$                                             # (no matches; exit=1)
+```
+
+Still placeholders only — no real service URL, no `onrender.com` host, no key/token/secret.
+D-043-R002 intact. Scope unchanged (two allowed files, docs-only, uncommitted).
+
 ## Requested status
 
 **awaiting_gate** — G0, G1, G5 required; reviewers code-reviewer + security-reviewer.

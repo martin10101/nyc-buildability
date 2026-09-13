@@ -29,7 +29,7 @@ the CORS entry on `nycdf-api`.
   internal/dev posture. The visual redesign remains a separate later effort. (D-043-R004.)
 - **Honest privacy meaning.** "Private" here means **unlisted URL + feature-flag-gated +
   internal/dev labeling** — it is **NOT secret-proof.** The API has **no authentication**
-  (`services/api/app/main.py` module docstring lines 6-11; `docs/MVP_AGENDA.md` §I). See §6 before
+  (`services/api/app/main.py` module docstring lines 6-11; `docs/MVP_AGENDA.md` §I). See §5 before
   turning the internal flag on for the API.
 - **You will create this service by hand in the dashboard, NOT via the Blueprint.** The
   `render.yaml` `nycdf-web` block is still withheld; creating the Blueprint's service would also
@@ -118,9 +118,17 @@ Set these on the **new web service** in the dashboard, **before** you trigger th
      `TRUE_TOKENS` at `rule-evaluation.ts` line 79. Any other / absent / empty value = disabled
      (fail-safe).
    - This is a **server-read** variable, deliberately **not** prefixed `NEXT_PUBLIC_`, so Next never
-     inlines it into the browser bundle (`rule-evaluation.ts` lines 60-65). The internal surface
-     also requires a per-request `?ruleeval=on` opt-in (§9), so setting the flag on does not by
-     itself render the surface on ordinary requests.
+     inlines it into the browser bundle (`rule-evaluation.ts` lines 60-65).
+   - **The flag alone does NOT surface anything.** Every internal surface is behind a **two-factor
+     gate**: the env flag on **AND** a per-request `?ruleeval=on` opt-in. Both together produce the
+     single `ruleEvalEnabled` boolean (`apps/web/src/lib/rule-evaluation.ts` lines 96-103, computed
+     in `apps/web/src/app/property/page.tsx` line 30). That one boolean gates **both** the
+     **address front door** (`<AddressResolutionScreen />`) **and** the draft rule-evaluation
+     surface — the only mount point is `apps/web/src/components/property/PropertyLookup.tsx` line 265.
+     So on a plain `/property` request (no `?ruleeval=on`) the page shows **only the numeric BBL
+     lookup form — no address field** — even with this env flag set. To use the address flow you
+     must open `/property?ruleeval=on` (see §9). Absent / empty / any non-true-token value =
+     disabled (fail-safe).
 2. **`NEXT_PUBLIC_API_BASE_URL` = `<owner-pastes-private-API-URL>`**
    - The browser calls the API **cross-origin** at this base URL
      (`apps/web/src/lib/api.ts` `apiBaseUrl()`, lines 147-154; `apps/web/src/lib/address-api.ts`).
@@ -155,14 +163,34 @@ does not re-inline it (`apps/web/.env.example` lines 32-35; `docs/DEPLOYMENT_AND
 ## 4. Capture the new web origin
 
 From the new service's page, copy its assigned origin (scheme + host, **no trailing slash**) — call
-it `<new-web-service-origin>`. You need it for the CORS entry in §5.
+it `<new-web-service-origin>`. You need it for the CORS entry in §6.
 
-**This origin must exist before §5** — the API blocks all cross-origin access until it is listed
-(§5 rationale).
+**This origin must exist before §6** — the API blocks all cross-origin access until it is listed
+(§6 rationale).
 
 ---
 
-## 5. Set CORS + the internal flag on `nycdf-api`
+## 5. Honest exposure note — READ THIS BEFORE §6
+
+The API has **no authentication** (`services/api/app/main.py` docstring lines 6-11;
+`docs/MVP_AGENDA.md` §I). Read this **before** setting the internal flag on `nycdf-api` in §6.
+Therefore:
+
+- Turning `INTERNAL_RULE_EVAL_ENABLED` on for `nycdf-api` makes the flag-gated internal routes
+  **reachable by anyone who holds the API URL** — the flag is a feature toggle, **not** an access
+  control.
+- **Unlisted is not secret.** Keeping the web URL and API URL private reduces who stumbles onto
+  them; it does **not** protect the endpoints from anyone the URL reaches. This is the directive's
+  own framing: private = unlisted + flag-gated + internal/dev labeling, **not secret-proof**
+  (`project-control/directives/D-043-internal-web-deploy/source-001.md`; requirements
+  D-043-R002/R004).
+- Accept this consciously: share the URLs only with people you trust, and keep the internal/dev
+  labeling and disclaimers intact (D-043-R001/R004). Real access control arrives with the auth
+  layer (blocked on **B-001**), not with this deploy.
+
+---
+
+## 6. Set CORS + the internal flag on `nycdf-api`
 
 On the **existing `nycdf-api`** service (dashboard → `nycdf-api` → Environment):
 
@@ -183,31 +211,13 @@ On the **existing `nycdf-api`** service (dashboard → `nycdf-api` → Environme
      `/api/v1/properties/{bbl}/rule-evaluation` endpoint (`apps/web/src/lib/rule-evaluation.ts`
      lines 54-65, "the SAME name the API service reads"). With it unset, that endpoint returns a
      generic `404` and the web surface shows an honest "not available in this environment" note.
-   - **Read §6 before you set this** — turning it on has an exposure consequence.
+   - **You already read the exposure consequence in §5** — turning this on makes the flag-gated
+     routes reachable by anyone holding the API URL (the API has no auth). Set it knowingly.
 
 Save; Render restarts `nycdf-api`. Confirm `/api/v1/health` returns 200 after the restart.
 
 > **Env-var changes are deploys.** Record the variable **name + environment (never the value)** in
 > your ops log and expect a restart (`docs/DEPLOYMENT_AND_ROLLBACK.md` §1.3).
-
----
-
-## 6. Honest exposure note (read before §5 step 2)
-
-The API has **no authentication** (`services/api/app/main.py` docstring lines 6-11;
-`docs/MVP_AGENDA.md` §I). Therefore:
-
-- Turning `INTERNAL_RULE_EVAL_ENABLED` on for `nycdf-api` makes the flag-gated internal routes
-  **reachable by anyone who holds the API URL** — the flag is a feature toggle, **not** an access
-  control.
-- **Unlisted is not secret.** Keeping the web URL and API URL private reduces who stumbles onto
-  them; it does **not** protect the endpoints from anyone the URL reaches. This is the directive's
-  own framing: private = unlisted + flag-gated + internal/dev labeling, **not secret-proof**
-  (`project-control/directives/D-043-internal-web-deploy/source-001.md`; requirements
-  D-043-R002/R004).
-- Accept this consciously: share the URLs only with people you trust, and keep the internal/dev
-  labeling and disclaimers intact (D-043-R001/R004). Real access control arrives with the auth
-  layer (blocked on **B-001**), not with this deploy.
 
 ---
 
@@ -242,21 +252,36 @@ UI]**
 ## 9. End-to-end owner verification
 
 After §1–§7, verify on your own device (D-043-R001 required evidence: "owner confirms the live URL
-works on their device"):
+works on their device").
 
-1. **Load the web URL** (`<new-web-service-origin>`) — the app loads and the property flow is
-   usable (root `/` returns 200; health posture from §1 step 10).
-2. **Resolve a real address live** — enter a real NYC address in the address flow; it resolves
-   end-to-end against the **live** `nycdf-api` (this exercises the cross-origin call from §2 step 2
-   and the CORS allowlist from §5 step 1). If the address does **not** resolve but the API is up,
-   the most likely cause is a CORS mismatch — re-check that `<new-web-service-origin>` in §5 exactly
-   matches the origin from §4 (no trailing slash, correct scheme).
-3. **Flag-on internal surface renders** — append `?ruleeval=on` to a property URL. With
-   `INTERNAL_RULE_EVAL_ENABLED=1` on **both** services (§2, §5) **and** the per-request opt-in, the
-   draft rule-evaluation surface renders (`apps/web/src/lib/rule-evaluation.ts` lines 54-77,
-   two-factor gate). Without `?ruleeval=on`, or with the flag unset, the surface stays hidden and
-   the endpoint returns a benign `404` shown as "not available in this environment" — that is the
-   expected default, not a failure.
+**FIRST, understand the opt-in URL — read before step 2.** Every internal surface (both the address
+front door **and** the draft rule-evaluation surface) is gated by the single `ruleEvalEnabled`
+boolean, which requires the env flag on **AND** a per-request `?ruleeval=on` opt-in
+(`apps/web/src/lib/rule-evaluation.ts` lines 96-103 → `apps/web/src/app/property/page.tsx` line 30 →
+`apps/web/src/components/property/PropertyLookup.tsx` line 265, the only mount of
+`<AddressResolutionScreen />`). **Consequence:** a plain `/property` request (no `?ruleeval=on`)
+shows **only the numeric BBL lookup form — there is no address field**, even with the env flag set.
+That is **expected**, not a broken deploy. To use the address flow you must open
+**`<new-web-service-origin>/property?ruleeval=on`**.
+
+1. **Load the web URL** (`<new-web-service-origin>`) — the app loads (root `/` returns 200; health
+   posture from §1 step 10). Plain `/property` shows the numeric BBL lookup form; the numeric lookup
+   works on its own.
+2. **Resolve a real address live** — open **`<new-web-service-origin>/property?ruleeval=on`**; the
+   address front door (`<AddressResolutionScreen />`) is now mounted. Enter a real NYC address; it
+   resolves end-to-end against the **live** `nycdf-api` (this exercises the cross-origin call from §2
+   step 2 and the CORS allowlist from §6 step 1). If the address field is absent, you are on plain
+   `/property` — re-open the URL **with** `?ruleeval=on`. If the field is present but the address
+   does **not** resolve while the API is up, the most likely cause is a CORS mismatch — re-check that
+   `<new-web-service-origin>` in §6 exactly matches the origin from §4 (no trailing slash, correct
+   scheme).
+3. **Flag-on draft rule-evaluation surface renders** — on that **same** `?ruleeval=on` request, with
+   `INTERNAL_RULE_EVAL_ENABLED=1` on **both** services (§2, §6), the draft rule-evaluation surface
+   also renders (the same two-factor gate mounts both surfaces;
+   `apps/web/src/lib/rule-evaluation.ts` lines 54-77, 96-103;
+   `apps/web/src/components/property/PropertyLookup.tsx` line 265). Without `?ruleeval=on`, or with
+   the env flag unset, both surfaces stay hidden and the rule-eval endpoint returns a benign `404`
+   shown as "not available in this environment" — the expected default, not a failure.
 
 **Expected-absent (do NOT treat as bugs):**
 
