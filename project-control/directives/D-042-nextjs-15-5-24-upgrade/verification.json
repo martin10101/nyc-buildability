@@ -4,5 +4,38 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-042 requirements bind the non-ledger sentinel D-042-BOOTSTRAP (D-038..D-041 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this directive cite D-042:<requirement ids> and verify through their own DCV rows in the usual way.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-042",
+   "task_id": "M5-T021",
+   "applicable_requirement_ids": [
+    "D-042-R001"
+   ],
+   "reviewed_sha": "e0f7b2d10c7d17726dddea32e5468939ab3584aa",
+   "reviewed_manifest_sha256": "1405c086726179eef92c99ca8fdd91fabcf290ba912fa5edca31dc61a7ff0189",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T00:40:00+00:00",
+   "requirements": [
+    {
+     "id": "D-042-R001",
+     "state": "PASS",
+     "evidence": [
+      "EXACT PIN: apps/web/package.json@e0f7b2d1 dependencies.next == '15.5.24' exactly; react/react-dom unchanged 19.1.2. git diff 9cf2890b..e0f7b2d1 -- apps/web/package.json = EXACTLY six version changes and nothing else (next 15.5.21->15.5.24, vitest 3.2.7->4.1.11, sharp 0.35.3->0.35.4, js-yaml 4.3.1->4.3.2, +overrides baseline-browser-mapping 2.11.21 + browserslist 4.28.9); postcss/brace-expansion/nanoid/eslint-config-next untouched; no 16.x.",
+      "REGISTRY (live spot-check): registry.npmjs.org/next .time['15.5.24'] = 2026-08-25T16:14:06.715Z (byte-matches M5-T021-registry-research.md), ~18d >= 604800s; latest dist-tag 16.3.5 (15.5.24 is a deliberate same-line pin, not the latest major).",
+      "LOCK RESOLVES FIXED VERSIONS: apps/web/package-lock.json packages[] = next 15.5.24, vitest 4.1.11, @vitest/mocker 4.1.11, sharp 0.35.4, js-yaml 4.3.2, baseline-browser-mapping 2.11.21, browserslist 4.28.9, react/react-dom 19.1.2; programmatic scan for any node_modules/next at 16.x = none.",
+      "MACHINE PROOF (gh read-only): generate-lockfile run 34726113984 conclusion success (headSha 3cd3b93c); lockfile-job steps all success = npm ci integrity+lock<->package.json, blocking npm audit --audit-level=low, blocking audit JSON total==0 every severity, committed-lock >=7d age gate (fail-closed), npm CLI advisory, bot commit. CI run 34726577993 conclusion success (headSha 18ee6b79): all 18 jobs green, zero non-success, incl. web-dependency-security, web, web-e2e (448/448 vitest4), control-plane.",
+      "PROHIBITIONS: R003 no-deploy git diff --name-only 9cf2890b..e0f7b2d1 -- render.yaml .github/ = EMPTY; R004 no-16.x next exactly 15.5.24, no next-16.x lock node, only M5-T021 cites D-042.",
+      "required_evidence: accepted-track gated ledger task citing D-042:D-042-R001 (G0/G1/G5 all PASS: gates/M5-T021-{G0,G1,G5}.json; independent reviewers code-reviewer/security-reviewer != producer orchestrator) + web-dependency-security job GREEN (last standing CI red retired).",
+      "required_harness: python tools/validate_directive_compliance.py --check EXIT 0; ResolverTests 5/5 OK; test_project_control.py 23 groups EXIT 0; test_directive_reminder.py 12 OK. FROZEN IDENTITY: git log 18ee6b79..e0f7b2d1 over the 5 allowed_paths EMPTY; computed pc._task_git_identity(reviewed_sha=None -> HEAD e0f7b2d1) = 1405c086... == submit content_manifest_sha256. NEG CONTROLS: no-row fail-closed; correct row -> reasons=[] deferrals=[]; stale reviewed_sha + stale identity both fail closed."
+     ],
+     "verified_at": "2026-09-13T00:40:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "e0f7b2d10c7d17726dddea32e5468939ab3584aa"
+    }
+   ],
+   "note": "Independent DCV of M5-T021 (D-042-R001 Next.js 15.5.24 exact pin + whole-tree advisory sweep). Every obligation reproduced from primary evidence at HEAD e0f7b2d1: package.json exact-pin diff, live npm .time spot-check, lock resolution scan, gh-corroborated generate-lockfile proof chain (run 34726113984) + fully-green CI (run 34726577993, 18/18), no-deploy/no-16.x prohibition diffs, validator EXIT 0, in-memory accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD e0f7b2d1; it may be mechanically re-stamped to accept-time HEAD while this task's 5 allowed_paths diff vs their frozen material (18ee6b79; producer chain d62a779e/3cd3b93c/bot d83bcfe5) stays empty; computed material identity 1405c086726179eef92c99ca8fdd91fabcf290ba912fa5edca31dc61a7ff0189 is unchanged while those allowed_paths are unchanged."
+  }
+ ]
 }

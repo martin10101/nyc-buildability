@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-022",
  "title": "7 npm advisories in the committed web tree (1 CRITICAL Next.js RCE covering the currently-pinned 15.5.21, 3 high, 3 moderate) fail the whole-tree advisory-free rule closed, blocking ANY lockfile change - including the maplibre-gl@6.7.0 admission the D-040-R001 web half needs; the Next.js upgrade is owner-gated (D-040-R004)",
- "status": "open",
+ "status": "resolved",
  "created_at": "2026-09-12T15:40:00+00:00",
  "created_by": "orchestrator",
  "affects": [
@@ -23,5 +23,17 @@
   ".github/workflows/generate-lockfile.yml steps: blocking npm audit (all severities) BEFORE the bot commit - fail-closed by design",
   "project-control/reports/D-040-R001-mappluto-research.md Part C (maplibre-gl@6.7.0 admission facts: age-gate-passing as of 2026-09-12, Snyk clean, BSD-3-Clause, CVE-2026-85061 fixed in 6.4.1)"
  ],
- "notes": "No waiver is possible or requested (policy section G: no agent waiver, warning-only prohibited). The D-040 queue is otherwise COMPLETE: R003 (M0-T156), R002 (M5-T019), R001 server half (M5-T020) all accepted; D-041 C1 delivered end-to-end (M5-T017+M5-T018). This blocker gates only the final web half of R001."
+ "notes": "No waiver is possible or requested (policy section G: no agent waiver, warning-only prohibited). The D-040 queue is otherwise COMPLETE: R003 (M0-T156), R002 (M5-T019), R001 server half (M5-T020) all accepted; D-041 C1 delivered end-to-end (M5-T017+M5-T018). This blocker gates only the final web half of R001.",
+ "resolved_at": "2026-09-13T00:50:00+00:00",
+ "resolved_by": "orchestrator (D-042 owner authorization; D-042-R002 discharge)",
+ "resolution": {
+  "summary": "Resolved exactly along the recorded resolution_path: the owner authorized the Next.js upgrade as directive D-042 (captured 84caa347, 'Authorize the Next.js security upgrade to 15.5.24'). Ledger task M5-T021 (ACCEPTED, 191st) pinned next EXACTLY 15.5.24 and cleared ALL advisories in one wave (sharp 0.35.4, js-yaml 4.3.2, vitest 4.1.11, browserslist 4.28.9, baseline-browser-mapping 2.11.21 - every value registry-verified >= 7 days old); the sanctioned generate-lockfile workflow proved the lock (npm ci integrity, blocking audit total==0 at every severity, committed-lock age gate, CLI advisory) before its bot committed it (d83bcfe5); the first dispatch failed closed on a preserved vulnerable resolution - the negative proof. No waiver of any kind was used. The blocking condition (any advisory in the committed web tree) is DISCHARGED.",
+  "reproduced_facts": [
+   "CI run 34726577993 at 18ee6b79: CONCLUSION SUCCESS, all 18 jobs green - web-dependency-security SUCCESS (the last standing CI red retired); the first fully green CI run on the branch",
+   "generate-lockfile run 34726113984 SUCCESS end-to-end (run 34726060266 failed closed first - the fail-closed chain works)",
+   "apps/web/package.json dependencies.next == 15.5.24 exactly; package-lock resolves all six fixed versions; OSV clean for each (M5-T021-G5.md, independently methodology-validated)",
+   "DCV row for D-042-R001 PASS at e0f7b2d1 (identity 1405c086); M5-T021 accepted"
+  ],
+  "consequence": "Per D-042-R002 the maplibre-gl@6.7.0 admission for the D-040-R001 lot-outline web half MAY now proceed under its own G5 provenance review and age gate."
+ }
 }
