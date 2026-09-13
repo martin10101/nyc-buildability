@@ -34,28 +34,38 @@ spans multiple chat sessions. The working model, set by the owner on 2026-09-12:
   bigger-picture feedback the owner has explicitly asked for ("don't be shy"). The owner asked for
   simple, non-technical language throughout — short sentences, analogies, no jargon without an
   immediate explanation.
-- **Open threads for the next session** (refreshed end-of-night 2026-09-12): (1) **Render deploy
-  checklist** — D-043 authorized the internal web deploy; the build session will produce the
-  exact Render service settings + env-var checklist as an owner return item; walk the owner
-  through applying it, then the owner types real addresses into the live internal site. (2)
-  **Supabase credentials** expected from the owner (dashboards/env ONLY, never chat/files) —
-  unlocks storage, then the M3 legal-corpus capture chain. (3) **Design phase** — all inputs now
-  exist: `docs/design/competitor-report-presentation-research.md` (2 passes),
-  `docs/design/astra-presentation-research.md`, `docs/design/ui-inspiration/` (+README
-  corrections), `docs/design/ui-prototype.html`, and Part 10's locked rules; next step is the
-  design-director spec, Astra critique via its review channel, then implementation packets.
-  Astra's companion mockup file (nyc_zoning_result_mockup.html) was never received — ask the
-  owner for it. (4) **Valuation** — verify Part 9 price anchors live before any external use
-  (partial verification already in the two research docs). (5) **Architect demo prep** using
-  this document + the prototype. (6) The **clickable prototype artifact** ("Buildability
-  Prototype") belongs to a prior session — find it via `/artifacts` (or Artifact action:list)
-  and pass its URL as `url` when republishing `docs/design/ui-prototype.html`; keep the repo
-  copy and the artifact in sync. (7) Pricing research already priced: G6 + coverage move
-  willingness-to-pay most — keep nudging the owner on the lawyer call.
-- **Where everything from the 2026-09-12 marathon lives:** decisions → directives D-039..D-043;
-  design rules → Part 10; gap list → Part 4 (incl. B5 ACRIS, E3 assemblage, F build-tooling);
-  valuation → Part 9; research → the two docs/design research files; the look → ui-inspiration/
-  + ui-prototype.html. Nothing important exists only in a chat transcript.
+- **Open threads for the next session** (refreshed 2026-09-13, after the citywide-campaign
+  launch night; 198 accepted): (1) **Render deploy walkthrough** — the checklist is ACCEPTED
+  and committed (`docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md`, M5-T024); walk the owner
+  through the dashboard (env vars BEFORE first build; Geoclient key there; CORS exact-origin;
+  address flow needs `/property?ruleeval=on`), then the owner types real addresses into the
+  live unlisted site. (2) **Supabase credentials** from the owner (dashboards/env ONLY, never
+  chat/files) — unlocks storage, accounts, and the M3 legal-corpus chain INCLUDING M3-T004
+  (the ZR §11-25 cross-reference/suffix graph — the structural fix for unknown-rule risk;
+  recommend pulling it forward once unblocked). (3) **Citywide rule campaign RUNNING** —
+  D-045 (full scope incl. C/M/special districts, owner chose "truly everything"), D-046
+  (parallel producers) + D-047 (claude-sonnet-5 builders, ceiling 10 ramped, twice-failed →
+  opus rebuild), D-048 (named-only + not-assessed standing pattern for text ambiguities,
+  questions append to the architect doc), D-049 (owner decision: §11-25 suffix reading for the
+  R1/R2 variants; DRAFT until G6). Wave 1 closed (M4-T013 street-width research + M4-T014
+  R3/R4 families accepted); next build session's first actions: dispatch the re-claimed
+  M4-T012 (R1/R2 under D-049; BINDING first step = full-text 23-421 print/PDF completeness
+  proof with the 9,500-present check) and contract M4-T015 (B2 connector). (4) **Architect /
+  G6 conversation** — `docs/ARCHITECT_REVIEW_QUESTIONS.md` is the ready agenda (A1/A2 issued
+  as owner decisions with the confirmation ask open; A3 modifier list; plus ask the client for
+  the B-010 R5 benchmark sheet; B-011 construction-code scope also awaits the owner). (5)
+  **Design phase** — inputs unchanged and complete; next step design-director spec; Astra's
+  mockup file (nyc_zoning_result_mockup.html) still never received. (6) **Valuation** — verify
+  Part 9 price anchors live before external use. (7) **Prototype artifact** ("Buildability
+  Prototype") — find via /artifacts and republish with `url` to keep repo copy and artifact in
+  sync. (8) **Client demo framing** — lead with the client's own lot + the remaining-rights
+  line; pre-frame DRAFT labels as integrity; R5 is the best-covered family; live site beats
+  localhost.
+- **Where the 2026-09-12/13 decisions live:** directives D-039..D-049 (registry); design rules
+  → Part 10; gap list → Part 4; valuation → Part 9; professional questions + owner-verified
+  §11-25 / §23-421(g) findings → `docs/ARCHITECT_REVIEW_QUESTIONS.md`; the (g) HTML-extraction
+  hazard + capture-completeness rule → that doc's tooling note and the M4-T012 packet. Nothing
+  important exists only in a chat transcript.
 
 ---
 
