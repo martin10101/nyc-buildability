@@ -128,8 +128,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [
     "maplibre-gl is browser-only: it must live in a client component loaded without SSR (dynamic import or guarded mount) or next build breaks; this is its FIRST import - watch bundle impact and keep it scoped to the confirm surface",
     "WebGL is not guaranteed in headless CI Chromium: the component must detect unavailability and render the honest typed fallback; Playwright asserts stable copy/attribution/testids, never pixels",
@@ -147,7 +147,7 @@
     "python tools/modularity_check.py --check"
   ],
   "created_at": "2026-09-13T02:27:11.252630+00:00",
-  "updated_at": "2026-09-13T03:28:06.349712+00:00",
+  "updated_at": "2026-09-13T03:32:47.484644+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -173,6 +173,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "Producer material captured at b99ca6c0 (13 files, all inside allowed_paths; generated/*.ts byte-identical - drift duty held). Orchestrator reproduced: generate_ts_types --check exit 0 incl. lot_geometry; modularity exit 0 (16 pre-existing warnings elsewhere). CI on b99ca6c0 in flight = executable authority for web/web-e2e. Producer disclosures logged in report (holes via labelled synthetic polygon, synthetic e2e address-resolver seam, no basemap by design). Submitting; G1/G3/G5 dispatch now, G4 after CI evidence capture."
+    },
+    {
+      "at": "2026-09-13T03:30:30.926156+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "G1 PASS (advisories: A1 = intended orchestrator M5-T024.json bundling, confirmed; A2 interior-ring fixture follow-up) + G3 PASS (advisories 1-4) + G5 PASS (advisory F-1). CI on 58839789: 17/18 green incl. web build/typegen/modularity; web-e2e FAILED - all 4 lot-outline.spec.ts tests hit a strict-mode violation: getByLabel(Borough) ambiguous (address-form select AddressForm.tsx:111 vs 'Borough (source code)' label from format.ts:75). REWORK: RC-CI-1 (BLOCKING) scope the spec's form locators; fold-ins: G3-A1 SR-summary truthfulness in non-drawable single_lot state, G5-F-1 constant customAttribution + hostile-attribution test. G3-A2/A3/A4 + G1-A2 to advisory backlog."
     }
   ]
 }
