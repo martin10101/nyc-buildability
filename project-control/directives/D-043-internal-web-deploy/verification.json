@@ -1,8 +1,83 @@
 {
  "schema": "directive_verification/v2",
  "directive_id": "D-043",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-043 requirements bind the non-ledger sentinel D-043-BOOTSTRAP (D-038..D-042 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this directive cite D-043:<requirement ids> and verify through their own DCV rows in the usual way.",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-043 requirements bind the non-ledger sentinel D-043-BOOTSTRAP (D-038..D-042 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this directive cite D-043:<requirement ids> and verify through their own DCV rows in the usual way. Applicability append 2026-09-13 bound ledger task M5-T024 to R001..R004; its row below verifies the task-scope contribution while directive-level R001 owner return items stay OPEN (no completion claimed).",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-043",
+   "task_id": "M5-T024",
+   "applicable_requirement_ids": [
+    "D-043-R001",
+    "D-043-R002",
+    "D-043-R003",
+    "D-043-R004"
+   ],
+   "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff",
+   "reviewed_manifest_sha256": "83abb75a24d65b673c3b7005897bc18b3192d8894317d88b1a5c7db2bbd512ba",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T04:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-043-R001",
+     "state": "PASS",
+     "evidence": [
+      "TASK-SCOPE CONTRIBUTION = the owner-executed checklist that stands up apps/web as an internal/unlisted Render web service; verified complete: docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md section 1 (repo nyc-buildability 1.1; branch candidate/D-024-mrl-option-b 'not main' 1.2 lines 57-60; root apps/web 1.3; runtime Node 1.4; Node 22 1.5; build npm ci && npm run build 1.6; start npm run start + $PORT 1.7; plan tradeoff 1.8; region oregon 1.9; health / 1.10).",
+      "FLAG (unified, both services) reproduced from source: apps/web/src/lib/rule-evaluation.ts:83 INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = \"INTERNAL_RULE_EVAL_ENABLED\"; TRUE_TOKENS :79 = {1,true,yes,on}; server-read/not NEXT_PUBLIC lines 60-65,82. Checklist sets it on the web service (section 2 step 1, lines 114-131) AND on nycdf-api (section 6 step 2, lines 209-215).",
+      "TWO-FACTOR GATE REACHABILITY reproduced: rule-evaluation.ts:96-103 ruleEvaluationSurfaceEnabled = env flag AND ?ruleeval true-token; apps/web/src/app/property/page.tsx:30 computes it per request and passes the boolean; apps/web/src/components/property/PropertyLookup.tsx:265 `{ruleEvalEnabled ? <AddressResolutionScreen /> : null}` is the sole mount. Checklist section 2 step 1 (lines 122-131) and section 9 (lines 257-284) correctly require /property?ruleeval=on for the address flow - the RC-1 fix is code-accurate.",
+      "CORS reproduced: services/api/app/main.py _parse_allowed_origins:66-82 raises RuntimeError on any wildcard; unset/empty => no cross-origin (docstring lines 15-19, code line 74); allow_credentials=True line 104. Checklist section 6 step 1 (lines 197-208) matches exactly (exact origins, no wildcard/trailing slash, unset=blocked, misconfig fails startup).",
+      "BUILD/START match apps/web/package.json:8-9 (build=next build, start=next start); no engines field present, so 1.5 correctly instructs setting Node 22 explicitly and marks the exact Render mechanism [confirm in the dashboard UI]. NODE 22 = .github/workflows/ci.yml node-version:22 at lines 32,69,137 (three setup-node steps, as the checklist states).",
+      "NEXT_PUBLIC_API_BASE_URL -> private API with build-time-inlining caveat (section 2 step 2 lines 132-143; section 3): default http://127.0.0.1:8000 confirmed at apps/web/src/lib/api.ts:152-153.",
+      "CONTRACTED AS NORMAL GATED LEDGER TASK citing D-043: tasks/M5-T024.json directive_refs = [{D-043, ALL}]; requirements.json applicability binds M5-T024 to R001..R004 so cited==applicable=[R001..R004]. G0 PASS at 6a8f2298 (gates/M5-T024-G0.json), G1 PASS with RC-1 DISCHARGED and G5 PASS with A1 SATISFIED (gates/M5-T024-G1.json, -G5.json, both content_manifest_sha256=83abb75a... == my computed identity), reviewers code-reviewer/security-reviewer != producer cloud-architect.",
+      "PENDING OWNER RETURN ITEMS (owner-side per R003/D-008, NOT agent-performed and NOT part of this task's material contribution): (1) execute the checklist in the Render dashboard; (2) owner confirms the live URL works on their device. These are directive-level R001 required_harness/required_evidence; D-043-R001 therefore remains OPEN at the directive level until the owner executes. THIS ROW verifies only the task's material contribution (the complete, technically-accurate, gated checklist), which is fully satisfied - same increment-PASS-while-directive-open pattern as the D-040-R001 rows for M5-T020/M5-T022."
+     ],
+     "verified_at": "2026-09-13T04:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+    },
+    {
+     "id": "D-043-R002",
+     "state": "PASS",
+     "evidence": [
+      "INDEPENDENT GREP over docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md + project-control/reports/M5-T024-producer-report.md + project-control/reports/M5-T024-evidence-map.json: the ONLY http(s) URL literal is http://127.0.0.1 (the documented local default, verified at apps/web/src/lib/api.ts:153). Zero onrender.com or other real hosts - the two 'onrender' hits (producer-report lines 40,183) are negative assertions ('no onrender.com host'); zero keys/tokens/PEM/bearer - the 'sk-|bearer|api_key=|token=' hits (producer-report lines 54,179) are the echoed grep-command transcript only.",
+      "Private API URL appears ONLY as placeholder <owner-pastes-private-API-URL> (checklist section 0 placeholder table lines 42-46; section 2 step 2 line 132); new web origin only as <new-web-service-origin>.",
+      "Checklist never instructs putting the URL in repo/chat: section 0 table note (line 40 'never in a repo file, commit, or chat'), section 2 step 2 (line 143 'It never enters a repo file, commit, or chat (D-043-R002)'), section 6 ops-log note (lines 219-220 'record the variable name + environment (never the value)').",
+      "The env-injected browser-bundle posture is as already designed (NEXT_PUBLIC_* build-time inline, api.ts:152-153) - no new client-visible disclosure introduced by the task; producer report and orchestrator-assembled evidence-map contain no real URL/credential either."
+     ],
+     "verified_at": "2026-09-13T04:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+    },
+    {
+     "id": "D-043-R003",
+     "state": "PASS",
+     "evidence": [
+      "THE DELIVERABLE IS THE EXACT OWNER-EXECUTED CHECKLIST the requirement names: docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md preamble lines 5-9 state every dashboard action is performed/confirmed by the OWNER and no agent touches the dashboard; every section 1-10 step is written as an owner action.",
+      "NO AGENT PERFORMED ANY RENDER ACTION: the task's material commits are docs-only - git show --stat 0002ddb7 = docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md + producer-report + orchestrator-assembled evidence-map; git show --stat 9ce75316 = checklist + producer-report only. No dashboard/Render operation exists (and cannot exist) in a docs diff.",
+      "CREDENTIALS NEVER ENTER REPO/CHAT: placeholders only (verified under R002); Render-UI specifics not fixed by repo evidence are explicitly marked [confirm in the dashboard UI] (section 1 click-path lines 51-53, 1.5 Node mechanism lines 71-78, 1.7 $PORT line 87-88, section 7 Auto Sync toggle line 230-231) rather than guessed - producer disclosures 1-3 (report lines 102-118).",
+      "OWNER-EXECUTION of the dashboard steps is itself an owner-side return item that is not yet performed; R003's obligation ON THIS TASK - hand the owner the exact settings+env-var checklist and keep the agent out of the dashboard (Section 20 unchanged) - is fully satisfied at this content identity."
+     ],
+     "verified_at": "2026-09-13T04:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+    },
+    {
+     "id": "D-043-R004",
+     "state": "PASS",
+     "evidence": [
+      "NO PUBLIC-LAUNCH AFFORDANCE: independent grep of the checklist for robots|sitemap|marketing|SEO|publicly list|go public|search engine|indexing returns ONLY line 28's negative statement ('This is NOT a public launch. No public listing, marketing, indexing, or removal of the internal/dev posture'). No listing/marketing/indexing/robots/sitemap step exists anywhere.",
+      "INTERNAL/DEV POSTURE PRESERVED: section 0 line 28 (NOT a public launch), section 5 honest-exposure note (unlisted != secret, lines 173-189), section 9 expected-absent 'Any public-launch affordances - none exist and none are added here (D-043-R004)' (line 294).",
+      "render.yaml UNTOUCHED BY THE TASK: git diff 0002ddb7..982a3f23 -- render.yaml is EMPTY; both material commits 0002ddb7 and 9ce75316 touch only docs (checklist + producer-report; plus the orchestrator-assembled evidence-map at 0002ddb7). Section 8 (lines 235-248) records the nycdf-web restoration debt + duplicate-service caution as a later gated task, explicitly 'recorded, NOT done here'.",
+      "PR #241 / G6 / Supabase / expansion-hold posture unchanged: docs-only change; all forbidden paths (render.yaml, apps/web/**, services/api/**, .github/**, project-control/directives/**) untouched (git show --stat above); section 2 step 3 leaves NEXT_PUBLIC_SUPABASE_* blank per B-001 (lines 144-148), preserving the Supabase-before-credentials posture; grep for '#241' returns zero hits."
+     ],
+     "verified_at": "2026-09-13T04:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+    }
+   ]
+  }
+ ]
 }
