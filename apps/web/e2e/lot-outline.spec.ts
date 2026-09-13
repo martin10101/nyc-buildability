@@ -20,14 +20,15 @@ import { expect, test, type Page } from "@playwright/test";
  * lot-outline outcome via the harness's synthetic resolver + fixture routing. */
 async function resolveTo(page: Page, street: string): Promise<void> {
   await page.goto("/property?ruleeval=on");
-  // Scope every field to the address form: the page also renders provenance
-  // fields with labels like "Borough (source code)" (format.ts), so a bare
-  // getByLabel("Borough") is a strict-mode ambiguity. The form container
-  // disambiguates all three inputs + the submit button.
+  // Scope every field to the address form AND use exact label matching:
+  // getByLabel matches case-insensitive SUBSTRING by default, so inside the form
+  // "Borough" also matched the ZIP input labeled "ZIP code (alternative to
+  // borough)" (AddressForm.tsx:130). exact:true pins each of the three unique
+  // in-form label texts (form-scoping alone left the ZIP-label collision).
   const form = page.getByTestId("address-form");
-  await form.getByLabel("House number").fill("100");
-  await form.getByLabel("Street").fill(street);
-  await form.getByLabel("Borough").selectOption("Manhattan");
+  await form.getByLabel("House number", { exact: true }).fill("100");
+  await form.getByLabel("Street", { exact: true }).fill(street);
+  await form.getByLabel("Borough", { exact: true }).selectOption("Manhattan");
   await form.getByTestId("address-submit").click();
   await expect(page.getByTestId("address-confirm-card")).toBeVisible({
     timeout: 15_000,

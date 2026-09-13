@@ -204,3 +204,13 @@ interior-ring contract fixture (fixtures forbidden), `interactive:false`, accura
 Files changed this round: `apps/web/src/components/address/LotOutlineMap.tsx`,
 `apps/web/e2e/lot-outline.spec.ts`, `apps/web/src/components/address/__tests__/lot-outline-map.test.tsx`,
 and this report.
+
+## Rework round 2 (CI closure — locator exact-match)
+
+Round-1's form-scoping was insufficient (CI run 34735830129, same 4 tests): `getByLabel` matches
+case-insensitive SUBSTRING by default, and INSIDE the form two labels contain "borough" — the
+"Borough" select and the "ZIP code (alternative to borough)" input (AddressForm.tsx:130) — so the
+in-form collision remained. Repair (spec-only, `resolveTo()`): added `{ exact: true }` to the three
+label lookups (`House number`, `Street`, `Borough`), each verified unique in the form. No component,
+test, or contract change. Local `generate_ts_types.py --check` and `modularity_check --check` remain
+exit 0 (unchanged this round); vitest/Playwright still run only on CI (the next run is the verification).
