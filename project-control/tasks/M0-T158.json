@@ -50,14 +50,14 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "none beyond typo - the harness and CI fail closed"
   ],
   "blockers": [],
   "created_at": "2026-09-13T01:49:01.303272+00:00",
-  "updated_at": "2026-09-13T01:50:59.302983+00:00",
+  "updated_at": "2026-09-13T01:53:38.453202+00:00",
   "directive_refs": [
     {
       "directive_id": "D-044",
