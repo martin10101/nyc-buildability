@@ -98,8 +98,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "blocked",
-  "progress_percent": 15,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -115,7 +115,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T04:49:29.945538+00:00",
+  "updated_at": "2026-09-13T06:19:51.280330+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -146,7 +146,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-13T04:26:18.647054+00:00",
-  "worktree": "wt-m4t012",
+  "worktree": "wt-m4t012-r2",
   "progress_log": [
     {
       "at": "2026-09-13T04:30:20.324627+00:00",
@@ -161,6 +161,20 @@
       "percent": 15,
       "status": "blocked",
       "message": "BLOCKED on B-023 (Section 20 / Tier D): ZR 23-421 names R1/R2 only as bare group labels - whether R1-2A/R2A/R2X are swept in, and whether R2X shares the 25/35 pitched envelope, needs a qualified-human ruling; producer verified live official text and wrote ZERO files rather than guess (fail-closed held; source facts in rules-engineer agent memory). Packet premise correction recorded: R1/R2 setback is sloping-plane geometry (A2), not numeric. A1 wave re-points to the explicitly-enumerated R3/R4 families (M4-T014). M4-T012 must NOT resume while M4-T014 holds the same directory scopes (D-046-R002)."
+    },
+    {
+      "at": "2026-09-13T06:19:50.597593+00:00",
+      "agent": "orchestrator",
+      "percent": 15,
+      "status": "ready",
+      "message": "Unblocked for re-dispatch: B-023 resolved by D-048 disposition, then D-049 owner decision supersedes for the five lettered variants (suffix-inheritance encoding); rules dirs FREE (M4-T014 accepted 198th); G0 re-recorded on the definitive scope"
+    },
+    {
+      "at": "2026-09-13T06:19:51.280330+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Re-claimed on the D-049 scope; FIRST action for the producer per the BINDING capture-completeness requirement: full-text 23-421 proof (print/PDF-class artifact) with the 9,500-present check BEFORE encoding (g)"
     }
   ]
 }
