@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "0b85aa17eef9607d565a2b2a33620d65765bf69833edad548f58251be4804be8",
+ "requirements_content_digest_sha256": "94874d09effe9f6578d1478f28c1ba13aedd468d4538ad3dee8d4fc83f8a148b",
  "sources": [
   {
    "file": "source-001.md",
@@ -94,6 +94,12 @@
    "actor": "orchestrator",
    "action": "verifier_authorized_reviewed_sha_restamp",
    "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
+  },
+  {
+   "at": "2026-09-13T06:52:20+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T015 (B2 street-width connector BUILD, pins the accepted M4-T013 research) to D-045-R003/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0b85aa17 -> 94874d09. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
   }
  ]
 }

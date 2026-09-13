@@ -28,7 +28,7 @@
   "D-046-R004",
   "D-046-R005"
  ],
- "requirements_content_digest_sha256": "f648e8a44faf6906f2a88f41adaa7b0cb30f4385d64e470c48c16084f781b740",
+ "requirements_content_digest_sha256": "9aac0e466f8bd16ac5652f45b5e85905fd6f39cb60c6b239ddaab3cc6e309982",
  "sources": [
   {
    "file": "source-001.md",
@@ -83,6 +83,12 @@
    "actor": "orchestrator",
    "action": "verifier_authorized_reviewed_sha_restamp",
    "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
+  },
+  {
+   "at": "2026-09-13T06:52:20+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T015 (wave-2 connector lane; runs 2-wide with the re-dispatched M4-T012, scopes pairwise-disjoint) to D-046-R001/R002 (append-only, task_ids only; no requirement text changed). Digest resynced f648e8a4 -> 9aac0e46. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
   }
  ]
 }
