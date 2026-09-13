@@ -1,0 +1,38 @@
+{
+  "snapshot_id": "zr-23-421-r3-r4",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-421",
+  "section_title": "Basic pitched-roof envelopes for certain districts - R3/R4 series enumeration and 25/35 ft caps",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-421",
+    "retrieved_at": "2026-09-13T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "Captured fresh in-task for M4-T014 by direct HTTPS GET of the official DCP Zoning Resolution portal on 2026-09-13 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries a machine-readable <time datetime=\"2024-12-05T12:00:00Z\">12/5/2024</time> Last-Amended stamp (City of Yes for Housing Opportunity). The site-wide currency banner was not separately captured and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "rules_engineer_in_task_curl_capture_2026-09-13",
+    "raw_html_verified": false,
+    "verification_required": "Captured by direct curl of the official portal HTML on 2026-09-13 and tag-stripped to the verbatim excerpt below; NOT re-verified byte-for-byte against the raw HTML bytes, so raw_html_verified is false and extraction_status is extracted_draft. The pitched-roof district ENUMERATION (which districts this envelope governs), the 25 ft perimeter-wall / 35 ft ridge caps, the building-type applicability (single- or two-family detached / semi-detached / zero lot line), and the sloping-plane setback geometry MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A\n\nIn the districts indicated, the height and setback regulations for single- or two-family detached, semi-detached, or zero lot line buildings or other structures, where permitted, shall be set forth in this Section.\n\nPerimeter walls are subject to setback regulations at a maximum height above the base plane of 25 feet.\n\nAbove these heights, sloping planes control the maximum height of the building or other structure requiring either a setback or a pitched roof. These planes start at the maximum permitted height of the perimeter walls and meet at a ridge line of 35 feet above the base plane.",
+  "district_enumeration": {
+    "anchor": "23-421 opening district list (first line of the section body)",
+    "districts": ["R1", "R2", "R3A", "R3X", "R3-1", "R3-2", "R4", "R4-1", "R4A", "R5A"],
+    "note": "The section applies ONE uniform pitched-roof envelope (25 ft perimeter wall / 35 ft ridge, both above the base plane) to every district in this single enumerated list, for single- or two-family detached / semi-detached / zero-lot-line buildings 'where permitted'. The R3/R4-series members recorded here are R3A, R3X, R3-1, R3-2, R4, R4-1, R4A (R1/R2 are group labels - the subject of open blocker B-023 and out of M4-T014 scope; R5A belongs to the accepted M4-T006 R5 pilot). R4B does NOT appear in this section (it is flat-only under 23-422) - the asymmetry is recorded, not symmetrized."
+  },
+  "content_digest_sha256": "68e4d147a351188ce0df06d8609b1c3766c76776e0a87482e04ac2cc9459e046",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Governs the pitched-roof envelope for the enumerated R1-R5A districts: perimeter-wall height max 25 ft above the base plane; ridge/building height max 35 ft above the base plane. The two caps are SEPARATE typed constraints. Applicability is conditional on building type (single- or two-family detached / semi-detached / zero-lot-line per 23-421).",
+    "The setback above the perimeter wall is governed by the sloping-plane (apex-point, <=80-degree pitch) geometry set forth in paragraphs (a) through (g) of 23-421, NOT a flat numeric depth; that geometry is an A2 gap (D-045-R008) surfaced as a documented limitation, never reduced to a number here.",
+    "The 23-421 special provision permitting the reference plane up to 5 ft above the base plane applies ONLY to R1 and R2 Districts without a letter suffix (large or sloped lots); it does NOT touch the R3/R4 series and is out of M4-T014 scope (R1/R2 = blocker B-023).",
+    "Captured fresh in-task for M4-T014 as the governing-source snapshot for the R3/R4-series pitched-roof height DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}

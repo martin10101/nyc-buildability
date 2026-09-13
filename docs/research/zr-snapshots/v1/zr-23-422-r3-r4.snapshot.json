@@ -1,0 +1,56 @@
+{
+  "snapshot_id": "zr-23-422-r3-r4",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "23-422",
+  "section_title": "Basic flat-roof envelopes for certain districts - R3-2/R4/R4B statements",
+  "article": "II",
+  "chapter": "3",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-422",
+    "retrieved_at": "2026-09-13T00:00:00Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "Captured fresh in-task for M4-T014 by direct HTTPS GET of the official DCP Zoning Resolution portal on 2026-09-13 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries a machine-readable <time datetime=\"2024-12-05T12:00:00Z\">12/5/2024</time> Last-Amended stamp (City of Yes for Housing Opportunity). The site-wide currency banner was not separately captured and is a needs_review item.",
+    "section_last_amended": "2024-12-05",
+    "section_last_amended_source_text": "Last Amended 12/5/2024",
+    "capture_method": "rules_engineer_in_task_curl_capture_2026-09-13",
+    "raw_html_verified": false,
+    "verification_required": "Captured by direct curl of the official portal HTML on 2026-09-13 and tag-stripped to the verbatim excerpt below; NOT re-verified byte-for-byte against the raw HTML bytes, so raw_html_verified is false and extraction_status is extracted_draft. The flat-roof district list, the exact statement-to-district association (R3-2/R4 -> 35 ft; R4B -> 25 ft), the 'residences not subject to Section 23-421' building-type condition, and every applicability caveat MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "verbatim_excerpt": "R3-2 R4 R4B R5 R5B R5D\n\nIn the districts indicated, the height and setback regulations for buildings or other structures shall be set forth in this Section.\n\nR3-2 R4\nIn the districts indicated, for residences not subject to the provisions of Section 23-421, the maximum building height shall be 35 feet.\n\nR4B\nIn the district indicated, the maximum building height shall be 25 feet.",
+  "table": {
+    "columns": ["District(s)", "Condition", "Maximum building height (ft)", "Base height / setback"],
+    "rows": [
+      {
+        "districts": "R3-2, R4",
+        "condition": "residences NOT subject to the provisions of Section 23-421 (i.e. not the detached / semi-detached / zero-lot-line pitched forms)",
+        "max_building_height_ft": "35",
+        "base_height_setback": "none stated (single flat building-height cap; no base-height/setback split)"
+      },
+      {
+        "districts": "R4B",
+        "condition": "unconditional within this Section (R4B has no Section 23-421 pitched counterpart)",
+        "max_building_height_ft": "25",
+        "base_height_setback": "none stated (single flat building-height cap; no base-height/setback split)"
+      }
+    ],
+    "table_note": "The R5/R5B/R5D statements of this same section are captured separately in snapshot zr-23-422 for the accepted M4-T006 R5 pilot and are intentionally NOT duplicated here. R3-2 and R4 also appear in Section 23-421 (pitched) - the section is selected by building type; the two envelopes are distinct and must never be conflated. R4B appears ONLY here (flat-only); the asymmetry is recorded, not symmetrized."
+  },
+  "district_enumeration": {
+    "anchor": "23-422 opening district list (first line of the section body) and the per-statement district labels",
+    "flat_section_districts": ["R3-2", "R4", "R4B", "R5", "R5B", "R5D"],
+    "r3_r4_series_in_scope": ["R3-2", "R4", "R4B"],
+    "note": "R3-2 and R4 receive a 35 ft maximum building height for residences NOT subject to Section 23-421; R4B receives a 25 ft maximum building height. R3A, R3X, R3-1, R4-1 and R4A do NOT appear in Section 23-422 (they are pitched-only under 23-421) - recorded, not symmetrized."
+  },
+  "content_digest_sha256": "0268089074b51d7b2457fa280bb19f5a2ce1c49b708dbb6654f49df78ea61b18",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Governs the flat-roof envelope for R3-2/R4 (35 ft max building height, for residences not subject to 23-421) and R4B (25 ft max building height). Each is a single maximum-building-height cap with NO base-height/setback split - a base height and a setback are not invented.",
+    "R3-2 and R4 have BOTH a pitched envelope (23-421: 25 ft perimeter / 35 ft ridge) and this flat envelope (35 ft building height); the section is selected by building type. R4B is flat-only. The R3-2/R4 flat 35 ft cap is a DIFFERENT construct from R4B's 25 ft cap and from the 23-421 pitched 25/35 caps - encoded separately, never inherited.",
+    "Captured fresh in-task for M4-T014 as the governing-source snapshot for the R3/R4-series flat-roof height DRAFT rule family (needs_review).",
+    "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
+  ]
+}
