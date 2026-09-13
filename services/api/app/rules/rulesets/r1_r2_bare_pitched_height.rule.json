@@ -1,0 +1,82 @@
+{
+  "rule_id": "r1-r2-bare-pitched-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback_r1_r2",
+  "title": "R1/R2 bare group labels (pitched-roof envelope, ZR 23-421) - maximum perimeter-wall height and maximum ridge/building height",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r1_r2_height_setback.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the pitched-roof envelope HEIGHT constraints for the BARE 'R1' and 'R2' district labels EXPRESSLY named in NYC Zoning Resolution section 23-421's opening enumeration (City of Yes, Last Amended 2024-12-05): 'R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A'. This is an EXPRESS citation - no interpretive step is required for the bare labels themselves. Two SEPARATE typed constraints are emitted, both measured ABOVE THE BASE PLANE: maximum perimeter-wall height (25 ft) and maximum ridge/building height (35 ft). FAIL-CLOSED INPUT: applicability is conditional on BUILDING TYPE (single- or two-family detached / semi-detached / zero-lot-line per 23-421); the canonical property_profile exposes NO building-type field, so building_type is a REQUIRED input with no canonical source - when missing/unavailable the evaluation returns professional_review_required with NO value. The five lettered/numeric-suffix variants (R1-1, R1-2, R1-2A, R2A, R2X) are NOT matched by this rule - each inherits the same numeric envelope via a SEPARATE rule (r1-r2-suffix-variants-pitched-height) carrying explicit OWNER-DECISION provenance (ZR 11-25 suffix inheritance, D-049 2026-09-13), never presented as an express citation of this enumeration. The 5-ft reference-plane allowance for no-letter-suffix lots meeting section 23-421(g)'s trigger conditions is a SEPARATE rule (r1-r2-reference-plane-23421g); it modifies the reference PLANE these caps are measured from, never the 25/35 numbers themselves. The setback above the perimeter wall is governed by the sloping-plane (apex-point, <=80-degree pitch) geometry of 23-421 paragraphs (a)-(f), NOT a flat numeric depth; it is surfaced as a documented limitation (A2 gap, D-045-R008), never reduced to a number. The pitched envelope is a permitted alternative building form, never rendered as a pitched-roof REQUIREMENT (section 23-413(a) governs rooftop obstructions for any envelope shape). NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-421-r1-r2",
+      "section": "23-421",
+      "quote": "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A ... Perimeter walls are subject to setback regulations at a maximum height above the base plane of 25 feet. ... These planes ... meet at a ridge line of 35 feet above the base plane.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "1bce881805d9ee4d79253432ad86128b7203f81f2054ff25e1ba8dfb1dad1e8b"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability is EXACTLY the bare labels 'R1' and 'R2' (in_set); a lettered/numeric-suffix variant (R1-1, R1-2, R1-2A, R2A, R2X) or any other district is NOT matched here (visible not_applicable) - each is a separate rule."},
+    {"name": "building_type", "type": "string", "required": true, "enum": ["detached", "semi_detached", "zero_lot_line", "attached", "other"], "description": "Building type. REQUIRED and FAIL-CLOSED: no canonical property_profile field exposes building type, so in practice this is unavailable and the evaluation returns professional_review_required with no value. The pitched-roof envelope applies only to the source-named single- or two-family detached / semi-detached / zero-lot-line forms; 'attached'/'other' are the engine's representation of residences not subject to section 23-421 and yield a visible not_applicable here (there is no companion 23-422 flat-roof rule for bare R1/R2 - section 23-422 does not list R1 or R2 at all)."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44; examples the owner's research identified include section 119-212 Special Hillsides Preservation District Tier II and section 113-523 Special Ocean Parkway subdistrict, each of which can modify this envelope's geometry)."},
+    {"name": "historic_district", "type": "boolean", "required": false, "description": "True iff the lot is in a designated LPC Historic District (section 23-426(a), conditional base-height modification tied to an adjacent building's height); when a caller supplies true -> professional_review_required."},
+    {"name": "large_site", "type": "boolean", "required": false, "description": "True iff a large-site context (section 23-425, eligible large sites - applies section 23-424 heights plus a conditional increase tied to existing roof heights/ornamental features) applies; when true -> professional_review_required."},
+    {"name": "transportation_infrastructure_adjacent", "type": "boolean", "required": false, "description": "True iff the lot's frontage is adjacent to the described transportation infrastructure (section 23-443(b), a +10 ft maximum-height increase in R1-R6 for multiple dwellings); when true -> professional_review_required."}
+  ],
+  "outputs": [
+    {"name": "max_perimeter_wall_height", "type": "number", "unit": "feet", "description": "Maximum perimeter-wall height (ft) ABOVE THE BASE PLANE (section 23-421). Separate typed constraint; not a buildable-envelope result."},
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum ridge/building height (ft) ABOVE THE BASE PLANE (section 23-421). Separate typed constraint; not a buildable-envelope result."}
+  ],
+  "parameters": [
+    {"name": "perimeter_wall_height_ft", "value": 25, "citation_ref": "zr-23-421-r1-r2", "note": "Maximum perimeter-wall height 25 ft above the base plane (section 23-421), uniform across the enumerated R1-R5A pitched districts. Candidate value pending raw-HTML verification and G6 approval."},
+    {"name": "ridge_height_ft", "value": 35, "citation_ref": "zr-23-421-r1-r2", "note": "Maximum ridge/building height 35 ft above the base plane (section 23-421), uniform across the enumerated R1-R5A pitched districts. Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R1", "R2"]},
+      {"op": "in_set", "input": "building_type", "values": ["detached", "semi_detached", "zero_lot_line"]}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "wall_h", "op": "identity", "args": [{"param": "perimeter_wall_height_ft"}], "note": "Maximum perimeter-wall height above the base plane (section 23-421)."},
+      {"id": "ridge_h", "op": "identity", "args": [{"param": "ridge_height_ft"}], "note": "Maximum ridge/building height above the base plane (section 23-421)."}
+    ],
+    "outputs": {
+      "max_perimeter_wall_height": {"step": "wall_h"},
+      "max_building_height": {"step": "ridge_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "pitched_plane_setback_professional_review", "description": "The setback above the perimeter wall is governed by the sloping-plane / pitched-roof geometry of section 23-421 paragraphs (a)-(f) (apex points, sloping planes at up to 80 degrees rising from the 25 ft perimeter-wall plane to the 35 ft ridge), NOT a flat numeric depth. It is not reduced to a single number here (A2 gap, D-045-R008) and requires professional review.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-421-r1-r2"},
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify residence-district height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify height (section 23-44; e.g. section 119-212 Special Hillsides Preservation District Tier II sites at 36 ft pitched to midpoint, or section 113-523 Special Ocean Parkway subdistrict apex-point modification); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "historic_district_base_height_match", "description": "In a designated LPC Historic District the perimeter-wall height may be required to match adjacent buildings (section 23-426(a)); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "historic_district", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "large_site_modification", "description": "A large-site context (section 23-425, eligible large sites) may govern; the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "large_site", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "transportation_infrastructure_height_increase", "description": "A transportation-infrastructure-adjacent frontage (section 23-443(b)) permits a +10 ft maximum-height increase in R1-R6 for the described multiple dwellings; the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "transportation_infrastructure_adjacent", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "Heights are measured ABOVE THE BASE PLANE (section 23-421 / 23-42), not above curb; the base-plane determination is a separate professional input.",
+    "Applicability requires a building type (detached / semi-detached / zero-lot-line) that has no canonical property_profile field; without it the rule fails closed to professional_review_required.",
+    "The setback is pitched-plane geometry (23-421 paragraphs a-f), not a flat depth; it is surfaced as a documented limitation / professional review (A2 gap, D-045-R008), not a numeric setback constraint.",
+    "The lettered/numeric-suffix variants R1-1, R1-2, R1-2A, R2A, R2X are NOT covered by this rule; they are encoded in the SEPARATE r1-r2-suffix-variants-pitched-height rule with explicit owner-decision provenance.",
+    "The section 23-421(g) 5-ft reference-plane allowance (no-letter-suffix lots meeting the area/width/slope trigger) is a SEPARATE rule (r1-r2-reference-plane-23421g); it does not change the 25/35 ft caps computed here.",
+    "The section 23-424 qualifying-residential-site alternative envelope (35 ft base / 35 ft building height) is a SEPARATE rule (r1-r2-qrs-height) and competes with this rule's output when both are simultaneously applicable (same-family conflict, never a silent precedence pick).",
+    "The pitched envelope is a permitted alternative building form, never rendered as a pitched-roof REQUIREMENT; section 23-413(a) governs rooftop obstructions for any envelope shape and is not modeled here."
+  ]
+}
