@@ -93,7 +93,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T02:27:18.341759+00:00",
-  "updated_at": "2026-09-13T03:03:50.759624+00:00",
+  "updated_at": "2026-09-13T03:07:32.237545+00:00",
   "directive_refs": [
     {
       "directive_id": "D-043",
@@ -124,6 +124,13 @@
       "percent": 70,
       "status": "rework",
       "message": "G1 PASS w/ BLOCKING RC-1 + G5 PASS w/ advisory A1. RC-1 (BLOCKING for acceptance): checklist section 9 step 2 unreachable as written - address flow renders only at /property?ruleeval=on (two-factor gate rule-evaluation.ts:96-103 -> PropertyLookup.tsx:265); fix section 9 ordering/URL + state that ?ruleeval=on gates BOTH the address front door and the rule-eval surface (sections 2.1, 9.3). G5 A1 (advisory, fold in during same rework): move/strengthen exposure-note ordering so it precedes the API flag step for a strict linear reader. Rework routed to the cloud-architect producer worktree; docs-only, single file. G1 advisories A-1 (stale page.tsx:22 docstring) + A-2 (env.example cites nonexistent DEPLOYMENT_AND_ROLLBACK 0.1) recorded to advisory backlog (forbidden paths here)."
+    },
+    {
+      "at": "2026-09-13T03:07:32.237545+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "Rework round 1 closed: RC-1 DISCHARGED (G1 delta attestation) + A1 SATISFIED (G5 delta attestation); both gates re-recorded PASS at post-rework identity. Next: directive-compliance verification rows (R001..R004) then accept; owner-side execution items (dashboard steps + live-URL confirmation) recorded as return items."
     }
   ]
 }
