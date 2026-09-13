@@ -60,6 +60,64 @@
      "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T014",
+   "applicable_requirement_ids": [
+    "D-045-R001",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f",
+   "reviewed_manifest_sha256": "b20678d4f2c6ff96cea6319aa6626498ad72109145775d26a4bafc9501e86224",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R001",
+     "state": "PASS",
+     "evidence": [
+      "A1 WAVE-1b INCREMENT (R3/R4 series height/setback). Three per-variant needs_review rulesets at HEAD: services/api/app/rules/rulesets/r3_r4_pitched_height.rule.json (perimeter-wall 25 ft + ridge 35 ft, applicability in_set R3A/R3X/R3-1/R3-2/R4/R4-1/R4A x building_type detached/semi_detached/zero_lot_line), r3_2_r4_flat_height.rule.json (building_height 35 ft, R3-2/R4 x attached/other), r4b_height.rule.json (building_height 25 ft, R4B flat-only). R1/R2 (B-023) and R5A (M4-T006 pilot) correctly excluded.",
+      "CAPS VERBATIM-TRACEABLE (verifier reproduced): the pitched rule's 25/35 cite snapshot zr-23-421-r3-r4 content_digest_sha256 68e4d147...9459e046, and the snapshot verbatim_excerpt (637 chars) literally contains 'a maximum height above the base plane of 25 feet', 'a ridge line of 35 feet above the base plane', and the district enumeration 'R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A'. Flat 35 (R3-2/R4) and R4B 25 both cite zr-23-422-r3-r4 (digest 0268089074b5). Verifier recomputed sha256(verbatim_excerpt) == recorded content_digest (MATCH) - the M4-T010 fail-closed citation-digest binding holds.",
+      "HASH-GUARDED SNAPSHOTS, canonical+bundle byte-identical (verifier git hash-object): zr-23-42 = 7d23f0ba (both copies), zr-23-421-r3-r4 = 4edbea4c (both; == the record's blob parity 4edbea4c), zr-23-422-r3-r4 = a3129b08 (both). docs/research/zr-snapshots/v1 (canonical) and services/api/app/_zr_snapshots/v1 (bundle) match byte-for-byte, so the sync/bundle-parity guard holds.",
+      "TESTS: services/api/tests/rules/test_r3_r4_height.py = 90 cases; full rules suite = 458; green via CI run 34740497612 (verifier gh-confirmed: headSha 6fc8a878, conclusion success). Verifier confirmed git diff 6fc8a878..HEAD over services/api/app/rules/rulesets + services/api/tests/rules + services/api/app/rules/schemas is EMPTY - the code/tests CI ran are byte-identical to HEAD; the only 6fc8a878..HEAD material delta is the notes-only zr-23-421 snapshot (4 lines) + the two reports, proven behavior-invariant (digest unchanged; G4 delta attestation reproduced 458 against the corrected snapshot). Orchestrator addendum: confirmation run 34741407310 on the rework head e49ac4bd subsequently concluded success, all jobs green (project-control/reports/M4-T014-ci-evidence.md).",
+      "(g)-PROVENANCE CORRECTION properly attributes out-of-capture content to named sources: rework 346f8535 (verifier --stat: only zr-23-421 canonical+bundle 4 lines each + the two reports) provenance-qualified the paragraph-(g) statements (5-ft R1/R2-no-suffix reference plane, (a)-(g) lettering, apex/<=80 geometry) as NOT obtainable via the HTML curl channel, naming .claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md (B-023) + owner-verified docs/ARCHITECT_REVIEW_QUESTIONS.md, and removed the pseudo-verbatim quote marks - with zero rule-value change (digest 68e4d147 stable). Independent G3 supplemental-ruling FAIL -> G3-rereview PASS at 346f8535 verified this against the owner record.",
+      "DRAFT posture: every rule status=needs_review, rule_version 0.1.0-draft, release.qualified_human_approval=pending, 'NOT a Verified determination'; the encoded values are candidate/pending raw-HTML verification + G6. SCOPE NOTE: directive-level D-045-R001 (all R1-R4/R6-R12 families) remains OPEN; this row verifies the R3/R4 A1 increment only (one-family cadence), which is fully satisfied."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "ONE-FAMILY BOUNDED: a single bounded family group (R3/R4 series) in one gated task carrying G0/G2/G3/G4/G5 and citing D-045:D-045-R001/R008/R009 - not a monolithic all-districts task. Per-variant scoping (in_set) mirrors the accepted M4-T006 R5 pilot cadence.",
+      "A2 PROVISIONS TYPED AS GAPS, not computed: the sloping-plane/pitched-roof setback geometry (23-421 a-g) is an exceptions[] entry effect=documented_limitation citing A2/D-045-R008 (r3_r4_pitched_height.rule.json:65, limitations[3]); building_type is a REQUIRED fail-closed input -> professional_review_required with no value when absent (inputs, description); overlay/special-district/historic-district each -> professional_review_required (23-44/23-426). No mechanic computes on guessed geometry.",
+      "NO STREET-WIDTH VALUE in any cap: verifier grep for 'street.?width|streetwidth' across all three rulesets returned NO match - the street-width-conditional mechanics are correctly deferred to A2/B2, not encoded here.",
+      "In-flight work not displaced: M4-T014's diff is confined to the rules dirs + snapshots + its two reports (allowed_paths); the M5-T023/M5-T024 completions and D-043 posture are untouched."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "DRAFT-UNTIL-G6 preserved: all three rulesets status=needs_review, release.independent_review/qualified_human_approval=pending; limitations[0] 'Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.' Nothing moves any rule past needs_review (Section 20 / Tier D intact).",
+      "NO COMPLIANCE LANGUAGE (verifier grep 'buildable|feasible|compliant|compliance|as-of-right|massing' over the three rulesets): the only matches are NEGATIVE disclaimers ('Separate typed constraint; not a buildable-envelope result'); zero positive compliance/feasibility/massing claims - corroborating the G5 grep.",
+      "SNAPSHOTS extracted_draft disclosed: zr-23-421-r3-r4 extraction_status=extracted_draft, capture_method=rules_engineer_in_task_curl_capture_2026-09-13 (HTML); the field name verbatim_excerpt + the (g)-provenance qualifier make partiality explicit.",
+      "FULL-TEXT 23-421 COMPLETENESS PROOF recorded as owed before G6: r3_r4_pitched_height.rule.json limitations[3]/[5] and the G3-rereview both record that section-completeness must be evidenced from a full-text (print/PDF) artifact before any rule citing this snapshot advances toward G6 (carried into the M4-T012 packet) - an honest downstream item, not a G3 blocker (nothing publishes at G3)."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    }
+   ]
   }
  ]
 }

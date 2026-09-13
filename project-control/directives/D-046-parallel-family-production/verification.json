@@ -43,6 +43,46 @@
      "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T014",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f",
+   "reviewed_manifest_sha256": "b20678d4f2c6ff96cea6319aa6626498ad72109145775d26a4bafc9501e86224",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "PARALLEL WAVE-1 EXECUTION: M4-T014 ran as the wave-1 RULES lane in its own isolated worktree wt-m4t014 (tasks/M4-T014.json worktree field) concurrently with M4-T013 (research lane, producer official-source-researcher, worktree wt-m4t013) - two concurrent writing producers on disjoint D-045 tasks, within the 3-producer ceiling (D-046-R004). progress_log records 'wave-1 rules lane (partner M4-T013 research lane, pairwise-disjoint)' and the FIRST claude-sonnet-5 dispatch (D-047).",
+      "SEQUENTIAL INTEGRATION by the orchestrator: the two producers' materials landed as distinct commits (M4-T014 = c8d94f38 + rework 346f8535, M4-T013 = 05b5721f), integrated sequentially on candidate/D-024-mrl-option-b; each producer confined to its own task deliverables."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "ALLOWED_PATHS PROVABLY PAIRWISE-DISJOINT (the exact R002 invariant). Verifier computed prefix-aware overlap between M4-T014 allowed_paths [services/api/app/rules/rulesets, services/api/app/rules/schemas, services/api/app/_zr_snapshots, services/api/tests/rules, project-control/reports/M4-T014-producer-report.md, project-control/reports/M4-T014-source-capture.md, docs/research/zr-snapshots] and M4-T013 allowed_paths [project-control/reports/M4-T013-street-width-research.md, docs/research/source-registry-drafts] = NONE. Zero deliverable-scope overlap.",
+      "ONLY COMMIT-FILE INTERSECTION between the two producers' material commits (c8d94f38 vs 05b5721f) is .claude/agent-memory/rules-engineer/MEMORY.md - OUTSIDE both tasks' allowed_paths, governed by the separate per-agent memory permission; the commits are sequential (05b5721f is an ancestor of c8d94f38), so no parallel-write collision on deliverables. NOTE: c8d94f38 (the orchestrator's material-capture commit) also carried project-control/tasks/M4-T014.json + state.json - orchestrator control-plane writes (the pre-capture packet correction + lifecycle), not producer scope breaches; the producer rules-engineer wrote only rulesets/snapshots/tests/its two reports + its own agent-memory.",
+      "M4-T012 BLOCKED WITH CLEAN WORKTREE THROUGHOUT: tasks/M4-T014.json path_notes records M4-T012 is BLOCKED on B-023 with a clean worktree and no live producer and MUST NOT be re-dispatched while M4-T014 is in flight; verifier confirmed the only commits touching the rules dirs in this window are M4-T014's own (no concurrent M4-T012 producer). The engine/evaluator/api/packages/tools/.github/deps forbidden paths were untouched (verifier git diff 1cca43f7..HEAD = empty over those globs).",
+      "PACKET CORRECTION recorded PRE-CAPTURE: allowed_paths gained docs/research/zr-snapshots (the canonical dir the sync_zr_snapshots mechanism requires alongside the bundle copies) via an orchestrator packet correction logged before material capture (progress_log 2026-09-13T05:20:02, M4-T006 precedent) - a disclosed disjoint-scope adjustment, not a mid-flight overlap."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    }
+   ]
   }
  ]
 }

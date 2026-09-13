@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-13T07:55:00+00:00",
+ "updated_at": "2026-09-13T08:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -88,6 +88,12 @@
    "actor": "orchestrator",
    "action": "verifier_authorized_reviewed_sha_restamp",
    "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
+  },
+  {
+   "at": "2026-09-13T08:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "verifier_authorized_reviewed_sha_restamp",
+   "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
   }
  ]
 }
