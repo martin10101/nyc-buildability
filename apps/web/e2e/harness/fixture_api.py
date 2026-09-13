@@ -47,17 +47,25 @@ from __future__ import annotations
 
 import json
 import os
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1.address_resolution import get_address_resolver
+from app.api.v1.lot_geometry import get_lot_outline_fetcher
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.config import (
     INTERNAL_RULE_EVAL_ENABLED_ENV_VAR,
     INTERNAL_SCENARIO_ENABLED_ENV_VAR,
+)
+from app.connectors.geoclient_address import AddressResolution
+from app.connectors.mappluto_lot_outline import (
+    LotOutlineTransport,
+    build_outline_query_url,
 )
 from app.connectors.pluto_soda import (
     TransportFailure,
@@ -245,6 +253,131 @@ def harness_substrate_provider(canonical_bbl: str, correlation_id: str):
     return None
 
 
+# ---------------------------------------------------------------------------
+# M5-T023 (D-040-R001): display-only lot-outline surface on the address confirm
+# card. TWO seams are overridden so the browser can walk the surface entirely
+# OFFLINE against RECORDED OFFICIAL data:
+#
+#   1. get_lot_outline_fetcher -> a scripted transport that returns the VERBATIM
+#      recorded official ArcGIS f=geojson&outSR=4326 fixtures
+#      (services/api/tests/fixtures/mappluto_lot_outline, task M5-T020). The REAL
+#      route + REAL builder (parse + contract validation) run over them, so the
+#      served outline documents are production code paths — NO geometry byte is
+#      hand-written here (the same recorded-official-fixture discipline the PLUTO
+#      seam above uses). Distinct BBLs select the outcomes the walkthrough needs.
+#   2. get_address_resolver -> a small SYNTHETIC test resolver (the same test-seam
+#      pattern as harness_substrate_provider below) that maps a handful of test
+#      street names to AddressResolution results carrying a canonical BBL. This
+#      is scaffolding ONLY: no prior task wired an address-resolution seam, and
+#      the confirm card (hence the lot-outline surface) is reachable only through
+#      a resolved address. The resolver is clearly synthetic; the GEOMETRY it
+#      leads to is the real recorded data from seam (1).
+# ---------------------------------------------------------------------------
+
+LOT_OUTLINE_FIXTURE_DIR = (
+    REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "mappluto_lot_outline"
+)
+LOT_OUTLINE_RETRIEVED_AT = "2026-09-12T13:45:07Z"
+
+# Canonical BBL -> recorded raw ArcGIS fixture. LOT80 (invalid_geometry) is NOT
+# routable by a distinct BBL: its synthetic feature carries BBL 1008350041, and
+# the builder's single-feature result-match check would raise result_mismatch
+# for any other requested BBL - so invalid_geometry is proven in the offline
+# vitest pack (via the contract fixture) rather than the browser walkthrough.
+LOT_OUTLINE_BY_BBL = {
+    "1008350041": "LOT01_single_1008350041.geojson",  # single_lot Polygon (S1)
+    "5999999999": "LOT02_nofeature_5999999999.geojson",  # no_outline no_feature
+    "1000157501": "LOT03_condo_billing_1000157501.geojson",  # single_lot condo billing
+    "1000151001": "LOT04_condo_unit_1000151001.geojson",  # no_outline condo unit (S3)
+    "1000010010": "LOT05_holes_1000010010.geojson",  # single_lot with holes
+    "4142600001": "LOT06_multipolygon_4142600001.geojson",  # single_lot MultiPolygon
+    "1008350096": "LOT96_multiple_features_synthetic.geojson",  # multiple_features (S3)
+}
+# A designated BBL that models an upstream transport fault (official service
+# returned a non-200): the builder raises LotOutlineError and the route maps it
+# to 502 upstream_error, exercising the client's typed error fallback (S4).
+LOT_OUTLINE_UPSTREAM_FAIL_BBL = "2000020002"
+
+
+def harness_lot_outline_fetcher(canonical_bbl: str, correlation_id: str) -> LotOutlineTransport:
+    """Return a recorded-fixture transport for one canonical BBL (or a modeled
+    upstream fault). The URL is the REAL bounded query URL; the body is verbatim
+    recorded official bytes (or empty on the modeled fault)."""
+    url = build_outline_query_url(canonical_bbl, correlation_id=correlation_id)
+    if canonical_bbl == LOT_OUTLINE_UPSTREAM_FAIL_BBL:
+        return LotOutlineTransport(
+            url=url, status=500, body="{}", retrieved_at=LOT_OUTLINE_RETRIEVED_AT
+        )
+    name = LOT_OUTLINE_BY_BBL.get(canonical_bbl, "LOT02_nofeature_5999999999.geojson")
+    body = (LOT_OUTLINE_FIXTURE_DIR / name).read_text(encoding="utf-8")
+    return LotOutlineTransport(
+        url=url, status=200, body=body, retrieved_at=LOT_OUTLINE_RETRIEVED_AT
+    )
+
+
+# Test street name -> canonical BBL the resolver returns. The e2e fills these
+# exact street names to drive each lot-outline outcome through the real address
+# confirm card. Any other street resolves to the single_lot outline BBL.
+ADDRESS_BBL_BY_STREET = {
+    "OUTLINE AVENUE": "1008350041",  # single_lot outline (S1 primary)
+    "HOLES ISLAND": "1000010010",  # single_lot with interior holes
+    "MULTIPART ROAD": "4142600001",  # single_lot MultiPolygon
+    "CONDO UNIT WAY": "1000151001",  # condo unit -> honest-empty (S3)
+    "REVIEW PLAZA": "1008350096",  # multiple_features -> review posture (S3)
+    "OUTLINE FAIL ROAD": LOT_OUTLINE_UPSTREAM_FAIL_BBL,  # typed error fallback (S4)
+}
+
+
+def harness_address_resolver(
+    house_number: str,
+    street: str,
+    *,
+    borough: str | None = None,
+    zip_code: str | None = None,
+) -> AddressResolution:
+    """SYNTHETIC test resolver: resolve a test street to a canonical BBL so the
+    address confirm card renders. Clearly not official data; only the geometry
+    the card then loads (seam 1) is recorded official data."""
+    key = (street or "").strip().upper()
+    bbl = ADDRESS_BBL_BY_STREET.get(key, "1008350041")
+    correlation_id = uuid.uuid4().hex
+    return AddressResolution(
+        status="resolved",
+        correlation_id=correlation_id,
+        house_number_in=house_number,
+        street_in=street,
+        borough_in=borough,
+        zip_in=zip_code,
+        bbl=bbl,
+        bin=None,
+        street_name_normalized=key or "OUTLINE AVENUE",
+        borough_name=(borough or "Manhattan").upper(),
+        zip_code=None,
+        grc="00",
+        grc2="00",
+        suggestions=[],
+        raw_fields={"bbl": bbl},
+        provenance={
+            "source_id": "nyc-geoclient",
+            "endpoint": "https://api.nyc.gov/geo/geoclient/v2/address",
+            "request_params": {
+                "houseNumber": house_number,
+                "street": street,
+                "borough": borough or "",
+            },
+            "retrieved_at": "2026-07-16T12:00:00Z",
+            "http_status": 200,
+            "geosupport_return_code": "00",
+            "geosupport_return_code2": "00",
+            "reason_code": None,
+            "reason_code2": None,
+            "response_digest": "sha256:" + "a" * 64,
+            "digest_canonicalization": "canonical-json-1",
+            "correlation_id": correlation_id,
+        },
+    )
+
+
 def build_app():
     # M4-T005: enable the internal rule-evaluation endpoint's SERVER flag for
     # this test process only (independent of the frontend flag). The no-call
@@ -266,6 +399,17 @@ def build_app():
     app.dependency_overrides[get_pluto_fetcher] = lambda: harness_fetcher
     app.dependency_overrides[get_spatial_substrate_provider] = (
         lambda: harness_substrate_provider
+    )
+    # M5-T023: the lot-outline transport seam (recorded official fixtures through
+    # the real builder) and the synthetic address resolver that makes the confirm
+    # card reachable. Both are test-process only; production uses the live keyless
+    # GET and the real Geoclient connector, and the route 404s when the flag is
+    # off (INTERNAL_RULE_EVAL_ENABLED, enabled above for this process).
+    app.dependency_overrides[get_lot_outline_fetcher] = (
+        lambda: harness_lot_outline_fetcher
+    )
+    app.dependency_overrides[get_address_resolver] = (
+        lambda: harness_address_resolver
     )
     # Test-origin CORS only (see module docstring CORS NOTE).
     app.add_middleware(

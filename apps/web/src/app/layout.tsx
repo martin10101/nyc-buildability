@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { REQUIRED_DISCLAIMER } from "@/lib/disclaimer";
 import "./globals.css";
+// M5-T023: MapLibre GL JS stylesheet for the lot-outline map controls and
+// canvas positioning (its FIRST use is the address confirm card's
+// LotOutlineMap). Imported once at the app root — a static CSS side-effect that
+// never pulls the browser-only maplibre-gl JS runtime into SSR (that stays a
+// dynamic import inside the client-only map effect).
+import "maplibre-gl/dist/maplibre-gl.css";
 
 export const metadata: Metadata = {
   title: "NYC Buildability",

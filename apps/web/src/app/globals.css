@@ -660,3 +660,24 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
+/* ---- Lot-outline map (M5-T023) ---- */
+/* The MapLibre canvas needs an explicit height or it collapses to 0px. This is
+   additive layout only; the map is a display-only approximate outline. */
+.lot-outline {
+  margin: 0.75rem 0;
+}
+
+.lot-outline-map {
+  width: 100%;
+  height: 320px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .lot-outline-map {
+    height: 240px;
+  }
+}
