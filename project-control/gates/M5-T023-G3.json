@@ -4,9 +4,18 @@
   "reviewer": "human-journey-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T023-G3-journey-review.md",
-  "reviewed_at": "2026-09-13T03:28:03.818227+00:00",
-  "content_manifest_sha256": "59c81626044f25f35bc0524fff4c477389925fe23193b61c477e1152a3241653",
-  "reviewed_sha": "76d840471d17e8ce3a99d5bfada76955d1bf883b",
-  "updated_at": "2026-09-13T03:28:06.325347+00:00"
+  "report_file": "project-control/reports/M5-T023-G3-delta-attestation.md",
+  "reviewed_at": "2026-09-13T03:58:51.446786+00:00",
+  "content_manifest_sha256": "ceb64b3d94debedac93006b1114020d76860b26a030b6c54b768bfd35b3faae8",
+  "reviewed_sha": "83ac97f0da8334acf1875d725e71d1e3d75afe02",
+  "history": [
+    {
+      "reviewer": "human-journey-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T023-G3-journey-review.md",
+      "reviewed_at": "2026-09-13T03:28:03.818227+00:00"
+    }
+  ],
+  "updated_at": "2026-09-13T03:58:53.512217+00:00"
 }
