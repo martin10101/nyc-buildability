@@ -6,6 +6,17 @@ Producer: backend-engineer (claude-sonnet-5). Worktree: wt-m4t015, reset to base
 STATUS: **submitting for independent review** (not a self-declared completion - producers submit
 evidence only; gates judge it, per CLAUDE.md and the ORCHESTRATION_POLICY).
 
+> ORCHESTRATOR CORRECTIONS (2026-09-13, G4-arc rework; producer values superseded where marked):
+> per G4 ADVISORY-1/2 (report M4-T015-G4-test-adequacy-review.md), three accuracy corrections were
+> applied inline below, each tagged [ORCH-CORRECTED]: (1) the modularity verbatim block in section 9
+> now shows the reviewed-candidate output (selected 401 files; warnings 17) in which the new
+> connector IS listed as a review_signal above the justification threshold - the policy-required
+> cohesion justification is RECORDED in the G4 gate report and stands; (2) the per-file test split
+> is 49 collected in the connector suite + 82 collected in the classifier suite (total 131,
+> unchanged); (3) no other producer content was altered. The class-count wording error ("23") was
+> in the orchestrator evidence map and commit message, not this report; the evidence map is
+> corrected to 24.
+
 ## 1. Sandbox capability check (disclosed up front)
 
 The producer sandbox for this session had a working Python 3.11 launcher (`python`, not the bare
@@ -28,8 +39,8 @@ remains the executable authority per `documented_test_commands`.
   parsing connector and the per-segment typed envelope + mapped-street override.
 - `services/api/app/connectors/dcm_street_width_classifier.py` (NEW) - the pure free-text width
   classifier (no I/O, no imports from the connector).
-- `services/api/tests/connectors/test_dcm_street_centerline_arcgis.py` (NEW, 46 tests)
-- `services/api/tests/connectors/test_dcm_street_width_classifier.py` (NEW, 85 tests)
+- `services/api/tests/connectors/test_dcm_street_centerline_arcgis.py` (NEW, 49 collected tests [ORCH-CORRECTED])
+- `services/api/tests/connectors/test_dcm_street_width_classifier.py` (NEW, 82 collected tests [ORCH-CORRECTED])
 - `services/api/tests/fixtures/dcm_street_centerline/` (NEW, 26 files: 25 live-captured + 1
   documented-synthetic + `MANIFEST.json`)
 - `docs/research/source-registry-drafts/dcm-street-centerline.json` (MODIFIED - see section 6)
@@ -237,21 +248,28 @@ EXIT CODE: 0
 ```
 
 619 total tests collected in `services/api/tests/connectors` (the full pre-existing connector suite,
-untouched, plus this task's additions): 131 new tests (46 in
-`test_dcm_street_centerline_arcgis.py`, 85 in `test_dcm_street_width_classifier.py`), zero
-regressions in any pre-existing connector test.
+untouched, plus this task's additions): 131 new tests (49 collected in
+`test_dcm_street_centerline_arcgis.py`, 82 collected in `test_dcm_street_width_classifier.py`
+[ORCH-CORRECTED]), zero regressions in any pre-existing connector test.
 
 ```
-$ python tools/modularity_check.py --check
-selected 399 files; failures 0; warnings 16
+$ python tools/modularity_check.py --check   [ORCH-CORRECTED: reviewed-candidate output]
+selected 401 files; failures 0; warnings 17
 EXIT CODE: 0
 ```
 
-The 16 warnings are all pre-existing files unrelated to this task (`scenario_analysis.py`,
-`breakeven.py`, `mappluto_geometry_arcgis.py`, several `tools/agent_supervisor/*.py` files,
-`tools/context_benchmark.py`, `apps/web/src/lib/surveyReview/types.ts`); neither new module
-(`dcm_street_centerline_arcgis.py` at 959 lines, `dcm_street_width_classifier.py` at 390 lines)
-appears in the warning list.
+[ORCH-CORRECTED] At the reviewed candidate, 16 of the 17 warnings are pre-existing files unrelated
+to this task (`scenario_analysis.py`, `breakeven.py`, `mappluto_geometry_arcgis.py`, several
+`tools/agent_supervisor/*.py` files, `tools/context_benchmark.py`,
+`apps/web/src/lib/surveyReview/types.ts`); the 17th IS this task's
+`dcm_street_centerline_arcgis.py` (959 lines), listed as `review_signal: above the justification
+threshold; record a cohesion justification in review`. The check exits 0 (review_signal is
+non-blocking) and the policy-required cohesion justification is RECORDED in the independent G4
+gate report (`project-control/reports/M4-T015-G4-test-adequacy-review.md`): one connector
+responsibility, pure classifier already split out, size driven by exhaustive typed error handling,
+mirroring the accepted `mappluto_geometry_arcgis.py` precedent. The original producer sandbox run
+predated the peer M4-T012 material in the same push and understated the reviewed-candidate
+warning set; the reviewed-candidate output above supersedes it.
 
 ```
 $ python -m ruff check services/api/app/connectors/dcm_street_centerline_arcgis.py \

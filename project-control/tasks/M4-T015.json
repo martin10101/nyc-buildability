@@ -113,8 +113,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [
     "free-text width parsing is the chief hazard: an over-permissive parser would silently raise FAR eligibility downstream; the mathematical-entailment rule + exhaustive typed-class tests are mandatory; any doubtful class fails closed to narrow",
     "OQ-1 (exact geometric definition of DCM mapped width) and OQ-3 (ZR-grounded ambiguity policy) are OPEN legal/rule questions - the connector surfaces classes and flags, never resolves them",
@@ -130,7 +130,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T06:43:32.831670+00:00",
-  "updated_at": "2026-09-13T07:33:27.612827+00:00",
+  "updated_at": "2026-09-13T07:51:35.811102+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -165,6 +165,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "Producer material captured at 8538c272 (34 files; orchestrator reproduction: connectors 619 passed, modularity EXIT 0, 27 fixture files). Producer disclosures routed to G1: three live-source refinements vs the PDF-sourced draft text (Record_ST/Paper_ST Y/N domain; Build_Status coded domain; Feat_status independence), the deliberate no-mappluto-import decision, and the empty_or_missing class proven by unit test only (no live row exists)"
+    },
+    {
+      "at": "2026-09-13T07:51:35.811102+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "G1/G4/G5 all PASS at b3e66078 with zero blocking findings; rework applied for the report-accuracy items (G1 routed advisory + G4 ADVISORY-1/2/3): producer report section 9 modularity block corrected to the reviewed-candidate output (401 files / 17 warnings, connector listed as review_signal) with the cohesion justification recorded in the G4 gate report; test split corrected to 49+82 collected; evidence-map class count corrected to 24. All corrections tagged ORCH-CORRECTED, producer content otherwise untouched. Resubmit + delta-attestations from the same three reviewers next"
     }
   ]
 }

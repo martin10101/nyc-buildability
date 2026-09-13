@@ -116,7 +116,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T07:33:26.168157+00:00",
+  "updated_at": "2026-09-13T07:39:01.701286+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -197,6 +197,13 @@
       "percent": 70,
       "status": "rework",
       "message": "G4 FAIL BLOCKING-1 (6 ruff findings in the new test file - the exact cause of the api CI failure at dd7c8b74; G3 PASS w/ 4 advisories, G5 PASS w/ 1 advisory, G2 PASS). Rework applied by orchestrator (Tier A correction, behavior-neutral + reviewer-invited additions): the 6 lint fixes exactly as G4 prescribed; G3-A2 citation-gloss reword (exact reviewer wording); G3-A1 questions-doc TOOLING NOTE correction; G4 ADVISORY-1 (+2 as3 effective-date cases for the g rule) and ADVISORY-2 (+8 NC-1 foreign-district cases for QRS and g rules). Verified: ruff clean, rules 568 passed, modularity EXIT 0, sync OK 14. Delta-attestations from the same three reviewers next, then re-record gates at the frozen head"
+    },
+    {
+      "at": "2026-09-13T07:39:01.701286+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "All three delta-attestations returned: G3 PASS stands, G4 FAIL->PASS (BLOCKING-1 discharged, advisories 1+2 closed, 3 deferred as the known campaign ban-list item), G5 PASS stands. G5 advisory formalized HERE: the docs/ARCHITECT_REVIEW_QUESTIONS.md TOOLING NOTE correction was an ORCHESTRATOR Tier A rework edit (G3-A1), on a non-forbidden doc the packet R005 names - producer never touched it; recorded as the write-scope clarification the reviewer requested. Remaining before accept: CI conclusion on 8538c272 (in flight) + DCV round + restamp/accept"
     }
   ]
 }
