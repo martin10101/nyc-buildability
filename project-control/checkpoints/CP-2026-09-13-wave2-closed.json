@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-13-wave2-closed",
+  "timestamp": "2026-09-13T08:36:05.029775+00:00",
+  "commit": "b91bdc3a9bdad47dd7c2f6852f6351a9ee75c687",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "200 accepted. Wave 2 closed 2-wide per D-046/D-047: M4-T012 (199th, R1/R2 height/setback on the D-049 definitive scope; print/PDF 23-421 capture proof w/ 9500-present PASS; G4 ruff FAIL->PASS arc; producer disclosed the raw-HTML-(g) contradiction of the packet premise - questions-doc TOOLING NOTE corrected) + M4-T015 (200th, B2 DCM street-width connector; 24-class fail-closed classifier; 26 fixtures G1 live byte-verified; cohesion justification recorded in the G4 gate report). DCV 16 rows PASS at f5b8742b; CI green at material head 8538c272. Open: D-047-R001 backend-engineer agent-file model flip classifier-blocked (dispatch used harness override to claude-sonnet-5; owner settings item). Next lanes per D-047-R004 ramp: A2 mechanics (now unblocked by the connector) or C-district research. Owner items unchanged: D-043 walkthrough, Supabase B-001, G6 ask, PR #241 unmerged",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-13T08:36:05.079720+00:00"
+}
