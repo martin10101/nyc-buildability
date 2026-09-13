@@ -59,6 +59,13 @@ print/PDF completeness) stays the only provenance; interpretation still routes D
 Seeded RQ-001 (A2 section map) + RQ-002 (C-district survey) directly feed the wave-3 lanes below —
 CHECK THE QUEUE for ANSWERED entries before starting either lane; RQ-003 (§12-10 QRS definition)
 could convert D-049-R004 fail-closed flags into computed conditions; RQ-004 = A4 triage input;
+**AMENDMENT 1 (R005, @ c68cdd8e) — ACTIVE NOTIFICATION: appending to the md is NEVER sufficient
+notice. While any owner-addressed request is OPEN, state each as one line in owner-visible turn
+output at every owner-facing seam (wave summaries, landings, the handoff owner-items list); on
+appending NEW requests, send one batched PushNotification (desktop; phone when Remote Control is
+connected) — genuinely new asks only; the companion session owns the in-conversation relay leg.
+Quiet rule narrowed: owner-addressed research requests are never silent. Non-blocking unchanged —
+notify, then proceed.**
 RQ-005 (appended by this session) = the DCM OQ-1/OQ-5/LION fact gaps. Mark entries
 ANSWERED/ROUTED with date + verification target (R003).
 
@@ -76,6 +83,10 @@ ANSWERED/ROUTED with date + verification target (R003).
    both edit paths this session; dispatches used the harness override to claude-sonnet-5,
    deviation recorded in M4-T015 G0/path_notes/progress); D-043 dashboard walkthrough + live-URL
    confirm; Supabase B-001; the G6 ask in `docs/ARCHITECT_REVIEW_QUESTIONS.md`; PR #241 unmerged.
+   **OPEN research requests awaiting the owner (D-050-R005 — please go through
+   `docs/RESEARCH_REQUESTS.md`):** RQ-001 A2 sky-exposure/street-width ZR section map; RQ-002
+   C-district rule-structure survey; RQ-003 §12-10 "qualifying residential site" verbatim;
+   RQ-004 special-district priority inventory; RQ-005 DCM width-definition + bulk-product facts.
 
 ## TIPS THIS SESSION PROVED (full set in orchestrator memory)
 
