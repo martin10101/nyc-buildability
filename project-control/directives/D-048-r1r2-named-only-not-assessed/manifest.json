@@ -1,0 +1,65 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-048",
+ "version": 1,
+ "slug": "r1r2-named-only-not-assessed",
+ "title": "Owner 2026-09-13 (B-023 disposition): R1/R2 height/setback covers ONLY the districts ZR 23-421 explicitly names; lettered variants (R1-1/R1-2/R1-2A/R2A/R2X) render 'not assessed - needs professional review'; the three interpretation questions move to docs/ARCHITECT_REVIEW_QUESTIONS.md + the G6 agenda; same named-only pattern applies campaign-wide without new owner stops.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T05:08:13+00:00",
+ "created_at": "2026-09-13T05:08:13+00:00",
+ "updated_at": "2026-09-13T05:08:13+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "05b5721f45ecaa69d62662082d28ecc5c32fc2d2",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the decision verbatim in the live companion session 2026-09-13, selecting the relayed option 1 for B-023 and ordering the owner-facing questions markdown (source-001.md #owner-message-verbatim)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-048-R001",
+  "D-048-R002",
+  "D-048-R003",
+  "D-048-R004",
+  "D-048-R005",
+  "D-048-R006"
+ ],
+ "requirements_content_digest_sha256": "c6148833b2f1256ece070772eadfbdf79bc92cffe869687fbed0cf51c111f76f",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T05:08:13+00:00",
+   "content_digest_sha256": "ae9e247a22268953e0649bcf128941a8aeee9bc84e59a20dc61f6205a39d4cdc"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "legal_ambiguity_disposition",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "M4-T012 re-dispatch encoding ONLY ZR 23-421's explicitly named districts; not-assessed rendering for unnamed variants; campaign-wide named-only pattern with questions-doc appends; docs/ARCHITECT_REVIEW_QUESTIONS.md maintenance",
+  "prohibited": "any agent answering the B-023 interpretation questions; sweeping an unnamed variant into a rule by assumption; rendering an ambiguous variant as zero or an inherited envelope; resuming M4-T012 while M4-T014 holds overlapping scopes"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T05:08:13+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-047 precedent); B-023 option 1 selected + owner-facing questions doc ordered and created (docs/ARCHITECT_REVIEW_QUESTIONS.md); standing named-only pattern (R004) is companion-decomposed and flagged to the owner for veto; relay to the live build session (ctl24-ce) follows immediately per R006"
+  }
+ ]
+}

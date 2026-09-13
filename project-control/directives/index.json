@@ -645,7 +645,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-047-sonnet-producers-ramp-10/manifest.json"
+  },
+  {
+   "directive_id": "D-048",
+   "slug": "r1r2-named-only-not-assessed",
+   "title": "Owner 2026-09-13 (B-023 disposition): R1/R2 height/setback covers ONLY the districts ZR 23-421 explicitly names; lettered variants render 'not assessed - needs professional review'; interpretation questions move to docs/ARCHITECT_REVIEW_QUESTIONS.md + the G6 agenda; same named-only pattern applies campaign-wide without new owner stops.",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-048-r1r2-named-only-not-assessed/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T04:43:49+00:00"
+ "updated_at": "2026-09-13T05:08:13+00:00"
 }
