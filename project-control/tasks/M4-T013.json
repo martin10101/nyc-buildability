@@ -77,12 +77,12 @@
     "G0",
     "G1"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "the term 'street width' is overloaded across NYC sources (DCM mapped width, CSCL physical attributes, Geoclient per-address values) - the report must keep the concepts separate; conflating them would poison the A2 rule mechanics downstream",
     "the ZR's own street/street-line definitions govern which measurement the rules need; if the official data's concept does not match the ZR concept, that mismatch is THE finding, not something to paper over",
@@ -96,7 +96,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T04:42:55.202857+00:00",
-  "updated_at": "2026-09-13T04:42:55.427991+00:00",
+  "updated_at": "2026-09-13T04:49:29.698370+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -115,5 +115,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-13T04:42:55.202857+00:00"
+  "directive_regime_entered_at": "2026-09-13T04:42:55.202857+00:00",
+  "worktree": "wt-m4t013",
+  "progress_log": [
+    {
+      "at": "2026-09-13T04:49:29.697371+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; D-046/D-047 wave-1 slot 2 (research lane, disjoint from all rules dirs); producer model claude-sonnet-5 per D-047-R001"
+    }
+  ]
 }

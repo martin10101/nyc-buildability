@@ -98,8 +98,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "blocked",
+  "progress_percent": 15,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -115,7 +115,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T04:30:20.324627+00:00",
+  "updated_at": "2026-09-13T04:49:29.945538+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -136,6 +136,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed at 824afe67adb7d401e6c8f0a15ed51d7acc9e5094; first D-045 campaign task (A1 wave 1); rules-engineer dispatch next"
+    },
+    {
+      "at": "2026-09-13T04:49:29.945538+00:00",
+      "agent": "orchestrator",
+      "percent": 15,
+      "status": "blocked",
+      "message": "BLOCKED on B-023 (Section 20 / Tier D): ZR 23-421 names R1/R2 only as bare group labels - whether R1-2A/R2A/R2X are swept in, and whether R2X shares the 25/35 pitched envelope, needs a qualified-human ruling; producer verified live official text and wrote ZERO files rather than guess (fail-closed held; source facts in rules-engineer agent memory). Packet premise correction recorded: R1/R2 setback is sloping-plane geometry (A2), not numeric. A1 wave re-points to the explicitly-enumerated R3/R4 families (M4-T014). M4-T012 must NOT resume while M4-T014 holds the same directory scopes (D-046-R002)."
     }
   ]
 }
