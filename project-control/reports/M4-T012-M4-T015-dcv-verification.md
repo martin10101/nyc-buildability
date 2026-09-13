@@ -97,3 +97,31 @@ Intake note: for every cited directive (D-045, D-046, D-048, D-049) the `require
 ## VERDICT: PASS
 
 VERIFICATION COMPLETE — with the three relied-upon items (CI conclusions, G1 live-fetch, and the slow `test_directive_compliance.py` completion) disclosed above as not-personally-reproduced-in-sandbox but corroborated; none is the sole evidence for any requirement row.
+
+---
+
+## VERIFIER ADDENDUM (same verifier, follow-up return after the slow harness completed)
+
+> Orchestrator note: saved VERBATIM from the verifier's follow-up return. The addendum
+> again says "14 requirement rows" in one sentence while enumerating 16 ids explicitly
+> (11 M4-T012 + 5 M4-T015); the per-row enumeration governs, as noted above.
+
+The full harness now completes and passes — this closes the one open item.
+
+**Harness resolution (updates UNVERIFIABLE item #3):**
+- `tools/test_directive_compliance.py` → **Ran 129 tests, OK** (2742s — the suite is genuinely slow under Windows git-subprocess cost, not hung; every test passed)
+- `tools/test_project_control.py` → **all 23 groups OK**
+- `tools/test_directive_reminder.py` → **Ran 12 tests, OK**
+
+All three directive/control harness scripts now **fully reproduced and passing**, alongside `validate_directive_compliance.py --check` EXIT 0. Item #3 is no longer a caveat — it is verified.
+
+**Verdict of record — unchanged: PASS.**
+
+Final standing of the caveats:
+1. **CI conclusions** (dd7c8b74=FAILURE, 8538c272=SUCCESS) — still not reproducible via `gh` in my sandbox (API-push/branch CI-trigger quirk); corroborated by my own green suites (rules 568 / connectors 619), modularity EXIT 0, the ruff fixes present in rework 4f8b093f, and the G4 FAIL→PASS gate records. Not the sole evidence for any row. [Orchestrator: the conclusions are directly captured in project-control/reports/M4-T012-M4-T015-ci-evidence.md.]
+2. **G1 live-network byte-verification** — I could not re-run WebFetch against the live ArcGIS endpoint; relied on the G1 gate record plus my own MANIFEST sha256 (26/26) and fixture-provenance reproduction. Not the sole evidence for D-045-R003 (the offline connector/classifier/fixture evidence was fully reproduced).
+3. **test_directive_compliance.py full completion** — **now RESOLVED**: 129 tests OK.
+
+All requirement rows across M4-T012 (D-045-R001, D-045-R008, D-045-R009, D-048-R001, D-048-R002, D-049-R001, D-049-R002, D-049-R003, D-049-R004, D-049-R005, D-049-R006) and M4-T015 (D-045-R003, D-045-R008, D-045-R009, D-046-R001, D-046-R002) stand **PASS** on independently reproduced primary evidence. No VIOLATED row; no requirement rests solely on an unreproduced item.
+
+## VERDICT: PASS — VERIFICATION COMPLETE
