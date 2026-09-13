@@ -72,8 +72,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 30,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "C-district FAR interacts with residential equivalents and overlays - a wrong equivalence mapping would silently corrupt mixed-lot results downstream; the mapping must be quoted, never inferred from district-name patterns",
     "City of Yes changed commercial FAR provisions; the report must pin the current official text and note effective-date/version posture",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T18:01:36.357059+00:00",
-  "updated_at": "2026-09-13T18:30:22.889812+00:00",
+  "updated_at": "2026-09-13T18:48:23.558551+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -122,6 +122,13 @@
       "percent": 30,
       "status": "claimed",
       "message": "Wave-3 dispatch: producer official-source-researcher launched in isolated worktree pinned to 6dbf65fa (show-toplevel guard + reset-to-contract-head in prompt); scope = single report file; interpretation-routes-to-architect-doc constraint in prompt; agent-file model claude-sonnet-5, no override"
+    },
+    {
+      "at": "2026-09-13T18:47:26.865521+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at 9fe63924d95e07059d36d6c2eadb5f8223325a5a (cherry-picked producer commit 46a8a110 from wt agent-ac05120d1954c8141; report sha256 e0561742... LF-normalized verified; producer self-checks validator+modularity EXIT 0; S5 single-file scope held). Key findings: 33-121 overlay FAR table keyed by underlying R district; 34-111 = overlay governing-rules section; 34-112 equivalents table (19 rows, corrects RQ-002's C4-6 example to R10); 5 OQs incl. 7.50-vs-7.52 R9A divergence (factual check item)"
     }
   ]
 }

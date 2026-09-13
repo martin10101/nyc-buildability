@@ -1,0 +1,18 @@
+{
+  "task_id": "M4-T017",
+  "producer_agent": "official-source-researcher",
+  "report_file": "project-control/reports/M4-T017-c-district-research.md",
+  "submitted_at": "2026-09-13T18:48:22.052444+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M4-T017-evidence-map.json",
+  "content_manifest_sha256": "8a3c7c72965b01b19dde5910e7bd8e3db4d0a7f5d780e4600762dd348e98c389",
+  "reviewed_sha": "9fe63924d95e07059d36d6c2eadb5f8223325a5a",
+  "applicable_requirements": [
+    "D-045-R005",
+    "D-045-R008",
+    "D-045-R009",
+    "D-046-R001",
+    "D-046-R002"
+  ],
+  "updated_at": "2026-09-13T18:48:23.537794+00:00"
+}

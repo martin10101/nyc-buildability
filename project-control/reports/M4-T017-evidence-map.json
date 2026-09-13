@@ -1,0 +1,26 @@
+{
+  "task_id": "M4-T017",
+  "assembled_by": "orchestrator",
+  "note": "Research-only task (D-045-R005 first half). Evidence scoped to the research deliverable; the C-district BUILD packets are later tasks that pin this report.",
+  "requirements": {
+    "D-045-R005": [
+      "project-control/reports/M4-T017-c-district-research.md - evidenced section map for the C-district families: ZR 33-12 umbrella + 33-121 (overlay C1-1..C1-5/C2-1..C2-5 commercial FAR table keyed by underlying Residence District, 3 columns) + 33-122/33-123 (standalone C1-6+/C3-C8 tables keyed by commercial code), captured verbatim via the print/pdf/node/<id> completeness channel (node 17721) with sha256 recorded",
+      "overlay mechanics pinned: 34-111 quoted verbatim as THE section deferring residential uses in overlays to Article II Chapter 3 (the chapter the existing residential FAR rule files implement); mixed-lot consequence stated as an explicit build requirement (two separate evaluations, never substituted)",
+      "residential equivalents: 34-112 establishing table captured verbatim (19 rows, per-district lookup, NOT name-pattern inference); corrects RQ-002's own illustrative guess (C4-6 -> R10, not R7)",
+      "suffix rules: 11-25 (cross-cutting, not commercial-exclusive - honest limitation recorded) + 11-121 numeric-suffix companion; reconciliation finding: equivalents/overlay-resolved R-codes plug into r6_r12_residential_far.rule.json / r1_r2_r3_residential_far.rule.json unmodified - build work is routing/lookup, not a new FAR table",
+      "5 open questions (report section 8) recorded open and routed, none resolved in-task, incl. the 33-121 7.50 vs residential 7.52 R9A divergence flagged as a factual verification item and interpretation items routed to the architect-doc channel (D-048); build-packet decomposition recommendation (section 9): three bounded families"
+    ],
+    "D-045-R008": [
+      "bounded research-only packet under the normal gated process (G0 recorded at 1cf2c488 contract seam; single deliverable file); wave-3 ordering per the orchestrator replanning judgment recorded in the packet business_reason (handoff seq 108 NEXT-ACTION 2)"
+    ],
+    "D-045-R009": [
+      "coverage-scope-only work: no rule published, DRAFT-until-G6 language preserved throughout the report (scenario S4); no gap-list self-assignment; no hold lifted; zero dependencies touched (producer git status single-file proof, S5)"
+    ],
+    "D-046-R001": [
+      "wave-3 parallel slot 2: dispatched concurrently with M4-T016 into an isolated worktree (agent-ac05120d1954c8141) pinned to contract head 6dbf65fa; producer commit 46a8a110 cherry-picked to the integration branch by the orchestrator (sequential integration)"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint scope by construction: allowed_paths = exactly one report file (project-control/reports/M4-T017-c-district-research.md), sharing no file with M4-T016's single report file; producer self-check git status showed exactly one modified file"
+    ]
+  }
+}
