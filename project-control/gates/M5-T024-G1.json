@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T024",
+  "gate_id": "G1",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T024-G1-evidence-review.md",
+  "reviewed_at": "2026-09-13T02:59:26.179526+00:00",
+  "content_manifest_sha256": "9f045bb1b13bec96f1475c26baaac9e26474857ab5fa5cf50f713d775cee1b58",
+  "reviewed_sha": "0583311a1949c378940848aaa1eb03da81b0dcdb",
+  "updated_at": "2026-09-13T02:59:26.588572+00:00"
+}
