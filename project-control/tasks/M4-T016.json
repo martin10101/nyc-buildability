@@ -1,0 +1,113 @@
+{
+  "task_id": "M4-T016",
+  "title": "D-045 A2 research: ZR geometry-mechanics section map + within-100-ft wide-street lot-geometry mechanic research (OQ-4; consumes accepted M4-T015 DCM connector)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Research-first half of the A2 geometry-dependent rule mechanics (D-045-R002): (1) map the ZR sections (City of Yes text) defining street-width-dependent height/setback mechanics for R6-R12 - sky exposure planes, wide/narrow-street base and maximum heights, setback depths, permitted obstructions - each with section number, exact title, districts named, whether wide/narrow changes the numbers, and the 12-10 defined terms it leans on (street line, base plane, sky exposure plane, wide street), all evidenced by verbatim quotes + URLs + retrieval dates from the official source (print/PDF-class completeness discipline per D-049 precedent where captures are load-bearing); (2) design research for the OQ-4 geometry computation - the within-100-ft-of-a-wide-street any-portion-of-lot test (ZR 23-22 footnote 1): DCM polyline geometry x MapPLUTO lot geometry x 100-ft buffer in EPSG:2263, consuming the accepted dcm_street_centerline_arcgis connector (returnGeometry flip documented) and the existing MapPLUTO geometry connector - geometric semantics, projection/units evidence, edge cases (corner lots, multiple frontages, irregular segments), and an honest no-supported-estimate posture for missing inputs; OQ-3 (ambiguity-class fail-closed policy) is interpretation - it stays fail-closed-to-narrow and is NEVER resolved in this task (G6-class ruling per the architect doc). NO code changes - research report only; the A2 build packets pin this report.",
+  "business_reason": "NEXT-ACTION 1 of handoff seq 108: the accepted M4-T015 connector unblocked the A2 lane; D-045-R002 mandates mechanics ship with their data inputs and D-045-R003/M4-T013 discipline mandates research first. RQ-001 in docs/RESEARCH_REQUESTS.md is OPEN (non-blocking per D-050) so our researcher does the work.",
+  "inputs": [
+    "project-control/directives/D-045-citywide-rule-coverage/requirements.json (R002 verbatim: mechanics ship with their data inputs, never guessed geometry; missing input -> honest not-assessed) + D-046 requirements (R001/R002: wave-3 slot 1, scopes disjoint from M4-T017)",
+    "project-control/reports/M4-T013-street-width-research.md (the accepted B2 research: OQ-3/OQ-4 verbatim, the 75-ft entailment rule, ZR 23-22 footnote 1 phrasing - READ-ONLY pin)",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py + dcm_street_width_classifier.py (accepted M4-T015: what the connector returns today, returnGeometry=false posture, 24-class classifier - READ-ONLY)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py + mappluto_lot_outline.py (the existing lot-geometry input for the OQ-4 computation - READ-ONLY)",
+    "services/api/app/rules/rulesets/r6_r7_r8_wide_street_conditional_far.rule.json (the existing wide-street consumer - READ-ONLY)",
+    "docs/RESEARCH_REQUESTS.md RQ-001 + RQ-005 (OPEN; non-blocking discovery aids per D-050 - if answered mid-task, results are discovery aids only, official capture still mandatory - READ-ONLY)",
+    "docs/ARCHITECT_REVIEW_QUESTIONS.md (where OQ-3-class interpretation questions route - READ-ONLY)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client: verbatim samples only, no bulk geometry downloads)"
+  ],
+  "outputs": [
+    "project-control/reports/M4-T016-a2-geometry-mechanics-research.md (the research deliverable: evidenced ZR section map for R6-R12 street-width/sky-exposure-plane/setback/permitted-obstruction mechanics; 12-10 defined-terms table with capture targets; OQ-4 geometry-mechanic design with projection/units evidence and edge-case inventory; data-input fit assessment against the accepted DCM + MapPLUTO connectors incl. the returnGeometry flip; honest limitations + open questions; a build-packet decomposition recommendation the A2 build tasks can pin)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M4-T016-a2-geometry-mechanics-research.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/ARCHITECT_REVIEW_QUESTIONS.md",
+    "docs/research/source-registry-drafts/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "section_map_evidenced",
+      "input": "the ZR section-map part of the report",
+      "expected": "every R6-R12 geometry-dependent height/setback mechanic named with section number, exact title, districts, wide/narrow dependence, and the 12-10 defined terms it leans on; every material claim carries a verbatim quote + official URL + retrieval date; nothing guessed (permanent principle 3)"
+    },
+    {
+      "id": "S2",
+      "case": "oq4_mechanic_designed_not_assumed",
+      "input": "the OQ-4 geometry section",
+      "expected": "the within-100-ft any-portion-of-lot test is specified from the ZR text (23-22 footnote 1 quoted) with the geometric operations (DCM polyline x lot polygon x 100-ft buffer), EPSG:2263 units evidence from the sources' own docs, and edge cases (corner lots, multiple frontages, irregular/ambiguous segments) inventoried; where evidence is missing the report says so instead of assuming"
+    },
+    {
+      "id": "S3",
+      "case": "oq3_never_resolved",
+      "input": "the whole report",
+      "expected": "OQ-3 (ambiguity-class fail-closed policy) is surfaced and stays fail-closed-to-narrow, explicitly routed to the architect doc / G6-class ruling; the report resolves NO interpretation question in-task"
+    },
+    {
+      "id": "S4",
+      "case": "connector_fit_honest",
+      "input": "the data-input fit section",
+      "expected": "what the accepted DCM connector returns today vs what OQ-4 needs (geometry: the returnGeometry flip), and what the MapPLUTO connectors provide, stated from the code/fixtures as they exist; gaps recorded as build-packet requirements, not papered over"
+    },
+    {
+      "id": "S5",
+      "case": "research_only_scope",
+      "input": "git status over the worktree",
+      "expected": "exactly one new file: the report; zero code/schema/fixture/dependency changes (the A2 build is a later packet pinning this report)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "sky-exposure-plane and street-width mechanics are spread across multiple ZR chapters (23-6xx et al.) with City of Yes amendments - a section missed here becomes a coverage hole in the A2 build; the report must state its search method and completeness posture honestly",
+    "the ZR 'within 100 feet' test is about wide-STREET adjacency portions of a lot, not fronting width alone (M4-T013 finding) - conflating frontage classification with the buffer test would poison the build",
+    "EPSG:2263 is in US survey feet - unit evidence must come from the sources' own docs, never assumed",
+    "web sources may be slow/unavailable; record retrieval failures honestly and mark affected sections open rather than substituting memory"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-13T18:01:20.203792+00:00",
+  "updated_at": "2026-09-13T18:01:20.980959+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T18:01:20.203792+00:00",
+  "path_notes": "RESEARCH-ONLY (D-045-R002 research-first half): ONE writable file - the report. D-046 WAVE-3 DISJOINTNESS: shares nothing with M4-T017 (its single report file). Producer official-source-researcher (agent file already pinned claude-sonnet-5 per D-047-R001 - no override deviation this wave); every material claim carries a live URL + retrieval date; quotes verbatim; no schema/field/unit ever guessed. OQ-3 is interpretation: fail-closed-to-narrow stands until a G6-class ruling; the task only surfaces it. WORKTREE: producer works in its own worktree reset to the contract HEAD; primary checkout is orchestrator-only; show-toplevel guard mandatory.",
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ]
+}

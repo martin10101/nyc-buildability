@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:35:34+00:00",
  "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-13T08:15:00+00:00",
+ "updated_at": "2026-09-13T18:04:28+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -28,7 +28,7 @@
   "D-046-R004",
   "D-046-R005"
  ],
- "requirements_content_digest_sha256": "9aac0e466f8bd16ac5652f45b5e85905fd6f39cb60c6b239ddaab3cc6e309982",
+ "requirements_content_digest_sha256": "56212b57bddcd7851040835a579b82d7320dcb80bd06fd8802e74d1f5e13d403",
  "sources": [
   {
    "file": "source-001.md",
@@ -89,6 +89,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T015 (wave-2 connector lane; runs 2-wide with the re-dispatched M4-T012, scopes pairwise-disjoint) to D-046-R001/R002 (append-only, task_ids only; no requirement text changed). Digest resynced f648e8a4 -> 9aac0e46. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
+  },
+  {
+   "at": "2026-09-13T18:04:28+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger tasks M4-T016 + M4-T017 (wave 3, 2-wide, pairwise-disjoint single-report-file scopes) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 9aac0e46 -> 56212b57 in the SAME commit as the binding."
   }
  ]
 }

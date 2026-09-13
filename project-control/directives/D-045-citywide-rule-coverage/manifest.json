@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-13T08:15:00+00:00",
+ "updated_at": "2026-09-13T18:04:28+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "94874d09effe9f6578d1478f28c1ba13aedd468d4538ad3dee8d4fc83f8a148b",
+ "requirements_content_digest_sha256": "9e020e6394a8ba9db788325ba0b7d1a79b9f229537d613f705f824cb145b4522",
  "sources": [
   {
    "file": "source-001.md",
@@ -100,6 +100,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T015 (B2 street-width connector BUILD, pins the accepted M4-T013 research) to D-045-R003/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0b85aa17 -> 94874d09. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
+  },
+  {
+   "at": "2026-09-13T18:04:28+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger tasks M4-T016 (A2 geometry-mechanics RESEARCH, pins accepted M4-T013/M4-T015) to D-045-R002/R008/R009 and M4-T017 (C-district RESEARCH, D-045-R005 research-first half) to D-045-R005/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 94874d09 -> 9e020e63 in the SAME commit as the binding (c14 discipline per handoff seq 108 TIP)."
   }
  ]
 }

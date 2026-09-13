@@ -1,0 +1,110 @@
+{
+  "task_id": "M4-T017",
+  "title": "D-045 C-district research: commercial FAR structure, C1/C2 overlay mechanics, residential equivalents (R005 research-first half; RQ-002 skeleton)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Research-first half of the C-district rule families (D-045-R005): map where the ZR (City of Yes text) sets (1) commercial FAR for C1-C8 (section numbers + table structure, with district-by-district values evidenced); (2) how C1/C2 overlays on residential districts work - the section establishing that residential district rules govern residential uses in an overlay, and where overlay commercial FAR caps live; (3) where residential equivalents of commercial districts are defined (the mapping section, e.g. C4-6 -> R7); (4) any 11-25-style general rules specific to commercial suffixes or district variants. Every material claim carries section number, exact title, verbatim quote, URL, retrieval date from the official source (print/PDF-class completeness discipline where captures are load-bearing); ambiguities and interpretation questions recorded as open questions routed to the architect doc (D-048), never resolved by assumption. Honest limitation surfaces for mixed lots (overlay changes a residential answer). NO code changes - research report only; the C-district build packets pin this report.",
+  "business_reason": "NEXT-ACTION 2 of handoff seq 108 (optional parallel lane): D-045-R005 mandates the C-district families with the same research-first discipline; scope is fully disjoint from the A2 lane (D-046-R002). RQ-002 in docs/RESEARCH_REQUESTS.md is OPEN (non-blocking per D-050) so our researcher does the work.",
+  "inputs": [
+    "project-control/directives/D-045-citywide-rule-coverage/requirements.json (R005 verbatim: C-district families incl. overlay math, same citation/test/review/DRAFT discipline as R001) + D-046 requirements (R001/R002: wave-3 slot 2, scopes disjoint from M4-T016)",
+    "docs/RESEARCH_REQUESTS.md RQ-002 (OPEN; the four-part skeleton this research answers; non-blocking discovery aid per D-050 - official capture still mandatory - READ-ONLY)",
+    "services/api/app/rules/rulesets/r6_r12_residential_far.rule.json + r1_r2_r3_residential_far.rule.json (the residential FAR family pattern C-district equivalents must reconcile with - READ-ONLY)",
+    "project-control/reports/M4-T012-M4-T015-dcv-verification.md + docs/ARCHITECT_REVIEW_QUESTIONS.md (the D-048/D-049 interpretation-routing precedent - READ-ONLY)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client: verbatim samples only)"
+  ],
+  "outputs": [
+    "project-control/reports/M4-T017-c-district-research.md (the research deliverable: evidenced section map for C1-C8 commercial FAR incl. table structure; the C1/C2 overlay governing-rules section + overlay commercial FAR caps; the residential-equivalents mapping section; commercial-suffix general rules; interpretation questions routed to the architect doc; honest limitations; a build-packet decomposition recommendation the C-district build tasks can pin)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M4-T017-c-district-research.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/ARCHITECT_REVIEW_QUESTIONS.md",
+    "docs/research/source-registry-drafts/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "commercial_far_map_evidenced",
+      "input": "the commercial FAR section",
+      "expected": "where the ZR sets C1-C8 commercial FAR is identified with section numbers, exact titles, verbatim quotes, URLs, retrieval dates; the table structure described from the captured text, never from memory"
+    },
+    {
+      "id": "S2",
+      "case": "overlay_mechanics_pinned",
+      "input": "the overlay section",
+      "expected": "the section establishing that residential-district rules govern residential uses in a C1/C2 overlay is quoted verbatim; overlay commercial FAR caps located; the mixed-lot consequence (overlay changes a lot result) stated as a build requirement"
+    },
+    {
+      "id": "S3",
+      "case": "residential_equivalents_mapped",
+      "input": "the equivalents section",
+      "expected": "the section(s) establishing residential equivalents of commercial districts identified and quoted; the mapping's structure (per-district table vs rule) stated from evidence"
+    },
+    {
+      "id": "S4",
+      "case": "interpretation_routed_never_resolved",
+      "input": "the whole report",
+      "expected": "any question about what a provision MEANS is recorded as an open question routed to the architect doc (D-048); the report resolves NO interpretation question in-task; all rules stay DRAFT-until-G6 language"
+    },
+    {
+      "id": "S5",
+      "case": "research_only_scope",
+      "input": "git status over the worktree",
+      "expected": "exactly one new file: the report; zero code/schema/fixture/dependency changes (the C-district build is a later packet pinning this report)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "C-district FAR interacts with residential equivalents and overlays - a wrong equivalence mapping would silently corrupt mixed-lot results downstream; the mapping must be quoted, never inferred from district-name patterns",
+    "City of Yes changed commercial FAR provisions; the report must pin the current official text and note effective-date/version posture",
+    "overlay commercial caps vs underlying residential rules is a known confusion surface - keep the concepts separate the way M4-T013 kept width concepts separate",
+    "web sources may be slow/unavailable; record retrieval failures honestly and mark affected sections open rather than substituting memory"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-13T18:01:36.357059+00:00",
+  "updated_at": "2026-09-13T18:01:37.247840+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R005",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T18:01:36.357059+00:00",
+  "path_notes": "RESEARCH-ONLY (D-045-R005 research-first half): ONE writable file - the report. D-046 WAVE-3 DISJOINTNESS: shares nothing with M4-T016 (its single report file). Producer official-source-researcher (agent file already pinned claude-sonnet-5 per D-047-R001). Interpretation questions route to docs/ARCHITECT_REVIEW_QUESTIONS.md via an open-questions section in the report (the report file is the only writable surface; the orchestrator carries any routing edit to the architect doc). WORKTREE: producer works in its own worktree reset to the contract HEAD; primary checkout is orchestrator-only; show-toplevel guard mandatory.",
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ]
+}
