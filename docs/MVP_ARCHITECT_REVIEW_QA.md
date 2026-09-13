@@ -34,15 +34,28 @@ spans multiple chat sessions. The working model, set by the owner on 2026-09-12:
   bigger-picture feedback the owner has explicitly asked for ("don't be shy"). The owner asked for
   simple, non-technical language throughout — short sentences, analogies, no jargon without an
   immediate explanation.
-- **Open threads for the next session** (owner-requested, 2026-09-12): (1) deepen the valuation
-  discussion with LIVE market research — verify comparable-tool pricing (TestFit, UrbanForm,
-  Deepblocks, the former Envelope.city, PropertyShark-class data tools) before relying on the
-  Part 9 estimates; (2) the UI/design-system phase — research how dense-data feasibility tools
-  present information, then the design-spec → critique → implement path (incl. the question of
-  the Codex reviewer model "Astra" as a design critic or producer — see the build session's
-  governance constraints before promising anything); (3) Supabase credentials expected from the
-  owner ~2026-09-13 (they go to environment/dashboards only, NEVER chat or files); (4) prepping
-  the owner's demo conversation with a real architect using this document.
+- **Open threads for the next session** (refreshed end-of-night 2026-09-12): (1) **Render deploy
+  checklist** — D-043 authorized the internal web deploy; the build session will produce the
+  exact Render service settings + env-var checklist as an owner return item; walk the owner
+  through applying it, then the owner types real addresses into the live internal site. (2)
+  **Supabase credentials** expected from the owner (dashboards/env ONLY, never chat/files) —
+  unlocks storage, then the M3 legal-corpus capture chain. (3) **Design phase** — all inputs now
+  exist: `docs/design/competitor-report-presentation-research.md` (2 passes),
+  `docs/design/astra-presentation-research.md`, `docs/design/ui-inspiration/` (+README
+  corrections), `docs/design/ui-prototype.html`, and Part 10's locked rules; next step is the
+  design-director spec, Astra critique via its review channel, then implementation packets.
+  Astra's companion mockup file (nyc_zoning_result_mockup.html) was never received — ask the
+  owner for it. (4) **Valuation** — verify Part 9 price anchors live before any external use
+  (partial verification already in the two research docs). (5) **Architect demo prep** using
+  this document + the prototype. (6) The **clickable prototype artifact** ("Buildability
+  Prototype") belongs to a prior session — find it via `/artifacts` (or Artifact action:list)
+  and pass its URL as `url` when republishing `docs/design/ui-prototype.html`; keep the repo
+  copy and the artifact in sync. (7) Pricing research already priced: G6 + coverage move
+  willingness-to-pay most — keep nudging the owner on the lawyer call.
+- **Where everything from the 2026-09-12 marathon lives:** decisions → directives D-039..D-043;
+  design rules → Part 10; gap list → Part 4 (incl. B5 ACRIS, E3 assemblage, F build-tooling);
+  valuation → Part 9; research → the two docs/design research files; the look → ui-inspiration/
+  + ui-prototype.html. Nothing important exists only in a chat transcript.
 
 ---
 
