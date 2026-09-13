@@ -101,7 +101,7 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 90,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "sloping-plane setback geometry (23-421) and any street-width-conditional provision are A2 territory - typed provenance-carrying gaps ONLY, exactly like the pilot r5a_height treatment (D-045-R008)",
@@ -112,7 +112,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T04:49:56.673440+00:00",
-  "updated_at": "2026-09-13T05:53:22.910293+00:00",
+  "updated_at": "2026-09-13T05:58:00.675298+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -160,6 +160,13 @@
       "percent": 75,
       "status": "rework",
       "message": "G3 REVISED to FAIL on the peer-verified (g)-extraction hazard (supplemental ruling): BLOCKING RC = provenance-qualify or remove the (g)-content assertions in zr-23-421-r3-r4.snapshot.json notes (BOTH canonical and bundle copies, byte-identity maintained) + M4-T014-source-capture.md (drop the pseudo-verbatim quote marks; name the actual basis = prior-task rules-engineer agent memory + the owner-verified record in docs/ARCHITECT_REVIEW_QUESTIONS.md; state the 9,500/100ft/5pct conditions are owner-verified-elsewhere, NOT captured here). No rule value changes. G5 delta attestation needed after (notes outside the hashed excerpt, digests stable). Routing to producer."
+    },
+    {
+      "at": "2026-09-13T05:58:00.675298+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "Rework round 1 closed: G3 PASS at the corrected identity (blocking (g)-provenance correction discharged; producer correctly followed the source document over the orchestrator paraphrase on the trigger grouping and disclosed it), G4 + G5 delta attestations PASS STAND (blob parity 4edbea4c, digest 68e4d147 stable, 458 reproduced). DCV rows next, then accept - which closes wave 1 and frees the rules dirs for the M4-T012 re-dispatch."
     }
   ]
 }

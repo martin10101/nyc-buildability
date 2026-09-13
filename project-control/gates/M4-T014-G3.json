@@ -3,11 +3,11 @@
   "gate_id": "G3",
   "reviewer": "code-reviewer",
   "role": "independent_review",
-  "result": "FAIL",
-  "report_file": "project-control/reports/M4-T014-G3-supplemental-ruling.md",
-  "reviewed_at": "2026-09-13T05:48:35.381162+00:00",
-  "content_manifest_sha256": "35ee7eb5365949cd9e9380d2739f825d797ca71f5745f934d2e2f77412e58295",
-  "reviewed_sha": "62e25e068ecf71f98d248dca8a68b96af3c5dcf5",
+  "result": "PASS",
+  "report_file": "project-control/reports/M4-T014-G3-rereview.md",
+  "reviewed_at": "2026-09-13T05:57:57.431281+00:00",
+  "content_manifest_sha256": "b20678d4f2c6ff96cea6319aa6626498ad72109145775d26a4bafc9501e86224",
+  "reviewed_sha": "e4872c3820269a669736e77ca602a38dc7b2f67a",
   "history": [
     {
       "reviewer": "code-reviewer",
@@ -15,7 +15,14 @@
       "result": "PASS",
       "report_file": "project-control/reports/M4-T014-G3-rule-content-review.md",
       "reviewed_at": "2026-09-13T05:44:40.315346+00:00"
+    },
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M4-T014-G3-supplemental-ruling.md",
+      "reviewed_at": "2026-09-13T05:48:35.381162+00:00"
     }
   ],
-  "updated_at": "2026-09-13T05:48:36.161262+00:00"
+  "updated_at": "2026-09-13T05:57:58.196252+00:00"
 }
