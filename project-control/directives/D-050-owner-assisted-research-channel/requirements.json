@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-050",
- "version": 2,
- "requirement_count": 5,
+ "version": 3,
+ "requirement_count": 6,
  "producer": "orchestrator",
- "updated_at": "2026-09-13T17:52:00+00:00",
+ "updated_at": "2026-09-13T19:08:12+00:00",
  "requirements": [
   {
    "id": "D-050-R001",
@@ -135,6 +135,32 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 2
+  },
+  {
+   "id": "D-050-R006",
+   "text": "IMMEDIATE UPDATE + COMPACT CLOSURE + PHONE ACCESS (amendment 2) — (a) The pushed branch's docs/RESEARCH_REQUESTS.md is the owner's phone-readable copy (GitHub file URL in the doc header): every queue change is committed AND pushed in the same working step, never left dirty-local or batched. (b) When the owner returns results, the receiving session marks the entry ANSWERED (date + named verification target) immediately. (c) When a request is SATISFIED (answer verified/consumed, everything checks out), its full entry is REMOVED from the active queue and collapsed to a one-line row in the file's Closed register (id - outcome - date - where the answer lives); full text stays in git history; the active file never accumulates satisfied requests.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-050-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "queue file always current on the pushed branch; ANSWERED stamps same-step; satisfied entries collapse to Closed one-liners",
+   "required_evidence": "document history on the pushed branch; absence of stale satisfied entries",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 3
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-050",
- "version": 2,
+ "version": 3,
  "slug": "owner-assisted-research-channel",
  "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
  "status": "active",
@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T17:23:15+00:00",
  "created_at": "2026-09-13T17:23:15+00:00",
- "updated_at": "2026-09-13T17:52:00+00:00",
+ "updated_at": "2026-09-13T19:08:12+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "e063b7c70dfcb9df8e251195146511dbfc63447d",
@@ -26,9 +26,10 @@
   "D-050-R002",
   "D-050-R003",
   "D-050-R004",
-  "D-050-R005"
+  "D-050-R005",
+  "D-050-R006"
  ],
- "requirements_content_digest_sha256": "72532b6e4d524c4f37daaf98c96d33667351f4637352ca8e483ee797fe23bd0b",
+ "requirements_content_digest_sha256": "b42ef23d5d0bb11cecd5c1cb7dd562f0f2234fced2ad52d5a4e05254adf4b83d",
  "sources": [
   {
    "file": "source-001.md",
@@ -44,10 +45,19 @@
    "amends": "source-001.md",
    "recorded_at": "2026-09-13T17:52:00+00:00",
    "content_digest_sha256": "55f2b0cc15a11ff8b374dc6f2b295f5e1db4e4445f5c1233ff24e7e5b8c9bf0d"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-13T19:08:12+00:00",
+   "content_digest_sha256": "37949b85a356e20fcbab40bb285181f9462913a0827f6a4f80e1653c686e6b3b"
   }
  ],
  "amendments": [
-  "source-002-amendment.md"
+  "source-002-amendment.md",
+  "source-003-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -75,6 +85,12 @@
    "actor": "orchestrator",
    "event": "amended",
    "note": "Amendment 1 (source-002): owner requires ACTIVE NOTIFICATION - the md alone is never sufficient notice; added D-050-R005 (owner-visible seam lines + PushNotification on new appends + companion in-conversation surfacing; quiet rule narrowed; non-blocking unchanged). Digest resynced ddd35374 -> 72532b6e."
+  },
+  {
+   "at": "2026-09-13T19:08:12+00:00",
+   "actor": "orchestrator",
+   "event": "amended",
+   "note": "Amendment 2 (source-003): owner operates from phone - added D-050-R006 (pushed-branch GitHub URL is the phone-readable copy, commit+push every queue change same-step; ANSWERED stamped immediately on returned results; SATISFIED entries removed from the active queue and collapsed to one-line Closed-register rows, full text in git history). Digest resynced 72532b6e -> b42ef23d."
   }
  ]
 }

@@ -4,6 +4,12 @@
 The owner runs them through external deep-research tooling (Astra) and brings back results —
 making the campaign faster. Started 2026-09-13 (owner directive D-050).
 
+**Read this from your phone (always current):**
+https://github.com/martin10101/nyc-buildability/blob/candidate/D-024-mrl-option-b/docs/RESEARCH_REQUESTS.md
+Every change to this file is committed AND pushed in the same step (D-050-R006), so that link
+is never stale. From the phone you can also just ask the companion session to read out what's
+open, or dictate results into the chat — it does the file work.
+
 **The rules (D-050):**
 - Results are **discovery aids, never sources of record.** Every load-bearing claim gets verified
   against the official text through the normal capture discipline (print/PDF-class completeness
@@ -19,6 +25,12 @@ making the campaign faster. Started 2026-09-13 (owner directive D-050).
 
 **Entry format:** question · why it matters · what it unlocks · status (OPEN / ANSWERED
 <date> / ROUTED-to-architect-doc).
+
+**Lifecycle (D-050-R006):** results returned by the owner are stamped ANSWERED immediately
+(date + named verification target) and pushed in the same step. Once a request is SATISFIED —
+answer verified/consumed, everything checks out — its full entry is DELETED from the active
+queue and collapsed to one line in the Closed register at the bottom (full text stays in git
+history). The active queue never carries figured-out material.
 
 ---
 
@@ -93,3 +105,9 @@ making the campaign faster. Started 2026-09-13 (owner directive D-050).
 *Loop: append new requests below with the same format. Owner: paste results to the companion
 session or the build session; the receiving session marks the entry ANSWERED and names the
 verification target.*
+
+---
+
+## Closed register (one line per satisfied request; full text in git history)
+
+*(none yet)*
