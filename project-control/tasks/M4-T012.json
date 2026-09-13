@@ -26,6 +26,7 @@
     "services/api/app/rules/schemas",
     "services/api/app/_zr_snapshots",
     "services/api/tests/rules",
+    "docs/research/zr-snapshots",
     "project-control/reports/M4-T012-producer-report.md",
     "project-control/reports/M4-T012-source-capture.md"
   ],
@@ -98,8 +99,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 25,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -115,7 +116,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T06:49:18.269522+00:00",
+  "updated_at": "2026-09-13T07:13:50.523667+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -182,6 +183,13 @@
       "percent": 25,
       "status": "claimed",
       "message": "Producer DISPATCHED (rules-engineer, agent-file model claude-sonnet-5 per D-047-R001, isolated worktree off base dbd07817 with reset+show-toplevel guards); BINDING first step in the dispatch prompt: print/PDF-class full-text 23-421 proof + 9,500-present check + reconcile vs docs/ARCHITECT_REVIEW_QUESTIONS.md before encoding (g). Wave 2 slot 1 of 2 (parallel with M4-T015, scopes pairwise-disjoint per D-046-R002)"
+    },
+    {
+      "at": "2026-09-13T07:13:47.776541+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at dd7c8b74 (17 files; orchestrator reproduction: rules 558 passed, modularity EXIT 0, sync --check OK 14). Packet correction recorded pre-submit per the M4-T014 precedent: allowed_paths += docs/research/zr-snapshots (the canonical dir the established sync mechanism requires; producer disclosed rather than silently writing). Binding capture proof PASS via print/PDF (sha256 b5777618, 9500-present, verbatim MATCH). Producer disclosure routed to G3: raw HTML bytes DO contain (g) - packet premise about the HTML channel contradicted; PDF stays the citation channel of record"
     }
   ]
 }

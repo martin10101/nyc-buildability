@@ -1,0 +1,44 @@
+{
+  "task_id": "M4-T012",
+  "assembled_by": "orchestrator",
+  "note": "R1/R2 family material at dd7c8b74 (D-049 definitive scope). Executable authority for the api suite is CI on the pushed head; the orchestrator reproduced the three local checks at capture (rules 558 passed, modularity EXIT 0, sync_zr_snapshots --check OK 14 files). Binding capture-completeness proof PASS (print/PDF channel, sha256 b5777618..., 9,500-present, verbatim reconciliation MATCH).",
+  "requirements": {
+    "D-045-R001": [
+      "services/api/app/rules/rulesets/r1_r2_bare_pitched_height.rule.json + r1_r2_suffix_variants_pitched_height.rule.json + r1_r2_reference_plane_23421g.rule.json + r1_r2_qrs_height.rule.json - the R1/R2-series height/setback draft family (residential_height_setback_r1_r2), typed 25/35 perimeter-wall/ridge constraints separated, all needs_review",
+      "snapshots: fresh in-task print/PDF capture 2026-09-13 (zr-11-25, zr-23-421-r1-r2, zr-23-421-g, zr-23-424-r1-r2) in canonical docs/research/zr-snapshots/v1/ + byte-identical bundle copies (sync --check EXIT 0, 14 files); every constraint carries section/clause + effective-date + snapshot id/hash provenance",
+      "services/api/tests/rules/test_r1_r2_height_setback.py - 100 deterministic cases (AS-1..AS-6, NC-1..NC-8): per-variant expectations, min/max separation, fail-closed gaps, letter-suffix exclusion isolation, effective-date discipline, 9500/100/5 trigger-boundary mutation checks; full rules suite 558 passed (producer AND orchestrator reproduction)",
+      "reports: project-control/reports/M4-T012-producer-report.md + M4-T012-source-capture.md (URL/date/sha256 per snapshot; authoritative variant enumeration with source anchors; discrepancy disclosure)"
+    ],
+    "D-045-R008": [
+      "one-family bounded scope held: the full sloping-plane setback geometry (23-421 (a)-(f)) stays a typed A2 gap on every envelope rule, never computed; no street-width or geometry mechanics entered any cap; engine/evaluator/schemas untouched"
+    ],
+    "D-045-R009": [
+      "every rule status needs_review DRAFT; owner-decision provenance markers never presented as express citations; producer report S5 banned-language grep clean (producer self-caught and corrected one massing usage); nothing moves past needs_review; no dependency change"
+    ],
+    "D-048-R001": [
+      "bare R1 and R2 encoded from the EXPRESS 23-421 enumeration in r1_r2_bare_pitched_height.rule.json citing zr-23-421-r1-r2 (print/PDF capture, digest 1bce8818...), 25 ft perimeter wall / 35 ft ridge as separate typed constraints - the still-standing express half of D-048-R001; the five lettered variants are governed by D-049-R006 supersession (see D-049-R001)"
+    ],
+    "D-048-R002": [
+      "SUPERSEDED for the five lettered variants by D-049-R006 (owner decision): R1-1/R1-2/R1-2A/R2A/R2X are now ENCODED per the 11-25 suffix-inheritance reading with owner-decision provenance instead of rendering not-assessed; tests prove no manufactured numbers (every value snapshot-cited or fail-closed) and the professional ask stays open in docs/ARCHITECT_REVIEW_QUESTIONS.md"
+    ],
+    "D-049-R001": [
+      "r1_r2_suffix_variants_pitched_height.rule.json - R1-1, R1-2, R1-2A, R2A, R2X share the 23-421 25/35 pitched envelope via ZR 11-25 suffix inheritance, citing zr-11-25 (full-text capture, digest 6843ad22...) + zr-23-421-r1-r2, every constraint carrying OWNER-DECISION provenance markers and DRAFT-until-G6; cross-variant isolation + wrong-district negative controls in test_r1_r2_height_setback.py"
+    ],
+    "D-049-R002": [
+      "R2X height parity: the 23-21 FAR row (1.00 vs 0.75) recorded as a floor-area-only express exception in the suffix-variants ruleset provenance (R2X FAR-parity note); R2X height follows 11-25 + 23-421 like the other variants; isolation tests prove no height divergence and no FAR leakage into height"
+    ],
+    "D-049-R003": [
+      "r1_r2_reference_plane_23421g.rule.json - 23-421(g) as an EXPLICIT CONDITIONAL: eligible R1-1/R1-2/R2 only (letter-suffix R1-2A/R2A/R2X excluded, proven by NC tests); trigger (area >= 9,500 AND width >= 100) OR slope >= 5 percent; missing input emits professional_review_required, never a silent apply/omit; citation zr-23-421-g (digest 52dd8aab...) from the print/PDF artifact with the 9,500-present check PASS and word-for-word reconciliation vs docs/ARCHITECT_REVIEW_QUESTIONS.md; bare-R1 eligibility NOT extended beyond the owner-verified enumeration (disclosed)",
+      "conservative all-three-inputs-required design disclosed in the ruleset limitations + producer report decision 3 (fail-closed direction, never a wrong value)"
+    ],
+    "D-049-R004": [
+      "site modifiers never silent: 23-424 gets its own dedicated rule r1_r2_qrs_height.rule.json (fail-closed on the qualifying_residential_site boolean, 12-10 definition never assumed, transit-route exclusion recorded as documented limitation, same-family conflict with base envelope proven by test - never a silent precedence pick); 23-425 large_site flag; 23-426(a) historic_district flag; 23-443(b) NEW transportation_infrastructure_adjacent flag; 119-212 + 113-523 folded into special_district_present with sections named in the description (producer decision 4, disclosed); 23-413(a) noted so the pitched envelope is never rendered as a requirement"
+    ],
+    "D-049-R005": [
+      "owner-decision provenance + DRAFT-until-G6 on every derived output; the 11-25 professional-confirmation ask REMAINS OPEN at docs/ARCHITECT_REVIEW_QUESTIONS.md section A1 (explicitly not closed by the producer); source-capture report states nothing is a Verified determination"
+    ],
+    "D-049-R006": [
+      "supersession mechanics honored: the five lettered variants moved from the D-048 not-assessed treatment to suffix-inheritance encoding; bare R1/R2 express encoding unchanged; D-048-R004 standing ambiguity pattern untouched; the packet objective and this evidence map record the supersession chain explicitly"
+    ]
+  }
+}
