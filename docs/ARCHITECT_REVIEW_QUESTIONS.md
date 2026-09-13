@@ -60,6 +60,16 @@ marked with the answer and the directive that captured it.
   same day via a different extraction path) records identical figures — "In R1 and R2 Districts
   without a letter suffix", ≥9,500 sq ft & ≥100 ft width OR ≥5% slope, reference plane up to 5 ft
   above base plane — so the owner's verbatim now has an independent in-repo witness.
+  CORRECTION TO THE TOOLING NOTE (2026-09-13, M4-T012 producer finding, G3-reviewed): the RAW
+  HTML response bytes of the official §23-421 page DO contain paragraph (g) including "9,500"
+  (direct HTTPS GET, raw response sha256 fc51ec09…, full value in
+  project-control/reports/M4-T012-source-capture.md; the text sits inside the field--name-body
+  container immediately after a large inline base64 PNG). The earlier four failed renders were
+  therefore a text-extraction-layer artifact (truncation at the embedded image), NOT a
+  raw-response limitation. The pipeline rule above STANDS unchanged: section completeness is
+  still proven from a print/PDF-class artifact (M4-T012 used the official entityprint PDF,
+  sha256 b5777618…, 9,500 present, word-for-word MATCH vs the owner verbatim), with raw-HTML
+  byte inspection usable as corroboration — never HTML text extraction alone.
 - **Citation for the professional:** ZR §23-421 (City of Yes text, last amended 2024-12-05,
   verified live at zr.planning.nyc.gov on 2026-09-13). Applicability line reads:
   "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A". §23-422 (flat-roof alternative) excludes R1/R2.

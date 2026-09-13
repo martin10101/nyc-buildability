@@ -37,12 +37,14 @@ Coverage map:
   AS-6 installed-wheel deployability + DSL validation
   NC-1 cross-variant isolation (no district borrows another variant's rule)
   NC-2 letter-suffix exclusion from section 23-421(g) (R1-2A/R2A/R2X never get the allowance)
-  NC-3 special-district / commercial-overlay / historic-district / large-site / transportation context -> PRR
+  NC-3 special-district / commercial-overlay / historic-district / large-site /
+       transportation context -> PRR
   NC-4 building-type unavailable -> fail closed (PRR)
   NC-5 missing required input -> fail closed (PRR), including the (g) rule's 3 geometry inputs
   NC-6 uncertain / conflicting geometry -> PRR / data_conflict
   NC-7 same-family conflict: QRS alternative vs base envelope for max_building_height
-  NC-8 (g) trigger boundary: area+width path, slope path, neither path, conservative all-required design
+  NC-8 (g) trigger boundary: area+width path, slope path, neither path,
+       conservative all-required design
 """
 
 from __future__ import annotations
@@ -187,7 +189,6 @@ def test_as1_r2x_far_row_documented_as_floor_area_only(registry):
 
 
 def test_as1_reference_plane_g_confident_when_area_and_width_satisfy(registry):
-    rule = registry.rule("r1-r2-reference-plane-23421g")
     res = registry.evaluate(
         "r1-r2-reference-plane-23421g",
         {
@@ -313,11 +314,22 @@ def test_as2_11_25_snapshot_last_amended_predates_city_of_yes(store):
             {"zoning_district": "R2X", "building_type": "detached"},
         ),
         ("r1-r2-qrs-height", {"zoning_district": "R2", "qualifying_residential_site": True}),
+        (
+            "r1-r2-reference-plane-23421g",
+            {
+                "zoning_district": "R1-1", "building_type": "detached",
+                "lot_area_sqft": 50000, "lot_width_ft": 500, "rear_wall_slope_percent": 50,
+            },
+        ),
     ],
 )
 def test_as3_before_amendment_not_effective(registry, rid, inputs):
     rule = registry.rule(rid)
-    full = _qrs_inputs(rule, **inputs) if rid == "r1-r2-qrs-height" else _envelope_inputs(rule, **inputs)
+    full = (
+        _qrs_inputs(rule, **inputs)
+        if rid == "r1-r2-qrs-height"
+        else _envelope_inputs(rule, **inputs)
+    )
     res = registry.evaluate(rid, full, as_of_date="2024-12-04")
     assert res.coverage_status == cov.COVERAGE_NOT_APPLICABLE
     assert res.outputs == {}
@@ -333,11 +345,22 @@ def test_as3_before_amendment_not_effective(registry, rid, inputs):
             {"zoning_district": "R2X", "building_type": "detached"},
         ),
         ("r1-r2-qrs-height", {"zoning_district": "R2", "qualifying_residential_site": True}),
+        (
+            "r1-r2-reference-plane-23421g",
+            {
+                "zoning_district": "R1-1", "building_type": "detached",
+                "lot_area_sqft": 50000, "lot_width_ft": 500, "rear_wall_slope_percent": 50,
+            },
+        ),
     ],
 )
 def test_as3_on_amendment_date_effective(registry, rid, inputs):
     rule = registry.rule(rid)
-    full = _qrs_inputs(rule, **inputs) if rid == "r1-r2-qrs-height" else _envelope_inputs(rule, **inputs)
+    full = (
+        _qrs_inputs(rule, **inputs)
+        if rid == "r1-r2-qrs-height"
+        else _envelope_inputs(rule, **inputs)
+    )
     res = registry.evaluate(rid, full, as_of_date="2024-12-05")
     assert res.coverage_status == cov.COVERAGE_CONDITIONAL
     assert res.outputs
@@ -443,6 +466,34 @@ def test_nc1_unknown_variant_is_unsupported_not_nearest(registry):
             rid, _envelope_inputs(rule, zoning_district="R2Z", building_type="detached")
         )
         assert res.coverage_status == cov.COVERAGE_NOT_APPLICABLE
+
+
+@pytest.mark.parametrize("foreign", ["R3A", "R3X", "R4", "R5"])
+def test_nc1_qrs_rule_never_matches_foreign_districts(registry, foreign):
+    """G4 rework advisory: pin the QRS rule's in_set so a future broadening of its
+    district scope is a visible, test-caught change."""
+    rule = registry.rule("r1-r2-qrs-height")
+    res = registry.evaluate(
+        "r1-r2-qrs-height",
+        _qrs_inputs(rule, zoning_district=foreign, qualifying_residential_site=True),
+    )
+    assert res.coverage_status == cov.COVERAGE_NOT_APPLICABLE
+    assert res.outputs == {}
+
+
+@pytest.mark.parametrize("foreign", ["R3A", "R3X", "R4", "R5"])
+def test_nc1_reference_plane_rule_never_matches_foreign_districts(registry, foreign):
+    """G4 rework advisory: pin the (g) rule's in_set against foreign districts even
+    with fully-satisfying geometry (NC-2 covers the excluded R1/R2-family members)."""
+    res = registry.evaluate(
+        "r1-r2-reference-plane-23421g",
+        {
+            "zoning_district": foreign, "building_type": "detached",
+            "lot_area_sqft": 50000, "lot_width_ft": 500, "rear_wall_slope_percent": 50,
+        },
+    )
+    assert res.coverage_status == cov.COVERAGE_NOT_APPLICABLE
+    assert res.outputs == {}
 
 
 # --------------------------------------------------------------------------
@@ -582,7 +633,9 @@ def test_nc5_missing_district_fails_closed(registry):
     "missing_field",
     ["lot_area_sqft", "lot_width_ft", "rear_wall_slope_percent"],
 )
-def test_nc5_reference_plane_missing_any_single_geometry_input_fails_closed(registry, missing_field):
+def test_nc5_reference_plane_missing_any_single_geometry_input_fails_closed(
+    registry, missing_field
+):
     """NC-8 conservative-by-design: even ONE missing geometry input fails closed,
     regardless of whether the OTHER two would already resolve the trigger."""
     full = {

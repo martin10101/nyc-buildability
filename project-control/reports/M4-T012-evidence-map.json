@@ -1,7 +1,7 @@
 {
   "task_id": "M4-T012",
   "assembled_by": "orchestrator",
-  "note": "R1/R2 family material at dd7c8b74 (D-049 definitive scope). Executable authority for the api suite is CI on the pushed head; the orchestrator reproduced the three local checks at capture (rules 558 passed, modularity EXIT 0, sync_zr_snapshots --check OK 14 files). Binding capture-completeness proof PASS (print/PDF channel, sha256 b5777618..., 9,500-present, verbatim reconciliation MATCH).",
+  "note": "R1/R2 family material at dd7c8b74 plus the G4-arc rework commit (lint fixes exactly as G4 prescribed; G3-A2 citation-gloss reword; G4 ADVISORY-1/2 test additions -> rules suite 568 passed, ruff clean, modularity EXIT 0, sync OK 14). Executable authority for the api suite is CI on the pushed rework head. Binding capture-completeness proof PASS (print/PDF channel, sha256 b5777618..., 9,500-present, verbatim reconciliation MATCH). Test-count references to 100/558 in the reports predate the rework additions (now 110/568).",
   "requirements": {
     "D-045-R001": [
       "services/api/app/rules/rulesets/r1_r2_bare_pitched_height.rule.json + r1_r2_suffix_variants_pitched_height.rule.json + r1_r2_reference_plane_23421g.rule.json + r1_r2_qrs_height.rule.json - the R1/R2-series height/setback draft family (residential_height_setback_r1_r2), typed 25/35 perimeter-wall/ridge constraints separated, all needs_review",
