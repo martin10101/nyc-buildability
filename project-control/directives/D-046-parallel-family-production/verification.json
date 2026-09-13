@@ -4,5 +4,45 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-046 requirements bind the non-ledger sentinel D-046-BOOTSTRAP (D-038..D-045 precedent; validator c5 forbids sentinel task_ids in task_verifications). This directive shapes EXECUTION of the D-045 campaign; individual campaign tasks verify through their own DCV rows, and D-046 rows accrue at verification time. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T013",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3",
+   "reviewed_manifest_sha256": "232efa20a94973a13e4cd1a347eb5d4ccb9004fd994e4410dafdf238e4820262",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T07:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "PARALLEL WAVE-1 EXECUTION: M4-T013 ran as wave-1 slot 2 (research lane) in its own isolated worktree wt-m4t013 (base 5450d39f per project-control/reports/M4-T013-evidence-map.json) concurrently with M4-T014 (rules lane, producer rules-engineer, its own worktree) - two concurrent writing producers on disjoint D-045 tasks, within the 3-producer ceiling (D-046-R004). Recorded in tasks/M4-T013.json progress_log ('D-046/D-047 wave-1 slot 2 (research lane, disjoint from all rules dirs)') and worktree field 'wt-m4t013'.",
+      "ISOLATED-WORKTREE DISCIPLINE: the two producers' materials landed as distinct commits (M4-T013 = 05b5721f, M4-T014 = c8d94f38), each confined to its own task deliverables under the standing orchestration policy; the orchestrator integrated them sequentially (05b5721f is an ancestor of c8d94f38)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "ALLOWED_PATHS PROVABLY PAIRWISE-DISJOINT (the exact R002 invariant: 'concurrent writing producers whose allowed_paths overlap any file'). Verifier computed prefix-aware overlap between M4-T013 allowed_paths [project-control/reports/M4-T013-street-width-research.md, docs/research/source-registry-drafts] and M4-T014 allowed_paths [services/api/app/rules/rulesets, services/api/app/rules/schemas, services/api/app/_zr_snapshots, services/api/tests/rules, project-control/reports/M4-T014-producer-report.md, project-control/reports/M4-T014-source-capture.md, docs/research/zr-snapshots] = NONE. Zero file overlap in the deliverable scopes.",
+      "ONLY COMMIT-FILE INTERSECTION is .claude/agent-memory/rules-engineer/MEMORY.md (git show 05b5721f/--c8d94f38 --name-only) - which is OUTSIDE both tasks' allowed_paths and is governed by the separate per-agent memory permission (.claude/rules/project-control.md: agents write only under .claude/agent-memory/<self>/). It is NOT a parallel-producer write collision on deliverables: the two commits are SEQUENTIAL (05b5721f is an ancestor of c8d94f38), and 05b5721f's inclusion of the rules-engineer memory is an orchestrator cross-worktree memory-preservation bundling (commit message: 'producer agent memories preserved from worktrees'), not the official-source-researcher writing into another agent's dir. The R002 disjointness invariant on allowed_paths is therefore not breached.",
+      "SHARED SURFACES not edited in parallel: this research task touched no registry-wiring, coverage-table, or shared-schema file (its scope is the research report + source-registry-drafts draft only), consistent with R002's 'shared surfaces integrated sequentially by the orchestrator'. Independent G1 corroborated D-046-R002 PASS (zero overlap with any rules dir)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    }
+   ]
+  }
+ ]
 }

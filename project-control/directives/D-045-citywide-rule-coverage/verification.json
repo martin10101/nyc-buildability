@@ -4,5 +4,62 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-045 requirements bind the non-ledger sentinel D-045-BOOTSTRAP (D-038..D-043 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this campaign cite D-045:<requirement ids> and verify through their own DCV rows in the usual way; directive-level requirements remain OPEN until their coverage is actually accepted - no completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T013",
+   "applicable_requirement_ids": [
+    "D-045-R003",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3",
+   "reviewed_manifest_sha256": "232efa20a94973a13e4cd1a347eb5d4ccb9004fd994e4410dafdf238e4820262",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T07:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R003",
+     "state": "PASS",
+     "evidence": [
+      "RESEARCH-FIRST HALF of the B2 street-width connector (task scope; the connector build is a later packet). project-control/reports/M4-T013-street-width-research.md@HEAD identifies the authoritative source with evidence: DCM Street Center Line (NYC DCP) as PRIMARY via the DCP_GIS ArcGIS FeatureServer (keyless, EPSG:2263, geoJSON-capable), SODA g6zj-tzgn as documented-stale fallback, BYTES bulk product noted Render-worker-only; every material claim carries a live URL + 2026-09-13 retrieval date + verbatim official quotes (Evidence index E1-E8).",
+      "VERIFIER LIVE-REPRODUCED the load-bearing S1/S2 primary-source claims byte-exact via curl to the ArcGIS layer ?f=json: name=DCM_Street_Center_Line, geometryType=esriGeometryPolyline, wkid 102718 / latestWkid 2263 (EPSG:2263), maxRecordCount=2000, formats='JSON, geoJSON, PBF', editingInfo.dataLastEditDate=1764617995374 (2025-12-01Z), and Streetwidth field = (String, length 50) - confirming the FREE-TEXT width finding, not a clean number. All identical to the report/registry values.",
+      "VERIFIER LIVE-REPRODUCED the S4 comparison crux: services/api/tests/fixtures/geoclient/G01_address_documented_example.json response_body_raw.address carries streetWidth='30', streetWidthMaximum='30', streetStatus='2' (paved/roadbed) vs DCM mapped 60 on W 100 St - the divergence the report uses to KILL Geoclient for legal use (advisory cross-check only). Report states tradeoffs on authority/granularity/semantics/failure modes, not hidden.",
+      "REGISTRY DRAFT docs/research/source-registry-drafts/dcm-street-centerline.json@HEAD: two records (nyc-dcp-dcm-street-centerline-arcgis primary + -soda fallback) in the M2-T009 posture (source_id, agency, endpoint, auth, rate_limits, update_frequency, geographic_coverage, fields_available with byte-verified field definitions, terms, connector_implementation=PLAN ONLY, known_limitations, fallback_source, open_questions), each carrying draft_status = NON-FINAL RESEARCH DRAFT.",
+      "INDEPENDENT G1 (data-contract-verifier != producer official-source-researcher, project-control/reports/M4-T013-G1-research-review.md) reproduced the same claims LIVE incl. byte-reading the official DCM metadata PDF and confirming the honesty crux (Streetwidth carries NO field-level definition while Feat_Type/Route_Type/Record_ST/Paper_ST DO), re-running the SODA metadata/sample/domain queries, and confirming the fixture value - VERDICT PASS, 2 advisories 0 blocking; gate record project-control/gates/M4-T013-G1.json content_manifest_sha256 = 232efa20... == verifier-computed identity.",
+      "SCOPE NOTE: directive-level D-045-R003 (the built connector: recorded fixtures byte-verified at G1, contract tests, unit/CRS honesty) REMAINS OPEN - this task delivered ONLY the mandated research-first half + registry draft (packet objective: 'NO connector code in this task'). This row verifies that research-first contribution, which is fully satisfied (increment-PASS-while-directive-open pattern; the later connector packet pins this report)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "RESEARCH-FIRST SEQUENCING held: git show 05b5721f --stat = 7 files, +471/-0 - the research report, the registry draft, project-control/reports/M4-T013-evidence-map.json (orchestrator-assembled), and four .claude/agent-memory/ files ONLY; ZERO connector code, fixtures, dependency, or schema (no services/api/**, apps/web/**, packages/**). The B2 work correctly runs research BEFORE the connector build.",
+      "BOUNDED GATED TASK, not monolithic: M4-T013 is a single research task carrying G0 (PASS, administrative) + G1 (PASS, data-contract-verifier), citing D-045:D-045-R003/R008/R009 (tasks/M4-T013.json directive_refs) - consistent with 'one reviewed family at a time' under the normal gated process.",
+      "IN-FLIGHT WORK NOT DISPLACED: the concurrently-recorded M5-T023 (accepted) / M5-T024 (accepted) completions and the D-043 deploy posture are untouched by this research-only diff (allowed_paths = report + source-registry-drafts only)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "NO RULE PROMOTION / NO COMPLIANCE LANGUAGE: the research report and registry draft contain no promotion of any rule and no compliance declaration. The central recommendation (fail-closed-to-narrow parsing of the free-text width field) is EXPLICITLY routed to OQ-3 as 'a ZR-grounded rule/legal decision (needs G6-class review), not resolved here by assumption' (report section 4, section 8 OQ-3; registry open_questions OQ-3); OQ-1 (exact mapped-width geometric definition) and the ZR-mapping ambiguities are likewise left OPEN.",
+      "DRAFT DISCIPLINE INTACT: the cited ZR 12-10 snapshot is treated as a snapshot (the report notes it is extraction_status extracted_draft / needs-G6), never as a determination; the width-concept characterization is held as an open question backed by (a) the 'Official City Map' framing and (b) empirical paved-vs-mapped divergence, not asserted as a field definition.",
+      "SCOPE LIMIT respected: research-only, coverage-scope work; no dependency change (D-046-R003/section-G untouched), no expansion-hold change, PR #241 / D-043 posture untouched (diff is docs-only within allowed_paths). Independent G1 review corroborated D-045-R009 PASS on the same basis."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    }
+   ]
+  }
+ ]
 }

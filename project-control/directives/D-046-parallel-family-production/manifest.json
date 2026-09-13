@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:35:34+00:00",
  "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-13T06:55:00+00:00",
+ "updated_at": "2026-09-13T07:55:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -71,6 +71,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T014 (wave-1 rules lane; M4-T012 blocked/clean so its directory scopes are free; T012 must not resume while T014 is in flight) to D-046-R001/R002 (append-only). Digest resynced e31a8a1c -> f648e8a4."
+  },
+  {
+   "at": "2026-09-13T07:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "verifier_authorized_reviewed_sha_restamp",
+   "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
   }
  ]
 }

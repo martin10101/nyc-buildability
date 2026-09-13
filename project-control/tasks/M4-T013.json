@@ -81,8 +81,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "the term 'street width' is overloaded across NYC sources (DCM mapped width, CSCL physical attributes, Geoclient per-address values) - the report must keep the concepts separate; conflating them would poison the A2 rule mechanics downstream",
     "the ZR's own street/street-line definitions govern which measurement the rules need; if the official data's concept does not match the ZR concept, that mismatch is THE finding, not something to paper over",
@@ -96,7 +96,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T04:42:55.202857+00:00",
-  "updated_at": "2026-09-13T05:19:30.491047+00:00",
+  "updated_at": "2026-09-13T05:33:58.824761+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -139,5 +139,7 @@
       "status": "awaiting_gate",
       "message": "G1 PASS (live byte-exact source verification; advisories: A1 sibling-wording reconciled - the ACTUAL wave-1 partner is M4-T014 (the packet inputs line predated the B-023 re-point; evidence map correct); A2 field-count wording carried to the B2 connector packet). DCV next, then accept."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T05:33:58.824761+00:00"
 }
