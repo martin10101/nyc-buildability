@@ -44,9 +44,9 @@ fallback, as before.
    (test_directive_compliance 129 OK). verification.json blocks assembled at f5b8742b.
 4. Validation at landing: registry validator EXIT 0 (foreground, ~7 min); rules 568; connectors
    619; modularity EXIT 0 (17 warnings, connector justified); sync_zr_snapshots OK 14; **CI fully
-   green at material head 8538c272**; runs on b91bdc3a/307779ff cancelled by successor pushes
-   (control-plane-only deltas); run on tip d40301a8 was IN PROGRESS at landing — expected green
-   (tree byte-identical to 8538c272 for all material paths; validator passed locally).
+   green at material head 8538c272 AND at the last substantive head d40301a8** (confirmed
+   completed success at landing; b91bdc3a/307779ff runs were cancelled by successor pushes —
+   control-plane-only deltas). Later 10faa11f/cb0f16a6 commits are this handoff doc only.
    Checkpoint `CP-2026-09-13-wave2-closed`.
 
 ## NEXT ACTIONS (wave 3 per D-047-R004 ramp — widen only while review latency + CI stay healthy)
