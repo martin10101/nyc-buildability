@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T021",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M5-T021-producer-report.md",
+  "submitted_at": "2026-09-13T00:01:32.795128+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T021-evidence-map.json",
+  "content_manifest_sha256": "1405c086726179eef92c99ca8fdd91fabcf290ba912fa5edca31dc61a7ff0189",
+  "reviewed_sha": "a53e7244b1a9cbcce3005c913ba9d947b373581b",
+  "applicable_requirements": [
+    "D-042-R001"
+  ],
+  "updated_at": "2026-09-13T00:01:33.381782+00:00"
+}

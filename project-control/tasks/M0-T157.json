@@ -55,14 +55,14 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "the derivation must not assume id format beyond D-<digits> (guard with isdigit filter)"
   ],
   "blockers": [],
   "created_at": "2026-09-12T23:52:23.338381+00:00",
-  "updated_at": "2026-09-12T23:52:39.834169+00:00",
+  "updated_at": "2026-09-13T00:01:34.078332+00:00",
   "directive_refs": [
     {
       "directive_id": "D-001",

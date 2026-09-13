@@ -80,8 +80,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "a fix version younger than 7 days fails the age gate - fail closed and record; do not waiver",
     "the js-yaml override currently BLOCKS its own fix; bumping the override to a non-fixed or too-young version re-fails the audit",
@@ -91,7 +91,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-12T23:32:55.119379+00:00",
-  "updated_at": "2026-09-12T23:53:25.809585+00:00",
+  "updated_at": "2026-09-13T00:01:33.381782+00:00",
   "directive_refs": [
     {
       "directive_id": "D-042",
