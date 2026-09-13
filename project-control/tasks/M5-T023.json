@@ -121,15 +121,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "human-journey-reviewer",
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "maplibre-gl is browser-only: it must live in a client component loaded without SSR (dynamic import or guarded mount) or next build breaks; this is its FIRST import - watch bundle impact and keep it scoped to the confirm surface",
     "WebGL is not guaranteed in headless CI Chromium: the component must detect unavailability and render the honest typed fallback; Playwright asserts stable copy/attribution/testids, never pixels",
@@ -147,7 +147,7 @@
     "python tools/modularity_check.py --check"
   ],
   "created_at": "2026-09-13T02:27:11.252630+00:00",
-  "updated_at": "2026-09-13T02:27:11.446262+00:00",
+  "updated_at": "2026-09-13T02:39:04.442607+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -157,5 +157,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-13T02:27:11.252630+00:00"
+  "directive_regime_entered_at": "2026-09-13T02:27:11.252630+00:00",
+  "worktree": "wt-m5t023",
+  "progress_log": [
+    {
+      "at": "2026-09-13T02:39:04.442607+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed at 6a8f2298; bound to D-040-R001 (digest d672035d); frontend-engineer dispatch next; scenarios recorded in packet"
+    }
+  ]
 }

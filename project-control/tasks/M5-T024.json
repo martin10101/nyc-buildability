@@ -71,13 +71,13 @@
     "G1",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "cloud-architect",
   "reviewer_agents": [
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "CORS omission bricks the deploy: the browser calls the API cross-origin and services/api/app/main.py blocks everything when API_CORS_ALLOWED_ORIGINS is unset - the checklist's step order must produce the web origin before the CORS entry",
     "NEXT_PUBLIC inlining trap: an env var set AFTER the first build silently leaves the 127.0.0.1 default in the bundle - the checklist must sequence env-before-build and state the rebuild-on-change rule",
@@ -93,7 +93,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T02:27:18.341759+00:00",
-  "updated_at": "2026-09-13T02:27:18.532120+00:00",
+  "updated_at": "2026-09-13T02:39:04.746107+00:00",
   "directive_refs": [
     {
       "directive_id": "D-043",
@@ -101,5 +101,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-13T02:27:18.341759+00:00"
+  "directive_regime_entered_at": "2026-09-13T02:27:18.341759+00:00",
+  "worktree": "wt-m5t024",
+  "progress_log": [
+    {
+      "at": "2026-09-13T02:39:04.746107+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed at 6a8f2298; bound to D-043-R001..R004 (digest a82c113c); cloud-architect dispatch next; checklist stub committed as tracked anchor"
+    }
+  ]
 }
