@@ -15,7 +15,12 @@ marked with the answer and the directive that captured it.
 
 ## A. Legal-text interpretation questions (currently blocking coverage)
 
-### A1. Do ZR 23-421's bare "R1" and "R2" labels include the lettered variants? — OWNER RESEARCH SAYS YES (via ZR §11-25); PENDING PROFESSIONAL CONFIRMATION
+### A1. Do ZR 23-421's bare "R1" and "R2" labels include the lettered variants? — OWNER DECISION D-049 ISSUED 2026-09-13 (encode the §11-25 reading); PROFESSIONAL CONFIRMATION STILL SOUGHT AT G6
+
+> **Status note (D-049):** the owner directed the build to encode this reading as an owner
+> decision. All derived rules stay DRAFT/needs-review until G6. What the professional confirms:
+> that §11-25's "except as otherwise set forth in express provisions" caveat is fully accounted
+> for by the exceptions mapped below — i.e., that no express provision was missed.
 
 - **Plain English:** The zoning rule for single-family house heights (pitched-roof: 25 ft walls /
   35 ft ridge) lists the districts it applies to. For R3 and R4 it names variants explicitly
@@ -66,7 +71,7 @@ marked with the answer and the directive that captured it.
   as "not assessed — needs professional review." (Most real R1 lots are mapped R1-1/R1-2, so this
   affects most R1 lots.) Bare R1/R2 lots are covered.
 
-### A2. Does R2X share the 25/35 ft pitched envelope, or does it have its own? — OWNER RESEARCH SAYS SHARED; PENDING PROFESSIONAL CONFIRMATION
+### A2. Does R2X share the 25/35 ft pitched envelope, or does it have its own? — OWNER DECISION D-049 ISSUED 2026-09-13 (shared; FAR row is floor-area-only); PROFESSIONAL CONFIRMATION STILL SOUGHT AT G6
 
 - **Plain English:** If the answer to A1 is "yes, variants are included," R2X still needs its own
   confirmation — it's a higher-density district that the floor-area table already treats

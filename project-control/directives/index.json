@@ -657,7 +657,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-048-r1r2-named-only-not-assessed/manifest.json"
+  },
+  {
+   "directive_id": "D-049",
+   "slug": "encode-11-25-reading",
+   "title": "Owner 2026-09-13: ENCODE THE 11-25 READING (owner decision, NOT qualified sign-off) - R1-1/R1-2/R1-2A/R2A/R2X share ZR 23-421's 25/35 draft envelope via ZR 11-25 suffix inheritance; R2X FAR row is floor-area-only; 23-421(g) as explicit conditional (no-letter-suffix only); site modifiers as conditions/review flags, never silent; DRAFT until G6; professional-confirmation ask stays open.",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-049-encode-11-25-reading/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T05:08:13+00:00"
+ "updated_at": "2026-09-13T06:10:09+00:00"
 }
