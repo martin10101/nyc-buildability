@@ -1,0 +1,246 @@
+{
+  "manifest_version": 1,
+  "task": "M4-T015",
+  "source_id": "nyc-dcp-dcm-street-centerline-arcgis",
+  "service_root": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services",
+  "layer": "DCM_Street_Center_Line",
+  "authentication": "none (keyless official service; no credential material exists in this pack)",
+  "digest_algorithm": "sha256:<hex> over the exact UTF-8 bytes of the raw response body",
+  "capture_note": "captured_at is the file-write timestamp from the live capture session (M2-T021 pattern), not a claim about the source's own edit time; the source-freshness pin is editingInfo.dataLastEditDate, recorded separately per fixture / in the connector's LayerMetadata.",
+  "fixtures": [
+    {
+      "file": "metadata.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0?f=json",
+      "captured_at": "2026-09-13T06:57:06Z",
+      "sha256": "sha256:5d59aa711054846cf5d0c2e56b772be66b0a7e459872a370eabcafcc2fde5db2",
+      "bytes": 11694,
+      "synthetic": false,
+      "purpose": "Layer-0 metadata: 18-field inventory, geometryType (esriGeometryPolyline), spatialReference (wkid 102718 / latestWkid 2263), maxRecordCount 2000, objectIdField, editingInfo.dataLastEditDate=1764617995374 (2025-12-01T19:39:55Z) freshness pin. Confirms the M4-T013 research live."
+    },
+    {
+      "file": "west_100_st_two_segments.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=Borough%3D%27Manhattan%27%20AND%20Street_NM%3D%27West%20100%20Street%27&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:06Z",
+      "sha256": "sha256:ebf13f620bf374a132d37c2efe4ee48907c5d2660fafedc33d3a527ef2ed68bf",
+      "bytes": 4472,
+      "synthetic": false,
+      "purpose": "S4 canonical two-segment case (research E6/S4): OBJECTID 7719 Streetwidth '60' and OBJECTID 14471 Streetwidth '100', both Mapped_St, Record_ST=N, Paper_ST=N - reproduces the 30-vs-60/100 Geoclient divergence and proves width varies per segment of one named street."
+    },
+    {
+      "file": "wide_clean_numeric_80.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D7&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:06Z",
+      "sha256": "sha256:4184e761fec3538a46db3c81f69c106d8c6914725b06d7e444611ae9014decb1",
+      "bytes": 4239,
+      "synthetic": false,
+      "purpose": "Class clean_numeric_ge_75 -> wide. Kappock Street, Streetwidth '80', Mapped_St, Paper_ST=N, Record_ST=N: clean mathematical entailment, no override in play."
+    },
+    {
+      "file": "width_irregular.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D380&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:06Z",
+      "sha256": "sha256:27ca0da19f4b30611e15dc61ff133f3d7388a9fe151dc65bb29667de176d9cb0",
+      "bytes": 3669,
+      "synthetic": false,
+      "purpose": "Class width_irregular -> narrow_fail_closed, review_required=True. Shore Parkway North, Streetwidth 'Width Irregular'."
+    },
+    {
+      "file": "not_applicable_n_a_unmapped.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D523&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:07Z",
+      "sha256": "sha256:b63360ac93c7cbf420b8e4d9111d50e333550f087d8a1a5ceef3e47ebe3edb81",
+      "bytes": 3509,
+      "synthetic": false,
+      "purpose": "Class not_applicable_n_a -> narrow_fail_closed AND Feat_Type=Not_mapped. Riegelmann Boardwalk, Streetwidth 'n/a' - dual-purpose width-ambiguity + unmapped-street-status fixture (S3)."
+    },
+    {
+      "file": "unknown_no_qualifier.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D244&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:07Z",
+      "sha256": "sha256:9fcfc96bedefedbc1f871a0e42f38f7fb962e81727a3ee219ebb3731a351e197",
+      "bytes": 4082,
+      "synthetic": false,
+      "purpose": "Class unknown_no_qualifier -> narrow_fail_closed. Clayton Road, Streetwidth 'Unknown'."
+    },
+    {
+      "file": "varies_plain.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D54010&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:07Z",
+      "sha256": "sha256:8928115c2486f05dc89216716c1f9be8d3a2d28ea61a804ccdb2707c151ff0bc",
+      "bytes": 3534,
+      "synthetic": false,
+      "purpose": "Class varies -> narrow_fail_closed, no mapped-street override in play. 4 Avenue, Streetwidth 'Varies', Paper_ST=N, Record_ST=N."
+    },
+    {
+      "file": "varies_paper_override.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D18356&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:07Z",
+      "sha256": "sha256:d21dd70ae0e389a2a787e9c354ada815a72e1914ba821fb157a719cac4db3f0a",
+      "bytes": 3973,
+      "synthetic": false,
+      "purpose": "Class varies AND Paper_ST=Y - Bassett Avenue - combined ambiguous-width + paper-street-override fixture."
+    },
+    {
+      "file": "gt_inequality_ge_75_wide.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D59&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:07Z",
+      "sha256": "sha256:9177ebeb6c169814d82fcc450086cf1a6f7df651261ead2a2c533fba32e74446",
+      "bytes": 3505,
+      "synthetic": false,
+      "purpose": "Class gt_inequality_ge_75 -> wide. East 35 Street, Streetwidth '>75' (N=75>=75, mathematically entails wide)."
+    },
+    {
+      "file": "lt_inequality_le_75_narrow.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D262&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:08Z",
+      "sha256": "sha256:6beeafd71c53b8c02bcf026e952ee776a98041e670f69b089806dbf675ae48fc",
+      "bytes": 3512,
+      "synthetic": false,
+      "purpose": "Class lt_inequality_at_or_below_75_confident_narrow. Archwood Avenue, Streetwidth '<60' (N=60<=75, confidently narrow)."
+    },
+    {
+      "file": "range_straddles_cutoff_60_75.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D183&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:08Z",
+      "sha256": "sha256:ad503f4b31f7999848e9c88dfce78e7328231e89cd71716d8ab8ad389e0530c8",
+      "bytes": 3503,
+      "synthetic": false,
+      "purpose": "Class range_straddles_cutoff -> narrow_fail_closed, review_required=True. East 96 Street, Streetwidth '60-75' (lower<75<=upper)."
+    },
+    {
+      "file": "range_both_ge_75_wide_75_90.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D3632&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:08Z",
+      "sha256": "sha256:73ef71e5fd7302e4b48327b11d4bf20d5f21f7aea79dcd5461d9ca64619cb146",
+      "bytes": 3504,
+      "synthetic": false,
+      "purpose": "Class range_both_endpoints_ge_75 -> wide. East 95 Street, Streetwidth '75-90' (both endpoints >=75)."
+    },
+    {
+      "file": "range_both_lt_75_narrow_50_60.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D1261&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:08Z",
+      "sha256": "sha256:eab33d6f7b1dfdaf55ac5e9fb5decf91e4863b678248240546afa76bbc47e836",
+      "bytes": 3498,
+      "synthetic": false,
+      "purpose": "Class range_both_endpoints_lt_75 -> narrow_fail_closed, review_required=False. Jay Avenue, Streetwidth '50-60' (upper endpoint <75, confidently narrow)."
+    },
+    {
+      "file": "range_straddles_cutoff_74_75_3.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D15544&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:08Z",
+      "sha256": "sha256:2d2e61162339cb1dc4d4882ec7cb662e08a02faa6dbaebc2f0153aa7d42a91ae",
+      "bytes": 3505,
+      "synthetic": false,
+      "purpose": "Class range_straddles_cutoff (second live shape). Centre Street, Streetwidth '74-75.3' - the ONLY live occurrence of this exact value (count=1 per research E7 / live re-check)."
+    },
+    {
+      "file": "approximate_tilde_60.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D161&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:09Z",
+      "sha256": "sha256:b71fd4e3e25edf092977956361a579ab208a8be1596e4e5c612ed051b2020c8b",
+      "bytes": 3569,
+      "synthetic": false,
+      "purpose": "Class approximate_or_hedged_value_ambiguous. 100 Avenue, Streetwidth '~60'."
+    },
+    {
+      "file": "unknown_hedged_below_75.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D474&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:09Z",
+      "sha256": "sha256:d2437b8dc4ea8146c392903af4a821bb54255ad9d1b9853f884ef78f6c777b92",
+      "bytes": 8088,
+      "synthetic": false,
+      "purpose": "Class unknown_hedged_below_75 -> narrow_fail_closed, review_required=True (OQ-3 never resolved in-task). Margaret Corbin Drive, Streetwidth 'Unknown but <75'. Larger byte size than sibling fixtures reflects this segment's own polyline vertex count (returnGeometry defaults true on this endpoint); no anomaly."
+    },
+    {
+      "file": "unknown_hedged_above_75.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D1008&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:09Z",
+      "sha256": "sha256:2126cbf73138e0f32b8912474f285b57cd09d74edffb1b97fca27305f8fe2618",
+      "bytes": 3555,
+      "synthetic": false,
+      "purpose": "Class unknown_hedged_above_75 -> narrow_fail_closed, review_required=True (never granted wide despite the hedge). Walker Street, Streetwidth 'Unknown but >75'."
+    },
+    {
+      "file": "approximate_prose_probably.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D52833&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:09Z",
+      "sha256": "sha256:630b2063c8f85a12bcc960dc0c21dbae7feff70e7513f746c31c034dc880df1b",
+      "bytes": 3521,
+      "synthetic": false,
+      "purpose": "Class approximate_or_hedged_value_ambiguous (prose form). Caton Avenue, Streetwidth 'Probably between 80 - 90' - ambiguous despite the numeric range being entirely >=75."
+    },
+    {
+      "file": "regular_but_unknown.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D46567&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:09Z",
+      "sha256": "sha256:380c431facacb06f8289bea9dc717dfbfe41ae4ff9002b094e1a90bd1330f9de",
+      "bytes": 3526,
+      "synthetic": false,
+      "purpose": "Class regular_but_unknown. Old New Utrecht Road, Streetwidth 'Regular but unknown.'."
+    },
+    {
+      "file": "paper_street_override_wide.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D599&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:10Z",
+      "sha256": "sha256:e4e3216c4257355229ca7855dde0b184dbbfc911151d2eb2adaf44844f20d100",
+      "bytes": 3529,
+      "synthetic": false,
+      "purpose": "S3 mapped-street override proof: Paper_ST='Y', Streetwidth '80' (a clean wide-looking value). Jay Place - proves paper streets never classify wide regardless of width text."
+    },
+    {
+      "file": "record_street_override_wide.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D16549&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:10Z",
+      "sha256": "sha256:a04f97ea2f94ecc45f82e31f817f18af077b503c86d2c0e31828413345fae72a",
+      "bytes": 3657,
+      "synthetic": false,
+      "purpose": "S3 mapped-street override proof: Record_ST='Y', Feat_Type=Not_mapped, Streetwidth '80'. Woodvale Avenue."
+    },
+    {
+      "file": "former_street_override_wide.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D10335&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:10Z",
+      "sha256": "sha256:6544d5a0528fbfa4bf99d2e8b1709d937b9faff3b4246f8bcde381196b4b7ab8",
+      "bytes": 3536,
+      "synthetic": false,
+      "purpose": "S3 mapped-street override proof: Feat_Type='Former_St' (not a currently mapped street), Streetwidth '100'. Stillwell Avenue."
+    },
+    {
+      "file": "unmapped_street_override_wide.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=OBJECTID%3D20420&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:10Z",
+      "sha256": "sha256:9dbb0a3376a4e4b2c8dc8831c9a87c5154bb96de1978d00ea1d4bb3d2538dd73",
+      "bytes": 3510,
+      "synthetic": false,
+      "purpose": "S3 mapped-street override proof from Feat_Type alone: Feat_Type='Not_mapped', Paper_ST='N', Record_ST='N', Streetwidth '80'. Sharrott Avenue. Also shows the live Feat_status value 'Way_on_record' co-occurring with Record_ST='N' on the SAME feature - evidence that Feat_status (OQ-2, undocumented domain) is independent of Record_ST/Paper_ST and must never be used for override logic."
+    },
+    {
+      "file": "paging_page1.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=Streetwidth%3D%2780%27%20AND%20Feat_Type%3D%27Mapped_St%27%20AND%20Paper_ST%3D%27N%27%20AND%20Record_ST%3D%27N%27&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=5&resultOffset=0",
+      "captured_at": "2026-09-13T06:57:11Z",
+      "sha256": "sha256:585607aac4592ff9b61fe7092a9bc2be3113f09259bdba0cf1f41ce64575191b",
+      "bytes": 6841,
+      "synthetic": false,
+      "purpose": "S5 paging page 1 (resultRecordCount=5, resultOffset=0) of a bounded predicate with more than 5 live matches; exceededTransferLimit=true observed. OBJECTIDs 7,10,11,18,68."
+    },
+    {
+      "file": "paging_page2.json",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=Streetwidth%3D%2780%27%20AND%20Feat_Type%3D%27Mapped_St%27%20AND%20Paper_ST%3D%27N%27%20AND%20Record_ST%3D%27N%27&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&outSR=2263&f=json&orderByFields=OBJECTID%20ASC&resultRecordCount=5&resultOffset=5",
+      "captured_at": "2026-09-13T06:57:11Z",
+      "sha256": "sha256:e691df415ec59a97a78d32c6e9d755eb6f7e0f84604b6f373c5e1104d367c5f9",
+      "bytes": 6464,
+      "synthetic": false,
+      "purpose": "S5 paging page 2 (resultRecordCount=5, resultOffset=5) of the same predicate; disjoint OBJECTIDs (71,72,74,85,98) from page 1 prove resultOffset advances correctly and there is no duplication/overlap."
+    },
+    {
+      "file": "provider_error_http200_synthetic.json",
+      "url": null,
+      "captured_at": "2026-09-13T00:00:00Z",
+      "sha256": "sha256:0d5e05a7f8b86ec9ec6f101d5a4651ec7498c73ed3be7c9d5e75aea3a09ce272",
+      "bytes": 114,
+      "synthetic": true,
+      "purpose": "DOCUMENTED-SYNTHETIC (per the M2-T009 precedent): an ArcGIS error object delivered with HTTP 200 (the documented failure shape for a malformed/rejected query on this service family - not itself live-observed on a successful request during this task's capture session, but the exact shape research section 6 and the zoning-features/mappluto connectors document; never treated as data). Handwritten, never derived from a live byte capture; marked synthetic so it is never confused with an official record."
+    }
+  ]
+}

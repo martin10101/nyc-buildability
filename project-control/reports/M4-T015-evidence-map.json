@@ -1,0 +1,28 @@
+{
+  "task_id": "M4-T015",
+  "assembled_by": "orchestrator",
+  "note": "B2 street-width connector build material captured from the producer worktree (base 2c127706). Orchestrator reproduction at capture: connectors suite 619 passed (incl. the 131 new), modularity EXIT 0, 27 fixture files present; producer additionally ran ruff 0.13.0 clean on the four new files in its sandbox. CI on the pushed head is the executable authority.",
+  "requirements": {
+    "D-045-R003": [
+      "services/api/app/connectors/dcm_street_centerline_arcgis.py - the DCM Street Center Line ArcGIS connector (query/paging, bounded no-retry transport per the M5-T020 posture, typed error taxonomy incl. the HTTP-200 ArcGIS error-object trap, mapped-street override) built against the PRIMARY source the accepted M4-T013 research pinned; SODA g6zj-tzgn stays the documented-stale fallback; Geoclient per-address streetWidth stays killed for legal use and is NOT wired",
+      "services/api/app/connectors/dcm_street_width_classifier.py - pure free-text width classifier with 23 typed ambiguity classes: wide ONLY on mathematical entailment >= 75 ft, narrow_fail_closed + typed class + review flag on every other class; the complete class -> disposition table is in the producer report; OQ-3 (ZR-grounded ambiguity policy) explicitly left open",
+      "services/api/tests/fixtures/dcm_street_centerline/ - 25 live-captured verbatim fixtures + 1 documented-synthetic provider-error shape + MANIFEST.json (exact URL, capture timestamp, sha256 per fixture, self-consistency verified on disk); includes the West 100 St two-segment 60/100 divergence case",
+      "services/api/tests/connectors/test_dcm_street_centerline_arcgis.py (46) + test_dcm_street_width_classifier.py (85) - 131 fully offline tests via the injected fetch seam; empty_or_missing class proven via direct classifier unit tests (no live row exists - never fabricated as a fixture, disclosed)",
+      "docs/research/source-registry-drafts/dcm-street-centerline.json - updated with connector-implemented status, self_declared_source_id, and three live-source refinements (Record_ST/Paper_ST live domain Y/N; Build_Status live coded-value domain; Feat_status independence from Record_ST proven by co-occurrence) - draft_status stays non-final",
+      "project-control/reports/M4-T015-producer-report.md - full evidence incl. disclosures; G1 data-contract verification is the gate that byte-verifies fixtures against the live official source",
+      "reuse note (R003 'M5-T020 MapPLUTO connector reused, not duplicated'): no parcel-geometry functionality was duplicated; the producer disclosed deliberately NOT importing mappluto exports because none (BBL normalization, polygon canonicalization) apply to the street-segment domain - disclosed as reviewer item, not silent"
+    ],
+    "D-045-R008": [
+      "bounded connector-lane task: zero rules-dir writes, no consumer wiring (rules/profile/api untouched), the within-100-ft lot-geometry computation (OQ-4) left to its downstream task; campaign ordering unchanged"
+    ],
+    "D-045-R009": [
+      "scope-limit preserved: no rule moved past needs_review, no compliance declarations, ZERO dependency changes (no requirements*/pyproject/package.json in the material - section G untouched), standing holds intact"
+    ],
+    "D-046-R001": [
+      "wave-2 slot 2 executed in an isolated producer worktree (base 2c127706) in parallel with the re-dispatched M4-T012 producer - the wave ran 2-wide within the D-047-R004 ramp"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint concurrent scopes held by construction and verified at capture: M4-T015 wrote connectors/tests/fixtures/registry-draft/report paths; M4-T012 wrote rules dirs + snapshots + its reports - zero file overlap between the two producers' writes"
+    ]
+  }
+}
