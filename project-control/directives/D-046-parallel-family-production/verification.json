@@ -121,6 +121,82 @@
      "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T016",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d6d2d728c3b9ef308087f950097aa9a4cc2927bfc387032a436c83e3dce50030",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-3 parallel slot 1: dispatch record commit 8de6ad9f (both producers running parallel in isolated worktrees pinned to 6dbf65fa); producer commit 232a889b authored in wt agent-a4bced1914f048c32, integrated sequentially by the orchestrator as cherry-pick eac7b42a (report sha256 ab12aab4 LF-normalized verified).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness by construction: allowed_paths = exactly [project-control/reports/M4-T016-a2-geometry-mechanics-research.md], zero files shared with M4-T017's single report file; material commit touches only its own report (verifier-reproduced via git show --stat).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T017",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d69be5e784eecbe51f0f8c53f5e0d20502ef391e6ebecd3c2b3fa30107cb3b63",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-3 parallel slot 2: dispatch record commit 8de6ad9f; producer commit 46a8a110 authored in wt agent-ac05120d1954c8141, integrated sequentially by the orchestrator as cherry-pick 9fe63924 (report sha256 e0561742 LF-normalized verified).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness by construction: allowed_paths = exactly [project-control/reports/M4-T017-c-district-research.md], zero files shared with M4-T016's single report file; material commits touch only its own report (verifier-reproduced via git show --stat).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
   }
  ]
 }

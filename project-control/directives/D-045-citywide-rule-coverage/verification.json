@@ -225,6 +225,111 @@
      "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T016",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d6d2d728c3b9ef308087f950097aa9a4cc2927bfc387032a436c83e3dce50030",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "A2 research half: report maps R6-R12 geometry mechanics (23-432 height table / 23-433 setback 10ft-wide-15ft-narrow / 23-73 series sky-exposure incl. 23-736 slopes 2.7:1-5.6:1 + alternates / 23-411 obstructions) with section number, title, districts, wide/narrow dependence, 12-10 defined terms - each URL+retrieval-date+sha256 evidenced; G1 (data-contract-verifier) reproduced the load-bearing values byte-exact live.",
+      "OQ-4 geometry design grounded in the quoted ZR 23-22 footnote-1 text (verifier confirmed verbatim in r6_r7_r8_wide_street_conditional_far.rule.json:21); DCM polyline x MapPLUTO lot x 100-ft buffer in EPSG:2263 (US survey feet, epsg.io corroboration disclosed after epsg.org 403); edge cases inventoried; tangency tolerance honestly left unsourced.",
+      "Data-input fit verified against ACTUAL code by both G1 and DCV offline: returnGeometry absent from build_segment_query_url (geometry arrives by default), parse_segment_page reads attributes only (parse-and-expose gap, correcting the packet shorthand); mappluto_lot_outline display-only/EPSG:4326; mappluto_geometry_arcgis measurement-grade; BOUNDARY_TOLERANCE_FT=20.0 flagged as NOT a buffer tolerance.",
+      "MATERIAL CONFLICT KEPT VISIBLE (permanent principle 4): live 12-10 'street, wide' Last Amended 3/26/2026 (fuller than the accepted M4-T013 pin / zr-12-10 snapshot: C5-3/C6-4/C6-6 alternate-width clause + Broadway W94-97 CD7 and Allen St Rivington-Delancey CD3 named designations) - G1 reproduced the capture byte-identical (sha256 0c341a0b, 1,316,667 bytes); routed OQ-4-a/b/c, never adjudicated in-task.",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Bounded gated research packet: G0 PASS (orchestrator administrative, reviewed 1cf2c488) + G1 PASS (data-contract-verifier != producer official-source-researcher, reviewed_sha 7c2761c2, report project-control/reports/M4-T016-G1-research-review.md); required_gates [G0,G1] complete; allowed_paths = single report file; wave-3 ordering recorded per handoff seq 108 NEXT-ACTION 1 (A2 unblocked by accepted M4-T015).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Preservation verified from commits: eac7b42a touches only the report (+506/-4); no rule file, snapshot, code, or dependency changed; DRAFT-until-G6 explicit; OQ-3 fail-closed-to-narrow routed to a G6-class ruling; no hold lifted (PR #241 + expansion hold untouched); the producer's out-of-scope agent-memory commit a34a61ca was disclosed and NOT integrated.",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T017",
+   "applicable_requirement_ids": [
+    "D-045-R005",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d69be5e784eecbe51f0f8c53f5e0d20502ef391e6ebecd3c2b3fa30107cb3b63",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R005",
+     "state": "PASS",
+     "evidence": [
+      "C-district research half: report answers RQ-002's four parts with captured evidence - commercial FAR umbrella+overlay tables (33-12/33-121, keyed by underlying Residence District, spot rows R1R2/R9A/R10 byte-exact live per G1), standalone half (33-122/33-123) disclosed structural-only with values deferred to build family 2 (F5 correction present at HEAD per verifier-reproduced diff), overlay governing rule 34-111 verbatim, 34-112 residential-equivalents table byte-exact live ALL 20 rows incl. the C4-6->R10 correction of RQ-002's guess, suffix rules 11-25/11-121.",
+      "Interpretation discipline: OQ-1..OQ-5 routed to D-048/architect doc, none resolved; OQ-3 factual premise (33-121 R9A 7.50 vs residential rule 7.52) independently confirmed by both G1 and DCV against r6_r12_residential_far.rule.json:36; DRAFT-until-G6 throughout.",
+      "G1 advisories A1-A4 pinned for the build packets (image-rendered 33-121 rows spot-check; family-2 must capture 33-122/33-123 values from a text source; 33-12 carve-outs unverified; OQ-3/OQ-1 never silently resolved).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Bounded gated research packet: G0 PASS (orchestrator administrative, reviewed 1cf2c488) + G1 PASS (data-contract-verifier != producer; reviewed_sha 7c2761c2; report project-control/reports/M4-T017-G1-research-review.md with the embedded delta-attestation carrying the PASS across the F5/F6 ORCH-CORRECTED rework); rework arc preserved in the progress log (PASS-with-corrections -> rework -> resubmit -> attested); required_gates [G0,G1] complete; single-file allowed_paths.",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Preservation verified from commits: 9fe63924 touches only the report (+440/-4); 7c2761c2 touches only report/evidence/gate-report files; no rule file, snapshot, code, or dependency changed; DRAFT-until-G6 explicit; no hold lifted (PR #241 + expansion hold untouched).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
   }
  ]
 }

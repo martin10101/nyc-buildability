@@ -171,6 +171,32 @@ corrections" semantics for the orchestrator to track.
 
 ## Delta-attestation (appended by the orchestrator upon reviewer confirmation)
 
-PENDING at file-creation time — the tagged ORCH-CORRECTED edits implementing F5(b) and F6 were
-applied immediately after this verdict; the same reviewer's attestation over exactly that delta
-is recorded below when received.
+Received from the same reviewer (data-contract-verifier), verbatim:
+
+> Delta verified. The `git diff 939ca72b 7c2761c2` over my two attestation-surface files shows
+> exactly four changes and nothing else:
+>
+> 1. **§1 sentence (F5 option b)** — now discloses the standalone 33-122/33-123 half as
+>    structural-only with district-by-district values deferred to build family 2, tagged
+>    `[ORCH-CORRECTED per G1 F5]`. Satisfies the §1 over-claim half of F5.
+> 2. **§7 new item 7 (F5)** — records the deferral and requires family-2 verbatim capture
+>    before any 33-122/33-123 value is coded, citing advisory A2. Satisfies the
+>    honest-limitation half of F5.
+> 3. **§9 family-1 line (F6)** — "19 rows" → "20 rows [ORCH-CORRECTED per G1 F6: was 19]" for
+>    the 33-121 table.
+> 4. **evidence-map JSON (F6)** — "19 rows" → "20 rows per the G1 F6 count correction" for the
+>    34-112 table.
+>
+> None of the content I verified byte-exact at 939ca72b changed: every verbatim quote (33-12,
+> 33-121, 34-111, 34-112, 33-122/33-123 structure), the full 34-112 equivalents table (incl.
+> C4-6→R10), the OQ set, and the provenance index are untouched. The edits are additive
+> corrections only. The out-of-scope additions in 7c2761c2 (the recorded gate report,
+> M4-T016's evidence map, the M4-T016 cherry-pick) are correctly outside my scoped diff and
+> outside my attestation surface.
+>
+> ## ATTESTED
+>
+> Both required corrections (F5 and F6) are satisfied at
+> **7c2761c2913f1809e4c923866c591b0e13716aa6**. My PASS verdict carries to this identity.
+> Advisories A1–A4 remain standing guidance for the build packets (they were advisory, not
+> blocking, and are unaffected by this delta).

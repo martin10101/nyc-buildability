@@ -75,8 +75,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 30,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "sky-exposure-plane and street-width mechanics are spread across multiple ZR chapters (23-6xx et al.) with City of Yes amendments - a section missed here becomes a coverage hole in the A2 build; the report must state its search method and completeness posture honestly",
     "the ZR 'within 100 feet' test is about wide-STREET adjacency portions of a lot, not fronting width alone (M4-T013 finding) - conflating frontage classification with the buffer test would poison the build",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T18:01:20.203792+00:00",
-  "updated_at": "2026-09-13T18:30:21.677710+00:00",
+  "updated_at": "2026-09-13T19:35:53.983963+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -125,6 +125,15 @@
       "percent": 30,
       "status": "claimed",
       "message": "Wave-3 dispatch: producer official-source-researcher launched in isolated worktree pinned to 6dbf65fa (show-toplevel guard + reset-to-contract-head in prompt); scope = single report file; OQ-3 never-resolve constraint in prompt; agent-file model claude-sonnet-5, no override"
+    },
+    {
+      "at": "2026-09-13T18:58:20.764811+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at eac7b42a (cherry-picked producer commit 232a889b from wt agent-a4bced1914f048c32; report sha256 ab12aab4... LF-normalized verified; producer self-checks validator+modularity EXIT 0; S5 report-only commit; out-of-scope agent-memory commit a34a61ca disclosed, NOT integrated). MATERIAL DISCOVERY: live 12-10 street-wide definition Last Amended 3/26/2026 is fuller than the accepted M4-T013 pin / zr-12-10 snapshot (routed OQ-4-a/b/c, unresolved). returnGeometry premise corrected: geometry already arrives, parse layer discards it"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T19:35:53.981949+00:00"
 }

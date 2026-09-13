@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-13-wave3-closed",
+  "timestamp": "2026-09-13T19:36:38.476208+00:00",
+  "commit": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "Wave 3 closed 2-wide: M4-T016 (A2 geometry-mechanics research, 201st) + M4-T017 (C-district research, 202nd) accepted end-to-end (G0/G1 gates, ORCH-CORRECTED F5/F6 rework arc with delta-attestation, 10/10 DCV rows PASS at restamped 920110be per verifier conditional authorization). Key carries: live 12-10 street-wide definition amended 3/26/2026 (fuller than accepted pin - OQ-4-a/b/c routed, B6-before-B4 build order per G1 advisory); DCM geometry is parse-and-expose not query change; C-district build = 3 bounded families (overlay FAR / standalone FAR needs own capture / equivalents routing, 34-112 C4-6->R10); OQ-3 + R9A 7.50-vs-7.52 routed to architect/G6. D-050 amendments 1+2 absorbed live (R005 active notification, R006 immediate-push + Closed register; mobile push disabled in /config - owner item). Next: A2 build packets (B3-B7 split per M4-T016 Part 4) + C-district build families; both research reports are the pins.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-13T19:36:38.601434+00:00"
+}

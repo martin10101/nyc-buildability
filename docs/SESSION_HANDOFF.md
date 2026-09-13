@@ -65,7 +65,13 @@ output at every owner-facing seam (wave summaries, landings, the handoff owner-i
 appending NEW requests, send one batched PushNotification (desktop; phone when Remote Control is
 connected) — genuinely new asks only; the companion session owns the in-conversation relay leg.
 Quiet rule narrowed: owner-addressed research requests are never silent. Non-blocking unchanged —
-notify, then proceed.**
+notify, then proceed.** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
+PHONE ACCESS: the pushed branch's docs/RESEARCH_REQUESTS.md is the owner's phone-readable copy
+(GitHub URL in the doc header) — every queue change commits AND pushes in the same working step,
+never dirty-local or batched; owner-returned results are stamped ANSWERED (date + named
+verification target) immediately by the receiving session; SATISFIED requests are DELETED from
+the active queue and collapsed to one-line rows in the Closed register at the file bottom (full
+text stays in git history).**
 RQ-005 (appended by this session) = the DCM OQ-1/OQ-5/LION fact gaps. Mark entries
 ANSWERED/ROUTED with date + verification target (R003).
 
