@@ -83,6 +83,44 @@
      "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T015",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "e393fc35419395130b516d3dc35727b441f166a982c36c826bcf2c03c010be18",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave 2 ran 2-wide: both producers dispatched 2026-09-13T06:49:18 (progress logs: wave 2 slot 1 of 2 / slot 2 of 2), isolated worktrees wt-m4t012-r2 (base dbd07817) and wt-m4t015 (base 2c127706), within the D-047-R004 ramp (start 3-4, never exceeded).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness proven: producer material file sets dd7c8b74 (17 files) and 8538c272 (34 files) intersect in ZERO files (verifier-computed); allowed_paths disjoint by construction; the orchestrator rework 4f8b093f also intersects 8538c272 in zero files; shared surfaces integrated sequentially by the orchestrator only.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
   }
  ]
 }

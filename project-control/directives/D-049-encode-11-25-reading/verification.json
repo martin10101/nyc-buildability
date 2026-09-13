@@ -4,5 +4,93 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-049 requirements bind the non-ledger sentinel D-049-BOOTSTRAP (D-038..D-048 precedent; validator c5 forbids sentinel task_ids in task_verifications). The M4-T012 re-dispatch and later modifier tasks verify through their own DCV rows. No completion claim exists at capture time. The decision encoded here is an OWNER DECISION, never a qualified legal sign-off; G6 remains open.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-049",
+   "task_id": "M4-T012",
+   "applicable_requirement_ids": [
+    "D-049-R001",
+    "D-049-R002",
+    "D-049-R003",
+    "D-049-R004",
+    "D-049-R005",
+    "D-049-R006"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "48d7d256e3f244fed09c453bfd49a5dd48b14d23ec0121b63c9cda6b7aa66a2d",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-049-R001",
+     "state": "PASS",
+     "evidence": [
+      "r1_r2_suffix_variants_pitched_height: in_set exactly [R1-1, R1-2, R1-2A, R2A, R2X]; cites zr-11-25 (verbatim suffix-inheritance text, digest 6843ad22) + zr-23-421-r1-r2; exception owner_decision_suffix_inheritance_not_express marks OWNER DECISION D-049 2026-09-13; needs_review; outputs {25.0, 35.0} for all five variants (parametrized tests, verifier-reproduced).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-049-R002",
+     "state": "PASS",
+     "evidence": [
+      "R2X height parity: zr-23-21 table verified source-accurate (R2X own row standard FAR 1.00; R2/R2A 0.75); exception r2x_far_row_is_floor_area_only records the FAR row does NOT modify height; test binds R2X -> {25.0, 35.0} and asserts the note present on R2X, absent on R2A. Citation gloss corrected to the G3 reviewer's exact wording in the G4-arc rework.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-049-R003",
+     "state": "PASS",
+     "evidence": [
+      "23-421(g) explicit conditional: in_set [R1-1, R1-2, R2] AND building_type AND any[all[area>=9500, width>=100], slope>=5]; output reference_plane_elevation_max_ft 5.0; letter-suffix AND bare-R1 exclusion proven (test_nc2, NOT_APPLICABLE even with satisfying geometry); trigger boundaries bound at 9500/9499, 100/99, 5/4.99; missing any input -> professional_review_required, never silent (test_nc5); cited zr-23-421-g (52dd8aab) excerpt contains 9,500 / 100 feet / five percent / five feet.",
+      "Conservative all-three-inputs-required design disclosed in limitations + report and ruled acceptable fail-closed conservatism by G3 (hazard b); bare-R1 eligibility NOT extended beyond the owner enumeration (disclosed; G6 agenda item).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-049-R004",
+     "state": "PASS",
+     "evidence": [
+      "Site modifiers never silent: 23-424 dedicated r1_r2_qrs_height rule (fail-closed qualifying_residential_site, 12-10 never assumed, transit-route exclusion documented, same-family conflict surfaced by test_nc7 - never silent precedence); 23-425 large_site, 23-426(a) historic_district, 23-443(b) transportation_infrastructure_adjacent flags each -> professional_review_required (test_nc3); 119-212 + 113-523 folded into special_district_present with sections named (disclosed; G3 hazard-c ruling: satisfies R004); 23-413(a) noted - pitched envelope never a requirement.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-049-R005",
+     "state": "PASS",
+     "evidence": [
+      "Owner-decision provenance + DRAFT-until-G6 on every derived output; docs/ARCHITECT_REVIEW_QUESTIONS.md A1 shows OWNER DECISION D-049 ISSUED with the professional confirmation STILL SOUGHT AT G6 (ask open); source-capture report states nothing is a Verified determination.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-049-R006",
+     "state": "PASS",
+     "evidence": [
+      "Supersession mechanics honored (five variants only; D-048-R004 + other rows stand); the BINDING capture-completeness requirement satisfied and internally consistent across zr-23-421-g raw_pdf_sha256, the source-capture report, and the questions doc (b5777618, 9,500-present PASS, MATCH); registry validator --check EXIT 0 at the frozen head.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
+  }
+ ]
 }

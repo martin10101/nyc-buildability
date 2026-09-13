@@ -99,8 +99,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -116,7 +116,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T07:39:01.701286+00:00",
+  "updated_at": "2026-09-13T08:34:48.993497+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -205,5 +205,7 @@
       "status": "awaiting_gate",
       "message": "All three delta-attestations returned: G3 PASS stands, G4 FAIL->PASS (BLOCKING-1 discharged, advisories 1+2 closed, 3 deferred as the known campaign ban-list item), G5 PASS stands. G5 advisory formalized HERE: the docs/ARCHITECT_REVIEW_QUESTIONS.md TOOLING NOTE correction was an ORCHESTRATOR Tier A rework edit (G3-A1), on a non-forbidden doc the packet R005 names - producer never touched it; recorded as the write-scope clarification the reviewer requested. Remaining before accept: CI conclusion on 8538c272 (in flight) + DCV round + restamp/accept"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T08:34:48.993497+00:00"
 }

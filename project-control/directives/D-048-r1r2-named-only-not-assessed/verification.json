@@ -4,5 +4,45 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-048 requirements bind the non-ledger sentinel D-048-BOOTSTRAP (D-038..D-047 precedent; validator c5 forbids sentinel task_ids in task_verifications). The M4-T012 re-dispatch and future campaign tasks verify through their own DCV rows. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-048",
+   "task_id": "M4-T012",
+   "applicable_requirement_ids": [
+    "D-048-R001",
+    "D-048-R002"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "48d7d256e3f244fed09c453bfd49a5dd48b14d23ec0121b63c9cda6b7aa66a2d",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-048-R001",
+     "state": "PASS",
+     "evidence": [
+      "Express half intact: r1_r2_bare_pitched_height applicability in_set [R1, R2] only, 25/35 cited to the express zr-23-421-r1-r2 enumeration (R1 R2 R3A R3X ... literally in the excerpt); test_nc1_bare_rule_scoped_to_bare_labels_only proves no lettered variant matches the bare rule.",
+      "The five lettered variants are governed by the D-049-R006 supersession (see the D-049 rows), owner-sourced and explicit.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-048-R002",
+     "state": "PASS",
+     "evidence": [
+      "PASS as-superseded: D-049 source-001.md + D-049-R006 modify D-048-R001/R002 for the five named variants ONLY (not-assessed -> encoded per the 11-25 reading). No manufactured number: the variants receive the SAME 25/35 cited to the express snapshot via the zr-11-25 owner-decision citation, bound by test; D-048-R004 standing pattern and every other D-048 row stand untouched.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
+  }
+ ]
 }

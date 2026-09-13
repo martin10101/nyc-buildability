@@ -118,6 +118,113 @@
      "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T012",
+   "applicable_requirement_ids": [
+    "D-045-R001",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "48d7d256e3f244fed09c453bfd49a5dd48b14d23ec0121b63c9cda6b7aa66a2d",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R001",
+     "state": "PASS",
+     "evidence": [
+      "A1 wave-1 increment (R1/R2 series): four per-variant needs_review rulesets at HEAD (r1_r2_bare_pitched_height, r1_r2_suffix_variants_pitched_height, r1_r2_reference_plane_23421g, r1_r2_qrs_height), family residential_height_setback_r1_r2. Verifier recomputed sha256(verbatim_excerpt) for all 14 snapshots == stored digests (the four new: zr-11-25 6843ad22, zr-23-421-r1-r2 1bce8818, zr-23-421-g 52dd8aab, zr-23-424-r1-r2 336ba2cb); canonical/bundle byte-identical 14/14.",
+      "Caps verbatim-traceable: 25 ft perimeter wall / 35 ft ridge literally in the zr-23-421-r1-r2 excerpt; every parameter carries citation_ref + content_digest + effective_from 2024-12-05; tests bind {25.0, 35.0} (rules suite 568 passed, verifier-reproduced; 110-case pack incl. 9500/100/5 boundary mutation checks).",
+      "BINDING capture-completeness proof (print/PDF channel, raw sha256 b5777618, 9,500-present PASS, word-for-word reconciliation vs the owner-verified verbatim) verified internally consistent across snapshot + source-capture report + questions doc; the producer's disclosed raw-HTML-(g) finding honestly recorded (G3 hazard-a ruling PASS).",
+      "Gates: G0/G2/G3/G4/G5 all PASS with producer != reviewers; G4 FAIL->PASS ruff arc preserved (reports M4-T012-G4-test-adequacy-review.md + delta attestations); CI FAILURE at dd7c8b74 -> SUCCESS at material head 8538c272 (project-control/reports/M4-T012-M4-T015-ci-evidence.md). SCOPE NOTE: directive-level R001 (all families) remains OPEN; this row verifies the R1/R2 increment (increment-PASS-while-directive-open pattern).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "One-family bounded task; sloping-plane setback geometry (23-421 (a)-(f)) is a documented_limitation exception on every envelope rule, never a numeric output (test_nc8_setback_geometry_never_a_numeric_output); engine/evaluator/schemas untouched (verifier diff-confirmed across dd7c8b74/4f8b093f).",
+      "No street-width value in any cap; A2/B2 mechanics correctly deferred; in-flight work not displaced (diff confined to the corrected allowed_paths).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "All rules needs_review; banned-language grep clean (only negated disclaimers); owner-decision provenance never presented as express (test_as1_bare_and_suffix_rules_cite_distinct_provenance); ZERO dependency-file changes in all material commits; PR #241/expansion/D-043 postures untouched.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T015",
+   "applicable_requirement_ids": [
+    "D-045-R003",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "e393fc35419395130b516d3dc35727b441f166a982c36c826bcf2c03c010be18",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R003",
+     "state": "PASS",
+     "evidence": [
+      "Connector BUILD half (research half verified on M4-T013): dcm_street_centerline_arcgis.py + dcm_street_width_classifier.py at HEAD. Fail-closed rule verified in code: WIDE only for clean_numeric_ge_75 / range_both_endpoints_ge_75 / gt_inequality_ge_75 (true entailments of >= 75); every other of the 24 typed classes -> narrow_fail_closed + class + review flag; mapped-street override keys only on Feat_Type/Paper_ST/Record_ST (never Feat_status) and only ever tightens.",
+      "Recorded-official fixtures: verifier recomputed sha256 for all 26 MANIFEST entries, 0 mismatches; exactly 1 documented-synthetic (provider-error shape); West 100 St 60/100 divergence case present. G1 (data-contract-verifier) live byte-verified 3 fixtures + dataLastEditDate against the keyless endpoint - PASS (M4-T015-G1-data-contract-review.md + delta attestation).",
+      "outSR=2263, resultOffset/exceededTransferLimit paging with loop-safety pathologies typed, HTTP-200 ArcGIS error-object -> typed UpstreamError, CRS validated; no Geoclient wiring; registry draft non-final with self_declared_source_id == connector SOURCE_ID; connectors suite 619 passed (verifier-reproduced); CI SUCCESS at material head 8538c272 (project-control/reports/M4-T012-M4-T015-ci-evidence.md).",
+      "SCOPE NOTE: the within-100-ft geometry computation (OQ-4) and the ZR-grounded ambiguity policy (OQ-3) remain OPEN downstream items, surfaced never resolved - directive-level R003 build+research now both delivered; consumer wiring is A2's task.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Bounded connector lane: producer commit 8538c272 touched zero rules/_zr_snapshots/tests-rules paths; OQ-4 explicitly deferred; no consumer wiring; campaign ordering unchanged.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "No rule touched; ZERO dependency-file changes (section G untouched); registry draft_status non-final; OQ-1/OQ-3 open; no compliance or legal judgment anywhere in the material.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
   }
  ]
 }
