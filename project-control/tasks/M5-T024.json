@@ -76,8 +76,8 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "CORS omission bricks the deploy: the browser calls the API cross-origin and services/api/app/main.py blocks everything when API_CORS_ALLOWED_ORIGINS is unset - the checklist's step order must produce the web origin before the CORS entry",
     "NEXT_PUBLIC inlining trap: an env var set AFTER the first build silently leaves the 127.0.0.1 default in the bundle - the checklist must sequence env-before-build and state the rebuild-on-change rule",
@@ -93,7 +93,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T02:27:18.341759+00:00",
-  "updated_at": "2026-09-13T02:39:04.746107+00:00",
+  "updated_at": "2026-09-13T02:52:37.150472+00:00",
   "directive_refs": [
     {
       "directive_id": "D-043",
@@ -110,6 +110,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed at 6a8f2298; bound to D-043-R001..R004 (digest a82c113c); cloud-architect dispatch next; checklist stub committed as tracked anchor"
+    },
+    {
+      "at": "2026-09-13T02:52:36.068722+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at 0002ddb7bf63485bd1e5e4f844b5298484784f19 (exactly the two allowed files; worktree base c6aca328). Orchestrator pre-gate note for G1: verify checklist section 9 step 2 against the two-factor gate (ruleEvaluationSurfaceEnabled = env AND ?ruleeval opt-in; AddressResolutionScreen only renders inside that gate - does step 2 need the ?ruleeval=on note too?); page.tsx:22 comment is stale vs the code (pre-existing, out of scope). Submitting for G1+G5."
     }
   ]
 }
