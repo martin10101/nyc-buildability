@@ -14,7 +14,7 @@
     "D-043-R003",
     "D-043-R004"
    ],
-   "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff",
+   "reviewed_sha": "56943e0645deabd7910f72d975916e6e701ac092",
    "reviewed_manifest_sha256": "83abb75a24d65b673c3b7005897bc18b3192d8894317d88b1a5c7db2bbd512ba",
    "producer": "orchestrator",
    "verifier": "directive-compliance-verifier",
@@ -36,7 +36,7 @@
      ],
      "verified_at": "2026-09-13T04:35:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+     "reviewed_sha": "56943e0645deabd7910f72d975916e6e701ac092"
     },
     {
      "id": "D-043-R002",
@@ -49,7 +49,7 @@
      ],
      "verified_at": "2026-09-13T04:35:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+     "reviewed_sha": "56943e0645deabd7910f72d975916e6e701ac092"
     },
     {
      "id": "D-043-R003",
@@ -62,7 +62,7 @@
      ],
      "verified_at": "2026-09-13T04:35:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+     "reviewed_sha": "56943e0645deabd7910f72d975916e6e701ac092"
     },
     {
      "id": "D-043-R004",
@@ -75,7 +75,7 @@
      ],
      "verified_at": "2026-09-13T04:35:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "982a3f2355321da232428516ed163f3a8f7167ff"
+     "reviewed_sha": "56943e0645deabd7910f72d975916e6e701ac092"
     }
    ]
   }

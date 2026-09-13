@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-13T01:20:18+00:00",
  "created_at": "2026-09-13T01:20:18+00:00",
- "updated_at": "2026-09-13T02:32:24+00:00",
+ "updated_at": "2026-09-13T04:52:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "0bfcc08b26560dfa97b23bc25b54bf89e49b9572",
@@ -64,6 +64,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M5-T024 (owner-executed Render internal-deploy checklist) to D-043-R001..R004 (append-only). Digest resynced 02066449 -> a82c113c. (affected_tasks intentionally NOT pre-populated: rows accrue at verification time per the D-040 authority_note precedent.)"
+  },
+  {
+   "at": "2026-09-13T04:52:00+00:00",
+   "actor": "orchestrator",
+   "action": "verifier_authorized_reviewed_sha_restamp",
+   "note": "M5-T024 row reviewed_sha 982a3f23 -> 56943e06 per directive-compliance-verifier RESTAMP AUTHORIZED (conditional on empty allowed-paths diff, verified empty at restamp; reviewed_manifest_sha256 83abb75a unchanged - material identity invariant across control-plane-only commits)."
   }
  ]
 }
