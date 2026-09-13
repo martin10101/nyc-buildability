@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-13T06:20:00+00:00",
+ "updated_at": "2026-09-13T06:55:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "ca8d29c02cf157997a3a420e1b120d69ea8b19278963a8f61156351aad31e642",
+ "requirements_content_digest_sha256": "0b85aa17eef9607d565a2b2a33620d65765bf69833edad548f58251be4804be8",
  "sources": [
   {
    "file": "source-001.md",
@@ -76,6 +76,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T013 (B2 street-width official-source research) to D-045-R003/R008/R009 (append-only). Digest resynced 27bc7302 -> ca8d29c0."
+  },
+  {
+   "at": "2026-09-13T06:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T014 (A1 wave 1b: R3+R4 families - explicit enumeration, B-023 does not touch them) to D-045-R001/R008/R009 (append-only). Digest resynced ca8d29c0 -> 0b85aa17."
   }
  ]
 }

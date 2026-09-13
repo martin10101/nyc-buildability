@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:35:34+00:00",
  "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-13T06:20:00+00:00",
+ "updated_at": "2026-09-13T06:55:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -28,7 +28,7 @@
   "D-046-R004",
   "D-046-R005"
  ],
- "requirements_content_digest_sha256": "e31a8a1cc3508285f83b06714f4ac183ddc36d7f0415fa005877630ad66f0cd1",
+ "requirements_content_digest_sha256": "f648e8a44faf6906f2a88f41adaa7b0cb30f4385d64e470c48c16084f781b740",
  "sources": [
   {
    "file": "source-001.md",
@@ -65,6 +65,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T013 (wave-1 slot 2) to D-046-R001/R002 (append-only). Wave 1 runs WIDTH 2 (M4-T012 rules dirs + M4-T013 research paths, pairwise-disjoint); a second rules-family producer is deferred until M4-T012 lands because its directory-scoped allowed_paths would violate R002 - back-off per R004 spirit, never scope-fudging. From wave 2, family packets use file-precise scopes to enable width 3. Digest resynced 914fd95f -> e31a8a1c."
+  },
+  {
+   "at": "2026-09-13T06:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T014 (wave-1 rules lane; M4-T012 blocked/clean so its directory scopes are free; T012 must not resume while T014 is in flight) to D-046-R001/R002 (append-only). Digest resynced e31a8a1c -> f648e8a4."
   }
  ]
 }

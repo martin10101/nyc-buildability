@@ -1,0 +1,140 @@
+{
+  "task_id": "M4-T014",
+  "title": "D-045 A1 wave 1b: R3+R4 series height/setback draft rule families (explicitly-enumerated variants; pilot pattern of numeric caps + typed A2 gaps)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Extract, as draft (needs_review) rule families in the existing rules engine/DSL, the CURRENT effective height & setback regulations for the R3 and R4 series districts. Unlike the B-023-blocked R1/R2 packet, the governing sections enumerate these variants EXPLICITLY (the M4-T012 producer's live source verification of 2026-09-13: ZR 23-421 lists R3A, R3X, R3-1, R3-2, R4, R4-1, R4A; 23-422 lists R3-2, R4, R4B) - the authoritative variant list and every value still come ONLY from hash-guarded official snapshots captured in-task. Clone the accepted M4-T006 R5-pilot pattern exactly: separate typed min/max constraints per variant (perimeter wall / ridge caps under the pitched-roof section; base/building height, street wall, setback under the flat alternative where the source provides them); sloping-plane setback geometry and any street-width-conditional provision are recorded as typed, provenance-carrying A2 gaps (D-045-R008 defers the mechanics), exactly as the pilot's r5a_height treatment; where a variant appears in only one of the two sections (e.g. R4B flat-only), encode exactly what the source says and record the asymmetry with its anchor - never symmetrize by assumption. Fail-closed everywhere; needs_review DRAFT; never a buildable-envelope label.",
+  "business_reason": "D-045-R001 A1 coverage continues on the families whose enumeration the official text settles explicitly, keeping the campaign moving while B-023 (the R1/R2 group-label ruling) waits on the qualified human.",
+  "inputs": [
+    "project-control/tasks/M4-T006.json + project-control/reports/M4-T006-producer-report.md + M4-T006-input-readiness-matrix.md + M4-T006-source-capture.md (THE pilot discipline this packet clones: per-variant separation, typed min/max constraints, snapshot+hash provenance, fail-closed gaps, NC negative controls, needs_review posture)",
+    "services/api/app/rules/rulesets/ (the accepted R5 height/setback + FAR ruleset files as concrete DSL examples - READ-ONLY; new files only)",
+    "services/api/app/rules/ (the deterministic engine + DSL schemas - engine is READ-ONLY; schema extension ONLY if a genuinely new constraint shape is required, additive-only)",
+    "services/api/app/_zr_snapshots/v1/ + the sync_zr_snapshots mechanism (the byte-identical, hash-guarded official-text snapshot pattern; new R1/R2-series ZR section snapshots enter through THIS mechanism only)",
+    "docs/MVP_ARCHITECT_REVIEW_QA.md Part 4, group A1 rows (the gap-list scope this wave discharges for R1+R2)",
+    "project-control/directives/D-045-citywide-rule-coverage/requirements.json (R001 the A1 obligation; R008 one-family-at-a-time; R009 preservation: DRAFT-until-G6, no compliance declarations)",
+    "docs/ACCEPTANCE_SCENARIO_STANDARD.md + .claude/rules/legal-rules path rules (auto-load on rules paths)",
+    "project-control/blockers/B-023-zr-23-421-group-label-scope-needs-legal-ruling.json + .claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md (the M4-T012 producer source verification this packet builds on: section 23-421 explicit enumeration R3A/R3X/R3-1/R3-2/R4/R4-1/R4A; 23-422 lists R3-2/R4/R4B; the R1/R2 group-label question does NOT touch R3/R4)"
+  ],
+  "outputs": [
+    "services/api/app/rules/rulesets/*.rule.json (NEW R3-series and R4-series height/setback ruleset file(s), per-variant scoped, needs_review, full provenance)",
+    "services/api/app/_zr_snapshots/v1/*.snapshot.json (NEW official ZR snapshots for every cited section via the established sync mechanism)",
+    "services/api/tests/rules/** (per-variant expectations, min/max separation, typed-A2-gap tests, effective-date tests, NC negative controls incl. cross-variant + cross-section isolation)",
+    "project-control/reports/M4-T014-producer-report.md + project-control/reports/M4-T014-source-capture.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/rules/rulesets",
+    "services/api/app/rules/schemas",
+    "services/api/app/_zr_snapshots",
+    "services/api/tests/rules",
+    "project-control/reports/M4-T014-producer-report.md",
+    "project-control/reports/M4-T014-source-capture.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/engine*",
+    "services/api/app/rules/evaluator*",
+    "services/api/app/api/**",
+    "services/api/app/scenario/**",
+    "services/api/app/connectors/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "render.yaml",
+    "requirements*.txt",
+    "pyproject.toml",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "docs/MVP_ARCHITECT_REVIEW_QA.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "per_variant_extraction_with_provenance",
+      "input": "the official ZR text snapshots for the R3- and R4-series height/setback sections",
+      "expected": "every variant the official source defines (authoritative enumeration recorded with its source anchor in the source-capture report) gets its OWN scoped constraints; every constraint value carries exact ZR section/clause, amendment/effective date, and snapshot id+hash; no value exists without a snapshot the hash guard verifies"
+    },
+    {
+      "id": "S2",
+      "case": "typed_minmax_separation",
+      "input": "the extracted constraint set",
+      "expected": "base height, building height, street wall, setback, and perimeter-wall constraints are SEPARATE typed constraints preserving min AND max where the source distinguishes them (never collapsed into one number); units explicit; the DSL schema unchanged unless a genuinely new shape required an additive-only extension justified in the report"
+    },
+    {
+      "id": "S3",
+      "case": "fail_closed_gaps",
+      "input": "a section the source leaves ambiguous or a variant/condition the wave does not cover",
+      "expected": "a typed, provenance-carrying gap outcome (never a guessed or interpolated number, never a silent omission); districts outside R3/R4 series evaluate as not-covered by these rulesets; tests prove both behaviors"
+    },
+    {
+      "id": "S4",
+      "case": "negative_controls",
+      "input": "the NC pattern from the R5 pilot applied to this family",
+      "expected": "wrong-district inputs match nothing; cross-variant isolation proven (an R3A value never leaks into R3X, and a 23-422 flat-alternative value never leaks into a 23-421 pitched constraint); superseded/older text is not used (effective-date discipline tested); mutation-style checks show each constraint's test actually binds its value"
+    },
+    {
+      "id": "S5",
+      "case": "draft_posture_and_language",
+      "input": "grep + status fields over the new rulesets and any rendered strings",
+      "expected": "every rule is status needs_review (DRAFT); no output or test labels anything a buildable envelope / feasible building / massing / compliance determination; D-045-R009 preserved verbatim (G6 remains the only path past needs_review)"
+    },
+    {
+      "id": "S6",
+      "case": "regression_and_determinism",
+      "input": "the full rules suite + engine determinism checks + modularity + CI on the pushed head",
+      "expected": "ALL existing rules tests pass unchanged; the engine is untouched (forbidden); evaluation is deterministic across runs; python tools/modularity_check.py --check EXIT 0; the api CI job green at the frozen candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
+    "sloping-plane setback geometry (23-421) and any street-width-conditional provision are A2 territory - typed provenance-carrying gaps ONLY, exactly like the pilot r5a_height treatment (D-045-R008)",
+    "variant/section asymmetry (e.g. R4B in 23-422 only) must be encoded exactly as sourced with the anchor recorded - never symmetrized by assumption",
+    "cross-variant leakage remains the chief modeling hazard - per-variant scoping with isolation tests mandatory",
+    "Python 3.12 repo vs 3.11 sandbox (M2-T015 pattern): if pytest cannot collect locally, rely on CI evidence and disclose",
+    "amendment currency: the extraction must state WHICH text version each snapshot captures and its effective date; a superseded value with a newer amendment in force is a defect"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-13T04:49:56.673440+00:00",
+  "updated_at": "2026-09-13T04:49:56.877307+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R001",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T04:49:56.673440+00:00",
+  "path_notes": "PILOT-CLONE DISCIPLINE: this packet intentionally mirrors accepted M4-T006 and the corrected M4-T012 lessons (same producer role, gates, review roster, path shape) so the campaign cadence is provable one family at a time (D-045-R008). ENGINE READ-ONLY: rulesets are data; the engine/evaluator are forbidden paths - a rule family that seems to need engine changes is a BLOCKED submission, not an engine edit. SNAPSHOTS: official text enters only via the established hash-guarded snapshot mechanism; the source-capture report records URL + retrieval date + hash for every snapshot. DRAFT-UNTIL-G6 (D-045-R009 / Section 20): nothing in this task moves any rule past needs_review. WORKTREE: producer works in its own worktree reset to the task base on candidate/D-024-mrl-option-b; primary checkout is orchestrator-only. D-046-R002 SEQUENCING NOTE: M4-T012 is BLOCKED on B-023 with a CLEAN worktree and no live producer; these directory scopes are therefore free. M4-T012 MUST NOT be re-dispatched while M4-T014 is in flight. CONCURRENT WAVE PARTNER: M4-T013 (research paths, fully disjoint). PRODUCER MODEL: claude-sonnet-5 (D-047-R001); two failed reviews -> rebuild on claude-opus-4-8 (D-047-R003).",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/rules",
+    "python tools/modularity_check.py --check",
+    "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
+  ]
+}
