@@ -29,6 +29,17 @@ marked with the answer and the directive that captured it.
   subject to express exceptions elsewhere, and it illustrates with R4-1/R4A/R4B. Applied to
   §23-421: R1 includes R1-1/R1-2/R1-2A; R2 includes R2/R2A/R2X — all within the basic 25/35
   envelope, subject to building-type scope and applicable modifications.
+- **Text verified against zr.planning.nyc.gov (companion session, 2026-09-13):** §11-25 quote
+  CONFIRMED VERBATIM ("…except as otherwise set forth in express provisions of this Resolution"),
+  examples R4/R4-1/R4A/R4B + C4-6/C4-6A, last amended 6/29/1994 (predates City of Yes). §23-424
+  CONFIRMED: "Height and setback requirements for qualifying residential sites" table lists
+  R1-1, R1-2, R1-2A, R2, R2A, R2X at 35 ft base / 35 ft max (R4s 35/45, R5s 45/55). §23-21
+  CONFIRMED in substance: R2X = FAR 1.00 (own row), R2/R2A = 0.75 (row shared with
+  R3A/R3X/R3-1/R3-2), and R2/R2A rise to 1.00 on qualifying residential sites. What the
+  professional still confirms: the APPLICATION of §11-25 here (the express-exceptions caveat),
+  and §23-421(g)'s exact conditions — the paragraph exists on the official page but its text was
+  not machine-readable in our checks (the 5 ft / 9,500 sq ft / 100 ft / 5% figures are the
+  owner's research, unverified by us).
 - **Citation for the professional:** ZR §23-421 (City of Yes text, last amended 2024-12-05,
   verified live at zr.planning.nyc.gov on 2026-09-13). Applicability line reads:
   "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A". §23-422 (flat-roof alternative) excludes R1/R2.
