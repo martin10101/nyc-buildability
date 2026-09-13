@@ -156,3 +156,51 @@ passed). Result: 651 SLOC, 42 under threshold, `modularity_check` exit 0, and al
 - **generated/lot_geometry.ts header** still says the generator wiring is a "follow-up"; I preserved it
   verbatim because the byte-identity duty forbids changing the committed artifact. A future contract
   task could reword it (which would require regenerating the file).
+
+## Rework round 1 (review-wave fold-ins + CI fix)
+
+Round-1 verdicts: G1/G3/G5 PASS (advisories only); CI web-e2e FAILED. Three items addressed, same
+scope/worktree, no new files.
+
+**RC-CI-1 (BLOCKING — CI run 34735243173).** All four `lot-outline.spec.ts` tests failed at
+`resolveTo()` with `getByLabel('Borough')` strict-mode violation (the page also renders a
+"Borough (source code)" provenance label, so the bare label matched multiple elements). Fix: scope
+every address-form input to the form container — `const form = page.getByTestId("address-form")` then
+`form.getByLabel("House number"|"Street"|"Borough")` and `form.getByTestId("address-submit")`. Audited
+every other locator in the spec: the rest use unique `data-testid`s (`lot-outline`, `zola-link`,
+`lot-outline-map`/`-webgl-unavailable`/`-empty`/`-review`/`-unavailable`/`-accuracy`/`-attribution`),
+no other ambiguity. Harness reaching the form fill in CI confirms the fixture seams work; only locator
+scoping changed.
+
+**FOLD-IN 1 (G3 ADVISORY-1 — screen-reader honesty).** `outcomeSummary()` keyed only on the typed
+outcome, so the no-WebGL single_lot branch (the likely headless-CI path and a real user path) announced
+"An approximate lot outline is shown…" while the visible fallback said no map could be opened. Fix:
+`outcomeSummary(outcome, drawable)` now returns, for a single_lot that is present but NOT drawable
+(no WebGL, or geometry unusable), a summary that says the outline could not be drawn / no interactive
+map could be opened and points to the ZoLa map above. The no-WebGL vitest test now asserts the summary
+contains "could not open an interactive map" and does NOT contain "An approximate lot outline is shown".
+
+**FOLD-IN 2 (G5 F-1 — latent DOM-XSS sink).** `AttributionControl` renders `customAttribution` as HTML
+(innerHTML), and `boundedText` does not neutralize HTML metacharacters, so passing the reflected
+`view.attribution` bypassed React escaping. Fix: a client-side CONSTANT `DCP_ATTRIBUTION =
+"NYC Department of City Planning (DCP), MapPLUTO"` is passed to the control; the reflected
+`view.attribution` is kept ONLY in the React-escaped `AttributionAndAccuracy` text (safe). The map
+effect no longer depends on the reflected string. New vitest assertion: a document whose attribution is
+`<img src=x onerror=…>` results in the AttributionControl receiving the CONSTANT (asserted on the mock's
+captured options, and that it does not contain "onerror"), while the React text shows the reflected
+value inert (no `<img>` element materializes; `window.__pwned` stays undefined).
+
+Not touched (per instruction — advisory backlog): swiftshader WebGL CI config (.github forbidden),
+interior-ring contract fixture (fixtures forbidden), `interactive:false`, accuracy-note default.
+
+**Rework self-checks (re-run locally):**
+- `python packages/contracts/scripts/generate_ts_types.py --check` → **exit 0** (all five artifacts
+  "up to date", incl. `lot_geometry`). No generator/contract change this round; byte-identity intact.
+- `python tools/modularity_check.py --check` → **exit 0** (LotOutlineMap edits are net-neutral in size).
+- Still cannot run vitest/Playwright/tsc/ESLint locally (thin client); CI remains the authority. The
+  spec fix is a pure locator-scoping change validated against `AddressForm.tsx` (form has
+  `data-testid="address-form"`; borough select id `address-borough`).
+
+Files changed this round: `apps/web/src/components/address/LotOutlineMap.tsx`,
+`apps/web/e2e/lot-outline.spec.ts`, `apps/web/src/components/address/__tests__/lot-outline-map.test.tsx`,
+and this report.

@@ -20,10 +20,15 @@ import { expect, test, type Page } from "@playwright/test";
  * lot-outline outcome via the harness's synthetic resolver + fixture routing. */
 async function resolveTo(page: Page, street: string): Promise<void> {
   await page.goto("/property?ruleeval=on");
-  await page.getByLabel("House number").fill("100");
-  await page.getByLabel("Street").fill(street);
-  await page.getByLabel("Borough").selectOption("Manhattan");
-  await page.getByTestId("address-submit").click();
+  // Scope every field to the address form: the page also renders provenance
+  // fields with labels like "Borough (source code)" (format.ts), so a bare
+  // getByLabel("Borough") is a strict-mode ambiguity. The form container
+  // disambiguates all three inputs + the submit button.
+  const form = page.getByTestId("address-form");
+  await form.getByLabel("House number").fill("100");
+  await form.getByLabel("Street").fill(street);
+  await form.getByLabel("Borough").selectOption("Manhattan");
+  await form.getByTestId("address-submit").click();
   await expect(page.getByTestId("address-confirm-card")).toBeVisible({
     timeout: 15_000,
   });

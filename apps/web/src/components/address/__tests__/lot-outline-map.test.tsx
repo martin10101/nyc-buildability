@@ -161,6 +161,29 @@ describe("LotOutlineMap — single_lot with WebGL", () => {
     );
   });
 
+  it("G5 F-1: a HOSTILE reflected attribution NEVER reaches the MapLibre AttributionControl (a client constant does); the React text shows it inert", async () => {
+    const hostile = '<img src=x onerror="window.__pwned=1">NYC DCP';
+    const fx = fixture("single_lot_polygon");
+    fx.attribution = hostile;
+    const { container } = render(
+      <LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />,
+    );
+    await screen.findByTestId("lot-outline-map");
+    await waitFor(() => expect(mocks.attributionCtor).toHaveBeenCalled());
+    // The control receives the client CONSTANT, never the reflected string.
+    const opts = mocks.attributionCtor.mock.calls[0][0] as { customAttribution: string };
+    expect(opts.customAttribution).toBe("NYC Department of City Planning (DCP), MapPLUTO");
+    expect(opts.customAttribution).not.toContain("onerror");
+    // The reflected value still shows as INERT React-escaped text (no element).
+    expect(screen.getByTestId("lot-outline-attribution").textContent).toContain(
+      "onerror",
+    );
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(
+      (window as unknown as Record<string, unknown>).__pwned,
+    ).toBeUndefined();
+  });
+
   it("S2: a Polygon WITH an interior hole passes every ring to the source (no hole filled)", async () => {
     // Synthetic structural input (a hole case is not among the committed
     // contract fixtures): proves the pass-through never drops an interior ring.
@@ -272,5 +295,10 @@ describe("LotOutlineMap — WebGL unavailable", () => {
     );
     expect(screen.queryByTestId("lot-outline-map")).toBeNull();
     expect(mocks.mapCtor).not.toHaveBeenCalled();
+    // G3 ADVISORY-1: the screen-reader summary must MATCH the visible fallback,
+    // not falsely announce that a map is shown.
+    const summary = screen.getByTestId("lot-outline-summary").textContent ?? "";
+    expect(summary).toContain("could not open an interactive map");
+    expect(summary).not.toContain("An approximate lot outline is shown");
   });
 });

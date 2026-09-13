@@ -111,6 +111,13 @@ function geometryBounds(
   ];
 }
 
+/** Client-side CONSTANT attribution for the MapLibre AttributionControl. G5 F-1:
+ * MapLibre renders customAttribution as HTML (innerHTML), so it must NEVER carry
+ * a reflected server string (boundedText does not neutralize HTML
+ * metacharacters). The reflected `view.attribution` is shown ONLY as
+ * React-escaped text in AttributionAndAccuracy, which is safe. */
+const DCP_ATTRIBUTION = "NYC Department of City Planning (DCP), MapPLUTO";
+
 const EMPTY_STYLE = {
   version: 8 as const,
   sources: {},
@@ -126,15 +133,20 @@ const EMPTY_STYLE = {
 /** A one-line screen-reader summary of the current state, derived
  * deterministically from the typed outcome (no legal semantics, no invented
  * values). */
-function outcomeSummary(outcome: LotOutlineOutcome | null): string {
+function outcomeSummary(outcome: LotOutlineOutcome | null, drawable: boolean): string {
   if (outcome === null) return "Loading the approximate lot outline…";
   switch (outcome.kind) {
     case "document":
       switch (outcome.view.outcome) {
         case "single_lot":
-          return outcome.view.geometryUnusable
-            ? "The lot outline could not be drawn: the official geometry was not usable. Use the ZoLa map link for the authoritative outline."
-            : "An approximate lot outline is shown, drawn from the official NYC City Planning MapPLUTO parcel geometry (plus or minus 20 feet).";
+          if (outcome.view.geometryUnusable)
+            return "The lot outline could not be drawn: the official geometry was not usable. Use the ZoLa map link above for the authoritative outline.";
+          if (!drawable)
+            // Geometry exists but no interactive map could be opened (e.g. no
+            // WebGL). The summary must match the visible fallback, not claim a
+            // map is shown.
+            return "An approximate outline is available for this lot, but this browser could not open an interactive map. Use the ZoLa map link above for the authoritative outline.";
+          return "An approximate lot outline is shown, drawn from the official NYC City Planning MapPLUTO parcel geometry (plus or minus 20 feet).";
         case "no_outline":
           return outcome.view.noOutlineReason === "condo_unit_lot_no_polygon"
             ? "No outline is drawn: this is a condominium unit lot, which has no parcel polygon of its own. Use the ZoLa map link."
@@ -215,7 +227,6 @@ export function LotOutlineMap({
     view.geometry !== null &&
     webglAvailable;
   const geometry = drawable ? (view.geometry as ValidatedGeometry) : null;
-  const attribution = view?.attribution ?? "";
 
   useEffect(() => {
     if (!geometry) return;
@@ -242,8 +253,10 @@ export function LotOutlineMap({
         zoom: 15,
       });
       mapRef.current = map;
+      // G5 F-1: pass the CONSTANT (MapLibre renders this as HTML). The
+      // reflected view.attribution is shown only as React-escaped text.
       map.addControl(
-        new gl.AttributionControl({ customAttribution: attribution }),
+        new gl.AttributionControl({ customAttribution: DCP_ATTRIBUTION }),
         "bottom-right",
       );
       map.on("load", () => {
@@ -280,7 +293,7 @@ export function LotOutlineMap({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [geometry, attribution]);
+  }, [geometry]);
 
   return (
     <section
@@ -290,7 +303,7 @@ export function LotOutlineMap({
       data-testid="lot-outline"
     >
       <p className="visually-hidden" data-testid="lot-outline-summary" role="status">
-        {outcomeSummary(outcome)}
+        {outcomeSummary(outcome, drawable)}
       </p>
 
       {outcome === null ? (
