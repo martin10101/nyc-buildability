@@ -1,0 +1,13 @@
+{
+  "task_id": "M5-T022",
+  "note": "Cited D-040:D-040-R001, APPLICABLE via the append-only applicability bind (digest a4145aeb->6d8c506f). evaluate_task_refs: ok=true, applicable == cited == [D-040-R001].",
+  "requirements": {
+    "D-040-R001": [
+      "apps/web/package.json at f17a5869 (ONE added exact pin: maplibre-gl 6.7.0 - the newest age-gate-passing version; the MapLibre GL JS dependency the lot-outline increment's technical rules mandate)",
+      "apps/web/package-lock.json at 6d776102 (bot-committed workflow-proven lock: the 22-node transitive tree, every node registry.npmjs.org + sha512 + aged + advisory-free per the machine gates)",
+      "project-control/reports/M5-T022-producer-report.md (admission rationale, the full transitive enumeration table for the G5 provenance review, proof-chain narrative)",
+      "project-control/reports/M5-T022-ci-evidence.txt (generate-lockfile run 34729750887 SUCCESS; CI run 34729820746 CONCLUSION SUCCESS - the branch stays fully green with the package admitted)",
+      "project-control/reports/D-040-R001-mappluto-research.md Part C + project-control/blockers/B-022-*.json resolution (the admission facts + the D-042-R002 discharge authorizing it)"
+    ]
+  }
+}
