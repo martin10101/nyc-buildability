@@ -50,7 +50,11 @@ marked with the answer and the directive that captured it.
   HTML render loses §23-421(g) in text extraction. The rules pipeline must prove section
   completeness from an artifact that provably contains the full text (e.g. the print/PDF render),
   never from HTML extraction alone. The architect can eyeball the paragraph in seconds via the
-  link.
+  link. CORROBORATION (2026-09-13): the original rules producer's preserved source-facts memory
+  (.claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md, captured live the
+  same day via a different extraction path) records identical figures — "In R1 and R2 Districts
+  without a letter suffix", ≥9,500 sq ft & ≥100 ft width OR ≥5% slope, reference plane up to 5 ft
+  above base plane — so the owner's verbatim now has an independent in-repo witness.
 - **Citation for the professional:** ZR §23-421 (City of Yes text, last amended 2024-12-05,
   verified live at zr.planning.nyc.gov on 2026-09-13). Applicability line reads:
   "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A". §23-422 (flat-roof alternative) excludes R1/R2.
