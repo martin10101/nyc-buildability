@@ -113,8 +113,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "rework",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "free-text width parsing is the chief hazard: an over-permissive parser would silently raise FAR eligibility downstream; the mathematical-entailment rule + exhaustive typed-class tests are mandatory; any doubtful class fails closed to narrow",
     "OQ-1 (exact geometric definition of DCM mapped width) and OQ-3 (ZR-grounded ambiguity policy) are OPEN legal/rule questions - the connector surfaces classes and flags, never resolves them",
@@ -130,7 +130,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T06:43:32.831670+00:00",
-  "updated_at": "2026-09-13T07:51:35.811102+00:00",
+  "updated_at": "2026-09-13T07:54:32.333978+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",

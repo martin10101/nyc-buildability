@@ -4,9 +4,18 @@
   "reviewer": "security-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M4-T015-G5-security-review.md",
-  "reviewed_at": "2026-09-13T07:42:54.398545+00:00",
-  "content_manifest_sha256": "8728692600e20aa4298b850be859c14bad18a897160a770f8d3669d41d7f36c2",
-  "reviewed_sha": "b3e66078ee50cbf1a8de89d0b85cdd2dfe50dffb",
-  "updated_at": "2026-09-13T07:42:55.176470+00:00"
+  "report_file": "project-control/reports/M4-T015-delta-attestations.md",
+  "reviewed_at": "2026-09-13T07:54:31.541989+00:00",
+  "content_manifest_sha256": "e393fc35419395130b516d3dc35727b441f166a982c36c826bcf2c03c010be18",
+  "reviewed_sha": "b3bc8368920da5e52c9196f44398d273600b189e",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M4-T015-G5-security-review.md",
+      "reviewed_at": "2026-09-13T07:42:54.398545+00:00"
+    }
+  ],
+  "updated_at": "2026-09-13T07:54:32.315992+00:00"
 }
