@@ -34,34 +34,6 @@ history). The active queue never carries figured-out material.
 
 ---
 
-## RQ-001 — Map the sky-exposure-plane and street-width height mechanics (A2 wave) — OPEN
-
-- **Question:** For NYC ZR residential districts R6–R12 (City of Yes text), list every section
-  that defines the height/setback mechanics that depend on geometry: sky exposure planes,
-  street-width-dependent maximum base/building heights, setback depth rules, and permitted
-  obstructions. For each: section number, exact title, which districts it names, whether "wide
-  street"/"narrow street" changes the numbers, and the defined terms it leans on (base plane,
-  street line, sky exposure plane, etc. — with the section where each term is defined,
-  presumably §12-10).
-- **Why:** the A2 geometry-mechanics wave builds these rules next; the street-width data
-  connector is already live. A verified section map turns each rule task from "find the law"
-  into "capture and encode the law."
-- **Unlocks:** height/setback envelopes for the mid- and high-density residential districts —
-  most of the city's multifamily lots.
-
-## RQ-002 — Commercial district rule-structure survey (C-district lane) — OPEN
-
-- **Question:** For NYC commercial districts C1 through C8: (1) where does the ZR set commercial
-  FAR (section numbers + the table structure); (2) how do C1/C2 OVERLAYS on residential
-  districts work — which section says the residential district's rules govern residential uses
-  in an overlay, and where do overlay commercial FAR caps live; (3) where are the residential
-  equivalents of commercial districts defined (e.g. "C4-6 has an R7 residential equivalent" —
-  the section that establishes the mapping); (4) any §11-25-style general rules specific to
-  commercial suffixes. Exact sections, titles, quotes, URLs.
-- **Why:** the C-district research task is a named wave-3 lane; this is its skeleton.
-- **Unlocks:** the commercial half of your "truly everything" order — including mixed lots where
-  an overlay changes a residential answer.
-
 ## RQ-003 — The §12-10 "qualifying residential site" definition, verbatim — OPEN
 
 - **Question:** Quote the complete ZR §12-10 definition of "qualifying residential site"
@@ -72,6 +44,10 @@ history). The active queue never carries figured-out material.
   because this definition wasn't captured; the FAR table also jumps R2/R2A to 1.00 on qualifying
   sites, so the definition moves floor-area numbers too.
 - **Unlocks:** turning several "professional review required" flags into computed conditions.
+- **Added 2026-09-13 (wave-3 finding):** while in §12-10, ALSO quote the current "street, wide"
+  definition verbatim — the live text was AMENDED 3/26/2026 and is materially fuller than our
+  accepted snapshot (an alternate-width clause + two named-street designations). The A2 build
+  now requires a fresh §12-10 capture + architect ruling before the wide-street rules build.
 
 ## RQ-004 — Special-district priority inventory (A4 planning input) — OPEN
 
@@ -110,4 +86,8 @@ verification target.*
 
 ## Closed register (one line per satisfied request; full text in git history)
 
-*(none yet)*
+- **RQ-001** — satisfied by the loop's own accepted research (M4-T016, A2 geometry-mechanics
+  section map, 201st accepted) — closed 2026-09-13 — answer lives in the M4-T016 report.
+- **RQ-002** — satisfied by the loop's own accepted research (M4-T017, C-district survey,
+  202nd accepted; corrected the C4-6 example: residential equivalent is R10, not R7) — closed
+  2026-09-13 — answer lives in the M4-T017 report.
