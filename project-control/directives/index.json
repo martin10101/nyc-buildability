@@ -669,7 +669,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-049-encode-11-25-reading/manifest.json"
+  },
+  {
+   "directive_id": "D-050",
+   "slug": "owner-assisted-research-channel",
+   "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-050-owner-assisted-research-channel/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T06:10:09+00:00"
+ "updated_at": "2026-09-13T17:23:15+00:00"
 }

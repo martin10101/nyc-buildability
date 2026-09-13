@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-050",
+ "version": 1,
+ "slug": "owner-assisted-research-channel",
+ "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T17:23:15+00:00",
+ "created_at": "2026-09-13T17:23:15+00:00",
+ "updated_at": "2026-09-13T17:23:15+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "e063b7c70dfcb9df8e251195146511dbfc63447d",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner proposed the channel verbatim in the live companion session 2026-09-13 ('if he needs something research, we could do it manually... use astero's research ability to bring back the results... to make it go faster'); captured with the leads-not-sources guardrail matching the same-day 11-25/(g) precedent (source-001.md)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-050-R001",
+  "D-050-R002",
+  "D-050-R003",
+  "D-050-R004"
+ ],
+ "requirements_content_digest_sha256": "ddd353740d9af6adc0f791f4e0c37dd15cd69e4d26d9d68e788019201fce322c",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T17:23:15+00:00",
+   "content_digest_sha256": "b9d4f6a212960ffed6b31faedf2e01b566528f6a55595c6c5099e0da878c9384"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_acceleration_channel",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "loop-appended research requests in docs/RESEARCH_REQUESTS.md; owner-returned deep-research results consumed as cited discovery aids; companion capture/relay of results",
+  "prohibited": "citing owner research as provenance; encoding from research text without official-source verification; blocking any task on an unanswered request; routing interpretation questions through this channel instead of D-048/D-049; weakening G1, capture-completeness, or any gate"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T17:23:15+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-049 precedent); docs/RESEARCH_REQUESTS.md created in the same commit, seeded with RQ-001..RQ-004 (A2 section map, C-district survey, 12-10 qualifying-site definition, special-district priority inventory); relay to the build session follows per R004"
+  }
+ ]
+}
