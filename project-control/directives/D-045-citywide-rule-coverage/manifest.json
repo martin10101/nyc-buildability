@@ -1,0 +1,69 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-045",
+ "version": 1,
+ "slug": "citywide-rule-coverage",
+ "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - residential heights/setbacks beyond R5 (A1), geometry-dependent mechanics + street-width connector (A2/B2), contextual/Quality Housing + bonuses (A3), commercial + manufacturing families, special purpose + waterfront as later waves (A4); one reviewed family at a time under normal gates; all rules stay DRAFT until G6.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T04:10:12+00:00",
+ "created_at": "2026-09-13T04:10:12+00:00",
+ "updated_at": "2026-09-13T04:10:12+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the directive verbatim in the live companion session 2026-09-13 and resolved the scope via a structured question, selecting 'Truly everything (incl. A4)' (source-001.md #scope-clarification-verbatim)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-045-R001",
+  "D-045-R002",
+  "D-045-R003",
+  "D-045-R004",
+  "D-045-R005",
+  "D-045-R006",
+  "D-045-R007",
+  "D-045-R008",
+  "D-045-R009",
+  "D-045-R010"
+ ],
+ "requirements_content_digest_sha256": "df16d3af3224b5c5500423cc6a1b0e48494032fe18f7740fb1e19c369bfd0977",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T04:10:12+00:00",
+   "content_digest_sha256": "6d085693783e231f437e0e65a60ce9a66e062abd46c40a4faa4028269e6905ab"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "rule_coverage_campaign_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "citywide zoning-rule coverage campaign: A1 residential heights/setbacks (R1-R4, R6-R12), A2 geometry-dependent mechanics with their data inputs, B2 street-width connector, A3 contextual/Quality Housing + bonus programs, C-district and M-district families, A4 special purpose + waterfront as later waves; bounded gated tasks citing D-045 requirement ids",
+  "prohibited": "publishing any rule without G6; out-of-scope gap-list self-assignment (B3/B4/B5/C2/C3/E1-E3/group D stay owner-triage candidates); lifting any standing hold (PR #241, expansion hold outside the lot-outline release, D-043 internal-only posture); bypassing dependency policy §G"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T04:10:12+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043 precedent); scope resolved by owner selection 'Truly everything (incl. A4)' before capture; relay to the live build session (ctl24-ce) follows immediately per R010"
+  }
+ ]
+}

@@ -609,7 +609,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-044-handoff-budget-8k/manifest.json"
+  },
+  {
+   "directive_id": "D-045",
+   "slug": "citywide-rule-coverage",
+   "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - A1 heights beyond R5, A2 geometry mechanics + B2 street-width connector, A3 contextual/bonus, C + M district families, A4 special purpose/waterfront as later waves; one reviewed family at a time; all rules DRAFT until G6.",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-045-citywide-rule-coverage/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T01:45:00+00:00"
+ "updated_at": "2026-09-13T04:10:12+00:00"
 }
