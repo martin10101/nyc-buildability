@@ -2,11 +2,11 @@
   "task_id": "M4-T014",
   "producer_agent": "rules-engineer",
   "report_file": "project-control/reports/M4-T014-producer-report.md",
-  "submitted_at": "2026-09-13T05:22:15.563925+00:00",
+  "submitted_at": "2026-09-13T05:53:21.792737+00:00",
   "requested_status": "awaiting_gate",
   "evidence_map": "project-control/reports/M4-T014-evidence-map.json",
-  "content_manifest_sha256": "35ee7eb5365949cd9e9380d2739f825d797ca71f5745f934d2e2f77412e58295",
-  "reviewed_sha": "7226db90802247cc76fecd887650addd96e376d4",
+  "content_manifest_sha256": "b20678d4f2c6ff96cea6319aa6626498ad72109145775d26a4bafc9501e86224",
+  "reviewed_sha": "346f85353f579edcce143c7b604f7543800ec4ea",
   "applicable_requirements": [
     "D-045-R001",
     "D-045-R008",
@@ -14,5 +14,5 @@
     "D-046-R001",
     "D-046-R002"
   ],
-  "updated_at": "2026-09-13T05:22:16.541998+00:00"
+  "updated_at": "2026-09-13T05:53:22.910293+00:00"
 }

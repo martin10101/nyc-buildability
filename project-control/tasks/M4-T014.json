@@ -100,8 +100,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "rework",
-  "progress_percent": 75,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "sloping-plane setback geometry (23-421) and any street-width-conditional provision are A2 territory - typed provenance-carrying gaps ONLY, exactly like the pilot r5a_height treatment (D-045-R008)",
@@ -112,7 +112,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T04:49:56.673440+00:00",
-  "updated_at": "2026-09-13T05:51:39.590894+00:00",
+  "updated_at": "2026-09-13T05:53:22.910293+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
