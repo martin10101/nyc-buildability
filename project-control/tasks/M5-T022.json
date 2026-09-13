@@ -1,0 +1,98 @@
+{
+  "task_id": "M5-T022",
+  "title": "maplibre-gl@6.7.0 dependency admission (D-040-R001 web half prerequisite)",
+  "task_type": "feature",
+  "milestone_id": "M5",
+  "objective": "Admit maplibre-gl EXACTLY 6.7.0 into apps/web via the proven sanctioned chain: exact pin in package.json, generate-lockfile workflow regeneration + proof (npm ci integrity, blocking audit total==0 every severity, committed-lock 7-day age gate, CLI advisory) before the bot commits, CI green at the post-lock head, and the policy-15 G5 PROVENANCE review of the NEW package + its full transitive tree from the generated lock. 6.7.0 is the newest age-gate-passing version (published 2026-09-02, ~11d; 6.8.0/6.9.0 still too young), Snyk/OSV-clean, BSD-3-Clause, CVE-2026-85061 fixed in 6.4.1 (research: D-040-R001-mappluto-research.md Part C).",
+  "business_reason": "B-022 resolved per D-042-R002; the admission is the last prerequisite before the lot-outline web rendering packet closes D-040-R001.",
+  "inputs": [
+    "project-control/reports/D-040-R001-mappluto-research.md Part C (the admission facts: 6.7.0 newest aged fixed, advisories/license, transitive-tree warning - enumerate from the GENERATED lock, never estimate)",
+    "project-control/directives/D-042-nextjs-15-5-24-upgrade/requirements.json R002 (the discharge authorizing this admission) + project-control/blockers/B-022-*.json (resolved)",
+    ".github/workflows/generate-lockfile.yml (the sanctioned proven chain; bot pushes do not trigger CI)",
+    "project-control/reports/M5-T021-producer-report.md + M5-T021-G5.md (the just-proven admission pattern + the reviewer's OSV methodology)"
+  ],
+  "outputs": [
+    "apps/web/package.json (ONE added dependency: maplibre-gl exactly 6.7.0; nothing else)",
+    "apps/web/package-lock.json (regenerated + proven + bot-committed; the maplibre transitive tree enters here)",
+    "project-control/reports/M5-T022-producer-report.md (the admission rationale + workflow/CI evidence + the transitive-tree enumeration from the lock)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "project-control/reports/M5-T022-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/**",
+    "apps/web/e2e/**",
+    "apps/web/.npmrc",
+    ".github/**",
+    "render.yaml",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "exact_admission",
+      "input": "the final package.json + lock",
+      "expected": "dependencies['maplibre-gl'] == '6.7.0' exactly; the ONLY package.json change; the lock resolves maplibre-gl 6.7.0 + its transitive tree, every new node from registry.npmjs.org with sha512 integrity"
+    },
+    {
+      "id": "S2",
+      "case": "workflow_proven",
+      "input": "the generate-lockfile run",
+      "expected": "the full proof chain SUCCEEDS (npm ci, audit total==0 every severity incl. the new tree, committed-lock age gate over EVERY node incl. the new transitives, CLI advisory) before the bot commit"
+    },
+    {
+      "id": "S3",
+      "case": "ci_green",
+      "input": "ci.yml at the post-lock head",
+      "expected": "CONCLUSION SUCCESS - the branch stays fully green with the new package admitted (web-dependency-security SUCCESS re-proven; web/web-e2e unaffected - no source imports maplibre yet)"
+    },
+    {
+      "id": "S4",
+      "case": "provenance_review",
+      "input": "G5 over the new package + generated tree",
+      "expected": "G5 verifies maplibre-gl publisher/repo/license (BSD-3-Clause)/advisory history (CVE-2026-85061 fixed 6.4.1; 6.7.0 clean) and enumerates the transitive additions from the lock diff with no unexplained or rogue-registry node"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G5"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "maplibre transitives could include a too-young or advisory-carrying node - the workflow fails closed (the M5-T021 negative proof)",
+    "unused-dependency window: the package lands before any source imports it (intended; the web packet follows)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-13T01:04:58.086917+00:00",
+  "updated_at": "2026-09-13T01:07:46.652721+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T01:04:58.086917+00:00",
+  "path_notes": "PRODUCER = ORCHESTRATOR (workflow dispatch authority; the edit is one exact pin). NEW PACKAGE: policy 15 requires the G5 PROVENANCE review - publisher/repo/license/advisory history for maplibre-gl AND every transitive member the generated lock adds, each age+advisory+pin+integrity checked by the machine gates (the workflow + web-dependency-security job) and provenance-reviewed by G5. NO rendering code in this task - the web packet follows. No deploy (D-042-R003 posture unchanged).",
+  "documented_test_commands": [
+    "generate-lockfile workflow + ci.yml at the post-lock head (thin client)"
+  ],
+  "worktree": "primary-checkout"
+}
