@@ -75,8 +75,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "sky-exposure-plane and street-width mechanics are spread across multiple ZR chapters (23-6xx et al.) with City of Yes amendments - a section missed here becomes a coverage hole in the A2 build; the report must state its search method and completeness posture honestly",
     "the ZR 'within 100 feet' test is about wide-STREET adjacency portions of a lot, not fronting width alone (M4-T013 finding) - conflating frontage classification with the buffer test would poison the build",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T18:01:20.203792+00:00",
-  "updated_at": "2026-09-13T18:01:20.980959+00:00",
+  "updated_at": "2026-09-13T18:07:30.569350+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -109,5 +109,15 @@
   "documented_test_commands": [
     "python tools/validate_directive_compliance.py --check",
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ],
+  "worktree": "wt-m4t016",
+  "progress_log": [
+    {
+      "at": "2026-09-13T18:07:30.553546+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; wave 3 slot 1 (A2 research); scenarios recorded in packet; producer official-source-researcher (agent file claude-sonnet-5 per D-047-R001, no override needed)"
+    }
   ]
 }

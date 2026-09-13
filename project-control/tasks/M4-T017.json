@@ -72,8 +72,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "C-district FAR interacts with residential equivalents and overlays - a wrong equivalence mapping would silently corrupt mixed-lot results downstream; the mapping must be quoted, never inferred from district-name patterns",
     "City of Yes changed commercial FAR provisions; the report must pin the current official text and note effective-date/version posture",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-13T18:01:36.357059+00:00",
-  "updated_at": "2026-09-13T18:01:37.247840+00:00",
+  "updated_at": "2026-09-13T18:07:31.439792+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -106,5 +106,15 @@
   "documented_test_commands": [
     "python tools/validate_directive_compliance.py --check",
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ],
+  "worktree": "wt-m4t017",
+  "progress_log": [
+    {
+      "at": "2026-09-13T18:07:31.431182+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; wave 3 slot 2 (C-district research); scenarios recorded in packet; producer official-source-researcher (agent file claude-sonnet-5 per D-047-R001, no override needed)"
+    }
   ]
 }
