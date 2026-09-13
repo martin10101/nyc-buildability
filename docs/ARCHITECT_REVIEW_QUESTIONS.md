@@ -15,13 +15,20 @@ marked with the answer and the directive that captured it.
 
 ## A. Legal-text interpretation questions (currently blocking coverage)
 
-### A1. Do ZR 23-421's bare "R1" and "R2" labels include the lettered variants? — OPEN
+### A1. Do ZR 23-421's bare "R1" and "R2" labels include the lettered variants? — OWNER RESEARCH SAYS YES (via ZR §11-25); PENDING PROFESSIONAL CONFIRMATION
 
 - **Plain English:** The zoning rule for single-family house heights (pitched-roof: 25 ft walls /
-  35 ft ridge) lists the districts it applies to. For R3 and R4 it names every lettered variant
-  explicitly (R3A, R3X, R3-1, R3-2, R4-1, R4A). For R1 and R2 it says just "R1" and "R2." Do those
-  bare labels legally sweep in R1-1, R1-2, R1-2A, R2A, and R2X — or do those variants have their own
-  (or no) height rules?
+  35 ft ridge) lists the districts it applies to. For R3 and R4 it names variants explicitly
+  (R3A, R3X, R3-1, R3-2, R4-1, R4A — though NOT R4B, which has its own flat-roof provision in
+  §23-422; questionnaire correction 2026-09-13 from owner research). For R1 and R2 it says just
+  "R1" and "R2." Do those bare labels legally sweep in R1-1, R1-2, R1-2A, R2A, and R2X — or do
+  those variants have their own (or no) height rules?
+- **Owner's researched reading (2026-09-13, current official text; NOT a qualified sign-off):**
+  YES — ZR **§11-25** is the Resolution's own interpretation rule: "All regulations applicable to
+  a district designation shall be applicable to such district designation appended with a suffix,"
+  subject to express exceptions elsewhere, and it illustrates with R4-1/R4A/R4B. Applied to
+  §23-421: R1 includes R1-1/R1-2/R1-2A; R2 includes R2/R2A/R2X — all within the basic 25/35
+  envelope, subject to building-type scope and applicable modifications.
 - **Citation for the professional:** ZR §23-421 (City of Yes text, last amended 2024-12-05,
   verified live at zr.planning.nyc.gov on 2026-09-13). Applicability line reads:
   "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A". §23-422 (flat-roof alternative) excludes R1/R2.
@@ -33,12 +40,15 @@ marked with the answer and the directive that captured it.
   as "not assessed — needs professional review." (Most real R1 lots are mapped R1-1/R1-2, so this
   affects most R1 lots.) Bare R1/R2 lots are covered.
 
-### A2. Does R2X share the 25/35 ft pitched envelope, or does it have its own? — OPEN
+### A2. Does R2X share the 25/35 ft pitched envelope, or does it have its own? — OWNER RESEARCH SAYS SHARED; PENDING PROFESSIONAL CONFIRMATION
 
 - **Plain English:** If the answer to A1 is "yes, variants are included," R2X still needs its own
   confirmation — it's a higher-density district that the floor-area table already treats
   differently. Same envelope, or different?
 - **Citation:** ZR §23-421 vs §23-21 (R2X grouped with R4 at FAR 1.00; R2/R2A at 0.75).
+- **Owner's researched reading (2026-09-13; NOT a qualified sign-off):** R2X SHARES the 25/35
+  envelope. §23-21's separate FAR row is an express exception concerning floor area only — it does
+  not import R4's other regulations. Height remains determined through §§11-25 + 23-421.
 - **Product impact:** R2X lots' height/setback stays "not assessed" until confirmed.
 
 ### A3. Does any other ZR section give R2A, R2X, or R1-2A a distinct height/setback envelope? — OPEN
@@ -46,8 +56,37 @@ marked with the answer and the directive that captured it.
 - **Plain English:** A completeness check: we searched the captured governing sections (23-42,
   23-421, 23-422, 23-44/441/442, 21-11) and found none — but "we didn't find one" is not the same
   as "there isn't one." Please confirm.
+- **Owner's research found REAL site-specific modifiers (2026-09-13; needs the qualified
+  answer):** the basic envelope is shared, but these provisions can change it for particular
+  sites — the professional should confirm this list is right and complete:
+  - **§23-421(g)** — reference plane may rise up to 5 ft above the base plane in R1/R2 districts
+    WITHOUT a letter suffix (per its wording: R1-1, R1-2, R2 eligible; R1-2A, R2A, R2X excluded),
+    when the lot is ≥9,500 sq ft with ≥100 ft width, OR street-to-rear slope ≥5%.
+  - **§23-424** — "qualifying residential site": expressly lists R1-1, R1-2, R1-2A, R2, R2A, R2X
+    with 35 ft max base height / 35 ft max building height + referenced setbacks. NOTE: the
+    ordinary transit-proximity qualifying route excludes R1/R2; other routes (e.g. the
+    community-facility floor-space condition as of 2024-12-05) can include them — the §12-10
+    "qualifying residential site" definition must be evaluated, never assumed.
+  - **§23-425** — eligible large sites: applies §23-424 heights + conditional increase tied to
+    existing roof heights / ornamental features.
+  - **§23-426(a)** — LPC-designated Historic Districts: conditional base-height modification
+    involving an adjacent building's height.
+  - **§23-443(b)** — transportation-infrastructure-adjacent frontage: +10 ft maximum-height
+    increase in R1–R6 for the described multiple dwellings.
+  - **§119-212** — Special Hillsides Preservation District Tier II sites: separate control,
+    R1/R2 at 36 ft, pitched roofs measured to midpoint.
+  - **§113-523** — Special Ocean Parkway subdistrict: modifies §23-421's envelope geometry
+    (apex points above perimeter walls).
+  - Also noted: §23-421 permits setbacks within its sloping planes (a pitched-roof envelope is
+    not a pitched-roof requirement), and rooftop obstructions carry their own limits (§23-413(a)).
 - **Product impact:** closes the loop on A1/A2; on the ruling, the R1/R2 rule family is finished
-  and every R1/R2-variant lot gets a real draft envelope.
+  and every R1/R2-variant lot gets a real draft envelope — with the modifiers above encoded as
+  conditions or review flags, never silently.
+
+*Owner's research disposition note (2026-09-13): the researched reading above supports encoding
+the shared basic envelope with precise applicability conditions while retaining review status
+wherever eligibility, special-district rules, or another material modifier is unresolved. It is
+explicitly NOT a qualified sign-off, NOT an owner decision, and does NOT clear G6.*
 
 ---
 
