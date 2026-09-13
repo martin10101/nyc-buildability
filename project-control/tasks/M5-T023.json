@@ -128,8 +128,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "maplibre-gl is browser-only: it must live in a client component loaded without SSR (dynamic import or guarded mount) or next build breaks; this is its FIRST import - watch bundle impact and keep it scoped to the confirm surface",
     "WebGL is not guaranteed in headless CI Chromium: the component must detect unavailability and render the honest typed fallback; Playwright asserts stable copy/attribution/testids, never pixels",
@@ -147,7 +147,7 @@
     "python tools/modularity_check.py --check"
   ],
   "created_at": "2026-09-13T02:27:11.252630+00:00",
-  "updated_at": "2026-09-13T02:39:04.442607+00:00",
+  "updated_at": "2026-09-13T03:20:28.833642+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -166,6 +166,13 @@
       "percent": 10,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed at 6a8f2298; bound to D-040-R001 (digest d672035d); frontend-engineer dispatch next; scenarios recorded in packet"
+    },
+    {
+      "at": "2026-09-13T03:20:26.010120+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at b99ca6c0 (13 files, all inside allowed_paths; generated/*.ts byte-identical - drift duty held). Orchestrator reproduced: generate_ts_types --check exit 0 incl. lot_geometry; modularity exit 0 (16 pre-existing warnings elsewhere). CI on b99ca6c0 in flight = executable authority for web/web-e2e. Producer disclosures logged in report (holes via labelled synthetic polygon, synthetic e2e address-resolver seam, no basemap by design). Submitting; G1/G3/G5 dispatch now, G4 after CI evidence capture."
     }
   ]
 }
