@@ -1,7 +1,7 @@
 {
  "blocker_id": "B-023",
  "title": "ZR section 23-421 (pitched-roof envelope) names R1/R2 only as bare group labels - whether they sweep in the lettered variants R1-2A/R2A/R2X, and whether higher-density R2X shares the 25/35 ft envelope, is a legal-interpretation question no captured official text resolves; M4-T012 (A1 wave 1, R1+R2 families) is blocked on a qualified-human ruling (Section 20 / Tier D)",
- "status": "open",
+ "status": "resolved",
  "created_at": "2026-09-13T06:40:00+00:00",
  "created_by": "orchestrator",
  "affects": [
@@ -10,6 +10,6 @@
  ],
  "detail": "Producer (rules-engineer) verified the current-effective City of Yes text (Last Amended 2024-12-05) live against zr.planning.nyc.gov on 2026-09-13 (sections 23-42, 23-421, 23-422, 23-44/441/442, 21-11) and cross-checked the byte-verified in-corpus zr-23-21 FAR snapshot (digest b52771e6...). Findings: (1) section 23-421 applies to 'R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A' - the R3/R4 variants are enumerated EXPLICITLY while R1/R2 appear only as group labels; R1-1/R1-2/R1-2A/R2A/R2X appear in NO captured governing height/setback section; (2) the zr-23-21 FAR table treats R2X differently from R2/R2A (grouped with R4 at FAR 1.00 vs 0.75), so assuming R2X shares the 25/35 pitched envelope would be a guess; (3) section 23-422 (flat alternative) EXCLUDES R1/R2; (4) the packet premise ('numeric limits, no A2 dependency') is contradicted - R1/R2 setback is sloping-plane geometry (A2, deferred by D-045-R008), only the 25 ft perimeter-wall / 35 ft ridge caps are numeric. Producer wrote no ruleset/snapshot rather than transcribe or infer (permanent principle 3); worktree left clean; source facts preserved in .claude/agent-memory/rules-engineer/zr-r1-r2-height-setback-source-facts.md.",
  "needs": "OWNER / QUALIFIED-HUMAN RULING (G6-adjacent; Section 20 hard stop - never an agent interpretation): (a) do section 23-421's bare 'R1'/'R2' group labels include the lettered variants R1-1, R1-2, R1-2A, R2A, R2X? (b) does R2X share the 25/35 ft pitched envelope or carry a distinct one? (c) confirm no other section assigns R2A/R2X/R1-2A a distinct height/setback envelope. On the ruling, M4-T012 re-dispatches (encode per the ruling, with sloping-plane setback mechanics still recorded as typed A2 gaps); until then it stays blocked and MUST NOT resume while M4-T014 (R3/R4, same directory scopes) is in flight (D-046-R002).",
- "resolution": null,
- "resolved_at": null
+ "resolution": "DISPOSED by owner directive D-048 (2026-09-13): named-only coverage - M4-T012 re-dispatch encodes ONLY the districts ZR 23-421 explicitly enumerates (bare R1/R2; numeric 25/35 ft caps; sloping-plane setback stays a typed A2 gap); R1-1/R1-2/R1-2A/R2A/R2X render not-assessed-needs-professional-review with per-variant tests (never inherited, never zero). The three interpretation questions move UNANSWERED to docs/ARCHITECT_REVIEW_QUESTIONS.md + the G6 agenda (D-048-R003/R005). Re-dispatch timing constraint stands: NOT while M4-T014 holds the same directory scopes (D-046-R002). D-048-R004 makes this the STANDING campaign pattern for same-shape textual ambiguity (named-only + not-assessed + append question; genuine contradictions still stop per D-008).",
+ "resolved_at": "2026-09-13T07:40:00+00:00"
 }

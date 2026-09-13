@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T05:08:13+00:00",
  "created_at": "2026-09-13T05:08:13+00:00",
- "updated_at": "2026-09-13T05:08:13+00:00",
+ "updated_at": "2026-09-13T07:42:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "05b5721f45ecaa69d62662082d28ecc5c32fc2d2",
@@ -29,7 +29,7 @@
   "D-048-R005",
   "D-048-R006"
  ],
- "requirements_content_digest_sha256": "c6148833b2f1256ece070772eadfbdf79bc92cffe869687fbed0cf51c111f76f",
+ "requirements_content_digest_sha256": "918d3a3e8d40161fc9bc2cfee9a0ab154a3ed7982c54d2ab14da77361999024b",
  "sources": [
   {
    "file": "source-001.md",
@@ -60,6 +60,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-047 precedent); B-023 option 1 selected + owner-facing questions doc ordered and created (docs/ARCHITECT_REVIEW_QUESTIONS.md); standing named-only pattern (R004) is companion-decomposed and flagged to the owner for veto; relay to the live build session (ctl24-ce) follows immediately per R006"
+  },
+  {
+   "at": "2026-09-13T07:42:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M4-T012 (named-only rescope) to D-048-R001/R002 (append-only). Digest resynced c6148833 -> 918d3a3e."
   }
  ]
 }
