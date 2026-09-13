@@ -1,0 +1,105 @@
+{
+  "task_id": "M5-T024",
+  "title": "D-043 internal web deploy: owner-executed Render service settings + env-var checklist",
+  "task_type": "infrastructure",
+  "milestone_id": "M5",
+  "objective": "Produce the exact, owner-executed Render dashboard checklist that stands up apps/web as an INTERNAL/unlisted web service on the existing Hobby workspace: service settings (repo/branch, root dir, Node 22, build/start commands, plan, region, health posture), env vars on BOTH services (INTERNAL_RULE_EVAL_ENABLED on the new web service AND on nycdf-api; NEXT_PUBLIC_API_BASE_URL pointed at the private API service with the build-time-inlining caveat; API_CORS_ALLOWED_ORIGINS on nycdf-api set to the new web origin), the standing Render Blueprint Auto Sync = No confirmation, the M5-T019 stale-flag-name dashboard check, internal/dev posture (no public listing/indexing), and the recorded render.yaml nycdf-web restoration debt with the duplicate-service caution. Every dashboard step is OWNER-performed; no credentials or private URLs enter the repo.",
+  "business_reason": "D-043-R001 authorizes the internal deploy now that D-042 produced a fully green CI at Next 15.5.24; the owner is active and ready to execute dashboard steps; the deliverable per D-043-R003 is the exact checklist.",
+  "inputs": [
+    "project-control/directives/D-043-internal-web-deploy/source-001.md + requirements.json (R001 deliverable, R002 API-URL privacy, R003 owner-only dashboard boundary, R004 not-a-public-launch; the source's own words: 'private' means unlisted + flag-gated + internal/dev labeling, NOT secret-proof)",
+    "render.yaml (the live nycdf-api service config to reference: starter/oregon, health /api/v1/health, API_CORS_ALLOWED_ORIGINS declared sync:false with exact-origin no-wildcard semantics; the WITHHELD nycdf-web block note incl. 'restoration owed'; secrets policy S1)",
+    "docs/MVP_AGENDA.md section I (Render provisioned 2026-09-11: Hobby workspace, Blueprint from candidate/D-024-mrl-option-b, nycdf-api LIVE staging, ENVIRONMENT=staging, GEOCLIENT_SUBSCRIPTION_KEY entered, the standing 'owner to confirm Blueprint Auto Sync = No' item, the API-has-no-auth caution)",
+    "the prior nycdf-web block preserved in git history immediately before commit 23817a9f (git show - READ-ONLY: the ADR-004 build/start commands and NEXT_PUBLIC envVars to carry into the dashboard checklist)",
+    "apps/web/.env.example (NEXT_PUBLIC posture: names only; NEXT_PUBLIC_API_BASE_URL is inlined at BUILD time - changing it requires rebuild/redeploy) + docs/DEPLOYMENT_AND_ROLLBACK.md sections 0.1 and 1.3 (same rule, operator wording)",
+    "apps/web/src/lib/rule-evaluation.ts (the canonical flag name INTERNAL_RULE_EVAL_ENABLED + TRUE_TOKENS 1/true/yes/on; server-read, deliberately not NEXT_PUBLIC) + apps/web/src/app/property/page.tsx (server component reads it per request)",
+    "apps/web/src/lib/api.ts + apps/web/src/lib/address-api.ts (the BROWSER calls the API directly at NEXT_PUBLIC_API_BASE_URL, default http://127.0.0.1:8000 - hence CORS on nycdf-api is load-bearing)",
+    "services/api/app/main.py (API_CORS_ALLOWED_ORIGINS enforcement: comma-separated EXACT origins, wildcards rejected at startup, unset/empty = no cross-origin access)",
+    "project-control/reports/M5-T019-producer-report.md (flag unification D-040-R002 + the owner return note: rename/remove the old env name in any Render dashboard IF it was ever set)",
+    "apps/web/package.json (scripts: next build / next start) + .github/workflows/ci.yml node-version 22 (the Node line the service must match; no engines field exists - the checklist must state the exact Render mechanism, e.g. the NODE_VERSION env var)",
+    "docs/research/render-nextjs-previews-2026-07-16.md (recorded Render facts: blueprint-spec, autoDeployTrigger semantics)"
+  ],
+  "outputs": [
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md (the single owner-executed checklist: numbered dashboard steps in dependency order - create service (repo, branch, root dir apps/web, runtime Node + exact version mechanism, build command, start command binding $PORT, plan with the Hobby/free spin-down tradeoff stated, region oregon for co-location, health posture), set web-service env vars BEFORE first build (INTERNAL_RULE_EVAL_ENABLED true-token, NEXT_PUBLIC_API_BASE_URL=<owner-pasted private API URL - placeholder only>), then capture the new web origin and set API_CORS_ALLOWED_ORIGINS on nycdf-api (exact origin, no wildcard, no trailing slash) + INTERNAL_RULE_EVAL_ENABLED on nycdf-api, the M5-T019 stale-flag-name check, the Blueprint Auto Sync = No confirmation, the honest exposure note (flag-on internal routes become reachable by anyone holding the API URL - unlisted is not secret-proof), the not-public posture (R004), the render.yaml nycdf-web restoration debt + duplicate-service caution (dashboard-created service is NOT Blueprint-managed), and an end-to-end owner verification script: load the web URL, flag-on surfaces render, resolve a real address against the live API, plus the expected-absent list (Supabase-gated features, B-001))",
+    "project-control/reports/M5-T024-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md",
+    "project-control/reports/M5-T024-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "render.yaml",
+    "apps/web/**",
+    "services/api/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/MVP_AGENDA.md",
+    "docs/DEPLOYMENT_AND_ROLLBACK.md",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "completeness_and_order",
+      "input": "the checklist read top to bottom against the packet inputs",
+      "expected": "every setting the owner needs is present with its exact value or an explicit <owner-fills> placeholder; steps are in dependency order (web env vars BEFORE first build because NEXT_PUBLIC_API_BASE_URL is build-time inlined; the web origin exists BEFORE the CORS step on nycdf-api); both services' env changes covered; the Auto Sync = No confirm and the M5-T019 stale-flag-name check are folded in; nothing requires an agent to touch the dashboard (R003)"
+    },
+    {
+      "id": "S2",
+      "case": "privacy_grep",
+      "input": "grep of the checklist + report for onrender.com hosts, real URLs, keys, or tokens",
+      "expected": "zero real service URLs (placeholders only), zero credentials, zero secret names with values; the API URL appears only as <owner-pastes-private-API-URL>; D-043-R002 satisfied by construction"
+    },
+    {
+      "id": "S3",
+      "case": "technical_accuracy",
+      "input": "cross-check of every claimed name/value against the repo evidence",
+      "expected": "flag name is exactly INTERNAL_RULE_EVAL_ENABLED with a documented true token; API_CORS_ALLOWED_ORIGINS semantics match services/api/app/main.py (exact origins, wildcard rejected, unset = blocked); build/start commands match apps/web/package.json and bind $PORT; Node version matches CI (22) with the correct Render mechanism; every claim carries its source file reference"
+    },
+    {
+      "id": "S4",
+      "case": "honest_exposure_and_scope",
+      "input": "the checklist's posture sections",
+      "expected": "states plainly that the API has no auth and flag-on internal routes are reachable by anyone holding the API URL (unlisted != secret); internal/dev labeling stays; NOT a public launch - no listing/marketing/indexing steps anywhere (R004); the render.yaml restoration debt and duplicate-service caution are recorded as a follow-up owed, not performed here"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "CORS omission bricks the deploy: the browser calls the API cross-origin and services/api/app/main.py blocks everything when API_CORS_ALLOWED_ORIGINS is unset - the checklist's step order must produce the web origin before the CORS entry",
+    "NEXT_PUBLIC inlining trap: an env var set AFTER the first build silently leaves the 127.0.0.1 default in the bundle - the checklist must sequence env-before-build and state the rebuild-on-change rule",
+    "turning INTERNAL_RULE_EVAL_ENABLED on for nycdf-api exposes the flag-gated routes to anyone holding the API URL (the API has no auth) - the checklist must say this honestly rather than imply secrecy (the directive's own words: not secret-proof)",
+    "Hobby workspace limits: free web services spin down after inactivity; the checklist must state the tradeoff and leave the plan choice to the owner",
+    "a dashboard-created service is NOT Blueprint-managed: the recorded render.yaml nycdf-web restoration debt must warn about a later duplicate-service collision instead of quietly conflicting"
+  ],
+  "blockers": [],
+  "path_notes": "DOCS-ONLY SCOPE: two files. The producer is READ-ONLY everywhere else, including render.yaml (the nycdf-web block restoration is a recorded debt for a LATER change, never this task). No dashboard action is performed by any agent (D-043-R003); the deliverable is the checklist the owner executes. No real URL, key, or credential may appear in either output file (D-043-R002; placeholders only). The checklist must fold in the two standing owner items: Blueprint Auto Sync = No confirmation (docs/MVP_AGENDA.md section I) and the M5-T019 stale-flag-name dashboard check.",
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "grep -ri 'onrender' docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md project-control/reports/M5-T024-producer-report.md (must yield placeholders only - captured in the report)",
+    "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ],
+  "created_at": "2026-09-13T02:27:18.341759+00:00",
+  "updated_at": "2026-09-13T02:27:18.532120+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-043",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T02:27:18.341759+00:00"
+}

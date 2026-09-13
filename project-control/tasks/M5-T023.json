@@ -1,0 +1,161 @@
+{
+  "task_id": "M5-T023",
+  "title": "D-040-R001 web half: MapLibre lot-outline rendering on the address confirm card + lot_geometry generator wiring",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Consume the accepted flag-gated GET /api/v1/properties/{bbl}/lot-geometry route from the address confirm card: a NEW typed hardened lot-geometry client (address-api.ts discipline), a NEW focused LotOutlineMap component rendering the display-only EPSG:4326 outline with MapLibre GL JS (first import of the admitted maplibre-gl@6.7.0), replacing the lot-outline placeholder with honest typed outcomes (single_lot outline, condo-unit honest-empty, multiple_features review posture, typed error fallback), MultiPolygon/holes support, NYC DCP attribution on the map, the +/-20ft approximate-outline copy and the ZoLa link kept; plus wire lot_geometry into packages/contracts/scripts/generate_ts_types.py check/write so the CI drift job covers the generated TS (the recorded M5-T020 follow-up).",
+  "business_reason": "Closes the D-040-R001 lot-outline increment (the last open D-040 item): the confirm card's placeholder admits it draws no outline; the server half (M5-T020) and the MapLibre admission (M5-T022) are accepted and waiting for exactly this rendering work.",
+  "inputs": [
+    "project-control/reports/D-040-R001-mappluto-research.md (THE research pin: display-only discipline, +/-20ft accuracy is the source's own statement, NYC DCP attribution required, condo-unit lots carry NO polygon, multipolygons + holes occur)",
+    "project-control/tasks/M5-T020.json + project-control/reports/M5-T020-producer-report.md (the ACCEPTED server half: GET /api/v1/properties/{bbl}/lot-geometry semantics, typed outcomes single_lot/no_outline/multiple_features/invalid_geometry, flag-gated generic 404 when off, X-Correlation-ID)",
+    "project-control/reports/M5-T022-maplibre-admission-g5.md or the M5-T022 report file(s) under project-control/reports/ (maplibre-gl@6.7.0 ADMITTED and intentionally INERT until this task - the FIRST import happens here; no other new package is admitted)",
+    "packages/contracts/generated/lot_geometry.ts + packages/contracts/schemas/v1/lot_geometry.schema.json (the closed contract this UI consumes - READ-ONLY except the generated file's byte-identity duty below)",
+    "packages/contracts/fixtures/valid/lot_geometry/** (contract fixtures incl. the MultiPolygon/holes cases (LOT05/LOT06 lineage) and honest-empty outcomes - the web tests' input data, READ-ONLY)",
+    "services/api/app/api/v1/lot_geometry.py (READ-ONLY dependency: exact response envelope + status codes the client must mirror honestly)",
+    "apps/web/src/lib/address-api.ts + apps/web/src/lib/bounded.ts (the hardened-client discipline to mirror: documented status matrix, bounded reflection of every reflected string, cancellable time-bounded fetch, unexpected_response outcome)",
+    "apps/web/src/components/property/PropertyLookup.tsx:265 + apps/web/src/app/property/page.tsx (READ-ONLY flag architecture: the whole AddressResolutionScreen tree renders ONLY when the server-read INTERNAL_RULE_EVAL_ENABLED flag is on, so the lot-outline surface inherits the gate; never re-read the flag client-side, never NEXT_PUBLIC it)",
+    "apps/web/src/components/address/AddressConfirmCard.tsx:141-145 (the lot-outline placeholder to replace) + apps/web/src/components/address/__tests__/address-confirm.test.tsx:182 (the test asserting the placeholder today)",
+    "apps/web/e2e/harness/fixture_api.py + apps/web/e2e/helpers.ts + apps/web/e2e/confirm-journey.spec.ts (the Playwright harness pattern: the fixture API serves recorded responses; add the lot-geometry fixture route there)",
+    "packages/contracts/scripts/generate_ts_types.py (the generator to wire lot_geometry into --check/--write, mirroring the scenario wiring at lines 480-560; ci.yml:392 runs --check so CI drift coverage follows automatically)",
+    ".claude/rules/3d-ui-expansion.md (MapLibre GL JS is the mandated map library; no WebGL engine from scratch; provenance on every shape) + .claude/rules/frontend-web.md (contracts-only data, progressive disclosure, a11y as G3 acceptance evidence)",
+    "docs/design/astra-presentation-research.md (UI presentation contract: honest labeling posture the confirm card already follows)"
+  ],
+  "outputs": [
+    "apps/web/src/lib/lot-geometry-api.ts (NEW typed hardened client for GET /api/v1/properties/{bbl}/lot-geometry: documented status matrix mirrored from the route, bounded reflection, cancellable + time-bounded, typed outcomes incl. route-absent/404 and unexpected_response; no legal/geometry logic - transport + verification only)",
+    "apps/web/src/lib/__tests__/lot-geometry-api.test.ts (offline: contract fixtures through the client; every typed outcome + boundary/malformed/timeout paths)",
+    "apps/web/src/components/address/LotOutlineMap.tsx (NEW focused client component: MapLibre GL JS map rendering the display-only EPSG:4326 outline as a GeoJSON source/line+fill layers; MultiPolygon + holes rendered correctly; fitBounds to the outline; NYC DCP attribution on the map; +/-20ft approximate-outline copy; accessible region label + textual outcome summary; honest typed fallback UI when WebGL is unavailable or the fetch fails - never a blank div)",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx (vitest with maplibre-gl mocked at the module boundary: asserts source data passed to the map is exactly the fixture geometry (all rings), attribution + copy present, each typed outcome renders its honest state)",
+    "apps/web/src/components/address/AddressConfirmCard.tsx (placeholder at 141-145 replaced by the LotOutlineMap surface; ZoLa link and its BBL-absent branch KEPT verbatim; all existing testids preserved except lot-outline-placeholder, which is superseded by the new surface's testids)",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx (updated for the new surface; the source-scan style assertions kept honest)",
+    "apps/web/src/app/layout.tsx + apps/web/src/app/globals.css (ONLY if needed for the maplibre-gl CSS import / map container sizing - additive, justified in the report)",
+    "apps/web/e2e/lot-outline.spec.ts (NEW Playwright spec: flag-on journey reaches the confirm card and the lot-outline surface shows the outline state for a fixture BBL, honest-empty for the condo-unit fixture, review posture for multiple_features; asserts stable copy/attribution/testids, not pixels)",
+    "apps/web/e2e/harness/fixture_api.py (additive: lot-geometry fixture route serving the recorded contract fixtures + a flag-off/404 mode)",
+    "packages/contracts/scripts/generate_ts_types.py (lot_geometry wired into --check and --write exactly like scenario; the committed generated/lot_geometry.ts must come out BYTE-IDENTICAL - any diff is a defect to reconcile and justify, never silently regenerate)",
+    "project-control/reports/M5-T023-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/lot-geometry-api.ts",
+    "apps/web/src/lib/__tests__/lot-geometry-api.test.ts",
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "apps/web/src/app/layout.tsx",
+    "apps/web/src/app/globals.css",
+    "apps/web/e2e/lot-outline.spec.ts",
+    "apps/web/e2e/confirm-journey.spec.ts",
+    "apps/web/e2e/helpers.ts",
+    "apps/web/e2e/harness/fixture_api.py",
+    "packages/contracts/scripts/generate_ts_types.py",
+    "packages/contracts/generated/lot_geometry.ts",
+    "project-control/reports/M5-T023-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "packages/contracts/schemas/**",
+    "packages/contracts/fixtures/**",
+    "apps/web/package.json",
+    "package.json",
+    "package-lock.json",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/address-api.ts",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/app/property/page.tsx",
+    "apps/web/src/components/property/**",
+    "apps/web/src/components/compare/**",
+    "apps/web/src/components/rule-evaluation/**",
+    "apps/web/src/components/survey-review/**",
+    "tools/**",
+    ".github/**",
+    "render.yaml",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "single_lot_outline_rendered",
+      "input": "flag-on tree + confirm card with a canonical BBL + the single-lot contract fixture served through the mocked client/fixture route",
+      "expected": "the lot-outline surface replaces the placeholder: MapLibre map initialized with the fixture geometry as a GeoJSON source (asserted fixture-derived, all coordinates untouched), outline + fill layers present, fitBounds to the outline, NYC DCP attribution visible on the map, the +/-20ft approximate-outline copy rendered, the ZoLa link still present and unchanged, display-only posture (no area/dimension text derived from coordinates anywhere)"
+    },
+    {
+      "id": "S2",
+      "case": "multipolygon_and_holes",
+      "input": "the MultiPolygon and holes contract fixtures (LOT05/LOT06 lineage) through the same path",
+      "expected": "every polygon and every interior ring reaches the map source exactly as in the fixture (no ring dropped, no first-polygon pick, no hole filled); the rendered state carries the same honest copy; vitest asserts the source data structurally equals the fixture geometry"
+    },
+    {
+      "id": "S3",
+      "case": "honest_empties",
+      "input": "condo-unit no-outline outcome fixture; multiple_features review outcome fixture",
+      "expected": "condo unit -> NO map is fabricated: a typed honest-empty state naming the reason (condo unit lots carry no polygon; the billing lot holds the merged outline) with the ZoLa link as the escape hatch; multiple_features -> review posture copy, never a silent first-pick outline; both states keyboard-reachable with the same testid discipline"
+    },
+    {
+      "id": "S4",
+      "case": "failure_posture",
+      "input": "route returns generic 404 (API flag off); network error; timeout; malformed/contract-violating body; WebGL unavailable",
+      "expected": "every failure renders a typed, honest fallback that states the outline is unavailable and keeps the ZoLa link; NO crash, NO blank silent container, NO retry storm (bounded single fetch per BBL view); the client maps undocumented (status,body) pairs to unexpected_response; when the web flag is off the surface never mounts and no fetch fires (inherited from the PropertyLookup gate - asserted)"
+    },
+    {
+      "id": "S5",
+      "case": "generator_drift_coverage",
+      "input": "python packages/contracts/scripts/generate_ts_types.py --check at HEAD; then a mutation run with a perturbed generated/lot_geometry.ts",
+      "expected": "--check covers lot_geometry (exit 0 at HEAD with the committed file BYTE-IDENTICAL; the perturbed copy makes --check exit non-zero naming lot_geometry) - the recorded M5-T020 follow-up closed; ci.yml:392 needs no change"
+    },
+    {
+      "id": "S6",
+      "case": "regression_a11y_modularity",
+      "input": "full web vitest suite + typecheck + lint + build + full Playwright suite on the pushed head; python tools/modularity_check.py --check",
+      "expected": "ALL existing web tests pass (address-confirm updated honestly, nothing else weakened); the map region is an accessibly-labeled landmark with a textual outcome summary for screen readers; keyboard navigation reaches the ZoLa link and any map controls; modularity EXIT 0 (new files focused, AddressConfirmCard does not absorb map logic); CI web + web-e2e jobs fully green"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "human-journey-reviewer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "maplibre-gl is browser-only: it must live in a client component loaded without SSR (dynamic import or guarded mount) or next build breaks; this is its FIRST import - watch bundle impact and keep it scoped to the confirm surface",
+    "WebGL is not guaranteed in headless CI Chromium: the component must detect unavailability and render the honest typed fallback; Playwright asserts stable copy/attribution/testids, never pixels",
+    "display-only discipline: any area/dimension/measurement math from 4326 coordinates in web code is a defect (grep-provable); the map only DRAWS what the contract delivered",
+    "flag discipline: INTERNAL_RULE_EVAL_ENABLED stays server-read; never introduce a NEXT_PUBLIC flag mirror; the surface inherits the PropertyLookup gate",
+    "generated lot_geometry.ts must stay byte-identical when the generator is wired; a diff means the wiring diverges from what M5-T020 generated - reconcile, never silently regenerate the committed artifact",
+    "the ZoLa link, its BBL-absent branch, and the +/-20ft approximate-outline copy are KEEP requirements; removing or weakening them fails G3",
+    "bounded reflection: every string reflected from the response goes through boundedText/boundedToken before rendering; geometry coordinates are validated as numbers before reaching MapLibre; nothing from the response is interpolated into map style expressions"
+  ],
+  "blockers": [],
+  "path_notes": "MODULARITY: LotOutlineMap.tsx owns ALL map behavior (new focused module); lot-geometry-api.ts owns ALL transport (mirrors address-api.ts, which is READ-ONLY reference); AddressConfirmCard.tsx changes are minimal composition (placeholder block swapped for the new surface) - it must not absorb map or transport logic; public interfaces of existing modules stay stable; layout.tsx/globals.css edits are additive-only for the maplibre CSS and justified in the report. FLAG ARCHITECTURE (READ-ONLY): PropertyLookup.tsx:265 renders AddressResolutionScreen only when the server-read flag is on - the lot-outline surface inherits this; do not add a second flag read. CONTRACT: consume packages/contracts/generated/lot_geometry.ts types directly (frontend-web rule: contracts only, never a competing schema); the closed-contract byte-identity duty extends to the generator wiring. E2E: the harness fixture_api.py serves recorded contract fixtures; never invent geometry bytes. WORKTREE: dispatched producer works in its own worktree reset to the task's base SHA on candidate/D-024-mrl-option-b; primary checkout is orchestrator-only.",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client, no local npm)",
+    "python packages/contracts/scripts/generate_ts_types.py --check",
+    "python tools/modularity_check.py --check"
+  ],
+  "created_at": "2026-09-13T02:27:11.252630+00:00",
+  "updated_at": "2026-09-13T02:27:11.446262+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T02:27:11.252630+00:00"
+}

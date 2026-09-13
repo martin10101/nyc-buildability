@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-13T01:20:18+00:00",
  "created_at": "2026-09-13T01:20:18+00:00",
- "updated_at": "2026-09-13T01:20:18+00:00",
+ "updated_at": "2026-09-13T02:32:24+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "0bfcc08b26560dfa97b23bc25b54bf89e49b9572",
@@ -27,7 +27,7 @@
   "D-043-R003",
   "D-043-R004"
  ],
- "requirements_content_digest_sha256": "0206644998025f8620e53ba83451b3bcee01889bedb728cdd8ac5974344ac3e4",
+ "requirements_content_digest_sha256": "a82c113ccf520f449e3138c21e40cdec3de45c7f88d999767d09eda709c9eaee",
  "sources": [
   {
    "file": "source-001.md",
@@ -58,6 +58,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from interactive chat; scope notes in source-001.md; the old 'no hosted web deploy before the RCE fix' restriction's condition is satisfied by D-042/M5-T021"
+  },
+  {
+   "at": "2026-09-13T02:32:24+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M5-T024 (owner-executed Render internal-deploy checklist) to D-043-R001..R004 (append-only). Digest resynced 02066449 -> a82c113c. (affected_tasks intentionally NOT pre-populated: rows accrue at verification time per the D-040 authority_note precedent.)"
   }
  ]
 }
