@@ -585,7 +585,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-042-nextjs-15-5-24-upgrade/manifest.json"
+  },
+  {
+   "directive_id": "D-043",
+   "slug": "internal-web-deploy",
+   "title": "Owner 2026-09-12: INTERNAL web deploy on Render AUTHORIZED - unlisted apps/web service, unified flag on, private API preserved, owner performs dashboard steps; NOT a public launch; from an advisory-free post-M5-T021 head.",
+   "status": "active",
+   "issued_at": "2026-09-12",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-043-internal-web-deploy/manifest.json"
   }
  ],
- "updated_at": "2026-09-12T23:26:26+00:00"
+ "updated_at": "2026-09-13T01:20:18+00:00"
 }

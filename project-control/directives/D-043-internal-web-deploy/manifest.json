@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-043",
+ "version": 1,
+ "slug": "internal-web-deploy",
+ "title": "Owner 2026-09-12: INTERNAL web deploy on Render AUTHORIZED - unlisted apps/web service, unified flag on, private API preserved, owner performs dashboard steps; NOT a public launch; from an advisory-free post-M5-T021 head.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-12",
+ "captured_at": "2026-09-13T01:20:18+00:00",
+ "created_at": "2026-09-13T01:20:18+00:00",
+ "updated_at": "2026-09-13T01:20:18+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "0bfcc08b26560dfa97b23bc25b54bf89e49b9572",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the proposed authorization line verbatim in the live session 2026-09-12 ET, immediately after the first fully green CI (source-001.md)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-043-R001",
+  "D-043-R002",
+  "D-043-R003",
+  "D-043-R004"
+ ],
+ "requirements_content_digest_sha256": "0206644998025f8620e53ba83451b3bcee01889bedb728cdd8ac5974344ac3e4",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T01:20:18+00:00",
+   "content_digest_sha256": "f058b5e493a6a409612d539368ed8a151154ca705e8de1ab54259103d5d13a39"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "deployment_authorization_internal",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "one bounded deployment effort: internal unlisted Render service for apps/web from an advisory-free head, flag on, owner-performed dashboard steps, owner-confirmed live URL",
+  "prohibited": "public launch/listing; disclosing the private API URL; credentials in repo/chat; any change to PR #241, G6, Supabase, or the expansion hold posture"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T01:20:18+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from interactive chat; scope notes in source-001.md; the old 'no hosted web deploy before the RCE fix' restriction's condition is satisfied by D-042/M5-T021"
+  }
+ ]
+}

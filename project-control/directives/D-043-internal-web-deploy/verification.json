@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-043",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-043 requirements bind the non-ledger sentinel D-043-BOOTSTRAP (D-038..D-042 precedent; validator c5 forbids sentinel task_ids in task_verifications). Tasks contracted under this directive cite D-043:<requirement ids> and verify through their own DCV rows in the usual way.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

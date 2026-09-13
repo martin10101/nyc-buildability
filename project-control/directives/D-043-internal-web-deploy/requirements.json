@@ -1,0 +1,138 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-043",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-13T01:20:18+00:00",
+ "requirements": [
+  {
+   "id": "D-043-R001",
+   "text": "Deploy apps/web as an INTERNAL/dev Render web service from an advisory-free head at or after the M5-T021 Next.js 15.5.24 upgrade: unlisted URL, the unified internal feature flag ENABLED, NEXT_PUBLIC_API_BASE_URL pointed at the existing private API service, internal/dev labeling and the standing disclaimers intact. Contract as normal gated ledger task(s) citing D-043:D-043-R001.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-043-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "deployed service reachable at the unlisted URL; flag-on address flow resolves a real address end-to-end against the live API",
+   "required_evidence": "accepted ledger task(s); owner confirms the live URL works on their device",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-043-R002",
+   "text": "PRIVACY PRESERVED: the API URL remains private (existing standing rule). The web service's own URL is unlisted and shared only by the owner. No repository file, log, chat message, or client-visible artifact may disclose the private API address beyond the Render environment configuration; the browser bundle carries only the env-injected base URL as already designed.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-043-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "grep of repo/artifacts for the service URLs; bundle env posture",
+   "required_evidence": "no private URL committed or posted; env-only configuration",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-043-R003",
+   "text": "OWNER-ACTION BOUNDARY: Render dashboard operations (service creation/confirmation, environment variables, any keys incl. Geoclient) are performed or confirmed by the OWNER. The task's return item hands the owner the exact service settings and env-var checklist to apply; credentials never enter repo or chat (Section 20 unchanged).",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-043-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "task return-report checklist; absence of credentials in repo/chat",
+   "required_evidence": "owner-applied dashboard settings confirmed in the return report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-043-R004",
+   "text": "SCOPE LIMIT: this is NOT a public launch - no public listing, marketing, indexing, or removal of internal/dev posture; the visual redesign remains a separate effort; PR #241, G6, Supabase-before-credentials, and the expansion hold (outside the Packet 3 release) are unchanged.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-043-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-12"
+   },
+   "dependencies": [],
+   "required_harness": "service/robots posture; ledger contents",
+   "required_evidence": "no public-launch action cites D-043",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
