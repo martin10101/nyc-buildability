@@ -1900,6 +1900,19 @@
    "schema_version": "directive_verification/v2",
    "verified_at": "2026-09-13T00:40:00+00:00",
    "note": "EMPTY-SET verification. M0-T157 cites D-001:ALL for s19 governance coverage, but the canonical resolver derives ZERO D-001 requirements applicable to this packet: all 136 D-001 requirements bind by a task_ids conjunction that EXCLUDES M0-T157 (reg.evaluate_task_refs: ok=True, applicable_ids=[], reasons=[], invalid_refs=[]). This row exists because accept() fail-closes when a CITED directive has no task_verification row independent of applicability (reproduced: pc._directive_accept_reasons returned 'D-001/M0-T157: no task_verification row (fail closed)'; with this row injected in-memory reasons=[] deferrals=[]). Material verified from primary evidence at HEAD e0f7b2d1: git show 14bdcc73 = one test function (test_s12 derives max D-nnn+500, assertNotIn before use; +8/-1); resolver/validator/registry forbidden paths byte-unchanged; ResolverTests 5/5 OK; control-plane CI green (run 34726577993 @18ee6b79); validate_directive_compliance.py --check EXIT 0; git log 14bdcc73..e0f7b2d1 over the 2 allowed_paths EMPTY. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD e0f7b2d1; re-stamp to git rev-parse HEAD at accept if HEAD advances (computed material identity a015e85ae77bb0f34c0f4e6eb272141d8eb2e6b1d810623770692b2f4b3c270b unchanged while the 2 allowed_paths are unchanged since 14bdcc73)."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T158",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "b7d2d7021a3375b11fec0ab72550dbf7c6728bdd",
+   "reviewed_manifest_sha256": "c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T02:05:00+00:00",
+   "requirements": [],
+   "note": "EMPTY-SET verification. M0-T158 cites D-001:ALL for s19 governance coverage, but the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs ok=True, applicable_ids=['D-044-R001','D-044-R002']; D-001 applicable subset empty; reasons=[]). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independent of applicability (reproduced in-process: D-001/M0-T158 'no task_verification row (fail closed)'; injecting this empty-set row -> reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD b7d2d702; re-stamp to accept-time HEAD if it advances - identity c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e is unchanged while the task's 2 allowed_paths are unchanged."
   }
  ],
  "updated_at": "2026-08-18T23:10:02+00:00"

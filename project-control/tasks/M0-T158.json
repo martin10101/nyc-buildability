@@ -50,14 +50,14 @@
   "reviewer_agents": [
     "code-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "none beyond typo - the harness and CI fail closed"
   ],
   "blockers": [],
   "created_at": "2026-09-13T01:49:01.303272+00:00",
-  "updated_at": "2026-09-13T01:53:38.453202+00:00",
+  "updated_at": "2026-09-13T02:00:08.135431+00:00",
   "directive_refs": [
     {
       "directive_id": "D-044",
@@ -78,5 +78,7 @@
     "python tools/test_context_budget_check.py",
     "python tools/context_budget_check.py"
   ],
-  "worktree": "primary-checkout"
+  "worktree": "primary-checkout",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T02:00:08.135431+00:00"
 }

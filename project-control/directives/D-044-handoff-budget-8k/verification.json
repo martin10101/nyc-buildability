@@ -4,5 +4,47 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-044 requirements bind the non-ledger sentinel D-044-BOOTSTRAP (D-038..D-042 precedent). Tasks contracted under this directive cite D-044:<requirement> and verify through their own DCV rows.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-044",
+   "task_id": "M0-T158",
+   "applicable_requirement_ids": [
+    "D-044-R001",
+    "D-044-R002"
+   ],
+   "reviewed_sha": "b7d2d7021a3375b11fec0ab72550dbf7c6728bdd",
+   "reviewed_manifest_sha256": "c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T02:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-044-R001",
+     "state": "PASS",
+     "evidence": [
+      "VALUE == 8000: git show b7d2d702:tools/context_budget.json = \"handoff_token_budget\": 8000. Diff d1ab1f31 over that file = single hunk, one changed value (-4000/+8000).",
+      "HARNESS GREEN at HEAD: python tools/test_context_budget_check.py = 15 tests OK (EXIT 0); python tools/context_budget_check.py = PASS (EXIT 0).",
+      "evaluate_task_refs ok=True, applicable==cited=={D-044-R001,D-044-R002}, reasons=[] (no uncited-applicable requirement)."
+     ],
+     "verified_at": "2026-09-13T02:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b7d2d7021a3375b11fec0ab72550dbf7c6728bdd"
+    },
+    {
+     "id": "D-044-R002",
+     "state": "PASS",
+     "evidence": [
+      "SCOPE LIMIT held: eager_token_budget still 6000 at HEAD; the d1ab1f31 diff over tools/context_budget.json changes ONLY handoff_token_budget - every other key/marker/allowlist byte-identical to the pre-image.",
+      "CHECK LOGIC UNTOUCHED: git log d1ab1f31~1..b7d2d702 -- tools/context_budget_check.py tools/test_context_budget_check.py = EMPTY (forbidden_paths honored).",
+      "test_context_budget_check.py 15/15 OK confirms the unchanged enforcement logic still guards the config."
+     ],
+     "verified_at": "2026-09-13T02:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "b7d2d7021a3375b11fec0ab72550dbf7c6728bdd"
+    }
+   ],
+   "note": "Independent DCV of M0-T158 (D-044 handoff_token_budget 4000->8000, one surgical config value). Both requirements reproduced from primary evidence at HEAD b7d2d702: single-value diff (git show d1ab1f31), value==8000 + eager==6000 at HEAD, forbidden check-script/test immutability (git log empty), harness green (test_context_budget_check 15/15 OK, context_budget_check PASS), validator --check EXIT 0, evaluate_task_refs applicable==cited, in-process accept dry-run reasons=[] deferrals=[]. Frozen identity: git log d1ab1f31..b7d2d702 over the 2 allowed_paths EMPTY. Computed material identity c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e (pc._task_git_identity, reviewed_sha=None -> HEAD) == submit content_manifest_sha256 == G1 gate manifest. G1 reviewer code-reviewer != producer orchestrator. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD b7d2d702; it may be mechanically re-stamped to accept-time HEAD while this task's 2 allowed_paths diff vs its frozen material (d1ab1f31) stays empty; the computed material identity is unchanged while those allowed_paths are unchanged."
+  }
+ ]
 }
