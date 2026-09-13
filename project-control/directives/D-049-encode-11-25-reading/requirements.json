@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 7,
  "producer": "orchestrator",
- "updated_at": "2026-09-13T06:10:09+00:00",
+ "updated_at": "2026-09-13T08:30:00+00:00",
  "requirements": [
   {
    "id": "D-049-R001",
@@ -13,7 +13,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -26,7 +29,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -39,7 +46,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -52,7 +62,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -65,7 +79,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -78,7 +95,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -91,7 +112,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -104,7 +128,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -117,7 +145,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -130,7 +161,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -143,7 +178,10 @@
    "classification": "sequencing",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -156,7 +194,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -169,7 +211,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-049-BOOTSTRAP"],
+    "task_ids": [
+     "D-049-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -182,7 +226,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],

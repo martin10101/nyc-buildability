@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T06:10:09+00:00",
  "created_at": "2026-09-13T06:10:09+00:00",
- "updated_at": "2026-09-13T06:10:09+00:00",
+ "updated_at": "2026-09-13T08:30:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "802cdd49767580ee45103c5c3bb742128f0e3036",
@@ -30,7 +30,7 @@
   "D-049-R006",
   "D-049-R007"
  ],
- "requirements_content_digest_sha256": "107e8f4544f2e557fa1331e7c69f3813bdebac24c215dc2f52cc23d6b18b2685",
+ "requirements_content_digest_sha256": "5fff598846e2726049218137147883495d2846a97b17d04faacc83bcdf849920",
  "sources": [
   {
    "file": "source-001.md",
@@ -61,6 +61,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-048 precedent); owner accepted the standing offer after two owner research passes, companion live verification, and the in-repo corroborating witness; relay to the live build session (ctl24-ce) follows immediately per R007"
+  },
+  {
+   "at": "2026-09-13T08:30:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M4-T012 (definitive D-049 rescope) to D-049-R001..R006 (append-only). Digest resynced 107e8f45 -> 5fff5988."
   }
  ]
 }
