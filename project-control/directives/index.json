@@ -633,7 +633,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-046-parallel-family-production/manifest.json"
+  },
+  {
+   "directive_id": "D-047",
+   "slug": "sonnet-producers-ramp-10",
+   "title": "Owner 2026-09-13: campaign producers switch to claude-sonnet-5 (builders ONLY - reviewers/orchestrator stay on the D-004 pinned set; twice-failed tasks rebuild on claude-opus-4-8) and the D-046 concurrency ceiling rises 3 -> 10 with a mandatory ramp (start 3-4, widen only while review/CI latency stays healthy).",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-047-sonnet-producers-ramp-10/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T04:35:34+00:00"
+ "updated_at": "2026-09-13T04:43:49+00:00"
 }
