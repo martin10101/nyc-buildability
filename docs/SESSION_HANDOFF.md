@@ -65,7 +65,12 @@ output at every owner-facing seam (wave summaries, landings, the handoff owner-i
 appending NEW requests, send one batched PushNotification (desktop; phone when Remote Control is
 connected) — genuinely new asks only; the companion session owns the in-conversation relay leg.
 Quiet rule narrowed: owner-addressed research requests are never silent. Non-blocking unchanged —
-notify, then proceed.** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
+notify, then proceed.** **OWNER RESEARCH RETURNED 2026-09-13 (post-wave-3): Astra deep-research
+results received and archived at `docs/research/owner-research/NYC_Buildability_Research_2026-09-13.md`
+(discovery aid ONLY, R002); RQ-003/RQ-004 stamped ANSWERED, RQ-005 answered-in-part (residual:
+the DCM field-level width convention — DCP Technical Review / Borough Topo Office is the named
+target); no conflict with any accepted rule value; wave-4 packets should consult it FIRST to
+cut discovery time, then capture officially.** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
 PHONE ACCESS: the pushed branch's docs/RESEARCH_REQUESTS.md is the owner's phone-readable copy
 (GitHub URL in the doc header) — every queue change commits AND pushes in the same working step,
 never dirty-local or batched; owner-returned results are stamped ANSWERED (date + named
