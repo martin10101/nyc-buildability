@@ -55,8 +55,13 @@ Four questions, verbatim from the task packet: (1) where C1-C8 commercial FAR is
 overlays on Residence Districts work, including where the "residential rules govern residential
 uses" rule lives and where overlay commercial FAR caps live; (3) where residential equivalents of
 commercial districts are defined; (4) any general rule specific to commercial suffixes/variants.
-Answered in sections 3-6 below, each with section number, exact title, verbatim quote, official URL,
-and retrieval date.
+Answered in sections 3-6 below with section number, exact title, verbatim quote, official URL, and
+retrieval date - with ONE disclosed exception: for the standalone commercial-FAR half (33-122 and
+33-123), this report evidences the sections' existence, exact scope, and table STRUCTURE, but does
+NOT capture their exact titles' verbatim openings or district-by-district FAR values; those are
+deferred to build family 2's own research step (see honest limitation 7 and section 9).
+[ORCH-CORRECTED per G1 F5: the original sentence claimed full verbatim coverage for all four parts;
+the standalone half is structural-only.]
 
 ## 2. Retrieval method (thin-client, verbatim samples only)
 
@@ -377,6 +382,12 @@ sha256 values above are the durable provenance record.
    channel carries slightly higher transcription risk than a text-layer PDF and should be spot-checked
    again by whichever build task first codes a 33-121/33-122 numeric value into a rule file, per this
    project's fail-closed provenance discipline.
+7. [ORCH-CORRECTED per G1 F5] The standalone commercial-FAR tables (33-122 commercial-only and
+   33-123 community-facility/mixed, covering C1-6+/C2-6+/C3-C8) are evidenced here by section
+   number, scope, and table structure ONLY - their exact titles' verbatim text and district-by-
+   district FAR values are NOT captured in this report and MUST be captured verbatim from a
+   text-source channel by build family 2's research step before any 33-122/33-123 value is coded
+   (G1 reviewer advisory A2 concurs). Section 1's completeness claim is corrected accordingly.
 
 ## 8. Open questions (recorded, never resolved by assumption - route to D-048/architect review)
 
@@ -416,8 +427,9 @@ own A1 split:
 
 1. **Overlay commercial/community-facility FAR** (ZR 33-121) - covers C1-1..C1-5/C2-1..C2-5 only;
    inputs: underlying Residence District (or Greater-Transit-Zone/R1-R2-adjusted per 34-111(a)/(b)),
-   use mix (commercial-only / community-facility-only / mixed). Small, well-bounded table (19 rows,
-   3 columns) matching the residential rule family's own table-driven pattern.
+   use mix (commercial-only / community-facility-only / mixed). Small, well-bounded table (20 rows
+   [ORCH-CORRECTED per G1 F6: was 19], 3 columns) matching the residential rule family's own
+   table-driven pattern.
 2. **Standalone commercial FAR** (ZR 33-122/33-123) - covers C1-6+/C2-6+/C3/C4/C5/C6/C7/C8; two
    parallel tables (commercial-only vs. community-facility/mixed) keyed directly by commercial
    district code, no Residence District lookup needed for this half.
