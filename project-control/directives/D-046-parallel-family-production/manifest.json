@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-046",
+ "version": 1,
+ "slug": "parallel-family-production",
+ "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; concurrency backs off under resource pressure, never quality.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T04:35:34+00:00",
+ "created_at": "2026-09-13T04:35:34+00:00",
+ "updated_at": "2026-09-13T04:35:34+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner answered 'Yes' verbatim to the explicit scale-up offer (parallel family production, 2-3 producers, within all existing gates) in the live companion session 2026-09-13 (source-001.md #owner-message-verbatim)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-046-R001",
+  "D-046-R002",
+  "D-046-R003",
+  "D-046-R004",
+  "D-046-R005"
+ ],
+ "requirements_content_digest_sha256": "914fd95f01d9ba14bce69f25a1da6dff036d0753ab9d0ba9fdceef9c6526744b",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T04:35:34+00:00",
+   "content_digest_sha256": "0b36c5661ba6af9ceaa774634186681f1fee00104f0ce7c9e7ab74d78674bbb2"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "execution_scaling_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "up to 3 concurrent writing producers on pairwise-disjoint D-045 campaign tasks, isolated worktrees, standing orchestration policy; backoff under resource pressure",
+  "prohibited": "overlapping concurrent scopes; any relaxation of gates, review independence, §G dependency policy, sequential integration, or orchestrator sole authority; citing parallelism to skip or thin review"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T04:35:34+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043/D-045 precedent); owner accepted the explicit offer incl. cost posture and non-compressible quality stages; relay to the live build session (ctl24-ce) follows immediately per R005"
+  }
+ ]
+}

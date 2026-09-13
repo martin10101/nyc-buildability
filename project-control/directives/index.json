@@ -621,7 +621,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-045-citywide-rule-coverage/manifest.json"
+  },
+  {
+   "directive_id": "D-046",
+   "slug": "parallel-family-production",
+   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-046-parallel-family-production/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T04:10:12+00:00"
+ "updated_at": "2026-09-13T04:35:34+00:00"
 }
