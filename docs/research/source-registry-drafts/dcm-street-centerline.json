@@ -1,0 +1,106 @@
+[
+  {
+    "draft_status": "NON-FINAL RESEARCH DRAFT (M4-T013, D-045-R003 B2). Pilot-grade + this full first-pass validation; not an applied source_registry record. No connector built. A later connector packet must apply/confirm the registry mechanism, capture recorded-official fixtures (incl. the free-text-width and irregular/paper cases), and add contract tests. Field-level definition of the width concept is an OPEN QUESTION (see known_limitations / open_questions).",
+    "source_id": "nyc-dcp-dcm-street-centerline-arcgis",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "Digital City Map (DCM) - Street Center Line (official DCP_GIS ArcGIS feature service) - RECOMMENDED PRIMARY channel for mapped street width + mapped-street status",
+    "official_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer",
+    "source_type": "official_arcgis_feature_service",
+    "api_dataset_identifier": "DCM_Street_Center_Line/FeatureServer layer 0 (owner DCP_GIS org 'NYC DCP Mapping Portal'; ArcGIS Online item 9ce5b83f139748f29eb92cdabeb29398, type Feature Service; discovered via arcgis.com/sharing/rest/search?q=owner:DCP_GIS DCM street, E4, 2026-09-13)",
+    "authentication": {
+      "required": false,
+      "notes": "Keyless public feature service (same DCP_GIS portal as MapPLUTO/zoning-features; anonymous query verified live 2026-09-13, E5). No credential material of any kind is sent or stored. A key requirement would be routed to the owner boundary; none exists here."
+    },
+    "rate_limits": {
+      "published_limit": null,
+      "notes": "No published numeric limit; ArcGIS Online HTTP 429 contractually possible (handle via bounded retry + Retry-After, per the M2-T007/M2-T009 resilience posture). maxRecordCount 2000 bounds every response (E5).",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Monthly per the official metadata Use Limitations: 'Digital City Map (DCM) data changes often and is updated monthly. Updates will include recent city map alterations adopted by City Council.' (E3, verbatim). Live editingInfo.dataLastEditDate 1764617995374 ms = 2025-12-01T19:39:55Z observed 2026-09-13 (E5), consistent with the metadata Summary 'Dataset last updated: October 31, 2025' and Publication date 2025-10-31 (E3). dataLastEditDate is the per-ingest source-freshness provenance stamp only (never a transport-staleness signal - owner two-staleness rule).",
+    "geographic_coverage": "Citywide, all five boroughs; 53,986 line features (ArcGIS row count 2026-09-13, E5; matches metadata object count 53986, E3). Metadata Description (E3, verbatim): 'Citywide street center-line features representing official street names and widths shown on the Official City Map of New York City. Features include paper streets gathered from Borough Final Section maps (except Staten Island). Alteration Maps, Zoning Maps and street name index cards on archive in the Technical Review Division at the Department of City Planning. Record streets and unmapped streets are included in this dataset for context and informational purposes only.' Borough domain (E3): Bronx, Brooklyn, CW (City-wide or more than one borough), Manhattan, Queens, Staten Island.",
+    "fields_available": {
+      "note": "18 fields on layer 0, live-verified 2026-09-13 (E5). Geometry esriGeometryPolyline; spatialReference wkid 102718 / latestWkid 2263 = EPSG:2263 (NAD83 New York-Long Island State Plane, US survey feet) - byte-verified in the official metadata Spatial Reference block (E3) and live on the service (E5). Output formats 'JSON, geoJSON, PBF' and supportsPagination true (E5). NOTE the per-channel field-name divergence vs the SODA companion: ArcGIS carries Feat_status / Streetwidth / RoadwayType / Build_Status where SODA truncates to feat_statu / streetwidt / roadway_typ / build_stat - a connector must map from the live schema of whichever channel it queries, never assume names across channels (S4 cross-channel finding).",
+      "field_definitions_byte_verified_from_metadata_E3": {
+        "Streetwidth": "STRING(50). NO field-level definition text is present in the official metadata for this field (only alias/type/width) - the ONLY authoritative characterization of the width concept is the dataset Summary/Description phrase 'official street names and widths shown on the Official City Map of New York City' (E3). The Official-City-Map framing = the legally MAPPED street width (as distinct from paved/roadbed width); empirically corroborated (E6: West 100 St Manhattan = 60, vs Geoclient/LION paved 30). The exact geometric definition (mapped right-of-way / property-line-to-property-line vs bed width) is NOT spelled out at field level = OQ-1. The field is FREE TEXT: observed domain (E7) includes clean integers ('60','80','100'), decimals ('49.5'), ranges ('50-60','60-75','75-90'), inequalities ('>75','>80','<60'), approximations ('~60','~80'), prose ('Around 60','More or less 40','Probably between 80 - 90','Regular but unknown.'), 'Width Irregular' (45), 'n/a' (2954), and 'Unknown'/'Unknown but <75'/'Unknown but >75' (1404+). Units are feet where numeric. A connector MUST parse conservatively and fail closed - never parse-and-guess.",
+        "Feat_Type": "STRING(50). 'The street line type from the City Map, indicating if the street centerline is a mapped or unmapped street.' Domain: Former_St, Mapped_St, Not_mapped (E3).",
+        "Feat_statu": "STRING(50). No field-level description captured in metadata (E3). Observed value 'City_St' on live samples (E1). Value domain = OQ-2.",
+        "Street_NM": "STRING(100). 'Name of the street or right of way on record at local borough topographic office.' (E3). Not a stable join key: width varies per segment of one named street, so determinations are per-segment/per-geometry, never per street name (S2/S4).",
+        "HonoraryNM": "STRING(100). 'A co-name, or additional but secondary name, given to an official street name through Local Law legislation.' (E3).",
+        "Old_ST_NM": "STRING(254). 'After a street name is officially changed through a street renaming, the old name is archived in this field.' (E3).",
+        "Route_Type": "STRING(50). 'Route type shown on the Master Plan of Arterial Highways and Major Streets referenced in Appendix H of NYC Zoning Resolution.' Domain: Arterial, Former_ROW, General_use, Major_street, Other (E3). Directly ZR-relevant (Appendix H) but distinct from the wide/narrow width test.",
+        "Record_ST": "STRING(50). 'Flag that indicates if the right of way is a record street shown on the City Map. A record street is a type of unmapped street that was recorded at local Borough President's topographic offices and is displayed on the City Map and Zoning Map. New unmapped streets are not recorded and displayed on the City Map or Zoning Map.' Value: yes = record street (E3).",
+        "RoadwayTyp": "STRING(50). No field-level description captured in metadata (E3). Observed value 'Surface_ST' on live samples (E1). Domain = OQ-2.",
+        "Build_Stat": "STRING(50). No field-level description captured in metadata (E3). Observed values 'Improved'/'Unimproved' on live samples (E1/pilot). Domain = OQ-2.",
+        "Paper_ST": "STRING(50). 'Flag that indicates if feature is a paper street. A paper street is a street that is officially mapped but is not physically built and only appears on paper on the Official City Map.' Value: yes (E3). Legal treatment of paper streets must come from the ZR text, not assumption (S2 caveat).",
+        "Stair_ST": "STRING(50). 'Flag that indicates if feature is a stair street. A stair street is a street segment that contains steps or stairs to accommodate foot traffic.' Value: yes (E3).",
+        "CCO_ST": "STRING(50). 'Non city-owned street made eligible for public use and capital improvements through a Corporation Counsel Opinion (CCO) of Dedication.' Value: yes (E3).",
+        "Marg_Wharf": "STRING(50). 'A designated area on or near the waterfront under the jurisdiction of Small Business Services (SBS) and displayed as \"Marginal Street, Wharf or Place\". It is not the same as an official street but is shown on the City Map.' Value: yes (E3).",
+        "Edit_Date": "DATE. 'The date the record was last edited.' (E3).",
+        "OBJECTID": "esriFieldTypeOID (E5). Shape geometry = polyline coordinates (E3/E5)."
+      }
+    },
+    "terms_usage_notes": "DCP informational-purposes-only disclaimer (metadata Use Limitations / Resource Constraints, E3, verbatim): 'This dataset is provided by the Department of City Planning (DCP) on DCP's website for informational purposes only. DCP does not warranty the completeness, accuracy, content, or fitness for any particular purpose or use of the dataset ... DCP and the City are not liable for any deficiencies ...'. Not a legal boundary survey. Attribution to NYC DCP expected on any display or derived output.",
+    "connector_implementation": "PLAN ONLY (no connector in M4-T013). Recommended for the later B2 connector packet: allowlisted per-segment / per-area geometry queries (pinned service root; bounded where clause and outFields subset; deterministic paging with orderByFields=OBJECTID ASC + resultOffset honoring exceededTransferLimit; maxRecordCount 2000), CRS validation before any coordinate interpretation (native EPSG:2263; request f=geojson&outSR=4326 ONLY as display transport, never for measurement - mirror the MapPLUTO two-CRS discipline), a typed free-text-width parser (numeric -> value; range/inequality/approx/prose/'Width Irregular'/'n/a'/'Unknown' -> width_indeterminate, fail closed to NARROW so the conservative non-wide FAR is never over-ridden), separate raw/canonical-normalized digests, and M1-T009 resilience primitives. Never a bulk citywide mirror on the thin client (low-storage policy).",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No YYYYMM version label on the ArcGIS channel; provenance pins use editingInfo.dataLastEditDate (2025-12-01T19:39:55Z observed 2026-09-13, E5) + retrieval timestamp. Metadata Publication date 2025-10-31; Summary 'Dataset last updated: October 31, 2025' (E3).",
+    "health_status": "verified_live_2026-09-13 (metadata + layer schema + sample queries; no connector, no fixtures)",
+    "known_limitations": [
+      "Streetwidth is FREE TEXT, not numeric: ranges/inequalities/approximations/prose/'Width Irregular'/'n/a'/'Unknown' all occur (E7). Values straddling the ZR 75-ft threshold ('75','>75','60-75','74-75.3','75-90','Unknown but <75','Unknown but >75') are the highest-stakes cases and several are irreducibly ambiguous - parse conservatively, fail closed to narrow, never guess.",
+      "The width concept is characterized only at dataset level ('widths shown on the Official City Map'); no field-level definition in metadata (OQ-1). The mapped-width interpretation rests on that framing + empirical divergence from paved width; byte-verify against the Official City Map / borough final-section source during full validation.",
+      "Width varies per segment of one named street (West 100 St Manhattan: 60 and 100, E6) - determinations are per-segment/per-lot geometry, never per street name.",
+      "Paper streets (Paper_ST=yes), unmapped/record streets (Feat_Type Not_mapped, Record_ST=yes), stair streets, marginal-wharf features and CCO streets are all present - each needs an explicit ZR-grounded treatment, not a default.",
+      "Horizontal accuracy: the DCM metadata gives no explicit tolerance for this layer; the sibling DCP GIS products state +/- 20 ft (zoning-features / MapPLUTO). Near-75-ft-boundary and within-100-ft conclusions are uncertain by the source's own informational-only posture.",
+      "maxRecordCount 2000 (E5) rules this out as a citywide bulk mirror; per-segment/per-area queries only (thin client).",
+      "Field-name divergence between the ArcGIS channel (Feat_status/Streetwidth/RoadwayType/Build_Status) and the SODA companion (feat_statu/streetwidt/roadway_typ/build_stat) - map from the live schema of the queried channel."
+    ],
+    "fallback_source": "SODA companion nyc-dcp-dcm-street-centerline-soda (dataset g6zj-tzgn) - corroboration + a geoJSON-native tabular read, but observed STALER than this ArcGIS channel (see that record). DCP BYTES shapefile release (dcm_street_centerline; nyc.gov page https://www.nyc.gov/site/planning/data-maps/open-data/dwn-digital-city-map.page) for bulk, on a Render worker only.",
+    "open_questions": [
+      "OQ-1: byte-verify the exact geometric definition of the mapped width (right-of-way / property-line-to-property-line vs bed) against the Official City Map / borough final-section source; the field carries no metadata definition.",
+      "OQ-2: value domains for Feat_statu, RoadwayTyp, Build_Stat (metadata lists no domain; live samples show City_St / Surface_ST / Improved).",
+      "OQ-3: full free-text-width domain enumeration + the ZR-grounded classification/fail-closed policy (a rule/legal task, not a data task) for ambiguous, irregular, paper, and unmapped segments.",
+      "OQ-4: the within-100-ft-of-a-wide-street, any-portion-of-lot geometry computation (DCM line geometry x lot geometry x 100-ft buffer) is a separate downstream task; a fronting-street width alone cannot answer ZR 23-22 footnote 1.",
+      "OQ-5: exact BYTES shapefile download URL/file name (nyc.gov 403 to non-browser clients per prior research; browser capture needed; must not be guessed)."
+    ]
+  },
+  {
+    "draft_status": "NON-FINAL RESEARCH DRAFT (M4-T013). Corroboration / fallback channel for the ArcGIS primary above.",
+    "source_id": "nyc-dcp-dcm-street-centerline-soda",
+    "agency": "NYC Department of City Planning (DCP)",
+    "name": "DCM_StreetCenterLine - NYC Open Data tabular+geometry (Socrata SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/g6zj-tzgn.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "g6zj-tzgn (NYC Open Data; landing https://data.cityofnewyork.us/City-Government/DCM_StreetCenterLine/g6zj-tzgn; metadata fetched live 2026-09-13, E1)",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token (X-App-Token header) to leave the shared-IP throttle pool; keyless queries verified live 2026-09-13 (E1/E6/E7)",
+      "notes": "A token is a rate-limit optimization, not an access requirement; the pilot ran keyless KB-scale queries."
+    },
+    "rate_limits": {
+      "without_token": "throttled by IP in a shared common pool",
+      "with_token": "not throttled unless abusive; no numeric published limit",
+      "throttle_signal": "HTTP 429"
+    },
+    "update_frequency": "Socrata custom field 'Update Frequency: Monthly' (E1). BUT the SODA channel is observed STALE: rowsUpdatedAt 1714764762 = 2024-05-03T19:32:42Z and viewLastModified 1730492547 = 2024-11-01T20:22:27Z (E1, epochs converted 2026-09-13) - i.e. no row refresh for ~16 months as of 2026-09, despite the 'Monthly' claim, while the ArcGIS channel and the official metadata both show a 2025-10/2025-12 update (E3/E5). Treat the 'Monthly' label as aspirational on this channel; prefer the ArcGIS channel for currency (S4/OQ-1a).",
+    "geographic_coverage": "Citywide, all five boroughs. the_geom is served as WGS84 MultiLineString (EPSG:4326 lng/lat) on the SODA channel (E1 sample) - note the CRS differs from the ArcGIS native EPSG:2263. Description (E1): 'The Digital City Map (DCM) data represents street lines and other features shown on the City Map, which is the official street map of the City of New York.'",
+    "fields_available": {
+      "note": "17 columns from the api/views columns array (E1): the_geom (multiline), borough (text), feat_type (text), feat_statu (text), street_nm (text), honorary_nm (text), old_st_nm (text), streetwidt (text), route_type (text), roadway_typ (text), build_stat (text), record_st (text), paper_st (text), stair_st (text), cco_st (text), marg_wharf (text), edit_date (calendar_date). Same semantics as the ArcGIS record's byte-verified field definitions; field names are TRUNCATED here (streetwidt, feat_statu, roadway_typ, build_stat) and lowercased. SODA omits null fields per record - infer schema from the columns array, never from record keys.",
+      "streetwidt_domain_evidence": "Free text; grouped-count enumeration 2026-09-13 (E7): top numeric '60'(19074),'80'(8658),'50'(6598),'70'(4378),'100'(3262); non-numeric 'n/a'(2954),'Unknown'(1404),'>80'(368),'>75'(364),'Width Irregular'(45),'Unknown but <75'(38),'Unknown but >75'(17),'60-75'(18),'75-90'(7),'75-100'(3),'74-75.3'(1), plus decimals/ranges/approx/prose. '75' itself occurs 470 times."
+    },
+    "terms_usage_notes": "Same DCP informational-purposes-only disclaimer (E3). NYC Open Data terms apply (no warranty; automated API access not prohibited).",
+    "connector_implementation": "PLAN ONLY. Usable as a corroboration/cross-check channel and for a geoJSON-native tabular read, but NOT as the currency-authoritative source given the observed staleness. If used, poll viewLastModified as the freshness signal (blob/geo Socrata row timestamps can freeze) and cross-check the ArcGIS dataLastEditDate.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version string; freshness signals are rowsUpdatedAt 2024-05-03 / viewLastModified 2024-11-01 (E1) - both trailing the ArcGIS 2025-12-01 edit.",
+    "health_status": "verified_live_2026-09-13 (metadata + sample records + streetwidt domain); no connector, no fixtures",
+    "known_limitations": [
+      "STALER than the ArcGIS channel (rows ~2024-05, view ~2024-11 vs ArcGIS 2025-12) despite a 'Monthly' label - do not treat as currency-authoritative (S4).",
+      "streetwidt is free text with the same ambiguity classes as the ArcGIS Streetwidth field (E7) - fail closed near the 75-ft threshold.",
+      "Field names truncated/lowercased vs ArcGIS (streetwidt vs Streetwidth etc.) - do not assume names across channels.",
+      "the_geom is EPSG:4326 here vs EPSG:2263 native on ArcGIS - never mix CRS; measurement must use a feet CRS."
+    ],
+    "fallback_source": "Primary is the ArcGIS record nyc-dcp-dcm-street-centerline-arcgis; DCP BYTES shapefile for bulk (Render worker only).",
+    "open_questions": [
+      "OQ-1a: confirm whether/when this SODA channel resumes monthly refresh, or whether it is effectively deprecated in favor of the ArcGIS/BYTES channels (the 'Monthly' custom field currently disagrees with the observed timestamps).",
+      "Shares OQ-1..OQ-5 with the ArcGIS record (width definition, domains, free-text policy, 100-ft geometry task, BYTES URLs)."
+    ]
+  }
+]
