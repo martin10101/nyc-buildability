@@ -113,8 +113,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 15,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "free-text width parsing is the chief hazard: an over-permissive parser would silently raise FAR eligibility downstream; the mathematical-entailment rule + exhaustive typed-class tests are mandatory; any doubtful class fails closed to narrow",
     "OQ-1 (exact geometric definition of DCM mapped width) and OQ-3 (ZR-grounded ambiguity policy) are OPEN legal/rule questions - the connector surfaces classes and flags, never resolves them",
@@ -130,7 +130,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T06:43:32.831670+00:00",
-  "updated_at": "2026-09-13T06:49:18.650768+00:00",
+  "updated_at": "2026-09-13T07:33:27.612827+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -158,6 +158,13 @@
       "percent": 15,
       "status": "claimed",
       "message": "Producer DISPATCHED (backend-engineer, isolated worktree off base 2c127706 with reset+show-toplevel guards). D-047-R001 deviation recorded: agent-file model flip classifier-blocked twice (Edit + PowerShell), dispatch carries the harness model override resolving to claude-sonnet-5; durable agent-file flip = open owner/settings item. Wave 2 slot 2 of 2 (parallel with M4-T012, scopes pairwise-disjoint per D-046-R002)"
+    },
+    {
+      "at": "2026-09-13T07:33:26.401703+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at 8538c272 (34 files; orchestrator reproduction: connectors 619 passed, modularity EXIT 0, 27 fixture files). Producer disclosures routed to G1: three live-source refinements vs the PDF-sourced draft text (Record_ST/Paper_ST Y/N domain; Build_Status coded domain; Feat_status independence), the deliberate no-mappluto-import decision, and the empty_or_missing class proven by unit test only (no live row exists)"
     }
   ]
 }

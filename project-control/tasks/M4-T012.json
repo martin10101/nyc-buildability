@@ -99,8 +99,8 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "rework",
-  "progress_percent": 70,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -116,7 +116,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T07:32:11.176623+00:00",
+  "updated_at": "2026-09-13T07:33:26.168157+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
