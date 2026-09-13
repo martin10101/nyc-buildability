@@ -1,0 +1,61 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-044",
+ "version": 1,
+ "slug": "handoff-budget-8k",
+ "title": "Owner 2026-09-12: session-handoff token budget raised to 8000 (handoff_token_budget in tools/context_budget.json); eager budget and all other guards unchanged.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-12",
+ "captured_at": "2026-09-13T01:45:00+00:00",
+ "created_at": "2026-09-13T01:45:00+00:00",
+ "updated_at": "2026-09-13T01:45:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the grant verbatim in the live orchestrator session during /session-handoff, 2026-09-12 ET, in direct response to the stated 4000-token handoff cap."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-044-R001",
+  "D-044-R002"
+ ],
+ "requirements_content_digest_sha256": "41304aa333a8712de74ba29b130474482744aa09994d6673dcf4d4db1ead7b4a",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T01:45:00+00:00",
+   "content_digest_sha256": "58e5d01a22578099da087c9a2aa4d296c79903b57ee85023150668fd8011fc35"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "operational_budget_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "one bounded governance task: handoff_token_budget 4000 -> 8000 in tools/context_budget.json",
+  "prohibited": "any other budget/guard change; any check-script logic change"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "D-044 captured verbatim from the owner's live grant during /session-handoff; two requirements (R001 the bump, R002 the scope limit); digests recorded via sha256_text_artifact."
+  }
+ ]
+}

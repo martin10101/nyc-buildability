@@ -597,7 +597,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-043-internal-web-deploy/manifest.json"
+  },
+  {
+   "directive_id": "D-044",
+   "slug": "handoff-budget-8k",
+   "title": "Owner 2026-09-12: session-handoff token budget raised to 8000 (handoff_token_budget in tools/context_budget.json); eager budget and all other guards unchanged.",
+   "status": "active",
+   "issued_at": "2026-09-12",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-044-handoff-budget-8k/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T01:20:18+00:00"
+ "updated_at": "2026-09-13T01:45:00+00:00"
 }

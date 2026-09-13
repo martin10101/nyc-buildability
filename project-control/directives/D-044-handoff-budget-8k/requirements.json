@@ -1,0 +1,82 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-044",
+ "version": 1,
+ "requirement_count": 2,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-13T01:45:00+00:00",
+ "requirements": [
+  {
+   "id": "D-044-R001",
+   "text": "Raise the session-handoff file token budget from 4000 to 8000: set handoff_token_budget = 8000 in tools/context_budget.json (the value tools/context_budget_check.py enforces fail-closed over docs/SESSION_HANDOFF.md in the context-budget CI job). Execute as a normal gated ledger task citing D-044:D-044-R001.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-044-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "python tools/test_context_budget_check.py green; python tools/context_budget_check.py PASS; context-budget CI job green at the fix head",
+   "required_evidence": "accepted ledger task; the config value equals 8000; no other config value changed",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [
+     "tools/context_budget.json"
+    ],
+    "tests": [
+     "tools/test_context_budget_check.py"
+    ],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-044-R002",
+   "text": "SCOPE LIMIT: the grant covers ONLY the handoff budget. eager_token_budget (6000) and every other guard/marker/allowlist in tools/context_budget.json are unchanged; the check script's logic is untouched.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-044-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "config diff shows exactly one value changed",
+   "required_evidence": "git diff over tools/context_budget.json = one value; tools/context_budget_check.py untouched",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [
+     "tools/context_budget.json"
+    ],
+    "tests": [
+     "tools/test_context_budget_check.py"
+    ],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

@@ -71,15 +71,15 @@
     "code-reviewer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "maplibre transitives could include a too-young or advisory-carrying node - the workflow fails closed (the M5-T021 negative proof)",
     "unused-dependency window: the package lands before any source imports it (intended; the web packet follows)"
   ],
   "blockers": [],
   "created_at": "2026-09-13T01:04:58.086917+00:00",
-  "updated_at": "2026-09-13T01:27:25.478575+00:00",
+  "updated_at": "2026-09-13T01:48:28.438142+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
@@ -103,5 +103,7 @@
       "status": "claimed",
       "message": "Pin f17a5869 + bot lock 6d776102 via generate-lockfile run 34729750887 SUCCESS first-dispatch (full proof chain incl. age gate over all 575 nodes and audit total==0 with the 22-node maplibre tree). Pushing report to trigger the decisive CI run."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-13T01:48:28.437138+00:00"
 }

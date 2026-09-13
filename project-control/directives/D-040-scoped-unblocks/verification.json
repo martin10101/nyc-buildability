@@ -102,6 +102,40 @@
     }
    ],
    "note": "Independent DCV of M5-T020 (D-040-R001 SERVER increment: MapPLUTO display-only EPSG:4326 lot-outline transport + flag-gated GET /properties/{bbl}/lot-geometry route + closed lot_geometry contract). Every obligation reproduced from primary evidence at HEAD 3c11a701: research-first timing (git first-commit vs packet), full-diff scope containment, byte-identical schema copies (git hash-object), 3 recomputed fixture sha256s, forbidden-path immutability, validator EXIT 0, 70 new-pack + 906 regression tests, in-memory accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (backend-engineer). reviewed_sha stamped at verified HEAD 3c11a701; it may be mechanically re-stamped to accept-time HEAD while this task's allowed_paths diff vs its frozen material (a3d59e03; producer 683b6095, base a5e5e408) stays empty; computed material identity ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077 is unchanged while those 12 allowed_paths are unchanged. SCOPE NOTE: this row verifies the SERVER half only; D-040-R001 stays open at directive level until the follow-on web-rendering (MapLibre) packet lands and is independently verified."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T022",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67",
+   "reviewed_manifest_sha256": "06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T01:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "DEPENDENCY-ADMISSION increment (web-half prerequisite) of the scoped lot-outline release. EXACT PIN: git show 1feb1a0c:apps/web/package.json = ONE added dependency \"maplibre-gl\": \"6.7.0\" (exact, no ^/~); next 15.5.24 / react|react-dom 19.1.2 byte-unchanged. Pin diff f17a5869 = single +line. MapLibre GL JS is the library .claude/rules/3d-ui-expansion.md mandates for the lot-outline increment.",
+      "LOCK RESOLVES 6.7.0 + 22-NODE TREE: node_modules/maplibre-gl version 6.7.0, resolved registry.npmjs.org, integrity sha512-Y1Q1+UP9WXou0DUrnaFdDsoMqiMCWy6aS968IBUaQ2eZi6H1/kPCfpfZOWXFJZbeKMkX9Wo6OFzY/k48qqPf3Q== (== registry). Independent bot-lock diff 6d776102 enumeration: 22 added node_modules entries (set identical to producer section-2 table), 0 added resolved off registry.npmjs.org, 0 added integrity non-sha512; only removed line is minimist \"dev\": true (dev->prod promotion, G5 LOW-2).",
+      "INERT WINDOW: git grep -iE 'maplibre|mapbox|maptiler|leaflet' 1feb1a0c -- apps/web/src apps/web/e2e = NO MATCHES (no source imports the package yet; intended).",
+      "PRESERVED HOLD NOT VIOLATED: git log f17a5869~1..1feb1a0c -- master_plan.json empty; material commits touch ONLY apps/web/package.json (f17a5869) + apps/web/package-lock.json (6d776102); git diff --stat f17a5869~1..6d776102 -- render.yaml .github/ services/ apps/web/src/ apps/web/e2e/ packages/ apps/web/.npmrc empty; no 3D-massing/19-task-pack/GDS P1-P8/MASTER_EXECUTION_PLAN artifact; no deploy (D-042-R003 unchanged).",
+      "AUTHORIZATION CHAIN: B-022 status=resolved, resolved_at 2026-09-13T00:50:00Z at commit 636bab06 which git merge-base --is-ancestor confirms precedes pin f17a5869 (authored 2026-09-13T01:07:47Z) -> resolved BEFORE the pin; D-042-R002 explicitly discharges B-022 and authorizes maplibre-gl@6.7.0 admission under its own G5 + age gate. evaluate_task_refs ok=True, applicable==cited==[D-040-R001], reasons=[] (no uncited-applicable requirement from any directive incl. D-042 whose reqs are all task_id-scoped, none path-based).",
+      "GATES (producer != reviewers): gates/M5-T022-{G1,G5}.json PASS with reviewers code-reviewer / security-reviewer (both != producer orchestrator); G0 PASS (orchestrator contracting gate). G5 = policy-15 new-package provenance review (reports/M5-T022-G5.md): 22 nodes OSV-clean, integrity==registry, ages recomputed (tightest maplibre-gl 10.45 d >= 604800 s; 6.8.0/6.9.0 excluded), zero install scripts, OIDC trusted-publishing. G1/G5 recorded content_manifest_sha256 06293120... == submit manifest.",
+      "FROZEN IDENTITY: git log 6d776102..1feb1a0c over the 3 allowed_paths = only 44c1012d (producer report); dependency files unchanged since 6d776102; git log 44c1012d..1feb1a0c over all 3 allowed_paths EMPTY. Computed material identity 06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8 (pc._task_git_identity, reviewed_sha=None -> HEAD 1feb1a0c) == submit-record content_manifest_sha256 (reports/M5-T022.json) == G1/G5 gate manifests.",
+      "HARNESS: python tools/validate_directive_compliance.py --check EXIT 0; test_directive_reminder.py 12/12 OK. NEGATIVE CONTROLS reproduced in-process: (a) stale reviewed_sha -> fail closed; stale content identity -> fail closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) well-formed row injected in-memory -> reasons=[] deferrals=[]; producer==verifier -> fail closed.",
+      "OPEN WEB HALF: this row verifies the DEPENDENCY-ADMISSION prerequisite ONLY. The apps/web lot-outline web RENDERING is the LAST open R001 increment and has not landed; D-040-R001 remains OPEN at the directive level until that rendering packet lands and is independently verified."
+     ],
+     "verified_at": "2026-09-13T01:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67"
+    }
+   ],
+   "note": "Independent DCV of M5-T022 (D-040-R001 DEPENDENCY-ADMISSION increment: maplibre-gl@6.7.0 exact pin + bot-proven 22-node transitive lock, the web-half prerequisite). Every obligation reproduced from primary evidence at HEAD 1feb1a0c: exact pin diff, lock 6.7.0 + 22-node registry/sha512 enumeration, inert-window grep, master-plan/forbidden-path immutability, B-022-before-pin ancestry + D-042-R002 discharge, evaluate_task_refs applicable==cited, G1/G5 producer!=reviewer with G5 provenance PASS, validator EXIT 0, in-process accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD 1feb1a0c; it may be mechanically re-stamped to accept-time HEAD while this task's allowed_paths diff vs its frozen material (dependency files at 6d776102; producer report at 44c1012d) stays empty; computed material identity 06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8 is unchanged while those 3 allowed_paths are unchanged. SCOPE NOTE: this row verifies the dependency-admission half only; D-040-R001 stays OPEN at directive level until the follow-on apps/web lot-outline web-rendering packet lands and is independently verified."
   }
  ]
 }
