@@ -93,7 +93,7 @@
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
   ],
   "created_at": "2026-09-13T02:27:18.341759+00:00",
-  "updated_at": "2026-09-13T02:52:37.150472+00:00",
+  "updated_at": "2026-09-13T02:58:04.280015+00:00",
   "directive_refs": [
     {
       "directive_id": "D-043",
