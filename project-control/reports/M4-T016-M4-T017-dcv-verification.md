@@ -217,3 +217,32 @@ from a long-running validator read overlapping the companion's mid-write (requir
 before manifest.json — the stale 72532b6e is the amendment-1 digest caught pre-resync); the
 settled committed state at 920110be is internally consistent, and the orchestrator's direct
 re-run at that head returned VALIDATOR_EXIT=0.
+
+## Addendum C (verifier follow-up, first-hand closure of ITEM 1 — received after acceptance)
+
+Received from the verifier verbatim after its own independent re-run at the settled head:
+
+> ## ITEM 1 — CLOSED (first-hand confirmed)
+>
+> My independent re-run of `python tools/validate_directive_compliance.py --check` at the
+> settled head `920110be`, with a direct exit-code capture (no `tail` in the pipeline),
+> produced: `VALIDATOR_EXIT=0`. Crucially, this run emitted **no `directive registry INVALID`
+> line** — unlike my original run. The registry is now **VALID**, exit 0, clean. This
+> first-hand reproduces the transient-mid-write explanation (my ~300s+ validator read
+> overlapped the companion writing D-050 amendment 2 — `requirements.json` bumped before
+> `manifest.json` — which then landed atomically as commit 920110be). **No remediation is
+> needed**, and my section-3 discrepancy from the prior return is **withdrawn as a
+> non-defect**.
+>
+> ## Final consolidated verdict: **PASS**
+>
+> Both wave-3 tasks pass directive-compliance verification. All ten requirement rows are
+> SATISFIED on reproduced primary evidence; applicability is clean (applicable == cited);
+> D-045/D-046 source digests match; material identity is frozen and now confirmed
+> byte-identical from `7c2761c2` through the settled head `920110be`. The single prior open
+> item (D-050 validator error) is confirmed transient and resolved — the registry validates
+> cleanly (exit 0) at `920110be`. No requirement is VIOLATED or UNVERIFIABLE, and no
+> remediation remains.
+
+With this, the ITEM-1 closure no longer rests on the orchestrator's re-run alone: producer,
+orchestrator, and independent verifier evidence all agree at the settled head.
