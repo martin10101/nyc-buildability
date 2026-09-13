@@ -92,14 +92,14 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 10,
   "risks": [
     "SOURCE AVAILABILITY: if a needed official ZR section snapshot is absent from the corpus and cannot be captured through the established snapshot mechanism from the producer sandbox, submit BLOCKED naming the exact sections - NEVER transcribe from memory or a secondary source (permanent principle 3)",
     "the R1/R2 series may carry conditional provisions that reference geometry-dependent mechanics (A2 territory) - such provisions are recorded as typed fail-closed gaps citing the section, NOT implemented in this wave (D-045-R008 sequencing)",
@@ -115,7 +115,7 @@
     "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
   ],
   "created_at": "2026-09-13T04:26:18.647054+00:00",
-  "updated_at": "2026-09-13T04:26:18.855445+00:00",
+  "updated_at": "2026-09-13T04:30:20.324627+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -127,5 +127,15 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-09-13T04:26:18.647054+00:00"
+  "directive_regime_entered_at": "2026-09-13T04:26:18.647054+00:00",
+  "worktree": "wt-m4t012",
+  "progress_log": [
+    {
+      "at": "2026-09-13T04:30:20.324627+00:00",
+      "agent": "orchestrator",
+      "percent": 10,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed at 824afe67adb7d401e6c8f0a15ed51d7acc9e5094; first D-045 campaign task (A1 wave 1); rules-engineer dispatch next"
+    }
+  ]
 }
