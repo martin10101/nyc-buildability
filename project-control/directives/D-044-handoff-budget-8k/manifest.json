@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-13T01:45:00+00:00",
  "created_at": "2026-09-13T01:45:00+00:00",
- "updated_at": "2026-09-13T01:45:00+00:00",
+ "updated_at": "2026-09-13T02:00:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67",
@@ -25,7 +25,7 @@
   "D-044-R001",
   "D-044-R002"
  ],
- "requirements_content_digest_sha256": "41304aa333a8712de74ba29b130474482744aa09994d6673dcf4d4db1ead7b4a",
+ "requirements_content_digest_sha256": "27dd2213753170fd6ea3a59e875864304351d0a8264f6e5b6672c8ba1922617f",
  "sources": [
   {
    "file": "source-001.md",
@@ -56,6 +56,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "D-044 captured verbatim from the owner's live grant during /session-handoff; two requirements (R001 the bump, R002 the scope limit); digests recorded via sha256_text_artifact."
+  },
+  {
+   "at": "2026-09-13T02:00:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M0-T158 to D-044-R001 + D-044-R002 (append-only). Digest resynced 41304aa3 -> 27dd2213."
   }
  ]
 }

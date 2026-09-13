@@ -1,0 +1,82 @@
+{
+  "task_id": "M0-T158",
+  "title": "D-044: handoff_token_budget 4000 -> 8000 in tools/context_budget.json",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Execute the owner's D-044 grant: raise handoff_token_budget from 4000 to 8000 in tools/context_budget.json - ONE value; every other budget/guard unchanged (D-044-R002); the check script untouched. Proven by tools/test_context_budget_check.py green + context_budget_check.py PASS + the context-budget CI job at the fix head.",
+  "business_reason": "The owner raised the session-handoff budget so landing handoffs can be complete without over-compression (D-044, captured verbatim).",
+  "inputs": [
+    "project-control/directives/D-044-handoff-budget-8k/requirements.json (R001 the bump; R002 the scope limit)",
+    "tools/context_budget.json (handoff_token_budget currently 4000)",
+    "tools/test_context_budget_check.py + tools/context_budget_check.py (the enforcing harness - READ-ONLY)"
+  ],
+  "outputs": [
+    "tools/context_budget.json (one value: 8000)",
+    "project-control/reports/M0-T158-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/context_budget.json",
+    "project-control/reports/M0-T158-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "tools/context_budget_check.py",
+    "tools/test_context_budget_check.py",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "one_value",
+      "input": "git diff over tools/context_budget.json",
+      "expected": "exactly one changed value: handoff_token_budget 4000 -> 8000; every other key byte-identical (D-044-R002)"
+    },
+    {
+      "id": "S2",
+      "case": "harness_green",
+      "input": "the enforcing harness",
+      "expected": "python tools/test_context_budget_check.py green; python tools/context_budget_check.py PASS; context-budget CI job green at the fix head"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "code-reviewer"
+  ],
+  "status": "claimed",
+  "progress_percent": 10,
+  "risks": [
+    "none beyond typo - the harness and CI fail closed"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-13T01:49:01.303272+00:00",
+  "updated_at": "2026-09-13T01:50:59.302983+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-044",
+      "requirement_ids": [
+        "D-044-R001",
+        "D-044-R002"
+      ]
+    },
+    {
+      "directive_id": "D-001",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T01:49:01.303272+00:00",
+  "path_notes": "GOVERNANCE-PATH task (s19: task_type=governance + D-001:ALL, M0-T156/157 precedent). One JSON value; the check script and its tests are forbidden (logic untouched).",
+  "documented_test_commands": [
+    "python tools/test_context_budget_check.py",
+    "python tools/context_budget_check.py"
+  ],
+  "worktree": "primary-checkout"
+}

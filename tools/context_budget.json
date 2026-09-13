@@ -1,7 +1,7 @@
 {
   "_comment": "Config for tools/context_budget_check.py. Guards the automatic project-instruction context budget so it cannot silently regrow to the pre-2026-07-21 ~23k-token bloat. Tokens are estimated as ceil(chars/4).",
   "eager_token_budget": 6000,
-  "handoff_token_budget": 4000,
+  "handoff_token_budget": 8000,
   "handoff_file": "docs/SESSION_HANDOFF.md",
   "retired_markers": ["retired", "superseded", "deprecated", "obsolete"],
   "retired_section_min_chars": 400,
