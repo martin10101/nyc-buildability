@@ -1,0 +1,13 @@
+{
+  "task_id": "M5-T021",
+  "note": "Cited D-042:D-042-R001, APPLICABLE via the append-only applicability bind (digest 7fd8d5c2->2a1b8b0c). evaluate_task_refs: ok=true, applicable == cited == [D-042-R001].",
+  "requirements": {
+    "D-042-R001": [
+      "apps/web/package.json at 3cd3b93c (next EXACTLY 15.5.24; sharp 0.35.4, js-yaml 4.3.2, vitest 4.1.11, baseline-browser-mapping 2.11.21 + browserslist 4.28.9 overrides - every value registry-verified >= 7 days old; no 16.x; react untouched)",
+      "apps/web/package-lock.json at d83bcfe5 (regenerated + PROVEN by the sanctioned workflow: npm ci integrity, blocking audit total==0 at every severity, committed-lock age gate, CLI advisory - the bot commits only a clean lock)",
+      "project-control/reports/M5-T021-registry-research.md (npm .time timestamps + OSV clean-version queries per pin, incl. the newly-found sharp CRITICAL GHSA-rgj7-g3m4-5g8c fixed in aged 0.35.4)",
+      "project-control/reports/M5-T021-producer-report.md (pin rationale table, the two-run fail-closed-then-success workflow chain, honest notes)",
+      "project-control/reports/M5-T021-ci-evidence.txt (run 34726577993 at 18ee6b79: CONCLUSION SUCCESS, every job green - web-dependency-security GREEN, the last standing red retired; web-e2e 448/448 on vitest 4)"
+    ]
+  }
+}
