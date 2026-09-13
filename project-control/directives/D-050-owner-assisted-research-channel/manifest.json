@@ -1,7 +1,7 @@
 {
  "schema": "directive_manifest/v1",
  "directive_id": "D-050",
- "version": 1,
+ "version": 2,
  "slug": "owner-assisted-research-channel",
  "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
  "status": "active",
@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T17:23:15+00:00",
  "created_at": "2026-09-13T17:23:15+00:00",
- "updated_at": "2026-09-13T17:23:15+00:00",
+ "updated_at": "2026-09-13T17:52:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "e063b7c70dfcb9df8e251195146511dbfc63447d",
@@ -25,9 +25,10 @@
   "D-050-R001",
   "D-050-R002",
   "D-050-R003",
-  "D-050-R004"
+  "D-050-R004",
+  "D-050-R005"
  ],
- "requirements_content_digest_sha256": "ddd353740d9af6adc0f791f4e0c37dd15cd69e4d26d9d68e788019201fce322c",
+ "requirements_content_digest_sha256": "72532b6e4d524c4f37daaf98c96d33667351f4637352ca8e483ee797fe23bd0b",
  "sources": [
   {
    "file": "source-001.md",
@@ -35,9 +36,19 @@
    "sequence": 1,
    "recorded_at": "2026-09-13T17:23:15+00:00",
    "content_digest_sha256": "b9d4f6a212960ffed6b31faedf2e01b566528f6a55595c6c5099e0da878c9384"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-13T17:52:00+00:00",
+   "content_digest_sha256": "55f2b0cc15a11ff8b374dc6f2b295f5e1db4e4445f5c1233ff24e7e5b8c9bf0d"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [],
@@ -58,6 +69,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-049 precedent); docs/RESEARCH_REQUESTS.md created in the same commit, seeded with RQ-001..RQ-004 (A2 section map, C-district survey, 12-10 qualifying-site definition, special-district priority inventory); relay to the build session follows per R004"
+  },
+  {
+   "at": "2026-09-13T17:52:00+00:00",
+   "actor": "orchestrator",
+   "event": "amended",
+   "note": "Amendment 1 (source-002): owner requires ACTIVE NOTIFICATION - the md alone is never sufficient notice; added D-050-R005 (owner-visible seam lines + PushNotification on new appends + companion in-conversation surfacing; quiet rule narrowed; non-blocking unchanged). Digest resynced ddd35374 -> 72532b6e."
   }
  ]
 }

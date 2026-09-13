@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-050",
- "version": 1,
- "requirement_count": 4,
+ "version": 2,
+ "requirement_count": 5,
  "producer": "orchestrator",
- "updated_at": "2026-09-13T17:23:15+00:00",
+ "updated_at": "2026-09-13T17:52:00+00:00",
  "requirements": [
   {
    "id": "D-050-R001",
@@ -109,6 +109,32 @@
    "status_reason": "",
    "evidence_paths": [],
    "amendment_sequence": 1
+  },
+  {
+   "id": "D-050-R005",
+   "text": "ACTIVE NOTIFICATION (amendment 1) — appending to docs/RESEARCH_REQUESTS.md is NEVER sufficient notice by itself. When new owner-addressed requests are appended, and while any remain OPEN: (a) the build session states them in owner-visible turn output at every owner-facing seam (wave summaries, session landings, handoff 'owner items') as one line per request; (b) on appending new requests, it sends a PushNotification (desktop; phone when Remote Control is connected) — batched into one message, one line, only for genuinely new asks; (c) the companion session surfaces new/open requests whenever the owner converses with it. The loop-monitoring quiet rule is narrowed accordingly: owner-addressed research requests are never silent. The non-blocking rule (R001) is unchanged — notify, then proceed without waiting.",
+   "source_ref": "source-002-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-050-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "turn output + handoff carry open-request lines; PushNotification sent on new appends; companion relays in conversation",
+   "required_evidence": "session transcripts/handoff content; notification tool results where recorded",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 2
   }
  ]
 }
