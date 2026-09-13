@@ -72,14 +72,14 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "maplibre transitives could include a too-young or advisory-carrying node - the workflow fails closed (the M5-T021 negative proof)",
     "unused-dependency window: the package lands before any source imports it (intended; the web packet follows)"
   ],
   "blockers": [],
   "created_at": "2026-09-13T01:04:58.086917+00:00",
-  "updated_at": "2026-09-13T01:16:11.874698+00:00",
+  "updated_at": "2026-09-13T01:27:25.478575+00:00",
   "directive_refs": [
     {
       "directive_id": "D-040",
