@@ -5,15 +5,35 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff - seq 104 (amended): 190 accepted; R001 SERVER half DONE; web half BLOCKED on owner Next.js authorization (B-022) - ALL non-owner-gated D-040/D-041 work COMPLETE
+## Handoff - seq 105: 192 accepted; D-042 EXECUTED (Next.js 15.5.24, tree advisory-free, FIRST FULLY GREEN CI); B-022 RESOLVED; MapLibre admission UNBLOCKED
 
-Generated 2026-09-12 ~10:50 ET by the same orchestrator session (seq-103 continuation). Root
+Generated 2026-09-12 ~21:05 ET by the same orchestrator session (seq-104 continuation). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`2b8a6619` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
+`636bab06` **pushed**. `main` untouched at `d8b3899f`. PR #241 OPEN - NEVER merge.
 
 ## STATE (verify live; ledger wins)
 
-1. **Accepted = 190.** NEW since seq 103: **M5-T020 (190th, D-040-R001 SERVER half)** ACCEPTED -
+1. **Accepted = 192.** NEW since seq 104: owner directive **D-042** (peer-captured 84caa347,
+   "Authorize the Next.js security upgrade to 15.5.24") EXECUTED end-to-end:
+   - **M5-T021 (191st):** next EXACTLY 15.5.24 + whole-tree advisory sweep in one wave
+     (sharp 0.35.4 - a CRITICAL the registry research found beyond the listed seven;
+     js-yaml 4.3.2; vitest 4.1.11 major; browserslist 4.28.9 + baseline-browser-mapping
+     2.11.21 overrides - every value registry-timestamp-verified >= 7 days). The sanctioned
+     generate-lockfile workflow FAILED CLOSED once (preserved vulnerable resolution - the
+     negative proof) then SUCCEEDED; bot lock d83bcfe5. **CI run 34726577993 = CONCLUSION
+     SUCCESS, ALL 18 JOBS GREEN - the FIRST fully green CI run on the branch**
+     (web-dependency-security retired; web-e2e 448/448 on vitest 4). One vitest-4
+     focus-timing correction (waitFor, ratified). G1+G5 PASS zero corrections; DCV; accept.
+   - **M0-T157 (192nd):** the D-042 capture broke a resolver test's hardcoded "D-042"
+     nonexistence fixture -> repaired with a registry-DERIVED id (max+500, assertNotIn);
+     mutation-proven non-tautological; G1 (129/129 full suite) + G4 PASS; D-001 empty-set
+     DCV row; accept.
+   - **B-022 RESOLVED** per D-042-R002 (advisory-free evidence recorded in the blocker).
+   TRAP for the future: npm install --package-lock-only PRESERVES existing in-range
+   resolutions - a vulnerable transitive needs an override, not just a regen. And a
+   too-young fix version fails the age gate at regen (baseline-browser-mapping needed an
+   aged-pin override).
+   Seq-104 recap: **Accepted was 190.** NEW since seq 103: **M5-T020 (190th, D-040-R001 SERVER half)** ACCEPTED -
    display-only EPSG:4326 MapPLUTO lot-outline transport (new focused module importing the
    BYTE-IMMUTABLE 2263 connector's discipline; no measurement from 4326 coords) + body-less
    flag-gated GET /api/v1/properties/{bbl}/lot-geometry (typed outcomes: single_lot /
@@ -78,7 +98,13 @@ Generated 2026-09-12 ~10:50 ET by the same orchestrator session (seq-103 continu
 
 ## NEXT ACTION (in order)
 
-1. **BLOCKED - OWNER RETURN ITEM (B-022, root-caused 2026-09-12).** The R001 web half
+1. **UNBLOCKED - proceed:** maplibre-gl@6.7.0 admission (M5-T022 next): add the exact pin
+   to apps/web/package.json dependencies, dispatch generate-lockfile.yml (the proven chain),
+   empty/next-commit CI trigger, G5 provenance review of the NEW package + its transitive
+   tree from the generated lock (policy 15: a new package needs G5 provenance), DCV, accept -
+   citing D-040:D-040-R001. Then the web rendering packet (confirm-card outline consuming
+   the ACCEPTED M5-T020 route + lot_geometry.ts; G3 in the wave; wire the lot_geometry.ts
+   generator/CI drift coverage there). HISTORICAL (resolved B-022 detail below): The R001 web half
    (MapLibre admission + rendering) CANNOT proceed: the committed web tree carries
    7 npm advisories (1 CRITICAL Next.js RCE GHSA-p293-qw3h-jr36/GHSA-2xp9-vwfh-vxw4
    whose vulnerable range 9.5.6-canary.0 - 15.5.23 NOW COVERS the pinned 15.5.21 -
