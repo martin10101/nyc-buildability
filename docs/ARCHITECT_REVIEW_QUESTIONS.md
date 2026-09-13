@@ -36,10 +36,21 @@ marked with the answer and the directive that captured it.
   R1-1, R1-2, R1-2A, R2, R2A, R2X at 35 ft base / 35 ft max (R4s 35/45, R5s 45/55). §23-21
   CONFIRMED in substance: R2X = FAR 1.00 (own row), R2/R2A = 0.75 (row shared with
   R3A/R3X/R3-1/R3-2), and R2/R2A rise to 1.00 on qualifying residential sites. What the
-  professional still confirms: the APPLICATION of §11-25 here (the express-exceptions caveat),
-  and §23-421(g)'s exact conditions — the paragraph exists on the official page but its text was
-  not machine-readable in our checks (the 5 ft / 9,500 sq ft / 100 ft / 5% figures are the
-  owner's research, unverified by us).
+  professional still confirms: the APPLICATION of §11-25 here (the express-exceptions caveat).
+- **§23-421(g) — OWNER-VERIFIED VERBATIM (2026-09-13, second research pass):** the full paragraph
+  renders on the official mirror. Quoted sentence: "the reference plane for applying the
+  regulations of this Section may be located up to five feet above the base plane." Conditions
+  (either suffices), for R1/R2 districts WITHOUT a letter suffix: (1) zoning-lot area ≥9,500 sq ft
+  AND width ≥100 ft; or (2) slope ≥5% measured between street-wall-line level and rear-wall-line
+  level. Owner's suffix reading: numerical suffixes (-1, -2) are distinct from letter suffixes
+  (A, X), so R1-1/R1-2/R2 are eligible; R1-2A/R2A/R2X are not. Reproduction recipe: open the
+  official §23-421 page and search "9,500" — text extractors show paragraph (g) as item 7.
+  TOOLING NOTE (for the professional and the build): the companion session's HTML extraction
+  could NOT render this paragraph on two official mirrors across four attempts — the zr site's
+  HTML render loses §23-421(g) in text extraction. The rules pipeline must prove section
+  completeness from an artifact that provably contains the full text (e.g. the print/PDF render),
+  never from HTML extraction alone. The architect can eyeball the paragraph in seconds via the
+  link.
 - **Citation for the professional:** ZR §23-421 (City of Yes text, last amended 2024-12-05,
   verified live at zr.planning.nyc.gov on 2026-09-13). Applicability line reads:
   "R1 R2 R3A R3X R3-1 R3-2 R4 R4-1 R4A R5A". §23-422 (flat-roof alternative) excludes R1/R2.
