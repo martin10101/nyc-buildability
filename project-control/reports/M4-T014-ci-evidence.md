@@ -21,3 +21,9 @@ and fully green; no run on this material ever FAILED.
 - `python tools/modularity_check.py --check` → EXIT 0
 - `python services/api/scripts/sync_zr_snapshots.py --check` → EXIT 0
   ("runtime-bundled ZR snapshots are byte-identical to the canonical source (10 file(s))")
+
+**ADDENDUM (post-rework confirmation run):** CI run **34741407310** on head **`e49ac4bd`** (the
+rework-round-1 submission head, whose tree contains the corrected snapshot notes at material
+commit `346f8535`) concluded **success — all jobs green** (verified via `gh run view` 2026-09-13
+~08:00 UTC). This directly re-proves the executable authority at the corrected identity, on top
+of G4's independent 458-test reproduction against the corrected snapshot bytes.
