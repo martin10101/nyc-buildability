@@ -49,6 +49,19 @@ fallback, as before.
    control-plane-only deltas). Later 10faa11f/cb0f16a6 commits are this handoff doc only.
    Checkpoint `CP-2026-09-13-wave2-closed`.
 
+## POST-LANDING AMENDMENT: D-050 owner-assisted research channel (peer-captured @ b7fc789a)
+
+D-050 arrived by peer relay AFTER landing; verified + ACKNOWLEDGED by this session (R004).
+`docs/RESEARCH_REQUESTS.md` is the running queue: append research-shaped requests (NON-BLOCKING —
+never wait; absent an answer, official-source-researcher proceeds as normal). **Results are
+discovery aids ONLY — no citation chain may terminate at owner research; official capture (incl.
+print/PDF completeness) stays the only provenance; interpretation still routes D-048/D-049.**
+Seeded RQ-001 (A2 section map) + RQ-002 (C-district survey) directly feed the wave-3 lanes below —
+CHECK THE QUEUE for ANSWERED entries before starting either lane; RQ-003 (§12-10 QRS definition)
+could convert D-049-R004 fail-closed flags into computed conditions; RQ-004 = A4 triage input;
+RQ-005 (appended by this session) = the DCM OQ-1/OQ-5/LION fact gaps. Mark entries
+ANSWERED/ROUTED with date + verification target (R003).
+
 ## NEXT ACTIONS (wave 3 per D-047-R004 ramp — widen only while review latency + CI stay healthy)
 
 1. **Contract the A2 lane** (now unblocked by the accepted connector): research-first per
@@ -86,8 +99,10 @@ fallback, as before.
 
 Deferred M4-T015 G4 test-robustness advisories 4–6 (record-trigger-isolating fixture; explicit
 no-retry call-count; exact lt/le class pins); `returnGeometry=false` until OQ-4 consumes geometry;
-redirect pinning in default_fetch (LOW); hyphenated ban-list gap (campaign-wide); validator ~440 s
-runtime; prior backlog items from seq 107 stand.
+redirect pinning in default_fetch (LOW); hyphenated ban-list gap (campaign-wide); validator
+runtime has GROWN to ~15 min per the peer (was ~440 s — budget your one full run per seam and use
+foreground with a generous timeout; background runs got reaped twice this session); prior backlog
+items from seq 107 stand.
 
 ## STANDING RESTRICTIONS (unchanged)
 

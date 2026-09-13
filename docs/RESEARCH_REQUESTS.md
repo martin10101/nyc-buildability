@@ -72,6 +72,22 @@ making the campaign faster. Started 2026-09-13 (owner directive D-050).
   encoding alphabetically.
 - **Unlocks:** an informed owner triage for the final campaign waves.
 
+## RQ-005 — DCM Street Center Line: official width-definition + bulk-product facts (B2 hardening) — OPEN
+
+- **Question:** (1) Find the official DCP/City Map documentation that defines exactly WHAT the
+  DCM Street Center Line `Streetwidth` value records geometrically (mapped right-of-way /
+  property-line-to-property-line vs roadbed) — the dataset metadata has NO field-level
+  definition; cite the document, section, exact quote, URL. (2) The exact download URL + file
+  name of the DCM street-centerline BYTES shapefile (nyc.gov returns 403 to non-browser
+  clients; needs a browser). (3) The verbatim LION data-dictionary text defining `StreetWidth`
+  ("narrowest width of the paved area…" is search-derived, not yet byte-read — it lives deep in
+  lion_metadata.pdf). Exact quotes + URLs for all three.
+- **Why:** these are the accepted M4-T013/M4-T015 open questions OQ-1, OQ-5, and E2/OQ-7 — the
+  three pure fact-finding gaps left in the street-width connector's provenance. (OQ-3, the
+  ambiguity-class policy, is interpretation and stays with the architect doc / G6.)
+- **Unlocks:** closes the connector's remaining research caveats before the A2 wave consumes it;
+  the width-definition citation also strengthens the wide-street rule's G6 package.
+
 ---
 
 *Loop: append new requests below with the same format. Owner: paste results to the companion
