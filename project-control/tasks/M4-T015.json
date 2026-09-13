@@ -1,0 +1,153 @@
+{
+  "task_id": "M4-T015",
+  "title": "D-045 B2 connector build: DCM Street Center Line street-width connector (ArcGIS primary, fail-closed-to-narrow width classification)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Build the street-width / mapped-street data connector pinned to the accepted M4-T013 research (project-control/reports/M4-T013-street-width-research.md): a NEW focused connector module for the DCM Street Center Line ArcGIS feature service (DCM_Street_Center_Line/FeatureServer/0, DCP_GIS, keyless, EPSG:2263 native) as PRIMARY source, with the SODA g6zj-tzgn channel documented as the stale fallback and Geoclient per-address streetWidth KILLED for legal use (paved width, not mapped width - research section 5). Central obligation: the authoritative Streetwidth field is FREE TEXT (ranges, inequalities, approximations, prose, irregular, n/a, unknown - research E7), so the connector implements a conservative typed classifier that emits wide ONLY where the raw value MATHEMATICALLY entails width >= 75 ft (the ZR 12-10 threshold), and fails closed to narrow on every other class, carrying the typed ambiguity class and a review flag - never a guessed or interpolated number. Mapped-street status (Feat_type/Feat_status/Record_ST/Paper_ST) surfaces as typed fields; paper/record/unmapped segments never classify wide. Recorded-official fixtures (verbatim live-captured bytes + MANIFEST provenance), fully offline tests via an injected fetch seam, HTTP-200-error-object trap, exceededTransferLimit paging, bounded predicates only (thin client). Registry draft updated per the M2-T009 posture. The downstream consumer (R6-R8 wide-street conditional rule / A2 geometry mechanics) is NOT wired in this task; OQ-1/OQ-3 stay open legal questions the connector surfaces but never resolves.",
+  "business_reason": "D-045-R003 names the B2 street-width connector as the A2 dependency; the research-first half (M4-T013) is accepted - this is the build half, running parallel with M4-T012 under D-046/D-047 wave discipline with fully disjoint scope.",
+  "inputs": [
+    "project-control/reports/M4-T013-street-width-research.md (THE pinned research: ArcGIS endpoint + CRS + freshness facts (E5), SODA staleness (E1), Geoclient kill (section 5), free-text width domain (E7), re-runnable capture procedure (section 6), open questions OQ-1..OQ-5 - every connector fact traces to this report or the source itself, never memory)",
+    "docs/research/source-registry-drafts/dcm-street-centerline.json (the two draft records this build updates: connector PLAN-ONLY marker to be replaced by the SOURCE_ID self-declaration; M2-T009 posture, draft_status stays non-final)",
+    "project-control/directives/D-045-citywide-rule-coverage/requirements.json (R003 verbatim: full connector discipline, M5-T020 MapPLUTO connector reused not duplicated) + D-046 requirements (R001 wave slot / R002 disjointness)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py + mappluto_lot_outline.py (READ-ONLY discipline sources: ArcGIS query/paging/error-object handling, injection-proof parameter building, typed-outcome vocabulary, injected fetch seam, bounded no-retry fetch posture)",
+    "services/api/tests/fixtures/mappluto_geometry/MANIFEST.json + services/api/tests/fixtures/mappluto_lot_outline (the recorded-official capture pattern: verbatim bytes, exact URL, timestamp, sha256, documented-synthetic marking for provider-error shapes)",
+    "services/api/app/rules/rulesets/r6_r7_r8_wide_street_conditional_far.rule.json + docs/research/zr-snapshots/v1/zr-12-10.snapshot.json (READ-ONLY: the downstream 75-ft wide/narrow concept and its consumer - NOT wired here)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client: KB-scale bounded samples, no bulk datasets)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py (NEW focused module: bounded ArcGIS query builder with paging + outSR=2263 + f=json, injection-proof predicate construction, HTTP-200-error-object trap, typed per-segment envelope carrying raw Streetwidth text VERBATIM + typed width classification + mapped-street status + source provenance incl. dataLastEditDate freshness pin)",
+    "services/api/app/connectors/dcm_street_width_classifier.py (NEW pure classifier module: exhaustive typed ambiguity classes over the observed E7 domain; wide only on mathematical entailment >= 75; narrow_fail_closed + class + review flag otherwise)",
+    "services/api/tests/connectors/test_dcm_street_centerline_arcgis.py + test_dcm_street_width_classifier.py (fully offline via the injected seam + recorded fixtures; exhaustive class coverage incl. negative controls)",
+    "services/api/tests/fixtures/dcm_street_centerline/** (live-captured verbatim response bytes + MANIFEST.json with exact URL, capture timestamp, sha256 per fixture)",
+    "docs/research/source-registry-drafts/dcm-street-centerline.json (updated: connector implemented + SOURCE_ID self-declaration; draft_status stays non-final)",
+    "project-control/reports/M4-T015-producer-report.md (incl. the complete width-class -> disposition table, capture provenance, self-check results verbatim, disclosures)"
+  ],
+  "dependencies": [
+    "M4-T013"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/app/connectors/dcm_street_width_classifier.py",
+    "services/api/tests/connectors/test_dcm_street_centerline_arcgis.py",
+    "services/api/tests/connectors/test_dcm_street_width_classifier.py",
+    "services/api/tests/fixtures/dcm_street_centerline",
+    "docs/research/source-registry-drafts/dcm-street-centerline.json",
+    "project-control/reports/M4-T015-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/connectors/mappluto_lot_outline.py",
+    "services/api/app/connectors/geoclient_address.py",
+    "services/api/app/connectors/pluto_soda.py",
+    "services/api/app/connectors/zoning_features_arcgis.py",
+    "services/api/app/connectors/ztldb_soda.py",
+    "services/api/app/connectors/bbl.py",
+    "services/api/app/rules/**",
+    "services/api/app/_zr_snapshots/**",
+    "services/api/app/api/**",
+    "services/api/app/scenario/**",
+    "services/api/app/profile/**",
+    "services/api/app/spatial/**",
+    "services/api/app/config.py",
+    "services/api/tests/rules/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "render.yaml",
+    "package.json",
+    "requirements*.txt",
+    "pyproject.toml",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "docs/MVP_ARCHITECT_REVIEW_QA.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "authoritative_source_and_provenance",
+      "input": "the connector module querying the researched DCM ArcGIS layer (recorded fixtures via the injected seam)",
+      "expected": "queries target exactly the researched endpoint (DCM_Street_Center_Line/FeatureServer/0) with outSR=2263 and bounded predicates; the typed envelope carries source provenance (source id, endpoint, dataLastEditDate freshness pin, retrieval metadata) and preserves the raw Streetwidth text VERBATIM alongside any classification; every field consumed is evidenced in the research report (E3/E5) - nothing guessed (permanent principle 3)"
+    },
+    {
+      "id": "S2",
+      "case": "fail_closed_width_classification",
+      "input": "the typed classifier over the complete observed E7 value domain",
+      "expected": "wide ONLY where the raw value mathematically entails width >= 75 ft (clean numeral or decimal >= 75; range with BOTH endpoints >= 75; strict inequality >N with N >= 75); EVERY other class (cutoff-straddling ranges like 60-75 and 74-75.3, <-inequalities, >-inequalities below 75, approximations like ~80, prose, Width Irregular, varies, n/a, Unknown, Unknown but <75, Unknown but >75, empty/missing) yields narrow_fail_closed carrying its typed ambiguity class + review flag; the complete class -> disposition table is recorded in the producer report; OQ-3 stays OPEN - no disposition requiring ZR-grounded or legal judgment is resolved in-task"
+    },
+    {
+      "id": "S3",
+      "case": "mapped_street_status_honest",
+      "input": "fixtures covering mapped, paper, and record street segments",
+      "expected": "Feat_type/Feat_status/Record_ST/Paper_ST surface as typed fields; paper/record/unmapped segments NEVER classify wide regardless of width text (fail closed + flag); unknown field-domain values (OQ-2 open) surface as typed unknown, never coerced or invented"
+    },
+    {
+      "id": "S4",
+      "case": "recorded_official_fixtures",
+      "input": "the fixture set + MANIFEST",
+      "expected": "each fixture is verbatim live-captured bytes from the keyless public endpoint with MANIFEST entries recording exact URL, capture timestamp, and sha256; the canonical set includes the West 100 St Manhattan two-segment case (60 + 100) and live samples for every ambiguity class the classifier types where the class exists in the source; documented-synthetic bytes ONLY for provider-error shapes per the M2-T009 precedent and marked as such in the MANIFEST; all tests run fully OFFLINE via the injected seam"
+    },
+    {
+      "id": "S5",
+      "case": "upstream_error_and_paging_honesty",
+      "input": "an HTTP-200 body carrying an ArcGIS error object; an exceededTransferLimit response; a network failure",
+      "expected": "the error-object body is a typed upstream error, never data; paging via resultOffset is honored and tested; predicates stay bounded (no citywide sweep - thin client); network failure yields a typed error with the bounded no-retry posture of M5-T020"
+    },
+    {
+      "id": "S6",
+      "case": "scope_and_regression",
+      "input": "git diff over the worktree + the full connectors suite + modularity",
+      "expected": "no consumer wiring (rules/profile/api untouched - the A2 wave consumes this later); Geoclient module untouched (its advisory cross-check is a later packet); ALL existing connectors tests pass unchanged; python tools/modularity_check.py --check EXIT 0; ZERO new dependencies (a genuinely needed package = BLOCKED submission per policy section G, never an in-task admission)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "free-text width parsing is the chief hazard: an over-permissive parser would silently raise FAR eligibility downstream; the mathematical-entailment rule + exhaustive typed-class tests are mandatory; any doubtful class fails closed to narrow",
+    "OQ-1 (exact geometric definition of DCM mapped width) and OQ-3 (ZR-grounded ambiguity policy) are OPEN legal/rule questions - the connector surfaces classes and flags, never resolves them",
+    "SODA fallback is ~16 months stale - any fallback documentation must carry the staleness caveat; currency comes from the ArcGIS dataLastEditDate pin",
+    "Python 3.12 repo vs 3.11 sandbox (M2-T015 pattern): if pytest cannot collect locally, rely on CI evidence and disclose",
+    "live capture may fail from the producer sandbox; record failures honestly and submit BLOCKED naming the exact URLs tried if the recorded-official fixture set cannot be captured - NEVER invent or derive fixture bytes"
+  ],
+  "blockers": [],
+  "path_notes": "CONNECTOR-DISCIPLINE CLONE (M5-T020/M2-T009): new focused modules only; every existing connector is READ-ONLY (forbidden); reuse public patterns by import where applicable, never copy-paste forks and never edits. WIDTH SEMANTICS: DCM records the MAPPED (Official City Map) width - the ZR 12-10 concept; Geoclient streetWidth is PAVED width, killed for legal use (research section 5) - do not wire it even as an advisory in this task. CLASSIFIER DIRECTION: a wide-street determination only ever RAISES FAR downstream, so the connector NEVER emits wide except on mathematical certainty from the raw text; everything else is narrow_fail_closed + typed class + review flag, preserving the rules layer's conservative posture. MEASUREMENT CRS: EPSG:2263 native (outSR=2263); display-transport reprojection is out of scope here. THIN CLIENT: KB-scale bounded captures only, no bulk datasets. DISJOINTNESS (D-046-R002): allowed_paths share nothing with M4-T012 (rules dirs, _zr_snapshots, tests/rules, its reports) - pairwise-disjoint by construction. PRODUCER MODEL (D-047-R001): claude-sonnet-5; the backend-engineer agent-file model-key flip was blocked by the session permission classifier (Edit and PowerShell both denied) - the dispatch carries the harness model override resolving to claude-sonnet-5 and this deviation is recorded here and in the progress log; the durable agent-file flip is an open owner/settings item; escalation per D-047-R003 on two review failures. WORKTREE: producer works in its own worktree reset to the task base on candidate/D-024-mrl-option-b; primary checkout is orchestrator-only.",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/connectors",
+    "python tools/modularity_check.py --check",
+    "CI 'api' job (ruff + pytest) on the pushed head - the executable authority where the local 3.11 sandbox cannot collect (M2-T015 pattern)"
+  ],
+  "created_at": "2026-09-13T06:43:32.831670+00:00",
+  "updated_at": "2026-09-13T06:43:33.059666+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R003",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T06:43:32.847320+00:00"
+}
