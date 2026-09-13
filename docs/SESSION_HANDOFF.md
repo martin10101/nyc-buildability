@@ -7,7 +7,8 @@ gates, and workflow routes live in `CLAUDE.md`.
 
 ## Handoff - seq 108: 200 accepted; landed by /session-handoff (no reason given)
 
-Generated 2026-09-13 ~08:55 UTC by the wave-2 orchestrator session
+Generated 2026-09-13 ~17:21 UTC (landing invoked hours after the wave closed ~08:49 UTC; no
+repository activity in between — 0/0 vs origin at landing) by the wave-2 orchestrator session
 (session_01JjK8w1YXwFBjUS8PRrTfHp). Root `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch
 `candidate/D-024-mrl-option-b`, HEAD `d40301a8` **pushed** (0/0 vs origin). `main` untouched.
 PR #241 OPEN — NEVER merge. Dirty at landing: ONLY the conventional reviewer agent-memory files
