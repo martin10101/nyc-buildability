@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-13-d045-integration",
+  "timestamp": "2026-09-13T04:25:42.760965+00:00",
+  "commit": "532fc22141723ad9631cef9def2e4b872afa6b42",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "196 accepted. Session landed both handoff NEXT-ACTIONS: M5-T024 accepted 195th (D-043 owner checklist, gates+DCV complete, owner dashboard execution + live-URL confirmation OPEN as directive-level return items) and M5-T023 accepted 196th (lot-outline WEB rendering - D-040-R001 increment chain COMPLETE; CI 18/18 green at 3ff94619, two-round e2e-locator convergence VERIFIED_CLOSED). D-045 citywide rule-coverage campaign (peer-captured owner directive) integrated into M4 per R010; first campaign task M4-T012 (A1 wave 1) contracting next. Advisory backlog grew: interior-ring fixture, swiftshader e2e WebGL, interactive:false question, stale page.tsx:22 docstring, env.example 0.1 reference.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-13T04:25:42.786800+00:00"
+}

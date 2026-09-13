@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-13T04:10:12+00:00",
+ "updated_at": "2026-09-13T05:55:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "df16d3af3224b5c5500423cc6a1b0e48494032fe18f7740fb1e19c369bfd0977",
+ "requirements_content_digest_sha256": "27bc7302237b31a113377f72c8f60f1e84226acc3db4d049c15972cc8a29e29e",
  "sources": [
   {
    "file": "source-001.md",
@@ -64,6 +64,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043 precedent); scope resolved by owner selection 'Truly everything (incl. A4)' before capture; relay to the live build session (ctl24-ce) follows immediately per R010"
+  },
+  {
+   "at": "2026-09-13T05:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T012 (A1 wave 1: R1+R2 height/setback families) to D-045-R001/R008/R009 (append-only). Digest resynced df16d3af -> 27bc7302."
   }
  ]
 }

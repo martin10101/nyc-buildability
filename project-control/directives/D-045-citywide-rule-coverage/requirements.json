@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 10,
  "producer": "orchestrator",
- "updated_at": "2026-09-13T04:10:12+00:00",
+ "updated_at": "2026-09-13T05:55:00+00:00",
  "requirements": [
   {
    "id": "D-045-R001",
@@ -13,7 +13,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -26,7 +29,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -39,20 +46,28 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [],
     "effective_date": "2026-09-13"
    },
-   "dependencies": ["D-045-R003"],
+   "dependencies": [
+    "D-045-R003"
+   ],
    "required_harness": "geometry-dependent evaluations reproduce documented ZR examples in tests; missing-input branches proven",
    "required_evidence": "accepted ledger tasks citing D-045-R002",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -65,7 +80,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -78,7 +95,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -91,7 +112,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -104,7 +127,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -117,7 +144,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -130,7 +159,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -143,7 +176,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -156,7 +191,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -169,20 +208,32 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [],
     "effective_date": "2026-09-13"
    },
-   "dependencies": ["D-045-R001", "D-045-R002", "D-045-R004", "D-045-R005", "D-045-R006"],
+   "dependencies": [
+    "D-045-R001",
+    "D-045-R002",
+    "D-045-R004",
+    "D-045-R005",
+    "D-045-R006"
+   ],
    "required_harness": "per-body rule packs + tests; coverage surface names each special district assessed vs not",
    "required_evidence": "accepted ledger tasks citing D-045-R007",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -195,7 +246,10 @@
    "classification": "sequencing",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -208,7 +262,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -221,7 +279,10 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -234,7 +295,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -247,7 +312,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-045-BOOTSTRAP"],
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -260,7 +327,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
