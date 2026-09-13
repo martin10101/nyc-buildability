@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-13T05:55:00+00:00",
+ "updated_at": "2026-09-13T06:20:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "27bc7302237b31a113377f72c8f60f1e84226acc3db4d049c15972cc8a29e29e",
+ "requirements_content_digest_sha256": "ca8d29c02cf157997a3a420e1b120d69ea8b19278963a8f61156351aad31e642",
  "sources": [
   {
    "file": "source-001.md",
@@ -70,6 +70,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound ledger task M4-T012 (A1 wave 1: R1+R2 height/setback families) to D-045-R001/R008/R009 (append-only). Digest resynced df16d3af -> 27bc7302."
+  },
+  {
+   "at": "2026-09-13T06:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T013 (B2 street-width official-source research) to D-045-R003/R008/R009 (append-only). Digest resynced 27bc7302 -> ca8d29c0."
   }
  ]
 }

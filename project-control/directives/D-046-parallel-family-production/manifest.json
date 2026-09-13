@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:35:34+00:00",
  "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-13T04:35:34+00:00",
+ "updated_at": "2026-09-13T06:20:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -28,7 +28,7 @@
   "D-046-R004",
   "D-046-R005"
  ],
- "requirements_content_digest_sha256": "914fd95f01d9ba14bce69f25a1da6dff036d0753ab9d0ba9fdceef9c6526744b",
+ "requirements_content_digest_sha256": "e31a8a1cc3508285f83b06714f4ac183ddc36d7f0415fa005877630ad66f0cd1",
  "sources": [
   {
    "file": "source-001.md",
@@ -59,6 +59,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043/D-045 precedent); owner accepted the explicit offer incl. cost posture and non-compressible quality stages; relay to the live build session (ctl24-ce) follows immediately per R005"
+  },
+  {
+   "at": "2026-09-13T06:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M4-T013 (wave-1 slot 2) to D-046-R001/R002 (append-only). Wave 1 runs WIDTH 2 (M4-T012 rules dirs + M4-T013 research paths, pairwise-disjoint); a second rules-family producer is deferred until M4-T012 lands because its directory-scoped allowed_paths would violate R002 - back-off per R004 spirit, never scope-fudging. From wave 2, family packets use file-precise scopes to enable width 3. Digest resynced 914fd95f -> e31a8a1c."
   }
  ]
 }

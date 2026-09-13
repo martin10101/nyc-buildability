@@ -1,0 +1,119 @@
+{
+  "task_id": "M4-T013",
+  "title": "D-045 B2 research: street-width / mapped-street official-source research (A2 dependency; connector research-first discipline)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Identify and evidence the authoritative official NYC source(s) for street width and mapped-street status per street segment/frontage - the data input the A2 geometry-dependent rule mechanics need (street-width-dependent height limits; the existing R6-R8 wide-street conditional rule's 75-ft class of thresholds). Research-first per the connector discipline: official publisher and dataset/API identification with evidence (never guessed schemas/fields/units); field semantics incl. WHICH width the source records (mapped street width vs roadbed vs curb-to-curb) and how that maps onto the ZR's street-width concepts; access method, auth posture, rate limits, update cadence, licensing; recorded-official capture feasibility for a thin client (small verbatim sample captures documented by URL+timestamp+hash procedure, no bulk datasets); honest limitations and conflict surfaces (e.g. Geoclient per-address streetWidth/streetWidthMaximum fields recorded in M2-T021 as a candidate - compare authority, granularity, and semantics against segment-level sources such as DCP's Digital City Map / street centerline products); a source-registry draft per the M2-T009 posture. NO connector code in this task - research + registry draft only; the connector build is a later packet citing this research.",
+  "business_reason": "D-045-R003 names the B2 street-width connector as the A2 dependency and mandates official-source research FIRST; running it now (parallel with M4-T012 under D-046) pulls the A2 wave's critical path forward with fully disjoint scope.",
+  "inputs": [
+    "project-control/directives/D-045-citywide-rule-coverage/requirements.json (R003: the B2 obligation verbatim - research first, source-registry record, verbatim capture with provenance) + D-046 requirements (R001/R002: this task is wave-1 slot 2, scopes disjoint from M4-T012)",
+    "docs/MVP_ARCHITECT_REVIEW_QA.md Part 4, row B2 (the gap-list statement of the street-width need - READ-ONLY)",
+    "project-control/reports/D-040-R001-mappluto-research.md + docs/research/source-registry-drafts/pluto-mappluto.json (the research-report + registry-draft QUALITY BAR this deliverable must match: evidenced facts, exact URLs, retrieval dates, honest limitations)",
+    "docs/MVP_AGENDA.md section I note on M2-T021 (Geoclient per-address streetWidth/streetWidthMaximum fields recorded live - the candidate to compare against segment-level sources) + services/api/tests/fixtures/geoclient/G01_address_documented_example.json (the recorded fields, READ-ONLY)",
+    "services/api/app/rules/rulesets/ - the existing R6-R8 wide-street conditional rule file (READ-ONLY: what street-width semantics the rules layer already consumes)",
+    "docs/research/source-registry-drafts/ (the M2-T009 draft posture to clone)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client: sample captures only, never bulk datasets)"
+  ],
+  "outputs": [
+    "project-control/reports/M4-T013-street-width-research.md (the research deliverable: authoritative source identification with evidence; field semantics incl. which width concept each candidate records and its fit to the ZR street-width thresholds; access/auth/rate/cadence/licensing; capture-procedure design (URL+timestamp+hash, small verbatim samples); candidate comparison incl. Geoclient per-address fields vs segment-level sources; honest limitations and open questions; a recommendation the connector packet can pin)",
+    "docs/research/source-registry-drafts/*.json (NEW source-registry draft(s) for the recommended source(s), M2-T009 posture)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M4-T013-street-width-research.md",
+    "docs/research/source-registry-drafts"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/MVP_ARCHITECT_REVIEW_QA.md",
+    "docs/MVP_AGENDA.md",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "authoritative_source_identified",
+      "input": "the research report's source section",
+      "expected": "the official publisher(s) and exact dataset/API for street width and mapped-street status are identified with evidence (live URLs, retrieval dates, official documentation quotes); access method and auth posture stated from the source's own docs; nothing guessed (permanent principle 3)"
+    },
+    {
+      "id": "S2",
+      "case": "width_semantics_pinned",
+      "input": "the field-semantics section",
+      "expected": "for each candidate the report states WHICH width concept the field records (mapped/record width vs roadbed vs curb-to-curb), its units, and how it maps onto the ZR street-width thresholds the rules layer consumes (the existing R6-R8 wide-street rule named as the consumer); ambiguities recorded as open questions, never resolved by assumption"
+    },
+    {
+      "id": "S3",
+      "case": "capture_feasibility",
+      "input": "the capture-procedure section",
+      "expected": "a documented, re-runnable recorded-official capture procedure (exact query URLs, expected response shape from evidence, timestamp+hash recording) sized for the thin client (small verbatim samples, no bulk downloads); keyless vs keyed stated; any key requirement routed to the owner boundary, never acquired in-task"
+    },
+    {
+      "id": "S4",
+      "case": "candidate_comparison_honest",
+      "input": "the comparison section",
+      "expected": "Geoclient per-address streetWidth/streetWidthMaximum (recorded in M2-T021 fixtures) compared against segment-level official sources on authority, granularity, semantics, and failure modes; disagreement surfaces named; the recommendation states its tradeoffs instead of hiding them"
+    },
+    {
+      "id": "S5",
+      "case": "registry_draft_posture",
+      "input": "the new draft(s) under docs/research/source-registry-drafts/",
+      "expected": "draft(s) follow the M2-T009 structure (source id, publisher, endpoint, cadence, licensing, limitations) consistent with the research report; draft status clearly non-final; no invented registry mechanism"
+    },
+    {
+      "id": "S6",
+      "case": "research_only_scope",
+      "input": "git status over the worktree",
+      "expected": "zero code changes: only the research report + registry draft(s); no connector, no fixtures, no dependency, no schema touched (the connector build is a later packet that pins this report)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "the term 'street width' is overloaded across NYC sources (DCM mapped width, CSCL physical attributes, Geoclient per-address values) - the report must keep the concepts separate; conflating them would poison the A2 rule mechanics downstream",
+    "the ZR's own street/street-line definitions govern which measurement the rules need; if the official data's concept does not match the ZR concept, that mismatch is THE finding, not something to paper over",
+    "web sources may be slow/unavailable; record retrieval failures honestly and mark affected sections open rather than substituting memory",
+    "licensing/terms for bulk products may differ from per-query APIs - state both; thin client forbids bulk mirrors regardless"
+  ],
+  "blockers": [],
+  "path_notes": "RESEARCH-ONLY (D-045-R003 first half): two writable surfaces - the report file and the registry-drafts directory. D-046 WAVE-1 DISJOINTNESS: these paths share nothing with M4-T012 (services/api rules dirs + its reports) - pairwise-disjoint by construction (D-046-R002). The connector BUILD is a later packet (connector code, fixtures, tests are all forbidden here). Producer is official-source-researcher (WebSearch/WebFetch capable); every material claim carries a live URL + retrieval date; quotes verbatim; no schema/field/unit ever guessed. WORKTREE: producer works in its own worktree reset to the task base; primary checkout is orchestrator-only.",
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ],
+  "created_at": "2026-09-13T04:42:55.202857+00:00",
+  "updated_at": "2026-09-13T04:42:55.427991+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R003",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-13T04:42:55.202857+00:00"
+}
