@@ -166,3 +166,10 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   candidate: checklist addendum). "Confirm facts (not yet available)" is honest-by-design:
   user_confirmations exist in the contract but no endpoint accepts them until the
   analysis-run milestone + persistence/auth (Supabase B-001) land — not a flag.
+- **Live-deploy staleness (owner walkthrough, Compare run):** the deployed nycdf-api is the
+  2026-09-11 blueprint build (autoDeployTrigger off) — it PREDATES M4-T009's R1–R12 FAR
+  families (accepted 9/12): the live scenario coverage matrix says "(R5)" and treats
+  higher-density as out_of_scope. The owner's next Manual-Deploy round must cover BOTH
+  services (web + api). Scenario for 3022647515 fails closed on `spatial_intersection_absent`
+  (profile carries no spatial_intersection section; integration.py:474 — district never
+  guessed) — the geometry lane (B3 done, B4 next) + spatial layer is exactly this gap.
