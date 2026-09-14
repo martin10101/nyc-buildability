@@ -14,7 +14,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-051-BOOTSTRAP"
+     "D-051-BOOTSTRAP",
+     "M4-T018"
     ],
     "task_types": [],
     "milestones": [],
@@ -46,7 +47,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-051-BOOTSTRAP"
+     "D-051-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -78,7 +80,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-051-BOOTSTRAP"
+     "D-051-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],

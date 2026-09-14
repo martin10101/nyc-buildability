@@ -14,7 +14,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -46,7 +47,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -78,7 +80,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -110,7 +113,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -142,7 +146,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -174,7 +179,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -209,7 +215,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-052-BOOTSTRAP"
+     "D-052-BOOTSTRAP",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],

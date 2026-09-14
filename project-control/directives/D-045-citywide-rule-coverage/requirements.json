@@ -49,7 +49,9 @@
    "applicability": {
     "task_ids": [
      "D-045-BOOTSTRAP",
-     "M4-T016"
+     "M4-T016",
+     "M4-T018",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -258,7 +260,9 @@
      "M4-T014",
      "M4-T015",
      "M4-T016",
-     "M4-T017"
+     "M4-T017",
+     "M4-T018",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],
@@ -296,7 +300,9 @@
      "M4-T014",
      "M4-T015",
      "M4-T016",
-     "M4-T017"
+     "M4-T017",
+     "M4-T018",
+     "M4-T019"
     ],
     "task_types": [],
     "milestones": [],

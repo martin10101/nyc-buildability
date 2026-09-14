@@ -1,0 +1,118 @@
+{
+  "task_id": "M4-T018",
+  "title": "A2/B6: ZR 12-10 wide/narrow-street text capture + accepted-snapshot reconciliation (OQ-4-a/b/c; B6-before-B4 per M4-T016 G1 advisory)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Resolve OQ-4-a/b/c from the accepted M4-T016 research BEFORE any wide-street geometry build: (1) capture the CURRENT official ZR 12-10 definitions of 'street, wide' (Last Amended 3/26/2026 per two byte-verified observations) and 'street, narrow', plus the directly-leaned-on terms 'street line' and 'street setback line', with print/PDF-class completeness discipline (or the documented sha256-pinned canonical-HTML fallback if the print channel 504s again - disclose exactly as M4-T016 did); (2) reconcile the captured text against the accepted zr-12-10 snapshot pinned by r6_r7_r8_wide_street_conditional_far.rule.json and the accepted M4-T013 pin - state precisely WHAT changed (the C5-3/C6-4/C6-6 alternate-width clause, the 70-ft continuous-street-line clause, the Broadway W94-97 CD7 and Allen St Rivington-Delancey CD3 named designations), WHEN (amendment date evidence), and WHICH accepted artifacts reference superseded text (conflict stays VISIBLE, never adjudicated - the snapshot update itself is a later rules-engineer task); (3) specify capture-ready requirements for the named-street override table (legislative facts, never derivable from DCM data - M4-T016 G1 advisory 2) and the C5-3/C6-4/C6-6 alternate-width test as build inputs for D-052-R001 exception checking; (4) note the 2026 Allen Street demapping proceedings (C 250306 MMM / N 250307 ZRM, archived owner research, discovery aid only) as context the build must not confuse with the zoning-text exception. Bounded-negative discipline per D-051-R001. NO code changes - research report only.",
+  "business_reason": "D-052-R001 requires applicable zoning exceptions checked before final classification and M4-T016's G1 advisory 1 requires B6 (fresh 12-10 capture + reconciliation) BEFORE B4 builds the buffer test; wave-4 slot 1, disjoint from the M4-T019 policy-layer build.",
+  "inputs": [
+    "project-control/directives/D-052-street-width-draft-classification/requirements.json (R001: exceptions checked before final classification - this task captures the exception TEXT; R008 residual honesty) + D-051 R001 (bounded negatives) + D-045/D-046 rows per refs - all READ-ONLY",
+    "project-control/reports/M4-T016-a2-geometry-mechanics-research.md (accepted: OQ-4-a/b/c verbatim, the 12-10 discovery, E6 sha256 0c341a0b + capture-channel notes - READ-ONLY pin)",
+    "project-control/reports/M4-T013-street-width-research.md (accepted: the prior 12-10 flat-75 pin being reconciled - READ-ONLY)",
+    "services/api/app/rules/rulesets/r6_r7_r8_wide_street_conditional_far.rule.json + its zr-12-10 snapshot reference (what the accepted rule currently pins - READ-ONLY; the snapshot UPDATE is a later rules-engineer task, forbidden here)",
+    "docs/research/owner-research/RQ005_Deep_Research_2026-09-14.md + RQ005_Independent_Confirmation_2026-09-13.md (discovery aids ONLY per D-050-R002: Allen St proceedings context, Section-Map route - never provenance)",
+    "docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md (thin client: verbatim samples only)"
+  ],
+  "outputs": [
+    "project-control/reports/M4-T018-zr1210-wide-street-reconciliation.md (the research deliverable: fresh captures with sha256 + channel disclosure; WHAT/WHEN changed vs the accepted snapshot with conflict kept visible; capture-ready build-input specs for the named-street override table + the C5-3/C6-4/C6-6 alternate-width test; honest limitations + open questions)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/M4-T018-zr1210-wide-street-reconciliation.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/ARCHITECT_REVIEW_QUESTIONS.md",
+    "docs/research/owner-research/**",
+    "docs/research/source-registry-drafts/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "current_text_captured",
+      "input": "the capture section",
+      "expected": "the current 12-10 'street, wide' and 'street, narrow' definitions (+ 'street line', 'street setback line') captured verbatim with URL, retrieval date, sha256, and channel disclosure (print/PDF-class or the documented canonical-HTML fallback with the 504 disclosed); amendment-date evidence (3/26/2026 for street-wide) stated from the capture, not from memory or the discovery aids"
+    },
+    {
+      "id": "S2",
+      "case": "reconciliation_conflict_visible",
+      "input": "the reconciliation section",
+      "expected": "precise WHAT/WHEN delta vs the accepted zr-12-10 snapshot and the M4-T013 flat-75 pin; every accepted artifact referencing superseded text NAMED; the conflict stays visible and routed - the task never adjudicates which text governs a past acceptance and never edits the snapshot"
+    },
+    {
+      "id": "S3",
+      "case": "build_input_specs",
+      "input": "the build-inputs section",
+      "expected": "capture-ready specs for (a) the named-street override table (legislative facts with their 12-10 anchors, never DCM-derivable) and (b) the C5-3/C6-4/C6-6 alternate-width test, each stated as D-052-R001 exception-check inputs with what a rule implementation needs"
+    },
+    {
+      "id": "S4",
+      "case": "bounded_negatives",
+      "input": "the whole report",
+      "expected": "every negative claim bounded to named sources (D-051-R001); discovery aids cited only as leads with the official capture carrying every load-bearing claim"
+    },
+    {
+      "id": "S5",
+      "case": "research_only_scope",
+      "input": "git status over the worktree",
+      "expected": "exactly one file changed: the report (placeholder replaced); zero code/schema/fixture/snapshot/dependency changes"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "the 12-10 page is ~1.3MB and the print/PDF render 504'd twice for M4-T016 - the fallback channel must be disclosed, never silently substituted",
+    "the accepted r6_r7_r8 rule + snapshot reference the pre-amendment text; mishandling the reconciliation as a silent snapshot edit would corrupt accepted provenance - the update is a separate gated task",
+    "the Allen Street map amendment's filing status is unverified (owner research): keep map-status and zoning-text as separate facts",
+    "web sources may be slow/unavailable; record retrieval failures honestly"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T02:06:14.818298+00:00",
+  "updated_at": "2026-09-14T02:06:15.024791+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    },
+    {
+      "directive_id": "D-051",
+      "requirement_ids": [
+        "D-051-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T02:06:14.818298+00:00",
+  "path_notes": "RESEARCH-ONLY (B6 per the accepted M4-T016 Part 4 split; G1 advisory 1: B6 BEFORE B4). ONE writable file. D-046 WAVE-4 DISJOINTNESS: shares nothing with M4-T019 (services/api policy module + test). Producer official-source-researcher (agent file claude-sonnet-5 per D-047-R001). WORKTREE: producer works in its own worktree reset to the contract HEAD; show-toplevel guard mandatory; primary checkout is orchestrator-only.",
+  "documented_test_commands": [
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ]
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-14",
  "captured_at": "2026-09-14T01:45:00+00:00",
  "created_at": "2026-09-14T01:45:00+00:00",
- "updated_at": "2026-09-14T02:04:12+00:00",
+ "updated_at": "2026-09-14T02:08:15+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "aff0431841167759e800c68f908bb5612f8a9dbe",
@@ -31,7 +31,7 @@
   "D-052-R007",
   "D-052-R008"
  ],
- "requirements_content_digest_sha256": "f2c86d91a8d4c484a74870b19960f4378c015d07836e301b751bee6fb93317f8",
+ "requirements_content_digest_sha256": "932c5d483a570b695d0deddd536469ea8ff39f5c77e6658fc0b9d5c9c9d85508",
  "sources": [
   {
    "file": "source-001.md",
@@ -69,6 +69,12 @@
    "actor": "orchestrator",
    "action": "capture_defect_correction",
    "note": "D-052-R008 classification corrected 'return_item' -> 'return' (c1 vocabulary; the invalid value was a capture defect caught by the validator the moment the directive was indexed - the requirement text is unchanged). Digest resynced 53264a59 -> f2c86d91 in the SAME commit (c14). Also in this commit: index.json registration for D-051/D-052, which the capture commits had omitted - the validator/registry could not see either directive until now."
+  },
+  {
+   "at": "2026-09-14T02:08:15+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound the implementing ledger task M4-T019 (policy-layer module + tests) to D-052-R001..R007 (append-only; R008 closure artifacts were capture-commit items, sentinel-bound). Digest resynced f2c86d91 -> 932c5d48 in the SAME commit."
   }
  ]
 }

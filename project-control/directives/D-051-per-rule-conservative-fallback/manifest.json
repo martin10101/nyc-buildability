@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T22:05:00+00:00",
  "created_at": "2026-09-13T22:05:00+00:00",
- "updated_at": "2026-09-14T02:04:12+00:00",
+ "updated_at": "2026-09-14T02:08:15+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "418b078f04f1c8fb753eb52f0e8074fc9764da00",
@@ -29,7 +29,7 @@
   "D-051-R005",
   "D-051-R006"
  ],
- "requirements_content_digest_sha256": "136f58097038767dbba4c5e1917fc37a775065cbe43119fa785cbac2dc50d5dc",
+ "requirements_content_digest_sha256": "acf85f8048fe3c6863ce859d6e5dff0c54eb5903cdd9151d7a5a6da28ad8c3a7",
  "sources": [
   {
    "file": "source-001.md",
@@ -66,6 +66,12 @@
    "actor": "orchestrator",
    "action": "capture_defect_correction",
    "note": "D-051-R006 classification corrected 'return_item' -> 'return' (c1 vocabulary; the invalid value was a capture defect caught by the validator the moment the directive was indexed - the requirement text is unchanged). Digest resynced da6af7c8 -> 136f5809 in the SAME commit (c14). Also in this commit: index.json registration for D-051/D-052, which the capture commits had omitted - the validator/registry could not see either directive until now."
+  },
+  {
+   "at": "2026-09-14T02:08:15+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M4-T018 to D-051-R001 (bounded-negative research discipline) and M4-T019 to D-051-R002/R003 (unknown-stays-unknown module semantics; per-rule fallback separation) (append-only). Digest resynced 136f5809 -> acf85f80 in the SAME commit."
   }
  ]
 }

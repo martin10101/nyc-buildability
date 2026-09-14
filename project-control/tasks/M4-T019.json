@@ -1,0 +1,141 @@
+{
+  "task_id": "M4-T019",
+  "title": "D-052 street-width classification-policy layer: pure module consuming the accepted 24-class classifier (B5 implementation half; preconditions typed, geometry matching deferred to B3/B4)",
+  "task_type": "feature",
+  "milestone_id": "M4",
+  "objective": "Implement the owner-approved D-052 DRAFT street-width classification policy as a NEW pure module services/api/app/connectors/dcm_street_width_policy.py (sibling of the accepted, unmodified dcm_street_width_classifier.py) plus its test file: consume the accepted classifier's 24 typed classes + raw label and produce a typed policy decision per D-052 - (R001) 75-ft threshold, <75 narrow / >=75 wide, with applicable-zoning-exceptions-checked as a TYPED PRECONDITION input (exceptions_checked attestation; absent or false -> UNRESOLVED, never silently thresholded); (R002) classification issues ONLY when the caller supplies documented source, street-status and frontage-coverage attestations (typed precondition object; a bare nearest-centerline match MUST be refused - frontage matching itself is the later B3/B4 geometry work); every classification carries the owner-approved-assumption wording, never a DCP-guarantee claim; (R003) one-sided-bound rule: classify iff ALL values permitted by the accepted reading fall on one side of 75 (owner examples as literal test cases: '<75' narrow; '>75','>=75','75-90' wide; '<=75','60-75','70-80' UNRESOLVED); (R004) approximations, probabilistic wording, conflicts, unclear coverage, unrecognized text -> UNKNOWN routed to map resolution; NEVER invent tolerances, average, round across the threshold, or endpoint-pick (negative tests for each forbidden move); (R005) output preserves the provenance quintuple (original label, source version, matched geometry ref, interpreted bounds, classification reason); (R006) UNKNOWN stays the underlying data state - the module emits data states, consuming rules justify their own fallbacks (D-051-R003); (R007) tests cover threshold boundaries, range handling, frontage-mismatch refusals, exception-unimplemented UNRESOLVED; all outputs DRAFT-labeled until G6. Zero new dependencies; the accepted classifier and connector modules are READ-ONLY; run cd services/api && python -m ruff check . before finishing (api CI step 1).",
+  "business_reason": "Owner directive D-052 ('Record this decision and implement it through the existing project controls') - wave-4 slot 2, disjoint from M4-T018; unblocks B4/B7 wiring by giving the geometry lane a decided, tested policy surface.",
+  "inputs": [
+    "project-control/directives/D-052-street-width-draft-classification/source-001.md + requirements.json (THE specification - implement R001..R007 verbatim; the owner's worked examples in R003 are literal test cases - READ-ONLY)",
+    "project-control/directives/D-051-per-rule-conservative-fallback/requirements.json (R002 unknown-stays-unknown, R003 per-rule fallback - the module emits data states, never rule fallbacks - READ-ONLY)",
+    "services/api/app/connectors/dcm_street_width_classifier.py (accepted M4-T015: the 24 typed classes + parse output this module consumes - READ-ONLY, NEVER modified)",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py (accepted transport: source-version fields available for provenance - READ-ONLY)",
+    "services/api/tests/connectors/test_dcm_street_width_classifier.py (the accepted test patterns + fixtures to build against - READ-ONLY)",
+    "project-control/reports/M4-T013-street-width-research.md section 4 ambiguity classes + M4-T016 report Part 2.4 edge cases (READ-ONLY pins)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/dcm_street_width_policy.py (NEW pure module: typed precondition object (source documented, street-status, frontage-coverage, exceptions-checked attestations), interpreted-bounds representation, D-052 decision function returning wide/narrow/UNRESOLVED/UNKNOWN + provenance quintuple + owner-approved-assumption wording + DRAFT label; refusal paths for missing preconditions and bare nearest-centerline matches)",
+    "services/api/tests/connectors/test_dcm_street_width_policy.py (NEW: threshold boundaries 74.99/75/75.01; every R003 owner example verbatim; negative tests per R004 forbidden move; precondition-refusal tests; provenance-quintuple schema tests; UNKNOWN propagation)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/connectors/dcm_street_width_policy.py",
+    "services/api/tests/connectors/test_dcm_street_width_policy.py"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/dcm_street_width_classifier.py",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/app/rules/**",
+    "services/api/tests/fixtures/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/state.json",
+    "services/api/pyproject.toml",
+    "services/api/uv.lock",
+    "package-lock.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "threshold_and_examples_verbatim",
+      "input": "pytest over the new test file",
+      "expected": "74.99->narrow-eligible, 75.0/75.01->wide-eligible (subject to preconditions); every D-052-R003 owner example passes as written: '<75' narrow; '>75','>=75','75-90' wide; '<=75','60-75','70-80' UNRESOLVED; property honored: classify iff the accepted reading's interval is a subset of (0,75) or [75,inf)"
+    },
+    {
+      "id": "S2",
+      "case": "preconditions_fail_closed",
+      "input": "tests with missing/false attestations",
+      "expected": "absent or false source/street-status/frontage-coverage/exceptions-checked attestations -> the module REFUSES to classify (UNRESOLVED with reason), incl. an explicit bare-nearest-centerline refusal case; no default-true precondition anywhere"
+    },
+    {
+      "id": "S3",
+      "case": "forbidden_moves_negative_tests",
+      "input": "tests for R004",
+      "expected": "'~75' and probabilistic wording stay UNKNOWN (no invented tolerance); '60-75' never endpoint-picked; no averaging path exists; no rounding across 75; conflicting inputs -> UNKNOWN"
+    },
+    {
+      "id": "S4",
+      "case": "provenance_and_labels",
+      "input": "output-schema tests",
+      "expected": "every decision carries the provenance quintuple (original label, source version, matched-geometry ref, interpreted bounds, reason), the owner-approved-assumption wording on classifications, and the DRAFT-until-G6 label; UNKNOWN is a first-class data state distinct from narrow"
+    },
+    {
+      "id": "S5",
+      "case": "scope_and_regression",
+      "input": "git status + full connector suite + ruff",
+      "expected": "exactly two new files; the accepted classifier/connector byte-unchanged; cd services/api && python -m ruff check . EXIT 0; existing connectors suite still green; zero new dependencies"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "classification semantics drift: the module must implement the D-052 text, not a paraphrase - G3 reviews code-vs-directive fidelity line by line",
+    "precondition theater: attestation flags that callers can trivially default to true would gut R002 - the type design must force explicit caller assertions with provenance",
+    "boundary semantics: exactly 75 is WIDE (R001); '>=75' and '75-90' include 75 on the wide side - a naive strict-inequality implementation would misclassify the threshold",
+    "the module must not import or wire any rule/consumer (B7 is later); UNKNOWN emission vs rule fallback separation (D-051-R003) must stay clean"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T02:06:32.461047+00:00",
+  "updated_at": "2026-09-14T02:06:32.682119+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-052",
+      "requirement_ids": [
+        "D-052-R001",
+        "D-052-R002",
+        "D-052-R003",
+        "D-052-R004",
+        "D-052-R005",
+        "D-052-R006",
+        "D-052-R007"
+      ]
+    },
+    {
+      "directive_id": "D-051",
+      "requirement_ids": [
+        "D-051-R002",
+        "D-051-R003"
+      ]
+    },
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T02:06:32.461047+00:00",
+  "path_notes": "BUILD (B5 implementation half per M4-T016 Part 4 + D-052). TWO new files; the accepted classifier stays byte-immutable (M4-T016 G1 advisory 5 pattern: sibling module). D-046 WAVE-4 DISJOINTNESS: shares nothing with M4-T018 (single control-plane report file). Producer backend-engineer; D-047-R001 model claude-sonnet-5 via dispatch override (agent-file flip still classifier-blocked - record the deviation, owner settings item stands). RUFF IS API CI STEP 1: run cd services/api && python -m ruff check . before finishing. WORKTREE: producer in its own worktree reset to contract HEAD; show-toplevel guard mandatory.",
+  "documented_test_commands": [
+    "cd services/api && python -m pytest tests/connectors/test_dcm_street_width_policy.py -q",
+    "cd services/api && python -m pytest tests/connectors -q (regression: accepted suite stays green)",
+    "cd services/api && python -m ruff check .",
+    "python tools/validate_directive_compliance.py --check",
+    "python tools/modularity_check.py --check"
+  ]
+}
