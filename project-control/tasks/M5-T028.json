@@ -85,17 +85,17 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T09:17:46.363419+00:00",
-  "updated_at": "2026-09-14T09:17:46.634848+00:00",
+  "updated_at": "2026-09-14T09:22:44.762964+00:00",
   "directive_refs": [
     {
       "directive_id": "D-059",
@@ -122,5 +122,15 @@
   "path_notes": [
     "Opened directly from the M5-T027 G3 advisory A1 (independent reviewer finding), not from a producer self-report; closes the D-059-R003 defect class project-wide.",
     "Scope is disjoint from the concurrent M4-T021 connectors lane and from M5-T027's own files (which are forbidden here) - D-046-R002 satisfied by construction."
+  ],
+  "worktree": "wt-m5t028",
+  "progress_log": [
+    {
+      "at": "2026-09-14T09:22:44.762964+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS; dispatching unnamed backend-engineer producer (claude-sonnet-5 per D-047) into an isolated worktree. Opened from the M5-T027 G3 independent-reviewer advisory A1"
+    }
   ]
 }
