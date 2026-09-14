@@ -67,15 +67,21 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   Ridge lots — §12-10-only eligibility function is WRONG; cross-refs §23-21/§23-424
   (35/35, 35/45, 45/55)/§27-111/§66-11; print/PDF capture still owed.
 
-## D-053 relaunch — **LOOP LIVE 2026-09-14** (run persistent-local-34 on M4-T020)
+## D-053 loop — shift 1 COMPLETE (persistent-local-34 closed benignly at unit completion)
 
-- **LIVE**: pid 12488, launched detached from certified wt-controller-src; audit seq 776–778
-  run_budget_started → START_CLAUDE (manifest/journal/lock/config/models/capabilities all
-  verified). Packet **M4-T020 (B3 geometry parse-and-expose)**: contracted d7f0f3f8, G0 PASS,
-  claimed, worktree wt-m4t020 @ 7f297f09 (D-046/D-045 bound, evaluate_task_refs ok,
-  loop-closed-profile commands). Watcher: two-phase read-only
-  `scratchpad/loop_break_watcher_m4t020.sh` in quiet mode (BREAK/FREEZE/CLOSED only; a fast
-  CLOSED can be the benign DL-2 checkpoint_field_mismatch — inspect wt-m4t020 first).
+- **Run persistent-local-34 (M4-T020 B3) FINISHED its unit**: worker built the module, ran
+  all four documented commands auto-approved (audit seq 838–844), `claude_unit_completed`
+  seq 845; close = the benign checkpoint refusal (seq 846: worktree-FIELD mismatch,
+  'wt-m4t020' vs full path — same DL-class as the starting_sha variant) → synchronous stop.
+  **Work verified green by the orchestrator (39 tests + ruff) and COMMITTED at wt-m4t020
+  `d7766b8d`** (branch task/M4-T020-dcm-geometry). NEXT for M4-T020: cherry-pick to
+  candidate, submit + G3/G4 wave + DCV + accept (normal arc).
+- **Relaunch pattern for shift 2** (successor): adapt `scratchpad/relaunch_m4t020.ps1`
+  (new packet/branch, fresh run-id persistent-local-35+); down-state drill first
+  (pending-approvals denies w/ \r-strip, clear-recovery from PAUSED_RECOVERY, worktree
+  reset to claim head). **D-058-R004: worker stays claude-fable-5 via EXTRA USAGE**
+  (regular weekly exhausted per owner; opus chain = genuine-hard-stop last resort only,
+  never a pin flip).
 - **D-055 (owner, captured+executed 2026-09-14)**: Fable while it lasts for main + reviewers —
   model_selection.toml = fable-5 w/ ["claude-opus-4-8"] quota fallback (D-036 revert done);
   five gate-reviewer agent files (89c4e304 set) back to `model: claude-fable-5`, effort key
