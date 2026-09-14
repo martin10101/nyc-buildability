@@ -1,7 +1,7 @@
 {
  "task_id": "M5-T025",
  "assembled_by": "orchestrator",
- "reviewed_sha": "10aaedccb80b3954f03d7bc1b504807ec8fb21c1",
+ "reviewed_sha": "634954162449c4c94b30ff3037ac7b743ef1df73",
  "note": "D-056 web-fix packet; producer commit 9ad6a4f5 cherry-picked as the material commit 10aaedcc. Producer worktree had no node_modules (thin client) - CI web + web-e2e on the pushed head is the executable authority (M5-T023 precedent); local vitest impossible anywhere on this machine. F1 record correction applied 2026-09-14 (rework seam); reviewed_sha updated at resubmit.",
  "requirements": {
   "D-056-R001": [
