@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-055",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-055 requirements bind the non-ledger sentinel D-055-BOOTSTRAP (D-038..D-053 precedent; validator c5 forbids sentinel task_ids in task_verifications). No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

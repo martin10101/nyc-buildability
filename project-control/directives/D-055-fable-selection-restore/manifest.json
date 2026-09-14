@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-055",
+ "version": 1,
+ "slug": "fable-selection-restore",
+ "title": "Owner 2026-09-14: SELECT FABLE WHILE IT LASTS for main and reviewers - execute the D-036-R001 worker revert (model_selection.toml back to claude-fable-5 with the opus-4-8 quota fallback) and revert the five 2026-08-09 gate-reviewer fallback flips back to claude-fable-5 (effort key removed); standing fallback cycles stay armed; producers/D-047 untouched; blocked surfaces return to the owner, never bypassed.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T04:32:00+00:00",
+ "created_at": "2026-09-14T04:32:00+00:00",
+ "updated_at": "2026-09-14T04:32:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "218dd2728c55755e93e71af5d42ab19a4f4417d3",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the directive verbatim mid-turn in the orchestrator session, immediately after the seam report that listed both Fable-deselection states and their classifier-blocked status - the message is the explicit authorization to fix both surfaces and doubles as the standing reviewer-model-fallback rule's named 'Fable is back' trigger."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-055-R001",
+  "D-055-R002",
+  "D-055-R003",
+  "D-055-R004",
+  "D-055-R005"
+ ],
+ "requirements_content_digest_sha256": "84d56384f45826e8e44e8f8c6adc0bad966dd4b10352c36a4b16eca2d438074d",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T04:32:00+00:00",
+   "content_digest_sha256": "9b7fb71c3b02e15cf59c98c56c24449c1dad61131b97f58265b6653c285e1abc"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "model_selection_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "restoring claude-fable-5 selection for the loop worker pin and the five gate-reviewer agent files, with the standing quota-fallback chains re-armed",
+  "prohibited": "bypassing a permission-classifier block; touching producer/specialist agent files or the D-047 producer-model intent; creating any new hold; changing review independence, gates, or acceptance authority"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T04:32:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the owner's mid-turn message in the orchestrator session; execution follows in the immediately-subsequent commit(s) this seam; any still-blocked surface returns to the owner per R005."
+  }
+ ]
+}

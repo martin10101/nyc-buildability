@@ -729,6 +729,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-054-persistent-knowledge-files/manifest.json"
+  },
+  {
+   "directive_id": "D-055",
+   "slug": "fable-selection-restore",
+   "title": "Owner 2026-09-14: SELECT FABLE WHILE IT LASTS for main and reviewers - execute the D-036-R001 worker revert (model_selection.toml back to claude-fable-5 with the opus-4-8 quota fallback) and revert the five 2026-08-09 gate-reviewer fallback flips back to claude-fable-5 (effort key removed); standing fallback cycles stay armed; producers/D-047 untouched; blocked surfaces return to the owner, never bypassed.",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-055-fable-selection-restore/manifest.json"
   }
  ],
  "updated_at": "2026-09-14T02:36:29+00:00"

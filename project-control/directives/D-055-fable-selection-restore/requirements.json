@@ -1,0 +1,170 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-055",
+ "version": 1,
+ "requirement_count": 5,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-14T04:32:00+00:00",
+ "requirements": [
+  {
+   "id": "D-055-R001",
+   "text": "MAIN (loop worker) SELECTS FABLE — execute the D-036-R001 recorded revert in C:/SupervisorController/model_selection.toml verbatim: [claude] model = \"claude-fable-5\" and fallback_models = [\"claude-opus-4-8\"] (fallback selected ONLY on reason_code quota_exhausted, the standing D-036 chain). No effort key (D-004-R159 stands). The file's own D-036 comment records these exact revert values.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-055-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "model_selection.toml shows the Fable pin + restored fallback chain",
+   "required_evidence": "file content; next supervisor run's init/model events",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-055-R002",
+   "text": "REVIEWERS SELECT FABLE — revert the five gate-reviewer agent files flipped on 2026-08-09 (commit 89c4e304): code-reviewer, control-plane-verifier, directive-compliance-verifier, qa-engineer, security-reviewer each return to 'model: claude-fable-5' with the fallback-era 'effort: xhigh' key REMOVED (restoring the D-004 am.22/23 R734-R742 pinned form). No other agent file changes: producers (D-047), the opus-4-8 specialist set, and the already-Fable orchestrator file are untouched.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-055-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "the five agent files show model: claude-fable-5 and no effort key; diff touches exactly those five files",
+   "required_evidence": "git diff of the execution commit",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-055-R003",
+   "text": "AVAILABILITY BASIS (external fact) — Fable-is-back is evidenced at execution time: the orchestrator session runs claude-fable-5 on this account at this seam (post the 2026-09-10 Thursday weekly reset); controller-side Fable launch capability was proven by the R263 probe (M0-T113-fable-probe). No new probe is required by this directive; the standing chains handle a wrong guess safely.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-055-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "recorded evidence statement in the capture + seam report",
+   "required_evidence": "source-001 capture-context; session model identity",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-055-R004",
+   "text": "WHILE-IT-LASTS SEMANTICS (owner decision) — Fable exhaustion never waits or blocks: on quota exhaustion the standing fallbacks take over (model_selection fallback_models chain for the worker; the reviewer-model-fallback standing rule claude-opus-4-8 xhigh for the reviewer files, revert again on the owner's next 'Fable is back'). This directive creates NO hold and retires none; it re-arms the existing cycle.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-055-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "no new hold records; fallback chains present after execution",
+   "required_evidence": "model_selection fallback list; standing-rule continuity",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-055-R005",
+   "text": "RETURN — report execution state at the owner seam: which surfaces were changed, and for ANY surface still permission-classifier-blocked after this owner authorization, the exact manual step (file + lines) for the owner - blocked surfaces are returned, never bypassed.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-055-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "seam report enumerating changed vs blocked surfaces",
+   "required_evidence": "seam report; ledger/registry audit entries",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}
