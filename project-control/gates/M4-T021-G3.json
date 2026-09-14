@@ -4,9 +4,18 @@
   "reviewer": "code-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M4-T021-G3-code-review.md",
-  "reviewed_at": "2026-09-14T09:40:26.476549+00:00",
-  "content_manifest_sha256": "e5072217e9e6bbdac9e46fda2152db04f9444bc4d45866ec90395865a5399c81",
-  "reviewed_sha": "8e7db3af5fe0a1f465104c6935b7f22ecc4704ff",
-  "updated_at": "2026-09-14T09:40:26.827292+00:00"
+  "report_file": "project-control/reports/M4-T021-G3-delta-attestation.md",
+  "reviewed_at": "2026-09-14T10:08:36.039087+00:00",
+  "content_manifest_sha256": "7413f6e4f3594881e1b206aba19c094ef5ee965e9dc15ab3d1436c31fbe9dbd0",
+  "reviewed_sha": "14af4e209bdc105d495c7d509a6e8b0222ee3a2e",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M4-T021-G3-code-review.md",
+      "reviewed_at": "2026-09-14T09:40:26.476549+00:00"
+    }
+  ],
+  "updated_at": "2026-09-14T10:08:36.366009+00:00"
 }
