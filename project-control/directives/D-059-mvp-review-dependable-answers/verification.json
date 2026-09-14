@@ -1,8 +1,71 @@
 {
-  "schema": "directive_verification/v2",
-  "directive_id": "D-059",
-  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-059-BOOTSTRAP at capture; fix/wiring tasks are bound by applicability.task_ids append as they are contracted (validator c5 forbids sentinel task_ids in task_verifications). No completion claim exists at capture time.",
-  "verified_by": null,
-  "verified_at": null,
-  "task_verifications": []
+ "schema": "directive_verification/v2",
+ "directive_id": "D-059",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-059-BOOTSTRAP at capture; fix/wiring tasks are bound by applicability.task_ids append as they are contracted (validator c5 forbids sentinel task_ids in task_verifications). No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": [
+  {
+   "directive_id": "D-059",
+   "task_id": "M5-T027",
+   "applicable_requirement_ids": [
+    "D-059-R001",
+    "D-059-R002",
+    "D-059-R003",
+    "D-059-R011"
+   ],
+   "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1",
+   "reviewed_manifest_sha256": "7d1697b004c9751842e5c9c26806162ae25861c398435b29175f3c3d7c79f58d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T09:41:22+00:00",
+   "requirements": [
+    {
+     "id": "D-059-R001",
+     "state": "PASS",
+     "evidence": [
+      "Recorded-data semantics implemented: UNUSED_FLOOR_AREA_LABEL / SCOPE_NOTE state the number is a RECORDED-DATA COMPARISON and NOT a ZR 12-10 zoning-floor-area difference, name PLUTO condo net-vs-gross semantics, state that a positive or negative result does not by itself establish unused legal development rights or zoning noncompliance, and name the preconditions a genuine rights calculation would additionally require (compatible existing zoning-area input + confirmed zoning-lot extent). Verifier read the strings at the pinned sha and reproduced the forbidden-noun test.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    },
+    {
+     "id": "D-059-R002",
+     "state": "PASS",
+     "evidence": [
+      "bldgarea-zero fail-closed implemented and proven red-on-old: zero existing area is COMPUTED only when the same profile's numbldgs fact is present, usable, and exactly 0 (established vacancy); positive, absent, unusable-coverage, or non-numeric numbldgs all route to the typed existing_building_area_unusable state with a null value and the professional-review flag set at section and document level, with the original zero and the numbldgs basis carried in assumptions. The G4 reviewer physically swapped the pre-fix module back in (5 failed / 26 passed) and the DCV re-derived the same conclusion from the pre-fix source.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    },
+    {
+     "id": "D-059-R003",
+     "state": "PASS",
+     "evidence": [
+      "SCOPE-LIMITED PASS. Within M5-T027's own contracted surface (the two files the requirement text names): builder._cap_citation_section derives the section from the evaluated rule's own citation and constants.draft_cap_label / coverage_matrix_rows / preliminary_cap_reason consume the derived value, never a hardcoded one; the R5 document carries 23-21 and not 23-22 while the R6-R12/R9A document carries 23-22 and not 23-21, with the coverage matrix naming (R5) vs (R6-R12). DIRECTIVE-LEVEL R003 REMAINS OPEN PROJECT-WIDE: the verifier independently re-confirmed the five live-wired hardcodes (derive.py:82, breakeven.py:155, comparison.py:118/129, ranking.py:114, sensitivity.py:128) and traced their live wiring through scenario_analysis.py; follow-up task M5-T028 is contracted and bound to this same requirement to close them. This row must NOT be read as directive-wide closure.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    },
+    {
+     "id": "D-059-R011",
+     "state": "PASS",
+     "evidence": [
+      "External fact re-verified at consumption time by the INDEPENDENT VERIFIER against the live primary source (not on the producer's re-citation, which the verifier explicitly declined to treat as sufficient): it fetched the official nyc.gov PLUTO data dictionary PDF on 2026-09-14 (browser UA; sha256 455ebe1f...), confirmed the document is still 22v1/May 2022 and unchanged, and read the BldgArea rule verbatim - a zero total building floor area means NOT AVAILABLE when NUMBER OF BUILDINGS is greater than zero, and NOT APPLICABLE when it is zero - which is exactly the semantic the code implements. The connector's in-repo citations were cross-checked against the same document and found accurate.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    }
+   ]
+  }
+ ]
 }

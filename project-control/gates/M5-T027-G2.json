@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T027",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T027-producer-report.md",
+  "reviewed_at": "2026-09-14T09:42:39.343986+00:00",
+  "content_manifest_sha256": "7d1697b004c9751842e5c9c26806162ae25861c398435b29175f3c3d7c79f58d",
+  "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1",
+  "updated_at": "2026-09-14T09:42:39.956648+00:00"
+}

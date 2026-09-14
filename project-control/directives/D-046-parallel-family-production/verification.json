@@ -387,6 +387,44 @@
      "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T027",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1",
+   "reviewed_manifest_sha256": "7d1697b004c9751842e5c9c26806162ae25861c398435b29175f3c3d7c79f58d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T09:41:22+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing policy: M5-T027 ran in an isolated worktree concurrently with the in-flight M4-T021 connectors lane - 2 concurrent producers, within the ceiling of 3, confirmed by the verifier from commit interleaving and both task files' timestamps rather than from either task's prose.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Disjointness confirmed by direct allowed_paths set comparison performed by the verifier: M5-T027 (three scenario modules + three test files + own report) and M4-T021 (one connector module + its test + own report) share zero paths; the material commit touched exactly the contracted files with no forbidden path touched.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+    }
+   ]
   }
  ]
 }
