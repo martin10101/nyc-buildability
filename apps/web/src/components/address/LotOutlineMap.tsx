@@ -47,6 +47,8 @@ import {
 // full maplibre type surface.
 interface MapLike {
   on(type: string, listener: () => void): void;
+  once(type: string, listener: () => void): void;
+  isStyleLoaded(): boolean;
   addSource(id: string, source: unknown): void;
   addLayer(layer: unknown): void;
   addControl(control: unknown, position?: string): void;
@@ -59,9 +61,81 @@ interface MapConstructor {
 interface AttributionControlConstructor {
   new (options: unknown): unknown;
 }
+interface NavigationControlConstructor {
+  new (options: unknown): unknown;
+}
 interface MapLibreModule {
   Map: MapConstructor;
   AttributionControl: AttributionControlConstructor;
+  NavigationControl: NavigationControlConstructor;
+}
+
+/**
+ * Run `draw` exactly once, as soon as the map's style is ready — regardless
+ * of whether readiness is reached BEFORE or AFTER this function is called
+ * (task M5-T025, D-056-R002 root-cause fix).
+ *
+ * ROOT CAUSE: the prior code called `map.on("load", draw)` unconditionally,
+ * every time. MapLibre's "load" event fires exactly ONCE, when the initial
+ * style finishes loading AND the map completes its first render; a listener
+ * attached after that single firing is never invoked — this is the well
+ * documented class of bug MapLibre's own guidance warns about, and is why
+ * "style.load" plus an explicit readiness check is the recommended idiom
+ * over a bare "load" listener for adding sources/layers after construction.
+ * Because the EMPTY_STYLE's background layer paints as soon as the style is
+ * applied to the map — independent of whether "load" ever fires — a missed
+ * "load" event produces EXACTLY the reported symptom: a rendered (gray)
+ * canvas with attribution controls, but no outline, because
+ * addSource/addLayer/fitBounds were gated entirely behind that one listener
+ * and silently never ran (no error was thrown; there was simply nothing left
+ * to invoke the callback).
+ *
+ * This function closes the race unconditionally: if the style is ALREADY
+ * loaded by the time it is called, `draw` runs immediately and
+ * synchronously, with no event wait at all. Otherwise it arms BOTH "load"
+ * and "style.load" with an idempotency guard, so `draw` still runs exactly
+ * once even if both end up firing.
+ */
+export interface StyleReadyMap {
+  isStyleLoaded(): boolean;
+  once(type: string, listener: () => void): void;
+}
+export function runOnStyleReady(map: StyleReadyMap, draw: () => void): void {
+  let done = false;
+  const runOnce = () => {
+    if (done) return;
+    done = true;
+    draw();
+  };
+  if (map.isStyleLoaded()) {
+    runOnce();
+    return;
+  }
+  map.once("load", runOnce);
+  map.once("style.load", runOnce);
+}
+
+/**
+ * Camera-framing options for `fitBounds` (D-056-R002 framing fix). The prior
+ * `maxZoom: 18` rendered a canonical NYC rowhouse lot (~25 x 100 ft) at
+ * roughly 17 x 67 px inside the 320px panel: at NYC's latitude (~40.71 N,
+ * cos ~0.758) the Web Mercator ground resolution at zoom 18 is
+ * ~156543.034 * 0.758 / 2^18 ~= 0.45 m/px, and 25ft x 100ft = 7.62m x
+ * 30.48m, so 7.62/0.45 ~= 17px by 30.48/0.45 ~= 67px — effectively invisible
+ * even when the outline IS drawn (see the producer report). 19.5 roughly
+ * HALVES the ground resolution to ~0.16 m/px, rendering the same lot at
+ * roughly 48 x 190 px, clearly visible inside the panel. No raster basemap
+ * tiles are wired (M5-T023 — the outline draws on a flat background layer),
+ * so there is no tile-pixelation ceiling that would argue for keeping the
+ * cap lower.
+ */
+export const LOT_OUTLINE_MAX_ZOOM = 19.5;
+export function lotOutlineFitBoundsOptions(): {
+  padding: number;
+  duration: number;
+  maxZoom: number;
+} {
+  return { padding: 24, duration: 0, maxZoom: LOT_OUTLINE_MAX_ZOOM };
 }
 
 /** Detect a usable WebGL context WITHOUT importing maplibre-gl. Any failure
@@ -133,7 +207,11 @@ const EMPTY_STYLE = {
 /** A one-line screen-reader summary of the current state, derived
  * deterministically from the typed outcome (no legal semantics, no invented
  * values). */
-function outcomeSummary(outcome: LotOutlineOutcome | null, drawable: boolean): string {
+function outcomeSummary(
+  outcome: LotOutlineOutcome | null,
+  drawable: boolean,
+  mapRenderFailed: boolean,
+): string {
   if (outcome === null) return "Loading the approximate lot outline…";
   switch (outcome.kind) {
     case "document":
@@ -141,6 +219,11 @@ function outcomeSummary(outcome: LotOutlineOutcome | null, drawable: boolean): s
         case "single_lot":
           if (outcome.view.geometryUnusable)
             return "The lot outline could not be drawn: the official geometry was not usable. Use the ZoLa map link above for the authoritative outline.";
+          if (drawable && mapRenderFailed)
+            // Geometry and WebGL are both present but the map itself
+            // reported an error after construction (D-056-R002 hardening) —
+            // distinct from the no-WebGL fallback below.
+            return "An approximate outline is available for this lot, but the interactive map could not be rendered. Use the ZoLa map link above for the authoritative outline.";
           if (!drawable)
             // Geometry exists but no interactive map could be opened (e.g. no
             // WebGL). The summary must match the visible fallback, not claim a
@@ -191,6 +274,11 @@ export function LotOutlineMap({
 }) {
   const [outcome, setOutcome] = useState<LotOutlineOutcome | null>(null);
   const [webglAvailable, setWebglAvailable] = useState(false);
+  // D-056-R002 hardening: a "error" event from a constructed map (WebGL
+  // context loss, a style/source/layer failure) now routes to a typed
+  // fallback instead of leaving a silently blank/gray map — distinct from
+  // the (unchanged) no-WebGL fallback below, which never constructs a map.
+  const [mapRenderFailed, setMapRenderFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLike | null>(null);
 
@@ -233,6 +321,7 @@ export function LotOutlineMap({
     const container = containerRef.current;
     if (!container) return;
     let cancelled = false;
+    setMapRenderFailed(false);
 
     void (async () => {
       const mod = (await import("maplibre-gl")) as unknown as {
@@ -259,7 +348,24 @@ export function LotOutlineMap({
         new gl.AttributionControl({ customAttribution: DCP_ATTRIBUTION }),
         "bottom-right",
       );
-      map.on("load", () => {
+      // D-056-R003: visible, keyboard-accessible zoom in/out buttons.
+      // showCompass is off — this is a flat, display-only top-down outline
+      // with no rotation-relevant affordance elsewhere, so a bearing
+      // indicator would add clutter without conveying anything useful.
+      map.addControl(new gl.NavigationControl({ showCompass: false }), "top-right");
+      // D-056-R002 hardening: a map "error" (e.g. WebGL context loss, a
+      // style/source/layer failure) was previously UNHANDLED — silently
+      // logged by MapLibre and otherwise invisible. Route it to a typed
+      // fallback instead of leaving a permanently blank/gray map.
+      map.on("error", () => {
+        if (cancelled) return;
+        setMapRenderFailed(true);
+      });
+      // D-056-R002 root-cause fix: run the draw step exactly once, as soon
+      // as the style is ready, regardless of whether readiness was reached
+      // before or after this listener attaches (see runOnStyleReady's own
+      // documentation above for the root-cause analysis).
+      runOnStyleReady(map, () => {
         if (cancelled) return;
         map.addSource("lot-outline", {
           type: "geojson",
@@ -283,7 +389,7 @@ export function LotOutlineMap({
           paint: { "line-color": "#1d4e79", "line-width": 2 },
         });
         if (bounds) {
-          map.fitBounds(bounds, { padding: 24, duration: 0, maxZoom: 18 });
+          map.fitBounds(bounds, lotOutlineFitBoundsOptions());
         }
       });
     })();
@@ -303,7 +409,7 @@ export function LotOutlineMap({
       data-testid="lot-outline"
     >
       <p className="visually-hidden" data-testid="lot-outline-summary" role="status">
-        {outcomeSummary(outcome, drawable)}
+        {outcomeSummary(outcome, drawable, mapRenderFailed)}
       </p>
 
       {outcome === null ? (
@@ -315,7 +421,7 @@ export function LotOutlineMap({
       {view !== null ? (
         <>
           {view.outcome === "single_lot" && !view.geometryUnusable ? (
-            drawable ? (
+            drawable && !mapRenderFailed ? (
               <>
                 <div
                   ref={containerRef}
@@ -323,6 +429,21 @@ export function LotOutlineMap({
                   data-testid="lot-outline-map"
                   aria-label="Interactive approximate lot outline map"
                 />
+                <AttributionAndAccuracy view={view} />
+              </>
+            ) : drawable && mapRenderFailed ? (
+              // D-056-R002 hardening: geometry and WebGL are both present,
+              // but the map itself reported an "error" after construction —
+              // an honest fallback instead of a permanently blank/gray map.
+              <>
+                <p
+                  className="section-note"
+                  data-testid="lot-outline-render-error"
+                >
+                  An approximate outline is available for this lot, but the
+                  interactive map could not be rendered. Open the city&apos;s
+                  ZoLa map above for the authoritative outline.
+                </p>
                 <AttributionAndAccuracy view={view} />
               </>
             ) : (

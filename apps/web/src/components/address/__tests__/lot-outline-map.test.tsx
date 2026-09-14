@@ -2,14 +2,28 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { LotOutlineMap } from "@/components/address/LotOutlineMap";
+import {
+  LOT_OUTLINE_MAX_ZOOM,
+  LotOutlineMap,
+  lotOutlineFitBoundsOptions,
+  runOnStyleReady,
+} from "@/components/address/LotOutlineMap";
 
 /**
- * M5-T023 pack for LotOutlineMap. maplibre-gl is mocked at the MODULE boundary
- * (the component dynamic-imports it) so this runs offline with no WebGL: the
- * mock records exactly what geometry reaches the map source, proving the
- * contract geometry is drawn VERBATIM (every ring, every polygon) and never
- * recomputed. Each typed outcome is asserted to render its honest state.
+ * M5-T023/M5-T025 pack for LotOutlineMap. maplibre-gl is mocked at the MODULE
+ * boundary (the component dynamic-imports it) so this runs offline with no
+ * WebGL: the mock records exactly what geometry reaches the map source,
+ * proving the contract geometry is drawn VERBATIM (every ring, every
+ * polygon) and never recomputed. Each typed outcome is asserted to render
+ * its honest state.
+ *
+ * D-056-R002: the mock's "load" wiring is now driven through `once()` +
+ * `isStyleLoaded()` (matching the real MapLike surface the component uses),
+ * with a per-test-configurable `styleAlreadyLoaded` flag — this is what lets
+ * the regression tests below actually exercise the race the root-cause fix
+ * closes (a bare `on("load", cb)` queueMicrotask mock could never express
+ * "the event already fired before we attached"; `runOnStyleReady` is also
+ * unit-tested directly against a minimal fake, independent of this mock).
  */
 
 const mocks = vi.hoisted(() => {
@@ -20,13 +34,31 @@ const mocks = vi.hoisted(() => {
   const fitBounds = vi.fn();
   const remove = vi.fn();
   const attributionCtor = vi.fn();
+  const navigationCtor = vi.fn();
+  const state = {
+    styleAlreadyLoaded: false,
+    errorListeners: [] as Array<() => void>,
+  };
 
   class MockMap {
     constructor(options: unknown) {
       mapCtor(options);
     }
-    on(type: string, cb: () => void) {
+    isStyleLoaded() {
+      return state.styleAlreadyLoaded;
+    }
+    once(type: string, cb: () => void) {
+      // Mirrors the real MapLibre "one-time listener attached after the
+      // style is already loaded is never invoked" semantics: if the style
+      // is already loaded, no further "load"/"style.load" event will ever
+      // fire again, so this mock (correctly) does NOT invoke cb here — the
+      // component must have already run the draw step synchronously via
+      // isStyleLoaded() before calling once() at all.
+      if (state.styleAlreadyLoaded) return;
       if (type === "load") queueMicrotask(cb);
+    }
+    on(type: string, cb: () => void) {
+      if (type === "error") state.errorListeners.push(cb);
     }
     addSource(id: string, source: unknown) {
       addSource(id, source);
@@ -49,6 +81,11 @@ const mocks = vi.hoisted(() => {
       attributionCtor(options);
     }
   }
+  class MockNavigationControl {
+    constructor(options: unknown) {
+      navigationCtor(options);
+    }
+  }
   return {
     mapCtor,
     addSource,
@@ -57,15 +94,29 @@ const mocks = vi.hoisted(() => {
     fitBounds,
     remove,
     attributionCtor,
+    navigationCtor,
+    state,
     MockMap,
     MockAttributionControl,
+    MockNavigationControl,
+    setStyleAlreadyLoaded(value: boolean) {
+      state.styleAlreadyLoaded = value;
+    },
+    fireMapError() {
+      state.errorListeners.forEach((cb) => cb());
+    },
   };
 });
 
 vi.mock("maplibre-gl", () => ({
-  default: { Map: mocks.MockMap, AttributionControl: mocks.MockAttributionControl },
+  default: {
+    Map: mocks.MockMap,
+    AttributionControl: mocks.MockAttributionControl,
+    NavigationControl: mocks.MockNavigationControl,
+  },
   Map: mocks.MockMap,
   AttributionControl: mocks.MockAttributionControl,
+  NavigationControl: mocks.MockNavigationControl,
 }));
 
 const FIXTURE_ROOT = resolve(
@@ -107,6 +158,8 @@ afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
   vi.clearAllMocks();
+  mocks.setStyleAlreadyLoaded(false);
+  mocks.state.errorListeners.length = 0;
 });
 
 describe("LotOutlineMap — single_lot with WebGL", () => {
@@ -127,10 +180,25 @@ describe("LotOutlineMap — single_lot with WebGL", () => {
     // A fill + a line layer, camera framed, attribution control added.
     expect(mocks.addLayer).toHaveBeenCalledTimes(2);
     expect(mocks.fitBounds).toHaveBeenCalled();
+    // D-056-R002 framing fix: the raised maxZoom cap is what actually reaches
+    // fitBounds (not just "called with something").
+    expect(mocks.fitBounds).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ maxZoom: LOT_OUTLINE_MAX_ZOOM }),
+    );
     expect(mocks.attributionCtor).toHaveBeenCalledWith(
       expect.objectContaining({
         customAttribution: expect.stringContaining("City Planning"),
       }),
+    );
+    // D-056-R003: a visible, keyboard-accessible zoom control (compass off —
+    // a flat top-down display-only outline has no rotation affordance).
+    expect(mocks.navigationCtor).toHaveBeenCalledWith(
+      expect.objectContaining({ showCompass: false }),
+    );
+    expect(mocks.addControl).toHaveBeenCalledWith(
+      expect.anything(),
+      "top-right",
     );
     // Visible +/-20 ft copy + attribution text (present with or without WebGL).
     expect(screen.getByTestId("lot-outline-accuracy").textContent).toContain(
@@ -300,5 +368,135 @@ describe("LotOutlineMap — WebGL unavailable", () => {
     const summary = screen.getByTestId("lot-outline-summary").textContent ?? "";
     expect(summary).toContain("could not open an interactive map");
     expect(summary).not.toContain("An approximate lot outline is shown");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// D-056-R002 root-cause fix: `runOnStyleReady` closes the missed-"load"-event
+// race directly and is unit-tested here against a minimal FAKE (no WebGL, no
+// maplibre-gl mock, no React) — the strongest possible red-on-old/green-on-new
+// proof this jsdom environment can express, since it exercises the exact
+// function that replaced the old `map.on("load", draw)` call.
+// ---------------------------------------------------------------------------
+describe("runOnStyleReady — pure unit tests (D-056-R002 root-cause fix)", () => {
+  it("style ALREADY loaded: draw() runs immediately and synchronously, with no event wait at all", () => {
+    // This is exactly the race that produced the reported symptom: a
+    // listener attached via bare `map.on('load', draw)` AFTER the style
+    // already finished loading is never invoked, so draw() never runs even
+    // though the map itself booted and painted its background layer. The
+    // OLD code had no `isStyleLoaded()` check at all, so it could not close
+    // this race — it could only ever wait for a NEXT "load"/"style.load"
+    // event that, in the already-loaded case, never comes.
+    const once = vi.fn();
+    const fakeMap = { isStyleLoaded: () => true, once };
+    const draw = vi.fn();
+    runOnStyleReady(fakeMap, draw);
+    expect(draw).toHaveBeenCalledTimes(1);
+    // No listener was even armed — the immediate path is truly synchronous,
+    // not "attach and hope the event still fires".
+    expect(once).not.toHaveBeenCalled();
+  });
+
+  it("style NOT YET loaded: arms both 'load' and 'style.load'; draw() runs exactly once even if both fire", () => {
+    const listeners: Record<string, () => void> = {};
+    const fakeMap = {
+      isStyleLoaded: () => false,
+      once: (type: string, cb: () => void) => {
+        listeners[type] = cb;
+      },
+    };
+    const draw = vi.fn();
+    runOnStyleReady(fakeMap, draw);
+    expect(draw).not.toHaveBeenCalled();
+    expect(Object.keys(listeners).sort()).toEqual(["load", "style.load"]);
+    // Both events fire (a real, if unusual, possibility) — draw still runs
+    // exactly once (idempotency guard).
+    listeners.load();
+    listeners["style.load"]();
+    expect(draw).toHaveBeenCalledTimes(1);
+  });
+
+  it("style not yet loaded, only 'style.load' fires (not 'load'): draw() still runs", () => {
+    // MapLibre's own guidance treats "style.load" as the reliable hook —
+    // this proves the fix does not silently depend on "load" alone.
+    const listeners: Record<string, () => void> = {};
+    const fakeMap = {
+      isStyleLoaded: () => false,
+      once: (type: string, cb: () => void) => {
+        listeners[type] = cb;
+      },
+    };
+    const draw = vi.fn();
+    runOnStyleReady(fakeMap, draw);
+    listeners["style.load"]();
+    expect(draw).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("lotOutlineFitBoundsOptions — D-056-R002 framing fix", () => {
+  it("raises maxZoom above the prior fingernail-size cap of 18", () => {
+    const options = lotOutlineFitBoundsOptions();
+    expect(options.maxZoom).toBe(LOT_OUTLINE_MAX_ZOOM);
+    expect(options.maxZoom).toBeGreaterThan(18);
+    expect(options.padding).toBe(24);
+    expect(options.duration).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Component-level proof that the root-cause fix is actually wired in:
+// with the mock configured to reproduce "style already loaded before the
+// wiring attaches" (the exact race `runOnStyleReady` closes), the map still
+// draws. Under the OLD component code (bare `map.on("load", draw)`, no
+// isStyleLoaded() check), this scenario is UNREPRODUCIBLE-as-a-pass: the old
+// mock's `on("load", cb)` unconditionally queueMicrotask'd cb regardless of
+// any "already loaded" state, which is precisely why that mock could never
+// have caught the real bug — this new mock instead mirrors real MapLibre
+// "one-time listener, already fired" semantics (see `once()` above), so a
+// component still built on bare `on("load", ...)` would leave the map
+// undrawn here.
+// ---------------------------------------------------------------------------
+describe("LotOutlineMap — root-cause regression: style already loaded before wiring attaches", () => {
+  beforeEach(() => enableWebgl());
+
+  it("draws the outline even when the style is ALREADY loaded by the time draw-wiring attaches", async () => {
+    mocks.setStyleAlreadyLoaded(true);
+    const fx = fixture("single_lot_polygon");
+    render(
+      <LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />,
+    );
+    expect(await screen.findByTestId("lot-outline-map")).toBeInTheDocument();
+    await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
+    expect(mocks.addLayer).toHaveBeenCalledTimes(2);
+    expect(mocks.fitBounds).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// D-056-R002 hardening: a map "error" event (WebGL context loss, a
+// style/source/layer failure) was previously UNHANDLED. It now routes to a
+// typed fallback instead of leaving a permanently blank/gray map.
+// ---------------------------------------------------------------------------
+describe("LotOutlineMap — map 'error' event routes to a typed fallback (D-056-R002 hardening)", () => {
+  beforeEach(() => enableWebgl());
+
+  it("an 'error' event after construction replaces the map with an honest fallback, never a silent blank map", async () => {
+    const fx = fixture("single_lot_polygon");
+    render(
+      <LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />,
+    );
+    expect(await screen.findByTestId("lot-outline-map")).toBeInTheDocument();
+    mocks.fireMapError();
+    expect(
+      await screen.findByTestId("lot-outline-render-error"),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId("lot-outline-map")).toBeNull();
+    // The +/-20 ft copy and attribution stay visible (same honest-fallback
+    // shape as the other typed states) and the summary matches what's shown.
+    expect(screen.getByTestId("lot-outline-accuracy").textContent).toContain(
+      "20 ft",
+    );
+    const summary = screen.getByTestId("lot-outline-summary").textContent ?? "";
+    expect(summary).toContain("could not be rendered");
   });
 });

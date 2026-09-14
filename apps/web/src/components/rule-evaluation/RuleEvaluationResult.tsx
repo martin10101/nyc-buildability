@@ -1,5 +1,6 @@
 import { CoverageBadge } from "@/components/property/CoverageBadge";
 import { formatValue, urlHost } from "@/lib/format";
+import { datasetLandingUrl } from "@/lib/provenance-link";
 import {
   classifyRuleEvaluation,
   type RuleEvalPresentation,
@@ -128,6 +129,34 @@ function InputAndProvenance({ document }: { document: RuleEvaluation }) {
                     <>
                       <dt>Source</dt>
                       <dd>{provenance.source_id}</dd>
+                    </>
+                  ) : null}
+                  {/* D-056-R001: an outbound link, built ONLY from a
+                      validated Socrata dataset id (never from requestUrl),
+                      when a citation's open-schema provenance carries one.
+                      Today's ZR legal-text citations never carry a
+                      dataset_id (they cite zoningresolution.planning.nyc.gov,
+                      not a Socrata dataset), so this renders nothing for
+                      real citations — an honest absence, forward-compatible
+                      with any future provenance record that does carry one
+                      (same guarded-open-key pattern as source_id above). */}
+                  {typeof provenance.dataset_id === "string" ? (
+                    <>
+                      <dt>Dataset id</dt>
+                      <dd>
+                        {datasetLandingUrl(provenance.dataset_id) ? (
+                          <a
+                            href={datasetLandingUrl(provenance.dataset_id) as string}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-testid="rule-eval-source-link"
+                          >
+                            {provenance.dataset_id}
+                          </a>
+                        ) : (
+                          provenance.dataset_id
+                        )}
+                      </dd>
                     </>
                   ) : null}
                   {typeof requestUrl === "string" ? (

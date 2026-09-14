@@ -1,4 +1,5 @@
 import { formatValue, urlHost } from "@/lib/format";
+import { datasetLandingUrl } from "@/lib/provenance-link";
 import type { Reproducibility, SourceFact } from "@/lib/contract";
 
 /**
@@ -10,6 +11,14 @@ import type { Reproducibility, SourceFact } from "@/lib/contract";
  * `reproducibility` object (the per-record dataset_id/request_url keys the
  * builder also emits are NOT documented in source_fact.schema.json and are
  * deliberately not consumed).
+ *
+ * D-056-R001: the dataset id is rendered as a clickable outbound link to the
+ * official dataset landing page WHEN it passes strict validation
+ * (src/lib/provenance-link.ts) — constant prefix + validated token only,
+ * never anything built from `request_url`. An invalid/malformed id (which
+ * the required `reproducibility.dataset_id` field should never be, but is
+ * not re-validated at the schema layer) falls back to the prior plain-text
+ * rendering — an honest absence, never a guessed link.
  */
 export function ProvenanceDisclosure({
   records,
@@ -67,7 +76,20 @@ export function ProvenanceDisclosure({
             {reproducibility ? (
               <>
                 <dt>Dataset id</dt>
-                <dd>{reproducibility.dataset_id}</dd>
+                <dd data-testid="provenance-dataset-id">
+                  {datasetLandingUrl(reproducibility.dataset_id) ? (
+                    <a
+                      href={datasetLandingUrl(reproducibility.dataset_id) as string}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-testid="provenance-source-link"
+                    >
+                      {reproducibility.dataset_id}
+                    </a>
+                  ) : (
+                    reproducibility.dataset_id
+                  )}
+                </dd>
                 <dt>Retrieved from</dt>
                 <dd>{urlHost(reproducibility.request_url)}</dd>
               </>
