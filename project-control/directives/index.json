@@ -789,6 +789,18 @@
       "superseded_by": null,
       "affected_tasks": [],
       "manifest": "D-059-mvp-review-dependable-answers/manifest.json"
+    },
+    {
+      "directive_id": "D-060",
+      "slug": "loop-continuity-fable-exhaustion",
+      "title": "Owner 2026-09-14: keep the build loop running - the recorded fable_exhaustion_turnover_recorded REFUSED-unsafe stop plus the runtime's own usage-limit fallback of the orchestrator session establish the D-058-R004 genuine hard-stop condition, authorizing the armed claude-opus-4-8 worker fallback (revert to Fable on availability); no quality, gate, or hold relaxation.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-060-loop-continuity-fable-exhaustion/manifest.json"
     }
   ],
   "updated_at": "2026-09-14T02:36:29+00:00"

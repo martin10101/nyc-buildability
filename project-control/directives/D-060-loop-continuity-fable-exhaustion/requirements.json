@@ -1,0 +1,165 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-060",
+  "version": 1,
+  "requirement_count": 5,
+  "producer": "orchestrator",
+  "updated_at": "2026-09-14T09:00:03+00:00",
+  "requirements": [
+    {
+      "id": "D-060-R001",
+      "text": "LOOP CONTINUITY - the build loop must be kept running. When a run stops, the orchestrator diagnoses the recorded stop reason from primary runtime evidence and restores the loop rather than leaving it down; a stopped loop is reported with its reason, never silently left parked.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-060-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "supervisor status/log evidence showing a live run after each restore",
+      "required_evidence": "supervisor run log + status at the restore seam",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; actuation recorded in the same seam",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-060-R002",
+      "text": "FABLE-EXHAUSTION HARD STOP MET -> OPUS FALLBACK ACTUATION AUTHORIZED. The 'fable_exhaustion_turnover_recorded' REFUSED-unsafe stop (exit 11) together with the runtime's own usage-limit fallback of the orchestrator session IS the genuine hard-stop last-resort condition D-058-R004 reserves the opus chain for. The worker may therefore be pinned to the already-allowlisted, owner-approved 'claude-opus-4-8' (immutable config.toml allowed_models + the armed quota_exhausted fallback chain) so the loop keeps running, following the owner's own 2026-08-09 / 2026-09-07 manual recovery precedent (D-036-R002). The actuation is recorded as a deviation with its evidence and revert condition in the model_selection.toml provenance block; no allowlist is widened and no new model is introduced.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-060-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "model_selection.toml diff carrying the D-060 citation, the frozen evidence, and the revert condition; a live run on the fallback model",
+      "required_evidence": "model_selection.toml + supervisor run log at the relaunch seam",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; actuation recorded in the same seam",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-060-R003",
+      "text": "REVERT ON FABLE RETURN - the pin returns to 'claude-fable-5' as soon as Fable is available again (normally the weekly reset, D-036-R001/D-055), evidenced by a launch probe or a session observed running Fable; the fallback chain is restored to [\"claude-opus-4-8\"] at that revert. The opus pin is temporary by construction and must not outlive the exhaustion.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-060-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "revert commit restoring model='claude-fable-5' with availability evidence",
+      "required_evidence": "model_selection.toml at the revert seam",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; actuation recorded in the same seam",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-060-R004",
+      "text": "NO QUALITY OR SCOPE RELAXATION - keeping the loop alive changes the worker model only. Unchanged and non-waivable: independent review (producer != reviewer), all G0-G7 gates, dependency policy SectionG, sequential integration, sole orchestrator ledger/git/gh authority, every active owner hold (PR #241 never merged, expansion hold, G6, Tier D / Section 20), and the D-059-R008 step-1 priority on dependable answers. Loop continuity never becomes a reason to skip or soften any of these.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-060-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "gates/holds unchanged across the restore seam",
+      "required_evidence": "ledger + gate records",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; actuation recorded in the same seam",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-060-R005",
+      "text": "PRIMARY-EVIDENCE DISCIPLINE FOR MODEL FACTS - model availability/exhaustion claims come only from primary runtime records (the supervisor's recorded stop reason and the runtime's own model-switch/usage-limit log), never from a model's self-report or an inference from behavior; the frozen evidence is quoted in the capture.",
+      "source_ref": "source-001.md#resolved-question",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-060-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "quoted primary records in the directive source",
+      "required_evidence": "source-001.md capture-context section",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "captured; actuation recorded in the same seam",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    }
+  ]
+}
