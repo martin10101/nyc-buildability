@@ -155,3 +155,14 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   separately declared units; authoritative confirmation = the ACRIS condo declaration, out
   of scope); numfloors ABSENT from the official PLUTO record (app honestly shows missing -
   a floors-bearing source (DOB) is a future connector candidate, not a defect).
+- **Finding 6 (confirmed, candidate packet): the aggregated "Missing official inputs" card
+  is mounted ONLY on the /property lookup view (PropertyLookup.tsx:144) — the Step-2
+  Confirm screen shows the completeness summary + per-fact notes but has no list and no
+  link.** Candidate: mount or link MissingInputsSection on ConfirmScreen (pairs with the
+  Finding-5 banner-link nit).
+- **Owner-facing flag map (walkthrough Q&A):** Compare/scenario endpoint is gated by its
+  OWN api-side var `INTERNAL_SCENARIO_ENABLED` (config.py:34; fail-safe 404 when unset) —
+  NOT by INTERNAL_RULE_EVAL_ENABLED; the D-043 checklist never mentions it (doc-gap
+  candidate: checklist addendum). "Confirm facts (not yet available)" is honest-by-design:
+  user_confirmations exist in the contract but no endpoint accepts them until the
+  analysis-run milestone + persistence/auth (Supabase B-001) land — not a flag.
