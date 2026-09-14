@@ -135,3 +135,17 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   a block-sized multi-address lot; Geoclient correctly maps 125 Taylor onto it. UX
   candidate: carry the user-confirmed address into Step 2 ("You searched 125 Taylor St —
   this lot's official PLUTO label is 83 Taylor St") instead of silently swapping labels.
+- **Finding 5 (confirmed, candidate packet): year fields render with thousands separators**
+  ("Year built 2,005"). Cause: `apps/web/src/lib/format.ts` formatValue line ~15 runs EVERY
+  number through toLocaleString("en-US") grouping; year-class fields (yearbuilt, yearalter*)
+  need plain rendering. Tiny fix + test. (298 Wallabout walkthrough, live SODA yearbuilt raw
+  = "2005".) Minor sibling candidate: the data-completeness banner could link to the
+  Missing-inputs section that already enumerates the absent fields (discoverability only —
+  the enumeration exists, MissingInputsSection + show-more toggle, nothing is dropped).
+- Walkthrough data notes (298 Wallabout, BBL 3022647515, live SODA 2026-09-14): condo lot
+  (condono=1313, 75xx billing lot), bldgclass R4 (DOF condo building-class code) under
+  zoning R7-1 (different vocabulary - no contradiction); unitsres=unitstotal=20 = DECLARED
+  condo units (owner counts 12 apts + 8 basement rooms - consistent if basement rooms are
+  separately declared units; authoritative confirmation = the ACRIS condo declaration, out
+  of scope); numfloors ABSENT from the official PLUTO record (app honestly shows missing -
+  a floors-bearing source (DOB) is a future connector candidate, not a defect).
