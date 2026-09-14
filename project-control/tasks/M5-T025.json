@@ -86,13 +86,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "reflected-string href regression: any path where server-echoed text reaches an href gates G3 - the negative test in S1 is mandatory",
     "root-cause theater: fixing symptoms (e.g. only raising maxZoom) without explaining why NO outline was visible would leave the defect - G3 verifies cause-vs-fix coherence (D-056-R002)",
@@ -101,7 +101,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T05:20:01.499404+00:00",
-  "updated_at": "2026-09-14T05:52:00+00:00",
+  "updated_at": "2026-09-14T05:26:57.964954+00:00",
   "directive_refs": [
     {
       "directive_id": "D-056",
@@ -138,5 +138,14 @@
     "G5 F-1 discipline: links only from constant prefix + validated token; MapLibre customAttribution stays the constant; no reflected string reaches innerHTML or href.",
     "WORKTREE: producer in its own worktree reset to the contract HEAD; show-toplevel guard mandatory; local npm limited to running existing node_modules binaries (vitest/tsc) - NO npm install, NO lockfile touch (thin client)."
   ],
-  "worktree": "wt-m5t025"
+  "worktree": "wt-m5t025",
+  "progress_log": [
+    {
+      "at": "2026-09-14T05:26:57.964954+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed (D-056 owner work order; parallel disjoint packet while the loop runs M4-T020). Producer frontend-engineer w/ claude-sonnet-5 dispatch override (D-047 deviation in G0 report). Walkthrough finding 4 (address continuity) recorded separately as candidate - NOT in this scope."
+    }
+  ]
 }
