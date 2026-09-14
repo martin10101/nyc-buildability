@@ -90,12 +90,12 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:26:53.634491+00:00",
-  "updated_at": "2026-09-14T09:23:37.172539+00:00",
+  "updated_at": "2026-09-14T09:40:40.136000+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -139,6 +139,13 @@
       "percent": 40,
       "status": "claimed",
       "message": "DEVIATION RECORDED (D-060): the D-053 supervisor loop could NOT execute this packet - run persistent-local-35 stopped REFUSED-unsafe exit 11 on fable_exhaustion_turnover_recorded and the worker-model actuation is owner-only by controller design (S3.2 rule 6). To keep the work moving per D-060-R001, B4 is being produced by an ORCHESTRATOR-DISPATCHED producer (unnamed backend-engineer, isolation worktree, model override claude-sonnet-5 per D-047) off base d7c22f3e instead of the loop worker. When the owner restores the model pin, point the relaunched loop at the NEXT packet, not this one."
+    },
+    {
+      "at": "2026-09-14T09:40:40.136000+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "REWORK (blocking): 3 findings across both gates, ruling recorded in reports/M4-T021-rework-ruling.md. (1) G3-F1 EC-5 must GATE on attested values with a typed unresolved status mirroring the accepted D-052 DECISION_UNRESOLVED precedent - orchestrator ruled for G3 over G4's NB-2 because the packet incorporates that precedent by name and G3 verified its mechanism from source. (2) G3-F2 the quad_segs comment is factually false (BaseGeometry.buffer defaults to 16, not 8); set 16, correct the claim in module + report, add an end-cap-proximate test. (3) G4-F1 thread source_retrieved_at/source_raw_digest from both attested inputs onto SegmentContribution and WideStreetBufferResult in BOTH branches with covering tests (remedy (a), not disclosure - permanent principle 2). No DCV and no acceptance until all three are corrected and BOTH reviewers re-attest at the corrected head."
     }
   ],
   "worktree": "wt-m4t021"

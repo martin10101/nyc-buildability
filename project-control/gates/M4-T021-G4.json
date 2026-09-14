@@ -1,0 +1,12 @@
+{
+  "task_id": "M4-T021",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "FAIL",
+  "report_file": "project-control/reports/M4-T021-G4-test-adequacy.md",
+  "reviewed_at": "2026-09-14T09:40:27.350483+00:00",
+  "content_manifest_sha256": "e5072217e9e6bbdac9e46fda2152db04f9444bc4d45866ec90395865a5399c81",
+  "reviewed_sha": "8e7db3af5fe0a1f465104c6935b7f22ecc4704ff",
+  "updated_at": "2026-09-14T09:40:27.693958+00:00"
+}
