@@ -92,11 +92,11 @@
     "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 90,
+  "progress_percent": 95,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:41:42.232354+00:00",
-  "updated_at": "2026-09-14T09:47:51.982927+00:00",
+  "updated_at": "2026-09-14T09:47:54.006300+00:00",
   "directive_refs": [
     {
       "directive_id": "D-059",
