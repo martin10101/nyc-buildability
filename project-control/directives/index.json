@@ -765,6 +765,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-057-ruleeval-default-on/manifest.json"
+  },
+  {
+   "directive_id": "D-058",
+   "slug": "seam-handoff-fable-extra-usage",
+   "title": "Owner 2026-09-14 (/session-handoff reason, verbatim): finish at a seam; codex-loop operation continues (benign unit-complete close recorded, successor relaunches next packet); session knowledge into the D-054 two-tier files; loop keeps using claude-fable-5 via EXTRA USAGE now that the regular weekly quota is exhausted (fable pin stays; opus chain last-resort only).",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-058-seam-handoff-fable-extra-usage/manifest.json"
   }
  ],
  "updated_at": "2026-09-14T02:36:29+00:00"

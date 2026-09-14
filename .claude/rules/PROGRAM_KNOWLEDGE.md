@@ -105,3 +105,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - PS5.1: no `&&`, no quotes-in-`git commit -m` via PowerShell (use Bash tool); UTF-16
   redirection trap; heredocs via Write tool when Bash mangles them.
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
+- Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
+  owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
+- Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
+  web test placeholders with a trivial passing test; empty py test files are fine.
+- `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list
+  shapes fail closed). Git-Bash-parsed CLI digests carry \r — strip before `deny`.

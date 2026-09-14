@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-058",
+ "version": 1,
+ "slug": "seam-handoff-fable-extra-usage",
+ "title": "Owner 2026-09-14 (/session-handoff reason, verbatim): finish at a seam; codex-loop operation continues (benign unit-complete close recorded, successor relaunches next packet); session knowledge into the D-054 two-tier files; loop keeps using claude-fable-5 via EXTRA USAGE now that the regular weekly quota is exhausted (fable pin stays; opus chain last-resort only).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T07:55:00+00:00",
+ "created_at": "2026-09-14T07:55:00+00:00",
+ "updated_at": "2026-09-14T07:55:00+00:00",
+ "channel": "session_handoff_reason",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "89de37946a3ad3f8c542c03bbe70183742f048a9",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the directive as the /session-handoff reason (D-054 precedent for handoff-reason capture)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-058-R001",
+  "D-058-R002",
+  "D-058-R003",
+  "D-058-R004"
+ ],
+ "requirements_content_digest_sha256": "a14888c877f331f83d0933577e8ddc8ccb7ac0310041f561746fc9eee74bad91",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T07:55:00+00:00",
+   "content_digest_sha256": "1cf824a34a0593db5707ca81853fb2491903c33c8386717968a4b9d5a7d7a23f"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "session_turnover",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "seam landing, knowledge-file updates, loop relaunch continuity, fable-via-extra-usage selection",
+  "prohibited": "rounding up incomplete work; killing healthy agents; flipping the fable pin to opus outside a genuine hard-stop fallback event; any auto-accept/merge"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T07:55:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture during handoff execution; loop's benign close + work commit recorded in capture-context."
+  }
+ ]
+}
