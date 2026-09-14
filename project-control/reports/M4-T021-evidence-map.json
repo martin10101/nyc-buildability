@@ -1,0 +1,36 @@
+{
+  "task_id": "M4-T021",
+  "prepared_by": "orchestrator",
+  "prepared_at": "2026-09-14",
+  "material_commit": "cb277b8f (producer commit, cherry-picked onto the candidate branch; touches exactly the 3 allowed_paths)",
+  "requirements": {
+    "D-045-R002": [
+      "B4 delivers the A2 geometry mechanic the accepted M4-T016 research (Part 2.2 steps A-D, Part 4.3 item 2) specifies: services/api/app/connectors/wide_street_buffer_engine.py (632 lines) takes typed wide-disposed DCM segment polylines (accepted M4-T020 B3 results) plus the MapPLUTO lot polygon (accepted M2-T009 measurement surface) by READ-ONLY import, requires validated EPSG:2263 identity on BOTH inputs, computes the 100.0 US-survey-foot planar buffer, and exposes both the boolean any-portion intersects (ZR 23-22 footnote 1 'or portions thereof') and the intersection sub-geometry/area for downstream apportionment, with per-segment contributions and the union-before-intersect aggregate both visible.",
+      "Honest-absence discipline held throughout: EC-6 empty wide-segment input yields a typed 'no wide segment provided' result rather than a default in either direction; EC-5 named-street override and the C5-3/C6-4/C6-6 alternate-width clause are out of scope and cannot be silently skipped - Ec5AttestedPreconditions is required with NO default (construction-time TypeError on omission, the D-052/M4-T019 precedent); EC-2's honest under-claim (ambiguous DCM segments excluded by the caller's wide-only input contract) is carried on every result via EC2_UNDER_CLAIM_NOTICE and documented as a tradeoff section in the producer report.",
+      "EC-4 handled without inventing a legal tolerance: the producer empirically characterised exact-100-ft tangency with a standalone shapely probe (GEOS returns intersects=True with a zero-area LineString intersection), left the exact predicate result standing, proved BOUNDARY_TOLERANCE_FT is never imported via an AST name scan, and recorded the open legal-tolerance question for G6 rather than resolving it."
+    ],
+    "D-045-R008": [
+      "Single bounded gated task: 3 allowed files (new module, new test file, own report), contracted under ledger id M4-T021 citing D-045:R002/R008/R009 + D-046:R001/R002, G0 PASS recorded before claim, G3/G4 independent review to follow; one family lane at a time, nothing monolithic. Dependency order respected: B4 was contracted only after B3 (M4-T020) was ACCEPTED, and B7 rule wiring remains a later packet (the accepted wave-5 queue puts it LAST)."
+    ],
+    "D-045-R009": [
+      "Preservation held: the producer commit touches exactly the 3 allowed files; no accepted connector, no rule file, and no ruleset was modified (all fenced as forbidden_paths); zero new dependencies (shapely 2.0.7 was already admitted with the pyproject GEOS-determinism discipline, and the module asserts shapely.__version__/geos_version_string rather than adding a package); no compliance declaration and no DRAFT/needs_review posture change; full accepted connectors suite stays green (781 passed = the 752 previously-accepted plus 29 new)."
+    ],
+    "D-046-R001": [
+      "Produced under the parallel regime in an isolated worktree off base d7c22f3e by an unnamed backend-engineer producer with a claude-sonnet-5 model override (D-047), concurrent with the disjoint M5-T027 scenario lane. DEVIATION RECORDED (D-060): this packet was contracted for the D-053 supervisor loop, but run persistent-local-35 stopped REFUSED-unsafe (exit 11, fable_exhaustion_turnover_recorded) and the worker-model actuation is owner-only by controller design (blocker B-024), so the orchestrator-dispatched producer path was used to preserve loop continuity under D-060-R001; the deviation is recorded in the M4-T021 progress log."
+    ],
+    "D-046-R002": [
+      "Disjointness held: M4-T021's allowed_paths are two services/api/app/connectors + tests files plus its own report, sharing zero files with the concurrent M5-T027/M5-T028 scenario-layer scopes; git show --name-only cb277b8f confirms the producer stayed inside exactly those 3 files and touched no forbidden path."
+    ]
+  },
+  "orchestrator_verification_at_integration_head": {
+    "focused": "python -m pytest services/api/tests/connectors/test_wide_street_buffer_engine.py -q -> 29 passed (producer run)",
+    "connectors_suite": "python -m pytest services/api/tests/connectors -q -> 781 passed (orchestrator re-ran at the integration head)",
+    "ruff": "cd services/api && python -m ruff check . -> All checks passed!",
+    "modularity": "python tools/modularity_check.py --check -> selected 405 files; failures 0; warnings 17 (new files not among them)"
+  },
+  "producer_disclosed_judgment_calls_for_reviewer_attention": [
+    "EC-5: Ec5AttestedPreconditions is required/no-default but does NOT gate computation on the attested boolean values, because the pinned research says B4 is not blocked on B5/B6/B7 - the producer flags this as a defensible-but-not-unique reading of the packet text and asks the reviewer to rule.",
+    "quad_segs=8 buffer resolution pinned for determinism continuity, not independently re-derived from an official source.",
+    "No dedicated multipolygon/holes lot fixture - structurally supported via the reused canonical_to_shapely path but untested here."
+  ]
+}
