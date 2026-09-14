@@ -741,6 +741,20 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-055-fable-selection-restore/manifest.json"
+  },
+  {
+   "directive_id": "D-056",
+   "slug": "provenance-links-lot-outline",
+   "title": "Owner 2026-09-14 (live walkthrough work order): add safe outbound provenance source links (constant-prefix + validated dataset-id, both provenance surfaces), fix the lot-outline map so the outline is actually visible (root-cause + framing) and add zoom in/out buttons; ZoLa blank page recorded as external (city SPA client-side boot; link format verified twice); executed as one parallel gated packet (M5-T025) while the D-053 loop runs M4-T020; owner Manual Deploy step returned at the seam.",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [
+    "M5-T025"
+   ],
+   "manifest": "D-056-provenance-links-lot-outline/manifest.json"
   }
  ],
  "updated_at": "2026-09-14T02:36:29+00:00"

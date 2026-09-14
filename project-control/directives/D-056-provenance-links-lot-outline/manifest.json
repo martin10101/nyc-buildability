@@ -1,0 +1,69 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-056",
+ "version": 1,
+ "slug": "provenance-links-lot-outline",
+ "title": "Owner 2026-09-14 (live walkthrough work order): add safe outbound provenance source links (constant-prefix + validated dataset-id, both provenance surfaces), fix the lot-outline map so the outline is actually visible (root-cause + framing) and add zoom in/out buttons; ZoLa blank page recorded as external (city SPA client-side boot; link format verified twice); executed as one parallel gated packet (M5-T025) while the D-053 loop runs M4-T020; owner Manual Deploy step returned at the seam.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T05:40:00+00:00",
+ "created_at": "2026-09-14T05:40:00+00:00",
+ "updated_at": "2026-09-14T05:40:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "e8913a12674ddb0df757ed85d4e78cbbadd114b1",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the work order verbatim during their live walkthrough of the D-043 internal deploy, after retesting the two pending findings; 'Please add the links' and 'would be nice to have a zoom in and out button' are the deliverables, the ZoLa retest result is the recorded external fact."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-056-R001",
+  "D-056-R002",
+  "D-056-R003",
+  "D-056-R004",
+  "D-056-R005",
+  "D-056-R006"
+ ],
+ "requirements_content_digest_sha256": "88ce47643f6a66edea45ba37411844dfa5ecf8f4e6b32f4be8321cf84a0b65f0",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T05:40:00+00:00",
+   "content_digest_sha256": "566c55f30bad2d56d2bdddbd3d3bc87a7dbff6041c0e4939959252d71d0f7297"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M5-T025"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_fix_order",
+  "task_ids": [
+   "M5-T025"
+  ],
+  "task_types": [],
+  "allowed": "safe constructed outbound links in the two provenance surfaces; lot-outline map visibility root-cause/fix + framing + zoom controls within the D-040-R001 scoped release; one parallel gated packet disjoint from the loop's M4-T020",
+  "prohibited": "reflected-string hrefs; new dependencies; measurement from display-only geometry; expansion-pack tasks; editing loop internals or scope mid-flight; any change to transport/client contract modules outside the packet's allowed_paths"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T05:40:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture of the owner's live-walkthrough work order; findings history in docs/WORKING_KNOWLEDGE.md and commit e8913a12; M5-T025 contract follows in the immediately-subsequent commit this seam."
+  }
+ ]
+}
