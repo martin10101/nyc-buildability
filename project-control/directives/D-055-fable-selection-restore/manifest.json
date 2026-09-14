@@ -10,7 +10,7 @@
  "issued_at": "2026-09-14",
  "captured_at": "2026-09-14T04:32:00+00:00",
  "created_at": "2026-09-14T04:32:00+00:00",
- "updated_at": "2026-09-14T04:32:00+00:00",
+ "updated_at": "2026-09-14T04:40:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "218dd2728c55755e93e71af5d42ab19a4f4417d3",
@@ -59,6 +59,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the owner's mid-turn message in the orchestrator session; execution follows in the immediately-subsequent commit(s) this seam; any still-blocked surface returns to the owner per R005."
+  },
+  {
+   "at": "2026-09-14T04:40:00+00:00",
+   "actor": "orchestrator",
+   "event": "executed",
+   "note": "R001 + R002 executed under the owner authorization (the earlier classifier blocks did not recur): model_selection.toml [claude] model=claude-fable-5 + fallback_models=[claude-opus-4-8] (verified parsing; the SupervisorController checkout is the owner-deployed copy and is deliberately not committed by the orchestrator - the supervisor digest-records the selection per decision); five reviewer agent files reverted to model: claude-fable-5 with the effort: xhigh fallback key removed (execution commit in this repository, exactly the 89c4e304 flip set). R003 evidence stands in source-001. R004: no hold created; both fallback cycles armed. R005 return delivered at the same seam."
   }
  ]
 }
