@@ -131,6 +131,31 @@ history). The active queue never carries figured-out material.
   proposed DRAFT classification table is routed as INPUT to the OQ-3 interpretation process
   (D-051-R005), never adopted in-task. The B2-hardening/G6-package task still makes its own
   recorded captures of the DCM metadata PDF + LION 26C PDF (shas above make that cheap).
+- **THIRD PASS 2026-09-14** (owner deep research;
+  `docs/research/owner-research/RQ005_Deep_Research_2026-09-14.md`): materially strengthens
+  the record without closing (1). NEW: (a) **qualified labels are publisher-INTENTIONAL** —
+  DCP's own 2018-04-18 Street Map PR handles `Unknown but <71.2 ft` deliberately (not a parser
+  artifact); (b) **variable width is represented by centerline SEGMENTATION** — E 96 St
+  Brooklyn runs `60` → `60-75` → `75-90` → `90` across four adjoining features with ranges on
+  ~27-ft transition segments, so a named street never gets ONE width and frontage work must
+  collect every touching feature; (c) **Admin Code §25-101** makes the duly-adopted City Map
+  conclusive on street location/width/grades — the controlling legal record above any dataset
+  field; (d) a worked map-reading example verifies "width between mapped street boundaries"
+  (BSA 4-07-A Tiemann Ave 60 ft property-line-to-property-line + 1956 Bronx Plan 11474 + DCM
+  `60` agreeing); (e) the 2026 **Allen Street mall demapping** (C 250306 MMM / N 250307 ZRM)
+  is live proof that legal wide-street classification and measured width are SEPARATE facts —
+  the §12-10 named-street exception (amended 3/26/2026) preserves wide treatment while the
+  mapped configuration changes; (f) a demonstrated per-frontage resolution route: the Final
+  Section Map index (in DCP's public app config) links retrievable Section/Alteration Map PDFs
+  — sheets for all three sampled ambiguous records were actually retrieved. **Report's own
+  conclusion, adopted here: RQ-005(1) cannot close as a universal automated interpretation on
+  this evidence; the two honest closure forms are (i) documented publisher semantics (DCP) or
+  (ii) an owner-approved DRAFT product policy for stated inference conditions (the OQ-3
+  decision, which now has rich input). Per-frontage map evidence can close individual sites
+  meanwhile.** Build-packet carries: frontage-level multi-feature collection; segmentation
+  awareness; §25-101 as legal anchor; the Section-Map retrieval route as a candidate connector;
+  representation per D-051-R002 (raw text + recognized form + qualifiers + version + geometry +
+  coverage reason, legal classification recorded separately). No conflict with accepted work.
 
 ---
 
