@@ -705,7 +705,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-052-street-width-draft-classification/manifest.json"
+  },
+  {
+   "directive_id": "D-053",
+   "slug": "relaunch-codex-loop-campaign",
+   "title": "Owner 2026-09-14: RELAUNCH THE CODEX LOOP on the D-045 campaign queue - limited-auto dispatch + live Codex/Astra reviews resume; build session drops to quiet monitor + final authority (R595 stays shadow - NO auto-accept); detached loop communicates via the repository; monitor owns owner notifications (D-050-R005); owner-side Astra research channel unchanged; D-045..D-052 bind inside the loop.",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-053-relaunch-codex-loop-campaign/manifest.json"
   }
  ],
- "updated_at": "2026-09-13T17:23:15+00:00"
+ "updated_at": "2026-09-14T02:36:29+00:00"
 }

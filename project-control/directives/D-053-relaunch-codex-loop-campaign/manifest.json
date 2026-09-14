@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-053",
+ "version": 1,
+ "slug": "relaunch-codex-loop-campaign",
+ "title": "Owner 2026-09-14: RELAUNCH THE CODEX LOOP on the D-045 campaign queue - limited-auto dispatch + live Codex/Astra reviews resume ('the guide'); build session drops to quiet monitor + final authority (stamps/merges/pushes; R595 stays shadow - NO auto-accept); detached loop communicates via the repository only; monitor owns the owner-notification leg (D-050-R005); Astra's owner-side research channel unchanged; D-045..D-052 bind inside the loop.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T02:36:29+00:00",
+ "created_at": "2026-09-14T02:36:29+00:00",
+ "updated_at": "2026-09-14T02:36:29+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "859b34c926360e9800b3ce76bd71fc504d2eff7f",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner answered 'Yes' verbatim to the explicit relaunch offer after correcting the companion's account of the loop's history (the loop was finished and had delivered; only final push/monitoring stayed manual by design), and asked the Astra-roles + communication questions the decomposition answers (source-001.md)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-053-R001",
+  "D-053-R002",
+  "D-053-R003",
+  "D-053-R004",
+  "D-053-R005"
+ ],
+ "requirements_content_digest_sha256": "c2341d8ac2337ccf16d34695a41268e5a9a9b8232a238f6a0317824411f696c7",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T02:36:29+00:00",
+   "content_digest_sha256": "849ea541865111ff06f88f24978717cef0a813676c222018e335767c2374464e"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "execution_mode_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "relaunch of the proven supervisor-bridge loop on D-045 campaign work per the documented relaunch mechanics; monitor-and-stamp posture for the build session; monitor-owned owner notifications",
+  "prohibited": "activating live automated acceptance/merge (R595 stays shadow); loop self-acceptance; bypassing any campaign directive, gate, or the D-050 leads-never-sources rule; editing loop internals mid-flight instead of injecting through the monitor's authority"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T02:36:29+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture; id coordinated with the build session - D-051/D-052 were its captures). Companion's prior mischaracterization of the loop history is corrected in source-001 context. Relay to the build session follows per R005; relaunch mechanics are the build session's to execute with its recorded traps."
+  }
+ ]
+}
