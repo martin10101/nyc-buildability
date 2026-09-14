@@ -1,7 +1,7 @@
 {
   "project_status": "active",
   "current_milestone": "M4",
-  "last_checkpoint": "CP-2026-09-14-wave4-closed",
+  "last_checkpoint": "CP-2026-09-14-seam-d058-r2",
   "accepted_tasks": [
     "M0-T000",
     "M0-T001",
@@ -237,5 +237,5 @@
     "M0-T133-G3",
     "M0-T133-G4"
   ],
-  "updated_at": "2026-09-14T06:15:30.534676+00:00"
+  "updated_at": "2026-09-14T06:16:19.190014+00:00"
 }
