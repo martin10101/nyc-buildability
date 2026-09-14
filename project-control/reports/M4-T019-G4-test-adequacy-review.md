@@ -124,6 +124,59 @@ Applied immediately after the verdict as a tagged ORCH-CORRECTED test addition:
 
 ## Delta-attestations (appended on receipt)
 
-PENDING at file-creation time — the same G4 reviewer's attestation over exactly this delta,
-and the G3 reviewer's attestation that its PASS carries to the corrected identity (the G3
-review surface includes the test file), are recorded below when received.
+### G4 reviewer attestation (verbatim)
+
+> **ATTESTED — F1 satisfied at 42e57a6a; my PASS carries and the blocking condition is
+> discharged.**
+>
+> Delta verification (read-only, at head `42e57a6acf9781d7ca71a7e59445204510f1b23d`):
+> 1. **Production module byte-unchanged.** `git diff 859b34c9 42e57a6a --
+>    services/api/app/connectors/dcm_street_width_policy.py` → empty. My mutation-probe
+>    conclusions on the module all still hold verbatim.
+> 2. **Test delta is exactly the one prescribed function.** The only change to the test file
+>    is an appended `test_no_precondition_field_has_a_default`, tagged `[ORCH-CORRECTED per
+>    G4 F1]`, iterating `dataclasses.fields(AttestedPreconditions)` and asserting
+>    `field.default is dataclasses.MISSING` and `field.default_factory is
+>    dataclasses.MISSING` per field — the exact shape I prescribed, with the M6 rationale in
+>    its docstring. No other test was altered.
+> 3. **Suite green.** `python -m pytest tests/connectors/test_dcm_street_width_policy.py -q`
+>    → **94 passed** at the new head.
+> 4. **F1 regression hole closed (re-probe).** Re-ran mutation M6 (`exceptions_checked: bool
+>    = True`) against the corrected suite in the isolated scratch harness: now **CAUGHT** —
+>    `test_no_precondition_field_has_a_default` fails (1 failed, 93 passed), whereas at
+>    859b34c9 it survived (93 passed). The precondition-theater regression window on the
+>    R001 zoning-exceptions gate is now guarded.
+>
+> Control-plane gate/report records added by the same commit are outside my attestation
+> surface and were not reviewed. Findings F2 (advisory for B7) and F3 (cosmetic) were never
+> blocking and are unaffected. Verdict stands: **PASS**, blocking condition discharged.
+
+### G3 reviewer attestation (verbatim)
+
+> **ATTESTED.** My G3 PASS carries to identity `42e57a6acf9781d7ca71a7e59445204510f1b23d`.
+>
+> Verification performed (read-only):
+> - **Production module diff empty:** `git diff 859b34c9 42e57a6a --
+>   services/api/app/connectors/dcm_street_width_policy.py` produced no output. The module I
+>   verified line-by-line is byte-unchanged; every R001–R007 / D-051 finding in my report
+>   stands unmodified.
+> - **Test diff is exactly the one function:** the only change is an appended
+>   `test_no_precondition_field_has_a_default`, tagged `[ORCH-CORRECTED per G4 F1]`,
+>   iterating `dataclasses.fields(AttestedPreconditions)` and asserting per field that both
+>   `field.default` and `field.default_factory` are `dataclasses.MISSING`. No other lines
+>   changed; no existing test altered.
+> - **Assertion holds against the byte-unchanged module:** all 6 `AttestedPreconditions`
+>   fields report no `default` and no `default_factory`. The new test passes.
+>
+> Consistency with my review: this addition **strengthens** my R002 finding ("no
+> precondition can default to satisfied"). It closes the specific G4 mutation M6 gap I did
+> not have a dedicated guard for — only the per-field check catches a default on the last
+> dataclass field. Behavior-neutral (test-only), no new dependency, no production surface
+> altered. Verdict unchanged: **G3 = PASS at 42e57a6a.** Advisories A1–A4 carry forward for
+> the B7 wiring task (A1 to be elevated to an explicit B7 acceptance criterion).
+
+Orchestrator identity note: between the rework commit 42e57a6a and the gate records, the
+companion session's disjoint D-053 capture landed as fef69aae (directive-registry + index
+files only). Both gate records therefore stamp reviewed_sha fef69aae; the task's
+allowed-paths content identity is byte-identical between 42e57a6a and fef69aae (D-053
+touches neither task file), so both attestations' identity claims hold at the recorded sha.
