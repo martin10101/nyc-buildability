@@ -1,123 +1,129 @@
 {
- "schema": "directive_manifest/v1",
- "directive_id": "D-045",
- "version": 1,
- "slug": "citywide-rule-coverage",
- "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - residential heights/setbacks beyond R5 (A1), geometry-dependent mechanics + street-width connector (A2/B2), contextual/Quality Housing + bonuses (A3), commercial + manufacturing families, special purpose + waterfront as later waves (A4); one reviewed family at a time under normal gates; all rules stay DRAFT until G6.",
- "status": "active",
- "lifecycle_state": "active",
- "issued_by": "owner",
- "issued_at": "2026-09-13",
- "captured_at": "2026-09-13T04:10:12+00:00",
- "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-14T03:58:46+00:00",
- "channel": "interactive_chat",
- "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
- "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
- "owner_approval": {
-  "state": "authorized",
-  "note": "Owner typed the directive verbatim in the live companion session 2026-09-13 and resolved the scope via a structured question, selecting 'Truly everything (incl. A4)' (source-001.md #scope-clarification-verbatim)."
- },
- "requirements_file": "requirements.json",
- "verification_file": "verification.json",
- "final_reviewed_sha": null,
- "locked_requirement_ids": [
-  "D-045-R001",
-  "D-045-R002",
-  "D-045-R003",
-  "D-045-R004",
-  "D-045-R005",
-  "D-045-R006",
-  "D-045-R007",
-  "D-045-R008",
-  "D-045-R009",
-  "D-045-R010"
- ],
- "requirements_content_digest_sha256": "8944c6be49a87fe522b79a0452c7f7e0e66620dd9dff8845dbf45f66953c50b3",
- "sources": [
-  {
-   "file": "source-001.md",
-   "kind": "original",
-   "sequence": 1,
-   "recorded_at": "2026-09-13T04:10:12+00:00",
-   "content_digest_sha256": "6d085693783e231f437e0e65a60ce9a66e062abd46c40a4faa4028269e6905ab"
-  }
- ],
- "amendments": [],
- "supersedes": [],
- "superseded_by": null,
- "affected_tasks": [],
- "affected_prs": [],
- "affected_branches": [
-  "candidate/D-024-mrl-option-b"
- ],
- "scope": {
-  "kind": "rule_coverage_campaign_authorization",
-  "task_ids": [],
-  "task_types": [],
-  "allowed": "citywide zoning-rule coverage campaign: A1 residential heights/setbacks (R1-R4, R6-R12), A2 geometry-dependent mechanics with their data inputs, B2 street-width connector, A3 contextual/Quality Housing + bonus programs, C-district and M-district families, A4 special purpose + waterfront as later waves; bounded gated tasks citing D-045 requirement ids",
-  "prohibited": "publishing any rule without G6; out-of-scope gap-list self-assignment (B3/B4/B5/C2/C3/E1-E3/group D stay owner-triage candidates); lifting any standing hold (PR #241, expansion hold outside the lot-outline release, D-043 internal-only posture); bypassing dependency policy §G"
- },
- "audit_log": [
-  {
-   "at": "2026-09-13T04:10:12+00:00",
-   "actor": "orchestrator",
-   "event": "captured",
-   "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043 precedent); scope resolved by owner selection 'Truly everything (incl. A4)' before capture; relay to the live build session (ctl24-ce) follows immediately per R010"
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-045",
+  "version": 1,
+  "slug": "citywide-rule-coverage",
+  "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - residential heights/setbacks beyond R5 (A1), geometry-dependent mechanics + street-width connector (A2/B2), contextual/Quality Housing + bonuses (A3), commercial + manufacturing families, special purpose + waterfront as later waves (A4); one reviewed family at a time under normal gates; all rules stay DRAFT until G6.",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-13",
+  "captured_at": "2026-09-13T04:10:12+00:00",
+  "created_at": "2026-09-13T04:10:12+00:00",
+  "updated_at": "2026-09-14T08:28:02+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Owner typed the directive verbatim in the live companion session 2026-09-13 and resolved the scope via a structured question, selecting 'Truly everything (incl. A4)' (source-001.md #scope-clarification-verbatim)."
   },
-  {
-   "at": "2026-09-13T05:55:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T012 (A1 wave 1: R1+R2 height/setback families) to D-045-R001/R008/R009 (append-only). Digest resynced df16d3af -> 27bc7302."
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-045-R001",
+    "D-045-R002",
+    "D-045-R003",
+    "D-045-R004",
+    "D-045-R005",
+    "D-045-R006",
+    "D-045-R007",
+    "D-045-R008",
+    "D-045-R009",
+    "D-045-R010"
+  ],
+  "requirements_content_digest_sha256": "9de82f1893e56b077e388f8e17492ccd24f511e4258edc64d90912d69abcba51",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-13T04:10:12+00:00",
+      "content_digest_sha256": "6d085693783e231f437e0e65a60ce9a66e062abd46c40a4faa4028269e6905ab"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "rule_coverage_campaign_authorization",
+    "task_ids": [],
+    "task_types": [],
+    "allowed": "citywide zoning-rule coverage campaign: A1 residential heights/setbacks (R1-R4, R6-R12), A2 geometry-dependent mechanics with their data inputs, B2 street-width connector, A3 contextual/Quality Housing + bonus programs, C-district and M-district families, A4 special purpose + waterfront as later waves; bounded gated tasks citing D-045 requirement ids",
+    "prohibited": "publishing any rule without G6; out-of-scope gap-list self-assignment (B3/B4/B5/C2/C3/E1-E3/group D stay owner-triage candidates); lifting any standing hold (PR #241, expansion hold outside the lot-outline release, D-043 internal-only posture); bypassing dependency policy §G"
   },
-  {
-   "at": "2026-09-13T06:20:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T013 (B2 street-width official-source research) to D-045-R003/R008/R009 (append-only). Digest resynced 27bc7302 -> ca8d29c0."
-  },
-  {
-   "at": "2026-09-13T06:55:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T014 (A1 wave 1b: R3+R4 families - explicit enumeration, B-023 does not touch them) to D-045-R001/R008/R009 (append-only). Digest resynced ca8d29c0 -> 0b85aa17."
-  },
-  {
-   "at": "2026-09-13T07:55:00+00:00",
-   "actor": "orchestrator",
-   "action": "verifier_authorized_reviewed_sha_restamp",
-   "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
-  },
-  {
-   "at": "2026-09-13T08:15:00+00:00",
-   "actor": "orchestrator",
-   "action": "verifier_authorized_reviewed_sha_restamp",
-   "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
-  },
-  {
-   "at": "2026-09-13T06:52:20+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T015 (B2 street-width connector BUILD, pins the accepted M4-T013 research) to D-045-R003/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0b85aa17 -> 94874d09. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
-  },
-  {
-   "at": "2026-09-13T18:04:28+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger tasks M4-T016 (A2 geometry-mechanics RESEARCH, pins accepted M4-T013/M4-T015) to D-045-R002/R008/R009 and M4-T017 (C-district RESEARCH, D-045-R005 research-first half) to D-045-R005/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 94874d09 -> 9e020e63 in the SAME commit as the binding (c14 discipline per handoff seq 108 TIP)."
-  },
-  {
-   "at": "2026-09-14T02:08:15+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound wave-4 ledger tasks M4-T018 (B6 12-10 capture/reconciliation research) + M4-T019 (D-052 policy layer) to D-045-R002/R008/R009 (append-only, task_ids only). Digest resynced 9e020e63 -> 0bcc87c0 in the SAME commit (c14)."
-  },
-  {
-   "at": "2026-09-14T03:58:46+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound wave-5 ledger task M4-T020 (B3 geometry parse-and-expose build, pins accepted M4-T016 Part 4.3 item 1) to D-045-R002/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0bcc87c0 -> 8944c6be in the SAME commit (c14). First packet of the D-053 loop relaunch."
-  }
- ]
+  "audit_log": [
+    {
+      "at": "2026-09-13T04:10:12+00:00",
+      "actor": "orchestrator",
+      "event": "captured",
+      "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043 precedent); scope resolved by owner selection 'Truly everything (incl. A4)' before capture; relay to the live build session (ctl24-ce) follows immediately per R010"
+    },
+    {
+      "at": "2026-09-13T05:55:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T012 (A1 wave 1: R1+R2 height/setback families) to D-045-R001/R008/R009 (append-only). Digest resynced df16d3af -> 27bc7302."
+    },
+    {
+      "at": "2026-09-13T06:20:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T013 (B2 street-width official-source research) to D-045-R003/R008/R009 (append-only). Digest resynced 27bc7302 -> ca8d29c0."
+    },
+    {
+      "at": "2026-09-13T06:55:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T014 (A1 wave 1b: R3+R4 families - explicit enumeration, B-023 does not touch them) to D-045-R001/R008/R009 (append-only). Digest resynced ca8d29c0 -> 0b85aa17."
+    },
+    {
+      "at": "2026-09-13T07:55:00+00:00",
+      "actor": "orchestrator",
+      "action": "verifier_authorized_reviewed_sha_restamp",
+      "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
+    },
+    {
+      "at": "2026-09-13T08:15:00+00:00",
+      "actor": "orchestrator",
+      "action": "verifier_authorized_reviewed_sha_restamp",
+      "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
+    },
+    {
+      "at": "2026-09-13T06:52:20+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T015 (B2 street-width connector BUILD, pins the accepted M4-T013 research) to D-045-R003/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0b85aa17 -> 94874d09. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
+    },
+    {
+      "at": "2026-09-13T18:04:28+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger tasks M4-T016 (A2 geometry-mechanics RESEARCH, pins accepted M4-T013/M4-T015) to D-045-R002/R008/R009 and M4-T017 (C-district RESEARCH, D-045-R005 research-first half) to D-045-R005/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 94874d09 -> 9e020e63 in the SAME commit as the binding (c14 discipline per handoff seq 108 TIP)."
+    },
+    {
+      "at": "2026-09-14T02:08:15+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-4 ledger tasks M4-T018 (B6 12-10 capture/reconciliation research) + M4-T019 (D-052 policy layer) to D-045-R002/R008/R009 (append-only, task_ids only). Digest resynced 9e020e63 -> 0bcc87c0 in the SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-14T03:58:46+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-5 ledger task M4-T020 (B3 geometry parse-and-expose build, pins accepted M4-T016 Part 4.3 item 1) to D-045-R002/R008/R009 (append-only, task_ids only; no requirement text changed). Digest resynced 0bcc87c0 -> 8944c6be in the SAME commit (c14). First packet of the D-053 loop relaunch."
+    },
+    {
+      "at": "2026-09-14T08:28:02+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-5 shift-2 ledger task M4-T021 (B4 wide-street buffer/intersection engine, pins accepted M4-T016 Part 4.3 item 2; depends on accepted M4-T020 B3) to D-045-R002/D-045-R008/D-045-R009 (append-only, task_ids only; no requirement text changed). Digest resynced 8944c6be -> 9de82f18 in the SAME commit (c14). Second packet of the D-053 loop (run persistent-local-35 planned)."
+    }
+  ]
 }

@@ -1,124 +1,130 @@
 {
- "schema": "directive_manifest/v1",
- "directive_id": "D-046",
- "version": 1,
- "slug": "parallel-family-production",
- "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; concurrency backs off under resource pressure, never quality.",
- "status": "active",
- "lifecycle_state": "active",
- "issued_by": "owner",
- "issued_at": "2026-09-13",
- "captured_at": "2026-09-13T04:35:34+00:00",
- "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-14T07:40:00+00:00",
- "channel": "interactive_chat",
- "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
- "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
- "owner_approval": {
-  "state": "authorized",
-  "note": "Owner answered 'Yes' verbatim to the explicit scale-up offer (parallel family production, 2-3 producers, within all existing gates) in the live companion session 2026-09-13 (source-001.md #owner-message-verbatim)."
- },
- "requirements_file": "requirements.json",
- "verification_file": "verification.json",
- "final_reviewed_sha": null,
- "locked_requirement_ids": [
-  "D-046-R001",
-  "D-046-R002",
-  "D-046-R003",
-  "D-046-R004",
-  "D-046-R005"
- ],
- "requirements_content_digest_sha256": "ba17c674597d490e498ecfe08393e1907996d46e359d638956454c2db59eec3f",
- "sources": [
-  {
-   "file": "source-001.md",
-   "kind": "original",
-   "sequence": 1,
-   "recorded_at": "2026-09-13T04:35:34+00:00",
-   "content_digest_sha256": "0b36c5661ba6af9ceaa774634186681f1fee00104f0ce7c9e7ab74d78674bbb2"
-  }
- ],
- "amendments": [],
- "supersedes": [],
- "superseded_by": null,
- "affected_tasks": [],
- "affected_prs": [],
- "affected_branches": [
-  "candidate/D-024-mrl-option-b"
- ],
- "scope": {
-  "kind": "execution_scaling_authorization",
-  "task_ids": [],
-  "task_types": [],
-  "allowed": "up to 3 concurrent writing producers on pairwise-disjoint D-045 campaign tasks, isolated worktrees, standing orchestration policy; backoff under resource pressure",
-  "prohibited": "overlapping concurrent scopes; any relaxation of gates, review independence, §G dependency policy, sequential integration, or orchestrator sole authority; citing parallelism to skip or thin review"
- },
- "audit_log": [
-  {
-   "at": "2026-09-13T04:35:34+00:00",
-   "actor": "orchestrator",
-   "event": "captured",
-   "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043/D-045 precedent); owner accepted the explicit offer incl. cost posture and non-compressible quality stages; relay to the live build session (ctl24-ce) follows immediately per R005"
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-046",
+  "version": 1,
+  "slug": "parallel-family-production",
+  "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; concurrency backs off under resource pressure, never quality.",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-13",
+  "captured_at": "2026-09-13T04:35:34+00:00",
+  "created_at": "2026-09-13T04:35:34+00:00",
+  "updated_at": "2026-09-14T08:28:02+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Owner answered 'Yes' verbatim to the explicit scale-up offer (parallel family production, 2-3 producers, within all existing gates) in the live companion session 2026-09-13 (source-001.md #owner-message-verbatim)."
   },
-  {
-   "at": "2026-09-13T06:20:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T013 (wave-1 slot 2) to D-046-R001/R002 (append-only). Wave 1 runs WIDTH 2 (M4-T012 rules dirs + M4-T013 research paths, pairwise-disjoint); a second rules-family producer is deferred until M4-T012 lands because its directory-scoped allowed_paths would violate R002 - back-off per R004 spirit, never scope-fudging. From wave 2, family packets use file-precise scopes to enable width 3. Digest resynced 914fd95f -> e31a8a1c."
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002",
+    "D-046-R003",
+    "D-046-R004",
+    "D-046-R005"
+  ],
+  "requirements_content_digest_sha256": "40e99052367d680db1a343deea67916c1f1a831ffc7de2ffbdf3828eed9351a4",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-13T04:35:34+00:00",
+      "content_digest_sha256": "0b36c5661ba6af9ceaa774634186681f1fee00104f0ce7c9e7ab74d78674bbb2"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "execution_scaling_authorization",
+    "task_ids": [],
+    "task_types": [],
+    "allowed": "up to 3 concurrent writing producers on pairwise-disjoint D-045 campaign tasks, isolated worktrees, standing orchestration policy; backoff under resource pressure",
+    "prohibited": "overlapping concurrent scopes; any relaxation of gates, review independence, §G dependency policy, sequential integration, or orchestrator sole authority; citing parallelism to skip or thin review"
   },
-  {
-   "at": "2026-09-13T06:55:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T014 (wave-1 rules lane; M4-T012 blocked/clean so its directory scopes are free; T012 must not resume while T014 is in flight) to D-046-R001/R002 (append-only). Digest resynced e31a8a1c -> f648e8a4."
-  },
-  {
-   "at": "2026-09-13T07:55:00+00:00",
-   "actor": "orchestrator",
-   "action": "verifier_authorized_reviewed_sha_restamp",
-   "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
-  },
-  {
-   "at": "2026-09-13T08:15:00+00:00",
-   "actor": "orchestrator",
-   "action": "verifier_authorized_reviewed_sha_restamp",
-   "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
-  },
-  {
-   "at": "2026-09-13T06:52:20+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M4-T015 (wave-2 connector lane; runs 2-wide with the re-dispatched M4-T012, scopes pairwise-disjoint) to D-046-R001/R002 (append-only, task_ids only; no requirement text changed). Digest resynced f648e8a4 -> 9aac0e46. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
-  },
-  {
-   "at": "2026-09-13T18:04:28+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger tasks M4-T016 + M4-T017 (wave 3, 2-wide, pairwise-disjoint single-report-file scopes) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 9aac0e46 -> 56212b57 in the SAME commit as the binding."
-  },
-  {
-   "at": "2026-09-14T02:08:15+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound wave-4 tasks M4-T018 + M4-T019 (2-wide, pairwise-disjoint scopes) to D-046-R001/R002 (append-only). Digest resynced 56212b57 -> 3903932e in the SAME commit."
-  },
-  {
-   "at": "2026-09-14T03:58:46+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound wave-5 ledger task M4-T020 (B3 build; single writing producer - the relaunched codex-loop worker - so disjointness is trivially satisfied; nothing else in flight) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 3903932e -> 4536a16c in the SAME commit (c14)."
-  },
-  {
-   "at": "2026-09-14T05:52:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M5-T025 (D-056 web-fix packet, hand-conducted parallel to the loop's M4-T020; 2 concurrent writers, allowed_paths fully disjoint) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 4536a16c -> 5b564d34 in the SAME commit (c14)."
-  },
-  {
-   "at": "2026-09-14T07:40:00+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_append",
-   "note": "Bound ledger task M5-T026 (D-057 default-on gate packet; 2 concurrent writers, disjoint from M4-T020 and from M5-T025's files) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 5b564d34 -> ba17c674 in the SAME commit (c14)."
-  }
- ]
+  "audit_log": [
+    {
+      "at": "2026-09-13T04:35:34+00:00",
+      "actor": "orchestrator",
+      "event": "captured",
+      "note": "verbatim capture from the interactive companion session (peer-capture per D-042/D-043/D-045 precedent); owner accepted the explicit offer incl. cost posture and non-compressible quality stages; relay to the live build session (ctl24-ce) follows immediately per R005"
+    },
+    {
+      "at": "2026-09-13T06:20:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T013 (wave-1 slot 2) to D-046-R001/R002 (append-only). Wave 1 runs WIDTH 2 (M4-T012 rules dirs + M4-T013 research paths, pairwise-disjoint); a second rules-family producer is deferred until M4-T012 lands because its directory-scoped allowed_paths would violate R002 - back-off per R004 spirit, never scope-fudging. From wave 2, family packets use file-precise scopes to enable width 3. Digest resynced 914fd95f -> e31a8a1c."
+    },
+    {
+      "at": "2026-09-13T06:55:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T014 (wave-1 rules lane; M4-T012 blocked/clean so its directory scopes are free; T012 must not resume while T014 is in flight) to D-046-R001/R002 (append-only). Digest resynced e31a8a1c -> f648e8a4."
+    },
+    {
+      "at": "2026-09-13T07:55:00+00:00",
+      "actor": "orchestrator",
+      "action": "verifier_authorized_reviewed_sha_restamp",
+      "note": "M4-T013 row recorded; reviewed_sha restamped a085454b -> 0f71681b per the verifier's conditional pre-authorization (allowed-paths diff empty + identity 232efa20 unchanged, verified at restamp)."
+    },
+    {
+      "at": "2026-09-13T08:15:00+00:00",
+      "actor": "orchestrator",
+      "action": "verifier_authorized_reviewed_sha_restamp",
+      "note": "M4-T014 row recorded; reviewed_sha restamped 7f14089b -> 802cdd49 per the verifier conditional pre-authorization (allowed-paths diff empty + identity b20678d4 unchanged, verified at restamp)."
+    },
+    {
+      "at": "2026-09-13T06:52:20+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M4-T015 (wave-2 connector lane; runs 2-wide with the re-dispatched M4-T012, scopes pairwise-disjoint) to D-046-R001/R002 (append-only, task_ids only; no requirement text changed). Digest resynced f648e8a4 -> 9aac0e46. Timestamp note: this entry uses CLI UTC; the two prior entries carry wall-clock stamps future-skewed ~1.5h, so log order (not the at-field) reflects append order."
+    },
+    {
+      "at": "2026-09-13T18:04:28+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger tasks M4-T016 + M4-T017 (wave 3, 2-wide, pairwise-disjoint single-report-file scopes) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 9aac0e46 -> 56212b57 in the SAME commit as the binding."
+    },
+    {
+      "at": "2026-09-14T02:08:15+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-4 tasks M4-T018 + M4-T019 (2-wide, pairwise-disjoint scopes) to D-046-R001/R002 (append-only). Digest resynced 56212b57 -> 3903932e in the SAME commit."
+    },
+    {
+      "at": "2026-09-14T03:58:46+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-5 ledger task M4-T020 (B3 build; single writing producer - the relaunched codex-loop worker - so disjointness is trivially satisfied; nothing else in flight) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 3903932e -> 4536a16c in the SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-14T05:52:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M5-T025 (D-056 web-fix packet, hand-conducted parallel to the loop's M4-T020; 2 concurrent writers, allowed_paths fully disjoint) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 4536a16c -> 5b564d34 in the SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-14T07:40:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound ledger task M5-T026 (D-057 default-on gate packet; 2 concurrent writers, disjoint from M4-T020 and from M5-T025's files) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 5b564d34 -> ba17c674 in the SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-14T08:28:02+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound wave-5 shift-2 ledger task M4-T021 (B4 wide-street buffer/intersection engine, pins accepted M4-T016 Part 4.3 item 2; depends on accepted M4-T020 B3) to D-046-R001/D-046-R002 (append-only, task_ids only; no requirement text changed). Digest resynced ba17c674 -> 40e99052 in the SAME commit (c14). Second packet of the D-053 loop (run persistent-local-35 planned)."
+    }
+  ]
 }

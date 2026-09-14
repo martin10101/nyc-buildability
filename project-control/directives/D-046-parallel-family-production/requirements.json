@@ -1,190 +1,192 @@
 {
- "schema": "directive_requirements/v1",
- "directive_id": "D-046",
- "version": 1,
- "requirement_count": 5,
- "producer": "orchestrator",
- "updated_at": "2026-09-14T07:40:00+00:00",
- "requirements": [
-  {
-   "id": "D-046-R001",
-   "text": "SCALE UP — Execute the D-045 campaign with parallel production: up to 3 concurrent writing producers on disjoint D-045 family/connector tasks, each dispatched into its own isolated worktree under the standing orchestration policy (.claude/ORCHESTRATION_POLICY.md). Apply from the next A1 wave onward wherever ready tasks with disjoint scopes exist.",
-   "source_ref": "source-001.md#owner-message-verbatim",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-046-BOOTSTRAP",
-     "M4-T013",
-     "M4-T014",
-     "M4-T015",
-     "M4-T016",
-     "M4-T017",
-     "M4-T018",
-     "M4-T019",
-     "M4-T020",
-     "M5-T025",
-     "M5-T026"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "paths": [],
-    "lifecycle_events": [],
-    "effective_date": "2026-09-13"
-   },
-   "dependencies": [],
-   "required_harness": "dispatch records / progress log show concurrent producers on disjoint D-045 tasks",
-   "required_evidence": "campaign waves executed with >1 concurrent producer where disjoint ready tasks existed",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   },
-   "reviewed_sha": null,
-   "status_reason": "",
-   "evidence_paths": [],
-   "amendment_sequence": 1
-  },
-  {
-   "id": "D-046-R002",
-   "text": "DISJOINTNESS IS MANDATORY — Never dispatch two concurrent writing producers whose allowed_paths overlap any file. Family tasks are contracted so scopes are provably disjoint (per-family rule files, tests, fixtures); shared surfaces (registry wiring, coverage tables, shared schemas) are integrated sequentially by the orchestrator, never edited in parallel.",
-   "source_ref": "source-001.md#capture-context",
-   "classification": "prohibition",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-046-BOOTSTRAP",
-     "M4-T013",
-     "M4-T014",
-     "M4-T015",
-     "M4-T016",
-     "M4-T017",
-     "M4-T018",
-     "M4-T019",
-     "M4-T020",
-     "M5-T025",
-     "M5-T026"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "paths": [],
-    "lifecycle_events": [],
-    "effective_date": "2026-09-13"
-   },
-   "dependencies": [],
-   "required_harness": "task packets' allowed_paths pairwise-disjoint for concurrently dispatched producers",
-   "required_evidence": "no concurrent dispatch with overlapping scopes in the campaign record",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   },
-   "reviewed_sha": null,
-   "status_reason": "",
-   "evidence_paths": [],
-   "amendment_sequence": 1
-  },
-  {
-   "id": "D-046-R003",
-   "text": "NO QUALITY RELAXATION — Parallelism changes execution shape only. Unchanged and non-waivable: independent review (producer ≠ reviewer, reviewers read-only), all G0–G7 gates, dependency policy §G including the 7-day age gate, sequential integration and sole ledger/git/gh authority of the orchestrator (ADR-005/ADR-006 tiers), directive-compliance verification, and careful legal sourcing for every rule. Parallelism is never cited to skip, thin, batch-waive, or self-approve review.",
-   "source_ref": "source-001.md#capture-context",
-   "classification": "prohibition",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-046-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "paths": [],
-    "lifecycle_events": [],
-    "effective_date": "2026-09-13"
-   },
-   "dependencies": [],
-   "required_harness": "gate records per task unchanged in kind and independence",
-   "required_evidence": "every campaign task carries the full gate set with producer ≠ reviewer",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   },
-   "reviewed_sha": null,
-   "status_reason": "",
-   "evidence_paths": [],
-   "amendment_sequence": 1
-  },
-  {
-   "id": "D-046-R004",
-   "text": "RESOURCE BACKPRESSURE — Concurrency ceiling is 3 writing producers. On resource pressure (usage caps, model unavailability, CI contention, review backlog), reduce concurrency and keep quality rather than queueing degraded work; the owner is informed only on major stalls per the standing quiet-monitoring rule. Ordering judgment stays with the orchestrator (D-045-R008 unchanged).",
-   "source_ref": "source-001.md#capture-context",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-046-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "paths": [],
-    "lifecycle_events": [],
-    "effective_date": "2026-09-13"
-   },
-   "dependencies": [],
-   "required_harness": "orchestrator practice; progress log on any backoff",
-   "required_evidence": "no quality incident attributed to over-parallelization",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   },
-   "reviewed_sha": null,
-   "status_reason": "",
-   "evidence_paths": [],
-   "amendment_sequence": 1
-  },
-  {
-   "id": "D-046-R005",
-   "text": "RELAY / ACKNOWLEDGMENT (return item) — The companion session relays this directive to the live build session; the build session acknowledges and applies it from the next dispatch wave. Discharged when the build session confirms and the first parallel wave is recorded.",
-   "source_ref": "source-001.md#owner-message-verbatim",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-046-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "paths": [],
-    "lifecycle_events": [],
-    "effective_date": "2026-09-13"
-   },
-   "dependencies": [],
-   "required_harness": "cross-session message + acknowledgment; first parallel dispatch recorded",
-   "required_evidence": "message in this capture's audit_log; subsequent dispatch record",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   },
-   "reviewed_sha": null,
-   "status_reason": "",
-   "evidence_paths": [],
-   "amendment_sequence": 1
-  }
- ]
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-046",
+  "version": 1,
+  "requirement_count": 5,
+  "producer": "orchestrator",
+  "updated_at": "2026-09-14T07:40:00+00:00",
+  "requirements": [
+    {
+      "id": "D-046-R001",
+      "text": "SCALE UP — Execute the D-045 campaign with parallel production: up to 3 concurrent writing producers on disjoint D-045 family/connector tasks, each dispatched into its own isolated worktree under the standing orchestration policy (.claude/ORCHESTRATION_POLICY.md). Apply from the next A1 wave onward wherever ready tasks with disjoint scopes exist.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-046-BOOTSTRAP",
+          "M4-T013",
+          "M4-T014",
+          "M4-T015",
+          "M4-T016",
+          "M4-T017",
+          "M4-T018",
+          "M4-T019",
+          "M4-T020",
+          "M5-T025",
+          "M5-T026",
+          "M4-T021"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-13"
+      },
+      "dependencies": [],
+      "required_harness": "dispatch records / progress log show concurrent producers on disjoint D-045 tasks",
+      "required_evidence": "campaign waves executed with >1 concurrent producer where disjoint ready tasks existed",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-046-R002",
+      "text": "DISJOINTNESS IS MANDATORY — Never dispatch two concurrent writing producers whose allowed_paths overlap any file. Family tasks are contracted so scopes are provably disjoint (per-family rule files, tests, fixtures); shared surfaces (registry wiring, coverage tables, shared schemas) are integrated sequentially by the orchestrator, never edited in parallel.",
+      "source_ref": "source-001.md#capture-context",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-046-BOOTSTRAP",
+          "M4-T013",
+          "M4-T014",
+          "M4-T015",
+          "M4-T016",
+          "M4-T017",
+          "M4-T018",
+          "M4-T019",
+          "M4-T020",
+          "M5-T025",
+          "M5-T026",
+          "M4-T021"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-13"
+      },
+      "dependencies": [],
+      "required_harness": "task packets' allowed_paths pairwise-disjoint for concurrently dispatched producers",
+      "required_evidence": "no concurrent dispatch with overlapping scopes in the campaign record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-046-R003",
+      "text": "NO QUALITY RELAXATION — Parallelism changes execution shape only. Unchanged and non-waivable: independent review (producer ≠ reviewer, reviewers read-only), all G0–G7 gates, dependency policy §G including the 7-day age gate, sequential integration and sole ledger/git/gh authority of the orchestrator (ADR-005/ADR-006 tiers), directive-compliance verification, and careful legal sourcing for every rule. Parallelism is never cited to skip, thin, batch-waive, or self-approve review.",
+      "source_ref": "source-001.md#capture-context",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-046-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-13"
+      },
+      "dependencies": [],
+      "required_harness": "gate records per task unchanged in kind and independence",
+      "required_evidence": "every campaign task carries the full gate set with producer ≠ reviewer",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-046-R004",
+      "text": "RESOURCE BACKPRESSURE — Concurrency ceiling is 3 writing producers. On resource pressure (usage caps, model unavailability, CI contention, review backlog), reduce concurrency and keep quality rather than queueing degraded work; the owner is informed only on major stalls per the standing quiet-monitoring rule. Ordering judgment stays with the orchestrator (D-045-R008 unchanged).",
+      "source_ref": "source-001.md#capture-context",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-046-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-13"
+      },
+      "dependencies": [],
+      "required_harness": "orchestrator practice; progress log on any backoff",
+      "required_evidence": "no quality incident attributed to over-parallelization",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    },
+    {
+      "id": "D-046-R005",
+      "text": "RELAY / ACKNOWLEDGMENT (return item) — The companion session relays this directive to the live build session; the build session acknowledges and applies it from the next dispatch wave. Discharged when the build session confirms and the first parallel wave is recorded.",
+      "source_ref": "source-001.md#owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-046-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "paths": [],
+        "lifecycle_events": [],
+        "effective_date": "2026-09-13"
+      },
+      "dependencies": [],
+      "required_harness": "cross-session message + acknowledgment; first parallel dispatch recorded",
+      "required_evidence": "message in this capture's audit_log; subsequent dispatch record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      },
+      "reviewed_sha": null,
+      "status_reason": "",
+      "evidence_paths": [],
+      "amendment_sequence": 1
+    }
+  ]
 }

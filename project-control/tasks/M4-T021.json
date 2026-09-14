@@ -1,0 +1,128 @@
+{
+  "task_id": "M4-T021",
+  "title": "B4 wide-street 100-ft buffer/intersection engine (EPSG:2263): planar buffer over wide-disposed DCM segments intersected with the MapPLUTO lot polygon, portions-aware, fail-closed",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Implement B4 per the accepted M4-T016 A2 research (Part 4.3 item 2; design Part 2.2 steps A-D; edge cases Part 2.4): a NEW deterministic geometry-engine module services/api/app/connectors/wide_street_buffer_engine.py (the dcm_street_width_policy.py sibling precedent) plus its test file. Contract: (1) TYPED INPUTS - wide-disposed DCM segment polylines (the accepted M4-T020 dcm_street_centerline_geometry results, filtered by the caller to effective_disposition == wide via the accepted M4-T015 classifier / M4-T019 policy - NEVER re-implemented or re-decided here) and the MapPLUTO zoning-lot polygon (the accepted mappluto_geometry_arcgis measurement surface); BOTH inputs must carry their validated EPSG:2263 identity (wkid 102718 / latestWkid 2263) - absence or mismatch on either side is a TYPED error; NO reprojection path may exist (the same-CRS simplification is evidenced in Part 2.3, not assumed). (2) BUFFER - a planar buffer of exactly 100.0 US survey feet per wide segment polyline (shapely 2.0.7, ALREADY ADMITTED with GEOS-determinism assertions - zero new dependencies), valid only in the projected foot-unit CRS, never degrees. (3) INTERSECTION - the boolean any-portion intersects test (ZR 23-22 footnote 1 'or portions thereof', quoted verbatim in r6_r7_r8_wide_street_conditional_far.rule.json) AND the intersection sub-geometry/area exposed for the rule layer's future apportionment; per-segment contributions AND the union-before-intersect aggregate both visible. (4) EDGE CASES TYPED per Part 2.4: EC-1 corner/multi-frontage handled by union-by-construction; EC-2 ambiguous/narrow segments are EXCLUDED by the caller's wide-only input contract and the module must document the resulting honest under-claim (M4-T013-style tradeoff section in the producer report); EC-3 always per-segment - never one-width-per-named-street; EC-4 exact-100-ft tangency: NO silent tolerance - BOUNDARY_TOLERANCE_FT (a positional-accuracy constant) must NOT be reused as a legal buffer allowance; the exact floating-point predicate result stands and the open tolerance question is DOCUMENTED, not resolved; EC-5 the named-street override (Broadway W94-97 CD7; Allen St Rivington-Delancey CD3) and the C5-3/C6-4/C6-6 alternate-width clause are OUT of this module's scope - the API must carry a typed no-default attested-preconditions input (the D-052/M4-T019 AttestedPreconditions precedent) so a caller cannot silently skip them (B7 wires them LAST); EC-6 an empty wide-segment input set produces a typed honest 'no wide segment provided' result, never a default in either direction. (5) DETERMINISM + PROVENANCE - shapely.__version__ and geos_version_string asserted (pyproject discipline); every result carries the inputs' provenance (retrieval identities, raw digests, CRS stamps, classifier basis passthrough) and the 100.0-ft constant's citation. (6) Zero new dependencies; accepted modules READ-ONLY; NO rule-file or ruleset edits (B7 is a later packet). Producer report to project-control/reports/M4-T021-producer-report.md.",
+  "business_reason": "D-045 A2 lane wave 5 shift 2: B4 is the geometry mechanic that computes the ZR 23-22 footnote-1 'within 100 feet of a wide street' split; consumes accepted B3 (M4-T020) + accepted MapPLUTO geometry (M2-T009); unblocks B7 rule wiring (LAST)",
+  "inputs": [
+    "project-control/reports/M4-T016-a2-geometry-mechanics-research.md Part 2.2 (steps A-D design), Part 2.3 (CRS/unit evidence incl. US-survey-foot confirmation), Part 2.4 (EC-1..6), Part 4.3 item 2 (the B4 contract this packet pins) - READ-ONLY",
+    "services/api/app/connectors/dcm_street_centerline_geometry.py (accepted M4-T020 B3: typed EPSG:2263 polylines + provenance - READ-ONLY, consumed by import)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py (accepted lot-polygon measurement surface + CRS-validation precedent + the BOUNDARY_TOLERANCE_FT constant that must NOT be reused - READ-ONLY)",
+    "services/api/app/connectors/dcm_street_width_policy.py (accepted D-052 AttestedPreconditions no-default precedent - READ-ONLY)",
+    "services/api/pyproject.toml shapely==2.0.7 pin + GEOS-determinism notes (READ-ONLY; zero new dependencies)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/wide_street_buffer_engine.py (NEW: typed inputs, CRS identity gate, 100.0-ft planar buffer, per-segment + union intersection, portions sub-geometry/area, EC-1..6 typed, determinism assertions, provenance passthrough)",
+    "services/api/tests/connectors/test_wide_street_buffer_engine.py (NEW: fully offline synthetic-fixture suite per S1-S5)",
+    "project-control/reports/M4-T021-producer-report.md (incl. the EC-2 honest-under-claim tradeoff section and the EC-4 open-tolerance documentation)"
+  ],
+  "dependencies": [
+    "M4-T020"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/wide_street_buffer_engine.py",
+    "services/api/tests/connectors/test_wide_street_buffer_engine.py",
+    "project-control/reports/M4-T021-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/app/connectors/dcm_street_centerline_geometry.py",
+    "services/api/app/connectors/dcm_street_width_classifier.py",
+    "services/api/app/connectors/dcm_street_width_policy.py",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/connectors/mappluto_lot_outline.py",
+    "services/api/app/rules/**",
+    "services/api/pyproject.toml",
+    "services/api/requirements.in",
+    "services/api/requirements.txt",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    ".claude/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "wide_only_buffer_membership",
+      "input": "synthetic EPSG:2263 fixtures: lot polygon + wide segment within/beyond 100 ft",
+      "expected": "segment within 100 ft -> intersects true + non-empty sub-geometry with area > 0; segment beyond 100 ft -> intersects false, empty portion; results carry per-segment identity; only caller-supplied wide segments participate (the module never re-classifies width)"
+    },
+    {
+      "id": "S2",
+      "case": "crs_and_input_fail_closed",
+      "input": "missing/mismatched CRS identity on either input; degenerate/invalid polygon or polyline; malformed attestation",
+      "expected": "each a TYPED error/state (never a computed number); no reprojection call path exists (AST/token-scan test per the M4-T020 precedent); AttestedPreconditions-style input has NO defaults - omission is a type/construction error"
+    },
+    {
+      "id": "S3",
+      "case": "portions_split_corner_lot",
+      "input": "corner lot with one wide frontage in range and one non-wide frontage",
+      "expected": "union-before-intersect aggregate correct; sub-area strictly between 0 and lot area for a genuine partial split; per-segment contributions individually visible (EC-1/EC-3)"
+    },
+    {
+      "id": "S4",
+      "case": "tangency_and_empty_honesty",
+      "input": "lot exactly at 100.0 ft; empty wide-segment set",
+      "expected": "tangency: documented exact-predicate behavior with NO silent tolerance (EC-4; BOUNDARY_TOLERANCE_FT not referenced); empty set: typed 'no wide segment provided' result, never a default either way (EC-6)"
+    },
+    {
+      "id": "S5",
+      "case": "scope_regression_determinism",
+      "input": "git diff + suite + determinism assertions",
+      "expected": "exactly the 3 allowed files; full connectors suite green; ruff clean; modularity 0 failures; shapely.__version__ == 2.0.7 and geos_version_string asserted; zero new dependencies"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-14T08:26:53.634491+00:00",
+  "updated_at": "2026-09-14T08:26:53.859511+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T08:26:53.634491+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/connectors/test_wide_street_buffer_engine.py",
+    "python -m pytest services/api/tests/connectors",
+    "python -m ruff check services/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "D-046 wave-5 shift-2 packet for the D-053 loop (run persistent-local-35): sole writing producer at dispatch; scope disjoint from every open task by construction (2 NEW files + own report).",
+    "Consumes accepted B3 (M4-T020) + accepted MapPLUTO geometry by READ-ONLY import; B7 rule wiring is a LATER packet (do LAST per the accepted wave-5 queue)."
+  ]
+}
