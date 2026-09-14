@@ -74,8 +74,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "the 12-10 page is ~1.3MB and the print/PDF render 504'd twice for M4-T016 - the fallback channel must be disclosed, never silently substituted",
     "the accepted r6_r7_r8 rule + snapshot reference the pre-amendment text; mishandling the reconciliation as a silent snapshot edit would corrupt accepted provenance - the update is a separate gated task",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T02:06:14.818298+00:00",
-  "updated_at": "2026-09-14T02:06:15.024791+00:00",
+  "updated_at": "2026-09-14T02:09:56.664522+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -114,5 +114,15 @@
   "documented_test_commands": [
     "python tools/validate_directive_compliance.py --check",
     "python tools/modularity_check.py --check (docs-only change; must stay EXIT 0)"
+  ],
+  "worktree": "wt-m4t018",
+  "progress_log": [
+    {
+      "at": "2026-09-14T02:09:56.664522+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed; wave 4 slot 1 (B6 research); scenarios in packet; producer official-source-researcher (agent file claude-sonnet-5, no override)"
+    }
   ]
 }
