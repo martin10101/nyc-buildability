@@ -14,7 +14,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-059-BOOTSTRAP"
+          "D-059-BOOTSTRAP",
+          "M5-T027"
         ],
         "task_types": [],
         "milestones": [],
@@ -45,7 +46,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-059-BOOTSTRAP"
+          "D-059-BOOTSTRAP",
+          "M5-T027"
         ],
         "task_types": [],
         "milestones": [],
@@ -76,7 +78,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-059-BOOTSTRAP"
+          "D-059-BOOTSTRAP",
+          "M5-T027"
         ],
         "task_types": [],
         "milestones": [],
@@ -324,7 +327,8 @@
       "binding": true,
       "applicability": {
         "task_ids": [
-          "D-059-BOOTSTRAP"
+          "D-059-BOOTSTRAP",
+          "M5-T027"
         ],
         "task_types": [],
         "milestones": [],

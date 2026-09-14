@@ -10,7 +10,7 @@
   "issued_at": "2026-09-13",
   "captured_at": "2026-09-13T04:35:34+00:00",
   "created_at": "2026-09-13T04:35:34+00:00",
-  "updated_at": "2026-09-14T08:28:02+00:00",
+  "updated_at": "2026-09-14T08:42:35+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -28,7 +28,7 @@
     "D-046-R004",
     "D-046-R005"
   ],
-  "requirements_content_digest_sha256": "40e99052367d680db1a343deea67916c1f1a831ffc7de2ffbdf3828eed9351a4",
+  "requirements_content_digest_sha256": "5b0706d47cc3b6447b77a86cb465ecca7b51fbac365923cfed1292c160558280",
   "sources": [
     {
       "file": "source-001.md",
@@ -125,6 +125,12 @@
       "actor": "orchestrator",
       "action": "applicability_append",
       "note": "Bound wave-5 shift-2 ledger task M4-T021 (B4 wide-street buffer/intersection engine, pins accepted M4-T016 Part 4.3 item 2; depends on accepted M4-T020 B3) to D-046-R001/D-046-R002 (append-only, task_ids only; no requirement text changed). Digest resynced ba17c674 -> 40e99052 in the SAME commit (c14). Second packet of the D-053 loop (run persistent-local-35 planned)."
+    },
+    {
+      "at": "2026-09-14T08:42:35+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound D-059-R008 step-1 fix task M5-T027 (unused-floor-area semantics + zero-with-buildings fail-closed + evaluation-derived labels) to D-046-R001/D-046-R002 (append-only, task_ids only; no requirement text changed). Digest resynced 40e99052 -> 5b0706d4 in the SAME commit (c14). Dispatched concurrently with the D-053 loop on M4-T021 (disjoint scopes)."
     }
   ]
 }

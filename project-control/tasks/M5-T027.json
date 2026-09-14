@@ -1,0 +1,129 @@
+{
+  "task_id": "M5-T027",
+  "title": "Dependable answers 1 (D-059): unused-floor-area recorded-data semantics + bldgarea-zero-with-buildings fail-closed + coverage/section labels derived from actual evaluation",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Fix the three D-059 correctness findings in the scenario layer, exactly and additively within the existing contract schema (packages/contracts is FORBIDDEN - zero schema changes): (1) R002 ZERO-WITH-BUILDINGS FAIL-CLOSED - in services/api/app/scenario/unused_floor_area.py, an existing-building floor area recorded as 0 while the profile's PLUTO numbldgs fact is a positive number must NOT be consumed as a usable zero: route it to the EXISTING typed reason 'existing_building_area_unusable' (state not_computable, value null, section professional_review flag per the official PLUTO dictionary rule that zero area with buildings present means the area is UNAVAILABLE - D-059-R011); the original zero and the numbldgs basis stay traceable in the section inputs/assumptions. A recorded zero remains computable ONLY when vacancy is established by the same profile (numbldgs present and == 0); when numbldgs is absent or unusable alongside a zero area, fail closed to the same unusable reason (never guess vacancy). Correct the existing test that supplies a zero area as a 'vacant lot' without establishing vacancy (red-on-old rows for the reviewer-reproduced case: one building, bldgarea 0, positive cap -> previously computed full cap as unused). (2) R001 RECORDED-DATA SEMANTICS - in services/api/app/scenario/constants.py (and any wording emitted via builder.py), the subtraction must present itself as a limited comparison of recorded data: the existing-area input is PLUTO's recorded gross building area (condo semantics differ; NOT a verified ZR 12-10 zoning-floor-area figure - the pluto_soda connector's own source notes carry this distinction), so labels/assumptions must stop calling the result a zoning-floor-area difference or anything implying legal unused development rights; state the ZR 12-10 non-equivalence and that a rights calculation would additionally require a compatible existing zoning-area input and confirmed zoning-lot extent. (3) R003 LABELS FROM ACTUAL EVALUATION - remove the hardcoded 'draft max residential zoning floor area (R5)' coverage wording and the universal 'ZR 23-21' cap-section label: coverage descriptions and displayed section references must derive from the actually-evaluated rules (R6-R12 rows cite ZR 23-22), with tests asserting the derivation for at least one low-density and one higher-density district. Constraints: response schema shape and enums byte-compatible (contracts-typegen/schema-bundle CI jobs must stay green); no e2e edits; zero new dependencies; if any fix genuinely cannot be made without a contract-schema change, STOP that item and return a scope-block note instead of exceeding scope. Producer report to project-control/reports/M5-T027-producer-report.md.",
+  "business_reason": "D-059-R008 step 1 (make today's answers dependable): the three reviewer-verified correctness findings (R001 area-semantics wording, R002 zero-with-buildings trap - reviewer-reproduced against the pure function, R003 stale R5/ZR-23-21 labels) must be fixed before any reliance-oriented architect demonstration",
+  "inputs": [
+    "project-control/directives/D-059-mvp-review-dependable-answers/source-001.md findings 1-3 + requirements.json R001/R002/R003/R011 - READ-ONLY (the binding texts)",
+    "services/api/app/connectors/pluto_soda.py (numbldgs typing at ~:170/:784 and the connector's recorded-area vs ZR 12-10 source notes - READ-ONLY)",
+    "packages/contracts/schemas/v1/scenario.schema.json unused-floor-area section (the enum vocabulary the fix must stay inside - READ-ONLY, FORBIDDEN to edit)",
+    "official PLUTO data dictionary citation carried in the connector notes (zero-area-with-buildings = unavailable; re-verify per D-059-R011)"
+  ],
+  "outputs": [
+    "unused_floor_area.py: numbldgs-aware zero handling (fail-closed to existing_building_area_unusable; vacancy-established zero still computable; basis traceable)",
+    "constants.py + builder.py: recorded-data-comparison wording (R001) and evaluation-derived coverage/section labels (R003)",
+    "test_unused_floor_area.py: red-on-old zero-with-buildings rows, vacancy-established rows, corrected miscast vacant-lot test",
+    "test_scenario_foundation.py / test_scenario_contract.py: label-derivation assertions updated as needed",
+    "project-control/reports/M5-T027-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/scenario/unused_floor_area.py",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/tests/scenario/test_unused_floor_area.py",
+    "services/api/tests/scenario/test_scenario_foundation.py",
+    "services/api/tests/scenario/test_scenario_contract.py",
+    "project-control/reports/M5-T027-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/**",
+    "services/api/app/connectors/**",
+    "services/api/app/rules/**",
+    "services/api/app/api/**",
+    "services/api/app/spatial/**",
+    "services/api/pyproject.toml",
+    "services/api/requirements.in",
+    "services/api/requirements.txt",
+    "apps/web/**",
+    "tools/**",
+    ".github/**",
+    ".claude/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "zero_with_buildings_fail_closed",
+      "input": "profile: bldgarea fact value 0, numbldgs fact positive, positive draft cap (the reviewer-reproduced shape)",
+      "expected": "state not_computable, value null, reason existing_building_area_unusable, section professional_review flag set; original zero + numbldgs basis visible in inputs/assumptions; RED on the pre-fix code"
+    },
+    {
+      "id": "S2",
+      "case": "vacancy_established_vs_unknown_zero",
+      "input": "zero bldgarea with numbldgs == 0 (established vacancy); zero bldgarea with numbldgs absent/unusable",
+      "expected": "established vacancy: computed difference (zero is a usable value); numbldgs absent/unusable: fail closed to existing_building_area_unusable; the old miscast 'vacant lot' test corrected to an established-vacancy fixture"
+    },
+    {
+      "id": "S3",
+      "case": "recorded_data_comparison_wording",
+      "input": "labels/assumptions emitted by constants.py/builder.py",
+      "expected": "the number is presented as a comparison of recorded data (PLUTO recorded gross building area vs draft cap); no wording claims a zoning-floor-area difference or unused legal development rights; ZR 12-10 non-equivalence stated; rights-calculation preconditions named"
+    },
+    {
+      "id": "S4",
+      "case": "labels_from_evaluation",
+      "input": "scenario documents for one low-density and one higher-density (R6+) district",
+      "expected": "no hardcoded '(R5)' coverage wording or universal ZR 23-21 label; the cap section reference matches the actually-evaluated rule's citation (23-22 for the R6-R12 family); tests assert the derivation"
+    },
+    {
+      "id": "S5",
+      "case": "scope_schema_and_regression",
+      "input": "git diff + suites",
+      "expected": "exactly the allowed files; scenario + connectors suites green; ruff clean; modularity 0 failures; response schema/enums byte-compatible (no packages/** change); zero new dependencies"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-14T08:41:42.232354+00:00",
+  "updated_at": "2026-09-14T08:41:42.452454+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-059",
+      "requirement_ids": [
+        "D-059-R001",
+        "D-059-R002",
+        "D-059-R003",
+        "D-059-R011"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T08:41:42.232354+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario",
+    "python -m pytest services/api/tests",
+    "python -m ruff check services/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "D-059-R008 step-1 packet (dependable answers), dispatched concurrently with the D-053 loop on M4-T021 (disjoint: scenario layer vs connectors); concurrency 2 <= 3 (D-046).",
+    "Contract-schema prose in scenario.schema.json also carries the old zoning-floor-area framing - OUT of scope here (contracts forbidden); recorded as a candidate follow-up needing its own packet."
+  ]
+}
