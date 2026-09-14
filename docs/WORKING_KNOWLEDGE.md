@@ -112,10 +112,15 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   deliberate, none admitted). Owner to scroll-zoom center; if truly absent → defect packet
   (console evidence requested). Polish candidates if present: higher maxZoom for small lots,
   basemap admission (needs G5 source admission).
-- Finding 3 (RETESTED, closed as EXTERNAL — D-056-R004): ZoLa stays blank on the owner's
-  machine; link format verified from ZoLa router source (2026-09-12 doc) AND live shell
-  re-fetch 2026-09-14 (normal SPA shell for the exact URL). City SPA client-side boot issue;
-  no repo change owed. Findings 1+2 became the D-056 work order → packet M5-T025.
+- Finding 3 (RETESTED, closed as EXTERNAL — D-056-R004): ZoLa blank; link format verified
+  from ZoLa router source (2026-09-12 doc) AND live shell re-fetch 2026-09-14. EVIDENCE
+  UPDATE 2026-09-14: the ZoLa HOMEPAGE itself is blank on TWO owner devices (desktop +
+  mobile Chrome, 5+ min, multiple refreshes) while the shell fetches fine server-side →
+  city-side app/asset failure OR a network shared by both devices (router DNS/ad-block);
+  definitively NOT this repo's link and NOT a single-browser config. Discriminator handed
+  to owner: retry mobile on cellular (wifi off). No repo change owed; web search shows no
+  indexed outage report; NYC Planning Labs contact labs_dl@planning.nyc.gov if persistent.
+  Findings 1+2 became the D-056 work order → packet M5-T025.
 - **Finding 4 (confirmed vs live PLUTO, candidate packet): address-continuity gap on
   Step 2.** Owner entered "125 Taylor St" → confirm card 125 TAYLOR STREET / BBL 3021720001
   → Step 2 shows "83 TAYLOR STREET" for the SAME BBL. NOT a lookup bug: PLUTO stores ONE
