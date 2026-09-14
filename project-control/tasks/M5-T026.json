@@ -78,8 +78,8 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "semantic drift: present-but-invalid param must stay OFF (kill-switch class) - flipping it to default-on would silently weaken the kill switch",
     "e2e coupling: any edit outside the 5 files (esp. e2e/harness) violates D-057-R002 and fails the packet",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T05:57:14.460749+00:00",
-  "updated_at": "2026-09-14T07:11:24.227507+00:00",
+  "updated_at": "2026-09-14T07:19:43.281101+00:00",
   "directive_refs": [
     {
       "directive_id": "D-057",
@@ -132,5 +132,7 @@
       "status": "claimed",
       "message": "Producer returned and material integrated at 0b112357 (5 files, 71 new gate-matrix tests, docstring + checklist 2a section; disclosures: no local runner - CI authority; two benign NEXT_PUBLIC context notes). NEXT: push CI, submit w/ evidence map, G3/G4 wave, DCV, accept (successor)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T07:19:43.281101+00:00"
 }

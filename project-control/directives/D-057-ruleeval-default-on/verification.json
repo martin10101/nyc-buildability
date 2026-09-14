@@ -4,5 +4,56 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. R001-R003 bind ledger task M5-T026 plus the non-ledger sentinel D-057-BOOTSTRAP; R004 binds the sentinel only (validator c5). No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-057",
+   "task_id": "M5-T026",
+   "applicable_requirement_ids": [
+    "D-057-R001",
+    "D-057-R002",
+    "D-057-R003"
+   ],
+   "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b",
+   "reviewed_manifest_sha256": "858707a7a70dcabf054aa84db3a535be9744964a2a79a9b0e163b22a4c2c250f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:19:22+00:00",
+   "requirements": [
+    {
+     "id": "D-057-R001",
+     "state": "PASS",
+     "evidence": [
+      "Exact default-on semantics implemented and matrix-proven: INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR (rule-evaluation.ts:102, no NEXT_PUBLIC_ prefix), ruleEvaluationDefaultOnEnabled mirrors TRUE_TOKENS fail-safe (:114-118); surface gate: main flag off short-circuits, param absent -> default-on var, param present -> true iff true token (kill switch preserved regardless of both vars) (:131-139); per-request server read from the page.tsx Server Component; 50-row matrix + main-flag-OFF block in the test file.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    },
+    {
+     "id": "D-057-R002",
+     "state": "PASS",
+     "evidence": [
+      "Purely additive, zero behavior change with the var unset: producer commit 0b112357 = exactly the 5 allowed files (no e2e/config/component/package file); dedicated equivalence block (test.ts:255-302) reproduces every pre-D-057 output with the var deleted; pre-existing tests byte-unmodified (200-insertion/0-deletion diff); CI web-e2e green at byte-identical content.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    },
+    {
+     "id": "D-057-R003",
+     "state": "PASS",
+     "evidence": [
+      "Operator checklist section 2a carries all five required elements (exact var name, WEB service only, effect, exposure-consequence sentence, kill-switch survival, server-read no-rebuild note) plus section-9 pointer and traceability row; rule-evaluation.ts comment block and page.tsx docstring updated to the implemented semantics.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    }
+   ]
+  }
+ ]
 }

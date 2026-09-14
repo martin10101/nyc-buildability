@@ -311,6 +311,44 @@
      "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T026",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b",
+   "reviewed_manifest_sha256": "858707a7a70dcabf054aa84db3a535be9744964a2a79a9b0e163b22a4c2c250f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:19:22+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing policy: producer in isolated worktree wt-m5t026, concurrent with the D-053 loop worker (wt-m4t020) and the M5-T025 producer (wt-m5t025); concurrent writers <= 3; dispatch shape recorded in the task packet path_notes/progress_log.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections computed by the verifier: M5-T026 vs M5-T025 = empty, M5-T026 vs M4-T020 = empty; producer commit touched only the 5 allowed files; no forbidden path touched.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    }
+   ]
   }
  ]
 }
