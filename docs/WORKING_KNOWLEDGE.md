@@ -117,9 +117,15 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   UPDATE 2026-09-14: the ZoLa HOMEPAGE itself is blank on TWO owner devices (desktop +
   mobile Chrome, 5+ min, multiple refreshes) while the shell fetches fine server-side →
   city-side app/asset failure OR a network shared by both devices (router DNS/ad-block);
-  definitively NOT this repo's link and NOT a single-browser config. Discriminator handed
-  to owner: retry mobile on cellular (wifi off). No repo change owed; web search shows no
-  indexed outage report; NYC Planning Labs contact labs_dl@planning.nyc.gov if persistent.
+  definitively NOT this repo's link and NOT a single-browser config. **ROOT CAUSE PROVEN
+  2026-09-14 (owner console + independent fetch): ZoLa's backing service
+  labs-layers-api.herokuapp.com/v1/layer-groups returns HTTP 500 (both POST from the app,
+  per the owner's console trace on route map-feature.lot, and GET from this side) — a
+  city-side outage of ZoLa's layers API; the SPA dies before painting.** No repo change
+  owed; none of OUR accepted connectors depend on labs-layers-api (DCM/MapPLUTO go direct
+  to ArcGIS/SODA) — the outage does not touch platform data paths. Resilience candidate
+  noted: a second escape-hatch link (city Digital Tax Map) beside the ZoLa link on the
+  confirm card. NYC Planning Labs contact labs_dl@planning.nyc.gov if persistent.
   Findings 1+2 became the D-056 work order → packet M5-T025.
 - **Finding 4 (confirmed vs live PLUTO, candidate packet): address-continuity gap on
   Step 2.** Owner entered "125 Taylor St" → confirm card 125 TAYLOR STREET / BBL 3021720001
