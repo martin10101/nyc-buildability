@@ -430,6 +430,56 @@
      "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T020",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e",
+   "reviewed_manifest_sha256": "b5de6b518f245e8605285cd6bb5706d79c3e8c163917913fa44b563f90ce8e20",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T08:25:49+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "B3 delivers the A2 geometry lane's data input with fail-closed honesty: CRS gate exact-pair (wkid 102718/latestWkid 2263) BEFORE any coordinate interpretation; 8-status typed validity taxonomy with visible refused entries; no reprojection/conversion/repair/coercion; byte-faithful passthrough; AST import-set-equality allowlist proves reuse-by-import with no second fetch. Verifier ran 39/39 focused + 752/752 connectors at the pin; CI 34817436542 success (api py312 + modularity).",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Single bounded gated task (3-file scope) under G0 (d7f0f3f8) + independent G3/G4 (code-reviewer/qa-engineer, PASS at 72ee474c); A2 lane wave-5 order per the master plan's recorded D-045 sequencing; nothing monolithic, no displaced work (M5-T023/T024 accepted).",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Preservation held: material commit = exactly the 3 allowed files; accepted transport dcm_street_centerline_arcgis.py byte-immutable across the whole range (blob 97ef4467, last touched 8538c272); zero dependency-file changes; no rules touched, no compliance declaration; PR #241 OPEN; expansion-hold surfaces untouched; nothing merged to main.",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    }
+   ]
   }
  ]
 }

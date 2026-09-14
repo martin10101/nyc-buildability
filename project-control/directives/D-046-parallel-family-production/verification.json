@@ -349,6 +349,44 @@
      "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T020",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e",
+   "reviewed_manifest_sha256": "b5de6b518f245e8605285cd6bb5706d79c3e8c163917913fa44b563f90ce8e20",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T08:25:49+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production per the standing policy: loop worker (run persistent-local-34) in isolated worktree wt-m4t020 live 04:31-06:15, concurrent with disjoint M5-T025 (wt-m5t025, claimed 05:26) and M5-T026 (wt-m5t026, claimed 06:00); concurrency 2-3 <= ceiling 3; bindings recorded in the D-046 manifest audit_log.",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections all empty (M4-T020 x M5-T025, M4-T020 x M5-T026, M5-T025 x M5-T026); only ba301b67 touches M4-T020's files in the whole range; no services/api commit after it.",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    }
+   ]
   }
  ]
 }

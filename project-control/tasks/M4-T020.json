@@ -86,8 +86,8 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "transport drift: re-implementing fetch/query/validation instead of importing the accepted surfaces would fork the connector discipline - G3 reviews reuse fidelity",
     "silent geometry loss: dropping features whose geometry is missing/malformed would corrupt B4's buffer inputs downstream - absence must be a typed, visible state",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T03:57:40.898040+00:00",
-  "updated_at": "2026-09-14T07:33:12.388463+00:00",
+  "updated_at": "2026-09-14T08:26:04.966311+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -166,5 +166,7 @@
       "status": "claimed",
       "message": "LOOP SHIFT 1 COMPLETE: worker finished the unit (claude_unit_completed audit seq 845; all 4 documented commands auto-approved and run), close was the benign checkpoint worktree-field mismatch (DL-class). Orchestrator verified green at wt-m4t020 (39 focused tests + whole-tree ruff) and committed the producer material as d7766b8d on task/M4-T020-dcm-geometry. NEXT: cherry-pick to candidate, submit, G3/G4 wave, DCV, accept (successor)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T08:26:04.966311+00:00"
 }
