@@ -26,7 +26,7 @@ Source verification was performed independently by the G1 researcher and relayed
 
 ## Module boundaries and paths
 
-New production modules are in `apps/web/src/components/architect`, `apps/web/src/lib/architect`, plus `src/lib/address-search.ts` and `src/lib/map-context.ts`. Canonical API clients and generated contracts were consumed unchanged. Separate hooks own property, analysis, address-suggestion and zoning-context requests; presentation components own selection/display and map-layer lifecycle. The existing map remains cohesive at 564 physical lines (under the target); new modules remain below the 600 SLOC target. Rule calculations, API services, database, credentials, dependency files, locks, build/deployment configuration and dashboard files were not changed by this producer.
+New production modules are in `apps/web/src/components/architect`, `apps/web/src/lib/architect`, plus `src/lib/address-search.ts` and `src/lib/map-context.ts`. Canonical API clients and generated contracts were consumed unchanged. Separate hooks own property, analysis, address-suggestion and zoning-context requests; presentation components own selection/display and map-layer lifecycle. The existing map remains cohesive at 584 physical lines (under the target); the extracted render observer is 30 lines and new modules remain below the 600 SLOC target. Rule calculations, API services, database, credentials, dependency files, locks, build/deployment configuration and dashboard files were not changed by this producer. Three exact installed MapLibre distribution/license assets were added under the orchestrator's narrowly expanded public-path authorization, as documented below.
 
 Other edits are confined to app route wiring/scoped styles, optional presentation props in existing address/facts/survey components, focused tests and browser journeys. No producer git mutation, project-control CLI mutation, push, merge, dependency installation or deployment was performed.
 
@@ -90,6 +90,37 @@ The first frozen browser run produced 95 passes and three failures; the independ
 The browser corrections scope GeoSearch options to the named suggestions list and assert the complete determination collection plus the applicable trace. The keyboard trace showed the old substring helper returning true after tabbing past the last overview control while the URL remained Overview; the replacement checks the exact navigation/disclosure element's focus using Tab, then asserts the Evidence URL. Screenshots now wait for scenario/evaluation outcomes and bounded map-layer loaded/unavailable settlement. Survey overlay assertions explicitly open the source disclosure. No safety assertion or journey was removed.
 
 Final correction checks are recorded in `ui-review-corrections-full.log` (37 files / 612 tests), `ui-review-corrections-types.log`, `ui-review-corrections-lint.log` and `ui-review-corrections-build.log`. Targeted red/green logs for the identity and missing-source defects are `ui-g3-identity-announcement-red.log`, `ui-g3-missing-source-red.log` and `ui-g3-identity-source-green.log`. Browser/print-media execution and new density measurements remain pending the orchestrator's next frozen-SHA CI and independent review; this producer does not claim the first failing browser run as a pass.
+
+## Independent map rendering correction
+
+CI v2 reported 98 browser passes and one failure: the retained lot-outline journey requires the visible agency attribution to include “City Planning.” The compact architect caption now spells out “NYC Department of City Planning / MapPLUTO,” retaining the visible ±20 ft accuracy and the full technical source disclosure. The existing browser assertion was not changed; the focused component assertion now checks the expanded agency name. The initial attribution-only checks passed (18 focused tests/types/lint), but G3's actual screenshot and trace review then correctly withheld acceptance because the selected parcel was absent. The new browser/print journeys passing in v2 did not establish parcel rendering.
+
+The bounded causal investigation matched three independent observations: the v2 Overview canvas and final trace frames contained the NYC raster but no amber parcel; the same trace contained an HTTP 200 `single_lot` Governors Island polygon with its interior rings; and the trace contained a second request for the page URL as a **script**, answered with `text/html`, instead of a MapLibre worker module. Inspection of the emitted production chunk found `import.meta.url` compiled to an installed-package `file:///.../maplibre-gl.mjs` path. The admitted MapLibre 6.7.0 `src/util/web_worker.ts` returns an empty default worker URL for non-HTTP module URLs; `new Worker("")` therefore fetched the current page. Raster drawing did not depend on the GeoJSON worker. The GeoJSON source awaited the worker's `loadData` response, while the component incorrectly marked readiness immediately after `addSource`/`addLayer`, so its existing deadline and screenshot waiter missed the stalled parcel.
+
+The fix explicitly calls `setWorkerUrl("/maplibre/6.7.0/maplibre-gl-worker.mjs")` before constructing any parcel map. The worker's sibling shared-module import remains verbatim. This follows the official [MapLibre installation guidance for bundlers/Next.js](https://www.maplibre.org/maplibre-gl-js/docs/) and [v6 migration guide](https://www.maplibre.org/maplibre-gl-js/docs/guides/v5-to-v6-migration-guide/). The worker path is a code constant; no reflected/source/user value selects executable code. No dependency, lock, build or deployment configuration changed.
+
+| Exact same-origin asset (under `apps/web/public/maplibre/6.7.0/`) | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `maplibre-gl-worker.mjs` | 19,181 | `742ce5cfac9eb71015e0893e31b7c2bcffdc6e4bd186007a50eb721d693197b5` |
+| `maplibre-gl-shared.mjs` | 492,183 | `64e24fd71a28f597891c8b9b5ead9623aee0e20c0ff9e7e8e3fd9b3949c52407` |
+| `LICENSE.txt` | 5,984 | `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2` |
+
+Each file is byte-identical to the already installed, unchanged-lock MapLibre 6.7.0 package (`dist/` for the modules, package root for the license). The complete upstream license and third-party notices are retained. A regression asserts installed version, fixed path and byte parity for all three files. Existing `CODE_MODULARITY_POLICY` section 9 excludes vendor code; no new exception or policy change was made.
+
+Parcel success now requires `isSourceLoaded("lot-outline")` and `queryRenderedFeatures` results from **both** parcel fill and line layers on a render event. The canonical geometry remains verbatim. Until then the accessible summary states that the parcel is loading. The existing 10-second startup deadline now covers this actual readiness condition. Failure disposes the listener and map, shows the existing typed fallback, and cannot be reversed by a late callback; unmount also disposes the observation. Independent raster failures continue to affect their own context status. No delay, retry, fake shape, legal computation or relaxed geometry guard was introduced.
+
+New regressions distinguish layer installation from source/render readiness, reject other-source and fill-only features, exercise the stalled-worker deadline and late callback, verify cleanup, and check worker configuration before map construction. The three real-geometry desktop/mobile browser paths now require rendered parcel state and more than 100 selected-line-color pixels in an actual canvas screenshot before their final captures. A separate browser journey aborts the fixed worker request and requires the bounded unavailable state with retained accuracy copy. Raster success alone cannot pass these assertions. This browser evidence awaits the next frozen CI run; no local-browser success is claimed.
+
+| Final correction command / check | Observed result / log |
+| --- | --- |
+| `./node_modules/.bin/vitest run src/lib/__tests__/map-context.test.ts src/components/address/__tests__/lot-outline-map.test.tsx` | PASS: 2 files / 32 tests; `ui-map-worker-focused.log` |
+| `./node_modules/.bin/vitest run` | PASS: 37 files / 617 tests; `ui-map-worker-full.log` |
+| `./node_modules/.bin/tsc --noEmit` | PASS; `ui-map-worker-types.log` |
+| Focused ESLint of five changed authored TS/TSX modules/tests | PASS, zero warnings; `ui-map-worker-lint.log` |
+| `./node_modules/.bin/eslint .` | Exit 0, zero errors; 1,077 warnings confined to the two unmodified minified vendor `.mjs` files, zero authored-file warnings; `ui-map-worker-full-lint.log`. No suppression, waiver or config change. |
+| `./node_modules/.bin/next build` | PASS: production compilation, types and all routes; `ui-map-worker-build.log` |
+| `python tools/modularity_check.py --check` | PASS: 434 files, zero failures, 18 pre-existing warnings; `ui-map-worker-modularity.log` |
+| Production `node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3104`, followed by Python `urllib.request` GET/parity assertions for the three fixed assets | PASS: HTTP 200 for all three; module MIME `application/javascript`, license `text/plain`, response bytes equal installed assets and hashes above; `ui-map-worker-http.log`. Server stopped after the check. |
 
 ## Remaining limits / independent verification
 

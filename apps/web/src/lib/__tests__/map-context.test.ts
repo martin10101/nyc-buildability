@@ -1,11 +1,54 @@
-import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it, vi } from "vitest";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "../map-context";
 import { parseZoningContext, zoningContextRequest, fetchZoningContext } from "../architect/zoning-context";
 import { officialZoningTextUrl } from "../architect/source-links";
+import { MAPLIBRE_WORKER_URL, observeParcelRender } from "../architect/map-runtime";
 
 const polygon = { type: "Feature", properties: { OBJECTID: 1, ZONEDIST: "R5" }, geometry: { type: "Polygon", coordinates: [[[-74,40],[-73.99,40],[-73.99,40.01],[-74,40]]] } };
 const collection = { type: "FeatureCollection", features: [polygon] };
 describe("source-backed map context", () => {
+  it("ships the exact admitted MapLibre worker, sibling module and license on the fixed same-origin path", () => {
+    const installed = resolve(process.cwd(), "node_modules/maplibre-gl");
+    const packageVersion = JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8")).version;
+    expect(packageVersion).toBe("6.7.0");
+    expect(MAPLIBRE_WORKER_URL).toBe(`/maplibre/${packageVersion}/maplibre-gl-worker.mjs`);
+    for (const file of ["maplibre-gl-worker.mjs", "maplibre-gl-shared.mjs", "LICENSE.txt"]) {
+      const original = readFileSync(resolve(installed, file === "LICENSE.txt" ? file : `dist/${file}`));
+      const hosted = readFileSync(resolve(process.cwd(), `public/maplibre/${packageVersion}/${file}`));
+      expect(hosted.equals(original), `${file} must remain byte-identical to the lock-admitted distribution`).toBe(true);
+    }
+  });
+
+  it("requires the parcel source and both visible parcel layers, then stops observing", () => {
+    let render = () => {};
+    const map = {
+      on: (_event: string, listener: () => void) => { render = listener; }, off: vi.fn(),
+      getLayer: vi.fn().mockReturnValue({}), isSourceLoaded: vi.fn().mockReturnValue(false),
+      queryRenderedFeatures: vi.fn().mockReturnValue([]),
+    };
+    const shown = vi.fn();
+    observeParcelRender(map, shown);
+    render();
+    expect(map.queryRenderedFeatures).not.toHaveBeenCalled();
+    map.isSourceLoaded.mockReturnValue(true);
+    render();
+    expect(shown).not.toHaveBeenCalled();
+    map.queryRenderedFeatures.mockReturnValue([{ source: "lot-outline", layer: { id: "lot-outline-fill" } }]);
+    render();
+    expect(shown).not.toHaveBeenCalled();
+    map.queryRenderedFeatures.mockReturnValue(["lot-outline-fill", "lot-outline-line"].map(id => ({ source: "nyc-basemap", layer: { id } })));
+    render();
+    expect(shown).not.toHaveBeenCalled();
+    map.queryRenderedFeatures.mockReturnValue(["lot-outline-fill", "lot-outline-line"].map(id => ({ source: "lot-outline", layer: { id } })));
+    render(); render();
+    expect(map.isSourceLoaded).toHaveBeenCalledWith("lot-outline");
+    expect(map.queryRenderedFeatures).toHaveBeenCalledWith({ layers: ["lot-outline-fill", "lot-outline-line"] });
+    expect(shown).toHaveBeenCalledTimes(1);
+    expect(map.off).toHaveBeenCalledWith("render", render);
+  });
+
   it("uses only fixed official raster templates with source attribution", () => {
     expect(NYC_CONTEXT_STYLE.sources["nyc-basemap"].tiles).toEqual(["https://maps.nyc.gov/xyz/1.0.0/carto/basemap/{z}/{x}/{y}.jpg"]);
     expect(NYC_CONTEXT_STYLE.sources["nyc-labels"].tileSize).toBe(256);

@@ -31,9 +31,30 @@ async function openView(page: Page, view: string, bbl = BBL) {
 
 async function settledMap(page: Page) {
   await expect(page.getByTestId("lot-outline-loading")).toHaveCount(0, { timeout: 15_000 });
-  // The map has a bounded startup/layer deadline. Accept honest source failure,
-  // but never capture the canvas while the status still says loading/preparing.
+  // This fixture has a real single-lot polygon and the CI browser has WebGL.
+  // The state requires a loaded GeoJSON source plus rendered fill AND line
+  // features; a raster-only canvas or honest fallback cannot satisfy it.
+  await expect(page.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered", { timeout: 15_000 });
+  // External context sources may fail honestly; wait for their bounded outcome.
   await expect.poll(async () => (await page.locator(".architect-map-status").allTextContents()).every(text => !/loading|Preparing/.test(text)), { timeout: 15_000 }).toBe(true);
+  const canvasPng = await page.getByTestId("lot-outline-map").locator("canvas").screenshot();
+  const selectedParcelPixels = await page.evaluate(async encoded => {
+    const snapshot = new Image();
+    snapshot.src = `data:image/png;base64,${encoded}`;
+    await snapshot.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = snapshot.width; canvas.height = snapshot.height;
+    const context = canvas.getContext("2d")!;
+    context.drawImage(snapshot, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+    let pixels = 0;
+    for (let offset = 0; offset < data.length; offset += 4) {
+      // Selected parcel line #a4680c, allowing small rasterization variation.
+      if (Math.abs(data[offset] - 164) <= 3 && Math.abs(data[offset + 1] - 104) <= 3 && Math.abs(data[offset + 2] - 12) <= 3 && data[offset + 3] === 255) pixels++;
+    }
+    return pixels;
+  }, canvasPng.toString("base64"));
+  expect(selectedParcelPixels, "actual map canvas must paint the selected parcel line, not only the NYC raster").toBeGreaterThan(100);
 }
 
 test("one-box keyboard selection resolves the authoritative BBL and preserves searched address", async ({ page }, info) => {
@@ -56,6 +77,19 @@ test("one-box keyboard selection resolves the authoritative BBL and preserves se
   await expect(page.getByTestId("architect-cap").locator(".architect-metric")).not.toHaveText("—");
   await settledMap(page);
   await screenshot(page, info, "02-overview-confirmed-address");
+});
+
+test("an unavailable parcel worker produces a bounded honest map fallback", async ({ page }) => {
+  let workerRequests = 0;
+  await page.route("**/maplibre/6.7.0/maplibre-gl-worker.mjs", route => { workerRequests++; return route.abort("failed"); });
+  await page.goto(`/property?ruleeval=on&bbl=${BBL}&view=overview`);
+  await expect(page.getByTestId("profile-view")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("lot-outline-render-error")).toBeVisible({ timeout: 15_000 });
+  expect(workerRequests).toBeGreaterThan(0);
+  await expect(page.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "unavailable");
+  await expect(page.getByTestId("lot-outline-map")).toHaveCount(0);
+  await expect(page.getByTestId("lot-outline-summary")).toContainText("interactive map could not be rendered");
+  await expect(page.getByTestId("lot-outline-accuracy")).toContainText("±20 ft");
 });
 
 const VIEWS = [

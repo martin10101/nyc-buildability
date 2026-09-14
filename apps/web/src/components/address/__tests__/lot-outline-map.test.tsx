@@ -8,6 +8,7 @@ import {
   lotOutlineFitBoundsOptions,
   runOnStyleReady,
 } from "@/components/address/LotOutlineMap";
+import { MAPLIBRE_WORKER_URL } from "@/lib/architect/map-runtime";
 
 /**
  * M5-T023/M5-T025 pack for LotOutlineMap. maplibre-gl is mocked at the MODULE
@@ -39,8 +40,12 @@ const mocks = vi.hoisted(() => {
   const remove = vi.fn();
   const attributionCtor = vi.fn();
   const navigationCtor = vi.fn();
+  const setWorkerUrl = vi.fn();
   const state = {
     styleAlreadyLoaded: false,
+    autoRender: true,
+    sourceLoaded: true,
+    renderListeners: [] as Array<() => void>,
     errorListeners: [] as Array<(event?: { sourceId?: string }) => void>,
   };
 
@@ -63,6 +68,20 @@ const mocks = vi.hoisted(() => {
     }
     on(type: string, cb: (event?: { sourceId?: string }) => void) {
       if (type === "error") state.errorListeners.push(cb);
+      if (type === "render") {
+        state.renderListeners.push(cb);
+        if (state.autoRender) queueMicrotask(cb);
+      }
+    }
+    off(type: string, cb: () => void) {
+      if (type === "render") state.renderListeners = state.renderListeners.filter(listener => listener !== cb);
+    }
+    isSourceLoaded() { return state.sourceLoaded; }
+    getLayer(id: string) {
+      return addLayer.mock.calls.find(([layer]) => (layer as { id: string }).id === id)?.[0];
+    }
+    queryRenderedFeatures() {
+      return ["lot-outline-fill", "lot-outline-line"].map(id => ({ source: "lot-outline", layer: { id } }));
     }
     addSource(id: string, source: unknown) {
       addSource(id, source);
@@ -99,6 +118,7 @@ const mocks = vi.hoisted(() => {
     remove,
     attributionCtor,
     navigationCtor,
+    setWorkerUrl,
     state,
     MockMap,
     MockAttributionControl,
@@ -114,10 +134,12 @@ const mocks = vi.hoisted(() => {
 
 vi.mock("maplibre-gl", () => ({
   default: {
+    setWorkerUrl: mocks.setWorkerUrl,
     Map: mocks.MockMap,
     AttributionControl: mocks.MockAttributionControl,
     NavigationControl: mocks.MockNavigationControl,
   },
+  setWorkerUrl: mocks.setWorkerUrl,
   Map: mocks.MockMap,
   AttributionControl: mocks.MockAttributionControl,
   NavigationControl: mocks.MockNavigationControl,
@@ -164,6 +186,10 @@ afterEach(() => {
   vi.clearAllMocks();
   mocks.setStyleAlreadyLoaded(false);
   mocks.state.errorListeners.length = 0;
+  mocks.state.renderListeners.length = 0;
+  mocks.state.autoRender = true;
+  mocks.state.sourceLoaded = true;
+  vi.useRealTimers();
 });
 
 describe("LotOutlineMap — single_lot with WebGL", () => {
@@ -177,6 +203,9 @@ describe("LotOutlineMap — single_lot with WebGL", () => {
 
     expect(await screen.findByTestId("lot-outline-map")).toBeInTheDocument();
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
+    expect(mocks.setWorkerUrl).toHaveBeenCalledWith(MAPLIBRE_WORKER_URL);
+    expect(mocks.setWorkerUrl.mock.invocationCallOrder[0]).toBeLessThan(mocks.mapCtor.mock.invocationCallOrder[0]);
+    await waitFor(() => expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered"));
 
     const [, source] = mocks.addSource.mock.calls[0] as [string, { data: { geometry: unknown } }];
     // The geometry handed to MapLibre EQUALS the fixture geometry — untouched.
@@ -508,13 +537,60 @@ describe("LotOutlineMap — map 'error' event routes to a typed fallback (D-056-
 
 
 describe("M5-T029 source-backed street context", () => {
+  it("does not announce an outline from layer installation alone; waits for loaded and rendered parcel features", async () => {
+    enableWebgl();
+    mocks.state.autoRender = false;
+    mocks.state.sourceLoaded = false;
+    render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
+    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(2));
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "loading");
+    expect(screen.getByTestId("lot-outline-summary")).toHaveTextContent("Loading the selected parcel outline");
+    act(() => mocks.state.renderListeners.forEach(listener => listener()));
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "loading");
+    mocks.state.sourceLoaded = true;
+    act(() => mocks.state.renderListeners.forEach(listener => listener()));
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered");
+    expect(screen.getByTestId("lot-outline-summary")).toHaveTextContent("An approximate lot outline is shown");
+    expect(mocks.state.renderListeners).toHaveLength(0);
+  });
+
+  it("bounds a stalled GeoJSON worker with an honest fallback and disposes the map without accepting late renders", async () => {
+    enableWebgl();
+    vi.useFakeTimers();
+    mocks.state.autoRender = false;
+    render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+    await act(async () => { await vi.dynamicImportSettled(); });
+    expect(mocks.state.renderListeners).toHaveLength(1);
+    const lateRender = mocks.state.renderListeners[0];
+    await act(async () => { await vi.advanceTimersByTimeAsync(10_000); });
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "unavailable");
+    expect(screen.getByTestId("lot-outline-render-error")).toHaveTextContent("interactive map could not be rendered");
+    expect(screen.queryByTestId("lot-outline-map")).not.toBeInTheDocument();
+    expect(screen.getByTestId("lot-outline-accuracy")).toHaveTextContent("±20 ft");
+    expect(mocks.remove).toHaveBeenCalledTimes(1);
+    expect(mocks.state.renderListeners).toHaveLength(0);
+    act(lateRender);
+    expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "unavailable");
+  });
+
+  it("disposes an outstanding parcel render observation when the view unmounts", async () => {
+    enableWebgl();
+    mocks.state.autoRender = false;
+    const { unmount } = render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
+    await waitFor(() => expect(mocks.state.renderListeners).toHaveLength(1));
+    unmount();
+    expect(mocks.state.renderListeners).toHaveLength(0);
+    expect(mocks.remove).toHaveBeenCalledTimes(1);
+  });
+
   it("keeps the parcel available when an individual street layer fails", async () => {
     enableWebgl();
     render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
     expect(screen.getByRole("button", { name: "Recenter lot" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Zoning boundaries" })).not.toBeChecked();
-    expect(screen.getByTestId("lot-outline-accuracy")).toHaveTextContent("Approximate outline · ±20 ft · NYC DCP / MapPLUTO");
+    expect(screen.getByTestId("lot-outline-accuracy")).toHaveTextContent("Approximate outline · ±20 ft · NYC Department of City Planning / MapPLUTO");
     expect(screen.getByTestId("lot-outline-accuracy")).not.toHaveTextContent("EPSG");
     expect(screen.getByTestId("lot-outline-technical-accuracy")).not.toBeVisible();
     fireEvent.click(screen.getByText("Map sources and limitations", { exact: true }));

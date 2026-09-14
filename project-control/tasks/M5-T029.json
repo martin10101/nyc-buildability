@@ -40,7 +40,10 @@
     "apps/web/src/lib/__tests__/address-search.test.ts",
     "apps/web/src/lib/__tests__/map-context.test.ts",
     "apps/web/e2e",
-    "project-control/reports/M5-T029-producer-report.md"
+    "project-control/reports/M5-T029-producer-report.md",
+    "apps/web/public/maplibre/6.7.0/maplibre-gl-worker.mjs",
+    "apps/web/public/maplibre/6.7.0/maplibre-gl-shared.mjs",
+    "apps/web/public/maplibre/6.7.0/LICENSE.txt"
   ],
   "forbidden_paths": [
     "services/**",
@@ -141,8 +144,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 90,
   "risks": [
     "Source service outage/CORS or inaccessible deployment credentials",
     "Existing e2e selectors encode the prior UI; adapt user-journey navigation while retaining safety assertions",
@@ -150,7 +153,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T20:09:45.264382+00:00",
-  "updated_at": "2026-09-14T21:18:48.496790+00:00",
+  "updated_at": "2026-09-14T21:51:18.651293+00:00",
   "directive_refs": [
     {
       "directive_id": "D-061",
@@ -185,7 +188,8 @@
     "Modularity: presentation belongs in small architect components and CSS; fetching/cancellation in dedicated hooks/clients. Preserve canonical clients, generated contracts, legal engine and public route bookmarks. New modules target under 600 SLOC; extract from oversized views rather than grow them.",
     "Source introductions require G1/G5. GeoSearch suggestions are address candidates, not PLUTO facts; existing official resolver remains identity authority. Map context display does not evaluate zoning.",
     "Future 3D/unit/financial capability screens are honest unavailable views, no engine or persistence work.",
-    "Independent D-061 intake corrected atomic tracking without scope change: R009 scope preservation, R010 autocomplete, R013 main/PR protection are additional task bindings. Deployment R008/R011/R012 remain separately tracked delivery acts."
+    "Independent D-061 intake corrected atomic tracking without scope change: R009 scope preservation, R010 autocomplete, R013 main/PR protection are additional task bindings. Deployment R008/R011/R012 remain separately tracked delivery acts.",
+    "Orchestrator bounded rework authorization 2026-09-14: exact installed, lock-admitted MapLibre 6.7.0 worker/shared/license copied to the three explicitly allowed same-origin public files. This repairs a traced Next worker bootstrap failure; no dependency version, lock, backend or deployment configuration change. Independent G1/G5 asset parity and browser parcel rendering required. Vendor bytes are excluded by existing CODE_MODULARITY_POLICY section 9, not a new exception."
   ],
   "worktree": "/workspace/scratch/cfa2464c5c7f/nycdf-ui-work",
   "progress_log": [
@@ -202,6 +206,13 @@
       "percent": 55,
       "status": "in_progress",
       "message": "Architect shell, canonical data/evidence views and address entry composed; official zoning layer and responsive source access in progress. Independent directive intake corrected and passed; functional gates pending."
+    },
+    {
+      "at": "2026-09-14T21:51:18.651267+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "V2 independent reviews closed density, identity, missing-source and NYZD-label findings. Final visual proof exposed one bounded MapLibre worker bootstrap defect; exact admitted same-origin assets plus parcel readiness are authorized within frontend scope. Attribution correction included. Candidate/main untouched pending replacement CI and gates."
     }
   ]
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ZoningContextControl, type ZoningContextMap } from "@/components/architect/ZoningContextControl";
 import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
+import { MAPLIBRE_WORKER_URL, observeParcelRender, type ParcelRenderMap } from "@/lib/architect/map-runtime";
 import {
   fetchLotGeometry,
   type LotOutlineOutcome,
@@ -47,7 +48,7 @@ import {
 // Minimal structural typing of the maplibre-gl surface this module uses, so the
 // dynamic import stays self-contained and does not couple the type-check to the
 // full maplibre type surface.
-interface MapLike extends ZoningContextMap {
+interface MapLike extends Omit<ZoningContextMap, "on" | "off">, ParcelRenderMap {
   on(type: string, listener: (event?: { sourceId?: string; isSourceLoaded?: boolean }) => void): void;
   once(type: string, listener: () => void): void;
   isStyleLoaded(): boolean;
@@ -67,6 +68,7 @@ interface NavigationControlConstructor {
   new (options: unknown): unknown;
 }
 interface MapLibreModule {
+  setWorkerUrl(url: string): void;
   Map: MapConstructor;
   AttributionControl: AttributionControlConstructor;
   NavigationControl: NavigationControlConstructor;
@@ -221,6 +223,7 @@ function outcomeSummary(
   outcome: LotOutlineOutcome | null,
   drawable: boolean,
   mapRenderFailed: boolean,
+  mapReady: boolean,
 ): string {
   if (outcome === null) return "Loading the approximate lot outline…";
   switch (outcome.kind) {
@@ -239,6 +242,7 @@ function outcomeSummary(
             // WebGL). The summary must match the visible fallback, not claim a
             // map is shown.
             return "An approximate outline is available for this lot, but this browser could not open an interactive map. Use the ZoLa map link above for the authoritative outline.";
+          if (!mapReady) return "Loading the selected parcel outline…";
           return "An approximate lot outline is shown, drawn from the official NYC City Planning MapPLUTO parcel geometry (plus or minus 20 feet).";
         case "no_outline":
           return outcome.view.noOutlineReason === "condo_unit_lot_no_polygon"
@@ -263,7 +267,7 @@ function outcomeSummary(
 }
 
 function AttributionAndAccuracy({ view, compact = false }: { view: LotOutlineView; compact?: boolean }) {
-  if (compact) return <p className="section-note" data-testid="lot-outline-accuracy">Approximate outline · ±20 ft · <span data-testid="lot-outline-attribution">NYC DCP / MapPLUTO</span></p>;
+  if (compact) return <p className="section-note" data-testid="lot-outline-accuracy">Approximate outline · ±20 ft · <span data-testid="lot-outline-attribution">NYC Department of City Planning / MapPLUTO</span></p>;
   return (
     <>
       <p className="section-note" data-testid="lot-outline-accuracy">
@@ -340,10 +344,20 @@ export function LotOutlineMap({
     setMapRenderFailed(false);
     setMapReady(false);
     setContextLayers({ "nyc-basemap": "loading", "nyc-labels": "loading" });
-    let styleDrawn = false;
+    let parcelRendered = false;
+    let failed = false;
+    let stopParcelWatch: () => void = () => undefined;
+    const failRender = () => {
+      if (cancelled || failed) return;
+      failed = true;
+      stopParcelWatch();
+      setMapRenderFailed(true);
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
     const readinessTimer = setTimeout(() => {
       if (!cancelled) {
-        if (!styleDrawn) setMapRenderFailed(true);
+        if (!parcelRendered) failRender();
         setContextLayers(current => Object.fromEntries(Object.entries(current).map(([key, value]) => [key, value === "loading" ? "error" : value])));
       }
     }, 10_000);
@@ -352,8 +366,9 @@ export function LotOutlineMap({
       const mod = (await import("maplibre-gl")) as unknown as {
         default?: MapLibreModule;
       } & Partial<MapLibreModule>;
-      if (cancelled) return;
+      if (cancelled || failed) return;
       const gl: MapLibreModule = mod.default ?? (mod as MapLibreModule);
+      gl.setWorkerUrl(MAPLIBRE_WORKER_URL);
       const bounds = geometryBounds(geometry);
       const map = new gl.Map({
         container,
@@ -382,14 +397,14 @@ export function LotOutlineMap({
       // logged by MapLibre and otherwise invisible. Route it to a typed
       // fallback instead of leaving a permanently blank/gray map.
       map.on("error", (event) => {
-        if (cancelled) return;
+        if (cancelled || failed) return;
         if (event?.sourceId === "nyc-zoning-context") return;
         if (context && contextLayerName(event?.sourceId)) {
           setContextLayers(current => ({ ...current, [event!.sourceId!]: "error" }));
-        } else setMapRenderFailed(true);
+        } else failRender();
       });
       if (context) map.on("sourcedata", event => {
-        if (!cancelled && event?.isSourceLoaded && contextLayerName(event.sourceId)) {
+        if (!cancelled && !failed && event?.isSourceLoaded && contextLayerName(event.sourceId)) {
           setContextLayers(current => ({ ...current, [event.sourceId!]: current[event.sourceId!] === "error" ? "error" : "ready" }));
         }
       });
@@ -398,7 +413,7 @@ export function LotOutlineMap({
       // before or after this listener attaches (see runOnStyleReady's own
       // documentation above for the root-cause analysis).
       runOnStyleReady(map, () => {
-        if (cancelled) return;
+        if (cancelled || failed) return;
         map.addSource("lot-outline", {
           type: "geojson",
           data: {
@@ -423,14 +438,18 @@ export function LotOutlineMap({
         if (bounds) {
           map.fitBounds(bounds, context ? { padding: 72, duration: 0, maxZoom: 18.5 } : lotOutlineFitBoundsOptions());
         }
-        styleDrawn = true;
-        setMapReady(true);
+        stopParcelWatch = observeParcelRender(map, () => {
+          if (cancelled || failed) return;
+          parcelRendered = true;
+          setMapReady(true);
+        });
       });
-    })().catch(() => { if (!cancelled) setMapRenderFailed(true); });
+    })().catch(failRender);
 
     return () => {
       clearTimeout(readinessTimer);
       cancelled = true;
+      stopParcelWatch();
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -442,6 +461,7 @@ export function LotOutlineMap({
       role="region"
       aria-label="Approximate tax lot outline"
       data-testid="lot-outline"
+      data-parcel-state={outcome === null ? "loading" : mapRenderFailed || !drawable ? "unavailable" : mapReady ? "rendered" : "loading"}
     >
       {context && drawable && !mapRenderFailed ? <div className="architect-map-toolbar">
         <span className="architect-map-key">Selected lot</span>
@@ -450,7 +470,7 @@ export function LotOutlineMap({
       {context && drawable && mapReady && mapRef.current && contextBounds && !mapRenderFailed ? <ZoningContextControl map={mapRef.current} bounds={contextBounds} /> : null}
       {context && drawable && !mapRenderFailed ? <p className="architect-map-status" role="status">{!mapReady ? "Preparing map… " : ""}{Object.entries(contextLayers).map(([key, status]) => `${contextLayerName(key)}: ${status === "ready" ? "loaded" : status === "error" ? "unavailable" : "loading"}`).join(" · ")}</p> : null}
       <p className="visually-hidden" data-testid="lot-outline-summary" role="status">
-        {outcomeSummary(outcome, drawable, mapRenderFailed)}
+        {outcomeSummary(outcome, drawable, mapRenderFailed, mapReady)}
       </p>
 
       {outcome === null ? (
