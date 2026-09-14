@@ -1,0 +1,39 @@
+{
+  "task_id": "M5-T027",
+  "prepared_by": "orchestrator",
+  "prepared_at": "2026-09-14",
+  "material_commit": "bb1b37b8 (cherry-pick of producer commit b57998a6, byte-identical)",
+  "requirements": {
+    "D-059-R001": [
+      "services/api/app/scenario/constants.py (+169/-57 across the label surface): the unused-floor-area number is now presented as a limited comparison of RECORDED data - the existing-area input is named as PLUTO's recorded gross building area (condo semantics differ) and is explicitly stated NOT to be a verified ZR 12-10 zoning-floor-area figure; wording that called the result a zoning-floor-area difference or implied unused legal development rights is removed, and the preconditions a genuine rights calculation would additionally require (a compatible existing zoning-area input + confirmed zoning-lot extent) are stated.",
+      "services/api/app/scenario/builder.py: the live builder path emits the corrected wording; the legacy DRAFT_CAP_LABEL constant is retained ONLY for out-of-scope consumers (derive.py, __init__.py) that are outside allowed_paths - the builder no longer reads it (producer report design-decisions section).",
+      "Disclosed limitation (producer report): the web presentation surface is apps/web/** = forbidden path here, and scenario.schema.json's own prose retains the old framing (packages/** forbidden) - both recorded as follow-up candidates in the packet's path_notes, not silently claimed as done."
+    ],
+    "D-059-R002": [
+      "services/api/app/scenario/unused_floor_area.py (+154/-8): a bldgarea value of 0 with a positive PLUTO numbldgs no longer consumes as a usable zero - it routes to the EXISTING typed reason existing_building_area_unusable (state not_computable, value null, section professional-review flag), with the original zero and the numbldgs basis carried as assumptions records (the schema's unused_floor_area_inputs object is closed and packages/** is forbidden, so the basis rides assumptions rather than a new field).",
+      "Vacancy discipline: a recorded zero stays computable ONLY when vacancy is established by the same profile (numbldgs present and == 0); numbldgs absent or unusable alongside a zero area fails closed to the same unusable reason - vacancy is never guessed.",
+      "RED-ON-OLD PROOF (producer, verbatim): the pre-fix unused_floor_area.py was temporarily swapped back in and the 5 new fail-closed tests re-run - all 5 failed exactly as the D-059 reviewer described (old code returned computed / full cap with no reason); the fix was restored and the suite reconfirmed at 431 passed.",
+      "services/api/tests/scenario/test_unused_floor_area.py (+141): the miscast 'vacant lot' zero-area test (which supplied zero area without establishing vacancy) is corrected to an established-vacancy fixture, plus 4 new fail-closed tests and numbldgs-basis assertions."
+    ],
+    "D-059-R003": [
+      "The hardcoded 'draft max residential zoning floor area (R5)' coverage wording, the 'non-R5' phrasing, and the universal ZR 23-21 cap-section label are removed from constants.py; coverage descriptions and displayed section references are derived from the actually-evaluated rules, wired into builder.py's _assemble and the preliminary branch.",
+      "services/api/tests/scenario/test_scenario_foundation.py (+106): new label-derivation tests covering both a low-density district and the R6-R12 family (which cites ZR 23-22), asserting the reference follows the evaluated rule rather than a constant."
+    ],
+    "D-059-R011": [
+      "The official PLUTO data dictionary distinction consumed by this task (recorded gross building area is not ZR 12-10 zoning floor area; a zero area with a positive building count means the area is UNAVAILABLE) is the basis for both the R001 wording and the R002 fail-closed routing; the repository's pluto_soda connector source notes carry the same distinction and were read as the in-repo citation (connector itself untouched - forbidden path)."
+    ],
+    "D-046-R001": [
+      "Produced under the parallel regime by an unnamed backend-engineer producer (model override claude-sonnet-5 per D-047) in an isolated worktree off contract head 7150edef, concurrent with the M4-T021 B4 lane; concurrency <= the ceiling of 3."
+    ],
+    "D-046-R002": [
+      "Disjointness held: M5-T027's scope is the scenario layer (unused_floor_area.py, constants.py, builder.py + their tests) and shares zero files with the concurrent M4-T021 connectors scope (wide_street_buffer_engine.py + its test) or any other open task; the producer commit touched exactly the contracted files (6 changed, report created)."
+    ]
+  },
+  "orchestrator_verification_at_integration_head": {
+    "scenario_suite": "python -m pytest services/api/tests/scenario -q -> 431 passed",
+    "contract_suite": "python -m pytest services/api/tests/scenario/test_scenario_contract.py -q -> 28 passed (response schema byte-compatible; no packages/** change)",
+    "ruff": "cd services/api && python -m ruff check . -> All checks passed!",
+    "modularity": "python tools/modularity_check.py --check -> selected 405 files; failures 0; warnings 17 (none on touched files)",
+    "known_sandbox_gap": "the producer's full-tree run showed 1 failure + tests/documents collection errors from the pre-existing Python 3.11-vs-3.12 PEP 695 gap in app/documents/units.py (untouched, outside scope); CI on py312 is the executable authority"
+  }
+}
