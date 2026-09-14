@@ -83,11 +83,11 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   reason_code quota_exhausted; reviewer files flip per reviewer-model-fallback (revert on
   owner's next "Fable is back"). D-047 sonnet-5 loop-allowlist item still open (owner
   settings, D-053-R004).
-- Launch traps proven this arc: auto-mode classifier can block the detached launch +
-  model/agent-file edits until an explicit owner directive lands (D-055 unblocked all of it);
-  owner `!`-prefix attempt produced NO artifacts (script never ran) — a standalone PowerShell
-  window or the session under owner authorization both work. \r-strip digests parsed from CLI
-  output in Git Bash before `deny`.
+- Launch traps proven this arc: classifier-block → capture-directive-then-retry-once
+  (promoted to Tier 1); owner `!`-prefix attempt produced NO artifacts (script never ran).
+  MapLibre trap (M5-T025 G3-corrected root cause): a one-time `load` listener as the SOLE
+  draw contingency never fires on a degraded-GL device — always arm `style.load` + an
+  `error` handler; `isStyleLoaded()` fast path = defense-in-depth.
 - Posture now: **quiet monitor + owner bridge only** (R002/R003); NO auto-accept/merge (R595
   shadow); gates/acceptance stamped by the orchestrator at the seam; relaunch-per-task via
   `scratchpad/relaunch_m4t020.ps1` pattern (new packet path/branch/run-id each time).

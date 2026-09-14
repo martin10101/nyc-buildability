@@ -92,7 +92,7 @@
     "qa-engineer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 95,
+  "progress_percent": 85,
   "risks": [
     "reflected-string href regression: any path where server-echoed text reaches an href gates G3 - the negative test in S1 is mandatory",
     "root-cause theater: fixing symptoms (e.g. only raising maxZoom) without explaining why NO outline was visible would leave the defect - G3 verifies cause-vs-fix coherence (D-056-R002)",
@@ -101,7 +101,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T05:20:01.499404+00:00",
-  "updated_at": "2026-09-14T06:10:41.420574+00:00",
+  "updated_at": "2026-09-14T06:15:30.013056+00:00",
   "directive_refs": [
     {
       "directive_id": "D-056",
@@ -153,6 +153,13 @@
       "percent": 70,
       "status": "rework",
       "message": "G3 verdict PASS with ONE blocking record correction (F1): the claimed 'listener attached after load fired' race is unreachable at the call site; reachable mechanism = one-time load event never fires on a degraded-GL device (no style.load arm/readiness/error surface). G4 PASS zero blockers (CI-green condition now satisfied: all 18 jobs green at 10aaedcc incl. web + web-e2e). Applying tagged ORCH-CORRECTED comment/report/evidence-map edits (zero behavior change) -> resubmit -> delta-attestations from BOTH reviewers -> gates at corrected head."
+    },
+    {
+      "at": "2026-09-14T06:15:30.011051+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "awaiting_gate",
+      "message": "FULLY GATED: G3 PASS (F1 record-correction applied + delta-attestation carries to 63495416) + G4 PASS (identity-carry mechanically proven) recorded at 89de3794; CI green at BOTH the reviewed 10aaedcc (18/18) and the corrected-head run f5e7f4a1 (all jobs). REMAINING: DCV over D-056/D-046/D-040 applicable rows at the frozen identity, then accept. Advisories carried: G3 A1/A2/A7, G4 NB-1/NB-2/NB-3 = follow-up candidates."
     }
   ]
 }

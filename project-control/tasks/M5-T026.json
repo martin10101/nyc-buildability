@@ -79,7 +79,7 @@
     "qa-engineer"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "semantic drift: present-but-invalid param must stay OFF (kill-switch class) - flipping it to default-on would silently weaken the kill switch",
     "e2e coupling: any edit outside the 5 files (esp. e2e/harness) violates D-057-R002 and fails the packet",
@@ -87,7 +87,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T05:57:14.460749+00:00",
-  "updated_at": "2026-09-14T06:00:59.051997+00:00",
+  "updated_at": "2026-09-14T06:15:30.352886+00:00",
   "directive_refs": [
     {
       "directive_id": "D-057",
@@ -124,6 +124,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed (D-057 default-on gate mode; parallel disjoint packet; concurrent writers 2/3). Producer frontend-engineer w/ claude-sonnet-5 dispatch override (D-047 deviation in G0 report)."
+    },
+    {
+      "at": "2026-09-14T06:15:30.352886+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer returned and material integrated at 0b112357 (5 files, 71 new gate-matrix tests, docstring + checklist 2a section; disclosures: no local runner - CI authority; two benign NEXT_PUBLIC context notes). NEXT: push CI, submit w/ evidence map, G3/G4 wave, DCV, accept (successor)."
     }
   ]
 }
