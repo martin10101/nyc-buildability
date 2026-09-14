@@ -158,5 +158,28 @@ explicitly NOT a qualified sign-off, NOT an owner decision, and does NOT clear G
 
 ---
 
+## D. Decided questions (owner decisions on record)
+
+1. **OQ-3 — street-width ambiguity-class classification policy: OWNER-DECIDED 2026-09-14
+   (D-052).** First surfaced by the accepted M4-T013 research ("the exact fail-closed policy
+   for each ambiguity class is a ZR-grounded rule/legal decision") and held fail-closed-to-
+   narrow through the accepted M4-T015 connector. The owner approved a DRAFT classification
+   policy: 75-ft ordinary threshold with applicable ZR exceptions checked first (unimplemented
+   applicable exception ⇒ UNRESOLVED); clear numbers and one-sided explicit bounds usable from
+   the correctly matched DCM feature under documented source/street-status/frontage-coverage
+   checks, recorded as an owner-approved assumption (never a DCP guarantee; nearest-centerline
+   match alone insufficient); straddling ranges, approximations, probabilistic wording,
+   conflicts, unclear coverage and unrecognized text stay UNKNOWN and route to effective-map
+   resolution; no invented tolerances, averaging, threshold-rounding or endpoint-picking; full
+   provenance (original label, source version, matched geometry, interpreted bounds, reason);
+   UNKNOWN stays the data state and every consuming rule justifies its own fallback (D-051);
+   outputs DRAFT until G6. Full decomposition:
+   `project-control/directives/D-052-street-width-draft-classification/`. This is a DRAFT
+   product policy, not an official DCM interpretation — the RQ-005 publisher-convention
+   residual remains open (docs/RESEARCH_REQUESTS.md). G6 review of the resulting rules remains
+   the Section 20 hard stop.
+
+---
+
 *Maintained under directive D-048. New interpretation questions from the build campaign are appended
 here automatically instead of stopping the build each time; genuine contradictions still stop.*

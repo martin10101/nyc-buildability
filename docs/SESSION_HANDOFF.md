@@ -78,7 +78,14 @@ validated PER CONSUMING RULE (§23-431 street-wall placement is the counterexamp
 fail-closed-to-narrow is NOT universally conservative; the accepted FAR rule remains the one
 validated case) — every A2 rule packet consuming width classification MUST carry a per-rule
 conservative-direction analysis or keep assumption/review labels (cite D-051:R002,R003); the
-RQ-005 independent-confirmation report is archived in owner-research/ (aid only).** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
+RQ-005 independent-confirmation report is archived in owner-research/ (aid only).** **D-052
+(OQ-3 OWNER-DECIDED): DRAFT street-width classification policy approved — 75-ft threshold w/
+exceptions-first, one-sided explicit bounds usable under source/street-status/frontage-coverage
+checks (owner-approved assumption; nearest-centerline alone insufficient), straddling/approx/
+unrecognized ⇒ UNKNOWN ⇒ map resolution, full provenance, per-rule fallback (D-051), DRAFT
+until G6. Implementation = gated wave-4 tasks citing D-052:R001..R007 (policy layer consumes
+the accepted M4-T015 24-class classifier output; frontage-coverage needs the A2 geometry
+lane); OQ-3 closure recorded in the architect doc section D; RQ-005(1) residual unchanged.** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
 PHONE ACCESS: the pushed branch's docs/RESEARCH_REQUESTS.md is the owner's phone-readable copy
 (GitHub URL in the doc header) — every queue change commits AND pushes in the same working step,
 never dirty-local or batched; owner-returned results are stamped ANSWERED (date + named

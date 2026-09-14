@@ -1,0 +1,68 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-052",
+ "version": 1,
+ "slug": "street-width-draft-classification",
+ "title": "Owner decision 2026-09-13/14 (OQ-3 resolved): approved DRAFT street-width classification policy - 75-ft ordinary threshold with exceptions checked first; clear numbers / one-sided explicit bounds usable from the correctly matched DCM feature under documented source/street-status/frontage-coverage checks (owner-approved assumption, never a DCP guarantee); straddling ranges, approximations, conflicts, unclear coverage stay UNKNOWN to map resolution; full provenance representation; UNKNOWN stays the data state with per-rule fallback justification; DRAFT until G6; RQ-005 publisher-convention residual stays open.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T01:45:00+00:00",
+ "created_at": "2026-09-14T01:45:00+00:00",
+ "updated_at": "2026-09-14T01:45:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "aff0431841167759e800c68f908bb5612f8a9dbe",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the decision verbatim in the live build session immediately after the third D-050 research pass ('Owner decision - OQ-3: I approve the following DRAFT street-width classification policy. Record this decision and implement it through the existing project controls.'). Source-001.md #owner-message-verbatim."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-052-R001",
+  "D-052-R002",
+  "D-052-R003",
+  "D-052-R004",
+  "D-052-R005",
+  "D-052-R006",
+  "D-052-R007",
+  "D-052-R008"
+ ],
+ "requirements_content_digest_sha256": "53264a59eaa0fa6fe25217fd8a2532bca2e9acad3becc968c627f3c6f0c1ac66",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T01:45:00+00:00",
+   "content_digest_sha256": "2d25de53c8cf4856d52e001d27cb5d1c978289f3b1ee911ae72a34cfef949e6a"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "owner_decision_draft_policy",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "DRAFT street-width classification per the eight requirements: implement through normal gated ledger tasks citing D-052 ids; OQ-3 closure entry in the architect doc; classification consumed by A2 geometry-dependent rules under D-051 per-rule fallback discipline",
+  "prohibited": "presenting the policy as a verified DCP guarantee or official universal DCM interpretation; classifying on straddling/approximate/probabilistic/unrecognized values; inventing tolerances, averaging, rounding across the threshold, endpoint-picking; classifying on a bare nearest-centerline match; skipping applicable zoning exceptions; publishing any result as non-DRAFT before G6; closing the RQ-005 publisher-convention residual on this decision's authority",
+  "prior_owner_decision_note": "This supplies the ZR-grounded rule/legal decision that M4-T013 OQ-3 and the accepted M4-T015 connector's fail-closed-to-narrow posture were explicitly awaiting; the connector's 24-class typed output is the designed input surface for this policy layer."
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "D-052 captured verbatim by the build session (owner issued the OQ-3 decision here directly); peer session acknowledged the id claim (its channel shifts to D-053) and holds commits until this push. Capture commit also carries the R008 closure artifacts: docs/ARCHITECT_REVIEW_QUESTIONS.md owner-decision entry + docs/RESEARCH_REQUESTS.md RQ-005 cross-reference + SESSION_HANDOFF note. Decision inputs on record: accepted M4-T013/M4-T015/M4-T016 reports and the three archived D-050 research passes (discovery aids)."
+  }
+ ]
+}

@@ -156,6 +156,12 @@ history). The active queue never carries figured-out material.
   awareness; §25-101 as legal anchor; the Section-Map retrieval route as a candidate connector;
   representation per D-051-R002 (raw text + recognized form + qualifiers + version + geometry +
   coverage reason, legal classification recorded separately). No conflict with accepted work.
+- **OQ-3 DECIDED 2026-09-14 (D-052):** the owner approved the DRAFT classification policy
+  (75-ft threshold, one-sided-bound rule, UNKNOWN-to-map-resolution, full provenance, per-rule
+  fallback justification, DRAFT until G6) — see
+  `project-control/directives/D-052-street-width-draft-classification/` and the architect doc
+  section D. **The RQ-005(1) publisher-convention residual above remains OPEN unchanged** —
+  the decision is an owner-approved product policy, not an official DCM interpretation.
 
 ---
 
