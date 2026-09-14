@@ -124,3 +124,28 @@ VIOLATED, zero UNVERIFIABLE. Material identity, classifier immutability, disjoin
 c6-completeness (incl. D-053), gate independence, DRAFT posture, and prohibited-action
 absence all confirmed. The orchestrator may record this result after validating it; the
 verifier wrote nothing.
+
+---
+
+## Addendum (verifier follow-up, received after acceptance): the slow-harness caveat is CLOSED
+
+The verifier's original §1 noted `python tools/test_directive_compliance.py` had not
+finished in-session (>25 min Windows subprocess runtime; not load-bearing). Its follow-up,
+verbatim:
+
+> The final harness item is now confirmed green: `python tools/test_directive_compliance.py`
+> → **Ran 129 tests in 2946.250s — OK (EXIT 0)**. (The earlier empty output file was
+> unittest buffering stderr until completion.)
+>
+> All four required harness scripts now pass at the frozen head `a7cc1757…`:
+> `validate_directive_compliance.py --check` EXIT 0; `test_directive_compliance.py` 129
+> tests OK; `test_project_control.py` 23 groups passed; `test_directive_reminder.py` 12
+> tests OK; plus the 94-test policy suite and clean whole-tree ruff.
+>
+> My verdict is unchanged and final: **Overall: PASS.** All 20 rows SATISFIED; zero
+> VIOLATED, zero UNVERIFIABLE. The §4 conditional restamp pre-authorization stands.
+
+Orchestrator note: acceptance had already been recorded at d752c09b on the original PASS
+(the slow harness was explicitly not primary evidence for any row); this addendum upgrades
+the record from "environmental caveat, not load-bearing" to "fully green" — no state change
+required.
