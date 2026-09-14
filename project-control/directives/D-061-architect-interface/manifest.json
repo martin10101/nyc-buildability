@@ -1,0 +1,92 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-061",
+  "version": 1,
+  "slug": "architect-interface",
+  "title": "Owner-approved architect front-end redesign, evidence traceability, build and delivery",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-14",
+  "captured_at": "2026-09-14T20:09:38.435031+00:00",
+  "created_at": "2026-09-14T20:09:38.435031+00:00",
+  "updated_at": "2026-09-14T20:09:38.435031+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "capture_head_sha": "ef7ee891a70af4752187d6161deadbd55cbdb96a",
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Explicit front-end edit approval followed by build/push/live request in source-002 and source-003. Prior no-edit preview stage concluded; backend/rules/data boundary remains."
+  },
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-061-R001",
+    "D-061-R002",
+    "D-061-R003",
+    "D-061-R004",
+    "D-061-R005",
+    "D-061-R006",
+    "D-061-R007",
+    "D-061-R008"
+  ],
+  "requirements_content_digest_sha256": "e09a078387417b036174b77269eba37526661e484632a92f382d4e4a269dcc93",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-14T20:09:38.435031+00:00",
+      "content_digest_sha256": "4a1298e6496304492e6fa416018e03b5893e6a597cdd03083b24e712142dccce"
+    },
+    {
+      "file": "source-002-amendment.md",
+      "kind": "amendment",
+      "sequence": 2,
+      "recorded_at": "2026-09-14T20:09:38.435031+00:00",
+      "content_digest_sha256": "a883a759e80725cf5b9b33641892d6bb369b2c8cdfdbc99d8098acfd7114b0c2",
+      "amends": "source-001.md"
+    },
+    {
+      "file": "source-003-amendment.md",
+      "kind": "amendment",
+      "sequence": 3,
+      "recorded_at": "2026-09-14T20:09:38.435031+00:00",
+      "content_digest_sha256": "be5ba11c2b8d7224776eccc6453a9a99dd2d4cc30cb102135213557aa68db98d",
+      "amends": "source-002-amendment.md"
+    }
+  ],
+  "amendments": [
+    "source-002-amendment.md",
+    "source-003-amendment.md"
+  ],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M5-T029"
+  ],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "frontend",
+    "task_ids": [
+      "M5-T029"
+    ],
+    "task_types": [
+      "frontend"
+    ],
+    "allowed": "Front-end presentation and source-backed address/map UX plus task evidence; owner has authorized push/deployment of this interface.",
+    "prohibited": "Backend services, calculation/rule logic, database, contracts, dependency changes, supervisor/model configuration, expansion engines, main and PR 241."
+  },
+  "audit_log": [
+    {
+      "at": "2026-09-14T20:09:38.435031+00:00",
+      "actor": "orchestrator",
+      "action": "captured",
+      "note": "Captured visible owner messages verbatim; UI-only authority, provenance, complete-page previews now approved for implementation. No prior controls or holds changed."
+    }
+  ]
+}

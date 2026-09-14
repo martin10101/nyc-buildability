@@ -1,0 +1,86 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-061",
+  "verified_by": null,
+  "verified_at": null,
+  "authority_note": "Independent verifier owns verdicts; no self-verification or completion claim.",
+  "task_verifications": [
+    {
+      "directive_id": "D-061",
+      "task_id": "M5-T029",
+      "applicable_requirement_ids": [
+        "D-061-R001",
+        "D-061-R002",
+        "D-061-R003",
+        "D-061-R004",
+        "D-061-R005",
+        "D-061-R006",
+        "D-061-R007"
+      ],
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "producer": "frontend-engineer",
+      "verifier": null,
+      "schema_version": "directive_verification/v2",
+      "verified_at": null,
+      "requirements": [
+        {
+          "id": "D-061-R001",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R002",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R003",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R004",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R005",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R006",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R007",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ]
+}

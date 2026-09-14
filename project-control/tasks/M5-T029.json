@@ -1,0 +1,195 @@
+{
+  "task_id": "M5-T029",
+  "title": "Architect workspace: professional frontend, evidence, address search and map context",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Implement the owner-approved architect interface using existing canonical API contracts; preserve every material fact and trace; frontend only.",
+  "business_reason": "",
+  "inputs": [
+    "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md sections 1-3,7-10,12-16",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Property/Confirm/Compare/Evidence)",
+    "docs/ENGINEERING_RELIABILITY_STANDARD.md sections 2-4,6-9",
+    "docs/CODE_MODULARITY_POLICY.md",
+    "project-control/directives/D-061-architect-interface/requirements.json",
+    "apps/web/src/lib/{contract,address-api,api,lot-geometry-api,rule-evaluation-contract,scenario-contract}.ts (read-only)",
+    "apps/web/src/test-support/fixtures.ts",
+    "apps/web/src/test-support/rule-evaluation-fixtures.ts",
+    "apps/web/e2e/harness/fixture_api.py",
+    "packages/contracts/fixtures/valid/** (read-only)",
+    "docs/design/zola-deeplink-url-confirmation.md"
+  ],
+  "outputs": [
+    "Professional architect shell and all available workflow screens; future view capability labels",
+    "Bounded source-backed autocomplete and map context; safe link and error handling",
+    "Complete facts/calculations/sources/review disclosures and printable brief of actual results",
+    "Executable behavior tests and producer evidence"
+  ],
+  "dependencies": [
+    "M5-T025",
+    "M5-T026",
+    "M5-T027",
+    "M5-T028"
+  ],
+  "allowed_paths": [
+    "apps/web/src/app",
+    "apps/web/src/components",
+    "apps/web/src/lib/architect",
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/map-context.ts",
+    "apps/web/src/lib/__tests__/address-search.test.ts",
+    "apps/web/src/lib/__tests__/map-context.test.ts",
+    "apps/web/e2e",
+    "project-control/reports/M5-T029-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "supabase/**",
+    "packages/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/.npmrc",
+    "apps/web/next.config.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/address-api.ts",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/scenario*",
+    "apps/web/src/lib/rule-evaluation*",
+    "apps/web/src/lib/lot-geometry-api.ts",
+    "apps/web/src/lib/surveyReview/**",
+    "apps/web/src/components/dashboard/**",
+    "apps/web/src/app/dashboard/**",
+    ".github/**",
+    ".claude/**",
+    "tools/**",
+    "render.yaml",
+    "project-control/tasks/**",
+    "project-control/directives/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "requirement": "D-061-R001,R002,R006",
+      "preconditions": "Existing recorded official profile and rule/scenario fixture APIs",
+      "input": "Open address/BBL entry, choose lot, visit overview/facts/zoning/evidence/review/report",
+      "expected": "Professional consistent navigation; primary result/map visible; each original fact, missing input, conflict and unsupported check accessible; no invented numbers",
+      "invariants": "Backend/contracts untouched; DRAFT retained; future tools explicitly unavailable",
+      "execution": "Component tests + Playwright desktop/mobile",
+      "evidence": "project-control/reports/M5-T029-producer-report.md",
+      "cleanup": "Reset browser fixture session"
+    },
+    {
+      "id": "S2",
+      "requirement": "D-061-R003",
+      "preconditions": "Profile with provenance and rule trace",
+      "input": "Open sources for a fact and calculation; inspect captured/source/version and transformations",
+      "expected": "Actual values, units, formula/trace, original source metadata and safe links preserved; absent links/dates never invented",
+      "invariants": "No arbitrary reflected URL/HTML; missing never zero",
+      "execution": "Component tests and independent walkthrough",
+      "evidence": "project-control/reports/M5-T029-producer-report.md",
+      "cleanup": "Reset fixture session"
+    },
+    {
+      "id": "S3",
+      "requirement": "D-061-R004",
+      "preconditions": "Recorded official GeoSearch response plus existing address resolver",
+      "input": "Type address; keyboard pick; edit during delayed response; malformed/no match/429/network failure; manual/BBL fallback",
+      "expected": "Bounded debounced one-box official suggestions; no stale result overwrites; explicit selection/resolution; recoverable failure; all five boroughs supported",
+      "invariants": "Official provider identity; abort/time budget; no silent borough/BBL guesses",
+      "execution": "Source-contract review + unit/component + browser tests",
+      "evidence": "project-control/reports/M5-T029-producer-report.md",
+      "cleanup": "Reset network fixtures"
+    },
+    {
+      "id": "S4",
+      "requirement": "D-061-R005",
+      "preconditions": "Official lot geometry and source-backed map context",
+      "input": "View map, zoom, fail tile/geometry fetch, disable WebGL, no-outline or conflicting-geometry response",
+      "expected": "Map context and selected parcel visible when available; honest per-layer failure and accessible fallback; source attribution retained",
+      "invariants": "Verbatim geometry; no legal calculations in frontend",
+      "execution": "Map unit tests + actual browser canvas/fallback walkthrough",
+      "evidence": "project-control/reports/M5-T029-producer-report.md",
+      "cleanup": "Destroy map/release listeners"
+    },
+    {
+      "id": "S5",
+      "requirement": "D-061-R007",
+      "preconditions": "Frozen implementation",
+      "input": "Full web checks and read-only diff/contract review",
+      "expected": "Build/typecheck/lint/tests and independent gates pass; no backend/lockfile/contracts changes; flag-off and legacy bookmarks remain safe",
+      "invariants": "No waived gates or test deletions to hide failure; owner PC untouched",
+      "execution": "Cloud runtime self-check + existing GitHub CI",
+      "evidence": "project-control/reports/M5-T029-producer-report.md",
+      "cleanup": "Untracked build artifacts stay ignored"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 20,
+  "risks": [
+    "Source service outage/CORS or inaccessible deployment credentials",
+    "Existing e2e selectors encode the prior UI; adapt user-journey navigation while retaining safety assertions",
+    "Some approved concept capabilities lack backend support; preserve unavailable state instead of fabrication"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T20:09:45.264382+00:00",
+  "updated_at": "2026-09-14T20:12:32.150831+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-061",
+      "requirement_ids": [
+        "D-061-R001",
+        "D-061-R002",
+        "D-061-R003",
+        "D-061-R004",
+        "D-061-R005",
+        "D-061-R006",
+        "D-061-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T20:09:45.264499+00:00",
+  "documented_test_commands": [
+    "npm run lint",
+    "npm run typecheck",
+    "npm run test",
+    "npm run build",
+    "npm run test:e2e",
+    "python tools/modularity_check.py --check",
+    "python tools/validate_directive_compliance.py --check"
+  ],
+  "path_notes": [
+    "New owner-authorized frontend task, independent of suspended expansion engines. M4-T005 is historical awaiting-G6 code, not an active writer per handoff seq112. No active writer overlaps this task.",
+    "Execution: ChatGPT cloud Linux workspace (29 GB free); temporary web dependencies/build/browser evidence under 2 GB expected, ignored from git. No owner-PC installation. CI authoritative.",
+    "Modularity: presentation belongs in small architect components and CSS; fetching/cancellation in dedicated hooks/clients. Preserve canonical clients, generated contracts, legal engine and public route bookmarks. New modules target under 600 SLOC; extract from oversized views rather than grow them.",
+    "Source introductions require G1/G5. GeoSearch suggestions are address candidates, not PLUTO facts; existing official resolver remains identity authority. Map context display does not evaluate zoning.",
+    "Future 3D/unit/financial capability screens are honest unavailable views, no engine or persistence work."
+  ],
+  "worktree": "/workspace/scratch/cfa2464c5c7f/nycdf-ui-work",
+  "progress_log": [
+    {
+      "at": "2026-09-14T20:12:32.150802+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "S1-S5 acceptance scenarios recorded before implementation; owner-approved frontend only in isolated cloud worktree."
+    }
+  ]
+}

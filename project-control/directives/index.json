@@ -625,7 +625,7 @@
     {
       "directive_id": "D-046",
       "slug": "parallel-family-production",
-      "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
+      "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and \u00a7G unchanged; backoff under resource pressure, never quality.",
       "status": "active",
       "issued_at": "2026-09-13",
       "issued_by": "owner",
@@ -801,7 +801,21 @@
       "superseded_by": null,
       "affected_tasks": [],
       "manifest": "D-060-loop-continuity-fable-exhaustion/manifest.json"
+    },
+    {
+      "directive_id": "D-061",
+      "slug": "architect-interface",
+      "title": "Owner-approved architect front-end redesign, evidence traceability, build and delivery",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M5-T029"
+      ],
+      "manifest": "D-061-architect-interface/manifest.json"
     }
   ],
-  "updated_at": "2026-09-14T02:36:29+00:00"
+  "updated_at": "2026-09-14T20:09:38.435031+00:00"
 }

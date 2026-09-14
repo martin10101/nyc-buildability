@@ -1,0 +1,272 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-061",
+  "version": 1,
+  "requirement_count": 8,
+  "producer": "orchestrator",
+  "updated_at": "2026-09-14T20:09:38.435031+00:00",
+  "requirements": [
+    {
+      "id": "D-061-R001",
+      "text": "Build the approved professional front-end presentation and navigation for the architect workflow; keep application calculations, legal rules, API services, database, contracts, credentials and dependencies unchanged.",
+      "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R002",
+      "text": "Preserve architect-relevant facts, limitations, conflicts, missing inputs and review state; concise summaries must keep the complete information accessible.",
+      "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R003",
+      "text": "Expose traceability for facts and results: actual input values and units, transformations, calculation traces, sources and safe official links, available versions/dates and review history. Missing evidence stays explicitly missing.",
+      "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R004",
+      "text": "Provide one-box address entry with official address suggestions as the user types and a BBL/manual recovery path. Official address resolution and the existing property contracts remain authoritative.",
+      "source_ref": "source-001.md#address-and-map-feedback-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R005",
+      "text": "Replace the empty-map experience with usable map context, parcel framing, controls, attribution and honest loading/failure states. Only source-backed map layers may be presented; no derived zoning geometry or fabricated map content.",
+      "source_ref": "source-001.md#address-and-map-feedback-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R006",
+      "text": "Carry the approved design through the architect-facing pages. Later planning concepts must clearly identify unavailable capabilities and must not fabricate calculations or saved decisions.",
+      "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R007",
+      "text": "Build and verify the front-end implementation through the existing tests, independent UI and security review, source-link/contract checks and CI before integration. Preserve backend and main.",
+      "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R008",
+      "text": "Push the reviewed implementation to candidate/D-024-mrl-option-b and deploy the existing front-end service when authorized access is available; report the actual pushed SHA and verified deployment status, including any unavailable deployment credential. Do not merge PR 241 or push main.",
+      "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-061-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "Git remote and deployment evidence",
+      "required_evidence": "project-control/reports/M5-T029-delivery.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner-authorized work captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    }
+  ]
+}
