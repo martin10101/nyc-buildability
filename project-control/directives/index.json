@@ -751,9 +751,7 @@
    "issued_by": "owner",
    "supersedes": [],
    "superseded_by": null,
-   "affected_tasks": [
-    "M5-T025"
-   ],
+   "affected_tasks": [],
    "manifest": "D-056-provenance-links-lot-outline/manifest.json"
   }
  ],

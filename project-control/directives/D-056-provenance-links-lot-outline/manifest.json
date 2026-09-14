@@ -10,7 +10,7 @@
  "issued_at": "2026-09-14",
  "captured_at": "2026-09-14T05:40:00+00:00",
  "created_at": "2026-09-14T05:40:00+00:00",
- "updated_at": "2026-09-14T05:40:00+00:00",
+ "updated_at": "2026-09-14T06:05:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "e8913a12674ddb0df757ed85d4e78cbbadd114b1",
@@ -42,18 +42,14 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [
-  "M5-T025"
- ],
+ "affected_tasks": [],
  "affected_prs": [],
  "affected_branches": [
   "candidate/D-024-mrl-option-b"
  ],
  "scope": {
   "kind": "product_fix_order",
-  "task_ids": [
-   "M5-T025"
-  ],
+  "task_ids": [],
   "task_types": [],
   "allowed": "safe constructed outbound links in the two provenance surfaces; lot-outline map visibility root-cause/fix + framing + zoom controls within the D-040-R001 scoped release; one parallel gated packet disjoint from the loop's M4-T020",
   "prohibited": "reflected-string hrefs; new dependencies; measurement from display-only geometry; expansion-pack tasks; editing loop internals or scope mid-flight; any change to transport/client contract modules outside the packet's allowed_paths"
@@ -64,6 +60,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture of the owner's live-walkthrough work order; findings history in docs/WORKING_KNOWLEDGE.md and commit e8913a12; M5-T025 contract follows in the immediately-subsequent commit this seam."
+  },
+  {
+   "at": "2026-09-14T06:05:00+00:00",
+   "actor": "orchestrator",
+   "event": "metadata_correction",
+   "note": "affected_tasks/scope.task_ids cleared to [] (validator c14 reads a listed in-regime task as requiring a task_verification row at capture time, which cannot exist before the work): the M5-T025 binding lives canonically in requirements.json applicability.task_ids (R001-R003), as in every prior campaign directive; no requirement text or source changed - requirements digest untouched."
   }
  ]
 }

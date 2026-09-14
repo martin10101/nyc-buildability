@@ -112,7 +112,15 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   deliberate, none admitted). Owner to scroll-zoom center; if truly absent → defect packet
   (console evidence requested). Polish candidates if present: higher maxZoom for small lots,
   basemap admission (needs G5 source admission).
-- Finding 3 (pending owner retest): ZoLa `/bbl/<bbl>` link verified correct
-  (docs/design/zola-deeplink-url-confirmation.md); blank page = the Ember SPA's slow boot
-  (serves white shell, client-side redirect). Owner to wait/reload; if permanently blank,
-  re-verify live.
+- Finding 3 (RETESTED, closed as EXTERNAL — D-056-R004): ZoLa stays blank on the owner's
+  machine; link format verified from ZoLa router source (2026-09-12 doc) AND live shell
+  re-fetch 2026-09-14 (normal SPA shell for the exact URL). City SPA client-side boot issue;
+  no repo change owed. Findings 1+2 became the D-056 work order → packet M5-T025.
+- **Finding 4 (confirmed vs live PLUTO, candidate packet): address-continuity gap on
+  Step 2.** Owner entered "125 Taylor St" → confirm card 125 TAYLOR STREET / BBL 3021720001
+  → Step 2 shows "83 TAYLOR STREET" for the SAME BBL. NOT a lookup bug: PLUTO stores ONE
+  representative address per tax lot, and live SODA (64uk-42ks, 2026-09-14) returns
+  address="83 TAYLOR STREET", lotarea=116000, lotfront=580, lotdepth=200 for that lot —
+  a block-sized multi-address lot; Geoclient correctly maps 125 Taylor onto it. UX
+  candidate: carry the user-confirmed address into Step 2 ("You searched 125 Taylor St —
+  this lot's official PLUTO label is 83 Taylor St") instead of silently swapping labels.
