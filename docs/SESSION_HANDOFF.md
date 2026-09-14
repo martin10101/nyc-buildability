@@ -5,7 +5,7 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff — seq 110: 204 pending-accept; landed by /session-handoff (re-run)
+## Handoff — seq 110 (final): **204 ACCEPTED, wave 4 CLOSED, nothing in flight**
 
 Reason: owner directive embedded as the turnover reason — recorded VERBATIM as
 `project-control/directives/D-054-persistent-knowledge-files/source-001.md` (two-tier
@@ -66,27 +66,21 @@ agent-memory files + session scratchpad. Campaign-continuity CLI: known-stale �
 
 ## IN FLIGHT AT LANDING
 
-- **Wave-4 combined DCV verifier was RUNNING** (read-only, dispatched at frozen head
-  a7cc1757; 20 rows: T018 ×6, T019 ×14; prompt asked for the standard conditional-restamp
-  pre-authorization). If its result did not land in-session: **RE-DISPATCH** the same
-  combined DCV (directive-compliance-verifier, read-only, frozen at live HEAD) — cheap and
-  safe; all evidence is committed. Never resume a killed producer; re-dispatching a
-  read-only verifier is always safe.
+- **NOTHING.** The wave-4 DCV returned before session close: 20/20 rows SATISFIED
+  (verbatim + restamp-condition verification in
+  `reports/M4-T018-M4-T019-dcv-verification.md`); M4-T018 (203rd) + M4-T019 (204th)
+  ACCEPTED at reviewed_sha d752c09b; checkpoint CP-2026-09-14-wave4-closed. No sub-agent
+  live; no unpushed work.
 
 ## NEXT ACTIONS (exact order)
 
-1. **Close wave 4:** collect/re-dispatch the DCV → assemble v2 blocks into D-045/D-046/
-   D-051/D-052 verification.json (reviewed_sha = restamp target per the verifier's
-   authorization; manifests in gates/M4-T018-G1.json + M4-T019-G4.json records; producer =
-   the task's material producer) → accept M4-T018 + M4-T019 (**204**) → checkpoint →
-   ONE seam commit → push.
-2. **Execute D-053 (the relaunch):** verify capture (done once by this session — re-verify),
+1. **Execute D-053 (the relaunch):** verify capture (done once by this session — re-verify),
    then the documented relaunch mechanics (orchestrator memory: loop-relaunch-mechanics /
    task-switch drill — 5 start blockers, certified-cwd manifest binding, checkout_key,
    ask stores, NEVER audit-write verbs vs a live run, watcher quiet mode). Report loop-live
    at the owner seam (discharges R005). After live: STOP hand-conducting waves; quiet
    monitor + final authority only (R002).
-3. Wave-5 packet candidates the loop (or you, if the owner defers relaunch) should draw:
+2. Wave-5 packet candidates the loop (or you, if the owner defers relaunch) should draw:
    B3 (DCM geometry parse-and-expose sibling), B4 (buffer engine; B6 done), snapshot-update
    task (zr-12-10 refresh per M4-T018 + G1 advisory: conflict visible, no re-adjudication),
    C-district families 1–3 (M4-T017 §9), B7 wiring LAST (G3 advisory A1 = acceptance

@@ -330,6 +330,106 @@
      "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T018",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "8f2059989c1646290b055de449a974a0b0f793c8fac77afb3068847628d08c0f",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "B6 research half: fresh 12-10 capture (sha 4a75e22f, 504 fallback disclosed, amendment 3/26/2026 from the term's own time element; G1 reproduced byte-exact live) + reconciliation with conflict VISIBLE (amendment predates the 2026-07-22 snapshot; carriers named: snapshot, M4-T013 report, r5_setback.rule.json; packet premise corrected - r6_r7_r8 cites zr-23-22 only) + capture-ready D-052-R001 exception build-input specs with honest data gaps, no manufactured numbers.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "One bounded gated research task: G0 PASS (77fc6bf2 seam) + G1 PASS (data-contract-verifier != producer, byte-exact live reproduction).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Coverage-scope-only: exactly one file changed (faf0b22e/00b28626); snapshot/rules/deps byte-unchanged over the whole wave diff; DRAFT/needs_review posture preserved; conflict routed to the G6/rules-engineer track, never adjudicated; no hold lifted.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T019",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "634c209226edc3860ddf66f6dff7cb4fc392fb7103edab43d9933ccd6b2d817f",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "Policy layer ships against its actual data input (accepted 24-class classifier); insufficient inputs produce honest UNRESOLVED/UNKNOWN, never a guessed number; frontage matching typed as caller attestation pending B3/B4.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Single bounded feature task: G0 + G3 (code-reviewer) + G4 (qa-engineer), reviewers != producer; PASS-with-blocking-F1 arc closed with both delta-attestations recorded verbatim.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Two new files only; accepted classifier byte-unchanged vs 8538c272; zero dependency/rule/snapshot changes over the wave diff; DRAFT labels intact; no hold lifted.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
   }
  ]
 }

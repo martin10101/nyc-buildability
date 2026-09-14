@@ -4,16 +4,11 @@ Living file for the section under construction NOW. Handoff names it a must-read
 while working; at section close PRUNE finished material (git keeps history) or PROMOTE
 durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritative.
 
-## Wave-4 close (the immediate work)
+## Wave-4: CLOSED (pruned per D-054-R003 — detail in git history + the DCV report)
 
-- M4-T018 + M4-T019 FULLY GATED awaiting accept (→204). Gates: T018 G0@77fc6bf2 G1@859b34c9;
-  T019 G0@77fc6bf2, G3+G4@fef69aae (both delta-attestations verbatim inside
-  `reports/M4-T019-G4-test-adequacy-review.md`). Material identities: T018 manifest in its
-  G1 record; T019 in its G4 record; both byte-stable 859b34c9→a7cc1757.
-- Combined 20-row DCV was in flight at landing (frozen at a7cc1757; restamp pre-auth
-  requested in-prompt). No result recorded → RE-DISPATCH same scope (T018: D-045
-  R002/R008/R009 + D-046 R001/R002 + D-051 R001; T019: D-052 R001–R007 + D-051 R002/R003 +
-  D-045 R002/R008/R009 + D-046 R001/R002). Then v2 blocks → accept both → checkpoint → push.
+- M4-T018 (203rd) + M4-T019 (204th) ACCEPTED; 20/20 DCV rows PASS
+  (`reports/M4-T018-M4-T019-dcv-verification.md`); checkpoint CP-2026-09-14-wave4-closed.
+  Nothing in flight. Next big block: D-053 relaunch (section below).
 
 ## A2 build map (B-lanes; statuses)
 

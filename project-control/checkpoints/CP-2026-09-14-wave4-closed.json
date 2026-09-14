@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-14-wave4-closed",
+  "timestamp": "2026-09-14T03:31:10.338530+00:00",
+  "commit": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "Wave 4 closed 2-wide: M4-T018 (12-10 capture/reconciliation, 203rd) + M4-T019 (D-052 policy layer, 204th) accepted end-to-end (G0/G1 + G0/G3/G4 w/ both delta-attestations; 20/20 DCV rows PASS at restamped d752c09b under the verifier's four-condition pre-auth, all verified TRUE). Session also delivered: wave 3 (201st/202nd), D-050 amendments 1-2 + 3 archived research passes, D-051/D-052/D-054 captures, D-053 relaunch captured+verified NOT executed. NEXT: execute D-053 relaunch (runbook pointers in docs/WORKING_KNOWLEDGE.md); loop draws B3/B4/snapshot-update/C-district families; B7 last w/ the G3-A1 acceptance criterion. Nothing in flight.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-14T03:31:10.381448+00:00"
+}

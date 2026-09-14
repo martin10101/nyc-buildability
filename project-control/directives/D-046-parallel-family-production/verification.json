@@ -197,6 +197,82 @@
      "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T018",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "8f2059989c1646290b055de449a974a0b0f793c8fac77afb3068847628d08c0f",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-4 parallel slot 1: dispatch 9e89497a, isolated worktree pinned 293d6c03, sequential orchestrator integration (cherry-pick 00b28626, sha LF-verified).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "allowed_paths (one report file) provably disjoint from M4-T019's two services/api files; material commits touch only allowed files.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T019",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "634c209226edc3860ddf66f6dff7cb4fc392fb7103edab43d9933ccd6b2d817f",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-4 parallel slot 2: dispatch 9e89497a, isolated worktree pinned 293d6c03 (backend-engineer with the recorded claude-sonnet-5 override), sequential integration (cherry-pick a6c73ec0, shas LF-verified).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "allowed_paths (two new services/api files) provably disjoint from M4-T018's single report file.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
   }
  ]
 }

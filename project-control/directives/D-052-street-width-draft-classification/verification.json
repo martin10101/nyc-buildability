@@ -4,5 +4,104 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-052 requirements bind the non-ledger sentinel D-052-BOOTSTRAP (D-038..D-051 precedent; validator c5 forbids sentinel task_ids in task_verifications). The implementing ledger task(s) verify through their own DCV rows citing D-052 requirement ids. Capture-time artifacts for R008 (architect-doc closure entry, RQ-005 cross-reference) are evidenced in the capture commit and verified by the first DCV wave citing D-052. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-052",
+   "task_id": "M4-T019",
+   "applicable_requirement_ids": [
+    "D-052-R001",
+    "D-052-R002",
+    "D-052-R003",
+    "D-052-R004",
+    "D-052-R005",
+    "D-052-R006",
+    "D-052-R007"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "634c209226edc3860ddf66f6dff7cb4fc392fb7103edab43d9933ccd6b2d817f",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-052-R001",
+     "state": "PASS",
+     "evidence": [
+      "WIDE_THRESHOLD_FT=75.0 from the accepted classifier; exactly 75 = WIDE; precondition gate incl. exceptions_checked runs BEFORE thresholding on every path -> UNRESOLVED, never silently thresholded; boundary tests 74.99/75/75.01; verifier re-ran the 94-test suite + whole-tree ruff EXIT 0.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R002",
+     "state": "PASS",
+     "evidence": [
+      "AttestedPreconditions frozen dataclass with NO defaults (per-field default-is-MISSING assertion added as the G4 F1 correction, verifier-confirmed it catches mutation M6); nearest_centerline_only AND any unrecognized method fail closed; owner-approved-assumption wording only on issued classifications, 'never a verified NYC DCP guarantee'.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R003",
+     "state": "PASS",
+     "evidence": [
+      "One-sided-bound rule over the 24-class interpreted-bounds table (G3 verified row-by-row against the accepted classifier's parsing semantics); all 7 owner examples pass verbatim as literal tests against real classifier output; straddling classes -> UNRESOLVED with no endpoint pick; import-time + test exhaustiveness (len==24).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R004",
+     "state": "PASS",
+     "evidence": [
+      "Not-derivable classes -> UNKNOWN routed to map_resolution; module performs NO arithmetic on widths (structural absence of tolerance/averaging/rounding/endpoint-picking); a negative test pins each forbidden move (G4 mutation battery: all forbidden-move mutations caught).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R005",
+     "state": "PASS",
+     "evidence": [
+      "PolicyDecision carries the provenance quintuple on every decision including refusals; UNKNOWN records routed_to; G3's explicit R005 ruling: the qualitative class-derived interpreted-bounds representation SATISFIES the requirement (re-parsing would create a second drift-prone parser).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R006",
+     "state": "PASS",
+     "evidence": [
+      "UNKNOWN emitted as a first-class state distinct from UNRESOLVED and from the classifier's narrow_fail_closed disposition (dedicated non-leak test; the policy never reads the disposition field); no consuming rule wired; no fallback applied.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-052-R007",
+     "state": "PASS",
+     "evidence": [
+      "DRAFT-until-G6 label populated on all four decision paths; test suite covers thresholds, ranges, frontage-mismatch refusals, exceptions-unchecked; G4 test-adequacy PASS with a 10-probe mutation battery (9/10 caught -> F1 closed the survivor).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  }
+ ]
 }

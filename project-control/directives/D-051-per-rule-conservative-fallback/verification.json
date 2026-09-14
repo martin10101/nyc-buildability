@@ -4,5 +4,70 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-051 requirements bind the non-ledger sentinel D-051-BOOTSTRAP (D-038..D-050 precedent; validator c5 forbids sentinel task_ids in task_verifications). Future rule/consumer tasks verify through their own DCV rows citing D-051 requirement ids. No completion claim exists at capture time; R004/R006's capture-time artifacts (queue fold, archived report, corrected wording, owner reply) are evidenced in the capture commit and verified by the next DCV wave that cites D-051.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-051",
+   "task_id": "M4-T018",
+   "applicable_requirement_ids": [
+    "D-051-R001"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "8f2059989c1646290b055de449a974a0b0f793c8fac77afb3068847628d08c0f",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-051-R001",
+     "state": "PASS",
+     "evidence": [
+      "Bounded negatives throughout ('not located in X' with sources named); Allen St demapping marked unverified-lead-only from the discovery aid; two upstream narrative errors corrected with evidence instead of propagated.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-051",
+   "task_id": "M4-T019",
+   "applicable_requirement_ids": [
+    "D-051-R002",
+    "D-051-R003"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "634c209226edc3860ddf66f6dff7cb4fc392fb7103edab43d9933ccd6b2d817f",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-051-R002",
+     "state": "PASS",
+     "evidence": [
+      "Raw label + ambiguity_class + review-relevant provenance preserved end-to-end; unknown width never presented as verified narrow (non-leak test).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-051-R003",
+     "state": "PASS",
+     "evidence": [
+      "Module emits data states only - imports/wires no rule, applies no fallback; the per-rule fallback obligation is left to consuming rules (B7) with the type separation forcing it.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  }
+ ]
 }

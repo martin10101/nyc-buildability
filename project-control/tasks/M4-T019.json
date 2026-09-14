@@ -81,8 +81,8 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "classification semantics drift: the module must implement the D-052 text, not a paraphrase - G3 reviews code-vs-directive fidelity line by line",
     "precondition theater: attestation flags that callers can trivially default to true would gut R002 - the type design must force explicit caller assertions with provenance",
@@ -91,7 +91,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T02:06:32.461047+00:00",
-  "updated_at": "2026-09-14T02:40:49.918241+00:00",
+  "updated_at": "2026-09-14T03:30:54.078341+00:00",
   "directive_refs": [
     {
       "directive_id": "D-052",
@@ -168,5 +168,7 @@
       "status": "rework",
       "message": "G4 verdict PASS with ONE blocking required correction (qa-engineer, reviewed at 859b34c9, 10-probe mutation battery 9/10 caught): F1 MEDIUM - mutation M6 survived (a default on the LAST AttestedPreconditions field, e.g. exceptions_checked: bool = True, compiles, keeps zero-arg construction raising, and leaves all 93 tests green - silent default on the R001 exceptions gate). Required fix: dataclasses.fields() no-default/no-default_factory assertion over every field. Applying as tagged ORCH-CORRECTED test addition; delta-attestation from BOTH T019 reviewers (G3 identity also moves) then gate records at the corrected head. G3 was PASS (R005 ruling: qualitative interpreted-bounds SATISFIES; advisories A1-A4 to B7, A1 elevated to B7 acceptance criterion). F2/F3 advisory only"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T03:30:54.078341+00:00"
 }
