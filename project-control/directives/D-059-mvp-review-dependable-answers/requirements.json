@@ -79,7 +79,8 @@
       "applicability": {
         "task_ids": [
           "D-059-BOOTSTRAP",
-          "M5-T027"
+          "M5-T027",
+          "M5-T028"
         ],
         "task_types": [],
         "milestones": [],

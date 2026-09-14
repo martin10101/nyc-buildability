@@ -1,0 +1,126 @@
+{
+  "task_id": "M5-T028",
+  "title": "Dependable answers 2 (D-059-R003 completion): remove the hardcoded ZR 23-21 section label from the five live-wired scenario-analysis modules (derive/breakeven/comparison/ranking/sensitivity)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Complete D-059-R003 across the scenario-analysis surface the M5-T027 packet could not reach. The accepted M5-T027 fix derived the cap section label from the actually-evaluated rule in constants.py/builder.py, but five sibling modules - all reachable through the LIVE scenario_analysis.py endpoint (main.py mounts scenario_analysis_v1_router) - still hardcode 'ZR 23-21' regardless of the district family evaluated: derive.py:82 (DERIVED_RANGE_LABEL, emitted UNCONDITIONALLY as the label of every derived_practical_usable_range document - not a fallback), breakeven.py:155, comparison.py:118 and :129, ranking.py:114, and sensitivity.py:128. Requirement: the displayed ZR section reference in each of these surfaces must be DERIVED from the rule actually evaluated for the subject property (the R6-R12 family cites ZR 23-22), reusing the M5-T027 derivation seam rather than introducing a second mechanism; where a surface genuinely has no evaluated-rule context available at the point the string is built, it must either take the derived value from its caller or state the section generically WITHOUT naming a specific ZR section - never assert 23-21 by default. Keep every other word of these labels intact (they are reviewed provenance prose): this is a section-reference correction, not a rewrite. Response schema shape and enums stay byte-compatible (packages/** FORBIDDEN; the contracts-typegen and contracts-schema-bundle CI jobs must stay green) and no rule file is touched. Add tests asserting the derivation for BOTH a low-density (23-21) and an R6-R12 (23-22) district on each affected document, hand-derived from the real ruleset files rather than by calling the code under test. Zero new dependencies. Producer report to project-control/reports/M5-T028-producer-report.md.",
+  "business_reason": "M5-T027 G3 advisory A1 (independent reviewer): the D-059-R003 stale-label defect class is only partially resolved - five modules reachable through the live scenario_analysis.py endpoint still hardcode 'ZR 23-21' regardless of the district family actually evaluated, and derive.py's DERIVED_RANGE_LABEL is emitted unconditionally on every derived_practical_usable_range document. Closing this is required before R003 can be claimed resolved project-wide",
+  "inputs": [
+    "project-control/reports/M5-T027-G3-code-review.md advisory A1 (the finding, with the exact file:line list and the live-wiring proof) - READ-ONLY",
+    "services/api/app/scenario/constants.py + builder.py at the accepted M5-T027 identity (the derivation seam to REUSE: _residential_far_family_label / coverage_matrix_rows / _cap_citation_section) - READ-ONLY",
+    "services/api/app/rules/rulesets/r6_r12_residential_far.rule.json and the R5 pilot ruleset (the citation values tests must be hand-derived from) - READ-ONLY",
+    "services/api/app/api/v1/scenario_analysis.py (the live wiring that makes these surfaces user-visible) - READ-ONLY"
+  ],
+  "outputs": [
+    "derive.py, breakeven.py, comparison.py, ranking.py, sensitivity.py: section reference derived from the evaluated rule (or generic where no rule context exists), provenance prose otherwise unchanged",
+    "tests covering both district families per affected document surface",
+    "project-control/reports/M5-T028-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T027"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/derive.py",
+    "services/api/app/scenario/breakeven.py",
+    "services/api/app/scenario/comparison.py",
+    "services/api/app/scenario/ranking.py",
+    "services/api/app/scenario/sensitivity.py",
+    "services/api/tests/scenario/test_scenario_derive.py",
+    "services/api/tests/scenario/test_scenario_breakeven.py",
+    "services/api/tests/scenario/test_scenario_comparison.py",
+    "services/api/tests/scenario/test_scenario_ranking.py",
+    "services/api/tests/scenario/test_scenario_sensitivity.py",
+    "project-control/reports/M5-T028-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/**",
+    "services/api/app/scenario/constants.py",
+    "services/api/app/scenario/builder.py",
+    "services/api/app/scenario/unused_floor_area.py",
+    "services/api/app/connectors/**",
+    "services/api/app/rules/**",
+    "services/api/app/api/**",
+    "services/api/pyproject.toml",
+    "services/api/requirements.in",
+    "services/api/requirements.txt",
+    "apps/web/**",
+    "tools/**",
+    ".github/**",
+    ".claude/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "derived_range_label_follows_the_evaluated_rule",
+      "input": "derived_practical_usable_range built for a low-density district and for an R6-R12 district",
+      "expected": "the emitted label names ZR 23-21 in the first case and ZR 23-22 in the second (or is generic where no rule context reaches the builder) - never a hardcoded 23-21 for an R6-R12 property; expected strings hand-derived from the ruleset files"
+    },
+    {
+      "id": "S2",
+      "case": "four_sibling_surfaces_corrected",
+      "input": "breakeven, comparison (both sites), ranking, sensitivity documents for both district families",
+      "expected": "each surface's section reference follows the evaluated rule or is generic; no residual hardcoded 'ZR 23-21' remains in any of the five modules (grep-asserted in a test)"
+    },
+    {
+      "id": "S3",
+      "case": "provenance_prose_preserved",
+      "input": "diff of the five modules",
+      "expected": "only the section reference changes; the surrounding reviewed provenance wording (DRAFT labelling, transported-verbatim statements, typed-assumption language) is byte-identical apart from the reference itself"
+    },
+    {
+      "id": "S4",
+      "case": "scope_schema_and_regression",
+      "input": "git diff + suites",
+      "expected": "exactly the allowed files; full scenario suite green; contract suite green (response schema/enums byte-compatible, no packages/** change); ruff clean; modularity 0 failures; zero new dependencies"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-14T09:17:46.363419+00:00",
+  "updated_at": "2026-09-14T09:17:46.634848+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-059",
+      "requirement_ids": [
+        "D-059-R003"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T09:17:46.363419+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/scenario -q",
+    "python -m pytest services/api/tests/scenario/test_scenario_contract.py -q",
+    "python -m ruff check services/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "Opened directly from the M5-T027 G3 advisory A1 (independent reviewer finding), not from a producer self-report; closes the D-059-R003 defect class project-wide.",
+    "Scope is disjoint from the concurrent M4-T021 connectors lane and from M5-T027's own files (which are forbidden here) - D-046-R002 satisfied by construction."
+  ]
+}

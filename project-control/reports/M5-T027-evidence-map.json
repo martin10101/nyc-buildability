@@ -2,7 +2,8 @@
   "task_id": "M5-T027",
   "prepared_by": "orchestrator",
   "prepared_at": "2026-09-14",
-  "material_commit": "bb1b37b8 (cherry-pick of producer commit b57998a6, byte-identical)",
+  "material_commit": "77558eb5 (the cherry-pick of producer commit b57998a6; byte-identical on all five contracted code/test files)",
+  "material_commit_correction": "[ORCH-CORRECTED per M5-T027-G3 material-commit-identity finding] This field originally named bb1b37b8. The G3 reviewer correctly established that bb1b37b8 is the FOLLOW-UP integration seam commit (it touches only project-control/state.json and tasks/M4-T021.json) and that the content commit is its parent 77558eb5. The reviewer independently confirmed `git diff b57998a6 77558eb5` is empty across the five contracted code/test files. Correction is to a claim document only: M5-T027-evidence-map.json is not in the task's allowed_paths, so the material-identity manifest is unaffected and no rework/resubmit cycle is triggered.",
   "requirements": {
     "D-059-R001": [
       "services/api/app/scenario/constants.py (+169/-57 across the label surface): the unused-floor-area number is now presented as a limited comparison of RECORDED data - the existing-area input is named as PLUTO's recorded gross building area (condo semantics differ) and is explicitly stated NOT to be a verified ZR 12-10 zoning-floor-area figure; wording that called the result a zoning-floor-area difference or implied unused legal development rights is removed, and the preconditions a genuine rights calculation would additionally require (a compatible existing zoning-area input + confirmed zoning-lot extent) are stated.",
