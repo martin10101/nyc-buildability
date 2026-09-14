@@ -37,3 +37,15 @@ Ruling: **leave as-is now; do not split.** Raw line count is 754 against thresho
 ## Final verdict
 
 **CONFIRMED.** F1 and F2 are genuinely resolved by the rework, reproduced independently rather than taken on trust; G4's provenance finding is independently verified correct and its fix complete; scope, regression, and tooling evidence all reproduce exactly as claimed at `432ed8f3`. Original PASS-with-corrections rulings on all untouched dimensions carry forward unchanged.
+
+---
+
+## Identity-carry attestation at head `d9ac9596` (after the [ORCH-CORRECTED] NB-5 docstring fix)
+
+> Saved VERBATIM from the same code-reviewer agent, resumed again (2026-09-14).
+
+Confirmed at `d9ac9596`: the diff from `432ed8f3` touches only `wide_street_buffer_engine.py` (11 insertions / 3 deletions, exactly as claimed), entirely inside the `Ec5AttestedPreconditions` docstring (a triple-quoted string block — no code token outside a comment/docstring is touched); the test file and every forbidden path (6 connectors, `rules/**`, dependency files) diff empty across `432ed8f3..d9ac9596`. Module still compiles (`py_compile` clean), and behavior is unchanged: 792/792 tests pass, ruff clean, modularity still `failures 0` with the same single `wide_street_buffer_engine.py` warning I already ruled on (file now 762 raw lines, still comfortably under the 750-SLOC justify tier on the tool's real metric and still 0 failures).
+
+The new wording is accurate against the gate I verified myself from source, not restated on trust: it correctly names `STATUS_PRECONDITIONS_NOT_ATTESTED` as the refusal state and correctly describes the mirrored `dcm_street_width_policy` `DECISION_UNRESOLVED` mechanism — matching exactly what I independently read at `dcm_street_width_policy.py:337-364,384-402` and exactly what I confirmed the gate code does at `wide_street_buffer_engine.py:628-661` in my prior pass. It also correctly preserves the superseded sentence as superseded rather than deleting it, consistent with the project's non-silent-correction discipline. I concur with the orchestrator's ruling over G4's NB-5 grading: a docstring asserting the literal opposite of a module's actual legal-attestation gating behavior is exactly the class of false-permanent-claim defect I treated as blocking for my own F2, so treating it the same way here is the right call, not an inconsistency.
+
+CONFIRMED — verdict and modularity ruling (leave as-is now, no split; B7/override-table logic must land as its own module, never inside this file) both carry unchanged to head `d9ac9596`.
