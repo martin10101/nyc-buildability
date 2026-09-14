@@ -1,0 +1,120 @@
+{
+  "task_id": "M5-T026",
+  "title": "Default-on internal surfaces (D-057): additive INTERNAL_RULE_EVAL_DEFAULT_ON gate mode + operator checklist note",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Implement D-057 exactly: (R001) add server-read INTERNAL_RULE_EVAL_DEFAULT_ON (TRUE_TOKENS rule; an absent, empty, or unrecognized value counts as false; NEVER NEXT_PUBLIC_) in apps/web/src/lib/rule-evaluation.ts and extend ruleEvaluationSurfaceEnabled to: main flag off -> off (unchanged); param explicit true token -> on (bookmarks); param PRESENT without a true token (incl. 'off') -> off (kill switch, unchanged); param ABSENT -> on iff the new var holds a true token. (R002) ZERO behavior change where the new var is unset: no e2e file edited, no harness change, var-absent rows in the unit matrix prove old semantics byte-for-byte. (R003) docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md gains the OPTIONAL new var (web service only; §2-adjacent placement; what it does; the exposure-consequence sentence - with it set, anyone holding the URL sees the full internal flow on the plain URL; ?ruleeval=off stays the kill switch; server-read = env save + automatic restart suffices, no rebuild). Update the rule-evaluation.ts module comment block (factor 2 description) and the stale page.tsx docstring line so docs match the implemented semantics. Full unit matrix in apps/web/src/lib/__tests__/rule-evaluation.test.ts over (main flag x default-on var x param {absent, on, off, garbage, array}) with every fail-safe row explicit. Zero new dependencies. Producer report to project-control/reports/M5-T026-producer-report.md.",
+  "business_reason": "Owner order: plain URL must work on the internal deploy without ?ruleeval=on (D-057-R001..R003); additive design preserves every existing consumer (R002)",
+  "inputs": [
+    "project-control/directives/D-057-ruleeval-default-on/source-001.md + requirements.json (the spec incl. the recorded design decision - READ-ONLY)",
+    "apps/web/src/lib/rule-evaluation.ts current two-factor gate + TRUE_TOKENS (the code being extended)",
+    "apps/web/e2e/rule-evaluation-flag-off.spec.ts + playwright.config.ts (consumers that MUST keep working unchanged - READ-ONLY)"
+  ],
+  "outputs": [
+    "extended rule-evaluation.ts (new env-var constant + three-way param semantics + updated comments)",
+    "full gate matrix in rule-evaluation.test.ts",
+    "page.tsx docstring aligned",
+    "checklist optional-var section",
+    "project-control/reports/M5-T026-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/lib/__tests__/rule-evaluation.test.ts",
+    "apps/web/src/app/property/page.tsx",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md",
+    "project-control/reports/M5-T026-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/e2e/**",
+    "apps/web/playwright.config.ts",
+    "apps/web/src/components/**",
+    "apps/web/src/lib/rule-evaluation-api.ts",
+    "apps/web/package.json",
+    "package-lock.json",
+    "packages/**",
+    "services/api/**",
+    "tools/**",
+    ".github/**",
+    ".claude/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "gate_matrix_complete",
+      "input": "vitest over rule-evaluation.test.ts",
+      "expected": "matrix rows: main flag off -> off for EVERY combination; flag on + param 'on' -> on regardless of new var; flag on + param present non-true ('off', '0', 'banana', empty string, array forms) -> off regardless of new var; flag on + param ABSENT -> on iff new var true token; new var absent/empty/garbage -> false; whitespace/case handling mirrors TRUE_TOKENS"
+    },
+    {
+      "id": "S2",
+      "case": "additive_zero_regression",
+      "input": "git diff + var-absent matrix rows",
+      "expected": "no e2e or config file in the diff; with INTERNAL_RULE_EVAL_DEFAULT_ON unset every input maps to the pre-change output (explicit equivalence rows); existing tests in the file stay green unmodified where they encode var-absent behavior"
+    },
+    {
+      "id": "S3",
+      "case": "docs_honest",
+      "input": "checklist + comments review",
+      "expected": "checklist names the exact var, web-service-only placement, the exposure consequence, kill-switch survival, and no-rebuild note; rule-evaluation.ts comment block and page.tsx docstring describe the implemented semantics (no stale two-factor text)"
+    },
+    {
+      "id": "S4",
+      "case": "scope_and_safety",
+      "input": "git status + review",
+      "expected": "exactly the 5 allowed files; both env vars stay server-read (no NEXT_PUBLIC_ anywhere in the diff); zero new dependencies; CI web + web-e2e on the pushed head green (executable authority - thin client)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "semantic drift: present-but-invalid param must stay OFF (kill-switch class) - flipping it to default-on would silently weaken the kill switch",
+    "e2e coupling: any edit outside the 5 files (esp. e2e/harness) violates D-057-R002 and fails the packet",
+    "doc rot: shipping the mode without the checklist note leaves the owner runbook wrong (R003 is a deliverable, not a nicety)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T05:57:14.460749+00:00",
+  "updated_at": "2026-09-14T07:40:00+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-057",
+      "requirement_ids": [
+        "D-057-R001",
+        "D-057-R002",
+        "D-057-R003"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T05:57:14.460749+00:00",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client); no local npm runner exists on this machine",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "D-057 execution: parallel disjoint packet (loop on M4-T020 services/api; M5-T025 producer already returned - concurrent writers 2/3, D-046). No file overlap with M5-T025's 9 files.",
+    "Producer frontend-engineer; D-047-R001 claude-sonnet-5 via dispatch override (deviation recorded in G0 report).",
+    "WORKTREE: producer isolated, reset to contract HEAD, show-toplevel guard mandatory; no npm install ever (thin client)."
+  ],
+  "worktree": "wt-m5t026"
+}
