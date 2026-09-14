@@ -70,7 +70,15 @@ results received and archived at `docs/research/owner-research/NYC_Buildability_
 (discovery aid ONLY, R002); RQ-003/RQ-004 stamped ANSWERED, RQ-005 answered-in-part (residual:
 the DCM field-level width convention — DCP Technical Review / Borough Topo Office is the named
 target); no conflict with any accepted rule value; wave-4 packets should consult it FIRST to
-cut discovery time, then capture officially.** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
+cut discovery time, then capture officially.** **D-051 (captured post-wave-3 by the build
+session): owner corrected two build-session claims and bound wave-4 engineering — (1) bounded
+negatives only ("not located in examined sources", never "the city never documented it");
+(2) unknown street width keeps factual status UNKNOWN, and every conservative fallback is
+validated PER CONSUMING RULE (§23-431 street-wall placement is the counterexample proving
+fail-closed-to-narrow is NOT universally conservative; the accepted FAR rule remains the one
+validated case) — every A2 rule packet consuming width classification MUST carry a per-rule
+conservative-direction analysis or keep assumption/review labels (cite D-051:R002,R003); the
+RQ-005 independent-confirmation report is archived in owner-research/ (aid only).** **AMENDMENT 2 (R006, @ 920110be) — IMMEDIATE UPDATE + COMPACT CLOSURE +
 PHONE ACCESS: the pushed branch's docs/RESEARCH_REQUESTS.md is the owner's phone-readable copy
 (GitHub URL in the doc header) — every queue change commits AND pushes in the same working step,
 never dirty-local or batched; owner-returned results are stamped ANSWERED (date + named

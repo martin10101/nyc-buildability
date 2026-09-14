@@ -1,0 +1,65 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-051",
+ "version": 1,
+ "slug": "per-rule-conservative-fallback",
+ "title": "Owner 2026-09-13: two corrections of build-session claims (bounded-negative evidence discipline; 'unknown means narrow is always safe' is FALSE) + binding instruction: unknown street width keeps factual status UNKNOWN and every conservative fallback is validated per consuming rule (23-431 street-wall counterexample); RQ-005 independent-confirmation research handoff received (discovery aid).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T22:05:00+00:00",
+ "created_at": "2026-09-13T22:05:00+00:00",
+ "updated_at": "2026-09-13T22:05:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "418b078f04f1c8fb753eb52f0e8074fc9764da00",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner pasted the correcting review + instruction verbatim into the live build session 2026-09-13 immediately after the wave-3 close and the first D-050 research return (source-001.md #owner-message-verbatim)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-051-R001",
+  "D-051-R002",
+  "D-051-R003",
+  "D-051-R004",
+  "D-051-R005",
+  "D-051-R006"
+ ],
+ "requirements_content_digest_sha256": "da6af7c8f30aca6178fd26bcda00ed3822fe786ffbf6ccfc939ddd5f73e0cc55",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T22:05:00+00:00",
+   "content_digest_sha256": "ed1b8cdfe7c27d7d83da2d0ba44d00c28761f87f0d11c0b29b56697c43610fa4"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "engineering_correction_and_research_receipt",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "evidence-discipline correction (bounded negatives); unknown-width factual-status preservation; per-consuming-rule conservative-fallback validation with assumption/review labels until validated; RQ-005 fold + refined residual; classification-policy proposal routed to OQ-3 interpretation only",
+  "prohibited": "presenting bounded-search negatives as universal negatives; presenting unknown width as verified narrow; adopting a width-classification policy for ambiguous classes without the OQ-3/G6-class ruling; treating 'research ANSWERED' as implemented or professionally approved; citing the archived discovery-aid reports as provenance"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T22:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "D-051 captured verbatim by the build session (owner issued it here directly); peer session acknowledged the id claim and holds D-052+ for its own channel. Companion research report archived at docs/research/owner-research/RQ005_Independent_Confirmation_2026-09-13.md (discovery aid, D-050-R002). Capture commit also carries the R004 queue fold + R006 wording correction."
+  }
+ ]
+}

@@ -107,18 +107,30 @@ history). The active queue never carries figured-out material.
   PDF page 24 byte-read: `StreetWidth_Min` (alias `StreetWidth`), Double, verbatim "Formerly
   known as StreetWidth, this represents the narrowest width, in feet, of the paved area of the
   street." (PDF sha256 `b98255a2…`) — confirms M4-T013's paved-vs-mapped finding; Geoclient
-  width stays KILLED for legal use. **(1) REMAINS OPEN (honest gap, confirmed real):** the
-  research checked BOTH the metadata PDF (page 4) AND the shapefile's embedded XML — the
-  `Streetwidt` field has NO field-level definition anywhere recovered ("width 50" is string
-  capacity, not feet); dataset-level "official street names and widths from the Official City
-  Map" supports mapped-width intent but the exact geometric convention
-  (property-line-to-property-line; variable-width handling; nonnumeric encodings) is
-  undocumented. **Residual authoritative target:** DCP Technical Review / the relevant Borough
-  Topographical Office field convention, or the applicable City Map alteration for ambiguous
-  segments. **Verification target:** the B2-hardening/G6-package task makes its own recorded
-  captures of the DCM metadata PDF + LION 26C PDF (shas above make that cheap) and keeps the
-  connector fail-closed-to-narrow until (1) resolves; the ambiguity POLICY itself stays OQ-3 /
-  architect-doc (interpretation, untouched here).
+  width stays KILLED for legal use. **(1) REMAINS OPEN — refined 2026-09-13 by the owner's
+  independent-confirmation pass**
+  (`docs/research/owner-research/RQ005_Independent_Confirmation_2026-09-13.md`, D-051-R004):
+  what IS now supported by official evidence — DCM records **mapped** street widths ("Mapped
+  street widths (usually includes sidewalks)" per DCP's own application text), intended display
+  units are **feet**, and the field-definition absence is thorough (no `attrdef` in the PDF or
+  embedded XML, and the width entry in DCP's metadata-authoring file is name+type only across
+  14 historical versions). Observed data profile: 54,051 records, 6,908 (12.8%) non-plain-
+  numeric (`n/a` 2,954; `Unknown` 1,401; `>80` 368; `>75` 364; `60-75`, `~75`,
+  `Width Irregular`, `Unknown but >75` …), some on records marked Mapped_St/City_St. What
+  remains open — stated precisely: measurement boundaries (which mapped lines), variable-width
+  representation (min/max/nominal/where-measured), and the authoritative interpretation of the
+  nonnumeric encodings. **This is "no field-level definition located in the examined official
+  sources" — NOT "never documented anywhere" (D-051-R001).** **Closure evidence:** a written
+  DCP specification — dataset contact `DCPOpendata@planning.nyc.gov`, inquiry text drafted in
+  the archived report (owner-side outreach) — and/or, per specific frontage, the effective
+  adopted Section/Alteration Map (Borough President topographical bureau per current City Map
+  guidance). **Handling until closed (D-051-R002/R003):** unknown/ambiguous width keeps
+  factual status UNKNOWN with its class + review flag; conservative fallbacks are validated
+  PER CONSUMING RULE (narrow is validated-safe for the accepted wide-street FAR rule, but NOT
+  universally — §23-431 street-wall placement is the counterexample). The researcher's
+  proposed DRAFT classification table is routed as INPUT to the OQ-3 interpretation process
+  (D-051-R005), never adopted in-task. The B2-hardening/G6-package task still makes its own
+  recorded captures of the DCM metadata PDF + LION 26C PDF (shas above make that cheap).
 
 ---
 
