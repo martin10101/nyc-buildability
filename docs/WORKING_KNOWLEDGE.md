@@ -93,3 +93,26 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   `scratchpad/relaunch_m4t020.ps1` pattern (new packet path/branch/run-id each time).
 - Wave-5 queue after M4-T020: B4 buffer engine, zr-12-10 snapshot-update task, C-district
   families 1–3, B7 wiring LAST (G3-A1 acceptance criterion).
+
+## D-043 owner walkthrough findings (2026-09-14, live Render deploy)
+
+- Deploy WORKS end-to-end on the owner's device: web service created by hand per the
+  checklist; `?ruleeval=on` address flow resolves live (CORS correct), confirm card +
+  property profile + provenance disclosures render. This is the D-043-R001 evidence leg
+  (owner-confirmed live URL). Real URLs stay out of repo/chat per D-043-R002.
+- **Finding 1 (confirmed, candidate packet): provenance panel has no outbound source link.**
+  `ProvenanceDisclosure.tsx` renders `source_id` (internal slug e.g. nyc-dcp-pluto-soda),
+  `dataset_id`, and only `urlHost(request_url)` as TEXT. A safe clickable link is
+  constructible TODAY without reflecting any server string: constant allowlisted host +
+  validated dataset-id token → `https://data.cityofnewyork.us/d/<dataset_id>` (same
+  constant-prefix + validated-token pattern as the ZoLa link, G5 F-1 discipline). Small
+  focused web packet; same treatment applies to RuleEvaluationResult.tsx line ~135.
+- Finding 2 (pending owner retest): lot-outline map shows gray panel — outline may just be
+  SMALL (fitBounds maxZoom 18 caps a single tax lot to fingernail size; no basemap is
+  deliberate, none admitted). Owner to scroll-zoom center; if truly absent → defect packet
+  (console evidence requested). Polish candidates if present: higher maxZoom for small lots,
+  basemap admission (needs G5 source admission).
+- Finding 3 (pending owner retest): ZoLa `/bbl/<bbl>` link verified correct
+  (docs/design/zola-deeplink-url-confirmation.md); blank page = the Ember SPA's slow boot
+  (serves white shell, client-side redirect). Owner to wait/reload; if permanently blank,
+  re-verify live.
