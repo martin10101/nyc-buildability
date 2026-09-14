@@ -1,0 +1,133 @@
+{
+  "task_id": "M4-T020",
+  "title": "B3 DCM centerline geometry parse-and-expose: sibling measurement module typing the polyline geometry already arriving on the accepted transport's wire (EPSG:2263, CRS-validated, fail-closed)",
+  "task_type": "backend",
+  "milestone_id": "M4",
+  "objective": "Implement B3 per the accepted M4-T016 A2 research (Part 4.3 item 1, Parts 2.3/3.1): a NEW sibling measurement module services/api/app/connectors/dcm_street_centerline_geometry.py (the mappluto_lot_outline.py-beside-mappluto_geometry_arcgis.py precedent) plus its test file, parsing, CRS-validating, and typing the esriGeometryPolyline geometry that ALREADY arrives on the accepted DCM transport's segment-query wire (returnGeometry defaults TRUE; the accepted parse_segment_page deliberately discards geometry and stays byte-unchanged). Contract: (1) parse features[].geometry.paths from the same page body the accepted transport fetches - typed polylines (tuples of finite (x,y) floats), multi-path segments preserved, paired with the segment's identity/attributes; reuse the accepted module's fetch/validation surfaces by READ-ONLY import - never re-implement transport, never issue a second fetch for the same page; (2) CRS fail-closed - the response spatialReference must be wkid 102718 / latestWkid 2263 (EPSG:2263, US survey feet, per M4-T016 Part 2.3 evidence); anything else or absent -> typed error, NEVER assumed or reprojected; this is the MEASUREMENT-grade sibling (display-only 4326 stays mappluto_lot_outline's job); (3) geometry-validity taxonomy per the mappluto_geometry_arcgis precedent - feature with attributes but null/missing geometry, empty paths, path with <2 points, non-numeric or non-finite coordinates are each a TYPED state/error, never a silent drop (B4's buffer correctness depends on absence being visible); (4) values pass through untouched - no rounding, simplification, averaging, or unit conversion; (5) provenance carried per output (source layer/version fields the transport exposes, retrieval identity, raw-body digest passthrough); (6) zero new dependencies; accepted connector modules all READ-ONLY. Producer report saved to project-control/reports/M4-T020-producer-report.md.",
+  "business_reason": "D-045 A2 geometry lane (M4-T016 Part 4.3 item 1: B3 depends on nothing new, blocks B4); first wave-5 packet, executed by the relaunched codex loop per D-053",
+  "inputs": [
+    "project-control/reports/M4-T016-a2-geometry-mechanics-research.md Part 2.3 (CRS/unit evidence: wkid 102718/latestWkid 2263, US survey foot), Part 3.1 (DCM connector fit: geometry arrives, parse discards), Part 4.3 item 1 (the B3 contract this packet pins) - READ-ONLY",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py (accepted M4-T015 transport: fetch/validation/error taxonomy + source-version fields to reuse by import - READ-ONLY, NEVER modified)",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py (accepted geometry-validity taxonomy + CRS-validation precedent - READ-ONLY)",
+    "services/api/tests/connectors/test_dcm_street_centerline_arcgis.py + test_mappluto_geometry_arcgis.py (accepted test/fixture patterns - READ-ONLY)"
+  ],
+  "outputs": [
+    "services/api/app/connectors/dcm_street_centerline_geometry.py (NEW sibling measurement module: typed polyline geometry, CRS fail-closed EPSG:2263, validity taxonomy, provenance passthrough)",
+    "services/api/tests/connectors/test_dcm_street_centerline_geometry.py (NEW: wire-format parse, multi-path, CRS refusals, malformed-geometry taxonomy, passthrough-integrity, provenance schema)",
+    "project-control/reports/M4-T020-producer-report.md (producer evidence report)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/connectors/dcm_street_centerline_geometry.py",
+    "services/api/tests/connectors/test_dcm_street_centerline_geometry.py",
+    "project-control/reports/M4-T020-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/app/connectors/dcm_street_width_classifier.py",
+    "services/api/app/connectors/dcm_street_width_policy.py",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/connectors/mappluto_lot_outline.py",
+    "services/api/app/rules/**",
+    "services/api/tests/fixtures/**",
+    "apps/web/**",
+    "packages/**",
+    "tools/**",
+    ".github/**",
+    "docs/**",
+    ".claude/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json",
+    "services/api/pyproject.toml",
+    "services/api/uv.lock",
+    "package-lock.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "wire_format_parse_and_typing",
+      "input": "pytest over the new test file with documented esriGeometryPolyline page bodies",
+      "expected": "features[].geometry.paths become typed polylines of finite (x,y) float pairs; multi-path segments preserved as distinct paths; each polyline is paired with its segment identity/attributes from the SAME page body; the accepted transport is reused by import (no duplicated HTTP/query building beyond documented reuse)"
+    },
+    {
+      "id": "S2",
+      "case": "crs_fail_closed",
+      "input": "tests with missing, absent-wkid, and wrong-wkid spatialReference variants",
+      "expected": "only wkid 102718 / latestWkid 2263 is accepted; anything else -> typed CRS error naming expected vs received; no assumed-CRS path, no reprojection path, no unit conversion anywhere in the module"
+    },
+    {
+      "id": "S3",
+      "case": "malformed_geometry_taxonomy",
+      "input": "tests for null geometry, empty paths, single-point path, non-numeric and NaN/Infinity coordinates",
+      "expected": "each condition is a distinct TYPED state or error (mappluto_geometry_arcgis taxonomy precedent); a feature with attributes but no usable geometry is VISIBLE in the result, never silently dropped; no partial-polyline repair or coordinate coercion"
+    },
+    {
+      "id": "S4",
+      "case": "passthrough_integrity_and_provenance",
+      "input": "value-integrity + output-schema tests",
+      "expected": "coordinate values byte-faithful to the wire JSON (no rounding/simplification/averaging); every output carries provenance (source layer/version fields, retrieval identity, raw-body digest passthrough from the transport surfaces)"
+    },
+    {
+      "id": "S5",
+      "case": "scope_and_regression",
+      "input": "git status + documented commands",
+      "expected": "exactly the three allowed files created/modified; every accepted connector byte-unchanged; python -m pytest services/api/tests/connectors green (accepted suite + new file); python -m ruff check services/api EXIT 0; python tools/modularity_check.py --check PASS; zero new dependencies"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "transport drift: re-implementing fetch/query/validation instead of importing the accepted surfaces would fork the connector discipline - G3 reviews reuse fidelity",
+    "silent geometry loss: dropping features whose geometry is missing/malformed would corrupt B4's buffer inputs downstream - absence must be a typed, visible state",
+    "CRS/unit integrity: any assumed CRS, reprojection, or unit conversion breaks the EPSG:2263 measurement chain (M4-T016 Part 2.3); fail closed only",
+    "loop DL-2: the worker checkpoint must carry the FULL 40-hex starting_sha or empty string - an abbreviated sha gets the checkpoint refused (work survives; known benign pattern)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T03:57:40.898040+00:00",
+  "updated_at": "2026-09-14T03:58:46+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T03:57:40.898040+00:00",
+  "documented_test_commands": [
+    "python -m pytest services/api/tests/connectors/test_dcm_street_centerline_geometry.py",
+    "python -m pytest services/api/tests/connectors",
+    "python -m ruff check services/api",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "LOOP PACKET (first wave-5 packet under D-053): executed by the codex-loop worker, not an Agent-tool dispatch. allowed_paths are EXACT FILES deliberately (trailing-slash dirs never match under policy.py path_matches; allowed wins over forbidden, so scope stays narrow).",
+    "documented_test_commands are single clean segments run from the repo root (closed command profile M0-T149: no cd/&&/quoting/redirection). Worker: run them through the Bash tool - the broker classifies PowerShell invocations as unclassifiable and defers them to an ASK.",
+    "Checkpoint contract: starting_sha must be the FULL 40-hex commit sha or the empty string; an abbreviated sha is refused by the controller (exact-match, fail-closed) - the known DL-2 pattern.",
+    "Worker model comes from C:/SupervisorController/model_selection.toml within the immutable config.toml allowlist [claude-fable-5, claude-opus-4-8]. D-047-R001 (claude-sonnet-5 producers) is NOT satisfiable inside the loop because sonnet-5 is not on the owner's allowlist - per D-053-R004 a blocked allowlist is an OWNER SETTINGS ITEM, never a bypass; deviation recorded in the G0 report and at the owner seam.",
+    "The accepted transport module dcm_street_centerline_arcgis.py is byte-immutable (sibling-module pattern, M4-T016 G1 advisory 5 precedent); reuse is READ-ONLY import. mappluto_lot_outline stays the display-only 4326 surface; THIS module is measurement-grade EPSG:2263 and never serves display."
+  ],
+  "worktree": "wt-m4t020"
+}

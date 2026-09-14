@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:35:34+00:00",
  "created_at": "2026-09-13T04:35:34+00:00",
- "updated_at": "2026-09-14T02:08:15+00:00",
+ "updated_at": "2026-09-14T03:58:46+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "9f0f202f9cad4b25d9bad1b41d767854e352661b",
@@ -28,7 +28,7 @@
   "D-046-R004",
   "D-046-R005"
  ],
- "requirements_content_digest_sha256": "3903932ecd0c3c2f261d13dee3c1dc567d3d981efa840ff98a30b4fbcf82b028",
+ "requirements_content_digest_sha256": "4536a16c9a7d75edbd15510d7dad21a12aba1f690d248271dbaede81a438468c",
  "sources": [
   {
    "file": "source-001.md",
@@ -101,6 +101,12 @@
    "actor": "orchestrator",
    "action": "applicability_append",
    "note": "Bound wave-4 tasks M4-T018 + M4-T019 (2-wide, pairwise-disjoint scopes) to D-046-R001/R002 (append-only). Digest resynced 56212b57 -> 3903932e in the SAME commit."
+  },
+  {
+   "at": "2026-09-14T03:58:46+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound wave-5 ledger task M4-T020 (B3 build; single writing producer - the relaunched codex-loop worker - so disjointness is trivially satisfied; nothing else in flight) to D-046-R001/R002 (append-only, task_ids only). Digest resynced 3903932e -> 4536a16c in the SAME commit (c14)."
   }
  ]
 }
