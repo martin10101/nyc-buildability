@@ -87,7 +87,7 @@
     "qa-engineer"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 25,
   "risks": [
     "transport drift: re-implementing fetch/query/validation instead of importing the accepted surfaces would fork the connector discipline - G3 reviews reuse fidelity",
     "silent geometry loss: dropping features whose geometry is missing/malformed would corrupt B4's buffer inputs downstream - absence must be a typed, visible state",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T03:57:40.898040+00:00",
-  "updated_at": "2026-09-14T04:03:02.454048+00:00",
+  "updated_at": "2026-09-14T04:06:20.138970+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -137,6 +137,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed as wave-5 slot 1; FIRST packet of the D-053 codex-loop relaunch (loop worker = producer under model_selection.toml pin; D-047 sonnet-5 allowlist deviation recorded in G0 report). Launch next: worktree wt-m4t020 reset to claim head, run-id persistent-local-34."
+    },
+    {
+      "at": "2026-09-14T04:06:20.138970+00:00",
+      "agent": "orchestrator",
+      "percent": 25,
+      "status": "claimed",
+      "message": "LAUNCH-PREP DEVIATION RECORD: the D-036-R001 standing Thursday revert of C:/SupervisorController/model_selection.toml (opus-4-8 -> fable-5 + fallback restore) is PERMISSION-CLASSIFIER-BLOCKED for this session (same guard class as the agent-file model-key flips) - NOT bypassed; the loop launches on the standing owner-approved D-036-R002 pin claude-opus-4-8 (immutable-allowlist member, same value as the proven persistent-local-2x/33 runs). Owner item: execute the recorded revert when convenient (file comment carries the exact values). G0-report wording anticipated the revert; THIS entry is the corrective record. Supervisor recovery drill complete: 3 stale M4-T009 asks denied, PAUSED_RECOVERY cleared to PREFLIGHT, 0 surviving children / 0 pending effects; wt-m4t020 created at claim head be062f6d, packet copies byte-identical."
     }
   ]
 }
