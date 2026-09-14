@@ -10,7 +10,7 @@
  "issued_at": "2026-09-14",
  "captured_at": "2026-09-14T02:36:29+00:00",
  "created_at": "2026-09-14T02:36:29+00:00",
- "updated_at": "2026-09-14T02:36:29+00:00",
+ "updated_at": "2026-09-14T04:45:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "859b34c926360e9800b3ce76bd71fc504d2eff7f",
@@ -59,6 +59,12 @@
    "actor": "orchestrator",
    "event": "captured",
    "note": "verbatim capture from the interactive companion session (peer-capture; id coordinated with the build session - D-051/D-052 were its captures). Companion's prior mischaracterization of the loop history is corrected in source-001 context. Relay to the build session follows per R005; relaunch mechanics are the build session's to execute with its recorded traps."
+  },
+  {
+   "at": "2026-09-14T04:45:00+00:00",
+   "actor": "orchestrator",
+   "event": "executed_loop_live",
+   "note": "R005 execution complete: capture re-verified; M4-T020 (B3) contracted d7f0f3f8 / G0 PASS / claimed; supervisor down-state drill (3 stale M4-T009 asks denied, PAUSED_RECOVERY cleared); run persistent-local-34 launched DETACHED pid 12488 from the certified wt-controller-src cwd, lock held, audit seq 776-778 run_budget_started -> START_CLAUDE (all preflight verified). Worker model per D-055 (fable-5 + opus quota fallback); the two earlier classifier-blocked launch attempts and the owner no-artifact ! attempt are recorded in the ledger/WORKING_KNOWLEDGE; final launch succeeded under the explicit owner authorization. Monitor in quiet-watch (read-only two-phase watcher); R001 lifecycle evidence accrues as loop-produced campaign tasks move through the normal gates; R002 authority unchanged (no auto-accept/merge, R595 shadow)."
   }
  ]
 }
