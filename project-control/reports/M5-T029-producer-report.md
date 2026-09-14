@@ -10,11 +10,11 @@ The workspace provides Search, Overview, Property facts, Zoning, Scenarios, Evid
 
 Presentation is scoped under `.architect-shell`: warm canvas, ink text/navigation, narrow rail, restrained amber parcel selection, map/result composition, contextual source inspector, mobile navigation and immediate mobile source drawer. Escape closes source inspection and returns focus. Background evaluation arrival does not steal focus. The existing required global disclaimer remains unchanged. Internal-build restrictions remain available from the shared top bar; dashboard source and styles are untouched.
 
-Every supplied lot/building fact remains in the fact tables. Zoning districts, overlays, mapped flags and spatial evidence remain accessible; missing landmark/historic/flood flags and the unconnected pending-action check remain explicitly unknown. Conflicts, critical missing inputs, stale-record status and unsupported analysis remain visible with affected results. Additional source and review records are available on demand.
+Every supplied lot/building fact remains in the fact tables, with Lot/Building/Identity category controls and a name/value/units filter. Zoning districts, overlays, mapped flags and spatial evidence remain accessible; a shared block keeps missing landmark/historic/flood flags and the unconnected pending-action check explicitly unknown in both Zoning and the printable brief. Conflicts, critical missing inputs, stale-record status and unsupported analysis remain visible with affected results. Additional source and review records are available on demand.
 
 Evidence exposes original and normalized values, units, source/version/retrieval/effective dates, linked fact review state, all confirmation/override records, rule inputs, applicability, computation operations/resolved arguments/results, outputs, source quotations/snapshot IDs, effective windows and release/review status. Absent transformation steps, dates, links and event history are explicitly absent. Complete captured property/scenario/evaluation records remain accessible as escaped text. Dataset links use the existing validated dataset-token helper. Legal-text links use only observed official HTTPS article/chapter/section forms, with a fixed origin and no credentials/query/custom port; the label distinguishes current official text from the captured quotation.
 
-The brief prints readable facts, calculations, limitations and a compact source/review appendix. Complete captured records are included in print only when the architect selects the audit appendix. The frontend does not claim a saved report or server PDF service.
+The brief starts with a concise summary, contents links and collapsed screen sections. Printing expands every readable fact, calculation, limitation and source/review section, including via the browser's beforeprint event, then restores the screen state after printing. Complete captured records are included in print only when the architect selects the audit appendix. The frontend does not claim a saved report or server PDF service.
 
 ## Source-backed address and map behavior
 
@@ -68,6 +68,28 @@ An initial test-authoring cluster failed because these new Vitest files lacked e
 | D-061-R013 | No producer git/control/push/merge authority used; protected main and PR 241 remain orchestrator-controlled |
 
 Delivery-only R008/R011/R012 are outside this producer's authority and belong to the orchestrator's delivery report.
+
+## Independent G1 correction
+
+G1 identified official mixed-district labels containing `/` that the initial NYZD parser rejected. The parser now accepts that observed character while retaining the existing string/null type, 15-character maximum, OBJECTID, geometry, byte and request bounds. Regression cases use the source-verified pairs OBJECTID 10 `M1-2/R6`, 114 `M1-4/R6A` and 132 `M1-2/R6B`, with local test polygon coordinates. Each failed against the original parser before the one-line fix. Additional checks continue rejecting non-string, empty, overlong, backslash and markup labels.
+
+Rework checks: `./node_modules/.bin/vitest run src/lib/__tests__/map-context.test.ts src/components/address/__tests__/lot-outline-map.test.tsx` passed (2 files / 27 tests); focused ESLint and full `tsc --noEmit` passed. Logs: `ui-g1-mixed-district-red.log`, `ui-g1-mixed-district-green.log`, `ui-g1-mixed-district-lint.log` and `ui-g1-mixed-district-types.log`. This correction is submitted for independent re-review; the previous full-suite/build results above describe the first freeze.
+
+## Independent accessibility and visual corrections
+
+The first frozen browser run produced 95 passes and three failures; the independent G3 review also measured excessive page lengths and an incomplete map capture. The following corrections address that review together:
+
+- Identity announcements now use the same BBL boundary as visible results. Mismatched or unstated rule-evaluation identities announce withholding instead of an applicability/spatial classification. A mismatched property profile also announces its identity error. Unsupported and spatial-uncertainty fixtures reproduced both rule-announcement defects before the fix; correctly bound results still announce normally.
+- A dangling source reference now displays an explicit unavailable-source message and always retains Close while selected. A behavioral regression reproduces the previous failure and verifies focus restoration after closing.
+- Facts starts with one category and provides a reversible filter. Tests traverse all categories, enumerate all supplied lot/building rows and retain source inspection after filtering.
+- Evidence puts applicable determinations first and opens those traces initially; all other determinations remain individually expandable with their complete records. The supplied evaluation array is not modified.
+- Overview uses a concise zoning-floor-area label. The original supplied label and reasons remain in Result scope and source wording; the complete coverage matrix retains original keys under readable labels. Envelope-blocking checks remain visible in a compact summary. Mobile metrics keep formatted numbers on one line. Architect maps show the ±20 ft accuracy and NYC DCP attribution succinctly; full technical source wording is available in Map sources and limitations. Legacy map wording remains unchanged.
+- Compact survey composition places the fact queue beside the selected item and its existing checks/actions. The original document/overlays, detailed downstream impacts and state history have explicit disclosures. Current blockers and impact counts stay visible; accept/correct/reject, confirmation gating, stale drafts and the server review semantics are unchanged. The compact-mode test exercises selection, source opening, affirmation and impact access.
+- Screen report folding preserves all sections for print. The shared missing-flags block is included in the standalone brief. Unit tests cover beforeprint/afterprint expansion/restoration and audit selection. A new Chromium journey checks actual print CSS: an initially hidden fact and captured-source row become visible, default raw audit records stay hidden, and explicit audit selection includes them.
+
+The browser corrections scope GeoSearch options to the named suggestions list and assert the complete determination collection plus the applicable trace. The keyboard trace showed the old substring helper returning true after tabbing past the last overview control while the URL remained Overview; the replacement checks the exact navigation/disclosure element's focus using Tab, then asserts the Evidence URL. Screenshots now wait for scenario/evaluation outcomes and bounded map-layer loaded/unavailable settlement. Survey overlay assertions explicitly open the source disclosure. No safety assertion or journey was removed.
+
+Final correction checks are recorded in `ui-review-corrections-full.log` (37 files / 612 tests), `ui-review-corrections-types.log`, `ui-review-corrections-lint.log` and `ui-review-corrections-build.log`. Targeted red/green logs for the identity and missing-source defects are `ui-g3-identity-announcement-red.log`, `ui-g3-missing-source-red.log` and `ui-g3-identity-source-green.log`. Browser/print-media execution and new density measurements remain pending the orchestrator's next frozen-SHA CI and independent review; this producer does not claim the first failing browser run as a pass.
 
 ## Remaining limits / independent verification
 

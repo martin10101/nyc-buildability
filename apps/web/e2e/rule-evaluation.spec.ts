@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { expectProfile, tabUntil } from "./helpers";
 
 // Same real fixture API/evaluator journeys as M4-T005. M5-T029 changes only
@@ -14,6 +14,13 @@ async function lookupWithRuleEval(page: Page, bbl: string): Promise<void> {
 async function openDraft(page: Page) {
   await page.getByRole("navigation", { name: "Architect workspace" }).getByRole("link", { name: "Zoning", exact: true }).click();
   await page.getByText("Draft rule result, conflicts and applicability", { exact: true }).click();
+}
+async function tabToControl(page: Page, target: Locator) {
+  for (let i = 0; i < 300; i += 1) {
+    await page.keyboard.press("Tab");
+    if (await target.evaluate(element => element === document.activeElement)) return;
+  }
+  await expect(target).toBeFocused();
 }
 
 test("AS-3: applicable-draft journey — DRAFT, never Verified, with provenance", async ({ page }) => {
@@ -81,10 +88,13 @@ test("a11y: background draft arrival announces politely without stealing profile
   await expect(page.getByTestId("rule-eval-announcer")).toHaveText(/Draft rule evaluation loaded/, { timeout: 15_000 });
   expect(await page.evaluate(() => document.activeElement?.hasAttribute("data-outcome-heading") ?? false)).toBe(true);
   // Keyboard reaches the new Evidence navigation, then a native disclosure.
-  await tabUntil(page, { textContains: "Evidence" });
+  const evidenceLink = page.getByRole("navigation", { name: "Architect workspace" }).getByRole("link", { name: "Evidence", exact: true });
+  await tabToControl(page, evidenceLink);
+  await expect(evidenceLink).toBeFocused();
   await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/view=evidence/);
   await expect(page.getByRole("heading", { name: "How this was calculated" })).toBeVisible();
-  await tabUntil(page, { textContains: "Full rule-evaluation document" });
+  await tabToControl(page, page.locator('details > summary:text-is("Full rule-evaluation document")'));
   await page.keyboard.press("Enter");
   await expect(page.locator('details:has(> summary:text-is("Full rule-evaluation document"))')).toContainText("input_fingerprint");
 });

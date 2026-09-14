@@ -51,7 +51,7 @@ export function parseZoningContext(body: unknown): ZoningContextCollection | nul
     for (const feature of value.features) {
         if (!feature || feature.type !== "Feature" || !feature.geometry || !feature.properties)
             return null;
-        if (!Number.isInteger(feature.properties.OBJECTID) || !(feature.properties.ZONEDIST === null || (typeof feature.properties.ZONEDIST === "string" && /^[A-Z0-9 -]{1,15}$/.test(feature.properties.ZONEDIST))))
+        if (!Number.isInteger(feature.properties.OBJECTID) || !(feature.properties.ZONEDIST === null || (typeof feature.properties.ZONEDIST === "string" && /^[A-Z0-9 /-]{1,15}$/.test(feature.properties.ZONEDIST))))
             return null;
         const geometry = feature.geometry;
         if (!["Polygon", "MultiPolygon"].includes(geometry.type) || !Array.isArray(geometry.coordinates))

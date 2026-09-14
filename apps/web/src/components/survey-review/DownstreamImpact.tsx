@@ -23,9 +23,11 @@ import type { FactView } from "@/lib/surveyReview/types";
 export function DownstreamImpact({
   facts,
   onSelectEvidence,
+  compact = false,
 }: {
   facts: FactView[];
   onSelectEvidence: (evidenceId: string) => void;
+  compact?: boolean;
 }) {
   const impacted = facts.filter((f) => f.downstream_impact !== null);
   const blockedCount = impacted.filter((f) => f.downstream_impact?.impact_kind === "blocked").length;
@@ -49,6 +51,7 @@ export function DownstreamImpact({
               ? `; ${provisionalCount} render${provisionalCount === 1 ? "s a" : ""} dependent conclusion${provisionalCount === 1 ? "" : "s"} provisional until confirmation.`
               : "."}
           </p>
+          <details open={!compact} className="provenance-details"><summary>Affected facts and reasons</summary>
           <ul className="sr-downstream-list">
             {impacted.map((fact) => {
               const impact = fact.downstream_impact!;
@@ -79,6 +82,7 @@ export function DownstreamImpact({
               );
             })}
           </ul>
+          </details>
         </>
       )}
     </section>

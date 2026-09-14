@@ -514,6 +514,12 @@ describe("M5-T029 source-backed street context", () => {
     await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
     expect(screen.getByRole("button", { name: "Recenter lot" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Zoning boundaries" })).not.toBeChecked();
+    expect(screen.getByTestId("lot-outline-accuracy")).toHaveTextContent("Approximate outline · ±20 ft · NYC DCP / MapPLUTO");
+    expect(screen.getByTestId("lot-outline-accuracy")).not.toHaveTextContent("EPSG");
+    expect(screen.getByTestId("lot-outline-technical-accuracy")).not.toBeVisible();
+    fireEvent.click(screen.getByText("Map sources and limitations", { exact: true }));
+    expect(screen.getByTestId("lot-outline-technical-accuracy")).toBeVisible();
+    expect(screen.getByTestId("lot-outline-technical-accuracy")).toHaveTextContent("EPSG:4326");
     act(() => mocks.fireMapError("nyc-basemap"));
     expect(screen.getByText(/Street basemap: unavailable/)).toBeInTheDocument();
     expect(screen.getByTestId("lot-outline-map")).toBeInTheDocument();

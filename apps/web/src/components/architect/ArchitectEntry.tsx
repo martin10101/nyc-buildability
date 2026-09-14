@@ -68,6 +68,9 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
     const returnedEvaluation = analysis.evaluation?.kind === "evaluation" ? analysis.evaluation.document : null;
     const scenario = returnedScenario?.evaluated_input.bbl === profile.identity.bbl ? returnedScenario : null;
     const evaluation = returnedEvaluation?.evaluated_input.bbl === profile.identity.bbl ? returnedEvaluation : null;
+    const evaluationAnnouncement = returnedEvaluation && !evaluation
+        ? `Rule evaluation identity ${returnedEvaluation.evaluated_input.bbl ? "mismatch" : "missing"}. Requested BBL ${profile.identity.bbl}; returned BBL ${returnedEvaluation.evaluated_input.bbl ?? "not stated"}. Results are withheld from this property.`
+        : analysis.evaluation ? announcementForRuleEvaluation(analysis.evaluation) : "";
     const [address, setAddress] = useState<SelectedAddress | null>(null);
     const [selection, setSelection] = useState("calculation");
     const [inspectorSelection, setInspectorSelection] = useState<string | null>(null);
@@ -134,7 +137,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
         default: content = <PlannedView label={VIEW_LABELS[view]}/>;
     }
     return <div data-testid="profile-view">
-    <OutcomeAnnouncer testId="rule-eval-announcer" message={analysis.evaluation ? announcementForRuleEvaluation(analysis.evaluation) : ""}/>
+    <OutcomeAnnouncer testId="rule-eval-announcer" message={evaluationAnnouncement}/>
     <header className="architect-property-header">
       <div>
         <div className="architect-title-line">
@@ -180,7 +183,10 @@ export function ArchitectEntry({ defaultView = "overview", surveyEnabled = false
     const bbl = valid.ok ? valid.canonical : null;
     const view = params.has("view") ? readWorkspaceView(params.get("view")) : defaultView;
     const property = useProperty(bbl);
-    const message = property.outcome ? announcementForOutcome(property.outcome) : "";
+    const returnedProfile = property.outcome?.kind === "profile" ? property.outcome.profile : null;
+    const message = returnedProfile && bbl && returnedProfile.identity.bbl !== bbl
+        ? `Property identity mismatch. Requested BBL ${bbl}; returned BBL ${returnedProfile.identity.bbl}. This record cannot be used for the selected property.`
+        : property.outcome ? announcementForOutcome(property.outcome) : "";
     return <ArchitectShell bbl={bbl} active={bbl ? view : "search"} surveyEnabled={surveyEnabled}>
     <OutcomeAnnouncer message={message}/>
     {!bbl ? <>

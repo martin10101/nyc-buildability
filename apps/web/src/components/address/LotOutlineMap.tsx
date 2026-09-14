@@ -262,7 +262,8 @@ function outcomeSummary(
   }
 }
 
-function AttributionAndAccuracy({ view }: { view: LotOutlineView }) {
+function AttributionAndAccuracy({ view, compact = false }: { view: LotOutlineView; compact?: boolean }) {
+  if (compact) return <p className="section-note" data-testid="lot-outline-accuracy">Approximate outline · ±20 ft · <span data-testid="lot-outline-attribution">NYC DCP / MapPLUTO</span></p>;
   return (
     <>
       <p className="section-note" data-testid="lot-outline-accuracy">
@@ -357,9 +358,8 @@ export function LotOutlineMap({
       const map = new gl.Map({
         container,
         style: context ? NYC_CONTEXT_STYLE : EMPTY_STYLE,
-        // No basemap tile source is wired (none is admitted in the source
-        // registry); the outline draws on a neutral background. attributionControl
-        // is added explicitly below so the NYC DCP attribution is on the map.
+        // Architect context uses admitted NYC raster sources; the legacy
+        // surface keeps its neutral background. Parcel attribution is added below.
         attributionControl: false,
         interactive: true,
         center: bounds ? [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2] : [-73.98, 40.75],
@@ -470,7 +470,7 @@ export function LotOutlineMap({
                   data-testid="lot-outline-map"
                   aria-label="Interactive approximate lot outline map"
                 />
-                <AttributionAndAccuracy view={view} />
+                <AttributionAndAccuracy view={view} compact={context}/>
               </>
             ) : drawable && mapRenderFailed ? (
               // D-056-R002 hardening: geometry and WebGL are both present,
@@ -485,7 +485,7 @@ export function LotOutlineMap({
                   interactive map could not be rendered. Open the city&apos;s
                   ZoLa map above for the authoritative outline.
                 </p>
-                <AttributionAndAccuracy view={view} />
+                <AttributionAndAccuracy view={view} compact={context}/>
               </>
             ) : (
               // Geometry is present but WebGL is unavailable: an honest fallback
@@ -500,7 +500,7 @@ export function LotOutlineMap({
                   browser could not open an interactive map (no WebGL). Open the
                   city&apos;s ZoLa map above for the authoritative outline.
                 </p>
-                <AttributionAndAccuracy view={view} />
+                <AttributionAndAccuracy view={view} compact={context}/>
               </>
             )
           ) : null}
@@ -512,7 +512,7 @@ export function LotOutlineMap({
                 outline is drawn here. Open the city&apos;s ZoLa map above for
                 the authoritative outline.
               </p>
-              <AttributionAndAccuracy view={view} />
+              <AttributionAndAccuracy view={view} compact={context}/>
             </>
           ) : null}
 
@@ -523,7 +523,7 @@ export function LotOutlineMap({
                   ? "No parcel outline is drawn: this is a condominium unit lot, which carries no polygon of its own in the official MapPLUTO data — the billing lot holds the merged complex outline. Open the city's ZoLa map above."
                   : "No parcel outline is drawn: the official source returned no lot for this BBL. Open the city's ZoLa map above."}
               </p>
-              <AttributionAndAccuracy view={view} />
+              <AttributionAndAccuracy view={view} compact={context}/>
             </>
           ) : null}
 
@@ -535,7 +535,7 @@ export function LotOutlineMap({
                 trusted — the platform never silently picks one. Open the
                 city&apos;s ZoLa map above.
               </p>
-              <AttributionAndAccuracy view={view} />
+              <AttributionAndAccuracy view={view} compact={context}/>
             </>
           ) : null}
 
@@ -545,13 +545,13 @@ export function LotOutlineMap({
                 No outline is drawn: the official parcel geometry for this lot
                 was not a usable shape. Open the city&apos;s ZoLa map above.
               </p>
-              <AttributionAndAccuracy view={view} />
+              <AttributionAndAccuracy view={view} compact={context}/>
             </>
           ) : null}
         </>
       ) : null}
 
-      {context ? <details className="provenance-details"><summary>Map sources and limitations</summary><p className="section-note">Street basemap and labels: <a href="https://maps.nyc.gov/tiles/" target="_blank" rel="noopener noreferrer">City of New York, CC BY 4.0</a>. Tile capture dates are not supplied here; this is reference context, not current survey evidence. Selected lot: official MapPLUTO geometry. No dimensions or zoning calculations are derived from this map.</p></details> : null}
+      {context ? <details className="provenance-details"><summary>Map sources and limitations</summary>{view ? <><p className="section-note" data-testid="lot-outline-technical-accuracy">{view.accuracyNote}</p><p className="section-note">{view.attribution}</p></> : null}<p className="section-note">Street basemap and labels: <a href="https://maps.nyc.gov/tiles/" target="_blank" rel="noopener noreferrer">City of New York, CC BY 4.0</a>. Tile capture dates are not supplied here; this is reference context, not current survey evidence. Selected lot: official MapPLUTO geometry. No dimensions or zoning calculations are derived from this map.</p></details> : null}
       {outcome !== null && outcome.kind !== "document" ? (
         <p className="section-note" data-testid="lot-outline-unavailable">
           {outcome.kind === "route_absent"

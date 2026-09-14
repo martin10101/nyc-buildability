@@ -10,7 +10,7 @@ export function SurveyWorkspace({ documentDigest }: {
     const [bbl, setBbl] = useState<string | null>(null);
     return <ArchitectShell bbl={bbl} active="survey" surveyEnabled>
     <SurveyReviewClientProvider>
-      {documentDigest ? <SurveyReviewScreen documentDigest={documentDigest} onPropertyChange={setBbl}/> : <ReviewInbox />}
+      {documentDigest ? <SurveyReviewScreen compact documentDigest={documentDigest} onPropertyChange={setBbl}/> : <ReviewInbox />}
     </SurveyReviewClientProvider>
   </ArchitectShell>;
 }

@@ -5,6 +5,7 @@ import { fieldLabel, formatValue } from "@/lib/format";
 import { propertyHref } from "@/lib/architect/navigation";
 import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { CoverageBadge } from "@/components/property/CoverageBadge";
+import { AssessmentCoverage } from "./AssessmentCoverage";
 export function PropertyIssuesSummary({ profile }: {
     profile: PropertyProfile;
 }) {
@@ -41,16 +42,20 @@ export function DraftHeadline({ scenario }: {
       </> : scenario ? "No supported cap" : "—"}
     </p>
     <h2>
-      {scenario?.cap_label ?? "Draft zoning floor-area cap"}
+      Draft zoning floor-area cap
     </h2>
     <p className="section-note">FAR only · Buildable envelope not assessed</p>
     {scenario ? <>
       <CoverageBadge status={scenario.coverage_status}/>
+      <details className="provenance-details architect-result-scope">
+        <summary>Result scope and source wording</summary>
+        <p>{scenario.cap_label}</p>
       {scenario.reasons.length ? <ul className="architect-issue-list">
         {scenario.reasons.map((reason, i) => <li key={i}>
           {reason}
         </li>)}
       </ul> : null}
+      </details>
     </> : null}
   </div>;
 }
@@ -90,28 +95,7 @@ export function PropertyOverview({ profile, scenario, onInspect }: {
             {fact ? <button type="button" className="architect-text-button" onClick={() => onInspect(fact.provenance_ref)}>Source</button> : null}
           </div>)}
         </div>
-        <h3>Assessment coverage</h3>
-        {scenario ? <div className="table-scroll">
-          <table className="facts-table">
-            <thead>
-              <tr>
-                <th scope="col">Check</th>
-                <th scope="col">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scenario.coverage_matrix.map((row, i) => <tr key={i}>
-                <th scope="row">
-                  {row.constraint_family}
-                </th>
-                <td>
-                  {row.rule_status_today}
-                  {row.blocks_buildable_envelope ? " · Blocks envelope" : ""}
-                </td>
-              </tr>)}
-            </tbody>
-          </table>
-        </div> : <p className="section-note">Assessment coverage is available when the scenario service returns a supported document.</p>}
+        <AssessmentCoverage scenario={scenario}/>
         <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span>
         </Link>
       </section>

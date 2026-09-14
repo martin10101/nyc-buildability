@@ -20,6 +20,22 @@ describe("source-backed map context", () => {
     expect(zoningContextRequest([[NaN,40],[-73,42]])).toBeNull();
     expect(parseZoningContext(collection)?.features[0].geometry.coordinates).toBe(polygon.geometry.coordinates);
   });
+  it.each([
+    [10, "M1-2/R6"],
+    [114, "M1-4/R6A"],
+    [132, "M1-2/R6B"],
+  ])("retains official NYZD mixed-district label for OBJECTID %i", (OBJECTID, ZONEDIST) => {
+    // Label/ID pairs verified against NYZD; the polygon is the local geometry fixture.
+    const feature = { ...polygon, properties: { OBJECTID, ZONEDIST } };
+    const result = parseZoningContext({ ...collection, features: [feature] });
+    expect(result?.features[0].properties).toEqual({ OBJECTID, ZONEDIST });
+    expect(result?.features[0].geometry.coordinates).toBe(polygon.geometry.coordinates);
+  });
+  it("keeps mixed-district metadata bounded and rejects unrelated characters", () => {
+    for (const ZONEDIST of [42, "", "M1-2/R6".repeat(3), "M1-2\\R6", "<R6>"]) {
+      expect(parseZoningContext({ ...collection, features: [{ ...polygon, properties: { OBJECTID: 10, ZONEDIST } }] })).toBeNull();
+    }
+  });
   it("withholds partial, malformed, open-ring and oversized boundary data", () => {
     expect(parseZoningContext({ ...collection, properties: { exceededTransferLimit: true } })).toBeNull();
     expect(parseZoningContext({ error: { message: "unavailable" } })).toBeNull();

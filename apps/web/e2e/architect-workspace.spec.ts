@@ -11,9 +11,29 @@ async function screenshot(page: Page, info: TestInfo, name: string) {
   await info.attach(name, { path, contentType: "image/png" });
 }
 async function openView(page: Page, view: string, bbl = BBL) {
+  const scenarioResponse = page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/properties/${bbl}/scenario`);
+  const evaluationResponse = page.waitForResponse(response => new URL(response.url()).pathname === `/api/v1/properties/${bbl}/rule-evaluation`);
   await page.goto(`/property?ruleeval=on&bbl=${bbl}&view=${view}`);
   await expect(page.getByTestId("profile-view")).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  const [scenario, evaluation] = await Promise.all([scenarioResponse, evaluationResponse]);
+  expect(scenario.ok()).toBe(true);
+  expect(evaluation.ok()).toBe(true);
+  await expect(page.getByTestId("rule-eval-announcer")).not.toBeEmpty({ timeout: 15_000 });
+  await expect(page.getByText("Loading draft scenario…", { exact: true })).toHaveCount(0, { timeout: 15_000 });
+  if (view === "overview") {
+    await expect(page.getByTestId("architect-cap").locator(".architect-metric")).not.toHaveText("—");
+    await settledMap(page);
+  }
+  if (view === "scenarios") await expect(page.getByTestId("scenario-result")).toBeVisible();
+  return { scenario: await scenario.json(), evaluation: await evaluation.json() };
+}
+
+async function settledMap(page: Page) {
+  await expect(page.getByTestId("lot-outline-loading")).toHaveCount(0, { timeout: 15_000 });
+  // The map has a bounded startup/layer deadline. Accept honest source failure,
+  // but never capture the canvas while the status still says loading/preparing.
+  await expect.poll(async () => (await page.locator(".architect-map-status").allTextContents()).every(text => !/loading|Preparing/.test(text)), { timeout: 15_000 }).toBe(true);
 }
 
 test("one-box keyboard selection resolves the authoritative BBL and preserves searched address", async ({ page }, info) => {
@@ -24,7 +44,7 @@ test("one-box keyboard selection resolves the authoritative BBL and preserves se
   await screenshot(page, info, "01-search-desktop");
   const input = page.getByRole("combobox", { name: "Street address", exact: true });
   await input.fill("100 Hol");
-  await expect(page.getByRole("option")).toContainText("HOLES ISLAND");
+  await expect(page.getByRole("listbox", { name: "Official NYC address suggestions" }).getByRole("option", { name: /100 HOLES ISLAND/ })).toBeVisible();
   await input.press("ArrowDown"); await input.press("Enter");
   await expect(page.getByTestId("resolved-bbl")).toHaveText(BBL);
   await page.getByTestId("confirm-continue").click();
@@ -32,6 +52,9 @@ test("one-box keyboard selection resolves the authoritative BBL and preserves se
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/100 HOLES ISLAND/);
   await expect(page.getByTestId("representative-address")).toContainText("PLUTO representative address");
   await expect(page.getByTestId("lot-outline")).toBeVisible();
+  await expect(page.getByText("Loading draft scenario…", { exact: true })).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.getByTestId("architect-cap").locator(".architect-metric")).not.toHaveText("—");
+  await settledMap(page);
   await screenshot(page, info, "02-overview-confirmed-address");
 });
 
@@ -46,13 +69,17 @@ for (const [view, name] of VIEWS) {
   test(`architect ${view}: canonical records, reachable navigation and screenshot`, async ({ page }, info) => {
     await page.setViewportSize({ width: 1440, height: 960 });
     await installSurveyReviewMock(page);
-    await openView(page, view, ["evidence", "scenarios"].includes(view) ? "1000010100" : BBL);
+    const records = await openView(page, view, ["evidence", "scenarios"].includes(view) ? "1000010100" : BBL);
     await expect(page.getByRole("navigation", { name: "Architect workspace" })).toBeVisible();
     if (view === "evidence") {
-      await expect(page.getByText("Full evaluation trace", { exact: true })).toBeVisible({ timeout: 15_000 });
-      await expect(page.getByRole("link", { name: "Open current official text ↗" }).first()).toHaveAttribute("href", /^https:\/\/zoningresolution\.planning\.nyc\.gov\/article-/);
+      await expect(page.locator(".architect-determination")).toHaveCount(records.evaluation.evaluations.length);
+      const applicable = page.locator(".architect-determination[open]").first();
+      await expect(applicable.locator(":scope > summary")).toContainText("Applicable determination");
+      await expect(applicable.getByText("Full evaluation trace", { exact: true })).toBeVisible();
+      await expect(applicable.getByRole("link", { name: "Open current official text ↗" }).first()).toHaveAttribute("href", /^https:\/\/zoningresolution\.planning\.nyc\.gov\/article-/);
     }
     if (view === "facts") {
+      await page.getByLabel("Filter facts", { exact: true }).fill("lot area");
       const source = page.getByRole("button", { name: "Source for Lot area", exact: true });
       await source.click();
       await expect(page.getByRole("complementary", { name: "Contextual evidence inspector" })).toContainText("Original value");
@@ -71,6 +98,8 @@ for (const [view, name] of VIEWS) {
 test("mobile source inspector is immediately visible and Escape returns to the source", async ({ page }, info) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openView(page, "overview");
+  const figures = page.locator(".architect-fact-metrics strong");
+  for (const figure of await figures.all()) expect(await figure.evaluate(element => { const range = document.createRange(); range.selectNodeContents(element); return range.getClientRects().length; })).toBe(1);
   await screenshot(page, info, "14-overview-mobile");
   await page.getByRole("button", { name: "Navigation", exact: true }).click();
   await page.getByRole("navigation").getByRole("link", { name: "Property facts", exact: true }).click();
@@ -93,7 +122,40 @@ test("survey review retains document overlays, source facts and decision history
   await expect(page.getByTestId("review-topbar")).toBeVisible();
   await expect(page.getByTestId("document-state-badge")).toContainText("Needs review");
   await expect(page.getByTestId("check-conflict")).toBeVisible();
+  await expect(page.getByTestId("fact-list")).toBeVisible();
+  await expect(page.getByTestId("focused-actions")).toBeVisible();
   await screenshot(page, info, "08-survey-review-desktop");
+});
+
+test("the closed screen brief prints all readable facts and sources, with an optional audit appendix", async ({ page }) => {
+  await openView(page, "report");
+  const facts = page.locator("#brief-facts");
+  const sources = page.locator("#brief-sources");
+  const lotArea = facts.getByRole("rowheader", { name: "Lot area", exact: true });
+  const capturedSource = sources.locator("tbody tr").first();
+  await expect(facts).not.toHaveAttribute("open");
+  await expect(sources).not.toHaveAttribute("open");
+  await expect(lotArea).not.toBeVisible();
+  await expect(capturedSource).not.toBeVisible();
+  // Avoid the native dialog while exercising the actual print button and CSS.
+  await page.evaluate(() => { window.print = () => window.dispatchEvent(new Event("beforeprint")); });
+  await page.getByRole("button", { name: "Print property brief" }).click();
+  await page.emulateMedia({ media: "print" });
+  await expect(lotArea).toBeVisible();
+  await expect(capturedSource).toBeVisible();
+  await expect(capturedSource).toContainText("Original:");
+  await expect(page.locator(".architect-audit-appendix")).not.toBeVisible();
+  await expect(page.locator(".architect-raw").first()).not.toBeVisible();
+  await page.emulateMedia({ media: "screen" });
+  await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+  await expect(facts).not.toHaveAttribute("open");
+  await page.getByRole("checkbox", { name: "Include full audit appendix" }).check();
+  await page.getByRole("button", { name: "Print property brief" }).click();
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".architect-audit-appendix")).toBeVisible();
+  await expect(page.locator(".architect-audit-appendix pre")).toContainText('"profile_version"');
+  await page.emulateMedia({ media: "screen" });
+  await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
 });
 
 test("manual and BBL recovery remain reachable when suggestions fail", async ({ page }) => {

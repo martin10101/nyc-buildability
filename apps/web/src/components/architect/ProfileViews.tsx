@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { mappedFeatureView, type PropertyProfile } from "@/lib/contract";
-import { completenessDisplay } from "@/lib/coverage";
+import type { PropertyProfile } from "@/lib/contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { provenanceById } from "@/lib/provenance";
 import { propertyHref } from "@/lib/architect/navigation";
-import { FactsTable } from "@/components/property/FactsTable";
 import { ConflictsSection } from "@/components/property/ConflictsSection";
 import { MissingInputsSection } from "@/components/property/MissingInputsSection";
 import { UnsupportedSection } from "@/components/property/UnsupportedSection";
@@ -13,71 +11,17 @@ import { CoverageLegend } from "@/components/property/CoverageLegend";
 import { ZoningSection } from "@/components/property/ZoningSection";
 import { RuleEvaluationResult } from "@/components/rule-evaluation/RuleEvaluationResult";
 import { CapturedRecord } from "./EvidenceRecord";
+import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
 import { PropertyIssuesSummary } from "./PropertyOverview";
-export function PropertyFacts({ profile, onInspect }: {
-    profile: PropertyProfile;
-    onInspect?: (id: string) => void;
-}) {
-    const byId = provenanceById(profile);
-    return <>
-    <PropertyIssuesSummary profile={profile}/>
-    <FactsTable title="Lot facts" facts={profile.lot_facts} byId={byId} reproducibility={profile.reproducibility} onInspect={onInspect}/>
-    <FactsTable title="Existing building facts" facts={profile.existing_building_facts} byId={byId} reproducibility={profile.reproducibility} onInspect={onInspect}/>
-    <section className="card">
-      <h2>Identity & source coverage</h2>
-      <dl className="architect-definition-list">
-        <dt>BBL</dt>
-        <dd>
-          {profile.identity.bbl}
-        </dd>
-        <dt>BIN</dt>
-        <dd>
-          {profile.identity.bins?.length ? profile.identity.bins.join(", ") : "Unknown — not supplied"}
-        </dd>
-        <dt>Profile address</dt>
-        <dd>
-          {profile.identity.address?.normalized_address ?? "Unknown — not supplied"}
-        </dd>
-        <dt>Data completeness</dt>
-        <dd>
-          {profile.data_completeness ? completenessDisplay(profile.data_completeness).headline : "Not supplied"}
-        </dd>
-        <dt>Development intent</dt>
-        <dd>
-          {profile.project_intent.objectives?.length ? profile.project_intent.objectives.join(", ") : "Not recorded"}
-        </dd>
-        <dt>Profile geometry</dt>
-        <dd>
-          {profile.identity.geometry?.type ?? "Not included in this profile"}
-        </dd>
-      </dl>
-      <CapturedRecord value={profile.identity} label="Full identity record"/>
-      <CapturedRecord value={profile.status_dimensions} label="All source and analysis status dimensions"/>
-    </section>
-  </>;
-}
+export { PropertyFacts } from "./PropertyFacts";
 export function ZoningView({ profile, evaluation }: {
     profile: PropertyProfile;
     evaluation: RuleEvaluation | null;
 }) {
-    const features = (profile.zoning.mapped_features ?? []).map(mappedFeatureView);
-    const absentFlags = [["landmark", "Landmark"], ["histdist", "Historic district"], ["firm07_flag", "2007 FIRM flood flag"], ["pfirm15_flag", "2015 preliminary FIRM flood flag"]].filter(([key]) => !features.some(feature => feature.feature === key && feature.hasValue));
     return <>
     <PropertyIssuesSummary profile={profile}/>
     <ZoningSection profile={profile} byId={provenanceById(profile)}/>
-    <section className="card">
-      <h2>Additional flags</h2>
-      <dl className="architect-definition-list">
-        {absentFlags.map(([key, label]) => <div key={key}>
-          <dt>
-            {label}
-          </dt>
-          <dd>Unknown — not supplied</dd>
-        </div>)}
-        <dt>Pending land-use actions</dt>
-        <dd>Unknown — source not connected</dd>
-      </dl>
-    </section>
+    <AdditionalZoningFlags profile={profile}/>
     <section className="card">
       <h2>Spatial evidence</h2>
       <p className="section-note">Map boundaries provide context. Canonical intersection results and uncertainty are preserved below.</p>

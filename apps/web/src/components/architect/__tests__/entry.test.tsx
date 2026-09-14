@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fieldLabel } from "@/lib/format";
 import { baseProfile } from "@/test-support/fixtures";
-import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
+import { draftApplicableDoc, spatialUncertaintyDoc, unsupportedDoc } from "@/test-support/rule-evaluation-fixtures";
 import { ArchitectEntry } from "../ArchitectEntry";
 import type { PropertyProfile } from "@/lib/contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
@@ -26,7 +26,37 @@ describe("connected architect entry", () => {
     fireEvent.keyDown(inspector, { key: "Escape" });
     expect(source).toHaveFocus();
     for (const field of Object.keys(state.profile!.lot_facts)) expect(screen.getByRole("rowheader", { name: fieldLabel(field) })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Building" }));
     expect(screen.getByRole("heading", { name: "Existing building facts" })).toBeInTheDocument();
+    for (const field of Object.keys(state.profile!.existing_building_facts)) expect(screen.getByRole("rowheader", { name: fieldLabel(field) })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Identity" }));
+    expect(screen.getByRole("heading", { name: "Identity & source coverage" })).toBeInTheDocument();
+  });
+  it("filters the selected fact category without losing source access or the complete records", () => {
+    render(<ArchitectEntry/>);
+    fireEvent.change(screen.getByLabelText("Filter facts"), { target: { value: "lot area" } });
+    expect(screen.getAllByRole("rowheader")).toHaveLength(1);
+    expect(screen.getByRole("button", { name: "Source for Lot area" })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Filter facts"), { target: { value: "no matching fact" } });
+    expect(screen.getByText("No facts match this filter.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Clear filter" }));
+    expect(screen.getAllByRole("rowheader")).toHaveLength(Object.keys(state.profile!.lot_facts).length);
+  });
+  it("explains an absent selected source and keeps the inspector close control usable", () => {
+    state.params.set("view", "overview");
+    state.profile!.lot_facts.lotarea!.provenance_ref = "missing-lot-area-source";
+    render(<ArchitectEntry />);
+    const source = within(screen.getByText("Lot area").closest("div")!).getByRole("button", { name: "Source" });
+    source.focus();
+    fireEvent.click(source);
+    const inspector = screen.getByRole("complementary", { name: "Contextual evidence inspector" });
+    expect(inspector).toHaveFocus();
+    expect(within(inspector).getByRole("heading", { name: "Source record unavailable" })).toBeInTheDocument();
+    expect(inspector).toHaveTextContent("missing-lot-area-source");
+    expect(inspector).toHaveTextContent("was not supplied");
+    fireEvent.click(within(inspector).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("complementary", { name: "Contextual evidence inspector" })).not.toBeInTheDocument();
+    expect(source).toHaveFocus();
   });
   it("retains the searched label and distinguishes the PLUTO representative address", () => {
     const bbl = state.profile!.identity.bbl;
@@ -43,11 +73,35 @@ describe("connected architect entry", () => {
     expect(screen.queryByText("max_residential_far")).not.toBeInTheDocument();
     expect(screen.getByText("Returned rule evaluation record")).toBeInTheDocument();
   });
+  it.each([
+    { returnedBbl: "5000010001", document: unsupportedDoc, identityState: "mismatch" },
+    { returnedBbl: null, document: spatialUncertaintyDoc, identityState: "missing" },
+  ])("announces identity $identityState instead of a withheld analysis classification", ({ returnedBbl, document, identityState }) => {
+    state.params.set("view", "evidence");
+    const { rerender } = render(<ArchitectEntry />);
+    state.evaluation = document();
+    state.evaluation.evaluated_input.bbl = returnedBbl;
+    rerender(<ArchitectEntry />);
+    const announcer = screen.getByTestId("rule-eval-announcer");
+    expect(announcer).toHaveTextContent(`Rule evaluation identity ${identityState}`);
+    expect(announcer).toHaveTextContent(`Requested BBL ${state.profile!.identity.bbl}`);
+    expect(announcer).toHaveTextContent(`returned BBL ${returnedBbl ?? "not stated"}`);
+    expect(announcer).toHaveTextContent("Results are withheld from this property");
+    expect(announcer).not.toHaveTextContent(/no draft rule applies|lot spans districts|Draft rule evaluation loaded/);
+  });
+  it("announces a loaded evaluation only when its BBL matches the selected property", () => {
+    state.evaluation = draftApplicableDoc();
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    render(<ArchitectEntry />);
+    expect(screen.getByTestId("rule-eval-announcer")).toHaveTextContent("Draft rule evaluation loaded: an unreviewed draft determination");
+  });
   it("rejects a mismatched property record before mounting its analysis", () => {
     state.profile!.identity.bbl = "5000010001";
     render(<ArchitectEntry />);
     expect(screen.getByRole("heading", { name: "Property identity mismatch" })).toBeInTheDocument();
     expect(screen.queryByTestId("profile-view")).not.toBeInTheDocument();
+    expect(screen.getByTestId("outcome-announcer")).toHaveTextContent("Property identity mismatch");
+    expect(screen.getByTestId("outcome-announcer")).not.toHaveTextContent("profile loaded");
   });
   it("preserves explicit absent flags and planned capability states", () => {
     state.params.set("view", "zoning"); state.profile!.zoning.mapped_features = [];

@@ -40,7 +40,7 @@ const FALLBACK_PAGE: ReviewPage = {
   coordinate_space: null,
 };
 
-export function SurveyReviewScreen({ documentDigest, onPropertyChange }: { documentDigest: string; onPropertyChange?: (bbl: string) => void }) {
+export function SurveyReviewScreen({ documentDigest, onPropertyChange, compact = false }: { documentDigest: string; onPropertyChange?: (bbl: string) => void; compact?: boolean }) {
   const client = useSurveyReviewClient();
   const [loading, setLoading] = useState(true);
   const [readOutcome, setReadOutcome] = useState<ReadDocumentOutcome | null>(null);
@@ -187,6 +187,7 @@ export function SurveyReviewScreen({ documentDigest, onPropertyChange }: { docum
 
         {!loading && document ? (
           <ReviewBody
+            compact={compact}
             document={document}
             selectedFact={selectedFact}
             selectedEvidenceId={selectedEvidenceId}
@@ -220,6 +221,7 @@ export function SurveyReviewScreen({ documentDigest, onPropertyChange }: { docum
 }
 
 function ReviewBody({
+  compact,
   document,
   selectedFact,
   selectedEvidenceId,
@@ -241,6 +243,7 @@ function ReviewBody({
   onRejectDocument,
   onReopenDocument,
 }: {
+  compact: boolean;
   document: ReviewDocument;
   selectedFact: FactView | null;
   selectedEvidenceId: string | null;
@@ -300,8 +303,11 @@ function ReviewBody({
         </section>
       ) : null}
 
-      <div className="sr-layout">
+      <div className={`sr-layout${compact ? " sr-layout-compact" : ""}`}>
         <div className="sr-layout-canvas">
+          {compact ? <FactList facts={document.facts} selectedEvidenceId={selectedEvidenceId} onSelect={onSelectEvidence} compact/> : null}
+          <details className="card architect-disclosure sr-document-disclosure" open={!compact}>
+            <summary>Original document and overlays</summary>
           <DocumentOverlay
             facts={document.facts}
             pageNumber={activePage.page_number}
@@ -327,10 +333,11 @@ function ReviewBody({
               ))}
             </nav>
           ) : null}
+          </details>
         </div>
 
         <div className="sr-layout-decisions">
-          <FactList facts={document.facts} selectedEvidenceId={selectedEvidenceId} onSelect={onSelectEvidence} />
+          {!compact ? <FactList facts={document.facts} selectedEvidenceId={selectedEvidenceId} onSelect={onSelectEvidence} /> : null}
           {selectedFact ? (
             <FocusedItem
               key={`${selectedFact.evidence_id}:${selectedFact.correction_history.length}:${selectedFact.confirmation_state}`}
@@ -353,7 +360,7 @@ function ReviewBody({
         </div>
       </div>
 
-      <DownstreamImpact facts={document.facts} onSelectEvidence={onSelectEvidence} />
+      <DownstreamImpact facts={document.facts} onSelectEvidence={onSelectEvidence} compact={compact}/>
 
       <ConfirmDocumentPanel
         document={document}
@@ -363,7 +370,7 @@ function ReviewBody({
         onSelectEvidence={onSelectEvidence}
       />
 
-      <StateHistory history={document.state_history} />
+      {compact ? <details className="card architect-disclosure"><summary>Document state history</summary><StateHistory history={document.state_history}/></details> : <StateHistory history={document.state_history} />}
 
       <p className="section-note">
         <Link href="/survey/review">Back to the review inbox</Link>

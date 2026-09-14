@@ -8,6 +8,7 @@ export function CalculationEvidence({ evaluation, scenario }: {
     evaluation: RuleEvaluation | null;
     scenario: Scenario | null;
 }) {
+    const traces = evaluation ? [...evaluation.evaluations].sort((a, b) => Number(b.applicability_outcome) - Number(a.applicability_outcome)) : [];
     return <div className="architect-calculation-evidence">
     <p className="architect-eyebrow">Deterministic evaluation</p>
     <h2>How this was calculated</h2>
@@ -20,10 +21,9 @@ export function CalculationEvidence({ evaluation, scenario }: {
         </li>)}
       </ul> : null}
       {evaluation.evaluations.length === 0 ? <p>No applicable computation trace was returned. No result is inferred.</p> : null}
-      {evaluation.evaluations.map((trace, index) => <section className="architect-trace" key={`${trace.rule_id}-${index}`}>
-        <h3>
-          {trace.rule_id || "Rule identifier not supplied"}
-        </h3>
+      {traces.map((trace, index) => <details className="architect-trace architect-determination" key={`${trace.rule_id}-${index}`} open={trace.applicability_outcome}>
+        <summary>{trace.applicability_outcome ? "Applicable determination" : "Other determination"} · {trace.rule_id || "Rule identifier not supplied"}</summary>
+        <h3>{trace.rule_id || "Rule identifier not supplied"}</h3>
         <p className="section-note">Version {trace.rule_version || "unknown"} · {trace.rule_status} · Applicability: {trace.applicability_outcome ? "applies" : "does not apply"}
         </p>
         <h4>Inputs used</h4>
@@ -102,7 +102,7 @@ export function CalculationEvidence({ evaluation, scenario }: {
           <p className="section-note">These are the supplied review statuses. Individual reviewer events are not included in this record.</p>
         </details>
         <CapturedRecord value={trace} label="Full evaluation trace"/>
-      </section>)}
+      </details>)}
       <CapturedRecord value={evaluation} label="Full rule-evaluation document"/>
     </> : <p>Rule evaluation has not returned a usable document. No calculation trace is available.</p>}
     {scenario ? <section className="architect-trace">

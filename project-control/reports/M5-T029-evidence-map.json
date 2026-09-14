@@ -1,0 +1,15 @@
+{
+  "reviewed_sha": "50995365dedba7694f8462c5db3fd4dcf235690f",
+  "requirements": {
+    "D-061-R001": ["apps/web/src/components/architect/ArchitectShell.tsx", "apps/web/src/app/property/architect.css", "apps/web/e2e/architect-workspace.spec.ts"],
+    "D-061-R002": ["apps/web/src/components/architect/ProfileViews.tsx", "apps/web/src/components/architect/AnalysisIdentityNotice.tsx", "apps/web/src/components/architect/__tests__/workspace.test.tsx"],
+    "D-061-R003": ["apps/web/src/components/architect/EvidenceRecord.tsx", "apps/web/src/components/architect/CalculationEvidence.tsx", "apps/web/src/components/architect/ReportSources.tsx", "apps/web/src/components/architect/__tests__/workspace.test.tsx"],
+    "D-061-R004": ["apps/web/src/components/architect/AddressAutocomplete.tsx", "apps/web/src/components/architect/__tests__/autocomplete.test.tsx", "apps/web/e2e/architect-workspace.spec.ts"],
+    "D-061-R005": ["apps/web/src/components/address/LotOutlineMap.tsx", "apps/web/src/lib/map-context.ts", "apps/web/src/lib/__tests__/map-context.test.ts", "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx", "apps/web/e2e/lot-outline.spec.ts"],
+    "D-061-R006": ["apps/web/src/lib/architect/navigation.ts", "apps/web/src/components/architect/ArchitectEntry.tsx", "apps/web/src/components/architect/SurveyWorkspace.tsx", "apps/web/src/components/architect/ReportView.tsx", "apps/web/e2e/architect-workspace.spec.ts"],
+    "D-061-R007": ["project-control/reports/M5-T029-producer-report.md", "https://github.com/martin10101/nyc-buildability/actions/runs/34896822769", "Independent G1/G3/G4/G5 and final DCV review required before acceptance; results pending at submission"],
+    "D-061-R009": ["Frozen diff ef7ee891a70af4752187d6161deadbd55cbdb96a..50995365dedba7694f8462c5db3fd4dcf235690f: frontend and owner-authorized control records only", "project-control/reports/M5-T029-producer-report.md"],
+    "D-061-R010": ["apps/web/src/lib/address-search.ts", "apps/web/src/lib/architect/use-address-suggestions.ts", "apps/web/src/lib/__tests__/address-search.test.ts", "apps/web/src/components/architect/__tests__/autocomplete.test.tsx", "apps/web/e2e/architect-workspace.spec.ts"],
+    "D-061-R013": ["Remote main remains d8b3899f61efa6620e18a26541ced96020f5bef9; no main update or PR 241 merge performed", "Implementation published only on task/M5-T029-architect-workspace for CI; candidate integration follows acceptance"]
+  }
+}

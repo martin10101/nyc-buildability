@@ -3,6 +3,8 @@ import { cleanup, render, screen, fireEvent } from "@testing-library/react";
 import { EvidenceRecord } from "../EvidenceRecord";
 import { baseProfile } from "@/test-support/fixtures";
 import { propertyHref, readWorkspaceView } from "@/lib/architect/navigation";
+import { draftApplicableDoc, unsupportedDoc } from "@/test-support/rule-evaluation-fixtures";
+import { CalculationEvidence } from "../CalculationEvidence";
 
 describe("architect workspace safety", () => {
   it("retains the canonical BBL through every available view", () => {
@@ -21,6 +23,22 @@ describe("architect workspace safety", () => {
     expect(screen.getByText(/javascript:alert/)).toBeInTheDocument();
     expect(document.querySelector('a[href^="javascript:"]')).toBeNull();
   });
+  it("shows the applicable determination first and keeps other determinations expandable", () => {
+    const evaluation = draftApplicableDoc();
+    const other = unsupportedDoc().evaluations[0];
+    other.rule_id = "other-recorded-determination";
+    evaluation.evaluations.unshift(other);
+    render(<CalculationEvidence evaluation={evaluation} scenario={null}/>);
+    const determinations = document.querySelectorAll<HTMLDetailsElement>(".architect-determination");
+    expect(determinations).toHaveLength(2);
+    expect(determinations[0].open).toBe(true);
+    expect(determinations[0].querySelector("summary")).toHaveTextContent("Applicable determination · r5-residential-far");
+    expect(determinations[1].open).toBe(false);
+    fireEvent.click(determinations[1].querySelector("summary")!);
+    expect(determinations[1].open).toBe(true);
+    expect(determinations[1]).toHaveTextContent("Full evaluation trace");
+    expect(evaluation.evaluations[0].rule_id).toBe("other-recorded-determination");
+  });
 });
 
 afterEach(cleanup);
@@ -28,12 +46,28 @@ afterEach(cleanup);
 it("prints a readable brief by default and includes complete audit records only on request", async () => {
   const { ReportView } = await import("../ReportView");
   const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
-  render(<ReportView profile={baseProfile()} scenario={null} evaluation={null} label="Test property" />);
+  const profile = baseProfile();
+  profile.zoning.mapped_features = [];
+  render(<ReportView profile={profile} scenario={null} evaluation={null} label="Test property" />);
   const audit = screen.getByRole("checkbox", { name: "Include full audit appendix" });
   expect(audit).not.toBeChecked();
+  const facts = document.getElementById("brief-facts") as HTMLDetailsElement;
+  const sources = document.getElementById("brief-sources") as HTMLDetailsElement;
+  expect(facts.open).toBe(false);
+  expect(sources.open).toBe(false);
   fireEvent.click(screen.getByRole("button", { name: "Print property brief" }));
   expect(print).toHaveBeenCalledOnce();
+  expect(facts.open).toBe(true);
+  expect(sources.open).toBe(true);
+  const zoning = document.getElementById("brief-zoning")!;
+  for (const label of ["Landmark", "Historic district", "2007 FIRM flood flag", "2015 preliminary FIRM flood flag", "Pending land-use actions"]) expect(zoning).toHaveTextContent(label);
+  expect(zoning).toHaveTextContent("Unknown — not supplied");
   expect(Array.from(document.querySelectorAll<HTMLDetailsElement>(".architect-raw")).every(item => !item.open)).toBe(true);
+  fireEvent(window, new Event("afterprint"));
+  expect(facts.open).toBe(false);
+  expect(sources.open).toBe(false);
+  fireEvent(window, new Event("beforeprint"));
+  expect(facts.open).toBe(true);
   fireEvent(window, new Event("afterprint"));
   fireEvent.click(audit);
   fireEvent.click(screen.getByRole("button", { name: "Print property brief" }));

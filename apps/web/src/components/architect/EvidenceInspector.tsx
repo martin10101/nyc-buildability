@@ -27,11 +27,11 @@ export function EvidenceInspector({ profile, selected, onClose, onEvidence }: {
     return <aside ref={panelRef} tabIndex={-1} className={`architect-inspector ${selected ? "has-selection" : ""}`} aria-label="Contextual evidence inspector">
     <div className="architect-inspector-heading">
       <h2>
-        {record ? "Fact evidence" : "Sources & review"}
+        {selected ? record ? "Fact evidence" : "Source record unavailable" : "Sources & review"}
       </h2>
-      {record ? <button type="button" className="architect-text-button" onClick={onClose}>Close</button> : null}
+      {selected ? <button type="button" className="architect-text-button" onClick={onClose}>Close</button> : null}
     </div>
-    {record ? <EvidenceRecord record={record} profile={profile}/> : <>
+    {record ? <EvidenceRecord record={record} profile={profile}/> : selected ? <p role="status">The source record for reference <code>{selected}</code> was not supplied with this property.</p> : <>
       <p className="architect-eyebrow">Property record</p>
       <h3>
         {source?.source_id ?? "Source not supplied"}
