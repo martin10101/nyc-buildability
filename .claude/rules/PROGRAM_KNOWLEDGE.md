@@ -23,6 +23,19 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - `gate --sha` must equal live HEAD at record time; task allowed_paths must be clean. A
   disjoint peer commit between rework and gate record is fine when task identity is
   byte-stable — record an identity note in the gate report.
+- `new-task` WITHOUT `--gates` defaults to the FULLER set G0,G2,G3,G4,G5 (not G0,G3,G4). G2 =
+  producer self-check, recorded by `--reviewer orchestrator` (the CLI rejects the producer's
+  own name). A required gate ALSO needs its reviewer in the packet's `reviewer_agents` — fix a
+  missing one by ADDING the reviewer, never by dropping the gate.
+- ANY material edit after `submit` (even an orchestrator comment fix) invalidates the frozen
+  submission identity; `accept` fails closed "frozen-evidence identity mismatch". Fix = walk
+  `awaiting_gate → rework → in_progress → submit` to re-freeze; gates recorded AFTER the edit
+  stay valid and need no re-run. Lifecycle forbids `rework→awaiting_gate` and
+  `awaiting_gate→in_progress` directly.
+- `accept` also scans EVERY open blocker's `affects` **and `detail`** for a word-bounded task id
+  (`_blocker_references`, deliberately over-blocking). Historical prose naming a packet will
+  block it: correct the reference + keep the facts + log a dated `scope_corrections` entry —
+  NEVER close/downgrade a blocker to get past it.
 - `submit` needs `--evidence-map` (JSON in reports/, per applicable requirement id) and
   `--report` UNDER project-control/reports/ (build tasks: save the producer return verbatim
   there as M4-Txxx-producer-report.md).
@@ -66,12 +79,14 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   modularity `python tools/modularity_check.py --check`.
 - Rules: `services/api/app/rules/rulesets/*.rule.json`; ZR snapshots
   `docs/research/zr-snapshots/v1/`; snapshot sync `sync_zr_snapshots`.
-- Street-width stack: `services/api/app/connectors/dcm_street_centerline_arcgis.py`
-  (transport; returnGeometry defaults TRUE, parse discards geometry) →
-  `dcm_street_width_classifier.py` (24 typed classes, byte-immutable, accepted) →
-  `dcm_street_width_policy.py` (D-052 layer; no-default `AttestedPreconditions`).
-  Lot side: `mappluto_geometry_arcgis.py` (EPSG:2263, measurement) vs `mappluto_lot_outline.py`
-  (display-only 4326, NEVER measure).
+- Wide-street stack (all accepted): `dcm_street_centerline_arcgis.py` (transport; returnGeometry
+  TRUE, parse discards geometry) → `dcm_street_width_classifier.py` (24 classes, byte-immutable)
+  → `dcm_street_width_policy.py` (D-052; no-default `AttestedPreconditions` that VALUE-gates to
+  UNRESOLVED) → `dcm_street_centerline_geometry.py` (B3, typed 2263 polylines) →
+  `wide_street_buffer_engine.py` (B4, 100.0-ft buffer ∩ lot). B7 rule-wiring is NEXT and must be
+  its OWN module + close the B4 input-bounds gap (see Tier 2). Lot side:
+  `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display
+  only, NEVER measure).
 
 ## Domain anchors (verified)
 
@@ -95,10 +110,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   10 wide/15 narrow) → optional 23-73x sky-plane (un-suffixed R6–R10 only; 23-736 slopes
   2.7/5.6, alt 3.7/7.6) → 23-411/12/13 obstructions. C-districts: 33-121 overlay FAR (keyed
   by underlying R), 34-111 overlay governing rule, 34-112 equivalents table (C4-6→R10).
-- Owner research (Astra) = discovery aid ONLY (D-050-R002): archived under
-  docs/research/owner-research/; queue docs/RESEARCH_REQUESTS.md commits+pushes SAME step
-  (R006; pushed branch = owner's phone copy); new appends → seam line + PushNotification
-  (R005; mobile push currently disabled in /config).
+- Owner research (Astra) = discovery aid ONLY (D-050-R002); RQ queue commits+pushes in the SAME
+  step (R006) and appends get a seam line + PushNotification (R005). Detail: Tier 2.
 
 ## Session habits
 
@@ -110,16 +123,12 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
 - Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
   owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
-- Fable exhaustion kills the loop: run stops `REFUSED (unsafe, exit 11)
-  fable_exhaustion_turnover_recorded` (doctor names the cause — the live account-quota CLI
-  signature was never captured, so the probe leaves it 'unknown' and holds the pause). The
-  worker-pin flip is OWNER-ONLY (controller S3.2 rule 6: "writing the value is the owner's
-  edit"; `set-claude-model` also refuses on a stale out-of-band digest) AND classifier-blocked
-  — open a blocker with the one-line edit, never retry past it. The INITIAL pin needs no
-  launch probe, so the owner's edit alone suffices. Keep work moving meanwhile by dispatching
-  the blocked packet to an orchestrator producer (model override) + record the deviation.
-  Confirm exhaustion from primary records only: the run log + `model_switch_tracker.py
-  --query` (never a model's self-report).
+- Fable exhaustion kills the loop (`REFUSED unsafe exit 11
+  fable_exhaustion_turnover_recorded`): the worker-pin flip is OWNER-ONLY (controller S3.2
+  rule 6) AND classifier-blocked — open a blocker with the one-line edit, never retry past it;
+  the INITIAL pin needs no launch probe so the owner's edit alone suffices. Keep working via an
+  orchestrator-dispatched producer + recorded deviation. Confirm exhaustion ONLY from the run
+  log + `model_switch_tracker.py --query`, never a model's self-report. Full arc: B-024, D-060.
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list

@@ -7,10 +7,18 @@ gates, and workflow routes live in `CLAUDE.md`.
 
 ## Handoff — seq 112: D-059 MVP-review lane; 210 accepted; loop DOWN on B-024
 
+Turnover reason (owner, VERBATIM): "update the 2 md that keep trake of leasens learned from
+this seasen" — done: both D-054 tiers updated (Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md`
+COMPRESSED to fit before appending, 5954/6000 tok; Tier 2 `docs/WORKING_KNOWLEDGE.md` gained a
+"Gate/lifecycle mechanics learned the hard way" section and had its stale counts corrected).
+
 Generated 2026-09-14 (UTC) by session_01JjK8w1YXwFBjUS8PRrTfHp. Root
-`C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`.
-`main` untouched. PR #241 OPEN — NEVER merge. **Nothing in flight at landing** — no live
-agent, no uncommitted control-plane work, every dispatched review returned and is recorded.
+`C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`,
+HEAD at landing `f0e7d82f` + the knowledge-tier commit below. Origin
+`https://github.com/martin10101/nyc-buildability.git`. `main` untouched. PR #241 OPEN — NEVER
+merge. **Nothing in flight at landing** — no live agent, no uncommitted control-plane work,
+every dispatched review returned and is recorded. Dirty at landing: ONLY the conventional
+reviewer `.claude/agent-memory/**` files and the session `scratchpad/` (both expected).
 **MUST-READ: `docs/WORKING_KNOWLEDGE.md` (Tier 2) — its D-059 section leads the file.**
 
 Accepted by milestone: M0 138 · M1 9 · M2 21 · M3 1 · M4 15 · M5 26 = **210**.
