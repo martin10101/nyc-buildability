@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-057",
+ "version": 1,
+ "slug": "ruleeval-default-on",
+ "title": "Owner 2026-09-14: make the internal surfaces work on the plain URL - additive INTERNAL_RULE_EVAL_DEFAULT_ON server var (default-on when set; ?ruleeval=off kill switch and ?ruleeval=on bookmarks preserved; absent var = exactly today's two-factor behavior, zero e2e changes); operator checklist updated; owner activates by setting the var on the web service (M5-T026).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T07:25:00+00:00",
+ "created_at": "2026-09-14T07:25:00+00:00",
+ "updated_at": "2026-09-14T07:25:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "10aaedccb80b3954f03d7bc1b504807ec8fb21c1",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the ask verbatim during the live walkthrough; the privacy-layer tradeoff was disclosed in the same exchange and the order stands (consistent with the owner's accepted D-043 §5 exposure posture)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-057-R001",
+  "D-057-R002",
+  "D-057-R003",
+  "D-057-R004"
+ ],
+ "requirements_content_digest_sha256": "7ead16a3ebf3889a76ed7553a876efae8960c5924e82ae60ac3e9ced4575a2c5",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T07:25:00+00:00",
+   "content_digest_sha256": "e1cfdad8a40e03348d94a9dd4135a87dc70bb8c81c96cc393b5e9ee2ef8b8844"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_fix_order",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "additive default-on gate mode in rule-evaluation.ts + tests + operator checklist note, as one gated packet (M5-T026)",
+  "prohibited": "changing behavior where the new var is unset; editing e2e specs; weakening the main INTERNAL_RULE_EVAL_ENABLED gate, the kill switch, or the fail-safe defaults; NEXT_PUBLIC_ exposure of either flag"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T07:25:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture; M5-T026 contract follows immediately; tradeoff disclosure recorded in capture-context."
+  }
+ ]
+}

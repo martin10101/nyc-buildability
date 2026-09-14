@@ -1,0 +1,141 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-057",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-14T07:25:00+00:00",
+ "requirements": [
+  {
+   "id": "D-057-R001",
+   "text": "DEFAULT-ON MODE — add the server-read env var INTERNAL_RULE_EVAL_DEFAULT_ON (same TRUE_TOKENS rule; absent/empty/unknown = false = today's behavior) and extend ruleEvaluationSurfaceEnabled: main flag off -> off (unchanged); explicit true-token param -> on; param present without a true token (incl. 'off') -> off (kill switch preserved); param ABSENT -> on iff the new var holds a true token. Server-read only (never NEXT_PUBLIC_), read per request, never build-inlined.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-057-BOOTSTRAP",
+     "M5-T026"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "unit-test matrix over (main flag x default-on var x param states); fail-safe rows explicit",
+   "required_evidence": "rule-evaluation.ts + its test at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-057-R002",
+   "text": "ZERO BEHAVIOR CHANGE WHERE THE NEW VAR IS UNSET — every existing consumer (shared Playwright harness, all committed e2e specs incl. rule-evaluation-flag-off.spec.ts, any deploy without the var) keeps byte-identical behavior; NO e2e spec is edited; the change is purely additive.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-057-BOOTSTRAP",
+     "M5-T026"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "diff touches no e2e file; unit rows prove var-absent == old semantics",
+   "required_evidence": "git diff + tests",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-057-R003",
+   "text": "OPERATOR DOC — the D-043 deploy checklist gains the new OPTIONAL env var (web service only; what it does, the exposure consequence sentence, and that ?ruleeval=off remains the kill switch), so the recorded owner runbook stays true.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-057-BOOTSTRAP",
+     "M5-T026"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "checklist section updated alongside the code in the same packet",
+   "required_evidence": "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-057-R004",
+   "text": "OWNER ACTIVATION STEP (return) — default-on activates ONLY when the owner sets INTERNAL_RULE_EVAL_DEFAULT_ON=1 on the Render WEB service (env save restarts the service; no rebuild needed since the var is server-read). Report the exact step at the seam together with the M5-T025 Manual Deploy instruction.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-057-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "seam report names the exact dashboard step",
+   "required_evidence": "seam report; acceptance record",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

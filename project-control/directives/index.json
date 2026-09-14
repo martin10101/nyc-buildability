@@ -753,6 +753,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-056-provenance-links-lot-outline/manifest.json"
+  },
+  {
+   "directive_id": "D-057",
+   "slug": "ruleeval-default-on",
+   "title": "Owner 2026-09-14: make the internal surfaces work on the plain URL - additive INTERNAL_RULE_EVAL_DEFAULT_ON server var (default-on when set; ?ruleeval=off kill switch and ?ruleeval=on bookmarks preserved; absent var = exactly today's two-factor behavior, zero e2e changes); operator checklist updated; owner activates by setting the var on the web service (M5-T026).",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-057-ruleeval-default-on/manifest.json"
   }
  ],
  "updated_at": "2026-09-14T02:36:29+00:00"
