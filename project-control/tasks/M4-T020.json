@@ -81,13 +81,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "transport drift: re-implementing fetch/query/validation instead of importing the accepted surfaces would fork the connector discipline - G3 reviews reuse fidelity",
     "silent geometry loss: dropping features whose geometry is missing/malformed would corrupt B4's buffer inputs downstream - absence must be a typed, visible state",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T03:57:40.898040+00:00",
-  "updated_at": "2026-09-14T03:58:46+00:00",
+  "updated_at": "2026-09-14T04:03:02.454048+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -129,5 +129,14 @@
     "Worker model comes from C:/SupervisorController/model_selection.toml within the immutable config.toml allowlist [claude-fable-5, claude-opus-4-8]. D-047-R001 (claude-sonnet-5 producers) is NOT satisfiable inside the loop because sonnet-5 is not on the owner's allowlist - per D-053-R004 a blocked allowlist is an OWNER SETTINGS ITEM, never a bypass; deviation recorded in the G0 report and at the owner seam.",
     "The accepted transport module dcm_street_centerline_arcgis.py is byte-immutable (sibling-module pattern, M4-T016 G1 advisory 5 precedent); reuse is READ-ONLY import. mappluto_lot_outline stays the display-only 4326 surface; THIS module is measurement-grade EPSG:2263 and never serves display."
   ],
-  "worktree": "wt-m4t020"
+  "worktree": "wt-m4t020",
+  "progress_log": [
+    {
+      "at": "2026-09-14T04:03:02.454048+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + G0 PASS + claimed as wave-5 slot 1; FIRST packet of the D-053 codex-loop relaunch (loop worker = producer under model_selection.toml pin; D-047 sonnet-5 allowlist deviation recorded in G0 report). Launch next: worktree wt-m4t020 reset to claim head, run-id persistent-local-34."
+    }
+  ]
 }
