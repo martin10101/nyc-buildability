@@ -10,7 +10,7 @@
  "issued_at": "2026-09-14",
  "captured_at": "2026-09-14T01:45:00+00:00",
  "created_at": "2026-09-14T01:45:00+00:00",
- "updated_at": "2026-09-14T01:45:00+00:00",
+ "updated_at": "2026-09-14T02:04:12+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "aff0431841167759e800c68f908bb5612f8a9dbe",
@@ -31,7 +31,7 @@
   "D-052-R007",
   "D-052-R008"
  ],
- "requirements_content_digest_sha256": "53264a59eaa0fa6fe25217fd8a2532bca2e9acad3becc968c627f3c6f0c1ac66",
+ "requirements_content_digest_sha256": "f2c86d91a8d4c484a74870b19960f4378c015d07836e301b751bee6fb93317f8",
  "sources": [
   {
    "file": "source-001.md",
@@ -63,6 +63,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "D-052 captured verbatim by the build session (owner issued the OQ-3 decision here directly); peer session acknowledged the id claim (its channel shifts to D-053) and holds commits until this push. Capture commit also carries the R008 closure artifacts: docs/ARCHITECT_REVIEW_QUESTIONS.md owner-decision entry + docs/RESEARCH_REQUESTS.md RQ-005 cross-reference + SESSION_HANDOFF note. Decision inputs on record: accepted M4-T013/M4-T015/M4-T016 reports and the three archived D-050 research passes (discovery aids)."
+  },
+  {
+   "at": "2026-09-14T02:04:12+00:00",
+   "actor": "orchestrator",
+   "action": "capture_defect_correction",
+   "note": "D-052-R008 classification corrected 'return_item' -> 'return' (c1 vocabulary; the invalid value was a capture defect caught by the validator the moment the directive was indexed - the requirement text is unchanged). Digest resynced 53264a59 -> f2c86d91 in the SAME commit (c14). Also in this commit: index.json registration for D-051/D-052, which the capture commits had omitted - the validator/registry could not see either directive until now."
   }
  ]
 }

@@ -13,7 +13,9 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -26,7 +28,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -39,7 +45,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -52,7 +60,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -65,7 +77,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -78,7 +92,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -91,7 +109,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -104,7 +124,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -117,7 +141,9 @@
    "classification": "hold",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -130,7 +156,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -140,10 +170,12 @@
    "id": "D-051-R006",
    "text": "RETURN ITEMS - (a) Correct the existing overclaim instances: the build session's prior owner-summary ('the city literally never wrote it down anywhere public'; 'any unclear street counts as narrow, which can only under-estimate, never over-promise') is corrected in the owner-facing reply generated from this capture, and the RQ-005 queue stamp's 'undocumented' wording is refined to 'no field-level definition located in the examined official sources'. (b) Answer the owner's question ('How is this answer does this work?') with an assessment generated from the completed record: what the new evidence supports, what stays open, and what path closes it. (c) 'Research ANSWERED' means evidence located - never implemented or professionally approved (owner's explicit distinction; reiterates D-050-R002/DRAFT-until-G6).",
    "source_ref": "source-001.md#owner-message-verbatim",
-   "classification": "return_item",
+   "classification": "return",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-051-BOOTSTRAP"],
+    "task_ids": [
+     "D-051-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -156,7 +188,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],

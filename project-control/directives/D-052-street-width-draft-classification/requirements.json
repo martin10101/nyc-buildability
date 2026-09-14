@@ -13,7 +13,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -26,7 +28,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -39,7 +45,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -52,7 +60,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -65,7 +77,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -78,7 +92,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -91,7 +109,9 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -104,7 +124,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -117,7 +141,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -130,7 +156,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -143,20 +173,29 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
     "lifecycle_events": [],
     "effective_date": "2026-09-14"
    },
-   "dependencies": ["D-051-R002", "D-051-R003"],
+   "dependencies": [
+    "D-051-R002",
+    "D-051-R003"
+   ],
    "required_harness": "consuming-rule packets carry per-rule fallback justifications or emit not-assessed; tests prove UNKNOWN propagates",
    "required_evidence": "accepted rule task(s) citing D-052-R006 alongside D-051-R002/R003",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -169,7 +208,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -182,7 +223,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],
@@ -192,10 +237,12 @@
    "id": "D-052-R008",
    "text": "CLOSURE + HONEST RESIDUAL - OQ-3 closes as OWNER-DECIDED upon this directive's recording (closure entry appended to docs/ARCHITECT_REVIEW_QUESTIONS.md; the M4-T013/M4-T015 reports' OQ-3 references remain immutable history). The remaining RQ-005 publisher-convention questions stay accurately marked unresolved; this decision is an owner-approved DRAFT policy and does NOT claim the research established an official universal DCM interpretation.",
    "source_ref": "source-001.md#owner-message-verbatim",
-   "classification": "return_item",
+   "classification": "return",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-052-BOOTSTRAP"],
+    "task_ids": [
+     "D-052-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "paths": [],
@@ -208,7 +255,11 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
    "reviewed_sha": null,
    "status_reason": "",
    "evidence_paths": [],

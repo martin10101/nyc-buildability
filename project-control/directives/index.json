@@ -681,6 +681,30 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-050-owner-assisted-research-channel/manifest.json"
+  },
+  {
+   "directive_id": "D-051",
+   "slug": "per-rule-conservative-fallback",
+   "title": "Owner 2026-09-13: two corrections of build-session claims (bounded-negative evidence discipline; 'unknown means narrow is always safe' is FALSE - 23-431 street-wall counterexample) + binding instruction: unknown street width keeps factual status UNKNOWN and every conservative fallback is validated per consuming rule with assumption/review labels until validated; RQ-005 independent-confirmation research received (discovery aid).",
+   "status": "active",
+   "issued_at": "2026-09-13",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-051-per-rule-conservative-fallback/manifest.json"
+  },
+  {
+   "directive_id": "D-052",
+   "slug": "street-width-draft-classification",
+   "title": "Owner decision 2026-09-14 (OQ-3 RESOLVED): approved DRAFT street-width classification policy - 75-ft threshold with exceptions checked first; clear numbers/one-sided explicit bounds usable from the correctly matched DCM feature under documented source/street-status/frontage-coverage checks (owner-approved assumption, never a DCP guarantee); straddling/approximate/unrecognized values stay UNKNOWN to effective-map resolution; full provenance; UNKNOWN stays the data state with per-rule fallback justification (D-051); DRAFT until G6; RQ-005 publisher-convention residual stays open.",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-052-street-width-draft-classification/manifest.json"
   }
  ],
  "updated_at": "2026-09-13T17:23:15+00:00"

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T22:05:00+00:00",
  "created_at": "2026-09-13T22:05:00+00:00",
- "updated_at": "2026-09-13T22:05:00+00:00",
+ "updated_at": "2026-09-14T02:04:12+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "418b078f04f1c8fb753eb52f0e8074fc9764da00",
@@ -29,7 +29,7 @@
   "D-051-R005",
   "D-051-R006"
  ],
- "requirements_content_digest_sha256": "da6af7c8f30aca6178fd26bcda00ed3822fe786ffbf6ccfc939ddd5f73e0cc55",
+ "requirements_content_digest_sha256": "136f58097038767dbba4c5e1917fc37a775065cbe43119fa785cbac2dc50d5dc",
  "sources": [
   {
    "file": "source-001.md",
@@ -60,6 +60,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "D-051 captured verbatim by the build session (owner issued it here directly); peer session acknowledged the id claim and holds D-052+ for its own channel. Companion research report archived at docs/research/owner-research/RQ005_Independent_Confirmation_2026-09-13.md (discovery aid, D-050-R002). Capture commit also carries the R004 queue fold + R006 wording correction."
+  },
+  {
+   "at": "2026-09-14T02:04:12+00:00",
+   "actor": "orchestrator",
+   "action": "capture_defect_correction",
+   "note": "D-051-R006 classification corrected 'return_item' -> 'return' (c1 vocabulary; the invalid value was a capture defect caught by the validator the moment the directive was indexed - the requirement text is unchanged). Digest resynced da6af7c8 -> 136f5809 in the SAME commit (c14). Also in this commit: index.json registration for D-051/D-052, which the capture commits had omitted - the validator/registry could not see either directive until now."
   }
  ]
 }
