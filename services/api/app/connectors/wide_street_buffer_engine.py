@@ -312,9 +312,17 @@ class Ec5AttestedPreconditions:
     C5-3/C6-4/C6-6 alternate-width clause are OUT of this module's scope
     (B7 wires them later). Every field is required with NO default - a
     caller must explicitly construct this, so the omission can never be
-    silent (S2). This module does NOT gate computation on the attested
-    values (see module docstring) - it only forces explicit acknowledgment
-    and carries the attestation through every result for audit.
+    silent (S2). [ORCH-CORRECTED per M4-T021-G4-delta NB-5] This module DOES
+    gate computation on the attested values: when either
+    ``named_street_override_checked`` or ``alternate_width_clause_checked``
+    is ``False``, ``compute_wide_street_buffer_intersection`` refuses and
+    returns ``STATUS_PRECONDITIONS_NOT_ATTESTED`` with every buffer and
+    intersection field empty, mirroring the accepted
+    ``dcm_street_width_policy`` precedent's ``DECISION_UNRESOLVED`` refusal.
+    The attestation is also carried through every result for audit. (The
+    superseded text here claimed the opposite - "does NOT gate computation
+    on the attested values" - which was true only before the EC-5 value gate
+    was added; it is recorded as SUPERSEDED rather than silently deleted.)
 
     ``named_street_override_checked`` - the caller checked whether either of
     the two named-street legislative designations (Broadway W94-97 CD7;
