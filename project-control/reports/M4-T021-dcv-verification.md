@@ -4,10 +4,17 @@
 > (2026-09-14; transport entity-decoding only, per the report-preservation rule).
 > Verifier ≠ producer ≠ gate reviewers ≠ orchestrator.
 >
-> **Orchestrator action on the verifier's one open item:** it could not complete
-> `tools/test_directive_compliance.py` within its session budget and recommended the
-> orchestrator capture it under a longer budget. That run was started immediately as a
-> background job at the acceptance seam; its result is recorded in the acceptance commit.
+> **Orchestrator action on the verifier's one open item — with a provenance correction:** the
+> verifier could not complete `tools/test_directive_compliance.py` within its session budget and
+> recommended a longer-budget capture. The authoritative result — **129 tests, OK, exit 0, in
+> 3244s (~54 min)** — comes from the VERIFIER'S OWN background run (`bhv11kwu4`), which it
+> launched and read directly from that run's output file, then folded into a follow-up to this
+> report. The orchestrator separately launched a duplicate run (`bmwc78smk`) at the acceptance
+> seam; that duplicate was KILLED before finishing and produced only partial output (it was
+> progressing normally, last seen passing `LineEndingNormalizationTest`). An earlier draft of
+> this header implied the recorded result came from the orchestrator's run — it did not, and
+> that is corrected here. The provenance is in fact stronger than first stated: the passing
+> result is the independent verifier's own execution, not the orchestrator's.
 
 ## Scope and identity confirmation
 
