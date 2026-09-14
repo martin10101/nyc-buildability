@@ -5,13 +5,28 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff — seq 109: 204 pending-accept; landed by /session-handoff (no reason given)
+## Handoff — seq 110: 204 pending-accept; landed by /session-handoff (re-run)
 
-Generated 2026-09-14 (UTC) by the wave-3/4 orchestrator session
+Reason: owner directive embedded as the turnover reason — recorded VERBATIM as
+`project-control/directives/D-054-persistent-knowledge-files/source-001.md` (two-tier
+persistent-knowledge system; captured + implemented this seam, not duplicated here for
+budget). Generated 2026-09-14 (UTC) by the wave-3/4 orchestrator session
 (session_01JjK8w1YXwFBjUS8PRrTfHp). Root `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch
-`candidate/D-024-mrl-option-b`, HEAD `a7cc1757` **pushed** (0/0). `main` untouched. PR #241
-OPEN — NEVER merge. Dirty at landing: ONLY conventional reviewer agent-memory files +
-session scratchpad. Campaign-continuity CLI: known-stale records — ledger+git fallback.
+`candidate/D-024-mrl-option-b` (tip = this seam's capture commit; 0/0 after push). `main`
+untouched. PR #241 OPEN — NEVER merge. Dirty at landing: ONLY conventional reviewer
+agent-memory files + session scratchpad. Campaign-continuity CLI: known-stale — ledger+git.
+
+## NEW (D-054): two knowledge files — READ TIER 2 NOW
+
+- **Tier 1** `.claude/rules/PROGRAM_KNOWLEDGE.md` — compressed program-wide pointers,
+  auto-injected into every session (you already have it). APPEND when you discover something
+  program-wide useful; eager budget (context_budget_check, 6000 tok) is the hard cap —
+  compress, never raise.
+- **Tier 2** `docs/WORKING_KNOWLEDGE.md` — living current-section knowledge (street-width /
+  A2 + C-district lanes right now): wave-4 close state, B-lane map, exception build inputs,
+  C-district family specs, D-053 relaunch runbook pointers. **MUST-READ at resume.** Update
+  it while working; at section close PRUNE finished material or PROMOTE durable items to
+  Tier 1 (D-054-R003).
 
 ## WHAT THIS SESSION DELIVERED
 
@@ -45,6 +60,9 @@ session scratchpad. Campaign-continuity CLI: known-stale records — ledger+git 
    auto-accept/merge, R595 shadow), R003 repo-only comms + this session's successor = quiet
    monitor + owner bridge (D-050-R005 leg), R004 Astra roles distinct, R005 verify→execute→
    report loop-live. **NOT yet executed.**
+6. **D-054 captured + implemented at this seam:** the two-tier knowledge system (files above;
+   registry `directives/D-054-persistent-knowledge-files/`; index.json entry same commit;
+   context_budget_check PASS 5330/6000 eager).
 
 ## IN FLIGHT AT LANDING
 

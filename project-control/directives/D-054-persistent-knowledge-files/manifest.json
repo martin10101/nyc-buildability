@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-054",
+ "version": 1,
+ "slug": "persistent-knowledge-files",
+ "title": "Owner 2026-09-14 (via /session-handoff reason): two-tier persistent knowledge system - Tier 1 .claude/rules/PROGRAM_KNOWLEDGE.md (compressed program-wide pointers, auto-injected into every session as an unconditioned rule, grows continuously under the eager context budget) + Tier 2 docs/WORKING_KNOWLEDGE.md (living current-section knowledge, handoff-read, prune-or-promote at section close); repo files chosen as the shared loop-visible stores.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T03:30:00+00:00",
+ "created_at": "2026-09-14T03:30:00+00:00",
+ "updated_at": "2026-09-14T03:30:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "4c5a821570f5f26718c73863c8fa6763de5be6d1",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner embedded the directive verbatim as the /session-handoff turnover reason in the live build session and invited design advice ('if you have a better way of doing it feel free to advise'); the accepted refinements (unconditioned-rule injection under the eager budget; prune-OR-PROMOTE at section close; Markdown-pointer format; repo files as the loop-visible shared stores) are recorded in R001/R003/R004."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-054-R001",
+  "D-054-R002",
+  "D-054-R003",
+  "D-054-R004",
+  "D-054-R005"
+ ],
+ "requirements_content_digest_sha256": "8a9489927d67ba7c2b4d5fe5847536ff2edac57f51899b64009169edc3ed21ed",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T03:30:00+00:00",
+   "content_digest_sha256": "b1d326c9ba339648035a5e52a29df9c17c0e722f373d1f6c8f5fb6e87f56e223"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_infrastructure",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "creation and continuous maintenance of the two knowledge files by any session (append-when-discovered for Tier 1 pointers; live updates + section-close prune-or-promote for Tier 2); handoff wiring; companion sessions are consumers and contributors via the same unconditioned-rule injection",
+  "prohibited": "raising the eager context budget as a side effect of Tier-1 growth; carrying finished-section material in the active Tier-2 file; duplicating ledger/gate/directive state into the knowledge files (pointers only - the ledger stays authoritative); storing secrets (public repo)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T03:30:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "D-054 captured by the build session mid-/session-handoff (the directive arrived as the turnover reason). Capture commit carries: this registry + index.json entry (same-commit rule), both seeded knowledge files, SESSION_HANDOFF seq 110 wiring, context_budget_check PASS. Peer session acknowledged the id claim (its channel shifts to D-055) and suggested counting companion sessions among Tier-1 consumers - accepted in R001 (the unconditioned-rule mechanism already delivers it)."
+  }
+ ]
+}

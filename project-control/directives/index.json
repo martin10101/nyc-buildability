@@ -717,6 +717,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-053-relaunch-codex-loop-campaign/manifest.json"
+  },
+  {
+   "directive_id": "D-054",
+   "slug": "persistent-knowledge-files",
+   "title": "Owner 2026-09-14: two-tier persistent knowledge system - Tier 1 .claude/rules/PROGRAM_KNOWLEDGE.md (compressed program-wide pointers, auto-injected every session, grows under the eager context budget) + Tier 2 docs/WORKING_KNOWLEDGE.md (living current-section knowledge, handoff-read, prune-or-promote at section close).",
+   "status": "active",
+   "issued_at": "2026-09-14",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-054-persistent-knowledge-files/manifest.json"
   }
  ],
  "updated_at": "2026-09-14T02:36:29+00:00"
