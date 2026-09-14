@@ -18,8 +18,15 @@ export const metadata: Metadata = {
  * INTERNAL_RULE_EVAL_ENABLED once per request (never inlined into the browser
  * bundle) and passes a plain boolean into the client tree. When the flag is
  * off the rule-evaluation surface is never rendered and its fetch is never
- * issued (defense in depth; the endpoint is independently gated). A per-request
- * `?ruleeval=off` acts only as a fail-safe kill switch.
+ * issued (defense in depth; the endpoint is independently gated). With the
+ * flag on, the surface is either explicit opt-in-only (plain `/property`
+ * shows just the BBL form; append `?ruleeval=on`), or default-on when the
+ * optional INTERNAL_RULE_EVAL_DEFAULT_ON var is set (D-057; plain `/property`
+ * shows the full internal flow with no query param). A per-request, PRESENT
+ * `?ruleeval` value that is not a true token (e.g. `off`) acts as a fail-safe
+ * kill switch in BOTH modes — it always disables the surface, never
+ * weakened by the default-on var. See `ruleEvaluationSurfaceEnabled` in
+ * `@/lib/rule-evaluation` for the exact decision table.
  */
 export default async function PropertyPage({
   searchParams,

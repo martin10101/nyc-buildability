@@ -147,6 +147,33 @@ Set these on the **new web service** in the dashboard, **before** you trigger th
      reads them yet; Supabase-backed features are expected-absent (§9). Only publishable values may
      ever go here — never a service-role key (`apps/web/.env.example` lines 12-16).
 
+### 2a. OPTIONAL — default-on mode for the internal surfaces (D-057, added 2026-09-14)
+
+This step is **optional** and independent of steps 1-3 above; skip it to keep the opt-in-only
+behavior (plain `/property` shows only the numeric BBL form, as described in step 1 and §9).
+
+- **Var name:** `INTERNAL_RULE_EVAL_DEFAULT_ON` = `1` — set on the **WEB service only** (do **not**
+  set this on `nycdf-api`; it has no effect there).
+- **What it does:** with it set to a true token, a plain `/property` request — **no**
+  `?ruleeval=on` query param — shows the **full internal flow** (the address front door **and** the
+  draft rule-evaluation surface) directly, as long as `INTERNAL_RULE_EVAL_ENABLED` (step 1) is also
+  on. Same **true tokens** and same fail-safe rule as step 1 (`1`, `true`, `yes`, `on`,
+  case-insensitive, trimmed; absent / empty / unrecognized = **off**, i.e. today's opt-in-only
+  behavior, unchanged). Source: `apps/web/src/lib/rule-evaluation.ts`
+  (`INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR`, `ruleEvaluationSurfaceEnabled`).
+- **Exposure consequence — read this before setting it.** With this var set, **anyone holding the
+  web URL sees the full internal flow immediately**, with no query param to type — one fewer privacy
+  layer than the opt-in-only default. This is the same exposure posture already disclosed and
+  owner-accepted in §5 (unlisted + flag-gated, **not** secret-proof); D-057 records the owner's
+  explicit order to make the plain URL work without `?ruleeval=on`
+  (`project-control/directives/D-057-ruleeval-default-on/source-001.md`).
+- **`?ruleeval=off` remains the kill switch.** Even with this var set, a request that explicitly adds
+  `?ruleeval=off` (or any other non-true `ruleeval` value) still forces the surface off for that
+  request — the fail-safe kill switch is never weakened by this var.
+- **Server-read — no rebuild needed.** Unlike `NEXT_PUBLIC_API_BASE_URL` (step 2, which is
+  build-inlined), this var is read per request. Saving it in the dashboard and letting Render
+  restart the service (the normal env-var-change restart) is sufficient.
+
 ---
 
 ## 3. Trigger the first build
@@ -262,7 +289,8 @@ boolean, which requires the env flag on **AND** a per-request `?ruleeval=on` opt
 `<AddressResolutionScreen />`). **Consequence:** a plain `/property` request (no `?ruleeval=on`)
 shows **only the numeric BBL lookup form — there is no address field**, even with the env flag set.
 That is **expected**, not a broken deploy. To use the address flow you must open
-**`<new-web-service-origin>/property?ruleeval=on`**.
+**`<new-web-service-origin>/property?ruleeval=on`** — **unless** you opted into §2a's optional
+`INTERNAL_RULE_EVAL_DEFAULT_ON` var, in which case the plain URL already shows the full flow.
 
 1. **Load the web URL** (`<new-web-service-origin>`) — the app loads (root `/` returns 200; health
    posture from §1 step 10). Plain `/property` shows the numeric BBL lookup form; the numeric lookup
@@ -324,6 +352,7 @@ this check matters only if the old name lingers somewhere from an earlier setup.
 | Not-a-public-launch; private = unlisted+flag-gated+labeling, not secret-proof; owner-only dashboard boundary | `project-control/directives/D-043-internal-web-deploy/` source-001.md + requirements.json R001-R004 |
 | Stale-flag rename (INTERNAL_RULE_EVAL_UI → …_ENABLED) | `project-control/reports/M5-T019-producer-report.md` lines 168-183 |
 | SSR Next.js = Web Service; Node version documented separately | `docs/research/render-nextjs-previews-2026-07-16.md` §1 |
+| §2a: optional `INTERNAL_RULE_EVAL_DEFAULT_ON` var, same true-token rule, server-read, kill switch survives, exposure consequence | `apps/web/src/lib/rule-evaluation.ts` (`INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR`, `ruleEvaluationSurfaceEnabled`); `project-control/directives/D-057-ruleeval-default-on/source-001.md` (owner-accepted exposure tradeoff) |
 
 **Items marked [confirm in the dashboard UI]** are Render UI specifics not fixed by repo evidence:
 the New-Web-Service click-path labels, the exact Node-version mechanism, the `$PORT` listen

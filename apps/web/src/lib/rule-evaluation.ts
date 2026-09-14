@@ -64,13 +64,23 @@ export const DEFAULT_TIMEOUT_MS = 12_000;
 //     disabled (fail safe), so a production deploy that never sets it keeps the
 //     surface unreachable.
 //
-//  2. PER-REQUEST OPT-IN: the request explicitly asks for the surface via
-//     `?ruleeval=on`. Absent (or `off`) -> disabled. This second factor keeps
-//     the experimental surface silent unless deliberately requested even where
-//     the environment allows it, and lets the shared single-server e2e harness
-//     enable the surface for the rule-evaluation journeys WITHOUT rendering it
-//     (or issuing its fetch) on any other journey. In production, where the
-//     environment gate is closed, the opt-in has no effect at all.
+//  2. PER-REQUEST OPT-IN, or DEFAULT-ON when INTERNAL_RULE_EVAL_DEFAULT_ON is
+//     set (D-057): the request explicitly asks for the surface via
+//     `?ruleeval=on`, OR the `ruleeval` param is ABSENT and the second
+//     server-read var INTERNAL_RULE_EVAL_DEFAULT_ON holds a true token (same
+//     TRUE_TOKENS rule; absent / empty / unknown -> false, i.e. today's
+//     behavior when the var is unset — this mode is purely additive). A
+//     `ruleeval` param that IS present but is NOT a true token (`off`, `0`, an
+//     empty string, an unrecognized word, or an array that does not resolve to
+//     a true-token first element) is the FAIL-SAFE KILL SWITCH: it disables the
+//     surface unconditionally, regardless of either env var — this is what
+//     lets the shared single-server e2e harness enable the surface for the
+//     rule-evaluation journeys WITHOUT rendering it (or issuing its fetch) on
+//     any other journey, and lets a default-on deploy still be silenced per
+//     request. The e2e harness never sets INTERNAL_RULE_EVAL_DEFAULT_ON, so its
+//     param-absent requests stay OFF, byte-identical to pre-D-057 behavior. In
+//     production, where the environment gate (factor 1) is closed, neither the
+//     opt-in nor the default-on var has any effect.
 //
 // When the resulting boolean is false the surface is never rendered and the
 // rule-evaluation fetch is never issued.
@@ -82,6 +92,15 @@ const TRUE_TOKENS: ReadonlySet<string> = new Set(["1", "true", "yes", "on"]);
  * endpoint. Server-side only — deliberately NOT NEXT_PUBLIC_. */
 export const INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED";
 
+/** D-057: the OPTIONAL default-on var. When it holds a true token, a request
+ * whose `ruleeval` param is ABSENT gets the surface anyway (no query param
+ * needed on the deployed URL). Absent / empty / unknown -> false, so a deploy
+ * that never sets it is byte-identical to pre-D-057 behavior. An explicit,
+ * present `ruleeval` param (any value) always overrides this — see
+ * `ruleEvaluationSurfaceEnabled`. Server-side only — never inlined into the
+ * browser bundle, and never build-inlined (read per request, like factor 1). */
+export const INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR = "INTERNAL_RULE_EVAL_DEFAULT_ON";
+
 /** The env-level flag: an explicit true token enables it; absent / empty /
  * unknown -> disabled (fail safe). Read server-side only. */
 export function ruleEvaluationFlagEnabled(
@@ -90,14 +109,31 @@ export function ruleEvaluationFlagEnabled(
   return typeof rawValue === "string" && TRUE_TOKENS.has(rawValue.trim().toLowerCase());
 }
 
-/** Whether to render the rule-evaluation surface for THIS request: the env
- * flag must be on AND the request must explicitly opt in with `?ruleeval=on`.
- * Default (no env, no params, or `?ruleeval=off`) is OFF. */
+/** D-057: the optional default-on var, same TRUE_TOKENS / fail-safe rule as
+ * `ruleEvaluationFlagEnabled`. Read server-side only, per request. */
+export function ruleEvaluationDefaultOnEnabled(
+  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR],
+): boolean {
+  return typeof rawValue === "string" && TRUE_TOKENS.has(rawValue.trim().toLowerCase());
+}
+
+/** Whether to render the rule-evaluation surface for THIS request. The env
+ * flag (factor 1) must be on; then:
+ *   - `ruleeval` ABSENT -> on iff INTERNAL_RULE_EVAL_DEFAULT_ON holds a true
+ *     token (default OFF, i.e. unchanged, when that var is unset);
+ *   - `ruleeval` PRESENT and a true token (e.g. `on`, `1`, after array-first /
+ *     trim / lowercase handling) -> ON (bookmarked `?ruleeval=on` links keep
+ *     working, even on a default-on deploy);
+ *   - `ruleeval` PRESENT and NOT a true token (`off`, `0`, `""`, an
+ *     unrecognized word, or an array whose first element is not a true token)
+ *     -> OFF unconditionally — the fail-safe kill switch, never weakened by
+ *     either env var. */
 export function ruleEvaluationSurfaceEnabled(params?: {
   ruleeval?: string | string[] | undefined;
 }): boolean {
   if (!ruleEvaluationFlagEnabled()) return false;
   const raw = params?.ruleeval;
+  if (raw === undefined) return ruleEvaluationDefaultOnEnabled();
   const value = Array.isArray(raw) ? raw[0] : raw;
   return typeof value === "string" && TRUE_TOKENS.has(value.trim().toLowerCase());
 }
