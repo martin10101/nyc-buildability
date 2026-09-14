@@ -55,6 +55,17 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   connectors suite 781; producer cb277b8f; G3/G4 in flight). B7 (wire into
   r6_r7_r8_wide_street_conditional_far.rule.json — currently cites zr-23-22 ONLY, performs
   no wide-street determination) = OPEN, do LAST.
+- **B7 BINDING PRECONDITIONS (from the M4-T021 reviewers — do NOT rediscover these when B7 is
+  scoped):** (1) *G3 modularity ruling:* do NOT split `wide_street_buffer_engine.py`, but B7's
+  rule-wiring and the named-street override table MUST land as their own module(s) consuming
+  this one — never added into this file (the DCM parse/classify/policy four-file split is the
+  precedent). (2) *G5 advisory A1:* the engine has NO input-size or coordinate-magnitude bound
+  of its own — `len(wide_segments)`, per-path vertex count, and plausible-EPSG:2263-extent are
+  all unbounded here, relying entirely on upstream transport caps (MAX_RESPONSE_BYTES 10 MB,
+  MAX_RESULT_RECORD_COUNT 2000/page, HARD_MAX_PAGES). Acceptable today ONLY because nothing
+  reaches this module from a request path. **Before B7 wires it behind a handler, add a typed
+  fail-closed bound (and/or an extent sanity check alongside the existing finiteness check) or
+  make it a binding requirement of B7's own contract.**
 - **B4 judgment calls the producer disclosed for the reviewers to rule on** (carry into B7):
   `Ec5AttestedPreconditions` is required/no-default but does NOT gate computation on the
   attested boolean VALUES (reading: the pinned research says B4 is not blocked on B5/B6/B7);
