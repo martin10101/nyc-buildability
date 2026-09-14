@@ -67,12 +67,30 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   Ridge lots — §12-10-only eligibility function is WRONG; cross-refs §23-21/§23-424
   (35/35, 35/45, 45/55)/§27-111/§66-11; print/PDF capture still owed.
 
-## D-053 relaunch (next big block after wave-4 close)
+## D-053 relaunch — EXECUTED TO THE LAUNCH STEP (2026-09-14); launch = ONE owner command
 
-- Captured @ fef69aae, verified. Execute per orchestrator-memory runbooks
-  (loop-relaunch-mechanics + task-switch drill): 5 start blockers (config-space quoting,
-  packet status→G0+claim, documented_test_commands profile, allowed_paths glob format, audit
-  fork), certified-cwd manifest binding, checkout_key=sha256(resolve(--checkout)),
-  bash-mangles-C:\, two ask stores, NEVER audit-write verbs vs a LIVE run, watcher quiet
-  mode. Authority: NO auto-accept/merge (R595 shadow); monitor = owner bridge (D-050-R005
-  leg); report loop-live at owner seam = discharges R005; then stop hand-conducting.
+- Everything staged by the orchestrator session: **M4-T020 (B3 geometry parse-and-expose)**
+  contracted (d7f0f3f8) + G0 PASS + claimed + launch-prep record (a9df0fdd); registry bound
+  D-045-R002/R008/R009 + D-046-R001/R002 w/ digest resyncs (evaluate_task_refs ok);
+  loop-closed-profile commands; placeholders seeded; supervisor down-state drill DONE
+  (3 stale M4-T009 asks denied — CRLF trap: strip \r from parsed digests; PAUSED_RECOVERY
+  → PREFLIGHT; 0 children/0 effects); wt-m4t020 @ a9df0fdd, packet copies byte-identical;
+  all launch paths verified; run-id **persistent-local-34**.
+- **LAUNCH IS CLASSIFIER-BLOCKED for the session** (PowerShell AND Bash routes both denied;
+  the detached Start-Process launch is a guarded action class now). Owner runs ONE command
+  (survives session end — Start-Process detaches):
+  `powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\MLFLL\Downloads\nyc-zoning\ctl24\scratchpad\relaunch_m4t020.ps1"`
+  (or type it with a `!` prefix in the orchestrator session). Alternative: add a Bash
+  permission allow rule for the launch and tell the session to retry.
+- **D-036 Thursday model revert ALSO classifier-blocked** (model_selection.toml edit denied):
+  loop runs the standing owner-approved opus-4-8 pin; owner item = execute the revert
+  recorded verbatim in the file comment (fable-5 + fallback ["claude-opus-4-8"]).
+  D-047 sonnet-5: NOT on the loop allowlist → owner settings item (D-053-R004), deviation
+  recorded in the M4-T020 G0 report + ledger.
+- Watcher: two-phase read-only `scratchpad/loop_break_watcher_m4t020.sh` armed in-session
+  (waits for the lock, then quiet BREAK/FREEZE/CLOSED only; a fast CLOSED can be the benign
+  DL-2 checkpoint_field_mismatch — inspect wt-m4t020 before assuming failure).
+- After loop-live: monitor + owner bridge only (R002/R003); NO auto-accept/merge (R595
+  shadow); gates/acceptance stay with the orchestrator at the seam.
+- Wave-5 queue after M4-T020: B4 buffer engine, zr-12-10 snapshot-update task, C-district
+  families 1–3, B7 wiring LAST (G3-A1 acceptance criterion).
