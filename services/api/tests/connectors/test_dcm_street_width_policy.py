@@ -393,3 +393,18 @@ def test_policy_never_raises(raw: str, preconditions: AttestedPreconditions) -> 
     assert decision.decision_state in (
         DECISION_WIDE, DECISION_NARROW, DECISION_UNRESOLVED, DECISION_UNKNOWN,
     )
+
+
+def test_no_precondition_field_has_a_default() -> None:
+    """[ORCH-CORRECTED per G4 F1] Every AttestedPreconditions field is caller-supplied.
+
+    Structural guard for the packet's named precondition-theater risk: a default on the
+    LAST dataclass field (e.g. ``exceptions_checked: bool = True``) would compile, keep
+    zero-arg construction raising ``TypeError``, and leave every behavioral test green -
+    only a per-field default check catches that one-line regression (G4 mutation M6).
+    """
+    import dataclasses
+
+    for field in dataclasses.fields(AttestedPreconditions):
+        assert field.default is dataclasses.MISSING, field.name
+        assert field.default_factory is dataclasses.MISSING, field.name

@@ -74,8 +74,8 @@
   "reviewer_agents": [
     "data-contract-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "the 12-10 page is ~1.3MB and the print/PDF render 504'd twice for M4-T016 - the fallback channel must be disclosed, never silently substituted",
     "the accepted r6_r7_r8 rule + snapshot reference the pre-amendment text; mishandling the reconciliation as a silent snapshot edit would corrupt accepted provenance - the update is a separate gated task",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T02:06:14.818298+00:00",
-  "updated_at": "2026-09-14T02:25:50.405284+00:00",
+  "updated_at": "2026-09-14T02:30:40.557119+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
