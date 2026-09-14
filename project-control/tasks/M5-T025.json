@@ -91,8 +91,8 @@
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "rework",
+  "progress_percent": 70,
   "risks": [
     "reflected-string href regression: any path where server-echoed text reaches an href gates G3 - the negative test in S1 is mandatory",
     "root-cause theater: fixing symptoms (e.g. only raising maxZoom) without explaining why NO outline was visible would leave the defect - G3 verifies cause-vs-fix coherence (D-056-R002)",
@@ -101,7 +101,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T05:20:01.499404+00:00",
-  "updated_at": "2026-09-14T05:26:57.964954+00:00",
+  "updated_at": "2026-09-14T06:05:41.587743+00:00",
   "directive_refs": [
     {
       "directive_id": "D-056",
@@ -146,6 +146,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + G0 PASS + claimed (D-056 owner work order; parallel disjoint packet while the loop runs M4-T020). Producer frontend-engineer w/ claude-sonnet-5 dispatch override (D-047 deviation in G0 report). Walkthrough finding 4 (address continuity) recorded separately as candidate - NOT in this scope."
+    },
+    {
+      "at": "2026-09-14T06:05:41.587743+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "rework",
+      "message": "G3 verdict PASS with ONE blocking record correction (F1): the claimed 'listener attached after load fired' race is unreachable at the call site; reachable mechanism = one-time load event never fires on a degraded-GL device (no style.load arm/readiness/error surface). G4 PASS zero blockers (CI-green condition now satisfied: all 18 jobs green at 10aaedcc incl. web + web-e2e). Applying tagged ORCH-CORRECTED comment/report/evidence-map edits (zero behavior change) -> resubmit -> delta-attestations from BOTH reviewers -> gates at corrected head."
     }
   ]
 }

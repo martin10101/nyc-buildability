@@ -2,7 +2,7 @@
  "task_id": "M5-T025",
  "assembled_by": "orchestrator",
  "reviewed_sha": "10aaedccb80b3954f03d7bc1b504807ec8fb21c1",
- "note": "D-056 web-fix packet; producer commit 9ad6a4f5 cherry-picked as the material commit 10aaedcc. Producer worktree had no node_modules (thin client) - CI web + web-e2e on the pushed head is the executable authority (M5-T023 precedent); local vitest impossible anywhere on this machine.",
+ "note": "D-056 web-fix packet; producer commit 9ad6a4f5 cherry-picked as the material commit 10aaedcc. Producer worktree had no node_modules (thin client) - CI web + web-e2e on the pushed head is the executable authority (M5-T023 precedent); local vitest impossible anywhere on this machine. F1 record correction applied 2026-09-14 (rework seam); reviewed_sha updated at resubmit.",
  "requirements": {
   "D-056-R001": [
    "apps/web/src/lib/provenance-link.ts: strict anchored Socrata id regex ^[a-z0-9]{4}-[a-z0-9]{4}$ + constant prefix https://data.cityofnewyork.us/d/; the function's only input is a dataset id - no code path from request_url to any href (structural property, not just tested)",
@@ -11,7 +11,7 @@
    "18 R001 tests: 10 provenance-link.test.ts (anchored rejection incl. substrings/full URLs/case; hostile javascript:/query/fragment/whitespace/script payloads -> null) + 4 sections.test.tsx + 4 rule-evaluation.test.tsx incl. hostile request_url never in any rendered href in either surface"
   ],
   "D-056-R002": [
-   "Root cause (code-evidence): the entire draw step hung on ONE one-time map.on('load') listener, no isStyleLoaded() check, no error handler - the documented MapLibre missed-event race; EMPTY_STYLE background + AttributionControl render independent of 'load', so a missed event yields EXACTLY the owner-reported gray-canvas+attribution+no-outline symptom, permanently",
+   "[ORCH-CORRECTED per M5-T025-G3 F1] Root cause (reachable mechanism): the entire draw step's sole contingency was the one-time map 'load' event, which requires a completed first visually-complete render and never fires on a degraded-GL device (the reporting device also failed to boot ZoLa, a GL map SPA; D-056-R004 names hardware acceleration) - with no style.load arm, no readiness check, and no error handler, addSource/addLayer/fitBounds silently never ran while the background layer + attribution still painted: exactly the reported symptom. The originally-claimed 'listener attached after load already fired' race is NOT reachable at this call site (listener attached synchronously with construction) - G3-verified; the isStyleLoaded() fast path is defense-in-depth, the style.load arm + error surface are the operative fix. Device-side trigger confirmed by the owner redeploy retest (D-056-R006).",
    "Fix: exported runOnStyleReady() - synchronous isStyleLoaded() check (draws immediately when true, categorically closing the race) else arms BOTH load and style.load with an idempotency guard; map.on('error') now routes to a new typed lot-outline-render-error fallback instead of a silent blank map; all six pre-existing fallback branches byte-identical",
    "Framing: fitBounds maxZoom 18 -> 19.5 (LOT_OUTLINE_MAX_ZOOM, exported) - canonical 25x100ft lot grows ~17x67px -> ~48x190px in the 320px panel (calc in producer report)",
    "Red-on-old/green-on-new: 3 pure runOnStyleReady unit tests against a mock with REAL one-time-event semantics (the old mock always fired via queueMicrotask and could never catch this class); +6 lot-outline-map.test.tsx total",

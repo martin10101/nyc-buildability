@@ -17,13 +17,17 @@ import {
  * polygon) and never recomputed. Each typed outcome is asserted to render
  * its honest state.
  *
- * D-056-R002: the mock's "load" wiring is now driven through `once()` +
- * `isStyleLoaded()` (matching the real MapLike surface the component uses),
- * with a per-test-configurable `styleAlreadyLoaded` flag — this is what lets
- * the regression tests below actually exercise the race the root-cause fix
- * closes (a bare `on("load", cb)` queueMicrotask mock could never express
- * "the event already fired before we attached"; `runOnStyleReady` is also
- * unit-tested directly against a minimal fake, independent of this mock).
+ * D-056-R002 [ORCH-CORRECTED per M5-T025-G3 F1]: the mock's "load" wiring is
+ * driven through `once()` + `isStyleLoaded()` (matching the real MapLike
+ * surface the component uses), with a per-test-configurable
+ * `styleAlreadyLoaded` flag. These tests are a WIRING GUARD, not a faithful
+ * simulation of MapLibre's event timing (G3 A3): they prove the draw step no
+ * longer hangs on a single bare `on("load")` contingency — the reachable
+ * root cause was "load" (which needs a completed first render) never firing
+ * on a degraded-rendering device, with no style.load arm, readiness check,
+ * or error surface. The already-loaded rows exercise the `isStyleLoaded()`
+ * defense-in-depth path; `runOnStyleReady` is also unit-tested directly
+ * against a minimal fake, independent of this mock.
  */
 
 const mocks = vi.hoisted(() => {
@@ -380,13 +384,14 @@ describe("LotOutlineMap — WebGL unavailable", () => {
 // ---------------------------------------------------------------------------
 describe("runOnStyleReady — pure unit tests (D-056-R002 root-cause fix)", () => {
   it("style ALREADY loaded: draw() runs immediately and synchronously, with no event wait at all", () => {
-    // This is exactly the race that produced the reported symptom: a
-    // listener attached via bare `map.on('load', draw)` AFTER the style
-    // already finished loading is never invoked, so draw() never runs even
-    // though the map itself booted and painted its background layer. The
-    // OLD code had no `isStyleLoaded()` check at all, so it could not close
-    // this race — it could only ever wait for a NEXT "load"/"style.load"
-    // event that, in the already-loaded case, never comes.
+    // [ORCH-CORRECTED per M5-T025-G3 F1] This path is DEFENSE-IN-DEPTH, not
+    // the operative production fix: at the component's call site the
+    // listener was always attached synchronously with construction, so
+    // "already loaded before attach" is not reachable there. The reachable
+    // root cause was the one-time "load" event (which requires a completed
+    // first render) never firing on a degraded-rendering device, with no
+    // style.load arm and no readiness check — closed by the style.load arm
+    // tested below. This row pins the fast path for any OTHER call order.
     const once = vi.fn();
     const fakeMap = { isStyleLoaded: () => true, once };
     const draw = vi.fn();
@@ -444,17 +449,17 @@ describe("lotOutlineFitBoundsOptions — D-056-R002 framing fix", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Component-level proof that the root-cause fix is actually wired in:
-// with the mock configured to reproduce "style already loaded before the
-// wiring attaches" (the exact race `runOnStyleReady` closes), the map still
-// draws. Under the OLD component code (bare `map.on("load", draw)`, no
-// isStyleLoaded() check), this scenario is UNREPRODUCIBLE-as-a-pass: the old
-// mock's `on("load", cb)` unconditionally queueMicrotask'd cb regardless of
-// any "already loaded" state, which is precisely why that mock could never
-// have caught the real bug — this new mock instead mirrors real MapLibre
-// "one-time listener, already fired" semantics (see `once()` above), so a
-// component still built on bare `on("load", ...)` would leave the map
-// undrawn here.
+// [ORCH-CORRECTED per M5-T025-G3 F1] Component-level WIRING GUARD that the
+// fix is actually wired in: with the mock configured to "style already
+// loaded before the wiring attaches", the map still draws. This scenario is
+// the mock's proxy for "the draw step must not hang on a single bare
+// on('load') contingency" — the reachable production failure was "load"
+// never firing on a degraded-rendering device (see the module ROOT CAUSE
+// comment), which the style.load arm closes. A component still built on
+// bare `on("load", ...)` leaves the map undrawn here (red-on-old), because
+// this mock's `once()` mirrors one-time-event semantics while the old
+// mock's `on("load", cb)` unconditionally queueMicrotask'd cb and could
+// never have caught any missed-draw bug.
 // ---------------------------------------------------------------------------
 describe("LotOutlineMap — root-cause regression: style already loaded before wiring attaches", () => {
   beforeEach(() => enableWebgl());

@@ -75,20 +75,28 @@ interface MapLibreModule {
  * of whether readiness is reached BEFORE or AFTER this function is called
  * (task M5-T025, D-056-R002 root-cause fix).
  *
- * ROOT CAUSE: the prior code called `map.on("load", draw)` unconditionally,
- * every time. MapLibre's "load" event fires exactly ONCE, when the initial
- * style finishes loading AND the map completes its first render; a listener
- * attached after that single firing is never invoked — this is the well
- * documented class of bug MapLibre's own guidance warns about, and is why
- * "style.load" plus an explicit readiness check is the recommended idiom
- * over a bare "load" listener for adding sources/layers after construction.
- * Because the EMPTY_STYLE's background layer paints as soon as the style is
- * applied to the map — independent of whether "load" ever fires — a missed
- * "load" event produces EXACTLY the reported symptom: a rendered (gray)
- * canvas with attribution controls, but no outline, because
- * addSource/addLayer/fitBounds were gated entirely behind that one listener
- * and silently never ran (no error was thrown; there was simply nothing left
- * to invoke the callback).
+ * ROOT CAUSE [ORCH-CORRECTED per M5-T025-G3 F1]: the prior code gated the
+ * ENTIRE draw step (addSource/addLayer/fitBounds) behind exactly one
+ * one-time `map.on("load", draw)` listener. MapLibre's "load" fires once,
+ * only after the initial style loads AND the map completes its first
+ * visually-complete render — an event that can simply NEVER FIRE on a
+ * device whose GL rendering is degraded (the reporting device also failed
+ * to boot ZoLa, another GL map app; the D-056-R004 record names hardware
+ * acceleration). With no "style.load" arm, no readiness check, and no
+ * "error" handler, there was then nothing left to invoke the callback: the
+ * EMPTY_STYLE background layer paints as soon as the style is applied
+ * (independent of "load") and AttributionControl is construction-time DOM,
+ * so the result is EXACTLY the reported symptom — gray canvas +
+ * attribution, no outline, permanently, with nothing to find by zooming.
+ * NOTE: the "listener attached after 'load' already fired" race is NOT
+ * reachable at this call site (the listener was attached synchronously in
+ * the same task as construction, and an event requiring a completed render
+ * cannot fire inside the constructor); the `isStyleLoaded()` fast path
+ * below is therefore defense-in-depth for other call orders, not the
+ * operative fix here. The operative fix is the "style.load" arm — it fires
+ * when the style loads, independent of the render pipeline — plus the
+ * "error" surface added at the call site. The precise device-side trigger
+ * is confirmed by the owner's redeploy retest (D-056-R006).
  *
  * This function closes the race unconditionally: if the style is ALREADY
  * loaded by the time it is called, `draw` runs immediately and

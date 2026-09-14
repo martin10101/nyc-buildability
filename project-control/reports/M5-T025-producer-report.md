@@ -61,7 +61,28 @@ substrings, full URLs, and case variants.
 
 ## R002 — lot-outline visibility: root cause + fix
 
-**Root cause (evidence-based, code-read; the live browser bug itself is not reproducible in
+> **[ORCH-CORRECTED per M5-T025-G3 F1 — the root-cause MECHANISM below is amended; the
+> producer's original text is preserved beneath for the record.]** G3 verified from
+> `10aaedcc~1` that the "listener attached AFTER the one-time `load` already fired" race is
+> NOT reachable at this call site: `map.on("load", ...)` was attached synchronously in the
+> same task as `new gl.Map(...)`, and an event defined to require a completed first
+> visually-complete render cannot fire inside the constructor. The REACHABLE root cause —
+> consistent with all the same evidence — is: **the entire draw step's sole contingency was
+> the one-time `"load"` event, which never fires on a device whose GL rendering cannot
+> complete the first visually-complete render** (the reporting device also failed to boot
+> ZoLa, another GL map SPA; the D-056-R004 record names hardware acceleration), **with no
+> `"style.load"` arm, no readiness check, and no `error` surface** — so
+> `addSource`/`addLayer`/`fitBounds` silently never ran while the background layer and
+> attribution still painted, yielding exactly the reported symptom. The delivered fix is
+> operative against exactly this: the `"style.load"` arm fires when the style loads,
+> independent of the render pipeline, and the `error` handler surfaces whatever else. The
+> `isStyleLoaded()` fast path is defense-in-depth for other call orders, not the operative
+> fix at this call site. The precise device-side trigger is confirmed by the owner's
+> redeploy retest (D-056-R006). Same correction carried into the component ROOT CAUSE
+> comment, the two test comments, and the evidence-map R002 row.
+
+**Producer's original root-cause text (superseded as to mechanism, preserved verbatim;
+evidence-based, code-read; the live browser bug itself is not reproducible in
 this environment — see Limitations).** In the pre-fix `LotOutlineMap.tsx`, the entire draw
 step (`addSource`/`addLayer`×2/`fitBounds`) was gated behind exactly one
 `map.on("load", callback)` registration, with no readiness check and no `error` handler.
