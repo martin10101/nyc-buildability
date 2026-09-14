@@ -66,6 +66,32 @@
      "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
     }
    ]
+  },
+  {
+   "directive_id": "D-059",
+   "task_id": "M5-T028",
+   "applicable_requirement_ids": [
+    "D-059-R003"
+   ],
+   "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701",
+   "reviewed_manifest_sha256": "1b1c4bab5cfe6f64d2db568e57eaaa1dcf208cfda7c86ce11c720e9ffd608648",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T10:19:05+00:00",
+   "requirements": [
+    {
+     "id": "D-059-R003",
+     "state": "PASS",
+     "evidence": [
+      "DIRECTIVE-LEVEL CLOSURE. This row closes D-059-R003 project-wide and SUPERSEDES the deliberately scope-limited PASS recorded for M5-T027. The verifier established closure on three independent legs rather than accepting the task's own scope: (a) every remaining '23-21' literal in non-test source is either a parameterized alias (X_LABEL = _x_label(\"23-21\")) or a comment, and each alias was proven unreachable from the live path - scenario_analysis.py imports none of the six label constants, and _rebuild_scenario always builds scenario_document server-side with the request body structurally forbidden from supplying it (FORBIDDEN_FACT_KEYS at every depth); the verifier further traced builder.py:344 to show derive.py's own DRAFT_CAP_LABEL fallback requires a document state builder.py never produces. (b) It SWEPT BEYOND the five contracted modules looking for a sixth defective one and found none - evidence.py's hit is inside a module docstring never serialized into a response, and the wide_street_buffer_engine/dcm_street_width ZR references belong to the unrelated wide-street definition. (c) It confirmed the fix on the LIVE WIRING, not merely in tests, including that the R6-R12 test builds its document through the same build_scenario the live route calls. All 10 live emission sites now derive per call; the old code was verified unconditional at the parent commit.",
+      "Full verifier basis: project-control/reports/M5-T028-dcv-verification.md (verbatim return; 3/3 requirement rows PASS; restamp condition empirically re-verified by the verifier at two successive live heads during its own session)."
+     ],
+     "verified_at": "2026-09-14T10:19:05+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
+    }
+   ]
   }
  ]
 }

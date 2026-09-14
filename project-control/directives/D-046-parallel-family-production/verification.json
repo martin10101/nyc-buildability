@@ -425,6 +425,44 @@
      "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T028",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701",
+   "reviewed_manifest_sha256": "1b1c4bab5cfe6f64d2db568e57eaaa1dcf208cfda7c86ce11c720e9ffd608648",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T10:19:05+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production verified from PRIMARY task-packet timestamps by the verifier, not from any gate's claim: M4-T021's producer was active (claimed 09:05:42Z, rework 09:40:40Z, in_progress 09:59:41Z) throughout M5-T028's entire producer window (claimed 09:22:44Z, G2 self-check 09:45:31Z) - 2 concurrent writing producers, within the ceiling of 3. Both gate reports had deferred this requirement to DCV as outside code-review scope.",
+      "Full verifier basis: project-control/reports/M5-T028-dcv-verification.md (verbatim return; 3/3 requirement rows PASS; restamp condition empirically re-verified by the verifier at two successive live heads during its own session)."
+     ],
+     "verified_at": "2026-09-14T10:19:05+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Disjointness confirmed by direct allowed_paths comparison: M4-T021 (one connector module + its test + report) and M5-T028 (five scenario modules + five tests + report) share zero paths; git show --stat on the producer commit = exactly the 11 contracted files, with M5-T027's constants.py/builder.py (forbidden here) confirmed untouched so the accepted derivation seam could not be mutated by this packet.",
+      "Full verifier basis: project-control/reports/M5-T028-dcv-verification.md (verbatim return; 3/3 requirement rows PASS; restamp condition empirically re-verified by the verifier at two successive live heads during its own session)."
+     ],
+     "verified_at": "2026-09-14T10:19:05+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
+    }
+   ]
   }
  ]
 }
