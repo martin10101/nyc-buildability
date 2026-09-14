@@ -1,0 +1,27 @@
+{
+  "task_id": "M4-T018",
+  "assembled_by": "orchestrator",
+  "note": "Research-only task (B6 per the accepted M4-T016 Part 4 split). Evidence scoped to the research deliverable; the snapshot update and exception-rule builds are later packets that pin this report.",
+  "requirements": {
+    "D-045-R002": [
+      "project-control/reports/M4-T018-zr1210-wide-street-reconciliation.md - fresh capture of the current ZR 12-10 'street, wide' (Last Amended 3/26/2026, byte-independent re-confirmation of the M4-T016 discovery: C5-3/C6-4/C6-6 alternate-width clause + Broadway W94-97 CD7 + Allen St CD3 named designations), 'street, narrow' (12/15/1961 unchanged), 'street line' (10/25/1973), and first-time verbatim 'street setback line' (9/19/1985, narrow SI/Queens-CD10 concept); print/PDF channel 504 reproduced twice and the sha256-pinned canonical-HTML fallback disclosed (1,316,658 bytes, sha 4a75e22f, retrieved 2026-09-14)",
+      "reconciliation with the conflict kept VISIBLE (permanent principle 4): the accepted zr-12-10.snapshot.json (retrieved 2026-07-22) and the M4-T013 pin carry only the superseded flat-75 sentence; CHRONOLOGY CORRECTION of the M4-T016 narrative - the amendment (2026-03-26) PREDATES the snapshot retrieval, so the flat text was already superseded at capture time; artifacts carrying superseded text NAMED (snapshot, M4-T013 report, r5_setback.rule.json which cites zr-12-10 directly); PACKET-PREMISE CORRECTION disclosed: r6_r7_r8_wide_street_conditional_far.rule.json cites only zr-23-22, not zr-12-10",
+      "capture-ready build-input specs for the D-052-R001 exception checks: the two-row named-street override table (legislative facts with 12-10 anchors + verbatim text; open grammatical-scope question on 'separated by mapped public park' recorded) and the C5-3/C6-4/C6-6 alternate-width test (two independent triggers, data gaps, open 'may be considered' vs 'is' legal-reading question routed, not resolved); snapshot section_last_amended metadata mismatch flagged as a pre-existing defect, out of scope"
+    ],
+    "D-045-R008": [
+      "bounded research-only packet under the normal gated process (G0 recorded at contract seam 77fc6bf2); B6-before-B4 ordering per the accepted M4-T016 G1 advisory 1, recorded in the packet business_reason"
+    ],
+    "D-045-R009": [
+      "coverage-scope-only: producer commit faf0b22e touches exactly one report file; zero snapshot/code/rule/dependency changes; conflict visible and unadjudicated; accepted work untouched (immutability preserved); no hold lifted"
+    ],
+    "D-046-R001": [
+      "wave-4 parallel slot 1: dispatch record 9e89497a; producer commit faf0b22e authored in wt agent-a7564bff6b3bb54c0 pinned to 293d6c03, integrated sequentially by the orchestrator as cherry-pick 00b28626 (report sha 2a481500 LF-normalized verified)"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint by construction: allowed_paths = exactly one report file, sharing nothing with M4-T019's two services/api files; producer git status clean single-file proof"
+    ],
+    "D-051-R001": [
+      "bounded-negative discipline applied throughout the report (negatives named to sources; the discovery-aid Allen St proceedings explicitly marked an unverified lead, never independently asserted); the producer additionally corrected two upstream narrative errors (packet premise + M4-T016 chronology) rather than propagating them"
+    ]
+  }
+}

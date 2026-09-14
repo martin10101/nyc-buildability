@@ -75,7 +75,7 @@
     "data-contract-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 30,
+  "progress_percent": 60,
   "risks": [
     "the 12-10 page is ~1.3MB and the print/PDF render 504'd twice for M4-T016 - the fallback channel must be disclosed, never silently substituted",
     "the accepted r6_r7_r8 rule + snapshot reference the pre-amendment text; mishandling the reconciliation as a silent snapshot edit would corrupt accepted provenance - the update is a separate gated task",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T02:06:14.818298+00:00",
-  "updated_at": "2026-09-14T02:11:35.831380+00:00",
+  "updated_at": "2026-09-14T02:25:50.405284+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -130,6 +130,13 @@
       "percent": 30,
       "status": "claimed",
       "message": "Wave-4 dispatch: official-source-researcher launched in isolated worktree pinned to 293d6c03 (show-toplevel guard + reset in prompt); single report file scope; conflict-stays-visible + D-051-R001 bounded-negative constraints in prompt"
+    },
+    {
+      "at": "2026-09-14T02:25:50.405284+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at 00b28626 (cherry-pick of faf0b22e from wt agent-a7564bff6b3bb54c0; report sha 2a481500 LF-verified; validator+modularity EXIT 0; S5 single-file). KEY: 12-10 street-wide 3/26/2026 amendment INDEPENDENTLY re-captured (fresh sha 4a75e22f); CHRONOLOGY CORRECTION - amendment predates the 2026-07-22 snapshot retrieval (flat text was already superseded at capture time); superseded-text carriers named (snapshot, M4-T013 report, r5_setback.rule.json); packet premise corrected (r6_r7_r8 rule cites zr-23-22 only); D-052-R001 exception build-input specs delivered; 3 new open questions routed"
     }
   ]
 }

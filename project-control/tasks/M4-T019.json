@@ -82,7 +82,7 @@
     "qa-engineer"
   ],
   "status": "claimed",
-  "progress_percent": 30,
+  "progress_percent": 60,
   "risks": [
     "classification semantics drift: the module must implement the D-052 text, not a paraphrase - G3 reviews code-vs-directive fidelity line by line",
     "precondition theater: attestation flags that callers can trivially default to true would gut R002 - the type design must force explicit caller assertions with provenance",
@@ -91,7 +91,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T02:06:32.461047+00:00",
-  "updated_at": "2026-09-14T02:11:36.153202+00:00",
+  "updated_at": "2026-09-14T02:25:50.947200+00:00",
   "directive_refs": [
     {
       "directive_id": "D-052",
@@ -153,6 +153,13 @@
       "percent": 30,
       "status": "claimed",
       "message": "Wave-4 dispatch: backend-engineer launched in isolated worktree pinned to 293d6c03 with harness model override to claude-sonnet-5 (D-047-R001 deviation; agent-file flip still blocked); two-file scope; D-052 R001-R007 verbatim-fidelity + fail-closed precondition + ruff-first constraints in prompt"
+    },
+    {
+      "at": "2026-09-14T02:25:50.945195+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Producer material captured at a6c73ec0 (cherry-pick of 2eaba13d from wt agent-acd38556e27cb595f; both file shas LF-verified; producer ran ALL checks: 93 policy tests + 712 regression + ruff + validator + modularity EXIT 0; orchestrator re-ran ruff whole-tree EXIT 0 + 93/93 at the integrated head). Design: no-default frozen preconditions dataclass, nearest-centerline = typed refusal, 24-class interpreted-bounds table w/ exhaustiveness assert, owner R003 examples as exact tests vs real classifier output, UNKNOWN/UNRESOLVED/fail-closed non-leak proven. Producer flagged R005 interpreted-bounds representation question -> G3"
     }
   ]
 }
