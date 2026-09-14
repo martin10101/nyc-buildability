@@ -40,8 +40,11 @@ the same projected, foot-unit CRS (never performed in unprojected degrees).
 every result and cross-checked against the accepted
 ``mappluto_geometry_arcgis`` pins (``PINNED_SHAPELY_VERSION`` = "2.0.7" /
 ``PINNED_GEOS_VERSION_STRING`` = "3.11.4") for determinism, per the pyproject
-discipline; the arc-approximation parameter (``BUFFER_QUAD_SEGS``) is pinned
-explicitly rather than left to an implicit library default.
+discipline; the arc-approximation parameter (``BUFFER_QUAD_SEGS`` = 16) is
+pinned explicitly for determinism, matching the real default of the
+``BaseGeometry.buffer`` method actually called here (see the constant's own
+comment for the verified distinction from the different, unused top-level
+``shapely.buffer()`` function's default of 8).
 
 INTERSECTION (contract item 3): both the boolean any-portion ``intersects``
 test (ZR 23-22 footnote 1 "or portions thereof") and the actual intersection
@@ -71,12 +74,22 @@ EDGE CASES (contract item 4; research Part 2.4):
     Rivington-Delancey CD3) and the C5-3/C6-4/C6-6 alternate-width clause
     are OUT of this module's scope (B7, later). The caller must supply a
     typed, no-default ``Ec5AttestedPreconditions`` (the accepted
-    ``dcm_street_width_policy.AttestedPreconditions`` precedent) so the
-    omission can never be silent; this module does not gate computation on
-    the attested values (B4 is not blocked on B5/B6/B7 per the research
-    report's own dependency note) - it only guarantees the caller cannot
-    construct the call without explicitly attesting, and it carries the
-    attestation through on every result for audit.
+    ``dcm_street_width_policy.AttestedPreconditions`` precedent), and - per
+    the rework ruling in ``project-control/reports/M4-T021-rework-ruling.md``
+    RULING 1 - this module now GATES computation on the attested values,
+    mirroring that precedent's own mechanism exactly: when
+    ``dcm_street_width_policy.AttestedPreconditions.exceptions_checked`` is
+    ``False``, ``classify_street_width_policy`` refuses and returns
+    ``DECISION_UNRESOLVED`` rather than a classification; analogously, when
+    either ``named_street_override_checked`` or
+    ``alternate_width_clause_checked`` is ``False``, this module refuses and
+    returns the typed ``STATUS_PRECONDITIONS_NOT_ATTESTED`` result (every
+    buffer/intersection field ``None``/empty, the reason visible in
+    ``ec5_not_attested_notice``) instead of ``STATUS_COMPUTED`` - never a
+    computed-looking number on unverified legal preconditions. Only an
+    affirmative attestation (both fields ``True``) computes exactly as
+    before. The attestation itself is always carried through on every
+    result (including refusals) for audit.
   EC-6 an empty wide-segment input set returns the typed
     ``STATUS_NO_WIDE_SEGMENTS_PROVIDED`` result state - never a computed
     True or a computed False in either direction.
@@ -134,6 +147,7 @@ __all__ = [
     "NO_WIDE_SEGMENTS_NOTICE",
     "STATUS_COMPUTED",
     "STATUS_NO_WIDE_SEGMENTS_PROVIDED",
+    "STATUS_PRECONDITIONS_NOT_ATTESTED",
     "TANGENCY_NOTICE",
     "AttestedLotPolygon",
     "AttestedWideSegment",
@@ -182,15 +196,28 @@ BUFFER_FT_CITATION = (
     "Part 2.1, quoted verbatim)."
 )
 
-# Buffer arc-approximation resolution, pinned explicitly rather than left to
-# shapely's implicit default (also 8, but implicit is not documented).
-BUFFER_QUAD_SEGS = 8
+# Buffer arc-approximation resolution. The buffer call below uses
+# ``BaseGeometry.buffer`` (the shapely method invoked on a shapely geometry
+# instance, e.g. ``linework.buffer(...)``), NOT the different top-level
+# ``shapely.buffer()`` function - the two have DIFFERENT defaults
+# (``BaseGeometry.buffer`` defaults to quad_segs=16; the unused top-level
+# ``shapely.buffer()`` defaults to quad_segs=8; verified live via
+# ``inspect.signature`` against installed shapely 2.0.7, per the G3 rework
+# ruling). This module pins 16 explicitly - set for determinism (an
+# explicit, permanent value rather than an implicit library default that
+# could change across shapely versions) and it matches the real default of
+# the API actually called here, so there is no silent divergence from the
+# library's own behavior. Higher quad_segs -> a finer arc approximation
+# (more vertices per quarter circle); this matters at a segment's rounded
+# end cap, not along its straight sides (see the end-cap-proximate test).
+BUFFER_QUAD_SEGS = 16
 
 # ---------------------------------------------------------------------------
 # Result states (EC-6: a distinct typed state, never a computed default).
 # ---------------------------------------------------------------------------
 STATUS_COMPUTED = "computed"
 STATUS_NO_WIDE_SEGMENTS_PROVIDED = "no_wide_segments_provided"
+STATUS_PRECONDITIONS_NOT_ATTESTED = "preconditions_not_attested"
 
 NO_WIDE_SEGMENTS_NOTICE = (
     "EC-6 (research Part 2.4 item 6): no wide-disposed DCM segment was "
@@ -365,7 +392,14 @@ class AttestedLotPolygon:
 @dataclass(frozen=True)
 class SegmentContribution:
     """One wide segment's own buffer/intersection contribution (EC-1/EC-3:
-    always visible individually, never collapsed into the aggregate)."""
+    always visible individually, never collapsed into the aggregate).
+
+    ``segment_source_retrieved_at`` / ``segment_source_raw_digest`` - the
+    originating ``AttestedWideSegment``'s retrieval-identity/raw-digest
+    provenance, carried through unmodified (G4-F1 rework: previously
+    required on the input but silently dropped before reaching any output;
+    now threaded through so a result can be traced to the fetch that
+    produced it, per CLAUDE.md permanent principle 2)."""
 
     segment_object_id: int | None
     classification_basis: str
@@ -373,23 +407,37 @@ class SegmentContribution:
     intersects: bool
     sub_geometry: BaseGeometry
     area_sq_ft: float
+    segment_source_retrieved_at: str | None
+    segment_source_raw_digest: str | None
 
 
 @dataclass(frozen=True)
 class WideStreetBufferResult:
     """Complete result of one lot's wide-street buffer/intersection
-    computation (or the typed EC-6 empty-set outcome).
+    computation (or a typed non-computed outcome: EC-6 empty-set, or EC-5
+    preconditions-not-attested per the rework ruling RULING 1).
 
-    ``status`` is ``STATUS_COMPUTED`` or ``STATUS_NO_WIDE_SEGMENTS_PROVIDED``
-    - the latter leaves every computed field ``None``/empty by construction,
-    never a manufactured True or False (EC-6). ``segment_contributions``
-    carries EVERY qualifying segment's own result (EC-1/EC-3);
-    ``aggregate_*`` fields carry the union-before-intersect result (EC-1).
-    ``ec5_preconditions`` is always the caller's attestation, passed through
-    unmodified. ``tangency_notice`` / ``ec2_under_claim_notice`` are always
-    present (EC-4/EC-2 documentation, never conditional on the outcome);
-    ``empty_notice`` is populated only when ``status`` is
-    ``STATUS_NO_WIDE_SEGMENTS_PROVIDED``.
+    ``status`` is ``STATUS_COMPUTED``, ``STATUS_NO_WIDE_SEGMENTS_PROVIDED``,
+    or ``STATUS_PRECONDITIONS_NOT_ATTESTED`` - every non-``STATUS_COMPUTED``
+    value leaves every buffer/intersection field ``None``/empty by
+    construction, never a manufactured True or False (EC-6) and never a
+    computed-looking number on unverified legal preconditions (EC-5).
+    ``segment_contributions`` carries EVERY qualifying segment's own result
+    (EC-1/EC-3); ``aggregate_*`` fields carry the union-before-intersect
+    result (EC-1). ``ec5_preconditions`` is always the caller's attestation,
+    passed through unmodified regardless of status. ``tangency_notice`` /
+    ``ec2_under_claim_notice`` are always present (EC-4/EC-2 documentation,
+    never conditional on the outcome); ``empty_notice`` is populated only
+    when ``status`` is ``STATUS_NO_WIDE_SEGMENTS_PROVIDED``;
+    ``ec5_not_attested_notice`` is populated only when ``status`` is
+    ``STATUS_PRECONDITIONS_NOT_ATTESTED``.
+
+    ``lot_source_retrieved_at`` / ``lot_source_raw_digest`` - the
+    originating ``AttestedLotPolygon``'s retrieval-identity/raw-digest
+    provenance, carried through unmodified on EVERY status (the lot is
+    validated before either the EC-5 gate or the EC-6 empty check, so its
+    provenance is always known where the lot itself was resolvable; G4-F1
+    rework - see ``SegmentContribution`` for the per-segment counterpart).
     """
 
     status: str
@@ -409,6 +457,9 @@ class WideStreetBufferResult:
     tangency_notice: str
     ec2_under_claim_notice: str
     empty_notice: str | None
+    ec5_not_attested_notice: str | None
+    lot_source_retrieved_at: str | None
+    lot_source_raw_digest: str | None
 
 
 # ---------------------------------------------------------------------------
@@ -467,6 +518,29 @@ def _validate_ec5_preconditions(
             correlation_id=correlation_id,
             detail={"bad_fields": bad_fields},
         )
+
+
+def _ec5_precondition_failures(preconditions: Ec5AttestedPreconditions) -> tuple[str, ...]:
+    """Return the human-readable reasons EC-5 computation must be refused,
+    or an empty tuple when both preconditions are affirmatively attested.
+    Mirrors ``dcm_street_width_policy._precondition_failures`` (the accepted
+    D-052/M4-T019 precedent this task packet names by name): no precondition
+    is ever treated as satisfied by omission or by a truthy stand-in - both
+    fields are explicitly re-checked here (per RULING 1,
+    ``project-control/reports/M4-T021-rework-ruling.md``)."""
+    failures: list[str] = []
+    if not preconditions.named_street_override_checked:
+        failures.append(
+            "named_street_override_checked is False - the Broadway W94-97 "
+            "CD7 / Allen St Rivington-Delancey CD3 named-street override has "
+            "not been checked for this lot's excluded segments"
+        )
+    if not preconditions.alternate_width_clause_checked:
+        failures.append(
+            "alternate_width_clause_checked is False - the C5-3/C6-4/C6-6 "
+            "alternate-width clause has not been checked for this lot"
+        )
+    return tuple(failures)
 
 
 def _segment_linework(
@@ -529,22 +603,62 @@ def compute_wide_street_buffer_intersection(
     intersection for one lot against caller-supplied, already wide-disposed
     DCM segments (research Part 2.2 steps A-D).
 
-    Order of operations: (1) EC-5 attestation is validated first (a
-    malformed/missing attestation refuses before any geometry is touched);
-    (2) the lot's CRS identity and geometry validity are gated; (3) an empty
-    ``wide_segments`` sequence returns the typed EC-6 result immediately;
-    (4) each segment's CRS identity and geometry validity are gated, its
-    100-ft buffer computed, and its own intersects/intersection recorded
-    (EC-1/EC-3); (5) all segment buffers are unioned (``unary_union``)
-    BEFORE intersecting the lot for the aggregate result (EC-1). No
-    coordinate is ever interpreted, and no buffer is ever computed, outside
-    the validated EPSG:2263 CRS.
+    Order of operations: (1) EC-5 attestation is validated first for
+    type/shape (a malformed/missing attestation refuses before any geometry
+    is touched); (2) the lot's CRS identity and geometry validity are gated;
+    (3) the EC-5 attestation is then gated on its VALUE (RULING 1,
+    ``project-control/reports/M4-T021-rework-ruling.md``) - when either
+    attested field is ``False``, computation refuses immediately with the
+    typed ``STATUS_PRECONDITIONS_NOT_ATTESTED`` result, before any segment
+    is ever touched; (4) an empty ``wide_segments`` sequence returns the
+    typed EC-6 result immediately; (5) each segment's CRS identity and
+    geometry validity are gated, its 100-ft buffer computed, and its own
+    intersects/intersection recorded (EC-1/EC-3); (6) all segment buffers
+    are unioned (``unary_union``) BEFORE intersecting the lot for the
+    aggregate result (EC-1). No coordinate is ever interpreted, and no
+    buffer is ever computed, outside the validated EPSG:2263 CRS, and no
+    buffer is ever computed against unattested EC-5 preconditions.
     """
     _validate_ec5_preconditions(ec5_preconditions, correlation_id=correlation_id)
 
     _require_crs(lot.wkid, lot.latest_wkid, label="lot polygon", correlation_id=correlation_id)
     lot_geometry = _lot_shapely(lot.assessment, correlation_id=correlation_id)
     lot_area_sq_ft = lot.assessment.area_sq_ft
+
+    ec5_failures = _ec5_precondition_failures(ec5_preconditions)
+    if ec5_failures:
+        reason = (
+            "EC-5 (research Part 2.4 item 5): computation refused - the "
+            "named-street override / alternate-width-clause preconditions "
+            "are not affirmatively attested: " + "; ".join(ec5_failures) + ". "
+            "Mirrors the accepted D-052/M4-T019 AttestedPreconditions "
+            "precedent (dcm_street_width_policy.classify_street_width_policy's "
+            "DECISION_UNRESOLVED gate on its analogous exceptions_checked "
+            "attestation) - never silently computed on unverified legal "
+            "preconditions."
+        )
+        return WideStreetBufferResult(
+            status=STATUS_PRECONDITIONS_NOT_ATTESTED,
+            buffer_ft=BUFFER_FT,
+            buffer_ft_citation=BUFFER_FT_CITATION,
+            lot_identity=lot.lot_identity,
+            lot_area_sq_ft=lot_area_sq_ft,
+            segment_contributions=(),
+            aggregate_union_buffer=None,
+            aggregate_intersects=None,
+            aggregate_sub_geometry=None,
+            aggregate_area_sq_ft=None,
+            crs=dict(CRS_STAMP),
+            shapely_version=shapely.__version__,
+            geos_version=shapely.geos_version_string,
+            ec5_preconditions=ec5_preconditions,
+            tangency_notice=TANGENCY_NOTICE,
+            ec2_under_claim_notice=EC2_UNDER_CLAIM_NOTICE,
+            empty_notice=None,
+            ec5_not_attested_notice=reason,
+            lot_source_retrieved_at=lot.source_retrieved_at,
+            lot_source_raw_digest=lot.source_raw_digest,
+        )
 
     if len(wide_segments) == 0:
         return WideStreetBufferResult(
@@ -565,6 +679,9 @@ def compute_wide_street_buffer_intersection(
             tangency_notice=TANGENCY_NOTICE,
             ec2_under_claim_notice=EC2_UNDER_CLAIM_NOTICE,
             empty_notice=NO_WIDE_SEGMENTS_NOTICE,
+            ec5_not_attested_notice=None,
+            lot_source_retrieved_at=lot.source_retrieved_at,
+            lot_source_raw_digest=lot.source_raw_digest,
         )
 
     contributions: list[SegmentContribution] = []
@@ -585,6 +702,8 @@ def compute_wide_street_buffer_intersection(
                 intersects=intersects,
                 sub_geometry=sub_geometry,
                 area_sq_ft=float(sub_geometry.area),
+                segment_source_retrieved_at=segment.source_retrieved_at,
+                segment_source_raw_digest=segment.source_raw_digest,
             )
         )
 
@@ -610,6 +729,9 @@ def compute_wide_street_buffer_intersection(
         tangency_notice=TANGENCY_NOTICE,
         ec2_under_claim_notice=EC2_UNDER_CLAIM_NOTICE,
         empty_notice=None,
+        ec5_not_attested_notice=None,
+        lot_source_retrieved_at=lot.source_retrieved_at,
+        lot_source_raw_digest=lot.source_raw_digest,
     )
 
 

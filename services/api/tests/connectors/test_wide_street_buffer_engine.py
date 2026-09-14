@@ -48,11 +48,13 @@ from app.connectors.mappluto_geometry_arcgis import (
 )
 from app.connectors.wide_street_buffer_engine import (
     BUFFER_FT,
+    BUFFER_QUAD_SEGS,
     EC2_UNDER_CLAIM_NOTICE,
     PINNED_GEOS_VERSION_STRING,
     PINNED_SHAPELY_VERSION,
     STATUS_COMPUTED,
     STATUS_NO_WIDE_SEGMENTS_PROVIDED,
+    STATUS_PRECONDITIONS_NOT_ATTESTED,
     TANGENCY_NOTICE,
     AttestedLotPolygon,
     AttestedWideSegment,
@@ -249,6 +251,181 @@ def test_per_segment_identity_is_visible() -> None:
     )
     ids = {c.segment_object_id for c in result.segment_contributions}
     assert ids == {11, 12}
+
+
+# ---------------------------------------------------------------------------
+# G4-F1 rework: provenance passthrough (source_retrieved_at/source_raw_digest
+# from BOTH AttestedWideSegment and AttestedLotPolygon are required no-
+# default INPUT fields but previously reached NO output dataclass - silently
+# dropped between validation and result construction. Now threaded onto
+# SegmentContribution (per-segment) and WideStreetBufferResult (lot-level),
+# asserted here for exact, non-tautological passthrough (compared against
+# the INPUT fixture's own field, never re-derived) in every branch: the
+# computed branch, the EC-6 empty-set branch, and the new EC-5
+# preconditions-not-attested refusal branch.
+# ---------------------------------------------------------------------------
+
+
+def test_segment_contribution_carries_source_provenance_passthrough() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    # Sanity: the fixture builder actually populated non-null provenance
+    # (parsed from the synthetic DCM transport), so this test would fail if
+    # the passthrough silently degraded to None on both sides.
+    assert segment.source_retrieved_at is not None
+    assert segment.source_raw_digest is not None
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    contribution = result.segment_contributions[0]
+    assert contribution.segment_source_retrieved_at == segment.source_retrieved_at
+    assert contribution.segment_source_raw_digest == segment.source_raw_digest
+
+
+def test_segment_contribution_carries_explicit_none_provenance_when_genuinely_unavailable() -> None:
+    # source_retrieved_at/source_raw_digest are required but may be
+    # explicitly None (never omitted) when genuinely unavailable - the
+    # passthrough must preserve that explicit None, not coerce it.
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    segment = dataclasses.replace(
+        segment, source_retrieved_at=None, source_raw_digest=None
+    )
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    contribution = result.segment_contributions[0]
+    assert contribution.segment_source_retrieved_at is None
+    assert contribution.segment_source_raw_digest is None
+
+
+def test_result_carries_lot_source_provenance_passthrough_when_computed() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    assert lot.source_retrieved_at is not None
+    assert lot.source_raw_digest is not None
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+    assert result.lot_source_retrieved_at == lot.source_retrieved_at
+    assert result.lot_source_raw_digest == lot.source_raw_digest
+
+
+def test_result_carries_lot_source_provenance_passthrough_when_empty_wide_segments() -> None:
+    # A refusal/empty result should still carry the lot's provenance where
+    # it is known - the lot was already validated before either the EC-6 or
+    # EC-5 branch is reached.
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    result = compute_wide_street_buffer_intersection(
+        lot, [], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_NO_WIDE_SEGMENTS_PROVIDED
+    assert result.lot_source_retrieved_at == lot.source_retrieved_at
+    assert result.lot_source_raw_digest == lot.source_raw_digest
+
+
+def test_result_carries_lot_source_provenance_passthrough_when_preconditions_not_attested() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    unchecked = Ec5AttestedPreconditions(
+        named_street_override_checked=False,
+        alternate_width_clause_checked=False,
+        attestation_note="neither check performed yet",
+    )
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=unchecked, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_PRECONDITIONS_NOT_ATTESTED
+    assert result.lot_source_retrieved_at == lot.source_retrieved_at
+    assert result.lot_source_raw_digest == lot.source_raw_digest
+
+
+# ---------------------------------------------------------------------------
+# G3-F2 rework: end-cap-proximate buffer geometry. Every fixture above
+# deliberately keeps a segment's endpoints (and therefore its buffer's
+# rounded end caps) FAR from the lot - long y-ranges (-1000..1000) so only
+# the buffer's STRAIGHT sides ever reach the lot, leaving the rounded-cap
+# code path completely untested (G3 confirmed this by direct inspection of
+# the fixture coordinates). This fixture instead places a SHORT segment
+# whose near endpoint sits diagonally near the lot's SE corner (200, 0) at
+# an exact 80-ft distance (a 48-64-80 right triangle: 48**2 + 64**2 ==
+# 80**2), well within the 100-ft buffer but positioned such that the
+# straight sides of the buffer NEVER reach the lot at all - independently
+# confirmed below with a flat-cap probe returning zero area/no intersection.
+# Every bit of the resulting intersection is therefore attributable
+# EXCLUSIVELY to the rounded end cap.
+#
+# Expected values are hand-derived via an INDEPENDENT, standalone shapely
+# computation (`.buffer(100.0, quad_segs=16)` called directly - never via
+# `compute_wide_street_buffer_intersection`, the function under test),
+# computed and recorded in the M4-T021 rework producer report BEFORE this
+# assertion was written - mirroring this suite's own established, already-
+# reviewed methodology (see test_line_probe_matches_the_hand_derived_expected_
+# values below). This is the same fixture used to prove the F2 quad_segs=8
+# vs. quad_segs=16 divergence is real and non-cosmetic (373.6219486597519
+# sq ft at quad_segs=8 vs. 382.9260890749891 sq ft at quad_segs=16 - a ~9.3
+# sq ft difference on the identical geometry, from the rounded-cap
+# resolution alone).
+# ---------------------------------------------------------------------------
+
+_END_CAP_NEAR = (248.0, -64.0)
+_END_CAP_FAR = (900.0, -424.0)
+# Independently, directly-hand-verified: distance from _END_CAP_NEAR to the
+# lot's SE corner (200, 0) is exactly 80.0 ft (a 48-64-80 right triangle),
+# strictly less than BUFFER_FT (100.0) - genuinely inside the buffer, not
+# tangent.
+_EXPECTED_END_CAP_DISTANCE_TO_CORNER_FT = 80.0
+
+
+def test_end_cap_proximate_intersection_is_exclusively_from_the_rounded_cap() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(41, [[list(_END_CAP_FAR), list(_END_CAP_NEAR)]])
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+    contribution = result.segment_contributions[0]
+    assert contribution.intersects is True
+    assert not contribution.sub_geometry.is_empty
+    # Independently hand-derived (standalone shapely probe with quad_segs=16,
+    # NOT via the module under test - see module comment above and the
+    # rework producer report for the derivation).
+    assert contribution.area_sq_ft == pytest.approx(382.9260890749891)
+    assert result.aggregate_area_sq_ft == pytest.approx(382.9260890749891)
+
+    # Proof the overlap is EXCLUSIVELY end-cap-driven, not from the straight
+    # sides: an independent flat-cap probe (no rounded ends at all) on the
+    # identical linework/distance/CRS never touches the lot.
+    from shapely.geometry import LineString as _LineString
+
+    flat_cap_probe = _LineString([_END_CAP_FAR, _END_CAP_NEAR]).buffer(
+        BUFFER_FT, quad_segs=BUFFER_QUAD_SEGS, cap_style="flat"
+    )
+    from shapely.geometry import Polygon as _Polygon
+
+    lot_probe = _Polygon(SQUARE_LOT_RINGS[0])
+    assert lot_probe.intersects(flat_cap_probe) is False
+    assert lot_probe.intersection(flat_cap_probe).area == 0.0
+
+
+def test_end_cap_proximate_intersection_is_sensitive_to_quad_segs_resolution() -> None:
+    """Standalone, independent confirmation (not via the module under test)
+    that this fixture's overlap genuinely differs between quad_segs=8 (the
+    incorrect prior value) and quad_segs=16 (BUFFER_QUAD_SEGS, current) -
+    proving the corrected constant is not cosmetic and that this fixture
+    actually exercises the code path the prior fixtures never touched."""
+    from shapely.geometry import LineString as _LineString
+    from shapely.geometry import Polygon as _Polygon
+
+    lot_probe = _Polygon(SQUARE_LOT_RINGS[0])
+    seg_probe = _LineString([_END_CAP_FAR, _END_CAP_NEAR])
+    area_quad_16 = lot_probe.intersection(seg_probe.buffer(BUFFER_FT, quad_segs=16)).area
+    area_quad_8 = lot_probe.intersection(seg_probe.buffer(BUFFER_FT, quad_segs=8)).area
+    assert area_quad_16 == pytest.approx(382.9260890749891)
+    assert area_quad_8 == pytest.approx(373.6219486597519)
+    assert area_quad_16 != pytest.approx(area_quad_8)
+    assert BUFFER_QUAD_SEGS == 16
 
 
 # ---------------------------------------------------------------------------
@@ -512,23 +689,122 @@ def test_ec2_under_claim_notice_always_present() -> None:
     assert computed_result.ec2_under_claim_notice == EC2_UNDER_CLAIM_NOTICE
 
 
-def test_ec5_preconditions_pass_through_unmodified_regardless_of_value() -> None:
-    # B4 does not gate computation on the attested EC-5 values (module
-    # docstring design decision, producer report) - but they ARE always
-    # carried through unmodified for audit, including when False.
+# ---------------------------------------------------------------------------
+# EC-5 VALUE GATE (rework RULING 1: G3-F1 stands - the attestation is gated
+# on its VALUE, mirroring the accepted dcm_street_width_policy precedent's
+# DECISION_UNRESOLVED mechanism, not merely required to be present). Pins
+# the new gate in BOTH directions: affirmative -> computed exactly as
+# before; each non-affirmative permutation (both booleans independently
+# matter) -> the typed STATUS_PRECONDITIONS_NOT_ATTESTED refusal, never
+# STATUS_COMPUTED, with the reason visible and every buffer/intersection
+# field None/empty. Replaces the retired
+# test_ec5_preconditions_pass_through_unmodified_regardless_of_value, which
+# pinned the no-gate reading the orchestrator's rework ruling overturned.
+# ---------------------------------------------------------------------------
+
+
+def test_ec5_affirmative_attestation_computes_normally() -> None:
+    # Both fields True (the only affirmative combination) -> STATUS_COMPUTED,
+    # exactly as before this rework; the attestation is still carried
+    # through unmodified.
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+    assert result.ec5_preconditions is EC5_CHECKED
+    assert result.ec5_not_attested_notice is None
+    assert len(result.segment_contributions) == 1
+
+
+def test_ec5_named_street_override_not_checked_is_typed_refusal() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    unchecked = Ec5AttestedPreconditions(
+        named_street_override_checked=False,
+        alternate_width_clause_checked=True,
+        attestation_note="named-street override not yet checked",
+    )
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=unchecked, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_PRECONDITIONS_NOT_ATTESTED
+    assert result.status != STATUS_COMPUTED
+    assert result.segment_contributions == ()
+    assert result.aggregate_union_buffer is None
+    assert result.aggregate_intersects is None
+    assert result.aggregate_sub_geometry is None
+    assert result.aggregate_area_sq_ft is None
+    assert result.ec5_preconditions is unchecked
+    assert result.ec5_not_attested_notice is not None
+    assert "named_street_override_checked is False" in result.ec5_not_attested_notice
+    # Only the FAILING field is named - alternate_width_clause_checked was
+    # attested True here, so its failure text must not appear.
+    assert "alternate_width_clause_checked is False" not in result.ec5_not_attested_notice
+    # The lot itself was already validated before the gate, so lot-level
+    # facts (including provenance) remain populated even in refusal.
+    assert result.lot_identity == "1-00100-0001"
+    assert result.lot_area_sq_ft == pytest.approx(40000.0)
+
+
+def test_ec5_alternate_width_clause_not_checked_is_typed_refusal() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    unchecked = Ec5AttestedPreconditions(
+        named_street_override_checked=True,
+        alternate_width_clause_checked=False,
+        attestation_note="alternate-width clause not yet checked",
+    )
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=unchecked, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_PRECONDITIONS_NOT_ATTESTED
+    assert result.segment_contributions == ()
+    assert result.aggregate_area_sq_ft is None
+    assert "alternate_width_clause_checked is False" in result.ec5_not_attested_notice
+    assert "named_street_override_checked is False" not in result.ec5_not_attested_notice
+    assert result.ec5_preconditions is unchecked
+
+
+def test_ec5_both_unchecked_is_typed_refusal_naming_both_reasons() -> None:
     lot = _make_lot(SQUARE_LOT_RINGS)
     segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
     unchecked = Ec5AttestedPreconditions(
         named_street_override_checked=False,
         alternate_width_clause_checked=False,
-        attestation_note="not yet checked for this synthetic fixture",
+        attestation_note="neither check performed yet",
     )
     result = compute_wide_street_buffer_intersection(
         lot, [segment], ec5_preconditions=unchecked, correlation_id=CORRELATION_ID
     )
-    assert result.status == STATUS_COMPUTED
-    assert result.ec5_preconditions is unchecked
+    assert result.status == STATUS_PRECONDITIONS_NOT_ATTESTED
+    assert result.segment_contributions == ()
+    assert result.aggregate_union_buffer is None
+    assert "named_street_override_checked is False" in result.ec5_not_attested_notice
+    assert "alternate_width_clause_checked is False" in result.ec5_not_attested_notice
     assert result.ec5_preconditions.named_street_override_checked is False
+    assert result.ec5_preconditions.alternate_width_clause_checked is False
+
+
+def test_ec5_gate_refuses_even_with_an_empty_wide_segment_set() -> None:
+    # The EC-5 value gate is checked BEFORE the EC-6 empty-set check (order
+    # of operations, module docstring) - an unattested precondition must
+    # surface as the EC-5 refusal, not silently fall through to the EC-6
+    # "no wide segments provided" status.
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    unchecked = Ec5AttestedPreconditions(
+        named_street_override_checked=False,
+        alternate_width_clause_checked=False,
+        attestation_note="neither check performed yet",
+    )
+    result = compute_wide_street_buffer_intersection(
+        lot, [], ec5_preconditions=unchecked, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_PRECONDITIONS_NOT_ATTESTED
+    assert result.status != STATUS_NO_WIDE_SEGMENTS_PROVIDED
+    assert result.empty_notice is None
+    assert result.ec5_not_attested_notice is not None
 
 
 # ---------------------------------------------------------------------------
@@ -647,16 +923,25 @@ def test_module_never_reimplements_transport_or_reprojection() -> None:
 def test_line_probe_matches_the_hand_derived_expected_values() -> None:
     """Independent, direct-shapely cross-check of the exact geometric facts
     this suite's expected values rely on (NOT calling the module under
-    test) - a regression guard on the fixture geometry itself."""
+    test) - a regression guard on the fixture geometry itself.
+
+    Uses ``quad_segs=BUFFER_QUAD_SEGS`` (16, the module's real pinned value
+    as of the G3-F2 rework correction - previously this probe hardcoded the
+    incorrect 8) for exact parity with the module's own buffer calls; none
+    of these three fixtures' values actually change between 8 and 16
+    because every one of them deliberately keeps the segment's endpoints far
+    from the lot (long y-ranges), so only the buffer's STRAIGHT sides ever
+    reach the lot - the end-cap-proximate fixture above is what actually
+    exercises the quad_segs-sensitive rounded-cap path."""
     from shapely.geometry import Polygon
 
     lot_geom = Polygon([(0, 0), (0, 200), (200, 200), (200, 0), (0, 0)])
     assert lot_geom.area == 40000.0
-    within = LineString([(-50, -1000), (-50, 1000)]).buffer(100.0, quad_segs=8)
+    within = LineString([(-50, -1000), (-50, 1000)]).buffer(100.0, quad_segs=BUFFER_QUAD_SEGS)
     assert lot_geom.intersection(within).area == 10000.0
-    beyond = LineString([(-300, -1000), (-300, 1000)]).buffer(100.0, quad_segs=8)
+    beyond = LineString([(-300, -1000), (-300, 1000)]).buffer(100.0, quad_segs=BUFFER_QUAD_SEGS)
     assert lot_geom.intersection(beyond).is_empty
-    tangent = LineString([(-100, -1000), (-100, 1000)]).buffer(100.0, quad_segs=8)
+    tangent = LineString([(-100, -1000), (-100, 1000)]).buffer(100.0, quad_segs=BUFFER_QUAD_SEGS)
     tangent_intersection = lot_geom.intersection(tangent)
     assert lot_geom.intersects(tangent) is True
     assert tangent_intersection.area == 0.0
