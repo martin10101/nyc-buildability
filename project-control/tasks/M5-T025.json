@@ -1,0 +1,142 @@
+{
+  "task_id": "M5-T025",
+  "title": "Web fixes from the D-043 owner walkthrough (D-056): safe outbound provenance source links in both provenance surfaces + lot-outline visibility root-cause/fix + framing + zoom controls",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Execute the three D-056 deliverables exactly. (1) R001 SOURCE LINKS: both provenance surfaces (apps/web/src/components/property/ProvenanceDisclosure.tsx and the provenance rows of apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx) render a clickable outbound link to the official dataset landing page, built ONLY as constant prefix https://data.cityofnewyork.us/d/ + the reproducibility dataset_id AFTER strict token validation (new small lib apps/web/src/lib/provenance-link.ts with its test; the ZoLa-link constant-prefix + validated-token pattern; NEVER an href from request_url or any reflected string - keep urlHost text as the human-readable label or alongside); invalid/absent dataset_id -> today's honest text, no link; target=_blank rel=noopener noreferrer. (2) R002 OUTLINE VISIBILITY: root-cause why the live deploy shows a gray canvas with NO visible outline for a single_lot result (owner device, BBL 3022647515 class; canvas + attribution render, so the map boots - suspects to check: the load-event/addLayer wiring against maplibre-gl v6 semantics with an inline empty style, layer paint/visibility, fitBounds framing, coordinate handling; maplibre CSS is imported in layout.tsx - ruled out) and FIX it; additionally the initial framing must show a single tax lot CLEARLY (fitBounds maxZoom 18 renders a ~25x100 ft lot at fingernail size - raise the cap or frame by padding so the lot fills a sensible share of the 320px panel). Display-only discipline unchanged: geometry verbatim, no measurement, camera framing only. Root cause stated with evidence in the producer report; regression-guard test that fails on the old behavior wherever jsdom can express it (extract pure framing/wiring logic if needed - jsdom and Playwright CI lack WebGL). (3) R003 ZOOM CONTROLS: visible zoom in/out buttons via the already-admitted maplibre-gl NavigationControl (showCompass off unless justified), keyboard-accessible, dynamic-import/SSR structure and every no-WebGL/fallback path unchanged. Zero new dependencies; package.json/lockfiles untouched. Producer report saved to project-control/reports/M5-T025-producer-report.md.",
+  "business_reason": "Direct owner work order during the live internal-deploy walkthrough (D-056-R001..R003); parallel disjoint packet while the D-053 loop runs M4-T020 (D-056-R005)",
+  "inputs": [
+    "project-control/directives/D-056-provenance-links-lot-outline/source-001.md + requirements.json (THE work order - R001/R002/R003 verbatim - READ-ONLY)",
+    "apps/web/src/lib/lot-geometry-api.ts (typed client the map consumes - READ-ONLY contract; outcome/geometry shapes)",
+    "apps/web/src/lib/bounded.ts + apps/web/src/lib/format.ts (boundedToken/urlHost precedents - READ-ONLY)",
+    "apps/web/src/components/address/AddressConfirmCard.tsx (ZoLa constant-prefix + validated-token link pattern + G5 F-1 comment - READ-ONLY precedent)",
+    "apps/web/src/lib/contract.ts (Reproducibility/SourceFact types - READ-ONLY)",
+    "docs/design/zola-deeplink-url-confirmation.md (link-construction verification precedent - READ-ONLY)"
+  ],
+  "outputs": [
+    "apps/web/src/lib/provenance-link.ts (NEW: strict dataset-id token validation + constant-prefix URL builder)",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts (NEW: valid/invalid/absent ids; negative reflected-string test)",
+    "ProvenanceDisclosure.tsx + RuleEvaluationResult.tsx rendering the safe link (honest absence preserved)",
+    "LotOutlineMap.tsx: outline visibly rendering (root-caused fix) + clear initial framing + NavigationControl zoom buttons",
+    "updated tests in the three existing test files covering the changed behavior",
+    "project-control/reports/M5-T025-producer-report.md (root cause w/ evidence, commands run, limitations)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx",
+    "apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx",
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/lib/provenance-link.ts",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
+    "apps/web/src/components/property/__tests__/sections.test.tsx",
+    "apps/web/src/components/rule-evaluation/__tests__/rule-evaluation.test.tsx",
+    "project-control/reports/M5-T025-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/lib/lot-geometry-api.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/address-api.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/app/**",
+    "apps/web/package.json",
+    "package.json",
+    "package-lock.json",
+    "packages/**",
+    "services/api/**",
+    "tools/**",
+    ".github/**",
+    ".claude/**",
+    "docs/**",
+    "project-control/directives/**",
+    "project-control/tasks/**",
+    "project-control/gates/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "safe_source_links_both_surfaces",
+      "input": "vitest over the provenance components + new lib",
+      "expected": "valid dataset_id -> anchor with href exactly https://data.cityofnewyork.us/d/<id>, target=_blank, rel=noopener noreferrer, in BOTH ProvenanceDisclosure and RuleEvaluationResult; invalid or absent dataset_id -> no anchor, honest text preserved; NEGATIVE: request_url content never appears in any href regardless of its value"
+    },
+    {
+      "id": "S2",
+      "case": "outline_visible_with_root_cause",
+      "input": "producer report + regression tests",
+      "expected": "a concrete root cause for the invisible outline is named with evidence (not a guess); the fix makes the outline render; a test fails on the old behavior where jsdom can express it; initial framing shows a single small lot clearly (maxZoom cap revisited with the chosen value justified); geometry passthrough stays verbatim, zero measurement code"
+    },
+    {
+      "id": "S3",
+      "case": "zoom_controls",
+      "input": "vitest + code review",
+      "expected": "NavigationControl (zoom in/out) added in the map init path, keyboard-accessible; no-WebGL fallback, honest-empty, review, invalid and transport-failure branches render exactly as before (existing tests stay green)"
+    },
+    {
+      "id": "S4",
+      "case": "scope_and_regression",
+      "input": "git status + full web checks",
+      "expected": "only allowed files changed; zero new dependencies (package.json/lockfiles byte-unchanged); whole web vitest suite + typecheck green locally as self-check; CI web + web-e2e jobs on the pushed head are the executable authority (thin client)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "reflected-string href regression: any path where server-echoed text reaches an href gates G3 - the negative test in S1 is mandatory",
+    "root-cause theater: fixing symptoms (e.g. only raising maxZoom) without explaining why NO outline was visible would leave the defect - G3 verifies cause-vs-fix coherence (D-056-R002)",
+    "WebGL-less harnesses: jsdom/Playwright-CI cannot render the map - the fix must be structured so its logic is testable without a canvas (pure helpers), never 'trust me it draws now'",
+    "fallback regressions: LotOutlineMap has six typed non-map branches that must stay byte-equivalent in behavior"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-14T05:20:01.499404+00:00",
+  "updated_at": "2026-09-14T05:52:00+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-056",
+      "requirement_ids": [
+        "D-056-R001",
+        "D-056-R002",
+        "D-056-R003"
+      ]
+    },
+    {
+      "directive_id": "D-046",
+      "requirement_ids": [
+        "D-046-R001",
+        "D-046-R002"
+      ]
+    },
+    {
+      "directive_id": "D-040",
+      "requirement_ids": [
+        "D-040-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-14T05:20:01.499404+00:00",
+  "documented_test_commands": [
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client); local vitest/typecheck runs are producer self-checks only",
+    "python tools/modularity_check.py --check"
+  ],
+  "path_notes": [
+    "D-056-R005 execution mode: hand-conducted parallel packet while the D-053 loop runs M4-T020; allowed_paths fully disjoint from the loop scope (apps/web vs services/api; D-046 ceiling 2/3).",
+    "Producer frontend-engineer; D-047-R001 model claude-sonnet-5 via dispatch override (agent-file flip still classifier-blocked; deviation recorded in the G0 report).",
+    "Lot-outline edits sit inside the D-040-R001 scoped release (lot-outline increment on the address confirm card, MapLibre GL JS per .claude/rules/3d-ui-expansion.md). No expansion-pack work.",
+    "G5 F-1 discipline: links only from constant prefix + validated token; MapLibre customAttribution stays the constant; no reflected string reaches innerHTML or href.",
+    "WORKTREE: producer in its own worktree reset to the contract HEAD; show-toplevel guard mandatory; local npm limited to running existing node_modules binaries (vitest/tsc) - NO npm install, NO lockfile touch (thin client)."
+  ],
+  "worktree": "wt-m5t025"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-12",
  "captured_at": "2026-09-12T07:51:39+00:00",
  "created_at": "2026-09-12T07:51:39+00:00",
- "updated_at": "2026-09-13T05:30:00+00:00",
+ "updated_at": "2026-09-14T05:52:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "6ec7b631286497414bf16b390e60937729c48839",
@@ -86,6 +86,12 @@
    "actor": "orchestrator",
    "action": "verifier_authorized_reviewed_sha_restamp",
    "note": "M5-T023 row reviewed_sha 7782be59 -> 318c8794 per directive-compliance-verifier conditional pre-authorization (allowed-paths diff empty + identity ceb64b3d unchanged, both verified at restamp)."
+  },
+  {
+   "at": "2026-09-14T05:52:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound ledger task M5-T025 (lot-outline visibility fix + zoom controls on the address confirm card - inside the released lot-outline increment) to D-040-R001 (append-only, task_ids only). Digest resynced d672035d -> dbc2c294 in the SAME commit (c14)."
   }
  ],
  "owner_approval": {
@@ -103,5 +109,5 @@
   "D-040-R005",
   "D-040-R006"
  ],
- "requirements_content_digest_sha256": "d672035de46ade8a26645aee1d69638525867ca659caba8b0efa01b3504cc4be"
+ "requirements_content_digest_sha256": "dbc2c2947956fc439346895a2ca921eee3bec2ad458e87d039922cc59e7f30e9"
 }
