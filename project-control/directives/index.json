@@ -1,783 +1,795 @@
 {
- "schema": "directive_index/v1",
- "version": 1,
- "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
- "directive_states": [
-  "proposed",
-  "active",
-  "superseded",
-  "withdrawn",
-  "retired"
- ],
- "directives": [
-  {
-   "directive_id": "D-001",
-   "slug": "owner-directive-compliance-system",
-   "title": "Durable Owner Directive Compliance System",
-   "status": "active",
-   "issued_at": "2026-07-23",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T023"
-   ],
-   "manifest": "D-001-owner-directive-compliance-system/manifest.json"
-  },
-  {
-   "directive_id": "D-002",
-   "slug": "activate-control-system-first-wave",
-   "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
-   "status": "active",
-   "issued_at": "2026-07-24",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T024",
-    "M3-T001",
-    "M4-T007",
-    "M2-T017"
-   ],
-   "manifest": "D-002-activate-control-system-first-wave/manifest.json"
-  },
-  {
-   "directive_id": "D-003",
-   "slug": "first-wave-integration-and-second-wave",
-   "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
-   "status": "active",
-   "issued_at": "2026-07-24",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T026"
-   ],
-   "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
-  },
-  {
-   "directive_id": "D-004",
-   "slug": "agent-teams-runtime-adoption",
-   "title": "Agent-teams runtime adoption, staged with pilots",
-   "status": "active",
-   "issued_at": "2026-07-24",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T027",
-    "M0-T028"
-   ],
-   "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
-  },
-  {
-   "directive_id": "D-005",
-   "slug": "codebase-knowledge-graph-pilot",
-   "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
-   "status": "active",
-   "issued_at": "2026-07-29",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
-  },
-  {
-   "directive_id": "D-006",
-   "slug": "dispatch-efficiency-and-graph-wiring",
-   "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
-   "status": "active",
-   "issued_at": "2026-08-03",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T035"
-   ],
-   "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
-  },
-  {
-   "directive_id": "D-007",
-   "slug": "codex-claude-supervisor-bridge",
-   "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
-   "status": "active",
-   "issued_at": "2026-07-31",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T036"
-   ],
-   "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
-  },
-  {
-   "directive_id": "D-008",
-   "slug": "owner-escalation-boundary",
-   "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
-   "status": "active",
-   "issued_at": "2026-08-04",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-008-owner-escalation-boundary/manifest.json"
-  },
-  {
-   "directive_id": "D-009",
-   "slug": "dependency-security-governance",
-   "title": "Dependency-Security Governance Directive (fresh, owner-activated 2026-08-04)",
-   "status": "active",
-   "issued_at": "2026-08-04",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T019"
-   ],
-   "manifest": "D-009-dependency-security-governance/manifest.json"
-  },
-  {
-   "directive_id": "D-010",
-   "slug": "autonomous-engineering-restructure",
-   "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
-   "status": "active",
-   "issued_at": "2026-08-06",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T037",
-    "M0-T038",
-    "M0-T039",
-    "M0-T040",
-    "M0-T041",
-    "M0-T042",
-    "M0-T043",
-    "M0-T044",
-    "M0-T045"
-   ],
-   "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
-  },
-  {
-   "directive_id": "D-011",
-   "slug": "bounded-truth-reconciliation",
-   "title": "Bounded truth reconciliation (owner correction of session-14 acceptance evidence)",
-   "status": "active",
-   "issued_at": "2026-08-11",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M2-T016",
-    "M0-T055",
-    "M0-T053",
-    "M0-T057",
-    "M0-T047"
-   ],
-   "manifest": "D-011-bounded-truth-reconciliation/manifest.json"
-  },
-  {
-   "directive_id": "D-012",
-   "slug": "supervised-product-validation-run",
-   "title": "First bounded supervised-auto product validation run (owner-authorized)",
-   "status": "active",
-   "issued_at": "2026-08-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-012-supervised-product-validation-run/manifest.json"
-  },
-  {
-   "directive_id": "D-013",
-   "slug": "context-intelligence-pipeline",
-   "title": "Context-intelligence pipeline (census/index, bounded context compiler, ontology, measurement) - units A1/A2/B/C/D/E/F",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T063",
-    "M0-T064",
-    "M0-T065",
-    "M0-T066",
-    "M0-T067",
-    "M0-T068",
-    "M0-T069"
-   ],
-   "manifest": "D-013-context-intelligence-pipeline/manifest.json"
-  },
-  {
-   "directive_id": "D-014",
-   "slug": "supervisor-command-authority-repair",
-   "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T070"
-   ],
-   "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
-  },
-  {
-   "directive_id": "D-015",
-   "slug": "nanoid-security-repair",
-   "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T071"
-   ],
-   "manifest": "D-015-nanoid-security-repair/manifest.json"
-  },
-  {
-   "directive_id": "D-016",
-   "slug": "overnight-integration-runway",
-   "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-016-overnight-integration-runway/manifest.json"
-  },
-  {
-   "directive_id": "D-017",
-   "slug": "a-to-z-completion-authorization",
-   "title": "Owner A-to-Z completion authorization - context-intelligence implementation (Units A1-F), controller manifest repair and safe live-controller update, permanent modularity enforcement, deterministic complexity-based model routing",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T063",
-    "M0-T064",
-    "M0-T065",
-    "M0-T066",
-    "M0-T067",
-    "M0-T068",
-    "M0-T069",
-    "M0-T072",
-    "M0-T073",
-    "M0-T074"
-   ],
-   "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
-  },
-  {
-   "directive_id": "D-018",
-   "slug": "context-vertical-integration-correction",
-   "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
-   "status": "active",
-   "issued_at": "2026-08-18",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T075"
-   ],
-   "manifest": "D-018-context-vertical-integration-correction/manifest.json"
-  },
-  {
-   "directive_id": "D-019",
-   "slug": "context-pipeline-promotion-blocker-closure",
-   "title": "Context pipeline promotion-blocker closure and adversarial completion protocol: repair the memory single-writer lock, complete path containment + private-path redaction, frozen diff-base identity, true Unit E consumption + seed ordering, honest routing unknowns, useful bounded advisory memory, and a reproducible clean-checkout e2e benchmark in permanent CI - one task, one branch, one PR.",
-   "status": "active",
-   "issued_at": "2026-08-19",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T076"
-   ],
-   "manifest": "D-019-context-pipeline-promotion-blocker-closure/manifest.json"
-  },
-  {
-   "directive_id": "D-020",
-   "slug": "program-wide-mcp-default-deny",
-   "title": "Program-wide MCP default-deny: every ordinary Claude Code session in NYC Buildability defaults to NO unrelated external MCP server active (claude.ai Airtable, Microsoft 365, Pencil, Supabase, or any other), via the smallest supported repository-level policy merged into the checked-in project settings - one task, one branch, one PR; no controller activation, no R060 promotion, no NYC application development.",
-   "status": "active",
-   "issued_at": "2026-08-19",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T077"
-   ],
-   "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
-  },
-  {
-   "directive_id": "D-023",
-   "slug": "bounded-autonomy-campaign",
-   "title": "Bounded-autonomy campaign: one coordinated, dependency-ordered upgrade of the existing NYC Buildability engineering system authorizing (1) a genuinely bounded unattended mode capable of a measured 10-hour run, (2) tier-permitted real GitHub commit/push/PR/ordinary-green-merge continuation that never overrides DO-NOT-MERGE banners or owner holds (PR #241 held), (3) reliable context/session turnover and model-quota fallback using only owner-approved live-probed model IDs, (4) official Claude Code Remote Control as monitoring/steering only (never the supervisor's approval adapter), and (5) a small project-owned engineering-reliability standard/skill written from scratch - preserving the existing supervisor, agent roster, ledger, worktree isolation, and GitHub workflow; no third-party agent framework; no unattended activation until prerequisites and live canaries pass; all remaining owner-only actions bundled into one exact final checkpoint.",
-   "status": "active",
-   "issued_at": "2026-08-21",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T078",
-    "M0-T079",
-    "M0-T080",
-    "M0-T081",
-    "M0-T082",
-    "M0-T083",
-    "M0-T084",
-    "M0-T085"
-   ],
-   "manifest": "D-023-bounded-autonomy-campaign/manifest.json"
-  },
-  {
-   "directive_id": "D-024",
-   "slug": "fable-codex-loop",
-   "title": "Fable-Codex continuous agent loop: implement, test, independently review, and prepare for owner activation a durable continuous agent loop in which Fable 5/Claude Code is the sole producer, bounded subagents do scoped work under workload-first supervision without worker-visible token quotas, Codex is an external read-only supervisor/reviewer with a version-probed fail-closed transport, the owner has a no-duration one-command start plus durable status/ask/pause/resume/graceful-stop/emergency-stop controls and zero-context /loop-* terminal commands, continuity is a renewable sequence of bounded epochs with exact-once succession and crash/host-restart recovery, a narrowly allowlisted 4.8 guardrail bridge with a durable two-attempt cap, root-cause replace-not-layer repair gating, preserved graph/context intelligence, Fable-only GitHub effects under existing authority, and activation held behind the owner gate until a two-unit golden end-to-end readiness run from the exact owner start command passes without human continuation (revision 2026-08-24, workload-first subagent supervision).",
-   "status": "active",
-   "issued_at": "2026-08-24",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T086",
-    "M0-T087",
-    "M0-T088",
-    "M0-T089",
-    "M0-T090",
-    "M0-T091",
-    "M0-T092",
-    "M0-T093",
-    "M0-T094",
-    "M0-T095",
-    "M0-T096",
-    "M0-T102",
-    "M0-T103",
-    "M0-T104",
-    "M0-T105",
-    "M0-T106",
-    "M0-T107"
-   ],
-   "manifest": "D-024-fable-codex-loop/manifest.json"
-  },
-  {
-   "directive_id": "D-025",
-   "slug": "session-handoff-skill",
-   "title": "Permanent /session-handoff operator skill: owner-only inline project skill at .claude/skills/session-handoff/SKILL.md that safely lands the active main session (stop new work, reconcile sub-agents and external effects), saves only actually-completed work under existing policy, REPLACES canonical docs/SESSION_HANDOFF.md with the 18-item living handoff, validates it against live Git and the ledger, prints HANDOFF READY/BLOCKED with the exact clean-start command and a COPY-INTO-THE-NEW-SESSION successor prompt, and supports a no-side-effect dry-run; reuses the existing ledger/supervisor/handoff machinery (no second competing handoff system); bounded utility only - no D-024 directive rewrite, no continuous-loop implementation in this task.",
-   "status": "active",
-   "issued_at": "2026-08-25",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T097"
-   ],
-   "manifest": "D-025-session-handoff-skill/manifest.json"
-  },
-  {
-   "directive_id": "D-026",
-   "slug": "global-session-handoff",
-   "title": "Hybrid global/project /session-handoff: personal skill at ~/.claude/skills/session-handoff/SKILL.md (personal OVERRIDES project per official docs) doing live-git root detection and deliberately loading <repo-root>/.claude/session-handoff-profile.md (identity-verified, repo-root-relative routing), with a generic established-convention fallback, HANDOFF BLOCKED on ambiguity, and no writes outside a git repo without owner confirmation; the existing project skill is slimmed into a profile-following repository fallback (never deleted, no drift); all D-025 safe-landing behavior preserved; tested via structural checks, ctl24 dry-run, disposable-repo generic fallback, and non-git fail-safe; minimum governance record; no D-024 directive modification; no real handoff unless the owner invokes without dry-run.",
-   "status": "active",
-   "issued_at": "2026-08-25",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T098"
-   ],
-   "manifest": "D-026-global-session-handoff/manifest.json"
-  },
-  {
-   "directive_id": "D-027",
-   "slug": "statusline-activation",
-   "title": "Owner-authorized activation of the accepted M0-T099 project statusLine handler: wire exactly per report section 4 (gitignore .claude/telemetry/ + project .claude/settings.json statusLine command) in passive shadow/read-only mode only; separate bounded activation task (M0-T100) keeping the accepted M0-T099 identity unchanged; verify project-only precedence with the owner's global personal statusLine fallback intact; prove both outputs (human row + sanitized sidecar) from one feed with a real live check; confirm nothing sensitive written unmasked; record/test/commit/push under project-control; no worktree purge; no continuous-Codex-loop activation; then continue to campaign NEXT (M0-T090 with carried advisories).",
-   "status": "active",
-   "issued_at": "2026-08-26",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [
-    "M0-T100"
-   ],
-   "manifest": "D-027-statusline-activation/manifest.json"
-  },
-  {
-   "directive_id": "D-028",
-   "slug": "sleep-handoff-650k",
-   "title": "Owner sleep instruction 2026-08-26: continue only authorized campaign work unattended; at ~650k main-agent context tokens (plus/minus 50k; alert 600k, never past ~700k without the handoff) hold at a clean seam and produce the session handoff with ~50k headroom. Conduct-only (sentinel D-028-BOOTSTRAP); D-010 R113-R114 not amended.",
-   "status": "active",
-   "issued_at": "2026-08-26",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-028-sleep-handoff-650k/manifest.json"
-  },
-  {
-   "directive_id": "D-029",
-   "slug": "m0t091-seam-hold",
-   "title": "Owner hold 2026-08-26: finish/review/accept/checkpoint/commit/push M0-T091 exactly as scoped; HOLD on claiming or beginning M0-T092 or any later campaign task; healthy agents/validation shells finish naturally; verify the clean seam (tree/origin/agents/ledger); report 'M0-T091 SEAM READY' (frozen accepted commit, checkpoint, test totals, campaign NEXT, background-process status); then WAIT for owner instruction. Conduct-only (sentinel D-029-BOOTSTRAP); narrows D-028's unattended continuation after the seam.",
-   "status": "active",
-   "issued_at": "2026-08-26",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-029-m0t091-seam-hold/manifest.json"
-  },
-  {
-   "directive_id": "D-030",
-   "slug": "successor-capability-rebaseline",
-   "title": "Owner instruction 2026-08-26 (/session-handoff reason): turnover after M0-T091; successor must perform the native Claude Code capability re-baseline (M0-T086 pattern, bounded gated ledger task) BEFORE claiming M0-T092 or any later D-024 task; discharges the D-029 wait state and converts the D-029 hold into this prerequisite. Conduct-only (sentinel D-030-BOOTSTRAP).",
-   "status": "active",
-   "issued_at": "2026-08-26",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-030-successor-capability-rebaseline/manifest.json"
-  },
-  {
-   "directive_id": "D-031",
-   "slug": "session-rotation-extension-750k",
-   "title": "Owner directive 2026-08-27: continue working in the CURRENT session until context occupancy reaches approximately 750k of the 1M window, then perform the session handoff. Session-scoped extension of the D-010 R113/R114 ~400k rotate-at-seam ceiling for session_01HfptKuEs3RDxaxsSHJjc7t only; D-010 unchanged for every other session; all gates/holds/restrictions unchanged. Conduct-only (sentinel D-031-BOOTSTRAP).",
-   "status": "active",
-   "issued_at": "2026-08-27",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-031-session-rotation-extension-750k/manifest.json"
-  },
-  {
-   "directive_id": "D-032",
-   "slug": "astra-loop-activation-and-review-reconciliation",
-   "title": "Owner directive 2026-09-05: (1) one role gets Codex running as a FULL-TIME persistent loop - main Codex agent = GPT-6 Astra (gpt-6-astra) at reasoning effort HIGH, updating the codex CLI if needed, done ASAP with owner-waived redundant re-checks; fires the D-024-R781 astra trigger and narrowly super",
-   "status": "active",
-   "issued_at": "2026-09-05",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-032-astra-loop-activation-and-review-reconciliation/manifest.json"
-  },
-  {
-   "directive_id": "D-033",
-   "slug": "supervisor-management-layer",
-   "title": "Owner directive 2026-09-07: plan and implement supervisor-run gate waves and acceptance, and present the staged R595 activation package. Activation itself stays owner-only; all holds preserved.",
-   "status": "active",
-   "issued_at": "2026-09-07",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "manifest": "D-033-supervisor-management-layer/manifest.json",
-   "affected_tasks": []
-  },
-  {
-   "directive_id": "D-034",
-   "slug": "architecture-context-and-review-skill",
-   "title": "Owner directive 2026-09-07: implement the captured practices - repo-root ARCHITECTURE.md (six-question architecture context incl. forbidden paths, invariants, stop conditions) and a repo-local /pr-review skill (code quality, test adequacy, security, compatibility; actionable-only, UNPROVEN-marked). Evidence-before-DONE folds in by citing the existing stronger gate law.",
-   "status": "active",
-   "issued_at": "2026-09-07",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-034-architecture-context-and-review-skill/manifest.json"
-  },
-  {
-   "directive_id": "D-035",
-   "slug": "loop-does-the-work-monitor-only",
-   "title": "Owner directive 2026-09-07: the codex loop does all the work (reviewing/pushing under the staged R595 path); main session monitors only and restarts the loop on death; rotate at the ~400k-token seam. Conduct-only (sentinel D-035-BOOTSTRAP).",
-   "status": "active",
-   "issued_at": "2026-09-07",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-035-loop-does-the-work-monitor-only/manifest.json"
-  },
-  {
-   "directive_id": "D-036",
-   "slug": "model-fallback-and-autostart-activation",
-   "title": "Owner directive 2026-09-07: arm worker model fallback (opus-4-8 only on weekly quota exhaustion, auto switch-back to Fable) + install autostart (boot/wake/weekly tasks, 4-min x50 retry). Conduct/config (sentinel D-036-BOOTSTRAP).",
-   "status": "active",
-   "issued_at": "2026-09-07",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-036-model-fallback-and-autostart-activation/manifest.json"
-  },
-  {
-   "directive_id": "D-037",
-   "slug": "reviewer-proportionality",
-   "title": "Owner directive 2026-09-07: reviewer proportionality - REVISE only for real gate/acceptance failures, minor polish passes as done-with-advisory (real gates stay blocking).",
-   "status": "active",
-   "issued_at": "2026-09-07",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-037-reviewer-proportionality/manifest.json"
-  },
-  {
-   "directive_id": "D-038",
-   "slug": "build-product-not-self",
-   "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT - no more building itself (supervisor self-infrastructure). Skip credentials this session; pivot the loop onto unblocked product engineering. Gates and holds unchanged.",
-   "status": "active",
-   "issued_at": "2026-09-08",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-038-build-product-not-self/manifest.json"
-  },
-  {
-   "directive_id": "D-039",
-   "slug": "m4-dependency-correction",
-   "title": "Owner decision 2026-09-11: correct the mis-chained M4-T001 dependency on M4-T010/M4-T009 (deps=[], T007/T008 precedent); accept M4-T010 then continue to the M4-T009 AS-5 unit + wave; G6 hold on M4-T001 untouched.",
-   "status": "active",
-   "issued_at": "2026-09-11",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-039-m4-dependency-correction/manifest.json"
-  },
-  {
-   "directive_id": "D-040",
-   "slug": "scoped-unblocks",
-   "title": "Owner 2026-09-12: unblock all menu items except Next.js and Supabase - scoped expansion-hold release for the lot-outline increment (Packet 3 only), flag-name unification authorized, digest normalization authorized; Next.js/Supabase stay owner-gated; G6 unchanged.",
-   "status": "active",
-   "issued_at": "2026-09-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-040-scoped-unblocks/manifest.json"
-  },
-  {
-   "directive_id": "D-041",
-   "slug": "c1-development-rights",
-   "title": "Owner 2026-09-12: gap-list C1 APPROVED - explicit remaining-development-rights line (existing built area vs draft FAR cap, honest over-built handling), owner's top product priority; C1 only, all other gap-list items stay candidates.",
-   "status": "active",
-   "issued_at": "2026-09-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-041-c1-development-rights/manifest.json"
-  },
-  {
-   "directive_id": "D-042",
-   "slug": "nextjs-15-5-24-upgrade",
-   "title": "Owner 2026-09-12: Next.js security upgrade AUTHORIZED - pin 15.5.21 -> exactly 15.5.24 with whole-tree advisory clearance (narrows D-040-R004 for this upgrade); unblocks B-022/MapLibre chain; deploy stays owner-gated; no 16.x.",
-   "status": "active",
-   "issued_at": "2026-09-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-042-nextjs-15-5-24-upgrade/manifest.json"
-  },
-  {
-   "directive_id": "D-043",
-   "slug": "internal-web-deploy",
-   "title": "Owner 2026-09-12: INTERNAL web deploy on Render AUTHORIZED - unlisted apps/web service, unified flag on, private API preserved, owner performs dashboard steps; NOT a public launch; from an advisory-free post-M5-T021 head.",
-   "status": "active",
-   "issued_at": "2026-09-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-043-internal-web-deploy/manifest.json"
-  },
-  {
-   "directive_id": "D-044",
-   "slug": "handoff-budget-8k",
-   "title": "Owner 2026-09-12: session-handoff token budget raised to 8000 (handoff_token_budget in tools/context_budget.json); eager budget and all other guards unchanged.",
-   "status": "active",
-   "issued_at": "2026-09-12",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-044-handoff-budget-8k/manifest.json"
-  },
-  {
-   "directive_id": "D-045",
-   "slug": "citywide-rule-coverage",
-   "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - A1 heights beyond R5, A2 geometry mechanics + B2 street-width connector, A3 contextual/bonus, C + M district families, A4 special purpose/waterfront as later waves; one reviewed family at a time; all rules DRAFT until G6.",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-045-citywide-rule-coverage/manifest.json"
-  },
-  {
-   "directive_id": "D-046",
-   "slug": "parallel-family-production",
-   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-046-parallel-family-production/manifest.json"
-  },
-  {
-   "directive_id": "D-047",
-   "slug": "sonnet-producers-ramp-10",
-   "title": "Owner 2026-09-13: campaign producers switch to claude-sonnet-5 (builders ONLY - reviewers/orchestrator stay on the D-004 pinned set; twice-failed tasks rebuild on claude-opus-4-8) and the D-046 concurrency ceiling rises 3 -> 10 with a mandatory ramp (start 3-4, widen only while review/CI latency stays healthy).",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-047-sonnet-producers-ramp-10/manifest.json"
-  },
-  {
-   "directive_id": "D-048",
-   "slug": "r1r2-named-only-not-assessed",
-   "title": "Owner 2026-09-13 (B-023 disposition): R1/R2 height/setback covers ONLY the districts ZR 23-421 explicitly names; lettered variants render 'not assessed - needs professional review'; interpretation questions move to docs/ARCHITECT_REVIEW_QUESTIONS.md + the G6 agenda; same named-only pattern applies campaign-wide without new owner stops.",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-048-r1r2-named-only-not-assessed/manifest.json"
-  },
-  {
-   "directive_id": "D-049",
-   "slug": "encode-11-25-reading",
-   "title": "Owner 2026-09-13: ENCODE THE 11-25 READING (owner decision, NOT qualified sign-off) - R1-1/R1-2/R1-2A/R2A/R2X share ZR 23-421's 25/35 draft envelope via ZR 11-25 suffix inheritance; R2X FAR row is floor-area-only; 23-421(g) as explicit conditional (no-letter-suffix only); site modifiers as conditions/review flags, never silent; DRAFT until G6; professional-confirmation ask stays open.",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-049-encode-11-25-reading/manifest.json"
-  },
-  {
-   "directive_id": "D-050",
-   "slug": "owner-assisted-research-channel",
-   "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-050-owner-assisted-research-channel/manifest.json"
-  },
-  {
-   "directive_id": "D-051",
-   "slug": "per-rule-conservative-fallback",
-   "title": "Owner 2026-09-13: two corrections of build-session claims (bounded-negative evidence discipline; 'unknown means narrow is always safe' is FALSE - 23-431 street-wall counterexample) + binding instruction: unknown street width keeps factual status UNKNOWN and every conservative fallback is validated per consuming rule with assumption/review labels until validated; RQ-005 independent-confirmation research received (discovery aid).",
-   "status": "active",
-   "issued_at": "2026-09-13",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-051-per-rule-conservative-fallback/manifest.json"
-  },
-  {
-   "directive_id": "D-052",
-   "slug": "street-width-draft-classification",
-   "title": "Owner decision 2026-09-14 (OQ-3 RESOLVED): approved DRAFT street-width classification policy - 75-ft threshold with exceptions checked first; clear numbers/one-sided explicit bounds usable from the correctly matched DCM feature under documented source/street-status/frontage-coverage checks (owner-approved assumption, never a DCP guarantee); straddling/approximate/unrecognized values stay UNKNOWN to effective-map resolution; full provenance; UNKNOWN stays the data state with per-rule fallback justification (D-051); DRAFT until G6; RQ-005 publisher-convention residual stays open.",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-052-street-width-draft-classification/manifest.json"
-  },
-  {
-   "directive_id": "D-053",
-   "slug": "relaunch-codex-loop-campaign",
-   "title": "Owner 2026-09-14: RELAUNCH THE CODEX LOOP on the D-045 campaign queue - limited-auto dispatch + live Codex/Astra reviews resume; build session drops to quiet monitor + final authority (R595 stays shadow - NO auto-accept); detached loop communicates via the repository; monitor owns owner notifications (D-050-R005); owner-side Astra research channel unchanged; D-045..D-052 bind inside the loop.",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-053-relaunch-codex-loop-campaign/manifest.json"
-  },
-  {
-   "directive_id": "D-054",
-   "slug": "persistent-knowledge-files",
-   "title": "Owner 2026-09-14: two-tier persistent knowledge system - Tier 1 .claude/rules/PROGRAM_KNOWLEDGE.md (compressed program-wide pointers, auto-injected every session, grows under the eager context budget) + Tier 2 docs/WORKING_KNOWLEDGE.md (living current-section knowledge, handoff-read, prune-or-promote at section close).",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-054-persistent-knowledge-files/manifest.json"
-  },
-  {
-   "directive_id": "D-055",
-   "slug": "fable-selection-restore",
-   "title": "Owner 2026-09-14: SELECT FABLE WHILE IT LASTS for main and reviewers - execute the D-036-R001 worker revert (model_selection.toml back to claude-fable-5 with the opus-4-8 quota fallback) and revert the five 2026-08-09 gate-reviewer fallback flips back to claude-fable-5 (effort key removed); standing fallback cycles stay armed; producers/D-047 untouched; blocked surfaces return to the owner, never bypassed.",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-055-fable-selection-restore/manifest.json"
-  },
-  {
-   "directive_id": "D-056",
-   "slug": "provenance-links-lot-outline",
-   "title": "Owner 2026-09-14 (live walkthrough work order): add safe outbound provenance source links (constant-prefix + validated dataset-id, both provenance surfaces), fix the lot-outline map so the outline is actually visible (root-cause + framing) and add zoom in/out buttons; ZoLa blank page recorded as external (city SPA client-side boot; link format verified twice); executed as one parallel gated packet (M5-T025) while the D-053 loop runs M4-T020; owner Manual Deploy step returned at the seam.",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-056-provenance-links-lot-outline/manifest.json"
-  },
-  {
-   "directive_id": "D-057",
-   "slug": "ruleeval-default-on",
-   "title": "Owner 2026-09-14: make the internal surfaces work on the plain URL - additive INTERNAL_RULE_EVAL_DEFAULT_ON server var (default-on when set; ?ruleeval=off kill switch and ?ruleeval=on bookmarks preserved; absent var = exactly today's two-factor behavior, zero e2e changes); operator checklist updated; owner activates by setting the var on the web service (M5-T026).",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-057-ruleeval-default-on/manifest.json"
-  },
-  {
-   "directive_id": "D-058",
-   "slug": "seam-handoff-fable-extra-usage",
-   "title": "Owner 2026-09-14 (/session-handoff reason, verbatim): finish at a seam; codex-loop operation continues (benign unit-complete close recorded, successor relaunches next packet); session knowledge into the D-054 two-tier files; loop keeps using claude-fable-5 via EXTRA USAGE now that the regular weekly quota is exhausted (fable pin stays; opus chain last-resort only).",
-   "status": "active",
-   "issued_at": "2026-09-14",
-   "issued_by": "owner",
-   "supersedes": [],
-   "superseded_by": null,
-   "affected_tasks": [],
-   "manifest": "D-058-seam-handoff-fable-extra-usage/manifest.json"
-  }
- ],
- "updated_at": "2026-09-14T02:36:29+00:00"
+  "schema": "directive_index/v1",
+  "version": 1,
+  "note": "Registry of owner directives. MULTIPLE directives may be status 'active' at once; this is a keyed list, never a single global current-directive pointer (D-001-R010/R018). Records are provenance only: all work-blocking decisions flow through tools/project_control.py, blockers, holds, and gates (two-lane principle, D-001-R118).",
+  "directive_states": [
+    "proposed",
+    "active",
+    "superseded",
+    "withdrawn",
+    "retired"
+  ],
+  "directives": [
+    {
+      "directive_id": "D-001",
+      "slug": "owner-directive-compliance-system",
+      "title": "Durable Owner Directive Compliance System",
+      "status": "active",
+      "issued_at": "2026-07-23",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T023"
+      ],
+      "manifest": "D-001-owner-directive-compliance-system/manifest.json"
+    },
+    {
+      "directive_id": "D-002",
+      "slug": "activate-control-system-first-wave",
+      "title": "Activate the control system, consolidate the plan, and prepare the first blind-isolated parallel build wave",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T024",
+        "M3-T001",
+        "M4-T007",
+        "M2-T017"
+      ],
+      "manifest": "D-002-activate-control-system-first-wave/manifest.json"
+    },
+    {
+      "directive_id": "D-003",
+      "slug": "first-wave-integration-and-second-wave",
+      "title": "Integrate first wave (D-002 sequential integration) and prepare second wave",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T026"
+      ],
+      "manifest": "D-003-first-wave-integration-and-second-wave/manifest.json"
+    },
+    {
+      "directive_id": "D-004",
+      "slug": "agent-teams-runtime-adoption",
+      "title": "Agent-teams runtime adoption, staged with pilots",
+      "status": "active",
+      "issued_at": "2026-07-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T027",
+        "M0-T028"
+      ],
+      "manifest": "D-004-agent-teams-runtime-adoption/manifest.json"
+    },
+    {
+      "directive_id": "D-005",
+      "slug": "codebase-knowledge-graph-pilot",
+      "title": "Codebase knowledge graph pilot (Graphify) - controlled evaluation before any adoption",
+      "status": "active",
+      "issued_at": "2026-07-29",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-005-codebase-knowledge-graph-pilot/manifest.json"
+    },
+    {
+      "directive_id": "D-006",
+      "slug": "dispatch-efficiency-and-graph-wiring",
+      "title": "Dispatch Efficiency and Code-Graph Wiring (owner draft v1.2, issued via D-004-R679)",
+      "status": "active",
+      "issued_at": "2026-08-03",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T035"
+      ],
+      "manifest": "D-006-dispatch-efficiency-and-graph-wiring/manifest.json"
+    },
+    {
+      "directive_id": "D-007",
+      "slug": "codex-claude-supervisor-bridge",
+      "title": "Codex-Claude Code Supervisor Bridge (v4.3, Autonomy-Tuned) - build directive",
+      "status": "active",
+      "issued_at": "2026-07-31",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T036"
+      ],
+      "manifest": "D-007-codex-claude-supervisor-bridge/manifest.json"
+    },
+    {
+      "directive_id": "D-008",
+      "slug": "owner-escalation-boundary",
+      "title": "Owner escalation boundary (stop-and-ask only for credentials/payment or legal sign-offs)",
+      "status": "active",
+      "issued_at": "2026-08-04",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-008-owner-escalation-boundary/manifest.json"
+    },
+    {
+      "directive_id": "D-009",
+      "slug": "dependency-security-governance",
+      "title": "Dependency-Security Governance Directive (fresh, owner-activated 2026-08-04)",
+      "status": "active",
+      "issued_at": "2026-08-04",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T019"
+      ],
+      "manifest": "D-009-dependency-security-governance/manifest.json"
+    },
+    {
+      "directive_id": "D-010",
+      "slug": "autonomous-engineering-restructure",
+      "title": "Autonomous Engineering Restructure and NYC Buildability Pilot Acceleration (Autonomous Engineering V2)",
+      "status": "active",
+      "issued_at": "2026-08-06",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T037",
+        "M0-T038",
+        "M0-T039",
+        "M0-T040",
+        "M0-T041",
+        "M0-T042",
+        "M0-T043",
+        "M0-T044",
+        "M0-T045"
+      ],
+      "manifest": "D-010-autonomous-engineering-restructure/manifest.json"
+    },
+    {
+      "directive_id": "D-011",
+      "slug": "bounded-truth-reconciliation",
+      "title": "Bounded truth reconciliation (owner correction of session-14 acceptance evidence)",
+      "status": "active",
+      "issued_at": "2026-08-11",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M2-T016",
+        "M0-T055",
+        "M0-T053",
+        "M0-T057",
+        "M0-T047"
+      ],
+      "manifest": "D-011-bounded-truth-reconciliation/manifest.json"
+    },
+    {
+      "directive_id": "D-012",
+      "slug": "supervised-product-validation-run",
+      "title": "First bounded supervised-auto product validation run (owner-authorized)",
+      "status": "active",
+      "issued_at": "2026-08-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-012-supervised-product-validation-run/manifest.json"
+    },
+    {
+      "directive_id": "D-013",
+      "slug": "context-intelligence-pipeline",
+      "title": "Context-intelligence pipeline (census/index, bounded context compiler, ontology, measurement) - units A1/A2/B/C/D/E/F",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T063",
+        "M0-T064",
+        "M0-T065",
+        "M0-T066",
+        "M0-T067",
+        "M0-T068",
+        "M0-T069"
+      ],
+      "manifest": "D-013-context-intelligence-pipeline/manifest.json"
+    },
+    {
+      "directive_id": "D-014",
+      "slug": "supervisor-command-authority-repair",
+      "title": "Bounded supervisor repair: packet command authority wiring (defect A) + revoke-all/status open_asks reconciliation (defect B)",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T070"
+      ],
+      "manifest": "D-014-supervisor-command-authority-repair/manifest.json"
+    },
+    {
+      "directive_id": "D-015",
+      "slug": "nanoid-security-repair",
+      "title": "Bounded dependency-security repair: nanoid 3.3.17 -> 3.3.18 (GHSA-2v37-7h3g-55p8, closes B-019) under the normal policy, no age waiver",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T071"
+      ],
+      "manifest": "D-015-nanoid-security-repair/manifest.json"
+    },
+    {
+      "directive_id": "D-016",
+      "slug": "overnight-integration-runway",
+      "title": "Overnight owner authorization - complete context-intelligence integration runway (Stages 0-7)",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-016-overnight-integration-runway/manifest.json"
+    },
+    {
+      "directive_id": "D-017",
+      "slug": "a-to-z-completion-authorization",
+      "title": "Owner A-to-Z completion authorization - context-intelligence implementation (Units A1-F), controller manifest repair and safe live-controller update, permanent modularity enforcement, deterministic complexity-based model routing",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T063",
+        "M0-T064",
+        "M0-T065",
+        "M0-T066",
+        "M0-T067",
+        "M0-T068",
+        "M0-T069",
+        "M0-T072",
+        "M0-T073",
+        "M0-T074"
+      ],
+      "manifest": "D-017-a-to-z-completion-authorization/manifest.json"
+    },
+    {
+      "directive_id": "D-018",
+      "slug": "context-vertical-integration-correction",
+      "title": "One bounded corrective vertical-integration task for the context-intelligence system - end-to-end compiler integration, concurrency hardening, path containment, real retention, promotion-proof repair, projection input-manifest staleness, runbook correction, permanent context-pipeline CI",
+      "status": "active",
+      "issued_at": "2026-08-18",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T075"
+      ],
+      "manifest": "D-018-context-vertical-integration-correction/manifest.json"
+    },
+    {
+      "directive_id": "D-019",
+      "slug": "context-pipeline-promotion-blocker-closure",
+      "title": "Context pipeline promotion-blocker closure and adversarial completion protocol: repair the memory single-writer lock, complete path containment + private-path redaction, frozen diff-base identity, true Unit E consumption + seed ordering, honest routing unknowns, useful bounded advisory memory, and a reproducible clean-checkout e2e benchmark in permanent CI - one task, one branch, one PR.",
+      "status": "active",
+      "issued_at": "2026-08-19",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T076"
+      ],
+      "manifest": "D-019-context-pipeline-promotion-blocker-closure/manifest.json"
+    },
+    {
+      "directive_id": "D-020",
+      "slug": "program-wide-mcp-default-deny",
+      "title": "Program-wide MCP default-deny: every ordinary Claude Code session in NYC Buildability defaults to NO unrelated external MCP server active (claude.ai Airtable, Microsoft 365, Pencil, Supabase, or any other), via the smallest supported repository-level policy merged into the checked-in project settings - one task, one branch, one PR; no controller activation, no R060 promotion, no NYC application development.",
+      "status": "active",
+      "issued_at": "2026-08-19",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T077"
+      ],
+      "manifest": "D-020-program-wide-mcp-default-deny/manifest.json"
+    },
+    {
+      "directive_id": "D-023",
+      "slug": "bounded-autonomy-campaign",
+      "title": "Bounded-autonomy campaign: one coordinated, dependency-ordered upgrade of the existing NYC Buildability engineering system authorizing (1) a genuinely bounded unattended mode capable of a measured 10-hour run, (2) tier-permitted real GitHub commit/push/PR/ordinary-green-merge continuation that never overrides DO-NOT-MERGE banners or owner holds (PR #241 held), (3) reliable context/session turnover and model-quota fallback using only owner-approved live-probed model IDs, (4) official Claude Code Remote Control as monitoring/steering only (never the supervisor's approval adapter), and (5) a small project-owned engineering-reliability standard/skill written from scratch - preserving the existing supervisor, agent roster, ledger, worktree isolation, and GitHub workflow; no third-party agent framework; no unattended activation until prerequisites and live canaries pass; all remaining owner-only actions bundled into one exact final checkpoint.",
+      "status": "active",
+      "issued_at": "2026-08-21",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T078",
+        "M0-T079",
+        "M0-T080",
+        "M0-T081",
+        "M0-T082",
+        "M0-T083",
+        "M0-T084",
+        "M0-T085"
+      ],
+      "manifest": "D-023-bounded-autonomy-campaign/manifest.json"
+    },
+    {
+      "directive_id": "D-024",
+      "slug": "fable-codex-loop",
+      "title": "Fable-Codex continuous agent loop: implement, test, independently review, and prepare for owner activation a durable continuous agent loop in which Fable 5/Claude Code is the sole producer, bounded subagents do scoped work under workload-first supervision without worker-visible token quotas, Codex is an external read-only supervisor/reviewer with a version-probed fail-closed transport, the owner has a no-duration one-command start plus durable status/ask/pause/resume/graceful-stop/emergency-stop controls and zero-context /loop-* terminal commands, continuity is a renewable sequence of bounded epochs with exact-once succession and crash/host-restart recovery, a narrowly allowlisted 4.8 guardrail bridge with a durable two-attempt cap, root-cause replace-not-layer repair gating, preserved graph/context intelligence, Fable-only GitHub effects under existing authority, and activation held behind the owner gate until a two-unit golden end-to-end readiness run from the exact owner start command passes without human continuation (revision 2026-08-24, workload-first subagent supervision).",
+      "status": "active",
+      "issued_at": "2026-08-24",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T086",
+        "M0-T087",
+        "M0-T088",
+        "M0-T089",
+        "M0-T090",
+        "M0-T091",
+        "M0-T092",
+        "M0-T093",
+        "M0-T094",
+        "M0-T095",
+        "M0-T096",
+        "M0-T102",
+        "M0-T103",
+        "M0-T104",
+        "M0-T105",
+        "M0-T106",
+        "M0-T107"
+      ],
+      "manifest": "D-024-fable-codex-loop/manifest.json"
+    },
+    {
+      "directive_id": "D-025",
+      "slug": "session-handoff-skill",
+      "title": "Permanent /session-handoff operator skill: owner-only inline project skill at .claude/skills/session-handoff/SKILL.md that safely lands the active main session (stop new work, reconcile sub-agents and external effects), saves only actually-completed work under existing policy, REPLACES canonical docs/SESSION_HANDOFF.md with the 18-item living handoff, validates it against live Git and the ledger, prints HANDOFF READY/BLOCKED with the exact clean-start command and a COPY-INTO-THE-NEW-SESSION successor prompt, and supports a no-side-effect dry-run; reuses the existing ledger/supervisor/handoff machinery (no second competing handoff system); bounded utility only - no D-024 directive rewrite, no continuous-loop implementation in this task.",
+      "status": "active",
+      "issued_at": "2026-08-25",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T097"
+      ],
+      "manifest": "D-025-session-handoff-skill/manifest.json"
+    },
+    {
+      "directive_id": "D-026",
+      "slug": "global-session-handoff",
+      "title": "Hybrid global/project /session-handoff: personal skill at ~/.claude/skills/session-handoff/SKILL.md (personal OVERRIDES project per official docs) doing live-git root detection and deliberately loading <repo-root>/.claude/session-handoff-profile.md (identity-verified, repo-root-relative routing), with a generic established-convention fallback, HANDOFF BLOCKED on ambiguity, and no writes outside a git repo without owner confirmation; the existing project skill is slimmed into a profile-following repository fallback (never deleted, no drift); all D-025 safe-landing behavior preserved; tested via structural checks, ctl24 dry-run, disposable-repo generic fallback, and non-git fail-safe; minimum governance record; no D-024 directive modification; no real handoff unless the owner invokes without dry-run.",
+      "status": "active",
+      "issued_at": "2026-08-25",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T098"
+      ],
+      "manifest": "D-026-global-session-handoff/manifest.json"
+    },
+    {
+      "directive_id": "D-027",
+      "slug": "statusline-activation",
+      "title": "Owner-authorized activation of the accepted M0-T099 project statusLine handler: wire exactly per report section 4 (gitignore .claude/telemetry/ + project .claude/settings.json statusLine command) in passive shadow/read-only mode only; separate bounded activation task (M0-T100) keeping the accepted M0-T099 identity unchanged; verify project-only precedence with the owner's global personal statusLine fallback intact; prove both outputs (human row + sanitized sidecar) from one feed with a real live check; confirm nothing sensitive written unmasked; record/test/commit/push under project-control; no worktree purge; no continuous-Codex-loop activation; then continue to campaign NEXT (M0-T090 with carried advisories).",
+      "status": "active",
+      "issued_at": "2026-08-26",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M0-T100"
+      ],
+      "manifest": "D-027-statusline-activation/manifest.json"
+    },
+    {
+      "directive_id": "D-028",
+      "slug": "sleep-handoff-650k",
+      "title": "Owner sleep instruction 2026-08-26: continue only authorized campaign work unattended; at ~650k main-agent context tokens (plus/minus 50k; alert 600k, never past ~700k without the handoff) hold at a clean seam and produce the session handoff with ~50k headroom. Conduct-only (sentinel D-028-BOOTSTRAP); D-010 R113-R114 not amended.",
+      "status": "active",
+      "issued_at": "2026-08-26",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-028-sleep-handoff-650k/manifest.json"
+    },
+    {
+      "directive_id": "D-029",
+      "slug": "m0t091-seam-hold",
+      "title": "Owner hold 2026-08-26: finish/review/accept/checkpoint/commit/push M0-T091 exactly as scoped; HOLD on claiming or beginning M0-T092 or any later campaign task; healthy agents/validation shells finish naturally; verify the clean seam (tree/origin/agents/ledger); report 'M0-T091 SEAM READY' (frozen accepted commit, checkpoint, test totals, campaign NEXT, background-process status); then WAIT for owner instruction. Conduct-only (sentinel D-029-BOOTSTRAP); narrows D-028's unattended continuation after the seam.",
+      "status": "active",
+      "issued_at": "2026-08-26",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-029-m0t091-seam-hold/manifest.json"
+    },
+    {
+      "directive_id": "D-030",
+      "slug": "successor-capability-rebaseline",
+      "title": "Owner instruction 2026-08-26 (/session-handoff reason): turnover after M0-T091; successor must perform the native Claude Code capability re-baseline (M0-T086 pattern, bounded gated ledger task) BEFORE claiming M0-T092 or any later D-024 task; discharges the D-029 wait state and converts the D-029 hold into this prerequisite. Conduct-only (sentinel D-030-BOOTSTRAP).",
+      "status": "active",
+      "issued_at": "2026-08-26",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-030-successor-capability-rebaseline/manifest.json"
+    },
+    {
+      "directive_id": "D-031",
+      "slug": "session-rotation-extension-750k",
+      "title": "Owner directive 2026-08-27: continue working in the CURRENT session until context occupancy reaches approximately 750k of the 1M window, then perform the session handoff. Session-scoped extension of the D-010 R113/R114 ~400k rotate-at-seam ceiling for session_01HfptKuEs3RDxaxsSHJjc7t only; D-010 unchanged for every other session; all gates/holds/restrictions unchanged. Conduct-only (sentinel D-031-BOOTSTRAP).",
+      "status": "active",
+      "issued_at": "2026-08-27",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-031-session-rotation-extension-750k/manifest.json"
+    },
+    {
+      "directive_id": "D-032",
+      "slug": "astra-loop-activation-and-review-reconciliation",
+      "title": "Owner directive 2026-09-05: (1) one role gets Codex running as a FULL-TIME persistent loop - main Codex agent = GPT-6 Astra (gpt-6-astra) at reasoning effort HIGH, updating the codex CLI if needed, done ASAP with owner-waived redundant re-checks; fires the D-024-R781 astra trigger and narrowly super",
+      "status": "active",
+      "issued_at": "2026-09-05",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-032-astra-loop-activation-and-review-reconciliation/manifest.json"
+    },
+    {
+      "directive_id": "D-033",
+      "slug": "supervisor-management-layer",
+      "title": "Owner directive 2026-09-07: plan and implement supervisor-run gate waves and acceptance, and present the staged R595 activation package. Activation itself stays owner-only; all holds preserved.",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "manifest": "D-033-supervisor-management-layer/manifest.json",
+      "affected_tasks": []
+    },
+    {
+      "directive_id": "D-034",
+      "slug": "architecture-context-and-review-skill",
+      "title": "Owner directive 2026-09-07: implement the captured practices - repo-root ARCHITECTURE.md (six-question architecture context incl. forbidden paths, invariants, stop conditions) and a repo-local /pr-review skill (code quality, test adequacy, security, compatibility; actionable-only, UNPROVEN-marked). Evidence-before-DONE folds in by citing the existing stronger gate law.",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-034-architecture-context-and-review-skill/manifest.json"
+    },
+    {
+      "directive_id": "D-035",
+      "slug": "loop-does-the-work-monitor-only",
+      "title": "Owner directive 2026-09-07: the codex loop does all the work (reviewing/pushing under the staged R595 path); main session monitors only and restarts the loop on death; rotate at the ~400k-token seam. Conduct-only (sentinel D-035-BOOTSTRAP).",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-035-loop-does-the-work-monitor-only/manifest.json"
+    },
+    {
+      "directive_id": "D-036",
+      "slug": "model-fallback-and-autostart-activation",
+      "title": "Owner directive 2026-09-07: arm worker model fallback (opus-4-8 only on weekly quota exhaustion, auto switch-back to Fable) + install autostart (boot/wake/weekly tasks, 4-min x50 retry). Conduct/config (sentinel D-036-BOOTSTRAP).",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-036-model-fallback-and-autostart-activation/manifest.json"
+    },
+    {
+      "directive_id": "D-037",
+      "slug": "reviewer-proportionality",
+      "title": "Owner directive 2026-09-07: reviewer proportionality - REVISE only for real gate/acceptance failures, minor polish passes as done-with-advisory (real gates stay blocking).",
+      "status": "active",
+      "issued_at": "2026-09-07",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-037-reviewer-proportionality/manifest.json"
+    },
+    {
+      "directive_id": "D-038",
+      "slug": "build-product-not-self",
+      "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT - no more building itself (supervisor self-infrastructure). Skip credentials this session; pivot the loop onto unblocked product engineering. Gates and holds unchanged.",
+      "status": "active",
+      "issued_at": "2026-09-08",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-038-build-product-not-self/manifest.json"
+    },
+    {
+      "directive_id": "D-039",
+      "slug": "m4-dependency-correction",
+      "title": "Owner decision 2026-09-11: correct the mis-chained M4-T001 dependency on M4-T010/M4-T009 (deps=[], T007/T008 precedent); accept M4-T010 then continue to the M4-T009 AS-5 unit + wave; G6 hold on M4-T001 untouched.",
+      "status": "active",
+      "issued_at": "2026-09-11",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-039-m4-dependency-correction/manifest.json"
+    },
+    {
+      "directive_id": "D-040",
+      "slug": "scoped-unblocks",
+      "title": "Owner 2026-09-12: unblock all menu items except Next.js and Supabase - scoped expansion-hold release for the lot-outline increment (Packet 3 only), flag-name unification authorized, digest normalization authorized; Next.js/Supabase stay owner-gated; G6 unchanged.",
+      "status": "active",
+      "issued_at": "2026-09-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-040-scoped-unblocks/manifest.json"
+    },
+    {
+      "directive_id": "D-041",
+      "slug": "c1-development-rights",
+      "title": "Owner 2026-09-12: gap-list C1 APPROVED - explicit remaining-development-rights line (existing built area vs draft FAR cap, honest over-built handling), owner's top product priority; C1 only, all other gap-list items stay candidates.",
+      "status": "active",
+      "issued_at": "2026-09-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-041-c1-development-rights/manifest.json"
+    },
+    {
+      "directive_id": "D-042",
+      "slug": "nextjs-15-5-24-upgrade",
+      "title": "Owner 2026-09-12: Next.js security upgrade AUTHORIZED - pin 15.5.21 -> exactly 15.5.24 with whole-tree advisory clearance (narrows D-040-R004 for this upgrade); unblocks B-022/MapLibre chain; deploy stays owner-gated; no 16.x.",
+      "status": "active",
+      "issued_at": "2026-09-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-042-nextjs-15-5-24-upgrade/manifest.json"
+    },
+    {
+      "directive_id": "D-043",
+      "slug": "internal-web-deploy",
+      "title": "Owner 2026-09-12: INTERNAL web deploy on Render AUTHORIZED - unlisted apps/web service, unified flag on, private API preserved, owner performs dashboard steps; NOT a public launch; from an advisory-free post-M5-T021 head.",
+      "status": "active",
+      "issued_at": "2026-09-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-043-internal-web-deploy/manifest.json"
+    },
+    {
+      "directive_id": "D-044",
+      "slug": "handoff-budget-8k",
+      "title": "Owner 2026-09-12: session-handoff token budget raised to 8000 (handoff_token_budget in tools/context_budget.json); eager budget and all other guards unchanged.",
+      "status": "active",
+      "issued_at": "2026-09-12",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-044-handoff-budget-8k/manifest.json"
+    },
+    {
+      "directive_id": "D-045",
+      "slug": "citywide-rule-coverage",
+      "title": "Owner 2026-09-13: FULL CITYWIDE rule-coverage campaign AUTHORIZED - A1 heights beyond R5, A2 geometry mechanics + B2 street-width connector, A3 contextual/bonus, C + M district families, A4 special purpose/waterfront as later waves; one reviewed family at a time; all rules DRAFT until G6.",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-045-citywide-rule-coverage/manifest.json"
+    },
+    {
+      "directive_id": "D-046",
+      "slug": "parallel-family-production",
+      "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-046-parallel-family-production/manifest.json"
+    },
+    {
+      "directive_id": "D-047",
+      "slug": "sonnet-producers-ramp-10",
+      "title": "Owner 2026-09-13: campaign producers switch to claude-sonnet-5 (builders ONLY - reviewers/orchestrator stay on the D-004 pinned set; twice-failed tasks rebuild on claude-opus-4-8) and the D-046 concurrency ceiling rises 3 -> 10 with a mandatory ramp (start 3-4, widen only while review/CI latency stays healthy).",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-047-sonnet-producers-ramp-10/manifest.json"
+    },
+    {
+      "directive_id": "D-048",
+      "slug": "r1r2-named-only-not-assessed",
+      "title": "Owner 2026-09-13 (B-023 disposition): R1/R2 height/setback covers ONLY the districts ZR 23-421 explicitly names; lettered variants render 'not assessed - needs professional review'; interpretation questions move to docs/ARCHITECT_REVIEW_QUESTIONS.md + the G6 agenda; same named-only pattern applies campaign-wide without new owner stops.",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-048-r1r2-named-only-not-assessed/manifest.json"
+    },
+    {
+      "directive_id": "D-049",
+      "slug": "encode-11-25-reading",
+      "title": "Owner 2026-09-13: ENCODE THE 11-25 READING (owner decision, NOT qualified sign-off) - R1-1/R1-2/R1-2A/R2A/R2X share ZR 23-421's 25/35 draft envelope via ZR 11-25 suffix inheritance; R2X FAR row is floor-area-only; 23-421(g) as explicit conditional (no-letter-suffix only); site modifiers as conditions/review flags, never silent; DRAFT until G6; professional-confirmation ask stays open.",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-049-encode-11-25-reading/manifest.json"
+    },
+    {
+      "directive_id": "D-050",
+      "slug": "owner-assisted-research-channel",
+      "title": "Owner 2026-09-13: OWNER-ASSISTED RESEARCH CHANNEL - the build loop may queue research questions in docs/RESEARCH_REQUESTS.md for the owner's external deep-research tooling (Astra); results are discovery aids with citations, never sources of record; non-blocking; interpretation still routes via D-048/D-049; all capture/verification discipline unchanged.",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-050-owner-assisted-research-channel/manifest.json"
+    },
+    {
+      "directive_id": "D-051",
+      "slug": "per-rule-conservative-fallback",
+      "title": "Owner 2026-09-13: two corrections of build-session claims (bounded-negative evidence discipline; 'unknown means narrow is always safe' is FALSE - 23-431 street-wall counterexample) + binding instruction: unknown street width keeps factual status UNKNOWN and every conservative fallback is validated per consuming rule with assumption/review labels until validated; RQ-005 independent-confirmation research received (discovery aid).",
+      "status": "active",
+      "issued_at": "2026-09-13",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-051-per-rule-conservative-fallback/manifest.json"
+    },
+    {
+      "directive_id": "D-052",
+      "slug": "street-width-draft-classification",
+      "title": "Owner decision 2026-09-14 (OQ-3 RESOLVED): approved DRAFT street-width classification policy - 75-ft threshold with exceptions checked first; clear numbers/one-sided explicit bounds usable from the correctly matched DCM feature under documented source/street-status/frontage-coverage checks (owner-approved assumption, never a DCP guarantee); straddling/approximate/unrecognized values stay UNKNOWN to effective-map resolution; full provenance; UNKNOWN stays the data state with per-rule fallback justification (D-051); DRAFT until G6; RQ-005 publisher-convention residual stays open.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-052-street-width-draft-classification/manifest.json"
+    },
+    {
+      "directive_id": "D-053",
+      "slug": "relaunch-codex-loop-campaign",
+      "title": "Owner 2026-09-14: RELAUNCH THE CODEX LOOP on the D-045 campaign queue - limited-auto dispatch + live Codex/Astra reviews resume; build session drops to quiet monitor + final authority (R595 stays shadow - NO auto-accept); detached loop communicates via the repository; monitor owns owner notifications (D-050-R005); owner-side Astra research channel unchanged; D-045..D-052 bind inside the loop.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-053-relaunch-codex-loop-campaign/manifest.json"
+    },
+    {
+      "directive_id": "D-054",
+      "slug": "persistent-knowledge-files",
+      "title": "Owner 2026-09-14: two-tier persistent knowledge system - Tier 1 .claude/rules/PROGRAM_KNOWLEDGE.md (compressed program-wide pointers, auto-injected every session, grows under the eager context budget) + Tier 2 docs/WORKING_KNOWLEDGE.md (living current-section knowledge, handoff-read, prune-or-promote at section close).",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-054-persistent-knowledge-files/manifest.json"
+    },
+    {
+      "directive_id": "D-055",
+      "slug": "fable-selection-restore",
+      "title": "Owner 2026-09-14: SELECT FABLE WHILE IT LASTS for main and reviewers - execute the D-036-R001 worker revert (model_selection.toml back to claude-fable-5 with the opus-4-8 quota fallback) and revert the five 2026-08-09 gate-reviewer fallback flips back to claude-fable-5 (effort key removed); standing fallback cycles stay armed; producers/D-047 untouched; blocked surfaces return to the owner, never bypassed.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-055-fable-selection-restore/manifest.json"
+    },
+    {
+      "directive_id": "D-056",
+      "slug": "provenance-links-lot-outline",
+      "title": "Owner 2026-09-14 (live walkthrough work order): add safe outbound provenance source links (constant-prefix + validated dataset-id, both provenance surfaces), fix the lot-outline map so the outline is actually visible (root-cause + framing) and add zoom in/out buttons; ZoLa blank page recorded as external (city SPA client-side boot; link format verified twice); executed as one parallel gated packet (M5-T025) while the D-053 loop runs M4-T020; owner Manual Deploy step returned at the seam.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-056-provenance-links-lot-outline/manifest.json"
+    },
+    {
+      "directive_id": "D-057",
+      "slug": "ruleeval-default-on",
+      "title": "Owner 2026-09-14: make the internal surfaces work on the plain URL - additive INTERNAL_RULE_EVAL_DEFAULT_ON server var (default-on when set; ?ruleeval=off kill switch and ?ruleeval=on bookmarks preserved; absent var = exactly today's two-factor behavior, zero e2e changes); operator checklist updated; owner activates by setting the var on the web service (M5-T026).",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-057-ruleeval-default-on/manifest.json"
+    },
+    {
+      "directive_id": "D-058",
+      "slug": "seam-handoff-fable-extra-usage",
+      "title": "Owner 2026-09-14 (/session-handoff reason, verbatim): finish at a seam; codex-loop operation continues (benign unit-complete close recorded, successor relaunches next packet); session knowledge into the D-054 two-tier files; loop keeps using claude-fable-5 via EXTRA USAGE now that the regular weekly quota is exhausted (fable pin stays; opus chain last-resort only).",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-058-seam-handoff-fable-extra-usage/manifest.json"
+    },
+    {
+      "directive_id": "D-059",
+      "slug": "mvp-review-dependable-answers",
+      "title": "Owner 2026-09-14 (uploaded MVP review + covering message): correctness findings before professional reliance - unused-floor-area semantics separation, bldgarea-zero-with-buildings fail-closed, labels from actual evaluation, spatial-failure root-cause protocol, wire built rules into the normal path; claims discipline (no completion-percentage/time-saved claims without the 15-20-parcel architect benchmark); 8-step delivery sequence with priority on dependable answers; status-prose reconciliation.",
+      "status": "active",
+      "issued_at": "2026-09-14",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [],
+      "manifest": "D-059-mvp-review-dependable-answers/manifest.json"
+    }
+  ],
+  "updated_at": "2026-09-14T02:36:29+00:00"
 }
