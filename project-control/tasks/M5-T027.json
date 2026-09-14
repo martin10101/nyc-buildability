@@ -91,12 +91,12 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:41:42.232354+00:00",
-  "updated_at": "2026-09-14T09:47:54.006300+00:00",
+  "updated_at": "2026-09-14T09:48:35.613612+00:00",
   "directive_refs": [
     {
       "directive_id": "D-059",
@@ -143,5 +143,7 @@
       "status": "awaiting_gate",
       "message": "[ORCH-CORRECTED contract-authoring omission] The packet lists G5 (security and privacy) in required_gates but its reviewer_agents roster omitted security-reviewer, so the required gate could not be recorded. Added security-reviewer to the roster (same correction applied to M5-T028 and M4-T021, which share the defect). This ADDS the reviewer the required gate needs - it does not remove or relax any gate. reviewer_agents is neither allowed_paths nor directive_refs, so the DCV restamp condition limb (c) is unaffected and material identity is unchanged."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T09:48:35.613612+00:00"
 }

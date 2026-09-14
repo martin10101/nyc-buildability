@@ -395,7 +395,7 @@
     "D-046-R001",
     "D-046-R002"
    ],
-   "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1",
+   "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c",
    "reviewed_manifest_sha256": "7d1697b004c9751842e5c9c26806162ae25861c398435b29175f3c3d7c79f58d",
    "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -411,7 +411,7 @@
      ],
      "verified_at": "2026-09-14T09:41:22+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+     "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
     },
     {
      "id": "D-046-R002",
@@ -422,7 +422,7 @@
      ],
      "verified_at": "2026-09-14T09:41:22+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "4a8d90555914947419fbbbe124c9c048187454f1"
+     "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
     }
    ]
   }
