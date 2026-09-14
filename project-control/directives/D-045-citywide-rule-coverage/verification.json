@@ -480,6 +480,56 @@
      "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M4-T021",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a",
+   "reviewed_manifest_sha256": "7413f6e4f3594881e1b206aba19c094ef5ee965e9dc15ab3d1436c31fbe9dbd0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T11:11:54+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "B4 ships the A2 geometry mechanic with honesty enforced at every non-computable path, and the verifier judged it satisfies R002 MORE strongly than the originally-submitted design that FAILED review: EC-5 is now a genuine VALUE gate (not presence-only) returning STATUS_PRECONDITIONS_NOT_ATTESTED with every buffer field None when the caller has not attested the named-street / alternate-width legal preconditions - mirroring the accepted dcm_street_width_policy DECISION_UNRESOLVED mechanism; EC-6 empty input and every CRS/geometry failure are typed refusals, never a coerced default; EC-4 leaves the raw GEOS tangency predicate standing and DOCUMENTS rather than resolves the open legal-tolerance question, with BOUNDARY_TOLERANCE_FT proven structurally absent by an AST/token scan; EC-2 carries the excluded-ambiguous-segment under-claim on every result. 40/40 module tests reproduced by the verifier, including all four EC-5 truth-table rows.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "Single bounded gated task with the full five-gate set recorded (G0/G2/G3/G4/G5). Verifier confirmed the c14 seam discipline (directive digest resync landed in the SAME commit as task creation, G0 report and placeholder seeding) and the dependency order (M4-T020 accepted 08:26:04Z, 49 seconds before M4-T021 was created at 08:26:53Z). B7 genuinely untouched: git diff over services/api/app/rules/** across the whole lineage is empty.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "Preservation verified across the ENTIRE lineage (contract -> producer -> rework -> the orchestrator's tagged docstring correction), not a single-commit spot check: git diff over all nine forbidden connector/rule/dependency paths from ccc01012 to the live head is EMPTY. Zero new dependencies. The module's own docstring keeps results DRAFT-adjacent, feeding a rule that remains DRAFT/needs-review until G6.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    }
+   ]
   }
  ]
 }

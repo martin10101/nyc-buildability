@@ -463,6 +463,44 @@
      "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T021",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a",
+   "reviewed_manifest_sha256": "7413f6e4f3594881e1b206aba19c094ef5ee965e9dc15ab3d1436c31fbe9dbd0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T11:11:54+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "SATISFIED, NOT MERELY EXCUSED - explicit verifier ruling (c) on the loop-substitution deviation. The requirement names a MECHANISM (concurrent writing producers on disjoint tasks, each in its own isolated worktree under the standing orchestration policy), not a specific dispatcher. The D-053 loop's Fable-exhaustion safe-stop (blocker B-024) was a failure of one dispatch channel; the orchestrator's substitution under the disclosed D-060-R001 deviation - an orchestrator-dispatched, isolation-worktree, unnamed producer, transparently logged rather than hidden - preserved exactly that mechanism. The verifier independently confirmed genuine THREE-way concurrency in the same window (wt-m4t021, wt-m5t027, wt-m5t028), within the ceiling of 3.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections computed by the verifier across all three concurrent tasks: M4-T021 x M5-T027 = empty, M4-T021 x M5-T028 = empty, M5-T027 x M5-T028 = empty. No shared control-plane surface was edited by more than one producer - only the orchestrator, sequentially.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    }
+   ]
   }
  ]
 }

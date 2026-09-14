@@ -91,12 +91,12 @@
     "qa-engineer",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:26:53.634491+00:00",
-  "updated_at": "2026-09-14T10:14:19.174636+00:00",
+  "updated_at": "2026-09-14T11:14:44.663717+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -154,7 +154,23 @@
       "percent": 80,
       "status": "in_progress",
       "message": "Rework complete and integrated (producer c48bfd80, cherry-picked byte-identical, exactly the 3 allowed_paths). All three blocking findings addressed per reports/M4-T021-rework-ruling.md: EC-5 now VALUE-gates to typed STATUS_PRECONDITIONS_NOT_ATTESTED mirroring dcm_street_width_policy._precondition_failures; BUFFER_QUAD_SEGS 8->16 with the false shapely-default claim corrected and a new end-cap-proximate fixture (expected areas hand-derived via independent raw-shapely calls: 382.9260890749891 at 16 vs 373.6219486597519 at 8, proving the path is genuinely exercised); source_retrieved_at/source_raw_digest threaded onto SegmentContribution and WideStreetBufferResult in ALL THREE branches. Orchestrator verified at head: 792 connectors passed (752 accepted + 40), ruff clean, modularity 0 failures. NEW ADVISORY for reviewers: modularity warnings 17->18, wide_street_buffer_engine.py crossed the review-signal threshold at 754 lines (disclosed in producer report section 9) - CLAUDE.md principle 16 asks for a module-boundary judgement before further growth."
+    },
+    {
+      "at": "2026-09-14T11:12:23.626528+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "Transitioning through rework solely to re-freeze the submission identity (lifecycle requires awaiting_gate -> rework -> in_progress -> submit). NO new defect: the [ORCH-CORRECTED per M4-T021-G4-delta NB-5] docstring edit at d9ac9596 landed after the prior submit at 432ed8f3, so accept() correctly refused the stale frozen-evidence identity. All five gates were recorded AFTER that edit and both reviewers gave identity-carry attestations on it."
+    },
+    {
+      "at": "2026-09-14T11:12:24.346524+00:00",
+      "agent": "backend-engineer",
+      "percent": 88,
+      "status": "in_progress",
+      "message": "Re-freezing submission at the current content identity 7413f6e4...dbd0 (unchanged since the gates were recorded)."
     }
   ],
-  "worktree": "wt-m4t021"
+  "worktree": "wt-m4t021",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T11:14:44.663717+00:00"
 }
