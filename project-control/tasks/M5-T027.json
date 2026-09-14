@@ -88,14 +88,15 @@
   "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
-    "qa-engineer"
+    "qa-engineer",
+    "security-reviewer"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 90,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:41:42.232354+00:00",
-  "updated_at": "2026-09-14T09:42:39.972418+00:00",
+  "updated_at": "2026-09-14T09:47:51.982927+00:00",
   "directive_refs": [
     {
       "directive_id": "D-059",
@@ -134,6 +135,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + G0 PASS; dispatching unnamed backend-engineer producer (claude-sonnet-5 per D-047) into isolated worktree, concurrent with the D-053 loop on M4-T021 (disjoint scopes, D-046 2/3)"
+    },
+    {
+      "at": "2026-09-14T09:47:51.982927+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "awaiting_gate",
+      "message": "[ORCH-CORRECTED contract-authoring omission] The packet lists G5 (security and privacy) in required_gates but its reviewer_agents roster omitted security-reviewer, so the required gate could not be recorded. Added security-reviewer to the roster (same correction applied to M5-T028 and M4-T021, which share the defect). This ADDS the reviewer the required gate needs - it does not remove or relax any gate. reviewer_agents is neither allowed_paths nor directive_refs, so the DCV restamp condition limb (c) is unaffected and material identity is unchanged."
     }
   ]
 }
