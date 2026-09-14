@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T027",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T027-G0-contract-readiness.md",
+  "reviewed_at": "2026-09-14T08:43:04.057510+00:00",
+  "content_manifest_sha256": "8b0771571727cf393f348ccd99b39d2b4d5619a68cfe7561470d39a6331aa062",
+  "reviewed_sha": "4cfdac3c876379a0f53041d50f6f61198b877d29",
+  "updated_at": "2026-09-14T08:43:04.566781+00:00"
+}
