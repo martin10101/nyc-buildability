@@ -671,3 +671,87 @@ def test_as7_module_imports_are_contract_free():
         "supabase",
     ):
         assert forbidden not in _BREAKEVEN_SOURCE
+
+
+# ---------------------------------------------------------------------------
+# D-059-R003 (M5-T028): THRESHOLD_LABEL must be DERIVED from the rule ACTUALLY
+# evaluated, never hardcoded (M5-T027 G3 advisory A1 follow-up). The R6-R12
+# family cites ZR 23-22, not the R1-R5 families' 23-21. Exercised for one
+# low-density (R5, the canonical fixture) and one higher-density (R6-R12)
+# district; expected section numbers are hand-typed literals read directly
+# from the real ruleset files (never produced by calling the code under
+# test): r5_residential_far.rule.json cites "23-21" and
+# r6_r12_residential_far.rule.json cites "23-22".
+# ---------------------------------------------------------------------------
+
+
+def _r6_r12_rule_evaluation() -> dict:
+    """A rule_evaluation whose evaluated trace is the REAL r6-r12-residential-far rule
+    (section 23-22, R9A's standard-residences FAR 7.52) instead of the canonical fixture's
+    r5-residential-far/23-21 trace. Local, independently-maintained copy of
+    test_scenario_foundation.py's own helper (that file is outside this task's
+    allowed_paths)."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    trace = rule_evaluation["evaluations"][0]
+    far = 7.52
+    lot_area = trace["evaluated_inputs"]["lot_area_sq_ft"]
+    trace["rule_id"] = "r6-r12-residential-far"
+    trace["evaluated_inputs"]["zoning_district"] = "R9A"
+    trace["applicability_trace"][0]["detail"]["values"] = ["R9A"]
+    trace["applicability_trace"][0]["detail"]["value_seen"] = "R9A"
+    trace["computation_steps"][0]["resolved_args"] = [far]
+    trace["computation_steps"][0]["result"] = far
+    trace["computation_steps"][1]["resolved_args"] = [lot_area, far]
+    trace["computation_steps"][1]["result"] = lot_area * far
+    trace["outputs"] = {
+        "max_residential_far": far,
+        "max_residential_floor_area_sq_ft": lot_area * far,
+    }
+    citation_provenance = dict(trace["citations"][0]["provenance"])
+    citation_provenance.update(
+        snapshot_id="zr-23-22",
+        request_url="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+        section_number="23-22",
+        section_title="Maximum Floor Area Ratio for R6 Through R12 Districts",
+    )
+    trace["citations"] = [
+        {
+            "snapshot_id": "zr-23-22",
+            "section": "23-22",
+            "quote": (
+                "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS. Separate maximum "
+                "residential floor area ratios are set forth for zoning lots "
+                "containing standard residences and zoning lots containing "
+                "qualifying affordable housing or qualifying senior housing."
+            ),
+            "last_amended": "2024-12-05",
+            "provenance": citation_provenance,
+        }
+    ]
+    rule_evaluation["zoning_district"] = "R9A"
+    rule_evaluation["family_coverage"]["rule_ids"] = ["r6-r12-residential-far"]
+    for candidate in rule_evaluation["spatial_uncertainty"]["base_district_candidates"]:
+        candidate["district_label"] = "R9A"
+    return rule_evaluation
+
+
+def test_d059_r003_threshold_label_names_the_low_density_section():
+    """The low-density (R5) evaluated rule -> the threshold label names ZR 23-21 (hand-typed
+    from r5_residential_far.rule.json's own ``section`` citation)."""
+    document = _preliminary_document()
+    result = find_scenario_threshold(document, VAR, 13000, [0.5, 0.8, 0.9, 1.0])
+    assert "(ZR 23-21)" in result["label"]
+    assert "23-22" not in result["label"]
+
+
+def test_d059_r003_threshold_label_names_the_r6_r12_section():
+    """An R6-R12 evaluated rule -> the threshold label names ZR 23-22 (hand-typed from
+    r6_r12_residential_far.rule.json's own ``section`` citation), NEVER the stale hardcoded
+    23-21."""
+    document = build_scenario(S.profile(), _r6_r12_rule_evaluation())
+    assert document["cap_provenance"]["rule_id"] == "r6-r12-residential-far"
+    target = document["draft_zoning_floor_area_cap_sq_ft"] / 2
+    result = find_scenario_threshold(document, VAR, target, [0.5, 0.8, 0.9, 1.0])
+    assert result["threshold_kind"] in _SCANNED_KINDS
+    assert "(ZR 23-22)" in result["label"]
+    assert "23-21" not in result["label"]

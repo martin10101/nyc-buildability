@@ -64,7 +64,11 @@ from typing import Any
 
 from ._json_safety import _json_safe, _unsafe_marker
 from .constants import NOT_VERIFIED_DISCLAIMER
-from .derive import DerivedRangeKind, derive_practical_usable_range
+from .derive import (
+    DerivedRangeKind,
+    _cap_section_reference,
+    derive_practical_usable_range,
+)
 
 __all__ = [
     "RANKING_LABEL",
@@ -108,14 +112,39 @@ class RankingKind:
 NEVER_VERIFIED_COVERAGE_CEILING = "conditional"
 
 # Mandatory honest label on a ranking (illustrative / from the draft cap, never Verified).
-RANKING_LABEL = (
-    "ILLUSTRATIVE ranked scenario cards: the caller's EXPLICITLY-declared assumption-sets "
-    "ordered by a NAMED objective, each scored ONLY from already-surfaced numbers (the "
-    "DRAFT residential zoning-floor-area cap under ZR 23-21 x explicitly-declared typed "
-    "factors). NOT gross, net, sellable, or feasible floor area; NOT a buildable envelope; "
-    "NOT an optimization over invented alternatives. Draft (needs_review); requires "
-    "professional review; NOT Verified."
-)
+#
+# D-059-R003 (M5-T028): the Zoning Resolution section named MUST be derived from the rule
+# ACTUALLY evaluated for the subject property (the R6-R12 family cites ZR 23-22, not the R1-R5
+# families' 23-21), never hardcoded. ``_ranking_label`` builds the label from whatever section
+# the scenario document's own ``cap_provenance`` citation names.
+def _ranking_label(section_reference: str | None) -> str:
+    """The mandatory ranking label, with the Zoning Resolution section clause built from the
+    ACTUAL evaluated rule's citation (``section_reference``) rather than a hardcoded section
+    number. Falls back to a section-agnostic clause (never invents a section) when no citation is
+    available."""
+    section_clause = (
+        f"under ZR {section_reference}"
+        if isinstance(section_reference, str) and section_reference
+        else "under the cited Zoning Resolution bulk-regulation section (see "
+        "cap_provenance.citations for the exact section)"
+    )
+    return (
+        "ILLUSTRATIVE ranked scenario cards: the caller's EXPLICITLY-declared assumption-sets "
+        "ordered by a NAMED objective, each scored ONLY from already-surfaced numbers (the "
+        f"DRAFT residential zoning-floor-area cap {section_clause} x explicitly-declared typed "
+        "factors). NOT gross, net, sellable, or feasible floor area; NOT a buildable envelope; "
+        "NOT an optimization over invented alternatives. Draft (needs_review); requires "
+        "professional review; NOT Verified."
+    )
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers OUTSIDE this
+# task's allowed_paths that import ``RANKING_LABEL`` directly (scenario/__init__.py's
+# re-export). Byte-identical to ``_ranking_label("23-21")`` - the R5 canonical rule_evaluation
+# fixture's own citation - so this stays a harmless, literally-correct legacy alias, NOT a
+# universal label: the live path below calls ``_ranking_label`` with the real per-request
+# citation for every district family.
+RANKING_LABEL = _ranking_label("23-21")
 
 # Mandatory honest label on every candidate card.
 CANDIDATE_LABEL = (
@@ -408,7 +437,7 @@ def _invalid_result(scenario_document: Any, objective: Any, reason: str) -> dict
         "candidate_count": 0,
         "scorable_count": 0,
         "candidates": [],
-        "label": RANKING_LABEL,
+        "label": _ranking_label(_cap_section_reference(scenario_document)),
         "reasons": [reason],
         "invalid_reason": reason,
         "empty_reason": None,
@@ -428,7 +457,7 @@ def _empty_result(scenario_document: Any, objective: RankingObjective, reason: s
         "candidate_count": 0,
         "scorable_count": 0,
         "candidates": [],
-        "label": RANKING_LABEL,
+        "label": _ranking_label(_cap_section_reference(scenario_document)),
         "reasons": [reason],
         "invalid_reason": None,
         "empty_reason": reason,
@@ -544,7 +573,7 @@ def rank_scenario_assumption_sets(
         "candidate_count": len(candidates),
         "scorable_count": scorable_count,
         "candidates": candidates,
-        "label": RANKING_LABEL,
+        "label": _ranking_label(_cap_section_reference(scenario_document)),
         "reasons": reasons,
         "invalid_reason": None,
         "empty_reason": None,

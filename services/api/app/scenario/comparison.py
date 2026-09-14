@@ -64,7 +64,11 @@ from typing import Any
 
 from ._json_safety import _json_safe
 from .constants import NOT_VERIFIED_DISCLAIMER
-from .derive import DerivedRangeKind, derive_practical_usable_range
+from .derive import (
+    DerivedRangeKind,
+    _cap_section_reference,
+    derive_practical_usable_range,
+)
 
 __all__ = [
     "COMPARISON_LABEL",
@@ -101,7 +105,10 @@ COMPARISON_METRIC_KEYS = (
     "canonical_cap_sq_ft",
 )
 
-_METRIC_LABELS: dict[str, str] = {
+# The three usable-range metric labels never name a Zoning Resolution section, so they stay
+# fixed text; only ``canonical_cap_sq_ft`` (below) names one, derived per-call from the rule
+# ACTUALLY evaluated (D-059-R003).
+_STATIC_METRIC_LABELS: dict[str, str] = {
     "usable_range_min": (
         "Illustrative practical-usable-area range MINIMUM (sq ft): the derived point-estimate min "
         "= draft cap x applied factors, transported from derive_practical_usable_range."
@@ -114,24 +121,79 @@ _METRIC_LABELS: dict[str, str] = {
         "Illustrative practical-usable-area range MAXIMUM (sq ft): the derived point-estimate max "
         "= draft cap x applied factors, transported from derive_practical_usable_range."
     ),
-    "canonical_cap_sq_ft": (
-        "Canonical DRAFT residential zoning-floor-area cap (ZR 23-21, sq ft): transported VERBATIM "
-        "from derive_practical_usable_range; NEVER independently recalculated by the comparison."
-    ),
 }
 
+
+def _canonical_cap_metric_label(section_reference: str | None) -> str:
+    """D-059-R003: the ``canonical_cap_sq_ft`` metric label's Zoning Resolution section clause,
+    built from the ACTUAL evaluated rule's own citation (never hardcoded). Falls back to a
+    section-agnostic clause (never invents a section) when no citation is available."""
+    section_clause = (
+        f"(ZR {section_reference}, sq ft)"
+        if isinstance(section_reference, str) and section_reference
+        else "(sq ft; see cap_provenance.citations for the exact Zoning Resolution section)"
+    )
+    return (
+        f"Canonical DRAFT residential zoning-floor-area cap {section_clause}: transported VERBATIM "
+        "from derive_practical_usable_range; NEVER independently recalculated by the comparison."
+    )
+
+
+def _metric_labels(section_reference: str | None) -> dict[str, str]:
+    """The four compared metrics' labels (D-059-R003): the three usable-range labels are fixed
+    text; ``canonical_cap_sq_ft`` is derived per-call from the actually-evaluated rule."""
+    return {
+        **_STATIC_METRIC_LABELS,
+        "canonical_cap_sq_ft": _canonical_cap_metric_label(section_reference),
+    }
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers OUTSIDE this
+# task's allowed_paths (none currently import it directly, but it is kept for the same reason
+# the other four label constants are: a stable, literally-correct R5 rendering). Byte-identical
+# to ``_metric_labels("23-21")``.
+_METRIC_LABELS: dict[str, str] = _metric_labels("23-21")
+
+
 # Mandatory honest label on a comparison (illustrative / from the draft cap, never Verified).
-COMPARISON_LABEL = (
-    "ILLUSTRATIVE scenario comparison: two or more explicitly-declared NAMED assumption-sets "
-    "compared side-by-side for ONE scenario. Each set's derived illustrative practical-usable-area "
-    "range is echoed from derive_practical_usable_range and its numeric metrics are "
-    "delta'd against "
-    "the baseline set (absolute + percent). The canonical draft cap (ZR 23-21) is transported "
-    "VERBATIM; NO independent legal calculation is performed. NOT gross, net, sellable, "
-    "or feasible "
-    "floor area; NOT a buildable envelope; NOT an optimization over invented sets. Draft "
-    "(needs_review); requires professional review; NOT Verified."
-)
+#
+# D-059-R003 (M5-T028): the Zoning Resolution section named MUST be derived from the rule
+# ACTUALLY evaluated for the subject property (the R6-R12 family cites ZR 23-22, not the R1-R5
+# families' 23-21), never hardcoded. ``_comparison_label`` builds the label from whatever
+# section the scenario document's own ``cap_provenance`` citation names.
+def _comparison_label(section_reference: str | None) -> str:
+    """The mandatory comparison label, with the Zoning Resolution section clause built from the
+    ACTUAL evaluated rule's citation (``section_reference``) rather than a hardcoded section
+    number. Falls back to a section-agnostic clause (never invents a section) when no citation is
+    available."""
+    section_clause = (
+        f"(ZR {section_reference})"
+        if isinstance(section_reference, str) and section_reference
+        else "(see cap_provenance.citations for the exact Zoning Resolution section)"
+    )
+    return (
+        "ILLUSTRATIVE scenario comparison: two or more explicitly-declared NAMED assumption-sets "
+        "compared side-by-side for ONE scenario. Each set's derived illustrative "
+        "practical-usable-area "
+        "range is echoed from derive_practical_usable_range and its numeric metrics are "
+        "delta'd against "
+        f"the baseline set (absolute + percent). The canonical draft cap {section_clause} is "
+        "transported "
+        "VERBATIM; NO independent legal calculation is performed. NOT gross, net, sellable, "
+        "or feasible "
+        "floor area; NOT a buildable envelope; NOT an optimization over invented sets. Draft "
+        "(needs_review); requires professional review; NOT Verified."
+    )
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers OUTSIDE this
+# task's allowed_paths that import ``COMPARISON_LABEL`` directly (scenario/__init__.py's
+# re-export, and test_scenario_comparison.py's honest-label assertions against the R5 canonical
+# fixture). Byte-identical to ``_comparison_label("23-21")`` - the R5 canonical rule_evaluation
+# fixture's own citation - so this stays a harmless, literally-correct legacy alias, NOT a
+# universal label: the live path below calls ``_comparison_label`` with the real per-request
+# citation for every district family.
+COMPARISON_LABEL = _comparison_label("23-21")
 
 # Mandatory honest label on every comparison row.
 SET_LABEL = (
@@ -228,10 +290,12 @@ def _base_lineage_identity(scenario_document: Any) -> dict:
     }
 
 
-def _compared_metrics_doc() -> list[dict]:
+def _compared_metrics_doc(metric_labels: dict[str, str]) -> list[dict]:
     """A fresh, documented list of the numeric metrics this comparison delta's, in emission
-    order (so a consumer can render the columns without hard-coding the metric vocabulary)."""
-    return [{"metric": key, "metric_label": _METRIC_LABELS[key]} for key in COMPARISON_METRIC_KEYS]
+    order (so a consumer can render the columns without hard-coding the metric vocabulary).
+    ``metric_labels`` (D-059-R003) is the per-call label set from :func:`_metric_labels`, so
+    ``canonical_cap_sq_ft`` names the ACTUAL evaluated rule's section."""
+    return [{"metric": key, "metric_label": metric_labels[key]} for key in COMPARISON_METRIC_KEYS]
 
 
 # --- Per-set parsing / derivation (explicit-only, read-only, sanitized) ---
@@ -361,9 +425,19 @@ def _extract_metrics(derived: dict) -> dict | None:
 # --- Baseline-relative delta (finite by construction; may be negative) ---
 
 
-def _metric_delta(metric_key: str, baseline_value: Any, set_value: Any) -> dict:
+def _metric_delta(
+    metric_key: str,
+    baseline_value: Any,
+    set_value: Any,
+    metric_labels: dict[str, str] | None = None,
+) -> dict:
     """Baseline-relative delta for ONE metric: the ABSOLUTE difference and the PERCENT difference
     of this set's metric versus the baseline set's metric, plus a transparent breakdown.
+
+    ``metric_labels`` (D-059-R003) is the per-call label set from :func:`_metric_labels`, so
+    ``canonical_cap_sq_ft``'s label names the ACTUAL evaluated rule's section; it defaults to the
+    R5 (``23-21``) backward-compatible rendering when omitted (a caller that is not the live
+    comparison flow, e.g. a targeted unit test of this helper in isolation).
 
     Both differences are computed from finite floats and are re-checked finite, so the emitted
     delta is ALWAYS a finite number (it may be NEGATIVE - a legitimate reduction) and never NaN /
@@ -372,11 +446,12 @@ def _metric_delta(metric_key: str, baseline_value: Any, set_value: Any) -> dict:
     A missing / non-finite baseline OR set value -> a typed not-computable marker (no delta
     fabricated). A percent delta against a ZERO baseline metric -> a typed not-computable percent
     marker (no ``ZeroDivisionError``, no Inf) while the absolute delta is still reported."""
+    labels = metric_labels if metric_labels is not None else _METRIC_LABELS
     baseline_float = _finite_float(baseline_value)
     set_float = _finite_float(set_value)
     entry: dict[str, Any] = {
         "metric": metric_key,
-        "metric_label": _METRIC_LABELS[metric_key],
+        "metric_label": labels[metric_key],
         "baseline_value": baseline_value if baseline_float is not None else None,
         "set_value": set_value if set_float is not None else None,
         "absolute_delta": None,
@@ -447,16 +522,17 @@ def _content_key(name: str | None, assumption_set_echo: Any) -> str:
 def _degenerate_result(scenario_document: Any, kind: str, reason: str) -> dict:
     """A typed ``invalid`` / ``empty`` outcome: no comparison performed, a machine-readable reason,
     never a fabricated set or metric."""
+    section_reference = _cap_section_reference(scenario_document)
     result = {
         "comparison_kind": kind,
         "base_lineage": _base_lineage_identity(scenario_document),
         "baseline_set_name": None,
         "baseline_metrics": None,
-        "compared_metrics": _compared_metrics_doc(),
+        "compared_metrics": _compared_metrics_doc(_metric_labels(section_reference)),
         "set_count": 0,
         "comparable_count": 0,
         "sets": [],
-        "label": COMPARISON_LABEL,
+        "label": _comparison_label(section_reference),
         "reasons": [reason],
         "invalid_reason": reason if kind == ComparisonKind.INVALID else None,
         "empty_reason": reason if kind == ComparisonKind.EMPTY else None,
@@ -547,6 +623,8 @@ def compare_scenario_assumption_sets(
         )
 
     baseline_metrics = baseline["metrics"]
+    section_reference = _cap_section_reference(scenario_document)
+    metric_labels = _metric_labels(section_reference)
     sets_out: list[dict] = []
     for index, core in enumerate(ordered):
         set_metrics = core["metrics"]
@@ -555,6 +633,7 @@ def compare_scenario_assumption_sets(
                 metric_key,
                 baseline_metrics.get(metric_key),
                 set_metrics.get(metric_key) if isinstance(set_metrics, dict) else None,
+                metric_labels,
             )
             for metric_key in COMPARISON_METRIC_KEYS
         ]
@@ -594,11 +673,11 @@ def compare_scenario_assumption_sets(
         "base_lineage": _base_lineage_identity(scenario_document),
         "baseline_set_name": baseline["name"],
         "baseline_metrics": baseline_metrics,
-        "compared_metrics": _compared_metrics_doc(),
+        "compared_metrics": _compared_metrics_doc(metric_labels),
         "set_count": len(ordered),
         "comparable_count": comparable_count,
         "sets": sets_out,
-        "label": COMPARISON_LABEL,
+        "label": _comparison_label(section_reference),
         "reasons": reasons,
         "invalid_reason": None,
         "empty_reason": None,

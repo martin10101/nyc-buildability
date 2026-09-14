@@ -45,6 +45,7 @@ from .constants import NOT_VERIFIED_DISCLAIMER
 from .derive import (
     RECOGNIZED_FACTOR_TYPES,
     DerivedRangeKind,
+    _cap_section_reference,
     derive_practical_usable_range,
 )
 
@@ -148,16 +149,44 @@ _VARIABLE_LABELS: dict[ThresholdVariable, str] = {
 }
 
 # Mandatory honest label on a threshold result (illustrative / from the draft cap, never Verified).
-THRESHOLD_LABEL = (
-    "ILLUSTRATIVE break-even / threshold response: ONE explicitly-named assumption scanned across "
-    "the caller's EXPLICIT bounded domain of candidate values to find the FIRST candidate at which "
-    "a named derived usable-area metric meets-or-crosses a numeric target. Each candidate's metric "
-    "is the derived point = the DRAFT residential zoning-floor-area cap (ZR 23-21) x "
-    "explicitly-declared typed factors, transported VERBATIM from derive_practical_usable_range. "
-    "The crossing is reported as an HONEST grid BRACKET, never an interpolated sub-grid value. NOT "
-    "gross, net, sellable, or feasible floor area; NOT a buildable envelope; NOT an optimization "
-    "over invented values. Draft (needs_review); requires professional review; NOT Verified."
-)
+#
+# D-059-R003 (M5-T028): the Zoning Resolution section named MUST be derived from the rule
+# ACTUALLY evaluated for the subject property (the R6-R12 family cites ZR 23-22, not the R1-R5
+# families' 23-21), never hardcoded. ``_threshold_label`` builds the label from whatever section
+# the scenario document's own ``cap_provenance`` citation names.
+def _threshold_label(section_reference: str | None) -> str:
+    """The mandatory threshold label, with the Zoning Resolution section clause built from the
+    ACTUAL evaluated rule's citation (``section_reference``) rather than a hardcoded section
+    number. Falls back to a section-agnostic clause (never invents a section) when no citation is
+    available."""
+    section_clause = (
+        f"(ZR {section_reference})"
+        if isinstance(section_reference, str) and section_reference
+        else "(see cap_provenance.citations for the exact Zoning Resolution section)"
+    )
+    return (
+        "ILLUSTRATIVE break-even / threshold response: ONE explicitly-named assumption scanned "
+        "across the caller's EXPLICIT bounded domain of candidate values to find the FIRST "
+        "candidate at which a named derived usable-area metric meets-or-crosses a numeric "
+        "target. Each candidate's metric "
+        f"is the derived point = the DRAFT residential zoning-floor-area cap {section_clause} x "
+        "explicitly-declared typed factors, transported VERBATIM from "
+        "derive_practical_usable_range. "
+        "The crossing is reported as an HONEST grid BRACKET, never an interpolated sub-grid "
+        "value. NOT "
+        "gross, net, sellable, or feasible floor area; NOT a buildable envelope; NOT an "
+        "optimization "
+        "over invented values. Draft (needs_review); requires professional review; NOT Verified."
+    )
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers OUTSIDE this
+# task's allowed_paths that import ``THRESHOLD_LABEL`` directly (scenario/__init__.py's
+# re-export). Byte-identical to ``_threshold_label("23-21")`` - the R5 canonical
+# rule_evaluation fixture's own citation - so this stays a harmless, literally-correct legacy
+# alias, NOT a universal label: the live path below calls ``_threshold_label`` with the real
+# per-request citation for every district family.
+THRESHOLD_LABEL = _threshold_label("23-21")
 
 # Mandatory honest label on every candidate row.
 CANDIDATE_LABEL = (
@@ -572,7 +601,7 @@ def _degenerate_result(
         "crossings_count": 0,
         "non_monotonic": False,
         "first_meeting_candidate": None,
-        "label": THRESHOLD_LABEL,
+        "label": _threshold_label(_cap_section_reference(scenario_document)),
         "reasons": [reason],
         "invalid_reason": reason if kind == ThresholdKind.INVALID else None,
         "empty_reason": reason if kind == ThresholdKind.EMPTY else None,
@@ -775,7 +804,7 @@ def find_scenario_threshold(
         "crossings_count": crossings_count,
         "non_monotonic": non_monotonic,
         "first_meeting_candidate": first_meeting_candidate,
-        "label": THRESHOLD_LABEL,
+        "label": _threshold_label(_cap_section_reference(scenario_document)),
         "reasons": reasons,
         "invalid_reason": None,
         "empty_reason": None,

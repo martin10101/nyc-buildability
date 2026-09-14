@@ -44,6 +44,7 @@ import copy
 import math
 from typing import Any
 
+from .builder import _cap_citation_section
 from .constants import DRAFT_CAP_LABEL, NOT_VERIFIED_DISCLAIMER
 
 __all__ = [
@@ -77,13 +78,58 @@ NEVER_VERIFIED_COVERAGE_CEILING = "conditional"
 
 # Mandatory honest label on a derived range (illustrative/derived, never gross/net/
 # sellable/feasible/buildable, never Verified).
-DERIVED_RANGE_LABEL = (
-    "ILLUSTRATIVE DERIVED practical-usable-area range: the DRAFT residential "
-    "zoning-floor-area cap (ZR 23-21) multiplied by explicitly-declared typed "
-    "assumption factors ONLY. NOT gross, net, sellable, or feasible floor area; "
-    "NOT a buildable envelope; NOT an optimization result. Draft (needs_review); "
-    "requires professional review; NOT Verified."
-)
+#
+# D-059-R003 (M5-T028): the Zoning Resolution section named in this label MUST be
+# derived from the rule ACTUALLY evaluated for the subject property - the R6-R12
+# family cites ZR 23-22, not the R1-R5 families' 23-21 - never a hardcoded
+# section. ``_derived_range_label`` builds the label from whatever section the
+# scenario document's own ``cap_provenance`` citation names.
+def _derived_range_label(section_reference: str | None) -> str:
+    """The mandatory derived-range label, with the Zoning Resolution section clause
+    built from the ACTUAL evaluated rule's citation (``section_reference``) rather
+    than a hardcoded section number. Falls back to a section-agnostic clause (never
+    invents a section) when no citation is available."""
+    section_clause = (
+        f"(ZR {section_reference})"
+        if isinstance(section_reference, str) and section_reference
+        else "(see cap_provenance.citations for the exact Zoning Resolution section)"
+    )
+    return (
+        "ILLUSTRATIVE DERIVED practical-usable-area range: the DRAFT residential "
+        f"zoning-floor-area cap {section_clause} multiplied by explicitly-declared typed "
+        "assumption factors ONLY. NOT gross, net, sellable, or feasible floor area; "
+        "NOT a buildable envelope; NOT an optimization result. Draft (needs_review); "
+        "requires professional review; NOT Verified."
+    )
+
+
+def _cap_section_reference(scenario_document: Any) -> str | None:
+    """The ACTUAL evaluated rule's cited Zoning Resolution section for this scenario
+    document (D-059-R003), reusing the M5-T027 derivation seam
+    (``builder._cap_citation_section``) rather than duplicating its logic. ``None``
+    when ``scenario_document`` is not a dict or carries no cap citation (a
+    no-cap outcome) - never guesses; the caller falls back to a section-agnostic
+    label. Every sibling scenario-analysis module (breakeven / comparison /
+    ranking / sensitivity) that needs the same section imports THIS function
+    rather than re-deriving it, so the derivation stays in one place while those
+    contract-free modules stay decoupled from ``builder`` directly."""
+    cap_provenance = (
+        scenario_document.get("cap_provenance")
+        if isinstance(scenario_document, dict)
+        else None
+    )
+    return _cap_citation_section(cap_provenance)
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers
+# OUTSIDE this task's allowed_paths that import ``DERIVED_RANGE_LABEL`` directly
+# (scenario/__init__.py's re-export). It is byte-identical to
+# ``_derived_range_label("23-21")``, which is what the R5 canonical
+# rule_evaluation fixture's own citation evaluates to, so this stays a harmless,
+# literally-correct legacy alias, NOT a universal label: the live derivation
+# path in ``derive_practical_usable_range`` below calls ``_derived_range_label``
+# with the real per-request citation for every district family.
+DERIVED_RANGE_LABEL = _derived_range_label("23-21")
 
 
 # --- Numeric guards (fail-closed): reject bool / non-numeric / NaN / +-inf. ---
@@ -260,7 +306,7 @@ def _not_derivable(scenario_document: dict, reason: str, canonical_cap: Any) -> 
         "applied_factors": [],
         "unapplied_assumptions": [],
         "factor_product": None,
-        "label": DERIVED_RANGE_LABEL,
+        "label": _derived_range_label(_cap_section_reference(scenario_document)),
         "reasons": reasons,
         "not_derivable_reason": reason,
     }
@@ -481,7 +527,7 @@ def derive_practical_usable_range(scenario_document: Any) -> dict:
         "applied_factors": applied_factors,
         "unapplied_assumptions": unapplied,
         "factor_product": factor_product,
-        "label": DERIVED_RANGE_LABEL,
+        "label": _derived_range_label(_cap_section_reference(scenario_document)),
         "reasons": reasons,
         "not_derivable_reason": None,
     }

@@ -14,6 +14,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+from pathlib import Path
 
 import pytest
 
@@ -997,3 +998,119 @@ def test_m5t006_as6_determinism_with_hardening(mutate):
     assert json.dumps(derive_practical_usable_range(first)) == json.dumps(
         derive_practical_usable_range(second)
     )
+
+
+# ---------------------------------------------------------------------------
+# D-059-R003 (M5-T028): DERIVED_RANGE_LABEL must be DERIVED from the rule
+# ACTUALLY evaluated, never hardcoded (M5-T027 G3 advisory A1 follow-up). The
+# R6-R12 family cites ZR 23-22, not the R1-R5 families' 23-21. Exercised for
+# one low-density (R5, the canonical fixture) and one higher-density (R6-R12)
+# district; expected section numbers are hand-typed literals read directly
+# from the real ruleset files (never produced by calling the code under
+# test): services/api/app/rules/rulesets/r5_residential_far.rule.json cites
+# "23-21" and r6_r12_residential_far.rule.json cites "23-22".
+# ---------------------------------------------------------------------------
+
+
+def _r6_r12_rule_evaluation() -> dict:
+    """A rule_evaluation whose evaluated trace is the REAL r6-r12-residential-far rule
+    (rules/rulesets/r6_r12_residential_far.rule.json: rule_id, citation section 23-22, R9A's
+    standard-residences FAR 7.52) instead of the canonical fixture's r5-residential-far/23-21
+    trace - built by editing a deep copy so every OTHER field (provenance wiring, bbl, etc.)
+    stays the same shape the rule engine actually emits. Mirrors
+    test_scenario_foundation.py's own ``_r6_r12_rule_evaluation`` helper (that file is outside
+    this task's allowed_paths, so this is a local, independently-maintained copy)."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    trace = rule_evaluation["evaluations"][0]
+    far = 7.52
+    lot_area = trace["evaluated_inputs"]["lot_area_sq_ft"]
+    trace["rule_id"] = "r6-r12-residential-far"
+    trace["evaluated_inputs"]["zoning_district"] = "R9A"
+    trace["applicability_trace"][0]["detail"]["values"] = ["R9A"]
+    trace["applicability_trace"][0]["detail"]["value_seen"] = "R9A"
+    trace["computation_steps"][0]["resolved_args"] = [far]
+    trace["computation_steps"][0]["result"] = far
+    trace["computation_steps"][1]["resolved_args"] = [lot_area, far]
+    trace["computation_steps"][1]["result"] = lot_area * far
+    trace["outputs"] = {
+        "max_residential_far": far,
+        "max_residential_floor_area_sq_ft": lot_area * far,
+    }
+    citation_provenance = dict(trace["citations"][0]["provenance"])
+    citation_provenance.update(
+        snapshot_id="zr-23-22",
+        request_url="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+        section_number="23-22",
+        section_title="Maximum Floor Area Ratio for R6 Through R12 Districts",
+    )
+    trace["citations"] = [
+        {
+            "snapshot_id": "zr-23-22",
+            "section": "23-22",
+            "quote": (
+                "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS. Separate maximum "
+                "residential floor area ratios are set forth for zoning lots "
+                "containing standard residences and zoning lots containing "
+                "qualifying affordable housing or qualifying senior housing."
+            ),
+            "last_amended": "2024-12-05",
+            "provenance": citation_provenance,
+        }
+    ]
+    rule_evaluation["zoning_district"] = "R9A"
+    rule_evaluation["family_coverage"]["rule_ids"] = ["r6-r12-residential-far"]
+    for candidate in rule_evaluation["spatial_uncertainty"]["base_district_candidates"]:
+        candidate["district_label"] = "R9A"
+    return rule_evaluation
+
+
+def test_d059_r003_derived_range_label_names_the_low_density_section():
+    """S1: a low-density (R5) evaluated rule -> the derived label names ZR 23-21 (hand-typed
+    from r5_residential_far.rule.json's own ``section`` citation)."""
+    document = _preliminary_document()
+    derived = derive_practical_usable_range(document)
+    assert "(ZR 23-21)" in derived["label"]
+    assert "23-22" not in derived["label"]
+
+
+def test_d059_r003_derived_range_label_names_the_r6_r12_section():
+    """S1: an R6-R12 evaluated rule -> the derived label names ZR 23-22 (hand-typed from
+    r6_r12_residential_far.rule.json's own ``section`` citation), NEVER the stale hardcoded
+    23-21."""
+    rule_evaluation = _r6_r12_rule_evaluation()
+    document = build_scenario(S.profile(), rule_evaluation)
+    assert document["cap_provenance"]["rule_id"] == "r6-r12-residential-far"
+
+    derived = derive_practical_usable_range(document)
+    assert derived["derived_kind"] == DerivedRangeKind.DERIVED
+    assert "(ZR 23-22)" in derived["label"]
+    assert "23-21" not in derived["label"]
+
+
+def test_d059_r003_derived_range_label_is_generic_with_no_cap_provenance():
+    """S1: when no rule context reaches the builder (a no-cap outcome), the label states the
+    section GENERICALLY - it never defaults to 23-21 (or any other specific section)."""
+    document = build_scenario(S.profile(), S.unsupported_rule_evaluation())
+    assert document["cap_provenance"] is None
+
+    derived = derive_practical_usable_range(document)
+    assert derived["derived_kind"] == DerivedRangeKind.NOT_DERIVABLE
+    assert "23-21" not in derived["label"]
+    assert "23-22" not in derived["label"]
+    assert "cap_provenance.citations" in derived["label"]
+
+
+def test_d059_r003_no_residual_hardcoded_zr_23_21_across_the_five_modules():
+    """S2: none of the five live-wired scenario-analysis modules (derive / breakeven /
+    comparison / ranking / sensitivity) may hardcode the literal 'ZR 23-21' phrase in their
+    SOURCE TEXT - the section reference must be derived from the actually-evaluated rule (or
+    stated generically). Reading the source directly (not just exercising a runtime path)
+    catches a regression that reintroduces the literal phrase even in code a particular test
+    run does not happen to execute."""
+    package_root = Path(__file__).resolve().parents[2] / "app" / "scenario"
+    for name in ("derive.py", "breakeven.py", "comparison.py", "ranking.py", "sensitivity.py"):
+        source = (package_root / name).read_text(encoding="utf-8")
+        assert "ZR 23-21" not in source, (
+            f"{name} still hardcodes the literal 'ZR 23-21' phrase; the section reference "
+            "must be derived from the actually-evaluated rule (D-059-R003)."
+        )

@@ -67,6 +67,7 @@ from .constants import NOT_VERIFIED_DISCLAIMER
 from .derive import (
     RECOGNIZED_FACTOR_TYPES,
     DerivedRangeKind,
+    _cap_section_reference,
     derive_practical_usable_range,
 )
 
@@ -122,14 +123,40 @@ SENSITIVITY_RESPONSE_METRIC_LABEL = (
 
 # Mandatory honest label on a sensitivity response (illustrative / from the draft cap,
 # never Verified).
-SENSITIVITY_LABEL = (
-    "ILLUSTRATIVE single-variable sensitivity / what-if response: ONE explicitly-named "
-    "assumption varied across the caller's EXPLICIT list of values, each point computed ONLY "
-    "from already-surfaced numbers (the DRAFT residential zoning-floor-area cap under ZR 23-21 "
-    "x explicitly-declared typed factors). NOT gross, net, sellable, or feasible floor area; "
-    "NOT a buildable envelope; NOT an optimization over invented values. Draft (needs_review); "
-    "requires professional review; NOT Verified."
-)
+#
+# D-059-R003 (M5-T028): the Zoning Resolution section named MUST be derived from the rule
+# ACTUALLY evaluated for the subject property (the R6-R12 family cites ZR 23-22, not the R1-R5
+# families' 23-21), never hardcoded. ``_sensitivity_label`` builds the label from whatever
+# section the scenario document's own ``cap_provenance`` citation names.
+def _sensitivity_label(section_reference: str | None) -> str:
+    """The mandatory sensitivity label, with the Zoning Resolution section clause built from the
+    ACTUAL evaluated rule's citation (``section_reference``) rather than a hardcoded section
+    number. Falls back to a section-agnostic clause (never invents a section) when no citation is
+    available."""
+    section_clause = (
+        f"under ZR {section_reference}"
+        if isinstance(section_reference, str) and section_reference
+        else "under the cited Zoning Resolution bulk-regulation section (see "
+        "cap_provenance.citations for the exact section)"
+    )
+    return (
+        "ILLUSTRATIVE single-variable sensitivity / what-if response: ONE explicitly-named "
+        "assumption varied across the caller's EXPLICIT list of values, each point computed ONLY "
+        f"from already-surfaced numbers (the DRAFT residential zoning-floor-area cap "
+        f"{section_clause} "
+        "x explicitly-declared typed factors). NOT gross, net, sellable, or feasible floor area; "
+        "NOT a buildable envelope; NOT an optimization over invented values. Draft (needs_review); "
+        "requires professional review; NOT Verified."
+    )
+
+
+# Backward-compatible module constant (D-059-R003) for the small set of consumers OUTSIDE this
+# task's allowed_paths that import ``SENSITIVITY_LABEL`` directly (scenario/__init__.py's
+# re-export). Byte-identical to ``_sensitivity_label("23-21")`` - the R5 canonical
+# rule_evaluation fixture's own citation - so this stays a harmless, literally-correct legacy
+# alias, NOT a universal label: the live path below calls ``_sensitivity_label`` with the real
+# per-request citation for every district family.
+SENSITIVITY_LABEL = _sensitivity_label("23-21")
 
 # Mandatory honest label on every response point.
 POINT_LABEL = (
@@ -438,7 +465,7 @@ def _invalid_result(scenario_document: Any, variable: Any, reason: str) -> dict:
         "point_count": 0,
         "derivable_count": 0,
         "points": [],
-        "label": SENSITIVITY_LABEL,
+        "label": _sensitivity_label(_cap_section_reference(scenario_document)),
         "reasons": [reason],
         "invalid_reason": reason,
         "empty_reason": None,
@@ -460,7 +487,7 @@ def _empty_result(scenario_document: Any, variable: SensitivityVariable, reason:
         "point_count": 0,
         "derivable_count": 0,
         "points": [],
-        "label": SENSITIVITY_LABEL,
+        "label": _sensitivity_label(_cap_section_reference(scenario_document)),
         "reasons": [reason],
         "invalid_reason": None,
         "empty_reason": reason,
@@ -583,7 +610,7 @@ def analyze_scenario_sensitivity(
         "point_count": len(points),
         "derivable_count": derivable_count,
         "points": points,
-        "label": SENSITIVITY_LABEL,
+        "label": _sensitivity_label(_cap_section_reference(scenario_document)),
         "reasons": reasons,
         "invalid_reason": None,
         "empty_reason": None,

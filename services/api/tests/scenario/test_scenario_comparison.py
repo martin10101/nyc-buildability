@@ -848,3 +848,107 @@ def test_rework_empty_outcome_carries_canonical_disclaimer():
     assert result["comparison_kind"] == ComparisonKind.EMPTY
     assert result["not_verified_disclaimer"] == NOT_VERIFIED_DISCLAIMER
     _strict_json_safe(result)
+
+
+# ---------------------------------------------------------------------------
+# D-059-R003 (M5-T028): COMPARISON_LABEL and the canonical_cap_sq_ft metric label must be
+# DERIVED from the rule ACTUALLY evaluated, never hardcoded (M5-T027 G3 advisory A1
+# follow-up). The R6-R12 family cites ZR 23-22, not the R1-R5 families' 23-21. Exercised for
+# one low-density (R5, the canonical fixture) and one higher-density (R6-R12) district;
+# expected section numbers are hand-typed literals read directly from the real ruleset files
+# (never produced by calling the code under test): r5_residential_far.rule.json cites "23-21"
+# and r6_r12_residential_far.rule.json cites "23-22".
+# ---------------------------------------------------------------------------
+
+
+def _r6_r12_rule_evaluation() -> dict:
+    """A rule_evaluation whose evaluated trace is the REAL r6-r12-residential-far rule
+    (section 23-22, R9A's standard-residences FAR 7.52) instead of the canonical fixture's
+    r5-residential-far/23-21 trace. Local, independently-maintained copy of
+    test_scenario_foundation.py's own helper (that file is outside this task's
+    allowed_paths)."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    trace = rule_evaluation["evaluations"][0]
+    far = 7.52
+    lot_area = trace["evaluated_inputs"]["lot_area_sq_ft"]
+    trace["rule_id"] = "r6-r12-residential-far"
+    trace["evaluated_inputs"]["zoning_district"] = "R9A"
+    trace["applicability_trace"][0]["detail"]["values"] = ["R9A"]
+    trace["applicability_trace"][0]["detail"]["value_seen"] = "R9A"
+    trace["computation_steps"][0]["resolved_args"] = [far]
+    trace["computation_steps"][0]["result"] = far
+    trace["computation_steps"][1]["resolved_args"] = [lot_area, far]
+    trace["computation_steps"][1]["result"] = lot_area * far
+    trace["outputs"] = {
+        "max_residential_far": far,
+        "max_residential_floor_area_sq_ft": lot_area * far,
+    }
+    citation_provenance = dict(trace["citations"][0]["provenance"])
+    citation_provenance.update(
+        snapshot_id="zr-23-22",
+        request_url="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+        section_number="23-22",
+        section_title="Maximum Floor Area Ratio for R6 Through R12 Districts",
+    )
+    trace["citations"] = [
+        {
+            "snapshot_id": "zr-23-22",
+            "section": "23-22",
+            "quote": (
+                "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS. Separate maximum "
+                "residential floor area ratios are set forth for zoning lots "
+                "containing standard residences and zoning lots containing "
+                "qualifying affordable housing or qualifying senior housing."
+            ),
+            "last_amended": "2024-12-05",
+            "provenance": citation_provenance,
+        }
+    ]
+    rule_evaluation["zoning_district"] = "R9A"
+    rule_evaluation["family_coverage"]["rule_ids"] = ["r6-r12-residential-far"]
+    for candidate in rule_evaluation["spatial_uncertainty"]["base_district_candidates"]:
+        candidate["district_label"] = "R9A"
+    return rule_evaluation
+
+
+def _cap_metric_label(result: dict) -> str:
+    """The ``canonical_cap_sq_ft`` metric label from the top-level ``compared_metrics`` doc."""
+    by_metric = {row["metric"]: row["metric_label"] for row in result["compared_metrics"]}
+    return by_metric["canonical_cap_sq_ft"]
+
+
+def _cap_delta_label(result: dict, set_name: str) -> str:
+    """The ``canonical_cap_sq_ft`` metric_label carried on ONE row's per-metric delta
+    breakdown (a separate emission site from ``compared_metrics``, per M5-T027 G3 advisory
+    A1's comparison.py:118 finding)."""
+    row = _row_by_name(result, set_name)
+    by_metric = {d["metric"]: d["metric_label"] for d in row["metric_deltas"]}
+    return by_metric["canonical_cap_sq_ft"]
+
+
+def test_d059_r003_comparison_label_names_the_low_density_section():
+    """The low-density (R5) evaluated rule -> COMPARISON_LABEL and the canonical_cap_sq_ft
+    metric label (both emission sites) name ZR 23-21 (hand-typed from
+    r5_residential_far.rule.json's own ``section`` citation)."""
+    document = _preliminary_document()
+    result = compare_scenario_assumption_sets(document, [_named("a", []), _named("b", [])])
+    assert "(ZR 23-21)" in result["label"]
+    assert "23-22" not in result["label"]
+    assert "(ZR 23-21, sq ft)" in _cap_metric_label(result)
+    assert "(ZR 23-21, sq ft)" in _cap_delta_label(result, "a")
+
+
+def test_d059_r003_comparison_label_names_the_r6_r12_section():
+    """An R6-R12 evaluated rule -> COMPARISON_LABEL and the canonical_cap_sq_ft metric label
+    (both emission sites) name ZR 23-22 (hand-typed from r6_r12_residential_far.rule.json's
+    own ``section`` citation), NEVER the stale hardcoded 23-21."""
+    document = build_scenario(S.profile(), _r6_r12_rule_evaluation())
+    assert document["cap_provenance"]["rule_id"] == "r6-r12-residential-far"
+    result = compare_scenario_assumption_sets(document, [_named("a", []), _named("b", [])])
+    assert result["comparison_kind"] == ComparisonKind.COMPARED
+    assert "(ZR 23-22)" in result["label"]
+    assert "23-21" not in result["label"]
+    assert "(ZR 23-22, sq ft)" in _cap_metric_label(result)
+    assert "23-21" not in _cap_metric_label(result)
+    assert "(ZR 23-22, sq ft)" in _cap_delta_label(result, "a")
+    assert "23-21" not in _cap_delta_label(result, "a")
