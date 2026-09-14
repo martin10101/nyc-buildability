@@ -32,6 +32,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   can extend its own imperfect condition) → assemble v2 blocks (reviewed_sha = restamp
   target; `reviewed_manifest_sha256` from the gate records; producer = the task's MATERIAL
   producer) → accept (reads disk vs HEAD) → one seam commit → push.
+- Evidence-map `material_commit` = the CHERRY-PICK commit itself, never the follow-up seam
+  commit (that one carries only state/task files) — reviewers catch the mislabel; the map is
+  outside allowed_paths so an `[ORCH-CORRECTED]` fix there moves no material identity.
 - "PASS with required corrections" = record PASS, corrections BLOCK acceptance: apply as
   tagged `[ORCH-CORRECTED per <gate> Fn]` edits → progress --status rework → resubmit at new
   head → SendMessage delta-attestation to the SAME reviewer agents (~1 min; they stay
@@ -107,6 +110,16 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
 - Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
   owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
+- Fable exhaustion kills the loop: run stops `REFUSED (unsafe, exit 11)
+  fable_exhaustion_turnover_recorded` (doctor names the cause — the live account-quota CLI
+  signature was never captured, so the probe leaves it 'unknown' and holds the pause). The
+  worker-pin flip is OWNER-ONLY (controller S3.2 rule 6: "writing the value is the owner's
+  edit"; `set-claude-model` also refuses on a stale out-of-band digest) AND classifier-blocked
+  — open a blocker with the one-line edit, never retry past it. The INITIAL pin needs no
+  launch probe, so the owner's edit alone suffices. Keep work moving meanwhile by dispatching
+  the blocked packet to an orchestrator producer (model override) + record the deviation.
+  Confirm exhaustion from primary records only: the run log + `model_switch_tracker.py
+  --query` (never a model's self-report).
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list

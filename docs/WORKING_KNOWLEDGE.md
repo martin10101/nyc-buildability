@@ -1,4 +1,41 @@
-# WORKING_KNOWLEDGE — current section: street-width / A2 geometry + C-district lanes (D-054 Tier 2)
+# WORKING_KNOWLEDGE — current section: D-059 dependable-answers + A2 geometry lanes (D-054 Tier 2)
+
+## D-059 MVP-review work order (owner 2026-09-14) — the CURRENT priority lane
+
+Owner transmitted a commissioned read-only MVP review (of the branch at 16272c05) with a
+covering message; captured VERBATIM as **D-059** (12 requirements R001–R012, source-001.md
+carries both the message and the full review byte-faithfully). It judges progress against the
+EXPANDED D-045 scope, not the old FAR demo. Standing items every session must respect:
+
+- **R006 claims discipline (prohibition, permanent):** never present the accepted-task count as
+  an MVP completion percentage or as finished customer features (138 of 206 were foundation /
+  control-plane); never repeat the old "2–4 hours saved per lot" estimate as demonstrated; time
+  saved comes ONLY from the R007 benchmark; don't cite the resolved B-022 as a current reason
+  the product is unfinished.
+- **R008 delivery sequence (8 steps)** governs remaining MVP order; step 1 = make today's
+  answers dependable (this is where M5-T027/M5-T028 sit), step 2 = street/lot measurement
+  (M4-T020 done, M4-T021 in review), then envelope → units → C/M campaign → corpus →
+  production workflow → professional proof.
+- **R007 benchmark protocol:** ~15–20 real parcels across all five boroughs incl. condo/billing
+  lots, mixed-address parcels, split zoning, special districts, wide-street boundary cases;
+  record the architect's checked answer, BOTH elapsed times, corrections, usefulness. G6 + B-010
+  stay open regardless.
+- **R004 spatial-failure protocol:** the recorded `spatial_intersection_absent` on BBL
+  3022647515 must be root-caused from the deployed commit + settings + typed logs and
+  reproduced — it is NOT justified to say B3/B4 alone fixes it (the live provider doesn't use
+  the centerline module and has its own `LIVE_SPATIAL_PROVIDER_ENABLED`); the deploy checklist
+  must also name `LIVE_SPATIAL_PROVIDER_ENABLED` and `INTERNAL_SCENARIO_ENABLED`. STILL OPEN.
+- **R009 status-prose reconciliation:** master_plan.json milestone summaries are stale (M2
+  survey rows, M3 acceptance). STILL OPEN. Verified counts at 2026-09-14: M0 138, M1 9, M2 21,
+  M3 1, M4 14, M5 24 = **207 accepted**.
+- Fix lane so far: **M5-T027** (R001 recorded-data wording, R002 bldgarea-zero-with-buildings
+  fail-closed, R003 evaluation-derived labels) BUILT + G3/G4 PASS, DCV in flight. **M5-T028**
+  contracted from the M5-T027 G3 advisory A1 — the R003 defect class survived in FIVE
+  live-wired modules (`derive.py:82` DERIVED_RANGE_LABEL emitted unconditionally,
+  `breakeven.py:155`, `comparison.py:118/:129`, `ranking.py:114`, `sensitivity.py:128`), all
+  reachable through the mounted scenario_analysis router. **R003 is NOT directive-wide closed
+  until M5-T028 lands.** Known still-out-of-scope carriers: `scenario.schema.json` prose and
+  the apps/web presentation surface (both forbidden in those packets).
 
 Living file for the section under construction NOW. Handoff names it a must-read; update it
 while working; at section close PRUNE finished material (git keeps history) or PROMOTE
@@ -12,11 +49,19 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
 
 ## A2 build map (B-lanes; statuses)
 
-- B5 ruling = DONE (D-052). B6 = DONE (M4-T018 report = the pin). B3 (geometry
-  parse-and-expose sibling module — geometry ALREADY arrives, parse_segment_page discards
-  it), B4 (100-ft buffer engine, EPSG:2263; B3 + mappluto_geometry_arcgis), B7 (wire into
+- B5 ruling = DONE (D-052). B6 = DONE (M4-T018 report = the pin). **B3 = DONE — M4-T020
+  ACCEPTED 2026-09-14 (207th)**, module `dcm_street_centerline_geometry.py` (DCV 5/5,
+  CI green). **B4 = BUILT, in review — M4-T021** (`wide_street_buffer_engine.py`, 29 tests,
+  connectors suite 781; producer cb277b8f; G3/G4 in flight). B7 (wire into
   r6_r7_r8_wide_street_conditional_far.rule.json — currently cites zr-23-22 ONLY, performs
-  no wide-street determination) = OPEN. Do B7 LAST.
+  no wide-street determination) = OPEN, do LAST.
+- **B4 judgment calls the producer disclosed for the reviewers to rule on** (carry into B7):
+  `Ec5AttestedPreconditions` is required/no-default but does NOT gate computation on the
+  attested boolean VALUES (reading: the pinned research says B4 is not blocked on B5/B6/B7);
+  `quad_segs=8` pinned for determinism continuity, not source-derived; no multipolygon/holes
+  lot fixture. EC-4 tangency was characterised empirically (GEOS: intersects=True with a
+  zero-area LineString) and the legal-tolerance question left OPEN for G6 —
+  `BOUNDARY_TOLERANCE_FT` is proven never imported (AST name scan).
 - **B7 acceptance criterion (G3 advisory A1, elevated):** `exceptions_checked=True` only when
   exceptions checked AND (none apply OR each applicable one implemented/resolved);
   `frontage_match_method=coverage_established` only after real multi-feature collection
@@ -67,7 +112,28 @@ durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritativ
   Ridge lots — §12-10-only eligibility function is WRONG; cross-refs §23-21/§23-424
   (35/35, 35/45, 45/55)/§27-111/§66-11; print/PDF capture still owed.
 
-## D-053 loop — shift 1 COMPLETE (persistent-local-34 closed benignly at unit completion)
+## D-053 loop — shift 1 HARVESTED; shift 2 BLOCKED on B-024 (Fable exhausted)
+
+- **Shift-1 harvest fully landed 2026-09-14**: M4-T020 (the loop worker's build) cherry-picked
+  byte-identical (patch-id 3ea576a6, blob-proven), G3/G4 PASS zero blocking, DCV 5/5,
+  **ACCEPTED as the 207th**. The loop's unit DID produce accepted product code end-to-end.
+- **Shift 2 could NOT run.** Relaunch (run `persistent-local-35`, packet M4-T021, the
+  relaunch_m4t021.ps1 adaptation) passed preflight, reached START_CLAUDE, then stopped
+  `REFUSED (unsafe, exit 11) fable_exhaustion_turnover_recorded` at 62.1s. Fable is exhausted
+  ACCOUNT-WIDE including the extra usage D-058-R004 relied on — corroborated independently by
+  `model_switch_tracker.py --query` showing this orchestrator session force-migrated Fable 5 →
+  Opus 5 at 08:45:24Z on a recorded USAGE/RATE LIMIT (explicitly not a safety refusal).
+  Root cause per the controller doctor: the live account-quota CLI signature has never been
+  captured, so the turnover probe leaves the failure 'unknown' and holds the fail-closed pause.
+  **The worker-pin flip is OWNER-ONLY** (controller S3.2 rule 6 + the classifier's model-file
+  guard) → **blocker B-024** carries the exact one-line edit. Authorization is pre-recorded as
+  **D-060-R002**; revert obligation D-060-R003. Candidate follow-up the doctor named: capture
+  the live quota signature now that a genuine exhaustion finally happened.
+- **Loop continuity without the loop (D-060-R001):** the blocked packet was produced by an
+  orchestrator-dispatched producer instead (deviation recorded in the M4-T021 progress log).
+  When the owner restores the pin, point the relaunched loop at the NEXT packet, not M4-T021.
+
+## D-053 loop — shift 1 detail (persistent-local-34 closed benignly at unit completion)
 
 - **Run persistent-local-34 (M4-T020 B3) FINISHED its unit**: worker built the module, ran
   all four documented commands auto-approved (audit seq 838–844), `claude_unit_completed`
