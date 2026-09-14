@@ -91,11 +91,11 @@
     "qa-engineer"
   ],
   "status": "claimed",
-  "progress_percent": 10,
+  "progress_percent": 40,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-14T08:26:53.634491+00:00",
-  "updated_at": "2026-09-14T08:40:30.014469+00:00",
+  "updated_at": "2026-09-14T09:05:42.923056+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -132,6 +132,13 @@
       "percent": 20,
       "status": "ready",
       "message": "Contracted + G0 PASS at e1def6b5 (post-D-059-capture head); packet awaits the D-053 loop worker (run persistent-local-35, worker claude-fable-5 via EXTRA USAGE per D-058-R004); B4 sits in D-059-R008 step 2 (campaign continues) alongside the step-1 fix lane"
+    },
+    {
+      "at": "2026-09-14T09:05:42.923056+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "claimed",
+      "message": "DEVIATION RECORDED (D-060): the D-053 supervisor loop could NOT execute this packet - run persistent-local-35 stopped REFUSED-unsafe exit 11 on fable_exhaustion_turnover_recorded and the worker-model actuation is owner-only by controller design (S3.2 rule 6). To keep the work moving per D-060-R001, B4 is being produced by an ORCHESTRATOR-DISPATCHED producer (unnamed backend-engineer, isolation worktree, model override claude-sonnet-5 per D-047) off base d7c22f3e instead of the loop worker. When the owner restores the model pin, point the relaunched loop at the NEXT packet, not this one."
     }
   ],
   "worktree": "wt-m4t021"
