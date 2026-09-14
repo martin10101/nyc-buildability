@@ -4,10 +4,10 @@
   "reviewer": "orchestrator",
   "role": "administrative",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T029-G0-refreshed.md",
-  "reviewed_at": "2026-09-14T21:35:08.042242+00:00",
-  "content_manifest_sha256": "0a423de2dbe8da714bc719662396ca12e4320edcf30d0c6be4217bc114485bc2",
-  "reviewed_sha": "1e93d0ccb0e6a3b49a5f761c530b717d3bbf8bf0",
+  "report_file": "project-control/reports/M5-T029-G0-v3.md",
+  "reviewed_at": "2026-09-14T22:06:37.308909+00:00",
+  "content_manifest_sha256": "3aab0196825b9ead61f3ab4f293876f4dd3ef9b02f0bc43d6ac4f62f46deccb3",
+  "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210",
   "history": [
     {
       "reviewer": "orchestrator",
@@ -15,7 +15,14 @@
       "result": "PASS",
       "report_file": "project-control/reports/M5-T029-G0-readiness.md",
       "reviewed_at": "2026-09-14T20:12:31.865015+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T029-G0-refreshed.md",
+      "reviewed_at": "2026-09-14T21:35:08.042242+00:00"
     }
   ],
-  "updated_at": "2026-09-14T21:35:08.102069+00:00"
+  "updated_at": "2026-09-14T22:06:37.380593+00:00"
 }

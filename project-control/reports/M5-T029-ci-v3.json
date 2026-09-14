@@ -1,0 +1,154 @@
+{
+  "task_id": "M5-T029",
+  "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210",
+  "content_manifest_sha256": "3aab0196825b9ead61f3ab4f293876f4dd3ef9b02f0bc43d6ac4f62f46deccb3",
+  "recorded_at": "2026-09-14T22:12:02.911Z",
+  "result": "PASS",
+  "ci_run": 34902199768,
+  "ci_url": "https://github.com/martin10101/nyc-buildability/actions/runs/34902199768",
+  "jobs": [
+    {
+      "id": 104170521865,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522032,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522036,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522046,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522057,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522093,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522160,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522162,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522173,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522200,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522208,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522210,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522273,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522300,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522364,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522378,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522419,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104170522482,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "additional_workflows": [
+    {
+      "id": 34902199770,
+      "name": "secret-scan",
+      "conclusion": "success"
+    },
+    {
+      "id": 34902199884,
+      "name": "context-budget",
+      "conclusion": "success"
+    }
+  ],
+  "web_e2e": {
+    "unit_files": 37,
+    "unit_tests": 617,
+    "browser_passed": 100,
+    "browser_failed": 0,
+    "worker_abort_fallback": "PASS",
+    "desktop_mobile_parcel_pixels": "PASS; actual captured images independently inspected",
+    "artifact_id": 10371615027,
+    "artifact_sha256": "248a0c5d0a91f1588cc8b2e09a912c00d9171da624361b0637cdb69294668b3d",
+    "artifact_bytes": 100046402
+  },
+  "modularity": {
+    "files": 435,
+    "failures": 0,
+    "existing_warnings": 18
+  },
+  "lint": {
+    "exit_code": 0,
+    "authored_warnings": 0,
+    "vendor_warnings": 1077,
+    "note": "Warnings confined to exact lock-admitted MapLibre 6.7.0 distributions; no suppression or lint configuration changes."
+  },
+  "notes": "All required CI checks passed at the actual frozen remote SHA. Earlier v1/v2 failures remain preserved as rework history. CI uses recorded official API fixtures; this is not live deployment verification."
+}

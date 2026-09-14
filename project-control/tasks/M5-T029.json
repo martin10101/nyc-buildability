@@ -144,8 +144,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Source service outage/CORS or inaccessible deployment credentials",
     "Existing e2e selectors encode the prior UI; adapt user-journey navigation while retaining safety assertions",
@@ -153,7 +153,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-14T20:09:45.264382+00:00",
-  "updated_at": "2026-09-14T21:51:18.651293+00:00",
+  "updated_at": "2026-09-14T22:18:55.081369+00:00",
   "directive_refs": [
     {
       "directive_id": "D-061",
@@ -214,5 +214,7 @@
       "status": "in_progress",
       "message": "V2 independent reviews closed density, identity, missing-source and NYZD-label findings. Final visual proof exposed one bounded MapLibre worker bootstrap defect; exact admitted same-origin assets plus parcel readiness are authorized within frontend scope. Attribution correction included. Candidate/main untouched pending replacement CI and gates."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-14T22:18:55.081306+00:00"
 }

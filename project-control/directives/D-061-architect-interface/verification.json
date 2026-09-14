@@ -1,8 +1,8 @@
 {
   "schema": "directive_verification/v2",
   "directive_id": "D-061",
-  "verified_by": null,
-  "verified_at": null,
+  "verified_by": "directive-compliance-verifier",
+  "verified_at": "2026-09-14T22:14:44.254709+00:00",
   "authority_note": "Independent verifier owns verdicts; no self-verification or completion claim.",
   "task_verifications": [
     {
@@ -20,92 +20,146 @@
         "D-061-R010",
         "D-061-R013"
       ],
-      "reviewed_sha": null,
-      "reviewed_manifest_sha256": null,
+      "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210",
+      "reviewed_manifest_sha256": "3aab0196825b9ead61f3ab4f293876f4dd3ef9b02f0bc43d6ac4f62f46deccb3",
       "producer": "frontend-engineer",
-      "verifier": null,
+      "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "verified_at": null,
+      "verified_at": "2026-09-14T22:14:44.254709+00:00",
       "requirements": [
         {
           "id": "D-061-R001",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T029-approved-design-reference.json",
+            "apps/web/src/components/architect/ArchitectShell.tsx",
+            "project-control/reports/M5-T029-G3-ui-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R002",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/components/architect/PropertyFacts.tsx",
+            "apps/web/src/components/architect/ProfileViews.tsx",
+            "apps/web/src/components/architect/AssessmentCoverage.tsx",
+            "project-control/reports/M5-T029-G4-qa-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R003",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/components/architect/EvidenceRecord.tsx",
+            "apps/web/src/components/architect/EvidenceInspector.tsx",
+            "apps/web/src/components/architect/CalculationEvidence.tsx",
+            "apps/web/src/lib/architect/source-links.ts",
+            "project-control/reports/M5-T029-G1-source-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R004",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/components/architect/AddressAutocomplete.tsx",
+            "apps/web/src/components/address/AddressResolutionScreen.tsx",
+            "apps/web/e2e/architect-workspace.spec.ts",
+            "project-control/reports/M5-T029-ci-v3.json"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R005",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/components/address/LotOutlineMap.tsx",
+            "apps/web/src/lib/architect/map-runtime.ts",
+            "apps/web/src/lib/__tests__/map-context.test.ts",
+            "project-control/reports/M5-T029-G1-source-v3.md",
+            "project-control/reports/M5-T029-G3-ui-v3.md",
+            "project-control/reports/M5-T029-ci-v3.json"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R006",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/components/architect/ArchitectEntry.tsx",
+            "apps/web/src/components/architect/SurveyWorkspace.tsx",
+            "apps/web/src/components/architect/ReportView.tsx",
+            "project-control/reports/M5-T029-G3-ui-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R007",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/gates/M5-T029-G0.json",
+            "project-control/gates/M5-T029-G1.json",
+            "project-control/gates/M5-T029-G2.json",
+            "project-control/gates/M5-T029-G3.json",
+            "project-control/gates/M5-T029-G4.json",
+            "project-control/gates/M5-T029-G5.json",
+            "project-control/reports/M5-T029-ci-v3.json"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R009",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/tasks/M5-T029.json",
+            "project-control/reports/M5-T029-G1-source-v3.md",
+            "project-control/reports/M5-T029-G4-qa-v3.md",
+            "project-control/reports/M5-T029-G5-security-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R010",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "apps/web/src/lib/address-search.ts",
+            "apps/web/src/lib/architect/use-address-suggestions.ts",
+            "apps/web/src/components/address/AddressResolutionScreen.tsx",
+            "apps/web/src/lib/__tests__/address-search.test.ts",
+            "project-control/reports/M5-T029-ci-v3.json"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         },
         {
           "id": "D-061-R013",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": null,
-          "verified_by": null,
-          "reviewed_sha": null
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T029-G0-v3.md",
+            "project-control/reports/M5-T029-directive-review-v3.md"
+          ],
+          "verified_at": "2026-09-14T22:14:44.254709+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210"
         }
       ]
     }

@@ -4,10 +4,10 @@
   "reviewer": "security-reviewer",
   "role": "independent_review",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T029-G5-security-v2.md",
-  "reviewed_at": "2026-09-14T21:45:05.132665+00:00",
-  "content_manifest_sha256": "0a423de2dbe8da714bc719662396ca12e4320edcf30d0c6be4217bc114485bc2",
-  "reviewed_sha": "1e93d0ccb0e6a3b49a5f761c530b717d3bbf8bf0",
+  "report_file": "project-control/reports/M5-T029-G5-security-v3.md",
+  "reviewed_at": "2026-09-14T22:11:27.258748+00:00",
+  "content_manifest_sha256": "3aab0196825b9ead61f3ab4f293876f4dd3ef9b02f0bc43d6ac4f62f46deccb3",
+  "reviewed_sha": "14c0525ddb28f81cd69da82834dbb24c21539210",
   "history": [
     {
       "reviewer": "security-reviewer",
@@ -15,7 +15,14 @@
       "result": "FAIL",
       "report_file": "project-control/reports/M5-T029-G5-security-v1.md",
       "reviewed_at": "2026-09-14T21:16:26.107676+00:00"
+    },
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T029-G5-security-v2.md",
+      "reviewed_at": "2026-09-14T21:45:05.132665+00:00"
     }
   ],
-  "updated_at": "2026-09-14T21:45:05.185829+00:00"
+  "updated_at": "2026-09-14T22:11:27.327933+00:00"
 }
