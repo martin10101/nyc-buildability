@@ -273,6 +273,44 @@
      "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
     }
    ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T025",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+   "reviewed_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:01:28+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing orchestration policy: isolated worktree wt-m5t025 concurrent with the D-053 loop worker on wt-m4t020 (services/api scope); concurrency 2 <= ceiling 3; recorded in the task packet path_notes/progress_log and the D-056 capture context.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise scope disjointness reproduced from packet files: M5-T025 allowed_paths share zero files with M4-T020 and with M5-T026 (lib/__tests__/rule-evaluation.test.ts != components/rule-evaluation/__tests__/rule-evaluation.test.tsx); producer commit 10aaedcc touched exactly the 9 allowed files; shared-surface integration was sequential orchestrator commits.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    }
+   ]
   }
  ]
 }

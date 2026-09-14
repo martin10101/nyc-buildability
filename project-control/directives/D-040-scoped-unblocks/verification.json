@@ -172,6 +172,32 @@
      "reviewed_sha": "318c8794d2de76fdbef6e930b5baf76091afe725"
     }
    ]
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T025",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+   "reviewed_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:01:28+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "Work confined to the released lot-outline increment (LotOutlineMap.tsx on the address confirm card, MapLibre GL JS per the path-scoped technical rules); expansion-hold section 2.1 scoped release cited via task directive_refs D-040:D-040-R001; everything else under the hold undisturbed; no expansion-pack task IDs anywhere.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    }
+   ]
   }
  ]
 }

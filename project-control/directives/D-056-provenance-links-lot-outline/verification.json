@@ -4,5 +4,56 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. R001-R003 bind ledger task M5-T025 (plus the non-ledger sentinel D-056-BOOTSTRAP for the directive-level record); R004-R006 bind the sentinel only (validator c5 forbids sentinel task_ids in task_verifications). No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-056",
+   "task_id": "M5-T025",
+   "applicable_requirement_ids": [
+    "D-056-R001",
+    "D-056-R002",
+    "D-056-R003"
+   ],
+   "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+   "reviewed_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:01:28+00:00",
+   "requirements": [
+    {
+     "id": "D-056-R001",
+     "state": "PASS",
+     "evidence": [
+      "Safe outbound provenance links in BOTH surfaces via constant DATASET_LANDING_PREFIX + anchored ^[a-z0-9]{4}-[a-z0-9]{4}$ dataset-id validation (provenance-link.ts:27-46, null on invalid/absent); anchors built only from datasetLandingUrl with target=_blank rel=noopener noreferrer (ProvenanceDisclosure.tsx:80-91, RuleEvaluationResult.tsx:143-161); request_url reaches only urlHost() text; hostile-request_url-never-in-any-href negative sweep present in both surface test suites.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    },
+    {
+     "id": "D-056-R002",
+     "state": "PASS",
+     "evidence": [
+      "Lot-outline root cause concretely recorded ([ORCH-CORRECTED per M5-T025-G3 F1]: one-time 'load' listener never fires on a degraded-GL device); fix arms isStyleLoaded() fast path + load/style.load + error->typed fallback (LotOutlineMap.tsx:111-124, 368-371); LOT_OUTLINE_MAX_ZOOM 19.5 framing for single-tax-lot visibility; red-on-old runOnStyleReady unit rows + component wiring guard + error-fallback tests (lot-outline-map.test.tsx:385-503); display-only geometry contract preserved (bounds math only, geometry passed verbatim).",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    },
+    {
+     "id": "D-056-R003",
+     "state": "PASS",
+     "evidence": [
+      "NavigationControl (showCompass:false, top-right, justification comment) in the map init path (LotOutlineMap.tsx:363); SSR/dynamic-import structure unchanged; all seven fallback-branch tests intact (condo/no_feature/multiple_features/invalid_geometry/route_absent/network/no-WebGL); zero new dependencies (maplibre-gl 6.7.0 admitted at M5-T022, package files untouched).",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    }
+   ]
+  }
+ ]
 }
