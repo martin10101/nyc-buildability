@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-14-seam-d059-fixlane",
+  "timestamp": "2026-09-14T11:25:07.119123+00:00",
+  "commit": "06011676028178f53e1d3efb111ad1455dd3a278",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "Seam close: 204 -> 210 accepted. M5-T025/026 (D-056/D-057 web), M4-T020 (B3 geometry, the loop worker's own build), M5-T027 (D-059 step-1: bldgarea-zero fails closed, recorded-data wording, derived labels), M5-T028 (D-059-R003 CLOSED PROJECT-WIDE across five live-wired modules), M4-T021 (B4 100-ft buffer engine, after a G4 FAIL + rework + dual delta-attestations + a ruled reviewer disagreement). D-059 (owner MVP review, 12 reqs) and D-060 (loop continuity) captured. Loop DOWN on B-024: Fable exhausted account-wide, worker-pin edit is owner-only; work continued via orchestrator-dispatched producers under D-060-R001. STILL OPEN: D-059-R004 spatial root cause, R009 master_plan prose. Nothing in flight.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-14T11:25:07.159656+00:00"
+}
