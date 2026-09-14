@@ -6,22 +6,33 @@ module owns ALL of the C1 logic (the ``derive.py`` separate-module precedent); t
 ``_assemble``.
 
 The section is a pure, deterministic function of the ``property_profile`` (its
-``existing_building_facts.bldgarea`` fact + root ``provenance[]`` array) and the two draft-cap
-fields the builder already computed (``draft_zoning_floor_area_cap_sq_ft`` +
-``cap_provenance``). It performs NO independent legal calculation: it consumes the canonical
-cap VERBATIM (never recomputed, never adjusted) and subtracts the existing built floor area.
+``existing_building_facts.bldgarea`` AND ``.numbldgs`` facts + root ``provenance[]`` array)
+and the two draft-cap fields the builder already computed
+(``draft_zoning_floor_area_cap_sq_ft`` + ``cap_provenance``). It performs NO independent legal
+calculation: it consumes the canonical cap VERBATIM (never recomputed, never adjusted) and
+subtracts the existing built floor area.
 
 Hard guarantees (also enforced by ``tests/scenario/test_unused_floor_area.py``):
 
 * States are typed (:class:`UnusedFloorAreaState`): ``computed`` (cap and a usable existing
   area present; value = cap - existing built area, an UNROUNDED float in square_feet; an
-  exact zero is ``computed``, NOT over-built), ``over_built`` (value strictly NEGATIVE,
-  preserved EXACTLY - never clamped/nulled/abs'd - with an honest statement, a section-level
-  professional-review flag, AND the document root professional_review_required forced true),
-  and ``not_computable`` with a typed reason (:class:`UnusedFloorAreaNotComputableReason`):
+  exact zero is ``computed``, NOT over-built - ONLY when numbldgs establishes vacancy, see
+  below), ``over_built`` (value strictly NEGATIVE, preserved EXACTLY - never
+  clamped/nulled/abs'd - with an honest statement, a section-level professional-review flag,
+  AND the document root professional_review_required forced true), and ``not_computable``
+  with a typed reason (:class:`UnusedFloorAreaNotComputableReason`):
   ``missing_existing_building_area`` / ``existing_building_area_unusable`` (the fact's
   coverage_status is echoed verbatim) / ``no_draft_far_cap``. A not_computable value is
   ``null`` and NEVER estimated.
+* D-059-R002/R011 (official PLUTO data dictionary): a recorded ``bldgarea`` of exactly 0 is
+  NOT automatically a usable zero (a vacant lot). It is consumed as a usable zero ONLY when
+  the SAME profile's ``numbldgs`` fact establishes vacancy (present, usable coverage_status,
+  value exactly 0). When ``numbldgs`` is absent, unusable, or positive, a zero ``bldgarea``
+  routes to ``existing_building_area_unusable`` (never guessed as vacant), with
+  ``professional_review_required`` true at the section level (a recorded zero alongside a
+  positive/uncertain building count is a data discrepancy, not a silent skip) and the original
+  zero + the numbldgs basis carried as machine-readable ``assumptions`` records (the closed
+  ``inputs`` shape has no numbldgs field).
 * Precise-noun labeling (research 3.1): the label states what the engine computed
   (FAR-derived floor-area difference); it never says "maximum buildable area", "remaining
   development rights", or "remaining capacity". A scope note records that building geometry
@@ -131,6 +142,102 @@ def _bldgarea_fact(property_profile: dict) -> dict | None:
     facts = _as_dict(_as_dict(property_profile).get("existing_building_facts"))
     fact = facts.get("bldgarea")
     return fact if isinstance(fact, dict) else None
+
+
+def _numbldgs_fact(property_profile: dict) -> dict | None:
+    """The existing-building numbldgs fact_value ({value, provenance_ref,
+    coverage_status, units}), or ``None`` when absent (same profile.
+    existing_building_facts sibling as bldgarea - app.profile.builder's
+    BUILDING_FACT_COLUMNS)."""
+    facts = _as_dict(_as_dict(property_profile).get("existing_building_facts"))
+    fact = facts.get("numbldgs")
+    return fact if isinstance(fact, dict) else None
+
+
+def _vacancy_basis(property_profile: dict) -> tuple[bool, Any, Any]:
+    """D-059-R002/R011: whether a recorded bldgarea of 0 is an established
+    vacancy per the official PLUTO data dictionary rule (a zero building-area
+    value with a POSITIVE building count means the area is UNAVAILABLE, not a
+    real zero - never guessed). Vacancy is established ONLY when the profile's
+    numbldgs fact is present, has a usable coverage_status, AND its value is a
+    usable finite non-negative number equal to exactly 0 - numbldgs absent,
+    unusable-coverage, non-numeric, or positive all fail closed (NOT
+    established).
+
+    Returns ``(vacancy_established, raw_numbldgs_value, usable_numbldgs_value)``
+    - the raw value is echoed for traceability even when it does not establish
+    vacancy (e.g. a positive count); the usable value is ``None`` whenever the
+    fact could not be read as a finite non-negative number."""
+    fact = _numbldgs_fact(property_profile)
+    if fact is None:
+        return False, None, None
+    raw_value = fact.get("value")
+    coverage = fact.get("coverage_status")
+    usable_coverage = (
+        isinstance(coverage, str) and coverage in C.USABLE_EXISTING_AREA_COVERAGE_STATUSES
+    )
+    usable_value = _nonnegative_finite_float(raw_value) if usable_coverage else None
+    established = usable_value is not None and usable_value == 0.0
+    return established, raw_value, usable_value
+
+
+def _zero_with_buildings_assumptions(
+    *, raw_bldgarea_value: Any, raw_numbldgs_value: Any, usable_numbldgs_value: float | None
+) -> list[dict]:
+    """D-059-R002: the machine-readable basis for the zero-with-buildings
+    fail-closed outcome - the ORIGINAL recorded zero plus the numbldgs basis
+    that failed to establish vacancy, both kept traceable (the closed
+    unused_floor_area_inputs contract shape has no room for a third field, so
+    this rides in ``assumptions``, the documented generic channel for
+    machine-readable calculation basis records)."""
+    if isinstance(raw_numbldgs_value, bool) or not isinstance(
+        raw_numbldgs_value, int | float | str
+    ):
+        numbldgs_basis_clause = "numbldgs was not present in the property profile"
+        numbldgs_assumption_value: Any = None
+        numbldgs_unit = None
+    elif usable_numbldgs_value is not None:
+        numbldgs_basis_clause = (
+            f"numbldgs was recorded as {usable_numbldgs_value:g}, a positive "
+            "building count (not zero)"
+        )
+        numbldgs_assumption_value = usable_numbldgs_value
+        numbldgs_unit = "buildings"
+    else:
+        numbldgs_basis_clause = (
+            f"numbldgs was recorded as {raw_numbldgs_value!r} but is not usable "
+            "(coverage_status or value)"
+        )
+        numbldgs_assumption_value = raw_numbldgs_value
+        numbldgs_unit = None
+    return [
+        {
+            "key": "existing_building_area_recorded_zero",
+            "assumption_type": "not_computable_basis",
+            "value": raw_bldgarea_value,
+            "unit": "square_feet",
+            "rationale": (
+                "PLUTO recorded the existing-building bldgarea fact as exactly "
+                "0; the recorded zero is preserved here even though it was NOT "
+                "consumed as a usable existing area (see "
+                "existing_building_area_unusable)."
+            ),
+        },
+        {
+            "key": "existing_building_area_numbldgs_basis",
+            "assumption_type": "not_computable_basis",
+            "value": numbldgs_assumption_value,
+            "unit": numbldgs_unit,
+            "rationale": (
+                "Official PLUTO data dictionary (D-059-R011): a recorded "
+                "bldgarea of 0 with a positive building count means the "
+                "existing building area is UNAVAILABLE, not a real zero; "
+                "vacancy is established only when numbldgs is present, usable, "
+                f"and exactly 0. Here, {numbldgs_basis_clause}, so vacancy is "
+                "NOT established and this fails closed rather than guessing."
+            ),
+        },
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -304,6 +411,37 @@ def build_unused_floor_area_section(
             assumptions=[],
             inputs=inputs_missing,
         )
+
+    # (b2) D-059-R002/R011: a recorded bldgarea of exactly 0 is USABLE only when
+    # this SAME profile establishes vacancy via numbldgs (present, usable
+    # coverage_status, and == 0). The official PLUTO data dictionary states a
+    # zero building-area value with a positive building count means the area is
+    # UNAVAILABLE, not a real zero; when numbldgs is absent, unusable, or
+    # positive, vacancy is NOT established and this fails closed to the SAME
+    # typed reason as case (b) - never guessed as a vacant lot. Routes to
+    # professional review (unlike case (a)/(b): a recorded zero alongside
+    # buildings is a data discrepancy that needs a qualified human, not a
+    # silent skip). The original zero and the numbldgs basis stay traceable in
+    # assumptions (the closed inputs shape has no third field for numbldgs).
+    if existing_area == 0.0:
+        vacancy_established, raw_numbldgs_value, usable_numbldgs_value = _vacancy_basis(
+            property_profile
+        )
+        if not vacancy_established:
+            return _section(
+                state=State.NOT_COMPUTABLE,
+                value=None,
+                professional_review_required=True,
+                over_built_statement=None,
+                not_computable_reason=Reason.EXISTING_BUILDING_AREA_UNUSABLE,
+                formula=None,
+                assumptions=_zero_with_buildings_assumptions(
+                    raw_bldgarea_value=fact_value,
+                    raw_numbldgs_value=raw_numbldgs_value,
+                    usable_numbldgs_value=usable_numbldgs_value,
+                ),
+                inputs=inputs_missing,
+            )
 
     # ------------------------------------------------------------------
     # COMPUTED / OVER_BUILT: cap - existing built area, UNROUNDED. The cap is

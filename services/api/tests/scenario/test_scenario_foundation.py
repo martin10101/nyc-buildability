@@ -407,6 +407,112 @@ def test_as12_degenerate_empty_inputs_fail_closed_not_crash():
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# D-059-R003: coverage descriptions and displayed section references must be
+# DERIVED from the actually-evaluated rule, never a hardcoded district family
+# or Zoning Resolution section (the R6-R12 family cites ZR 23-22, not the
+# R1-R5 families' 23-21 - the old code hardcoded "(R5)" / "ZR 23-21"
+# regardless of which family was evaluated). Exercised for one low-density
+# (R5, the canonical fixture) and one higher-density (R6-R12) district.
+# ---------------------------------------------------------------------------
+
+
+def _r6_r12_rule_evaluation() -> dict:
+    """A rule_evaluation whose evaluated trace is the REAL r6-r12-residential-far
+    rule (rules/rulesets/r6_r12_residential_far.rule.json: rule_id, citation
+    snapshot_id/section 23-22, R9A's standard-residences FAR 7.52) instead of
+    the canonical fixture's r5-residential-far/23-21 trace - built by editing a
+    deep copy so every OTHER field (provenance wiring, bbl, etc.) stays the
+    same shape the rule engine actually emits."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    trace = rule_evaluation["evaluations"][0]
+    far = 7.52
+    lot_area = trace["evaluated_inputs"]["lot_area_sq_ft"]
+    trace["rule_id"] = "r6-r12-residential-far"
+    trace["evaluated_inputs"]["zoning_district"] = "R9A"
+    trace["applicability_trace"][0]["detail"]["values"] = ["R9A"]
+    trace["applicability_trace"][0]["detail"]["value_seen"] = "R9A"
+    trace["computation_steps"][0]["resolved_args"] = [far]
+    trace["computation_steps"][0]["result"] = far
+    trace["computation_steps"][1]["resolved_args"] = [lot_area, far]
+    trace["computation_steps"][1]["result"] = lot_area * far
+    trace["outputs"] = {
+        "max_residential_far": far,
+        "max_residential_floor_area_sq_ft": lot_area * far,
+    }
+    citation_provenance = dict(trace["citations"][0]["provenance"])
+    citation_provenance.update(
+        snapshot_id="zr-23-22",
+        request_url="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+        section_number="23-22",
+        section_title="Maximum Floor Area Ratio for R6 Through R12 Districts",
+    )
+    trace["citations"] = [
+        {
+            "snapshot_id": "zr-23-22",
+            "section": "23-22",
+            "quote": (
+                "MAXIMUM FLOOR AREA RATIO FOR R6-R12 DISTRICTS. Separate maximum "
+                "residential floor area ratios are set forth for zoning lots "
+                "containing standard residences and zoning lots containing "
+                "qualifying affordable housing or qualifying senior housing."
+            ),
+            "last_amended": "2024-12-05",
+            "provenance": citation_provenance,
+        }
+    ]
+    rule_evaluation["zoning_district"] = "R9A"
+    rule_evaluation["family_coverage"]["rule_ids"] = ["r6-r12-residential-far"]
+    for candidate in rule_evaluation["spatial_uncertainty"]["base_district_candidates"]:
+        candidate["district_label"] = "R9A"
+    return rule_evaluation
+
+
+def test_as_r003_low_density_r5_derives_coverage_and_section_labels():
+    document = build_scenario(S.profile(), S.canonical_rule_evaluation())
+    validate_scenario_document(document)
+
+    assert "23-21" in document["cap_label"]
+    assert "23-22" not in document["cap_label"]
+    assert "23-21" in document["reasons"][0]
+
+    cap_row = _constraint_matrix_row(document, "residential_far_cap")
+    assert cap_row["governs"] == "draft max residential zoning floor area (R5)"
+
+
+def test_as_r003_higher_density_r6_r12_derives_coverage_and_section_labels():
+    rule_evaluation = _r6_r12_rule_evaluation()
+    document = build_scenario(S.profile(), rule_evaluation)
+    validate_scenario_document(document)
+
+    # The displayed section reference matches the ACTUAL evaluated rule's own
+    # citation (23-22), never the stale hardcoded R1-R5 section (23-21).
+    assert "23-22" in document["cap_label"]
+    assert "23-21" not in document["cap_label"]
+    assert "23-22" in document["reasons"][0]
+    assert "23-21" not in document["reasons"][0]
+
+    # No hardcoded "(R5)" coverage wording survives for a non-R5 evaluation;
+    # the family named is the one that was ACTUALLY evaluated (R6-R12).
+    cap_row = _constraint_matrix_row(document, "residential_far_cap")
+    assert cap_row["governs"] == "draft max residential zoning floor area (R6-R12)"
+    assert "R5" not in cap_row["governs"]
+
+    # No universal "non-R5" phrasing survives elsewhere in the matrix either.
+    for row in document["coverage_matrix"]:
+        assert "non-r5" not in row["governs"].lower()
+        assert "(r5)" not in row["governs"].lower() or row["constraint_family"] == (
+            "residential_far_cap"
+        )
+
+
+def _constraint_matrix_row(document: dict, constraint_family: str) -> dict:
+    for row in document["coverage_matrix"]:
+        if row["constraint_family"] == constraint_family:
+            return row
+    raise AssertionError(f"coverage_matrix row {constraint_family!r} not found")
+
+
 @pytest.mark.parametrize(
     "rule_evaluation_factory",
     [

@@ -53,12 +53,20 @@ def profile_with_bldgarea(
     units: str | None = "square_feet",
     with_fact: bool = True,
     with_provenance: bool = True,
+    numbldgs: dict | None = None,
 ):
     """A profile that (optionally) carries an existing-building bldgarea fact whose
     provenance_ref resolves against the root provenance[] array - the SAME resolution
     pattern lot area uses. bbl matches the canonical rule_evaluation so the scenario
-    stays a preliminary (no bbl-mismatch conflict)."""
+    stays a preliminary (no bbl-mismatch conflict).
+
+    ``numbldgs`` optionally supplies the SIBLING existing_building_facts.numbldgs fact
+    (e.g. ``{"value": 0.0, "coverage_status": "conditional"}``) - the D-059-R002/R011
+    vacancy basis a zero bldgarea needs to be consumed as a usable zero. Omitted
+    entirely (``None``, the default) means numbldgs is ABSENT from the profile.
+    """
     prof = S.profile()
+    facts: dict = {}
     if with_fact:
         fact = {
             "value": value,
@@ -67,7 +75,11 @@ def profile_with_bldgarea(
         }
         if units is not None:
             fact["units"] = units
-        prof["existing_building_facts"] = {"bldgarea": fact}
+        facts["bldgarea"] = fact
+    if numbldgs is not None:
+        facts["numbldgs"] = numbldgs
+    if facts:
+        prof["existing_building_facts"] = facts
     if with_provenance:
         prof["provenance"].append(
             {
@@ -79,6 +91,11 @@ def profile_with_bldgarea(
             }
         )
     return prof
+
+
+def _vacant_numbldgs(coverage_status: str = "conditional") -> dict:
+    """The established-vacancy numbldgs fact (present, usable, == 0)."""
+    return {"value": 0.0, "coverage_status": coverage_status}
 
 
 def _section(document: dict) -> dict:
@@ -205,15 +222,20 @@ def test_s3_zero_boundary_is_computed_not_over_built():
     assert section["assumptions"] == [C.zoning_lot_extent_assumption()]
 
 
-def test_s1_vacant_lot_zero_existing_area_is_usable_and_computed():
-    """G4 correction C1: an existing area of exactly 0.0 (a vacant lot) is a
-    USABLE input (_nonnegative_finite_float, deliberately not _positive_...)
-    and yields the C1 headline answer - the full draft cap as unused floor
-    area. Kills the one-character mutant that would reclassify a vacant lot
-    as existing_building_area_unusable."""
+def test_s1_established_vacancy_zero_existing_area_is_usable_and_computed():
+    """D-059-R002/R011 correction (formerly a MISCAST 'vacant lot' test that
+    supplied bldgarea=0 WITHOUT establishing vacancy - the exact defect the
+    reviewer flagged). An existing area of exactly 0.0 is a USABLE input
+    (_nonnegative_finite_float, deliberately not _positive_...) and yields the
+    C1 headline answer - the full draft cap as unused floor area - ONLY when
+    the SAME profile's numbldgs fact establishes vacancy (present, usable,
+    exactly 0). Kills the one-character mutant that would reclassify an
+    established-vacancy lot as existing_building_area_unusable."""
     rule_evaluation = S.canonical_rule_evaluation()
     cap = S.trace_cap(rule_evaluation)
-    document = build_scenario(profile_with_bldgarea(0.0), rule_evaluation)
+    document = build_scenario(
+        profile_with_bldgarea(0.0, numbldgs=_vacant_numbldgs()), rule_evaluation
+    )
     validate_scenario_document(document)
 
     section = _section(document)
@@ -223,6 +245,107 @@ def test_s1_vacant_lot_zero_existing_area_is_usable_and_computed():
     assert section["inputs"]["existing_building_floor_area"]["value_sq_ft"] == 0.0
     assert section["professional_review_required"] is False
     assert document["professional_review_required"] is False
+
+
+# ---------------------------------------------------------------------------
+# D-059-R002/R011 - bldgarea == 0 WITHOUT established vacancy fails closed
+# (never consumed as a real/vacant zero). Reproduces the reviewer's exact
+# unit-level case: one building, recorded bldgarea 0, a positive draft cap -
+# the OLD code returned the full cap as unused with no not_computable reason
+# and no professional-review flag. RED on that old behavior.
+# ---------------------------------------------------------------------------
+
+
+def test_s1_zero_with_positive_numbldgs_fails_closed_red_on_old():
+    """The reviewer's exact reproduction case: one building (numbldgs=1),
+    recorded bldgarea 0, a positive draft cap. The OLD code returned
+    computed=cap (the full cap as 'unused'), no not_computable_reason, and no
+    professional-review flag - exactly what this test forbids."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    cap = S.trace_cap(rule_evaluation)
+    document = build_scenario(
+        profile_with_bldgarea(0.0, numbldgs={"value": 1.0, "coverage_status": "conditional"}),
+        rule_evaluation,
+    )
+    validate_scenario_document(document)
+
+    section = _section(document)
+    # RED-ON-OLD: the pre-fix code computed this as `cap` (COMPUTED); the fix
+    # must fail closed instead.
+    assert section["state"] == State.NOT_COMPUTABLE.value
+    assert section["unused_draft_zoning_floor_area_sq_ft"] != cap
+    assert section["unused_draft_zoning_floor_area_sq_ft"] is None  # never estimated
+    assert section["not_computable_reason"] == Reason.EXISTING_BUILDING_AREA_UNUSABLE.value
+    # Escalates to professional review at BOTH levels (unlike the generic
+    # unusable-coverage-status case, which does not).
+    assert section["professional_review_required"] is True
+    assert document["professional_review_required"] is True
+
+    # The original zero and the numbldgs basis (1, a positive count) stay
+    # traceable in assumptions (the closed inputs shape has no numbldgs field).
+    assert len(section["assumptions"]) == 2
+    zero_assumption, numbldgs_assumption = section["assumptions"]
+    assert zero_assumption["key"] == "existing_building_area_recorded_zero"
+    assert zero_assumption["value"] == 0.0
+    assert numbldgs_assumption["key"] == "existing_building_area_numbldgs_basis"
+    assert numbldgs_assumption["value"] == 1.0
+    assert "1" in numbldgs_assumption["rationale"]
+    assert "positive" in numbldgs_assumption["rationale"].lower()
+
+
+def test_s1_zero_with_absent_numbldgs_fails_closed():
+    """numbldgs absent entirely (the shared _support PROFILE shape, and any
+    real profile that never received the column) - vacancy is never guessed."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    document = build_scenario(profile_with_bldgarea(0.0), rule_evaluation)  # no numbldgs
+    validate_scenario_document(document)
+
+    section = _section(document)
+    assert section["state"] == State.NOT_COMPUTABLE.value
+    assert section["unused_draft_zoning_floor_area_sq_ft"] is None
+    assert section["not_computable_reason"] == Reason.EXISTING_BUILDING_AREA_UNUSABLE.value
+    assert section["professional_review_required"] is True
+    assert document["professional_review_required"] is True
+    numbldgs_assumption = section["assumptions"][1]
+    assert numbldgs_assumption["value"] is None
+    assert "not present" in numbldgs_assumption["rationale"]
+
+
+@pytest.mark.parametrize("bad_numbldgs_coverage", ["data_conflict", "unsupported"])
+def test_s1_zero_with_unusable_numbldgs_coverage_fails_closed(bad_numbldgs_coverage):
+    """numbldgs is present but its own coverage_status makes it unusable -
+    treated the SAME as absent (never guessed)."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    document = build_scenario(
+        profile_with_bldgarea(
+            0.0, numbldgs={"value": 0.0, "coverage_status": bad_numbldgs_coverage}
+        ),
+        rule_evaluation,
+    )
+    validate_scenario_document(document)
+
+    section = _section(document)
+    assert section["state"] == State.NOT_COMPUTABLE.value
+    assert section["not_computable_reason"] == Reason.EXISTING_BUILDING_AREA_UNUSABLE.value
+    assert section["professional_review_required"] is True
+
+
+def test_s1_zero_with_nonnumeric_numbldgs_fails_closed():
+    """numbldgs has a usable coverage_status but a malformed (non-numeric)
+    value - fails closed, never coerced or guessed."""
+    rule_evaluation = S.canonical_rule_evaluation()
+    document = build_scenario(
+        profile_with_bldgarea(
+            0.0, numbldgs={"value": "one", "coverage_status": "conditional"}
+        ),
+        rule_evaluation,
+    )
+    validate_scenario_document(document)
+
+    section = _section(document)
+    assert section["state"] == State.NOT_COMPUTABLE.value
+    assert section["not_computable_reason"] == Reason.EXISTING_BUILDING_AREA_UNUSABLE.value
+    assert section["professional_review_required"] is True
 
 
 def test_s1_fractional_remainder_is_unrounded():

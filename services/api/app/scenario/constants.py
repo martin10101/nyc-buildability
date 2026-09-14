@@ -25,13 +25,44 @@ RESIDENTIAL_FAR_FAMILY = "residential_far"
 
 # The mandatory label attached to a surfaced cap (proposal section 5.4). It is
 # attached to the value so the cap can never travel without its honest framing.
-DRAFT_CAP_LABEL = (
-    "DRAFT maximum residential ZONING-FLOOR-AREA CAP under ZR 23-21. NOT gross, "
-    "net, sellable, or feasible floor area; NOT a buildable envelope. Height, "
-    "stories, setbacks, yards, lot coverage, open space, parking, and "
-    "street-wall constraints are UNKNOWN (see coverage matrix). Draft rule "
-    "(needs_review); requires professional review; NOT Verified."
-)
+#
+# D-059-R003: the displayed section reference MUST be derived from the actually
+# -evaluated rule's own citation, never hardcoded - the R6-R12 family cites ZR
+# 23-22, not the R1-R5 families' 23-21. ``draft_cap_label`` builds the label from
+# whatever section the live evaluation cited; the builder calls it with the real
+# citation (see builder.py's ``_assemble`` / preliminary branch).
+def draft_cap_label(section_reference: str | None) -> str:
+    """The mandatory cap label, with the Zoning Resolution section clause built
+    from the ACTUAL evaluated rule's citation (``section_reference``) rather than
+    a hardcoded section number. Falls back to a section-agnostic clause (never
+    invents a section) when no citation is available."""
+    section_clause = (
+        f"under ZR {section_reference}"
+        if isinstance(section_reference, str) and section_reference
+        else "under the cited Zoning Resolution bulk-regulation section (see "
+        "cap_provenance.citations for the exact section)"
+    )
+    return (
+        f"DRAFT maximum residential ZONING-FLOOR-AREA CAP {section_clause}. NOT "
+        "gross, net, sellable, or feasible floor area; NOT a buildable envelope. "
+        "Height, stories, setbacks, yards, lot coverage, open space, parking, "
+        "and street-wall constraints are UNKNOWN (see coverage matrix). Draft "
+        "rule (needs_review); requires professional review; NOT Verified."
+    )
+
+
+# Backward-compatible module constant for the small set of consumers OUTSIDE
+# this task's allowed_paths that import ``DRAFT_CAP_LABEL`` directly (derive.py's
+# malformed-input fallback, scenario/__init__.py's re-export, and
+# tests/scenario/test_scenario_derive.py's exact-equality fixtures) - none of
+# those files may be edited by this task. It is byte-identical to
+# ``draft_cap_label("23-21")``, which is what every one of those consumers'
+# fixtures actually evaluates (the R5 canonical rule_evaluation fixture cites
+# ZR 23-21), so this stays a harmless, literally-correct legacy alias, NOT a
+# universal label: the live builder path (constants.py + builder.py, this
+# task's scope) no longer reads this constant - it calls ``draft_cap_label``
+# with the real per-request citation for every district family.
+DRAFT_CAP_LABEL = draft_cap_label("23-21")
 
 # ---------------------------------------------------------------------------
 # C1 unused draft zoning floor area (D-041). Precise-noun labeling per
@@ -44,20 +75,40 @@ DRAFT_CAP_LABEL = (
 # ---------------------------------------------------------------------------
 
 # Machine label for the section (the precise-noun wording, owner-approved).
+#
+# D-059-R001: this is a LIMITED COMPARISON OF RECORDED DATA, not a verified ZR
+# 12-10 zoning-floor-area difference. PLUTO bldgarea is recorded gross building
+# area (condo lots carry different, net-based recording semantics per the
+# connector's own FIELD_UNITS source note) - it is not a confirmed existing ZR
+# 12-10 zoning-floor-area figure, so a positive result does not by itself
+# establish unused legal development rights and a negative result does not by
+# itself establish zoning noncompliance. The wording below deliberately never
+# calls the result "a zoning floor-area difference" and never claims
+# development-rights significance.
 UNUSED_FLOOR_AREA_LABEL = (
-    "Unused draft zoning floor area (FAR-derived): the DRAFT residential "
-    "zoning-floor-area cap (ZR 23-21) minus the existing built floor area. A "
-    "zoning floor-area difference only, under the draft label and per-fact "
-    "provenance discipline."
+    "Unused draft zoning floor area (FAR-derived): a RECORDED-DATA COMPARISON, "
+    "not a ZR 12-10 zoning floor-area difference. PLUTO's recorded existing "
+    "building floor area (bldgarea - generally gross building area; "
+    "condominium lots use different, net-based recording semantics) subtracted "
+    "from the DRAFT residential zoning-floor-area cap. PLUTO bldgarea is not a "
+    "confirmed existing ZR 12-10 zoning floor area figure, so this comparison "
+    "does not by itself establish unused legal development rights (a positive "
+    "result) or zoning noncompliance (a negative result); a development-rights "
+    "determination would additionally require a compatible, supported existing "
+    "zoning-floor-area input and a confirmed zoning-lot extent."
 )
 
 # The scope note (a document field, not display text): geometry NOT assessed.
 UNUSED_FLOOR_AREA_SCOPE_NOTE = (
-    "Scope: this is a zoning floor-area difference only. Building geometry - "
-    "height, yards, setbacks, layout, lot coverage, open space - has NOT been "
-    "assessed by this calculation. It does not establish achievable floor area "
-    "or a buildable envelope, and the tax lot is treated as the zoning lot "
-    "(see the zoning_lot_extent assumption)."
+    "Scope: this is a recorded-data comparison, not a ZR 12-10 zoning "
+    "floor-area difference and not a development-rights calculation. Building "
+    "geometry - height, yards, setbacks, layout, lot coverage, open space - has "
+    "NOT been assessed by this calculation. It does not establish achievable "
+    "floor area or a buildable envelope, and the tax lot is treated as the "
+    "zoning lot (see the zoning_lot_extent assumption). A development-rights "
+    "determination would additionally require a compatible, supported existing "
+    "ZR 12-10 zoning-floor-area input (not PLUTO recorded bldgarea) and a "
+    "confirmed zoning-lot extent."
 )
 
 # The honest explicit statement surfaced on an over-built (negative) remainder.
@@ -101,6 +152,24 @@ def zoning_lot_extent_assumption() -> dict:
             "arrangement is confirmed by a qualified professional."
         ),
     }
+
+
+def preliminary_cap_reason(section_reference: str | None) -> str:
+    """The ``reasons[0]`` text for a preliminary scenario (D-059-R003): the
+    Zoning Resolution section named is the ACTUAL evaluated rule's own citation
+    (``section_reference``), never a hardcoded section number. Omits the
+    parenthetical entirely when no citation is available (never invents one)."""
+    section_clause = (
+        f"(ZR {section_reference}) "
+        if isinstance(section_reference, str) and section_reference
+        else ""
+    )
+    return (
+        "Preliminary scenario: surfaced the canonical draft residential "
+        f"zoning-floor-area cap {section_clause}from the rule_evaluation trace, "
+        "verbatim. NOT a buildable envelope - see the coverage matrix for the "
+        "rule families still MISSING."
+    )
 
 
 # The permanent honest disclaimer stamped on every scenario, regardless of kind.
@@ -175,12 +244,19 @@ def completeness_for_blocking(blocks_envelope: bool) -> DataCompleteness:
 # The rule-coverage dependency matrix (proposal section 7), emitted verbatim on
 # every scenario. Only the first row exists today; everything else is MISSING or
 # out of scope and MUST NOT be inferred.
+#
+# D-059-R003: the first row's ``governs`` text below is a section-agnostic
+# FALLBACK only (used when no cap was surfaced, so no family is known). When a
+# cap WAS surfaced, ``coverage_matrix_rows`` overwrites it with a description
+# derived from the ACTUALLY-EVALUATED rule's own ``rule_id`` (e.g. R6-R12 for
+# ``r6-r12-residential-far``) - it never hardcodes a single district family
+# (the R5 wording previously survived even when an R6-R12 rule was evaluated).
 # ---------------------------------------------------------------------------
 # (constraint_family, governs, rule_status_today, blocks_buildable_envelope)
 COVERAGE_MATRIX = (
     (
         "residential_far_cap",
-        "draft max residential zoning floor area (R5)",
+        "draft max residential zoning floor area",
         "draft",
         False,
     ),
@@ -199,7 +275,7 @@ COVERAGE_MATRIX = (
     ("density_bonuses", "density bonuses (e.g. inclusionary housing)", "missing", False),
     (
         "higher_density_bulk_tower",
-        "higher-density bulk / tower massing (non-R5)",
+        "higher-density bulk / tower massing",
         "out_of_scope",
         False,
     ),
@@ -211,16 +287,51 @@ COVERAGE_MATRIX = (
     ),
 )
 
+# residential_far rule_id -> displayed district-family label, derived purely by
+# string transform (never a hand-maintained per-district lookup table): every
+# rule in rules/rulesets/*_residential_far.rule.json is named
+# "<district-family-stem>-residential-far" (e.g. "r5-residential-far",
+# "r6-r12-residential-far"); the stem, upper-cased, is the label ("R5",
+# "R6-R12"). D-059-R003: this is what lets the coverage-matrix / cap-label text
+# reflect whichever family was ACTUALLY evaluated instead of a hardcoded one.
+_RESIDENTIAL_FAR_RULE_ID_SUFFIX = "-residential-far"
 
-def coverage_matrix_rows() -> list[dict]:
+
+def _residential_far_family_label(rule_id: object) -> str | None:
+    """The district-family label for a residential_far ``rule_id`` (e.g. "R5",
+    "R6-R12"), or ``None`` when ``rule_id`` is not a recognized
+    ``<stem>-residential-far`` id (never guesses; the caller falls back to a
+    family-agnostic description)."""
+    if not isinstance(rule_id, str) or not rule_id.endswith(
+        _RESIDENTIAL_FAR_RULE_ID_SUFFIX
+    ):
+        return None
+    stem = rule_id[: -len(_RESIDENTIAL_FAR_RULE_ID_SUFFIX)]
+    return stem.upper() if stem else None
+
+
+def coverage_matrix_rows(cap_rule_id: object = None) -> list[dict]:
     """Materialize the coverage matrix as contract rows (fresh list each call so
-    a caller can never mutate the module constant)."""
-    return [
-        {
-            "constraint_family": family,
-            "governs": governs,
-            "rule_status_today": status,
-            "blocks_buildable_envelope": blocks,
-        }
-        for family, governs, status, blocks in COVERAGE_MATRIX
-    ]
+    a caller can never mutate the module constant).
+
+    ``cap_rule_id`` is the ``rule_id`` of the residential_far rule that actually
+    produced a surfaced cap (``cap_provenance["rule_id"]``), or ``None`` on any
+    outcome with no surfaced cap. D-059-R003: when a family label can be derived
+    from it, the ``residential_far_cap`` row's ``governs`` text names that
+    family (e.g. "(R6-R12)"); otherwise the row stays family-agnostic - it never
+    falls back to a specific, possibly-wrong district family.
+    """
+    family_label = _residential_far_family_label(cap_rule_id)
+    rows = []
+    for family, governs, status, blocks in COVERAGE_MATRIX:
+        if family == "residential_far_cap" and family_label is not None:
+            governs = f"{governs} ({family_label})"
+        rows.append(
+            {
+                "constraint_family": family,
+                "governs": governs,
+                "rule_status_today": status,
+                "blocks_buildable_envelope": blocks,
+            }
+        )
+    return rows
