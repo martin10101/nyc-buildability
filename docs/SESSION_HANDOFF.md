@@ -20,7 +20,10 @@ Accepted by milestone: M0 138 · M1 9 · M2 21 · M3 1 · M4 15 · M5 26 = **210
 
 `C:\SupervisorController\model_selection.toml` line 39: `model = "claude-fable-5"` →
 `model = "claude-opus-4-8"`, save. Then relaunch via `scratchpad/relaunch_m4t021.ps1` (adapt:
-fresh run-id, NEXT packet — not M4-T021, which is already accepted). Authorization is
+fresh run-id, NEXT packet — not M4-T021, which is already accepted). **Arm a fresh break
+watcher after the relaunch** — the previous one (armed for run persistent-local-34) expired at
+its 8-hour NO_LAUNCH timeout and exited, so nothing is watching now; pattern in
+`scratchpad/loop_break_watcher_m4t020.sh`, report BREAK/FREEZE/CLOSED only (quiet monitor). Authorization is
 PRE-RECORDED as **D-060-R002**; revert obligation **D-060-R003** (back to Fable the moment it
 returns). Do NOT retry the edit as the agent — the classifier blocks it and the controller
 states the write is the owner's (S3.2 rule 6). Alternative: raise extra usage on the account,
