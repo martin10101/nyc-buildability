@@ -19,12 +19,14 @@ export function FactsTable({
   facts,
   byId,
   reproducibility,
+  onInspect,
 }: {
   title: string;
   note?: string;
   facts: Record<string, FactValue>;
   byId: Map<string, SourceFact>;
   reproducibility?: Reproducibility;
+  onInspect?: (id: string) => void;
 }) {
   const entries = Object.entries(facts);
   if (entries.length === 0) {
@@ -74,11 +76,11 @@ export function FactsTable({
                   )}
                 </td>
                 <td>
-                  <ProvenanceDisclosure
+                  {onInspect && record ? <button type="button" className="architect-text-button" onClick={() => onInspect(record.provenance_id)}>Source for {fieldLabel(field)}</button> : <ProvenanceDisclosure
                     records={record ? [record] : []}
                     reproducibility={reproducibility}
                     label={`Source for ${fieldLabel(field)}`}
-                  />
+                  />}
                 </td>
               </tr>
             );

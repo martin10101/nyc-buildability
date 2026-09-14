@@ -40,7 +40,7 @@ const FALLBACK_PAGE: ReviewPage = {
   coordinate_space: null,
 };
 
-export function SurveyReviewScreen({ documentDigest }: { documentDigest: string }) {
+export function SurveyReviewScreen({ documentDigest, onPropertyChange }: { documentDigest: string; onPropertyChange?: (bbl: string) => void }) {
   const client = useSurveyReviewClient();
   const [loading, setLoading] = useState(true);
   const [readOutcome, setReadOutcome] = useState<ReadDocumentOutcome | null>(null);
@@ -87,6 +87,8 @@ export function SurveyReviewScreen({ documentDigest }: { documentDigest: string 
       outcomeRef.current?.querySelector<HTMLElement>("[data-outcome-heading]")?.focus();
     }
   }, [loading, readOutcome]);
+
+  useEffect(() => { if (document) onPropertyChange?.(document.target_bbl); }, [document, onPropertyChange]);
 
   const applyUpdated = useCallback((outcome: ActionOutcome): ActionOutcome => {
     if (outcome.kind === "updated") {

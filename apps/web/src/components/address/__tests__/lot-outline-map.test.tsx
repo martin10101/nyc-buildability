@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   LOT_OUTLINE_MAX_ZOOM,
@@ -41,7 +41,7 @@ const mocks = vi.hoisted(() => {
   const navigationCtor = vi.fn();
   const state = {
     styleAlreadyLoaded: false,
-    errorListeners: [] as Array<() => void>,
+    errorListeners: [] as Array<(event?: { sourceId?: string }) => void>,
   };
 
   class MockMap {
@@ -61,7 +61,7 @@ const mocks = vi.hoisted(() => {
       if (state.styleAlreadyLoaded) return;
       if (type === "load") queueMicrotask(cb);
     }
-    on(type: string, cb: () => void) {
+    on(type: string, cb: (event?: { sourceId?: string }) => void) {
       if (type === "error") state.errorListeners.push(cb);
     }
     addSource(id: string, source: unknown) {
@@ -106,8 +106,8 @@ const mocks = vi.hoisted(() => {
     setStyleAlreadyLoaded(value: boolean) {
       state.styleAlreadyLoaded = value;
     },
-    fireMapError() {
-      state.errorListeners.forEach((cb) => cb());
+    fireMapError(sourceId?: string) {
+      state.errorListeners.forEach((cb) => cb(sourceId ? { sourceId } : undefined));
     },
   };
 });
@@ -503,5 +503,22 @@ describe("LotOutlineMap — map 'error' event routes to a typed fallback (D-056-
     );
     const summary = screen.getByTestId("lot-outline-summary").textContent ?? "";
     expect(summary).toContain("could not be rendered");
+  });
+});
+
+
+describe("M5-T029 source-backed street context", () => {
+  it("keeps the parcel available when an individual street layer fails", async () => {
+    enableWebgl();
+    render(<LotOutlineMap bbl="1008350041" context fetchImpl={fetchReturning(jsonResponse(fixture("single_lot_polygon")))} />);
+    await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
+    expect(screen.getByRole("button", { name: "Recenter lot" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Zoning boundaries" })).not.toBeChecked();
+    act(() => mocks.fireMapError("nyc-basemap"));
+    expect(screen.getByText(/Street basemap: unavailable/)).toBeInTheDocument();
+    expect(screen.getByTestId("lot-outline-map")).toBeInTheDocument();
+    expect(screen.queryByTestId("lot-outline-render-error")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Recenter lot" }));
+    expect(mocks.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: 72, duration: 0, maxZoom: 18.5 });
   });
 });

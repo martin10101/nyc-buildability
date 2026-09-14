@@ -14,6 +14,7 @@ import {
   type AddressOutcome,
   type AddressQuery,
 } from "@/lib/address-api";
+import { AddressAutocomplete } from "@/components/architect/AddressAutocomplete";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import { AddressConfirmCard } from "./AddressConfirmCard";
 import {
@@ -81,7 +82,7 @@ function ResolvingCard({ focusOnMount }: { focusOnMount: boolean }) {
   );
 }
 
-export function AddressResolutionScreen() {
+export function AddressResolutionScreen({ architect = false }: { architect?: boolean } = {}) {
   const [values, setValues] = useState<AddressFormValues>(EMPTY_ADDRESS_FORM);
   /** Query currently being resolved, or null when nothing is in flight. */
   const [loadingQuery, setLoadingQuery] = useState<AddressQuery | null>(null);
@@ -96,6 +97,7 @@ export function AddressResolutionScreen() {
   /** Wraps the rendered outcome; arrival focus queries inside it (D1). */
   const outcomeRef = useRef<HTMLDivElement | null>(null);
   const streetInputRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteRef = useRef<HTMLInputElement | null>(null);
 
   // Cancel any in-flight request on unmount.
   useEffect(() => () => abortRef.current?.abort(), []);
@@ -173,8 +175,8 @@ export function AddressResolutionScreen() {
   }, [result, runResolve]);
 
   const editAddress = useCallback(() => {
-    streetInputRef.current?.focus();
-  }, []);
+    (architect ? autocompleteRef : streetInputRef).current?.focus();
+  }, [architect]);
 
   /** M5-T016 "Not my property": back to entry. The result clears (the
    * card unmounts, the announcer goes silent), the FORM VALUES are
@@ -182,8 +184,8 @@ export function AddressResolutionScreen() {
    * input. No fetch fires. */
   const notMyProperty = useCallback(() => {
     setResult(null);
-    streetInputRef.current?.focus();
-  }, []);
+    (architect ? autocompleteRef : streetInputRef).current?.focus();
+  }, [architect]);
 
   // D1: the single outcome announcement — cleared while resolving so a
   // repeated identical outcome (e.g. retry fails the same way) announces.
@@ -204,6 +206,7 @@ export function AddressResolutionScreen() {
               <AddressConfirmCard
                 outcome={outcome}
                 onNotMyProperty={notMyProperty}
+                architect={architect}
               />
             );
           case "ambiguous":
@@ -257,19 +260,14 @@ export function AddressResolutionScreen() {
             is mounted (G3 F1 — the document outline must not open on an h2;
             PropertyLookup demotes its own heading when the flag is on). */}
         <h1 className="section-title" style={{ fontSize: "1.4rem" }}>
-          Address lookup
+          {architect ? "Find a property" : "Address lookup"}
         </h1>
-        <p className="section-note">
-          Enter a street address and the city&apos;s official Geoclient
-          service resolves it to a tax lot. The city&apos;s service — not
-          this screen — decides what the address means.
-        </p>
-        <AddressForm
-          values={values}
-          onChange={setValues}
-          onSubmit={onSubmit}
-          streetInputRef={streetInputRef}
-        />
+        <p className="section-note">{architect ? "Search an address, then confirm the official lot match." : "Enter a street address for the city’s official Geoclient lot match."}</p>
+        {architect ? <AddressAutocomplete inputRef={autocompleteRef} onPick={query => {
+          setValues({ houseNumber: query.houseNumber, street: query.street, borough: query.borough ?? "", zip: query.zip ?? "" });
+          void runResolve(query);
+        }} onEdit={() => { ++requestSeq.current; abortRef.current?.abort(); setLoadingQuery(null); setResult(null); }} /> : null}
+        {architect ? <details className="provenance-details"><summary>Enter address manually</summary><AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} /></details> : <AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} />}
       </section>
 
       {loadingQuery !== null ? <ResolvingCard focusOnMount={retryFocus} /> : null}

@@ -1,14 +1,14 @@
 {
   "schema": "directive_requirements/v1",
   "directive_id": "D-061",
-  "version": 1,
-  "requirement_count": 8,
+  "version": 2,
+  "requirement_count": 13,
   "producer": "orchestrator",
-  "updated_at": "2026-09-14T20:09:38.435031+00:00",
+  "updated_at": "2026-09-14T20:31:52.846717+00:00",
   "requirements": [
     {
       "id": "D-061-R001",
-      "text": "Build the approved professional front-end presentation and navigation for the architect workflow; keep application calculations, legal rules, API services, database, contracts, credentials and dependencies unchanged.",
+      "text": "Build the approved professional front-end presentation and navigation for the architect workflow.",
       "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
       "classification": "obligation",
       "binding": true,
@@ -107,7 +107,7 @@
     },
     {
       "id": "D-061-R004",
-      "text": "Provide one-box address entry with official address suggestions as the user types and a BBL/manual recovery path. Official address resolution and the existing property contracts remain authoritative.",
+      "text": "Provide one-box address entry so the house number, street and locality can be entered together.",
       "source_ref": "source-001.md#address-and-map-feedback-owner-message-verbatim",
       "classification": "obligation",
       "binding": true,
@@ -206,7 +206,7 @@
     },
     {
       "id": "D-061-R007",
-      "text": "Build and verify the front-end implementation through the existing tests, independent UI and security review, source-link/contract checks and CI before integration. Preserve backend and main.",
+      "text": "Build and verify the front-end implementation through the existing tests, independent UI and security review, source-link/contract checks and CI before integration.",
       "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
       "classification": "evidence",
       "binding": true,
@@ -239,7 +239,7 @@
     },
     {
       "id": "D-061-R008",
-      "text": "Push the reviewed implementation to candidate/D-024-mrl-option-b and deploy the existing front-end service when authorized access is available; report the actual pushed SHA and verified deployment status, including any unavailable deployment credential. Do not merge PR 241 or push main.",
+      "text": "Push the reviewed implementation to candidate/D-024-mrl-option-b.",
       "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
       "classification": "authorization",
       "binding": true,
@@ -266,6 +266,168 @@
         "files": [],
         "tests": [],
         "tasks": []
+      }
+    },
+    {
+      "id": "D-061-R009",
+      "text": "Keep application calculations, legal rules, API services, database, contracts, credentials and dependencies unchanged.",
+      "source_ref": "source-002-amendment.md#front-end-authorization-owner-message-verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Independent intake correction: split existing obligations without removing or weakening them.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R010",
+      "text": "Show official address suggestions as the user types, with a BBL/manual recovery path; official address resolution and existing property records remain authoritative.",
+      "source_ref": "source-001.md#address-and-map-feedback-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Independent intake correction: split existing obligations without removing or weakening them.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
+      }
+    },
+    {
+      "id": "D-061-R011",
+      "text": "Deploy the reviewed interface to the existing front-end service when authorized deployment access is available.",
+      "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
+      "classification": "authorization",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-061-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "Git remote and deployment evidence",
+      "required_evidence": "project-control/reports/M5-T029-delivery.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Independent intake correction: split existing obligations without removing or weakening them.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-061-R012",
+      "text": "Report the actual pushed SHA and verified deployment status, including unavailable deployment access; do not imply that a repository push alone makes the interface live.",
+      "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
+      "classification": "evidence",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-061-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "Git remote and deployment evidence",
+      "required_evidence": "project-control/reports/M5-T029-delivery.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Independent intake correction: split existing obligations without removing or weakening them.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-061-R013",
+      "text": "Preserve the protected main branch and leave PR 241 unmerged throughout this frontend work and its delivery.",
+      "source_ref": "source-003-amendment.md#build-and-push-authorization-owner-message-verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T029",
+          "D-061-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-14"
+      },
+      "dependencies": [],
+      "required_harness": "M5-T029 acceptance scenarios and independent gate review",
+      "required_evidence": "project-control/reports/M5-T029-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Independent intake correction: split existing obligations without removing or weakening them.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T029"
+        ]
       }
     }
   ]

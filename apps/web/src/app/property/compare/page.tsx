@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { ArchitectEntry } from "@/components/architect/ArchitectEntry";
+import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
+import { surveyReviewEnabled } from "@/lib/surveyReview/config";
 import { Suspense } from "react";
 import { CompareEntry } from "@/components/compare/CompareScreen";
 
@@ -16,7 +19,9 @@ export const metadata: Metadata = {
  * prerendering; the fallback is the empty shell (the client resolves the BBL
  * parameter immediately on hydration).
  */
-export default function ComparePage() {
+export default async function ComparePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const params = await searchParams;
+  if (ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval })) return <Suspense fallback={null}><ArchitectEntry defaultView="scenarios" requireBbl surveyEnabled={surveyReviewEnabled()} /></Suspense>;
   return (
     <Suspense fallback={null}>
       <CompareEntry />

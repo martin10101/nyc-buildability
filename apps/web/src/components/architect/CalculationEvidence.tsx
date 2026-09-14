@@ -1,0 +1,121 @@
+import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import type { Scenario } from "@/lib/scenario-contract";
+import { officialZoningTextUrl } from "@/lib/architect/source-links";
+import { formatValue } from "@/lib/format";
+import { CoverageBadge } from "@/components/property/CoverageBadge";
+import { CapturedRecord } from "./EvidenceRecord";
+export function CalculationEvidence({ evaluation, scenario }: {
+    evaluation: RuleEvaluation | null;
+    scenario: Scenario | null;
+}) {
+    return <div className="architect-calculation-evidence">
+    <p className="architect-eyebrow">Deterministic evaluation</p>
+    <h2>How this was calculated</h2>
+    <p className="architect-status">Draft · Professional review required</p>
+    {evaluation ? <>
+      <CoverageBadge status={evaluation.coverage_status}/>
+      {evaluation.reasons.length > 0 ? <ul className="architect-issue-list">
+        {evaluation.reasons.map((reason, i) => <li key={i}>
+          {reason}
+        </li>)}
+      </ul> : null}
+      {evaluation.evaluations.length === 0 ? <p>No applicable computation trace was returned. No result is inferred.</p> : null}
+      {evaluation.evaluations.map((trace, index) => <section className="architect-trace" key={`${trace.rule_id}-${index}`}>
+        <h3>
+          {trace.rule_id || "Rule identifier not supplied"}
+        </h3>
+        <p className="section-note">Version {trace.rule_version || "unknown"} · {trace.rule_status} · Applicability: {trace.applicability_outcome ? "applies" : "does not apply"}
+        </p>
+        <h4>Inputs used</h4>
+        <dl className="architect-definition-list">
+          {Object.entries(trace.evaluated_inputs).map(([key, value]) => <div key={key}>
+            <dt>
+              {key}
+            </dt>
+            <dd>
+              {formatValue(value)}
+            </dd>
+          </div>)}
+        </dl>
+        <h4>Calculation steps</h4>
+        {trace.computation_steps.length ? <div className="table-scroll">
+          <table className="facts-table">
+            <thead>
+              <tr>
+                <th>Step / operation</th>
+                <th>Resolved inputs</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trace.computation_steps.map(step => <tr key={step.step_id}>
+                <th scope="row">
+                  {step.step_id} · {step.op}
+                  {step.note ? <p className="section-note">
+                    {step.note}
+                  </p> : null}
+                </th>
+                <td>
+                  {step.resolved_args.map(formatValue).join(" · ")}
+                </td>
+                <td>
+                  {formatValue(step.result)}
+                </td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div> : <p className="section-note">No calculation steps recorded.</p>}
+        <h4>Outputs</h4>
+        <dl className="architect-definition-list">
+          {Object.entries(trace.outputs).map(([key, value]) => <div key={key}>
+            <dt>
+              {key}
+            </dt>
+            <dd>
+              {formatValue(value)}
+            </dd>
+          </div>)}
+        </dl>
+        <p className="section-note">Units are shown where supplied in the source output.</p>
+        <details className="provenance-details">
+          <summary>Applicability, validation and uncertainty</summary>
+          <CapturedRecord value={{ applicability_trace: trace.applicability_trace, input_validation: trace.input_validation, uncertainty: trace.uncertainty, exceptions_applied: trace.exceptions_applied, notes: trace.notes }}/>
+        </details>
+        <h4>Rule sources</h4>
+        {trace.citations.length ? trace.citations.map((citation, i) => <div className="architect-citation" key={i}>
+          <strong>
+            {citation.section || "Section not supplied"}
+          </strong>
+          <blockquote>
+            {citation.quote}
+          </blockquote>
+          <p className="section-note">Snapshot {citation.snapshot_id} · Last amended {citation.last_amended ?? "not supplied"}
+          </p>
+          {officialZoningTextUrl((citation.provenance as Record<string, unknown>).request_url) ? <p>
+            <a href={officialZoningTextUrl((citation.provenance as Record<string, unknown>).request_url)!} target="_blank" rel="noopener noreferrer">Open current official text ↗</a>
+          </p> : <p className="section-note">Official text link not supplied in a supported form.</p>}
+          <CapturedRecord value={citation.provenance} label="Captured source metadata"/>
+        </div>) : <p>No source citation supplied.</p>}
+        <details className="provenance-details">
+          <summary>Rule version, effective dates and review history</summary>
+          <CapturedRecord value={{ effective_window: trace.effective_window, rule_release: trace.rule_release }}/>
+          <p className="section-note">These are the supplied review statuses. Individual reviewer events are not included in this record.</p>
+        </details>
+        <CapturedRecord value={trace} label="Full evaluation trace"/>
+      </section>)}
+      <CapturedRecord value={evaluation} label="Full rule-evaluation document"/>
+    </> : <p>Rule evaluation has not returned a usable document. No calculation trace is available.</p>}
+    {scenario ? <section className="architect-trace">
+      <h3>Scenario assumptions and area remainder</h3>
+      <p>
+        {scenario.unused_draft_zoning_floor_area.scope_note}
+      </p>
+      <p className="architect-formula">
+        {scenario.unused_draft_zoning_floor_area.formula ?? "No supported remainder formula"}
+      </p>
+      <CapturedRecord value={scenario.assumptions} label="All scenario assumptions"/>
+      <CapturedRecord value={scenario.unused_draft_zoning_floor_area} label="Remainder inputs, result and provenance"/>
+      <CapturedRecord value={scenario} label="Complete scenario record"/>
+    </section> : null}
+  </div>;
+}

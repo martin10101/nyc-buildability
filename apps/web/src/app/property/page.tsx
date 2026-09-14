@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { ArchitectEntry } from "@/components/architect/ArchitectEntry";
+import { surveyReviewEnabled } from "@/lib/surveyReview/config";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
@@ -35,6 +38,7 @@ export default async function PropertyPage({
 }) {
   const params = await searchParams;
   const ruleEvalEnabled = ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval });
+  if (ruleEvalEnabled) return <Suspense fallback={null}><ArchitectEntry surveyEnabled={surveyReviewEnabled()} /></Suspense>;
   return (
     <div className="property-shell">
       <InternalBanner />

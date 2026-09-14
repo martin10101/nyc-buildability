@@ -1,8 +1,7 @@
+import { SurveyWorkspace } from "@/components/architect/SurveyWorkspace";
 import type { Metadata } from "next";
+import "../../property/architect.css";
 import { notFound } from "next/navigation";
-import { InternalBanner } from "@/components/property/InternalBanner";
-import { ReviewInbox } from "@/components/survey-review/ReviewInbox";
-import { SurveyReviewClientProvider } from "@/lib/surveyReview/context";
 import { surveyReviewEnabled } from "@/lib/surveyReview/config";
 import "./survey-review.css";
 
@@ -26,11 +25,6 @@ export const dynamic = "force-dynamic";
 export default function SurveyReviewInboxPage() {
   if (!surveyReviewEnabled()) notFound();
   return (
-    <div className="property-shell">
-      <InternalBanner />
-      <SurveyReviewClientProvider>
-        <ReviewInbox />
-      </SurveyReviewClientProvider>
-    </div>
+    <SurveyWorkspace />
   );
 }

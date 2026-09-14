@@ -1,0 +1,64 @@
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fieldLabel } from "@/lib/format";
+import { baseProfile } from "@/test-support/fixtures";
+import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
+import { ArchitectEntry } from "../ArchitectEntry";
+import type { PropertyProfile } from "@/lib/contract";
+import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+
+const state = vi.hoisted(() => ({ params: new URLSearchParams(), profile: null as PropertyProfile | null, evaluation: null as RuleEvaluation | null, push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useSearchParams: () => state.params, useRouter: () => ({ push: state.push }) }));
+vi.mock("@/lib/architect/use-property", () => ({ useProperty: () => ({ loading: false, outcome: state.profile ? { kind: "profile", profile: state.profile } : null, retry: vi.fn() }) }));
+vi.mock("@/lib/architect/use-analysis", () => ({ useAnalysis: () => ({ scenario: null, evaluation: state.evaluation ? { kind: "evaluation", document: state.evaluation } : null, retryScenario: vi.fn(), retryEvaluation: vi.fn() }) }));
+vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
+beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); });
+
+describe("connected architect entry", () => {
+  it("shows all facts and opens source evidence immediately with Escape returning focus", () => {
+    render(<ArchitectEntry />);
+    const source = screen.getByRole("button", { name: "Source for Lot area" });
+    source.focus(); fireEvent.click(source);
+    const inspector = screen.getByRole("complementary", { name: "Contextual evidence inspector" });
+    expect(inspector).toHaveFocus();
+    expect(within(inspector).getByText("Original value")).toBeInTheDocument();
+    expect(inspector).toHaveClass("has-selection");
+    fireEvent.keyDown(inspector, { key: "Escape" });
+    expect(source).toHaveFocus();
+    for (const field of Object.keys(state.profile!.lot_facts)) expect(screen.getByRole("rowheader", { name: fieldLabel(field) })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Existing building facts" })).toBeInTheDocument();
+  });
+  it("retains the searched label and distinguishes the PLUTO representative address", () => {
+    const bbl = state.profile!.identity.bbl;
+    sessionStorage.setItem(`nyc-buildability:confirmed-address:${bbl}`, JSON.stringify({ bbl, label: "CONFIRMED SEARCHED ADDRESS", confirmedAt: "2026-09-14T00:00:00Z", sourceRecord: {} }));
+    render(<ArchitectEntry />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("CONFIRMED SEARCHED ADDRESS");
+    expect(screen.getByTestId("representative-address")).toHaveTextContent(state.profile!.identity.address!.normalized_address!);
+  });
+  it("withholds an analysis returned for another BBL and preserves its returned evidence", () => {
+    state.params.set("view", "evidence"); state.evaluation = draftApplicableDoc(); state.evaluation.evaluated_input.bbl = "5000010001";
+    render(<ArchitectEntry />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Rule evaluation identity mismatch");
+    expect(screen.getByRole("alert")).toHaveTextContent("5000010001");
+    expect(screen.queryByText("max_residential_far")).not.toBeInTheDocument();
+    expect(screen.getByText("Returned rule evaluation record")).toBeInTheDocument();
+  });
+  it("rejects a mismatched property record before mounting its analysis", () => {
+    state.profile!.identity.bbl = "5000010001";
+    render(<ArchitectEntry />);
+    expect(screen.getByRole("heading", { name: "Property identity mismatch" })).toBeInTheDocument();
+    expect(screen.queryByTestId("profile-view")).not.toBeInTheDocument();
+  });
+  it("preserves explicit absent flags and planned capability states", () => {
+    state.params.set("view", "zoning"); state.profile!.zoning.mapped_features = [];
+    const { rerender } = render(<ArchitectEntry />);
+    expect(screen.getByText("Pending land-use actions")).toBeInTheDocument();
+    expect(screen.getByText("Unknown — source not connected")).toBeInTheDocument();
+    for (const label of ["Landmark", "Historic district", "2007 FIRM flood flag", "2015 preliminary FIRM flood flag"]) expect(screen.getByText(label, { exact: true })).toBeInTheDocument();
+    state.params.set("view", "units"); rerender(<ArchitectEntry />);
+    expect(screen.getByRole("heading", { name: "Units is not available in this version" })).toBeInTheDocument();
+    expect(screen.queryByTestId("architect-cap")).not.toBeInTheDocument();
+  });
+});
+
+afterEach(cleanup);

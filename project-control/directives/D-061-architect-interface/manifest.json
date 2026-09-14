@@ -1,7 +1,7 @@
 {
   "schema": "directive_manifest/v1",
   "directive_id": "D-061",
-  "version": 1,
+  "version": 2,
   "slug": "architect-interface",
   "title": "Owner-approved architect front-end redesign, evidence traceability, build and delivery",
   "status": "active",
@@ -10,7 +10,7 @@
   "issued_at": "2026-09-14",
   "captured_at": "2026-09-14T20:09:38.435031+00:00",
   "created_at": "2026-09-14T20:09:38.435031+00:00",
-  "updated_at": "2026-09-14T20:09:38.435031+00:00",
+  "updated_at": "2026-09-14T20:31:52.846717+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "capture_head_sha": "ef7ee891a70af4752187d6161deadbd55cbdb96a",
@@ -29,9 +29,14 @@
     "D-061-R005",
     "D-061-R006",
     "D-061-R007",
-    "D-061-R008"
+    "D-061-R008",
+    "D-061-R009",
+    "D-061-R010",
+    "D-061-R011",
+    "D-061-R012",
+    "D-061-R013"
   ],
-  "requirements_content_digest_sha256": "e09a078387417b036174b77269eba37526661e484632a92f382d4e4a269dcc93",
+  "requirements_content_digest_sha256": "5458cd76b5ef21e16bc10acec9f76c6a5bcdbc77708215e0f84a395f71752166",
   "sources": [
     {
       "file": "source-001.md",
@@ -87,6 +92,12 @@
       "actor": "orchestrator",
       "action": "captured",
       "note": "Captured visible owner messages verbatim; UI-only authority, provenance, complete-page previews now approved for implementation. No prior controls or holds changed."
+    },
+    {
+      "at": "2026-09-14T20:31:52.846717+00:00",
+      "actor": "orchestrator",
+      "action": "intake_atomicity_correction",
+      "note": "Preserved R001-R008 identities; extracted original protected-scope, autocomplete, deployment, reporting and branch-protection clauses into R009-R013 following independent intake FAIL. No owner source or authorization changed. Exact approved preview references and page inventory added to task inputs. Evidence: project-control/reports/M5-T029-directive-intake-v1.md."
     }
   ]
 }

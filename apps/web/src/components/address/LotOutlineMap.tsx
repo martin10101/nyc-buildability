@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ZoningContextControl, type ZoningContextMap } from "@/components/architect/ZoningContextControl";
+import { NYC_CONTEXT_STYLE, contextLayerName } from "@/lib/map-context";
 import {
   fetchLotGeometry,
   type LotOutlineOutcome,
@@ -45,8 +47,8 @@ import {
 // Minimal structural typing of the maplibre-gl surface this module uses, so the
 // dynamic import stays self-contained and does not couple the type-check to the
 // full maplibre type surface.
-interface MapLike {
-  on(type: string, listener: () => void): void;
+interface MapLike extends ZoningContextMap {
+  on(type: string, listener: (event?: { sourceId?: string; isSourceLoaded?: boolean }) => void): void;
   once(type: string, listener: () => void): void;
   isStyleLoaded(): boolean;
   addSource(id: string, source: unknown): void;
@@ -276,10 +278,14 @@ function AttributionAndAccuracy({ view }: { view: LotOutlineView }) {
 export function LotOutlineMap({
   bbl,
   fetchImpl,
+  context = false,
 }: {
   bbl: string;
   fetchImpl?: typeof fetch;
+  context?: boolean;
 }) {
+  const [contextLayers, setContextLayers] = useState<Record<string, "loading" | "ready" | "error">>({ "nyc-basemap": "loading", "nyc-labels": "loading" });
+  const [mapReady, setMapReady] = useState(false);
   const [outcome, setOutcome] = useState<LotOutlineOutcome | null>(null);
   const [webglAvailable, setWebglAvailable] = useState(false);
   // D-056-R002 hardening: a "error" event from a constructed map (WebGL
@@ -323,6 +329,7 @@ export function LotOutlineMap({
     view.geometry !== null &&
     webglAvailable;
   const geometry = drawable ? (view.geometry as ValidatedGeometry) : null;
+  const contextBounds = useMemo(() => geometry ? geometryBounds(geometry) : null, [geometry]);
 
   useEffect(() => {
     if (!geometry) return;
@@ -330,6 +337,15 @@ export function LotOutlineMap({
     if (!container) return;
     let cancelled = false;
     setMapRenderFailed(false);
+    setMapReady(false);
+    setContextLayers({ "nyc-basemap": "loading", "nyc-labels": "loading" });
+    let styleDrawn = false;
+    const readinessTimer = setTimeout(() => {
+      if (!cancelled) {
+        if (!styleDrawn) setMapRenderFailed(true);
+        setContextLayers(current => Object.fromEntries(Object.entries(current).map(([key, value]) => [key, value === "loading" ? "error" : value])));
+      }
+    }, 10_000);
 
     void (async () => {
       const mod = (await import("maplibre-gl")) as unknown as {
@@ -340,7 +356,7 @@ export function LotOutlineMap({
       const bounds = geometryBounds(geometry);
       const map = new gl.Map({
         container,
-        style: EMPTY_STYLE,
+        style: context ? NYC_CONTEXT_STYLE : EMPTY_STYLE,
         // No basemap tile source is wired (none is admitted in the source
         // registry); the outline draws on a neutral background. attributionControl
         // is added explicitly below so the NYC DCP attribution is on the map.
@@ -365,9 +381,17 @@ export function LotOutlineMap({
       // style/source/layer failure) was previously UNHANDLED — silently
       // logged by MapLibre and otherwise invisible. Route it to a typed
       // fallback instead of leaving a permanently blank/gray map.
-      map.on("error", () => {
+      map.on("error", (event) => {
         if (cancelled) return;
-        setMapRenderFailed(true);
+        if (event?.sourceId === "nyc-zoning-context") return;
+        if (context && contextLayerName(event?.sourceId)) {
+          setContextLayers(current => ({ ...current, [event!.sourceId!]: "error" }));
+        } else setMapRenderFailed(true);
+      });
+      if (context) map.on("sourcedata", event => {
+        if (!cancelled && event?.isSourceLoaded && contextLayerName(event.sourceId)) {
+          setContextLayers(current => ({ ...current, [event.sourceId!]: current[event.sourceId!] === "error" ? "error" : "ready" }));
+        }
       });
       // D-056-R002 root-cause fix: run the draw step exactly once, as soon
       // as the style is ready, regardless of whether readiness was reached
@@ -388,26 +412,29 @@ export function LotOutlineMap({
           id: "lot-outline-fill",
           type: "fill",
           source: "lot-outline",
-          paint: { "fill-color": "#2f6fb0", "fill-opacity": 0.18 },
+          paint: { "fill-color": context ? "#c68b2b" : "#2f6fb0", "fill-opacity": context ? 0.3 : 0.18 },
         });
         map.addLayer({
           id: "lot-outline-line",
           type: "line",
           source: "lot-outline",
-          paint: { "line-color": "#1d4e79", "line-width": 2 },
+          paint: { "line-color": context ? "#a4680c" : "#1d4e79", "line-width": context ? 3 : 2 },
         });
         if (bounds) {
-          map.fitBounds(bounds, lotOutlineFitBoundsOptions());
+          map.fitBounds(bounds, context ? { padding: 72, duration: 0, maxZoom: 18.5 } : lotOutlineFitBoundsOptions());
         }
+        styleDrawn = true;
+        setMapReady(true);
       });
-    })();
+    })().catch(() => { if (!cancelled) setMapRenderFailed(true); });
 
     return () => {
+      clearTimeout(readinessTimer);
       cancelled = true;
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [geometry]);
+  }, [geometry, context]);
 
   return (
     <section
@@ -416,6 +443,12 @@ export function LotOutlineMap({
       aria-label="Approximate tax lot outline"
       data-testid="lot-outline"
     >
+      {context && drawable && !mapRenderFailed ? <div className="architect-map-toolbar">
+        <span className="architect-map-key">Selected lot</span>
+        <button className="secondary-button" type="button" onClick={() => { const bounds = geometry ? geometryBounds(geometry) : null; if (bounds) mapRef.current?.fitBounds(bounds, { padding: 72, duration: 0, maxZoom: 18.5 }); }}>Recenter lot</button>
+      </div> : null}
+      {context && drawable && mapReady && mapRef.current && contextBounds && !mapRenderFailed ? <ZoningContextControl map={mapRef.current} bounds={contextBounds} /> : null}
+      {context && drawable && !mapRenderFailed ? <p className="architect-map-status" role="status">{!mapReady ? "Preparing map… " : ""}{Object.entries(contextLayers).map(([key, status]) => `${contextLayerName(key)}: ${status === "ready" ? "loaded" : status === "error" ? "unavailable" : "loading"}`).join(" · ")}</p> : null}
       <p className="visually-hidden" data-testid="lot-outline-summary" role="status">
         {outcomeSummary(outcome, drawable, mapRenderFailed)}
       </p>
@@ -518,6 +551,7 @@ export function LotOutlineMap({
         </>
       ) : null}
 
+      {context ? <details className="provenance-details"><summary>Map sources and limitations</summary><p className="section-note">Street basemap and labels: <a href="https://maps.nyc.gov/tiles/" target="_blank" rel="noopener noreferrer">City of New York, CC BY 4.0</a>. Tile capture dates are not supplied here; this is reference context, not current survey evidence. Selected lot: official MapPLUTO geometry. No dimensions or zoning calculations are derived from this map.</p></details> : null}
       {outcome !== null && outcome.kind !== "document" ? (
         <p className="section-note" data-testid="lot-outline-unavailable">
           {outcome.kind === "route_absent"

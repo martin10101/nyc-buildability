@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { rememberAddress } from "@/lib/architect/selected-address";
 import type { AddressDocumentOutcome } from "@/lib/address-api";
 import { validateBblInput } from "@/lib/bbl";
 import { Meta } from "./AddressOutcomeCards";
@@ -39,9 +40,11 @@ const ZOLA_BBL_URL_PREFIX = "https://zola.planning.nyc.gov/bbl/";
 export function AddressConfirmCard({
   outcome,
   onNotMyProperty,
+  architect = false,
 }: {
   outcome: AddressDocumentOutcome;
   onNotMyProperty: () => void;
+  architect?: boolean;
 }) {
   const view = outcome.view;
   const validation =
@@ -148,7 +151,7 @@ export function AddressConfirmCard({
           fetch fires for a result that cannot link onward. The whole surface
           already inherits the server-read INTERNAL_RULE_EVAL_ENABLED flag via
           PropertyLookup, so there is no second flag read here. */}
-      {canonicalBbl ? <LotOutlineMap bbl={canonicalBbl} /> : null}
+      {canonicalBbl ? <LotOutlineMap bbl={canonicalBbl} context={architect} /> : null}
 
       <details className="provenance-details" data-testid="address-provenance">
         <summary>Where this came from</summary>
@@ -223,7 +226,8 @@ export function AddressConfirmCard({
       {canonicalBbl ? (
         <Link
           className="primary-button next-action-link"
-          href={`/property/confirm?bbl=${encodeURIComponent(canonicalBbl)}`}
+          href={`/property/confirm?bbl=${encodeURIComponent(canonicalBbl)}${architect ? "&ruleeval=on" : ""}`}
+          onClick={() => rememberAddress(outcome)}
           data-testid="confirm-continue"
         >
           Continue with this lot

@@ -20,6 +20,7 @@ import { expect, test, type Page } from "@playwright/test";
  * lot-outline outcome via the harness's synthetic resolver + fixture routing. */
 async function resolveTo(page: Page, street: string): Promise<void> {
   await page.goto("/property?ruleeval=on");
+  await page.getByText("Enter address manually", { exact: true }).click();
   // Scope every field to the address form AND use exact label matching:
   // getByLabel matches case-insensitive SUBSTRING by default, so inside the form
   // "Borough" also matched the ZIP input labeled "ZIP code (alternative to

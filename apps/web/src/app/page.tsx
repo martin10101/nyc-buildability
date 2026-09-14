@@ -1,23 +1,6 @@
 import Link from "next/link";
+import "./property/architect.css";
 
 export default function HomePage() {
-  return (
-    <section style={{ padding: "3rem 1.5rem", maxWidth: "72ch" }}>
-      <h1 style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}>
-        NYC Buildability
-      </h1>
-      <p style={{ fontSize: "1rem", color: "#3d3d3d" }}>
-        NYC Development Feasibility &amp; Zoning Intelligence Platform.
-      </p>
-      <p style={{ fontSize: "0.95rem", color: "#5a5a5a" }}>
-        Internal development build. The first slice of the Property / Confirm
-        / Compare / Evidence experience is the BBL property lookup below;
-        later milestones add the remaining stages on top of the canonical
-        property-profile contract.
-      </p>
-      <p>
-        <Link href="/property">Open the property lookup (BBL)</Link>
-      </p>
-    </section>
-  );
+  return <div className="architect-shell"><header className="architect-topbar"><span className="architect-brand">NYC BUILDABILITY</span><span className="architect-environment">Internal development build</span></header><section className="architect-welcome"><p className="architect-eyebrow">Property intelligence · New York City</p><h1>From property facts<br />to an informed next step.</h1><p>Official records, preliminary development analysis and the evidence behind every result, in one workspace.</p><Link className="primary-button" href="/property">Open workspace →</Link><p className="section-note">Available tools follow the capabilities enabled in this environment. Preliminary results require professional review.</p></section></div>;
 }

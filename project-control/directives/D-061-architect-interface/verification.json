@@ -15,7 +15,10 @@
         "D-061-R004",
         "D-061-R005",
         "D-061-R006",
-        "D-061-R007"
+        "D-061-R007",
+        "D-061-R009",
+        "D-061-R010",
+        "D-061-R013"
       ],
       "reviewed_sha": null,
       "reviewed_manifest_sha256": null,
@@ -74,6 +77,30 @@
         },
         {
           "id": "D-061-R007",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R009",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R010",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": null,
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-061-R013",
           "state": "pending",
           "evidence": [],
           "verified_at": null,
