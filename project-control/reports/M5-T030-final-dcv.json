@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "decision": "CONTINUE",
+  "reviewed_task_id": "M5-T030",
+  "reviewed_checkpoint_id": "M5-T030-review",
+  "verified_repo_head": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "verified_origin_main": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "model_used": "",
+  "verified_facts": [
+    {
+      "fact": "D-062-R001 PASS: validated selected-lot PLUTO links and secondary dataset links agree across source inspection, independent reviews, tests, and live evidence."
+    },
+    {
+      "fact": "D-062-R002 PASS: captured fields, values, metadata, and review history remain accessible; report casing is corrected and current/captured evidence is distinguished."
+    },
+    {
+      "fact": "D-062-R003 PASS: recorded live ESB and Brooklyn hrefs match official HTTP 200 responses containing exactly one matching lot; lotarea values 91351 and 116000 and version 26v2 agree."
+    },
+    {
+      "fact": "D-062-R004 PASS: all 13 frozen file hashes match; G0–G5 pass; CI 34917249174 passed 18 jobs, 703 unit tests, and 100 browser journeys. Protected application scope, main, and PR 241 remain preserved."
+    },
+    {
+      "fact": "D-062-R005 PASS: the architect-value draft explains supported assistance, manual alternatives, and professional judgment without complete-feasibility or measured-time claims."
+    },
+    {
+      "fact": "D-062-R006 PASS: delivery evidence confirms candidate publication without force to the exact reviewed green commit."
+    },
+    {
+      "fact": "D-062-R007 PASS: existing Render deployment dep-daka3nnqj5pc73add88g reports that commit live; subsequent building and report checks succeed."
+    }
+  ],
+  "unverified_claims": [
+    {
+      "claim": "Visual display of the raw JSON destination in the cloud browser.",
+      "why": "The environment blocks that display; verification used actual live DOM hrefs and official HTTP responses."
+    }
+  ],
+  "blocking_findings": [],
+  "reason_codes": [
+    "DIRECTIVE_FINAL_PASS",
+    "FROZEN_CONTENT_VERIFIED",
+    "REQUIRED_GATES_PASS",
+    "LIVE_BUILDING_EVIDENCE_VERIFIED",
+    "DELIVERY_SEPARATELY_VERIFIED"
+  ],
+  "next_claude_prompt": "Finish validation of the corrected verification.json containing only the M5-T030 task row. Retain R006/R007 PASS in the independent delivery matrix; the sentinel is not a valid task_verification ID. After validation passes, accept through the orchestrator and publish scoped acceptance records while keeping product code frozen and preserving the stated limits.",
+  "owner_question": "",
+  "rotation_reason": "",
+  "evidence_refs": [
+    {
+      "path": "project-control/reports/M5-T030-producer-report.md"
+    },
+    {
+      "path": "project-control/reports/M5-T030-scope-v2.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-ci-v2.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-G4-v2-qa.md"
+    },
+    {
+      "path": "project-control/reports/M5-T030-delivery.md"
+    },
+    {
+      "path": "project-control/reports/M5-T030-live-official-records.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-live-report-ui.json"
+    }
+  ]
+}

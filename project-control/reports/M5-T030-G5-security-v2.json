@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "decision": "CONTINUE",
+  "reviewed_task_id": "M5-T030",
+  "reviewed_checkpoint_id": "M5-T030-review",
+  "verified_repo_head": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "verified_origin_main": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "model_used": "",
+  "verified_facts": [
+    {
+      "fact": "G5 delta PASS. No new security findings. Frozen identity evidence records tree c6ecd539e46807a72f61dc061f40d15847ef8a47 and task content identity 003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8 with identity_error null."
+    },
+    {
+      "fact": "Independently verified all 13 final file hashes against M5-T030-scope-v2.json and all five rework.diff destination blob hashes against actual files. Delta SHA-256: 3f6963aae4ac4703e1781f721c2b6f8284569cdcf5d71ebd479460b5f1218728. Exactly two prior manifest files changed and three authorized test paths were added."
+    },
+    {
+      "fact": "The sole production delta is ReportSources.tsx adding the constant style textTransform: none to its row header. Removing that literal addition reproduces the previously reviewed ReportSources SHA-256 exactly. Link construction, BBL/source/dataset checks, escaping, captured values, and metadata are unchanged. This preserves the security conclusions for D-062-R001, R002, and R004 while correcting displayed text case."
+    },
+    {
+      "fact": "The three legacy browser-test edits select the outer summary explicitly; existing assertions remain. The architect browser test adds a computed-style assertion. All changed application paths are authorized in the updated task packet; the recorded protected application diff remains empty. The delta adds no product capability claims affecting D-062-R005."
+    },
+    {
+      "fact": "Eight prior manifest files and the unchanged legacy sections test retain their previously reviewed hashes, including all four focused security test files. The earlier independently executed 104 passing tests remain applicable to the unchanged security behavior; no broad rerun was performed. Initial G5 evidence and its limits remain recorded in M5-T030-G5-security.json."
+    }
+  ],
+  "unverified_claims": [
+    {
+      "claim": "Replacement CI and visual delta verification are complete.",
+      "why": "CI run 34917249174 was reported running at the reviewed SHA; this review does not certify its eventual result or browser screenshots."
+    },
+    {
+      "claim": "D-062-R003 is complete on the changed deployed frontend.",
+      "why": "Authorized delivery and the real-building live DOM href plus official HTTP verification remain pending."
+    }
+  ],
+  "blocking_findings": [],
+  "reason_codes": [
+    "G5_DELTA_PASS",
+    "UNCHANGED_SECURITY_BOUNDARIES",
+    "FROZEN_CONTENT_VERIFIED",
+    "LIVE_VERIFICATION_PENDING"
+  ],
+  "next_claude_prompt": "Record G5 delta PASS at 2cee838cf49cbb0bb7cf0c796d81141182909502. Complete replacement CI and visual delta verification, then perform the authorized delivery and real-building live verification. Keep task acceptance and D-062-R003 completion pending until that evidence exists.",
+  "owner_question": "",
+  "rotation_reason": "",
+  "evidence_refs": [
+    {
+      "path": "project-control/reports/M5-T030-G5-security.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-scope-v2.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-review-v2-identity.json"
+    },
+    {
+      "path": "project-control/tasks/M5-T030.json"
+    },
+    {
+      "path": "apps/web/src/components/architect/ReportSources.tsx"
+    },
+    {
+      "path": "apps/web/e2e/architect-workspace.spec.ts"
+    },
+    {
+      "path": "apps/web/e2e/confirm-journey.spec.ts"
+    },
+    {
+      "path": "apps/web/e2e/partial-and-conflict.spec.ts"
+    },
+    {
+      "path": "apps/web/e2e/primary-journey.spec.ts"
+    }
+  ]
+}

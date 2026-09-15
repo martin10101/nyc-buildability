@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-09-15T01:43:02.744Z",
+  "url": "https://nyc-buildability.onrender.com/property?bbl=1008350041&view=overview",
+  "href": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1008350041",
+  "about_href": "https://data.cityofnewyork.us/d/64uk-42ks",
+  "captured_record": {
+    "provenance_id": "pluto-64uk-42ks-26v2-1008350041-lotarea",
+    "source_id": "nyc-dcp-pluto-soda",
+    "original_field_name": "lotarea",
+    "original_value": "91351",
+    "normalized_value": 91351,
+    "units": "square feet",
+    "retrieved_at": "2026-09-15T01:42:02Z",
+    "dataset_version": "26v2",
+    "effective_date": null,
+    "bbl": "1008350041",
+    "confidence": 1,
+    "user_confirmed_or_overridden": "none",
+    "conflict_status": "none",
+    "fact_key": "fact:nyc-dcp-pluto-soda:64uk-42ks:1008350041:lotarea",
+    "observation_id": "obs:cb62b711005646b08810337e772e7be5:1008350041:lotarea",
+    "value_digest": "sha256:7553410aaa60a8d50930bc7ba434af10b50c83e5bc87bf4ed46f68aad131d0ca",
+    "response_digest": "sha256:9c0a3b2722f67ebbe63c67bc4d7af79985e5d9ad7f45db9f07f7cdd660d4a7fa",
+    "dataset_id": "64uk-42ks",
+    "request_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1008350041",
+    "input_vintages": {}
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "task_id": "M5-T030",
+  "directive_id": "D-062",
+  "recorded_at": "2026-09-15T01:38:23.478Z",
+  "baseline_candidate_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d",
+  "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "content_manifest_sha256": "003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8",
+  "ci": {
+    "run_id": 34917249174,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs_passed": 18,
+    "unit_tests_passed": 703,
+    "browser_tests_passed": 100
+  },
+  "target": {
+    "repo": "martin10101/nyc-buildability",
+    "branch": "candidate/D-024-mrl-option-b",
+    "render_service_id": "srv-dajnsctg1s2s73bg2do0",
+    "render_workspace_id": "tea-d37n4vje5dus739gucd0",
+    "url": "https://nyc-buildability.onrender.com",
+    "auto_deploy": "no"
+  },
+  "candidate_push": {
+    "result": "success",
+    "before": "546dd09a9541097a5c5e39cd43683c4068ab368d",
+    "after": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+    "force": false
+  },
+  "render_deploy": {
+    "id": "dep-daka3nnqj5pc73add88g",
+    "commit_id": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+    "started_at": "2026-09-15T01:39:42.390193Z",
+    "status": "live",
+    "trigger": "api",
+    "clear_cache": false,
+    "finished_at": "2026-09-15T01:41:08.938481Z",
+    "updated_at": "2026-09-15T01:41:39.950771Z"
+  },
+  "live_building_checks": [
+    {
+      "result": "PASS",
+      "bbl": "1008350041",
+      "live_ui_evidence": "project-control/reports/M5-T030-live-esb-ui.json",
+      "official_response_evidence": "project-control/reports/M5-T030-live-official-records.json",
+      "browser_checked_at": "2026-09-15T01:43:02.744Z",
+      "official_checked_at": "2026-09-15T01:42:32.403405+00:00",
+      "http_status": 200,
+      "record_count": 1,
+      "record_address": "338 5 AVENUE",
+      "captured_field": "lotarea",
+      "captured_original_value": "91351",
+      "captured_normalized_value": 91351,
+      "captured_at": "2026-09-15T01:42:02Z",
+      "dataset_version": "26v2",
+      "exact_href_match": true,
+      "field_value_match": true,
+      "version_match": true
+    },
+    {
+      "result": "PASS",
+      "bbl": "3021720001",
+      "live_ui_evidence": "project-control/reports/M5-T030-live-brooklyn-ui.json",
+      "official_response_evidence": "project-control/reports/M5-T030-live-official-records.json",
+      "browser_checked_at": "2026-09-15T01:43:58.659Z",
+      "official_checked_at": "2026-09-15T01:42:32.245263+00:00",
+      "http_status": 200,
+      "record_count": 1,
+      "record_address": "83 TAYLOR STREET",
+      "captured_field": "lotarea",
+      "captured_original_value": "116000",
+      "captured_normalized_value": 116000,
+      "captured_at": "2026-09-15T01:43:03Z",
+      "dataset_version": "26v2",
+      "exact_href_match": true,
+      "field_value_match": true,
+      "version_match": true
+    }
+  ],
+  "protected_main_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "protected_pr_241": {
+    "state": "open",
+    "merged": false,
+    "head": "4174a3b2a547ae7d5df5d35cefb63767cbf84721"
+  },
+  "status": "PASS: reviewed candidate deployed live and both real-building source links verified",
+  "report_check": {
+    "result": "PASS",
+    "evidence": "project-control/reports/M5-T030-live-report-ui.json"
+  },
+  "checked_at": "2026-09-15T01:45:16.766382+00:00",
+  "protected_refs_verified_after_push": {
+    "main": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+    "pr241_state": "open",
+    "pr241_merged": false,
+    "pr241_head": "4174a3b2a547ae7d5df5d35cefb63767cbf84721",
+    "candidate": "2cee838cf49cbb0bb7cf0c796d81141182909502"
+  },
+  "limits": [
+    "Verified actual live DOM hrefs plus independent official HTTP 200 one-row responses. The cloud browser previously blocked top-level raw JSON viewing; no claim that it visually opened the JSON document.",
+    "ESB BBL 1008350041 is identified by official LPC at 350 Fifth Avenue; PLUTO representative address is 338 5 AVENUE. BBL matches. Brooklyn searched125 Taylor Street is retained beside PLUTO representative83 Taylor Street; same BBL3021720001.",
+    "Both real-property pages display No supported cap and FAR only / Buildable envelope not assessed. This verifies source behavior, not complete development feasibility.",
+    "Current official records can change; recorded captures, dates and versions remain separate. No measured architect time savings."
+  ]
+}

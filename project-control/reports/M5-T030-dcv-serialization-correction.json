@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "decision": "CONTINUE",
+  "reviewed_task_id": "M5-T030",
+  "reviewed_checkpoint_id": "M5-T030-review",
+  "verified_repo_head": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "verified_origin_main": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "model_used": "",
+  "verified_facts": [
+    {
+      "fact": "Verifier-owned correction: the M5-T030 row's reviewed_manifest_sha256 must be 003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8, the independently reviewed task content identity. All requirement verdicts and evidence remain unchanged."
+    }
+  ],
+  "unverified_claims": [],
+  "blocking_findings": [],
+  "reason_codes": [
+    "VERIFICATION_SERIALIZATION_CORRECTED",
+    "FINAL_PASS_UNCHANGED"
+  ],
+  "next_claude_prompt": "Change only task_verifications[M5-T030].reviewed_manifest_sha256 in verification.json from 51a15f5bd44247ee2526b4a5d62ea19fa74e04d6006034b17ad2a734a5d39e45 to 003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8. Validate and accept through the orchestrator after the checks pass.",
+  "owner_question": "",
+  "rotation_reason": "",
+  "evidence_refs": [
+    {
+      "path": "project-control/reports/M5-T030-review-v2-identity.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-scope-v2.json"
+    }
+  ]
+}

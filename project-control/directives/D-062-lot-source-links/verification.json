@@ -2,7 +2,7 @@
   "schema": "directive_verification/v2",
   "directive_id": "D-062",
   "verified_by": "directive-compliance-verifier",
-  "verified_at": null,
+  "verified_at": "2026-09-15T01:47:20.426120+00:00",
   "authority_note": "Independent verifier owns verdicts; orchestrator only persists returned evidence.",
   "task_verifications": [
     {
@@ -15,52 +15,85 @@
         "D-062-R004",
         "D-062-R005"
       ],
-      "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d",
-      "reviewed_manifest_sha256": "51a15f5bd44247ee2526b4a5d62ea19fa74e04d6006034b17ad2a734a5d39e45",
-      "producer": "orchestrator",
+      "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+      "reviewed_manifest_sha256": "003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8",
+      "producer": "frontend-engineer",
       "verifier": "directive-compliance-verifier",
       "schema_version": "directive_verification/v2",
-      "verified_at": "2026-09-15T00:39:27.094621+00:00",
+      "verified_at": "2026-09-15T01:47:20.426120+00:00",
       "requirements": [
         {
           "id": "D-062-R001",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": "2026-09-15T00:39:27.094621+00:00",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T030-producer-report.md",
+            "apps/web/src/lib/provenance-link.ts",
+            "project-control/reports/M5-T030-G1-source-v2.md",
+            "project-control/reports/M5-T030-G3-v2-qa.md",
+            "project-control/reports/M5-T030-live-esb-ui.json",
+            "project-control/reports/M5-T030-live-brooklyn-ui.json"
+          ],
+          "verified_at": "2026-09-15T01:47:20.426120+00:00",
           "verified_by": "directive-compliance-verifier",
-          "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d"
+          "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502"
         },
         {
           "id": "D-062-R002",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": "2026-09-15T00:39:27.094621+00:00",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T030-producer-report.md",
+            "apps/web/src/components/architect/EvidenceRecord.tsx",
+            "apps/web/src/components/architect/ReportSources.tsx",
+            "project-control/reports/M5-T030-G3-v2-qa.md",
+            "project-control/reports/M5-T030-G5-security-v2.json",
+            "project-control/reports/M5-T030-live-report-ui.json"
+          ],
+          "verified_at": "2026-09-15T01:47:20.426120+00:00",
           "verified_by": "directive-compliance-verifier",
-          "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d"
+          "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502"
         },
         {
           "id": "D-062-R003",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": "2026-09-15T00:39:27.094621+00:00",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T030-producer-report.md",
+            "project-control/reports/M5-T030-delivery.md",
+            "project-control/reports/M5-T030-live-esb-ui.json",
+            "project-control/reports/M5-T030-live-brooklyn-ui.json",
+            "project-control/reports/M5-T030-live-official-records.json",
+            "project-control/reports/M5-T030-live-report-ui.json",
+            "project-control/reports/M5-T030-source-verification.md"
+          ],
+          "verified_at": "2026-09-15T01:47:20.426120+00:00",
           "verified_by": "directive-compliance-verifier",
-          "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d"
+          "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502"
         },
         {
           "id": "D-062-R004",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": "2026-09-15T00:39:27.094621+00:00",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T030-producer-report.md",
+            "project-control/reports/M5-T030-scope-v2.json",
+            "project-control/reports/M5-T030-ci-v2.json",
+            "project-control/reports/M5-T030-G4-v2-qa.md",
+            "project-control/reports/M5-T030-G5-security-v2.json",
+            "project-control/reports/M5-T030-delivery.json"
+          ],
+          "verified_at": "2026-09-15T01:47:20.426120+00:00",
           "verified_by": "directive-compliance-verifier",
-          "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d"
+          "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502"
         },
         {
           "id": "D-062-R005",
-          "state": "pending",
-          "evidence": [],
-          "verified_at": "2026-09-15T00:39:27.094621+00:00",
+          "state": "PASS",
+          "evidence": [
+            "project-control/reports/M5-T030-producer-report.md",
+            "project-control/reports/M5-T030-G1-source-v2.md",
+            "project-control/reports/M5-T030-delivery.md"
+          ],
+          "verified_at": "2026-09-15T01:47:20.426120+00:00",
           "verified_by": "directive-compliance-verifier",
-          "reviewed_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d"
+          "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502"
         }
       ]
     }

@@ -1,28 +1,34 @@
 {
-  "reviewed_sha": "3940e2c852234be7db2f675472a366c30af12905",
+  "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
   "requirements": {
     "D-062-R001": [
       "project-control/reports/M5-T030-producer-report.md",
       "apps/web/src/lib/provenance-link.ts",
-      "apps/web/src/components/architect/__tests__/source-links.test.tsx"
+      "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+      "project-control/reports/M5-T030-G1-source-v2.md",
+      "project-control/reports/M5-T030-G3-v2-qa.md"
     ],
     "D-062-R002": [
       "project-control/reports/M5-T030-producer-report.md",
       "apps/web/src/components/architect/EvidenceRecord.tsx",
       "apps/web/src/components/architect/ReportSources.tsx",
-      "apps/web/src/components/architect/__tests__/workspace.test.tsx"
+      "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+      "project-control/reports/M5-T030-G3-v2-qa.md",
+      "project-control/reports/M5-T030-G5-security-v2.json"
     ],
     "D-062-R003": [
-      "project-control/reports/M5-T030-producer-report.md",
-      "project-control/reports/M5-T030-esb-captured-fact.json",
-      "project-control/reports/M5-T030-real-building-baseline.json",
-      "Actual new deployed UI verification remains pending delivery; no completion claim."
+      "project-control/reports/M5-T030-delivery.json",
+      "project-control/reports/M5-T030-live-esb-ui.json",
+      "project-control/reports/M5-T030-live-brooklyn-ui.json",
+      "project-control/reports/M5-T030-live-official-records.json",
+      "project-control/reports/M5-T030-live-report-ui.json",
+      "project-control/reports/M5-T030-source-verification.md"
     ],
     "D-062-R004": [
-      "project-control/reports/M5-T030-producer-report.md",
       "project-control/reports/M5-T030-scope-v2.json",
-      "project-control/reports/M5-T030-G4-v1-qa.md",
-      "Replacement frozen CI and independent gates pending; prior failures preserved."
+      "project-control/reports/M5-T030-ci-v2.json",
+      "project-control/reports/M5-T030-G4-v2-qa.md",
+      "project-control/reports/M5-T030-G5-security-v2.json"
     ],
     "D-062-R005": [
       "project-control/reports/M5-T030-producer-report.md"

@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T030",
+  "status": "accepted",
+  "recorded_at": "2026-09-15T01:54:03.557891+00:00",
+  "reviewed_product_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "content_manifest_sha256": "003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8",
+  "validation_command": "python tools/validate_directive_compliance.py --check",
+  "validation_exit": 0,
+  "accept_command": "python tools/project_control.py accept --task-id M5-T030 --agent orchestrator",
+  "accept_exit": 0,
+  "accept_output": "Accepted M5-T030",
+  "independent_final_report": "project-control/reports/M5-T030-final-dcv.md",
+  "independent_serialization_correction": "project-control/reports/M5-T030-dcv-serialization-correction.json",
+  "delivery_evidence": "project-control/reports/M5-T030-delivery.md",
+  "recording_notes": [
+    "First verifier serialization included a non-task delivery sentinel; validation rejected c5. Verifier corrected serialization to retain only the canonical M5-T030 row; delivery verdicts remain in the independent matrix.",
+    "Accept then rejected a directive-manifest hash in the task-content identity field. Verifier explicitly corrected that one field to the independently reviewed task identity. Validation and acceptance then passed. No gate or validator was bypassed."
+  ],
+  "state_sync_scope": "Only M5-T030 added to accepted_tasks plus updated_at. No prior blocked delivery/session records or unrelated state changes are included.",
+  "publication_note": "Acceptance records only; runtime/frontend code remains byte-identical to the reviewed and live2cee838c build. No additional Render deploy is needed for these records."
+}

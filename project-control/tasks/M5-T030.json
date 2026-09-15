@@ -134,8 +134,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PLUTO representative address may differ; canonical BBL is the join key.",
     "Current public data may change after capture; preserve dates and versions.",
@@ -143,7 +143,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-15T00:36:10.826292+00:00",
-  "updated_at": "2026-09-15T01:24:56.216277+00:00",
+  "updated_at": "2026-09-15T01:53:15.380945+00:00",
   "directive_refs": [
     {
       "directive_id": "D-062",
@@ -208,5 +208,7 @@
       "status": "rework",
       "message": "CI34915644821:703unit tests pass,97/100browser journeys pass. Three legacy Source selectors now match nested captured-record summaries. Single bounded test-selector rework authorized in3named e2e files; all provenance assertions preserved. Live candidate remains546dd09a."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-15T01:53:15.380882+00:00"
 }

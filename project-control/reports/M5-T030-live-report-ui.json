@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-09-15T01:45:16.418Z",
+  "url": "https://nyc-buildability.onrender.com/property?ruleeval=on&bbl=1008350041&view=report",
+  "current_record_hrefs": [
+    "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1008350041"
+  ],
+  "selected_rows": [
+    "      - 'row \"Address address Original: 338 5 AVENUE Normalized: 338 5 AVENUE Current PLUTO record (JSON) About this dataset nyc-dcp-pluto-soda 26v2 pluto-64uk-42ks-26v2-1008350041-address Captured 2026-09-15T01:42:02Z Effective not published Review: none Conflict: none\"':",
+    "      - 'row \"Lot area lotarea Original: 91351 Normalized: 91,351 square feet Current PLUTO record (JSON) About this dataset nyc-dcp-pluto-soda 26v2 pluto-64uk-42ks-26v2-1008350041-lotarea Captured 2026-09-15T01:42:02Z Effective not published Review: none Conflict: none\"':"
+  ],
+  "has_exact_address_field": true,
+  "current_captured_note": "  - paragraph: Profile revision 1 · Generated 2026-09-15T01:42:02Z. Current records may differ from the captured evidence shown here."
+}
