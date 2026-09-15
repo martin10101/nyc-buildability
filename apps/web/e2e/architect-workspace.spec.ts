@@ -132,6 +132,7 @@ for (const [view, name] of VIEWS) {
       await expect(row.getByRole("link", { name: "Current PLUTO record (JSON)" })).toHaveAttribute("href", `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${BBL}`);
       await expect(row.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
       await expect(row).toContainText("Original:");
+      await expect(sources.getByText("address", { exact: true })).toHaveCSS("text-transform", "none");
       const path = info.outputPath("10a-report-captured-source-links.png");
       await row.screenshot({ path });
       await info.attach("report captured source links", { path, contentType: "image/png" });

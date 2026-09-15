@@ -35,7 +35,10 @@
     "apps/web/src/components/property/ProvenanceDisclosure.tsx",
     "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx",
     "apps/web/e2e/architect-workspace.spec.ts",
-    "project-control/reports/M5-T030-producer-report.md"
+    "project-control/reports/M5-T030-producer-report.md",
+    "apps/web/e2e/confirm-journey.spec.ts",
+    "apps/web/e2e/partial-and-conflict.spec.ts",
+    "apps/web/e2e/primary-journey.spec.ts"
   ],
   "forbidden_paths": [
     "services/**",
@@ -140,7 +143,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-15T00:36:10.826292+00:00",
-  "updated_at": "2026-09-15T01:00:08.156299+00:00",
+  "updated_at": "2026-09-15T01:24:56.216277+00:00",
   "directive_refs": [
     {
       "directive_id": "D-062",
@@ -169,7 +172,9 @@
     "Isolated cloud worktree at accepted candidate 546dd09a; dependency M5-T029 accepted; no overlapping writer. Main and PR 241 protected.",
     "Match SourceFact.bbl to profile identity where available. Fixed known PLUTO source/dataset, never request_url. Missing per-record dataset fallback only to same-source reproducibility.",
     "Prior owner build/push/live authority covers candidate update and existing Render frontend. Delivery evidence separate from implementation acceptance.",
-    "Reuse ignored identical-lock dependency install; owner PC untouched. No unrelated session/state upload."
+    "Reuse ignored identical-lock dependency install; owner PC untouched. No unrelated session/state upload.",
+    "Bounded CI rework: run34915644821 has703unitPASS,97browserPASS and3strict-mode failures in legacy Source summary selectors. Authorize exactly3existing e2e files to select the outer Source summary while preserving all assertions; production UI/source code unchanged. Inventory found other generic summary calls in different unaffected components; leave those unchanged.",
+    "G3 screenshot review found report row headers visually uppercasing exact source fields and captured strings through inherited CSS. Bounded presentation repair authorized in existing ReportSources.tsx plus a computed-style assertion in the already-allowed architect-workspace e2e. No global CSS or source semantics change; replacement CI screenshots must verify closure."
   ],
   "modularity_boundary_answers": {
     "responsibility": "Safe official source URL construction and existing evidence presentation.",
@@ -180,7 +185,7 @@
     "boundary_tests": "provenance-link.test.ts, focused source-links component tests, architect-workspace Playwright journey.",
     "submission_gate": "python tools/modularity_check.py --check must pass before submission."
   },
-  "worktree": "/workspace/scratch/cfa2464c5c7f/nycdf-source-links",
+  "worktree": "/workspace/scratch/cfa2464c5c7f/nycdf-source-review",
   "progress_log": [
     {
       "at": "2026-09-15T00:41:31.050754+00:00",
@@ -195,6 +200,13 @@
       "percent": 90,
       "status": "self_check",
       "message": "Frozen source links: 108 affected tests, wrong-lot mutation proof, typecheck/lint/modularity passed. Independent CI/browser gates and live real-building verification pending."
+    },
+    {
+      "at": "2026-09-15T01:12:22.418867+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "rework",
+      "message": "CI34915644821:703unit tests pass,97/100browser journeys pass. Three legacy Source selectors now match nested captured-record summaries. Single bounded test-selector rework authorized in3named e2e files; all provenance assertions preserved. Live candidate remains546dd09a."
     }
   ]
 }

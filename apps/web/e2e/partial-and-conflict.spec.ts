@@ -69,7 +69,7 @@ test("S2: D5 fallback provenance join renders for a contract-1.0.0 profile (no m
   await expectProfile(page);
 
   const chip = page.locator(".zoning-chip", { hasText: "R3-2" });
-  await chip.locator("summary").click();
+  await chip.locator(":scope > details > summary").click();
   // The fallback join is labeled honestly and resolves to the zonedist1
   // source column record.
   await expect(chip).toContainText("Linked by source column name");

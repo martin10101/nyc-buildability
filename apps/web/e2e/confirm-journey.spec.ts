@@ -84,7 +84,7 @@ test("S1: per-fact provenance drill-down works on the Confirm card", async ({ pa
   const details = page
     .getByTestId("confirm-lot")
     .locator("details", { hasText: "Source for Lot area" });
-  await details.locator("summary").click();
+  await details.locator(":scope > summary").click();
   await expect(details).toContainText("nyc-dcp-pluto-soda");
   await expect(details).toContainText("lotarea");
   await expect(details).toContainText("26v1");

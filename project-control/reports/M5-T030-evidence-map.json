@@ -1,5 +1,5 @@
 {
-  "reviewed_sha": "731a86c8167070a736c66511356e7a0d7e5b190d",
+  "reviewed_sha": "3940e2c852234be7db2f675472a366c30af12905",
   "requirements": {
     "D-062-R001": [
       "project-control/reports/M5-T030-producer-report.md",
@@ -20,9 +20,9 @@
     ],
     "D-062-R004": [
       "project-control/reports/M5-T030-producer-report.md",
-      "project-control/reports/M5-T030-scope.json",
-      "apps/web/src/lib/__tests__/provenance-link.test.ts",
-      "Frozen full CI and independent gates pending."
+      "project-control/reports/M5-T030-scope-v2.json",
+      "project-control/reports/M5-T030-G4-v1-qa.md",
+      "Replacement frozen CI and independent gates pending; prior failures preserved."
     ],
     "D-062-R005": [
       "project-control/reports/M5-T030-producer-report.md"

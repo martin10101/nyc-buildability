@@ -20,7 +20,7 @@ export function ReportSources({ profile }: {
           {profile.provenance.map(record => {
             const links = sourceFactLinks(record, profile.reproducibility, profile.identity);
             return <tr key={record.provenance_id}>
-            <th scope="row">
+            <th scope="row" style={{ textTransform: "none" }}>
               {fieldLabel(record.original_field_name)}
               <br /><code className="section-note">{record.original_field_name}</code>
               <p>Original: {formatValue(record.original_value)}
