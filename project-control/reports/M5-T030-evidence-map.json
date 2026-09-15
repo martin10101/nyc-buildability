@@ -1,0 +1,31 @@
+{
+  "reviewed_sha": "731a86c8167070a736c66511356e7a0d7e5b190d",
+  "requirements": {
+    "D-062-R001": [
+      "project-control/reports/M5-T030-producer-report.md",
+      "apps/web/src/lib/provenance-link.ts",
+      "apps/web/src/components/architect/__tests__/source-links.test.tsx"
+    ],
+    "D-062-R002": [
+      "project-control/reports/M5-T030-producer-report.md",
+      "apps/web/src/components/architect/EvidenceRecord.tsx",
+      "apps/web/src/components/architect/ReportSources.tsx",
+      "apps/web/src/components/architect/__tests__/workspace.test.tsx"
+    ],
+    "D-062-R003": [
+      "project-control/reports/M5-T030-producer-report.md",
+      "project-control/reports/M5-T030-esb-captured-fact.json",
+      "project-control/reports/M5-T030-real-building-baseline.json",
+      "Actual new deployed UI verification remains pending delivery; no completion claim."
+    ],
+    "D-062-R004": [
+      "project-control/reports/M5-T030-producer-report.md",
+      "project-control/reports/M5-T030-scope.json",
+      "apps/web/src/lib/__tests__/provenance-link.test.ts",
+      "Frozen full CI and independent gates pending."
+    ],
+    "D-062-R005": [
+      "project-control/reports/M5-T030-producer-report.md"
+    ]
+  }
+}

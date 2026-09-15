@@ -1,36 +1,37 @@
 import type { PropertyProfile } from "@/lib/contract";
 import { fieldLabel, formatValue } from "@/lib/format";
-import { datasetLandingUrl } from "@/lib/provenance-link";
+import { sourceFactLinks } from "@/lib/provenance-link";
 export function ReportSources({ profile }: {
     profile: PropertyProfile;
 }) {
     return <section className="card architect-report-sources">
     <h2>Source and review appendix</h2>
-    <p className="section-note">Profile revision {profile.profile_version.profile_revision} · Generated {profile.profile_version.generated_at}. Dates and versions below describe the captured records.</p>
+    <p className="section-note">Profile revision {profile.profile_version.profile_revision} · Generated {profile.profile_version.generated_at}. Current records may differ from the captured evidence shown here.</p>
     <div className="table-scroll">
       <table className="facts-table">
         <thead>
           <tr>
             <th>Fact / captured values</th>
-            <th>Source / version</th>
+            <th>Official links / captured source</th>
             <th>Dates / review</th>
           </tr>
         </thead>
         <tbody>
           {profile.provenance.map(record => {
-            const link = datasetLandingUrl(record.dataset_id ?? profile.reproducibility?.dataset_id);
+            const links = sourceFactLinks(record, profile.reproducibility, profile.identity);
             return <tr key={record.provenance_id}>
             <th scope="row">
               {fieldLabel(record.original_field_name)}
+              <br /><code className="section-note">{record.original_field_name}</code>
               <p>Original: {formatValue(record.original_value)}
                 <br />Normalized: {formatValue(record.normalized_value)}
                 {record.units ? ` ${record.units}` : ""}
               </p>
             </th>
             <td>
-              {link ? <a href={link}>
-                {record.source_id}
-              </a> : record.source_id}
+              {links.currentRecordUrl ? <><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
+              {links.datasetUrl ? <><a className="section-note" href={links.datasetUrl} target="_blank" rel="noopener noreferrer">About this dataset</a><br /></> : null}
+              {record.source_id}
               <br />
               {record.dataset_version}
               <p className="section-note">

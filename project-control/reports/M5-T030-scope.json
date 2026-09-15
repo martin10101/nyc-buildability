@@ -1,0 +1,40 @@
+{
+  "recorded_at": "2026-09-15T00:57:01.071136+00:00",
+  "baseline_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d",
+  "product_commit": "fa3cea2d2e4ac906f57648566df87178197c7076",
+  "product_tree": "5b6acf55ae6c079f0292aa8140ef6ccbeffa89a7",
+  "changed_application_paths": [
+    "apps/web/e2e/architect-workspace.spec.ts",
+    "apps/web/src/components/architect/EvidenceInspector.tsx",
+    "apps/web/src/components/architect/EvidenceRecord.tsx",
+    "apps/web/src/components/architect/ReportSources.tsx",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts",
+    "apps/web/src/lib/provenance-link.ts"
+  ],
+  "file_sha256": {
+    "apps/web/src/lib/provenance-link.ts": "5c62219754122bfee6d635058139d8cc3d3f52692ee55c89fb85f93fb4f419fe",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts": "1de6ec9cb72d83f370647d11671e0dcd4817bb35c551ef247a7ca8e850ab5bdb",
+    "apps/web/src/components/architect/EvidenceRecord.tsx": "85a5e2992981ea9692e68cda31c40155597fc13cb5eb78ea9c5499198a5d28fc",
+    "apps/web/src/components/architect/EvidenceInspector.tsx": "3370ed2f4a72cc082e422efa4a370525153de8fffb0fae6c65d5d0aec665099a",
+    "apps/web/src/components/architect/ReportSources.tsx": "02959d1bbbdf6c7223d55b46877bf9e8dc9bad8093eae142e5c206f4371f3d79",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx": "48a19ef905b56f7d6f4ae627753919a974f6f06f86083530d49789f87c529019",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx": "77c01ef4016c07f4583da5b791e61b6ef0d8673ddffe02fa44d8905c0c649bf2",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx": "0213e6c717d25643acbbd6a6649e0865d3f32549131ce9192d0897cad22572bf",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx": "99178ff3254e3f20a550c3fd01ab11f19b5b0e7848da3b681997f100d3ec9e95",
+    "apps/web/e2e/architect-workspace.spec.ts": "de8dea8d6055f0238dae4bf98904de29e998763298186c31d62884c4dcf52eb7"
+  },
+  "protected_application_diff": [],
+  "remote_main_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "remote_pr_241": {
+    "state": "open",
+    "merged": false,
+    "merged_at": null,
+    "base": "main",
+    "head": "4174a3b2a547ae7d5df5d35cefb63767cbf84721"
+  },
+  "note": "Remote main and PR 241 read through GitHub connector during review preparation. Product paths are frozen; source capture and task metadata are scoped technical evidence, not backend changes. This snapshot is not a deployment assertion."
+}

@@ -116,11 +116,27 @@ for (const [view, name] of VIEWS) {
       await page.getByLabel("Filter facts", { exact: true }).fill("lot area");
       const source = page.getByRole("button", { name: "Source for Lot area", exact: true });
       await source.click();
-      await expect(page.getByRole("complementary", { name: "Contextual evidence inspector" })).toContainText("Original value");
+      const inspector = page.getByRole("complementary", { name: "Contextual evidence inspector" });
+      await expect(inspector).toContainText("Original value");
+      await expect(inspector).toContainText("lotarea");
+      await expect(inspector.getByRole("link", { name: "Current PLUTO record (JSON)" })).toHaveAttribute("href", `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${BBL}`);
+      await expect(inspector.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
     }
     if (view === "zoning") await expect(page.getByText("Pending land-use actions", { exact: true })).toBeVisible();
     if (view === "documents") await expect(page.getByTestId("inbox-empty")).toBeVisible();
-    if (view === "report") await expect(page.getByRole("button", { name: "Print property brief" })).toBeVisible();
+    if (view === "report") {
+      await expect(page.getByRole("button", { name: "Print property brief" })).toBeVisible();
+      const sources = page.locator("#brief-sources");
+      await sources.locator(":scope > summary").click();
+      const row = sources.locator("tbody tr").first();
+      await expect(row.getByRole("link", { name: "Current PLUTO record (JSON)" })).toHaveAttribute("href", `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${BBL}`);
+      await expect(row.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
+      await expect(row).toContainText("Original:");
+      const path = info.outputPath("10a-report-captured-source-links.png");
+      await row.screenshot({ path });
+      await info.attach("report captured source links", { path, contentType: "image/png" });
+      await sources.locator(":scope > summary").click();
+    }
     if (["envelope", "units", "financials"].includes(view)) {
       await expect(page.getByRole("heading", { name: /is not available in this version/ })).toBeVisible();
       await expect(page.getByTestId("architect-cap")).toHaveCount(0);
@@ -143,6 +159,8 @@ test("mobile source inspector is immediately visible and Escape returns to the s
   await expect(inspector).toBeInViewport();
   await expect(inspector).toBeFocused();
   await expect(inspector).toContainText("Original value");
+  await expect(inspector.getByRole("link", { name: "Current PLUTO record (JSON)" })).toHaveAttribute("href", `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${BBL}`);
+  await expect(inspector.getByRole("link", { name: "About this dataset" })).toBeVisible();
   await screenshot(page, info, "15-source-inspector-mobile");
   await page.keyboard.press("Escape");
   await expect(source).toBeFocused();

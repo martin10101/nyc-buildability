@@ -1,24 +1,14 @@
 import { formatValue, urlHost } from "@/lib/format";
-import { datasetLandingUrl } from "@/lib/provenance-link";
+import { sourceFactLinks } from "@/lib/provenance-link";
 import type { Reproducibility, SourceFact } from "@/lib/contract";
 
 /**
  * Per-fact provenance drill-down (PRD sections 9/19; task M2-T001 output 2).
  *
  * Uses a native <details> disclosure: keyboard-accessible without JS.
- * Renders ONLY documented source_fact keys from the record; the dataset id
- * and request-URL host come from the documented profile-level
- * `reproducibility` object (the per-record dataset_id/request_url keys the
- * builder also emits are NOT documented in source_fact.schema.json and are
- * deliberately not consumed).
- *
- * D-056-R001: the dataset id is rendered as a clickable outbound link to the
- * official dataset landing page WHEN it passes strict validation
- * (src/lib/provenance-link.ts) — constant prefix + validated token only,
- * never anything built from `request_url`. An invalid/malformed id (which
- * the required `reproducibility.dataset_id` field should never be, but is
- * not re-validated at the schema layer) falls back to the prior plain-text
- * rendering — an honest absence, never a guessed link.
+ * This legacy surface receives no profile identity. Its current-record link
+ * uses the captured fact's validated BBL and same-source dataset metadata.
+ * Captured metadata stays escaped text; request_url never becomes an href.
  */
 export function ProvenanceDisclosure({
   records,
@@ -41,12 +31,15 @@ export function ProvenanceDisclosure({
       </p>
     );
   }
+  const entries = records.map(record => ({ record, links: sourceFactLinks(record, reproducibility) }));
   return (
     <details className="provenance-details">
       <summary>{label}</summary>
       {joinNote ? <p className="section-note">{joinNote}</p> : null}
-      {records.map((record) => (
+      {entries.some(({ links }) => links.currentRecordUrl) ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}
+      {entries.map(({ record, links }) => (
         <div className="provenance-body" key={record.provenance_id}>
+          {links.currentRecordUrl ? <p><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a></p> : null}
           <dl>
             <dt>Source</dt>
             <dd>{record.source_id}</dd>
@@ -73,30 +66,42 @@ export function ProvenanceDisclosure({
             </dd>
             <dt>Conflict status</dt>
             <dd>{record.conflict_status}</dd>
-            {reproducibility ? (
+            <dt>Fact review</dt>
+            <dd>{record.user_confirmed_or_overridden}</dd>
+            {links.datasetId !== undefined ? (
               <>
                 <dt>Dataset id</dt>
                 <dd data-testid="provenance-dataset-id">
-                  {datasetLandingUrl(reproducibility.dataset_id) ? (
+                  {links.datasetUrl ? (
                     <a
-                      href={datasetLandingUrl(reproducibility.dataset_id) as string}
+                      href={links.datasetUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       data-testid="provenance-source-link"
                     >
-                      {reproducibility.dataset_id}
+                      About this dataset · {links.datasetId}
                     </a>
                   ) : (
-                    reproducibility.dataset_id
+                    links.datasetId
                   )}
                 </dd>
-                <dt>Retrieved from</dt>
-                <dd>{urlHost(reproducibility.request_url)}</dd>
               </>
             ) : null}
+            {reproducibility?.source_id === record.source_id ? <>
+              <dt>Retrieved from</dt>
+              <dd>{urlHost(reproducibility.request_url)}</dd>
+            </> : null}
           </dl>
+          <details className="provenance-details">
+            <summary>Full captured source record</summary>
+            <pre>{JSON.stringify(record, null, 2)}</pre>
+          </details>
         </div>
       ))}
+      {reproducibility ? <details className="provenance-details">
+        <summary>Full captured profile metadata</summary>
+        <pre>{JSON.stringify(reproducibility, null, 2)}</pre>
+      </details> : null}
     </details>
   );
 }

@@ -3,7 +3,10 @@ import {
   DATASET_LANDING_PREFIX,
   datasetLandingUrl,
   isValidDatasetId,
+  plutoRecordUrl,
+  sourceFactLinks,
 } from "@/lib/provenance-link";
+import type { Identity, SourceFact } from "@/lib/contract";
 
 /** M5-T025 (D-056-R001) — strict dataset-id validation + constant-prefix URL builder. */
 
@@ -48,6 +51,92 @@ describe("isValidDatasetId", () => {
     expect(isValidDatasetId(42)).toBe(false);
     expect(isValidDatasetId({})).toBe(false);
     expect(isValidDatasetId("")).toBe(false);
+  });
+});
+
+describe("current official PLUTO record links", () => {
+  const sourceId = "nyc-dcp-pluto-soda";
+  const datasetId = "64uk-42ks";
+  const bbl = "1008350041";
+  const record = { source_id: sourceId, dataset_id: datasetId, bbl };
+  const source = { source_id: sourceId, dataset_id: datasetId };
+  const expected = `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${bbl}`;
+
+  // Shape checks only: these five synthetic tokens make no official-lot claim.
+  it.each(["1000010010", "2000010010", "3000010010", "4000010010", "5000010010"])("supports canonical BBL %s across all five boroughs", lot => {
+    expect(plutoRecordUrl(sourceId, datasetId, lot)).toBe(`https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${lot}`);
+  });
+
+  it.each([
+    undefined, null, 1008350041, {}, "", "100835004", "10083500410", "0008350041", "6008350041",
+    " 1008350041", "1008350041 ", "1008350041\n", "1008350041\r", "1008350041\r\n",
+    "1008350041&$limit=1", "1008350041%0A", "javascript:alert(1)", "１００８３５００４１", "1".repeat(1024),
+  ])("rejects malformed or hostile BBL %j without sanitizing it", lot => {
+    expect(plutoRecordUrl(sourceId, datasetId, lot)).toBeNull();
+  });
+
+  it.each([undefined, null, {}, 42, "", "another-source", "nyc-dcp-pluto-soda\n", "NYC-DCP-PLUTO-SODA"])("rejects unproven source %j", value => {
+    expect(plutoRecordUrl(value, datasetId, bbl)).toBeNull();
+  });
+
+  it.each([undefined, null, {}, 42, "", "abcd-1234", "64UK-42KS", "64uk-42ks\n", "64uk-42ks\r\n", "64uk-42ks?bbl=1"])("rejects unconfirmed PLUTO dataset %j", value => {
+    expect(plutoRecordUrl(sourceId, value, bbl)).toBeNull();
+  });
+
+  it.each(["64uk-42ks\n", "64uk-42ks\r", "64uk-42ks\r\n"])("never appends trailing line endings from dataset %j", value => {
+    expect(isValidDatasetId(value)).toBe(false);
+    expect(datasetLandingUrl(value)).toBeNull();
+  });
+
+  it("rejects a wrong lot even when both BBLs are individually valid", () => {
+    expect(sourceFactLinks(record, source, { bbl: "3021720001" }).currentRecordUrl).toBeNull();
+    expect(sourceFactLinks(record, source, { bbl }).currentRecordUrl).toBe(expected);
+  });
+
+  it.each([undefined, null, "1008350041\n"])("rejects missing or malformed supplied profile BBL %j", value => {
+    expect(sourceFactLinks(record, source, { bbl: value } as Identity).currentRecordUrl).toBeNull();
+  });
+
+  it("allows the legacy disclosure to use its captured BBL when no profile identity is supplied", () => {
+    expect(sourceFactLinks(record, source).currentRecordUrl).toBe(expected);
+  });
+
+  it("uses a missing record dataset only from matching-source reproducibility", () => {
+    const missingDataset = { source_id: sourceId, bbl };
+    expect(sourceFactLinks(missingDataset, source, { bbl }).currentRecordUrl).toBe(expected);
+    const mixed = sourceFactLinks(missingDataset, { ...source, source_id: "another-source" }, { bbl });
+    expect(mixed.currentRecordUrl).toBeNull();
+    expect(mixed.datasetUrl).toBeNull();
+    expect(sourceFactLinks(missingDataset, undefined, { bbl }).currentRecordUrl).toBeNull();
+  });
+
+  it("never lends the profile's PLUTO dataset to a non-PLUTO fact", () => {
+    const mixed = sourceFactLinks({ source_id: "another-source", bbl }, source, { bbl });
+    expect(mixed.currentRecordUrl).toBeNull();
+    expect(mixed.datasetUrl).toBeNull();
+  });
+
+  it.each([null, "", "bad-dataset", "abcd-1234"])("does not replace an explicitly invalid or different record dataset %j with PLUTO", dataset => {
+    const fact = { ...record, dataset_id: dataset } as SourceFact;
+    expect(sourceFactLinks(fact, source, { bbl }).currentRecordUrl).toBeNull();
+  });
+
+  it("fails closed on same-source dataset conflict and preserves the fact's independent About link", () => {
+    const links = sourceFactLinks(record, { ...source, dataset_id: "abcd-1234" }, { bbl });
+    expect(links.currentRecordUrl).toBeNull();
+    expect(links.datasetUrl).toBe("https://data.cityofnewyork.us/d/64uk-42ks");
+  });
+
+  it("uses an explicit record dataset independently of another source's profile metadata", () => {
+    expect(sourceFactLinks(record, { source_id: "another-source", dataset_id: "abcd-1234" }, { bbl }).currentRecordUrl).toBe(expected);
+  });
+
+  it("never uses hostile reflected request URLs from either captured record", () => {
+    const fact = { ...record, request_url: "https://evil.example/steal?bbl=3021720001" };
+    const metadata = { ...source, request_url: "javascript:alert(1)" };
+    const links = sourceFactLinks(fact, metadata, { bbl });
+    expect(links.currentRecordUrl).toBe(expected);
+    expect(links.datasetUrl).toBe("https://data.cityofnewyork.us/d/64uk-42ks");
   });
 });
 

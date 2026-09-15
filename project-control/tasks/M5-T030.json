@@ -1,0 +1,200 @@
+{
+  "task_id": "M5-T030",
+  "title": "Lot-specific official PLUTO source links",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Open the selected lot official record while preserving captured evidence; validate with real buildings.",
+  "business_reason": "An architect must be able to inspect the actual lot record without searching the full dataset again.",
+  "inputs": [
+    "project-control/directives/D-062-lot-source-links/requirements.json",
+    "docs/CODE_MODULARITY_POLICY.md",
+    "docs/ENGINEERING_RELIABILITY_STANDARD.md sections 2,3,8,9,10",
+    "apps/web/src/lib/contract.ts (read-only)",
+    "packages/contracts/generated/property_profile.ts (read-only)",
+    "apps/web/src/test-support/fixtures.ts (read-only)",
+    "project-control/reports/M5-T030-source-verification.md",
+    "project-control/reports/M5-T030-real-building-baseline.json",
+    "project-control/reports/M5-T030-esb-captured-fact.json"
+  ],
+  "outputs": [
+    "Safe lot-specific PLUTO links in existing evidence UI",
+    "Captured source information preserved with current/captured distinction",
+    "Executable regression examples and producer evidence"
+  ],
+  "dependencies": [
+    "M5-T029"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/provenance-link.ts",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts",
+    "apps/web/src/components/architect/EvidenceRecord.tsx",
+    "apps/web/src/components/architect/EvidenceInspector.tsx",
+    "apps/web/src/components/architect/ReportSources.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx",
+    "apps/web/e2e/architect-workspace.spec.ts",
+    "project-control/reports/M5-T030-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "packages/**",
+    "supabase/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/next.config.ts",
+    "apps/web/.npmrc",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/architect/source-links.ts",
+    "apps/web/src/components/rule-evaluation/**",
+    ".github/**",
+    ".claude/**",
+    "tools/**",
+    "render.yaml",
+    "project-control/tasks/**",
+    "project-control/directives/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "requirement": "D-062-R001,D-062-R002",
+      "preconditions": "Recorded PLUTO profile",
+      "input": "Open evidence drawer, profile sources, report and legacy disclosure",
+      "expected": "Matching BBL in official current-record URL; exact field and captured metadata preserved; About link secondary",
+      "invariants": "No current/captured conflation",
+      "execution": "Component tests and Playwright",
+      "evidence": "project-control/reports/M5-T030-producer-report.md",
+      "cleanup": "Reset fixture state; no persistent external mutation"
+    },
+    {
+      "id": "S2",
+      "requirement": "D-062-R001,D-062-R004",
+      "preconditions": "Wrong/missing/malformed BBL, conflicting dataset, non-PLUTO source, hostile request_url",
+      "input": "Request links plus valid lots in all five boroughs",
+      "expected": "Reject wrong identity or source; source-matched fallback only; fixed host/dataset; all boroughs supported",
+      "invariants": "No arbitrary href",
+      "execution": "Helper tests; red-before-green and wrong-lot mutation proof; security review",
+      "evidence": "project-control/reports/M5-T030-producer-report.md",
+      "cleanup": "Reset fixture state; no persistent external mutation"
+    },
+    {
+      "id": "S3",
+      "requirement": "D-062-R003",
+      "preconditions": "Empire State Building identified by official LPC as BBL 1008350041",
+      "input": "Load real profile; inspect source href and official response",
+      "expected": "Correct BBL, exactly one official row; compare captured field/value; record timestamp and address alias explanation",
+      "invariants": "No legal conclusions",
+      "execution": "Live UI DOM href and independent official HTTP check",
+      "evidence": "project-control/reports/M5-T030-producer-report.md",
+      "cleanup": "Reset fixture state; no persistent external mutation"
+    },
+    {
+      "id": "S4",
+      "requirement": "D-062-R004",
+      "preconditions": "Frozen product",
+      "input": "Run checks and independent review",
+      "expected": "Required gates pass; backend/contracts/dependencies/config/main/PR241 unchanged",
+      "invariants": "No waived gates or weakened tests",
+      "execution": "Diff, affected tests and one full CI",
+      "evidence": "project-control/reports/M5-T030-producer-report.md",
+      "cleanup": "Reset fixture state; no persistent external mutation"
+    },
+    {
+      "id": "S5",
+      "requirement": "D-062-R005",
+      "preconditions": "Observed MVP workflow",
+      "input": "Prepare plain-English architect value note",
+      "expected": "Explain assembled evidence and repeatable supported draft checks; manual alternative and professional judgment limits; no unmeasured time claims",
+      "invariants": "No inflated product capability",
+      "execution": "Producer report reviewed return note",
+      "evidence": "project-control/reports/M5-T030-producer-report.md",
+      "cleanup": "Reset fixture state; no persistent external mutation"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "awaiting_gate",
+  "progress_percent": 85,
+  "risks": [
+    "PLUTO representative address may differ; canonical BBL is the join key.",
+    "Current public data may change after capture; preserve dates and versions.",
+    "Cloud browser blocks top-level JSON viewing; validate DOM href and official HTTP response and report that limit."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-15T00:36:10.826292+00:00",
+  "updated_at": "2026-09-15T01:00:08.156299+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-062",
+      "requirement_ids": [
+        "D-062-R001",
+        "D-062-R002",
+        "D-062-R003",
+        "D-062-R004",
+        "D-062-R005"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-15T00:36:10.826361+00:00",
+  "documented_test_commands": [
+    "npm run typecheck",
+    "npm run test -- src/lib/__tests__/provenance-link.test.ts src/components/architect/__tests__/source-links.test.tsx src/components/architect/__tests__/workspace.test.tsx",
+    "npm run lint",
+    "npm run build",
+    "npm run test:e2e",
+    "python tools/modularity_check.py --check",
+    "python tools/validate_directive_compliance.py --check"
+  ],
+  "path_notes": [
+    "One bounded frontend defect cluster. Existing provenance-link helper owns official URL validation; existing evidence components own presentation. Legal citations retain dataset semantics. No new dependency or fetch layer.",
+    "Isolated cloud worktree at accepted candidate 546dd09a; dependency M5-T029 accepted; no overlapping writer. Main and PR 241 protected.",
+    "Match SourceFact.bbl to profile identity where available. Fixed known PLUTO source/dataset, never request_url. Missing per-record dataset fallback only to same-source reproducibility.",
+    "Prior owner build/push/live authority covers candidate update and existing Render frontend. Delivery evidence separate from implementation acceptance.",
+    "Reuse ignored identical-lock dependency install; owner PC untouched. No unrelated session/state upload."
+  ],
+  "modularity_boundary_answers": {
+    "responsibility": "Safe official source URL construction and existing evidence presentation.",
+    "module": "provenance-link.ts helper; EvidenceRecord/EvidenceInspector/ReportSources/ProvenanceDisclosure UI.",
+    "threshold": "All five current production modules are under 150 physical lines, far below 600 SLOC warning.",
+    "extraction": "No extraction needed for these small owning modules; avoid a parallel generic utility.",
+    "public_interface": "Preserve datasetLandingUrl and isValidDatasetId; component props and canonical contracts stay compatible.",
+    "boundary_tests": "provenance-link.test.ts, focused source-links component tests, architect-workspace Playwright journey.",
+    "submission_gate": "python tools/modularity_check.py --check must pass before submission."
+  },
+  "worktree": "/workspace/scratch/cfa2464c5c7f/nycdf-source-links",
+  "progress_log": [
+    {
+      "at": "2026-09-15T00:41:31.050754+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Source contracts and S1-S5 acceptance scenarios recorded; independent intake passed; bounded frontend implementation authorized."
+    },
+    {
+      "at": "2026-09-15T01:00:07.910121+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "self_check",
+      "message": "Frozen source links: 108 affected tests, wrong-lot mutation proof, typecheck/lint/modularity passed. Independent CI/browser gates and live real-building verification pending."
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { fieldLabel, formatValue } from "@/lib/format";
-import { datasetLandingUrl } from "@/lib/provenance-link";
+import { sourceFactLinks } from "@/lib/provenance-link";
 import type { PropertyProfile, SourceFact } from "@/lib/contract";
 /** All record fields stay accessible as escaped text; source URLs never become arbitrary hrefs. */
 export function CapturedRecord({ value, label = "Full captured record" }: {
@@ -19,14 +19,21 @@ export function EvidenceRecord({ record, profile }: {
     record: SourceFact;
     profile: PropertyProfile;
 }) {
-    const sourceLink = datasetLandingUrl(record.dataset_id ?? profile.reproducibility?.dataset_id);
+    const links = sourceFactLinks(record, profile.reproducibility, profile.identity);
     const confirmations = profile.user_confirmations.filter(item => item.field === record.original_field_name || item.field === record.fact_key);
     return <div className="architect-evidence-record">
-    <p className="architect-eyebrow">Source fact</p>
+    <p className="architect-eyebrow">Captured source fact</p>
     <h3>
       {fieldLabel(record.original_field_name)}
     </h3>
+    <p>
+      {links.currentRecordUrl ? <><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
+      {links.datasetUrl ? <a className="section-note" href={links.datasetUrl} target="_blank" rel="noopener noreferrer">About this dataset</a> : <span className="section-note">No safe official dataset link is available in this record.</span>}
+    </p>
+    {links.currentRecordUrl ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}
     <dl className="architect-definition-list">
+      <dt>Original field</dt>
+      <dd><code>{record.original_field_name}</code></dd>
       <dt>Original value</dt>
       <dd>
         {formatValue(record.original_value)}
@@ -66,7 +73,6 @@ export function EvidenceRecord({ record, profile }: {
         {record.user_confirmed_or_overridden}
       </dd>
     </dl>
-    {sourceLink ? <a href={sourceLink} target="_blank" rel="noopener noreferrer">Open official dataset ↗</a> : <p className="section-note">No safe official dataset link is available in this record.</p>}
     <details className="provenance-details">
       <summary>Review history</summary>
       {confirmations.length ? <CapturedRecord value={confirmations} label="Recorded confirmations and overrides"/> : <p className="section-note">No confirmation or override history is supplied for this fact.</p>}

@@ -14,11 +14,16 @@ describe("architect workspace safety", () => {
   });
   it("exposes every captured source value and review metadata without unsafe links", () => {
     const profile = baseProfile();
-    const record = { ...profile.provenance[0], original_value: "RAW-CAPTURE", normalized_value: "NORMALIZED-CAPTURE", request_url: "javascript:alert(1)", user_confirmed_or_overridden: "overridden" as const };
+    const record = { ...profile.provenance[0], original_value: "RAW-CAPTURE", normalized_value: "NORMALIZED-CAPTURE", request_url: "javascript:alert(1)", user_confirmed_or_overridden: "overridden" as const, conflict_status: "conflicting" as const };
+    profile.user_confirmations = [{ field: record.original_field_name, action: "overridden", override_value: "REVIEWED-CAPTURE", confirmed_by: "Synthetic reviewer", confirmed_at: "2026-09-15T01:00:00Z" }];
     render(<EvidenceRecord record={record} profile={profile} />);
     expect(screen.getByText("RAW-CAPTURE")).toBeInTheDocument();
     expect(screen.getByText("NORMALIZED-CAPTURE")).toBeInTheDocument();
     expect(screen.getByText("overridden")).toBeInTheDocument();
+    expect(screen.getByText("conflicting")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Review history"));
+    const history = screen.getByText("Recorded confirmations and overrides").closest("details")!.querySelector("pre")!;
+    expect(JSON.parse(history.textContent!)).toEqual(profile.user_confirmations);
     fireEvent.click(screen.getByText("Full captured source record"));
     expect(screen.getByText(/javascript:alert/)).toBeInTheDocument();
     expect(document.querySelector('a[href^="javascript:"]')).toBeNull();

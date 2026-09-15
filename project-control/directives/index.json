@@ -815,7 +815,21 @@
         "M5-T029"
       ],
       "manifest": "D-061-architect-interface/manifest.json"
+    },
+    {
+      "directive_id": "D-062",
+      "slug": "lot-source-links",
+      "title": "Lot-specific source links and real-building verification",
+      "status": "active",
+      "issued_at": "2026-09-15",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M5-T030"
+      ],
+      "manifest": "D-062-lot-source-links/manifest.json"
     }
   ],
-  "updated_at": "2026-09-14T20:09:38.435031+00:00"
+  "updated_at": "2026-09-15T00:34:40.144721+00:00"
 }
