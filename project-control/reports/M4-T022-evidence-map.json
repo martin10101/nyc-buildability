@@ -1,0 +1,41 @@
+{
+  "reviewed_sha": "b4514d9a338a7ced8bd268b85afd55b12c729fd3",
+  "requirements": {
+    "D-063-R003": [
+      "project-control/reports/M4-T022-producer-report.md",
+      "project-control/reports/M5-T031-producer-report.md",
+      "tools/test_residential_validation.py",
+      "project-control/reports/M5-T031-live-baseline.json"
+    ],
+    "D-063-R004": [
+      "project-control/reports/M4-T022-coverage.md",
+      "tests/fixtures/residential_validation/official_far_expectations.json",
+      "apps/web/src/components/architect/__tests__/development-limits.test.tsx"
+    ],
+    "D-063-R005": [
+      "project-control/reports/D-063-review-identity.json"
+    ],
+    "D-063-R006": [
+      "project-control/reports/M4-T022-test-results.json",
+      "project-control/reports/M4-T022-coverage.md",
+      "project-control/reports/M5-T031-live-baseline.json"
+    ],
+    "D-063-R007": [
+      "project-control/reports/M4-T022-producer-report.md",
+      "project-control/reports/M5-T031-producer-report.md"
+    ],
+    "D-063-R008": [
+      "project-control/reports/D-063-review-identity.json",
+      "project-control/reports/D-063-work-allocation.md"
+    ],
+    "D-063-R009": [
+      "project-control/reports/M4-T022-test-results.json",
+      "project-control/reports/D-063-work-allocation.md"
+    ],
+    "D-063-R010": [
+      "project-control/reports/D-063-review-identity.json",
+      "tools/residential_validation.py",
+      "apps/web/src/lib/architect/development-limits.ts"
+    ]
+  }
+}

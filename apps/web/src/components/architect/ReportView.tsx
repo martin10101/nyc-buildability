@@ -9,7 +9,8 @@ import { ScenarioConstraints } from "@/components/compare/ScenarioConstraints";
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { PropertyFacts, OpenIssues } from "./ProfileViews";
 import { PropertyIssuesSummary } from "./PropertyOverview";
-import { DevelopmentLimits } from "./DevelopmentLimits";
+import { DevelopmentLimits, IncompleteEvaluationNotice } from "./DevelopmentLimits";
+import { evaluationIsInspectable } from "@/lib/architect/development-limits";
 import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
 import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
@@ -78,7 +79,8 @@ export function ReportView({ profile, scenario, evaluation, label }: {
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-calculations">
       <summary>Calculation and rule evidence</summary>
-      <CalculationEvidence evaluation={evaluation} scenario={scenario}/>
+      <IncompleteEvaluationNotice evaluation={evaluation}/>
+      <CalculationEvidence evaluation={evaluationIsInspectable(evaluation) ? evaluation : null} scenario={scenario}/>
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-sources">
       <summary>Source and review appendix</summary>

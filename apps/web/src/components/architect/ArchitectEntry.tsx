@@ -10,6 +10,7 @@ import { recalledAddress, type SelectedAddress } from "@/lib/architect/selected-
 import { useProperty } from "@/lib/architect/use-property";
 import { useAnalysis } from "@/lib/architect/use-analysis";
 import type { PropertyProfile } from "@/lib/contract";
+import { evaluationIsInspectable } from "@/lib/architect/development-limits";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import { OutcomeFailureStates } from "@/components/property/FailureState";
@@ -26,6 +27,7 @@ import { EvidenceWorkspace } from "./EvidenceWorkspace";
 import { EvidenceInspector } from "./EvidenceInspector";
 import { ScenarioWorkspace } from "./ScenarioWorkspace";
 import { ReportView } from "./ReportView";
+import { IncompleteEvaluationNotice } from "./DevelopmentLimits";
 function PropertySearch() {
     const router = useRouter();
     const [bbl, setBbl] = useState("");
@@ -67,9 +69,11 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
     const returnedScenario = analysis.scenario?.kind === "scenario" ? analysis.scenario.document : null;
     const returnedEvaluation = analysis.evaluation?.kind === "evaluation" ? analysis.evaluation.document : null;
     const scenario = returnedScenario?.evaluated_input.bbl === profile.identity.bbl ? returnedScenario : null;
-    const evaluation = returnedEvaluation?.evaluated_input.bbl === profile.identity.bbl ? returnedEvaluation : null;
-    const evaluationAnnouncement = returnedEvaluation && !evaluation
+    const identityEvaluation = returnedEvaluation?.evaluated_input.bbl === profile.identity.bbl ? returnedEvaluation : null;
+    const evaluation = evaluationIsInspectable(identityEvaluation) ? identityEvaluation : null;
+    const evaluationAnnouncement = returnedEvaluation && !identityEvaluation
         ? `Rule evaluation identity ${returnedEvaluation.evaluated_input.bbl ? "mismatch" : "missing"}. Requested BBL ${profile.identity.bbl}; returned BBL ${returnedEvaluation.evaluated_input.bbl ?? "not stated"}. Results are withheld from this property.`
+        : identityEvaluation && !evaluation ? "Rule details incomplete. Numerical summaries are unavailable; the returned record is preserved."
         : analysis.evaluation ? announcementForRuleEvaluation(analysis.evaluation) : "";
     const [address, setAddress] = useState<SelectedAddress | null>(null);
     const [selection, setSelection] = useState("calculation");
@@ -99,7 +103,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
         case "scenarios":
             content = <>
     <PropertyIssuesSummary profile={profile}/>
-    {scenario ? <ScenarioWorkspace document={scenario}/> : null}
+    {scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl}/> : null}
   </>;
             break;
         case "evidence":
@@ -164,6 +168,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
       {analysisView ? <>
           <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
           <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
+          <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
         </> : null}
       {content}
     </div>

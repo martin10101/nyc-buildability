@@ -50,7 +50,9 @@
     "M5-T031",
     "M4-T022"
   ],
-  "affected_prs": [],
+  "affected_prs": [
+    242
+  ],
   "affected_branches": [
     "candidate/D-024-mrl-option-b",
     "task/M5-T031-development-first"

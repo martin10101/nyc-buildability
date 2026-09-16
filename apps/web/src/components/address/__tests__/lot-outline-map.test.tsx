@@ -520,7 +520,10 @@ describe("LotOutlineMap — map 'error' event routes to a typed fallback (D-056-
       <LotOutlineMap bbl="1008350041" fetchImpl={fetchReturning(jsonResponse(fx))} />,
     );
     expect(await screen.findByTestId("lot-outline-map")).toBeInTheDocument();
-    mocks.fireMapError();
+    // The container mounts before the dynamic MapLibre import attaches events.
+    // Exercise the documented post-construction error, not an unobserved event.
+    await waitFor(() => expect(screen.getByTestId("lot-outline")).toHaveAttribute("data-parcel-state", "rendered"));
+    act(() => mocks.fireMapError());
     expect(
       await screen.findByTestId("lot-outline-render-error"),
     ).toBeInTheDocument();

@@ -65,3 +65,52 @@ Browser tests have not been executed by this producer. The root's cloud browser 
 M4-T022 source matrix/real-parcel audit is the paired independent source evidence for D-063. This producer neither certifies those results nor treats reference matches or honest refusals as completed buildability. Backend spatial wiring and unsupported height/yards/coverage calculations remain separate gaps; engineering tests do not replace G6 legal approval. The architect was not asked for routine validation or a new benchmark sheet.
 
 Frozen app-file content identity (19 existing files named by the task's allowed app paths, sorted path + NUL + bytes + NUL; excludes this report): SHA-256 `6a805688f01797e34604a34f32f36266ddade407edf5680ed22fcb37c9857ac4`. Orchestrator commits, runs final gates and decides disposition. No git mutation, control-state mutation, main/PR-241 change or production action was performed by the producer.
+
+## Rework v2 — independent G3/G4 findings and bounded visual corrections
+
+This section supersedes the v1 guard and bulk-promotion claims above. Independent review `M5-T031-G3-G4-v1.md` at `b4514d9a338a7ced8bd268b85afd55b12c729fd3` found five must-fix cases despite the earlier green tests. All five were reproduced together before editing: `npm test -- --run src/components/architect/__tests__/development-limits.test.tsx -t 'review cluster'` exited **1**, with **8 failed / 66 excluded by the name filter**. Four failures were the separate missing nested trace fields; the other four covered conflict, null association, wrong bulk meaning and duplicate-value filtering. Raw capture: `/tmp/m5t031-rework-red.log`.
+
+| Finding | Complete bounded repair | Acceptance evidence |
+|---|---|---|
+| Missing/malformed trace fields can crash new selectors and existing detail consumers | Guard fields the readers actually dereference, including trace objects, validation records, effective-window flags, output objects, steps and citations. Guard the shared route composition; preserve the unchanged unusable document in an explicit captured-record disclosure. Zoning and Report also guard direct composition. | Original four cases pass; malformed primitive/array/object variants, citation entries and trace entries pass. All four missing-field cases exercised through Overview, Zoning, Scenarios, Evidence and Report. |
+| Conflicting or fail-safe evaluation still promotes a cap | Cap promotion requires an eligible unique residential trace, matching identity/version/status and the canonical residential square-foot output. Associated conflict/fail-safe states suppress promotion. Scenario failures and integrity disagreement also suppress numerical summary claims. | Same-BBL/same-fingerprint rule-conflict reproduction, all three summary views with fail-safe, and contradictory scenario/validation cases pass. |
+| Null/malformed fingerprint is treated as agreement | Both documents must carry meaningful matching SHA-256 fingerprints, matching BBL/profile version and matching evaluation-contract version. Missing evaluation cannot substantiate a scenario cap. | Null, empty, whitespace, incomplete and malformed fingerprints, absent evaluation and mismatched source identifiers pass. |
+| Matching identifiers/numbers can turn FAR into height | Removed generic numeric bulk promotion. The current open-typed bulk provenance does not establish supported height/yard/coverage meanings. These rows remain **Not calculated**, with evidence links and all supplied raw constraints retained. | FAR-as-height negative passes. The prior synthetic-height positive was replaced by preservation-without-promotion assertions, including zero in the unchanged captured scenario. This follows the review's explicit instruction; no bulk rule was removed. |
+| Filtering by the desired value conceals competing traces | Choose a single applicable residential trace, then require unique rule/version identity before any value agreement. Cap must equal the trace's existing square-foot output exactly; no arithmetic. | Same/different-value, invalid and inapplicable duplicate identities pass. Generic bulk trace matching no longer exists. |
+
+`ScenarioWorkspace` now supplies evaluation and selected BBL to the same headline. Unassociated returned scenario figures remain behind an explicitly labelled disclosure; the complete original scenario record is still available. No fabricated or cleaned substitute document is created.
+
+Independent visual review added two narrowly scoped corrections: the existing skip link is explicitly anchored at viewport `top:0; left:0`, keeping the existing keyboard-focus reveal; the new headline spells out **Professional review required** and other statuses, preserving the raw enum within source wording. The readable-status test was observed failing before the label edit (exit 1) and passing after (exit 0). Seven additional browser journeys cover all five malformed-response routes, missing fingerprint, and mobile skip-link scrolling/focus with screenshots. The new browser file now contains thirteen journeys; v2 execution remains for final frozen CI and independent visual review.
+
+### Load-bearing mutation evidence
+
+Each mutation used the actual adapter, restored its exact bytes in a `finally` block, then ran the same targeted command again:
+
+| Mutation | Command suffix after `npm test -- --run src/components/architect/__tests__/development-limits.test.tsx` | Mutated → restored |
+|---|---|---|
+| Treat missing scenario fingerprint as agreement | `-t 'R3 does not treat'` | Exit 1 / 1 failed → exit 0 / 1 passed |
+| Remove fail-safe rejection from trace selection | `-t 'withholds cap promotion across'` | Exit 1 / 3 failed → exit 0 / 3 passed |
+| Remove duplicate identity check before filtering | `-t 'inapplicable twin'` | Exit 1 / 1 failed → exit 0 / 1 passed |
+
+Raw pairs are `/tmp/m5t031-rework-{missing-fingerprint,fail-safe,identity-before-value}-{red,green}.log`. Other tests were name-filtered only during targeted proof; the final full run excludes none.
+
+### Regression failure found and repaired
+
+The first v2 full regression exited **1**, with **859 passed / 1 failed**. The unchanged existing map-error test fired its synthetic error as soon as the DOM container existed, before the asynchronous MapLibre import had necessarily attached its error listener (`lot-outline-map.test.tsx:525`). The failure surface and source path were inspected; no repeated run was used to hide the failure.
+
+The orchestrator explicitly extended scope to that one test file. It now waits for the observable `data-parcel-state="rendered"` precondition and fires the same error inside `act`. Every fallback/attribution assertion remains; no timeout, production map, dependency or contract changed. This closes the test's event-readiness race. Original failure capture: `/tmp/m5t031-rework-full.log`.
+
+### Final v2 producer checks and remaining gates
+
+| Command | Actual result |
+|---|---|
+| Focused run of development limits, entry, workspace, source links, unused floor area and lot-outline map tests | Exit 0; **6 files / 226 tests passed**. |
+| `npm test` after all repairs | Exit 0; **40 files / 861 tests passed**, no skipped tests; existing jsdom canvas warnings remain. |
+| `npm run typecheck` | Exit 0. |
+| `npm run lint` | Exit 0; **0 errors / 1,077 unchanged vendored warnings**. |
+| `npm run build` | Exit 0; compilation, type checking, static generation and build traces completed. |
+| `python tools/modularity_check.py --check` | Exit 0; **437 tracked files / 0 failures / 18 existing warnings**. |
+
+Final captures: `/tmp/m5t031-rework-focused-final.log`, `/tmp/m5t031-rework-full-final.log`, `/tmp/m5t031-rework-lint-final.log`, `/tmp/m5t031-rework-build-final.log`. The adapter is 162 physical lines; the shared component is 90. No production backend, rule, schema, API, dependency or configuration change was made. No git/control mutation or production action was performed by this producer.
+
+V2 app-file content digest, using the same sorted path/NUL/bytes/NUL method over the **20** allowed existing app files including the explicitly extended map-test path: SHA-256 `703ea0f8c745ec8e63a5a0426979f8edaa403679a48b92547dc0bec730ba2ed5`. The original v1 digest and observations remain above as history. Independent G3/G4/G5/DCV and v2 browser/visual verification must be rerun against the newly frozen candidate; v1 passes do not establish v2 acceptance. Legal approval and completed citywide bulk calculations remain outside this frontend result.

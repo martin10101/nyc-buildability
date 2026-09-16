@@ -8,3 +8,7 @@
 Both worktrees started at dd22b95. Producer scopes prohibit backend/rule, contract, configuration and dependency changes, control-plane mutations and git operations. The orchestrator alone integrates and records evidence. Stop conditions are a concrete scope conflict, missing credentials, or a decision requiring legal or production authority; routine source research and engineering checks do not require another architect benchmark sheet. Reviewers receive bounded packets at frozen content identities and return reports without edits.
 
 Frontend delivery uses the owner's existing instruction to build, push and show the site live on candidate/D-024-mrl-option-b. This does not authorize backend deployment, service configuration changes, new infrastructure, legal rule publication, changes to main, or merging PR 241. The existing Render service is manual-deploy; delivery follows successful required checks and review.
+
+### V2 bounded test-readiness allocation
+
+The frontend producer may additionally edit `apps/web/src/components/address/__tests__/lot-outline-map.test.tsx` solely to wait for rendered map readiness before firing the existing mocked error event. Root inspected the failing log and asynchronous setup. All existing fallback assertions stay intact; no production map change or timeout increase is authorized. This is a frontend test within the existing user scope.

@@ -44,9 +44,3 @@ Source retrieval and tests: 2026-09-15 UTC. This is engineering evidence, not le
 8. Representative engineering tests are reusable but this new module is not automatically invoked by current CI. A separate scoped CI wiring change is needed for that claim.
 
 The initial `splitzone='Y'` source request returned HTTP400 because the current SODA field is boolean. Its error is retained; the corrected `splitzone=true` capture succeeds. The failed research request is not hidden as a passing app test.
-
-## V2 audit protection update — 2026-09-16
-
-The independent v1 review found missing drift protection despite correct current values. V2 now checks operative source-row/footnote binding, exact official authority/section URLs, parameter citation resolution, area/FAR units and authored limitation scope. The source condition numbers are extracted from retained official text; metadata alone cannot redefine them.
-
-Final v2 evidence: 26 audit tests pass; a v1-helper revert produces29 failed mutation assertions and restoration passes. Offline audit:309 pass/29 gap; existing-engine audit:467 pass/80 gap, with the same98 numeric table cells and90 draft numeric outputs. These additional checks do not expand the real-property or bulk coverage listed above. Full v1 evidence and findings remain under `tests/fixtures/residential_validation/v1/`; current results and exact commands are in `M4-T022-test-results.json` and `verification_runs_v2.json`.

@@ -68,3 +68,65 @@ test("canonical evaluated FAR stays distinct from the PLUTO reference and the sq
   await expect(page.getByRole("region", { name: "Development limits" })).toContainText("PLUTO reference");
   await expect(page.locator(".architect-bulk-rows")).toContainText("Not calculated");
 });
+
+for (const view of ["overview", "zoning", "scenarios", "evidence", "report"]) {
+  test(`${view}: malformed accepted trace remains inspectable without promoting numbers`, async ({ page }) => {
+    const bbl = "1000010100";
+    let returnedRecord: unknown;
+    await page.route(`**/api/v1/properties/${bbl}/rule-evaluation`, async route => {
+      const response = await route.fetch();
+      const body = await response.json();
+      delete body.evaluations[0].outputs;
+      returnedRecord = body;
+      await route.fulfill({ response, json: body });
+    });
+    await page.goto(`/property?ruleeval=on&bbl=${bbl}&view=${view}`);
+    await expect(page.getByRole("heading", { name: "Rule details incomplete" })).toBeVisible();
+    await expect(page.getByTestId("rule-eval-announcer")).toContainText("Numerical summaries are unavailable");
+    const raw = page.getByText("Captured unusable rule-evaluation record", { exact: true }).locator("..");
+    await raw.locator(":scope > summary").click();
+    await expect(raw.locator("pre")).toBeVisible();
+    expect(JSON.parse((await raw.locator("pre").textContent())!)).toEqual(returnedRecord);
+    if (view !== "evidence") await expect(page.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("Not calculated");
+  });
+}
+
+test("a missing scenario fingerprint cannot establish a numerical result association", async ({ page }) => {
+  const bbl = "1000010100";
+  await page.route(`**/api/v1/properties/${bbl}/scenario`, async route => {
+    const response = await route.fetch();
+    const body = await response.json();
+    body.evaluated_input.input_fingerprint = null;
+    await route.fulfill({ response, json: body });
+  });
+  await open(page, "overview", bbl);
+  await expect(page.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("Not calculated");
+  await expect(page.getByTestId("development-evaluated-far")).toHaveText("Not calculated");
+  await expect(page.getByText("Analysis records differ · inspect evidence", { exact: true })).toBeVisible();
+});
+
+test("mobile skip link stays above the viewport on scroll and is revealed by keyboard focus", async ({ page }, info) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await open(page, "overview");
+  const skip = page.getByRole("link", { name: "Skip to workspace", exact: true });
+  await expect(skip).not.toBeFocused();
+  await expect(skip).toHaveCSS("top", "0px");
+  await expect(skip).toHaveCSS("left", "0px");
+  expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
+  await page.locator(".architect-existing-building > summary").scrollIntoViewIfNeeded();
+  expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
+  await page.screenshot({ path: info.outputPath("mobile-scrolled-skip-hidden.png"), fullPage: true });
+  // Traverse backwards from the immediately following header link: the skip
+  // target must be reachable by keyboard and reveal itself at the viewport top.
+  await page.getByRole("link", { name: "NYC Buildability — search", exact: true }).focus();
+  await page.keyboard.press("Shift+Tab");
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeInViewport();
+  const bounds = await skip.boundingBox();
+  expect(bounds!.x).toBe(0);
+  expect(bounds!.y).toBe(0);
+  await page.screenshot({ path: info.outputPath("mobile-skip-keyboard-focus.png") });
+  await page.keyboard.press("Tab");
+  await expect(skip).not.toBeFocused();
+  expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
+});

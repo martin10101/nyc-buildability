@@ -4,11 +4,14 @@ import { baseProfile } from "@/test-support/fixtures";
 import { PropertyOverview } from "../PropertyOverview";
 import { ZoningView } from "../ProfileViews";
 import { ReportView } from "../ReportView";
-import { DevelopmentLimits } from "../DevelopmentLimits";
+import { DevelopmentLimits, DraftHeadline } from "../DevelopmentLimits";
+import { ScenarioWorkspace } from "../ScenarioWorkspace";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
-import { draftApplicableDoc, missingEvidenceDoc } from "@/test-support/rule-evaluation-fixtures";
+import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
+import { draftApplicableDoc, missingEvidenceDoc, ruleConflictDoc } from "@/test-support/rule-evaluation-fixtures";
+import { bulkRow, evaluatedResidentialFar, scenarioCap } from "@/lib/architect/development-limits";
 import scenarioFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
@@ -67,6 +70,57 @@ describe("development-first entry points", () => {
   });
 });
 
+describe("review cluster — five independently reproduced associations", () => {
+  it.each(["input_validation", "effective_window", "outputs", "citations"])("R1 does not crash on validator-accepted missing trace %s", field => {
+    const { profile, evaluation, scenario } = inputs();
+    delete (evaluation.evaluations[0] as unknown as Record<string, unknown>)[field];
+    expect(validateRuleEvaluationDocument(evaluation).ok).toBe(true);
+    expect(() => show(profile, evaluation, scenario)).not.toThrow();
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it("R2 does not promote a cap while the associated evaluation reports a rule conflict", () => {
+    const { profile, scenario } = inputs();
+    const evaluation = ruleConflictDoc();
+    evaluation.evaluated_input.bbl = profile.identity.bbl;
+    evaluation.evaluated_input.input_fingerprint = scenario.evaluated_input.input_fingerprint!;
+    show(profile, evaluation, scenario);
+    expect(screen.getByText("Conflicting rule results")).toBeInTheDocument();
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it("R3 does not treat a null scenario fingerprint as association evidence", () => {
+    const { profile, evaluation, scenario } = inputs();
+    scenario.evaluated_input.input_fingerprint = null;
+    show(profile, evaluation, scenario);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+  });
+
+  it("R4 cannot relabel a residential FAR output as height in feet", () => {
+    const { profile, evaluation, scenario } = inputs();
+    const trace = evaluation.evaluations[0];
+    Object.assign(scenario.constraints.find(row => row.key === "height_limit")!, {
+      state: "draft", value: 1.5, unit: "feet",
+      provenance: { rule_id: trace.rule_id, rule_version: trace.rule_version, output_name: "max_residential_far" },
+    });
+    show(profile, evaluation, scenario);
+    expect(screen.getByText("Height", { selector: "dt" }).closest("div")).toHaveTextContent("Not calculated");
+  });
+
+  it("R5 never chooses one competing trace by filtering on the desired value", () => {
+    const { evaluation, scenario } = inputs();
+    const trace = evaluation.evaluations[0];
+    evaluation.evaluations.push({ ...structuredClone(trace), outputs: { max_residential_far: 2.5 } });
+    Object.assign(scenario.constraints.find(row => row.key === "height_limit")!, {
+      state: "draft", value: 1.5, unit: "feet",
+      provenance: { rule_id: trace.rule_id, rule_version: trace.rule_version, output_name: "max_residential_far" },
+    });
+    expect(bulkRow(scenario, "height_limit", evaluation).value).toBeNull();
+  });
+});
+
 describe("source and calculation boundaries", () => {
   it("shows the captured 1279 37 Street values without manufacturing a 7,200 sq ft cap", () => {
     const { profile } = inputs();
@@ -100,7 +154,7 @@ describe("source and calculation boundaries", () => {
   it("preserves genuine zero values for source FAR, evaluated FAR and the cap", () => {
     const { profile, evaluation, scenario } = inputs();
     reference(profile).normalized_value = 0;
-    evaluation.evaluations[0].outputs = { max_residential_far: 0 };
+    evaluation.evaluations[0].outputs = { max_residential_far: 0, max_residential_floor_area_sq_ft: 0 };
     scenario.draft_zoning_floor_area_cap_sq_ft = 0;
     show(profile, evaluation, scenario);
     expect(screen.getByTestId("development-reference-far")).toHaveTextContent("0.00");
@@ -204,18 +258,21 @@ describe("source and calculation boundaries", () => {
     expect(screen.getByRole("link", { name: "View source records →" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${bbl}&view=evidence`);
   });
 
-  it("renders supplied bulk constraints, including zero, without converting units or estimating gaps", () => {
+  it("preserves untyped bulk constraints, including zero, in evidence without interpreting their meaning", () => {
     const { profile, scenario, evaluation } = inputs();
     const height = scenario.constraints.find(row => row.key === "height_limit")!;
     const trace = structuredClone(evaluation.evaluations[0]);
     Object.assign(trace, { rule_id: "synthetic-bulk-output", family: "height", outputs: { synthetic_height: 0 } });
     evaluation.evaluations.push(trace);
     Object.assign(height, { state: "draft", value: 0, unit: "feet", provenance: { rule_id: trace.rule_id, rule_version: trace.rule_version, output_name: "synthetic_height" } });
-    show(profile, evaluation, scenario);
-    expect(screen.getByText("Height", { selector: "dt" }).closest("div")).toHaveTextContent("0 feetDraft");
+    render(<ReportView profile={profile} evaluation={evaluation} scenario={scenario} label="Test property"/>);
+    expect(screen.getByText("Height", { selector: "dt" }).closest("div")).toHaveTextContent("Not calculated");
     expect(screen.getByRole("link", { name: "Evidence for Height" })).toBeInTheDocument();
     expect(screen.getByText("Setbacks and yards", { selector: "dt" }).closest("div")).toHaveTextContent("Not calculated");
     expect(screen.getByText("Lot coverage and open space", { selector: "dt" }).closest("div")).toHaveTextContent("Not calculated");
+    const captured = screen.getByText("Complete scenario record").closest("details")!.querySelector("pre")!;
+    const retained = JSON.parse(captured.textContent!).constraints.find((row: { key: string }) => row.key === "height_limit");
+    expect(retained).toEqual(height);
   });
 
   it.each([null, {}, [], "claimed provenance", { rule_id: "unlinked-rule" }])("does not promote a bulk value without traceable provenance: %j", provenance => {
@@ -224,6 +281,116 @@ describe("source and calculation boundaries", () => {
     Object.assign(height, { state: "draft", value: 55, unit: "feet", provenance });
     show(profile, evaluation, scenario);
     expect(screen.getByText("Height", { selector: "dt" }).closest("div")).toHaveTextContent("Not calculated");
-    expect(screen.queryByRole("link", { name: "Evidence for Height" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Evidence for Height" })).toHaveAttribute("href", `/property?ruleeval=on&bbl=${profile.identity.bbl}&view=evidence`);
+  });
+});
+
+describe("review cluster neighboring states", () => {
+  it("shows readable review status and preserves its exact enum in source wording", () => {
+    const { profile, evaluation, scenario } = inputs();
+    scenario.coverage_status = "professional_review_required";
+    show(profile, evaluation, scenario);
+    const cap = screen.getByTestId("architect-cap");
+    expect(within(cap).getByText("Professional review required", { exact: true })).toBeInTheDocument();
+    const wording = within(cap).getByText("Result scope and source wording").closest("details")!;
+    expect(wording).toHaveTextContent("professional_review_required");
+  });
+  it.each(["conflicting scenario", "failed integrity", "unsupported scenario", "contradictory validation", "malformed invalid-input list"])("withholds promoted results for %s", kind => {
+    const { profile, evaluation, scenario } = inputs();
+    if (kind === "conflicting scenario") scenario.coverage_status = "data_conflict";
+    if (kind === "failed integrity") scenario.integrity_check.agreed = false;
+    if (kind === "unsupported scenario") scenario.scenario_kind = "unsupported";
+    if (kind === "contradictory validation") evaluation.evaluations[0].input_validation.invalid_inputs = [{ name: "lot_area", reason: "not usable" }];
+    if (kind === "malformed invalid-input list") (evaluation.evaluations[0].input_validation as unknown as Record<string, unknown>).invalid_inputs = null;
+    show(profile, evaluation, scenario);
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+  it.each([null, "", "   ", "sha256:", `sha256:${"G".repeat(64)}`])("withholds an unproven scenario fingerprint %j", inputFingerprint => {
+    const { profile, evaluation, scenario } = inputs();
+    scenario.evaluated_input.input_fingerprint = inputFingerprint;
+    show(profile, evaluation, scenario);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+  });
+
+  it.each(["overview", "zoning", "report"])("withholds cap promotion across %s when the evaluation is fail-safe", view => {
+    const { profile, evaluation, scenario } = inputs();
+    evaluation.fail_safe = true;
+    evaluation.fail_safe_reason = "spatial_intersection_absent";
+    const props = { profile, evaluation, scenario, onInspect: vi.fn() };
+    render(view === "overview" ? <PropertyOverview {...props}/> : view === "zoning" ? <ZoningView {...props}/> : <ReportView {...props} label="Test property"/>);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByText("Zoning boundary check unavailable")).toBeInTheDocument();
+  });
+
+  it.each(["zoning", "report"])("preserves a malformed evaluation as captured evidence in %s", view => {
+    const { profile, evaluation, scenario } = inputs();
+    delete (evaluation.evaluations[0] as unknown as Record<string, unknown>).outputs;
+    const props = { profile, evaluation, scenario, onInspect: vi.fn() };
+    expect(() => render(view === "zoning" ? <ZoningView {...props}/> : <ReportView {...props} label="Test property"/>)).not.toThrow();
+    expect(screen.getByRole("heading", { name: "Rule details incomplete" })).toBeInTheDocument();
+    const raw = screen.getByText("Captured unusable rule-evaluation record").closest("details")!.querySelector("pre")!;
+    expect(JSON.parse(raw.textContent!)).toEqual(evaluation);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  const malformed = [undefined, null, false, 42, "malformed", [], {}];
+  it.each(["input_validation", "effective_window", "outputs", "citations"].flatMap(field => malformed.map(value => ({ field, value }))))("guards malformed $field = $value at the reader", ({ field, value }) => {
+    const { profile, evaluation, scenario } = inputs();
+    (evaluation.evaluations[0] as unknown as Record<string, unknown>)[field] = value;
+    expect(() => show(profile, evaluation, scenario)).not.toThrow();
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it.each([null, false, 42, "bad trace", [], {}])("guards a malformed trace entry %j", trace => {
+    const { profile, evaluation, scenario } = inputs();
+    (evaluation.evaluations as unknown[])[0] = trace;
+    expect(() => show(profile, evaluation, scenario)).not.toThrow();
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it.each([null, {}, [], { snapshot_id: "s", section: "23-21", quote: "q", provenance: null }])("guards malformed citation entries %j", citation => {
+    const { profile, evaluation, scenario } = inputs();
+    (evaluation.evaluations[0].citations as unknown[])[0] = citation;
+    expect(() => show(profile, evaluation, scenario)).not.toThrow();
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it.each(["same number", "different number", "invalid twin", "inapplicable twin"])("checks duplicate trace identity before output filtering: %s", kind => {
+    const { profile, evaluation, scenario } = inputs();
+    const twin = structuredClone(evaluation.evaluations[0]);
+    if (kind === "different number") twin.outputs = { max_residential_far: 2.5, max_residential_floor_area_sq_ft: 25000 };
+    if (kind === "invalid twin") twin.input_validation.valid = false;
+    if (kind === "inapplicable twin") twin.applicability_outcome = false;
+    evaluation.evaluations.push(twin);
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)).toBeNull();
+    expect(scenarioCap(scenario, evaluation, profile.identity.bbl)).toBeNull();
+  });
+
+  it.each(["missing evaluation", "different rule", "different version", "wrong output meaning", "different cap value"])("does not promote a cap with %s", kind => {
+    const { profile, evaluation, scenario } = inputs();
+    if (kind === "different rule") scenario.cap_provenance!.rule_id = "different-rule";
+    if (kind === "different version") scenario.cap_provenance!.rule_version = "different-version";
+    if (kind === "wrong output meaning") scenario.cap_provenance!.output_name = "max_residential_far";
+    if (kind === "different cap value") scenario.draft_zoning_floor_area_cap_sq_ft = 15001;
+    render(<DraftHeadline scenario={scenario} evaluation={kind === "missing evaluation" ? null : evaluation} bbl={profile.identity.bbl}/>);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it("withholds the Scenarios headline and keeps an unassociated return inside explicit evidence", () => {
+    const { profile, scenario } = inputs();
+    const evaluation = ruleConflictDoc();
+    evaluation.evaluated_input.bbl = profile.identity.bbl;
+    evaluation.evaluated_input.input_fingerprint = scenario.evaluated_input.input_fingerprint!;
+    render(<ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={profile.identity.bbl}/>);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    const disclosure = screen.getByText("Returned scenario figures · association not confirmed").closest("details")!;
+    expect(disclosure.open).toBe(false);
+    expect(disclosure).toHaveTextContent("15,000");
+    const raw = screen.getByText("Complete scenario record").closest("details")!.querySelector("pre")!;
+    expect(JSON.parse(raw.textContent!)).toEqual(scenario);
   });
 });

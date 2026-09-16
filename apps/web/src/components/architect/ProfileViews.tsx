@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
-import { DevelopmentLimits } from "./DevelopmentLimits";
+import { DevelopmentLimits, IncompleteEvaluationNotice } from "./DevelopmentLimits";
+import { evaluationIsInspectable } from "@/lib/architect/development-limits";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { provenanceById } from "@/lib/provenance";
 import { propertyHref } from "@/lib/architect/navigation";
@@ -44,7 +45,8 @@ export function ZoningView({ profile, evaluation, scenario = null, onInspect }: 
       <CapturedRecord value={profile.zoning_features} label="Zoning feature layers and provenance"/>
       <CapturedRecord value={profile.lot_geometry} label="Lot geometry status and provenance"/>
     </section>
-    {evaluation ? <details className="card architect-disclosure">
+    <IncompleteEvaluationNotice evaluation={evaluation}/>
+    {evaluation && evaluationIsInspectable(evaluation) ? <details className="card architect-disclosure">
       <summary>Draft rule result, conflicts and applicability</summary>
       <RuleEvaluationResult document={evaluation}/>
     </details> : null}

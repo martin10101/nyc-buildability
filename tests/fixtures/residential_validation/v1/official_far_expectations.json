@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 1,
   "prepared_at": "2026-09-15T23:26:42.094961+00:00",
   "independence": "Transcribed from the official tables and footnotes before reading implementation rule tables during M4-T022. This is a reference-table check, not a property eligibility determination.",
   "sources": [
@@ -18,30 +18,21 @@
       "response_sha256": "872f2d2dfce1aaded7ee560fbcd43a1e5bf6b23c9de4532b2538f01bf6550d4c",
       "text_path": "tests/fixtures/residential_validation/23-22.txt",
       "text_sha256": "ba78d6e074c2f6baa417d2a6797fdc90f33284d1643275b0ec5f061bb61fba22"
-    },
-    {
-      "id": "12-10",
-      "url": "https://zr.planning.nyc.gov/article-i/chapter-2/12-10",
-      "retrieved_at": "2026-09-16T00:20:52.627567+00:00",
-      "response_sha256": "62d5d68a0136cab623f400726549fe229ed03e7399e29eadd7d57faf4fa39c98",
-      "text_path": "tests/fixtures/residential_validation/12-10-far-definition.txt",
-      "text_sha256": "432a070e974a0d2f4d5645be4fead32c8afd7ebe55a1380c636782518a61dcc1",
-      "capture_kind": "Operative floor area ratio definition excerpt; full fetched response hash retained."
     }
   ],
   "conditions": {
     "23-21-footnote-1": {
       "minimum_lot_area_sq_ft": "4000",
       "single_dwelling_unit_equivalent_far_limit": "0.60",
-      "scope": "For standard zoning lots with a lot area of 4,000 square feet or more, the maximum residential floor area associated with any single dwelling unit shall not exceed an equivalent floor area ratio of 0.60."
+      "scope": "Standard zoning lots in the indicated 0.75 FAR row; per dwelling unit limit, not replacement total-lot FAR."
     },
     "23-22-footnote-1": {
       "distance_ft": "100",
-      "scope": "For zoning lots, or portions thereof, located within 100 feet of a wide street"
+      "scope": "Zoning lots, or portions thereof, within 100 feet of a wide street."
     },
     "23-22-footnote-2": {
       "distance_ft": "100",
-      "scope": "Outside of Mandatory Inclusionary Housing areas, for zoning lots, or portions thereof, located within 100 feet of a wide street, containing UAP developments or qualifying senior housing"
+      "scope": "Outside Mandatory Inclusionary Housing areas; lots or portions within 100 feet of a wide street containing UAP developments or qualifying senior housing."
     }
   },
   "qualifying_column_meaning": {
@@ -468,7 +459,5 @@
       "source_section": "23-22",
       "notes": []
     }
-  ],
-  "revision_note": "V2 binds condition metadata to retained operative source and adds current12-10 dimensional definition. V1 fixture is retained under v1/.",
-  "revised_at": "2026-09-16T00:27:09.928575+00:00"
+  ]
 }

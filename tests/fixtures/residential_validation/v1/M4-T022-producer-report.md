@@ -65,39 +65,3 @@ No new architect benchmark sheet or repeated client confirmation was requested o
 | D-063-R010 | No replacement application calculator, API/schema/database/credential/deployment mutation |
 
 Engineering Reliability Standard §1: the parent live benchmark falsified the FAR-swap hypothesis; the repeated live mechanism is missing spatial evidence, while a presentation issue obscures the relevant reference. §3: source-derived acceptance checks and critical comparison mutation/revert evidence. §8: runtime context, frozen content identities, actual neighbor engine execution, typed missing/malformed cases, parent live journey and independent-review boundary. §10: exact scoped counts only; no speed, financial-value, citywide correctness or reliability improvement claim.
-
-## V2 — audit-drift rework, 2026-09-16 UTC
-
-This addendum supersedes the v1 verification counts above. V1 source findings remain valid, but independent review of frozen `b4514d9a338a7ced8bd268b85afd55b12c729fd3` correctly found **G3/G4 FAIL**: the reusable audit missed unit, parameter-provenance and condition drift. The exact review and v1 reports/fixtures are retained under `tests/fixtures/residential_validation/v1/`. That failure is not erased or described as a passing review.
-
-**Single root cause:** the audit compared numeric cells and local metadata without checking all material contract/provenance dimensions or binding condition metadata to the retained operative source. Production rule values were correct; only the audit/tests/allowed evidence were changed.
-
-V2 adds the following protections:
-
-- The stdlib helper re-parses the retained official table text, including district/column superscript positions. All 49 expectation rows, both numeric columns and their footnote assignments must agree with that operative text. The 4,000 sq ft threshold, 0.60 equivalent FAR and 100 ft distances are extracted from the retained footnotes, not copied into a second numeric oracle.
-- Condition metadata now contains the complete operative footnote scope. Missing/changed R8 MIH, distance and UAP/senior clauses fail comparison to the retained source. The original expectation fixture remains verbatim in `v1/official_far_expectations.json`.
-- All input/output unit declarations are checked. The existing `square_feet` interface is grounded in the operative area wording; a new dated [ZR 12-10 floor-area-ratio definition](https://zr.planning.nyc.gov/article-i/chapter-2/12-10) excerpt establishes the ratio of floor area to lot area. `far` is the canonical unit label for that dimensionless ratio. Wrong, missing and swapped area/FAR units fail.
-- Each parameter citation must resolve to exactly the correct section/snapshot identifier, with missing/dangling/wrong references rejected. Source IDs, official HTTPS authority and exact section URLs are independently checked, in addition to capture digests and bounded fixture paths.
-- The authored rule limitations are also checked against the source-derived conditions: per-unit threshold/limit, wide-street distance, always-disclosed wide alternative, R8 district scoping, compound qualifying conditions and correct limitation effects. These remain limitations and alternatives; no new eligibility calculator was added.
-
-**Observed red/revert/green evidence:** the nine added drift groups failed against v1. A final explicit temporary revert to the original helper SHA `bafaf1ee6f74cc1f4799376429a8b6a418b2808dca0fd533b0db5090a514375a` produced **29 failed mutation assertions**, exit 1. Restoring v2 made the same nine groups pass, exit 0. All modifications during that proof were to this worktree's allowed helper; the original helper was read from the integration checkout, never edited there. Exact output is retained in `tests/fixtures/residential_validation/verification_runs_v2.json`.
-
-Final commands, after restoration:
-
-| Command | V2 observed result |
-|---|---|
-| `python -m unittest tools.test_residential_validation -v` | Exit 0; 26 tests, OK |
-| `python tools/residential_validation.py --check-fixtures` | Exit 0; 309 pass / 29 gap, 21 parcels |
-| `PYTHONPATH=services/api /workspace/scratch/cfa2464c5c7f/feedback-test-venv/bin/python tools/residential_validation.py --check-fixtures --engine --full` | Exit 0; 467 pass / 80 gap, no failed checks |
-| `python tools/modularity_check.py --check` | Exit 0; 436 selected files, 0 failures, 18 existing warnings outside the new audit files |
-
-The numeric source/draft coverage remains **98 table cells and 90 engine outputs**; the increased passing count is additional drift checking, not increased real-property calculation coverage. The same 21 parcel captures, 20 ZTLDB matches and five browser no-cap results remain. No fresh live UI execution is claimed by this rework. CI invocation, Windows execution, property eligibility, complete bulk, G6 approval and deployment remain outside this producer's verified scope.
-
-Frozen v2 content identities:
-
-- Helper: `5d4e0ae84c1f554e4b13ffe96e1f5b6299b018f4fb2712dc3e26ded08ef4f170` (510 physical lines; focused read-only audit).
-- Tests: `4323c72255f357478f7013bb0887f773c65c0a0970dc7d746655c0f03cfe07c0`.
-- Source expectation fixture: `6e93e02f722457810c57e2bd032546a49215b1e75666d411873e48949372e390`.
-- New 12-10 definition excerpt: `432a070e974a0d2f4d5645be4fead32c8afd7ebe55a1380c636782518a61dcc1`.
-
-D-063-R003 now has producer evidence for the missing drift protections; independent verification is pending. No task/gate acceptance, git/control mutation, legal approval, production change or architect input occurred during rework.

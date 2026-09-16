@@ -1290,8 +1290,5 @@
     "Reference matches cannot verify project allowance.",
     "R11/R12 occur in mixed/special assignments in this sample; no general-rule legal conclusion is made.",
     "Condo billing BBL1002737501 has no match in the ZTLDB batch; unresolved source identity coverage."
-  ],
-  "audit_revision": "v2",
-  "prior_evidence_path": "tests/fixtures/residential_validation/v1/M4-T022-real-parcels.json",
-  "source_capture_status": "Original dated source/browser captures retained; no new live UI claim in rework."
+  ]
 }

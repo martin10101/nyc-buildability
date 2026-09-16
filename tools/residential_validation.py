@@ -68,26 +68,208 @@ def compare_number(layer, case, expected, observed):
     return check(layer, case, 'pass' if left == right else 'fail', expected, observed)
 
 
-def verify_source_captures(root, matrix):
-    results = []
+SOURCE_URLS = {
+    '23-21': 'https://zr.planning.nyc.gov/article-ii/chapter-3/23-21',
+    '23-22': 'https://zr.planning.nyc.gov/article-ii/chapter-3/23-22',
+    '12-10': 'https://zr.planning.nyc.gov/article-i/chapter-2/12-10',
+}
+
+
+def normalized(text):
+    return re.sub(r'\s+([,.])', r'\1', ' '.join(text.split()))
+
+
+def load_source_captures(root, matrix):
+    results, texts = [], {}
     permitted = (root / FIXTURES).resolve()
+    ids = [source.get('id') for source in matrix['sources']]
+    results.append(check('source_identity', 'source_set',
+                         'pass' if sorted(ids) == sorted(SOURCE_URLS) else 'fail',
+                         sorted(SOURCE_URLS), ids))
     for source in matrix['sources']:
+        section = source.get('id')
+        results.append(check('source_authority', str(section),
+                             'pass' if section in SOURCE_URLS
+                             and source.get('url') == SOURCE_URLS[section] else 'fail',
+                             SOURCE_URLS.get(section), source.get('url')))
         path = (root / source['text_path']).resolve()
         if not path.is_relative_to(permitted) or not path.is_file():
-            results.append(check('source_capture', source['id'], 'fail',
+            results.append(check('source_capture', str(section), 'fail',
                                  reason='Missing or out-of-scope source capture.'))
             continue
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
-        results.append(check('source_capture', source['id'],
+        results.append(check('source_capture', str(section),
                              'pass' if actual == source['text_sha256'] else 'fail',
                              source['text_sha256'], actual))
+        texts[section] = path.read_text()
+    return results, texts
+
+
+def verify_source_captures(root, matrix):
+    return load_source_captures(root, matrix)[0]
+
+
+def parse_table_capture(section, text):
+    """Extract retained operative table tokens, including attached superscripts."""
+    body = text.rsplit('Copy Link\n', 1)[1].split('Footer Links', 1)[0]
+    if body.splitlines()[0] != SOURCE_URLS[section]:
+        raise ValueError('Operative source section URL mismatch')
+    content = body.split('\nDistrict\n', 1)[1]
+    table, tail = re.split(r'\n1\n(?=For)', content, maxsplit=1)
+    footnotes = dict(re.findall(r'(?:^|\n)([12])\n(.*?)(?=\n[12]\n|$)',
+                               '1\n' + tail, re.S))
+    footnotes = {key: normalized(value) for key, value in footnotes.items()}
+    tokens = re.findall(r'R\d+(?:-\d+[A-Z]?|[A-Z])?|\d+\.\d+|(?<![\w.-])[12](?![\w.-])', table)
+    rows, index = [], 0
+    while index < len(tokens):
+        districts, district_notes = [], {}
+        while index < len(tokens) and tokens[index].startswith('R'):
+            district = tokens[index]; districts.append(district); index += 1
+            if index < len(tokens) and tokens[index] in ('1', '2'):
+                district_notes[district] = [tokens[index]]; index += 1
+        if not districts:
+            raise ValueError('Unrecognized table row')
+        values, value_notes = [], []
+        for _ in range(2):
+            value = tokens[index]; index += 1
+            if not re.fullmatch(r'\d+\.\d+', value):
+                raise ValueError('Unrecognized source FAR value')
+            values.append(value); marks = []
+            if index < len(tokens) and tokens[index] in ('1', '2'):
+                marks.append(tokens[index]); index += 1
+            value_notes.append(marks)
+        for district in districts:
+            marks = sorted(set(district_notes.get(district, []) + sum(value_notes, [])))
+            condition = 'base'
+            if section == '23-22' and '1' in marks:
+                condition = ('wide_street_additional_conditions' if '2' in marks
+                             else 'within_100ft_wide_street')
+            rows.append({'district': district, 'condition': condition,
+                         'standard_far': values[0], 'qualifying_far': values[1],
+                         'source_section': section,
+                         'notes': [f'{section}-footnote-{mark}' for mark in marks]})
+    return rows, footnotes
+
+
+def derive_source_reference(texts):
+    """Read values/conditions from source text, not editable expectation metadata."""
+    rows, notes = [], {}
+    for section in ('23-21', '23-22'):
+        parsed, footnotes = parse_table_capture(section, texts[section])
+        rows.extend(parsed)
+        notes.update({f'{section}-footnote-{key}': value for key, value in footnotes.items()})
+    low = notes['23-21-footnote-1']
+    area = re.search(r'lot area of ([\d,]+) (square feet) or more', low)
+    ratio = re.search(r'equivalent floor area ratio of (\d+\.\d+)', low)
+    definition = normalized(texts['12-10'])
+    if not area or not ratio or ('total floor area on a zoning lot, divided by the lot area'
+                                not in definition):
+        raise ValueError('Operative threshold/unit/ratio definition is missing')
+    conditions = {'23-21-footnote-1': {
+        'minimum_lot_area_sq_ft': area[1].replace(',', ''),
+        'single_dwelling_unit_equivalent_far_limit': ratio[1], 'scope': low}}
+    for key in ('23-22-footnote-1', '23-22-footnote-2'):
+        distance = re.search(r'within (\d+) feet of a wide street', notes[key])
+        if not distance:
+            raise ValueError('Operative wide-street distance is missing')
+        conditions[key] = {'distance_ft': distance[1], 'scope': notes[key]}
+    area_unit = {'square feet': 'square_feet'}[area[2]]
+    return {'rows': rows, 'conditions': conditions,
+            'units': {'lot_area_sq_ft': area_unit, 'max_residential_far': 'far',
+                      'max_residential_floor_area_sq_ft': area_unit}}
+
+
+def audit_reference_metadata(matrix, source):
+    results = []
+    for key in sorted(set(matrix['conditions']) | set(source['conditions'])):
+        expected, actual = source['conditions'].get(key), matrix['conditions'].get(key)
+        results.append(check('source_condition', key,
+                             'pass' if expected == actual else 'fail', expected, actual))
+    expected = {(r['district'], r['condition']): r for r in source['rows']}
+    actual = {(r['district'], r['condition']): r for r in matrix['rows']}
+    for key in sorted(set(expected) | set(actual)):
+        results.append(check('source_row_binding', ':'.join(key),
+                             'pass' if expected.get(key) == actual.get(key) else 'fail',
+                             expected.get(key), actual.get(key)))
     return results
 
 
-def audit_tables(matrix, rules):
+def audit_rule_contract(rule, source):
+    results = []
+    for name, unit in source['units'].items():
+        declarations = rule['inputs'] if name == 'lot_area_sq_ft' else rule['outputs']
+        actual = [d.get('unit') for d in declarations if d.get('name') == name]
+        results.append(check('rule_unit', rule['rule_id'] + ':' + name,
+                             'pass' if actual == [unit] else 'fail', [unit], actual))
+    sections = {r['source_section'] for r in source['rows']
+                if r['district'] in rule['applicability']['values']}
+    expected = {'zr-' + section for section in sections}
+    for param in rule['parameters']:
+        ref = param.get('citation_ref')
+        cited = [c.get('section') for c in rule['citations'] if c.get('snapshot_id') == ref]
+        valid = len(expected) == 1 and ref in expected and cited == list(sections)
+        results.append(check('parameter_provenance', rule['rule_id'] + ':' + param['name'],
+                             'pass' if valid else 'fail', sorted(expected), ref))
+    return results
+
+
+def audit_rule_limitations(rule, source):
+    results = []
+    rows = [r for r in source['rows'] if r['district'] in rule['applicability']['values']]
+    notes = {n for row in rows for n in row['notes']}
+    definitions = [
+        ('23-21-footnote-1', 'single_dwelling_unit_equivalent_far_cap'),
+        ('23-22-footnote-1', 'wide_street_far_alternative'),
+        ('23-22-footnote-2', 'r8_wide_street_qualifying_footnote_2'),
+    ]
+    for footnote, exception_id in definitions:
+        needed = footnote in notes
+        found = [e for e in rule['exceptions'] if e['id'] == exception_id]
+        valid = len(found) == int(needed)
+        if needed and len(found) == 1:
+            note, condition = found[0], source['conditions'][footnote]
+            text = normalized(note['description']).lower()
+            if footnote == '23-21-footnote-1':
+                area = re.search(r'lot area of ([\d,]+) square feet or more', text)
+                ratio = re.search(r'equivalent floor area ratio of (\d+\.\d+)', text)
+                valid = bool(area and ratio and area[1].replace(',', '') ==
+                             condition['minimum_lot_area_sq_ft'] and ratio[1] ==
+                             condition['single_dwelling_unit_equivalent_far_limit'])
+                valid = valid and note.get('condition') is None
+            else:
+                distance = re.search(r'within (\d+) feet of a wide street', text)
+                valid = bool(distance and distance[1] == condition['distance_ft'])
+                if footnote == '23-22-footnote-1':
+                    valid = valid and note.get('condition') is None
+                else:
+                    districts = {r['district'] for r in rows if footnote in r['notes']}
+                    valid = valid and len(districts) == 1 and note.get('condition') == {
+                        'op': 'equals', 'input': 'zoning_district', 'value': next(iter(districts))}
+                    compound = (r'outside a mandatory inclusionary housing area and '
+                                r'within \d+ feet of a wide street and '
+                                r'containing uap developments or qualifying senior housing')
+                    valid = valid and bool(re.search(compound, text))
+            expected_effect = ('conditional_alternative' if footnote == '23-22-footnote-1'
+                               else 'documented_limitation')
+            valid = valid and note.get('effect') == expected_effect
+        results.append(check('rule_condition_binding', rule['rule_id'] + ':' + footnote,
+                             'pass' if valid else 'fail', 'source-bound limitation/absence',
+                             found))
+    return results
+
+
+def audit_tables(matrix, rules, root=ROOT):
     """Compare both columns, all rows, district ownership and source sections."""
-    results, owners, expected_keys = [], {}, set()
+    results, texts = load_source_captures(root, matrix)
+    try:
+        source = derive_source_reference(texts)
+    except (KeyError, ValueError, IndexError) as exc:
+        return results + [check('source_derivation', 'operative_text', 'fail', reason=str(exc))]
+    results.extend(audit_reference_metadata(matrix, source))
+    owners, expected_keys = {}, set()
     for rule in rules:
+        results.extend(audit_rule_contract(rule, source))
+        results.extend(audit_rule_limitations(rule, source))
         params = {p['name']: p['value'] for p in rule['parameters']}
         districts = rule['applicability']['values']
         for name in ['standard_far_by_district', 'qualifying_far_by_district']:
@@ -290,7 +472,7 @@ def run(root, engine=False):
     matrix = read('official_far_expectations.json')
     rules = [json.loads(p.read_text()) for p in sorted(
         (root / 'services/api/app/rules/rulesets').glob('*far.rule.json'))]
-    checks = verify_source_captures(root, matrix) + audit_tables(matrix, rules)
+    checks = audit_tables(matrix, rules, root)
     observation_path = root / FIXTURES / 'application_observations.json'
     observations = json.loads(observation_path.read_text()) if observation_path.exists() else {}
     parcels, parcel_checks = audit_parcels(read('pluto_sample.json'),

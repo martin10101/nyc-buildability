@@ -6,15 +6,31 @@ import { draftApplicableDoc, spatialUncertaintyDoc, unsupportedDoc } from "@/tes
 import { ArchitectEntry } from "../ArchitectEntry";
 import type { PropertyProfile } from "@/lib/contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import type { Scenario } from "@/lib/scenario-contract";
+import scenarioFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 
-const state = vi.hoisted(() => ({ params: new URLSearchParams(), profile: null as PropertyProfile | null, evaluation: null as RuleEvaluation | null, push: vi.fn() }));
+const state = vi.hoisted(() => ({ params: new URLSearchParams(), profile: null as PropertyProfile | null, evaluation: null as RuleEvaluation | null, scenario: null as Scenario | null, push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useSearchParams: () => state.params, useRouter: () => ({ push: state.push }) }));
 vi.mock("@/lib/architect/use-property", () => ({ useProperty: () => ({ loading: false, outcome: state.profile ? { kind: "profile", profile: state.profile } : null, retry: vi.fn() }) }));
-vi.mock("@/lib/architect/use-analysis", () => ({ useAnalysis: () => ({ scenario: null, evaluation: state.evaluation ? { kind: "evaluation", document: state.evaluation } : null, retryScenario: vi.fn(), retryEvaluation: vi.fn() }) }));
+vi.mock("@/lib/architect/use-analysis", () => ({ useAnalysis: () => ({ scenario: state.scenario ? { kind: "scenario", document: state.scenario } : null, evaluation: state.evaluation ? { kind: "evaluation", document: state.evaluation } : null, retryScenario: vi.fn(), retryEvaluation: vi.fn() }) }));
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
-beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); });
+beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.scenario = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); });
 
 describe("connected architect entry", () => {
+  it.each(["overview", "zoning", "scenarios", "evidence", "report"].flatMap(view => ["input_validation", "effective_window", "outputs", "citations"].map(field => ({ view, field }))))("preserves a malformed $field record without crashing the $view route", ({ view, field }) => {
+    state.params.set("view", view);
+    state.evaluation = draftApplicableDoc();
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    delete (state.evaluation.evaluations[0] as unknown as Record<string, unknown>)[field];
+    state.scenario = structuredClone(scenarioFixture) as Scenario;
+    state.scenario.evaluated_input.bbl = state.profile!.identity.bbl;
+    expect(() => render(<ArchitectEntry/>)).not.toThrow();
+    expect(screen.getByRole("heading", { name: "Rule details incomplete" })).toBeInTheDocument();
+    expect(screen.getByTestId("rule-eval-announcer")).toHaveTextContent("Numerical summaries are unavailable");
+    const raw = screen.getByText("Captured unusable rule-evaluation record").closest("details")!.querySelector("pre")!;
+    expect(JSON.parse(raw.textContent!)).toEqual(state.evaluation);
+    if (view !== "evidence") expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
   it("shows all facts and opens source evidence immediately with Escape returning focus", () => {
     render(<ArchitectEntry />);
     const source = screen.getByRole("button", { name: "Source for Lot area" });
