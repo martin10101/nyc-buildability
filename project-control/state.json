@@ -1,7 +1,7 @@
 {
   "project_status": "active",
   "current_milestone": "M4",
-  "last_checkpoint": "M5-T029-acceptance",
+  "last_checkpoint": "D-063-acceptance-live",
   "accepted_tasks": [
     "M0-T000",
     "M0-T001",
@@ -187,6 +187,7 @@
     "M4-T019",
     "M4-T020",
     "M4-T021",
+    "M4-T022",
     "M5-T003",
     "M5-T004",
     "M5-T005",
@@ -214,7 +215,8 @@
     "M5-T027",
     "M5-T028",
     "M5-T029",
-    "M5-T030"
+    "M5-T030",
+    "M5-T031"
   ],
   "active_tasks": [
     "M0-T021",
@@ -231,9 +233,7 @@
     "M4-T004",
     "M4-T005",
     "M4-T006",
-    "M4-T022",
-    "M5-T001",
-    "M5-T031"
+    "M5-T001"
   ],
   "blocked_tasks": [
     "M0-T007",
@@ -242,10 +242,7 @@
   "failed_gates": [
     "M0-T080-G5",
     "M0-T133-G3",
-    "M0-T133-G4",
-    "M5-T031-G3",
-    "M5-T031-G4",
-    "M5-T031-G5"
+    "M0-T133-G4"
   ],
-  "updated_at": "2026-09-16T01:26:10.835618+00:00"
+  "updated_at": "2026-09-16T02:10:27.445993+00:00"
 }

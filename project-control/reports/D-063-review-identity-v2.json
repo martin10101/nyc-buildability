@@ -1,6 +1,6 @@
 {
-  "reviewed_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
-  "tree_sha": "ca83903aad8b3b7764777b08af35eb6ee09c9c72",
+  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "tree_sha": "26d1da24890766328b4d3292f651e2f7d8fac5b6",
   "baseline_sha": "780dccf1e95a6ede2051b334ed99e0340ebce914",
   "changed_paths": [
     "apps/web/e2e/architect-workspace.spec.ts",
@@ -30,20 +30,14 @@
     "project-control/gates/M4-T022-G3.json",
     "project-control/gates/M4-T022-G4.json",
     "project-control/gates/M5-T031-G0.json",
-    "project-control/gates/M5-T031-G1.json",
     "project-control/gates/M5-T031-G2.json",
     "project-control/gates/M5-T031-G3.json",
     "project-control/gates/M5-T031-G4.json",
     "project-control/gates/M5-T031-G5.json",
     "project-control/reports/D-063-ci-v1.json",
-    "project-control/reports/D-063-ci-v2.json",
     "project-control/reports/D-063-intake-review.md",
-    "project-control/reports/D-063-pre-final-review.md",
-    "project-control/reports/D-063-review-identity-v1.json",
     "project-control/reports/D-063-review-identity.json",
-    "project-control/reports/D-063-source-v2-attestation.md",
     "project-control/reports/D-063-work-allocation.md",
-    "project-control/reports/M4-T022-G0-readiness-v2.md",
     "project-control/reports/M4-T022-G0-readiness.md",
     "project-control/reports/M4-T022-G1-G3-G4-v1.md",
     "project-control/reports/M4-T022-G1-G3-G4-v2.md",
@@ -54,12 +48,9 @@
     "project-control/reports/M4-T022-source-matrix.json",
     "project-control/reports/M4-T022-test-results.json",
     "project-control/reports/M4-T022.json",
-    "project-control/reports/M5-T031-G0-readiness-v2.md",
     "project-control/reports/M5-T031-G0-readiness.md",
     "project-control/reports/M5-T031-G3-G4-v1.md",
-    "project-control/reports/M5-T031-G3-G4-v2.md",
     "project-control/reports/M5-T031-G5-v1.md",
-    "project-control/reports/M5-T031-G5-v2.md",
     "project-control/reports/M5-T031-baseline.md",
     "project-control/reports/M5-T031-evidence-map.json",
     "project-control/reports/M5-T031-live-baseline.json",
@@ -97,16 +88,16 @@
   "task_identities": {
     "M4-T022": {
       "manifest_sha256": "d25fc207bef4f94f93eb96d397112e6e7c2d3d0ea13c0b8f4fec99b0d4fba0fd",
-      "resolved_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1"
+      "resolved_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a"
     },
     "M5-T031": {
-      "manifest_sha256": "404d2df81b2f24a5d3d13e598be676df69e4ccbfd2f0e0f4dcfc0234aa966d64",
-      "resolved_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1"
+      "manifest_sha256": "634be631d1665c53ecae1a4b0f34a8e87283d835780d2cc5264b17462b51fedf",
+      "resolved_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a"
     }
   },
   "frontend_worktree_matches": true,
   "source_worktree_matches": true,
-  "frontend_path_content_sha256": "956d025a1ba3b7e3e16fd0031570487a4339a7d8efa1f13e258927156bc44a3a",
+  "frontend_path_content_sha256": "703ea0f8c745ec8e63a5a0426979f8edaa403679a48b92547dc0bec730ba2ed5",
   "frontend_files_count": 20,
   "forbidden_application_changes": [],
   "protected_refs": {
@@ -115,13 +106,5 @@
     "pr241": "4174a3b2a547ae7d5df5d35cefb63767cbf84721",
     "pr241_open_unmerged": true
   },
-  "ref_check_at": "2026-09-16T01:45:01.289790+00:00",
-  "render_boundary": {
-    "frontend_service": "srv-dajnsctg1s2s73bg2do0",
-    "backend_service": "srv-dai40fe1egvs73dcpjrg",
-    "both_auto_deploy": "off",
-    "backend_live_commit": "f0e7d82f98481506f16f48614722059e807d73ca",
-    "backend_live_deploy": "dep-dak18m2d0e5s738an8o0",
-    "authorized_action": "Manual deploy of existing frontend service only after all required gates and DCV."
-  }
+  "ref_check_at": "2026-09-16T01:16:14.296837+00:00"
 }

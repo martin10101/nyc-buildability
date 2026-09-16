@@ -3,11 +3,11 @@
   "gate_id": "G5",
   "reviewer": "security-reviewer",
   "role": "independent_review",
-  "result": "FAIL",
-  "report_file": "project-control/reports/M5-T031-G5-v2.md",
-  "reviewed_at": "2026-09-16T01:22:52.303198+00:00",
-  "content_manifest_sha256": "634be631d1665c53ecae1a4b0f34a8e87283d835780d2cc5264b17462b51fedf",
-  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T031-G5-v3.md",
+  "reviewed_at": "2026-09-16T01:50:19.756821+00:00",
+  "content_manifest_sha256": "404d2df81b2f24a5d3d13e598be676df69e4ccbfd2f0e0f4dcfc0234aa966d64",
+  "reviewed_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
   "history": [
     {
       "reviewer": "security-reviewer",
@@ -15,7 +15,14 @@
       "result": "FAIL",
       "report_file": "project-control/reports/M5-T031-G5-v1.md",
       "reviewed_at": "2026-09-16T00:20:26.617493+00:00"
+    },
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M5-T031-G5-v2.md",
+      "reviewed_at": "2026-09-16T01:22:52.303198+00:00"
     }
   ],
-  "updated_at": "2026-09-16T01:22:52.398348+00:00"
+  "updated_at": "2026-09-16T01:50:19.852680+00:00"
 }

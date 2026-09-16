@@ -1,5 +1,5 @@
 {
-  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "reviewed_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
   "requirements": {
     "D-063-R001": [
       "apps/web/src/components/architect/DevelopmentLimits.tsx",

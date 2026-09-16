@@ -10,7 +10,7 @@
   "issued_at": "2026-09-15",
   "captured_at": "2026-09-15T23:13:41.975490+00:00",
   "created_at": "2026-09-15T23:13:41.975490+00:00",
-  "updated_at": "2026-09-15T23:18:28.357312+00:00",
+  "updated_at": "2026-09-16T01:58:43.608265+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
   "capture_head_sha": "780dccf1e95a6ede2051b334ed99e0340ebce914",
@@ -20,7 +20,7 @@
   },
   "requirements_file": "requirements.json",
   "verification_file": "verification.json",
-  "final_reviewed_sha": null,
+  "final_reviewed_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
   "locked_requirement_ids": [
     "D-063-R001",
     "D-063-R002",

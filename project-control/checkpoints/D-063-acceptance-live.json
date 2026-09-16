@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "D-063-acceptance-live",
+  "timestamp": "2026-09-16T02:10:27.436880+00:00",
+  "commit": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "M4-T022 and M5-T031 accepted after all required gates and independent directive verification passed. Reviewed frontend deployed live on Render dep-dakvhsek1f9s73d60tv0; six actual live property checks across all five boroughs confirmed distinct source and existing FAR with retained evidence. CI: 918 unit/component tests, 113 browser journeys. Source audit: 45 district identifiers and 21 real parcel records, explicit gaps retained. Full calculation work remains: missing spatial integration, height, yards, coverage and eligibility. Backend, main, PR241 and service settings unchanged. See D-063-delivery.md and D-063-live-v3.json.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-16T02:10:27.445686+00:00"
+}

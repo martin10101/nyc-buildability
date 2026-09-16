@@ -95,12 +95,12 @@
     "official-source-researcher",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-15T23:14:13.021175+00:00",
-  "updated_at": "2026-09-16T01:19:32.089248+00:00",
+  "updated_at": "2026-09-16T02:09:39.780681+00:00",
   "directive_refs": [
     {
       "directive_id": "D-063",
@@ -138,6 +138,15 @@
       "percent": 75,
       "status": "in_progress",
       "message": "Independent source review confirms current numeric values. Rework reusable audit coverage for input/output units, citation references, official URLs and condition metadata; negative cases must detect all drift categories."
+    },
+    {
+      "at": "2026-09-16T01:47:00.114302+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "rework",
+      "message": "Administrative resubmission at final combined V3 commit; source audit content is unchanged and prior independent PASS is being re-attested. No audit implementation rework."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-16T02:09:39.780623+00:00"
 }

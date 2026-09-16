@@ -152,12 +152,12 @@
     "official-source-researcher",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-15T23:14:12.464959+00:00",
-  "updated_at": "2026-09-16T01:26:10.807513+00:00",
+  "updated_at": "2026-09-16T02:09:40.021666+00:00",
   "directive_refs": [
     {
       "directive_id": "D-063",
@@ -227,5 +227,7 @@
       "actor": "orchestrator",
       "note": "Bounded frontend test-only addition: the existing map error-event test fires before the asynchronously imported map attaches event listeners. Wait for deterministic rendered readiness before firing the error; preserve all assertions. No production map edit, timeout increase or weakened test. Observed in final regression at 859 pass / 1 fail."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-16T02:09:40.021601+00:00"
 }
