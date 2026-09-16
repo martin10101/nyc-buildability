@@ -16,6 +16,57 @@ vi.mock("@/lib/architect/use-analysis", () => ({ useAnalysis: () => ({ scenario:
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 beforeEach(() => { state.profile = baseProfile(); state.evaluation = null; state.scenario = null; state.params = new URLSearchParams(`bbl=${state.profile.identity.bbl}&view=facts`); sessionStorage.clear(); vi.clearAllMocks(); });
 
+describe("V3 connected report audit", () => {
+  it.each(["malformed evaluation", "evaluation mismatch", "evaluation missing BBL", "scenario mismatch", "scenario missing BBL", "both mismatched", "malformed mismatched evaluation"])("prints and restores original evidence for %s", kind => {
+    state.params.set("view", "report");
+    state.evaluation = draftApplicableDoc();
+    state.scenario = structuredClone(scenarioFixture) as Scenario;
+    state.evaluation.evaluated_input.bbl = state.profile!.identity.bbl;
+    state.scenario.evaluated_input.bbl = state.profile!.identity.bbl;
+    if (kind.includes("malformed")) delete (state.evaluation.evaluations[0] as unknown as Record<string, unknown>).outputs;
+    if (kind === "evaluation missing BBL") state.evaluation.evaluated_input.bbl = null;
+    if (kind === "scenario missing BBL") state.scenario.evaluated_input.bbl = null;
+    if (["evaluation mismatch", "both mismatched", "malformed mismatched evaluation"].includes(kind)) state.evaluation.evaluated_input.bbl = "5000010001";
+    if (["scenario mismatch", "both mismatched"].includes(kind)) state.scenario.evaluated_input.bbl = "5000010001";
+    const expected = [
+      ...(kind === "malformed evaluation" ? [{ label: "Captured unusable rule-evaluation record", value: state.evaluation }] : []),
+      ...(state.evaluation.evaluated_input.bbl !== state.profile!.identity.bbl ? [{ label: "Returned rule evaluation record", value: state.evaluation }] : []),
+      ...(state.scenario.evaluated_input.bbl !== state.profile!.identity.bbl ? [{ label: "Returned scenario record", value: state.scenario }] : []),
+    ];
+    render(<ArchitectEntry/>);
+    const report = document.querySelector<HTMLElement>(".architect-report")!;
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    const records = expected.map(({ label, value }) => {
+      expect(screen.getAllByText(label, { exact: true })).toHaveLength(1);
+      const record = screen.getByText(label, { exact: true }).closest("details")!;
+      expect(record.closest(".architect-report")).toBe(report);
+      expect(record.open).toBe(false);
+      expect(JSON.parse(record.querySelector("pre")!.textContent!)).toEqual(value);
+      if (label.startsWith("Returned")) expect(record.closest("[role='alert']")).toHaveTextContent("Results are withheld from this property");
+      return record;
+    });
+    // Include both initially open and initially closed disclosures in the
+    // actual route's print lifecycle, rather than only mounting ReportView.
+    const facts = report.querySelector<HTMLDetailsElement>("#brief-facts")!;
+    facts.open = true;
+    const before = Array.from(report.querySelectorAll("details")).map(item => ({ item, open: item.open }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Include full audit appendix" }));
+    const print = vi.spyOn(window, "print").mockImplementation(() => {
+      expect(report).toHaveClass("includes-audit");
+      records.forEach(record => expect(record.open).toBe(true));
+      expect(report.querySelector<HTMLDetailsElement>("#brief-calculations")!.open).toBe(true);
+    });
+    try {
+      fireEvent.click(screen.getByRole("button", { name: "Print property brief" }));
+      expect(print).toHaveBeenCalledOnce();
+      fireEvent(window, new Event("beforeprint"));
+      fireEvent(window, new Event("afterprint"));
+      before.forEach(({ item, open }) => expect(item.open).toBe(open));
+      records.forEach((record, i) => expect(JSON.parse(record.querySelector("pre")!.textContent!)).toEqual(expected[i].value));
+    } finally { print.mockRestore(); }
+  });
+});
+
 describe("connected architect entry", () => {
   it.each(["overview", "zoning", "scenarios", "evidence", "report"].flatMap(view => ["input_validation", "effective_window", "outputs", "citations"].map(field => ({ view, field }))))("preserves a malformed $field record without crashing the $view route", ({ view, field }) => {
     state.params.set("view", view);

@@ -88,6 +88,19 @@ for (const view of ["overview", "zoning", "scenarios", "evidence", "report"]) {
     await expect(raw.locator("pre")).toBeVisible();
     expect(JSON.parse((await raw.locator("pre").textContent())!)).toEqual(returnedRecord);
     if (view !== "evidence") await expect(page.getByTestId("architect-cap").locator(".architect-metric")).toHaveText("Not calculated");
+    if (view === "report") {
+      expect(await raw.evaluate(element => !!element.closest(".architect-report"))).toBe(true);
+      await raw.locator(":scope > summary").click();
+      const disclosures = page.locator(".architect-report details");
+      const before = await disclosures.evaluateAll(elements => elements.map(element => (element as HTMLDetailsElement).open));
+      await page.getByRole("checkbox", { name: "Include full audit appendix" }).check();
+      await page.evaluate(() => { window.print = () => window.dispatchEvent(new Event("beforeprint")); });
+      await page.getByRole("button", { name: "Print property brief" }).click();
+      await expect(raw).toHaveAttribute("open");
+      expect(JSON.parse((await raw.locator("pre").textContent())!)).toEqual(returnedRecord);
+      await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+      expect(await disclosures.evaluateAll(elements => elements.map(element => (element as HTMLDetailsElement).open))).toEqual(before);
+    }
   });
 }
 
@@ -112,8 +125,13 @@ test("mobile skip link stays above the viewport on scroll and is revealed by key
   await expect(skip).not.toBeFocused();
   await expect(skip).toHaveCSS("top", "0px");
   await expect(skip).toHaveCSS("left", "0px");
+  await expect(skip).toHaveCSS("opacity", "0");
+  await expect(skip).toHaveCSS("clip-path", "inset(50%)");
+  await expect(skip).toHaveCSS("pointer-events", "none");
   expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
   await page.locator(".architect-existing-building > summary").scrollIntoViewIfNeeded();
+  await expect(skip).toHaveCSS("opacity", "0");
+  await expect(skip).toHaveCSS("clip-path", "inset(50%)");
   expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
   await page.screenshot({ path: info.outputPath("mobile-scrolled-skip-hidden.png"), fullPage: true });
   // Traverse backwards from the immediately following header link: the skip
@@ -121,6 +139,9 @@ test("mobile skip link stays above the viewport on scroll and is revealed by key
   await page.getByRole("link", { name: "NYC Buildability — search", exact: true }).focus();
   await page.keyboard.press("Shift+Tab");
   await expect(skip).toBeFocused();
+  await expect(skip).toHaveCSS("opacity", "1");
+  await expect(skip).toHaveCSS("clip-path", "none");
+  await expect(skip).toHaveCSS("pointer-events", "auto");
   await expect(skip).toBeInViewport();
   const bounds = await skip.boundingBox();
   expect(bounds!.x).toBe(0);
@@ -128,5 +149,7 @@ test("mobile skip link stays above the viewport on scroll and is revealed by key
   await page.screenshot({ path: info.outputPath("mobile-skip-keyboard-focus.png") });
   await page.keyboard.press("Tab");
   await expect(skip).not.toBeFocused();
+  await expect(skip).toHaveCSS("opacity", "0");
+  await expect(skip).toHaveCSS("clip-path", "inset(50%)");
   expect(await skip.evaluate(element => element.getBoundingClientRect().bottom)).toBeLessThanOrEqual(0);
 });

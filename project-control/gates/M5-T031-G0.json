@@ -4,9 +4,18 @@
   "reviewer": "orchestrator",
   "role": "administrative",
   "result": "PASS",
-  "report_file": "project-control/reports/M5-T031-G0-readiness.md",
-  "reviewed_at": "2026-09-15T23:18:28.636391+00:00",
-  "content_manifest_sha256": "d9ae0acd3c92175b6db2dcce8e2b77786391c72ca18353af4d4fb1e4188bce00",
-  "reviewed_sha": "780dccf1e95a6ede2051b334ed99e0340ebce914",
-  "updated_at": "2026-09-15T23:18:28.730178+00:00"
+  "report_file": "project-control/reports/M5-T031-G0-readiness-v2.md",
+  "reviewed_at": "2026-09-16T01:17:07.719758+00:00",
+  "content_manifest_sha256": "634be631d1665c53ecae1a4b0f34a8e87283d835780d2cc5264b17462b51fedf",
+  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T031-G0-readiness.md",
+      "reviewed_at": "2026-09-15T23:18:28.636391+00:00"
+    }
+  ],
+  "updated_at": "2026-09-16T01:17:07.809261+00:00"
 }

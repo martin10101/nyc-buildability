@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T031",
+  "gate_id": "G1",
+  "reviewer": "official-source-researcher",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/D-063-source-v2-attestation.md",
+  "reviewed_at": "2026-09-16T01:19:32.157511+00:00",
+  "content_manifest_sha256": "634be631d1665c53ecae1a4b0f34a8e87283d835780d2cc5264b17462b51fedf",
+  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "updated_at": "2026-09-16T01:19:32.254548+00:00"
+}

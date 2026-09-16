@@ -1,5 +1,15 @@
 # M5-T031 producer evidence
 
+## Current candidate — V3 producer outcome
+
+The current candidate keeps development limits first, distinguishes the PLUTO residential FAR reference from Built FAR and evaluated outputs, and preserves the original evidence. **No height, yard or coverage number is promoted until the contract can establish its meaning.** These rows show their supplied unsupported/review/conflict state or **Not calculated**; their raw constraints remain available.
+
+V3 closes the locally reproduced citation-support and connected report-print defects. Meaningful, associated source records are required before a FAR/cap is highlighted. Empty or deficient records remain inspectable. Original malformed or unassociated returned documents now remain inside the report audit/print boundary, clearly labelled and withheld from current-property results. The skip link has explicit unfocused opacity/clipping with keyboard-focus reveal.
+
+Final producer verification: **918 tests passed**, typecheck/lint/build/modularity passed. Frozen application content digest: `956d025a1ba3b7e3e16fd0031570487a4339a7d8efa1f13e258927156bc44a3a` across the same 20 allowed app files. Browser screenshots and final frozen-SHA independent gates remain orchestrator-owned; this is a producer submission, not task acceptance or legal approval.
+
+The following V1 and V2 sections are retained as **superseded historical evidence**, including their failed reviews and corrected claims. Their numeric bulk-promotion description does not describe the current candidate. The V3 section at the end records the final repair and verification.
+
 Producer: frontend-engineer (isolated agent). Worktree: `m5t031-ui`, task branch `task/M5-T031-ui`, inherited task-control HEAD `dd22b95`; product base `780dccf1e95a6ede2051b334ed99e0340ebce914`. Submitted for independent review, not accepted by the producer.
 
 ## Result and limits
@@ -114,3 +124,52 @@ The orchestrator explicitly extended scope to that one test file. It now waits f
 Final captures: `/tmp/m5t031-rework-focused-final.log`, `/tmp/m5t031-rework-full-final.log`, `/tmp/m5t031-rework-lint-final.log`, `/tmp/m5t031-rework-build-final.log`. The adapter is 162 physical lines; the shared component is 90. No production backend, rule, schema, API, dependency or configuration change was made. No git/control mutation or production action was performed by this producer.
 
 V2 app-file content digest, using the same sorted path/NUL/bytes/NUL method over the **20** allowed existing app files including the explicitly extended map-test path: SHA-256 `703ea0f8c745ec8e63a5a0426979f8edaa403679a48b92547dc0bec730ba2ed5`. The original v1 digest and observations remain above as history. Independent G3/G4/G5/DCV and v2 browser/visual verification must be rerun against the newly frozen candidate; v1 passes do not establish v2 acceptance. Legal approval and completed citywide bulk calculations remain outside this frontend result.
+
+
+## Rework V3 — meaningful source support, connected audit retention and skip-link paint
+
+The orchestrator held release after independent `M5-T031-G5-v2.md` and `M5-T031-G3-G4-v2.md` reviewed remote V2 `5b832c8420e28d19bc4da45bfa4e92fbd234e18a`. The reports confirmed the original five findings closed, while reproducing the citation and print omissions. V2's 18 CI jobs, 861 unit/component tests and 113 browser journeys passed but did not close those independently found defects. Parent recorded the isolated V2 base as `541c951`. All repair edits remained in the existing allowed frontend/test paths; no git or control-state mutation was performed by the producer.
+
+### Bounded failure surface and repair
+
+| Review finding | Final repair and evidence |
+|---|---|
+| Empty citation display shape was accepted as numerical support | Kept `readableCitation` as a display-safety guard. A separate support identity now requires nonblank snapshot/section/quote, binding between citation and provenance snapshot/section, the existing official source identity and captured HTML URL, URL/section agreement, capture time, and a correctly formed content digest. Cap and trace must carry the same complete unique set of support identities, including excerpt/capture/digest. Invalid or mismatched support withholds the cap; invalid trace support also withholds evaluated FAR. The shared summary explicitly says **Rule source support incomplete · inspect evidence**. Empty readable records are preserved; malformed ones remain in the existing raw-record notice. |
+| Connected Report route discarded the raw record before the print component received it | ArchitectEntry passes the original returned analysis documents to ReportView. ReportView owns the identity/inspectability filters for result readers and renders the original malformed/mismatched/missing-identity notices inside its report boundary. It produces one notice per affected record. Seven actual ArchitectEntry cases check exact original JSON, report containment, withheld cap, explicit unassociated-record wording, full-audit opening, and afterprint restoration, including simultaneous mismatches and a malformed mismatched evaluation. |
+| Unfocused skip link appeared in full-page screenshots despite offscreen geometry assertions | Added explicit `opacity:0`, `clip-path:inset(50%)` and disabled pointer events while unfocused. Focus restores opacity, clipping, pointer events and the original viewport position. The anchor remains keyboard reachable. Browser assertions now check computed hidden and focused paint properties before/after scrolling and tabbing, while retaining both screenshot captures. This is a conservative correction to the independently observed screenshot discrepancy; no unobserved live viewport leak is claimed. |
+
+Source-support selection is presentation-only. It does not retrieve or rehash original source bytes, establish legal applicability, or treat an `extracted_draft` capture or `raw_html_verified:false` as legal approval. Positive controls cover the original canonical fixture and current committed `zr-23-21` / `zr-23-22` snapshot metadata; the latter substitutions are explicitly display tests, not zoning-applicability assertions. The existing supported HTML URL forms are reused; unsupported source forms remain inspectable without numerical promotion. No API contract or source snapshot was modified.
+
+V3 production edits: `src/lib/architect/development-limits.ts`, `ArchitectEntry.tsx`, `ReportView.tsx`, and `property/architect.css`. Test edits: architect `development-limits.test.tsx`, `entry.test.tsx`, and `e2e/development-limits.spec.ts`. The pure presentation selector is 206 physical lines; ReportView is 104 and ArchitectEntry is 220. Their responsibilities remain selection, report presentation/print lifecycle and route composition respectively.
+
+### Actual red/green and load-bearing evidence
+
+Before production edits, the new focused V3 acceptance pack exited **1: 51 failed / 6 passed**, with 168 older tests excluded by the name filter. The 57 new cases cover all-empty and whitespace-only citations; missing/empty/whitespace load-bearing provenance fields; missing/malformed provenance; mismatched source/snapshot/section/URL/digest/capture support; cap/trace disagreement; draft positive controls; and seven connected report-record cases. The all-empty reproduction explicitly passes both current canonical runtime validators; whitespace trace cases explicitly pass the evaluation validator. No claim is made that the scenario validator accepts whitespace identifiers.
+
+The first repair pass passed 56/57: one new test wrongly expected the Report/Evidence raw-document label in Zoning, whose existing rule disclosure instead links to the Evidence page. The test was corrected to verify the exact raw document on Report, while retaining all three summary assertions. No production information was removed. An initial typecheck found two intentional-invalid-provenance test assignments that needed casts through `unknown`; the test inputs and assertions stayed unchanged. Final focused V3: **57 passed**.
+
+Three temporary mutations prove the guards/record forwarding are load-bearing. Each original file was restored byte-for-byte in a `finally` block before the passing rerun:
+
+- Removing meaningful trace citation support: whitespace-source cases exited **1**, restoration exited **0**.
+- Removing cap/trace support matching: cap-support disagreement cases exited **1**, restoration exited **0**.
+- Passing sanitized documents into ReportView again: connected print cases exited **1**, restoration exited **0**.
+
+### Final V3 producer checks
+
+Commands ran in the isolated cloud worktree, npm commands from `apps/web`, using installed Node 24.19.0 / npm 11.9.0. No manifest, lockfile or dependency changed. Exact pinned npm 11.18.0 dependency-security and frozen-SHA CI evidence remain orchestrator-owned.
+
+| Command | Actual final result |
+|---|---|
+| `npm test -- --run src/components/architect/__tests__/development-limits.test.tsx src/components/architect/__tests__/entry.test.tsx -t V3` | Exit 0; **57 passed**, older cases excluded only by this focused filter. |
+| `npm test -- --run src/components/architect/__tests__/development-limits.test.tsx src/components/architect/__tests__/entry.test.tsx src/components/architect/__tests__/workspace.test.tsx src/components/architect/__tests__/source-links.test.tsx src/components/compare/__tests__/unused-floor-area.test.tsx src/components/address/__tests__/lot-outline-map.test.tsx` | Exit 0; **6 files / 283 tests passed**. |
+| `npm test` after restoration of all mutations | Exit 0; **40 files / 918 tests passed**, no skips. Existing jsdom canvas warnings remain and are not visual map evidence. |
+| `npm run typecheck` | Exit 0. |
+| `npm run lint` | Exit 0; **0 errors / 1,077 existing vendored warnings**. |
+| `npm run build` | Exit 0; compilation, type checking, all static pages and build traces completed. |
+| `python tools/modularity_check.py --check` | Exit 0; **437 files / 0 failures / 18 existing warnings**. |
+
+Raw captures: `/tmp/m5t031-v3-red.log`, `/tmp/m5t031-v3-green.log`, `/tmp/m5t031-v3-focused.log`, `/tmp/m5t031-v3-full-final.log`, `/tmp/m5t031-v3-typecheck-final.log`, `/tmp/m5t031-v3-lint-final.log`, `/tmp/m5t031-v3-build-final.log`, `/tmp/m5t031-v3-modularity-final.log`, plus `/tmp/m5t031-v3-{citation-support,citation-association,connected-print}-mutation-{red,green}.log`.
+
+The existing browser report-malformation journey now additionally exercises the actual connected report audit/print/afterprint lifecycle and exact evidence retention. The mobile skip-link journey checks computed opacity/clipping/pointer behavior and recaptures the same unfocused/focused screenshots. Browser journey count remains unchanged; changed browser assertions and fresh screenshots have **not** been run by this producer because the authorized cloud browser cannot access the local harness. Final CI and independent visual review must confirm them at the new frozen candidate. No standalone browser or live deployment was launched.
+
+Final application freeze: SHA-256 `956d025a1ba3b7e3e16fd0031570487a4339a7d8efa1f13e258927156bc44a3a`, over the **20** allowed existing app files (including the V2-authorized map test), sorted path + NUL + bytes + NUL, excluding this report. No further application edits are planned after this freeze. Backend spatial wiring, unavailable bulk calculations, G6 legal approval and final acceptance remain outside this producer submission; the architect was not asked to perform routine testing.

@@ -8,11 +8,14 @@ import { DevelopmentLimits, DraftHeadline } from "../DevelopmentLimits";
 import { ScenarioWorkspace } from "../ScenarioWorkspace";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
+import { validateScenarioDocument } from "@/lib/scenario-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import { draftApplicableDoc, missingEvidenceDoc, ruleConflictDoc } from "@/test-support/rule-evaluation-fixtures";
-import { bulkRow, evaluatedResidentialFar, scenarioCap } from "@/lib/architect/development-limits";
+import { bulkRow, evaluatedResidentialFar, evaluationIsInspectable, scenarioCap } from "@/lib/architect/development-limits";
 import scenarioFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
+import r5Snapshot from "../../../../../../services/api/app/_zr_snapshots/v1/zr-23-21.snapshot.json";
+import r6Snapshot from "../../../../../../services/api/app/_zr_snapshots/v1/zr-23-22.snapshot.json";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(cleanup);
@@ -35,6 +38,104 @@ function reference(profile: PropertyProfile) {
 function show(profile: PropertyProfile, evaluation: RuleEvaluation | null = null, scenario: Scenario | null = null) {
   return render(<DevelopmentLimits profile={profile} evaluation={evaluation} scenario={scenario}/>);
 }
+
+describe("V3 citation support", () => {
+  it.each(["overview", "zoning", "report"])("withholds empty but validator-accepted source support in %s", view => {
+    const { profile, evaluation, scenario } = inputs();
+    const empty = { snapshot_id: "", section: "", quote: "", provenance: {} };
+    evaluation.evaluations[0].citations = [empty];
+    scenario.cap_provenance!.citations = [structuredClone(empty)];
+    expect(validateRuleEvaluationDocument(evaluation).ok).toBe(true);
+    expect(validateScenarioDocument(scenario).ok).toBe(true);
+    expect(evaluationIsInspectable(evaluation)).toBe(true);
+    const props = { profile, evaluation, scenario, onInspect: vi.fn() };
+    render(view === "overview" ? <PropertyOverview {...props}/> : view === "zoning" ? <ZoningView {...props}/> : <ReportView {...props} label="Test property"/>);
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    expect(screen.getByText("Rule source support incomplete · inspect evidence")).toBeInTheDocument();
+    if (view === "report") {
+      const raw = screen.getByText("Full rule-evaluation document").closest("details")!.querySelector("pre")!;
+      expect(JSON.parse(raw.textContent!)).toEqual(evaluation);
+    }
+  });
+
+  it.each(["snapshot_id", "section", "quote"])("does not treat whitespace-only %s as supporting evidence", field => {
+    const { profile, evaluation } = inputs();
+    (evaluation.evaluations[0].citations[0] as unknown as Record<string, unknown>)[field] = " \t\n ";
+    expect(validateRuleEvaluationDocument(evaluation).ok).toBe(true);
+    expect(evaluationIsInspectable(evaluation)).toBe(true);
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)).toBeNull();
+  });
+
+  const sourceFields = ["snapshot_id", "section_number", "source_id", "official_channel", "request_url", "retrieved_at", "content_digest_sha256"];
+  it.each(sourceFields.flatMap(field => [undefined, "", " \t "].map(value => ({ field, value }))))("requires meaningful provenance $field = $value", ({ field, value }) => {
+    const { profile, evaluation, scenario } = inputs();
+    const citation = evaluation.evaluations[0].citations[0];
+    const metadata = citation.provenance as Record<string, unknown>;
+    if (value === undefined) delete metadata[field]; else metadata[field] = value;
+    scenario.cap_provenance!.citations = structuredClone(evaluation.evaluations[0].citations);
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)).toBeNull();
+    expect(scenarioCap(scenario, evaluation, profile.identity.bbl)).toBeNull();
+  });
+
+  it.each([undefined, null, {}, [], "source"])("withholds a missing or unusable provenance object %j", provenance => {
+    const { profile, evaluation, scenario } = inputs();
+    (evaluation.evaluations[0].citations[0] as unknown as Record<string, unknown>).provenance = provenance;
+    (scenario.cap_provenance!.citations[0] as unknown as Record<string, unknown>).provenance = provenance;
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)).toBeNull();
+    expect(scenarioCap(scenario, evaluation, profile.identity.bbl)).toBeNull();
+  });
+
+  it.each([
+    ["snapshot_id", "other-snapshot"], ["section_number", "23-22"], ["source_id", "unrelated-source"],
+    ["official_channel", "unrecorded"], ["retrieved_at", "yesterday"], ["content_digest_sha256", "not-a-digest"],
+    ["request_url", "https://example.com/article-ii/chapter-3/23-21"],
+    ["request_url", "javascript:alert(1)"],
+    ["request_url", "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22"],
+  ])("rejects unbound source metadata %s = %s", (field, value) => {
+    const { profile, evaluation, scenario } = inputs();
+    (evaluation.evaluations[0].citations[0].provenance as Record<string, unknown>)[field] = value;
+    scenario.cap_provenance!.citations = structuredClone(evaluation.evaluations[0].citations);
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)).toBeNull();
+    expect(scenarioCap(scenario, evaluation, profile.identity.bbl)).toBeNull();
+  });
+
+  it.each(["empty cap citation", "different snapshot", "different digest", "different quote", "different capture", "extra cap citation", "duplicate trace citation"])("withholds cap support with %s", kind => {
+    const { profile, evaluation, scenario } = inputs();
+    const citation = scenario.cap_provenance!.citations[0];
+    const metadata = citation.provenance as Record<string, unknown>;
+    if (kind === "empty cap citation") scenario.cap_provenance!.citations = [{ snapshot_id: "", section: "", quote: "", provenance: {} }];
+    if (kind === "different snapshot") { citation.snapshot_id = "another-capture"; metadata.snapshot_id = "another-capture"; }
+    if (kind === "different digest") metadata.content_digest_sha256 = "a".repeat(64);
+    if (kind === "different quote") citation.quote = "A different supplied excerpt.";
+    if (kind === "different capture") metadata.retrieved_at = "2026-08-01T00:00:00Z";
+    if (kind === "extra cap citation") scenario.cap_provenance!.citations.push(structuredClone(citation));
+    if (kind === "duplicate trace citation") evaluation.evaluations[0].citations.push(structuredClone(evaluation.evaluations[0].citations[0]));
+    render(<DraftHeadline scenario={scenario} evaluation={evaluation} bbl={profile.identity.bbl}/>);
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+  });
+
+  it.each([r5Snapshot, r6Snapshot])("accepts meaningful metadata from committed draft snapshot $snapshot_id", snapshot => {
+    const { profile, evaluation, scenario } = inputs();
+    // A presentation-only metadata substitution, not a district applicability
+    // or legal-approval assertion. Values remain the supplied fixture outputs.
+    const citation = {
+      snapshot_id: snapshot.snapshot_id, section: snapshot.section_number, quote: snapshot.verbatim_excerpt,
+      last_amended: snapshot.source.section_last_amended,
+      provenance: {
+        snapshot_id: snapshot.snapshot_id, section_number: snapshot.section_number,
+        source_id: snapshot.source.source_id, official_channel: snapshot.source.official_channel,
+        request_url: snapshot.source.request_url, retrieved_at: snapshot.source.retrieved_at,
+        content_digest_sha256: snapshot.content_digest_sha256, raw_html_verified: false, extraction_status: "extracted_draft",
+      },
+    };
+    evaluation.evaluations[0].citations = [citation];
+    scenario.cap_provenance!.citations = [structuredClone(citation)];
+    expect(evaluatedResidentialFar(evaluation, profile.identity.bbl)?.value).toBe(1.5);
+    expect(scenarioCap(scenario, evaluation, profile.identity.bbl)).toBe(15000);
+    expect(citation.provenance.raw_html_verified).toBe(false);
+  });
+});
 
 describe("development-first entry points", () => {
   it.each(["overview", "zoning", "report"])("puts a distinct city FAR reference and calculation status in %s", view => {

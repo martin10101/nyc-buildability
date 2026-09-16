@@ -15,12 +15,19 @@ import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
 import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
 import { ReportSources } from "./ReportSources";
-export function ReportView({ profile, scenario, evaluation, label }: {
+import { AnalysisIdentityNotice } from "./AnalysisIdentityNotice";
+export function ReportView({ profile, scenario: returnedScenario, evaluation: returnedEvaluation, label }: {
     profile: PropertyProfile;
     scenario: Scenario | null;
     evaluation: RuleEvaluation | null;
     label: string;
 }) {
+    // Retain original returns inside the print boundary. Only records associated
+    // with the selected property may reach its result and calculation views.
+    const bbl = profile.identity.bbl;
+    const scenario = returnedScenario?.evaluated_input.bbl === bbl ? returnedScenario : null;
+    const identityEvaluation = returnedEvaluation?.evaluated_input.bbl === bbl ? returnedEvaluation : null;
+    const evaluation = evaluationIsInspectable(identityEvaluation) ? identityEvaluation : null;
     const [auditAppendix, setAuditAppendix] = useState(false);
     const reportRef = useRef<HTMLDivElement | null>(null);
     const preparePrint = useRef<() => void>(() => undefined);
@@ -55,7 +62,10 @@ export function ReportView({ profile, scenario, evaluation, label }: {
           <input type="checkbox" checked={auditAppendix} onChange={event => setAuditAppendix(event.target.checked)}/> Include full audit appendix</label>
       </div>
     </section>
-    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation}/>
+    <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
+    <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
+    <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
+    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={identityEvaluation}/>
     <PropertyIssuesSummary profile={profile}/>
     <nav className="architect-report-contents" aria-label="Property brief contents">
       {[["brief-facts", "Facts"], ["brief-zoning", "Zoning"], ["brief-issues", "Issues & assumptions"], ["brief-calculations", "Calculations"], ["brief-sources", "Sources"]].map(([id, text]) => <a key={id} href={`#${id}`} onClick={() => { const section = document.getElementById(id); if (section instanceof HTMLDetailsElement) section.open = true; }}>{text}</a>)}
@@ -79,8 +89,7 @@ export function ReportView({ profile, scenario, evaluation, label }: {
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-calculations">
       <summary>Calculation and rule evidence</summary>
-      <IncompleteEvaluationNotice evaluation={evaluation}/>
-      <CalculationEvidence evaluation={evaluationIsInspectable(evaluation) ? evaluation : null} scenario={scenario}/>
+      <CalculationEvidence evaluation={evaluation} scenario={scenario}/>
     </details>
     <details className="card architect-disclosure architect-report-section" id="brief-sources">
       <summary>Source and review appendix</summary>

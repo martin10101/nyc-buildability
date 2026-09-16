@@ -3,6 +3,7 @@ import type { PropertyProfile, SourceFact } from "@/lib/contract";
 import type { EvaluationTrace, RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import type { Scenario } from "@/lib/scenario-contract";
 import { isRecord } from "@/lib/scenario-contract-checks";
+import { officialZoningTextUrl } from "./source-links";
 
 export interface ResidentialReference {
   value: number | null;
@@ -53,6 +54,44 @@ function readableCitation(value: unknown): boolean {
     && (value.last_amended == null || typeof value.last_amended === "string");
 }
 
+function nonBlank(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+/** Inspectability is not source support. These are the existing snapshot
+ * provenance fields exported by the evaluator, not a new contract or legal
+ * approval check. Draft captures remain draft; their digest is an identifier,
+ * not proof that the browser has reverified the original source bytes. */
+function citationSupportKey(value: unknown): string | null {
+  if (!isRecord(value) || !readableCitation(value) || !isRecord(value.provenance)) return null;
+  const provenance = value.provenance;
+  const url = officialZoningTextUrl(provenance.request_url);
+  if (!nonBlank(value.snapshot_id) || !nonBlank(value.section) || !nonBlank(value.quote)
+    || provenance.snapshot_id !== value.snapshot_id || provenance.section_number !== value.section
+    || provenance.source_id !== "nyc-dcp-zoning-resolution-portal" || provenance.official_channel !== "html"
+    || !url || !nonBlank(provenance.retrieved_at) || !Number.isFinite(Date.parse(provenance.retrieved_at))
+    || typeof provenance.content_digest_sha256 !== "string" || !/^[a-f0-9]{64}$/.test(provenance.content_digest_sha256)) return null;
+  const location = new URL(url);
+  const section = location.hash ? location.hash.slice(1) : location.pathname.split("/").at(-1);
+  if (section !== value.section) return null;
+  return JSON.stringify([value.snapshot_id, value.section, value.quote, provenance.source_id,
+    provenance.official_channel, url, provenance.retrieved_at, provenance.content_digest_sha256]);
+}
+
+function citationSupportKeys(value: unknown): string[] | null {
+  if (!Array.isArray(value) || !value.length) return null;
+  const keys = value.map(citationSupportKey);
+  if (keys.some(key => key === null) || new Set(keys).size !== keys.length) return null;
+  return (keys as string[]).sort();
+}
+
+function sameCitationSupport(left: unknown, right: unknown): boolean {
+  const leftKeys = citationSupportKeys(left);
+  const rightKeys = citationSupportKeys(right);
+  return !!leftKeys && !!rightKeys && leftKeys.length === rightKeys.length
+    && leftKeys.every((key, index) => key === rightKeys[index]);
+}
+
 export function evaluationIsInspectable(evaluation: RuleEvaluation | null): boolean {
   return !!evaluation && Array.isArray(evaluation.evaluations) && evaluation.evaluations.every(readableTrace);
 }
@@ -87,7 +126,7 @@ function uniqueResidentialTrace(evaluation: RuleEvaluation | null, bbl: string):
   const identities = evaluation.evaluations.filter(item => item.rule_id === trace.rule_id && item.rule_version === trace.rule_version);
   if (identities.length !== 1 || !trace.rule_id || !trace.rule_version || !trace.input_validation.valid
     || trace.input_validation.invalid_inputs.length > 0
-    || !trace.effective_window.in_effect || trace.coverage_status !== "conditional" || !trace.citations.length) return null;
+    || !trace.effective_window.in_effect || trace.coverage_status !== "conditional" || !citationSupportKeys(trace.citations)) return null;
   return trace;
 }
 
@@ -108,7 +147,7 @@ export function scenarioCap(scenario: Scenario | null, evaluation: RuleEvaluatio
   const value = scenario.draft_zoning_floor_area_cap_sq_ft;
   if (!trace || !isRecord(provenance) || provenance.rule_id !== trace.rule_id || provenance.rule_version !== trace.rule_version
     || provenance.rule_status !== trace.rule_status || provenance.output_name !== "max_residential_floor_area_sq_ft"
-    || !Array.isArray(provenance.citations) || !provenance.citations.length || !provenance.citations.every(readableCitation)
+    || !sameCitationSupport(trace.citations, provenance.citations)
     || !isLimit(value) || (trace.outputs as Record<string, unknown>).max_residential_floor_area_sq_ft !== value) return null;
   return value;
 }
@@ -130,6 +169,11 @@ export function calculationStatus(evaluation: RuleEvaluation | null, scenario: S
   if (evaluation?.fail_safe) return "Rule result unavailable · inspect evidence";
   if (scenario && analysisRecordsDiffer(evaluation, scenario)) return "Analysis records differ · inspect evidence";
   if (scenario?.integrity_check.agreed === false) return "Scenario integrity check failed · inspect evidence";
+  const trace = evaluation?.evaluations.find(item => item.family === "residential_far" && item.applicability_outcome);
+  if (trace && (!citationSupportKeys(trace.citations)
+    || (scenario?.cap_provenance && !sameCitationSupport(trace.citations, scenario.cap_provenance.citations)))) {
+    return "Rule source support incomplete · inspect evidence";
+  }
   return "Draft assessment · envelope incomplete";
 }
 

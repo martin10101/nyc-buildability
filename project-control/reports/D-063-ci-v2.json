@@ -1,0 +1,148 @@
+{
+  "reviewed_sha": "5b832c8420e28d19bc4da45bfa4e92fbd234e18a",
+  "workflows": [
+    {
+      "id": 35043352942,
+      "name": "context-budget",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35043353018,
+      "name": "secret-scan",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35043352927,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 104627794169,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794375,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794387,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794395,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794399,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794403,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794417,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794451,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794493,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794520,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794534,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794536,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794585,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794609,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794611,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794646,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794728,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104627794745,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "unit_tests": {
+    "files": 40,
+    "passed": 861
+  },
+  "browser_tests": {
+    "passed": 113
+  },
+  "artifact": {
+    "id": 10425589883,
+    "sha256": "4a7c91ce00e9cd730155fb97f7318204ae11496b482a8362b68fb828d3c9f55b",
+    "digest_verified": true,
+    "screenshots_directory": "/workspace/scratch/cfa2464c5c7f/m5t031-ci-images-v2"
+  },
+  "release_disposition": "WITHHELD: independent reviews found empty-citation promotion and connected malformed-record print omission; V3 repair required. CI success alone is not acceptance.",
+  "audit_ci_invocation_added": false
+}

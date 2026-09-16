@@ -136,7 +136,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
   </section>;
             break;
         case "report":
-            content = <ReportView profile={profile} evaluation={evaluation} scenario={scenario} label={label}/>;
+            content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label}/>;
             break;
         default: content = <PlannedView label={VIEW_LABELS[view]}/>;
     }
@@ -165,7 +165,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
       {analysisView && !analysis.scenario ? <p className="architect-inline-loading" role="status">Loading draft scenario…</p> : null}
       {analysisView && analysis.scenario && analysis.scenario.kind !== "scenario" && analysis.scenario.kind !== "aborted" ? <ScenarioFailureStates outcome={analysis.scenario} onRetry={() => { headingRef.current?.focus(); analysis.retryScenario(); }}/> : null}
       {analysisView && analysis.evaluation && analysis.evaluation.kind !== "evaluation" ? <RuleEvaluationFailure outcome={analysis.evaluation} onRetry={() => { headingRef.current?.focus(); analysis.retryEvaluation(); }}/> : null}
-      {analysisView ? <>
+      {analysisView && view !== "report" ? <>
           <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
           <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
           <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
