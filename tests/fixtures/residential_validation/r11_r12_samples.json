@@ -1,0 +1,121 @@
+{
+  "queries": [
+    {
+      "case": "R11_any_district",
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1+like+%27%25R11%25%27+OR+zonedist2+like+%27%25R11%25%27+OR+zonedist3+like+%27%25R11%25%27+OR+zonedist4+like+%27%25R11%25%27&%24limit=3&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:30:59.035245+00:00",
+      "records": [
+        {
+          "bbl": "1007990008.00000000",
+          "borough": "MN",
+          "block": "799",
+          "lot": "8",
+          "address": "165 WEST 23 STREET",
+          "zonedist1": "C6-3X",
+          "zonedist2": "M1-8A/R11",
+          "spdist1": "MSX",
+          "splitzone": true,
+          "lotarea": "2475",
+          "bldgarea": "8459",
+          "builtfar": "3.42000000000",
+          "residfar": "9.00000000000",
+          "affresfar": "10.80000000000",
+          "version": "26v2"
+        },
+        {
+          "bbl": "1007990009.00000000",
+          "borough": "MN",
+          "block": "799",
+          "lot": "9",
+          "address": "163 WEST 23 STREET",
+          "zonedist1": "C6-3X",
+          "zonedist2": "M1-8A/R11",
+          "spdist1": "MSX",
+          "splitzone": true,
+          "lotarea": "3150",
+          "bldgarea": "17000",
+          "builtfar": "5.40000000000",
+          "residfar": "9.00000000000",
+          "affresfar": "10.80000000000",
+          "version": "26v2"
+        },
+        {
+          "bbl": "1007990024.00000000",
+          "borough": "MN",
+          "block": "799",
+          "lot": "24",
+          "address": "131 WEST 23 STREET",
+          "zonedist1": "C6-3X",
+          "zonedist2": "M1-8A/R11",
+          "spdist1": "MSX",
+          "splitzone": true,
+          "lotarea": "17968",
+          "bldgarea": "32347",
+          "builtfar": "1.80000000000",
+          "residfar": "9.00000000000",
+          "affresfar": "10.80000000000",
+          "version": "26v2"
+        }
+      ]
+    },
+    {
+      "case": "R12_any_district",
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1+like+%27%25R12%25%27+OR+zonedist2+like+%27%25R12%25%27+OR+zonedist3+like+%27%25R12%25%27+OR+zonedist4+like+%27%25R12%25%27&%24limit=3&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:31:04.953391+00:00",
+      "records": [
+        {
+          "bbl": "1007590037.00000000",
+          "borough": "MN",
+          "block": "759",
+          "lot": "37",
+          "address": "501 8 AVENUE",
+          "zonedist1": "M1-9A/R12",
+          "zonedist2": "C6-4M",
+          "spdist1": "MSX",
+          "spdist2": "HY",
+          "splitzone": true,
+          "lotarea": "11275",
+          "bldgarea": "266912",
+          "builtfar": "23.67000000000",
+          "residfar": "15.00000000000",
+          "affresfar": "18.00000000000",
+          "version": "26v2"
+        },
+        {
+          "bbl": "1007590041.00000000",
+          "borough": "MN",
+          "block": "759",
+          "lot": "41",
+          "address": "8 AVENUE",
+          "zonedist1": "M1-9A/R12",
+          "spdist1": "MSX",
+          "splitzone": false,
+          "lotarea": "40",
+          "bldgarea": "0",
+          "builtfar": "0.00000000000",
+          "residfar": "15.00000000000",
+          "affresfar": "18.00000000000",
+          "version": "26v2"
+        },
+        {
+          "bbl": "1007590045.00000000",
+          "borough": "MN",
+          "block": "759",
+          "lot": "45",
+          "address": "519 8 AVENUE",
+          "zonedist1": "M1-9A/R12",
+          "zonedist2": "C6-4M",
+          "spdist1": "MSX",
+          "spdist2": "HY",
+          "splitzone": true,
+          "lotarea": "13400",
+          "bldgarea": "330291",
+          "builtfar": "24.65000000000",
+          "residfar": "15.00000000000",
+          "affresfar": "18.00000000000",
+          "version": "26v2"
+        }
+      ]
+    }
+  ]
+}

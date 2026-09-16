@@ -157,6 +157,24 @@
 .architect-determination:not([open]) { margin-top:14px;padding-top:8px; }
 .architect-report-contents { display:flex;flex-wrap:wrap;gap:10px 20px;padding:8px 0 22px;font-size:12px; }
 .architect-report-section { scroll-margin-top:20px; }
+.architect-development .architect-panel-heading h2 { font-size:19px; }
+.architect-development-status { color:#71613e;font-size:12px; }
+.architect-far-grid { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0;padding-bottom:18px;border-bottom:1px solid var(--arch-line); }
+.architect-far-grid h3 { font-size:12px;font-weight:550;line-height:1.5;margin:0 0 8px; }
+.architect-far-grid a { font-size:12px; }
+.architect-development-value { font-size:clamp(19px,2vw,28px);font-weight:600;line-height:1.25;letter-spacing:-.025em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+.architect-far-reference { padding-right:16px;border-right:1px solid var(--arch-line); }
+.architect-development .architect-draft-headline h2 { font-size:12px;font-weight:550;margin-bottom:7px; }
+.architect-development .architect-metric { font-size:26px;letter-spacing:-.02em; }
+.architect-development .architect-result-scope { margin-top:7px; }
+.architect-bulk-rows { margin:18px 0 8px;border-top:1px solid var(--arch-line); }
+.architect-bulk-rows>div { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 18px;padding:10px 0;border-bottom:1px solid #e6e9e7;font-size:12px; }
+.architect-bulk-rows dt { color:var(--arch-muted); }
+.architect-bulk-rows dd { margin:0;text-align:right;overflow-wrap:anywhere; }
+.architect-bulk-rows small,.architect-bulk-rows button { display:block;margin:3px 0 0 auto; }
+.architect-existing-building { margin-top:20px!important; }
+.architect-existing-building .card { margin-bottom:10px; }
+@media(max-width:700px) { .architect-far-grid { gap:10px; }.architect-far-reference { padding-right:10px; }.architect-development .architect-metric { font-size:26px; } }
 .architect-shell .sr-layout-compact { grid-template-columns:minmax(260px,.75fr) minmax(0,1.4fr);align-items:start;gap:22px; }
 .architect-shell .sr-layout-compact .sr-layout-canvas { position:sticky;top:20px; }
 .architect-shell .sr-layout-compact [data-testid="fact-list"] { padding:18px; }

@@ -88,13 +88,13 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
     let content;
     switch (view) {
         case "overview":
-            content = <PropertyOverview profile={profile} scenario={scenario} onInspect={inspect}/>;
+            content = <PropertyOverview profile={profile} scenario={scenario} evaluation={evaluation} onInspect={inspect}/>;
             break;
         case "facts":
             content = <PropertyFacts profile={profile} onInspect={inspect}/>;
             break;
         case "zoning":
-            content = <ZoningView profile={profile} evaluation={evaluation}/>;
+            content = <ZoningView profile={profile} evaluation={evaluation} scenario={scenario} onInspect={inspect}/>;
             break;
         case "scenarios":
             content = <>

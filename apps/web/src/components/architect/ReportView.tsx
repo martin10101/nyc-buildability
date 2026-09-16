@@ -8,8 +8,8 @@ import { ZoningSection } from "@/components/property/ZoningSection";
 import { ScenarioConstraints } from "@/components/compare/ScenarioConstraints";
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { PropertyFacts, OpenIssues } from "./ProfileViews";
-import { DraftHeadline, PropertyIssuesSummary } from "./PropertyOverview";
-import { AssessmentCoverage } from "./AssessmentCoverage";
+import { PropertyIssuesSummary } from "./PropertyOverview";
+import { DevelopmentLimits } from "./DevelopmentLimits";
 import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
 import { CapturedRecord } from "./EvidenceRecord";
 import { CalculationEvidence } from "./CalculationEvidence";
@@ -54,10 +54,7 @@ export function ReportView({ profile, scenario, evaluation, label }: {
           <input type="checkbox" checked={auditAppendix} onChange={event => setAuditAppendix(event.target.checked)}/> Include full audit appendix</label>
       </div>
     </section>
-    <section className="card">
-      <DraftHeadline scenario={scenario}/>
-      <AssessmentCoverage scenario={scenario}/>
-    </section>
+    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation}/>
     <PropertyIssuesSummary profile={profile}/>
     <nav className="architect-report-contents" aria-label="Property brief contents">
       {[["brief-facts", "Facts"], ["brief-zoning", "Zoning"], ["brief-issues", "Issues & assumptions"], ["brief-calculations", "Calculations"], ["brief-sources", "Sources"]].map(([id, text]) => <a key={id} href={`#${id}`} onClick={() => { const section = document.getElementById(id); if (section instanceof HTMLDetailsElement) section.open = true; }}>{text}</a>)}

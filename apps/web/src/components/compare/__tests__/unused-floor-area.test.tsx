@@ -142,6 +142,8 @@ describe("S2 — computed line renders its own labeled line beneath the cap", ()
     renderCompare(body);
 
     await screen.findByTestId("scenario-result");
+    expect(screen.getByRole("heading", { name: "Floor-area record comparison" })).toBeInTheDocument();
+    expect(screen.getByText("Draft cap minus recorded building area:")).toBeInTheDocument();
 
     // The remainder is DERIVED from the fixture cap, not retyped, then shown
     // with locale grouping (a literal DOM string catches a formatter regression).

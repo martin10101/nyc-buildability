@@ -1,0 +1,185 @@
+{
+  "source_url": "https://data.cityofnewyork.us/resource/fdkv-4t4z.json?%24where=bbl+in+%28%271000940001%27%2C%271002737501%27%2C%271003430001%27%2C%271003720012%27%2C%271005060012%27%2C%271005500022%27%2C%271007590037%27%2C%271007990008%27%2C%271009150032%27%2C%271010110001%27%2C%271022150042%27%2C%272032730231%27%2C%272033310040%27%2C%272034300037%27%2C%273005250001%27%2C%273005270001%27%2C%273052960043%27%2C%273065090024%27%2C%274001170001%27%2C%274032110010%27%2C%275000920001%27%29&%24limit=100",
+  "retrieved_at": "2026-09-15T23:34:28.718592+00:00",
+  "response_sha256": "adf30423275bd86b2731acdb628880a3809ba45231688a834cc323389cecb9e9",
+  "records": [
+    {
+      "borough_code": "1",
+      "tax_block": "94",
+      "tax_lot": "1",
+      "bbl": "1000940001",
+      "zoning_district_1": "R8",
+      "zoning_district_2": "C6-4",
+      "special_district_1": "LM",
+      "zoning_map_number": "12B"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "343",
+      "tax_lot": "1",
+      "bbl": "1003430001",
+      "zoning_district_1": "R7A",
+      "zoning_district_2": "R8A",
+      "zoning_map_number": "12C"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "372",
+      "tax_lot": "12",
+      "bbl": "1003720012",
+      "zoning_district_1": "R8B",
+      "zoning_map_number": "12C"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "506",
+      "tax_lot": "12",
+      "bbl": "1005060012",
+      "zoning_district_1": "R6",
+      "zoning_map_number": "12A"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "550",
+      "tax_lot": "22",
+      "bbl": "1005500022",
+      "zoning_district_1": "R10",
+      "zoning_map_number": "12C"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "759",
+      "tax_lot": "37",
+      "bbl": "1007590037",
+      "zoning_district_1": "M1-9A/R12",
+      "zoning_district_2": "C6-4M",
+      "special_district_1": "MSX",
+      "special_district_2": "HY",
+      "zoning_map_number": "8D"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "799",
+      "tax_lot": "8",
+      "bbl": "1007990008",
+      "zoning_district_1": "C6-3X",
+      "zoning_district_2": "M1-8A/R11",
+      "special_district_1": "MSX",
+      "zoning_map_number": "8D"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "915",
+      "tax_lot": "32",
+      "bbl": "1009150032",
+      "zoning_district_1": "R9",
+      "commercial_overlay_1": "C2-5",
+      "special_district_1": "TA",
+      "zoning_map_number": "8D"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "1011",
+      "tax_lot": "1",
+      "bbl": "1010110001",
+      "zoning_district_1": "R10H",
+      "zoning_district_2": "C5-1",
+      "zoning_map_number": "8C"
+    },
+    {
+      "borough_code": "1",
+      "tax_block": "2215",
+      "tax_lot": "42",
+      "bbl": "1022150042",
+      "zoning_district_1": "R7-1",
+      "zoning_map_number": "1B"
+    },
+    {
+      "borough_code": "2",
+      "tax_block": "3273",
+      "tax_lot": "231",
+      "bbl": "2032730231",
+      "zoning_district_1": "R6B",
+      "zoning_map_number": "3C"
+    },
+    {
+      "borough_code": "2",
+      "tax_block": "3331",
+      "tax_lot": "40",
+      "bbl": "2033310040",
+      "zoning_district_1": "R5D",
+      "commercial_overlay_1": "C1-4",
+      "zoning_map_number": "1D"
+    },
+    {
+      "borough_code": "2",
+      "tax_block": "3430",
+      "tax_lot": "37",
+      "bbl": "2034300037",
+      "zoning_district_1": "R3-2",
+      "zoning_district_2": "R3A",
+      "zoning_map_number": "7A"
+    },
+    {
+      "borough_code": "3",
+      "tax_block": "525",
+      "tax_lot": "1",
+      "bbl": "3005250001",
+      "zoning_district_1": "R5",
+      "zoning_map_number": "16A"
+    },
+    {
+      "borough_code": "3",
+      "tax_block": "527",
+      "tax_lot": "1",
+      "bbl": "3005270001",
+      "zoning_district_1": "R5",
+      "commercial_overlay_1": "C2-3",
+      "zoning_map_number": "16A"
+    },
+    {
+      "borough_code": "3",
+      "tax_block": "5296",
+      "tax_lot": "43",
+      "bbl": "3052960043",
+      "zoning_district_1": "M1-2/R6A",
+      "special_district_1": "MX-12",
+      "zoning_map_number": "22C"
+    },
+    {
+      "borough_code": "3",
+      "tax_block": "6509",
+      "tax_lot": "24",
+      "bbl": "3065090024",
+      "zoning_district_1": "R2X",
+      "special_district_1": "OP",
+      "zoning_map_number": "22C"
+    },
+    {
+      "borough_code": "4",
+      "tax_block": "117",
+      "tax_lot": "1",
+      "bbl": "4001170001",
+      "zoning_district_1": "R4",
+      "zoning_map_number": "9B",
+      "zoning_map_code": "Y"
+    },
+    {
+      "borough_code": "4",
+      "tax_block": "3211",
+      "tax_lot": "10",
+      "bbl": "4032110010",
+      "zoning_district_1": "R2",
+      "zoning_map_number": "14B"
+    },
+    {
+      "borough_code": "5",
+      "tax_block": "92",
+      "tax_lot": "1",
+      "bbl": "5000920001",
+      "zoning_district_1": "R1-2",
+      "special_district_1": "HS",
+      "zoning_map_number": "21A"
+    }
+  ]
+}

@@ -46,7 +46,7 @@ describe("connected architect entry", () => {
     state.params.set("view", "overview");
     state.profile!.lot_facts.lotarea!.provenance_ref = "missing-lot-area-source";
     render(<ArchitectEntry />);
-    const source = within(screen.getByText("Lot area").closest("div")!).getByRole("button", { name: "Source" });
+    const source = within(screen.getByRole("region", { name: "Development limits" })).getByRole("button", { name: "Source for Lot area" });
     source.focus();
     fireEvent.click(source);
     const inspector = screen.getByRole("complementary", { name: "Contextual evidence inspector" });

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { PropertyProfile } from "@/lib/contract";
+import type { Scenario } from "@/lib/scenario-contract";
+import { DevelopmentLimits } from "./DevelopmentLimits";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { provenanceById } from "@/lib/provenance";
 import { propertyHref } from "@/lib/architect/navigation";
@@ -14,12 +16,15 @@ import { CapturedRecord } from "./EvidenceRecord";
 import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
 import { PropertyIssuesSummary } from "./PropertyOverview";
 export { PropertyFacts } from "./PropertyFacts";
-export function ZoningView({ profile, evaluation }: {
+export function ZoningView({ profile, evaluation, scenario = null, onInspect }: {
     profile: PropertyProfile;
     evaluation: RuleEvaluation | null;
+    scenario?: Scenario | null;
+    onInspect?: (id: string) => void;
 }) {
     return <>
     <PropertyIssuesSummary profile={profile}/>
+    <DevelopmentLimits profile={profile} evaluation={evaluation} scenario={scenario} onInspect={onInspect}/>
     <ZoningSection profile={profile} byId={provenanceById(profile)}/>
     <AdditionalZoningFlags profile={profile}/>
     <section className="card">

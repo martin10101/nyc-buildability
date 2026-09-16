@@ -1,0 +1,171 @@
+{
+  "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=zonedist1%2Ccount%28%2A%29+AS+parcel_count&%24where=zonedist1+like+%27R%25%27&%24group=zonedist1&%24order=zonedist1&%24limit=200",
+  "retrieved_at": "2026-09-15T23:29:28.895462+00:00",
+  "response_sha256": "f673c1c275dded6365c3110762c7ba14789cb755feffcdb6cbfd18c36bfaec30",
+  "records": [
+    {
+      "zonedist1": "R10",
+      "parcel_count": "995"
+    },
+    {
+      "zonedist1": "R10A",
+      "parcel_count": "820"
+    },
+    {
+      "zonedist1": "R10H",
+      "parcel_count": "18"
+    },
+    {
+      "zonedist1": "R1-1",
+      "parcel_count": "1622"
+    },
+    {
+      "zonedist1": "R1-2",
+      "parcel_count": "14218"
+    },
+    {
+      "zonedist1": "R1-2A",
+      "parcel_count": "1544"
+    },
+    {
+      "zonedist1": "R2",
+      "parcel_count": "39814"
+    },
+    {
+      "zonedist1": "R2A",
+      "parcel_count": "38018"
+    },
+    {
+      "zonedist1": "R2X",
+      "parcel_count": "1339"
+    },
+    {
+      "zonedist1": "R3-1",
+      "parcel_count": "50393"
+    },
+    {
+      "zonedist1": "R3-2",
+      "parcel_count": "62247"
+    },
+    {
+      "zonedist1": "R3A",
+      "parcel_count": "54568"
+    },
+    {
+      "zonedist1": "R3X",
+      "parcel_count": "52432"
+    },
+    {
+      "zonedist1": "R4",
+      "parcel_count": "72949"
+    },
+    {
+      "zonedist1": "R4-1",
+      "parcel_count": "51729"
+    },
+    {
+      "zonedist1": "R4A",
+      "parcel_count": "25852"
+    },
+    {
+      "zonedist1": "R4B",
+      "parcel_count": "15446"
+    },
+    {
+      "zonedist1": "R5",
+      "parcel_count": "89983"
+    },
+    {
+      "zonedist1": "R5A",
+      "parcel_count": "4107"
+    },
+    {
+      "zonedist1": "R5B",
+      "parcel_count": "30618"
+    },
+    {
+      "zonedist1": "R5D",
+      "parcel_count": "4743"
+    },
+    {
+      "zonedist1": "R6",
+      "parcel_count": "67748"
+    },
+    {
+      "zonedist1": "R6-1",
+      "parcel_count": "90"
+    },
+    {
+      "zonedist1": "R6A",
+      "parcel_count": "15179"
+    },
+    {
+      "zonedist1": "R6B",
+      "parcel_count": "50720"
+    },
+    {
+      "zonedist1": "R6D",
+      "parcel_count": "168"
+    },
+    {
+      "zonedist1": "R7-1",
+      "parcel_count": "13893"
+    },
+    {
+      "zonedist1": "R7-2",
+      "parcel_count": "7896"
+    },
+    {
+      "zonedist1": "R7-3",
+      "parcel_count": "64"
+    },
+    {
+      "zonedist1": "R7A",
+      "parcel_count": "10748"
+    },
+    {
+      "zonedist1": "R7B",
+      "parcel_count": "3418"
+    },
+    {
+      "zonedist1": "R7D",
+      "parcel_count": "908"
+    },
+    {
+      "zonedist1": "R7X",
+      "parcel_count": "800"
+    },
+    {
+      "zonedist1": "R8",
+      "parcel_count": "4866"
+    },
+    {
+      "zonedist1": "R8A",
+      "parcel_count": "1285"
+    },
+    {
+      "zonedist1": "R8B",
+      "parcel_count": "7361"
+    },
+    {
+      "zonedist1": "R8X",
+      "parcel_count": "174"
+    },
+    {
+      "zonedist1": "R9",
+      "parcel_count": "261"
+    },
+    {
+      "zonedist1": "R9-1",
+      "parcel_count": "6"
+    },
+    {
+      "zonedist1": "R9A",
+      "parcel_count": "359"
+    },
+    {
+      "zonedist1": "R9X",
+      "parcel_count": "50"
+    }
+  ]
+}

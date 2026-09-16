@@ -1,0 +1,62 @@
+{
+  "3005250001": {
+    "bbl": "3005250001",
+    "reference_far": "1.5",
+    "calculated_far": null,
+    "calculated_floor_area_sq_ft": null,
+    "calculation_status": "not_calculated",
+    "reason": "spatial_intersection_absent",
+    "observed_at": "2026-09-15T23:29:02.539Z",
+    "origin": "orchestrator live browser observation; not rerun by source producer",
+    "evidence_path": "tests/fixtures/residential_validation/application_browser_baseline.json",
+    "evidence_sha256": "9c50219980cf92229828bd66faf699e8c6c79e7e8bee04bf2e2919da3182e54c"
+  },
+  "2033310040": {
+    "bbl": "2033310040",
+    "reference_far": "2",
+    "calculated_far": null,
+    "calculated_floor_area_sq_ft": null,
+    "calculation_status": "not_calculated",
+    "reason": "spatial_intersection_absent",
+    "observed_at": "2026-09-15T23:29:22.820Z",
+    "origin": "orchestrator live browser observation; not rerun by source producer",
+    "evidence_path": "tests/fixtures/residential_validation/application_browser_baseline.json",
+    "evidence_sha256": "9c50219980cf92229828bd66faf699e8c6c79e7e8bee04bf2e2919da3182e54c"
+  },
+  "4032110010": {
+    "bbl": "4032110010",
+    "reference_far": "0.75",
+    "calculated_far": null,
+    "calculated_floor_area_sq_ft": null,
+    "calculation_status": "not_calculated",
+    "reason": "spatial_intersection_absent",
+    "observed_at": "2026-09-15T23:29:48.578Z",
+    "origin": "orchestrator live browser observation; not rerun by source producer",
+    "evidence_path": "tests/fixtures/residential_validation/application_browser_baseline.json",
+    "evidence_sha256": "9c50219980cf92229828bd66faf699e8c6c79e7e8bee04bf2e2919da3182e54c"
+  },
+  "5000920001": {
+    "bbl": "5000920001",
+    "reference_far": "0.75",
+    "calculated_far": null,
+    "calculated_floor_area_sq_ft": null,
+    "calculation_status": "not_calculated",
+    "reason": "spatial_intersection_absent",
+    "observed_at": "2026-09-15T23:30:38.284Z",
+    "origin": "orchestrator live browser observation; not rerun by source producer",
+    "evidence_path": "tests/fixtures/residential_validation/application_browser_baseline.json",
+    "evidence_sha256": "9c50219980cf92229828bd66faf699e8c6c79e7e8bee04bf2e2919da3182e54c"
+  },
+  "1005060012": {
+    "bbl": "1005060012",
+    "reference_far": "2.43",
+    "calculated_far": null,
+    "calculated_floor_area_sq_ft": null,
+    "calculation_status": "not_calculated",
+    "reason": "spatial_intersection_absent",
+    "observed_at": "2026-09-15T23:31:13.593Z",
+    "origin": "orchestrator live browser observation; not rerun by source producer",
+    "evidence_path": "tests/fixtures/residential_validation/application_browser_baseline.json",
+    "evidence_sha256": "9c50219980cf92229828bd66faf699e8c6c79e7e8bee04bf2e2919da3182e54c"
+  }
+}

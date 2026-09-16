@@ -1,11 +1,14 @@
 import Link from "next/link";
 import type { PropertyProfile } from "@/lib/contract";
 import type { Scenario } from "@/lib/scenario-contract";
-import { fieldLabel, formatValue } from "@/lib/format";
+import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import { fieldLabel } from "@/lib/format";
+import { provenanceById } from "@/lib/provenance";
 import { propertyHref } from "@/lib/architect/navigation";
 import { LotOutlineMap } from "@/components/address/LotOutlineMap";
-import { CoverageBadge } from "@/components/property/CoverageBadge";
-import { AssessmentCoverage } from "./AssessmentCoverage";
+import { FactsTable } from "@/components/property/FactsTable";
+import { DevelopmentLimits } from "./DevelopmentLimits";
+export { DraftHeadline } from "./DevelopmentLimits";
 export function PropertyIssuesSummary({ profile }: {
     profile: PropertyProfile;
 }) {
@@ -29,50 +32,20 @@ export function PropertyIssuesSummary({ profile }: {
     {profile.reproducibility?.staleness?.stale ? <p className="architect-alert">The property source is stale. Captured dates and retrieval status are available in Evidence.</p> : null}
   </>;
 }
-export function DraftHeadline({ scenario }: {
-    scenario: Scenario | null;
-}) {
-    const cap = scenario?.draft_zoning_floor_area_cap_sq_ft;
-    return <div className="architect-draft-headline" data-testid="architect-cap">
-    <p className="architect-eyebrow">Preliminary potential</p>
-    <p className="architect-metric">
-      {cap != null ? <>
-        {formatValue(cap)}
-        <span> sq ft</span>
-      </> : scenario ? "No supported cap" : "—"}
-    </p>
-    <h2>
-      Draft zoning floor-area cap
-    </h2>
-    <p className="section-note">FAR only · Buildable envelope not assessed</p>
-    {scenario ? <>
-      <CoverageBadge status={scenario.coverage_status}/>
-      <details className="provenance-details architect-result-scope">
-        <summary>Result scope and source wording</summary>
-        <p>{scenario.cap_label}</p>
-      {scenario.reasons.length ? <ul className="architect-issue-list">
-        {scenario.reasons.map((reason, i) => <li key={i}>
-          {reason}
-        </li>)}
-      </ul> : null}
-      </details>
-    </> : null}
-  </div>;
-}
-export function PropertyOverview({ profile, scenario, onInspect }: {
+export function PropertyOverview({ profile, scenario, evaluation = null, onInspect }: {
     profile: PropertyProfile;
     scenario: Scenario | null;
+    evaluation?: RuleEvaluation | null;
     onInspect: (id: string) => void;
 }) {
     const bbl = profile.identity.bbl;
-    const headlineFacts = [
-        ["lotarea", profile.lot_facts.lotarea],
-        ["bldgarea", profile.existing_building_facts.bldgarea],
-        ["numfloors", profile.existing_building_facts.numfloors],
-    ] as const;
     return <>
     <PropertyIssuesSummary profile={profile}/>
     <div className="architect-overview-grid">
+      <div>
+        <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation} onInspect={onInspect}/>
+        <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span></Link>
+      </div>
       <section className="card architect-map-card">
         <div className="architect-panel-heading">
           <h2>Site context</h2>
@@ -80,25 +53,11 @@ export function PropertyOverview({ profile, scenario, onInspect }: {
         </div>
         <LotOutlineMap bbl={bbl} context/>
       </section>
-      <section className="card architect-overview-result">
-        <DraftHeadline scenario={scenario}/>
-        <div className="architect-fact-metrics">
-          {headlineFacts.map(([field, fact]) => <div key={field}>
-            <p>
-              {fieldLabel(field)}
-            </p>
-            <strong>
-              {fact ? formatValue(fact.value) : "Unknown"}
-            </strong>
-            {fact?.units ? <span> {fact.units}
-            </span> : null}
-            {fact ? <button type="button" className="architect-text-button" onClick={() => onInspect(fact.provenance_ref)}>Source</button> : null}
-          </div>)}
-        </div>
-        <AssessmentCoverage scenario={scenario}/>
-        <Link className="primary-button" href={propertyHref(bbl, "zoning")}>View zoning details <span aria-hidden="true">→</span>
-        </Link>
-      </section>
     </div>
+    <details className="card architect-disclosure architect-existing-building">
+      <summary>Existing building information</summary>
+      <FactsTable title="Existing building facts" facts={profile.existing_building_facts} byId={provenanceById(profile)} reproducibility={profile.reproducibility} onInspect={onInspect}/>
+      <Link href={propertyHref(bbl, "facts")}>All property facts →</Link>
+    </details>
   </>;
 }

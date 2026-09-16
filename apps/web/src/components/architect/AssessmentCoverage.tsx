@@ -14,10 +14,10 @@ const LABELS: Record<string, string> = {
   gross_to_net_efficiency_yield: "Gross-to-net efficiency",
 };
 export function AssessmentCoverage({ scenario }: { scenario: Scenario | null }) {
-  if (!scenario) return <p className="section-note">Assessment coverage has not returned.</p>;
+  if (!scenario) return <p className="section-note">Assessment coverage not supplied.</p>;
   const blockers = scenario.coverage_matrix.filter(row => row.blocks_buildable_envelope);
   return <div className="architect-assessment">
-    {blockers.length ? <p className="architect-coverage-status"><strong>Envelope assessment incomplete.</strong> {blockers.map(row => LABELS[row.constraint_family] ?? row.constraint_family.replaceAll("_", " ")).join(" · ")}</p> : null}
+    {blockers.length ? <p className="architect-coverage-status"><strong>Envelope assessment incomplete.</strong> {blockers.length} checks remain open.</p> : null}
     <details className="provenance-details">
       <summary>Assessment coverage · {scenario.coverage_matrix.length} checks</summary>
       <div className="table-scroll"><table className="facts-table">

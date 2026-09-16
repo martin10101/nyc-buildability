@@ -1,0 +1,356 @@
+{
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-063",
+  "version": 1,
+  "requirement_count": 10,
+  "producer": "orchestrator",
+  "updated_at": "2026-09-15T23:18:28.357312+00:00",
+  "requirements": [
+    {
+      "id": "D-063-R001",
+      "text": "Translate the architect feedback into a development-first presentation: FAR, height, yards and lot coverage are visible together; existing-building facts remain available in a separate collapsible section.",
+      "source_ref": "source-001.md#referenced-architect-feedback--earlier-owner-message-verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R002",
+      "text": "Distinguish recorded city reference FAR, built FAR, evaluated FAR and floor-area totals; preserve source values, provenance, missing inputs and calculation limits without inferring an unsupported result.",
+      "source_ref": "source-001.md#inherited-scope-and-verified-context--orchestrator-account-not-owner-quotation",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R003",
+      "text": "Do routine implementation and correctness testing internally using official records and rules, with expectations independently derived from those sources rather than copied from program results; do not repeatedly ask the client architect to check changes.",
+      "source_ref": "source-001.md#owner-instruction--verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R004",
+      "text": "Apply the presentation and validation across the residential district families R1 through R12 and their variants, across all five boroughs, including different lot and zoning contexts; do not hardcode the 1279 37 Street example or narrow to R5.",
+      "source_ref": "source-001.md#owner-instruction--verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R005",
+      "text": "Keep front-end changes within presentation and contract consumption; do not alter backend, legal rules, dependencies, deployment configuration, main, PR 241 or existing legal/production approval boundaries.",
+      "source_ref": "source-001.md#inherited-scope-and-verified-context--orchestrator-account-not-owner-quotation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R006",
+      "text": "Report actual source, display and calculation results separately, with tested scope and all remaining gaps; no claims of universal property correctness or completed development-limit coverage based on reference-value or refusal tests.",
+      "source_ref": "source-001.md#owner-instruction--verbatim",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R007",
+      "text": "Do not request repeated client-architect checks or make ordinary implementation testing depend on a new architect benchmark sheet; the development team owns source-based correctness testing.",
+      "source_ref": "source-001.md#owner-instruction--verbatim",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R008",
+      "text": "Preserve main unchanged and the prohibition on merging PR 241.",
+      "source_ref": "source-001.md#inherited-scope-and-verified-context--orchestrator-account-not-owner-quotation",
+      "classification": "hold",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R009",
+      "text": "Engineering source comparisons, fixtures and regression tests are distinct from G6 qualified legal approval and existing production-approval boundaries. Do not publish legal interpretations or claim universal buildability; unresolved issues remain visible without blocking unrelated authorized frontend work.",
+      "source_ref": "source-001.md#inherited-scope-and-verified-context--orchestrator-account-not-owner-quotation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    },
+    {
+      "id": "D-063-R010",
+      "text": "Preserve inherited application-calculation, API-contract, database and credential restrictions: no frontend replacement calculations, contract/schema changes, database work or credential access is authorized by this presentation and validation task.",
+      "source_ref": "source-001.md#inherited-scope-and-verified-context--orchestrator-account-not-owner-quotation",
+      "classification": "prohibition",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "M5-T031",
+          "M4-T022"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-15"
+      },
+      "dependencies": [],
+      "required_harness": "Independent official-source comparison, component/behavior tests and browser evidence within the bound task",
+      "required_evidence": "project-control/reports/M5-T031-producer-report.md and project-control/reports/M4-T022-producer-report.md",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before implementation.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T031",
+          "M4-T022"
+        ]
+      }
+    }
+  ]
+}

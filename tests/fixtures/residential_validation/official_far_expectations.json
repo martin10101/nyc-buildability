@@ -1,0 +1,463 @@
+{
+  "schema_version": 1,
+  "prepared_at": "2026-09-15T23:26:42.094961+00:00",
+  "independence": "Transcribed from the official tables and footnotes before reading implementation rule tables during M4-T022. This is a reference-table check, not a property eligibility determination.",
+  "sources": [
+    {
+      "id": "23-21",
+      "url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-21",
+      "retrieved_at": "2026-09-15T23:26:42.094961+00:00",
+      "response_sha256": "59a0419aff5132081ffdfea88305ca370665f4f331a97749b16c036155096048",
+      "text_path": "tests/fixtures/residential_validation/23-21.txt",
+      "text_sha256": "12488c7eac627fe3a080d2a23c4c5c8a663e36e2dff12440127a687a31b09b27"
+    },
+    {
+      "id": "23-22",
+      "url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-22",
+      "retrieved_at": "2026-09-15T23:26:42.094961+00:00",
+      "response_sha256": "872f2d2dfce1aaded7ee560fbcd43a1e5bf6b23c9de4532b2538f01bf6550d4c",
+      "text_path": "tests/fixtures/residential_validation/23-22.txt",
+      "text_sha256": "ba78d6e074c2f6baa417d2a6797fdc90f33284d1643275b0ec5f061bb61fba22"
+    }
+  ],
+  "conditions": {
+    "23-21-footnote-1": {
+      "minimum_lot_area_sq_ft": "4000",
+      "single_dwelling_unit_equivalent_far_limit": "0.60",
+      "scope": "Standard zoning lots in the indicated 0.75 FAR row; per dwelling unit limit, not replacement total-lot FAR."
+    },
+    "23-22-footnote-1": {
+      "distance_ft": "100",
+      "scope": "Zoning lots, or portions thereof, within 100 feet of a wide street."
+    },
+    "23-22-footnote-2": {
+      "distance_ft": "100",
+      "scope": "Outside Mandatory Inclusionary Housing areas; lots or portions within 100 feet of a wide street containing UAP developments or qualifying senior housing."
+    }
+  },
+  "qualifying_column_meaning": {
+    "23-21": "Qualifying residential sites",
+    "23-22": "Qualifying affordable housing or qualifying senior housing"
+  },
+  "rows": [
+    {
+      "district": "R1-2A",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R1-1",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R1-2",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R2A",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R2",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R3A",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R3X",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R3-1",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R3-2",
+      "condition": "base",
+      "standard_far": "0.75",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": [
+        "23-21-footnote-1"
+      ]
+    },
+    {
+      "district": "R2X",
+      "condition": "base",
+      "standard_far": "1.00",
+      "qualifying_far": "1.00",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R4A",
+      "condition": "base",
+      "standard_far": "1.00",
+      "qualifying_far": "1.50",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R4B",
+      "condition": "base",
+      "standard_far": "1.00",
+      "qualifying_far": "1.50",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R4",
+      "condition": "base",
+      "standard_far": "1.00",
+      "qualifying_far": "1.50",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R4-1",
+      "condition": "base",
+      "standard_far": "1.00",
+      "qualifying_far": "1.50",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R5A",
+      "condition": "base",
+      "standard_far": "1.50",
+      "qualifying_far": "2.00",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R5B",
+      "condition": "base",
+      "standard_far": "1.50",
+      "qualifying_far": "2.00",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R5",
+      "condition": "base",
+      "standard_far": "1.50",
+      "qualifying_far": "2.00",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R5D",
+      "condition": "base",
+      "standard_far": "2.00",
+      "qualifying_far": "2.00",
+      "source_section": "23-21",
+      "notes": []
+    },
+    {
+      "district": "R6A",
+      "condition": "base",
+      "standard_far": "3.00",
+      "qualifying_far": "3.90",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R6-1",
+      "condition": "base",
+      "standard_far": "3.00",
+      "qualifying_far": "3.90",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7B",
+      "condition": "base",
+      "standard_far": "3.00",
+      "qualifying_far": "3.90",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R6",
+      "condition": "within_100ft_wide_street",
+      "standard_far": "3.00",
+      "qualifying_far": "3.90",
+      "source_section": "23-22",
+      "notes": [
+        "23-22-footnote-1"
+      ]
+    },
+    {
+      "district": "R6",
+      "condition": "base",
+      "standard_far": "2.20",
+      "qualifying_far": "3.90",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R6B",
+      "condition": "base",
+      "standard_far": "2.00",
+      "qualifying_far": "2.40",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R6D",
+      "condition": "base",
+      "standard_far": "2.50",
+      "qualifying_far": "3.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R6-2",
+      "condition": "base",
+      "standard_far": "2.50",
+      "qualifying_far": "3.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7A",
+      "condition": "base",
+      "standard_far": "4.00",
+      "qualifying_far": "5.01",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7-1",
+      "condition": "within_100ft_wide_street",
+      "standard_far": "4.00",
+      "qualifying_far": "5.01",
+      "source_section": "23-22",
+      "notes": [
+        "23-22-footnote-1"
+      ]
+    },
+    {
+      "district": "R7-2",
+      "condition": "within_100ft_wide_street",
+      "standard_far": "4.00",
+      "qualifying_far": "5.01",
+      "source_section": "23-22",
+      "notes": [
+        "23-22-footnote-1"
+      ]
+    },
+    {
+      "district": "R7-1",
+      "condition": "base",
+      "standard_far": "3.44",
+      "qualifying_far": "5.01",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7-2",
+      "condition": "base",
+      "standard_far": "3.44",
+      "qualifying_far": "5.01",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7D",
+      "condition": "base",
+      "standard_far": "4.66",
+      "qualifying_far": "5.60",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7X",
+      "condition": "base",
+      "standard_far": "5.00",
+      "qualifying_far": "6.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R7-3",
+      "condition": "base",
+      "standard_far": "5.00",
+      "qualifying_far": "6.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R8A",
+      "condition": "base",
+      "standard_far": "6.02",
+      "qualifying_far": "7.20",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R8X",
+      "condition": "base",
+      "standard_far": "6.02",
+      "qualifying_far": "7.20",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R8",
+      "condition": "base",
+      "standard_far": "6.02",
+      "qualifying_far": "7.20",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R8",
+      "condition": "wide_street_additional_conditions",
+      "standard_far": "7.20",
+      "qualifying_far": "8.64",
+      "source_section": "23-22",
+      "notes": [
+        "23-22-footnote-1",
+        "23-22-footnote-2"
+      ]
+    },
+    {
+      "district": "R8B",
+      "condition": "base",
+      "standard_far": "4.00",
+      "qualifying_far": "4.80",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R9A",
+      "condition": "base",
+      "standard_far": "7.52",
+      "qualifying_far": "9.02",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R9",
+      "condition": "base",
+      "standard_far": "7.52",
+      "qualifying_far": "9.02",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R9D",
+      "condition": "base",
+      "standard_far": "9.00",
+      "qualifying_far": "10.80",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R9X",
+      "condition": "base",
+      "standard_far": "9.00",
+      "qualifying_far": "10.80",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R9-1",
+      "condition": "base",
+      "standard_far": "9.00",
+      "qualifying_far": "10.80",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R10A",
+      "condition": "base",
+      "standard_far": "10.00",
+      "qualifying_far": "12.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R10X",
+      "condition": "base",
+      "standard_far": "10.00",
+      "qualifying_far": "12.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R10",
+      "condition": "base",
+      "standard_far": "10.00",
+      "qualifying_far": "12.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R11",
+      "condition": "base",
+      "standard_far": "12.00",
+      "qualifying_far": "15.00",
+      "source_section": "23-22",
+      "notes": []
+    },
+    {
+      "district": "R12",
+      "condition": "base",
+      "standard_far": "15.00",
+      "qualifying_far": "18.00",
+      "source_section": "23-22",
+      "notes": []
+    }
+  ]
+}

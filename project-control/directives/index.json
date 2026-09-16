@@ -829,7 +829,22 @@
         "M5-T030"
       ],
       "manifest": "D-062-lot-source-links/manifest.json"
+    },
+    {
+      "directive_id": "D-063",
+      "slug": "development-first-validation",
+      "title": "Development-first presentation and internal residential validation",
+      "status": "active",
+      "issued_at": "2026-09-15",
+      "issued_by": "owner",
+      "supersedes": [],
+      "superseded_by": null,
+      "affected_tasks": [
+        "M5-T031",
+        "M4-T022"
+      ],
+      "manifest": "D-063-development-first-validation/manifest.json"
     }
   ],
-  "updated_at": "2026-09-15T00:34:40.144721+00:00"
+  "updated_at": "2026-09-15T23:14:10.707758+00:00"
 }

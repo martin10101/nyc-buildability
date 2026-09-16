@@ -1,0 +1,195 @@
+{
+  "task_id": "M5-T031",
+  "title": "Development-first property summary and explicit FAR meanings",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Apply architect feedback across residential property contexts while preserving source evidence and unsupported-calculation states.",
+  "business_reason": "Architects need development limits first and existing-building facts separately.",
+  "inputs": [
+    "project-control/directives/D-063-development-first-validation/requirements.json",
+    "PRD.md sections 7.1,9,19",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md sections Main analyst interface,UI rules",
+    "docs/ENGINEERING_RELIABILITY_STANDARD.md sections 1,2,3,7,8,9",
+    "docs/CODE_MODULARITY_POLICY.md",
+    "apps/web/src/lib/contract.ts (read-only)",
+    "apps/web/src/lib/rule-evaluation-contract.ts (read-only)",
+    "apps/web/src/lib/scenario-contract.ts (read-only)",
+    "apps/web/src/test-support/fixtures.ts (read-only)",
+    "project-control/reports/M5-T031-baseline.md"
+  ],
+  "outputs": [
+    "Development limits summary shared by overview, zoning and report; source-reference/evaluated values remain distinct.",
+    "Existing-building information collapsible on overview and retained in property facts/evidence/report.",
+    "Domain-context-independent presentation tests and real-parcel source/value checks."
+  ],
+  "dependencies": [
+    "M5-T030"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/DevelopmentLimits.tsx",
+    "apps/web/src/lib/architect/development-limits.ts",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/ProfileViews.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/ScenarioWorkspace.tsx",
+    "apps/web/src/components/architect/AssessmentCoverage.tsx",
+    "apps/web/src/components/compare/UnusedFloorAreaSection.tsx",
+    "apps/web/src/lib/format.ts",
+    "apps/web/src/app/property/architect.css",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/architect/__tests__/entry.test.tsx",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/compare/__tests__/unused-floor-area.test.tsx",
+    "apps/web/src/lib/__tests__/format.test.ts",
+    "apps/web/e2e/architect-workspace.spec.ts",
+    "apps/web/e2e/development-limits.spec.ts",
+    "project-control/reports/M5-T031-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "packages/**",
+    "supabase/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/next.config.ts",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/scenario-contract.ts",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/architect/use-analysis.ts",
+    ".github/**",
+    ".claude/**",
+    "tools/**",
+    "render.yaml",
+    "project-control/tasks/**",
+    "project-control/directives/**",
+    "project-control/state.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "requirement": "D-063-R001,D-063-R002",
+      "preconditions": "A profile has distinct built and residential reference FAR; a scenario may be unavailable",
+      "input": "Open Overview, Zoning and Report for BBL 3052960043",
+      "expected": "Development summary shows source residential FAR 3.00, built FAR 2.61 only as existing condition, no invented evaluated cap; source drill-down preserves values",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    },
+    {
+      "id": "S2",
+      "requirement": "D-063-R001,D-063-R002",
+      "preconditions": "Supported backend evaluation and matching property identity",
+      "input": "Render supplied FAR and floor-area result",
+      "expected": "Only canonical computed values appear as calculations; reference FAR cannot replace the evaluated value; incomplete envelope remains explicit",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    },
+    {
+      "id": "S3",
+      "requirement": "D-063-R002,D-063-R004",
+      "preconditions": "Residential contexts R1-R12, letter/number variants, split/mixed/special districts",
+      "input": "Render the same summary with each context and differing built/source/calculated values",
+      "expected": "Rendering is context-independent and does not use district-specific or property-specific hardcoding",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    },
+    {
+      "id": "S4",
+      "requirement": "D-063-R002,D-063-R005",
+      "preconditions": "Missing/null/zero/duplicate/conflicting/malformed source or mismatched evaluation identity",
+      "input": "Render summary and open evidence",
+      "expected": "Unknown and zero stay distinct; conflicting or mismatched results are not treated as reliable limits; source links remain safe",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    },
+    {
+      "id": "S5",
+      "requirement": "D-063-R001,D-063-R002",
+      "preconditions": "Existing building facts, flags and complete evidence are available",
+      "input": "Collapse/reopen existing information; view report and sources; keyboard and narrow-screen walkthrough",
+      "expected": "No important information is removed; controls are accessible; no overflow or wall of explanatory warnings",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    },
+    {
+      "id": "S6",
+      "requirement": "D-063-R003,D-063-R006",
+      "preconditions": "Before and after versions and real city record are available",
+      "input": "Run failing-before/passing-after tests plus final regression and independent review",
+      "expected": "Evidence reports display correctness separately from unsupported backend calculations; no architect is asked for routine verification",
+      "invariants": "Source values, canonical contracts and calculation safeguards preserved.",
+      "execution": "Component tests, source comparisons and browser walkthrough",
+      "evidence": "project-control/reports/M5-T031-producer-report.md",
+      "cleanup": "In-memory fixture state only; no production records modified"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "official-source-researcher",
+    "directive-compliance-verifier"
+  ],
+  "status": "in_progress",
+  "progress_percent": 20,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-15T23:14:12.464959+00:00",
+  "updated_at": "2026-09-15T23:20:23.208696+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-063",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-15T23:14:12.465039+00:00",
+  "documented_test_commands": [
+    "npm test -- --run src/components/architect/__tests__/development-limits.test.tsx",
+    "npm run typecheck",
+    "npm run lint",
+    "npm test",
+    "npm run build",
+    "python tools/modularity_check.py --check"
+  ],
+  "modularity_boundary": {
+    "responsibility": "Presentation of development limits and source/calculation distinctions",
+    "owner": "Dedicated DevelopmentLimits component and a pure display adapter; existing views only compose it.",
+    "size": "Existing overview/report/composition modules under 600 SLOC; no unrelated growth.",
+    "extraction": "Reuse one summary instead of duplicating logic across views.",
+    "stable_interfaces": "Canonical backend contracts, API clients and legal rules unchanged.",
+    "focused_tests": "development-limits.test.tsx plus affected workspace and comparison tests",
+    "gate": "Run modularity checker before submission."
+  },
+  "worktree": "/workspace/scratch/cfa2464c5c7f/m5t031-ui",
+  "progress_log": [
+    {
+      "at": "2026-09-15T23:20:23.208665+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Acceptance scenarios recorded; independent D-063 intake review passed; implementation begins in isolated UI worktree."
+    }
+  ]
+}

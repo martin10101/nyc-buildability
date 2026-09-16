@@ -149,7 +149,9 @@ for (const [view, name] of VIEWS) {
 test("mobile source inspector is immediately visible and Escape returns to the source", async ({ page }, info) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openView(page, "overview");
-  const figures = page.locator(".architect-fact-metrics strong");
+  const figures = page.getByTestId("development-reference-far");
+  await expect(figures).toHaveCount(1);
+  await expect(figures).toBeVisible();
   for (const figure of await figures.all()) expect(await figure.evaluate(element => { const range = document.createRange(); range.selectNodeContents(element); return range.getClientRects().length; })).toBe(1);
   await screenshot(page, info, "14-overview-mobile");
   await page.getByRole("button", { name: "Navigation", exact: true }).click();

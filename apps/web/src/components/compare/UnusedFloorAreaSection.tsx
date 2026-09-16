@@ -89,7 +89,7 @@ export function UnusedFloorAreaSection({ document }: { document: Scenario }) {
       data-testid="scenario-unused-floor-area"
       data-state={section.state}
     >
-      <h2 className="section-title">Unused draft zoning floor area</h2>
+      <h2 className="section-title">Floor-area record comparison</h2>
 
       {/* The precise-noun label is the document's own — never relabelled here. */}
       <p className="section-note" data-testid="scenario-unused-floor-area-label">
@@ -126,7 +126,7 @@ function ComputedLine({
     <div data-testid="scenario-unused-floor-area-computed">
       <p>
         <span className="section-note">
-          Unused draft zoning floor area (cap minus existing built floor area):
+          Draft cap minus recorded building area:
         </span>{" "}
         {/* The value is rendered EXACTLY as delivered. On over_built it is
             negative and the minus sign is shown — never clamped, hidden, or

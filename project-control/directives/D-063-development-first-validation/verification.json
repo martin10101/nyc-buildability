@@ -1,0 +1,199 @@
+{
+  "schema": "directive_verification/v2",
+  "directive_id": "D-063",
+  "verified_by": "directive-compliance-verifier",
+  "verified_at": null,
+  "authority_note": "Awaiting an independent verifier; no producer verdicts.",
+  "task_verifications": [
+    {
+      "directive_id": "D-063",
+      "task_id": "M5-T031",
+      "applicable_requirement_ids": [
+        "D-063-R001",
+        "D-063-R002",
+        "D-063-R003",
+        "D-063-R004",
+        "D-063-R005",
+        "D-063-R006",
+        "D-063-R007",
+        "D-063-R008",
+        "D-063-R009",
+        "D-063-R010"
+      ],
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "producer": "frontend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": null,
+      "requirements": [
+        {
+          "id": "D-063-R001",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R002",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R003",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R004",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R005",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R006",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R007",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R008",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R009",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R010",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        }
+      ]
+    },
+    {
+      "directive_id": "D-063",
+      "task_id": "M4-T022",
+      "applicable_requirement_ids": [
+        "D-063-R003",
+        "D-063-R004",
+        "D-063-R005",
+        "D-063-R006",
+        "D-063-R007",
+        "D-063-R008",
+        "D-063-R009",
+        "D-063-R010"
+      ],
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "producer": "official-source-researcher",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": null,
+      "requirements": [
+        {
+          "id": "D-063-R003",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R004",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R005",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R006",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R007",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R008",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R009",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        },
+        {
+          "id": "D-063-R010",
+          "state": "pending",
+          "evidence": [],
+          "verified_at": null,
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": null
+        }
+      ]
+    }
+  ]
+}
