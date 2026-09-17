@@ -1,10 +1,10 @@
 {
  "schema": "directive_requirements/v1",
  "directive_id": "D-067",
- "version": 1,
+ "version": 2,
  "requirement_count": 3,
  "producer": "orchestrator",
- "updated_at": "2026-09-17T06:50:00.000000+00:00",
+ "updated_at": "2026-09-17T07:15:00.000000+00:00",
  "requirements": [
   {
    "id": "D-067-R001",
@@ -39,8 +39,8 @@
   },
   {
    "id": "D-067-R002",
-   "text": "Owner decision on orchestrator rotation: the orchestrator session keeps going instead of rotating at ~400k context; it relies on the harness auto-compaction (context summarization around the model window, owner phrased as 'fills up at 1mill token you will auto compact') and continues the same session. For this session lineage this supersedes the seq-114 handoff instruction to rotate at ~400k and the D-010 R113/R114 rotate-at-seam ceiling as applied to this monitoring posture. A handoff (/session-handoff) is still written whenever a session actually ends.",
-   "source_ref": "source-001.md#owner-message-verbatim",
+   "text": "Owner decision on orchestrator rotation (scope narrowed by source-002 amendment): ONLY the interactive orchestrator session the owner is addressing keeps going past ~400k, relying on harness auto-compaction ('when you get to compacting, you just continue on') so unattended overnight operation survives token exhaustion. The ~400k-seam rotation rule is NOT cancelled for the loop side: any main/fable agent operating as part of the loop arrangement still rotates at the ~400k seam, and D-010 R113/R114 remains fully in force there; D-067 does not amend D-010. A handoff (/session-handoff) is still written whenever a session actually ends.",
+   "source_ref": "source-002-amendment.md#owner-message-verbatim-clarification-portion",
    "classification": "decision",
    "binding": true,
    "applicability": {
