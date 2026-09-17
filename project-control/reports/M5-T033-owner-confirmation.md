@@ -63,6 +63,28 @@ The owner pasted the full deploy + runtime log. Correlated findings:
    manylinux shapely 2.0.7 wheel bundling GEOS 3.11.4). Save → redeploy → re-probe.
    Follow-up: the deploy checklist should gain this pin (bounded doc follow-up task; the
    checklist file is not in any active packet's scope right now).
+### Post-pin probe (2026-09-17T10:12:06Z) — the live spatial path RUNS end-to-end
+
+Owner set `PYTHON_VERSION=3.12.11`; the rebuild (owner-pasted log, deploy of 216378e5)
+installed shapely 2.0.7 as the prebuilt cp312 manylinux wheel. Probes now DIVERGE per
+parcel — the uniform signature is gone:
+
+| BBL | fail_safe_reason | time |
+|---|---|---|
+| 3052960043 | `geometry_uncertain` | 3.53 s |
+| 3022647515 | `spatial_intersection_absent` (empty ZTLDB assignment → no_candidate_districts) | 1.43 s |
+| 1008350041 | `geometry_uncertain` | 3.06 s |
+
+Reading: the geometry-pin guard passes, all three connectors fetch, and the M2-T013
+engine composes and CLASSIFIES in production for the first time. `geometry_uncertain` is
+the engine's honest no-confident-single-district outcome (conservative near-boundary /
+composition classes), not a crash. Whether that conservatism on apparently-single-district
+lots (incl. the 350 Fifth Ave control) is correct behavior or the next bounded defect is a
+NEW follow-up diagnosis (candidate next-packet lane after M5-T034), to be worked from the
+typed classification record — not assumed. D-059-R004's runtime chain is now: cause #1
+flag absent (CONFIRMED, fixed) → cause #2 unpinned Python vs geometry pins (CONFIRMED,
+fixed) → current honest outcomes (uncertain / data-absent) with per-parcel divergence.
+
 4. Secondary observations, honestly bounded: `ztldb_soda source freshness: dataset rows last
    updated 2026-04-05 (age 164.6 days > 45-day threshold)` on every request — the CITY's
    ZTLDB dataset is stale at the source (the known "observed live stall" in the connector
