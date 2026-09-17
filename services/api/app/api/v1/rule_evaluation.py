@@ -78,13 +78,18 @@ router = APIRouter(prefix="/api/v1", tags=["rule-evaluation"])
 # derive a confident base-zoning district. That substrate is server-side data,
 # not something a caller may supply. The trusted DEFAULT delegates to the
 # settings-gated live provider (task M2-T020): with LIVE_SPATIAL_PROVIDER_ENABLED
-# unset (the default everywhere, including CI) it supplies None exactly as
+# unset (its code default; nothing sets it in CI) it supplies None exactly as
 # before - the evaluator fails safe (professional_review_required, spatial
 # absent), an honest "no confident district" rather than a guessed one. With the
-# explicit flag on, the accepted connectors + M2-T013 engine compose a real
-# substrate server-side, and EVERY failure/partial input still yields None
-# (app.spatial.live_provider fail-safe contract). Tests override this dependency
-# with recorded substrate fixtures (mirroring get_pluto_fetcher).
+# explicit flag on, the live provider issues the accepted connector calls and
+# hands their results to the M2-T013 engine; a SUCCESSFUL connector request is
+# not by itself valid, sufficient spatial data, and composition can still yield
+# None (empty official assignment, transfer-limited page, connector error) - a
+# real substrate results only when the connectors succeed AND return sufficient
+# data AND the engine composes a confident record. EVERY failure/partial input
+# still yields None (app.spatial.live_provider fail-safe contract). Tests
+# override this dependency with recorded substrate fixtures (mirroring
+# get_pluto_fetcher).
 # ---------------------------------------------------------------------------
 
 # (canonical_bbl, correlation_id) -> the M2-T013 substrate (LotIntersectionRecord

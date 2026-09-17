@@ -412,3 +412,124 @@ def test_s3_lot_no_feature_passes_engine_review_class_through() -> None:
     record = build_live_substrate(BBL, CID, fetchers=recording.suite())
     assert isinstance(record, LotIntersectionRecord)
     assert record.lot_overall_class == LOT_INVALID_GEOMETRY_REVIEW
+
+
+# ---------------------------------------------------------------------------
+# M5-T033 (D-059-R004): the deployed spatial_intersection_absent root cause,
+# reproduced at the PROVIDER boundary for both D-059 parcels. The route-level
+# reason (spatial_intersection_absent) is IDENTICAL for a disabled flag and for a
+# live connector failure - both return None (absent substrate) - so the response
+# body alone cannot tell them apart. Here we pin the PROVIDER-level signatures
+# that help SEPARATE a future deploy regression from a data failure: branch A
+# (flag off) makes ZERO connector calls and NO provider fail-safe log line;
+# branch B (flag on + failure) makes calls and logs exactly one connector_error
+# line. These call-count / log signatures - read at the runtime boundary, not
+# from the response body - are the reliable discriminators. Uniform absence
+# across a known-good control and fast latency are SUGGESTIVE observations, never
+# decisive: a SHARED connector failure with the flag ON is also uniform and fast
+# (reproduced by test_m5t033_shared_connector_failure_is_uniform_absent_flag_on),
+# so uniformity alone cannot prove the flag was off. The authoritative runtime
+# confirmation is the owner dashboard flag reading plus the correlated typed
+# connector logs, not this file.
+# ---------------------------------------------------------------------------
+
+# The two D-059-R004 named parcels (BBL 3022647515 is the requirement's parcel;
+# 3052960043 is the D-059 start parcel). The flag-off reason is BBL-independent.
+_D059_BBLS = ("3052960043", "3022647515")
+
+
+@pytest.mark.parametrize("bbl", _D059_BBLS)
+def test_m5t033_flag_off_absent_for_every_bbl_zero_calls_no_log(
+    bbl, monkeypatch, caplog
+) -> None:
+    """Branch A (deploy regression): with LIVE_SPATIAL_PROVIDER_ENABLED unset the
+    DEFAULT provider yields no substrate for EVERY BBL, short-circuiting before any
+    network I/O - the uniform-absent signature captured live. Proven by ZERO
+    connector calls AND ZERO provider fail-safe log lines (checked after return)."""
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = RecordingFetchers()  # healthy doubles that must never be called
+    _install(monkeypatch, recording.suite())
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        assert default_live_substrate(bbl, CID) is None
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+    assert _fail_safe_lines(caplog) == []
+
+
+@pytest.mark.parametrize("bbl", _D059_BBLS)
+def test_m5t033_flag_on_connector_failure_absent_but_calls_and_logs(
+    bbl, monkeypatch, caplog
+) -> None:
+    """Branch B (live data failure): flag on + an injected connector failure also
+    returns None, but the DISTINGUISHING per-parcel signature is present - the
+    ztldb connector WAS consulted for this BBL and exactly one payload-only
+    connector_error line was logged (never the canary detail string)."""
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingFetchers(
+        ztldb=ZtldbUpstreamError("canary-m5t033", correlation_id=CID)
+    )
+    _install(monkeypatch, recording.suite())
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        assert default_live_substrate(bbl, CID) is None
+    assert recording.ztldb_calls == [(bbl, CID)]
+    lines = _fail_safe_lines(caplog)
+    assert len(lines) == 1
+    assert "event=connector_error" in lines[0]
+    assert "error_type=UpstreamError" in lines[0]
+    assert "canary-m5t033" not in lines[0]
+
+
+def test_m5t033_flag_on_healthy_connectors_resolves_not_absent(monkeypatch) -> None:
+    """Flag on + HEALTHY connectors -> a real confident substrate, NOT None. This
+    shows the flag-on branch CAN resolve a district when its connectors succeed; it
+    does NOT prove that uniform absence implies the flag was off. A SHARED connector
+    failure (see test_m5t033_shared_connector_failure_is_uniform_absent_flag_on)
+    also yields uniform absence with the flag ON, so uniformity is only a suggestive
+    signal - the runtime flag reading and the typed connector logs are decisive."""
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingFetchers()
+    _install(monkeypatch, recording.suite())
+    record = default_live_substrate(_D059_BBLS[0], CID)
+    assert isinstance(record, LotIntersectionRecord)
+    assert record.lot_overall_class == LOT_SINGLE_DISTRICT_CONFIDENT
+    assert recording.ztldb_calls == [(_D059_BBLS[0], CID)]
+
+
+# The known-good control parcel the live capture also saw return absent
+# (350 Fifth Ave, Manhattan; resolves cleanly in GeoSearch).
+_CONTROL_BBL = "1008350041"
+
+
+def test_m5t033_shared_connector_failure_is_uniform_absent_flag_on(
+    monkeypatch, caplog
+) -> None:
+    """Counterexample to "uniform absence proves the flag is off": with the flag ON
+    and a SHARED connector failure (the SAME injected ZTLDB error for every parcel),
+    the provider returns None UNIFORMLY across both D-059 parcels AND the known-good
+    control - the exact uniform-across-a-control shape the live capture recorded. So
+    flag-off is not the only way to get uniform absence; a shared connector/network
+    fault is uniform (and fast) too. What still separates this flag-ON branch from
+    flag-off: every parcel WAS consulted (a recorded connector call) and logged
+    exactly one payload-only connector_error line - signatures read at the runtime
+    boundary, never from the response body."""
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    bbls = (*_D059_BBLS, _CONTROL_BBL)
+    results = []
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        for bbl in bbls:
+            recording = RecordingFetchers(
+                ztldb=ZtldbUpstreamError("canary-shared", correlation_id=CID)
+            )
+            _install(monkeypatch, recording.suite())
+            results.append(default_live_substrate(bbl, CID))
+            # Flag ON: the connector WAS consulted for this parcel (unlike the
+            # zero-call flag-off branch), proving the failure is a live fault.
+            assert recording.ztldb_calls == [(bbl, CID)]
+    # Uniform absence across both named parcels and the control - with the flag ON.
+    assert results == [None, None, None]
+    # One connector_error line per parcel; the canary detail never leaks.
+    lines = _fail_safe_lines(caplog)
+    assert len(lines) == len(bbls)
+    assert all("event=connector_error" in line for line in lines)
+    assert all("canary-shared" not in line for line in lines)

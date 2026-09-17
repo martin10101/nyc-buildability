@@ -58,8 +58,10 @@ __all__ = [
 
 logger = logging.getLogger("app.spatial.live_provider")
 
-# Env var gating the live spatial path. Name declared once here (value is
-# environment-scoped and unset by default on every deployed service).
+# Env var gating the live spatial path. Name declared once here. The value is
+# environment-scoped and owner-visible only; this module never asserts what a
+# deployed service currently carries. The CODE default, when the variable is
+# absent/empty/unknown, is DISABLED (fail-safe) - see live_spatial_provider_enabled.
 LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR = "LIVE_SPATIAL_PROVIDER_ENABLED"
 
 # Same closed token set as app.config: anything else - unset, "", "0", "off",

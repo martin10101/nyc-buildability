@@ -356,6 +356,25 @@ def test_ri_s3_absent_spatial_intersection_fails_safe(registry):
     assert result.needs_review is True
 
 
+@pytest.mark.parametrize("bbl", ["3052960043", "3022647515"])
+def test_m5t033_absent_substrate_uniform_spatial_intersection_absent(registry, bbl):
+    """M5-T033 (D-059-R004) terminal link of the deployed failure chain. When the
+    server-side live provider yields no substrate (flag off OR a connector
+    failure), the rebuilt profile carries no spatial_intersection and the evaluator
+    emits EXACTLY spatial_intersection_absent + professional review - BBL-
+    independent, matching the uniform live-capture signature on both D-059 parcels.
+    This is the last hop the route-level reason rests on; it proves reproduced code
+    behavior only and asserts nothing about the (owner-visible) live runtime."""
+    result = ri.evaluate_property(_profile(None, bbl=bbl), registry=registry)
+    assert result.bbl == bbl
+    assert result.fail_safe_reason == ri.FAILSAFE_SPATIAL_ABSENT
+    assert result.fail_safe_reason == "spatial_intersection_absent"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert result.professional_review_required is True
+    assert result.zoning_district is None
+    assert result.evaluations == []
+
+
 def test_ri_s3_present_section_missing_class_fails_safe(registry):
     # spatial_intersection present but lot_overall_class missing -> incomplete context
     section = {
