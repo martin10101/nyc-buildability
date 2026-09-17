@@ -40,9 +40,7 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [
-  "M5-T033"
- ],
+ "affected_tasks": [],
  "affected_prs": [],
  "affected_branches": [
   "candidate/D-024-mrl-option-b"
@@ -66,6 +64,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "M5-T033 bound to all four D-066 requirements (code-graph wiring in the next packet). Requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-17T07:28:37.624198+00:00",
+   "actor": "orchestrator",
+   "action": "correction",
+   "note": "M5-T033 removed from affected_tasks: binding is via requirements applicability (c14 requires a verification row for manifest-affected in-regime tasks; the row is written by the independent verifier at the acceptance seam, not at contract). Applicability binding unchanged."
   }
  ]
 }
