@@ -93,8 +93,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Scope magnets are OUT: missing-inputs card on ConfirmScreen, malformed-copy fix, address-flow test gaps (DB-007/009), api field exposure - surface them in the report via discovery routing, never fix in-packet",
     "No local web test run exists on this machine: do NOT claim test results you did not run; CI on the pushed head decides",
@@ -104,7 +104,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T22:43:50.175119+00:00",
-  "updated_at": "2026-09-17T22:43:50.427471+00:00",
+  "updated_at": "2026-09-17T22:46:13.495100+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -124,5 +124,14 @@
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t036",
   "documented_test_commands": [
     "python tools/modularity_check.py --check"
+  ],
+  "progress_log": [
+    {
+      "at": "2026-09-17T22:46:13.495100+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted at 8dccf758 under D-071 (loop-2 lane); disjoint scope vs M5-T035 verified; worktree wt-m5t036 next; loop-2 run persistent2-local-01 to build"
+    }
   ]
 }
