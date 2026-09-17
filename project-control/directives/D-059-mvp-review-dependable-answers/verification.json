@@ -92,6 +92,32 @@
      "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
     }
    ]
+  },
+  {
+   "directive_id": "D-059",
+   "task_id": "M5-T033",
+   "applicable_requirement_ids": [
+    "D-059-R004"
+   ],
+   "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828",
+   "reviewed_manifest_sha256": "b1c77a6f6a426ffbe5d1cd23f6f9f683ae1425c5f2ae7ad5683a09c6053f78eb",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T09:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-059-R004",
+     "state": "PASS",
+     "evidence": [
+      "Independent DCV at frozen head 62dd97cb (producer != verifier): the deployed uniform spatial_intersection_absent traced to the default provider returning None -> evaluator fail-safe (integration.py:81 consumed at :477); BOTH candidate branches reproduced deterministically with both D-059 parcels parametrized at provider/route/evaluator levels, the shared-connector-failure counterexample proving uniformity does not discriminate, and the DCV re-ran the three suites itself (654 passed in 19.49s). Checklist section 6a/6b names both flags with fail-safe defaults and the two-outcome owner dashboard table; production diff verified comment-only; runtime cause honestly held UNCONFIRMED pending the owner-only dashboard read (a by-design owner action, not a deliverable gap); no M4-T020/B4-fixes-it claim.",
+      "Full verifier basis: project-control/reports/M5-T033-DCV-verification.md. Independent G1/G3/G4/G5 reviews all PASS at the same pin; api CI green at material head 00be16d3."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    }
+   ]
   }
  ]
 }

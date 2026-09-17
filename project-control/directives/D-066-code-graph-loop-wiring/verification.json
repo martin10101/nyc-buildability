@@ -4,5 +4,64 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T033",
+   "applicable_requirement_ids": [
+    "D-066-R001",
+    "D-066-R002",
+    "D-066-R003",
+    "D-066-R004"
+   ],
+   "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828",
+   "reviewed_manifest_sha256": "b1c77a6f6a426ffbe5d1cd23f6f9f683ae1425c5f2ae7ad5683a09c6053f78eb",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T09:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet inputs carry the seam-regenerated code-graph navigation block (728/15255/6762; dependencies + depth-1/2 impact set for live_provider.py) with the query.py --no-regen instruction, tooling present, material graph claims matching source, and the producer report recording the graph as consulted and advisory (project-control/reports/M5-T033-DCV-verification.md)."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet outputs carry the Codex blast-radius guidance + required accuracy/usefulness statement; zero controller/supervisor/manifest paths in the material range; the reviewer's statement ('useful navigation, accuracy unverified from this packet') is on record in the producer report section 6, with its supervisor-journal provenance accurately characterized. The independent G3 reviewer separately verified the navigation block's pointers against source and found them accurate."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified project-control/reports/M5-T033-graph-comparison.md records the dated per-unit wall-time comparison with unit ids, the one-sided token figure marked UNVERIFIABLE, four stated limits, and no savings claim - an advisory observation exactly as the requirement demands."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: no standalone graph campaign, no controller/manifest edit on D-066 authority in the material range, and M5-T032 not displaced (accepted in parallel, ledger timestamps)."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    }
+   ]
+  }
+ ]
 }
