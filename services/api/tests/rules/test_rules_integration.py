@@ -25,6 +25,20 @@ from app.rules import RuleRegistry
 from app.rules import coverage as cov
 from app.rules import integration as ri
 from app.rules.dsl import evaluation_trace_schema
+from app.rules.wide_street_wiring import (
+    COVERAGE_CONDITIONAL,
+    COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    DETERMINATION_NOT_WITHIN_WIDE,
+    DETERMINATION_PROFESSIONAL_REVIEW,
+    DETERMINATION_WITHIN_WIDE,
+    DRAFT_LABEL_NOTICE,
+    FALLBACK_DIRECTION_NOTICE,
+    FAR_ROW_NONE,
+    FAR_ROW_STANDARD,
+    FAR_ROW_WIDE_STREET,
+    ROUTED_TO_NOT_USED_NOTICE,
+    WideStreetDetermination,
+)
 from app.spatial import policy as spatial_policy
 from app.spatial.models import (
     LOT_BOUNDARY_UNCERTAIN,
@@ -730,3 +744,178 @@ def test_hard4_successful_result_is_strict_json(registry):
     result = ri.evaluate_property(_confident_profile("R5", area=10000.0), registry=registry)
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
     json.dumps(result.export(), allow_nan=False)
+
+
+# --------------------------------------------------------------------------
+# M5-T034 - the wide-street determination reaches evaluate_property and drives
+# conditional-FAR row selection server-side (AS-3, task output #4). The wiring
+# module's OWN construction of a determination from policy + buffer inputs is
+# covered in test_wide_street_wiring.py; these tests isolate evaluate_property's
+# FOLD of an already-typed determination into the ZR 23-22 R6/R7-1/R7-2/R8 rows.
+# --------------------------------------------------------------------------
+
+def _wide_determination(
+    determination_state: str,
+    far_row: str,
+    coverage_hint: str,
+    *,
+    exceptions_checked: bool = True,
+    named_street_override_pending: bool = False,
+    aggregate_intersects: bool | None = None,
+) -> WideStreetDetermination:
+    """A typed :class:`WideStreetDetermination` fixture for the evaluator-seam
+    tests (built directly rather than through the buffer engine so no shapely
+    geometry is needed here; the engine-driven construction is tested in
+    test_wide_street_wiring.py)."""
+    return WideStreetDetermination(
+        determination_state=determination_state,
+        far_row=far_row,
+        coverage_hint=coverage_hint,
+        exceptions_checked=exceptions_checked,
+        named_street_override_pending=named_street_override_pending,
+        reason="test-fixture determination",
+        policy_decision_states=("wide",),
+        original_labels=("100",),
+        source_versions=("dcm-streetwidth-v1",),
+        matched_geometry_refs=("segment-object-id-1",),
+        interpreted_bounds_summaries=("exactly 100 ft",),
+        classification_reasons=("mapped width 100 ft >= 75 ft threshold",),
+        buffer_status="computed",
+        aggregate_intersects=aggregate_intersects,
+        aggregate_area_sq_ft=None,
+        lot_identity=_BBL,
+        draft_label=DRAFT_LABEL_NOTICE,
+        routed_to_note=ROUTED_TO_NOT_USED_NOTICE,
+        fallback_direction_note=FALLBACK_DIRECTION_NOTICE,
+    )
+
+
+def test_m5t034_within_wide_street_fires_wide_row_and_higher_far_for_r6(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.zoning_district == "R6"
+    assert result.wide_street_far_row == FAR_ROW_WIDE_STREET
+    # The higher (wide-street) R6 value comes straight from the rule's own
+    # wide_street_far_by_district parameter (3.00), never invented here.
+    assert result.wide_street_governing_far == 3.0
+    # WITHIN is a confident DRAFT outcome: coverage is NOT escalated to review.
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    assert result.coverage_status != cov.COVERAGE_VERIFIED
+    assert result.wide_street_determination is not None
+    assert result.wide_street_determination["governing_max_residential_far"] == 3.0
+    assert "DRAFT" in result.wide_street_determination["draft_label"]
+    # No Verified label leaks anywhere (D-045-R009).
+    assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(result.as_dict())
+
+
+def test_m5t034_within_wide_street_fires_higher_far_for_r8(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R8", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.zoning_district == "R8"
+    assert result.wide_street_far_row == FAR_ROW_WIDE_STREET
+    assert result.wide_street_governing_far == 7.2  # R8 wide-street value
+
+
+def test_m5t034_not_within_wide_street_fires_standard_conservative_row_for_r6(registry):
+    det = _wide_determination(
+        DETERMINATION_NOT_WITHIN_WIDE, FAR_ROW_STANDARD, COVERAGE_CONDITIONAL,
+        aggregate_intersects=False,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.wide_street_far_row == FAR_ROW_STANDARD
+    # The conservative (lower) R6 value from standard_far_by_district (2.20).
+    assert result.wide_street_governing_far == 2.2
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+
+
+def test_m5t034_professional_review_determination_escalates_and_grants_no_bonus(registry):
+    det = _wide_determination(
+        DETERMINATION_PROFESSIONAL_REVIEW, FAR_ROW_NONE,
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.wide_street_far_row == FAR_ROW_NONE
+    # No FAR bonus is granted on uncertainty (D-051 fallback direction).
+    assert result.wide_street_governing_far is None
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert any("professional review" in r.lower() for r in result.reasons)
+
+
+def test_m5t034_determination_ignored_for_non_conditional_district_r5(registry):
+    # R5's rule carries no wide_street_far_by_district parameter, so a supplied
+    # determination has NO effect: the wide-street fields stay None and the result
+    # is byte-identical to the no-determination path (additive guarantee).
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    with_det = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    without_det = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+    )
+    assert with_det.zoning_district == "R5"
+    assert with_det.wide_street_far_row is None
+    assert with_det.wide_street_governing_far is None
+    assert with_det.wide_street_determination is None
+    assert with_det.export() == without_det.export()
+
+
+def test_m5t034_wide_fields_default_none_when_no_determination_supplied(registry):
+    result = ri.evaluate_property(_confident_profile("R6", area=10000.0), registry=registry)
+    assert result.wide_street_far_row is None
+    assert result.wide_street_governing_far is None
+    assert result.wide_street_determination is None
+
+
+def test_m5t034_select_conditional_far_row_within_picks_wide_value():
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_WIDE_STREET
+    assert fold["governing_far"] == 3.0
+    assert fold["professional_review"] is False
+
+
+def test_m5t034_select_conditional_far_row_not_within_picks_standard_value():
+    det = _wide_determination(
+        DETERMINATION_NOT_WITHIN_WIDE, FAR_ROW_STANDARD, COVERAGE_CONDITIONAL,
+        aggregate_intersects=False,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_STANDARD
+    assert fold["governing_far"] == 2.2
+    assert fold["professional_review"] is False
+
+
+def test_m5t034_select_conditional_far_row_professional_review_grants_no_bonus():
+    det = _wide_determination(
+        DETERMINATION_PROFESSIONAL_REVIEW, FAR_ROW_NONE,
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_NONE
+    assert fold["governing_far"] is None
+    assert fold["professional_review"] is True

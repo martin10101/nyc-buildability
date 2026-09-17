@@ -43,11 +43,17 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from . import coverage as cov
 from . import lifecycle
 from .registry import RuleRegistry
+
+if TYPE_CHECKING:  # pragma: no cover - typing only; avoids importing the shapely-
+    # heavy wide-street buffer engine (transitively pulled by wide_street_wiring)
+    # onto this module's import path. The wiring is imported lazily, only when a
+    # wide-street determination is actually supplied (never on the default path).
+    from app.rules.wide_street_wiring import WideStreetDetermination
 
 # ---------------------------------------------------------------------------
 # Spatial vocabulary (DUPLICATED from app.spatial, guarded by a drift test).
@@ -132,6 +138,22 @@ class PropertyRuleEvaluation:
     # each rule's effective window) when a same-family conflict is detected;
     # ``None`` otherwise. Never carries a computed output/determination value.
     rule_conflict: dict | None = None
+    # M5-T034: wide-street conditional-FAR outcome. Populated ONLY when a
+    # wide-street determination is supplied for a wide-street-conditional district
+    # (ZR 23-22 R6/R7-1/R7-2/R8); ``None`` on every other path (the default, a
+    # non-conditional district, or a fail-safe short-circuit). ``wide_street_far_row``
+    # names the row the determination fired (``wide_street_row`` / ``standard_row`` /
+    # ``none``); ``wide_street_governing_far`` is the FAR that row selects from the
+    # rule's OWN byte-checked parameters (the higher wide value only for an
+    # affirmative WITHIN determination, else the conservative value, else None);
+    # ``wide_street_determination`` is a JSON-safe provenance summary (DRAFT).
+    # These are DELIBERATELY not part of as_dict()/the frozen rule_evaluation
+    # v1.0.0 contract (a future additive contract bump serializes the block); the
+    # determination's effect that DOES reach the response is carried by the
+    # existing coverage_status / professional_review_required / reasons fields.
+    wide_street_far_row: str | None = None
+    wide_street_governing_far: float | None = None
+    wide_street_determination: dict | None = None
 
     def as_dict(self) -> dict:
         return {
@@ -440,6 +462,105 @@ def _conflict_result(
 
 
 # ---------------------------------------------------------------------------
+# M5-T034: wide-street conditional-FAR row selection (server-side).
+#
+# The accepted wide-street stack (dcm_street_width_policy + wide_street_buffer_
+# engine, folded into a typed determination by app.rules.wide_street_wiring)
+# feeds THIS function, which selects the governing ZR 23-22 conditional-FAR row
+# for R6/R7-1/R7-2/R8. It is called by evaluate_property when a determination is
+# supplied, so the determination genuinely drives server-side FAR-row selection
+# rather than sitting in an unused helper (M5-T034 revision). It never invents a
+# FAR value: the two candidates are the rule's OWN byte-checked parameters.
+# ---------------------------------------------------------------------------
+
+def select_conditional_far_row(
+    determination: Any,
+    *,
+    standard_far: float,
+    wide_street_far: float,
+) -> dict:
+    """Fold one wide-street determination into the governing conditional-FAR row.
+
+    * ``within_100ft_of_wide_street`` fires the WIDE row -> the higher
+      ``wide_street_far`` governs (DRAFT, pending G6).
+    * ``not_within_100ft_of_wide_street`` fires the STANDARD row -> the
+      conservative ``standard_far`` governs.
+    * Any professional-review determination (unresolved/unknown/not-classified
+      width, an unimplemented named-street override candidate, a typed buffer-
+      engine failure, or an empty/absent classification) fires NO row and grants
+      NO FAR bonus: ``governing_far`` is None and coverage must escalate to
+      professional_review_required.
+
+    Never raises and never selects the higher value on uncertainty. Returns a
+    plain dict; the FAR values come straight from the rule's parameters, so this
+    is not a second source of truth. Deterministic and side-effect-free."""
+    # Lazy import: keeps the shapely-heavy buffer engine (pulled transitively by
+    # wide_street_wiring) off this module's import path - loaded only when a
+    # determination is actually supplied, never at module load or on the default
+    # (no-determination) request path.
+    from app.rules.wide_street_wiring import (
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED as _WS_PRR,
+    )
+    from app.rules.wide_street_wiring import (
+        FAR_ROW_WIDE_STREET as _WS_ROW_WIDE,
+    )
+    from app.rules.wide_street_wiring import (
+        select_far_row_value,
+    )
+
+    far_row = determination.far_row
+    governing = select_far_row_value(
+        determination, standard_far=standard_far, wide_street_far=wide_street_far
+    )
+    professional_review = determination.coverage_hint == _WS_PRR or governing is None
+    if professional_review:
+        reason = (
+            f"wide-street determination {determination.determination_state}: no "
+            "conditional-FAR row fires and no higher (wide-street) FAR bonus is "
+            "granted; coverage escalates to professional review "
+            "(D-051 fallback direction for these rows - the wide value is the "
+            f"higher FAR, so it is withheld on uncertainty). {determination.reason}"
+        )
+    else:
+        row_label = "wide-street (higher)" if far_row == _WS_ROW_WIDE else "standard (conservative)"
+        reason = (
+            f"wide-street determination {determination.determination_state}: the "
+            f"{row_label} conditional-FAR row governs (max_residential_far "
+            f"{governing}); DRAFT pending G6. {determination.reason}"
+        )
+    return {
+        "far_row": far_row,
+        "governing_far": governing,
+        "professional_review": professional_review,
+        "reason": reason,
+    }
+
+
+def _wide_street_summary(determination: Any, fold: dict) -> dict:
+    """A compact, JSON-safe provenance summary of a wide-street determination and
+    the row it selected - the D-052 provenance quintuple plus the DRAFT marker,
+    for a reviewer. NOT part of the frozen rule_evaluation contract (see
+    :class:`PropertyRuleEvaluation`)."""
+    return {
+        "determination_state": determination.determination_state,
+        "far_row": fold["far_row"],
+        "governing_max_residential_far": fold["governing_far"],
+        "coverage_hint": determination.coverage_hint,
+        "exceptions_checked": determination.exceptions_checked,
+        "named_street_override_pending": determination.named_street_override_pending,
+        "policy_decision_states": list(determination.policy_decision_states),
+        "original_labels": list(determination.original_labels),
+        "source_versions": list(determination.source_versions),
+        "matched_geometry_refs": list(determination.matched_geometry_refs),
+        "interpreted_bounds_summaries": list(determination.interpreted_bounds_summaries),
+        "classification_reasons": list(determination.classification_reasons),
+        "draft_label": determination.draft_label,
+        "fallback_direction_note": determination.fallback_direction_note,
+        "reason": fold["reason"],
+    }
+
+
+# ---------------------------------------------------------------------------
 # Public entry point.
 # ---------------------------------------------------------------------------
 
@@ -448,6 +569,7 @@ def evaluate_property(
     *,
     registry: RuleRegistry | None = None,
     as_of_date: str | None = None,
+    wide_street_determination: WideStreetDetermination | None = None,
 ) -> PropertyRuleEvaluation:
     """Map a canonical property profile into the rules evaluator and evaluate the
     draft R5 residential-FAR family. Pure and deterministic: the same profile
@@ -461,6 +583,18 @@ def evaluate_property(
     through to the evaluator and to FH-2 conflict detection. When omitted (the
     default and the only existing behaviour) no temporal gating is applied, so the
     single-rule R5 family behaves exactly as before.
+
+    ``wide_street_determination`` (optional, M5-T034) is the typed output of the
+    accepted wide-street stack (:func:`app.rules.wide_street_wiring.
+    determine_wide_street_far`). When supplied AND the confident district is a
+    wide-street-conditional ZR 23-22 district (R6/R7-1/R7-2/R8), it selects the
+    governing conditional-FAR row server-side (see
+    :func:`select_conditional_far_row`): a WITHIN determination fires the higher
+    wide-street value, a NOT_WITHIN determination the conservative value, and any
+    professional-review determination grants NO bonus and escalates coverage to
+    professional_review_required. When omitted (the default and every
+    non-conditional district) NOTHING here runs and the result is byte-identical
+    to before, so the flat R1-R12 rules and every existing caller are unaffected.
     """
     registry = registry or _default_registry()
     family_coverage = registry.family_coverage(TARGET_FAMILY)
@@ -618,6 +752,42 @@ def evaluate_property(
             "result is not_applicable (visible, not silent)"
         )
 
+    # M5-T034: fold a supplied wide-street determination into the governing
+    # conditional-FAR row for a wide-street-conditional district. Additive: with
+    # no determination supplied (the default, and every non-conditional district)
+    # nothing here runs and the result is byte-identical to before. A determination
+    # is honored only for the single applicable rule that actually carries a
+    # wide_street_far_by_district parameter for this district (R6/R7-1/R7-2/R8) -
+    # it never touches R5, the flat R6-R12 rule, or a not_applicable outcome.
+    ws_far_row: str | None = None
+    ws_governing_far: float | None = None
+    ws_summary: dict | None = None
+    if wide_street_determination is not None:
+        applicable_traces = [t for t in evaluations if t.get("applicability_outcome")]
+        if len(applicable_traces) == 1:
+            applied_rule = registry.rule(applicable_traces[0]["rule_id"])
+            standard_map = applied_rule.parameters.get("standard_far_by_district")
+            wide_map = applied_rule.parameters.get("wide_street_far_by_district")
+            if (
+                isinstance(standard_map, dict)
+                and isinstance(wide_map, dict)
+                and district in standard_map
+                and district in wide_map
+            ):
+                fold = select_conditional_far_row(
+                    wide_street_determination,
+                    standard_far=standard_map[district],
+                    wide_street_far=wide_map[district],
+                )
+                ws_far_row = fold["far_row"]
+                ws_governing_far = fold["governing_far"]
+                ws_summary = _wide_street_summary(wide_street_determination, fold)
+                reasons = [*reasons, fold["reason"]]
+                if fold["professional_review"]:
+                    coverage_status = cov.most_severe(
+                        coverage_status, cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+                    )
+
     needs_review = coverage_status != cov.COVERAGE_VERIFIED and (
         professional_review_required
         or any(status != lifecycle.STATUS_PUBLISHED for status in statuses)
@@ -647,6 +817,9 @@ def evaluate_property(
         family_coverage=family_coverage,
         reasons=reasons,
         coverage_source=_COVERAGE_SOURCE_EVALUATOR,
+        wide_street_far_row=ws_far_row,
+        wide_street_governing_far=ws_governing_far,
+        wide_street_determination=ws_summary,
     )
     # Defensive fail-close: this function can never return a Verified draft.
     assert_not_verified(result)
@@ -657,6 +830,7 @@ __all__ = [
     "PropertyRuleEvaluation",
     "DraftVerifiedError",
     "evaluate_property",
+    "select_conditional_far_row",
     "assert_not_verified",
     "NOT_VERIFIED_DISCLAIMER",
     "TARGET_FAMILY",

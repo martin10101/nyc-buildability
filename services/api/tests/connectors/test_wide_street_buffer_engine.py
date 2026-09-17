@@ -50,6 +50,9 @@ from app.connectors.wide_street_buffer_engine import (
     BUFFER_FT,
     BUFFER_QUAD_SEGS,
     EC2_UNDER_CLAIM_NOTICE,
+    EXTENT_ABS_MAX_FT,
+    MAX_VERTICES_PER_PATH,
+    MAX_WIDE_SEGMENTS,
     PINNED_GEOS_VERSION_STRING,
     PINNED_SHAPELY_VERSION,
     STATUS_COMPUTED,
@@ -59,6 +62,7 @@ from app.connectors.wide_street_buffer_engine import (
     AttestedLotPolygon,
     AttestedWideSegment,
     Ec5AttestedPreconditions,
+    InputBoundsError,
     InvalidGeometryError,
     MalformedAttestationError,
     WideStreetBufferResult,
@@ -945,3 +949,118 @@ def test_line_probe_matches_the_hand_derived_expected_values() -> None:
     tangent_intersection = lot_geom.intersection(tangent)
     assert lot_geom.intersects(tangent) is True
     assert tangent_intersection.area == 0.0
+
+
+# ---------------------------------------------------------------------------
+# M5-T034: typed fail-closed input bounds (M4-T021 G5 A1 closure). Deterministic
+# tests AT and BEYOND each bound (segment count, per-path vertex count,
+# coordinate magnitude/extent) prove a pathological input raises the typed
+# InputBoundsError (a WideStreetBufferEngineError subclass the B7 wiring maps to
+# professional review) rather than hanging or silently computing. The engine
+# adds NO new imports, so test_module_never_reimplements_transport_or_reprojection
+# above still pins the exact import allowlist.
+# ---------------------------------------------------------------------------
+
+
+def test_input_bounds_error_is_a_wide_street_buffer_engine_error() -> None:
+    # The wiring catches WideStreetBufferEngineError; InputBoundsError must be a
+    # subclass so the bound surfaces as an honest professional-review outcome.
+    from app.connectors.wide_street_buffer_engine import WideStreetBufferEngineError
+
+    assert issubclass(InputBoundsError, WideStreetBufferEngineError)
+
+
+def test_segment_count_at_bound_computes() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    at_bound = [segment] * MAX_WIDE_SEGMENTS
+    result = compute_wide_street_buffer_intersection(
+        lot, at_bound, ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+    assert len(result.segment_contributions) == MAX_WIDE_SEGMENTS
+
+
+def test_segment_count_beyond_bound_is_typed_input_bounds_error() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    beyond = [segment] * (MAX_WIDE_SEGMENTS + 1)
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            lot, beyond, ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+    assert str(MAX_WIDE_SEGMENTS) in str(excinfo.value)
+
+
+def test_per_path_vertex_count_at_bound_computes() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    path = [[-50.0, float(i)] for i in range(MAX_VERTICES_PER_PATH)]
+    segment = _make_segment(1, [path])
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+
+
+def test_per_path_vertex_count_beyond_bound_is_typed_input_bounds_error() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    path = [[-50.0, float(i)] for i in range(MAX_VERTICES_PER_PATH + 1)]
+    segment = _make_segment(1, [path])
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+    assert "vertices" in str(excinfo.value)
+
+
+def test_large_but_in_bound_coordinate_is_not_geofenced_out() -> None:
+    # A legitimately LARGE EPSG:2263-magnitude coordinate (real NYC eastings are
+    # ~1e6 ft) must NOT be rejected - the bound is a magnitude sanity ceiling,
+    # not a tight NYC geofence. This segment sits ~1e6 ft from the lot, so it
+    # computes (status COMPUTED) and simply does not intersect.
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    assert 1_000_000.0 < EXTENT_ABS_MAX_FT
+    segment = _make_segment(1, [[[1_000_000.0, 0.0], [1_000_000.0, 1000.0]]])
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+    assert result.aggregate_intersects is False
+
+
+def test_segment_coordinate_beyond_extent_is_typed_input_bounds_error() -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    beyond = EXTENT_ABS_MAX_FT + 1_000_000.0
+    segment = _make_segment(1, [[[beyond, 0.0], [beyond, 100.0]]])
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+
+
+def test_lot_coordinate_beyond_extent_is_typed_input_bounds_error() -> None:
+    beyond = EXTENT_ABS_MAX_FT + 1_000_000.0
+    huge_lot = _make_lot([[[0, 0], [0, beyond], [beyond, beyond], [beyond, 0], [0, 0]]])
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            huge_lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+    assert "lot" in str(excinfo.value)
+
+
+def test_crs_gate_wins_over_input_bounds() -> None:
+    # A wrong CRS AND an over-count input: the CRS refusal must win (bounds are
+    # checked only after the CRS gate passes, so no bound work happens on an
+    # uninterpretable-CRS input).
+    lot = _make_lot(SQUARE_LOT_RINGS, wkid=None, latest_wkid=None)
+    segment = _make_segment(1, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    beyond = [segment] * (MAX_WIDE_SEGMENTS + 1)
+    with pytest.raises(WrongCRSError):
+        compute_wide_street_buffer_intersection(
+            lot, beyond, ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
