@@ -854,7 +854,9 @@
    "issued_by": "owner",
    "supersedes": [],
    "superseded_by": null,
-   "affected_tasks": [],
+   "affected_tasks": [
+    "M5-T032"
+   ],
    "manifest": "D-064-subagent-opus48-lean-ops/manifest.json"
   }
  ],

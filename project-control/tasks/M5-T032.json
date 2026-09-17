@@ -1,0 +1,137 @@
+{
+  "task_id": "M5-T032",
+  "title": "Address-search reliability under GeoSearch failure + ZoLa-first human-readable property links",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Keep the single full-address field usable when GeoSearch autocomplete fails (handoff 2026-09-16 section 6): distinct outcomes for no-match, incomplete address, rate limit, timeout, source failure, malformed response; bounded recovery for transient 503s; explicit full-address /search action; preserved typed text; prefilled manual/Geoclient fallback route; explicit candidate confirmation retained. AND make the primary property source link a human-readable official page: ZoLa lot page from constant prefix + validated BBL first, current PLUTO JSON record demoted to a clearly secondary raw-record link, dataset landing retained; all M5-T030 identity/conflict guards preserved (D-064-R005).",
+  "business_reason": "Owner D-064: architect-facing reliability and human-readable provenance; first loop packet after relaunch (D-064-R008).",
+  "inputs": [
+    "project-control/directives/D-064-subagent-opus48-lean-ops/source-001.md (owner instruction; R005 link change, R007 focused testing, R008 first-packet scope)",
+    "Owner handoff section 6 (address-search defect observations, 2026-09-16): reproduced GeoSearch autocomplete 503s, one ~663ms failure (not the 6s timeout), separate-environment ~6.8s successful timings vs the 6000ms frontend deadline, current message collapses distinct failures into 'unavailable'",
+    "GeoSearch official docs: https://geosearch.planninglabs.nyc/docs/ (autocomplete while typing; /search for a complete pasted address; both share one service - endpoint switching is not an independent fallback)",
+    "Existing implementation: apps/web/src/lib/address-search.ts, apps/web/src/lib/architect/use-address-suggestions.ts, apps/web/src/components/architect/AddressAutocomplete.tsx, apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "Existing link discipline: apps/web/src/lib/provenance-link.ts (constant-prefix + strict token validation; never a server-echoed URL), ZoLa constant prefix precedent in AddressConfirmCard.tsx (https://zola.planning.nyc.gov/bbl/ + validated BBL)",
+    "Preserved behavior contract: M5-T030 wrong-lot/wrong-source/conflicting-metadata/stale-profile guards; searched-vs-representative address distinction; explicit candidate confirmation (never auto-accept first suggestion)"
+  ],
+  "outputs": [
+    "Repaired address-search flow: distinct typed outcomes for no-match, incomplete address, rate limit (429), timeout, source failure (5xx), malformed response; bounded recovery for transient errors (no unbounded retry, no indefinitely raised deadline, no hidden error); explicit full-address /search action for a complete pasted address without a selected suggestion; typed text preserved across failures; clear route to the existing Geoclient manual resolver / prefilled manual fallback",
+    "ZoLa-first source links: zolaLotUrl (or equivalent) in provenance-link.ts built ONLY from the constant ZoLa prefix + strictly validated BBL; primary 'view property' link on evidence/provenance surfaces is the ZoLa lot page; current PLUTO JSON record remains as a clearly secondary raw-record link; dataset landing link retained; honest absence when identity is invalid/conflicting",
+    "Regression tests: temporary 503 then recovery, repeated 503s, slow valid reply beyond deadline, full-address submission without selection, preserved input, ambiguity, Queens hyphenated numbers, all five boroughs, cancellation while editing, malformed payload; ZoLa-link valid/invalid/conflict cases; all existing M5-T030 negative cases still green",
+    "project-control/reports/M5-T032-producer-report.md (verbatim producer return; includes a dated live smoke-check record kept distinct from deterministic tests)"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/__tests__/address-search.test.ts",
+    "apps/web/src/lib/architect/use-address-suggestions.ts",
+    "apps/web/src/components/architect/AddressAutocomplete.tsx",
+    "apps/web/src/components/architect/__tests__/autocomplete.test.tsx",
+    "apps/web/src/components/architect/__tests__/entry.test.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/lib/provenance-link.ts",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts",
+    "apps/web/src/components/architect/EvidenceInspector.tsx",
+    "apps/web/src/components/architect/EvidenceRecord.tsx",
+    "apps/web/src/components/architect/ReportSources.tsx",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx",
+    "apps/web/src/components/property/__tests__/sections.test.tsx"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "description": "A transient GeoSearch 503 followed by a successful response recovers within the bounded retry policy; suggestions appear; the user's typed text is never cleared."
+    },
+    {
+      "id": "AS-2",
+      "description": "Repeated 503s produce a specific source-unavailable outcome (not a generic 'unavailable'), stop retrying at the bound, and present the manual/Geoclient fallback prefilled with the typed text."
+    },
+    {
+      "id": "AS-3",
+      "description": "A valid reply arriving after the deadline is a distinct timeout outcome; an explicit full-address search action is offered; no indefinite deadline raise."
+    },
+    {
+      "id": "AS-4",
+      "description": "A complete pasted address submitted without a highlighted suggestion goes through the explicit /search action and always lands on candidate confirmation - the first approximate suggestion is never auto-accepted as the lot."
+    },
+    {
+      "id": "AS-5",
+      "description": "Genuine no-match and incomplete-address are distinct outcomes with distinct wording; neither is presented as a service failure."
+    },
+    {
+      "id": "AS-6",
+      "description": "HTTP 429 is classified as rate-limit, distinct from 503 source failure, with bounded backoff."
+    },
+    {
+      "id": "AS-7",
+      "description": "A malformed or non-PAD-validated payload yields a validation-failure outcome; no partial or invented suggestion is rendered."
+    },
+    {
+      "id": "AS-8",
+      "description": "Queens hyphenated house numbers and at least one address per borough resolve through the repaired flow in deterministic fixture tests."
+    },
+    {
+      "id": "AS-9",
+      "description": "Editing the query cancels superseded in-flight work; a stale response never overwrites newer suggestions."
+    },
+    {
+      "id": "AS-10",
+      "description": "With a valid, conflict-free lot identity the primary source link is the ZoLa lot page (constant prefix + validated BBL); the current PLUTO JSON record is demoted to a clearly secondary raw-record link; the dataset landing link remains; invalid, absent, or conflicting identity renders honest absence; every existing M5-T030 wrong-lot/wrong-source/conflict test stays green."
+    },
+    {
+      "id": "AS-11",
+      "description": "A dated live smoke check (GeoSearch autocomplete + /search + one ZoLa lot URL) is recorded in the producer report as live evidence, separate from deterministic tests; deterministic tests do not require live internet success."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "GeoSearch autocomplete and /search share one upstream service - recovery design must not present endpoint switching as an independent fallback (handoff section 6)",
+    "Full suite + browser journeys run at the integration seam per D-064-R007; producer runs the focused commands only"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-17T03:45:31.847344+00:00",
+  "updated_at": "2026-09-17T03:46:28.687268+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-064",
+      "requirement_ids": [
+        "D-064-R005",
+        "D-064-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-17T03:45:31.847344+00:00",
+  "documented_test_commands": [
+    "npm run typecheck",
+    "npm run test -- src/lib/__tests__/address-search.test.ts src/lib/__tests__/provenance-link.test.ts src/components/architect/__tests__/autocomplete.test.tsx src/components/architect/__tests__/source-links.test.tsx src/components/address/__tests__/address-resolution.test.tsx src/components/address/__tests__/address-confirm.test.tsx",
+    "npm run lint",
+    "npm run build",
+    "npm run test:e2e",
+    "python tools/modularity_check.py --check",
+    "python tools/validate_directive_compliance.py --check"
+  ]
+}

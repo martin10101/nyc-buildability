@@ -4,16 +4,18 @@
  "version": 1,
  "requirement_count": 11,
  "producer": "orchestrator",
- "updated_at": "2026-09-16T18:00:00+00:00",
+ "updated_at": "2026-09-17T03:46:41.004090+00:00",
  "requirements": [
   {
    "id": "D-064-R001",
-   "text": "Every delegated Claude subagent — all .claude/agents/*.md definitions, dispatched producers, Claude-based review agents, and the supervisor loop worker — runs model claude-opus-4-8 at xhigh effort as the standing selection.",
+   "text": "Every delegated Claude subagent \u2014 all .claude/agents/*.md definitions, dispatched producers, Claude-based review agents, and the supervisor loop worker \u2014 runs model claude-opus-4-8 at xhigh effort as the standing selection.",
    "source_ref": "source-001.md#owner-message-1-verbatim",
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -29,7 +31,13 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [".claude/agents/"], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [
+     ".claude/agents/"
+    ],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R002",
@@ -38,7 +46,9 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -54,7 +64,13 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [".claude/agents/"], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [
+     ".claude/agents/"
+    ],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R003",
@@ -63,7 +79,9 @@
    "classification": "decision",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -79,7 +97,11 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R004",
@@ -88,7 +110,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -104,7 +128,11 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R005",
@@ -113,11 +141,16 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP",
+     "M5-T032"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
-    "paths": ["apps/web/"],
+    "paths": [
+     "apps/web/"
+    ],
     "effective_date": "2026-09-16"
    },
    "dependencies": [],
@@ -129,7 +162,15 @@
    "status_reason": "Captured before contracting.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": ["apps/web/src/lib/provenance-link.ts"], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [
+     "apps/web/src/lib/provenance-link.ts"
+    ],
+    "tests": [],
+    "tasks": [
+     "M5-T032"
+    ]
+   }
   },
   {
    "id": "D-064-R006",
@@ -138,11 +179,15 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
-    "paths": ["CLAUDE.md"],
+    "paths": [
+     "CLAUDE.md"
+    ],
     "effective_date": "2026-09-16"
    },
    "dependencies": [],
@@ -154,7 +199,13 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": ["CLAUDE.md"], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [
+     "CLAUDE.md"
+    ],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R007",
@@ -163,7 +214,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP",
+     "M5-T032"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -179,7 +233,13 @@
    "status_reason": "Captured before contracting.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": [
+     "M5-T032"
+    ]
+   }
   },
   {
    "id": "D-064-R008",
@@ -188,14 +248,18 @@
    "classification": "sequencing",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
     "paths": [],
     "effective_date": "2026-09-16"
    },
-   "dependencies": ["D-064-R009"],
+   "dependencies": [
+    "D-064-R009"
+   ],
    "required_harness": "Loop launch record shows the worker on claude-opus-4-8 and the first packet's ledger id.",
    "required_evidence": "loop launch log; ledger task packet",
    "producer": "orchestrator",
@@ -204,7 +268,11 @@
    "status_reason": "Captured before relaunch.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R009",
@@ -213,7 +281,9 @@
    "classification": "decision",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -229,7 +299,11 @@
    "status_reason": "Awaiting owner edit.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R010",
@@ -238,14 +312,18 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
     "paths": [],
     "effective_date": "2026-09-16"
    },
-   "dependencies": ["D-064-R008"],
+   "dependencies": [
+    "D-064-R008"
+   ],
    "required_harness": "Session behavior; loop watcher armed with the quiet filter.",
    "required_evidence": "monitoring posture noted in the relaunch record",
    "producer": "orchestrator",
@@ -254,16 +332,22 @@
    "status_reason": "Captured before relaunch.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-064-R011",
-   "text": "Return item: after execution give the owner one concise reconciliation — branch/deploy state recognized, effective subagent model/effort, remaining real blockers, and the first bounded task started — in the lean style of R006.",
+   "text": "Return item: after execution give the owner one concise reconciliation \u2014 branch/deploy state recognized, effective subagent model/effort, remaining real blockers, and the first bounded task started \u2014 in the lean style of R006.",
    "source_ref": "source-001.md#owner-message-1-verbatim",
    "classification": "return",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-064-BOOTSTRAP"],
+    "task_ids": [
+     "D-064-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -279,7 +363,11 @@
    "status_reason": "Captured before execution.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   }
  ]
 }

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-16",
  "captured_at": "2026-09-17T03:29:03.961118+00:00",
  "created_at": "2026-09-17T03:29:03.961118+00:00",
- "updated_at": "2026-09-17T03:29:03.961118+00:00",
+ "updated_at": "2026-09-17T03:46:41.004090+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "1fa1b47aea96166754094637fdd0c8fc275e229c",
@@ -34,7 +34,7 @@
   "D-064-R010",
   "D-064-R011"
  ],
- "requirements_content_digest_sha256": "31a24a8d025f232ff5e3770767c23095a1ca8f2b3a1a8825c11babf416083760",
+ "requirements_content_digest_sha256": "778100363e0a9b108f42e6b702e3679ca47eb9ed87197b9c5cd584d72d201f67",
  "sources": [
   {
    "file": "source-001.md",
@@ -47,7 +47,9 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
+ "affected_tasks": [
+  "M5-T032"
+ ],
  "affected_prs": [],
  "affected_branches": [
   "candidate/D-024-mrl-option-b"
@@ -65,6 +67,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim from the live owner session before execution; supersession recorded for the subagent scope only (D-064-R004)."
+  },
+  {
+   "at": "2026-09-17T03:46:41.004090+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound D-064-R005 and D-064-R007 to ledger task M5-T032 (address-search reliability + ZoLa-first links) and resynced the requirements digest in the same commit."
   }
  ]
 }
