@@ -28,8 +28,11 @@ Material commit: ae478563 on `task/M5-T034-wide-street-far-wiring` (integration 
 
 ## Packet-deviation flag for the review wave (producer report §3.3)
 
-`r6_r7_r8_wide_street_conditional_far.rule.json` is byte-UNCHANGED: the determination is
-consumed at the evaluator seam (`integration.py select_conditional_far_row` +
+`r6_r7_r8_wide_street_conditional_far.rule.json` [ORCH-CORRECTED per G1/G4-F1/DCV —
+superseded wording "is byte-UNCHANGED" was inaccurate] received prose-only edits (+4/-4:
+description/notes/limitations documenting the seam); its DSL steps, conditions, status
+`needs_review`, FAR parameter values, and citation digest are byte-stable. The
+determination is consumed at the evaluator seam (`integration.py select_conditional_far_row` +
 `evaluate_property(wide_street_determination=...)`), reading the rule's own byte-checked
 `standard_far_by_district` / `wide_street_far_by_district` parameters as the single source
 of FAR values. This deviates from the packet output line "rule.json updated to consume the

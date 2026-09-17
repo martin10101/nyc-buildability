@@ -88,8 +88,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "in_progress",
+  "progress_percent": 90,
   "risks": [
     "Scope magnet: the named-street override table and EC-4 legal tolerance are OUT of this packet - route them to follow-ups, never resolve them here",
     "The evaluator seam must stay fail-safe: a wiring failure can never produce a guessed district or FAR bonus",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T09:58:42.955725+00:00",
-  "updated_at": "2026-09-17T10:00:21.441509+00:00",
+  "updated_at": "2026-09-17T20:56:41.237597+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -133,6 +133,20 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contract, G0, bindings complete; awaiting supervisor-loop producer (run 38)"
+    },
+    {
+      "at": "2026-09-17T20:56:40.837217+00:00",
+      "agent": "rules-engineer",
+      "percent": 85,
+      "status": "rework",
+      "message": "[ORCH-CORRECTED] evidence-record corrections per G1 required correction, G4 F1/F2, DCV evidence-map ruling: rule.json 'byte-unchanged/NOT modified' wording replaced with the accurate prose-only-edits statement (3 artifacts); test count Ten->Nine. No code change; material identity ae478563 untouched."
+    },
+    {
+      "at": "2026-09-17T20:56:41.237597+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Corrections applied; re-freezing submission at corrected head"
     }
   ]
 }

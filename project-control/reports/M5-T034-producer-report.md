@@ -94,8 +94,13 @@ applicable trace carries both `standard_far_by_district` and
 determination escalates coverage via `cov.most_severe(...)` and grants no bonus.
 With no determination supplied the result is byte-identical to before.
 
-Observation on rule-JSON: `r6_r7_r8_wide_street_conditional_far.rule.json` is NOT
-modified. The determination is consumed at the evaluator seam, reading the rule's
+Observation on rule-JSON [ORCH-CORRECTED per G1 required correction / G4 F1 / DCV
+evidence-map ruling — superseded wording was "is NOT modified", which was literally
+inaccurate]: `r6_r7_r8_wide_street_conditional_far.rule.json` received PROSE-ONLY edits
+(+4/-4: description, the `wide_street_far_by_district` note, the exception note, one
+`limitations` entry) documenting the server-side consumption; its DSL steps, conditions,
+`status: needs_review`, FAR parameter VALUES, and the zr-23-22 citation digest are
+byte-stable. The determination is consumed at the evaluator seam, reading the rule's
 existing `standard_far_by_district` / `wide_street_far_by_district` params
 (rule.json:36-37) as the single source of FAR values. This differs from the
 packet output line "rule.json updated to consume the real determination"; the
@@ -116,7 +121,8 @@ injected into `get_rule_evaluation` and passed to `evaluate_property`
 byte-identical to prior behaviour and is exercised by the existing endpoint tests.
 
 ## 4. Tests added this unit — `tests/rules/test_rules_integration.py`
-Ten tests (evaluator-seam fold), covering: WITHIN→wide row + higher FAR for R6
+Nine tests [ORCH-CORRECTED per G4 F2 — superseded wording was "Ten tests"; the frozen
+tree carries nine `def test_m5t034` functions] (evaluator-seam fold), covering: WITHIN→wide row + higher FAR for R6
 (3.00) and R8 (7.20); NOT_WITHIN→standard conservative row for R6 (2.20);
 professional-review→coverage escalation + no bonus; determination ignored for a
 non-conditional district (R5) with export byte-identical to the no-determination
