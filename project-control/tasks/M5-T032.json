@@ -6,6 +6,7 @@
   "objective": "Keep the single full-address field usable when GeoSearch autocomplete fails (handoff 2026-09-16 section 6): distinct outcomes for no-match, incomplete address, rate limit, timeout, source failure, malformed response; bounded recovery for transient 503s; explicit full-address /search action; preserved typed text; prefilled manual/Geoclient fallback route; explicit candidate confirmation retained. AND make the primary property source link a human-readable official page: ZoLa lot page from constant prefix + validated BBL first, current PLUTO JSON record demoted to a clearly secondary raw-record link, dataset landing retained; all M5-T030 identity/conflict guards preserved (D-064-R005).",
   "business_reason": "Owner D-064: architect-facing reliability and human-readable provenance; first loop packet after relaunch (D-064-R008).",
   "inputs": [
+    "EXECUTION ENVIRONMENT (binding, thin client - ~6GB free, NO local npm/node_modules): do NOT propose npm/npx/node commands or WebFetch - they will be held and stall the run. Web tests execute in CI on the pushed head (the executable authority, M5-T023 pattern). Your job: edit within allowed_paths using native tools, run ONLY the documented python checks, git add/commit IN YOUR WORKTREE ROOT (plain git, never -C), write the producer report, and checkpoint with web-test execution explicitly deferred to CI. The orchestrator pushes the branch, captures CI results, and performs the dated live smoke checks (AS-11) - you need no network.",
     "CHECKPOINT ENVELOPE DISCIPLINE (controller S8.3, binding): in your final checkpoint JSON set starting_sha, current_sha, branch, and worktree to the empty string \"\" - the controller fills the authoritative values itself and any value YOU supply must match its records EXACTLY (full 40-hex SHAs, full worktree path) or the run is stopped. Leaving them blank is always safe.",
     "project-control/directives/D-064-subagent-opus48-lean-ops/source-001.md (owner instruction; R005 link change, R007 focused testing, R008 first-packet scope)",
     "Owner handoff section 6 (address-search defect observations, 2026-09-16): reproduced GeoSearch autocomplete 503s, one ~663ms failure (not the 6s timeout), separate-environment ~6.8s successful timings vs the 6000ms frontend deadline, current message collapses distinct failures into 'unavailable'",
@@ -42,7 +43,8 @@
     "apps/web/src/components/property/ProvenanceDisclosure.tsx",
     "apps/web/src/components/property/__tests__/sections.test.tsx",
     "apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx",
-    "apps/web/src/components/rule-evaluation/__tests__/rule-evaluation.test.tsx"
+    "apps/web/src/components/rule-evaluation/__tests__/rule-evaluation.test.tsx",
+    "project-control/reports/M5-T032-producer-report.md"
   ],
   "forbidden_paths": [],
   "acceptance_scenarios": [
@@ -88,7 +90,7 @@
     },
     {
       "id": "AS-11",
-      "description": "A dated live smoke check (GeoSearch autocomplete + /search + one ZoLa lot URL) is recorded in the producer report as live evidence, separate from deterministic tests; deterministic tests do not require live internet success."
+      "description": "A dated live smoke check (GeoSearch autocomplete + /search + one ZoLa lot URL) is captured BY THE ORCHESTRATOR at the integration seam and recorded alongside the producer report as live evidence, separate from deterministic tests; the producer requires no network access and deterministic tests never depend on live internet success."
     }
   ],
   "required_gates": [
@@ -116,7 +118,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T05:30:56.573838+00:00",
+  "updated_at": "2026-09-17T05:52:10.895811+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
@@ -129,13 +131,9 @@
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-17T03:45:31.847344+00:00",
   "documented_test_commands": [
-    "npm run typecheck",
-    "npm run test -- src/lib/__tests__/address-search.test.ts src/lib/__tests__/provenance-link.test.ts src/components/architect/__tests__/autocomplete.test.tsx src/components/architect/__tests__/source-links.test.tsx src/components/address/__tests__/address-resolution.test.tsx src/components/address/__tests__/address-confirm.test.tsx",
-    "npm run lint",
-    "npm run build",
-    "npm run test:e2e",
     "python tools/modularity_check.py --check",
-    "python tools/validate_directive_compliance.py --check"
+    "python tools/validate_directive_compliance.py --check",
+    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client, no local npm)"
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t032",
   "progress_log": [
