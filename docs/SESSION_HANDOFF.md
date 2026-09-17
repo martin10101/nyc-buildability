@@ -5,59 +5,31 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
-## Handoff — seq 112: D-059 MVP-review lane; 210 accepted; loop DOWN on B-024
+## Handoff — seq 113: D-064 executed; 214 accepted; LOOP LIVE on M5-T032 (opus-4-8 worker)
 
-Turnover reason (owner, VERBATIM): "update the 2 md that keep trake of leasens learned from
-this seasen" — done: both D-054 tiers updated (Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md`
-COMPRESSED to fit before appending, 5954/6000 tok; Tier 2 `docs/WORKING_KNOWLEDGE.md` gained a
-"Gate/lifecycle mechanics learned the hard way" section and had its stale counts corrected).
+Generated 2026-09-17 (UTC) by session_01SewZxbFqxV3yYhcDb7bMJt. Root
+`C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`.
+Origin `https://github.com/martin10101/nyc-buildability.git`. `main` untouched. PR #241 OPEN —
+NEVER merge. Between seq 112 and this session, a ChatGPT/Codex lane delivered and the ledger
+accepted **M5-T029 (architect workspace), M5-T030 (lot-specific source links), M5-T031
+(development-first FAR meanings), M4-T022 (residential source audit)** → **214 accepted**; owner
+handoff `C:\Users\MLFLL\Downloads\NYC_Buildability_Loop_Handoff_2026-09-16.md` is the delivery
+record (its §6 address-search defect and §9 spatial gap are the open work).
 
-Generated 2026-09-14 (UTC) by session_01JjK8w1YXwFBjUS8PRrTfHp. Root
-`C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`,
-HEAD at landing `f0e7d82f` + the knowledge-tier commit below. Origin
-`https://github.com/martin10101/nyc-buildability.git`. `main` untouched. PR #241 OPEN — NEVER
-merge. **Nothing in flight at landing** — no live agent, no uncommitted control-plane work,
-every dispatched review returned and is recorded. Dirty at landing: ONLY the conventional
-reviewer `.claude/agent-memory/**` files and the session `scratchpad/` (both expected).
-**MUST-READ: `docs/WORKING_KNOWLEDGE.md` (Tier 2) — its D-059 section leads the file.**
+**D-064** (captured + executed this session): ALL delegated subagents + the loop worker =
+`claude-opus-4-8` @ `xhigh` (25 agent files flipped; supersedes D-047/D-055/D-058-R004/D-060
+fable defaults for subagent scope — NO revert-to-fable duty remains); main session stays
+fable-5; lean-communication = CLAUDE.md principle 19; ZoLa-first links (R005) + batched per-seam
+testing (R007) bound to M5-T032; **B-024 RESOLVED** — owner personally edited
+`model_selection.toml` (model → opus-4-8, fallback_models → [], doctor overall PASS,
+digest cacbdf5a…).
 
-Accepted by milestone: M0 138 · M1 9 · M2 21 · M3 1 · M4 15 · M5 26 = **210**.
-(Per D-059-R006 this count is NOT an MVP completion measure — 138 are foundation/control-plane.)
-
-## THE ONE OWNER ACTION BLOCKING THE LOOP (B-024, still OPEN)
-
-`C:\SupervisorController\model_selection.toml` line 39: `model = "claude-fable-5"` →
-`model = "claude-opus-4-8"`, save. Then relaunch via `scratchpad/relaunch_m4t021.ps1` (adapt:
-fresh run-id, NEXT packet — not M4-T021, which is already accepted). **Arm a fresh break
-watcher after the relaunch** — the previous one (armed for run persistent-local-34) expired at
-its 8-hour NO_LAUNCH timeout and exited, so nothing is watching now; pattern in
-`scratchpad/loop_break_watcher_m4t020.sh`, report BREAK/FREEZE/CLOSED only (quiet monitor). Authorization is
-PRE-RECORDED as **D-060-R002**; revert obligation **D-060-R003** (back to Fable the moment it
-returns). Do NOT retry the edit as the agent — the classifier blocks it and the controller
-states the write is the owner's (S3.2 rule 6). Alternative: raise extra usage on the account,
-restoring Fable and making the edit unnecessary. Full evidence: `blockers/B-024-*.json`.
-
-## WHAT THIS SESSION DELIVERED (6 acceptances, 204 → 210)
-
-1. **M5-T025 (205th)** D-056 walkthrough web fixes · **M5-T026 (206th)** D-057 default-on gate.
-2. **M4-T020 (207th)** B3 DCM centerline geometry — the loop worker's own build, carried
-   end-to-end to acceptance.
-3. **D-059 captured**: the owner's uploaded MVP review + covering message, verbatim, 12
-   requirements. Standing: **R006 claims discipline** (never present task counts as MVP
-   completion; never repeat the 2–4 h/lot estimate as demonstrated), **R008** 8-step delivery
-   order, **R007** 15–20-parcel benchmark protocol.
-4. **M5-T027 (208th)** D-059 step-1 fixes: bldgarea-zero-with-buildings now FAILS CLOSED
-   (typed unusable + professional-review flag) instead of reporting the full cap as unused;
-   recorded-data wording replaces the zoning-floor-area/development-rights framing; labels
-   derive from the evaluated rule.
-5. **M5-T028 (209th)** — **D-059-R003 CLOSED PROJECT-WIDE**. Five live-wired modules
-   (derive/breakeven/comparison/ranking/sensitivity) no longer hardcode ZR 23-21. The DCV swept
-   BEYOND the five for a sixth defective module (none found) and proved the remaining literals
-   are unreachable aliases by tracing the live route.
-6. **M4-T021 (210th)** B4 wide-street 100-ft buffer/intersection engine — 100.0 US-survey-ft
-   planar buffer in EPSG:2263, union-before-intersect, any-portion boolean + sub-area, every
-   non-computable path a typed refusal.
-7. **D-060 captured** — loop continuity under the Fable hard stop (B-024 above).
+**LOOP STATE AT HANDOFF: LIVE.** Relaunched via `C:\SupervisorController\autostart-launch.ps1`
+(ACTIVE-TASK block → M5-T032, repo `wt-m5t032`, branch `task/M5-T032-address-search-links`;
+the launcher's `Start-Process` quoting of the spaced `--config` path was repaired in-file).
+`clear-recovery` was the audited operator exit from the seq-706 PAUSED_RECOVERY. Watcher armed
+(quiet: breaks/stalls/run-end only). **M5-T032** = handoff §6 address-search reliability +
+D-064-R005 ZoLa-first links; contracted, G0 PASS, claimed frontend-engineer, progress 20.
 
 ## STILL OPEN FROM D-059 (not started — do not report these as done)
 
