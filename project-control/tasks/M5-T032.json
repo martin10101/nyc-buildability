@@ -113,7 +113,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T03:52:36.103293+00:00",
+  "updated_at": "2026-09-17T04:17:36.015350+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
@@ -134,7 +134,7 @@
     "python tools/modularity_check.py --check",
     "python tools/validate_directive_compliance.py --check"
   ],
-  "worktree": "wt-m5t032",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t032",
   "progress_log": [
     {
       "at": "2026-09-17T03:52:36.103293+00:00",
