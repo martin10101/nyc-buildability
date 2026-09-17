@@ -1,0 +1,26 @@
+{
+  "task_id": "M5-T033",
+  "material_commit": "00be16d3",
+  "integration_commit": "f5099a80",
+  "ci_green_head": "00be16d3",
+  "requirements": {
+    "D-059-R004": [
+      "One causal account stated with the runtime cause explicitly UNCONFIRMED: producer report section 1 traces uniform spatial_intersection_absent to the default provider returning None, reproduces TWO candidate branches deterministically (flag-unset: zero connector calls, no log; flag-on shared connector failure: calls made + one typed connector_error line per parcel) and marks them NON-EXHAUSTIVE with the data-sufficiency and substrate-composition fail-safes acknowledged; response-body uniformity and latency treated as suggestive, never decisive.",
+      "Both D-059 parcels (3052960043, 3022647515) parametrized at provider, route, and evaluator levels (report section 3 AS-1..AS-3 test mapping; 654 tests green locally, api CI green at 00be16d3).",
+      "The single remaining owner confirmation is a bounded dashboard check with exact expected readings for BOTH outcomes (report section 2; checklist section 6b table), never a guessed setting; docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md now names LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED with fail-safe defaults and post-restart probes; the report states M4-T020/B4 alone does NOT fix the deployed failure.",
+      "Committed live capture as input: project-control/reports/M5-T033-live-capture.md (three-BBL probe incl. known-good control, 2026-09-17T07:21:18Z)."
+    ],
+    "D-066-R001": [
+      "Graph regenerated at the contract seam (728 files, 15255 nodes, 6762 edges, 2026-09-17) and a graph-derived navigation block embedded in the packet inputs (dependencies + depth-1/2 impact set for live_provider.py); the packet instructs the producer to use query.py --no-regen before broad sweeps; producer report section 6 records the graph as consulted and advisory."
+    ],
+    "D-066-R002": [
+      "Packet outputs carry the Codex review guidance (blast-radius check via the navigation block + required accuracy/usefulness statement); the Codex reviewer's statement is on record: 'useful navigation, accuracy unverified from this packet' (producer report section 6; worker rework-3 commit message)."
+    ],
+    "D-066-R003": [
+      "Audited per-unit comparison vs M5-T032 from the supervisor journal, presented as an advisory observation with four stated limits and no savings claim: project-control/reports/M5-T033-graph-comparison.md (~59 min one run vs ~181 min over two runs; token half one-sided and marked UNVERIFIABLE)."
+    ],
+    "D-066-R004": [
+      "Wiring folded into the ordinary next packet: no standalone graph campaign, no controller/manifest change on D-066 authority (git history clean of controller paths), and the in-flight M5-T032 work was not displaced (it proceeded to acceptance in parallel; ledger sequence)."
+    ]
+  }
+}
