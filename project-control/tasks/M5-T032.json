@@ -19,7 +19,8 @@
     "Repaired address-search flow: distinct typed outcomes for no-match, incomplete address, rate limit (429), timeout, source failure (5xx), malformed response; bounded recovery for transient errors (no unbounded retry, no indefinitely raised deadline, no hidden error); explicit full-address /search action for a complete pasted address without a selected suggestion; typed text preserved across failures; clear route to the existing Geoclient manual resolver / prefilled manual fallback",
     "ZoLa-first source links: zolaLotUrl (or equivalent) in provenance-link.ts built ONLY from the constant ZoLa prefix + strictly validated BBL; primary 'view property' link on evidence/provenance surfaces is the ZoLa lot page; current PLUTO JSON record remains as a clearly secondary raw-record link; dataset landing link retained; honest absence when identity is invalid/conflicting",
     "Regression tests: temporary 503 then recovery, repeated 503s, slow valid reply beyond deadline, full-address submission without selection, preserved input, ambiguity, Queens hyphenated numbers, all five boroughs, cancellation while editing, malformed payload; ZoLa-link valid/invalid/conflict cases; all existing M5-T030 negative cases still green",
-    "project-control/reports/M5-T032-producer-report.md (verbatim producer return; includes a dated live smoke-check record kept distinct from deterministic tests)"
+    "project-control/reports/M5-T032-producer-report.md (verbatim producer return; includes a dated live smoke-check record kept distinct from deterministic tests)",
+    "CI web + web-e2e jobs on the pushed head are the executable authority for all web tests (thin client, no local npm) - orchestrator captures the CI evidence at the seam"
   ],
   "dependencies": [],
   "allowed_paths": [
@@ -118,7 +119,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T05:52:10.895811+00:00",
+  "updated_at": "2026-09-17T05:55:05.536949+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
@@ -132,8 +133,7 @@
   "directive_regime_entered_at": "2026-09-17T03:45:31.847344+00:00",
   "documented_test_commands": [
     "python tools/modularity_check.py --check",
-    "python tools/validate_directive_compliance.py --check",
-    "CI 'web' job (lint + typecheck + build) and 'web-e2e' job (vitest + Playwright) on the pushed head - the executable authority (thin client, no local npm)"
+    "python tools/validate_directive_compliance.py --check"
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t032",
   "progress_log": [
