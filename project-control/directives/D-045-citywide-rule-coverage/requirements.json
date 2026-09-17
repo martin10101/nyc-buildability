@@ -1,368 +1,371 @@
 {
-  "schema": "directive_requirements/v1",
-  "directive_id": "D-045",
-  "version": 1,
-  "requirement_count": 10,
-  "producer": "orchestrator",
-  "updated_at": "2026-09-14T03:58:46+00:00",
-  "requirements": [
-    {
-      "id": "D-045-R001",
-      "text": "A1 — Build height/setback rule families for R1–R4 and R6–R12 (all subfamilies a real lot can carry, e.g. R6A/R6B/R7-2/R8X/R9-1/R10A), to the same discipline as the accepted R5 pilot: citation anchors to the captured legal text with digest fail-closed loading, deterministic evaluator rules, exact units, focused tests, independent review, DRAFT/needs-review status until G6. One bounded family (or coherent family group) per gated ledger task citing D-045:D-045-R001.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T012",
-          "M4-T014"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "per-family rule files + evaluator tests green in CI; coverage surface honestly reports which families are assessed",
-      "required_evidence": "accepted ledger tasks citing D-045-R001 covering every named district family",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R002",
-      "text": "A2 — Build the geometry-dependent rule mechanics: street-width-dependent height limits, sky-exposure planes, permitted obstructions/overhangs. Each mechanic ships together with the data inputs it needs (never a rule computing on guessed geometry); where an input is unavailable the result stays an honest 'no supported estimate' / not-assessed, never a manufactured number.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T016",
-          "M4-T018",
-          "M4-T019",
-          "M4-T020",
-          "M4-T021"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [
-        "D-045-R003"
-      ],
-      "required_harness": "geometry-dependent evaluations reproduce documented ZR examples in tests; missing-input branches proven",
-      "required_evidence": "accepted ledger tasks citing D-045-R002",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R003",
-      "text": "B2 (dependency of A2) — Build the street-width / mapped-street data connector under the full connector discipline: official-source research first, source-registry record, verbatim capture with provenance, recorded fixtures, contract tests, G1 data-contract verification. The existing MapPLUTO parcel-geometry connector (M5-T020) is reused, not duplicated.",
-      "source_ref": "source-001.md#capture-context",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T013",
-          "M4-T015"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "connector fixtures byte-verified against the live official source at G1; unit/CRS honesty proven",
-      "required_evidence": "accepted connector ledger task citing D-045-R003",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R004",
-      "text": "A3 — Build the contextual / Quality Housing variants and inclusionary-housing-style bonus programs, with careful legal sourcing (these materially change caps). Bonus math must name its program and preconditions on every output; any precondition the program cannot verify from official data renders as an explicit assumption or professional-review flag, never as a silently applied bonus.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "per-program rule tests incl. precondition-unverifiable branches",
-      "required_evidence": "accepted ledger tasks citing D-045-R004",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R005",
-      "text": "Commercial districts — Build the C-district rule families (commercial FAR and the mechanics needed for honest feasibility output in C districts), including commercial-overlay math where an overlay changes a lot's result. Same citation/test/review/DRAFT discipline as R001.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T017"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "per-family rule files + tests green in CI; overlay interaction cases covered",
-      "required_evidence": "accepted ledger tasks citing D-045-R005",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R006",
-      "text": "Manufacturing districts — Build the M-district rule families (M1–M3, including mixed/paired MX contexts where a lot presents them). Same citation/test/review/DRAFT discipline as R001.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "per-family rule files + tests green in CI",
-      "required_evidence": "accepted ledger tasks citing D-045-R006",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R007",
-      "text": "A4 — Build special purpose districts and waterfront zoning as later waves after the citywide base (R001–R006) is broad, per the owner-selected option wording ('later waves'). These large self-contained rule bodies enter one bounded district/body at a time under the same discipline.",
-      "source_ref": "source-001.md#scope-clarification-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [
-        "D-045-R001",
-        "D-045-R002",
-        "D-045-R004",
-        "D-045-R005",
-        "D-045-R006"
-      ],
-      "required_harness": "per-body rule packs + tests; coverage surface names each special district assessed vs not",
-      "required_evidence": "accepted ledger tasks citing D-045-R007",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R008",
-      "text": "SEQUENCING — Work proceeds 'one reviewed family at a time' (owner-accepted option wording): bounded tasks under the normal G0–G7 gated process, never a monolithic all-districts task. The in-flight M5-T023/M5-T024 completions and the D-043 owner deploy walkthrough are not displaced. Within that, ordering is the orchestrator's replanning judgment (suggested: A1 → A2+B2 → A3 → C → M → A4), recorded via /replan-project in the master plan.",
-      "source_ref": "source-001.md#capture-context",
-      "classification": "sequencing",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T012",
-          "M4-T013",
-          "M4-T014",
-          "M4-T015",
-          "M4-T016",
-          "M4-T017",
-          "M4-T018",
-          "M4-T019",
-          "M4-T020",
-          "M4-T021"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "master-plan campaign structure of bounded tasks; each cites its D-045 requirement id",
-      "required_evidence": "master-plan update recorded by the orchestrator",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R009",
-      "text": "PRESERVATION / SCOPE LIMIT — This directive changes coverage scope ONLY. Unchanged: every rule stays DRAFT/needs-review until G6 qualified legal review (owner-gated Section 20 hard stop); no compliance declarations; dependency policy §G for any new package; the expansion hold outside the released lot-outline increment; PR #241 unmerged; D-043 internal-only deploy posture. Gap-list rows NOT named here (B3 DOB, B4 landmarks, B5 ACRIS, C2, C3, E1–E3, group D) remain untriaged candidates under D-041-R003 — this directive is the owner triage for its named groups only.",
-      "source_ref": "source-001.md#capture-context",
-      "classification": "prohibition",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP",
-          "M4-T012",
-          "M4-T013",
-          "M4-T014",
-          "M4-T015",
-          "M4-T016",
-          "M4-T017",
-          "M4-T018",
-          "M4-T019",
-          "M4-T020",
-          "M4-T021"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "ledger contents; no task cites D-045 for out-of-scope work; draft labeling intact",
-      "required_evidence": "no acceptance of out-of-scope work under D-045; standing holds intact",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    },
-    {
-      "id": "D-045-R010",
-      "text": "RELAY / INTEGRATION (return item) — The companion session relays this directive to the live build session with the directive id and scope; the build-session orchestrator integrates the campaign into the master plan (/replan-project) and begins contracting under it. 'Tell the codex loop to build it' is discharged only when the build session acknowledges and the campaign appears in the plan.",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-045-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "paths": [],
-        "lifecycle_events": [],
-        "effective_date": "2026-09-13"
-      },
-      "dependencies": [],
-      "required_harness": "cross-session message sent; build-session acknowledgment; master-plan campaign entry",
-      "required_evidence": "message record in this capture's audit_log; subsequent master-plan/ledger state",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "reviewed_sha": null,
-      "status_reason": "",
-      "evidence_paths": [],
-      "amendment_sequence": 1
-    }
-  ]
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-045",
+ "version": 1,
+ "requirement_count": 10,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T09:59:44.401180+00:00",
+ "requirements": [
+  {
+   "id": "D-045-R001",
+   "text": "A1 — Build height/setback rule families for R1–R4 and R6–R12 (all subfamilies a real lot can carry, e.g. R6A/R6B/R7-2/R8X/R9-1/R10A), to the same discipline as the accepted R5 pilot: citation anchors to the captured legal text with digest fail-closed loading, deterministic evaluator rules, exact units, focused tests, independent review, DRAFT/needs-review status until G6. One bounded family (or coherent family group) per gated ledger task citing D-045:D-045-R001.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012",
+     "M4-T014"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "per-family rule files + evaluator tests green in CI; coverage surface honestly reports which families are assessed",
+   "required_evidence": "accepted ledger tasks citing D-045-R001 covering every named district family",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R002",
+   "text": "A2 — Build the geometry-dependent rule mechanics: street-width-dependent height limits, sky-exposure planes, permitted obstructions/overhangs. Each mechanic ships together with the data inputs it needs (never a rule computing on guessed geometry); where an input is unavailable the result stays an honest 'no supported estimate' / not-assessed, never a manufactured number.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T016",
+     "M4-T018",
+     "M4-T019",
+     "M4-T020",
+     "M4-T021",
+     "M5-T034"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [
+    "D-045-R003"
+   ],
+   "required_harness": "geometry-dependent evaluations reproduce documented ZR examples in tests; missing-input branches proven",
+   "required_evidence": "accepted ledger tasks citing D-045-R002",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R003",
+   "text": "B2 (dependency of A2) — Build the street-width / mapped-street data connector under the full connector discipline: official-source research first, source-registry record, verbatim capture with provenance, recorded fixtures, contract tests, G1 data-contract verification. The existing MapPLUTO parcel-geometry connector (M5-T020) is reused, not duplicated.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T013",
+     "M4-T015"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "connector fixtures byte-verified against the live official source at G1; unit/CRS honesty proven",
+   "required_evidence": "accepted connector ledger task citing D-045-R003",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R004",
+   "text": "A3 — Build the contextual / Quality Housing variants and inclusionary-housing-style bonus programs, with careful legal sourcing (these materially change caps). Bonus math must name its program and preconditions on every output; any precondition the program cannot verify from official data renders as an explicit assumption or professional-review flag, never as a silently applied bonus.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "per-program rule tests incl. precondition-unverifiable branches",
+   "required_evidence": "accepted ledger tasks citing D-045-R004",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R005",
+   "text": "Commercial districts — Build the C-district rule families (commercial FAR and the mechanics needed for honest feasibility output in C districts), including commercial-overlay math where an overlay changes a lot's result. Same citation/test/review/DRAFT discipline as R001.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T017"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "per-family rule files + tests green in CI; overlay interaction cases covered",
+   "required_evidence": "accepted ledger tasks citing D-045-R005",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R006",
+   "text": "Manufacturing districts — Build the M-district rule families (M1–M3, including mixed/paired MX contexts where a lot presents them). Same citation/test/review/DRAFT discipline as R001.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "per-family rule files + tests green in CI",
+   "required_evidence": "accepted ledger tasks citing D-045-R006",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R007",
+   "text": "A4 — Build special purpose districts and waterfront zoning as later waves after the citywide base (R001–R006) is broad, per the owner-selected option wording ('later waves'). These large self-contained rule bodies enter one bounded district/body at a time under the same discipline.",
+   "source_ref": "source-001.md#scope-clarification-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [
+    "D-045-R001",
+    "D-045-R002",
+    "D-045-R004",
+    "D-045-R005",
+    "D-045-R006"
+   ],
+   "required_harness": "per-body rule packs + tests; coverage surface names each special district assessed vs not",
+   "required_evidence": "accepted ledger tasks citing D-045-R007",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R008",
+   "text": "SEQUENCING — Work proceeds 'one reviewed family at a time' (owner-accepted option wording): bounded tasks under the normal G0–G7 gated process, never a monolithic all-districts task. The in-flight M5-T023/M5-T024 completions and the D-043 owner deploy walkthrough are not displaced. Within that, ordering is the orchestrator's replanning judgment (suggested: A1 → A2+B2 → A3 → C → M → A4), recorded via /replan-project in the master plan.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012",
+     "M4-T013",
+     "M4-T014",
+     "M4-T015",
+     "M4-T016",
+     "M4-T017",
+     "M4-T018",
+     "M4-T019",
+     "M4-T020",
+     "M4-T021",
+     "M5-T034"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "master-plan campaign structure of bounded tasks; each cites its D-045 requirement id",
+   "required_evidence": "master-plan update recorded by the orchestrator",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R009",
+   "text": "PRESERVATION / SCOPE LIMIT — This directive changes coverage scope ONLY. Unchanged: every rule stays DRAFT/needs-review until G6 qualified legal review (owner-gated Section 20 hard stop); no compliance declarations; dependency policy §G for any new package; the expansion hold outside the released lot-outline increment; PR #241 unmerged; D-043 internal-only deploy posture. Gap-list rows NOT named here (B3 DOB, B4 landmarks, B5 ACRIS, C2, C3, E1–E3, group D) remain untriaged candidates under D-041-R003 — this directive is the owner triage for its named groups only.",
+   "source_ref": "source-001.md#capture-context",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP",
+     "M4-T012",
+     "M4-T013",
+     "M4-T014",
+     "M4-T015",
+     "M4-T016",
+     "M4-T017",
+     "M4-T018",
+     "M4-T019",
+     "M4-T020",
+     "M4-T021",
+     "M5-T034"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "ledger contents; no task cites D-045 for out-of-scope work; draft labeling intact",
+   "required_evidence": "no acceptance of out-of-scope work under D-045; standing holds intact",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-045-R010",
+   "text": "RELAY / INTEGRATION (return item) — The companion session relays this directive to the live build session with the directive id and scope; the build-session orchestrator integrates the campaign into the master plan (/replan-project) and begins contracting under it. 'Tell the codex loop to build it' is discharged only when the build session acknowledges and the campaign appears in the plan.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-045-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-13"
+   },
+   "dependencies": [],
+   "required_harness": "cross-session message sent; build-session acknowledgment; master-plan campaign entry",
+   "required_evidence": "message record in this capture's audit_log; subsequent master-plan/ledger state",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
 }

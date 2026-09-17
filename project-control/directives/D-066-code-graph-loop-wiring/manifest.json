@@ -10,7 +10,7 @@
  "issued_at": "2026-09-17",
  "captured_at": "2026-09-17T05:32:23.029143+00:00",
  "created_at": "2026-09-17T05:32:23.029143+00:00",
- "updated_at": "2026-09-17T07:23:34.760838+00:00",
+ "updated_at": "2026-09-17T09:59:44.401180+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7525cadf448b785895ed47a592b48a4a6de5f97f",
@@ -27,7 +27,7 @@
   "D-066-R003",
   "D-066-R004"
  ],
- "requirements_content_digest_sha256": "649e8cd256dd0e00bd9d1f33ede93d0bdb200f14919f702ea9f10c69873e9888",
+ "requirements_content_digest_sha256": "3e32b55e42a846f3aeba334e05023094a99e2d72c7155974834ef685907d9858",
  "sources": [
   {
    "file": "source-001.md",
@@ -70,6 +70,12 @@
    "actor": "orchestrator",
    "action": "correction",
    "note": "M5-T033 removed from affected_tasks: binding is via requirements applicability (c14 requires a verification row for manifest-affected in-regime tasks; the row is written by the independent verifier at the acceptance seam, not at contract). Applicability binding unchanged."
+  },
+  {
+   "at": "2026-09-17T09:59:44.401180+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T034 bound to the every-seam navigation-block obligation. Digest resynced same commit."
   }
  ]
 }
