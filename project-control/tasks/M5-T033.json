@@ -1,0 +1,116 @@
+{
+  "task_id": "M5-T033",
+  "title": "Spatial-failure root cause: deployed spatial_intersection_absent (D-059-R004) + deploy-checklist flag coverage",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Trace the deployed spatial_intersection_absent failure to one confirmed root cause using the committed live capture (project-control/reports/M5-T033-live-capture.md), the deployed commit, and the code contract; reproduce BOTH candidate branches deterministically (flag unset -> uniform absent; flag on + connector failure -> typed per-parcel fail-safe) on BBLs 3052960043 and 3022647515; bound what each observable signature distinguishes; add the missing LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED entries to docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md; hand the single remaining owner dashboard check with exact expected readings for both outcomes. No claim that M4-T020/B4 alone fixes it.",
+  "business_reason": "D-059-R004 spatial-failure protocol (STILL OPEN); next packet after M5-T032 per handoff duty 4; carries D-066 code-graph wiring",
+  "inputs": [
+    "EXECUTION ENVIRONMENT (binding, thin client - ~6GB free): api task; NO npm/npx/node, NO WebFetch, NO network - they will be held and stall the run. Your job: edit within allowed_paths using native tools, run ONLY the documented python checks (ruff FIRST - it is the api CI job's first step), git add/commit IN YOUR WORKTREE ROOT (plain git, never -C; git add/commit will surface as ASKs the orchestrator answers - propose them once and continue), write the producer report, and checkpoint with any CI-authority evidence explicitly deferred to the orchestrator seam.",
+    "CHECKPOINT ENVELOPE DISCIPLINE (controller S8.3, binding): in your final checkpoint JSON set starting_sha, current_sha, branch, and worktree to the empty string \"\" - the controller fills the authoritative values itself and any value YOU supply must match its records EXACTLY or the run is stopped. Leaving them blank is always safe.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001, graph regenerated 2026-09-17 at this seam: 728 files, 15255 nodes, 6762 edges). Target module services/api/app/spatial/live_provider.py DEPENDS ON: connectors/mappluto_geometry_arcgis.py, connectors/zoning_features_arcgis.py, connectors/ztldb_soda.py, spatial/adapter.py, packages/contracts/schemas/v1/lot_geometry.schema.json. CONSUMERS (impact set): depth-1 api/v1/rule_evaluation.py, tests/api/test_rule_evaluation_api.py, tests/spatial/test_live_provider.py; depth-2 api/v1/evidence.py, api/v1/scenario.py, api/v1/scenario_analysis.py, app/main.py and their tests. integration.py:81 defines FAILSAFE_SPATIAL_ABSENT. For further who-consumes/impact questions run 'python tools/code_graph/query.py --no-regen impact <path>' or 'upstream <path>' BEFORE broad grep sweeps. The graph is ADVISORY: verify every material conclusion in actual source.",
+    "project-control/reports/M5-T033-live-capture.md (committed orchestrator live capture 2026-09-17T07:21:18Z: uniform spatial_intersection_absent on 3052960043, 3022647515 AND control 1008350041, all ~0.6-0.7s - weigh as evidence, not as the conclusion)",
+    "D-059-R004 protocol text (project-control/directives/D-059-mvp-review-workorder/): root cause via deployed commit + settings + typed logs; reproduce on the named parcel; NOT justified to claim M4-T020/B4 alone fixes it; deploy checklist must name LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED; deployed settings are OWNER-visible only - the deliverable is the bounded owner check, never a guessed setting.",
+    "Code contract: services/api/app/spatial/live_provider.py (flag token set, fail-safe None contract), services/api/app/api/v1/rule_evaluation.py (default provider seam), services/api/app/rules/integration.py (FAILSAFE_SPATIAL_ABSENT emission)",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md currently names INTERNAL_RULE_EVAL_ENABLED but NEITHER spatial flag - closing that gap is in scope"
+  ],
+  "outputs": [
+    "Root-cause record in the producer report: one confirmed causal account of the deployed spatial_intersection_absent, grounded in the committed live capture + code contract, with BOTH candidate branches reproduced deterministically in tests (flag unset -> uniform absent for every BBL; flag on + injected connector failure -> typed per-parcel fail-safe) and an explicit statement of what each observable signature does and does not distinguish",
+    "The single remaining owner dashboard check, written as a bounded instruction with exact expected readings for both outcomes (env var present+true vs absent/other on nycdf-api)",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md updated to name LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED with their fail-safe default (unset = disabled), where to set them, and the post-restart verification probe",
+    "Regression tests pinning the two signatures (uniform-absent vs typed per-parcel) so a future deploy regression is distinguishable from data failure",
+    "project-control/reports/M5-T033-producer-report.md (verbatim producer return)",
+    "CI api job on the pushed head is the executable authority for the api test suite; the orchestrator captures CI evidence and any further live probes at the seam. REVIEW GUIDANCE (D-066-R002, for the Codex reviewer): use the packet's navigation block and 'python tools/code_graph/query.py --no-regen impact services/api/app/spatial/live_provider.py' to check the change's blast radius (consumers of every edited module) and STATE IN THE REVIEW whether the graph information was accurate and useful. D-066-R003: the orchestrator records an audited per-unit wall-time/token comparison vs M5-T032 at the seam - the producer does not self-measure."
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/spatial/live_provider.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/rules/integration.py",
+    "services/api/tests/spatial/test_live_provider.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/rules/test_rules_integration.py",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md",
+    "project-control/reports/M5-T033-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "description": "A deterministic test proves flag-unset behavior: with LIVE_SPATIAL_PROVIDER_ENABLED absent, the provider yields no substrate for EVERY BBL and the evaluator emits spatial_intersection_absent with professional_review_required - matching the live capture's uniform signature."
+    },
+    {
+      "id": "AS-2",
+      "description": "A deterministic test proves the flag-on failure branch: with the flag set true and an injected connector failure, the outcome is the typed per-parcel fail-safe (never a guessed district, never a crash), observably distinct from the uniform flag-off signature."
+    },
+    {
+      "id": "AS-3",
+      "description": "Both D-059 parcels (3052960043, 3022647515) are exercised through the reproduction fixtures; no test claims the live runtime cause is confirmed - the report separates reproduced code behavior from the pending owner settings check."
+    },
+    {
+      "id": "AS-4",
+      "description": "The producer report states one causal account with the owner dashboard check as the single remaining confirmation, with exact expected readings for both outcomes; it does NOT claim M4-T020/B4 alone fixes the deployed failure."
+    },
+    {
+      "id": "AS-5",
+      "description": "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md names LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED with fail-safe defaults, setting location, and a post-restart verification probe; existing checklist content is preserved."
+    },
+    {
+      "id": "AS-6",
+      "description": "ruff (services/api) and the documented python checks pass; the api CI job on the pushed head is green at the seam (orchestrator-captured)."
+    },
+    {
+      "id": "AS-7",
+      "description": "ORCHESTRATOR-CAPTURED at the seam: the audited D-066-R003 per-unit wall-time/context-token comparison vs M5-T032 from the supervisor audit journal, presented as an advisory observation with its limits stated; and the Codex review's statement on graph accuracy/usefulness (D-066-R002) is on record."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Live-deploy settings are owner-visible only: the task must not guess the runtime env; its deliverable is the bounded owner check (D-059-R004)",
+    "The two failure signatures must stay observably distinct in tests or a future deploy regression becomes indistinguishable from data failure",
+    "api CI runs ruff first - a lint miss costs a CI round (run ruff before checkpointing)"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-17T07:21:58.526887+00:00",
+  "updated_at": "2026-09-17T07:21:58.790327+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-059",
+      "requirement_ids": [
+        "D-059-R004"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-17T07:21:58.526887+00:00",
+  "documented_test_commands": [
+    "python -m ruff check services/api",
+    "python -m pytest services/api/tests/spatial -q",
+    "python -m pytest services/api/tests/api/test_rule_evaluation_api.py -q",
+    "python -m pytest services/api/tests/rules -q",
+    "python tools/modularity_check.py --check",
+    "python tools/validate_directive_compliance.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t033"
+}
