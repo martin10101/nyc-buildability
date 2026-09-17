@@ -29,6 +29,15 @@ through git-bash!) → `clear-recovery` if PAUSED_RECOVERY → fresh run-id if a
 relaunch via autostart-launch.ps1 → re-arm the audit-tail watcher. Worker file edits survive
 all of this (they live in the task worktree, uncommitted).
 
+Machine-sleep crash recovery (run 38, 2026-09-17): a sleep/reboot kills supervisor + worker +
+orchestrator session together, leaving a STALE lock (pid dead), a journal stuck in
+CLAUDE_RUNNING (so `clear-recovery` refuses — it only fires from PAUSED_RECOVERY), a forked
+audit chain (mid-write), and boot refusal `unit_dispatch_unreconciled`. Order: repair script
+(archives fork) → gather read-only evidence (pending_effects 0, children 0, asks empty, edits
+confined to the task worktree) → run `recovery.reconcile_dispatch_intent(journal)` via the
+scripted journal-open from the loop-task-switch drill (NO CLI verb) → fresh run-id → relaunch.
+Worker edits survive in the worktree; the new run resumes from packet + tree.
+
 Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
 
 - The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
