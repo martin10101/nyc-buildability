@@ -1,0 +1,70 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-064",
+ "version": 1,
+ "slug": "subagent-opus48-lean-ops",
+ "title": "Owner 2026-09-16: all delegated Claude subagents run claude-opus-4-8 at xhigh (main agent stays Fable 5); human-readable ZoLa lot links replace raw PLUTO JSON as the primary source link; one-line lean-communication rule; batched per-seam full testing; loop relaunch after the owner's model_selection.toml edit with quiet monitoring.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-16",
+ "captured_at": "2026-09-17T03:29:03.961118+00:00",
+ "created_at": "2026-09-17T03:29:03.961118+00:00",
+ "updated_at": "2026-09-17T03:29:03.961118+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "1fa1b47aea96166754094637fdd0c8fc275e229c",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner gave the instruction directly in-session and said 'ok lets do it'. The subagent-scope supersession of D-055/D-058-R004/D-060 fable defaults follows the handoff Section 1 reconciliation instruction; the controller toml edit stays owner-only."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-064-R001",
+  "D-064-R002",
+  "D-064-R003",
+  "D-064-R004",
+  "D-064-R005",
+  "D-064-R006",
+  "D-064-R007",
+  "D-064-R008",
+  "D-064-R009",
+  "D-064-R010",
+  "D-064-R011"
+ ],
+ "requirements_content_digest_sha256": "31a24a8d025f232ff5e3770767c23095a1ca8f2b3a1a8825c11babf416083760",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-17T03:29:03.961118+00:00",
+   "content_digest_sha256": "4f5100dc8ee50b12fc77d4ae44a86edf64ee0c830564571a8c9d2ab1bd17cd33"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "standing_operating_preference",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "subagent model/effort flip to claude-opus-4-8 xhigh, CLAUDE.md lean-communication line, ZoLa-first lot links via a bound gated task, batched per-seam full regression, loop relaunch after the owner toml edit",
+  "prohibited": "changing the main-session model, agent-side edits to C:\\SupervisorController\\model_selection.toml, weakening tests/gates/holds, rewriting D-055/D-058/D-060 history, removing raw official records from provenance surfaces"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-17T03:29:03.961118+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim from the live owner session before execution; supersession recorded for the subagent scope only (D-064-R004)."
+  }
+ ]
+}
