@@ -928,6 +928,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-070-finished-seam-handoff/manifest.json"
+  },
+  {
+   "directive_id": "D-071",
+   "slug": "second-parallel-loop",
+   "title": "Owner 2026-09-17: second parallel build loop AUTHORIZED as a two-loop trial - full isolation (own runner identity, own worktree/branch, disjoint file scopes, sequential integration), lane = DB-016 context-panel parity (+ DB-005 ZoLa-link unification); watch machine load and account usage, drop to one loop on sustained contention; 3D stays held; a third loop needs a new owner decision.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-071-second-parallel-loop/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

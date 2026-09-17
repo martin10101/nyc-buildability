@@ -1,0 +1,69 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-071",
+ "version": 1,
+ "slug": "second-parallel-loop",
+ "title": "Owner 2026-09-17: second parallel build loop AUTHORIZED as a two-loop trial - full isolation (own runner identity, own worktree/branch, disjoint file scopes, sequential integration), lane = DB-016 context-panel parity (+ DB-005 ZoLa-link unification); watch machine load and account usage, drop to one loop on sustained contention; 3D stays held; a third loop needs a new owner decision.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-17",
+ "captured_at": "2026-09-17T22:43:29.857680+00:00",
+ "created_at": "2026-09-17T22:43:29.857680+00:00",
+ "updated_at": "2026-09-17T22:45:06.197528+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "dec4de2b6830b859b846ba8426ac36f04a62c86e",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner asked for the feasibility check, received the two-loop trial assessment with its limits, and authorized: \"yes set it up second loop on context panel\"."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-071-R001",
+  "D-071-R002",
+  "D-071-R003",
+  "D-071-R004"
+ ],
+ "requirements_content_digest_sha256": "2b63c2eb372f052c8b2b14e46f4c5d07684ce8e854388dfa927a4f5a77ae43b0",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-17T22:43:29.857680+00:00",
+   "content_digest_sha256": "0dd71754e50ed3b984938909f65d073ec54109cda95d0422a074c3ebb45c099f"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "second supervisor instance setup + the DB-016/DB-005 web packet; no gate/hold/authority change; expansion hold untouched",
+  "notes": "Rows bind the non-ledger sentinel D-071-BOOTSTRAP; the loop-2 packet binds R002 via applicability append at contract."
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-17T22:43:29.857680+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim in-session before any setup work; loop-2 packet contracted under it in the adjacent commits."
+  },
+  {
+   "at": "2026-09-17T22:45:06.197528+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T036 bound as the loop-2 lane packet (DB-016 context panel + DB-005 unification). Digest resynced same commit."
+  }
+ ]
+}

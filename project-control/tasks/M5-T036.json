@@ -1,0 +1,128 @@
+{
+  "task_id": "M5-T036",
+  "title": "DB-016: context-panel parity in the architect flow (designations we already fetch, with provenance + validated ZoLa links) + DB-005 ZoLa-link unification",
+  "task_type": "web",
+  "milestone_id": "M5",
+  "objective": "Surface the already-fetched official designations alongside the computed answers in the architect flow: a new ZoningContextPanel component rendering zoning districts (split lots included), commercial overlays, special districts, and landmark/historic flags from the client-side PropertyProfile - each with provenance and honest absent/Unknown states, plus the validated ZoLa lot link - mounted on the architect overview surface. Unify every inline ZoLa link through the shared validated zolaLotUrl helper (DB-005: PropertyOverview.tsx builds one inline; AddressConfirmCard too). Label display ONLY: no new computation, no new data source, no api change - the computed-answer engine remains the differentiator (owner ruling 2026-09-17).",
+  "business_reason": "Owner observation DB-016: the surface shows only FAR while ZoLa displays rich per-lot context our connectors already fetch; owner authorized loop-2 on this lane (D-071-R002). Fully disjoint file scope from the live M5-T035 loop packet (D-071-R001).",
+  "inputs": [
+    "EXECUTION ENVIRONMENT (binding, thin client - ~6GB free): WEB task; NO npm/npx/node EVER (no node_modules exists on this machine), NO WebFetch, NO network. Web tests CANNOT run locally - CI on the pushed head is the ONLY executable authority for web behavior (M5-T023 pattern); never mark web behavior verified from local reasoning. Edit within allowed_paths using native tools, run ONLY the documented python checks, git add/commit IN YOUR WORKTREE ROOT (plain git, never -C; git writes surface as ASKs the orchestrator answers - propose once and continue), write the producer report, checkpoint with CI-authority evidence deferred to the orchestrator seam.",
+    "CHECKPOINT ENVELOPE DISCIPLINE (controller S8.3, binding): in your final checkpoint JSON set starting_sha, current_sha, branch, and worktree to the empty string \"\" - the controller fills authoritative values; any value you supply must match EXACTLY or the run stops. Blank is always safe.",
+    "REVIEWER HONESTY BAR (binding - the Codex reviewer enforces this and the run has at most 4 review cycles; write the report to this bar in DRAFT 1): state observations separately from conclusions; never claim exhaustiveness unless proven; no 'most likely' rankings; every claim carries its evidence (test name, file:line, or command output); separate what YOU ran from what CI will prove; mark anything unverified as UNVERIFIED; never claim completion or compliance - the gates decide.",
+    "DISCOVERY ROUTING (D-069, binding on producer AND reviewer): surface out-of-scope product/domain discoveries in your REPORTS - never fix them in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam. You learn of that backlog only through this packet text.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-17 at this contract seam: 732 files, 15341 nodes, 6791 edges). Surface: PropertyOverview.tsx is imported by ArchitectEntry.tsx:24, ProfileViews.tsx:18, PropertyFacts.tsx:9, ReportView.tsx:11, ScenarioWorkspace.tsx:4 + development-limits.test.tsx - a panel mounted there reaches the whole architect flow, and ReportView means the printed brief renders it too (decide and STATE whether the panel belongs in print). Reference implementations to mirror (READ, do not edit): components/property/ZoningSection.tsx renders profile.zoning arrays 'districts' / 'commercial_overlays' / 'special_districts' with honest empty-text per array; architect/AdditionalZoningFlags.tsx renders landmark/histdist/FIRM flags from profile.zoning.mapped_features via mappedFeatureView with honest 'Unknown - not supplied'; lib/contract.ts carries PropertyProfile + mappedFeatureView. ZoLa helper: lib/provenance-link.ts zolaLotUrl (validated, null on invalid BBL) - PropertyOverview.tsx:52 currently builds the link INLINE (the DB-005 defect this packet fixes). For who-consumes/impact questions run 'python tools/code_graph/query.py --no-regen impact <path>' BEFORE broad sweeps. Graph is ADVISORY - verify every material conclusion in source.",
+    "LABEL-DISPLAY-ONLY BOUNDARY (binding, owner ruling 2026-09-17): this panel shows what the official record already supplies to the client - it never computes, never infers, never fills a gap. Absent data renders as the honest absent/Unknown state exactly like the reference components (never hidden, never defaulted). Provenance per section mirrors the existing profile provenance discipline. No api change, no contract.ts type change, no new fetch: if a designation you want is NOT already in the client-side PropertyProfile, note it in the report as a discovery - do not add plumbing.",
+    "DB-005 UNIFICATION (binding): every ZoLa link on the touched surfaces goes through zolaLotUrl (which returns null on an invalid BBL - render NO link then, never a raw template string). PropertyOverview.tsx:52 inline link replaced; AddressConfirmCard.tsx checked and unified the same way. Same constant-prefix + validated-token discipline as the accepted M5-T032 work (G5 F-1).",
+    "WEB TEST RULES (CODING_RULES.md, binding): type DOM queries as querySelectorAll<HTMLElement>; deliberate invalid-shape probes as 'as unknown as T'; NEVER commit an empty .test.tsx (vitest fails on 'no suite' - the placeholder already carries a trivial passing test, replace it with the real suite); don't read jsdom getContext/WebGL noise as failure - read the vitest FAIL summary only.",
+    "PARALLEL-LOOP ISOLATION (D-071-R001, binding): a second build loop is running M5-T035 on services/api/** concurrently. Your scope is apps/web/** + your report ONLY - if any change seems to need an api or shared-lib file outside allowed_paths, STOP and surface it in the report (discovery routing), never edit it.",
+    "D-059-R006 claims discipline: never present this panel as closing an MVP percentage or as parity 'done'; the report states exactly what is now displayed and what remains absent from the client-side profile."
+  ],
+  "outputs": [
+    "New component apps/web/src/components/architect/ZoningContextPanel.tsx: renders zoning districts (all, split lots included), commercial overlays, special districts, and landmark/historic flags from the client-side PropertyProfile with per-section provenance, honest absent/Unknown states, and ONE validated ZoLa lot link (zolaLotUrl; no link when null)",
+    "Panel mounted on the architect overview surface (PropertyOverview.tsx and/or ProfileViews.tsx) with a stated decision about the printed brief (ReportView reaches PropertyOverview)",
+    "DB-005 closed on the touched surfaces: PropertyOverview.tsx:52 inline ZoLa link and any AddressConfirmCard.tsx inline link routed through zolaLotUrl",
+    "Tests: zoning-context-panel suite (populated arrays, empty arrays -> honest empty text, absent mapped_features -> Unknown rows, invalid BBL -> no ZoLa link, split-lot multi-district rendering) + updated existing suites for the touched components",
+    "project-control/reports/M5-T036-producer-report.md (verbatim producer return, written to the REVIEWER HONESTY BAR)",
+    "CI web job on the pushed head is the executable authority; the orchestrator captures CI evidence at the seam. REVIEW GUIDANCE (for the Codex reviewer): use the navigation block and 'python tools/code_graph/query.py --no-regen impact apps/web/src/components/architect/PropertyOverview.tsx' to check blast radius (five importers incl. the printed brief), STATE whether the graph information was accurate and useful, and surface any out-of-scope discoveries in your review return (discovery routing)."
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/components/architect/ZoningContextPanel.tsx",
+    "apps/web/src/components/architect/__tests__/zoning-context-panel.test.tsx",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/ProfileViews.tsx",
+    "apps/web/src/components/architect/AdditionalZoningFlags.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "project-control/reports/M5-T036-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "apps/web/src/lib/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "description": "The panel renders every designation class present in the client-side profile (districts incl. split-lot multiples, commercial overlays, special districts, landmark/historic flags) with per-section provenance; nothing is computed, inferred, or defaulted."
+    },
+    {
+      "id": "AS-2",
+      "description": "Honest absence: empty arrays render the explicit empty text (mirroring ZoningSection); absent mapped_features render 'Unknown - not supplied' rows (mirroring AdditionalZoningFlags); nothing absent is hidden."
+    },
+    {
+      "id": "AS-3",
+      "description": "ZoLa links: exactly the validated helper on every touched surface; an invalid/absent BBL renders NO link (zolaLotUrl null path); no raw template-string ZoLa URL remains in the touched files (DB-005)."
+    },
+    {
+      "id": "AS-4",
+      "description": "The panel reaches the architect flow surfaces its mount point implies, and the printed-brief decision (include or exclude in ReportView's rendering) is stated and tested."
+    },
+    {
+      "id": "AS-5",
+      "description": "File scope stays disjoint from the live M5-T035 packet (apps/web/** + report only); no api, lib, or contract change; any needed-but-missing field is reported as a discovery, not plumbed."
+    },
+    {
+      "id": "AS-6",
+      "description": "Vitest suites for the new panel and touched components pass in CI on the pushed head (web CI is the executable authority; no local npm anywhere)."
+    },
+    {
+      "id": "AS-7",
+      "description": "python tools/modularity_check.py --check passes; no component grows past its responsibility."
+    },
+    {
+      "id": "AS-8",
+      "description": "The producer report meets the REVIEWER HONESTY BAR: observations separated from conclusions, every claim evidence-bound, UNVERIFIED marked (web behavior stays UNVERIFIED until CI), discoveries surfaced not fixed."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Scope magnets are OUT: missing-inputs card on ConfirmScreen, malformed-copy fix, address-flow test gaps (DB-007/009), api field exposure - surface them in the report via discovery routing, never fix in-packet",
+    "No local web test run exists on this machine: do NOT claim test results you did not run; CI on the pushed head decides",
+    "ReportView imports PropertyOverview - an unconsidered mount leaks the panel into the printed brief; decide and state it",
+    "A second loop is editing services/api/** concurrently: any edit outside apps/web/** + your report breaks parallel isolation (D-071-R001) - STOP and report instead",
+    "At most 4 review cycles per run: write the report to the honesty bar in draft 1"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-17T22:43:50.175119+00:00",
+  "updated_at": "2026-09-17T22:43:50.427471+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-071",
+      "requirement_ids": [
+        "D-071-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-17T22:43:50.175119+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t036",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}
