@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
+import { zolaLotUrl } from "@/lib/provenance-link";
 
 /**
  * M5-T016 acceptance pack — Address Confirm card + ZoLa deep-link + handoff
@@ -241,6 +242,28 @@ describe("S2 — ZoLa link discipline", () => {
     expect(link.getAttribute("target")).toBe("_blank");
     expect(link.getAttribute("rel")).toBe("noopener noreferrer");
     expect(screen.queryByTestId("zola-link-absent")).toBeNull();
+  });
+
+  it("DB-005: the rendered ZoLa href is exactly the shared zolaLotUrl helper output (no local template remains)", async () => {
+    const { doc } = await renderResolved();
+    const link = screen.getByTestId("zola-link");
+    // The migration replaced this card's local ZOLA_BBL_URL_PREFIX +
+    // encodeURIComponent template with the shared validated helper; the
+    // rendered href is byte-identical to the helper's output for the
+    // re-validated canonical BBL — the unification, proven at the surface.
+    expect(link.getAttribute("href")).toBe(zolaLotUrl(doc.canonical.bbl));
+    expect(zolaLotUrl(doc.canonical.bbl)).toBe(
+      `${ZOLA_PREFIX}${doc.canonical.bbl}`,
+    );
+  });
+
+  it("DB-005: a non-canonical BBL drives the helper's null contract — no ZoLa link renders", async () => {
+    const doc = resolvedDoc();
+    doc.canonical.bbl = "12345"; // fails validateBblInput AND zolaLotUrl
+    await renderResolved(doc);
+    expect(zolaLotUrl("12345")).toBeNull();
+    expect(screen.queryByTestId("zola-link")).toBeNull();
+    expect(screen.getByTestId("zola-link-absent")).toBeInTheDocument();
   });
 
   it("a BBL that fails client re-validation yields NO ZoLa link and NO Continue — honest absence, never a guessed link", async () => {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { rememberAddress } from "@/lib/architect/selected-address";
 import type { AddressDocumentOutcome } from "@/lib/address-api";
 import { validateBblInput } from "@/lib/bbl";
+import { zolaLotUrl } from "@/lib/provenance-link";
 import { Meta } from "./AddressOutcomeCards";
 import { LotOutlineMap } from "./LotOutlineMap";
 
@@ -20,9 +21,11 @@ import { LotOutlineMap } from "./LotOutlineMap";
  *
  *   - ZoLa: the CONFIRMED `/bbl/<10-digit-bbl>` convenience route
  *     (docs/design/zola-deeplink-url-confirmation.md — verified from the
- *     labs-zola router source + live checks 2026-09-12). Host+path is a
- *     module CONSTANT; ZoLa's SPA answers 200 for any path, so this client
- *     validation is the only guard.
+ *     labs-zola router source + live checks 2026-09-12). DB-005: built ONLY
+ *     through the shared validated `zolaLotUrl` helper (constant host+path
+ *     prefix + strict canonical-BBL check), which returns null — and renders
+ *     NO link — for anything that is not a canonical BBL. ZoLa's SPA answers
+ *     200 for any path, so this validation is the only guard.
  *   - The handoff: /property/confirm?bbl=<canonical> (the existing step-2
  *     route contract; ConfirmEntry reads the param on hydration).
  *
@@ -34,8 +37,6 @@ import { LotOutlineMap } from "./LotOutlineMap";
  * source_facts confidence (1.0 = deterministic retrieval) is deliberately
  * absent from the view model and never becomes a badge.
  */
-
-const ZOLA_BBL_URL_PREFIX = "https://zola.planning.nyc.gov/bbl/";
 
 export function AddressConfirmCard({
   outcome,
@@ -50,6 +51,11 @@ export function AddressConfirmCard({
   const validation =
     view.canonical.bbl === null ? null : validateBblInput(view.canonical.bbl);
   const canonicalBbl = validation?.ok ? validation.canonical : null;
+  // DB-005: the ZoLa deep-link is built ONLY through the shared validated
+  // helper. canonicalBbl already passed validateBblInput, so this is null
+  // exactly when there is no canonical BBL — the same gate as before, with
+  // no raw template string on this surface.
+  const zolaUrl = zolaLotUrl(canonicalBbl);
 
   const addressLine = [
     [view.inputEcho.houseNumber, view.canonical.streetNameNormalized]
@@ -123,11 +129,11 @@ export function AddressConfirmCard({
         </p>
       )}
 
-      {canonicalBbl ? (
+      {zolaUrl ? (
         <p>
           <a
             className="secondary-button"
-            href={`${ZOLA_BBL_URL_PREFIX}${encodeURIComponent(canonicalBbl)}`}
+            href={zolaUrl}
             target="_blank"
             rel="noopener noreferrer"
             data-testid="zola-link"

@@ -13,6 +13,7 @@ import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import { draftApplicableDoc, missingEvidenceDoc, ruleConflictDoc } from "@/test-support/rule-evaluation-fixtures";
 import { bulkRow, evaluatedResidentialFar, evaluationIsInspectable, scenarioCap } from "@/lib/architect/development-limits";
+import { zolaLotUrl } from "@/lib/provenance-link";
 import scenarioFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 import r5Snapshot from "../../../../../../services/api/app/_zr_snapshots/v1/zr-23-21.snapshot.json";
 import r6Snapshot from "../../../../../../services/api/app/_zr_snapshots/v1/zr-23-22.snapshot.json";
@@ -168,6 +169,33 @@ describe("development-first entry points", () => {
     fireEvent.click(screen.getByText("Existing building information"));
     expect(disclosure.open).toBe(false);
     expect(screen.getByTestId("development-reference-far")).toHaveTextContent("3.00");
+  });
+});
+
+describe("DB-005 — Site context ZoLa link routes through the validated helper", () => {
+  // The "Site context" map card link (PropertyOverview) is a SEPARATE ZoLa
+  // affordance from the ZoningContextPanel's own link — both now route through
+  // zolaLotUrl. Scope every assertion to the map card so the two never blur.
+  function siteCard() {
+    return document.querySelector<HTMLElement>(".architect-map-card")!;
+  }
+  it("renders the Site context ZoLa link from zolaLotUrl for a canonical BBL", () => {
+    const profile = baseProfile(); // accepted M1-T005 fixture, BBL 1000010010
+    render(<PropertyOverview profile={profile} scenario={null} evaluation={null} onInspect={vi.fn()}/>);
+    const link = within(siteCard()).getByRole("link", { name: /Open ZoLa/ });
+    // Byte-identical to the shared helper output — the DB-005 unification proven
+    // at the surface (the former inline template is gone).
+    expect(link.getAttribute("href")).toBe(zolaLotUrl(profile.identity.bbl));
+    expect(link.getAttribute("target")).toBe("_blank");
+    expect(link.getAttribute("rel")).toBe("noopener noreferrer");
+  });
+  it("renders NO Site context ZoLa link for a non-canonical BBL (helper null contract)", () => {
+    const profile = baseProfile();
+    profile.identity.bbl = "12345"; // zolaLotUrl -> null
+    profile.provenance.forEach(record => { record.bbl = "12345"; });
+    render(<PropertyOverview profile={profile} scenario={null} evaluation={null} onInspect={vi.fn()}/>);
+    expect(zolaLotUrl("12345")).toBeNull();
+    expect(within(siteCard()).queryByRole("link", { name: /Open ZoLa/ })).toBeNull();
   });
 });
 

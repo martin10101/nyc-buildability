@@ -4,10 +4,12 @@ import type { Scenario } from "@/lib/scenario-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { fieldLabel } from "@/lib/format";
 import { provenanceById } from "@/lib/provenance";
+import { zolaLotUrl } from "@/lib/provenance-link";
 import { propertyHref } from "@/lib/architect/navigation";
 import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { FactsTable } from "@/components/property/FactsTable";
 import { DevelopmentLimits } from "./DevelopmentLimits";
+import { ZoningContextPanel } from "./ZoningContextPanel";
 export { DraftHeadline } from "./DevelopmentLimits";
 export function PropertyIssuesSummary({ profile }: {
     profile: PropertyProfile;
@@ -39,6 +41,10 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
     onInspect: (id: string) => void;
 }) {
     const bbl = profile.identity.bbl;
+    // DB-005: the only ZoLa link on this surface goes through the validated
+    // helper (null on a non-canonical BBL -> render NO link, never a raw
+    // template string). Same discipline as the accepted M5-T032 work.
+    const siteZolaUrl = zolaLotUrl(bbl);
     return <>
     <PropertyIssuesSummary profile={profile}/>
     <div className="architect-overview-grid">
@@ -49,11 +55,12 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
       <section className="card architect-map-card">
         <div className="architect-panel-heading">
           <h2>Site context</h2>
-          <a href={`https://zola.planning.nyc.gov/bbl/${bbl}`} target="_blank" rel="noopener noreferrer">Open ZoLa ↗</a>
+          {siteZolaUrl ? <a href={siteZolaUrl} target="_blank" rel="noopener noreferrer">Open ZoLa ↗</a> : null}
         </div>
         <LotOutlineMap bbl={bbl} context/>
       </section>
     </div>
+    <ZoningContextPanel profile={profile}/>
     <details className="card architect-disclosure architect-existing-building">
       <summary>Existing building information</summary>
       <FactsTable title="Existing building facts" facts={profile.existing_building_facts} byId={provenanceById(profile)} reproducibility={profile.reproducibility} onInspect={onInspect}/>
