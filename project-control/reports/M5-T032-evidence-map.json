@@ -1,0 +1,18 @@
+{
+  "task_id": "M5-T032",
+  "material_commit": "cbc10397",
+  "material_commits": ["cbc10397", "71d4abb3", "2b440f41"],
+  "integration_commit": "a8ed75be",
+  "ci_green_head": "2b440f41",
+  "requirements": {
+    "D-064-R005": [
+      "ZoLa-first human-readable links implemented: provenance-link.ts builds zolaLotUrl ONLY from the constant prefix https://zola.planning.nyc.gov/bbl/ + strictly validated BBL; ProvenanceDisclosure renders 'View this lot on ZoLa' as the PRIMARY link with the current PLUTO JSON record demoted to a clearly secondary raw-record link and the dataset landing link retained (material commit cbc10397; AS-10 unit tests in provenance-link.test.ts and sections.test.tsx; legacy consumer tests updated to the intended contract in 71d4abb3).",
+      "Honest absence preserved: invalid, absent, or conflicting lot identity closes the ZoLa link together with the raw record (M5-T030 guard tests green in CI at 2b440f41).",
+      "Live AS-11 smoke: ZoLa lot page https://zola.planning.nyc.gov/bbl/3052960043 returned HTTP 200 with no redirect at 2026-09-17T07:14:30Z (project-control/reports/M5-T032-orchestrator-seam-evidence.md)."
+    ],
+    "D-064-R007": [
+      "Focused testing discipline: producer ran only the documented python checks in the worktree (modularity + directive validator, supervisor audit journal approvals); the full web suite executed once at the integration seam via CI on the pushed head - web (lint+typecheck+build) and web-e2e (vitest 971/971, Playwright journeys 113/113) green at 2b440f41.",
+      "Batched seam verification: intermediate CI reds were inventoried and repaired as three bounded convergence clusters (control-plane manifest shape; strict-TS test casts; behavior-contract consumer updates incl. the S4 focus-after-remount fix) rather than serial rerun-discovery - record in project-control/reports/M5-T032-orchestrator-seam-evidence.md."
+    ]
+  }
+}

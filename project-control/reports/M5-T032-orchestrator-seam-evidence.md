@@ -51,4 +51,19 @@ CI completes).
 
 ## CI evidence (appended at completion)
 
-- PENDING at first write: web / web-e2e / control-plane jobs on head cbc10397.
+- Final verdict, task-branch head **2b440f41** (material cbc10397 + ORCH corrections
+  71d4abb3 + e2e-copy correction 2b440f41): workflows **CI -> success, context-budget ->
+  success, secret-scan -> success** (GitHub Actions, 2026-09-17 ~08:0x UTC). All 18 CI jobs
+  green, including web (lint+typecheck+build), web-e2e (vitest 971/971; Playwright journeys
+  113/113 after the typed-copy update), api, control-plane, modularity, dependency gates.
+- Convergence record for the intermediate reds (defect inventory before fixes, D-064-era
+  method): cluster A control-plane (D-067 manifest amendment shape; fixed on candidate
+  d7188b2f, registry validate() 0 errors in 113 s), cluster B web typecheck (3 strict-TS
+  test-file errors; [ORCH-CORRECTED] 71d4abb3), cluster C behavior-contract consumers
+  (S4 focus-after-remount defect fixed with the file's own nonce-effect pattern; legacy
+  provenance-disclosure test and the e2e journey updated to the intended ZoLa-first /
+  typed-outcome contracts, with allowed_paths expanded per the producer's routing request).
+- Orchestrator foreground validator run: superseded by the control-plane CI job at
+  2b440f41 (same validator, clean runner) - green above; the local foreground attempt was
+  stopped mid-run and is recorded only as a distinct non-outcome, consistent with the
+  producer report's honesty section.
