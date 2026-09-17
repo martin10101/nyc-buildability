@@ -920,3 +920,138 @@ def test_m2t020_s3_live_connector_failure_is_absent_substrate_fail_safe(
     assert f"correlation_id={correlation_id}" in lines[0]
     assert "canary-upstream-detail" not in lines[0]
     assert "canary-upstream-detail" not in response.text
+
+
+# ==========================================================================
+# M5-T033 - deployed spatial_intersection_absent root-cause reproduction
+# (D-059-R004). The live capture (project-control/reports/M5-T033-live-capture.md)
+# recorded a UNIFORM spatial_intersection_absent across both D-059 parcels AND a
+# known-good control, each in ~0.6-0.7 s. Two candidate branches produce that
+# same response-level reason; these reproduce BOTH deterministically through the
+# route's DEFAULT spatial seam and pin what each observable signature does and
+# does NOT distinguish. No production code changes - the branches already exist;
+# this is the regression fence keeping a future deploy regression (flag unset)
+# separable from a live connector/data failure. Uniform absence across the control
+# and fast latency are SUGGESTIVE, never decisive: a shared connector failure is
+# uniform and fast too, so they cannot by themselves prove the flag was off (the
+# provider-level counterexample lives in tests/spatial/test_live_provider.py::
+# test_m5t033_shared_connector_failure_is_uniform_absent_flag_on). The runtime
+# cause stays UNCONFIRMED until the owner reads the deployed
+# LIVE_SPATIAL_PROVIDER_ENABLED value and its correlated connector logs
+# (docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md §6b); the tests assert code
+# behavior only, never that the live cause is confirmed.
+# ==========================================================================
+
+# The end-to-end seam behavior below is BBL-agnostic, so it runs on the module
+# fixture BBL (whose PLUTO row the connector validates against the requested BBL).
+# The D-059-R004 parcels themselves (3052960043, 3022647515) are exercised in the
+# reproduction fixtures at the PROVIDER level (tests/spatial/test_live_provider.py)
+# and the EVALUATOR level (tests/rules/test_rules_integration.py), where no PLUTO
+# row is fetched so the real parcel BBLs flow through unmodified.
+
+
+def test_m5t033_flag_off_uniform_absent_zero_connector_calls(
+    client, monkeypatch, rule_eval_validator
+):
+    """Branch A (deploy regression): LIVE_SPATIAL_PROVIDER_ENABLED unset -> the
+    DEFAULT provider yields no substrate with ZERO connector calls, and the
+    endpoint fail-safes to spatial_intersection_absent - the same reason the live
+    capture recorded UNIFORMLY across every parcel, reproduced end-to-end through
+    the route's own default seam (this branch's BBL-independence is pinned
+    per-parcel for the D-059 parcels at the provider/evaluator levels)."""
+    enable_flag(monkeypatch)  # INTERNAL_RULE_EVAL_ENABLED on (route reachable)
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = RecordingLiveFetchers(label="R5")  # working doubles; stay unused
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()  # route uses its DEFAULT (live) provider
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    assert doc["evaluations"] == []
+    # The signature that separates this from a live connector failure: ZERO
+    # connector calls, asserted AFTER the request (the fail-safe except cannot
+    # hide a recorded call). Flag-off short-circuits before any network I/O.
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m5t033_flag_on_connector_failure_same_reason_but_connector_consulted(
+    client, monkeypatch, rule_eval_validator, caplog
+):
+    """Branch B (live data failure): flag ON + an injected connector failure
+    returns the SAME response-level spatial_intersection_absent (a documented 200
+    fail-safe, never a 500) - so the response body alone does NOT distinguish it
+    from branch A. What DOES: the connector was actually consulted (recorded) and
+    the provider logged exactly one payload-only connector_error line. This is the
+    crux the owner dashboard check resolves."""
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+
+    def _raising_ztldb(bbl, cid):
+        raise ZtldbUpstreamError("canary-m5t033-detail", correlation_id=cid)
+
+    recording = RecordingLiveFetchers(ztldb=_raising_ztldb)
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    # Response-level reason IDENTICAL to branch A (body cannot tell them apart).
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    # Provider-level signature is observably DIFFERENT: the connector was consulted
+    # for this BBL, carrying the same correlation id the response advertises ...
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    # ... and exactly one payload-only fail-safe line was logged (no canary text).
+    lines = [
+        r.getMessage()
+        for r in caplog.records
+        if r.name == "app.spatial.live_provider" and "fail_safe" in r.getMessage()
+    ]
+    assert len(lines) == 1
+    assert "event=connector_error" in lines[0]
+    assert "error_type=UpstreamError" in lines[0]
+    assert "canary-m5t033-detail" not in lines[0]
+    assert "canary-m5t033-detail" not in response.text
+
+
+def test_m5t033_flag_on_healthy_connectors_is_not_absent_per_parcel(
+    client, monkeypatch, rule_eval_validator
+):
+    """Flag ON + HEALTHY connectors end-to-end -> the parcel resolves to a real
+    district (NOT absent). This shows the flag-on branch CAN resolve; it does NOT
+    prove uniform absence implies flag-off. A SHARED connector failure yields
+    uniform absence with the flag ON too (tests/spatial/test_live_provider.py::
+    test_m5t033_shared_connector_failure_is_uniform_absent_flag_on), so uniformity
+    and latency are suggestive only - the owner dashboard flag reading and the
+    correlated typed connector logs are the decisive runtime evidence."""
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingLiveFetchers(label="R5")
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe_reason"] != "spatial_intersection_absent"
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["zoning_district"] == "R5"
+    # The connectors WERE consulted for this parcel (unlike branch A's zero calls).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]

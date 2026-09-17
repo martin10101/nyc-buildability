@@ -248,6 +248,127 @@ Save; Render restarts `nycdf-api`. Confirm `/api/v1/health` returns 200 after th
 
 ---
 
+## 6a. Two more `nycdf-api` internal flags — live spatial substrate + scenario endpoint (D-059-R004, M5-T033)
+
+These two flags on **`nycdf-api`** were **not** named in earlier revisions of this checklist and are the
+subject of the D-059-R004 spatial-failure protocol. Their **code-level fail-safe default is disabled**:
+when the variable is **absent** the server behaves as OFF (`services/api/app/spatial/live_provider.py`,
+`services/api/app/config.py`). The actual value on any deployed service is **environment-scoped and
+owner-visible only** — this checklist never asserts what a deployed service currently carries; §6b is how
+you read it. Both follow the **same true-token rule** as `INTERNAL_RULE_EVAL_ENABLED` — accepted true
+tokens are `1`, `true`, `yes`, `on` (case-insensitive, trimmed); **absent / empty / any other value =
+disabled (fail-safe).** Set them on **`nycdf-api` → Environment**, save, and let Render restart the
+service (an env-var change is a deploy).
+
+1. **`LIVE_SPATIAL_PROVIDER_ENABLED`** — gates the **live spatial-substrate composition** behind the
+   rule-evaluation endpoint's default provider
+   (`services/api/app/spatial/live_provider.py`, `LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR`).
+   - **Fail-safe default (absent = disabled):** with it absent the server-side spatial provider returns
+     **no substrate** and makes **zero connector calls**, so `GET /api/v1/properties/{bbl}/rule-evaluation`
+     fail-safes to `spatial_intersection_absent` / `professional_review_required` for **every** BBL — a
+     valid 200 "professional review required" document with **no district**, never a live zoning answer.
+   - **This is ONE candidate cause of the recorded live failure — not a confirmed one.** The 2026-09-17
+     capture (`project-control/reports/M5-T033-live-capture.md`) saw uniform `spatial_intersection_absent`
+     across both D-059 parcels **and** a known-good control, each in ~0.6–0.7 s. A disabled flag produces
+     exactly that shape — **but so does a shared connector/network failure** (all three parcels hitting the
+     same failing upstream, which can also fail uniformly and fast). Uniformity and latency are therefore
+     **suggestive, not decisive**; the flag reading in §6b is what confirms it. To get live spatial
+     answers you **must** set this flag to a true token.
+   - **Independent of `INTERNAL_RULE_EVAL_ENABLED`.** The rule-eval route must **also** be enabled
+     (§6 step 2) for any of this to be reachable at all; this flag only decides whether the *reachable*
+     route composes a real substrate or fail-safes to absent. Turning it on makes the API perform live
+     ArcGIS/SODA connector calls per request.
+   - **Where:** `nycdf-api` → Environment. **Post-restart probe:** see **§6b**.
+
+2. **`INTERNAL_SCENARIO_ENABLED`** — gates the internal **scenario** endpoint
+   `GET /api/v1/properties/{bbl}/scenario` (`services/api/app/api/v1/scenario.py`
+   `@router.get("/properties/{bbl}/scenario", include_in_schema=False)` → guard
+   `internal_scenario_enabled()`; name in `services/api/app/config.py`,
+   `INTERNAL_SCENARIO_ENABLED_ENV_VAR`). Absent = the scenario route returns a generic **`404`
+   `{"detail":"Not Found"}`** byte-indistinguishable from an unmounted path (fail-safe) and absent from
+   the OpenAPI document — the **same** posture as the rule-eval flag, with a **distinct** name so the two
+   internal surfaces are enabled independently (the scenario route is gated by **this** flag only, not by
+   `INTERNAL_RULE_EVAL_ENABLED`). Set it to a true token to expose the scenario endpoint. **Where:**
+   `nycdf-api` → Environment. **Post-restart probe:** see **§6b** (exact method/path and the web opt-in).
+
+## 6b. OWNER DASHBOARD CHECK — read the live spatial provider flag (the remaining root-cause confirmation, D-059-R004)
+
+The deployed environment is **owner-visible only**, so this reading is the step that turns the recorded
+`spatial_intersection_absent` from a *candidate* cause into a *confirmed* one. **The recorded live cause
+stays UNCONFIRMED** until the deployed setting is read **for the same deployment the capture ran against**:
+the 2026-09-17 capture (`project-control/reports/M5-T033-live-capture.md`) was taken against backend commit
+`f0e7d82f`; if `nycdf-api` has been redeployed since, re-capture before concluding. On **`nycdf-api` →
+Environment**, read whether **`LIVE_SPATIAL_PROVIDER_ENABLED`** is present and set to a true token.
+
+**What is decisive vs. what is only suggestive.** Two runtime facts are decisive discriminators; two
+response-body observations are not:
+
+- **Decisive (read at the runtime boundary):** (1) the **dashboard flag reading** itself (present + true
+  token vs. absent/other), and (2) the API's **correlated typed connector log** — the
+  `live_spatial_substrate fail_safe event=connector_error error_type=… correlation_id=…` line
+  (`services/api/app/spatial/live_provider.py::_fail_safe`), emitted **only** when the flag is on and a
+  connector actually failed. Match its `correlation_id` to the response's `X-Correlation-ID`.
+- **Suggestive only (read from the response body):** **uniform** `spatial_intersection_absent` across
+  parcels and **fast** (~0.6–0.7 s) latency. A disabled flag produces both — **but so does a shared
+  connector/network failure** (every parcel hitting the same failing upstream fails uniformly, and can fail
+  fast, e.g. a DNS/connection error or an open circuit breaker). Uniformity and latency **narrow** the
+  field; they do not prove the flag was off.
+- **Absence of a connector-error log does NOT by itself prove flag-off.** The line can be missing in
+  several distinct situations — the flag really was off (no live path ran), OR the log was
+  filtered / level-gated / not captured, OR the live path failed at a stage that logs a *different* event
+  (`no_candidate_districts` / `district_page_partial`), OR a failure occurred outside this module. Read the
+  flag value; do not infer it from a missing log.
+
+| Reading on `nycdf-api` | Meaning | Expected live behavior |
+|---|---|---|
+| `LIVE_SPATIAL_PROVIDER_ENABLED` **absent, empty, or any non-true value** (`0`, `false`, `off`, `maybe`, …) | Live spatial path **DISABLED** (fail-safe default). One code-contract-consistent candidate for the uniform failure captured 2026-09-17 — **not ranked above** a shared connector/network failure, which produces the same uniform-and-fast shape; the discriminators above (the flag reading and the correlated typed logs), not this response signature, decide between them | **Every** BBL (including the control `1008350041`) returns `spatial_intersection_absent` / `professional_review_required` fast, with no district and **no `connector_error` log line**. **Fix:** set it to `1`, save, let Render restart, then run the probes below. |
+| `LIVE_SPATIAL_PROVIDER_ENABLED` = **`1` / `true` / `yes` / `on`** | Live spatial path **ENABLED** | A **successful connector request is not by itself a real district**: the live path still returns `spatial_intersection_absent` when the data returned is not valid/sufficient (empty official assignment, transfer-limited page) or the engine cannot confidently compose a single-district substrate. A real district appears only when the connectors succeed **and** return sufficient data **and** the engine composes a confident substrate; a parcel whose connectors fail returns `spatial_intersection_absent` **and** emits a typed `connector_error` log line (its `correlation_id` matching the response `X-Correlation-ID`). If **all** parcels — including the control — are still uniformly absent while this reads true, the **disabled-flag branch is excluded for the observed runtime**; the remaining cause is **not established from absence alone** — do **not** infer a connector/network failure from the uniform absence. Confirm it only from **correlated typed evidence** (a matching `connector_error` line, or another typed event), and do not re-deploy blindly. |
+
+- **Enabling the flag and still seeing failure does NOT disprove an earlier disabled flag.** If you set
+  the flag true, restart, and the control still returns absent, the **disabled-flag branch is excluded for
+  the observed runtime** — but that continued absence does **not** by itself establish any particular
+  remaining cause. It does **not** prove a second, separate connector problem: a connector/network failure
+  is only one possibility; insufficient or invalid official data (empty assignment) and a substrate the
+  engine cannot confidently compose produce the same absent body on the enabled path. The remaining
+  enabled-path cause is established **only from correlated typed evidence** (a matching `connector_error`
+  line, or another typed event such as `no_candidate_districts` / `district_page_partial`), never inferred
+  from the uniform absence. Separately — and preserved unchanged — the dashboard reading tells you the
+  flag's current state; it does not retroactively rule the flag in or out as the historical cause. Confirm
+  the historical cause only by pairing the captured deployment (commit `f0e7d82f`) with its own env reading.
+
+**Post-restart verification probes (after setting `LIVE_SPATIAL_PROVIDER_ENABLED` true).** All are direct
+API requests against `<nycdf-api-origin>`; each internal route is gated by its own env flag and is
+`include_in_schema=False` (never in the OpenAPI doc):
+
+1. **Rule-evaluation (control parcel):**
+   `GET <nycdf-api-origin>/api/v1/properties/1008350041/rule-evaluation`
+   (`services/api/app/api/v1/rule_evaluation.py`
+   `@router.get("/properties/{bbl}/rule-evaluation", include_in_schema=False)`, gated by
+   `INTERNAL_RULE_EVAL_ENABLED`). **Before:** `fail_safe_reason` = `spatial_intersection_absent`, no
+   district. **After (flag true + connectors succeed and return sufficient data):** the control
+   resolves to a real district (`fail_safe_reason` ≠ `spatial_intersection_absent`). Still absent after
+   the restart ⇒ the disabled-flag branch is excluded for this runtime; the remaining cause requires
+   correlated typed evidence (read the typed connector logs) — do not infer a connector problem from the
+   absent body alone.
+2. **Scenario endpoint:**
+   `GET <nycdf-api-origin>/api/v1/properties/{bbl}/scenario`
+   (`services/api/app/api/v1/scenario.py`
+   `@router.get("/properties/{bbl}/scenario", include_in_schema=False)`, gated by
+   `INTERNAL_SCENARIO_ENABLED` via `internal_scenario_enabled()`). **Required opt-in:** set
+   `INTERNAL_SCENARIO_ENABLED` to a true token on `nycdf-api` first — otherwise the route returns the
+   generic `404 {"detail":"Not Found"}`. With the flag on, the request returns a **200 `scenario` @ 1.0.0
+   document** (a no-scenario / professional-review outcome is still a normal 200, not an error; its spatial
+   substrate comes from the same provider, so it shares the `spatial_intersection_absent` fail-safe when the
+   spatial flag is off). **Web opt-in:** if probing through `nycdf-web` rather than the API directly, the
+   internal web surfaces additionally require the per-request `?ruleeval=on` query param plus the web env
+   flag (§9).
+
+The dashboard flag reading remains the authoritative confirmation; completing M4-T020 / B4 (the
+wide-street work) does **not** by itself fix this — the live provider has its own flag and failure
+conditions and does not use the street-centerline module (D-059-R004).
+
+---
+
 ## 7. Confirm Blueprint Auto Sync = No
 
 In the Blueprint settings for this workspace, confirm **Auto Sync = No** (a standing owner item,
@@ -353,6 +474,9 @@ this check matters only if the old name lingers somewhere from an earlier setup.
 | Stale-flag rename (INTERNAL_RULE_EVAL_UI → …_ENABLED) | `project-control/reports/M5-T019-producer-report.md` lines 168-183 |
 | SSR Next.js = Web Service; Node version documented separately | `docs/research/render-nextjs-previews-2026-07-16.md` §1 |
 | §2a: optional `INTERNAL_RULE_EVAL_DEFAULT_ON` var, same true-token rule, server-read, kill switch survives, exposure consequence | `apps/web/src/lib/rule-evaluation.ts` (`INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR`, `ruleEvaluationSurfaceEnabled`); `project-control/directives/D-057-ruleeval-default-on/source-001.md` (owner-accepted exposure tradeoff) |
+| §6a/§6b: `LIVE_SPATIAL_PROVIDER_ENABLED` name + true tokens + fail-safe (unset → None, zero connector calls → uniform `spatial_intersection_absent`); flag independent of the rule-eval flag | `services/api/app/spatial/live_provider.py` (`LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR`, `_TRUE_TOKENS`, `default_live_substrate`); `services/api/app/rules/integration.py` (`FAILSAFE_SPATIAL_ABSENT`) |
+| §6a: `INTERNAL_SCENARIO_ENABLED` name + true tokens + fail-safe 404 + GET `/properties/{bbl}/scenario` path, gated by this flag only (not the rule-eval flag) | `services/api/app/api/v1/scenario.py` (`@router.get("/properties/{bbl}/scenario", include_in_schema=False)`, `internal_scenario_enabled()` guard); `services/api/app/config.py` (`INTERNAL_SCENARIO_ENABLED_ENV_VAR`, `internal_scenario_enabled`, `_TRUE_TOKENS`) |
+| §6b: recorded uniform live failure across both D-059 parcels + control in ~0.6–0.7 s is a CANDIDATE cause, UNCONFIRMED until the deployed flag is read for the captured deployment (commit `f0e7d82f`); uniformity + latency are suggestive, the flag reading + typed connector logs are decisive; response body cannot distinguish flag-off from connector failure; M4-T020/B4 alone does not fix it | `project-control/reports/M5-T033-live-capture.md`; `services/api/app/spatial/live_provider.py::_fail_safe`; `project-control/directives/D-059-mvp-review-dependable-answers/requirements.json` (D-059-R004) |
 
 **Items marked [confirm in the dashboard UI]** are Render UI specifics not fixed by repo evidence:
 the New-Web-Service click-path labels, the exact Node-version mechanism, the `$PORT` listen
