@@ -34,6 +34,13 @@ Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
 - The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
   Windows pids and reports the live supervisor as dead (false LOOP BREAK). Use
   `tasklist //FI "PID eq $PID" //NH | grep -q $PID` with a 5 s recheck before alarming.
+- Ask-alert pattern (owner directive 2026-09-17 "ping me-side so questions are answered
+  right away"): queued asks serialize in audit.jsonl as `"decision":"DEFER_TO_OWNER"`
+  (detail carries `"tier":"ASK"` / `policy_rule S4.3/...`) — the words `undocumented_command`
+  / `pending_prompt` NEVER appear in the audit line, so a watcher grepping only those goes
+  silent while asks pile up (run-37 gap: 8 queued unnoticed). Watch for
+  `DEFER_TO_OWNER|"tier":"ASK"` AND poll the journal's unanswered `queued_asks` count
+  (sqlite read-only) as belt-and-braces.
 - Not every undocumented-command ask is a packet gap. Two benign classes seen in run 36:
   (a) the worker chains `; echo FOO_EXIT=$?` onto a documented test command — chaining can
   NEVER be a documented_test_command (profile forbids it), and the worker self-recovers by
