@@ -26,6 +26,8 @@ entries never get deleted — only status changes.
 | DB-014 | 2026-09-17 | Wide-street outcome (far_row/governing_far/provenance) deliberately NOT serialized in rule_evaluation contract v1.0.0 — clients still see only the conservative FAR even on a confident WITHIN | M5-T034 G3 INFO-B | Additive contract bump to surface the wide-street result + provenance to the UI | OPEN |
 | DB-015 | 2026-09-17 | The wide-street provider seam defaults to None — no live data source feeds real determinations through /rule-evaluation yet | M5-T034 G3 INFO-C; producer report §6.1 | Live provider wiring task (fetch DCM segments + lot geometry server-side per request, bounded) — the step that makes wide-street FAR real for users | OPEN |
 
+| DB-016 | 2026-09-17 | OWNER OBSERVATION: the product surface shows only residential FAR while ZoLa displays rich per-lot context (special districts, overlays, landmark status, neighbor-lot highlighting) — much of which our connectors ALREADY FETCH (e.g., the ZTLDB row carries zoning_district_1/2 + special_district_1 + zoning_map_number) but never display | Owner question 2026-09-17 ("what's the point if the government site shows all this?") | Context-panel parity task: surface the designations we already retrieve (with provenance + ZoLa link) alongside computed answers; label-display carries no computation risk and closes the perceived gap; the computed-answer engine remains the differentiator | OPEN |
+
 Sweep log: seeded 2026-09-17 from M5-T032/T033 gate findings, owner-confirmation records,
 M4-T018/T021 carried notes, and runs-36/37 analysis. +DB-013..015 from the M5-T034 review
-wave (same day).
+wave (same day). +DB-016 owner product-gap observation (same day).
