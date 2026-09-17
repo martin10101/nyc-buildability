@@ -76,14 +76,27 @@ parcel — the uniform signature is gone:
 | 1008350041 | `geometry_uncertain` | 3.06 s |
 
 Reading: the geometry-pin guard passes, all three connectors fetch, and the M2-T013
-engine composes and CLASSIFIES in production for the first time. `geometry_uncertain` is
-the engine's honest no-confident-single-district outcome (conservative near-boundary /
-composition classes), not a crash. Whether that conservatism on apparently-single-district
-lots (incl. the 350 Fifth Ave control) is correct behavior or the next bounded defect is a
-NEW follow-up diagnosis (candidate next-packet lane after M5-T034), to be worked from the
-typed classification record — not assumed. D-059-R004's runtime chain is now: cause #1
-flag absent (CONFIRMED, fixed) → cause #2 unpinned Python vs geometry pins (CONFIRMED,
-fixed) → current honest outcomes (uncertain / data-absent) with per-parcel divergence.
+engine composes and CLASSIFIES in production for the first time. D-059-R004's runtime
+chain: cause #1 flag absent (CONFIRMED, fixed) → cause #2 unpinned Python vs geometry
+pins (CONFIRMED, fixed) → per-parcel honest outcomes.
+
+### Both residual outcomes verified CORRECT against the city's own records (2026-09-17)
+
+- **1008350041 (350 Fifth Ave) `geometry_uncertain` is RIGHT, not over-caution.** The
+  city's ZTLDB row for the lot lists **TWO zoning districts — `zoning_district_1: C5-3`
+  AND `zoning_district_2: C6-4.5` — plus `special_district_1: MiD`** (Special Midtown),
+  zoning map 8D. The lot is genuinely SPLIT-ZONED; a confident single-district claim would
+  be false. The engine's refusal is the correct conservative outcome; supporting split-lot
+  apportionment (ZR 77-series class) is future scope, and this supersedes the earlier
+  "candidate next defect" framing.
+- **3022647515 (298 Wallabout St, Brooklyn) `spatial_intersection_absent` is RIGHT.**
+  ZTLDB returns **0 rows** for the BBL, while PLUTO shows it is a **condominium record**
+  (`condono: 1313`, building class R4, lot 7515 in the 7501+ condo-billing range,
+  zonedist1 R7-1). The zoning-lot database tracks the underlying LAND lot, not condo
+  billing/unit BBLs — so "no zoning-lot record" is true for the queried BBL. The product
+  gap is a condo→base-lot resolution step before the ZTLDB lookup (exactly the
+  D-059-R007 benchmark's "condo/billing lots" hard class); honest absence today is the
+  designed behavior.
 
 4. Secondary observations, honestly bounded: `ztldb_soda source freshness: dataset rows last
    updated 2026-04-05 (age 164.6 days > 45-day threshold)` on every request — the CITY's
