@@ -6,6 +6,7 @@
   "objective": "Keep the single full-address field usable when GeoSearch autocomplete fails (handoff 2026-09-16 section 6): distinct outcomes for no-match, incomplete address, rate limit, timeout, source failure, malformed response; bounded recovery for transient 503s; explicit full-address /search action; preserved typed text; prefilled manual/Geoclient fallback route; explicit candidate confirmation retained. AND make the primary property source link a human-readable official page: ZoLa lot page from constant prefix + validated BBL first, current PLUTO JSON record demoted to a clearly secondary raw-record link, dataset landing retained; all M5-T030 identity/conflict guards preserved (D-064-R005).",
   "business_reason": "Owner D-064: architect-facing reliability and human-readable provenance; first loop packet after relaunch (D-064-R008).",
   "inputs": [
+    "CHECKPOINT ENVELOPE DISCIPLINE (controller S8.3, binding): in your final checkpoint JSON set starting_sha, current_sha, branch, and worktree to the empty string \"\" - the controller fills the authoritative values itself and any value YOU supply must match its records EXACTLY (full 40-hex SHAs, full worktree path) or the run is stopped. Leaving them blank is always safe.",
     "project-control/directives/D-064-subagent-opus48-lean-ops/source-001.md (owner instruction; R005 link change, R007 focused testing, R008 first-packet scope)",
     "Owner handoff section 6 (address-search defect observations, 2026-09-16): reproduced GeoSearch autocomplete 503s, one ~663ms failure (not the 6s timeout), separate-environment ~6.8s successful timings vs the 6000ms frontend deadline, current message collapses distinct failures into 'unavailable'",
     "GeoSearch official docs: https://geosearch.planninglabs.nyc/docs/ (autocomplete while typing; /search for a complete pasted address; both share one service - endpoint switching is not an independent fallback)",
@@ -113,7 +114,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T04:17:36.015350+00:00",
+  "updated_at": "2026-09-17T04:58:22.350688+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
