@@ -39,16 +39,13 @@
    "file": "source-002-amendment.md",
    "kind": "amendment",
    "sequence": 2,
+   "amends": "source-001.md",
    "recorded_at": "2026-09-17T07:15:00.000000+00:00",
    "content_digest_sha256": "527af43d293f822bd878957e182775aa6c4e960e6edb90384675a9a4210d0c6b"
   }
  ],
  "amendments": [
-  {
-   "source": "source-002-amendment.md",
-   "at": "2026-09-17T07:15:00.000000+00:00",
-   "summary": "Scope of R002 narrowed: keep-going-through-compaction applies ONLY to the interactive orchestrator session; loop-side main/fable agents still rotate at the ~400k seam (D-010 R113/R114 untouched)."
-  }
+  "source-002-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -76,6 +73,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "source-002 amendment recorded; R002 text updated to the narrowed scope (interactive session only; loop-side ~400k rotation stands) with requirements digest resynced in the SAME commit."
+  },
+  {
+   "at": "2026-09-17T07:26:25.592452+00:00",
+   "actor": "orchestrator",
+   "action": "schema_shape_correction",
+   "note": "manifest.amendments reshaped to the schema's filename-list form and sources[1] given its 'amends' pointer (control-plane CI c3 TypeError on the dict-shaped entry); amendment content itself unchanged."
   }
  ]
 }

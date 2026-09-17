@@ -1,83 +1,95 @@
 {
-  "schema": "directive_manifest/v1",
-  "directive_id": "D-059",
-  "version": 1,
-  "slug": "mvp-review-dependable-answers",
-  "title": "Owner 2026-09-14 (uploaded MVP review + covering message): correctness findings before professional reliance - unused-floor-area semantics separation, bldgarea-zero-with-buildings fail-closed, labels from actual evaluation, spatial-failure root-cause protocol, wire built rules into the normal path; claims discipline (no completion-percentage/time-saved claims without the 15-20-parcel architect benchmark); 8-step delivery sequence with priority on dependable answers; status-prose reconciliation.",
-  "status": "active",
-  "lifecycle_state": "active",
-  "issued_by": "owner",
-  "issued_at": "2026-09-14",
-  "captured_at": "2026-09-14T08:34:32+00:00",
-  "created_at": "2026-09-14T08:34:32+00:00",
-  "updated_at": "2026-09-14T09:19:57+00:00",
-  "channel": "interactive_chat_with_uploaded_review",
-  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
-  "capture_head_sha": "ccc0101218f1f1fc16ede319ff1b049abe1a7163",
-  "owner_approval": {
-    "state": "authorized",
-    "note": "Owner transmitted the commissioned review with a covering message mid-session; the review self-describes as a sequencing recommendation granting no merge/deploy/hold permissions, and this capture preserves that boundary (R012)."
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-059",
+ "version": 1,
+ "slug": "mvp-review-dependable-answers",
+ "title": "Owner 2026-09-14 (uploaded MVP review + covering message): correctness findings before professional reliance - unused-floor-area semantics separation, bldgarea-zero-with-buildings fail-closed, labels from actual evaluation, spatial-failure root-cause protocol, wire built rules into the normal path; claims discipline (no completion-percentage/time-saved claims without the 15-20-parcel architect benchmark); 8-step delivery sequence with priority on dependable answers; status-prose reconciliation.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-14",
+ "captured_at": "2026-09-14T08:34:32+00:00",
+ "created_at": "2026-09-14T08:34:32+00:00",
+ "updated_at": "2026-09-17T07:23:34.760838+00:00",
+ "channel": "interactive_chat_with_uploaded_review",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "ccc0101218f1f1fc16ede319ff1b049abe1a7163",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner transmitted the commissioned review with a covering message mid-session; the review self-describes as a sequencing recommendation granting no merge/deploy/hold permissions, and this capture preserves that boundary (R012)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-059-R001",
+  "D-059-R002",
+  "D-059-R003",
+  "D-059-R004",
+  "D-059-R005",
+  "D-059-R006",
+  "D-059-R007",
+  "D-059-R008",
+  "D-059-R009",
+  "D-059-R010",
+  "D-059-R011",
+  "D-059-R012"
+ ],
+ "requirements_content_digest_sha256": "dc193e77dc4463e5847c2f1d896f56cdca13ad590578c831a3bf95e3cd2e4613",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-14T08:34:32+00:00",
+   "content_digest_sha256": "bfe48b8aefbf3eb1b15a338dedd5dca92a4890c93ad38e3684a9b39408b4d5de"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "mvp_review_work_order",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "MVP correctness fixes (scenario area semantics/labels, spatial diagnosis), rule wiring, claims discipline, benchmark protocol, delivery sequencing, status reconciliation. Does not lift any hold; Tier D / Section 20 unchanged.",
+  "prohibited": "presenting task counts as completion percentages; repeating unmeasured time-saved estimates as demonstrated; claiming B4 alone fixes the recorded spatial failure; lifting any hold - Tier D / Section 20 / PR #241 / G6 unchanged"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-14T08:34:32+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured mid-session at head ccc01012 (M4-T021 contract seam in flight); source = owner covering message + uploaded review cd08f17f (byte-faithful append), 12 requirements R001-R012, all bound to D-059-BOOTSTRAP pending fix-task contracting."
   },
-  "requirements_file": "requirements.json",
-  "verification_file": "verification.json",
-  "final_reviewed_sha": null,
-  "locked_requirement_ids": [
-    "D-059-R001",
-    "D-059-R002",
-    "D-059-R003",
-    "D-059-R004",
-    "D-059-R005",
-    "D-059-R006",
-    "D-059-R007",
-    "D-059-R008",
-    "D-059-R009",
-    "D-059-R010",
-    "D-059-R011",
-    "D-059-R012"
-  ],
-  "requirements_content_digest_sha256": "1ec1fdbe35260700183df96bcbc2c7c8282766dfeb96d0c7f9c2a88b74267e70",
-  "sources": [
-    {
-      "file": "source-001.md",
-      "kind": "original",
-      "sequence": 1,
-      "recorded_at": "2026-09-14T08:34:32+00:00",
-      "content_digest_sha256": "bfe48b8aefbf3eb1b15a338dedd5dca92a4890c93ad38e3684a9b39408b4d5de"
-    }
-  ],
-  "amendments": [],
-  "supersedes": [],
-  "superseded_by": null,
-  "affected_tasks": [],
-  "affected_prs": [],
-  "affected_branches": [
-    "candidate/D-024-mrl-option-b"
-  ],
-  "scope": {
-    "kind": "mvp_review_work_order",
-    "task_ids": [],
-    "task_types": [],
-    "allowed": "MVP correctness fixes (scenario area semantics/labels, spatial diagnosis), rule wiring, claims discipline, benchmark protocol, delivery sequencing, status reconciliation. Does not lift any hold; Tier D / Section 20 unchanged.",
-    "prohibited": "presenting task counts as completion percentages; repeating unmeasured time-saved estimates as demonstrated; claiming B4 alone fixes the recorded spatial failure; lifting any hold - Tier D / Section 20 / PR #241 / G6 unchanged"
+  {
+   "at": "2026-09-14T08:42:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound D-059-R008 step-1 fix task M5-T027 (unused-floor-area semantics + zero-with-buildings fail-closed + evaluation-derived labels) to D-059-R001/D-059-R002/D-059-R003/D-059-R011 (append-only, task_ids only; no requirement text changed). Digest resynced 2d46f9d5 -> 9bceb56c in the SAME commit (c14). Dispatched concurrently with the D-053 loop on M4-T021 (disjoint scopes)."
   },
-  "audit_log": [
-    {
-      "at": "2026-09-14T08:34:32+00:00",
-      "actor": "orchestrator",
-      "action": "captured",
-      "note": "Captured mid-session at head ccc01012 (M4-T021 contract seam in flight); source = owner covering message + uploaded review cd08f17f (byte-faithful append), 12 requirements R001-R012, all bound to D-059-BOOTSTRAP pending fix-task contracting."
-    },
-    {
-      "at": "2026-09-14T08:42:35+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound D-059-R008 step-1 fix task M5-T027 (unused-floor-area semantics + zero-with-buildings fail-closed + evaluation-derived labels) to D-059-R001/D-059-R002/D-059-R003/D-059-R011 (append-only, task_ids only; no requirement text changed). Digest resynced 2d46f9d5 -> 9bceb56c in the SAME commit (c14). Dispatched concurrently with the D-053 loop on M4-T021 (disjoint scopes)."
-    },
-    {
-      "at": "2026-09-14T09:19:57+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound follow-up task M5-T028 (removes the hardcoded ZR 23-21 section label from the five live-wired scenario-analysis modules) to D-059-R003 (append-only, task_ids only; no requirement text changed). Digest resynced 9bceb56c -> 1ec1fdbe in the SAME commit (c14). Opened from the M5-T027 G3 independent-reviewer advisory A1, which found the R003 defect class only partially resolved."
-    }
-  ]
+  {
+   "at": "2026-09-14T09:19:57+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound follow-up task M5-T028 (removes the hardcoded ZR 23-21 section label from the five live-wired scenario-analysis modules) to D-059-R003 (append-only, task_ids only; no requirement text changed). Digest resynced 9bceb56c -> 1ec1fdbe in the SAME commit (c14). Opened from the M5-T027 G3 independent-reviewer advisory A1, which found the R003 defect class only partially resolved."
+  },
+  {
+   "at": "2026-09-17T07:23:34.760838+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T033 bound to D-059-R004 (spatial-failure root-cause protocol). Requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-17T07:28:37.624198+00:00",
+   "actor": "orchestrator",
+   "action": "correction",
+   "note": "M5-T033 removed from affected_tasks: binding is via requirements applicability (c14 requires a verification row for manifest-affected in-regime tasks; the row is written by the independent verifier at the acceptance seam, not at contract). Applicability binding unchanged."
+  }
+ ]
 }

@@ -1,387 +1,388 @@
 {
-  "schema": "directive_requirements/v1",
-  "directive_id": "D-059",
-  "version": 1,
-  "requirement_count": 12,
-  "producer": "orchestrator",
-  "updated_at": "2026-09-14T08:34:32+00:00",
-  "requirements": [
-    {
-      "id": "D-059-R001",
-      "text": "UNUSED-FLOOR-AREA SEMANTICS - separate the clearly-identified recorded-data comparison from an actual development-rights calculation. The PLUTO-bldgarea-minus-draft-cap subtraction must not be worded as a zoning-floor-area difference or unused legal development rights: PLUTO bldgarea is recorded gross building area (condo semantics differ) and is not a verified existing ZR 12-10 zoning-floor-area figure. An actual rights claim requires a compatible, supported existing zoning-area input AND confirmed zoning-lot extent; until then the feature presents itself as a limited comparison of recorded data (surfaces: services/api/app/scenario/unused_floor_area.py, scenario/constants.py labels, and the web presentation of the number).",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP",
-          "M5-T027"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "unit tests over the corrected wording/typing; label text derived assertions",
-      "required_evidence": "unused_floor_area.py + constants.py + web surface + tests at the frozen head",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R002",
-      "text": "BLDGAREA-ZERO FAIL-CLOSED - when PLUTO records bldgarea == 0 with a positive building count (numbldgs >= 1), the unused-floor-area calculation must treat the existing area as UNAVAILABLE (typed not-computable reason / professional-review flag), never as a real zero or vacant lot; the official PLUTO dictionary states zero-area-with-buildings means the area is unavailable. The original zero stays traceable in provenance. The existing test that supplies zero area as a 'vacant lot' without establishing vacancy must be corrected. Reproduced by the reviewer against the pure calculation function (one building, bldgarea 0, 10000 sq ft draft cap -> returned 10000 unused, no not-computable reason).",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP",
-          "M5-T027"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "red-on-old unit test: bldgarea 0 + numbldgs >= 1 -> typed unavailable, never computed; vacancy-established zero remains computable",
-      "required_evidence": "unused_floor_area.py + pluto_soda.py consumption path + corrected tests",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R003",
-      "text": "LABELS FROM ACTUAL EVALUATION - remove the hardcoded 'draft max residential zoning floor area (R5)' coverage wording and the universal ZR 23-21 cap label in services/api/app/scenario/constants.py (emitted by builder.py): R6-R12 rules cite ZR 23-22, so displayed coverage descriptions and section references must be generated from the actual evaluated rules, not stale constants. Display/coverage wording only - this finding does not itself claim the numeric output is wrong.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP",
-          "M5-T027",
-          "M5-T028"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "unit tests asserting section labels/coverage text derive from the evaluated rule set",
-      "required_evidence": "constants.py + builder.py + tests at the frozen head",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R004",
-      "text": "SPATIAL-FAILURE ROOT-CAUSE PROTOCOL - the recorded live spatial_intersection_absent failure (BBL 3022647515) must be traced to one confirmed root cause via the deployed commit, settings, and typed logs, then reproduced on the same parcel; it is NOT justified to claim completing M4-T020/B4 alone fixes it (the live spatial provider does not use the street-centerline module and has its own LIVE_SPATIAL_PROVIDER_ENABLED setting and failure conditions). The deploy checklist must name LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED. Live-deploy configuration was not accessible to the reviewer, so the runtime cause is UNCONFIRMED until this runs.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "diagnosis record with deployed commit + settings + typed logs + same-parcel repro",
-      "required_evidence": "diagnosis report + checklist additions; owner-side deploy facts as needed",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R005",
-      "text": "WIRE BUILT RULES INTO THE NORMAL RESULT PATH - built-but-unwired rule families (R1/R2, R3/R4, R5-pilot height/setback) are not customer features until evaluate_property / the scenario path evaluates them with their required inputs; the scenario output currently keeps envelope constraints missing by design. Connect supported constraints and required inputs before calling their repository existence a finished customer feature; 'the height rules were built' and 'the architect receives a height answer' are different milestones.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "integration tests proving the normal path evaluates the wired families",
-      "required_evidence": "integration.py / scenario path + tests at the wiring task's frozen head",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R006",
-      "text": "CLAIMS DISCIPLINE (standing prohibition) - never present the accepted-task count as an MVP completion percentage or as finished customer features (138 of 206 are foundation/control-plane); never repeat the earlier 2-4-hours-saved-per-lot estimate as a demonstrated benefit; time-saved claims only from the measured architect benchmark (D-059-R007); do not report the resolved frontend security blocker (B-022) as a current reason the product is unfinished; incorrect quick answers never count as time saved.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "prohibition",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "conduct rule - checked at every owner-facing report/demo",
-      "required_evidence": "owner-facing reports/demos comply; no contrary claim in repo docs",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R007",
-      "text": "ARCHITECT BENCHMARK PROTOCOL - measure time saved with roughly 15-20 real parcels across all five boroughs including condo/billing lots, mixed-address parcels, split zoning, special districts, and wide-street boundary cases; record the architect's checked answer, both elapsed times, unanswered questions, corrections, and actual usefulness. Professional rule approval (G6) and the client benchmark (B-010) remain outstanding and are not replaced by this protocol.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "harness",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "the benchmark protocol itself (15-20 parcels, five boroughs, listed edge classes)",
-      "required_evidence": "benchmark records when executed; B-010/G6 remain open until their own closure",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R008",
-      "text": "DELIVERY SEQUENCE - the owner-endorsed 8-step order governs remaining MVP sequencing: (1) make today's answers dependable (deploy/version reconciliation, checklist completion, failed-parcel repro, area semantics + zero handling, stale labels, lot-outline retest on the owner's device); (2) finish street/lot measurements (complete M4-T020 acceptance [DONE 207th this session], frontage/distance/portion geometry, width policy wired to rules, corrective snapshot task); (3) combined building limits (wire height rules, remaining residential families, supported envelope); (4) dwelling-unit potential (AMI tool downstream); (5) authorized commercial/manufacturing campaign, later special/waterfront waves; (6) legal-source corpus completion; (7) production workflow (storage/auth, confirmations, survey, saved projects, report/export, launch protection); (8) professional proof (rule review + parcel benchmark). A limited pilot during the campaign is acceptable and does not replace the citywide goal. Priority within step 1: the area-calculation findings and the complete path from real property data to a supported result.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "sequencing",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "replan/contract order follows the sequence; deviations recorded with reasons",
-      "required_evidence": "master plan / contracted-task order at each seam",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R009",
-      "text": "STATUS-PROSE RECONCILIATION - master_plan.json milestone summaries must be reconciled with task-file reality (M2 survey-task rows and M3 acceptance state are stale; the review counted 206 accepted vs the handoff's 204). Task records, code, and CI stay the basis of truth; the misleading long-standing milestone summaries must be corrected.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "master_plan.json summaries match ledger reality at the correction commit",
-      "required_evidence": "corrected master_plan.json + ledger cross-check",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R010",
-      "text": "DEMONSTRATION GUIDANCE (return) - the next demonstration gathers an architect's feedback on a few checked properties while the campaign continues: use a property the architect has already analyzed (compare answers, open the governing source per number) plus one deliberately missing/unsupported case so refusal behavior is visible. Do not lead with task counts or a polished sample address.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "return",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "demo plan/report reflects this structure when a demo happens",
-      "required_evidence": "demo record at that time",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R011",
-      "text": "EXTERNAL FACT (time-sensitive) - the official PLUTO data dictionary distinguishes recorded gross building area from ZR 12-10 zoning floor area, and states that a zero building-area value with a positive building count means the area is unavailable (reviewer cited the 22v1 document at the nyc.gov URL; the repository connector's 26v1 source notes carry the same distinction). Re-verify against the current official dictionary whenever consumed by a fix task; conflicts stay visible.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "external_fact",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP",
-          "M5-T027"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "source citation re-verified at consumption time",
-      "required_evidence": "connector source notes + official dictionary citation in the consuming task",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    },
-    {
-      "id": "D-059-R012",
-      "text": "SCOPE DECISION RECORDED - progress is judged against the expanded D-045 'truly everything' scope authorized 2026-09-13, not the earlier residential FAR demo; the review is a sequencing recommendation for that existing goal and grants no new permission to merge, deploy, change owner holds, or alter the repository.",
-      "source_ref": "source-001.md#review-document-verbatim",
-      "classification": "decision",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-059-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-14"
-      },
-      "dependencies": [],
-      "required_harness": "none - recorded decision context",
-      "required_evidence": "this capture",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      },
-      "status_reason": "captured; pending fix/wiring task binding and independent verification",
-      "evidence_paths": [],
-      "reviewed_sha": null
-    }
-  ]
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-059",
+ "version": 1,
+ "requirement_count": 12,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T07:23:34.760838+00:00",
+ "requirements": [
+  {
+   "id": "D-059-R001",
+   "text": "UNUSED-FLOOR-AREA SEMANTICS - separate the clearly-identified recorded-data comparison from an actual development-rights calculation. The PLUTO-bldgarea-minus-draft-cap subtraction must not be worded as a zoning-floor-area difference or unused legal development rights: PLUTO bldgarea is recorded gross building area (condo semantics differ) and is not a verified existing ZR 12-10 zoning-floor-area figure. An actual rights claim requires a compatible, supported existing zoning-area input AND confirmed zoning-lot extent; until then the feature presents itself as a limited comparison of recorded data (surfaces: services/api/app/scenario/unused_floor_area.py, scenario/constants.py labels, and the web presentation of the number).",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP",
+     "M5-T027"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "unit tests over the corrected wording/typing; label text derived assertions",
+   "required_evidence": "unused_floor_area.py + constants.py + web surface + tests at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R002",
+   "text": "BLDGAREA-ZERO FAIL-CLOSED - when PLUTO records bldgarea == 0 with a positive building count (numbldgs >= 1), the unused-floor-area calculation must treat the existing area as UNAVAILABLE (typed not-computable reason / professional-review flag), never as a real zero or vacant lot; the official PLUTO dictionary states zero-area-with-buildings means the area is unavailable. The original zero stays traceable in provenance. The existing test that supplies zero area as a 'vacant lot' without establishing vacancy must be corrected. Reproduced by the reviewer against the pure calculation function (one building, bldgarea 0, 10000 sq ft draft cap -> returned 10000 unused, no not-computable reason).",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP",
+     "M5-T027"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "red-on-old unit test: bldgarea 0 + numbldgs >= 1 -> typed unavailable, never computed; vacancy-established zero remains computable",
+   "required_evidence": "unused_floor_area.py + pluto_soda.py consumption path + corrected tests",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R003",
+   "text": "LABELS FROM ACTUAL EVALUATION - remove the hardcoded 'draft max residential zoning floor area (R5)' coverage wording and the universal ZR 23-21 cap label in services/api/app/scenario/constants.py (emitted by builder.py): R6-R12 rules cite ZR 23-22, so displayed coverage descriptions and section references must be generated from the actual evaluated rules, not stale constants. Display/coverage wording only - this finding does not itself claim the numeric output is wrong.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP",
+     "M5-T027",
+     "M5-T028"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "unit tests asserting section labels/coverage text derive from the evaluated rule set",
+   "required_evidence": "constants.py + builder.py + tests at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R004",
+   "text": "SPATIAL-FAILURE ROOT-CAUSE PROTOCOL - the recorded live spatial_intersection_absent failure (BBL 3022647515) must be traced to one confirmed root cause via the deployed commit, settings, and typed logs, then reproduced on the same parcel; it is NOT justified to claim completing M4-T020/B4 alone fixes it (the live spatial provider does not use the street-centerline module and has its own LIVE_SPATIAL_PROVIDER_ENABLED setting and failure conditions). The deploy checklist must name LIVE_SPATIAL_PROVIDER_ENABLED and INTERNAL_SCENARIO_ENABLED. Live-deploy configuration was not accessible to the reviewer, so the runtime cause is UNCONFIRMED until this runs.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP",
+     "M5-T033"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "diagnosis record with deployed commit + settings + typed logs + same-parcel repro",
+   "required_evidence": "diagnosis report + checklist additions; owner-side deploy facts as needed",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R005",
+   "text": "WIRE BUILT RULES INTO THE NORMAL RESULT PATH - built-but-unwired rule families (R1/R2, R3/R4, R5-pilot height/setback) are not customer features until evaluate_property / the scenario path evaluates them with their required inputs; the scenario output currently keeps envelope constraints missing by design. Connect supported constraints and required inputs before calling their repository existence a finished customer feature; 'the height rules were built' and 'the architect receives a height answer' are different milestones.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "integration tests proving the normal path evaluates the wired families",
+   "required_evidence": "integration.py / scenario path + tests at the wiring task's frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R006",
+   "text": "CLAIMS DISCIPLINE (standing prohibition) - never present the accepted-task count as an MVP completion percentage or as finished customer features (138 of 206 are foundation/control-plane); never repeat the earlier 2-4-hours-saved-per-lot estimate as a demonstrated benefit; time-saved claims only from the measured architect benchmark (D-059-R007); do not report the resolved frontend security blocker (B-022) as a current reason the product is unfinished; incorrect quick answers never count as time saved.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "conduct rule - checked at every owner-facing report/demo",
+   "required_evidence": "owner-facing reports/demos comply; no contrary claim in repo docs",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R007",
+   "text": "ARCHITECT BENCHMARK PROTOCOL - measure time saved with roughly 15-20 real parcels across all five boroughs including condo/billing lots, mixed-address parcels, split zoning, special districts, and wide-street boundary cases; record the architect's checked answer, both elapsed times, unanswered questions, corrections, and actual usefulness. Professional rule approval (G6) and the client benchmark (B-010) remain outstanding and are not replaced by this protocol.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "the benchmark protocol itself (15-20 parcels, five boroughs, listed edge classes)",
+   "required_evidence": "benchmark records when executed; B-010/G6 remain open until their own closure",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R008",
+   "text": "DELIVERY SEQUENCE - the owner-endorsed 8-step order governs remaining MVP sequencing: (1) make today's answers dependable (deploy/version reconciliation, checklist completion, failed-parcel repro, area semantics + zero handling, stale labels, lot-outline retest on the owner's device); (2) finish street/lot measurements (complete M4-T020 acceptance [DONE 207th this session], frontage/distance/portion geometry, width policy wired to rules, corrective snapshot task); (3) combined building limits (wire height rules, remaining residential families, supported envelope); (4) dwelling-unit potential (AMI tool downstream); (5) authorized commercial/manufacturing campaign, later special/waterfront waves; (6) legal-source corpus completion; (7) production workflow (storage/auth, confirmations, survey, saved projects, report/export, launch protection); (8) professional proof (rule review + parcel benchmark). A limited pilot during the campaign is acceptable and does not replace the citywide goal. Priority within step 1: the area-calculation findings and the complete path from real property data to a supported result.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "replan/contract order follows the sequence; deviations recorded with reasons",
+   "required_evidence": "master plan / contracted-task order at each seam",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R009",
+   "text": "STATUS-PROSE RECONCILIATION - master_plan.json milestone summaries must be reconciled with task-file reality (M2 survey-task rows and M3 acceptance state are stale; the review counted 206 accepted vs the handoff's 204). Task records, code, and CI stay the basis of truth; the misleading long-standing milestone summaries must be corrected.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "master_plan.json summaries match ledger reality at the correction commit",
+   "required_evidence": "corrected master_plan.json + ledger cross-check",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R010",
+   "text": "DEMONSTRATION GUIDANCE (return) - the next demonstration gathers an architect's feedback on a few checked properties while the campaign continues: use a property the architect has already analyzed (compare answers, open the governing source per number) plus one deliberately missing/unsupported case so refusal behavior is visible. Do not lead with task counts or a polished sample address.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "demo plan/report reflects this structure when a demo happens",
+   "required_evidence": "demo record at that time",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R011",
+   "text": "EXTERNAL FACT (time-sensitive) - the official PLUTO data dictionary distinguishes recorded gross building area from ZR 12-10 zoning floor area, and states that a zero building-area value with a positive building count means the area is unavailable (reviewer cited the 22v1 document at the nyc.gov URL; the repository connector's 26v1 source notes carry the same distinction). Re-verify against the current official dictionary whenever consumed by a fix task; conflicts stay visible.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP",
+     "M5-T027"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "source citation re-verified at consumption time",
+   "required_evidence": "connector source notes + official dictionary citation in the consuming task",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  },
+  {
+   "id": "D-059-R012",
+   "text": "SCOPE DECISION RECORDED - progress is judged against the expanded D-045 'truly everything' scope authorized 2026-09-13, not the earlier residential FAR demo; the review is a sequencing recommendation for that existing goal and grants no new permission to merge, deploy, change owner holds, or alter the repository.",
+   "source_ref": "source-001.md#review-document-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-059-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "none - recorded decision context",
+   "required_evidence": "this capture",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "status_reason": "captured; pending fix/wiring task binding and independent verification",
+   "evidence_paths": [],
+   "reviewed_sha": null
+  }
+ ]
 }
