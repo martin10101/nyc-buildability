@@ -24,7 +24,15 @@ post-acceptance confirmation the task's §2 handed to the owner.
   verification probes per checklist §6b run at the seam and are appended below when the
   service restart settles.
 
-## Post-change probe (appended when captured)
+## Post-change probe (captured 2026-09-17 ~10:1x UTC)
 
-- PENDING at first write: rule-evaluation re-probe of 3052960043 / 3022647515 / 1008350041
-  after the Render restart.
+- All three BBLs still return `spatial_intersection_absent` BUT the latency signature
+  changed decisively: uniform 0.58–0.71 s before the owner's change → **1.55–2.80 s,
+  variable, across six repeated probes** after it (health endpoint steady at 0.16 s).
+  Per the accepted diagnosis this is the ENABLED-path signature (real connector calls now
+  run per request); the disabled-flag branch is excluded for the observed runtime.
+- Per checklist §6b the remaining cause is established only from correlated typed
+  evidence: the owner reads the `nycdf-api` service logs for
+  `live_spatial_substrate fail_safe event=<connector_error|no_candidate_districts|district_page_partial> …`
+  lines (the ~9 probe requests just generated fresh ones). The typed `event=`/`error_type=`
+  values name the exact remaining fix. Requested from the owner in-chat.
