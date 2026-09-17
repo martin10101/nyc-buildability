@@ -29,7 +29,8 @@ export function ReportSources({ profile }: {
               </p>
             </th>
             <td>
-              {links.currentRecordUrl ? <><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
+              {links.zolaUrl ? <><a href={links.zolaUrl} target="_blank" rel="noopener noreferrer" data-testid="zola-lot-link">View this lot on ZoLa</a><br /></> : null}
+              {links.currentRecordUrl ? <><a className="section-note" href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
               {links.datasetUrl ? <><a className="section-note" href={links.datasetUrl} target="_blank" rel="noopener noreferrer">About this dataset</a><br /></> : null}
               {record.source_id}
               <br />

@@ -5,6 +5,15 @@ import type { Identity, Reproducibility, SourceFact } from "@/lib/contract";
 /** The one allowlisted, constant host+path prefix for a dataset landing page. */
 export const DATASET_LANDING_PREFIX = "https://data.cityofnewyork.us/d/";
 
+/**
+ * The one allowlisted, constant host+path prefix for the human-readable ZoLa
+ * lot page. Same confirmed convenience route the address Confirm card uses
+ * (docs/design/zola-deeplink-url-confirmation.md); host+path is a module
+ * CONSTANT and the only guard is the strict BBL validation below — a
+ * server-echoed URL never reaches this link.
+ */
+export const ZOLA_LOT_PREFIX = "https://zola.planning.nyc.gov/bbl/";
+
 const SOCRATA_DATASET_ID_PATTERN = /^[a-z0-9]{4}-[a-z0-9]{4}$/;
 const PLUTO_SOURCE_ID = "nyc-dcp-pluto-soda";
 const PLUTO_DATASET_ID = "64uk-42ks";
@@ -35,6 +44,17 @@ export function plutoRecordUrl(sourceId: unknown, datasetId: unknown, bbl: unkno
     ? `${PLUTO_RECORD_PREFIX}${bbl}` : null;
 }
 
+/**
+ * The human-readable official ZoLa lot page for a strictly validated BBL.
+ * Source-agnostic (it identifies the lot, not a dataset), built ONLY from the
+ * constant prefix + a canonical 10-digit BBL. Returns null (honest absence,
+ * never a guessed or reflected link) for anything that is not a canonical BBL.
+ */
+export function zolaLotUrl(bbl: unknown): string | null {
+  return typeof bbl === "string" && bbl.length === 10 && BBL_PATTERN.test(bbl)
+    ? `${ZOLA_LOT_PREFIX}${bbl}` : null;
+}
+
 /** Resolve only this fact's metadata; never borrow a different source's dataset. */
 export function sourceFactLinks(
   record: Pick<SourceFact, "source_id" | "dataset_id" | "bbl">,
@@ -47,10 +67,16 @@ export function sourceFactLinks(
   const datasetConflict = sameSource && record.dataset_id !== undefined
     && record.dataset_id !== reproducibility?.dataset_id;
   const identityMatches = identity === undefined || record.bbl === identity.bbl;
+  const currentRecordUrl = identityMatches && !datasetConflict
+    ? plutoRecordUrl(record.source_id, datasetId, record.bbl) : null;
   return {
     datasetId,
     datasetUrl: datasetLandingUrl(datasetId),
-    currentRecordUrl: identityMatches && !datasetConflict
-      ? plutoRecordUrl(record.source_id, datasetId, record.bbl) : null,
+    currentRecordUrl,
+    // The human-readable primary link, gated by the SAME valid, conflict-free
+    // lot identity that unlocks the raw record (so every wrong-lot /
+    // wrong-source / dataset-conflict guard closes the ZoLa link too). When it
+    // is present, record.bbl already passed the canonical BBL validation.
+    zolaUrl: currentRecordUrl !== null ? zolaLotUrl(record.bbl) : null,
   };
 }

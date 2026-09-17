@@ -217,7 +217,10 @@ test("manual and BBL recovery remain reachable when suggestions fail", async ({ 
   await page.route("https://geosearch.planninglabs.nyc/v2/autocomplete?**", route => route.fulfill({ status: 429, contentType: "application/json", body: "{}" }));
   await page.goto("/property?ruleeval=on");
   await page.getByRole("combobox", { name: "Street address", exact: true }).fill("120 Broadway");
-  await expect(page.getByText("Address suggestions are busy. Use manual entry or BBL below.")).toBeVisible();
+  // [ORCH-CORRECTED per web-e2e CI on 71d4abb3] M5-T032 replaces the single
+  // generic "busy" message with distinct typed outcomes; a mocked 429 now
+  // renders the rate-limited copy.
+  await expect(page.getByText("Address suggestions are rate-limited right now. Wait a moment, then search the full address, or use manual entry or BBL below.")).toBeVisible();
   await page.getByText("Enter address manually", { exact: true }).click();
   await expect(page.getByTestId("address-form")).toBeVisible();
   await page.getByText("Search by tax lot (BBL)", { exact: true }).click();

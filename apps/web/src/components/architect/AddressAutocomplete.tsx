@@ -1,29 +1,126 @@
 "use client";
-import { useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type { AddressQuery } from "@/lib/address-api";
-import type { AddressSuggestion } from "@/lib/address-search";
+import {
+    fetchAddressSearch,
+    type AddressSearchErrorReason,
+    type AddressSearchOutcome,
+    type AddressSuggestion,
+} from "@/lib/address-search";
 import { useAddressSuggestions } from "@/lib/architect/use-address-suggestions";
-export function AddressAutocomplete({ onPick, onEdit, inputRef }: {
+
+/** Distinct, non-collapsing copy per failure reason (handoff §6): the old UI
+ * folded timeout, source failure, and transport error into one "unavailable"
+ * line. Each reason now reads differently and points at a real next step. */
+const ERROR_MESSAGES: Record<AddressSearchErrorReason, string> = {
+    rate_limited: "Address suggestions are rate-limited right now. Wait a moment, then search the full address, or use manual entry or BBL below.",
+    timeout: "The city’s address service is taking too long to suggest. Search the full address, or use manual entry or BBL below.",
+    source_unavailable: "The city’s address service is temporarily unavailable. Search the full address, or use manual entry or BBL below.",
+    unavailable: "Couldn’t reach the city’s address service. Check your connection, then search the full address, or use manual entry or BBL below.",
+    malformed: "The city’s address service returned a response we can’t read safely. Use manual entry or BBL below.",
+};
+
+export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
     onPick: (query: AddressQuery) => void;
     onEdit: () => void;
+    /** Hand the preserved typed text to the manual/Geoclient fallback so it is
+     * prefilled, never retyped (handoff §6). Optional so callers can opt out. */
+    onFallback?: (text: string) => void;
     inputRef: RefObject<HTMLInputElement | null>;
 }) {
     const [text, setText] = useState("");
     const [open, setOpen] = useState(false);
     const [active, setActive] = useState(-1);
     const [selected, setSelected] = useState(false);
-    const { outcome, loading } = useAddressSuggestions(text, selected);
+    const [searching, setSearching] = useState(false);
+    /** Result of an EXPLICIT full-address /search, valid only while its query
+     * still equals the current text (a stale full search never displays). */
+    const [searchResult, setSearchResult] = useState<{ query: string; outcome: AddressSearchOutcome } | null>(null);
+    const { outcome: typedOutcome, loading } = useAddressSuggestions(text, selected);
+    /** Monotonic id + abort controller for the EXPLICIT /search, mirroring the
+     * suggestion hook's guard: a superseded response can never apply (the seq
+     * check) and its transport is actively cancelled (the controller). Editing,
+     * picking a candidate, and unmount all supersede an in-flight full search. */
+    const fullSearchSeq = useRef(0);
+    const fullSearchAbort = useRef<AbortController | null>(null);
+
+    // Cancel any in-flight explicit full-address search on unmount.
+    useEffect(() => () => fullSearchAbort.current?.abort(), []);
+
+    /** Supersede an in-flight full search: abort its transport, retire its
+     * sequence so a late reply is dropped, and clear `searching` so a NEW
+     * query can search immediately (never blocked behind an abandoned request). */
+    const cancelFullSearch = () => {
+        fullSearchAbort.current?.abort();
+        fullSearchAbort.current = null;
+        fullSearchSeq.current += 1;
+        setSearching(false);
+    };
+
+    const fullSearchActive = searchResult !== null && searchResult.query === text;
+    const outcome: AddressSearchOutcome | null = fullSearchActive ? searchResult!.outcome : typedOutcome;
     const suggestions = outcome?.kind === "suggestions" ? outcome.suggestions : [];
+    const trimmedLength = text.trim().length;
+    const incomplete = trimmedLength > 0 && trimmedLength < 3;
+
     const choose = (item: AddressSuggestion) => {
+        // Selecting a candidate supersedes any full search still in flight.
+        cancelFullSearch();
         setText(`${item.query.houseNumber} ${item.query.street}, ${item.borough}`);
         setSelected(true);
         setOpen(false);
         onPick(item.query);
     };
-    const message = loading ? "Searching official NYC addresses…" : outcome?.kind === "error" ? (outcome.reason === "rate_limited" ? "Address suggestions are busy. Use manual entry or BBL below." : "Address suggestions are unavailable. Use manual entry or BBL below.") : outcome?.kind === "suggestions" && open ? (suggestions.length ? `${suggestions.length} address suggestions. Use arrow keys to choose, then Enter.` : "No matching address suggestions. Try a more complete address, manual entry or BBL.") : "";
+
+    /** The explicit /search action for a complete pasted address (never
+     * auto-accepts a candidate — the picked one still routes to confirmation).
+     * Request-generation + abort protected: only the newest search applies, and
+     * a superseded reply (edit / selection / unmount) is dropped, not rendered. */
+    const runFullSearch = () => {
+        const query = text;
+        if (query.trim().length < 3 || searching) return;
+        fullSearchAbort.current?.abort();
+        const controller = new AbortController();
+        fullSearchAbort.current = controller;
+        const seq = ++fullSearchSeq.current;
+        setSearching(true);
+        setOpen(true);
+        setActive(-1);
+        void fetchAddressSearch(query, { signal: controller.signal }).then(result => {
+            // Only the newest, un-aborted search may touch the screen.
+            if (seq !== fullSearchSeq.current || result.kind === "aborted") return;
+            setSearching(false);
+            setSearchResult({ query, outcome: result });
+            if (result.kind === "suggestions" && result.suggestions.length) setOpen(true);
+        });
+    };
+
+    // The autocomplete could not offer a usable pick: surface the explicit
+    // full-address action and the prefilled manual/Geoclient fallback.
+    const stalled =
+        outcome?.kind === "error" ||
+        (outcome?.kind === "suggestions" && suggestions.length === 0 && trimmedLength >= 3);
+    const offerRecovery = stalled && !selected && !searching;
+
+    const statusMessage = searching
+        ? "Searching the city’s full address service…"
+        : loading
+            ? "Searching official NYC addresses…"
+            : incomplete
+                ? "Keep typing the full address (at least 3 characters)."
+                : outcome?.kind === "error"
+                    ? ERROR_MESSAGES[outcome.reason]
+                    : outcome?.kind === "suggestions"
+                        ? suggestions.length && open
+                            ? `${suggestions.length} address suggestions. Use arrow keys to choose, then Enter.`
+                            : suggestions.length === 0 && trimmedLength >= 3
+                                ? "No matching address found in the city’s records. Search the full address, or use manual entry or BBL below."
+                                : ""
+                        : "";
+
     return <div className="architect-autocomplete">
     <label className="field-label" htmlFor="architect-address">Street address</label>
-    <input id="architect-address" ref={inputRef} className="text-input architect-search-input" role="combobox" aria-autocomplete="list" aria-expanded={open && suggestions.length > 0} aria-controls="architect-address-options" aria-activedescendant={open && active >= 0 ? `address-option-${active}` : undefined} aria-describedby="architect-address-hint" autoComplete="off" placeholder="Enter a New York City address" maxLength={200} value={text} onChange={event => { setText(event.target.value); setSelected(false); setActive(-1); setOpen(true); onEdit(); }} onKeyDown={event => {
+    <input id="architect-address" ref={inputRef} className="text-input architect-search-input" role="combobox" aria-autocomplete="list" aria-expanded={open && suggestions.length > 0} aria-controls="architect-address-options" aria-activedescendant={open && active >= 0 ? `address-option-${active}` : undefined} aria-describedby="architect-address-hint" autoComplete="off" placeholder="Enter a New York City address" maxLength={200} value={text} onChange={event => { setText(event.target.value); setSelected(false); setActive(-1); setOpen(true); setSearchResult(null); cancelFullSearch(); onEdit(); }} onKeyDown={event => {
             if (event.key === "Escape") {
                 setOpen(false);
                 setActive(-1);
@@ -42,6 +139,10 @@ export function AddressAutocomplete({ onPick, onEdit, inputRef }: {
                 event.preventDefault();
                 if (open && active >= 0 && suggestions[active])
                     choose(suggestions[active]);
+                else if (trimmedLength >= 3)
+                    // No highlighted suggestion: run the explicit /search — never
+                    // silently accept the first approximate match as the lot.
+                    runFullSearch();
             }
         }} onBlur={() => setOpen(false)} onFocus={() => { if (!selected && suggestions.length)
         setOpen(true); }}/>
@@ -58,8 +159,16 @@ export function AddressAutocomplete({ onPick, onEdit, inputRef }: {
     </ul> : <ul id="architect-address-options" role="listbox" aria-label="Official NYC address suggestions" hidden/>}
     <p id="architect-address-hint" className="section-note">All five boroughs · <a href="https://geosearch.planninglabs.nyc/docs/" target="_blank" rel="noopener noreferrer">NYC Planning address suggestions ↗</a>
     </p>
+    {trimmedLength >= 3 && !selected ? <div className="architect-search-actions">
+      <button type="button" className="secondary-button" data-testid="full-address-search" onClick={runFullSearch} disabled={searching}>
+        Search this full address
+      </button>
+      {offerRecovery && onFallback ? <button type="button" className="secondary-button" data-testid="use-manual-entry" onClick={() => onFallback(text)}>
+        Use manual entry with this address
+      </button> : null}
+    </div> : null}
     <p className="architect-search-status" role="status">
-      {message}
+      {statusMessage}
     </p>
   </div>;
 }

@@ -6,6 +6,9 @@ import { baseProfile } from "@/test-support/fixtures";
 afterEach(cleanup);
 
 it("legacy evidence opens its captured lot's current PLUTO record and keeps the dataset secondary", () => {
+  // [ORCH-CORRECTED per web-e2e CI on 3250fbc9] M5-T032 makes the ZoLa lot
+  // page the PRIMARY link (D-064-R005); the current PLUTO JSON record stays
+  // present but demoted. This legacy test asserted the old PLUTO-first order.
   const profile = baseProfile();
   const record = profile.provenance.find(item => item.original_field_name === "lotarea")!;
   render(<ProvenanceDisclosure records={[record]} reproducibility={profile.reproducibility} label="Source for Lot area" />);
@@ -16,7 +19,9 @@ it("legacy evidence opens its captured lot's current PLUTO record and keeps the 
   expect(current).toHaveAttribute("target", "_blank");
   expect(current).toHaveAttribute("rel", "noopener noreferrer");
   expect(screen.getByRole("link", { name: /About this dataset/ })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
-  expect(screen.getAllByRole("link")[0]).toBe(current);
+  const zola = screen.getByRole("link", { name: "View this lot on ZoLa" });
+  expect(zola).toHaveAttribute("href", `https://zola.planning.nyc.gov/bbl/${record.bbl}`);
+  expect(screen.getAllByRole("link")[0]).toBe(zola);
   expect(screen.getByText(/may differ from .*captured evidence/i)).toBeInTheDocument();
   for (const value of ["lotarea", "7577714", "7,577,714", "square feet", record.dataset_version, record.retrieved_at]) {
     expect(screen.getByText(value, { exact: true })).toBeInTheDocument();
