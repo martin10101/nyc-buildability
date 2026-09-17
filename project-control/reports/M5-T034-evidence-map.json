@@ -1,0 +1,23 @@
+{
+  "task_id": "M5-T034",
+  "material_commit": "ae478563",
+  "integration_commit": "54e1da7a",
+  "ci_green_head": "ae478563",
+  "requirements": {
+    "D-045-R002": [
+      "B7 geometry-dependent rule mechanics delivered: app/rules/wide_street_wiring.py is the FIRST production consumer of the accepted wide-street stack - it consumes the D-052 policy decision + B4 buffer engine read-only through public interfaces (own-module ruling honored), keys routing off decision_state never routed_to, and produces the typed determination the ZR 23-22 conditional-FAR rows consume; the evaluator seam (integration.py select_conditional_far_row + evaluate_property wide_street_determination param) folds it additively with byte-identity when absent; the route provider is server-side-only with a None default.",
+      "B4 input-bounds gap closed inside the engine: InputBoundsError + MAX_WIDE_SEGMENTS=512, MAX_VERTICES_PER_PATH=5000, EXTENT_ABS_MAX_FT=5e6 wired before linework/buffer ops, non-finite rejected; no split, no wiring added there (M4-T021 G3/G5 preconditions).",
+      "D-051 per-rule fallback direction VALIDATED and documented for these rows (FALLBACK_DIRECTION_NOTICE: the wide-street value is the HIGHER FAR, so withholding on uncertainty can never overstate buildable area; explicitly not a universal claim); elevated exceptions_checked criterion enforced with the named-street override segments failing safe (AS-4 tests).",
+      "Executable proof: 599 rules + 49 connector + 35 api tests green, ruff clean (services/api cwd), api CI green at ae478563."
+    ],
+    "D-045-R008": [
+      "One reviewed family, bounded task under the normal gate regime: single packet (M5-T034), 9 files inside allowed_paths, named-street override table and EC-4 tolerance explicitly deferred as follow-ups (DB-010, DB-011 in docs/DISCOVERY_BACKLOG.md); no scope creep into other rule families."
+    ],
+    "D-045-R009": [
+      "Preservation honored: r6_r7_r8_wide_street_conditional_far.rule.json byte-unchanged (needs_review + citations intact); every determination carries the DRAFT_LABEL_NOTICE + D-052 provenance quintuple; coverage tops out at conditional, uncertainty is professional_review_required; no published/Verified language (AS-6 tests). NOTE for reviewers: the packet output line said the rule.json would be updated to consume the determination - the producer instead consumed it at the evaluator seam reading the rule's own byte-checked FAR parameters, flagged as a deviation for reviewer judgment (seam-evidence file, producer report section 3.3)."
+    ],
+    "D-066-R001": [
+      "Packet inputs carried the seam-regenerated navigation block (728/15271/6762; producers, rule target, evaluator seam, first-production-consumer fact); producer report section 3.1 matches the block's structure exactly; graph advisory discipline preserved."
+    ]
+  }
+}
