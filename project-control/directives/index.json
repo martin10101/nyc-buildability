@@ -856,6 +856,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-064-subagent-opus48-lean-ops/manifest.json"
+  },
+  {
+   "directive_id": "D-065",
+   "slug": "affordable-far-scenarios",
+   "title": "Owner 2026-09-17: affordable-housing FAR pathways are part of the calculations - computed as separate labeled conditional scenarios beside the as-of-right result, with the evaluated rule as the single point of truth (PLUTO columns are cross-checks) and commitments shown as explicit conditions.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-065-affordable-far-scenarios/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
