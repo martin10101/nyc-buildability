@@ -16,13 +16,22 @@ function lotProfile() {
 }
 
 function expectLotLinks(bbl: string) {
+  // D-064-R005: the human-readable ZoLa lot page is the PRIMARY link; the raw
+  // PLUTO JSON record is demoted to a clearly secondary link; the dataset
+  // landing link remains.
+  const zola = screen.queryByRole("link", { name: "View this lot on ZoLa" });
+  expect(zola).not.toBeNull();
+  expect(zola).toHaveAttribute("href", `https://zola.planning.nyc.gov/bbl/${bbl}`);
+  expect(zola).toHaveAttribute("target", "_blank");
+  expect(zola).toHaveAttribute("rel", "noopener noreferrer");
   const current = screen.queryByRole("link", { name: "Current PLUTO record (JSON)" });
   expect(current).not.toBeNull();
   expect(current).toHaveAttribute("href", `https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=${bbl}`);
   expect(current).toHaveAttribute("target", "_blank");
   expect(current).toHaveAttribute("rel", "noopener noreferrer");
   expect(screen.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
-  expect(screen.getAllByRole("link")[0]).toBe(current);
+  // ZoLa is rendered first (primary); the raw record follows it.
+  expect(screen.getAllByRole("link")[0]).toBe(zola);
   expect(screen.getByText(/may differ from .*captured evidence/i)).toBeInTheDocument();
 }
 
@@ -70,6 +79,7 @@ describe.each(factSurfaces)("$name source boundaries", ({ show }) => {
     profile.provenance[0].bbl = "3021720001";
     show(profile);
     expect(screen.queryByRole("link", { name: "Current PLUTO record (JSON)" })).toBeNull();
+    expect(screen.queryByTestId("zola-lot-link")).toBeNull();
     expect(screen.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
     expect(screen.getByText("lotarea", { exact: true })).toBeInTheDocument();
   });
@@ -103,6 +113,7 @@ describe.each(factSurfaces)("$name source boundaries", ({ show }) => {
     profile.reproducibility!.dataset_id = "abcd-1234";
     show(profile);
     expect(screen.queryByRole("link", { name: "Current PLUTO record (JSON)" })).toBeNull();
+    expect(screen.queryByTestId("zola-lot-link")).toBeNull();
     expect(screen.getByRole("link", { name: "About this dataset" })).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
   });
 });
@@ -118,6 +129,7 @@ it.each([
   profile.reproducibility!.dataset_id = dataset;
   render(<EvidenceInspector profile={profile} selected={null} onClose={() => undefined} onEvidence={() => undefined} />);
   expect(screen.queryByRole("link", { name: "Current PLUTO record (JSON)" })).toBeNull();
+  expect(screen.queryByTestId("zola-lot-link")).toBeNull();
 });
 
 it("profile sources retain the complete captured retrieval metadata", () => {

@@ -39,7 +39,13 @@ export function ProvenanceDisclosure({
       {entries.some(({ links }) => links.currentRecordUrl) ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}
       {entries.map(({ record, links }) => (
         <div className="provenance-body" key={record.provenance_id}>
-          {links.currentRecordUrl ? <p><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a></p> : null}
+          {/* ZoLa-first (D-064-R005): the human-readable lot page is the PRIMARY
+              link; the raw PLUTO JSON record is demoted to a clearly secondary
+              link. Both are gated by the SAME valid, conflict-free lot identity
+              (sourceFactLinks), so a wrong-lot / wrong-source / dataset-conflict
+              record renders neither — honest absence, never a guessed link. */}
+          {links.zolaUrl ? <p><a href={links.zolaUrl} target="_blank" rel="noopener noreferrer" data-testid="zola-lot-link">View this lot on ZoLa</a></p> : null}
+          {links.currentRecordUrl ? <p><a className="section-note" href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a></p> : null}
           <dl>
             <dt>Source</dt>
             <dd>{record.source_id}</dd>

@@ -5,6 +5,19 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 
+// M5-T032: the architect fallback test (S8) drives the REAL AddressAutocomplete,
+// whose suggestion hook is mocked to a source failure so the prefilled
+// manual/Geoclient recovery affordance is offered without touching the network.
+// Every other test below renders the NON-architect screen (or PropertyLookup,
+// which mounts the screen non-architect), so the autocomplete is never mounted
+// and this mock is inert for them.
+vi.mock("@/lib/architect/use-address-suggestions", () => ({
+  useAddressSuggestions: () => ({
+    outcome: { kind: "error", reason: "source_unavailable" } as const,
+    loading: false,
+  }),
+}));
+
 /**
  * M5-T015 acceptance pack — address entry + resolution outcomes + error
  * matrix (design spec docs/design/address-entry-confirm-design-spec.md,
@@ -932,5 +945,52 @@ describe("S7 — state-machine integrity", () => {
     fillAndSubmit();
     await screen.findByTestId("address-unexpected-response");
     expect(screen.getByTestId("correlation-id").textContent).toBe(HTTP_CID);
+  });
+});
+
+/* ================================================================ *
+ * S8 — architect autocomplete fallback into the manual resolver
+ *      (M5-T032, handoff §6): complete screen interaction
+ * ================================================================ */
+
+describe("S8 — manual/Geoclient fallback opens, focuses, and preserves ONLY the typed text", () => {
+  it("drops into the existing resolver prefilled with the typed one-box text, clears stale house/borough/ZIP, opens the disclosure, and focuses the resolver", async () => {
+    render(<AddressResolutionScreen architect />);
+
+    // Stale values from an earlier pick/edit sit in the manual fields.
+    fireEvent.change(screen.getByLabelText("House number"), { target: { value: "999" } });
+    fireEvent.change(screen.getByLabelText("Borough"), { target: { value: "Bronx" } });
+    fireEvent.change(screen.getByLabelText("ZIP code (alternative to borough)"), {
+      target: { value: "10451" },
+    });
+
+    // The suggestion hook is mocked to a source failure, so once the analyst
+    // types a full address the prefilled recovery affordance is offered.
+    // (The architect screen has two `combobox`-role elements — the one-box
+    // input and the borough <select> — so target the input by its label.)
+    fireEvent.change(screen.getByLabelText("Street address"), {
+      target: { value: "120 Broadway, New York" },
+    });
+    fireEvent.click(screen.getByTestId("use-manual-entry"));
+
+    // The existing manual resolver is now OPEN…
+    const details = screen
+      .getByText("Enter address manually")
+      .closest("details") as HTMLDetailsElement;
+    expect(details.open).toBe(true);
+
+    // …the typed one-box text is preserved and VISIBLE in the street field…
+    const street = screen.getByLabelText("Street") as HTMLInputElement;
+    expect(street.value).toBe("120 Broadway, New York");
+
+    // …never silently combined with the stale house-number / borough / ZIP…
+    expect((screen.getByLabelText("House number") as HTMLInputElement).value).toBe("");
+    expect((screen.getByLabelText("Borough") as HTMLSelectElement).value).toBe("");
+    expect(
+      (screen.getByLabelText("ZIP code (alternative to borough)") as HTMLInputElement).value,
+    ).toBe("");
+
+    // …and focus lands on the resolver so the analyst continues immediately.
+    await waitFor(() => expect(document.activeElement).toBe(street));
   });
 });

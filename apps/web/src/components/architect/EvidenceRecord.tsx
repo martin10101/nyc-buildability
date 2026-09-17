@@ -27,7 +27,8 @@ export function EvidenceRecord({ record, profile }: {
       {fieldLabel(record.original_field_name)}
     </h3>
     <p>
-      {links.currentRecordUrl ? <><a href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
+      {links.zolaUrl ? <><a href={links.zolaUrl} target="_blank" rel="noopener noreferrer" data-testid="zola-lot-link">View this lot on ZoLa</a><br /></> : null}
+      {links.currentRecordUrl ? <><a className="section-note" href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
       {links.datasetUrl ? <a className="section-note" href={links.datasetUrl} target="_blank" rel="noopener noreferrer">About this dataset</a> : <span className="section-note">No safe official dataset link is available in this record.</span>}
     </p>
     {links.currentRecordUrl ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}

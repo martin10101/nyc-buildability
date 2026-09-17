@@ -90,6 +90,13 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
   const [result, setResult] = useState<ResolutionResult | null>(null);
   /** True only between a Retry/pick activation and its outcome (D1 focus). */
   const [retryFocus, setRetryFocus] = useState(false);
+  /** Controls the architect "Enter address manually" disclosure so an
+   * autocomplete fallback can OPEN the existing Geoclient resolver; kept in
+   * sync with native summary toggles via onToggle. */
+  const [manualOpen, setManualOpen] = useState(false);
+  /** Bumped on each fallback so the focus effect fires even when the manual
+   * resolver was already open. */
+  const [manualFocusNonce, setManualFocusNonce] = useState(0);
   // Monotonic id + abort controller: a stale response can never overwrite
   // a newer resolution, and superseded requests are actively cancelled.
   const requestSeq = useRef(0);
@@ -101,6 +108,12 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
 
   // Cancel any in-flight request on unmount.
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // After a fallback (nonce bump) the manual resolver is open and rendered;
+  // move focus to its street input so the analyst continues without hunting.
+  useEffect(() => {
+    if (manualFocusNonce > 0) streetInputRef.current?.focus();
+  }, [manualFocusNonce]);
 
   // D1: after an outcome arrives, move focus to the outcome heading.
   // `result` changes ONLY on arrival (an inert submit never calls
@@ -187,6 +200,17 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
     (architect ? autocompleteRef : streetInputRef).current?.focus();
   }, [architect]);
 
+  /** Autocomplete fallback (handoff §6): drop into the EXISTING Geoclient
+   * manual resolver with the typed text preserved and VISIBLE, opened and
+   * focused. The typed text is a full one-box string, so it seeds the street
+   * field alone — never silently combined with a stale house number, borough,
+   * or ZIP left over from an earlier pick or edit (those are cleared). */
+  const openManualFallback = useCallback((raw: string) => {
+    setValues({ ...EMPTY_ADDRESS_FORM, street: raw });
+    setManualOpen(true);
+    setManualFocusNonce((nonce) => nonce + 1);
+  }, []);
+
   // D1: the single outcome announcement — cleared while resolving so a
   // repeated identical outcome (e.g. retry fails the same way) announces.
   const announcement =
@@ -266,8 +290,8 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
         {architect ? <AddressAutocomplete inputRef={autocompleteRef} onPick={query => {
           setValues({ houseNumber: query.houseNumber, street: query.street, borough: query.borough ?? "", zip: query.zip ?? "" });
           void runResolve(query);
-        }} onEdit={() => { ++requestSeq.current; abortRef.current?.abort(); setLoadingQuery(null); setResult(null); }} /> : null}
-        {architect ? <details className="provenance-details"><summary>Enter address manually</summary><AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} /></details> : <AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} />}
+        }} onEdit={() => { ++requestSeq.current; abortRef.current?.abort(); setLoadingQuery(null); setResult(null); }} onFallback={openManualFallback} /> : null}
+        {architect ? <details className="provenance-details" open={manualOpen} onToggle={event => setManualOpen((event.currentTarget as HTMLDetailsElement).open)}><summary>Enter address manually</summary><AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} /></details> : <AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} />}
       </section>
 
       {loadingQuery !== null ? <ResolvingCard focusOnMount={retryFocus} /> : null}

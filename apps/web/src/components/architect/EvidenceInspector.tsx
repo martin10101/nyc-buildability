@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import type { PropertyProfile } from "@/lib/contract";
-import { datasetLandingUrl, plutoRecordUrl } from "@/lib/provenance-link";
+import { datasetLandingUrl, plutoRecordUrl, zolaLotUrl } from "@/lib/provenance-link";
 import { CapturedRecord, EvidenceRecord } from "./EvidenceRecord";
 export function EvidenceInspector({ profile, selected, onClose, onEvidence }: {
     profile: PropertyProfile;
@@ -25,6 +25,7 @@ export function EvidenceInspector({ profile, selected, onClose, onEvidence }: {
     const source = profile.reproducibility;
     const link = datasetLandingUrl(source?.dataset_id);
     const currentRecordUrl = plutoRecordUrl(source?.source_id, source?.dataset_id, profile.identity.bbl);
+    const zolaUrl = currentRecordUrl !== null ? zolaLotUrl(profile.identity.bbl) : null;
     return <aside ref={panelRef} tabIndex={-1} className={`architect-inspector ${selected ? "has-selection" : ""}`} aria-label="Contextual evidence inspector">
     <div className="architect-inspector-heading">
       <h2>
@@ -38,7 +39,8 @@ export function EvidenceInspector({ profile, selected, onClose, onEvidence }: {
         {source?.source_id ?? "Source not supplied"}
       </h3>
       <p>
-        {currentRecordUrl ? <><a href={currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
+        {zolaUrl ? <><a href={zolaUrl} target="_blank" rel="noopener noreferrer" data-testid="zola-lot-link">View this lot on ZoLa</a><br /></> : null}
+        {currentRecordUrl ? <><a className="section-note" href={currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a><br /></> : null}
         {link ? <a className="section-note" href={link} target="_blank" rel="noopener noreferrer">About this dataset</a> : <span className="section-note">Official dataset link not supplied.</span>}
       </p>
       {currentRecordUrl ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}
