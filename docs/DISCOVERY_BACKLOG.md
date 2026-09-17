@@ -22,5 +22,10 @@ entries never get deleted — only status changes.
 | DB-011 | 2026-09-17 | EC-4 boundary-tangency legal tolerance question (zero-area LineString intersects) left open for qualified review | M4-T021 B4 disclosed judgment calls | G6-era legal question; keep with the G6 queue | WATCH(G6 activation) |
 | DB-012 | 2026-09-17 | Loop review-round budget (4) is one round short for report-heavy tasks; honesty-bar packet block mitigates but the limit itself is owner-config | Runs 36/37 breaker analysis | Owner option: raise `consecutive_revision_loops` in the protected config; revisit if a run trips the breaker despite the honesty bar | WATCH(next breaker trip) |
 
+| DB-013 | 2026-09-17 | Buffer engine: lot-polygon vertex count unbounded before shapely construction; per-segment PATH count unbounded before MultiLineString build (both currently safe — server-derived inputs) | M5-T034 G5 findings 1-2 | Two cheap defense-in-depth ceilings when the engine sits behind a live request path | OPEN |
+| DB-014 | 2026-09-17 | Wide-street outcome (far_row/governing_far/provenance) deliberately NOT serialized in rule_evaluation contract v1.0.0 — clients still see only the conservative FAR even on a confident WITHIN | M5-T034 G3 INFO-B | Additive contract bump to surface the wide-street result + provenance to the UI | OPEN |
+| DB-015 | 2026-09-17 | The wide-street provider seam defaults to None — no live data source feeds real determinations through /rule-evaluation yet | M5-T034 G3 INFO-C; producer report §6.1 | Live provider wiring task (fetch DCM segments + lot geometry server-side per request, bounded) — the step that makes wide-street FAR real for users | OPEN |
+
 Sweep log: seeded 2026-09-17 from M5-T032/T033 gate findings, owner-confirmation records,
-M4-T018/T021 carried notes, and runs-36/37 analysis.
+M4-T018/T021 carried notes, and runs-36/37 analysis. +DB-013..015 from the M5-T034 review
+wave (same day).

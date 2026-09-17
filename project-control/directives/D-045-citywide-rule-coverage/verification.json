@@ -530,6 +530,54 @@
      "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M5-T034",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed",
+   "reviewed_manifest_sha256": "9aa0855d2d2a81d9fde61a178badec54529b7765cf4963e09d93155756fed5be",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T21:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "Independent DCV at frozen head 22724f02, carried by explicit restamp attestation to 6d5e1c42 (project-control-only delta, condition verified by the verifier itself): B7 wiring is the first production consumer of the accepted wide-street stack (own module, read-only public-interface consumption, routing keyed off decision_state never routed_to, every uncertainty -> professional_review_required with no FAR bonus, FAR values only from the rule's own byte-checked parameters); B4 input-bounds gap closed inside the engine with typed fail-closed guards before linework/buffer; D-051 fallback direction validated for these rows (FALLBACK_DIRECTION_NOTICE + passing AS-5 test). DCV re-ran every suite itself: 599 rules / 49 connector / 46 integration / 35 api / 20 wiring, ruff+modularity+validator green.",
+      "Full verifier basis: project-control/reports/M5-T034-DCV-verification.md; carry attestation: project-control/reports/M5-T034-delta-attestations.md. Independent G1/G3/G4/G5 all PASS at the same identity with carry attestations."
+     ],
+     "verified_at": "2026-09-17T21:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified one bounded reviewed-family packet under the normal gate set with out-of-scope items deferred as tracked backlog entries (DB-010/011/013/014/015), no multi-family merge (project-control/reports/M5-T034-DCV-verification.md)."
+     ],
+     "verified_at": "2026-09-17T21:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified preservation: rule status needs_review + pending reviews unchanged, FAR parameter values and zr-23-22 citation digest byte-stable, DRAFT notice + provenance quintuple on every determination, no published/verified language; its required evidence-record correction (prose-only-edits wording) was applied as [ORCH-CORRECTED] and the verifier confirmed the sole condition closed at 6d5e1c42."
+     ],
+     "verified_at": "2026-09-17T21:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
+    }
+   ]
   }
  ]
 }

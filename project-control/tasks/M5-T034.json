@@ -88,8 +88,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Scope magnet: the named-street override table and EC-4 legal tolerance are OUT of this packet - route them to follow-ups, never resolve them here",
     "The evaluator seam must stay fail-safe: a wiring failure can never produce a guessed district or FAR bonus",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T09:58:42.955725+00:00",
-  "updated_at": "2026-09-17T20:56:41.237597+00:00",
+  "updated_at": "2026-09-17T21:30:45.325389+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -148,5 +148,7 @@
       "status": "in_progress",
       "message": "Corrections applied; re-freezing submission at corrected head"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-17T21:30:45.325389+00:00"
 }

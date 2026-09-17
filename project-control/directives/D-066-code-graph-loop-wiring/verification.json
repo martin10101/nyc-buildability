@@ -62,6 +62,31 @@
      "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T034",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed",
+   "reviewed_manifest_sha256": "9aa0855d2d2a81d9fde61a178badec54529b7765cf4963e09d93155756fed5be",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T21:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet carried the seam-regenerated navigation block (728/15271/6762, producers + rule target + evaluator seam + first-consumer fact) with the query.py --no-regen instruction, and that the producer verified graph-derived conclusions in source (advisory discipline). Basis: project-control/reports/M5-T034-DCV-verification.md + delta-attestations."
+     ],
+     "verified_at": "2026-09-17T21:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
+    }
+   ]
   }
  ]
 }
