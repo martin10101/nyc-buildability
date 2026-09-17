@@ -15,7 +15,8 @@
     "DB-005 UNIFICATION (binding): every ZoLa link on the touched surfaces goes through zolaLotUrl (which returns null on an invalid BBL - render NO link then, never a raw template string). PropertyOverview.tsx:52 inline link replaced; AddressConfirmCard.tsx checked and unified the same way. Same constant-prefix + validated-token discipline as the accepted M5-T032 work (G5 F-1).",
     "WEB TEST RULES (CODING_RULES.md, binding): type DOM queries as querySelectorAll<HTMLElement>; deliberate invalid-shape probes as 'as unknown as T'; NEVER commit an empty .test.tsx (vitest fails on 'no suite' - the placeholder already carries a trivial passing test, replace it with the real suite); don't read jsdom getContext/WebGL noise as failure - read the vitest FAIL summary only.",
     "PARALLEL-LOOP ISOLATION (D-071-R001, binding): a second build loop is running M5-T035 on services/api/** concurrently. Your scope is apps/web/** + your report ONLY - if any change seems to need an api or shared-lib file outside allowed_paths, STOP and surface it in the report (discovery routing), never edit it.",
-    "D-059-R006 claims discipline: never present this panel as closing an MVP percentage or as parity 'done'; the report states exactly what is now displayed and what remains absent from the client-side profile."
+    "D-059-R006 claims discipline: never present this panel as closing an MVP percentage or as parity 'done'; the report states exactly what is now displayed and what remains absent from the client-side profile.",
+    "RUN-01 CARRYOVER (binding - the ONLY work of this run; expect ONE cycle): the build is DONE and all five independent reviews PASSED at the harvested head 657b238d. Exactly ONE defect remains, proven by web CI on that head (vitest, web-e2e job): FAIL src/components/architect/__tests__/zoning-context-panel.test.tsx - 'TestingLibraryElementError: Found multiple elements with the text: R3-2' (AS-1 test 1, ~line 45) and the same for 'C1-4' (AS-1 populated-overlay test, ~line 82); summary '1 failed | 40 passed (41)' test files - every other suite green. Root cause: getByText(<exact value>) is ambiguous because the shared list markup carries the value text on nested/multiple elements; the PRODUCTION panel is correct (the values render - that is WHY multiple matched). FIX THE TEST QUERIES ONLY, in that one test file: replace each ambiguous getByText('R3-2'|'C4-1'|'GI'|'C1-4'|landmark/histdist value) with a query that stays a REAL presence assertion - getAllByText(...) asserting length >= 1 (or the exact expected count), or a more tightly scoped within(...) query - NEVER queryBy+null-tolerant forms, NEVER deleted assertions, NEVER production edits. Check the WHOLE suite for other single-match queries on designation values that would be ambiguous the same way (the empty-text and testid queries are fine - they passed). Do NOT touch any production file, any other test file, or the report except a short dated addendum noting the query fix. Run the documented modularity command, commit, checkpoint (envelope fields empty-string). CI on the re-pushed head remains the executable authority."
   ],
   "outputs": [
     "New component apps/web/src/components/architect/ZoningContextPanel.tsx: renders zoning districts (all, split lots included), commercial overlays, special districts, and landmark/historic flags from the client-side PropertyProfile with per-section provenance, honest absent/Unknown states, and ONE validated ZoLa lot link (zolaLotUrl; no link when null)",
@@ -94,7 +95,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 75,
   "risks": [
     "Scope magnets are OUT: missing-inputs card on ConfirmScreen, malformed-copy fix, address-flow test gaps (DB-007/009), api field exposure - surface them in the report via discovery routing, never fix in-packet",
     "No local web test run exists on this machine: do NOT claim test results you did not run; CI on the pushed head decides",
@@ -104,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T22:43:50.175119+00:00",
-  "updated_at": "2026-09-17T22:46:13.495100+00:00",
+  "updated_at": "2026-09-17T23:50:39.747989+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -132,6 +133,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted at 8dccf758 under D-071 (loop-2 lane); disjoint scope vs M5-T035 verified; worktree wt-m5t036 next; loop-2 run persistent2-local-01 to build"
+    },
+    {
+      "at": "2026-09-17T23:50:39.747989+00:00",
+      "agent": "frontend-engineer",
+      "percent": 75,
+      "status": "claimed",
+      "message": "Loop-2 run 01 build harvested at 657b238d; ALL FIVE reviews PASS (verbatim reports on file: G1/G3/G4/G5/HJ); web CI on that head RED on exactly two ambiguous getByText queries in the new panel suite (Found multiple elements: R3-2 / C1-4) - test-query defect, production correct; RUN-01 CARRYOVER appended, loop-2 run 02 relaunching for the single-cycle test fix; gates to be recorded at the corrected head after delta-attestations"
     }
   ]
 }

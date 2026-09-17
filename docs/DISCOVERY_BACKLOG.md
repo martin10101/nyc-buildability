@@ -31,6 +31,8 @@ entries never get deleted — only status changes.
 | DB-017 | 2026-09-17 | Client-side profile mapped_features carries flags the new context panel does not render (2007 FIRM / 2015 pFIRM flood flags, transit zone, split-zone flag, zoning map number) — panel scope was districts/overlays/special districts/landmark+historic | M5-T036 producer discovery D1 (run persistent2-local-01, cross-session return) | Decide: extend the panel or keep AdditionalZoningFlags as the carrier for these; small follow-up either way | OPEN |
 | DB-018 | 2026-09-17 | Once the context panel mounts, the architect overview surface carries TWO ZoLa affordances (the panel's validated link + PropertyOverview's existing one) | M5-T036 producer discovery D2 (same return) | Consolidation is a design call (product-design-director class), not a defect; judge after the panel is accepted and visible | OPEN |
 
+| DB-019 | 2026-09-17 | M5-T036 review-wave polish trio (all advisory, none blocking): (a) "↗" glyph inside the two ZoLa link texts lacks aria-hidden (G3 F1 + HJ F6; matches a pre-existing sibling); (b) PropertyOverview renders NOTHING on a null BBL while the panel and confirm card show an honest absent note (G5 observation — consistency nuance); (c) mapped-feature coverage_status not surfaced on the panel's landmark/historic rows (G1 O1; full coverage table stays on the zoning tab + brief) | M5-T036 gate returns (G1/G3/G5/HJ) | One small web polish packet, or fold into the DB-018 design-director pass | OPEN |
+
 Sweep log: seeded 2026-09-17 from M5-T032/T033 gate findings, owner-confirmation records,
 M4-T018/T021 carried notes, and runs-36/37 analysis. +DB-013..015 from the M5-T034 review
 wave (same day). +DB-016 owner product-gap observation (same day).
