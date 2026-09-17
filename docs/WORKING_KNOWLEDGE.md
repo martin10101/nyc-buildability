@@ -50,6 +50,14 @@ Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
   silent while asks pile up (run-37 gap: 8 queued unnoticed). Watch for
   `DEFER_TO_OWNER|"tier":"ASK"` AND poll the journal's unanswered `queued_asks` count
   (sqlite read-only) as belt-and-braces.
+- Answer-ask CLI verbs (approve-once/deny) APPEND to the audit chain and can RACE the live
+  supervisor into a fork (duplicate sequence, seen run 39): the broker journal write usually
+  lands first, so the ANSWER still takes effect even when the audit append raises
+  AuditChainError. A forked chain blocks only NEW CLI processes — the live supervisor keeps
+  appending from its in-memory counter and the run continues unharmed. Posture: verify the
+  answer landed in `queued_asks` (read-only sqlite), keep monitoring, and repair the fork
+  BETWEEN runs (never run the repair script against a live supervisor). If a must-answer ask
+  arrives while the CLI is fork-blocked, the fallback is the controlled restart drill.
 - Not every undocumented-command ask is a packet gap. Two benign classes seen in run 36:
   (a) the worker chains `; echo FOO_EXIT=$?` onto a documented test command — chaining can
   NEVER be a documented_test_command (profile forbids it), and the worker self-recovers by
