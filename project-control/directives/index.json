@@ -916,6 +916,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-069-discovery-backlog/manifest.json"
+  },
+  {
+   "directive_id": "D-070",
+   "slug": "finished-seam-handoff",
+   "title": "Owner 2026-09-17: standing rule - every session must finish the seam BEFORE a planned handoff (backlog sweep + next packet contracted/claimed/pushed + worktree + launcher pointed at it), so the successor only verifies and launches; recorded permanently in the session handoff document; crash/forced turnover is the only fallback.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-070-finished-seam-handoff/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

@@ -116,6 +116,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 
 ## Session habits
 
+- D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
+  packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
+  only verifies+launches; crash/forced turnover = the only fallback.
+
 - Discoveries → `docs/DISCOVERY_BACKLOG.md` (D-069, NOT injected): append product/domain
   findings AT discovery; SWEEP OPEN/WATCH entries at every contract seam and replan; entries
   end as QUEUED(task)/RESOLVED/WATCH, never deleted, never duplicating ledger/blockers.

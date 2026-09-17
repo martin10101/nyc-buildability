@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-070",
+ "version": 1,
+ "slug": "finished-seam-handoff",
+ "title": "Owner 2026-09-17: standing rule - every session must finish the seam BEFORE a planned handoff (backlog sweep + next packet contracted/claimed/pushed + worktree + launcher pointed at it), so the successor only verifies and launches; recorded permanently in the session handoff document; crash/forced turnover is the only fallback.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-17",
+ "captured_at": "2026-09-17T22:19:21.584821+00:00",
+ "created_at": "2026-09-17T22:19:21.584821+00:00",
+ "updated_at": "2026-09-17T22:19:21.584821+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "623e34ebd88910b539e95bbba030c5cf6ccf1899",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner said yes to the quoted proposal and added the requirement to record the rule in the session handoff document."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-070-R001",
+  "D-070-R002",
+  "D-070-R003"
+ ],
+ "requirements_content_digest_sha256": "24163a18525be06ce3f7cdad7e40e4f65510be979da37b8621ad3c8d4b9fad14",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-17T22:19:21.584821+00:00",
+   "content_digest_sha256": "dca2f6aea3996e51e474f51570070d999e6b2f53c627ea6844cbc3cfb0499445"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "session-turnover process rule + handoff-document preamble; no product code, no ledger-task change, no gate/hold/authority change",
+  "notes": "Binds the orchestrator session lifecycle; the sentinel D-070-BOOTSTRAP keeps rows inert for ledger-task citation."
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-17T22:19:21.584821+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim in-session; preamble rule written to docs/SESSION_HANDOFF.md and Tier-1 pointer appended in the same commit."
+  }
+ ]
+}

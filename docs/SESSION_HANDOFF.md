@@ -5,6 +5,15 @@
 advanced; no SHA here is guaranteed current.** This file is orientation only. Operating rules,
 gates, and workflow routes live in `CLAUDE.md`.
 
+**STANDING RULE — finished-seam handoffs (D-070, owner 2026-09-17; PERMANENT preamble, keep
+across every rewrite):** a PLANNED handoff may be written only at a truly finished seam. Before
+writing it, the outgoing session completes the seam itself: D-069 backlog sweep recorded; the
+NEXT packet fully contracted (body checked, refs bound applicable==cited, placeholders seeded,
+G0 recorded, claimed, committed AND pushed); task worktree created at the contract head; the
+launcher ACTIVE-TASK block pointed at that packet with a fresh run-id. The successor's whole
+startup is then: verify state → revoke-all → launch → re-arm watcher. Crash/forced turnover is
+the ONLY exception (successor runs the seam as fallback and names the unplanned cause).
+
 ## Handoff — seq 115 (rev 2): THREE TASKS ACCEPTED (217 total), loop parked at a clean seam
 
 Turnover reason (owner, VERBATIM): "at a seam do seasen handoff"; rev 2 adds the owner's
