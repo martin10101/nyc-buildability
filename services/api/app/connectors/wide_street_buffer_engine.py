@@ -144,6 +144,9 @@ __all__ = [
     "EC2_UNDER_CLAIM_NOTICE",
     "EXPECTED_LATEST_WKID",
     "EXPECTED_WKID",
+    "EXTENT_ABS_MAX_FT",
+    "MAX_VERTICES_PER_PATH",
+    "MAX_WIDE_SEGMENTS",
     "NO_WIDE_SEGMENTS_NOTICE",
     "STATUS_COMPUTED",
     "STATUS_NO_WIDE_SEGMENTS_PROVIDED",
@@ -152,6 +155,7 @@ __all__ = [
     "AttestedLotPolygon",
     "AttestedWideSegment",
     "Ec5AttestedPreconditions",
+    "InputBoundsError",
     "InvalidGeometryError",
     "MalformedAttestationError",
     "SegmentContribution",
@@ -211,6 +215,36 @@ BUFFER_FT_CITATION = (
 # (more vertices per quarter circle); this matters at a segment's rounded
 # end cap, not along its straight sides (see the end-cap-proximate test).
 BUFFER_QUAD_SEGS = 16
+
+# ---------------------------------------------------------------------------
+# Typed fail-closed input bounds (M5-T034 / M4-T021 G5 A1 closure).
+#
+# G5 A1 found the engine had no input-size / coordinate-magnitude bound. Before
+# this engine is placed behind a request path (B7 wiring, M5-T034), a
+# pathological input - thousands of segments, a single path with millions of
+# vertices, or an absurd coordinate magnitude - must fail closed with a TYPED
+# error rather than hang, exhaust memory, or silently emit a garbage buffer.
+# The B7 wiring maps this typed error to an honest professional-review outcome
+# (never a guessed 'wide'); this module never catches it itself.
+#
+# These are MAGNITUDE / SIZE sanity ceilings, NOT a precise legal NYC geofence:
+#   - EXTENT_ABS_MAX_FT is a generous absolute-magnitude ceiling (a symmetric
+#     |x|,|y| bound) that comfortably contains the entire EPSG:2263 New York
+#     projected domain (real NYC eastings/northings are well under ~1.1e6 ft)
+#     with wide margin. Its job is to reject non-finite (+/-inf/NaN fail the
+#     `<=` comparison) and absurd magnitudes, NOT to geofence to the five
+#     boroughs: a tight NYC box would wrongly reject this engine's own
+#     synthetic/near-origin fixtures and legitimate edge coordinates, and the
+#     CRS gate already refuses any non-EPSG:2263 input. A precise geofence, if
+#     ever needed, is a separate concern left out of scope.
+#   - MAX_WIDE_SEGMENTS / MAX_VERTICES_PER_PATH are orders of magnitude above
+#     any real zoning lot's frontage count or DCM block-face vertex count, so a
+#     legitimate corner/multi-frontage lot never trips them; they exist purely
+#     to bound worst-case work before the O(vertices) buffer operations run.
+# ---------------------------------------------------------------------------
+MAX_WIDE_SEGMENTS = 512
+MAX_VERTICES_PER_PATH = 5000
+EXTENT_ABS_MAX_FT = 5_000_000.0
 
 # ---------------------------------------------------------------------------
 # Result states (EC-6: a distinct typed state, never a computed default).
@@ -300,6 +334,16 @@ class MalformedAttestationError(WideStreetBufferEngineError):
     by accident - only by explicit, typed, correctly-shaped construction."""
 
     error_type = "malformed_attestation"
+
+
+class InputBoundsError(WideStreetBufferEngineError):
+    """An input exceeds a fail-closed size/magnitude bound (segment count,
+    per-path vertex count, or plausible-EPSG:2263 coordinate extent). Raised
+    before any buffer is computed so a pathological input can never hang,
+    exhaust memory, or produce a silently-garbage geometry (M5-T034 / M4-T021
+    G5 A1). The B7 wiring maps this to an honest professional-review outcome."""
+
+    error_type = "input_bounds_exceeded"
 
 
 # ---------------------------------------------------------------------------
@@ -597,6 +641,82 @@ def _lot_shapely(
     return canonical_to_shapely(assessment.canonical_geometry)
 
 
+def _extent_within_bound(bounds: tuple[float, float, float, float]) -> bool:
+    """True iff every coordinate of a shapely ``.bounds`` box is finite and
+    within :data:`EXTENT_ABS_MAX_FT`. Non-finite values are rejected for free:
+    ``abs(+/-inf) <= EXTENT_ABS_MAX_FT`` is False, and any comparison against
+    NaN is False, so ``all(...)`` returns False for a NaN/inf coordinate."""
+    return all(abs(v) <= EXTENT_ABS_MAX_FT for v in bounds)
+
+
+def _check_lot_bounds(lot_geometry: BaseGeometry, *, correlation_id: str) -> None:
+    if not _extent_within_bound(lot_geometry.bounds):
+        raise InputBoundsError(
+            "lot polygon extent is outside the plausible-EPSG:2263 magnitude "
+            f"bound (every |coordinate| must be finite and <= {EXTENT_ABS_MAX_FT:g} "
+            f"ft; lot bounds={lot_geometry.bounds}); refused before buffering",
+            correlation_id=correlation_id,
+            detail={"bound_ft": EXTENT_ABS_MAX_FT, "lot_bounds": list(lot_geometry.bounds)},
+        )
+
+
+def _check_segment_count(
+    wide_segments: Sequence[AttestedWideSegment], *, correlation_id: str
+) -> None:
+    count = len(wide_segments)
+    if count > MAX_WIDE_SEGMENTS:
+        raise InputBoundsError(
+            f"wide-segment count {count} exceeds the fail-closed bound "
+            f"{MAX_WIDE_SEGMENTS}; refused before buffering",
+            correlation_id=correlation_id,
+            detail={"count": count, "max": MAX_WIDE_SEGMENTS},
+        )
+
+
+def _check_segment_vertex_counts(
+    polyline: SegmentPolyline, *, label: str, correlation_id: str
+) -> None:
+    """Cheap per-path VERTEX-COUNT bound for one segment. Reads only
+    ``polyline.paths`` (the raw coordinate lists) - no shapely geometry - so it
+    runs BEFORE :func:`_segment_linework` builds any linework. A pathological
+    path (millions of vertices) is therefore rejected before the O(vertices)
+    LineString/MultiLineString construction, let alone the buffer, ever runs
+    (M5-T034 / M4-T021 G5 A1: cheap size validation ahead of expensive geometry
+    processing, not after it)."""
+    for index, path in enumerate(polyline.paths or ()):
+        vertices = len(path)
+        if vertices > MAX_VERTICES_PER_PATH:
+            raise InputBoundsError(
+                f"{label} path[{index}] carries {vertices} vertices, exceeding "
+                f"the fail-closed bound {MAX_VERTICES_PER_PATH}; refused before "
+                "linework construction",
+                correlation_id=correlation_id,
+                detail={
+                    "vertices": vertices,
+                    "max": MAX_VERTICES_PER_PATH,
+                    "path_index": index,
+                },
+            )
+
+
+def _check_linework_extent(
+    linework: BaseGeometry, *, label: str, correlation_id: str
+) -> None:
+    """Coordinate-MAGNITUDE bound for one segment's already-built linework. It
+    needs the geometry's ``.bounds``, so it runs after :func:`_segment_linework`
+    - whose vertex count was already bounded by
+    :func:`_check_segment_vertex_counts` above - and BEFORE the O(vertices)
+    buffer operation."""
+    if not _extent_within_bound(linework.bounds):
+        raise InputBoundsError(
+            f"{label} extent is outside the plausible-EPSG:2263 magnitude bound "
+            f"(every |coordinate| must be finite and <= {EXTENT_ABS_MAX_FT:g} ft; "
+            f"segment bounds={linework.bounds}); refused before buffering",
+            correlation_id=correlation_id,
+            detail={"bound_ft": EXTENT_ABS_MAX_FT, "segment_bounds": list(linework.bounds)},
+        )
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -631,6 +751,7 @@ def compute_wide_street_buffer_intersection(
 
     _require_crs(lot.wkid, lot.latest_wkid, label="lot polygon", correlation_id=correlation_id)
     lot_geometry = _lot_shapely(lot.assessment, correlation_id=correlation_id)
+    _check_lot_bounds(lot_geometry, correlation_id=correlation_id)
     lot_area_sq_ft = lot.assessment.area_sq_ft
 
     ec5_failures = _ec5_precondition_failures(ec5_preconditions)
@@ -692,12 +813,19 @@ def compute_wide_street_buffer_intersection(
             lot_source_raw_digest=lot.source_raw_digest,
         )
 
+    _check_segment_count(wide_segments, correlation_id=correlation_id)
+
     contributions: list[SegmentContribution] = []
     buffers: list[BaseGeometry] = []
     for segment in wide_segments:
         label = f"segment object_id={segment.polyline.object_id!r}"
         _require_crs(segment.wkid, segment.latest_wkid, label=label, correlation_id=correlation_id)
+        # Cheap per-path vertex-count guard FIRST, before any linework is built
+        # (G5 A1): a pathological vertex count is rejected before the O(vertices)
+        # geometry construction, never after it.
+        _check_segment_vertex_counts(segment.polyline, label=label, correlation_id=correlation_id)
         linework = _segment_linework(segment.polyline, correlation_id=correlation_id)
+        _check_linework_extent(linework, label=label, correlation_id=correlation_id)
         buffer_geometry = linework.buffer(BUFFER_FT, quad_segs=BUFFER_QUAD_SEGS)
         buffers.append(buffer_geometry)
         intersects = bool(lot_geometry.intersects(buffer_geometry))

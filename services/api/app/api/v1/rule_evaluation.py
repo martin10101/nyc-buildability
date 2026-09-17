@@ -37,6 +37,7 @@ from __future__ import annotations
 import logging
 import uuid
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -64,7 +65,18 @@ from app.rules.response import (
 )
 from app.spatial.live_provider import default_live_substrate
 
-__all__ = ["get_spatial_substrate_provider", "router"]
+if TYPE_CHECKING:  # pragma: no cover - typing only; importing the wiring at
+    # runtime would pull the shapely-heavy buffer engine onto the request path.
+    # The provider is typed against the concrete determination; the runtime
+    # default and every test override supply either a real WideStreetDetermination
+    # or None, never an arbitrary object.
+    from app.rules.wide_street_wiring import WideStreetDetermination
+
+__all__ = [
+    "get_spatial_substrate_provider",
+    "get_wide_street_determination_provider",
+    "router",
+]
 
 logger = logging.getLogger("app.api.v1.rule_evaluation")
 
@@ -108,6 +120,46 @@ def get_spatial_substrate_provider() -> SpatialSubstrateProvider:
     return _default_spatial_substrate
 
 
+# ---------------------------------------------------------------------------
+# Server-side wide-street-determination provider (M5-T034 injection seam; NEVER
+# browser-supplied). The ZR 23-22 R6/R7-1/R7-2/R8 conditional-FAR rows depend on
+# whether the lot is within 100 ft of a WIDE street - a determination produced by
+# the accepted wide-street stack (app.rules.wide_street_wiring.
+# determine_wide_street_far) from server-side DCM street-width + geometry inputs,
+# never from the request body. Mirrors get_spatial_substrate_provider exactly: the
+# trusted DEFAULT supplies None because no wide-street data source is wired into
+# the profile-build path yet (precisely as the spatial substrate defaulted to None
+# before the M2-T020 live provider), so evaluate_property behaves byte-identically
+# to before - the conservative conditional-FAR row governs and NO wide-street
+# bonus is granted. A future provider (or a test override) supplies a real typed
+# determination, which then drives server-side conditional-FAR row selection in
+# evaluate_property: a professional-review determination escalates coverage to
+# professional_review_required; a guessed 'wide' is never produced.
+# ---------------------------------------------------------------------------
+
+# (canonical_bbl, correlation_id) -> the typed
+# app.rules.wide_street_wiring.WideStreetDetermination for that BBL, or None when
+# no wide-street determination is available. The return type is the CONCRETE
+# determination (forward-referenced so the shapely-heavy wiring stays off the
+# import path), not a loose ``object`` - a provider can only ever supply a real
+# typed determination or None.
+WideStreetDeterminationProvider = Callable[[str, str], "WideStreetDetermination | None"]
+
+
+def _default_wide_street_determination(
+    canonical_bbl: str, correlation_id: str
+) -> WideStreetDetermination | None:
+    return None
+
+
+def get_wide_street_determination_provider() -> WideStreetDeterminationProvider:
+    """Dependency returning the server-side wide-street-determination provider
+    (override point for tests). The default supplies None: no wide-street data
+    source is wired into the profile path yet, so the conditional-FAR rows return
+    the conservative row and grant no wide-street bonus (honest fail-safe)."""
+    return _default_wide_street_determination
+
+
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
     return JSONResponse(
         status_code=status_code,
@@ -144,6 +196,9 @@ def get_rule_evaluation(
     fetcher: PlutoFetcher = Depends(get_pluto_fetcher),  # noqa: B008
     substrate_provider: SpatialSubstrateProvider = Depends(  # noqa: B008
         get_spatial_substrate_provider
+    ),
+    wide_street_provider: WideStreetDeterminationProvider = Depends(  # noqa: B008
+        get_wide_street_determination_provider
     ),
 ) -> JSONResponse:
     """Rebuild the profile server-side, evaluate the draft rule family, and return
@@ -262,8 +317,14 @@ def get_rule_evaluation(
         # Evaluate (deterministic; no temporal gating - the endpoint takes only
         # the bbl path param) and serialize by reference into the versioned
         # contract. A needs-review / unsupported / fail-safe result is a NORMAL
-        # 200 document here, never an error.
-        evaluation = evaluate_property(profile)
+        # 200 document here, never an error. The wide-street determination comes
+        # from the injected server-side provider (default None - no data source
+        # wired yet), never the request; when present it drives conditional-FAR
+        # row selection server-side in evaluate_property.
+        wide_street_determination = wide_street_provider(normalized.canonical, correlation_id)
+        evaluation = evaluate_property(
+            profile, wide_street_determination=wide_street_determination
+        )
         document = serialize_rule_evaluation(
             evaluation,
             profile_contract_version=profile["profile_version"]["contract_version"],
