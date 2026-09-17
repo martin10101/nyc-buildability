@@ -868,6 +868,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-065-affordable-far-scenarios/manifest.json"
+  },
+  {
+   "directive_id": "D-066",
+   "slug": "code-graph-loop-wiring",
+   "title": "Owner 2026-09-17: wire the code-navigation graph into the loop's next packet - regenerate at seams, navigation block in packets, Codex checks blast radius with it and reports usefulness, small audited time/token comparison; advisory only, no sidetrack, no controller changes.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-066-code-graph-loop-wiring/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
