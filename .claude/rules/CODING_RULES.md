@@ -24,3 +24,6 @@
   committed example) — invented shapes fail closed in control-plane CI.
 - DON'T put `&&`, quotes-in-`git commit -m`, or heredocs through PowerShell 5.1 — use the Bash
   tool; write multi-line content with the Write tool.
+- DO run api pytest from `services/api` cwd — the rules suite ALONE from repo root fails
+  collection with `No module named 'app'` (invocation artifact, not a defect; it has faked a
+  16-error red twice).
