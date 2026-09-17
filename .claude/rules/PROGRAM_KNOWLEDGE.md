@@ -2,8 +2,9 @@
 
 Hard-won program-wide knowledge as one-line pointers. APPEND when you discover something
 program-wide useful (any session, when discovered — not at session end). BUDGET: eager total
-(tools/context_budget_check.py) must stay under 6000 tok — compress or demote before adding;
-never raise the budget. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
+(tools/context_budget_check.py) must stay under 10000 tok (owner-raised from 6000, D-067-R003)
+— compress or demote before adding; never raise the cap again without a new owner
+authorization. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
 Pointers only — the ledger/registry stays authoritative; no secrets (public repo).
 
 ## Control-plane mechanics (proven arcs)
@@ -116,8 +117,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 ## Session habits
 
 - Every wave: cite ruff pre-gate for api producers; budget ONE full validator run per seam;
-  D-047 producers = claude-sonnet-5 (researcher/rules agent files flipped; backend-engineer
-  flip blocked → dispatch model override + record deviation).
+  **D-064**: subagents+loop worker = opus-4-8 xhigh, main stays fable-5 (supersedes
+  D-047/D-055/D-058/D-060 fable defaults); lean comms = CLAUDE.md p19.
 - PS5.1: no `&&`, no quotes-in-`git commit -m` via PowerShell (use Bash tool); UTF-16
   redirection trap; heredocs via Write tool when Bash mangles them.
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.

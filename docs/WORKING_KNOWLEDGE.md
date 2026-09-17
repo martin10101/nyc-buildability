@@ -1,5 +1,53 @@
 # WORKING_KNOWLEDGE — current section: D-059 dependable-answers + A2 geometry (D-054 Tier 2)
 
+## Loop-packet contract for WEB tasks (learned the hard way, run persistent-local-36, 2026-09-17)
+
+Five packet defects each killed a run of the relaunched loop on M5-T032; every future loop
+packet (web tasks especially) must satisfy ALL of these up front:
+
+1. **Checkpoint envelope:** packet `worktree` = the FULL controller-authoritative path, and the
+   packet carries the instruction to leave `starting_sha`/`current_sha`/`branch`/`worktree` as
+   `""` in the worker checkpoint (controller fills them; any worker-supplied value must match
+   EXACTLY — short SHAs/names fail closed as `checkpoint_field_mismatch`).
+2. **Producer report path** (`project-control/reports/<task>-producer-report.md`) MUST be in
+   `allowed_paths` — the worker's Write is held forever otherwise.
+3. **documented_test_commands profile:** plain single commands only (no quotes, parens,
+   chaining, redirection) — a prose "CI is the authority" line there aborts launch with
+   `bad_documented_test_commands`. Put CI-authority prose in `outputs`/`inputs`.
+4. **Thin client = NO local npm** (no node_modules anywhere, ~6 GB free): web tests CANNOT run
+   locally. Web packets follow the M5-T023 pattern — worker edits + commits + python checks
+   only; CI on the pushed head is the executable authority; orchestrator pushes and captures
+   CI + any live smoke evidence at the seam. Never document npm/npx commands for the loop, and
+   tell the worker not to propose WebFetch (network is owner-default-deny).
+5. **After a `consecutive_revision_loops` (or any counter) breaker trip, the tally is durable
+   per run-id:** relaunch REQUIRES a fresh `--run-id` (edit the ACTIVE-TASK block in
+   `autostart-launch.ps1`); `clear-recovery` alone re-refuses with `budget_exhausted`.
+
+Recovery drill order when a run dies mid-task: read audit tail → fix the packet defect (BOTH
+packet copies: ctl24 + the task worktree) → deny stale asks (strip `\r` from digests piped
+through git-bash!) → `clear-recovery` if PAUSED_RECOVERY → fresh run-id if a counter tripped →
+relaunch via autostart-launch.ps1 → re-arm the audit-tail watcher. Worker file edits survive
+all of this (they live in the task worktree, uncommitted).
+
+Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
+
+- The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
+  Windows pids and reports the live supervisor as dead (false LOOP BREAK). Use
+  `tasklist //FI "PID eq $PID" //NH | grep -q $PID` with a 5 s recheck before alarming.
+- Not every undocumented-command ask is a packet gap. Two benign classes seen in run 36:
+  (a) the worker chains `; echo FOO_EXIT=$?` onto a documented test command — chaining can
+  NEVER be a documented_test_command (profile forbids it), and the worker self-recovers by
+  retrying the exact documented form within seconds → deny the chained ask as stale;
+  (b) worker `git add` / `git commit` — git writes are never AUTO (policy S4.3), so the
+  worker's local checkpoint commits arrive as ASKs by design → approve-once when staging is
+  in-scope. The supervisor stores only command DIGESTS; recover the actual command text by
+  timestamp-matching the ask's `queued_at_utc` against Bash tool_use entries in the worker
+  session transcripts under `~/.claude/projects/C--…-wt-m5t032/*.jsonl` (subagent files too).
+
+Also: the full `validate_directive_compliance.py` run starves against a live loop worker on
+this box (each `_run_git` call crawls to its 60 s bail under disk contention) — run it between
+units, or rely on the control-plane CI job (same validator, clean runner) for the seam verdict.
+
 ## D-059 MVP-review work order (owner 2026-09-14) — the CURRENT priority lane
 
 Owner transmitted a commissioned read-only MVP review (of the branch at 16272c05) with a

@@ -625,7 +625,7 @@
   {
    "directive_id": "D-046",
    "slug": "parallel-family-production",
-   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and \u00a7G unchanged; backoff under resource pressure, never quality.",
+   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
    "status": "active",
    "issued_at": "2026-09-13",
    "issued_by": "owner",
@@ -856,6 +856,42 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-064-subagent-opus48-lean-ops/manifest.json"
+  },
+  {
+   "directive_id": "D-065",
+   "slug": "affordable-far-scenarios",
+   "title": "Owner 2026-09-17: affordable-housing FAR pathways are part of the calculations - computed as separate labeled conditional scenarios beside the as-of-right result, with the evaluated rule as the single point of truth (PLUTO columns are cross-checks) and commitments shown as explicit conditions.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-065-affordable-far-scenarios/manifest.json"
+  },
+  {
+   "directive_id": "D-066",
+   "slug": "code-graph-loop-wiring",
+   "title": "Owner 2026-09-17: wire the code-navigation graph into the loop's next packet - regenerate at seams, navigation block in packets, Codex checks blast radius with it and reports usefulness, small audited time/token comparison; advisory only, no sidetrack, no controller changes.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-066-code-graph-loop-wiring/manifest.json"
+  },
+  {
+   "directive_id": "D-067",
+   "slug": "continuous-loop-compaction-budget",
+   "title": "Owner 2026-09-17: don't let the loop die - keep it running and building continuously; orchestrator keeps going past 400k relying on ~1M auto-compaction (supersedes the seq-114 rotation instruction for this lineage); eager context budget may be raised to 10000 tokens.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-067-continuous-loop-compaction-budget/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

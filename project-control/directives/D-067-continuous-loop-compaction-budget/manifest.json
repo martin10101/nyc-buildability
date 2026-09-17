@@ -1,0 +1,81 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-067",
+ "version": 2,
+ "slug": "continuous-loop-compaction-budget",
+ "title": "Owner 2026-09-17: don't let the loop die - keep it running and building continuously; orchestrator keeps going past 400k relying on ~1M auto-compaction (supersedes the seq-114 rotation instruction for this lineage); eager context budget may be raised to 10000 tokens.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-17",
+ "captured_at": "2026-09-17T06:50:00.000000+00:00",
+ "created_at": "2026-09-17T06:50:00.000000+00:00",
+ "updated_at": "2026-09-17T07:15:00.000000+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "c7bc181ab15f6acf620837fb8cead43f24ec985a",
+ "capture_head_sha": "c7bc181ab15f6acf620837fb8cead43f24ec985a",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner-typed instruction in the live monitoring session; the budget raise is permissive ('u can bump'), the loop-continuity and no-rotation items are directive."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-067-R001",
+  "D-067-R002",
+  "D-067-R003"
+ ],
+ "requirements_content_digest_sha256": "829cc15dc80a5ce551a6e4f349ef4dd869891e52640a98f32c316d30a541e62c",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-17T06:50:00.000000+00:00",
+   "content_digest_sha256": "6b8b0e5721bdb9800c307a677b9162580a61062ab5ea371ab9d39188fbdc4aac"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-09-17T07:15:00.000000+00:00",
+   "content_digest_sha256": "527af43d293f822bd878957e182775aa6c4e960e6edb90384675a9a4210d0c6b"
+  }
+ ],
+ "amendments": [
+  {
+   "source": "source-002-amendment.md",
+   "at": "2026-09-17T07:15:00.000000+00:00",
+   "summary": "Scope of R002 narrowed: keep-going-through-compaction applies ONLY to the interactive orchestrator session; loop-side main/fable agents still rotate at the ~400k seam (D-010 R113/R114 untouched)."
+  }
+ ],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_posture",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "continuous loop operation with recovery-drill relaunches, session continuation past 400k under auto-compaction, one-time budget cap raise to 10000 tokens",
+  "prohibited": "skipping gates/holds/Tier D stops in the name of throughput, removing or further loosening the budget check, treating R002 as amending D-010 beyond this session lineage's rotation posture"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-17T06:50:00.000000+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim while run persistent-local-36-m5t032 is live; budget edit follows in a separate commit citing D-067-R003."
+  },
+  {
+   "at": "2026-09-17T07:15:00.000000+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "source-002 amendment recorded; R002 text updated to the narrowed scope (interactive session only; loop-side ~400k rotation stands) with requirements digest resynced in the SAME commit."
+  }
+ ]
+}

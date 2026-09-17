@@ -1,0 +1,134 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-066",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T05:32:23.029143+00:00",
+ "requirements": [
+  {
+   "id": "D-066-R001",
+   "text": "At every contract seam the orchestrator regenerates the code graph (tools/code_graph/generate.py --repo .) and embeds a graph-derived navigation block (key consumers, dependencies, impact set for the packet's target files) in each new task packet, starting with the next contracted packet; the packet instructs the producer to consult tools/code_graph/query.py --no-regen for who-consumes/impact questions before broad search sweeps. The graph stays advisory: every material conclusion is verified in actual source.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-066-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Navigation block present in the next packet; producer prompt cites query.py --no-regen.",
+   "required_evidence": "next packet JSON + producer report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before contracting.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-066-R002",
+   "text": "Codex involvement without controller changes: the packet's review guidance directs the Codex reviewer to use the navigation block and graph outputs to check the change's blast radius (consumers of edited modules) and to state in its review whether the graph information was accurate and useful. No supervisor/controller/manifest edit is made for this.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-066-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Review guidance text in the next packet; Codex review return referencing the graph check.",
+   "required_evidence": "next packet JSON + recorded Codex review",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before contracting.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-066-R003",
+   "text": "A small dated comparison is recorded in the next packet's report: per-unit wall time and context tokens (from the supervisor audit journal) for the graph-guided packet versus the comparable prior packet (M5-T032), presented as an advisory observation with its limits stated - not a controlled benchmark or a savings claim.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-066-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Audit-journal numbers quoted with unit ids and dates.",
+   "required_evidence": "next packet's producer/orchestrator report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before contracting.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-066-R004",
+   "text": "Prohibition/sequencing: this wiring is folded into the next packet's ordinary flow - no standalone graph campaign, no displacement of the in-flight M5-T032 work, and no controller or manifest changes on this directive's authority.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-066-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Ledger sequence; absence of controller diffs.",
+   "required_evidence": "ledger + git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before contracting.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}
