@@ -2,8 +2,9 @@
 
 Hard-won program-wide knowledge as one-line pointers. APPEND when you discover something
 program-wide useful (any session, when discovered — not at session end). BUDGET: eager total
-(tools/context_budget_check.py) must stay under 6000 tok — compress or demote before adding;
-never raise the budget. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
+(tools/context_budget_check.py) must stay under 10000 tok (owner-raised from 6000, D-067-R003)
+— compress or demote before adding; never raise the cap again without a new owner
+authorization. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
 Pointers only — the ledger/registry stays authoritative; no secrets (public repo).
 
 ## Control-plane mechanics (proven arcs)
