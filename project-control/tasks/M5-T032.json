@@ -45,7 +45,8 @@
     "apps/web/src/components/property/__tests__/sections.test.tsx",
     "apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx",
     "apps/web/src/components/rule-evaluation/__tests__/rule-evaluation.test.tsx",
-    "project-control/reports/M5-T032-producer-report.md"
+    "project-control/reports/M5-T032-producer-report.md",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx"
   ],
   "forbidden_paths": [],
   "acceptance_scenarios": [

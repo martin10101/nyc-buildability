@@ -115,6 +115,17 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
     if (manualFocusNonce > 0) streetInputRef.current?.focus();
   }, [manualFocusNonce]);
 
+  /** [ORCH-CORRECTED per web CI on 3250fbc9] Bumped when returning to entry
+   * (Not my property / Edit address). The entry input is remounting during
+   * that same update, so a synchronous .focus() in the handler hits a null
+   * ref and focus falls to <body>; the effect runs after the entry UI is
+   * back in the DOM (same class of fix as manualFocusNonce above). */
+  const [entryFocusNonce, setEntryFocusNonce] = useState(0);
+  useEffect(() => {
+    if (entryFocusNonce > 0)
+      (architect ? autocompleteRef : streetInputRef).current?.focus();
+  }, [entryFocusNonce, architect]);
+
   // D1: after an outcome arrives, move focus to the outcome heading.
   // `result` changes ONLY on arrival (an inert submit never calls
   // setResult), so this can never steal focus mid-form-edit.
@@ -188,8 +199,8 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
   }, [result, runResolve]);
 
   const editAddress = useCallback(() => {
-    (architect ? autocompleteRef : streetInputRef).current?.focus();
-  }, [architect]);
+    setEntryFocusNonce((nonce) => nonce + 1);
+  }, []);
 
   /** M5-T016 "Not my property": back to entry. The result clears (the
    * card unmounts, the announcer goes silent), the FORM VALUES are
@@ -197,8 +208,8 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
    * input. No fetch fires. */
   const notMyProperty = useCallback(() => {
     setResult(null);
-    (architect ? autocompleteRef : streetInputRef).current?.focus();
-  }, [architect]);
+    setEntryFocusNonce((nonce) => nonce + 1);
+  }, []);
 
   /** Autocomplete fallback (handoff §6): drop into the EXISTING Geoclient
    * manual resolver with the typed text preserved and VISIBLE, opened and

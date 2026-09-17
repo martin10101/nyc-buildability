@@ -181,7 +181,9 @@ describe("zolaLotUrl — ZoLa-first human-readable lot page (M5-T032, D-064-R005
     // Non-PLUTO source → no raw record AND no ZoLa link (no borrowed identity).
     expect(sourceFactLinks({ source_id: "another-source", bbl }, source, { bbl }).zolaUrl).toBeNull();
     // Missing profile identity fails closed for both links.
-    expect(sourceFactLinks(record, source, { bbl: null } as Identity).zolaUrl).toBeNull();
+    // [ORCH-CORRECTED per web CI on 3250fbc9] deliberate invalid-shape probe
+    // needs the double cast under strict TS.
+    expect(sourceFactLinks(record, source, { bbl: null } as unknown as Identity).zolaUrl).toBeNull();
   });
 });
 

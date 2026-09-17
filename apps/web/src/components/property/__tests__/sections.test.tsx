@@ -257,7 +257,9 @@ describe("ProvenanceDisclosure — ZoLa-first human-readable lot link (M5-T032, 
     );
     expect(raw).toHaveClass("section-note");
     // Primary first: ZoLa renders before the raw record in the DOM.
-    const links = Array.from(container.querySelectorAll("a"));
+    // [ORCH-CORRECTED per web CI on 3250fbc9] typed as HTMLElement so
+    // indexOf accepts the getByRole results.
+    const links = Array.from(container.querySelectorAll<HTMLElement>("a"));
     expect(links.indexOf(zola)).toBeLessThan(links.indexOf(raw));
   });
 
