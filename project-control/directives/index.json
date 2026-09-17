@@ -892,6 +892,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-067-continuous-loop-compaction-budget/manifest.json"
+  },
+  {
+   "directive_id": "D-068",
+   "slug": "coding-rules-and-knowledge-scope",
+   "title": "Owner 2026-09-17: discovered future-useful knowledge goes into the shared md stores (not just loop mechanics), plus a terse auto-injected do/don't CODING_RULES.md seeded from real CI-relevant defect classes and appended at discovery.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-068-coding-rules-and-knowledge-scope/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
