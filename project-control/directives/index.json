@@ -904,6 +904,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-068-coding-rules-and-knowledge-scope/manifest.json"
+  },
+  {
+   "directive_id": "D-069",
+   "slug": "discovery-backlog",
+   "title": "Owner 2026-09-17: create a NOT-auto-injected discovery backlog (docs/DISCOVERY_BACKLOG.md) where mid-work product/domain findings are recorded at discovery and tracked to an explicit end state (queued into the pipeline, resolved, or watched), swept at every contract seam and replan.",
+   "status": "active",
+   "issued_at": "2026-09-17",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-069-discovery-backlog/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

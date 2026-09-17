@@ -116,6 +116,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 
 ## Session habits
 
+- Discoveries → `docs/DISCOVERY_BACKLOG.md` (D-069, NOT injected): append product/domain
+  findings AT discovery; SWEEP OPEN/WATCH entries at every contract seam and replan; entries
+  end as QUEUED(task)/RESOLVED/WATCH, never deleted, never duplicating ledger/blockers.
 - Every wave: cite ruff pre-gate for api producers; budget ONE full validator run per seam;
   **D-064**: subagents+loop worker = opus-4-8 xhigh, main stays fable-5 (supersedes
   D-047/D-055/D-058/D-060 fable defaults); lean comms = CLAUDE.md p19.
