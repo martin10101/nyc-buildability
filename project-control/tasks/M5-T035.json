@@ -17,7 +17,8 @@
     "DB-013 CEILINGS (M5-T034 G5 findings 1-2, binding): add a lot-polygon vertex-count bound before shapely construction and a per-segment path-count bound before MultiLineString build in wide_street_buffer_engine.py - typed fail-closed failures in the M5-T034 bound style; NO split of the engine file, NO wiring added into it (G3 modularity ruling stands).",
     "M5-T034 DISCLOSED GAP (producer report, binding): the provider default (None) is covered, but no test exercises a provider RETURNING a real typed determination through the full /rule-evaluation endpoint - add that test (one wide-class case asserting the wide row + provenance surfaces, one professional-review-class case asserting escalation).",
     "DEPLOY CHECKLIST ROWS (docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md): add a LIVE_WIDE_STREET_PROVIDER_ENABLED row mirroring the LIVE_SPATIAL_PROVIDER_ENABLED row's honesty discipline (flag reading + typed logs decide, never response shape alone) and a PYTHON_VERSION pin row (3.12.11; run-38 lesson: Render drifted to 3.14 -> source-built shapely -> geometry-pin guard refused; DB-004). Real deploy URLs stay OUT of the repo (D-043-R002).",
-    "D-045-R009 preservation (prohibition): rules stay DRAFT/needs_review pending G6 qualified-human approval; provenance quintuple on every determination; no published/verified/compliance claim anywhere."
+    "D-045-R009 preservation (prohibition): rules stay DRAFT/needs_review pending G6 qualified-human approval; provenance quintuple on every determination; no published/verified/compliance claim anywhere.",
+    "RUN-40 CARRYOVER (binding - front-load ALL of this in DRAFT 1; the previous run ended at the review-round budget with the implementation PARTLY DONE and its edits already in this worktree: build on them, never restart). Outstanding, in order: (1) Fix the missing provider-module alias / import ordering in tests/spatial/test_wide_street_live_provider.py, then run the documented ruff command FIRST and get a genuinely clean result - NEVER claim clean lint without running it (a stale green-lint claim cost a round). (2) Envelope-request validation BEFORE any metadata I/O: malformed/non-finite/absurd coordinates (huge integers included) raise DisallowedRequestError before any fetch, while metadata-first validation before trusting segment data is retained; deterministic regression tests for both. (3) Complete the envelope predicate suite in tests/connectors/test_dcm_street_centerline_arcgis.py: predicate exclusivity, invalid/non-finite/absurd inputs, zero-fetch rejection, URL query parameters, metadata freshness/schema-drift gates, paging pathologies, ceilings. (4) Full endpoint tests in tests/api/test_rule_evaluation_api.py with real typed determinations: wide row + provenance surfaced, and professional-review escalation. (5) Complete the provider suites: each typed failure class -> None, zero-segment honesty, flag-token matrix with ZERO connector calls when off, payload-only logging, unchanged default (flag-off) endpoint behavior. (6) Still untouched: the docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md rows (new flag + PYTHON_VERSION pin) and project-control/reports/M5-T035-producer-report.md (write it to the REVIEWER HONESTY BAR). (7) Every checkpoint carries IMPLEMENTATION - an investigation-only checkpoint cost a round and is not acceptable."
   ],
   "outputs": [
     "New module services/api/app/spatial/wide_street_live_provider.py: settings-gated orchestration-only composition (lot geometry -> envelope segments -> typed polylines -> classifier -> D-052 policy -> buffer engine -> wide_street_wiring determination), fail-safe None on every failure/insufficiency, payload-only typed logging",
@@ -94,7 +95,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "Scope magnets are OUT: named-street override table (DB-010), wide-street contract-surface bump (DB-014), context-panel parity (DB-016), split-lot apportionment (DB-001) - surface them in the report via discovery routing, never fix in-packet",
     "Zero-segment envelope result is honest absence, never a confident negative (D-051)",
@@ -104,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T21:46:16.211907+00:00",
-  "updated_at": "2026-09-17T21:52:22.866734+00:00",
+  "updated_at": "2026-09-17T22:59:31.520413+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -139,6 +140,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted at 91d7ac3f; packet loop-ready (6-item contract incl. discovery routing + honesty bar); worktree wt-m5t035 next; loop run 40 to build"
+    },
+    {
+      "at": "2026-09-17T22:59:31.520413+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "Run-40 breaker trip (consecutive_revision_loops 4/4): build partly done in wt-m5t035 (provider+engine+2 suites edited; connector tests, endpoint tests, checklist rows, report outstanding); 2 rounds lost to an investigation-only checkpoint + a stale lint claim; 6 stale asks denied; RUN-40 CARRYOVER block appended to both packet copies; relaunching run 41 (fresh run-id per durable-tally rule); DB-012 WATCH fired, owner option surfaced"
     }
   ]
 }

@@ -44,6 +44,13 @@ Worker edits survive in the worktree; the new run resumes from packet + tree.
 
 Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
 
+- **Asks live in TWO stores (run-40 proof, 2026-09-17): journal `queued_asks` AND the runtime
+  pending-approvals store (CLI `pending-approvals`).** Run 40 held 6 pending asks while
+  `queued_asks` read 0 the whole time — a watcher polling only the journal reports asks as
+  "self-resolved" while they sit unanswered. Poll BOTH; before any relaunch, `deny` each stale
+  entry by exact request_id + digest (copy them from the pending-approvals JSON — one mistyped
+  id = unknown_request), then re-list to confirm 0.
+
 - The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
   Windows pids and reports the live supervisor as dead (false LOOP BREAK). Use
   `tasklist //FI "PID eq $PID" //NH | grep -q $PID` with a 5 s recheck before alarming.
