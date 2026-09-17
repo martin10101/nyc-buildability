@@ -1,0 +1,135 @@
+{
+  "task_id": "M5-T035",
+  "title": "DB-015: live wide-street determination provider (settings-gated, fail-safe) + DCM envelope predicate + DB-013 engine ceilings",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire a LIVE server-side wide-street-determination provider into the get_wide_street_determination_provider seam (rule_evaluation.py), mirroring the app/spatial/live_provider.py pattern: settings-gated by a new explicit-true-token env flag, per-request composition of the ACCEPTED stack (mappluto lot geometry -> DCM centerline segments via a NEW bounded envelope-intersects predicate -> typed polylines -> width classifier -> D-052 policy -> buffer engine -> wide_street_wiring determination), every failure/partial input yielding None (honest fail-safe, never a fabricated determination). Add the DB-013 defense-in-depth ceilings in the buffer engine (lot-polygon vertex bound, per-segment path-count bound). Add the M5-T034-disclosed missing test: a provider RETURNING a real determination exercised through the full /rule-evaluation endpoint. Document the new flag + the PYTHON_VERSION pin (DB-004) in the Render deploy checklist. Rules stay DRAFT/needs_review (D-045-R009).",
+  "business_reason": "DB-015 (M5-T034 G3 INFO-C): the provider seam defaults to None - no live data feeds real wide-street determinations; this is the step that makes wide-street FAR real for users. Owner product ruling 2026-09-17: computed answers are the differentiator; DB-015 first, DB-016 next.",
+  "inputs": [
+    "EXECUTION ENVIRONMENT (binding, thin client - ~6GB free): api task; NO npm/npx/node, NO WebFetch, NO network. Edit within allowed_paths using native tools, run ONLY the documented python checks (ruff FIRST - it is the api CI job's first step), git add/commit IN YOUR WORKTREE ROOT (plain git, never -C; git writes surface as ASKs the orchestrator answers - propose once and continue), write the producer report, checkpoint with CI-authority evidence deferred to the orchestrator seam.",
+    "CHECKPOINT ENVELOPE DISCIPLINE (controller S8.3, binding): in your final checkpoint JSON set starting_sha, current_sha, branch, and worktree to the empty string \"\" - the controller fills authoritative values; any value you supply must match EXACTLY or the run stops. Blank is always safe.",
+    "REVIEWER HONESTY BAR (binding - the Codex reviewer enforces this and the run has at most 4 review cycles; write the report to this bar in DRAFT 1): state observations separately from conclusions; never claim exhaustiveness ('exactly two', 'the only cause') unless proven; no 'most likely' rankings; every claim carries its evidence (test name, file:line, or command output); separate what YOU ran from what CI will prove; mark anything unverified as UNVERIFIED; never claim completion or compliance - the gates decide.",
+    "DISCOVERY ROUTING (D-069, binding on producer AND reviewer): surface out-of-scope product/domain discoveries (data gaps, new real-world case classes, adjacent defects) in your REPORTS - never fix them in-packet; the orchestrator records them in docs/DISCOVERY_BACKLOG.md at the seam. You learn of that backlog only through this packet text.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-17 at this contract seam: 730 files, 15339 nodes, 6791 edges). Injection seam: app/api/v1/rule_evaluation.py get_wide_street_determination_provider (default returns None at ~:135-141; NEVER browser-supplied); rule_evaluation.py is imported by evidence.py:82, scenario.py:60, scenario_analysis.py:88, main.py:35 + the api test suites. Pattern precedent: app/spatial/live_provider.py (settings-gated M2-T020 spatial substrate; consumed at rule_evaluation.py:66; tests tests/spatial/test_live_provider.py). Accepted stack producers: connectors/dcm_street_centerline_arcgis.py fetch_street_segments (attribute predicates ONLY today - the envelope predicate is NEW work in this packet), connectors/dcm_street_centerline_geometry.py (typed EPSG:2263 polylines), connectors/dcm_street_width_classifier.py (24 classes), connectors/dcm_street_width_policy.py (D-052 decisions), connectors/wide_street_buffer_engine.py (100.0-ft buffer intersect lot; M5-T034 bounds; consumers: rules/wide_street_wiring.py:78 + two test suites), rules/wide_street_wiring.py determine_wide_street_far (typed determination). Lot geometry: connectors/mappluto_geometry_arcgis.py fetch_lot_geometry (EPSG:2263 MEASUREMENT connector) - NEVER mappluto_lot_outline.py (4326, display only). For who-consumes/impact questions run 'python tools/code_graph/query.py --no-regen impact <path>' BEFORE broad sweeps. Graph is ADVISORY - verify every material conclusion in source.",
+    "LIVE-PROVIDER PATTERN (binding precedent - mirror app/spatial/live_provider.py exactly): new env flag LIVE_WIDE_STREET_PROVIDER_ENABLED read on EVERY call from env; ONLY an explicit true token enables (1/true/yes/on); absent/empty/unknown = DISABLED with ZERO connector calls and provider returns None (endpoint behavior byte-identical to today). Any typed connector error, malformed/unexpected failure, transfer-limited partial page, or insufficient data -> None + payload-only log line (typed error class + correlation id; NEVER str(exc)). The wiring's typed determination is returned UNMODIFIED - including professional-review/UNRESOLVED classes; uncertainty is never collapsed and a determination is never fabricated. Orchestration ONLY: no new spatial engine, no new policy decisions in the provider module.",
+    "DCM ENVELOPE PREDICATE (new work, binding discipline): fetch_street_segments today supports EXACTLY ONE predicate of {borough, street_name, object_id, object_id_in}. Add an envelope-intersects predicate (EPSG:2263 envelope derived from the lot bbox expanded by the 100.0-ft buffer distance plus a stated margin) that PRESERVES: the exactly-one-predicate rule, metadata-first freshness pin + schema-drift guard, paging-pathology guards (repeated OBJECTIDs, byte-identical pages), HARD_MAX_PAGES / MAX_RESULT_RECORD_COUNT / MAX_RESPONSE_BYTES, returnGeometry TRUE, and DisallowedRequestError on invalid/non-finite/absurd envelopes (extent sanity).",
+    "ZERO/NEGATIVE-EVIDENCE DISCIPLINE (D-051, binding): an envelope query returning ZERO segments must NEVER produce a confident not-within-100ft determination - the provider yields None (honest absence; bounded negative: 'no DCM segments intersected the queried envelope', never 'no wide street exists'). A pipeline failure is never converted into wide OR narrow. The conservative row governing on None was validated in M5-T034 (D-051 fallback direction) - do not weaken it.",
+    "DB-013 CEILINGS (M5-T034 G5 findings 1-2, binding): add a lot-polygon vertex-count bound before shapely construction and a per-segment path-count bound before MultiLineString build in wide_street_buffer_engine.py - typed fail-closed failures in the M5-T034 bound style; NO split of the engine file, NO wiring added into it (G3 modularity ruling stands).",
+    "M5-T034 DISCLOSED GAP (producer report, binding): the provider default (None) is covered, but no test exercises a provider RETURNING a real typed determination through the full /rule-evaluation endpoint - add that test (one wide-class case asserting the wide row + provenance surfaces, one professional-review-class case asserting escalation).",
+    "DEPLOY CHECKLIST ROWS (docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md): add a LIVE_WIDE_STREET_PROVIDER_ENABLED row mirroring the LIVE_SPATIAL_PROVIDER_ENABLED row's honesty discipline (flag reading + typed logs decide, never response shape alone) and a PYTHON_VERSION pin row (3.12.11; run-38 lesson: Render drifted to 3.14 -> source-built shapely -> geometry-pin guard refused; DB-004). Real deploy URLs stay OUT of the repo (D-043-R002).",
+    "D-045-R009 preservation (prohibition): rules stay DRAFT/needs_review pending G6 qualified-human approval; provenance quintuple on every determination; no published/verified/compliance claim anywhere."
+  ],
+  "outputs": [
+    "New module services/api/app/spatial/wide_street_live_provider.py: settings-gated orchestration-only composition (lot geometry -> envelope segments -> typed polylines -> classifier -> D-052 policy -> buffer engine -> wide_street_wiring determination), fail-safe None on every failure/insufficiency, payload-only typed logging",
+    "Envelope-intersects predicate in services/api/app/connectors/dcm_street_centerline_arcgis.py preserving the connector's full fail-closed discipline, with deterministic tests (recorded fixtures, injected fetch callables, no network)",
+    "DB-013 ceilings in services/api/app/connectors/wide_street_buffer_engine.py (lot-polygon vertex bound + per-segment path-count bound, typed fail-closed, no split, no wiring) with tests at and beyond each bound",
+    "services/api/app/api/v1/rule_evaluation.py default provider wired to the settings-gated live provider exactly as get_spatial_substrate_provider wires default_live_substrate; flag off = byte-identical endpoint behavior",
+    "Tests: provider suite (flag-off zero-connector-calls, happy path composing a real determination from fixtures, each typed failure class -> None, zero-segment honesty), connector envelope suite, engine ceiling suite, and the full /rule-evaluation endpoint test with a provider returning a real typed determination (wide + professional-review classes)",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md: LIVE_WIDE_STREET_PROVIDER_ENABLED row + PYTHON_VERSION pin row",
+    "project-control/reports/M5-T035-producer-report.md (verbatim producer return, written to the REVIEWER HONESTY BAR)",
+    "CI api job on the pushed head is the executable authority; the orchestrator captures CI evidence at the seam. REVIEW GUIDANCE (for the Codex reviewer): use the navigation block and 'python tools/code_graph/query.py --no-regen impact services/api/app/api/v1/rule_evaluation.py' to check blast radius, STATE whether the graph information was accurate and useful, and surface any out-of-scope discoveries in your review return (discovery routing)."
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/spatial/wide_street_live_provider.py",
+    "services/api/tests/spatial/test_wide_street_live_provider.py",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/tests/connectors/test_dcm_street_centerline_arcgis.py",
+    "services/api/app/connectors/wide_street_buffer_engine.py",
+    "services/api/tests/connectors/test_wide_street_buffer_engine.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md",
+    "project-control/reports/M5-T035-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "description": "Flag absent/empty/any non-true token -> provider returns None with ZERO connector calls and the /rule-evaluation endpoint behaves byte-identically to today (existing suites green unmodified except where the packet adds tests)."
+    },
+    {
+      "id": "AS-2",
+      "description": "Envelope predicate: exactly-one-predicate rule preserved; metadata-first freshness pin + schema-drift guard run before any segment data is trusted; paging-pathology guards and page/byte ceilings intact; DisallowedRequestError on invalid/non-finite/absurd envelopes; deterministic tests for each."
+    },
+    {
+      "id": "AS-3",
+      "description": "Happy path: recorded fixtures compose a real typed determination end-to-end; the full /rule-evaluation endpoint test proves a wide-class determination fires the wide row with provenance surfaced, and a professional-review-class determination escalates coverage - closing the M5-T034 disclosed gap."
+    },
+    {
+      "id": "AS-4",
+      "description": "Every failure class (typed connector error, malformed response, transfer-limited partial page, wrong CRS, insufficient data, ZERO segments in the envelope) -> None + payload-only typed log line (class + correlation id, never str(exc)); no fabricated or converted determination; zero-segment case never yields a confident not-within."
+    },
+    {
+      "id": "AS-5",
+      "description": "DB-013 ceilings: exceeding the lot-polygon vertex bound or per-segment path-count bound yields a typed fail-closed failure surfacing as honest UNRESOLVED/None - never a crash, hang, or silent computation - with deterministic tests at and beyond each bound; engine file gains ONLY the bounds (no split, no wiring); modularity check passes."
+    },
+    {
+      "id": "AS-6",
+      "description": "Deploy checklist carries the LIVE_WIDE_STREET_PROVIDER_ENABLED row (flag reading + typed logs decide, never response shape alone) and the PYTHON_VERSION pin row; no real deploy URLs; DRAFT/needs_review and provenance quintuple preserved everywhere (D-045-R009)."
+    },
+    {
+      "id": "AS-7",
+      "description": "ruff and the documented python suites pass; api CI green on the pushed head at the seam (orchestrator-captured)."
+    },
+    {
+      "id": "AS-8",
+      "description": "The producer report meets the REVIEWER HONESTY BAR: observations separated from conclusions, no exhaustiveness or ranking claims, every claim evidence-bound, unverified items marked UNVERIFIED; out-of-scope discoveries surfaced in the report, never fixed in-packet."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Scope magnets are OUT: named-street override table (DB-010), wide-street contract-surface bump (DB-014), context-panel parity (DB-016), split-lot apportionment (DB-001) - surface them in the report via discovery routing, never fix in-packet",
+    "Zero-segment envelope result is honest absence, never a confident negative (D-051)",
+    "The envelope predicate must not weaken any existing connector guard; the provider must make ZERO connector calls when the flag is off",
+    "api CI runs ruff first - run it before every checkpoint",
+    "At most 4 review cycles per run: write the report to the honesty bar in draft 1"
+  ],
+  "blockers": [],
+  "created_at": "2026-09-17T21:46:16.211907+00:00",
+  "updated_at": "2026-09-17T21:46:16.470737+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-17T21:46:16.211907+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t035",
+  "documented_test_commands": [
+    "python -m ruff check services/api",
+    "python -m pytest services/api/tests/spatial -q",
+    "python -m pytest services/api/tests/connectors/test_dcm_street_centerline_arcgis.py -q",
+    "python -m pytest services/api/tests/connectors/test_wide_street_buffer_engine.py -q",
+    "python -m pytest services/api/tests/api/test_rule_evaluation_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
