@@ -40,7 +40,9 @@
     "apps/web/src/components/architect/__tests__/source-links.test.tsx",
     "apps/web/src/components/architect/__tests__/workspace.test.tsx",
     "apps/web/src/components/property/ProvenanceDisclosure.tsx",
-    "apps/web/src/components/property/__tests__/sections.test.tsx"
+    "apps/web/src/components/property/__tests__/sections.test.tsx",
+    "apps/web/src/components/rule-evaluation/RuleEvaluationResult.tsx",
+    "apps/web/src/components/rule-evaluation/__tests__/rule-evaluation.test.tsx"
   ],
   "forbidden_paths": [],
   "acceptance_scenarios": [
@@ -114,7 +116,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T04:58:22.350688+00:00",
+  "updated_at": "2026-09-17T05:30:56.573838+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
