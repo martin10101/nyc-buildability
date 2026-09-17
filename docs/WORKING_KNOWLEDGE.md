@@ -22,6 +22,10 @@ packet (web tasks especially) must satisfy ALL of these up front:
 5. **After a `consecutive_revision_loops` (or any counter) breaker trip, the tally is durable
    per run-id:** relaunch REQUIRES a fresh `--run-id` (edit the ACTIVE-TASK block in
    `autostart-launch.ps1`); `clear-recovery` alone re-refuses with `budget_exhausted`.
+6. **Discovery routing (D-069):** every packet instructs the producer AND the Codex review
+   guidance to surface out-of-scope product/domain discoveries in their reports (never fix
+   them in-packet); the orchestrator records them in `docs/DISCOVERY_BACKLOG.md` at the seam.
+   Codex learns of the backlog only through the packet — it reads no repo rule files.
 
 Recovery drill order when a run dies mid-task: read audit tail → fix the packet defect (BOTH
 packet copies: ctl24 + the task worktree) → deny stale asks (strip `\r` from digests piped
