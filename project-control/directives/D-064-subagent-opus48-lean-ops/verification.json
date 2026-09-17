@@ -4,5 +4,44 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-064-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-064",
+   "task_id": "M5-T032",
+   "applicable_requirement_ids": [
+    "D-064-R005",
+    "D-064-R007"
+   ],
+   "reviewed_sha": "c2437717af33601d61ef467e39fe162e8b797361",
+   "reviewed_manifest_sha256": "0d835f3f7828cc7316bced2d749470c3383f2b7c99f40b277c2b98cc991e40c8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T07:58:00+00:00",
+   "requirements": [
+    {
+     "id": "D-064-R005",
+     "state": "PASS",
+     "evidence": [
+      "Independent DCV at frozen head c2437717 (producer != verifier): zolaLotUrl built ONLY from the module constant https://zola.planning.nyc.gov/bbl/ + strict /^[1-5][0-9]{9}$/ 10-char BBL, honest null otherwise; zolaUrl gated by the SAME identity/conflict guard as the raw record (currentRecordUrl !== null); all four evidence surfaces render ZoLa primary with the current PLUTO JSON record demoted to a secondary section-note link and the dataset landing link retained; every M5-T030 wrong-lot/wrong-source/conflict guard preserved unchanged and extended to also close the ZoLa link; deterministic tests verified in provenance-link.test.ts, source-links.test.tsx, sections.test.tsx, provenance-disclosure.test.tsx; AS-11 live smoke: ZoLa lot page for BBL 3052960043 HTTP 200 no-redirect at 2026-09-17T07:14:30Z.",
+      "Content-identity anchor: apps/web byte-identical between the CI-green head 2b440f41 (18/18 jobs; vitest 971/971, Playwright 113/113) and the frozen head (git diff --stat empty). Full verifier basis: project-control/reports/M5-T032-DCV-verification.md (verbatim return). Independent G1/G3/G4/G5 reviews all PASS at the same pin."
+     ],
+     "verified_at": "2026-09-17T07:58:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c2437717af33601d61ef467e39fe162e8b797361"
+    },
+    {
+     "id": "D-064-R007",
+     "state": "PASS",
+     "evidence": [
+      "Independent DCV at frozen head c2437717: packet documented_test_commands are focused python checks only (modularity + directive validator); producer ran only those (supervisor audit journal); the full web suite executed ONCE at the integration seam via CI on the pushed head (web lint+typecheck+build green; web-e2e vitest 971/971, Playwright 113/113); intermediate reds repaired as three bounded convergence clusters, not serial rerun-discovery; no test weakened or deleted (each [ORCH-CORRECTED] edit verified as a contract update or strengthening).",
+      "Full verifier basis: project-control/reports/M5-T032-DCV-verification.md; QA G4 AS-by-AS coverage table (all AS-1..AS-10 covered deterministically, AS-11 orchestrator-captured by design): project-control/reports/M5-T032-G4-qa-review.md."
+     ],
+     "verified_at": "2026-09-17T07:58:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "c2437717af33601d61ef467e39fe162e8b797361"
+    }
+   ]
+  }
+ ]
 }

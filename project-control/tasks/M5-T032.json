@@ -113,15 +113,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 60,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "GeoSearch autocomplete and /search share one upstream service - recovery design must not present endpoint switching as an independent fallback (handoff section 6)",
     "Full suite + browser journeys run at the integration seam per D-064-R007; producer runs the focused commands only"
   ],
   "blockers": [],
   "created_at": "2026-09-17T03:45:31.847344+00:00",
-  "updated_at": "2026-09-17T07:33:38.249822+00:00",
+  "updated_at": "2026-09-17T08:01:09.348800+00:00",
   "directive_refs": [
     {
       "directive_id": "D-064",
@@ -153,5 +153,7 @@
       "status": "in_progress",
       "message": "Orchestrator seam: material captured+attributed (cbc10397), branch pushed, AS-11 live smoke recorded. CI on 3250fbc9: 2 vitest + 3 typecheck defects; [ORCH-CORRECTED] fixes applied (entry-focus nonce for Not-my-property/Edit-address remount class; two mechanical TS casts; legacy provenance-disclosure test updated to the intended ZoLa-first contract). allowed_paths expanded with provenance-disclosure.test.tsx per the producer's own routing request (Codex REVISE 1)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-17T08:01:09.348800+00:00"
 }
