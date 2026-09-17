@@ -28,6 +28,9 @@ entries never get deleted — only status changes.
 
 | DB-016 | 2026-09-17 | OWNER OBSERVATION: the product surface shows only residential FAR while ZoLa displays rich per-lot context (special districts, overlays, landmark status, neighbor-lot highlighting) — much of which our connectors ALREADY FETCH (e.g., the ZTLDB row carries zoning_district_1/2 + special_district_1 + zoning_map_number) but never display | Owner question 2026-09-17 ("what's the point if the government site shows all this?") | Context-panel parity task: surface the designations we already retrieve (with provenance + ZoLa link) alongside computed answers; label-display carries no computation risk and closes the perceived gap; the computed-answer engine remains the differentiator | QUEUED(M5-T036) |
 
+| DB-017 | 2026-09-17 | Client-side profile mapped_features carries flags the new context panel does not render (2007 FIRM / 2015 pFIRM flood flags, transit zone, split-zone flag, zoning map number) — panel scope was districts/overlays/special districts/landmark+historic | M5-T036 producer discovery D1 (run persistent2-local-01, cross-session return) | Decide: extend the panel or keep AdditionalZoningFlags as the carrier for these; small follow-up either way | OPEN |
+| DB-018 | 2026-09-17 | Once the context panel mounts, the architect overview surface carries TWO ZoLa affordances (the panel's validated link + PropertyOverview's existing one) | M5-T036 producer discovery D2 (same return) | Consolidation is a design call (product-design-director class), not a defect; judge after the panel is accepted and visible | OPEN |
+
 Sweep log: seeded 2026-09-17 from M5-T032/T033 gate findings, owner-confirmation records,
 M4-T018/T021 carried notes, and runs-36/37 analysis. +DB-013..015 from the M5-T034 review
 wave (same day). +DB-016 owner product-gap observation (same day).
