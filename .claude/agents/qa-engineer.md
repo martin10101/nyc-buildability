@@ -2,7 +2,8 @@
 name: qa-engineer
 description: Independent QA producer/reviewer that creates and runs unit, integration, contract, end-to-end, golden-property, regression, and failure-mode tests.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
-model: claude-fable-5
+model: claude-opus-4-8
+effort: xhigh
 permissionMode: default
 isolation: worktree
 memory: project

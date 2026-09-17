@@ -3,7 +3,7 @@ name: opportunity-search-engineer
 description: Builds citywide property filtering, geospatial search, ranking, explainable opportunity scoring, saved searches, and scalable map/list results.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: default
 isolation: worktree
 memory: project

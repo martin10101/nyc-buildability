@@ -3,7 +3,7 @@ name: visual-quality-reviewer
 description: Independent reviewer for visual hierarchy, interaction quality, 3D usability, accessibility, responsiveness, visual regressions, and premium product consistency. Never use as the producer of the same UI.
 tools: Read, Grep, Glob, Bash, Skill, Write
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: default
 memory: project
 skills:
