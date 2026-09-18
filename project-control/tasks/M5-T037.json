@@ -76,8 +76,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 92,
   "risks": [
     "Consumer fixtures asserting contract_version 1.0.0 exact-match will break - the packet includes those suites; update them deliberately, never loosen additionalProperties.",
     "web-e2e recorded fixtures are 1.0.0 - the validator MUST keep them valid or web-e2e goes red.",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T07:28:38.753908+00:00",
-  "updated_at": "2026-09-18T09:51:12.049439+00:00",
+  "updated_at": "2026-09-18T10:18:33.143491+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -133,6 +133,20 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Harvest: loop-1 build committed as material a6875731 (16 cross-layer files; +1112/-54); all seven documented commands re-run green at harvest; web AS-5/6/7 pending pushed-head CI; packet-copy edits attested as orchestrator repairs"
+    },
+    {
+      "at": "2026-09-18T10:18:32.845691+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "rework",
+      "message": "HJ returned PASS-with-required-corrections; F1 (report ungated-evaluation feed) and F2 (raw server strings on the calm panel) applied as tagged orchestrator corrections with the two guard tests"
+    },
+    {
+      "at": "2026-09-18T10:18:33.143491+00:00",
+      "agent": "backend-engineer",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Corrections committed; resubmitting at the corrected head for delta-attestation"
     }
   ]
 }
