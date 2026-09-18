@@ -162,6 +162,31 @@
      "reviewed_sha": "f7c196ba9841d51f7fc999c93967a8569149b537"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T038",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d94bbcb65923084d61b06734fabf63dd43b4094a",
+   "reviewed_manifest_sha256": "87e8c8363a9164ca289f3800250692c29f381e37b39cbde35c9a7cf04e141e2a",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:05:21+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at HEAD e829050e against frozen material d94bbcb6 (verbatim return project-control/reports/M5-T038-DCV-verification.md): nav block present in the packet with seam-regen provenance c759a049 (734/15427/6852, cross-checked against the M5-T039 row at the same seam), query.py --no-regen instruction and advisory clause verbatim; block pointers independently re-verified in source (five consumer imports); build honored the impact boundaries (PropertyOverview additive-only, M5-T037-lane test untouched, 9 material files all in allowed_paths; the one out-of-scope e2e consumer corrected by the tagged orchestrator commit 8c089343 with M5-T032 precedent)."
+     ],
+     "verified_at": "2026-09-18T10:05:21+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d94bbcb65923084d61b06734fabf63dd43b4094a"
+    }
+   ]
   }
  ]
 }
