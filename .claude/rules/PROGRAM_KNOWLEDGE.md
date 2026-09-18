@@ -137,6 +137,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   the INITIAL pin needs no launch probe so the owner's edit alone suffices. Keep working via an
   orchestrator-dispatched producer + recorded deviation. Confirm exhaustion ONLY from the run
   log + `model_switch_tracker.py --query`, never a model's self-report. Full arc: B-024, D-060.
+- `claim --worktree` MUST be the FULL path (controller-authoritative): a short name
+  lands in the packet, the worker echoes it, and S4.5 stops the run at the FIRST
+  checkpoint (`checkpoint_field_mismatch`). Fix both packet copies + fresh run-id.
+  Ask-answer CLI verbs racing a LIVE loop fork its audit chain - repair between runs.
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list
