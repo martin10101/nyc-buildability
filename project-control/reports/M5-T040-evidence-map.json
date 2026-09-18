@@ -1,0 +1,22 @@
+{
+  "task_id": "M5-T040",
+  "material_commits": ["987930a2 (run-45 hardening harvest)", "751a1826 (run-46 remaining-scope harvest; cherry-pick of 42b72b10)"],
+  "producer_report": "project-control/reports/M5-T040-producer-report.md",
+  "requirements": {
+    "D-045-R002": [
+      "The geometry-dependent street-width mechanic now carries its named-street exceptions leg end-to-end: wide_street_wiring.py consumes the accepted named_street_override matcher at the attestation seam, fail-closed per the packet truth table (exceptions_checked True only when every candidate segment resolves NOT_MATCHED with fully-resolved typed inputs; MATCHED_OVERRIDE and INDETERMINATE stay professional-review refusals carrying the distinct override provenance - snapshot sha256, section anchor, provision id, verbatim row). No alternate-width value is applied numerically anywhere (G6 legal queue preserved). Wiring truth-table suite green (98 passed across the matcher+wiring suites); consumer suites green (475 passed across tests/api + test_rules_integration)."
+    ],
+    "D-045-R008": [
+      "Bounded gated task citing D-045 requirement IDs, one family increment (the ZR 12-10 named-street exceptions leg of the B2 street-width wave), never a monolithic all-districts change: material commits touch exactly the packet's allowed_paths (9 files in 751a1826 + 5 in 987930a2), contract v1.1.0 byte-untouched, no *.rule.json in scope."
+    ],
+    "D-045-R009": [
+      "DRAFT preservation: no published/verified/compliance claim introduced; the DRAFT-pending-G6 marker and not_verified_disclaimer assertions unchanged (AS-8; display tests keep the DRAFT wording assertions); the module and wiring docstrings state implementation-of-capture posture; alternate-width provisions remain professional_review_required-class output."
+    ],
+    "D-066-R001": [
+      "The contract carried the seam-regen navigation block naming the wiring consumers (integration.py, rule_evaluation route, provider, api suites) and the matcher's leaf status; the producer swept the named consumer surface - tests/api and test_rules_integration are in allowed_paths and green at harvest (475 passed, orchestrator-reproduced); no consumer left silently red. wide_street_wiring.py crossing the modularity warning threshold is disclosed as a cohesion signal for review (modularity check 0 failures, exit 0 reproduced)."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances distinction on every wide-street surface: DevelopmentLimits and CalculationEvidence gate uniformly on determination_state (DB-025 a-c); the not-within case no longer shows a conditional-FAR heading over the conservative value; the professional-review status line renders only when determination_state says so; screen and report render from the SAME validated document with the parity tests repaired (hidden-heading queries against the report's closed details element). Web assertions prove on the pushed-head CI (orchestrator captures the conclusion)."
+    ]
+  }
+}
