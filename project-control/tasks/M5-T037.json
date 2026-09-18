@@ -76,8 +76,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Consumer fixtures asserting contract_version 1.0.0 exact-match will break - the packet includes those suites; update them deliberately, never loosen additionalProperties.",
     "web-e2e recorded fixtures are 1.0.0 - the validator MUST keep them valid or web-e2e goes red.",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T07:28:38.753908+00:00",
-  "updated_at": "2026-09-18T10:30:30.241149+00:00",
+  "updated_at": "2026-09-18T10:43:26.588378+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -162,5 +162,7 @@
       "status": "in_progress",
       "message": "Casing fix in progress"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-18T10:43:26.588378+00:00"
 }
