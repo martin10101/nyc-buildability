@@ -10,7 +10,7 @@
  "issued_at": "2026-09-18",
  "captured_at": "2026-09-18T06:16:33.161580+00:00",
  "created_at": "2026-09-18T06:16:33.161580+00:00",
- "updated_at": "2026-09-18T06:16:33.161580+00:00",
+ "updated_at": "2026-09-18T07:33:23.503866+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "95b2641044f99023002bb25753c74fb5d3f3f189",
  "capture_head_sha": null,
@@ -34,7 +34,7 @@
   "D-073-R010",
   "D-073-R011"
  ],
- "requirements_content_digest_sha256": "861533f015e0886a58e17139b3034635675a3e2304e2c9de64b4d110bb68e60d",
+ "requirements_content_digest_sha256": "5665a7a626aac26164ee69d9718d5898cd7783c5f709b7fac5203094fdda0377",
  "sources": [
   {
    "file": "source-001.md",
@@ -65,6 +65,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim mid-session, before the M5-T035 harvest commit and before any new packet contracting under this phase."
+  },
+  {
+   "at": "2026-09-18T07:33:23.503866+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T037 bound to D-073-R003 as the street-limit end-to-end screen-wiring packet (loop-1 lane). Digest resynced same commit."
   }
  ]
 }

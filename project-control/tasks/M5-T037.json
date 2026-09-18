@@ -1,0 +1,120 @@
+{
+  "task_id": "M5-T037",
+  "title": "DB-014 screen wiring: additive rule_evaluation v1.1.0 contract bump serializing the wide-street block + DB-020 digest fix + web display + report parity",
+  "task_type": "contract",
+  "milestone_id": "M5",
+  "objective": "Surface the accepted wide-street determination to the architect: append 1.1.0 to the closed rule_evaluation contract_version enum and serialize the structured wide-street block (far row, governing FAR, D-052 provenance summary) as optional keys; fix DB-020 (source_raw_digest carries streetwidth_raw text instead of the geometry-page raw digest) BEFORE the block is serialized; regenerate the TS types byte-identically; update the strict web runtime validator; display the street-dependent FAR result with what-was-calculated/units/conditions/sources on the development-limits surface with DRAFT-pending-G6 marking; verify the report path renders from the SAME document so screen and report cannot disagree (D-073-R003)",
+  "business_reason": "Closes the second street-width gap named by the external review: the computed street answer must reach the screen and report, not sit inside an internal component",
+  "inputs": [
+    "COMMAND CWD (binding; the rules suite does NOT collect from repo root - known invocation artifact): run the first four documented commands from the services/api directory (run a plain `cd services/api` first; the Bash tool keeps the working directory between commands; cd back with `cd ../..` before the last three, which run from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T035 acceptance seam c759a049: 734 files, 15427 nodes, 6852 edges). Run `python tools/code_graph/query.py --no-regen impact <path>` BEFORE broad sweeps. Graph is ADVISORY - verify every material conclusion in source. Impact set for this packet: services/api/app/rules/integration.py and response.py are imported by FOUR api surfaces (api/v1/evidence.py:95, api/v1/rule_evaluation.py:60, api/v1/scenario.py:73, api/v1/scenario_analysis.py:101) and their test suites - any serialization change is visible to all four; their suites are in allowed_paths and MUST be green. apps/web/src/lib/rule-evaluation-contract.ts is the strict web runtime validator (documented-key-set check: an undocumented key FAILS validation, so the validator must learn the new optional block in the SAME change). packages/contracts/generated/rule_evaluation.ts is generated - never hand-edit; regenerate via python packages/contracts/scripts/generate_ts_types.py.",
+    "ORDER OF WORK (binding): (1) DB-020 FIRST - fix wide_street_live_provider.py:356 so AttestedWideSegment.source_raw_digest carries the geometry-page raw digest (SegmentGeometryPage.raw_digest / geom_result.raw_digests), never the streetwidth text; add the regression test asserting a sha256-shaped digest, not '80'. The provenance block must be CORRECT before it is ever serialized (G1 F1, M5-T035-G1.md). (2) Contract bump: append '1.1.0' to the CLOSED contract_version enum in BOTH schema copies (canonical packages/contracts/schemas/v1/ AND bundled services/api/app/_contract_schemas/v1/ - the contracts-sync CI job requires byte-identical copies); add the OPTIONAL wide_street block properties (far row, governing FAR, D-052 provenance summary: source_versions, matched_geometry_refs, interpreted_bounds_summaries, classification_reasons, policy_decision_states, draft_label) keeping additionalProperties:false. This packet IS the accepted contract task the enum description requires. (3) Serialize: PropertyRuleEvaluation.as_dict emits the block ONLY when a determination exists; document contract_version becomes '1.1.0'; update any consumer-suite fixture asserting '1.0.0'. (4) Regenerate TS types byte-identically. (5) Web validator: extend the documented key set with the optional block; a 1.0.0 document (no block) remains VALID - the recorded web-e2e fixtures are 1.0.0 and must stay green. (6) Display + report.",
+    "DISPLAY CONTRACT (D-073-R003/R006, binding): DevelopmentLimits shows the street-dependent FAR result with - WHAT was calculated (wide-street conditional FAR row), its UNITS (FAR is a dimensionless ratio; floor-area derived values in sq ft), the CONDITIONS under which it applies (within 100 ft of a wide street; DRAFT pending qualified legal review - reuse the existing DRAFT/not-verified vocabulary), and its SOURCES (the D-052 provenance summary, rendered via the existing evidence affordances in CalculationEvidence). professional_review_required displays as the honest escalation it is. NEVER present the reference FAR as the computed result when the computation is unresolved; the conservative DSL trace value stays labeled as-is. Answer first, detail on demand - calm presentation.",
+    "REPORT PARITY (D-073-R003, binding): ReportView renders from the SAME validated document; add the wide-street block to the report surface so screen and report cannot disagree; assert in report-view.test.tsx that the same underlying values render on both surfaces (shared fixture). If you find the report path does NOT consume the same document, STOP that sub-scope and record the precise gap in your report instead of forking a second data path.",
+    "PRESERVATION (D-045-R009, binding): rules stay DRAFT/needs_review; no published/verified/compliance claim anywhere; the DRAFT-pending-G6 marker and not_verified_disclaimer keep their existing assertions; no *.rule.json is in scope.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. Do not propose WebFetch (network is default-deny). Do not run or document npm/npx/node (web proves ONLY in CI on the pushed head). Run ruff from services/api cwd before every checkpoint (api CI job step 1). Every checkpoint carries IMPLEMENTATION."
+  ],
+  "outputs": [
+    "rule_evaluation contract v1.1.0 (both schema copies byte-identical; enum appended; optional wide_street block; TS types regenerated byte-identically - generate_ts_types.py --check clean)",
+    "DB-020 fixed: geometry-page raw digest in AttestedWideSegment.source_raw_digest + regression test",
+    "as_dict/serialize emitting the block only when a determination exists; all four api consumer suites green",
+    "Web: strict validator extended (1.0.0 docs stay valid); DevelopmentLimits street-FAR display with what/units/conditions/sources + DRAFT marking; CalculationEvidence provenance rendering; ReportView parity from the same document",
+    "Tests: development-limits display cases (within-wide, professional-review, absent block), report-view parity test, contract-versions validator cases",
+    "project-control/reports/M5-T037-producer-report.md to the reviewer honesty bar"
+  ],
+  "dependencies": [
+    "M5-T035"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json",
+    "packages/contracts/generated/rule_evaluation.ts",
+    "services/api/app/_contract_schemas/v1/rule_evaluation.schema.json",
+    "services/api/app/rules/integration.py",
+    "services/api/app/rules/response.py",
+    "services/api/app/spatial/wide_street_live_provider.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_evidence_api.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "services/api/tests/spatial/test_wide_street_live_provider.py",
+    "services/api/tests/rules/test_rules_integration.py",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/__tests__/contract-versions.test.ts",
+    "apps/web/src/components/architect/DevelopmentLimits.tsx",
+    "apps/web/src/components/architect/CalculationEvidence.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "project-control/reports/M5-T037-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 digest fix: a live-provider determination carries the geometry-page sha256 digest in every AttestedWideSegment.source_raw_digest (test asserts digest shape and exact source value; the old width-text value fails).",
+    "AS-2 contract: generate_ts_types.py --check clean; bundled and canonical schema byte-identical; enum = ['1.0.0','1.1.0']; a 1.1.0 document with the block validates; an undocumented extra key still fails (additionalProperties:false intact).",
+    "AS-3 serialization: with a real typed within-wide determination through the endpoint, the document carries contract_version 1.1.0 and the wide_street block (far row + governing FAR + provenance summary incl. correct digests); with provider None, the block is ABSENT and the document remains valid.",
+    "AS-4 consumers: services/api/tests/api full directory green (evidence, scenario, scenario_analysis, rule_evaluation).",
+    "AS-5 web display (CI): DevelopmentLimits renders the wide-street conditional FAR with conditions + DRAFT marker + sources affordance for a block-bearing document; renders the honest escalation for professional_review_required; renders unchanged (no invented value) for a documentless 1.0.0 fixture.",
+    "AS-6 report parity (CI): ReportView renders the same wide-street values as the screen from one shared fixture; report-view.test.tsx asserts the parity.",
+    "AS-7 CI green on the pushed head across all checks (orchestrator captures).",
+    "AS-8 preservation: DRAFT/not-verified assertions unchanged; no compliance claim introduced (grep-clean)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Consumer fixtures asserting contract_version 1.0.0 exact-match will break - the packet includes those suites; update them deliberately, never loosen additionalProperties.",
+    "web-e2e recorded fixtures are 1.0.0 - the validator MUST keep them valid or web-e2e goes red.",
+    "Do not touch wide_street_wiring.py / rule_evaluation.py routes (out of scope; disjoint from the M5-T039 lane)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-18T07:28:38.753908+00:00",
+  "updated_at": "2026-09-18T07:28:39.077462+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-18T07:28:38.753908+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api -q",
+    "python -m pytest tests/spatial/test_wide_street_live_provider.py -q",
+    "python -m pytest tests/rules/test_rules_integration.py -q",
+    "python packages/contracts/scripts/generate_ts_types.py --check",
+    "python -m pytest packages/contracts/scripts/tests -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "task_id": "M5-T039",
+  "title": "DB-010 named-street override matcher (module only): deterministic ZR 12-10 named-street/alternate-width matcher from the accepted M4-T018 capture",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build the deterministic matcher module for the ZR 12-10 named-street overrides (Broadway W94-97 CD7; Allen St Rivington-Delancey CD3) and the C5-3/C6-4/C6-6 alternate-width/70-ft-connector provisions, from the accepted sha256-pinned M4-T018 snapshot capture ONLY: typed inputs (borough/CD + street name + cross-street bounds), typed tri-state outputs (matched / not-matched / indeterminate, fail-closed to indeterminate), distinct override provenance, exhaustive tests incl. boundary cross-streets. MODULE ONLY - no wiring into wide_street_live_provider.py or any consumer in this packet (wiring follows after M5-T037 lands to keep loop scopes disjoint)",
+  "business_reason": "DB-010: the named-street override table has no implementation, forcing the provider to refuse exceptions attestation near those segments; the matcher is the missing capability, built loop-safe as its own module",
+  "inputs": [
+    "COMMAND CWD (binding; the rules suite does NOT collect from repo root - known invocation artifact): run the first two documented commands from the services/api directory (plain `cd services/api` first; cwd persists; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T035 acceptance seam c759a049: 734 files, 15427 nodes, 6852 edges). Run `python tools/code_graph/query.py --no-regen impact <path>` BEFORE broad sweeps. Graph is ADVISORY - verify every material conclusion in source. This packet creates a NEW leaf module with NO consumers (wiring is a later packet, deliberately - the provider file belongs to the parallel M5-T037 lane). Its only repository input is the accepted sha256-pinned capture docs/research/zr-snapshots/v1/zr-12-10.snapshot.json (M4-T018; AMENDED 3/26/2026 text with the named-street table and the C5-3/C6-4/C6-6 alternate-width + 70-ft-connector provisions). Read the snapshot; NEVER any other source; no network.",
+    "CONTRACT (binding): deterministic, typed, stdlib+existing-deps only. Inputs: borough + community district, street name, and the segment's cross-street bounds (typed, normalized). Output: a typed tri-state - MATCHED_OVERRIDE (with which provision), NOT_MATCHED, or INDETERMINATE - failing CLOSED to INDETERMINATE on any normalization miss, ambiguous bound, or input outside the table's vocabulary. Every output carries distinct override provenance: snapshot sha256, section anchor, provision id, and the matched table row verbatim. Street-name matching is exact-after-documented-normalization (case/whitespace/abbreviation rules you derive FROM THE SNAPSHOT TEXT and document); NEVER fuzzy matching, NEVER geometry inference (the CD+cross-street matcher is textual - geometric segment matching is a later, separate capability).",
+    "LEGAL BOUNDARY (binding): if the snapshot text is ambiguous about whether a boundary cross-street is inclusive or exclusive, the module returns INDETERMINATE at that boundary and your report records the ambiguity as a qualified-legal-review question (G6 queue) - never a coding assumption (D-073 item 2). D-045-R009: DRAFT posture; no compliance claims; the module docstring states it implements the capture, not legal advice.",
+    "TESTS (binding): every named row (both streets); boundary cross-streets (inclusive/exclusive/INDETERMINATE per the text); wrong borough/CD; unknown street; normalization cases; alternate-width provisions; provenance fields exact; determinism (same input twice = same output). The placeholder test file already carries one passing test - keep the suite passing at every checkpoint.",
+    "Discovery routing (D-069): out-of-scope findings go in your report. Run ruff from services/api cwd before every checkpoint. Every checkpoint carries IMPLEMENTATION. No network; no WebFetch proposals."
+  ],
+  "outputs": [
+    "services/api/app/rules/named_street_override.py: typed deterministic matcher, tri-state fail-closed, distinct override provenance",
+    "services/api/tests/rules/test_named_street_override.py: exhaustive row/boundary/normalization/provenance suite",
+    "project-control/reports/M5-T039-producer-report.md incl. any boundary-ambiguity legal questions for the G6 queue"
+  ],
+  "dependencies": [
+    "M5-T035"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/named_street_override.py",
+    "services/api/tests/rules/test_named_street_override.py",
+    "project-control/reports/M5-T039-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1: every table row from the pinned snapshot matches with the correct provision id and verbatim row in provenance.",
+    "AS-2: a boundary cross-street resolves exactly as the snapshot text dictates, or INDETERMINATE with the ambiguity recorded.",
+    "AS-3: unknown street / wrong CD / wrong borough / malformed input -> NOT_MATCHED or INDETERMINATE per the documented rule, never an exception, never a match.",
+    "AS-4: provenance carries the snapshot sha256 + section anchor on every non-NOT_MATCHED result.",
+    "AS-5: ruff clean; suite green; modularity clean; no consumer file touched.",
+    "AS-6: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Scope temptation: NO provider wiring, NO geometry - module only (disjointness with the M5-T037 lane depends on it).",
+    "Normalization over-reach: rules must be derived from and cited to the snapshot text."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-18T07:28:57.006025+00:00",
+  "updated_at": "2026-09-18T07:28:57.281698+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-18T07:28:57.006025+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/rules/test_named_street_override.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
