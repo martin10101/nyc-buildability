@@ -1,0 +1,10 @@
+{
+  "task_id": "M5-T041",
+  "material_commit": "740b6f2f",
+  "producer_report": "project-control/reports/M5-T041-producer-report.md",
+  "requirements": {
+    "D-066-R001": [
+      "The contract carried the D-066-R001 code-graph navigation block from the 2026-09-18 seam regen (packet inputs; G0 report M5-T041-G0.md). The producer stayed inside the named web-only surface: material 740b6f2f touches exactly 10 apps/web files + the producer report, all inside allowed_paths; no services/api path, no contract schema, no generated TS, and address-search.ts untouched (out of allowed_paths) - verified by the cherry-pick diff stat at harvest. The validator file's consumers were respected per the nav block: DB-025(e) is a wording correction with no behavior change, so every recorded 1.0.0/1.1.0 fixture verdict is unchanged (producer report section 2 AS-5; contract-versions suite carries the positive-shape proof). Advisory-graph conclusions were verified in source per the block's advisory clause."
+    ]
+  }
+}
