@@ -589,3 +589,62 @@ describe("M5-T037 — wide-street conditional FAR on the development-limits surf
     expect(screen.getByTestId("development-evaluated-far")).toBeInTheDocument();
   });
 });
+
+describe("M5-T040 — DB-025 determination-state display gating (D-073-R006)", () => {
+  const notWithinBlock = {
+    determination_state: "not_within_100ft_of_wide_street",
+    far_row: "standard_row",
+    governing_max_residential_far: 2.2,
+    coverage_hint: "conditional",
+    exceptions_checked: true,
+    named_street_override_pending: false,
+    policy_decision_states: ["narrow"],
+    original_labels: ["40"],
+    source_versions: ["2026-03-26"],
+    matched_geometry_refs: ["OBJECTID=999"],
+    interpreted_bounds_summaries: ["mapped width 40 ft (< 75 ft, narrow)"],
+    classification_reasons: ["DCM effective_disposition=narrow; ambiguity_class=none"],
+    draft_label: "DRAFT — not a verified legal determination",
+    fallback_direction_note:
+      "On uncertainty the higher wide-street FAR is withheld; the conservative row governs.",
+    reason: "Not within 100 ft of a wide street; the conservative standard-row FAR governs; DRAFT pending G6.",
+  } satisfies NonNullable<RuleEvaluation["wide_street"]>;
+
+  function notWithinDoc(bbl: string): RuleEvaluation {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.1.0";
+    doc.evaluated_input.bbl = bbl;
+    doc.wide_street = structuredClone(notWithinBlock);
+    return doc;
+  }
+
+  it("captions the not-within value as the governing (conservative) FAR, never 'Wide-street conditional FAR' (DB-025c)", () => {
+    const { profile } = inputs();
+    const panel = show(profile, notWithinDoc(profile.identity.bbl)).container.querySelector<HTMLElement>(
+      '[data-testid="development-wide-street"]',
+    )!;
+    expect(within(panel).getByTestId("wide-street-result")).toHaveTextContent("2.20");
+    expect(panel).toHaveTextContent("the conservative floor-area ratio governs");
+    expect(panel).toHaveTextContent("Governing floor-area ratio");
+    // The wide-street conditional-FAR caption never sits over the conservative value.
+    expect(panel).not.toHaveTextContent("Wide-street conditional FAR");
+    // The accessible section label follows the not-within distinction (DB-025c).
+    expect(panel).toHaveAttribute("aria-label", "Governing floor-area ratio");
+  });
+
+  it("keeps the within-wide conditional-FAR caption for a genuine within determination (DB-025c control)", () => {
+    const { profile } = inputs();
+    const doc = notWithinDoc(profile.identity.bbl);
+    doc.wide_street!.determination_state = "within_100ft_of_wide_street";
+    doc.wide_street!.far_row = "wide_street_row";
+    doc.wide_street!.governing_max_residential_far = 3.44;
+    const panel = show(profile, doc).container.querySelector<HTMLElement>(
+      '[data-testid="development-wide-street"]',
+    )!;
+    expect(within(panel).getByTestId("wide-street-result")).toHaveTextContent("3.44");
+    expect(panel).toHaveTextContent("Wide-street conditional FAR");
+    expect(panel).toHaveTextContent("Applies within 100 ft of a wide street");
+    // The within control keeps the wide-street conditional-FAR accessible label.
+    expect(panel).toHaveAttribute("aria-label", "Wide-street conditional FAR");
+  });
+});

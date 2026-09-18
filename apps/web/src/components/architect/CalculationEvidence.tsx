@@ -9,6 +9,21 @@ export function CalculationEvidence({ evaluation, scenario }: {
     scenario: Scenario | null;
 }) {
     const traces = evaluation ? [...evaluation.evaluations].sort((a, b) => Number(b.applicability_outcome) - Number(a.applicability_outcome)) : [];
+    // DB-025(a,b): the wide-street review label and the "withheld" FAR gate on
+    // determination_state, never on a null-FAR heuristic, so a confident
+    // within/not-within determination is never mislabeled "Professional review
+    // required" here (D-073-R006).
+    const wideDeterminationState = evaluation?.wide_street?.determination_state;
+    const wideReview = wideDeterminationState === "professional_review_required";
+    // DB-025(c): "Wide-street conditional FAR" names the higher conditional value
+    // that exists only in the within case (and, withheld, the review case). In the
+    // not-within case the value is the CONSERVATIVE standard-row FAR, so its heading
+    // and value caption read "Governing floor-area ratio" — the conditional-FAR
+    // caption never sits over the conservative value. This mirrors DevelopmentLimits
+    // so the screen and the report read identically from the one validated document.
+    const wideValueLabel = wideDeterminationState === "not_within_100ft_of_wide_street"
+      ? "Governing floor-area ratio"
+      : "Wide-street conditional FAR";
     return <div className="architect-calculation-evidence">
     <p className="architect-eyebrow">Deterministic evaluation</p>
     <h2>How this was calculated</h2>
@@ -23,10 +38,10 @@ export function CalculationEvidence({ evaluation, scenario }: {
       {evaluation.evaluations.length === 0 ? <p>No applicable computation trace was returned. No result is inferred.</p> : null}
       {evaluation.wide_street ? <section className="architect-trace architect-determination architect-wide-street-provenance" data-testid="wide-street-provenance">
         <p className="architect-eyebrow">Wide-street determination</p>
-        <h3>Wide-street conditional FAR · D-052 provenance</h3>
-        <p className="architect-status">Draft · {evaluation.wide_street.draft_label} · Professional review required</p>
+        <h3>{wideValueLabel} · D-052 provenance</h3>
+        <p className="architect-status">Draft · {evaluation.wide_street.draft_label}{wideReview ? " · Professional review required" : ""}</p>
         <p>{evaluation.wide_street.reason}</p>
-        <p className="section-note">Governing wide-street conditional FAR (dimensionless ratio): {evaluation.wide_street.governing_max_residential_far != null ? evaluation.wide_street.governing_max_residential_far : "withheld — professional review required"}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
+        <p className="section-note">{wideValueLabel} (dimensionless ratio): {wideReview ? "withheld — professional review required" : (evaluation.wide_street.governing_max_residential_far ?? "withheld — professional review required")}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
         <p className="section-note">{evaluation.wide_street.fallback_direction_note}</p>
         <dl className="architect-definition-list">
           <div><dt>Determination</dt><dd>{evaluation.wide_street.determination_state}</dd></div>

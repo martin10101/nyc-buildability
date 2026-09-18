@@ -22,6 +22,7 @@ Coverage:
 
 from __future__ import annotations
 
+import hashlib
 import json
 
 from app.connectors.dcm_street_centerline_arcgis import DcmTransport
@@ -64,6 +65,13 @@ from app.connectors.wide_street_buffer_engine import (
     AttestedWideSegment,
     Ec5AttestedPreconditions,
 )
+from app.rules.named_street_override import (
+    MatchStatus,
+    NamedStreetOverrideMatcher,
+    OverrideQuery,
+    load_default_matcher,
+)
+from app.rules.snapshots import load_snapshot_file
 from app.rules.wide_street_wiring import (
     COVERAGE_CONDITIONAL,
     COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
@@ -73,7 +81,9 @@ from app.rules.wide_street_wiring import (
     FAR_ROW_NONE,
     FAR_ROW_STANDARD,
     FAR_ROW_WIDE_STREET,
+    MatchedNamedStreetOverride,
     NamedStreetOverrideStatus,
+    build_named_street_override_status,
     determine_wide_street_far,
     select_far_row_value,
 )
@@ -581,3 +591,327 @@ def test_draft_marker_present_and_never_claims_verified_or_published() -> None:
     assert result.coverage_hint in (COVERAGE_CONDITIONAL, COVERAGE_PROFESSIONAL_REVIEW_REQUIRED)
     assert result.coverage_hint != "verified"
     assert result.determination_state != "published"
+
+
+# ---------------------------------------------------------------------------
+# M5-T040 WIRING: build_named_street_override_status is the FIRST production
+# consumer of the accepted ZR 12-10 matcher (app.rules.named_street_override).
+# It runs the matcher over the candidate segments and produces the wiring's
+# NamedStreetOverrideStatus fail-closed (D-051). The wiring truth table (AS-4):
+#   all-NOT_MATCHED (fully-resolved) -> exceptions_checked True (row can fire);
+#   any MATCHED_OVERRIDE -> professional review carrying the distinct override
+#     provenance, wide FAR never applied numerically;
+#   any INDETERMINATE / missing input -> the existing refusal stands unchanged.
+# ---------------------------------------------------------------------------
+
+# Real-snapshot queries whose matcher outcomes are pinned by the accepted
+# M5-T039 matcher suite (test_named_street_override.py): an ordinary street is
+# NOT_MATCHED; the conditional Broadway designation is INDETERMINATE.
+_ORDINARY_RESOLVED = OverrideQuery("Manhattan", 7, "Nowhere Road", "A Street", "B Street")
+_ORDINARY_NO_BOUNDS = OverrideQuery("Manhattan", 7, "Nowhere Road", None, None)
+_CONDITIONAL_BROADWAY = OverrideQuery(
+    "Manhattan", 7, "Broadway", "West 94th Street", "West 97th Street"
+)
+
+
+def _real_matcher() -> NamedStreetOverrideMatcher:
+    return load_default_matcher()
+
+
+def _matched_override_matcher(tmp_path) -> tuple[NamedStreetOverrideMatcher, OverrideQuery, dict]:
+    """A matcher built from a SYNTHETIC unconditional snapshot whose single row
+    reaches MATCHED_OVERRIDE (mirrors test_named_street_override::
+    test_matched_override_for_unconditional_row). Returns the matcher, a query
+    that matches, and the expected provenance facts."""
+    named_quote = (
+        "In Community District 1 in the Borough of Testville, the roadways of "
+        "Testonly Avenue between First and Second Streets shall each be "
+        "considered a wide street."
+    )
+    alt_quote = "In C5-3 Districts the alternate-width test may be considered."
+    excerpt = named_quote + "\n\n" + alt_quote
+    digest = hashlib.sha256(excerpt.encode("utf-8")).hexdigest()
+    doc = {
+        "snapshot_id": "zr-wiring-matched",
+        "section_number": "12-10",
+        "section_title": "synthetic",
+        "source": {"request_url": "u", "retrieved_at": "t", "raw_html_verified": False},
+        "verbatim_excerpt": excerpt,
+        "content_digest_sha256": digest,
+        "extraction_status": "extracted_draft",
+        "named_street_overrides": {
+            "provision_id": "test-named",
+            "section_anchor": "ZR 12-10 test anchor",
+            "node_anchor": "/node/0",
+            "verbatim_source_quote": named_quote,
+            "disposition_when_located": "matched_override",
+            "open_legal_questions": [],
+            "rows": [
+                {
+                    "row_id": "testonly",
+                    "borough": "Testville",
+                    "community_district": 1,
+                    "street_name": "Testonly Avenue",
+                    "frontage_from": "First Street",
+                    "frontage_to": "Second Street",
+                }
+            ],
+        },
+        "alternate_width_provisions": {
+            "provision_id": "test-alt",
+            "section_anchor": "ZR 12-10 test anchor",
+            "applicable_districts": ["C5-3"],
+            "verbatim_source_quote": alt_quote,
+            "disposition_reason": "test",
+        },
+    }
+    path = tmp_path / "zr-wiring-matched.snapshot.json"
+    path.write_text(json.dumps(doc), encoding="utf-8")
+    matcher = NamedStreetOverrideMatcher(load_snapshot_file(path))
+    query = OverrideQuery("Testville", 1, "Testonly Avenue", "First Street", "Second Street")
+    expected = {
+        "provision_id": "test-named",
+        "snapshot_sha256": digest,
+        "section_anchor": "ZR 12-10 test anchor",
+        "matched_row_verbatim": named_quote,
+    }
+    return matcher, query, expected
+
+
+def test_build_status_all_not_matched_fully_resolved_is_clear() -> None:
+    # Every candidate segment is an ordinary street with fully-resolved inputs ->
+    # the matcher returns NOT_MATCHED for all -> the override table was applied and
+    # no designation applies (checked AND resolved).
+    matcher = _real_matcher()
+    assert matcher.match(_ORDINARY_RESOLVED).status is MatchStatus.NOT_MATCHED  # oracle
+    status = build_named_street_override_status(matcher, [_ORDINARY_RESOLVED])
+    assert status.override_table_implemented is True
+    assert status.segment_may_touch_named_override is False
+    assert status.matched_override is None
+
+
+def test_build_status_all_clear_lets_exceptions_checked_become_true() -> None:
+    # A wide segment within 100 ft + an all-clear override status -> the elevated
+    # exceptions_checked criterion is met and the wide row fires (AS-4).
+    matcher = _real_matcher()
+    status = build_named_street_override_status(matcher, [_ORDINARY_RESOLVED])
+    result = determine_wide_street_far(
+        [_wide_decision()],
+        lot=_make_lot(),
+        wide_segments=[_within_segment()],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=status,
+        correlation_id=CID,
+    )
+    assert result.determination_state == DETERMINATION_WITHIN_WIDE
+    assert result.exceptions_checked is True
+    assert result.named_street_override_pending is False
+    assert result.named_street_override_match is None
+
+
+def test_build_status_matched_override_carries_distinct_provenance(tmp_path) -> None:
+    matcher, query, expected = _matched_override_matcher(tmp_path)
+    assert matcher.match(query).status is MatchStatus.MATCHED_OVERRIDE  # oracle
+    status = build_named_street_override_status(matcher, [query])
+    assert isinstance(status.matched_override, MatchedNamedStreetOverride)
+    m = status.matched_override
+    assert m.provision_id == expected["provision_id"]
+    assert m.snapshot_sha256 == expected["snapshot_sha256"]
+    assert m.section_anchor == expected["section_anchor"]
+    assert m.matched_row_verbatim == expected["matched_row_verbatim"]
+
+
+def test_matched_override_forces_professional_review_with_provenance(tmp_path) -> None:
+    # A DEFINITIVE match -> professional review carrying the four override
+    # provenance elements, and the wide FAR is never applied numerically, EVEN with
+    # a wide policy decision and a within-100ft wide segment supplied.
+    matcher, query, expected = _matched_override_matcher(tmp_path)
+    status = build_named_street_override_status(matcher, [query])
+    result = determine_wide_street_far(
+        [_wide_decision()],
+        lot=_make_lot(),
+        wide_segments=[_within_segment()],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=status,
+        correlation_id=CID,
+    )
+    assert result.determination_state == DETERMINATION_PROFESSIONAL_REVIEW
+    assert result.far_row == FAR_ROW_NONE
+    assert result.exceptions_checked is False
+    assert result.named_street_override_pending is True
+    # No wide FAR bonus is ever granted on a matched override.
+    assert select_far_row_value(result, standard_far=2.2, wide_street_far=3.0) is None
+    # The distinct override provenance rides on the determination AND in the reason.
+    assert result.named_street_override_match is not None
+    assert result.named_street_override_match.provision_id == expected["provision_id"]
+    assert expected["snapshot_sha256"] in result.reason
+    assert expected["provision_id"] in result.reason
+    assert expected["section_anchor"] in result.reason
+
+
+def test_matched_override_preempts_all_narrow_standard_row(tmp_path) -> None:
+    # A named-street override designates the street WIDE regardless of numeric
+    # width: a match on an otherwise ALL-NARROW lot must NOT fire the standard row -
+    # it escalates to professional review (branch 0 preempts the all-narrow branch).
+    matcher, query, _ = _matched_override_matcher(tmp_path)
+    status = build_named_street_override_status(matcher, [query])
+    result = determine_wide_street_far(
+        [_narrow_decision()],
+        lot=_make_lot(),
+        wide_segments=[],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=status,
+        correlation_id=CID,
+    )
+    assert result.determination_state == DETERMINATION_PROFESSIONAL_REVIEW
+    assert result.far_row == FAR_ROW_NONE
+
+
+def test_build_status_indeterminate_segment_is_unresolved_refusal() -> None:
+    # A located-but-conditional designation (Broadway W94-97) is INDETERMINATE ->
+    # the segment could not be cleared -> refusal stands unchanged (may_touch True,
+    # not implemented) -> a wide-tending lot fails safe to professional review.
+    matcher = _real_matcher()
+    assert matcher.match(_CONDITIONAL_BROADWAY).status is MatchStatus.INDETERMINATE  # oracle
+    status = build_named_street_override_status(matcher, [_CONDITIONAL_BROADWAY])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+    assert status.matched_override is None
+    result = determine_wide_street_far(
+        [_wide_decision()],
+        lot=_make_lot(),
+        wide_segments=[_within_segment()],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=status,
+        correlation_id=CID,
+    )
+    assert result.determination_state == DETERMINATION_PROFESSIONAL_REVIEW
+    assert result.exceptions_checked is False
+    assert result.named_street_override_pending is True
+
+
+def test_build_status_not_matched_but_missing_bounds_is_unresolved() -> None:
+    # A NOT_MATCHED whose query lacks cross-street bounds is NOT fully-resolved
+    # (letter of the binding wiring semantics): it cannot clear the exception, so
+    # the status stays unresolved (fail-closed, never a guessed clearance).
+    matcher = _real_matcher()
+    assert matcher.match(_ORDINARY_NO_BOUNDS).status is MatchStatus.NOT_MATCHED  # oracle
+    status = build_named_street_override_status(matcher, [_ORDINARY_NO_BOUNDS])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+
+
+def test_build_status_mixed_unresolved_segment_blocks_clear() -> None:
+    # One fully-resolved NOT_MATCHED + one INDETERMINATE -> the whole lot is
+    # unresolved (every segment must clear for exceptions_checked to be possible).
+    matcher = _real_matcher()
+    status = build_named_street_override_status(
+        matcher, [_ORDINARY_RESOLVED, _CONDITIONAL_BROADWAY]
+    )
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+
+
+def test_build_status_empty_queries_is_unresolved() -> None:
+    # No candidate segment supplied -> nothing was checked -> unresolved (never a
+    # vacuous "cleared").
+    matcher = _real_matcher()
+    status = build_named_street_override_status(matcher, [])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+
+
+def test_build_status_matched_override_wins_over_indeterminate(tmp_path) -> None:
+    # A MATCHED_OVERRIDE is decisive even alongside an INDETERMINATE segment: the
+    # richer matched provenance is carried (not merely an unresolved refusal).
+    matcher, query, expected = _matched_override_matcher(tmp_path)
+    # A second query on the same synthetic matcher that is INDETERMINATE (located
+    # street, missing bounds resolves to INDETERMINATE only for a named row; here
+    # use a missing community district to force INDETERMINATE).
+    indeterminate_q = OverrideQuery(
+        "Testville", None, "Testonly Avenue", "First Street", "Second Street"
+    )
+    assert matcher.match(indeterminate_q).status is MatchStatus.INDETERMINATE
+    status = build_named_street_override_status(matcher, [indeterminate_q, query])
+    assert status.matched_override is not None
+    assert status.matched_override.provision_id == expected["provision_id"]
+
+
+# ---------------------------------------------------------------------------
+# M5-T040 (run 46): the wiring re-establishes TYPED, NORMALIZED candidate inputs
+# before an all-NOT_MATCHED result may attest exceptions_checked. The matcher
+# SHORT-CIRCUITS to NOT_MATCHED for an ordinary (non-override) street WITHOUT
+# inspecting the cross-street bounds and COERCES non-string locators (str() /
+# digit-scan) along the way, so a malformed-but-nonblank field must be caught at
+# the wiring seam, never trusted through that coerced NOT_MATCHED (D-051).
+# ---------------------------------------------------------------------------
+
+def _raw_query(
+    borough: object, cd: object, street: object, xfrom: object, xto: object
+) -> OverrideQuery:
+    """Build an OverrideQuery from deliberately untyped values (malformed-shape
+    probes). The frozen dataclass runs no runtime type check - matching a real
+    caller that passes non-string values - so the static checker is told to allow
+    the invalid shapes here once."""
+    return OverrideQuery(borough, cd, street, xfrom, xto)  # type: ignore
+
+
+# Malformed candidates: an ordinary (non-override) street carrying non-string
+# borough / community district / bounds. The matcher COERCES each and reaches
+# NOT_MATCHED without inspecting the bounds; the wiring's typed gate refuses them.
+_MALFORMED_BOUNDS = _raw_query("Manhattan", 7, "Nowhere Road", 123, 456)
+_MALFORMED_BOROUGH = _raw_query(123, 7, "Nowhere Road", "A Street", "B Street")
+_MALFORMED_CD_LIST = _raw_query("Manhattan", [7], "Nowhere Road", "A Street", "B Street")
+
+
+def test_matcher_short_circuits_to_not_matched_without_inspecting_bounds() -> None:
+    # Documents the short-circuit the wiring guards against: an ordinary street
+    # with GARBAGE, non-string bounds STILL returns NOT_MATCHED - the matcher
+    # never inspects the bounds on the non-override path.
+    matcher = _real_matcher()
+    assert matcher.match(_MALFORMED_BOUNDS).status is MatchStatus.NOT_MATCHED  # oracle
+    assert matcher.match(_MALFORMED_BOROUGH).status is MatchStatus.NOT_MATCHED  # coerced
+    assert matcher.match(_MALFORMED_CD_LIST).status is MatchStatus.NOT_MATCHED  # coerced
+
+
+def test_build_status_non_string_bounds_are_unresolved() -> None:
+    # Bounds present but non-string (nonblank when coerced) are NOT typed/
+    # normalized -> the exception cannot be cleared (fail-closed) even though the
+    # matcher short-circuited to NOT_MATCHED.
+    matcher = _real_matcher()
+    status = build_named_street_override_status(matcher, [_MALFORMED_BOUNDS])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+    assert status.matched_override is None
+
+
+def test_build_status_non_string_borough_is_unresolved() -> None:
+    # The matcher coerces a non-string borough to reach NOT_MATCHED; the wiring
+    # refuses to attest on an untyped locator.
+    matcher = _real_matcher()
+    status = build_named_street_override_status(matcher, [_MALFORMED_BOROUGH])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+
+
+def test_build_status_list_community_district_is_unresolved() -> None:
+    # A list community district coerces through the matcher's digit-scan
+    # ([7] -> "7" -> 7) to NOT_MATCHED, but a list is not a TYPED community
+    # district; the wiring's typed gate refuses it.
+    matcher = _real_matcher()
+    status = build_named_street_override_status(matcher, [_MALFORMED_CD_LIST])
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+
+
+def test_build_status_mixed_resolved_and_malformed_bounds_blocks_clear() -> None:
+    # One fully-resolved NOT_MATCHED + one NOT_MATCHED with malformed bounds ->
+    # the whole lot is unresolved (every segment must clear for exceptions_checked
+    # to be possible). Order-independent: the malformed segment blocks regardless.
+    matcher = _real_matcher()
+    forward = build_named_street_override_status(matcher, [_ORDINARY_RESOLVED, _MALFORMED_BOUNDS])
+    reverse = build_named_street_override_status(matcher, [_MALFORMED_BOUNDS, _ORDINARY_RESOLVED])
+    for status in (forward, reverse):
+        assert status.override_table_implemented is False
+        assert status.segment_may_touch_named_override is True
+        assert status.matched_override is None

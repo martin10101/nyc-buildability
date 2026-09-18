@@ -1,153 +1,94 @@
-# M5-T040 — producer report (hardening rework unit)
+# M5-T040 producer report — PARTIAL implementation (web parity-test repair; backend wiring accounted, pending)
 
-Task **M5-T040** — named-street override WIRING. This unit delivers ONLY the
-DB-023a hardening precondition (ORDER-OF-WORK step 1) so it is independently
-reviewable BEFORE any matcher consumer lands. Wiring, DB-025 display gating, and
-the DB-021(e) branch additions remain deferred to a later unit.
+Task: M5-T040. Producer: backend-engineer. Stage: in_progress (PARTIAL — not a whole-task completion claim).
+Directives in scope: D-073-R006 (DISPLAY CONTRACT / DB-025 a–c), D-045-R009 (DRAFT / not-verified
+preservation), D-066-R001 (code-graph navigation). Contract v1.1.0 stays CLOSED — no schema, generated-TS,
+integration.py, or response.py edit (none in allowed_paths; none touched).
 
-Status: **UNIT_COMPLETE** for the hardening rework; the matcher is still a LEAF
-(no `import ... named_street_override` anywhere under `app/`).
+This resubmission repairs the report-view wide-street parity tests and accounts for the backend
+named-street wiring already present in the working tree. It is a PARTIAL M5-T040 increment: web changes
+prove only in CI, and backend acceptance requires its own complete diff and evidence (below). Whole-task
+completion stays pending.
 
-## 1. The gap this unit closes (superseding the prior report §1)
+## Web repair delivered (this resubmission)
 
-The prior `_validate_unconditional_source_binding` judged "unconditional" by
-decomposing `verbatim_source_quote` into a word whitelist + capitalized tokens +
-numerals. But `verbatim_source_quote` is only constrained to be **a substring** of
-the digest-covered `verbatim_excerpt`. So a tamperer can keep the real excerpt +
-digest, strip all qualifier metadata, and **narrow** the quote to the real
-sub-span:
+`apps/web/src/components/architect/__tests__/report-view.test.tsx`
 
-> `In Community District 7 ... Broadway between West 94th and West 97th Streets and
-> in Community District 3 ... Allen Street between Rivington and Delancey Streets`
+1. Restored the missing `within` import (`:7`) — the prior report claimed it was added but the file still
+   imported only `cleanup, render, screen`, so every `within(...)` reference was unresolved.
+2. Made the DB-025(c) provenance assertions work against the report's CLOSED `<details>`. `ReportView`
+   nests `CalculationEvidence` inside `#brief-calculations` (`ReportView.tsx:94-97`), so the provenance
+   `<h3>` is outside the accessibility tree until expanded. The heading queries now pass
+   `{ hidden: true }` (`:224-225`, `:240`, `:254`) so they assert the heading regardless of the collapsed
+   state, and a value-caption assertion read via `textContent` (`:226-227`, `:241`) — unaffected by the
+   closed `<details>` — proves the intended caption too.
+3. Preserved the within, not-within, and professional-review controls and the shared
+   `reportValue === screenValue` comparison (`:230`), unchanged in intent.
 
-which omits `, which are separated by mapped public park shall each be considered a
-wide street.`. That narrowed span (a) is a genuine substring of the excerpt
-(integrity passes), (b) still anchors **both** rows so `_validate_against_source`
-passes, and (c) decomposes with **zero residual** — so the prior gate ALLOWED it
-and returned `MATCHED_OVERRIDE`. A word whitelist, capitalization, or bare
-substring membership was being treated as the binding, and it is defeatable.
+## Web display gating (present from the prior loop increment; unchanged this resubmission)
 
-## 2. The fix — bind to the AUTHENTICATED, COMPLETE source span
+- `CalculationEvidence.tsx:16-26,41,44` — provenance heading + value caption derive from
+  `determination_state` (not-within → "Governing floor-area ratio"; within/review → "Wide-street
+  conditional FAR"); DB-025(a) review-label gate (`:17,42`); DRAFT wording preserved (`:30,42,44`).
+- `DevelopmentLimits.tsx:62-96` — `WideStreetResult` gates the whole panel on `determination_state`;
+  accessible section label follows the within/not-within distinction (`:79`).
+- `development-limits.test.tsx:621-649` — DB-025(c) panel + `aria-label` assertions.
 
-Implementation hunk: `services/api/app/rules/named_street_override.py`
-`_validate_unconditional_source_binding(named, excerpt)` (now takes the
-digest-covered excerpt; call site `_validate_disposition_against_qualifiers`
-threads `self._snapshot.verbatim_excerpt`). A `matched_override` accept now
-requires BOTH, in order:
+## Backend modifications present in the working tree (accounted here — NOT removed, NOT out-of-scope)
 
-1. **COMPLETE-SPAN (primary binding).** Locate the quote in the digest-covered
-   excerpt and require it to occupy a whole sentence unit: begin at a span boundary
-   (excerpt start / newline / prior sentence terminator) AND end at a sentence
-   terminator followed by the span edge or whitespace. A quote cut before its
-   terminator (a narrowing that drops a trailing/interposed clause) is refused —
-   `DB-023a complete-span binding`.
-2. **NO-QUALIFIER on that complete span (defense in depth, retained).** The token
-   decomposition (`_UNCONDITIONAL_DESIGNATION_WORDS` + numeric/ordinal + capitalized
-   locators) now runs only AFTER the complete-span binding has forced the quote to
-   be the whole sentence, so a full conditional quote kept intact while metadata is
-   stripped still fails on the residual clause words.
+Four `services/api` files carry the named-street WIRING integration and DB-021(e) coverage. These are IN
+scope for M5-T040 (packet ORDER OF WORK step 3; outputs 2–3). They are neither deleted nor declared
+outside the task on worker authority; they are held for backend clearance under its own evidence pass.
 
-Both read ONLY digest-covered source (the excerpt and its substring quote) and NO
-mutable qualifier metadata, so the binding is tamper-evident. It decides no legal
-question and is scoped to `matched_override`; an `indeterminate` disposition (the
-real snapshot's value) is unaffected — the real matcher still constructs and
-returns INDETERMINATE for Broadway/Allen with full provenance.
+- `app/rules/wide_street_wiring.py` (+255) — consumes `named_street_override` at the attestation seam per
+  WIRING SEMANTICS, fail-closed (D-051): `exceptions_checked` True only on all-NOT_MATCHED with
+  fully-resolved typed inputs; MATCHED_OVERRIDE → professional-review refusal carrying override provenance;
+  INDETERMINATE / any missing input → refusal unchanged; no alternate-width value applied numerically.
+- `app/spatial/wide_street_live_provider.py` (+70) — provider construction of that status; DB-021(e)
+  branches.
+- `tests/rules/test_wide_street_wiring.py` (+334), `tests/spatial/test_wide_street_live_provider.py`
+  (+28) — wiring truth-table + branch regression coverage.
 
-The core added check (bounded excerpt of the real hunk):
+Backend clearance requires the complete relevant backend diff and its independent-review evidence
+(data-contract, code-review, qa, security, directive-compliance gates). That evidence is not assembled in
+this unit, so **backend acceptance remains PENDING**. `named_street_override.py` / `test_named_street_override.py`
+were closed at 987930a2 (RUN-45 harvest, DB-023 a–d) and are not reopened here.
 
-```python
-start = excerpt.find(quote)
-...
-starts_at_boundary = (
-    start == 0 or preceding.endswith("\n") or preceding.rstrip(" ").endswith(".")
-)
-ends_at_boundary = quote.rstrip().endswith(".") and (
-    following == "" or following[:1] in (" ", "\n")
-)
-if not (starts_at_boundary and ends_at_boundary):
-    raise NamedStreetOverrideError(... "not a COMPLETE sentence span" ...)
-```
+## Documented-command outcomes (supervisor-reproduced this run)
 
-## 3. Adversarial regression + retained coverage
+cwd `services/api`:
+1. `python -m ruff check .` → **All checks passed!**
+2. `python -m pytest tests/rules/test_named_street_override.py tests/rules/test_wide_street_wiring.py -q`
+   → **98 passed**
+3. `python -m pytest tests/spatial/test_wide_street_live_provider.py -q` → **38 passed**
+4. `python -m pytest tests/api tests/rules/test_rules_integration.py -q` → **475 passed**
 
-New test (`tests/rules/test_named_street_override.py`):
-`test_db023a_narrowed_source_quote_to_omit_condition_refused` — from the REAL
-zr-12-10 snapshot it preserves `verbatim_excerpt` + `content_digest_sha256`,
-removes all four qualifier signals, sets `disposition_when_located=matched_override`,
-and narrows `verbatim_source_quote` to the sub-span that omits the condition. It
-asserts the excerpt/digest are unchanged, the narrowed quote is a real substring of
-the excerpt that omits the clause, and **every row locator still anchors** (so the
-refusal is not incidental to source-tracing), then asserts construction refuses
-with `match="COMPLETE sentence span"` — the refusal is the complete-span binding.
+cwd repository root:
+5. `python tools/modularity_check.py --check` → **failures 0; warnings 21** (pre-existing review signals;
+   `wide_street_wiring.py` is now above the warning threshold — a cohesion signal for the backend review to
+   weigh before it grows further, not a CI failure).
 
-Retained (all green): the prior DB-023(a) metadata-bypass tests, the
-all-four-signals-stripped parametrization (`remove` / `null` / `falsely_resolved`,
-which keep the full conditional quote and are still caught by the defense-in-depth
-decomposition), the source-bound isolation test, and the legitimate
-unconditional-row coverage (`test_matched_override_for_unconditional_row`,
-`test_db023a_unconditional_row_with_no_qualifier_signals_reaches_override`, and the
-"allowed" half of the isolation test) — the complete-span gate does not over-refuse
-a genuine single-sentence unconditional designation.
+No unrelated root lint was fixed (ruff surfaced none).
 
-## 4. Cumulative FIVE-file diff (reconciled with the checkpoint)
+## Verification limits (honest)
 
-The working tree carries five files vs the seam head; the checkpoint's
-`changed_files` lists all five (the prior three-file list is superseded):
+- **Web proves ONLY in CI on the orchestrator-pushed head.** Thin-client policy: no local npm/npx/node was
+  run or documented. Do not read the web test/report changes as verified until CI is green on the pushed head.
+- The python/modularity commands above are supervisor-reproduced in-worktree this run.
+- **Backend acceptance and whole-task completion remain PENDING** until the complete backend diff and its
+  independent-review evidence are captured. This report is a partial-increment evidence pass, not a
+  completion claim.
 
-| file | this unit | content |
-|---|---|---|
-| `app/rules/named_street_override.py` | YES | DB-023a complete-span binding + defense-in-depth decomposition; docstring/comments corrected |
-| `tests/rules/test_named_street_override.py` | YES | narrowed-quote adversarial regression (+1 test) |
-| `app/spatial/wide_street_live_provider.py` | carried (DB-021, step 2) | provider-side `MAX_LOT_VERTICES` pre-check (`:425`), `wide_object_ids` cap before the geometry-fetch loop (`:467`), two-layer exceptions-attestation docstring (`_policy_decisions`), DB-020 page-`raw_digest` binding (`:368`) |
-| `tests/spatial/test_wide_street_live_provider.py` | carried (DB-021) | provider ceiling / page-digest tests |
-| `project-control/reports/M5-T040-producer-report.md` | YES | this report |
+## Acceptance-scenario mapping (this increment)
 
-The provider + provider-test changes are the DB-021 provider-hardening (ORDER step
-2); they are pre-wiring (no consumer import) and are exercised green by command 3.
-They are part of the cumulative diff and are listed so the packet is bounded and
-honest. DB-021(e) direct branch tests and the DB-025(d) multi-page fixture are NOT
-claimed here — they land with the wiring unit.
+- AS-6 (display, CI): three surfaces gate on `determination_state`; shared screen/report fixture — implemented; proves in CI.
+- AS-8 (DRAFT/not-verified preservation): DRAFT + professional-review wording untouched.
+- AS-1..AS-3 (DB-023): closed at 987930a2 (RUN-45), not reopened.
+- AS-4 (wiring), AS-5 (provider hardening / DB-021(e)): backend present in-tree; documented suites green;
+  acceptance pending the complete backend diff + independent review.
+- AS-7 (ruff / suites / modularity / contract byte-untouched): documented suites green; modularity 0
+  failures; contract files not in allowed_paths and not touched.
 
-## 5. Documented command runs (exact cwd / command / result)
+## Left to the orchestrator (out of producer scope)
 
-Run separately (never chained). Commands 1–4 from `services/api`; the modularity
-check from the repo root — per the packet's COMMAND CWD input. Supervisor captures
-the directories/outcomes.
-
-| # | cwd | command | result |
-|---|-----|---------|--------|
-| 1 | `wt-m5t040/services/api` | `python -m ruff check .` | `All checks passed!` |
-| 2 | `wt-m5t040/services/api` | `python -m pytest tests/rules/test_named_street_override.py tests/rules/test_wide_street_wiring.py -q` | `83 passed` |
-| 3 | `wt-m5t040/services/api` | `python -m pytest tests/spatial/test_wide_street_live_provider.py -q` | `37 passed` |
-| 4 | `wt-m5t040/services/api` | `python -m pytest tests/api tests/rules/test_rules_integration.py -q` | `475 passed` |
-| 5 | `wt-m5t040` (repo root) | `python tools/modularity_check.py --check` | `failures 0; warnings 20` |
-
-Command 2 rose 82 → **83** (the one new adversarial regression). Commands 3/4
-unchanged (37 / 475) — no consumer suite regressed. Modularity: **0 failures**;
-`named_street_override.py` stays in the warning tier (below the 750 justify tier and
-1000 hard tier), cohesive within its single responsibility (deterministic,
-source-bound ZR 12-10 override matching with fail-closed construction validation).
-No repository-root lint findings were touched and no supervisor configuration was
-modified.
-
-## 6. Scope preserved
-
-- **No consumer import added** — the matcher is still a leaf; wiring, the
-  fail-closed attestation truth table, DB-025 display gating, and the
-  DB-021(e)/DB-025(d) additions are deferred until this precondition is reviewed.
-- **Contract CLOSED, not widened** — no schema copy, no generated TS, no
-  `integration.py` / `response.py` change.
-- **No legal interpretation inferred** and **no out-of-scope snapshot/loader file
-  modified** — the fix reads (never writes) the digest-covered source.
-
-## 7. Discovery notes (D-069)
-
-- Digest-covering the disposition/qualifier metadata in the snapshot schema is a
-  separate, larger `docs/research/zr-snapshots` + loader change and remains out of
-  this packet's paths. It is no longer the mechanism this bypass relies on — the
-  accept is now bound to the already-digest-covered excerpt via the complete-span
-  binding. Routed to the discovery backlog.
-- The complete-span binding assumes the designation is a single sentence (true for
-  the pinned zr-12-10 paragraph 2 and for any genuine unconditional designation);
-  the fixed grammar should be revisited if a future unconditional designation uses
-  vocabulary outside the template. This is the D-051-correct fail-closed direction.
+Commits, pushes, and acceptance. Producer made no commit and no push; the closed contract is preserved.

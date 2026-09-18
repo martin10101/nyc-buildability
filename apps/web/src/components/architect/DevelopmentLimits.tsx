@@ -62,15 +62,27 @@ export function DraftHeadline({ scenario, evaluation = null, bbl = "" }: { scena
 function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvaluation | null; evidenceHref: string }) {
   const wide = evaluation?.wide_street;
   if (!wide) return null;
+  // DB-025(b): gate the ENTIRE presentation on determination_state (never on a
+  // null-FAR heuristic), so this shared component renders identically on the
+  // screen (DevelopmentLimits) and in the report (ReportView → DevelopmentLimits).
   const review = wide.determination_state === "professional_review_required";
   const within = wide.determination_state === "within_100ft_of_wide_street";
-  return <section className="architect-wide-street" data-testid="development-wide-street" aria-label="Wide-street conditional FAR">
-    <div className="architect-panel-heading"><h3>Wide-street conditional FAR</h3><span className="architect-status">Draft</span></div>
+  // DB-025(c): the conditional wide-street FAR only exists in the WITHIN case. In
+  // the not-within case the value is the CONSERVATIVE standard-row FAR, so it is
+  // never captioned "Wide-street conditional FAR".
+  const valueLabel = within ? "Wide-street conditional FAR" : "Governing floor-area ratio";
+  const headingText = review ? "Wide-street conditional FAR" : valueLabel;
+  // DB-025(c): the accessible section label follows the same within/not-within
+  // distinction as the visible heading, so assistive tech and sighted users read
+  // the conservative value under "Governing floor-area ratio", never under the
+  // wide-street conditional-FAR name.
+  return <section className="architect-wide-street" data-testid="development-wide-street" aria-label={headingText}>
+    <div className="architect-panel-heading"><h3>{headingText}</h3><span className="architect-status">Draft</span></div>
     {review
       ? <p className="architect-development-status" data-testid="wide-street-result">Professional review required — the higher wide-street floor-area ratio is withheld until a qualified reviewer confirms the determination.</p>
       : <>
           <p className="architect-development-value" data-testid="wide-street-result">{wide.governing_max_residential_far != null ? farValue(wide.governing_max_residential_far) : "Not calculated"}</p>
-          <p className="section-note">Wide-street conditional FAR — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
+          <p className="section-note">{valueLabel} — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
           <p className="section-note">{within ? "Applies within 100 ft of a wide street." : "Outside 100 ft of a wide street; the conservative floor-area ratio governs."}</p>
         </>}
     {/* [ORCH-CORRECTED per M5-T037 HJ F2] The primary panel keeps only clean,

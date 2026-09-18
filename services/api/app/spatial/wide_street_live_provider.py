@@ -63,6 +63,7 @@ import logging
 import os
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from functools import lru_cache
 
 from app.connectors.dcm_street_centerline_arcgis import (
     MAX_OBJECT_ID_LIST,
@@ -100,9 +101,15 @@ from app.connectors.wide_street_buffer_engine import (
     Ec5AttestedPreconditions,
     _canonical_vertex_count,
 )
+from app.rules.named_street_override import (
+    NamedStreetOverrideMatcher,
+    OverrideQuery,
+    load_default_matcher,
+)
 from app.rules.wide_street_wiring import (
     NamedStreetOverrideStatus,
     WideStreetDetermination,
+    build_named_street_override_status,
     determine_wide_street_far,
 )
 
@@ -149,19 +156,54 @@ _UNATTESTED_EC5 = Ec5AttestedPreconditions(
     ),
 )
 
-# The wiring's separate named-street-override attestation. The override table is
-# not implemented; the provider does not itself screen for the two named streets
-# (that is DB-010), so segment_may_touch is left False and the B4 EC-5 gate above
-# is the fail-safe that blocks a fabricated wide determination.
-_NAMED_OVERRIDE_STATUS = NamedStreetOverrideStatus(
-    override_table_implemented=False,
-    segment_may_touch_named_override=False,
-    note=(
-        "M5-T035 live provider: named-street override table not implemented "
-        "(DB-010); the B4 EC-5 preconditions are left unattested so a wide "
-        "determination is never fabricated."
-    ),
-)
+@lru_cache(maxsize=1)
+def _named_street_matcher() -> NamedStreetOverrideMatcher:
+    """The accepted ZR 12-10 named-street override matcher, built once from the
+    packaged snapshot store and reused across requests (deterministic, network-
+    free). A load failure propagates to the fail-safe caller below."""
+    return load_default_matcher()
+
+
+def _named_street_override_status(
+    seg_result: StreetSegmentQueryResult, correlation_id: str
+) -> NamedStreetOverrideStatus:
+    """Construct the wiring's :class:`NamedStreetOverrideStatus` by running the
+    accepted ZR 12-10 matcher over the candidate segments (M5-T040 wiring).
+
+    The DCM centerline attributes carry a street name and borough but NOT the
+    community district or the cross-street bounds the matcher needs to CLEAR (or
+    match) a segment, so the seam cannot fully resolve any candidate and returns
+    an UNRESOLVED (``segment_may_touch``) status - the honest fail-closed outcome
+    'the named-street override exception cannot be resolved from DCM centerline
+    inputs alone', which routes the determination to professional review (D-051).
+    The matcher is genuinely consulted; if a future connector supplies CD +
+    cross-street bounds, the SAME seam clears or matches with no change here. This
+    is the load-bearing named-street fail-safe, complementing the independent B4
+    EC-5 gate (:data:`_UNATTESTED_EC5`)."""
+    queries = [
+        OverrideQuery(
+            borough=segment.borough or "",
+            community_district=None,
+            street_name=segment.street_name or "",
+            cross_street_from=None,
+            cross_street_to=None,
+        )
+        for segment in seg_result.segments
+    ]
+    try:
+        matcher = _named_street_matcher()
+    except Exception as exc:  # noqa: BLE001 - fail-safe boundary, typed log only
+        _fail_safe("named_override_matcher_unavailable", correlation_id, exc)
+        return NamedStreetOverrideStatus(
+            override_table_implemented=False,
+            segment_may_touch_named_override=True,
+            note=(
+                "the ZR 12-10 named-street override matcher could not be loaded; "
+                "the exception is left unresolved (fail-closed to professional "
+                "review)"
+            ),
+        )
+    return build_named_street_override_status(matcher, queries)
 
 
 def live_wide_street_provider_enabled(env: Mapping[str, str] | None = None) -> bool:
@@ -489,7 +531,7 @@ def build_live_wide_street_determination(
         lot=lot,
         wide_segments=wide_segments,
         ec5_preconditions=_UNATTESTED_EC5,
-        named_street_override=_NAMED_OVERRIDE_STATUS,
+        named_street_override=_named_street_override_status(seg_result, correlation_id),
         correlation_id=correlation_id,
     )
 

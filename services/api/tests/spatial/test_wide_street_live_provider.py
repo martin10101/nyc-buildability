@@ -316,6 +316,34 @@ def test_db020_attested_segment_carries_geometry_page_digest_not_width_text() ->
     assert digest != attested[0].polyline.segment.streetwidth_raw
 
 
+def test_db025d_multipage_each_segment_carries_its_own_page_digest() -> None:
+    # DB-025(d): when the wide-geometry fetch returns MULTIPLE pages, each attested
+    # segment carries ITS OWN page's raw-body sha256 digest (DB-020) - a page-2
+    # segment never carries page-1's digest. The provider walks geom_result.pages
+    # (not the flattened entries), so per-page retrieval identity is preserved.
+    body1 = _dcm_page_body([_feature(7, "80", WIDE_SEGMENT_PATHS)])
+    body2 = _dcm_page_body([_feature(8, "82", [[[-60.0, -1000.0], [-60.0, 1000.0]]])])
+    page1 = parse_segment_geometry_page(_transport(body1), correlation_id=CID)
+    page2 = parse_segment_geometry_page(_transport(body2), correlation_id=CID)
+    assert raw_body_digest(body1) != raw_body_digest(body2)  # distinct page bodies
+    geom_double = SimpleNamespace(
+        entries=[*page1.entries, *page2.entries],
+        pages=[page1, page2],
+        exceeded_transfer_limit_on_last_page=False,
+        crs=dict(DCM_CRS_STAMP),
+        retrieved_at="2026-09-17T00:00:00Z",
+    )
+    fetchers = _CountingFetchers(geometries=geom_double).as_fetchers()
+    attested = provider._attested_wide_segments([7, 8], fetchers, CID)
+    assert attested is not None
+    assert len(attested) == 2
+    by_object_id = {a.polyline.segment.object_id: a.source_raw_digest for a in attested}
+    # Each segment's digest is exactly its OWN page body's sha256.
+    assert by_object_id[7] == raw_body_digest(body1)
+    assert by_object_id[8] == raw_body_digest(body2)
+    assert by_object_id[7] != by_object_id[8]
+
+
 # ---------------------------------------------------------------------------
 # AS-4: every failure/insufficiency class -> None (honest fail-safe)
 # ---------------------------------------------------------------------------
