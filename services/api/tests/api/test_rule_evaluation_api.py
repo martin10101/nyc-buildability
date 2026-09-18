@@ -45,7 +45,10 @@ from referencing import Registry, Resource
 
 from app.api.v1 import rule_evaluation as rule_eval_module
 from app.api.v1.properties import get_pluto_fetcher
-from app.api.v1.rule_evaluation import get_spatial_substrate_provider
+from app.api.v1.rule_evaluation import (
+    get_spatial_substrate_provider,
+    get_wide_street_determination_provider,
+)
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 from app.connectors.mappluto_geometry_arcgis import CRS_STAMP, analyze_lot_geometry
 from app.connectors.pluto_soda import (
@@ -67,12 +70,49 @@ from app.rules.response import (
     validate_rule_evaluation_document,
 )
 from app.rules.snapshots import SnapshotStore
+from app.rules.wide_street_wiring import (
+    COVERAGE_CONDITIONAL as WS_COVERAGE_CONDITIONAL,
+)
+from app.rules.wide_street_wiring import (
+    COVERAGE_PROFESSIONAL_REVIEW_REQUIRED as WS_COVERAGE_PRR,
+)
+from app.rules.wide_street_wiring import (
+    DETERMINATION_PROFESSIONAL_REVIEW as WS_DET_PRR,
+)
+from app.rules.wide_street_wiring import (
+    DETERMINATION_WITHIN_WIDE as WS_DET_WITHIN,
+)
+from app.rules.wide_street_wiring import (
+    DRAFT_LABEL_NOTICE,
+    FALLBACK_DIRECTION_NOTICE,
+    ROUTED_TO_NOT_USED_NOTICE,
+    WideStreetDetermination,
+)
+from app.rules.wide_street_wiring import (
+    FAR_ROW_NONE as WS_FAR_ROW_NONE,
+)
+from app.rules.wide_street_wiring import (
+    FAR_ROW_WIDE_STREET as WS_FAR_ROW_WIDE,
+)
 from app.spatial import live_provider as live_provider_module
+from app.spatial import wide_street_live_provider as wide_provider_module
 from app.spatial.live_provider import (
     LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR,
     LiveSpatialFetchers,
 )
+from app.spatial.wide_street_live_provider import (
+    LIVE_WIDE_STREET_PROVIDER_ENABLED_ENV_VAR,
+    LiveWideStreetFetchers,
+)
 
+# Importing app.rules.wide_street_wiring (above) pulls the shapely-heavy buffer
+# engine, exactly as the live provider would at runtime; a directly-constructed
+# WideStreetDetermination is the same typed object a real provider returns. The
+# M5-T034 disclosed gap is a provider RETURNING a determination through the
+# endpoint, exercised via the dependency override below (the wiring's own
+# engine-driven construction is proven in
+# tests/spatial/test_wide_street_live_provider.py and
+# tests/rules/test_wide_street_wiring.py).
 REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
 SCHEMA_DIR = REPO_ROOT / "packages" / "contracts" / "schemas" / "v1"
@@ -1055,3 +1095,231 @@ def test_m5t033_flag_on_healthy_connectors_is_not_absent_per_parcel(
     # The connectors WERE consulted for this parcel (unlike branch A's zero calls).
     correlation_id = response.headers["X-Correlation-ID"]
     assert recording.ztldb_calls == [(BBL, correlation_id)]
+
+
+# ==========================================================================
+# M5-T035 - a wide-street-determination provider RETURNING a real typed
+# determination flows through the DEFAULT get_wide_street_determination_provider
+# seam into evaluate_property and drives ZR 23-22 conditional-FAR row selection.
+# This closes the M5-T034 disclosed gap (AS-3): M5-T034 covered the provider
+# DEFAULT (None), but no test exercised a provider RETURNING a determination
+# through the full /rule-evaluation endpoint. The determination is supplied via a
+# dependency override (exactly as get_spatial_substrate_provider is overridden),
+# which is what "a provider returning a determination" means to this route.
+#
+# CONTRACT LIMITATION (surfaced here, routed as a discovery in the producer
+# report - NOT fixed in-packet): the wide-street row (wide_street_far_row), the
+# governing FAR (wide_street_governing_far), and the D-052 provenance summary
+# (wide_street_determination) are DELIBERATELY NOT part of the frozen
+# rule_evaluation @ 1.0.0 response contract (app.rules.integration.
+# PropertyRuleEvaluation.as_dict omits them; a future additive contract bump would
+# serialize the block). The determination's effect that DOES reach the response is
+# carried by coverage_status / professional_review_required / reasons. The
+# assertions below verify exactly those observable effects and pin the absence of
+# the structured block, rather than asserting a field the contract does not carry.
+# ==========================================================================
+
+
+def confident_district_substrate(district: str, area: float = 10000.0):
+    """A single-district-confident base-zoning substrate for an arbitrary district
+    label (mirrors confident_r5_substrate for the wide-street-conditional R6)."""
+    return _substrate(
+        "single_district_confident",
+        [_pair(district, "interior_confident", lot_area=area)],
+        review=False,
+    )
+
+
+def _wide_street_determination(
+    determination_state: str,
+    far_row: str,
+    coverage_hint: str,
+    *,
+    reason: str,
+    aggregate_intersects: bool | None = None,
+) -> WideStreetDetermination:
+    """A real typed WideStreetDetermination (the exact object a live provider
+    returns) built directly - no shapely geometry needed at this seam; the
+    engine-driven construction from fixtures is proven in
+    tests/spatial/test_wide_street_live_provider.py. Mirrors
+    tests/rules/test_rules_integration.py::_wide_determination."""
+    return WideStreetDetermination(
+        determination_state=determination_state,
+        far_row=far_row,
+        coverage_hint=coverage_hint,
+        exceptions_checked=True,
+        named_street_override_pending=False,
+        reason=reason,
+        policy_decision_states=("wide",),
+        original_labels=("100",),
+        source_versions=("dcm-streetwidth-v1",),
+        matched_geometry_refs=("segment-object-id-1",),
+        interpreted_bounds_summaries=("exactly 100 ft",),
+        classification_reasons=("mapped width 100 ft >= 75 ft threshold",),
+        buffer_status="computed",
+        aggregate_intersects=aggregate_intersects,
+        aggregate_area_sq_ft=None,
+        lot_identity=BBL,
+        draft_label=DRAFT_LABEL_NOTICE,
+        routed_to_note=ROUTED_TO_NOT_USED_NOTICE,
+        fallback_direction_note=FALLBACK_DIRECTION_NOTICE,
+    )
+
+
+def install_wide_street_provider(determination) -> None:
+    """Override the route's wide-street-determination provider so the endpoint
+    behaves as if a live provider returned this determination (mirrors
+    install_substrate)."""
+    app.dependency_overrides[get_wide_street_determination_provider] = (
+        lambda: (lambda canonical_bbl, correlation_id: determination)
+    )
+
+
+class _RecordingWideFetchers:
+    """Recording spies for the live wide-street provider's connector seams, to
+    prove ZERO connector calls when LIVE_WIDE_STREET_PROVIDER_ENABLED is off.
+    Counts are asserted AFTER the request returns (the provider's fail-safe except
+    would swallow an in-call AssertionError, but a recorded call cannot hide)."""
+
+    def __init__(self) -> None:
+        self.calls = {"lot": 0, "segments": 0, "geometries": 0}
+
+    def suite(self) -> LiveWideStreetFetchers:
+        def fetch_lot(bbl, cid):
+            self.calls["lot"] += 1
+            raise AssertionError("wide-street lot fetch must not run with the flag off")
+
+        def fetch_segments(envelope, cid):
+            self.calls["segments"] += 1
+            raise AssertionError("wide-street segment fetch must not run with the flag off")
+
+        def fetch_geometries(object_id_in, cid):
+            self.calls["geometries"] += 1
+            raise AssertionError("wide-street geometry fetch must not run with the flag off")
+
+        return LiveWideStreetFetchers(
+            fetch_lot=fetch_lot,
+            fetch_segments_by_envelope=fetch_segments,
+            fetch_segment_geometries_by_ids=fetch_geometries,
+        )
+
+
+def test_m5t035_within_wide_determination_fires_wide_row_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    # A within-100ft-of-a-wide-street determination on a confident R6 lot: the
+    # WIDE conditional-FAR row governs server-side. R6 is covered by exactly one
+    # residential_far rule (r6-r7-r8-wide-street-conditional-far; the flat r6-r12
+    # rule applies only to the suffixed districts), so the determination folds.
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    det = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T035 endpoint fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+    install_wide_street_provider(det)
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+
+    # WITHIN is a confident DRAFT outcome: coverage stays conditional, never
+    # escalated and never Verified (D-045-R009).
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["professional_review_required"] is False
+    assert doc["zoning_district"] == "R6"
+    assert "verified" not in set(_coverage_values(doc))
+    assert doc["not_verified_disclaimer"]
+
+    # The rule's OWN DSL trace output stays the CONSERVATIVE R6 value (2.20); the
+    # higher wide-street value is NEVER produced by the rule's computation - it is
+    # selected only server-side and only surfaces in reasons (below).
+    trace = _applicable_trace(doc)
+    assert trace["outputs"]["max_residential_far"] == 2.2
+
+    # The wide-row effect that reaches the frozen contract is the fold reason,
+    # naming the higher governing FAR (3.00) and the DRAFT marker. Asserted as an
+    # exact reconstructed string (not a broad substring match).
+    expected_reason = (
+        "wide-street determination within_100ft_of_wide_street: the "
+        "wide-street (higher) conditional-FAR row governs (max_residential_far "
+        "3.0); DRAFT pending G6. M5-T035 endpoint fixture: within-100ft determination"
+    )
+    assert expected_reason in doc["reasons"]
+
+    # CONTRACT LIMITATION (discovery-routed): the structured wide-street row /
+    # governing FAR / provenance summary are NOT part of rule_evaluation @ 1.0.0.
+    for absent in ("wide_street_far_row", "wide_street_governing_far", "wide_street_determination"):
+        assert absent not in doc
+
+
+def test_m5t035_professional_review_determination_escalates_coverage_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    # A professional-review wide-street determination on a confident R6 lot grants
+    # NO wide-street FAR bonus and ESCALATES coverage to professional_review_required
+    # (D-051 fallback direction: the wide value is the higher FAR, withheld on
+    # uncertainty). This is the observable, frozen-contract effect.
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    det = _wide_street_determination(
+        WS_DET_PRR,
+        WS_FAR_ROW_NONE,
+        WS_COVERAGE_PRR,
+        reason="M5-T035 endpoint fixture: unresolved street width",
+    )
+    install_wide_street_provider(det)
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # escalation is still a normal 200 document
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] == "R6"  # the district is still confidently known
+    assert "verified" not in set(_coverage_values(doc))
+
+    expected_reason = (
+        "wide-street determination professional_review_required: no "
+        "conditional-FAR row fires and no higher (wide-street) FAR bonus is "
+        "granted; coverage escalates to professional review "
+        "(D-051 fallback direction for these rows - the wide value is the "
+        "higher FAR, so it is withheld on uncertainty). "
+        "M5-T035 endpoint fixture: unresolved street width"
+    )
+    assert expected_reason in doc["reasons"]
+
+
+def test_m5t035_flag_off_default_wide_provider_zero_calls_byte_identical(client, monkeypatch):
+    # AS-1 (endpoint half): with LIVE_WIDE_STREET_PROVIDER_ENABLED off, the route's
+    # DEFAULT wide-street provider returns None with ZERO connector calls, and the
+    # /rule-evaluation document is byte-identical to the no-determination path.
+    enable_flag(monkeypatch)
+    monkeypatch.delenv(LIVE_WIDE_STREET_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = _RecordingWideFetchers()
+    monkeypatch.setattr(wide_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+
+    # Baseline: an explicit override that supplies NO determination (None).
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(None)
+    baseline = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # Now the route uses its DEFAULT wide-street provider (flag off -> None).
+    app.dependency_overrides.pop(get_wide_street_determination_provider, None)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    live_default = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The body carries no volatile field (AS-3 determinism), so parity is exact.
+    assert json.dumps(live_default, sort_keys=True) == json.dumps(baseline, sort_keys=True)
+    assert live_default["zoning_district"] == "R6"
+    # Zero wide-street connector calls with the flag off, asserted AFTER the request
+    # (the provider's fail-safe except cannot hide a recorded call).
+    assert recording.calls == {"lot": 0, "segments": 0, "geometries": 0}

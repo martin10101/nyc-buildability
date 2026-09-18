@@ -145,6 +145,8 @@ __all__ = [
     "EXPECTED_LATEST_WKID",
     "EXPECTED_WKID",
     "EXTENT_ABS_MAX_FT",
+    "MAX_LOT_VERTICES",
+    "MAX_PATHS_PER_SEGMENT",
     "MAX_VERTICES_PER_PATH",
     "MAX_WIDE_SEGMENTS",
     "NO_WIDE_SEGMENTS_NOTICE",
@@ -245,6 +247,26 @@ BUFFER_QUAD_SEGS = 16
 MAX_WIDE_SEGMENTS = 512
 MAX_VERTICES_PER_PATH = 5000
 EXTENT_ABS_MAX_FT = 5_000_000.0
+
+# DB-013 defense-in-depth ceilings (M5-T035, M5-T034 G5 findings 1-2). Now that
+# the engine sits behind a request path (the M5-T035 live wide-street provider),
+# two more cheap size bounds run BEFORE the O(vertices) shapely operations:
+#   - MAX_LOT_VERTICES bounds the lot polygon's total canonical-geometry vertex
+#     count BEFORE canonical_to_shapely constructs the lot geometry, so a
+#     pathological lot polygon (millions of vertices) is refused before shapely
+#     builds it. Real NYC tax lots carry at most a few thousand vertices even
+#     for the most convoluted parcels, so this is orders of magnitude above any
+#     legitimate lot.
+#   - MAX_PATHS_PER_SEGMENT bounds one segment's path count BEFORE the
+#     MultiLineString is built, so a segment with a pathological number of
+#     disjoint paths cannot explode the geometry construction. Real DCM
+#     block-face segments carry a handful of paths (the accepted West 100 St
+#     fixture carries three); this is far above any legitimate segment.
+# Both are typed InputBoundsError fail-closed refusals (never a crash, hang, or
+# silent computation); the B7 wiring maps the typed error to an honest
+# professional-review outcome, never a guessed determination.
+MAX_LOT_VERTICES = 200_000
+MAX_PATHS_PER_SEGMENT = 2_000
 
 # ---------------------------------------------------------------------------
 # Result states (EC-6: a distinct typed state, never a computed default).
@@ -638,6 +660,8 @@ def _lot_shapely(
             correlation_id=correlation_id,
             detail={"status": assessment.status},
         )
+    # DB-013: bound the lot vertex count BEFORE the O(vertices) shapely build.
+    _check_lot_vertex_count(assessment, correlation_id=correlation_id)
     return canonical_to_shapely(assessment.canonical_geometry)
 
 
@@ -697,6 +721,58 @@ def _check_segment_vertex_counts(
                     "path_index": index,
                 },
             )
+
+
+def _canonical_vertex_count(canonical_geometry: object) -> int:
+    """Total vertex count across every ring of a MapPLUTO canonical geometry
+    (a list of polygons; each polygon a list of rings; each ring a list of
+    [x, y] pairs - see mappluto_geometry_arcgis.MPG_CANONICALIZATION_SPEC).
+    Reads only the list lengths (no shapely, no coordinate interpretation) so it
+    runs BEFORE canonical_to_shapely builds any geometry (DB-013)."""
+    total = 0
+    if not isinstance(canonical_geometry, list | tuple):
+        return total
+    for polygon in canonical_geometry:
+        if not isinstance(polygon, list | tuple):
+            continue
+        for ring in polygon:
+            if isinstance(ring, list | tuple):
+                total += len(ring)
+    return total
+
+
+def _check_lot_vertex_count(
+    assessment: GeometryAssessment, *, correlation_id: str
+) -> None:
+    """DB-013 lot-polygon vertex bound, run BEFORE canonical_to_shapely builds
+    the lot geometry: a pathological lot polygon is refused before the
+    O(vertices) shapely construction rather than after it."""
+    vertices = _canonical_vertex_count(assessment.canonical_geometry)
+    if vertices > MAX_LOT_VERTICES:
+        raise InputBoundsError(
+            f"lot polygon carries {vertices} canonical vertices, exceeding the "
+            f"fail-closed bound {MAX_LOT_VERTICES}; refused before shapely "
+            "construction",
+            correlation_id=correlation_id,
+            detail={"vertices": vertices, "max": MAX_LOT_VERTICES},
+        )
+
+
+def _check_segment_path_count(
+    polyline: SegmentPolyline, *, label: str, correlation_id: str
+) -> None:
+    """DB-013 per-segment path-count bound, run BEFORE the MultiLineString is
+    built in :func:`_segment_linework`: a segment with a pathological number of
+    disjoint paths is refused before the geometry construction, never after it.
+    Reads only ``polyline.paths`` length (no shapely)."""
+    path_count = len(polyline.paths or ())
+    if path_count > MAX_PATHS_PER_SEGMENT:
+        raise InputBoundsError(
+            f"{label} carries {path_count} paths, exceeding the fail-closed "
+            f"bound {MAX_PATHS_PER_SEGMENT}; refused before linework construction",
+            correlation_id=correlation_id,
+            detail={"path_count": path_count, "max": MAX_PATHS_PER_SEGMENT},
+        )
 
 
 def _check_linework_extent(
@@ -824,6 +900,8 @@ def compute_wide_street_buffer_intersection(
         # (G5 A1): a pathological vertex count is rejected before the O(vertices)
         # geometry construction, never after it.
         _check_segment_vertex_counts(segment.polyline, label=label, correlation_id=correlation_id)
+        # DB-013: bound the per-segment path count BEFORE the MultiLineString build.
+        _check_segment_path_count(segment.polyline, label=label, correlation_id=correlation_id)
         linework = _segment_linework(segment.polyline, correlation_id=correlation_id)
         _check_linework_extent(linework, label=label, correlation_id=correlation_id)
         buffer_geometry = linework.buffer(BUFFER_FT, quad_segs=BUFFER_QUAD_SEGS)

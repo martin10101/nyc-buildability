@@ -7,12 +7,15 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import urllib.parse
 
 import pytest
 
 from app.connectors.dcm_street_centerline_arcgis import (
     CRS_STAMP,
+    ENVELOPE_ABS_MAX_FT,
+    ENVELOPE_SPATIAL_REL,
     EXPECTED_LATEST_WKID,
     EXPECTED_WKID,
     MAX_OBJECT_ID_LIST,
@@ -559,3 +562,214 @@ def test_parse_segment_page_rejects_non_200_status() -> None:
             DcmTransport(url="x", status=500, body="{}", retrieved_at="x"),
             correlation_id="c1",
         )
+
+
+# ---------------------------------------------------------------------------
+# Envelope-intersects predicate (M5-T035 / DB-015). The envelope changes only
+# the SELECTION; it preserves the exactly-one-predicate rule, the injection-proof
+# URL builder, and (through fetch_street_segments) the metadata-first freshness
+# pin, the CRS / schema-drift gates, and the paging-pathology guards. A
+# malformed / non-finite / absurd envelope is refused BEFORE any network I/O.
+# ---------------------------------------------------------------------------
+
+# A plausible EPSG:2263 (US survey feet) envelope well inside the NYC projected
+# domain; the exact coordinates are irrelevant to the offline fixtures (the
+# injected fetch drives the response), they only exercise the URL builder.
+_VALID_ENVELOPE = (980000.0, 190000.0, 981000.0, 191000.0)
+
+
+def test_envelope_predicate_builds_an_intersects_spatial_query() -> None:
+    url = build_segment_query_url(envelope=_VALID_ENVELOPE)
+    # esriGeometryEnvelope intersects in the authoritative EPSG:2263 CRS.
+    assert "geometryType=esriGeometryEnvelope" in url
+    assert "inSR=2263" in url
+    assert f"spatialRel={ENVELOPE_SPATIAL_REL}" in url
+    # A spatial predicate still carries a constant-true WHERE (1=1, url-encoded).
+    assert "where=1%3D1" in url
+    # The bounded out-field set, deterministic order, and outSR are unchanged.
+    assert "outFields=" in url and "outFields=*" not in url
+    assert "orderByFields=OBJECTID" in url
+    assert "outSR=2263" in url
+    # The four coordinates are present (4-decimal formatted, comma-joined).
+    assert "980000.0000" in url and "191000.0000" in url
+
+
+def test_envelope_is_mutually_exclusive_with_attribute_predicates() -> None:
+    # Exactly one predicate style per call: envelope XOR (borough/street_name)
+    # XOR object_id XOR object_id_in.
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=_VALID_ENVELOPE, borough="Manhattan")
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=_VALID_ENVELOPE, object_id=7)
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=_VALID_ENVELOPE, object_id_in=[1, 2])
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        (1.0, 2.0, 3.0),  # wrong length
+        (1.0, 2.0, 3.0, 4.0, 5.0),  # wrong length
+        "980000,190000,981000,191000",  # not a sequence of numbers
+    ],
+)
+def test_envelope_must_be_a_four_item_numeric_sequence(bad: object) -> None:
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=bad)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("nonfinite", [float("inf"), float("-inf"), float("nan")])
+def test_envelope_rejects_nonfinite_coordinates(nonfinite: float) -> None:
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(nonfinite, 190000.0, 981000.0, 191000.0))
+
+
+def test_envelope_rejects_absurd_magnitude() -> None:
+    over = ENVELOPE_ABS_MAX_FT * 2
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(over, 190000.0, over + 1000.0, 191000.0))
+    # A huge int not representable as a finite float must fail closed too (the
+    # OverflowError is mapped to disallowed_request, never leaked uncaught).
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(0.0, 0.0, 10**400, 191000.0))
+
+
+def test_envelope_rejects_inverted_bounds() -> None:
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(981000.0, 190000.0, 980000.0, 191000.0))
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(980000.0, 191000.0, 981000.0, 190000.0))
+
+
+def test_envelope_rejects_boolean_component() -> None:
+    # bool is a subclass of int; a True/False coordinate is not a real number.
+    with pytest.raises(DisallowedRequestError):
+        build_segment_query_url(envelope=(True, 190000.0, 981000.0, 191000.0))
+
+
+def test_fetch_street_segments_refuses_bad_envelope_before_any_network_io() -> None:
+    calls = {"n": 0}
+
+    def _must_not_fetch(url: str, correlation_id: str) -> DcmTransport:
+        calls["n"] += 1
+        raise AssertionError("no network I/O may occur for a refused envelope")
+
+    with pytest.raises(DisallowedRequestError):
+        fetch_street_segments(
+            envelope=(float("nan"), 190000.0, 981000.0, 191000.0),
+            fetch=_must_not_fetch,
+        )
+    # The refusal happens in the URL builder BEFORE the metadata round-trip.
+    assert calls["n"] == 0
+
+
+def test_envelope_fetch_runs_metadata_first_and_returns_segments() -> None:
+    result = fetch_street_segments(
+        envelope=_VALID_ENVELOPE,
+        fetch=_sequenced_fetcher(["metadata.json", "west_100_st_two_segments.json"]),
+    )
+    # Metadata-first discipline is preserved (provenance pin populated) and the
+    # first page URL carries the envelope spatial predicate, not an attribute one.
+    assert result.metadata_request_url == build_metadata_url()
+    assert "geometryType=esriGeometryEnvelope" in result.page_urls[0]
+    assert "Borough=" not in result.page_urls[0]
+    assert len(result.segments) >= 1
+
+
+def test_envelope_fetch_preserves_the_wrong_crs_gate() -> None:
+    # A non-authoritative layer CRS is refused during the metadata fetch, before
+    # any envelope coordinate is trusted - the envelope path does NOT bypass it.
+    doc = json.loads(_fixture_body("metadata.json"))
+    doc["spatialReference"] = {"wkid": 4326}
+    with pytest.raises(WrongCRSError):
+        fetch_street_segments(envelope=_VALID_ENVELOPE, fetch=_bodies_fetcher([json.dumps(doc)]))
+
+
+def test_envelope_fetch_preserves_the_paging_pathology_guard() -> None:
+    with pytest.raises(PagingPathologyError) as excinfo:
+        fetch_street_segments(
+            envelope=_VALID_ENVELOPE,
+            page_size=5,
+            fetch=_sequenced_fetcher(
+                ["metadata.json", "paging_page1.json", "paging_page1.json"]
+            ),
+        )
+    assert excinfo.value.detail["reason"] == "duplicate_page"
+
+
+# ---------------------------------------------------------------------------
+# Rejection-diagnostic robustness (M5-T035): a malformed envelope SHAPE or a
+# predicate CONFLICT that carries a huge integer must still refuse with the typed
+# DisallowedRequestError and NEVER raise an uncaught ValueError while building the
+# refusal's detail. Python 3.11+ caps int<->str conversion
+# (sys.get_int_max_str_digits, default 4300 digits), so repr() of an oversized
+# integer - or of a container that holds one - raises; the connector's diagnostics
+# now use a bounded _safe_repr so the refusal itself can never fail during
+# repr/string conversion. If the fix regressed, an uncaught ValueError would
+# escape and pytest.raises(DisallowedRequestError) below would NOT catch it.
+# ---------------------------------------------------------------------------
+
+# An integer whose decimal repr exceeds the interpreter's int->str conversion cap,
+# so repr()/str() of it (or of a tuple containing it) raises ValueError unless
+# guarded. Built by arithmetic (int arithmetic is not capped; only str conversion
+# is), sized above the live cap so this holds regardless of the configured limit.
+_HUGE_INT = 10 ** (sys.get_int_max_str_digits() + 100)
+
+
+def test_envelope_wrong_length_with_huge_int_is_disallowed_not_valueerror() -> None:
+    # A malformed SHAPE (3-item) whose sole element is a huge int: the refusal
+    # must be the typed DisallowedRequestError, and its detail must be bounded
+    # (never the raw, unrepresentable value).
+    with pytest.raises(DisallowedRequestError) as excinfo:
+        build_segment_query_url(envelope=(_HUGE_INT, 0, 1))  # type: ignore[arg-type]
+    assert len(str(excinfo.value.detail["envelope"])) <= 220
+
+
+def test_envelope_non_numeric_component_with_huge_int_is_disallowed() -> None:
+    # xmin is non-numeric (fails before any float() conversion), so the refusal
+    # path reprs the whole envelope - which also holds a huge int at ymin. The
+    # bounded _safe_repr keeps that from raising during the refusal.
+    with pytest.raises(DisallowedRequestError) as excinfo:
+        build_segment_query_url(envelope=("x", _HUGE_INT, 1.0, 1.0))  # type: ignore[arg-type]
+    assert excinfo.value.detail["axis"] == "xmin"
+    assert len(str(excinfo.value.detail["envelope"])) <= 220
+
+
+def test_predicate_conflict_with_huge_int_envelope_is_disallowed() -> None:
+    # A predicate CONFLICT (envelope AND object_id) whose envelope carries a huge
+    # int: the conflict detail reprs every predicate arg, so a raw repr would fail
+    # on the huge int; the typed refusal must survive.
+    with pytest.raises(DisallowedRequestError) as excinfo:
+        build_segment_query_url(envelope=(_HUGE_INT, 0, 1, 1), object_id=7)  # type: ignore[arg-type]
+    assert len(str(excinfo.value.detail["envelope"])) <= 220
+
+
+def test_predicate_conflict_with_huge_int_object_id_is_disallowed() -> None:
+    with pytest.raises(DisallowedRequestError) as excinfo:
+        build_segment_query_url(borough="Manhattan", object_id=_HUGE_INT)
+    assert len(str(excinfo.value.detail["object_id"])) <= 220
+
+
+def test_fetch_street_segments_refuses_huge_int_envelope_before_any_network_io() -> None:
+    # Deterministic zero-fetch regression: a malformed huge-int envelope is refused
+    # in the URL builder, BEFORE the metadata round-trip, with the typed
+    # DisallowedRequestError - not an uncaught ValueError and not one network call.
+    calls = {"n": 0}
+
+    def _must_not_fetch(url: str, correlation_id: str) -> DcmTransport:
+        calls["n"] += 1
+        raise AssertionError("no network I/O may occur for a refused envelope")
+
+    with pytest.raises(DisallowedRequestError):
+        fetch_street_segments(
+            envelope=(_HUGE_INT, 0, 1),  # type: ignore[arg-type]
+            fetch=_must_not_fetch,
+        )
+    assert calls["n"] == 0
+
+    with pytest.raises(DisallowedRequestError):
+        fetch_street_segments(
+            envelope=("x", _HUGE_INT, 1.0, 1.0),  # type: ignore[arg-type]
+            fetch=_must_not_fetch,
+        )
+    assert calls["n"] == 0

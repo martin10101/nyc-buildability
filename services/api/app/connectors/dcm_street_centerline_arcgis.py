@@ -60,6 +60,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import urllib.parse
 import urllib.request
@@ -81,6 +82,8 @@ __all__ = [
     "CONTRACT_VERSION",
     "CRS_STAMP",
     "DCP_DISCLAIMER",
+    "ENVELOPE_ABS_MAX_FT",
+    "ENVELOPE_SPATIAL_REL",
     "EXPECTED_LATEST_WKID",
     "EXPECTED_WKID",
     "FEAT_TYPE_DOMAIN",
@@ -168,6 +171,24 @@ OUT_FIELDS = (
 MAX_RESULT_RECORD_COUNT = 2000  # the live layer's own maxRecordCount (E5)
 MAX_OBJECT_ID_LIST = 50  # bounded IN(...) list length (thin client)
 HARD_MAX_PAGES = 200  # absolute page-loop ceiling regardless of page_size
+
+# Envelope-predicate extent sanity ceiling (M5-T035 / DB-015). A symmetric
+# |x|,|y| magnitude bound (US survey feet) that comfortably contains the whole
+# EPSG:2263 New York projected domain (real NYC eastings/northings are well
+# under ~1.1e6 ft) with wide margin, mirroring the accepted
+# wide_street_buffer_engine.EXTENT_ABS_MAX_FT sanity bound. Its job is to refuse
+# NON-FINITE (+/-inf/NaN fail the `<=` comparison) and ABSURD magnitudes before
+# any network I/O - NOT to geofence to the five boroughs (a tight NYC box would
+# wrongly reject legitimate near-boundary lots; the metadata CRS gate already
+# refuses any non-EPSG:2263 layer). The envelope is interpreted ONLY in the
+# authoritative EPSG:2263 CRS (inSR=2263); there is no reprojection path.
+ENVELOPE_ABS_MAX_FT = 5_000_000.0
+
+# The single spatial relationship this connector's envelope predicate emits: an
+# intersects test (ZR 23-22 "within 100 feet" candidate gather is a superset of
+# an intersects test against the lot-bbox-plus-buffer envelope; the caller does
+# the exact geometric proximity downstream). Never a caller-supplied relation.
+ENVELOPE_SPATIAL_REL = "esriSpatialRelIntersects"
 
 _SAFE_STREET_NAME_RE = re.compile(r"^[A-Za-z0-9 .,'\-]{1,100}$")
 _MAX_BODY_BYTES = 16 * 1024 * 1024  # bounded read; largest observed fixture << 20 KB
@@ -292,48 +313,144 @@ def _escape_sql_literal(value: str) -> str:
     return value.replace("'", "''")
 
 
+def _safe_repr(value: object, *, limit: int = 200) -> str:
+    """``repr()`` for a rejection DIAGNOSTIC that can never itself raise and is
+    always length-bounded. Python 3.11+ caps int<->str conversion
+    (``sys.get_int_max_str_digits``, default 4300 digits); ``repr()`` of an
+    oversized integer - or of a list/tuple that CONTAINS one - raises
+    ``ValueError``. A ``disallowed_request`` refusal reporting a malformed
+    envelope or a predicate conflict must not itself blow up while describing the
+    bad input (that would turn a clean typed refusal into an uncaught
+    ``ValueError`` before any network I/O), so this degrades to a typed, bounded
+    placeholder instead of the raw ``repr``. Normal-sized values are returned
+    unchanged (bounded), so existing diagnostics are byte-identical."""
+    try:
+        text = repr(value)
+    except (ValueError, RecursionError):
+        return f"<unrepresentable {type(value).__name__}>"
+    return text if len(text) <= limit else text[:limit] + "...(truncated)"
+
+
+def _validate_envelope(
+    envelope: object, *, correlation_id: str
+) -> tuple[float, float, float, float]:
+    """Validate an EPSG:2263 (xmin, ymin, xmax, ymax) envelope BEFORE any
+    network I/O. Refused (typed ``disallowed_request``) unless it is a 4-item
+    sequence of FINITE real numbers (bools rejected), each within
+    :data:`ENVELOPE_ABS_MAX_FT`, with xmin <= xmax and ymin <= ymax. Non-finite
+    (+/-inf/NaN) and absurd magnitudes fail closed here - never a silent absurd
+    spatial query. There is no reprojection; the values are always EPSG:2263."""
+    if not isinstance(envelope, list | tuple) or len(envelope) != 4:
+        raise DisallowedRequestError(
+            "envelope must be a 4-item (xmin, ymin, xmax, ymax) sequence",
+            correlation_id=correlation_id,
+            detail={"envelope": _safe_repr(envelope)},
+        )
+    values: list[float] = []
+    for axis, component in zip(("xmin", "ymin", "xmax", "ymax"), envelope, strict=True):
+        if isinstance(component, bool) or not isinstance(component, int | float):
+            raise DisallowedRequestError(
+                f"envelope {axis} must be a real number",
+                correlation_id=correlation_id,
+                detail={"envelope": _safe_repr(envelope), "axis": axis},
+            )
+        try:
+            value = float(component)
+        except OverflowError as exc:
+            # An int too large to convert to a float is an ABSURD magnitude - a
+            # refused request, never a silent absurd spatial query and never an
+            # uncaught OverflowError leaking out. The huge value is deliberately
+            # kept OUT of the payload (bounded detail only).
+            raise DisallowedRequestError(
+                f"envelope {axis} is an absurd magnitude not representable as a "
+                "finite EPSG:2263 coordinate",
+                correlation_id=correlation_id,
+                detail={"axis": axis, "reason": type(exc).__name__},
+            ) from exc
+        if not math.isfinite(value) or abs(value) > ENVELOPE_ABS_MAX_FT:
+            raise DisallowedRequestError(
+                f"envelope {axis}={component!r} is non-finite or outside the "
+                f"plausible-EPSG:2263 magnitude bound (|value| <= "
+                f"{ENVELOPE_ABS_MAX_FT:g} ft)",
+                correlation_id=correlation_id,
+                detail={
+                    "envelope": _safe_repr(envelope),
+                    "axis": axis,
+                    "bound_ft": ENVELOPE_ABS_MAX_FT,
+                },
+            )
+        values.append(value)
+    xmin, ymin, xmax, ymax = values
+    if xmin > xmax or ymin > ymax:
+        raise DisallowedRequestError(
+            "envelope is inverted (requires xmin <= xmax and ymin <= ymax)",
+            correlation_id=correlation_id,
+            detail={"envelope": [xmin, ymin, xmax, ymax]},
+        )
+    return xmin, ymin, xmax, ymax
+
+
 def build_segment_query_url(
     *,
     borough: str | None = None,
     street_name: str | None = None,
     object_id: int | None = None,
     object_id_in: list[int] | None = None,
+    envelope: tuple[float, float, float, float] | None = None,
     result_record_count: int = MAX_RESULT_RECORD_COUNT,
     result_offset: int = 0,
     correlation_id: str = "urlbuild",
 ) -> str:
-    """Build the ONE query URL shape this connector emits: an exact-equality
-    predicate over a validated allowlist (Borough / Street_NM / OBJECTID),
-    combined with AND, the bounded out-field set, deterministic ordering,
-    and a bounded page window. Exactly one predicate style may be used per
-    call: (borough and/or street_name) XOR (object_id) XOR (object_id_in).
-    A caller can never supply raw SQL, a host, or an unbounded field list."""
+    """Build the ONE query URL shape this connector emits: a bounded predicate
+    over a validated allowlist (Borough / Street_NM / OBJECTID) OR an EPSG:2263
+    envelope-intersects spatial predicate, the bounded out-field set,
+    deterministic ordering, and a bounded page window. Exactly one predicate
+    style may be used per call: (borough and/or street_name) XOR (object_id) XOR
+    (object_id_in) XOR (envelope). A caller can never supply raw SQL, a host, an
+    unbounded field list, or an arbitrary spatial relation - the envelope is
+    validated and always interpreted as EPSG:2263 intersects (returnGeometry
+    stays the layer default TRUE so the geometry sibling can read paths)."""
     predicate_styles = [
         bool(borough or street_name),
         object_id is not None,
         object_id_in is not None,
+        envelope is not None,
     ]
     if sum(predicate_styles) != 1:
         raise DisallowedRequestError(
             "exactly one predicate style is required: (borough/street_name) "
-            "XOR object_id XOR object_id_in",
+            "XOR object_id XOR object_id_in XOR envelope",
             correlation_id=correlation_id,
             detail={
-                "borough": repr(borough),
-                "street_name": repr(street_name),
-                "object_id": repr(object_id),
-                "object_id_in": repr(object_id_in),
+                "borough": _safe_repr(borough),
+                "street_name": _safe_repr(street_name),
+                "object_id": _safe_repr(object_id),
+                "object_id_in": _safe_repr(object_id_in),
+                "envelope": _safe_repr(envelope),
             },
         )
 
     clauses: list[str] = []
-    if borough or street_name:
+    spatial_params = ""
+    if envelope is not None:
+        xmin, ymin, xmax, ymax = _validate_envelope(envelope, correlation_id=correlation_id)
+        # A spatial predicate still needs a WHERE; a constant-true clause keeps
+        # the where-builder uniform while the envelope does the selection.
+        clauses.append("1=1")
+        geometry = f"{xmin:.4f},{ymin:.4f},{xmax:.4f},{ymax:.4f}"
+        spatial_params = (
+            f"&geometry={urllib.parse.quote(geometry, safe='')}"
+            "&geometryType=esriGeometryEnvelope"
+            "&inSR=2263"
+            f"&spatialRel={ENVELOPE_SPATIAL_REL}"
+        )
+    elif borough or street_name:
         if borough is not None:
             if borough not in BOROUGH_DOMAIN:
                 raise DisallowedRequestError(
                     "borough must be one of the documented domain values",
                     correlation_id=correlation_id,
-                    detail={"borough": repr(borough), "domain": list(BOROUGH_DOMAIN)},
+                    detail={"borough": _safe_repr(borough), "domain": list(BOROUGH_DOMAIN)},
                 )
             clauses.append(f"Borough='{_escape_sql_literal(borough)}'")
         if street_name is not None:
@@ -341,7 +458,7 @@ def build_segment_query_url(
                 raise DisallowedRequestError(
                     "street_name failed the safe-text allowlist",
                     correlation_id=correlation_id,
-                    detail={"street_name": repr(street_name)},
+                    detail={"street_name": _safe_repr(street_name)},
                 )
             clauses.append(f"Street_NM='{_escape_sql_literal(street_name)}'")
     elif object_id is not None:
@@ -349,7 +466,7 @@ def build_segment_query_url(
             raise DisallowedRequestError(
                 "object_id must be a positive integer",
                 correlation_id=correlation_id,
-                detail={"object_id": repr(object_id)},
+                detail={"object_id": _safe_repr(object_id)},
             )
         clauses.append(f"OBJECTID={object_id}")
     else:
@@ -364,7 +481,7 @@ def build_segment_query_url(
                 f"object_id_in must be a non-empty list of at most "
                 f"{MAX_OBJECT_ID_LIST} positive integers",
                 correlation_id=correlation_id,
-                detail={"object_id_in": repr(object_id_in)},
+                detail={"object_id_in": _safe_repr(object_id_in)},
             )
         ids = ",".join(str(v) for v in object_id_in)
         clauses.append(f"OBJECTID IN ({ids})")
@@ -377,13 +494,13 @@ def build_segment_query_url(
         raise DisallowedRequestError(
             f"result_record_count must be an integer in 1..{MAX_RESULT_RECORD_COUNT}",
             correlation_id=correlation_id,
-            detail={"result_record_count": repr(result_record_count)},
+            detail={"result_record_count": _safe_repr(result_record_count)},
         )
     if isinstance(result_offset, bool) or not isinstance(result_offset, int) or result_offset < 0:
         raise DisallowedRequestError(
             "result_offset must be a non-negative integer",
             correlation_id=correlation_id,
-            detail={"result_offset": repr(result_offset)},
+            detail={"result_offset": _safe_repr(result_offset)},
         )
 
     where = " AND ".join(clauses)
@@ -391,6 +508,7 @@ def build_segment_query_url(
     return (
         f"{SERVICE_ROOT}/{LAYER_NAME}/FeatureServer/0/query"
         f"?where={urllib.parse.quote(where, safe='')}"
+        f"{spatial_params}"
         f"&outFields={out_fields}"
         "&orderByFields=OBJECTID%20ASC"
         f"&resultRecordCount={result_record_count}&resultOffset={result_offset}"
@@ -832,29 +950,56 @@ def fetch_street_segments(
     street_name: str | None = None,
     object_id: int | None = None,
     object_id_in: list[int] | None = None,
+    envelope: tuple[float, float, float, float] | None = None,
     page_size: int = MAX_RESULT_RECORD_COUNT,
     max_pages: int | None = None,
     fetch: Callable[[str, str], DcmTransport] = default_fetch,
     correlation_id: str | None = None,
 ) -> StreetSegmentQueryResult:
     """Fetch a bounded set of street-center-line segments matching exactly
-    one predicate style, paging deterministically via ``resultOffset`` and
-    honoring ``exceededTransferLimit``. Loop-safety guarantees: repeated
-    OBJECTIDs across pages or a byte-identical repeated page raise the typed
-    ``paging_pathology`` fault; a hard page-count ceiling
-    (:data:`HARD_MAX_PAGES`, or the caller's ``max_pages`` if smaller) is
-    never exceeded. Metadata is fetched first so the freshness pin and
-    schema-drift guard run before any segment data is trusted."""
+    one predicate style (Borough/Street_NM, OBJECTID, OBJECTID IN, or an
+    EPSG:2263 envelope-intersects spatial predicate - M5-T035/DB-015), paging
+    deterministically via ``resultOffset`` and honoring
+    ``exceededTransferLimit``. Loop-safety guarantees: repeated OBJECTIDs across
+    pages or a byte-identical repeated page raise the typed ``paging_pathology``
+    fault; a hard page-count ceiling (:data:`HARD_MAX_PAGES`, or the caller's
+    ``max_pages`` if smaller) is never exceeded. Metadata is fetched first so
+    the freshness pin and schema-drift guard run before any segment data is
+    trusted. The envelope predicate preserves every one of these guards - it
+    changes only the selection, never the transport, paging, CRS, or
+    freshness/drift discipline; an invalid/non-finite/absurd envelope is
+    refused BEFORE any network I/O (typed ``disallowed_request``)."""
     correlation_id = correlation_id or uuid.uuid4().hex
-    metadata = fetch_layer_metadata(fetch=fetch, correlation_id=correlation_id)
 
     page_budget = min(max_pages, HARD_MAX_PAGES) if max_pages is not None else HARD_MAX_PAGES
     if isinstance(page_budget, bool) or not isinstance(page_budget, int) or page_budget < 1:
         raise DisallowedRequestError(
             "max_pages must be a positive integer",
             correlation_id=correlation_id,
-            detail={"max_pages": repr(max_pages)},
+            detail={"max_pages": _safe_repr(max_pages)},
         )
+
+    # Validate the ENTIRE request - predicate style, envelope extent-sanity, and
+    # the page window - BEFORE any network I/O, the metadata fetch included. An
+    # invalid/non-finite/absurd envelope or malformed predicate is refused with a
+    # typed disallowed_request without ever contacting the service (M5-T035: a bad
+    # request must not first spend a metadata round-trip). This first-page URL
+    # (resultOffset=0) is reused verbatim as the loop's first fetch below.
+    # Metadata-first discipline is UNCHANGED: fetch_layer_metadata still runs
+    # before any segment page is parsed, so the freshness pin + schema-drift + CRS
+    # guard still gate every segment the loop trusts.
+    first_page_url = build_segment_query_url(
+        borough=borough,
+        street_name=street_name,
+        object_id=object_id,
+        object_id_in=object_id_in,
+        envelope=envelope,
+        result_record_count=page_size,
+        result_offset=0,
+        correlation_id=correlation_id,
+    )
+
+    metadata = fetch_layer_metadata(fetch=fetch, correlation_id=correlation_id)
 
     segments: list[StreetSegment] = []
     seen_object_ids: set[int] = set()
@@ -879,14 +1024,22 @@ def fetch_street_segments(
                     "collected": len(segments),
                 },
             )
-        url = build_segment_query_url(
-            borough=borough,
-            street_name=street_name,
-            object_id=object_id,
-            object_id_in=object_id_in,
-            result_record_count=page_size,
-            result_offset=len(segments),
-            correlation_id=correlation_id,
+        # The first page's URL was already built (and the whole request validated)
+        # before the metadata fetch; reuse it verbatim. Later pages advance the
+        # deterministic resultOffset.
+        url = (
+            first_page_url
+            if pages_fetched == 0
+            else build_segment_query_url(
+                borough=borough,
+                street_name=street_name,
+                object_id=object_id,
+                object_id_in=object_id_in,
+                envelope=envelope,
+                result_record_count=page_size,
+                result_offset=len(segments),
+                correlation_id=correlation_id,
+            )
         )
         transport = fetch(url, correlation_id)
         retrieved_at = transport.retrieved_at

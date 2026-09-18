@@ -369,6 +369,68 @@ conditions and does not use the street-centerline module (D-059-R004).
 
 ---
 
+## 6c. `nycdf-api` internal flag — live wide-street determination (M5-T035, DB-015)
+
+This flag is **separate** from `LIVE_SPATIAL_PROVIDER_ENABLED` (§6a) and gates the **live
+wide-street-determination composition** behind the rule-evaluation endpoint's default wide-street
+provider. Its **code-level fail-safe default is disabled**: when the variable is **absent** the
+server-side wide-street provider returns **no determination** and makes **zero connector calls**
+(`services/api/app/spatial/wide_street_live_provider.py`,
+`live_wide_street_provider_enabled` / `default_live_wide_street_determination`). Set it on
+**`nycdf-api` → Environment**, save, and let Render restart the service (an env-var change is a deploy).
+
+1. **`LIVE_WIDE_STREET_PROVIDER_ENABLED`** — gates the live wide-street path.
+   - **Same true-token rule** as `INTERNAL_RULE_EVAL_ENABLED`: accepted true tokens are `1`, `true`,
+     `yes`, `on` (case-insensitive, trimmed); **absent / empty / any other value = disabled
+     (fail-safe)** (`wide_street_live_provider.py`, `_TRUE_TOKENS`).
+   - **Fail-safe default (absent = disabled):** with it absent the wide-street provider returns
+     `None` with **zero** connector calls, so `GET /api/v1/properties/{bbl}/rule-evaluation` behaves
+     **byte-identically to before this flag existed** — the conservative conditional-FAR row governs
+     and **no wide-street FAR bonus is granted** for any BBL. This is an honest fail-safe, not a live
+     answer.
+   - **Flag reading + typed logs decide, never the response shape alone.** Exactly like the spatial
+     provider (§6b): a response that shows no wide-street bonus is produced by BOTH the flag being off
+     **and** any live failure/insufficiency (connector error, transfer-limited page, zero DCM segments
+     in the queried envelope, an unattested legal precondition), because the wide-street stack **never
+     fabricates** a within-100ft answer and fails safe to the conservative row or professional review.
+     The response body therefore cannot distinguish flag-off from a live failure. What **does**: the
+     dashboard flag reading, and the provider's payload-only typed log line
+     (`live_wide_street fail_safe event=… error_type=… correlation_id=…`,
+     `wide_street_live_provider.py::_fail_safe`) — matched to the response `X-Correlation-ID`. Read the
+     flag value; do not infer it from the response body.
+   - **Independent of `INTERNAL_RULE_EVAL_ENABLED` and of `LIVE_SPATIAL_PROVIDER_ENABLED`.** The
+     rule-eval route must **also** be enabled (§6 step 2) for any of this to be reachable; this flag
+     only decides whether the *reachable* route composes a live wide-street determination or returns
+     `None`. Turning it on makes the API perform live DCM/MapPLUTO ArcGIS connector calls per request.
+   - **Honest scope (DRAFT / D-045-R009).** Even enabled, the wide-street rows stay
+     `needs_review` DRAFT pending G6 qualified-human approval; a live within-100ft determination is
+     never a Verified result. The current accepted stack does not implement the ZR 12-10 named-street
+     override table, so a lot with a wide-disposed segment resolves to **professional review**, not a
+     guessed higher FAR (honest fail-safe). **Where:** `nycdf-api` → Environment.
+
+## 6d. `nycdf-api` runtime pin — `PYTHON_VERSION` (DB-004; geometry determinism)
+
+Set **`PYTHON_VERSION` = `3.12.11`** on **`nycdf-api` → Environment** (a specific patch on the **3.12**
+line CI builds and tests against). This is **load-bearing** for the wide-street geometry engine:
+
+- **Why pin the interpreter.** The B4 buffer engine asserts an exact shapely / GEOS build at import
+  (`services/api/app/connectors/wide_street_buffer_engine.py`, `PINNED_SHAPELY_VERSION` = `2.0.7`,
+  `PINNED_GEOS_VERSION_STRING` = `3.11.4`; the assertions at module import fail closed on any drift).
+  On the pinned 3.12 line, `pip` installs the prebuilt shapely 2.0.7 manylinux **wheel** (which bundles
+  GEOS 3.11.4), so the pin holds and geometry output stays reproducible.
+- **What goes wrong unpinned (DB-004 / run-38, recorded — not re-verified in this task).** Render
+  drifted to a newer Python (3.14) for which **no matching shapely 2.0.7 wheel exists**, forcing a
+  source build against a **different** system GEOS; the engine's import-time GEOS pin then refuses
+  (fail-closed), and the wide-street path cannot load. Pinning `PYTHON_VERSION` to the CI-tested 3.12
+  line keeps Render on the interpreter the wheel targets.
+- **Evidence.** CI pins `python-version: "3.12"` in `.github/workflows/ci.yml`; `services/api/pyproject.toml`
+  declares `requires-python = ">=3.12"`; `render.yaml` compiles requirements with `--python-version 3.12`.
+  The exact patch `3.12.11` is a concrete, current 3.12 patch chosen so Render does not silently float
+  onto a newer minor. **[confirm the exact `PYTHON_VERSION` mechanism/label in the dashboard UI]** — the
+  env-var route keeps it visible next to the other `nycdf-api` env vars.
+
+---
+
 ## 7. Confirm Blueprint Auto Sync = No
 
 In the Blueprint settings for this workspace, confirm **Auto Sync = No** (a standing owner item,

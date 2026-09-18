@@ -64,6 +64,7 @@ from app.rules.response import (
     validate_rule_evaluation_document,
 )
 from app.spatial.live_provider import default_live_substrate
+from app.spatial.wide_street_live_provider import default_live_wide_street_determination
 
 if TYPE_CHECKING:  # pragma: no cover - typing only; importing the wiring at
     # runtime would pull the shapely-heavy buffer engine onto the request path.
@@ -140,23 +141,33 @@ def get_spatial_substrate_provider() -> SpatialSubstrateProvider:
 # (canonical_bbl, correlation_id) -> the typed
 # app.rules.wide_street_wiring.WideStreetDetermination for that BBL, or None when
 # no wide-street determination is available. The return type is the CONCRETE
-# determination (forward-referenced so the shapely-heavy wiring stays off the
-# import path), not a loose ``object`` - a provider can only ever supply a real
-# typed determination or None.
+# determination (forward-referenced so the shapely-heavy wiring stays off this
+# module's own type surface), not a loose ``object`` - a provider can only ever
+# supply a real typed determination or None.
 WideStreetDeterminationProvider = Callable[[str, str], "WideStreetDetermination | None"]
 
 
 def _default_wide_street_determination(
     canonical_bbl: str, correlation_id: str
 ) -> WideStreetDetermination | None:
-    return None
+    # Delegates to the settings-gated live provider (task M5-T035), exactly as
+    # _default_spatial_substrate delegates to default_live_substrate. With
+    # LIVE_WIDE_STREET_PROVIDER_ENABLED unset (its code default; nothing sets it
+    # in CI) it returns None with zero connector calls, so evaluate_property
+    # behaves byte-identically to before - the conservative conditional-FAR row
+    # governs and NO wide-street bonus is granted. With the explicit flag on, the
+    # live provider composes the accepted wide-street stack and returns its typed
+    # determination (never a fabricated wide; see the provider's fail-safe
+    # contract). EVERY failure/partial input still yields None.
+    return default_live_wide_street_determination(canonical_bbl, correlation_id)
 
 
 def get_wide_street_determination_provider() -> WideStreetDeterminationProvider:
     """Dependency returning the server-side wide-street-determination provider
-    (override point for tests). The default supplies None: no wide-street data
-    source is wired into the profile path yet, so the conditional-FAR rows return
-    the conservative row and grant no wide-street bonus (honest fail-safe)."""
+    (override point for tests). The default is the settings-gated live provider:
+    flag off (the default) yields None with zero connector calls -> the
+    conditional-FAR rows return the conservative row and grant no wide-street
+    bonus (honest fail-safe)."""
     return _default_wide_street_determination
 
 
