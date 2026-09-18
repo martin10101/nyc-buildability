@@ -80,3 +80,10 @@ remaining OPEN entry is research (DB-001/002), design-director class (DB-017/018
 owner-decision class (DB-012 WATCH) — no third pairwise-disjoint local build lane exists, so
 this seam runs TWO loops (stepwise 3→2 per D-072). DB-001/017/018 reviewed, stay OPEN. WATCH
 unchanged (DB-003, DB-008, DB-011, DB-012 — owner answer still pending).
+Same-day update: DB-002 RESEARCH DELIVERED (orchestrator-dispatched official-source-researcher;
+docs/research/condo-base-lot-resolution-sources.md, HIGH confidence) — verified path DOF DTM
+Condominiums p8u6-a6it billing→base-lot set (worked case 3022647515 → {3022640032, 3022640033},
+loop-closed to ZTLDB R7-1 both), units table eguu-7ie3 reverse path, ArcGIS DTM failover parity,
+PLUTO appbbl proven structurally incomplete (single-valued), 14-row contract-test pack C1-C14,
+8 open questions. Row stays OPEN until the connector task is contracted (next-seam candidate);
+the condo-spanning-zoning-lots divergent case is a G6-class legal surface (never auto-collapse).
