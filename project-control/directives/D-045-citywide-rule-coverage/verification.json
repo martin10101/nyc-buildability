@@ -625,6 +625,53 @@
      "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M5-T039",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4",
+   "reviewed_manifest_sha256": "cf9c1b9e0ef8c3c0d37599ac49c95b36127da694aa1f184f3da714c4b08143d4",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T09:28:07+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at HEAD 1c89fce5 against frozen material 1564e509 (verbatim return project-control/reports/M5-T039-DCV-verification.md): mechanic + repaired data input ship together; both snapshot copies byte-identical, digest reproduced, transcription byte-exact from the accepted M4-T018 capture (channel sha 4a75e22f); tri-state fail-closed matcher with construction-time source-anchoring guard and distinct provenance; runtime-exercised from the production loader - real rows INDETERMINATE w/ G6-Q1, C5-3 professional_review_required, no manufactured number on any path. G5 M1 recorded as required-before-wiring hardening, non-blocking as shipped."
+     ],
+     "verified_at": "2026-09-18T09:28:07+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T039-DCV-verification.md): material diff exactly the 5 in-scope files; genuine zero-consumer leaf (import sweep clean; precondition-field name hits are not imports); gates G0,G2,G3,G4,G5 all PASS; not monolithic; all four applicable requirements cited."
+     ],
+     "verified_at": "2026-09-18T09:28:07+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T039-DCV-verification.md): DRAFT-pending-G6 docstring; no *.rule.json or dependency manifest touched; no verified/published/compliant overreach (grep clean); snapshot stays extracted_draft/raw_html_verified:false; the three G6 questions recorded and resolved only as conservative refusals per the packet rulings; PR #241 / D-043 / expansion holds untouched."
+     ],
+     "verified_at": "2026-09-18T09:28:07+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4"
+    }
+   ]
   }
  ]
 }

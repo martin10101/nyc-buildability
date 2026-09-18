@@ -137,6 +137,31 @@
      "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T039",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4",
+   "reviewed_manifest_sha256": "cf9c1b9e0ef8c3c0d37599ac49c95b36127da694aa1f184f3da714c4b08143d4",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T09:28:07+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T039-DCV-verification.md): packet carries the seam-regenerated navigation block (c759a049: 734/15427/6852) with the query.py --no-regen instruction and advisory clause; the advisory conclusion (zero-consumer leaf) independently re-verified in source."
+     ],
+     "verified_at": "2026-09-18T09:28:07+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4"
+    }
+   ]
   }
  ]
 }
