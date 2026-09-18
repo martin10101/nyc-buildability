@@ -24,10 +24,8 @@ Generated 2026-09-18 ~05:5x UTC by session ctl24-5d. Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
 `5b9da18d` (PUSHED; CI green at 82143124, the material head). PR #241 OPEN — NEVER merge.
 **217 accepted** (M5-T036 becomes the 218th only at `accept`; never a percentage, D-059-R006).
-Dirty at landing (DELIBERATE, commit them FIRST): `project-control/state.json` +
-`tasks/M5-T036.json` (gate-CLI side effects) + untracked `reports/M5-T036.json` (the submit
-CLI's frozen-submission record) — held because the DCV was verifying at HEAD; plus conventional
-`.claude/agent-memory/**` + `scratchpad/` (leave).
+Dirty at landing: ONLY conventional `.claude/agent-memory/**` + `scratchpad/` (leave them) —
+the gate side-effect files and the frozen-submission record were committed WITH this handoff.
 
 ## COMPLETED THIS SESSION (durable evidence)
 
@@ -74,18 +72,17 @@ BOTH runtime keys (`9aca7075…` and `cfdedc11…`).
 
 ## NEXT ACTION (exact order)
 
-1. Commit the three held ledger files (frozen-submission record + gate side effects).
-2. Re-dispatch the DCV for M5-T036 → assemble v2 verification blocks in D-066 + D-071
+1. Re-dispatch the DCV for M5-T036 → assemble v2 verification blocks in D-066 + D-071
    `verification.json` (mirror the M5-T034 block shape; reviewed_sha = DCV's verified head)
    → `accept` M5-T036 → seam commit → push (218th).
-3. Harvest M5-T035: run the packet's documented python suites; commit the 11-file tree in
+2. Harvest M5-T035: run the packet's documented python suites; commit the 11-file tree in
    `wt-m5t035` (exclude the packet-copy edit); cherry-pick; push; CI; 5-reviewer wave
    (roster in packet) with the AS-3/DB-014 disposition stated up front — the response
    contract v1.0.0 deliberately does NOT expose the wide-street block (DB-014), so AS-3's
    endpoint proof = the FAR-effect via existing fields + server-side determination; rule it,
    don't let reviewers rediscover it. Then gates, DCV, accept.
-4. Owner decisions pending: DB-012 budget raise (above); nothing else waits on the owner.
-5. Next packets only AFTER both accepts, D-069 sweep at the seam, and D-070 finished-seam
+3. Owner decisions pending: DB-012 budget raise (above); nothing else waits on the owner.
+4. Next packets only AFTER both accepts, D-069 sweep at the seam, and D-070 finished-seam
    discipline before any further handoff.
 
 ## STANDING (unchanged unless noted)
@@ -111,8 +108,8 @@ C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch candidate/D-024-mrl-option-b, 
 pull; Bootstrap Gate 0 (cwd = worktree root, /mcp empty); read CLAUDE.md and
 docs/SESSION_HANDOFF.md (seq 116) and its authoritative files; run python
 tools/project_control.py status and reconcile (ledger and git win). Both loops are DOWN at
-clean stops; M5-T036 is submitted with all gates PASS and needs: commit the three held
-ledger files, re-dispatch the directive-compliance verifier, assemble the two verification
+clean stops; M5-T036 is submitted with all gates PASS and needs: re-dispatch the
+directive-compliance verifier, assemble the two verification
 blocks, accept, push. Then harvest the completed M5-T035 build from wt-m5t035 per the
 handoff's step 3 (state the AS-3/DB-014 disposition up front). Re-arm the dual watcher
 (BOTH ask stores, BOTH runtime keys) before relaunching any loop; any relaunch needs a
