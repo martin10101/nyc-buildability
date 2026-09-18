@@ -75,8 +75,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
     "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:09.965148+00:00",
-  "updated_at": "2026-09-18T23:49:23.803225+00:00",
+  "updated_at": "2026-09-18T23:56:55.232565+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
