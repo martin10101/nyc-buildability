@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T038",
+ "material_commit": "d94bbcb65923084d61b06734fabf63dd43b4094a",
+ "producer": "frontend-engineer",
+ "note": "Material commit = the cherry-pick of the wt-m5t038 build (9 files: 8 material web files + producer report; +730/-16) onto candidate/D-024-mrl-option-b; produced by the loop-2 worker under supervisor runs persistent2-local-03..05. AddressConfirmCard.tsx, AddressResolutionScreen.tsx, and workspace.test.tsx are in allowed_paths but deliberately unmodified (unchanged supporting wiring, disclosed in the report). Web suites prove ONLY in CI on the pushed head (thin client). The worktree's packet-copy edit to tasks/M5-T038.json is the ORCHESTRATOR'S OWN packet repairs (worktree full-path fix, checkpoint-envelope note), excluded from the material commit and attested here.",
+ "requirements": {
+  "D-066-R001": [
+   "Contract-seam code-graph navigation block embedded in the packet (regenerated 2026-09-18 at the M5-T035 acceptance seam c759a049: 734 files/15427 nodes/6852 edges) naming the address-search and PropertyOverview consumer sets, with the query.py --no-regen instruction and the advisory clause; the build honored the stated impact boundaries - PropertyOverview change additive-only (honest absent note behind data-testid site-zola-absent), the development-limits test file (M5-T037 lane) untouched, and the six recorded discoveries (DB-006/007/009/019a-c) were fixed display/copy/tests-only with no new computation, no schema change, no new data source, and the DB-008 deadline untouched (producer report sections 'What changed' + section D; material diff file list)."
+  ]
+ }
+}
