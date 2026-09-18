@@ -1,5 +1,6 @@
 import { ZoningValueList } from "@/components/property/ZoningSection";
 import { ProvenanceDisclosure } from "@/components/property/ProvenanceDisclosure";
+import { CoverageBadge } from "@/components/property/CoverageBadge";
 import { mappedFeatureView, type PropertyProfile } from "@/lib/contract";
 import { provenanceById, resolveFactProvenance } from "@/lib/provenance";
 import { formatValue } from "@/lib/format";
@@ -54,7 +55,7 @@ export function ZoningContextPanel({ profile }: { profile: PropertyProfile }) {
             rel="noopener noreferrer"
             data-testid="zoning-context-zola-link"
           >
-            Open in ZoLa ↗
+            Open in ZoLa <span aria-hidden="true">↗</span>
           </a>
         ) : (
           <span className="section-note" data-testid="zoning-context-zola-absent">
@@ -111,6 +112,13 @@ export function ZoningContextPanel({ profile }: { profile: PropertyProfile }) {
                 <span className="fact-value">
                   {view ? formatValue(view.value) : "Unknown — not supplied"}
                 </span>
+                {/* DB-019c: surface the mapped feature's own coverage_status on
+                    the row, display-only (nothing computed) and never by colour
+                    alone — the same CoverageBadge the reference ZoningSection
+                    rows use. The full coverage table stays on the zoning tab. */}
+                {view && view.coverageStatus ? (
+                  <CoverageBadge status={view.coverageStatus} />
+                ) : null}
                 {view ? (
                   <ProvenanceDisclosure
                     records={record ? [record] : []}

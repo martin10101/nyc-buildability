@@ -108,6 +108,47 @@ describe("bounded recovery and the explicit full-address action (M5-T032)", () =
 });
 
 /**
+ * DB-006: the retry/label gate. Only a transient server failure (>= 500) is the
+ * retried `source_unavailable`. A 4xx the service will not accept (404/422/400)
+ * is a DISTINCT `rejected` — never retried (retrying cannot change it) and never
+ * folded into the transient-failure label.
+ */
+describe("DB-006: 4xx is a distinct, non-retried `rejected`; only >= 500 is the retried `source_unavailable`", () => {
+  it("AS-1: a 404 is NOT retried and is NOT labelled source_unavailable (autocomplete)", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => { calls += 1; return response({ error: "not found" }, 404); };
+    const result = await fetchAddressSuggestions("120 Broadway", { fetchImpl, backoffMs: 0 });
+    expect(result).toEqual({ kind: "error", reason: "rejected" });
+    expect(result).not.toEqual({ kind: "error", reason: "source_unavailable" });
+    expect(calls).toBe(1);
+  });
+
+  it("AS-1: a 422 on the explicit full-address /search is likewise a single-attempt `rejected`", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => { calls += 1; return response({ error: "unprocessable" }, 422); };
+    const result = await fetchAddressSearch("120 Broadway, New York", { fetchImpl, backoffMs: 0 });
+    expect(result).toEqual({ kind: "error", reason: "rejected" });
+    expect(calls).toBe(1);
+  });
+
+  it("AS-1: a 400 is a single-attempt `rejected` (the retry bound is untouched)", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => { calls += 1; return response({ error: "bad request" }, 400); };
+    const result = await fetchAddressSuggestions("120 Broadway", { fetchImpl, backoffMs: 0 });
+    expect(result).toEqual({ kind: "error", reason: "rejected" });
+    expect(calls).toBe(1);
+  });
+
+  it("AS-1: a 500 IS the retried source_unavailable — it spends the full retry bound, unlike a 4xx", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => { calls += 1; return response({}, 500); };
+    const result = await fetchAddressSuggestions("120 Broadway", { fetchImpl, backoffMs: 0 });
+    expect(result).toEqual({ kind: "error", reason: "source_unavailable" });
+    expect(calls).toBe(ADDRESS_SEARCH_MAX_ATTEMPTS);
+  });
+});
+
+/**
  * AS-8: one real-shape NYC address per borough — Manhattan, Brooklyn, Queens,
  * the Bronx, and Staten Island — resolves END-TO-END through the repaired fetch
  * flow (fetchAddressSuggestions / fetchAddressSearch), not only through the
