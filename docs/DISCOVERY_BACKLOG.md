@@ -80,6 +80,8 @@ remaining OPEN entry is research (DB-001/002), design-director class (DB-017/018
 owner-decision class (DB-012 WATCH) — no third pairwise-disjoint local build lane exists, so
 this seam runs TWO loops (stepwise 3→2 per D-072). DB-001/017/018 reviewed, stay OPEN. WATCH
 unchanged (DB-003, DB-008, DB-011, DB-012 — owner answer still pending).
+| DB-026 | 2026-09-18 | Address→DTM-lot identity gap: a real corner/range address with NO PLUTO address string ("1279 37th Street" Brooklyn) resolves to no lot, though the building exists as lot 43 with address-of-record "3622 13 Avenue" (BBL 3052960043) — the review's live stop on that property was identity mismatch (+ unsupported MX-12 coverage), not a FAR-label issue | D-073-R004/R005 research (docs/research/live-case-regression-properties.md case 1; PLUTO 26v2 block-5296 enumeration) | Needs an authoritative address→DTM-lot step for range/corner addresses that surfaces the address-of-record so the user sees which lot was analysed; MX/Article XII FAR coverage is a separate campaign-tracked wave | OPEN |
+
 Same-day update: DB-002 RESEARCH DELIVERED (orchestrator-dispatched official-source-researcher;
 docs/research/condo-base-lot-resolution-sources.md, HIGH confidence) — verified path DOF DTM
 Condominiums p8u6-a6it billing→base-lot set (worked case 3022647515 → {3022640032, 3022640033},
@@ -87,3 +89,14 @@ loop-closed to ZTLDB R7-1 both), units table eguu-7ie3 reverse path, ArcGIS DTM 
 PLUTO appbbl proven structurally incomplete (single-valued), 14-row contract-test pack C1-C14,
 8 open questions. Row stays OPEN until the connector task is contracted (next-seam candidate);
 the condo-spanning-zoning-lots divergent case is a G6-class legal surface (never auto-collapse).
+Same-day update 2: D-073-R004/R005 RESEARCH DELIVERED (second dispatch) —
+docs/research/validation-collection-expectations.md (12 pre-registered cases: 5 flat R6-R12
+positives, 1 C-overlay, 3 street conditions incl. the Broadway W94-97 named-override refusal,
+3 correct-refusals; expectations fixed BEFORE any product consultation) +
+live-case-regression-properties.md EXTENDED with authoritative Part-1 records. Two seed
+candidates CORRECTED: 401 Columbia (BBL 3005250001) split-zoning REFUTED (single R5 in ZTLDB +
+PLUTO SplitZone=N + nyzd centroid; boundary-confidence class); 1279 37th = identity mismatch +
+unsupported MX-12 (→ new row DB-026). 69-02 Kessel confirmed single R2 boundary-confidence.
+298 Wallabout confirmed condo-identity (joins DB-002 path). Exact internal stopping step for
+the two boundary-confidence lots stays PROVISIONAL pending a permitted server-log re-run
+(research was product-consultation-barred by design).
