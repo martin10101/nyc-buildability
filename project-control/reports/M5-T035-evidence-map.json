@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T035",
+ "material_commit": "97fa2eea5d63b5b036055b10ad1902155f8a4be1",
+ "producer": "backend-engineer",
+ "note": "Material commit = the cherry-pick of the wt-m5t035 build (10 files, +2238/-54) onto candidate/D-024-mrl-option-b; produced under supervisor runs 40-41, harvested by the orchestrator with all six documented commands re-run green at harvest. The worktree's packet-copy carryover note (project-control/tasks/M5-T035.json in wt-m5t035) is an orchestrator dispatch note, deliberately excluded from the material commit and attested at the seam.",
+ "requirements": {
+  "D-045-R002": [
+   "Geometry-dependent mechanics wave delivered with its data inputs: services/api/app/spatial/wide_street_live_provider.py composes lot geometry -> DCM envelope segments -> typed 2263 polylines -> 24-class classifier -> D-052 policy -> 100.0-ft buffer engine -> wide_street_wiring determination, settings-gated and fail-safe to None on every failure/insufficiency class (typed-failure -> None tests in services/api/tests/spatial/test_wide_street_live_provider.py).",
+   "DCM envelope predicate with request validation BEFORE any metadata I/O (DisallowedRequestError on malformed/non-finite/absurd coordinates) in services/api/app/connectors/dcm_street_centerline_arcgis.py; suite services/api/tests/connectors/test_dcm_street_centerline_arcgis.py (69 pass) covers predicate exclusivity, zero-fetch rejection, metadata freshness/schema-drift gates, paging pathologies, ceilings.",
+   "DB-013 engine ceilings: lot-polygon vertex bound + per-segment path bound, typed fail-closed, in services/api/app/connectors/wide_street_buffer_engine.py (54 tests pass); no engine split, no wiring added (G3 modularity ruling preserved).",
+   "Endpoint proof: services/api/tests/api/test_rule_evaluation_api.py (38 pass) drives a real typed WideStreetDetermination through the DEFAULT provider seam - wide-street conditional-FAR effect surfaces via existing contract fields (coverage_status, reasons[] naming governing max_residential_far 3.0) and professional-review escalation; closes the M5-T034 disclosed gap. Producer report sections 1-4."
+  ],
+  "D-045-R008": [
+   "Bounded single-scope gated task in the campaign sequencing lane (A2/B-chain wiring increment), citing D-045:D-045-R002,D-045-R008,D-045-R009; no monolithic all-districts work; packet allowed_paths confined to the provider/connector/engine/endpoint files and their suites plus the deploy checklist and producer report."
+  ],
+  "D-045-R009": [
+   "Preservation upheld: every surfaced determination carries the DRAFT-pending-G6 marker in reasons[] (exact-string endpoint assertion in test_m5t035_within_wide_determination_fires_wide_row_via_endpoint); the rule's DSL trace output stays the conservative R6 value (trace outputs max_residential_far == 2.2) with the higher wide-street FAR selected only server-side; D-052 provenance quintuple carried on the in-memory determination summary (app/rules/integration.py _wide_street_summary); no published/verified/compliance claim anywhere in code, tests, checklist rows, or the producer report (report honesty framing, section 0)."
+  ],
+  "D-066-R001": [
+   "Contract-seam code-graph navigation block: the M5-T035 packet was contracted at the previous seam with the graph-derived navigation block embedded in the packet body (key consumers, dependencies, impact set for rule_evaluation.py, dcm_street_centerline_arcgis.py, wide_street_buffer_engine.py targets); the build stayed inside that impact set - no consumer outside the packet's file list changed behavior contracts (endpoint response contract deliberately unchanged: structured wide-street block NOT serialized, DB-014 ruled to the follow-up screen-wiring packet)."
+  ]
+ }
+}

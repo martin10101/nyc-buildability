@@ -94,8 +94,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Scope magnets are OUT: named-street override table (DB-010), wide-street contract-surface bump (DB-014), context-panel parity (DB-016), split-lot apportionment (DB-001) - surface them in the report via discovery routing, never fix in-packet",
     "Zero-segment envelope result is honest absence, never a confident negative (D-051)",
@@ -105,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T21:46:16.211907+00:00",
-  "updated_at": "2026-09-17T22:59:31.520413+00:00",
+  "updated_at": "2026-09-18T06:23:24.070059+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -147,6 +147,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "Run-40 breaker trip (consecutive_revision_loops 4/4): build partly done in wt-m5t035 (provider+engine+2 suites edited; connector tests, endpoint tests, checklist rows, report outstanding); 2 rounds lost to an investigation-only checkpoint + a stale lint claim; 6 stale asks denied; RUN-40 CARRYOVER block appended to both packet copies; relaunching run 41 (fresh run-id per durable-tally rule); DB-012 WATCH fired, owner option surfaced"
+    },
+    {
+      "at": "2026-09-18T06:23:22.781827+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvest: run-40/41 build committed as material 97fa2eea (10 files, +2238/-54); all six documented commands re-run green at harvest (ruff clean; spatial 76, dcm 69, buffer 54, endpoint 38 pass; modularity clean); worktree packet-copy carryover note excluded from material commit and attested at seam"
     }
   ]
 }
