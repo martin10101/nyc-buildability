@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T036",
+  "material_commit": "8214312480e80e2ce10abbbc423ff590afe4651b",
+  "material_commits_note": "Two producer material commits, both cherry-picks of the loop-2 worker tree: 657b238dce8af8df1bfff2e22e454caab1749413 (build) and 8214312480e80e2ce10abbbc423ff590afe4651b (test-only rework fixing the two CI-proven ambiguous queries). Control-plane commits between and after carry no allowed_paths content.",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T036 packet inputs carry the seam-regenerated code-graph navigation block (regenerated 2026-09-17 at the contract seam: 732 files, 15341 nodes, 6791 edges) naming the mount surface's five importers, the two reference implementations, the validated ZoLa helper and the exact inline-link defect line, plus the 'python tools/code_graph/query.py --no-regen impact <path>' instruction (project-control/tasks/M5-T036.json, CODE-GRAPH NAVIGATION BLOCK input).",
+      "The graph stayed advisory and was verified in source: the independent G3 reviewer confirmed the navigation block's pointers against source and recorded 'the code-graph nav block was accurate and useful — PropertyOverview's five importers and the ReportView print reach matched source exactly' (project-control/reports/M5-T036-G3.md, 'Nav block accuracy'). The G4 and human-journey reviewers independently re-derived the same importer set from source."
+    ],
+    "D-071-R002": [
+      "The contracted scope is exactly the owner-chosen loop-2 lane: DB-016 context-panel parity (ZoningContextPanel rendering districts incl. split-lot multiples, commercial overlays, special districts, landmark/historic flags from the client-side PropertyProfile with per-value provenance and honest absent/Unknown states, one validated ZoLa link) plus the DB-005 ZoLa-link unification on the same surfaces (PropertyOverview + AddressConfirmCard through zolaLotUrl; zero raw template URLs remain) — delivered at material commits 657b238d + 82143124 and verified by five independent PASS reviews with carry-attestations at 82143124 (project-control/reports/M5-T036-G1/G3/G4/G5/HJ.md + M5-T036-delta-attestations.md).",
+      "Label display only, computed answer stays the differentiator: no computation/inference/defaulting (G1 F1), no new fetch/api/contract change (G5 finding 3; forbidden_paths clean per G1 F6), and the panel carries the explicit 'Nothing here is computed' note with none of the development-limits result testids (HJ F1; AS-1 test). Backlog entries DB-016 and DB-005 moved to QUEUED(M5-T036) at the contract seam (docs/DISCOVERY_BACKLOG.md).",
+      "Executable authority: web CI green on the corrected head 82143124 including the web-e2e vitest job (project-control/reports/M5-T036-ci-evidence.md)."
+    ]
+  }
+}
