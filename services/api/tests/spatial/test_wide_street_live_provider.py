@@ -37,6 +37,7 @@ from app.connectors.mappluto_geometry_arcgis import (
     CRS_STAMP as MAPPLUTO_CRS_STAMP,
 )
 from app.connectors.mappluto_geometry_arcgis import (
+    GEOMETRY_VALID,
     OUTCOME_MULTIPLE,
     OUTCOME_SINGLE,
     analyze_lot_geometry,
@@ -454,3 +455,144 @@ def test_zero_segment_fail_safe_logs_payload_only_with_correlation_id(caplog) ->
     assert "event=no_segments_in_envelope" in lines[0]
     assert "error_type=none" in lines[0]
     assert f"correlation_id={CID}" in lines[0]
+
+
+# ---------------------------------------------------------------------------
+# DB-021 (M5-T040) provider hardening: (a) provider-side MAX_LOT_VERTICES
+# pre-check before the provider's own first canonical_to_shapely; (b) the
+# wide_object_ids cap before the geometry-fetch loop; (e) direct coverage of the
+# segment_geometry_unexpected_error branch and the _attested_lot sub-branches.
+# ---------------------------------------------------------------------------
+
+
+def _fail_safe_lines(caplog) -> list[str]:
+    return [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "app.spatial.wide_street_live_provider"
+        and "fail_safe" in record.getMessage()
+    ]
+
+
+def test_db021a_lot_over_vertex_cap_returns_none_before_envelope(monkeypatch, caplog) -> None:
+    # DB-021a: a lot whose canonical vertex count exceeds the provider-side
+    # MAX_LOT_VERTICES bound is refused BEFORE _lot_envelope's canonical_to_shapely
+    # (fail-safe None). Lower the cap below the 5-vertex square lot to exercise it.
+    monkeypatch.setattr(provider, "MAX_LOT_VERTICES", 3)
+    counting = _CountingFetchers(
+        lot=_lot_double(),
+        segments=AssertionError("segments must not be fetched past the vertex cap"),
+    )
+    with caplog.at_level(logging.WARNING, logger="app.spatial.wide_street_live_provider"):
+        determination = build_live_wide_street_determination(
+            BBL_FIXTURE, CID, fetchers=counting.as_fetchers()
+        )
+    assert determination is None
+    # Refused before any segment fetch (the check runs before _lot_envelope).
+    assert counting.calls["segments"] == 0
+    lines = _fail_safe_lines(caplog)
+    assert any("event=lot_vertices_over_cap" in line for line in lines)
+
+
+def test_db021b_wide_segments_over_cap_returns_none_before_geometry_fetch(
+    monkeypatch, caplog
+) -> None:
+    # DB-021b: more wide-disposed OBJECTIDs than MAX_WIDE_SEGMENTS are refused
+    # BEFORE the geometry-fetch loop (the engine's own 512 ceiling would only fire
+    # after every page was fetched). Lower the cap to 1 with two wide segments.
+    monkeypatch.setattr(provider, "MAX_WIDE_SEGMENTS", 1)
+    counting = _CountingFetchers(
+        lot=_lot_double(),
+        segments=_segments_double(
+            [_feature(7, "80", WIDE_SEGMENT_PATHS), _feature(8, "80", WIDE_SEGMENT_PATHS)]
+        ),
+        geometries=AssertionError("geometry must not be fetched past the wide cap"),
+    )
+    with caplog.at_level(logging.WARNING, logger="app.spatial.wide_street_live_provider"):
+        determination = build_live_wide_street_determination(
+            BBL_FIXTURE, CID, fetchers=counting.as_fetchers()
+        )
+    assert determination is None
+    assert counting.calls["geometries"] == 0
+    lines = _fail_safe_lines(caplog)
+    assert any("event=wide_segments_over_cap" in line for line in lines)
+
+
+def test_db021e_unexpected_wide_geometry_error_returns_none(caplog) -> None:
+    # DB-021e: an UNEXPECTED (non-DCM) failure from the geometry fetch is
+    # fail-safed to None via the segment_geometry_unexpected_error branch (the
+    # sibling of the typed DCMConnectorError branch already covered above).
+    counting = _CountingFetchers(
+        lot=_lot_double(),
+        segments=_segments_double([_feature(9, "80", WIDE_SEGMENT_PATHS)]),
+        geometries=RuntimeError("unexpected geometry failure"),
+    )
+    with caplog.at_level(logging.WARNING, logger="app.spatial.wide_street_live_provider"):
+        determination = build_live_wide_street_determination(
+            BBL_FIXTURE, CID, fetchers=counting.as_fetchers()
+        )
+    assert determination is None
+    lines = _fail_safe_lines(caplog)
+    assert any("event=segment_geometry_unexpected_error" in line for line in lines)
+    assert any("error_type=RuntimeError" in line for line in lines)
+
+
+def _assessment(*, status: str = GEOMETRY_VALID, canonical=None) -> SimpleNamespace:
+    return SimpleNamespace(
+        status=status,
+        canonical_geometry=SQUARE_LOT_RINGS if canonical is None else canonical,
+    )
+
+
+@pytest.mark.parametrize(
+    "lot,label",
+    [
+        (
+            SimpleNamespace(
+                outcome=OUTCOME_MULTIPLE, review_required=False, geometry=_assessment()
+            ),
+            "not-single-outcome",
+        ),
+        (
+            SimpleNamespace(
+                outcome=OUTCOME_SINGLE, review_required=True, geometry=_assessment()
+            ),
+            "review-required",
+        ),
+        (
+            SimpleNamespace(outcome=OUTCOME_SINGLE, review_required=False, geometry=None),
+            "geometry-none",
+        ),
+        (
+            SimpleNamespace(
+                outcome=OUTCOME_SINGLE,
+                review_required=False,
+                geometry=_assessment(status="invalid"),
+            ),
+            "status-not-valid",
+        ),
+        (
+            SimpleNamespace(
+                outcome=OUTCOME_SINGLE,
+                review_required=False,
+                geometry=SimpleNamespace(status=GEOMETRY_VALID, canonical_geometry=None),
+            ),
+            "canonical-none",
+        ),
+    ],
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_db021e_attested_lot_rejects_every_unusable_subbranch(lot, label) -> None:
+    # DB-021e: each _attested_lot None-return sub-branch (wrong outcome, review
+    # required, missing geometry, non-valid/repaired status, missing canonical
+    # geometry) is directly exercised and yields None (honest absence).
+    assert provider._attested_lot(lot, BBL_FIXTURE) is None
+
+
+def test_db021e_attested_lot_accepts_usable_single_valid_lot() -> None:
+    # Positive companion: a usable single valid lot is wrapped (never None), so
+    # the sub-branch tests above are proven to be rejecting, not vacuous.
+    lot = _lot_double()
+    attested = provider._attested_lot(lot, BBL_FIXTURE)
+    assert attested is not None
+    assert attested.lot_identity == BBL_FIXTURE

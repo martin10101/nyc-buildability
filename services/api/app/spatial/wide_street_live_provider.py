@@ -93,9 +93,12 @@ from app.connectors.mappluto_geometry_arcgis import (
 )
 from app.connectors.wide_street_buffer_engine import (
     BUFFER_FT,
+    MAX_LOT_VERTICES,
+    MAX_WIDE_SEGMENTS,
     AttestedLotPolygon,
     AttestedWideSegment,
     Ec5AttestedPreconditions,
+    _canonical_vertex_count,
 )
 from app.rules.wide_street_wiring import (
     NamedStreetOverrideStatus,
@@ -296,7 +299,25 @@ def _policy_decisions(seg_result: StreetSegmentQueryResult) -> list[PolicyDecisi
     fail-safed at) the wiring's NamedStreetOverrideStatus and the B4 EC-5 gate,
     never silently resolved here. The classifier's raw width read is used (never
     a more-permissive value); the connector's mapped-street override only ever
-    narrows, so feeding the raw read stays fail-safe."""
+    narrows, so feeding the raw read stays fail-safe.
+
+    TWO-LAYER EXCEPTIONS ATTESTATION (DB-021c). The ``exceptions_checked=True``
+    set here and the ``_UNATTESTED_EC5`` preconditions are DIFFERENT layers and
+    must not be conflated:
+
+    * D-052 width-policy layer (this ``AttestedPreconditions.exceptions_checked``):
+      attests that the WIDTH-CLASSIFICATION exceptions the policy module itself
+      recognizes were checked for this segment. It is a precondition of the
+      policy returning a confident ``wide``/``narrow`` decision at all; it says
+      nothing about ZR 12-10.
+    * ZR 12-10 EC-5 layer (``_UNATTESTED_EC5``, left ``False``): attests the
+      named-street override table and the C5-3/C6-4/C6-6 alternate-width clause
+      were applied. The accepted stack does not implement that legal leg
+      (DB-011, G6 legal queue), so it stays UNATTESTED and the B4 engine refuses
+      a confident wide-street proximity - the load-bearing fail-safe.
+
+    A confident width classification therefore never implies the ZR 12-10
+    exceptions were resolved; the two attestations are independent gates."""
     source_version = seg_result.source_data_last_edited or seg_result.retrieved_at
     decisions: list[PolicyDecision] = []
     for segment in seg_result.segments:
@@ -394,6 +415,18 @@ def build_live_wide_street_determination(
         _fail_safe("lot_not_usable", correlation_id)
         return None
 
+    # DB-021a: bound the lot's canonical vertex count BEFORE this module's own
+    # first canonical_to_shapely (in _lot_envelope). The B4 engine enforces the
+    # same MAX_LOT_VERTICES bound, but only once the engine runs - AFTER the
+    # provider has already shapely-built the envelope geometry here. Reuse the
+    # engine's authoritative counter so the pre-check and the engine's own gate
+    # share one definition; a pathological lot is refused (fail-safe None) before
+    # any O(vertices) geometry construction on the provider side.
+    lot_vertices = _canonical_vertex_count(lot.assessment.canonical_geometry)
+    if lot_vertices > MAX_LOT_VERTICES:
+        _fail_safe("lot_vertices_over_cap", correlation_id)
+        return None
+
     envelope = _lot_envelope(lot)
     if envelope is None:
         _fail_safe("lot_envelope_unavailable", correlation_id)
@@ -426,6 +459,14 @@ def build_live_wide_street_determination(
         if segment.effective_disposition == DISPOSITION_WIDE
         and segment.object_id is not None
     ]
+    # DB-021b: bound the count of wide-disposed segments BEFORE the per-chunk
+    # geometry fetch loop. The B4 engine enforces MAX_WIDE_SEGMENTS, but only
+    # after every geometry page has already been fetched and parsed; capping the
+    # OBJECTID list here refuses a pathological count (fail-safe None) before any
+    # geometry fetch runs, so an abusive envelope cannot drive unbounded fetches.
+    if len(wide_object_ids) > MAX_WIDE_SEGMENTS:
+        _fail_safe("wide_segments_over_cap", correlation_id)
+        return None
     try:
         wide_segments = _attested_wide_segments(
             wide_object_ids, fetchers, correlation_id

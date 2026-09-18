@@ -612,3 +612,476 @@ def test_integrity_quote_not_in_excerpt_raises(tmp_path):
 def test_default_store_has_repaired_snapshot():
     snap = SnapshotStore().get("zr-12-10")
     assert "named_street_overrides" in snap.raw
+
+
+# --------------------------------------------------------------------------
+# DB-023 hardening (M5-T040): (a) structural refusal of matched_override on a
+# row carrying an unresolved qualifier; (b) construction-time provenance-field
+# validation so match() never KeyErrors; (c) bounded raw-query reprs in reasons;
+# (d) word-boundary source anchoring.
+# --------------------------------------------------------------------------
+
+_SOURCE_SHAPED_NAMED_QUOTE = (
+    "In Community District 1 in the Borough of Testville, the roadways of "
+    "Testonly Avenue between First and Second Streets shall each be "
+    "considered a wide street."
+)
+_SOURCE_SHAPED_ALT_QUOTE = "In C5-3 Districts the alternate-width test may be considered."
+
+
+def _named_block(**overrides) -> dict:
+    """A source-tracing-clean named block (every row field anchors in the quote),
+    with individual fields overridable for the DB-023 fail-closed probes."""
+    block = {
+        "provision_id": "test-named",
+        "section_anchor": "test anchor",
+        "node_anchor": "/node/0",
+        "verbatim_source_quote": _SOURCE_SHAPED_NAMED_QUOTE,
+        "disposition_when_located": "indeterminate",
+        "disposition_reason": "r",
+        "open_legal_questions": [],
+        "rows": [
+            {
+                "row_id": "testonly",
+                "borough": "Testville",
+                "community_district": 1,
+                "street_name": "Testonly Avenue",
+                "frontage_from": "First Street",
+                "frontage_to": "Second Street",
+            }
+        ],
+    }
+    block.update(overrides)
+    return block
+
+
+def _alt_block(**overrides) -> dict:
+    block = {
+        "provision_id": "test-alt",
+        "section_anchor": "test anchor",
+        "applicable_districts": ["C5-3"],
+        "verbatim_source_quote": _SOURCE_SHAPED_ALT_QUOTE,
+        "disposition_reason": "r",
+    }
+    block.update(overrides)
+    return block
+
+
+def _excerpt() -> str:
+    return _SOURCE_SHAPED_NAMED_QUOTE + "\n\n" + _SOURCE_SHAPED_ALT_QUOTE
+
+
+def test_db023a_matched_override_with_open_question_fails_closed(tmp_path):
+    """AS-1 (DB-023a): flipping a qualifier-carrying row (a non-empty
+    open_legal_questions - here the mapped-public-park predicate) to
+    matched_override is refused STRUCTURALLY at construction; the disposition is
+    outside the digest cover, so an unverifiable qualifier can never read as an
+    unconditional override."""
+    named = _named_block(
+        disposition_when_located="matched_override",
+        open_legal_questions=["G6-Q1-park-qualifier-scope"],
+    )
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(), snapshot_id="zr-db023a"
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_matched_override_without_open_question_still_allowed(tmp_path):
+    """The structural refusal is scoped: an unconditional row (NO open legal
+    question) still reaches MATCHED_OVERRIDE (regression guard on DB-023a)."""
+    named = _named_block(
+        disposition_when_located="matched_override", open_legal_questions=[]
+    )
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(), snapshot_id="zr-db023a-ok"
+    )
+    matcher = NamedStreetOverrideMatcher(snap)
+    result = matcher.match(
+        OverrideQuery("Testville", 1, "Testonly Avenue", "First Street", "Second Street")
+    )
+    assert result.status is MatchStatus.MATCHED_OVERRIDE
+
+
+@pytest.mark.parametrize(
+    "block_kwargs,which",
+    [
+        ({"provision_id": None}, "named"),
+        ({"section_anchor": None}, "named"),
+        ({"provision_id": 7}, "named"),  # mistyped (not a str)
+        ({"section_anchor": ""}, "named"),  # empty
+    ],
+)
+def test_db023b_missing_or_mistyped_provenance_fails_closed(tmp_path, block_kwargs, which):
+    """AS-2 (DB-023b): a block missing/mistyping provision_id or section_anchor
+    fails CLOSED at construction so match() can never KeyError."""
+    named = _named_block(**block_kwargs) if which == "named" else _named_block()
+    alt = _alt_block() if which == "named" else _alt_block(**block_kwargs)
+    # Remove a key entirely when the override value is None (missing, not null).
+    for k, v in list(block_kwargs.items()):
+        if v is None:
+            (named if which == "named" else alt).pop(k, None)
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=alt, snapshot_id="zr-db023b"
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023b_alt_block_missing_provenance_fails_closed(tmp_path):
+    alt = _alt_block()
+    alt.pop("provision_id")
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=_named_block(), alt=alt, snapshot_id="zr-db023b-alt"
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023c_reason_bounds_long_query_input(matcher):
+    """AS-3 (DB-023c): a MatchResult.reason never embeds an unbounded raw-query
+    repr. A 5000-char street name and cross streets produce a bounded reason."""
+    huge = "Z" * 5000
+    # unknown-street path embeds the street repr
+    r1 = matcher.match(OverrideQuery("Manhattan", 7, huge, "A Street", "B Street"))
+    assert r1.status is MatchStatus.NOT_MATCHED
+    assert len(r1.reason) < 300
+    assert huge not in r1.reason
+    # outside-frontage path embeds both cross-street reprs
+    r2 = matcher.match(OverrideQuery("Manhattan", 7, "Broadway", huge, "Z" * 4000))
+    assert len(r2.reason) < 400
+    assert huge not in r2.reason
+    # wrong-CD path embeds the street + borough reprs
+    r3 = matcher.match(OverrideQuery(huge, 7, huge, "West 94th Street", "West 97th Street"))
+    assert len(r3.reason) < 400
+
+
+def test_db023d_partial_word_field_does_not_anchor(tmp_path):
+    """DB-023d: a structured field that would match the source only as a
+    partial-word substring ('roadway' inside 'Broadway') no longer anchors, so
+    it fails closed at construction (word-boundary anchoring)."""
+    named_quote = (
+        "In Community District 7 in the Borough of Manhattan, the roadways of "
+        "Broadway between West 94th and West 97th Streets shall each be "
+        "considered a wide street."
+    )
+    excerpt = named_quote + "\n\n" + _SOURCE_SHAPED_ALT_QUOTE
+    named = {
+        "provision_id": "p",
+        "section_anchor": "a",
+        "verbatim_source_quote": named_quote,
+        "disposition_when_located": "indeterminate",
+        "disposition_reason": "r",
+        "open_legal_questions": [],
+        "rows": [
+            {
+                # "roadway" is a partial-word fragment of "Broadway" in the source;
+                # under raw-substring anchoring it would have passed.
+                "row_id": "partial",
+                "borough": "Manhattan",
+                "community_district": 7,
+                "street_name": "roadway",
+                "frontage_from": "West 94th Street",
+                "frontage_to": "West 97th Street",
+            }
+        ],
+    }
+    snap = _synthetic(
+        tmp_path, excerpt=excerpt, named=named, alt=_alt_block(), snapshot_id="zr-db023d"
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+# --------------------------------------------------------------------------
+# DB-023a metadata-bypass closure (M5-T040 rework): disposition_when_located and
+# the qualifier metadata are NOT digest-covered, so flipping the REAL qualified
+# snapshot to matched_override and removing / nulling / emptying the mutable
+# open_legal_questions list (source quote and digest unchanged) must STILL be
+# refused. The refusal is SOURCE-BOUND to the qualifier_clause, which traces
+# verbatim to the digest-covered source quote. Plus malformed-metadata coverage.
+# --------------------------------------------------------------------------
+
+
+def _load_mutated(tmp_path, raw: dict, name: str):
+    """Write a mutated raw doc (verbatim_excerpt + content_digest untouched, so
+    the loader's digest check still passes) and load it through the production
+    loader."""
+    path = tmp_path / f"{name}.snapshot.json"
+    path.write_text(json.dumps(raw), encoding="utf-8")
+    return load_snapshot_file(path)
+
+
+def test_db023a_real_snapshot_qualifier_clause_is_source_anchored():
+    """Precondition the DB-023a refusal relies on: in the REAL zr-12-10 snapshot
+    the declared qualifier_clause is a verbatim substring of the digest-covered
+    source quote (and of the excerpt), so the source-binding actually holds."""
+    raw = _raw()
+    named = raw["named_street_overrides"]
+    assert named["qualifier_clause"] in named["verbatim_source_quote"]
+    assert named["qualifier_clause"] in raw["verbatim_excerpt"]
+
+
+@pytest.mark.parametrize("bypass", ["remove", "null", "empty"])
+def test_db023a_real_qualified_snapshot_matched_override_metadata_bypass_refused(
+    tmp_path, bypass
+):
+    """AS-1 (DB-023a metadata bypass): starting from the REAL qualified zr-12-10
+    snapshot (source quote still reads '...which are separated by mapped public
+    park...'), set disposition_when_located=matched_override and remove / null /
+    empty open_legal_questions while leaving the source quote unchanged. Each
+    variant must be REFUSED at construction: the refusal is source-bound to the
+    qualifier_clause, so emptying the free-floating metadata list cannot
+    manufacture an unconditional override on a conditioned designation."""
+    raw = _raw()
+    named = raw["named_street_overrides"]
+    named["disposition_when_located"] = "matched_override"
+    if bypass == "remove":
+        named.pop("open_legal_questions", None)
+    elif bypass == "null":
+        named["open_legal_questions"] = None
+    else:  # empty
+        named["open_legal_questions"] = []
+    snap = _load_mutated(tmp_path, raw, f"zr-12-10-bypass-{bypass}")
+    # source quote and digest untouched, and the qualifier clause still traces to
+    # the digest-covered source quote — the refusal below is genuinely source-bound.
+    quote = snap.raw["named_street_overrides"]["verbatim_source_quote"]
+    assert named["qualifier_clause"] in quote
+    assert snap.content_digest_sha256 == snap.raw["content_digest_sha256"]
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_source_anchored_qualifier_refuses_override_despite_empty_list(tmp_path):
+    """Isolates the source-bound signal: a SYNTHETIC block whose only unresolved
+    signal is a qualifier_clause tracing to its own source quote is refused for
+    matched_override even with an EMPTY open_legal_questions list and no
+    qualifier_scope_status / resolvable flag — proving the refusal does not depend
+    on the mutable metadata."""
+    named_quote = (
+        "In Community District 1 in the Borough of Testville, the roadways of "
+        "Testonly Avenue between First and Second Streets, which are separated by "
+        "mapped public park shall each be considered a wide street."
+    )
+    excerpt = named_quote + "\n\n" + _SOURCE_SHAPED_ALT_QUOTE
+    named = {
+        "provision_id": "test-named",
+        "section_anchor": "test anchor",
+        "node_anchor": "/node/0",
+        "verbatim_source_quote": named_quote,
+        "qualifier_clause": "which are separated by mapped public park",
+        "disposition_when_located": "matched_override",
+        "open_legal_questions": [],  # the bypass vector: emptied
+        "rows": [
+            {
+                "row_id": "testonly",
+                "borough": "Testville",
+                "community_district": 1,
+                "street_name": "Testonly Avenue",
+                "frontage_from": "First Street",
+                "frontage_to": "Second Street",
+            }
+        ],
+    }
+    snap = _synthetic(
+        tmp_path, excerpt=excerpt, named=named, alt=_alt_block(),
+        snapshot_id="zr-db023a-sourcebound",
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_qualifier_clause_absent_from_source_fails_closed(tmp_path):
+    """Integrity coverage / malformed metadata: a declared qualifier_clause that
+    is NOT a verbatim substring of the digest-covered source quote is a tamper and
+    fails closed at construction (even for an indeterminate disposition)."""
+    named = _named_block(qualifier_clause="which are separated by a private easement")
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(),
+        snapshot_id="zr-db023a-clausebad",
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_qualifier_clause_wrong_type_fails_closed(tmp_path):
+    """Malformed metadata: a non-string qualifier_clause fails closed rather than
+    being read as a valid (or absent) qualifier declaration."""
+    named = _named_block(qualifier_clause=7)
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(),
+        snapshot_id="zr-db023a-clausetype",
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_open_legal_questions_malformed_fails_closed(tmp_path):
+    """Malformed metadata: an open_legal_questions that is not a list is not
+    silently coerced (a bare string would otherwise iterate into characters) — it
+    fails closed at construction."""
+    named = _named_block(
+        disposition_when_located="matched_override",
+        open_legal_questions="G6-Q1-park-qualifier-scope",  # a bare string, not a list
+    )
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(),
+        snapshot_id="zr-db023a-olqbad",
+    )
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+# --------------------------------------------------------------------------
+# DB-023a ALL-SIGNALS-STRIPPED closure (M5-T040 rework, report §8 promotion):
+# the disposition and ALL FOUR qualifier signals (qualifier_clause,
+# qualifier_scope_status, qualifier_predicate_resolvable_from_text,
+# open_legal_questions) are outside the digest cover, so stripping / nulling /
+# falsely resolving every one of them together while keeping the REAL conditional
+# source quote and digest must STILL be refused. The trusted binding for an
+# unconditional disposition is taken from the digest-covered source itself.
+# --------------------------------------------------------------------------
+
+_FOUR_QUALIFIER_SIGNALS = (
+    "qualifier_clause",
+    "qualifier_scope_status",
+    "qualifier_predicate_resolvable_from_text",
+    "open_legal_questions",
+)
+_REAL_QUALIFIER_CLAUSE = "which are separated by mapped public park"
+
+
+@pytest.mark.parametrize("mode", ["remove", "null", "falsely_resolved"])
+def test_db023a_all_qualifier_signals_stripped_still_refused(tmp_path, mode):
+    """AS-1 (DB-023a all-signals-stripped): from the REAL zr-12-10 snapshot set
+    disposition_when_located=matched_override and strip EVERY qualifier signal at
+    once — ``remove`` (pop all four), ``null`` (set all four to None), or
+    ``falsely_resolved`` (qualifier_clause removed, qualifier_scope_status
+    ='resolved', qualifier_predicate_resolvable_from_text=True,
+    open_legal_questions=[]). The verbatim_excerpt and content_digest are left
+    untouched, so the digest-covered source quote still reads '...which are
+    separated by mapped public park...'. Each variant must be REFUSED at
+    construction: no mutable qualifier metadata remains to drive the refusal, so it
+    is bound to the digest-covered source (the metadata bypass this closes)."""
+    raw = _raw()
+    named = raw["named_street_overrides"]
+    named["disposition_when_located"] = "matched_override"
+    if mode == "remove":
+        for key in _FOUR_QUALIFIER_SIGNALS:
+            named.pop(key, None)
+    elif mode == "null":
+        for key in _FOUR_QUALIFIER_SIGNALS:
+            named[key] = None
+    else:  # falsely_resolved: metadata affirmatively (and falsely) claims resolution
+        named.pop("qualifier_clause", None)
+        named["qualifier_scope_status"] = "resolved"
+        named["qualifier_predicate_resolvable_from_text"] = True
+        named["open_legal_questions"] = []
+    snap = _load_mutated(tmp_path, raw, f"zr-12-10-allstripped-{mode}")
+    mutated_named = snap.raw["named_street_overrides"]
+    # the real conditional clause is still in the DIGEST-COVERED source, the digest
+    # is intact, and no truthy qualifier signal remains — the refusal is genuinely
+    # source-bound, not driven by leftover metadata.
+    assert _REAL_QUALIFIER_CLAUSE in mutated_named["verbatim_source_quote"]
+    assert snap.content_digest_sha256 == snap.raw["content_digest_sha256"]
+    assert not mutated_named.get("qualifier_clause")
+    assert not mutated_named.get("open_legal_questions")
+    assert mutated_named.get("qualifier_scope_status") in (None, "resolved")
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(snap)
+
+
+def test_db023a_all_signals_stripped_refusal_is_source_bound(tmp_path):
+    """Isolate that the all-signals-stripped refusal is driven by the
+    DIGEST-COVERED source and not merely by the presence of matched_override: the
+    SAME strip (all four qualifier signals ABSENT, disposition matched_override) is
+    REFUSED on the real CONDITIONAL source but ALLOWED — reaching MATCHED_OVERRIDE
+    — on a synthetic UNCONDITIONAL source."""
+    # conditional source, every qualifier signal removed -> refused
+    raw = _raw()
+    named = raw["named_street_overrides"]
+    named["disposition_when_located"] = "matched_override"
+    for key in _FOUR_QUALIFIER_SIGNALS:
+        named.pop(key, None)
+    conditional = _load_mutated(tmp_path, raw, "zr-12-10-sourcebound-cond")
+    with pytest.raises(NamedStreetOverrideError):
+        NamedStreetOverrideMatcher(conditional)
+    # unconditional source, no qualifier signals present at all -> allowed
+    named_uncond = _named_block(disposition_when_located="matched_override")
+    named_uncond.pop("open_legal_questions", None)  # match the "all absent" shape
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named_uncond, alt=_alt_block(),
+        snapshot_id="zr-sourcebound-uncond",
+    )
+    matcher = NamedStreetOverrideMatcher(snap)
+    result = matcher.match(
+        OverrideQuery("Testville", 1, "Testonly Avenue", "First Street", "Second Street")
+    )
+    assert result.status is MatchStatus.MATCHED_OVERRIDE
+
+
+def test_db023a_unconditional_row_with_no_qualifier_signals_reaches_override(tmp_path):
+    """Retain legitimate unconditional-row coverage: a genuinely unconditional
+    designation (source quote decomposes entirely into the designation grammar +
+    capitalized locators) with matched_override and NO qualifier signals is NOT
+    over-refused by the source-bound gate — it still reaches MATCHED_OVERRIDE."""
+    named = _named_block(disposition_when_located="matched_override")
+    for key in _FOUR_QUALIFIER_SIGNALS:
+        named.pop(key, None)
+    snap = _synthetic(
+        tmp_path, excerpt=_excerpt(), named=named, alt=_alt_block(),
+        snapshot_id="zr-db023a-uncond-nosignals",
+    )
+    matcher = NamedStreetOverrideMatcher(snap)
+    result = matcher.match(
+        OverrideQuery("Testville", 1, "Testonly Avenue", "First Street", "Second Street")
+    )
+    assert result.status is MatchStatus.MATCHED_OVERRIDE
+    assert result.provision_id == "test-named"
+
+
+# --------------------------------------------------------------------------
+# DB-023a COMPLETE-SPAN binding (M5-T040 rework): verbatim_source_quote is only
+# constrained to be *a substring* of the digest-covered excerpt, so a tamperer can
+# preserve the ORIGINAL excerpt + digest, remove all qualifier metadata, and NARROW
+# the quote to a real sub-span that DROPS '...which are separated by mapped public
+# park...' while every structured row still anchors. A whitelist/capitalization
+# decomposition of that narrowed span has no residual, so the prior gate would have
+# ALLOWED it. The unconditional binding must therefore come from the AUTHENTICATED,
+# COMPLETE span (a whole sentence unit of the excerpt), which refuses the narrowing.
+# --------------------------------------------------------------------------
+
+
+def test_db023a_narrowed_source_quote_to_omit_condition_refused(tmp_path):
+    """AS-1 (DB-023a complete-span binding): from the REAL zr-12-10 snapshot, keep
+    the excerpt and digest, remove every qualifier signal, set
+    disposition_when_located=matched_override, and NARROW verbatim_source_quote to
+    a genuine sub-span of the excerpt that omits the conditional clause. The
+    narrowed span still anchors both rows (borough/CD/frontages), so the
+    source-tracing guard would NOT catch it and the token decomposition of the
+    narrowed span is residual-free — yet construction is REFUSED because the quote
+    is not a COMPLETE sentence span of the digest-covered excerpt."""
+    raw = _raw()
+    named = raw["named_street_overrides"]
+    full_quote = named["verbatim_source_quote"]
+    marker = ", " + _REAL_QUALIFIER_CLAUSE
+    assert marker in full_quote
+    narrowed = full_quote.split(marker)[0]
+    named["verbatim_source_quote"] = narrowed
+    named["disposition_when_located"] = "matched_override"
+    for key in _FOUR_QUALIFIER_SIGNALS:
+        named.pop(key, None)
+    snap = _load_mutated(tmp_path, raw, "zr-12-10-narrowed-omit-condition")
+    # original excerpt + digest preserved; the narrowed quote is a genuine sub-span
+    # of the digest-covered excerpt that OMITS the condition ...
+    assert snap.verbatim_excerpt == raw["verbatim_excerpt"]
+    assert snap.content_digest_sha256 == snap.raw["content_digest_sha256"]
+    assert narrowed in snap.verbatim_excerpt
+    assert _REAL_QUALIFIER_CLAUSE not in narrowed
+    # ... yet every row locator still anchors in the narrowed span, so the refusal
+    # is not incidental to the source-tracing guard — it is the complete-span bind.
+    assert "Community District 7" in narrowed and "Community District 3" in narrowed
+    assert "Broadway" in narrowed and "Allen Street" in narrowed
+    with pytest.raises(NamedStreetOverrideError, match="COMPLETE sentence span"):
+        NamedStreetOverrideMatcher(snap)
