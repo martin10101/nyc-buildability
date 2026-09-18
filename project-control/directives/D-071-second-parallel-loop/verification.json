@@ -11,7 +11,7 @@
    "applicable_requirement_ids": [
     "D-071-R002"
    ],
-   "reviewed_sha": "5b9da18dd9ba7ab4ad0f7b23f09df3aafd8fe9a6",
+   "reviewed_sha": "5d5c502baff07020a8a0c5e933da5d32e7374b72",
    "reviewed_manifest_sha256": "a40beb782b9ddb488ff3b33d1c9eb4d4c5ae0b48c6027b5fbf30bb49e1392876",
    "producer": "frontend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -22,11 +22,11 @@
      "id": "D-071-R002",
      "state": "PASS",
      "evidence": [
-      "DCV verified at 5b9da18d (report project-control/reports/M5-T036-DCV-verification.md): ZoningContextPanel renders the four designation classes via the shared components with per-value provenance, honest absence, and the validated zolaLotUrl link (null -> honest absent note); mounted alongside the computed answer with the explicit nothing-here-is-computed note; DB-005 unification verified in PropertyOverview + AddressConfirmCard with zero raw template URLs remaining; label-display-only with no forbidden-path change; six gates PASS by non-producer reviewers with verbatim carry-attestations at material 82143124; CI green independently reproduced (gh run view 35289402788, web-e2e success). Restamp condition re-verified by the orchestrator at bc1fae15."
+      "DCV verified at 5b9da18d (report project-control/reports/M5-T036-DCV-verification.md): ZoningContextPanel renders the four designation classes via the shared components with per-value provenance, honest absence, and the validated zolaLotUrl link (null -> honest absent note); mounted alongside the computed answer with the explicit nothing-here-is-computed note; DB-005 unification verified in PropertyOverview + AddressConfirmCard with zero raw template URLs remaining; label-display-only with no forbidden-path change; six gates PASS by non-producer reviewers with verbatim carry-attestations at material 82143124; CI green independently reproduced (gh run view 35289402788, web-e2e success). Restamp condition re-verified by the orchestrator at bc1fae15. Restamped to 5d5c502b under the DCV's conditional pre-authorization (git diff 5b9da18d 5d5c502b --name-only = control-plane only; nav-block input byte-stable)."
      ],
      "verified_at": "2026-09-18T05:55:50+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "5b9da18dd9ba7ab4ad0f7b23f09df3aafd8fe9a6"
+     "reviewed_sha": "5d5c502baff07020a8a0c5e933da5d32e7374b72"
     }
    ]
   }
