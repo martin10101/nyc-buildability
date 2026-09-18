@@ -6,6 +6,7 @@
   "objective": "Close DB-023 (a)-(c) inside the matcher FIRST (structural refusal of matched_override on unresolved qualifiers or digest-covered structured fields; construction-time validation of provision_id/section_anchor failing closed; bounded raw-query reprs) plus advisory (d) word-boundary anchoring; then wire named_street_override into the wide-street attestation seam so exceptions_checked can become True ONLY when every candidate segment resolves NOT_MATCHED with fully-resolved inputs - MATCHED_OVERRIDE and INDETERMINATE stay professional-review refusals carrying distinct override provenance; add DB-021 provider ceilings (a: provider-side MAX_LOT_VERTICES pre-check, b: wide_object_ids cap pre-fetch, c: two-layer exceptions-attestation docstring, e: untested-branch coverage); gate DevelopmentLimits/CalculationEvidence/ReportView uniformly on determination_state with the DB-025(a-c) display corrections",
   "business_reason": "DB-010 wiring is the step that lets the product honestly attest named-street exceptions were checked near Broadway W94-97 and Allen St instead of always refusing; DB-023 is the G5-ruled precondition before the matcher gains its first consumer",
   "inputs": [
+    "RUN-45 CARRYOVER (binding; read FIRST): the hardening phase is DONE, committed, and harvested as material 987930a2 - DB-023(a) complete-span source binding, (b) construction-time provision_id/section_anchor validation, (c) bounded reprs, (d) word-boundary anchoring, plus DB-021(a) MAX_LOT_VERTICES pre-check, (b) wide-segment cap, (c) two-layer attestation docstring, and the page-digest provider tests. Do NOT rework, re-verify, or re-report ANY of that. THIS unit builds ONLY the remaining scope: (1) the WIRING integration per the WIRING SEMANTICS input (consumer import of named_street_override is now AUTHORIZED - the DB-023 precondition is closed); (2) DB-021(e) direct branch tests (segment_geometry_unexpected_error, _attested_lot sub-branches); (3) the DB-025(d) multi-page digest fixture IF not already covered by the committed page-digest tests (check first; do not duplicate); (4) DB-025(a-c) display gating in DevelopmentLimits/CalculationEvidence/ReportView + their two test suites. REPORT DISCIPLINE (the last run burned all four review rounds on report revisions, not code): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass.",
     "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
     "COMMAND CWD (binding; the rules/api suites do NOT collect from repo root - known invocation artifact): run the first four documented commands from the services/api directory (plain `cd services/api` first; the Bash tool keeps the working directory between commands; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
     "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T040/T041 contract seam, HEAD 198c24f8). Run `python tools/code_graph/query.py --no-regen impact <path>` BEFORE broad sweeps; graph is ADVISORY - verify every material conclusion in source. Impact set for this packet: wide_street_wiring.py is imported by integration.py (:56, :514-520), api/v1/rule_evaluation.py:74, spatial/wide_street_live_provider.py:100, and the suites test_rule_evaluation_api/test_rules_integration/test_wide_street_wiring; the provider is imported by api/v1/rule_evaluation.py:67 + its suites. named_street_override.py is currently a LEAF (only its own test imports it) - THIS packet creates its first consumer, which is exactly why DB-023 must close first. Any attestation-behavior change is visible to tests/api and tests/rules/test_rules_integration.py - both in allowed_paths and they MUST be green.",
@@ -75,7 +76,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 45,
   "risks": [
     "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
     "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
@@ -83,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:09.965148+00:00",
-  "updated_at": "2026-09-18T17:18:04.688618+00:00",
+  "updated_at": "2026-09-18T22:34:58.339867+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -123,6 +124,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the seq-118 two-loop seam; awaiting loop-1 launch"
+    },
+    {
+      "at": "2026-09-18T22:34:58.339867+00:00",
+      "agent": "backend-engineer",
+      "percent": 45,
+      "status": "in_progress",
+      "message": "Harvest 1 (run 45, breaker at 4 rounds - report churn, not code): DB-023(a-d) + DB-021(a,b,c) + page-digest tests committed as material 987930a2; orchestrator reproduced ruff clean / 100 passed / modularity 0 failures in-worktree; wiring + DB-021(e) + DB-025(a-d) remain; relaunching run 46 with RUN-45 carryover block"
     }
   ]
 }
