@@ -209,3 +209,104 @@ describe("AS-4 — mount on the overview surface; excluded from the printed brie
     expect(screen.queryByTestId("zoning-context-panel")).toBeNull();
   });
 });
+
+function renderOverview(profile = baseProfile()) {
+  return render(
+    <PropertyOverview
+      profile={profile}
+      scenario={null}
+      evaluation={null}
+      onInspect={vi.fn()}
+    />,
+  );
+}
+
+describe("AS-5 (DB-019a) — both ZoLa link glyphs are decorative (aria-hidden), names unchanged", () => {
+  it("hides the ↗ glyph on the panel's ZoLa link while keeping its accessible name", () => {
+    const panel = renderPanel();
+    const link = within(panel).getByTestId("zoning-context-zola-link");
+    const glyph = link.querySelector<HTMLElement>("span[aria-hidden='true']");
+    expect(glyph).not.toBeNull();
+    expect(glyph!.textContent).toBe("↗");
+    // The decorative arrow is out of the accessible name — the link still
+    // resolves by its human name.
+    expect(within(panel).getByRole("link", { name: "Open in ZoLa" })).toBe(link);
+  });
+
+  it("hides the ↗ glyph on the overview Site-context ZoLa link while keeping its name", () => {
+    renderOverview();
+    const link = screen.getByTestId("site-zola-link");
+    const glyph = link.querySelector<HTMLElement>("span[aria-hidden='true']");
+    expect(glyph).not.toBeNull();
+    expect(glyph!.textContent).toBe("↗");
+    expect(screen.getByRole("link", { name: "Open ZoLa" })).toBe(link);
+  });
+});
+
+describe("AS-6 (DB-019b) — PropertyOverview honest absent note on a non-canonical or null BBL", () => {
+  it("renders NO Site-context link and a panel-matched absent note when the BBL is not canonical", () => {
+    const profile = baseProfile();
+    profile.identity.bbl = "12345"; // wrong length — zolaLotUrl returns null
+    renderOverview(profile);
+    expect(screen.queryByTestId("site-zola-link")).toBeNull();
+    const siteAbsent = screen.getByTestId("site-zola-absent");
+    // PropertyOverview nests ZoningContextPanel, so its own absent note renders
+    // in the same tree — assert the two honest notes are the SAME copy (matched,
+    // not independently drifting literals).
+    const panelAbsent = screen.getByTestId("zoning-context-zola-absent");
+    expect(siteAbsent.textContent).toBe(panelAbsent.textContent);
+    expect(siteAbsent.textContent).toContain("needs a valid BBL");
+  });
+
+  it("renders the honest absent note (no link, no crash) when the BBL is literally null", () => {
+    // Explicit null-BBL regression for AS-6 / DB-019b. The generated contract
+    // types identity.bbl as a non-null string, but a connector miss can leave
+    // it absent; a literal null must take the SAME honest-absence path as a
+    // malformed string — never throw (zolaLotUrl's typeof guard and
+    // propertyHref's `?? ""` both tolerate it) and never emit a guessed link.
+    // Deliberate invalid-shape probe per CODING_RULES: `as unknown as`.
+    const profile = baseProfile();
+    profile.identity.bbl = null as unknown as string;
+    renderOverview(profile);
+    expect(screen.queryByTestId("site-zola-link")).toBeNull();
+    const siteAbsent = screen.getByTestId("site-zola-absent");
+    // Same copy the nested panel shows for its own null-derived absence — the
+    // two honest notes stay matched, not independently drifting literals.
+    const panelAbsent = screen.getByTestId("zoning-context-zola-absent");
+    expect(siteAbsent.textContent).toBe(panelAbsent.textContent);
+    expect(siteAbsent.textContent).toContain("needs a valid BBL");
+  });
+
+  it("with a canonical BBL the Site-context link renders and no absent note appears (prior rendering preserved)", () => {
+    renderOverview();
+    expect(screen.getByTestId("site-zola-link").getAttribute("href")).toBe(
+      `${ZOLA_PREFIX}1000010010`,
+    );
+    expect(screen.queryByTestId("site-zola-absent")).toBeNull();
+  });
+});
+
+describe("AS-7 (DB-019c) — landmark/historic rows surface the mapped-feature coverage_status", () => {
+  it("shows each present designation's coverage status inline, display-only (base fixture: conditional)", () => {
+    const panel = renderPanel();
+    const designations = within(panel).getByTestId("zoning-context-designations");
+    // One badge per PRESENT designation (landmark + historic), read straight
+    // from the fixture's coverage_status — nothing computed. Not colour-only:
+    // CoverageBadge carries the enum token + a screen-reader gloss.
+    const badges = designations.querySelectorAll<HTMLElement>(".status-badge");
+    expect(badges).toHaveLength(2);
+    for (const badge of Array.from(badges)) {
+      expect(badge.className).toContain("status-conditional");
+    }
+  });
+
+  it("adds NO coverage badge on an Unknown row — nothing is invented when the feature is absent", () => {
+    const profile = baseProfile();
+    profile.zoning.mapped_features = [];
+    const panel = renderPanel(profile);
+    const designations = within(panel).getByTestId("zoning-context-designations");
+    expect(designations.querySelectorAll(".status-badge")).toHaveLength(0);
+    // The honest Unknown rows are still both present.
+    expect(within(panel).getAllByText("Unknown — not supplied")).toHaveLength(2);
+  });
+});

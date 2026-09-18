@@ -994,3 +994,33 @@ describe("S8 — manual/Geoclient fallback opens, focuses, and preserves ONLY th
     await waitFor(() => expect(document.activeElement).toBe(street));
   });
 });
+
+/* ================================================================ *
+ * DB-007b — architect "Not my property" returns focus to the
+ *           address search box via the entryFocusNonce/useEffect
+ *           pattern (never a synchronous .focus() on a remounting
+ *           target, never dropped to <body>).
+ * ================================================================ */
+
+describe("DB-007b — architect 'Not my property' returns focus to the search box", () => {
+  it("moves focus to the architect autocomplete input when leaving the confirm card, not to <body>", async () => {
+    stubFetchOnce(jsonResponse(resolvedDoc(), 200));
+    render(<AddressResolutionScreen architect />);
+
+    // Drive a resolution through the manual resolver (the autocomplete's
+    // suggestion hook is mocked to a source failure in this file, so a pick
+    // is not available — the manual form reaches the same confirm card).
+    fillAndSubmit();
+    await screen.findByTestId("address-confirm-card");
+
+    // Leaving via "Not my property" clears the card; focus must return to the
+    // search box through the nonce effect (the entry UI is remounting in the
+    // same update, so a synchronous focus would hit a null ref and drop to
+    // <body> — CODING_RULES focus-nonce rule).
+    fireEvent.click(screen.getByTestId("not-my-property"));
+    const searchBox = screen.getByLabelText("Street address");
+    await waitFor(() => expect(document.activeElement).toBe(searchBox));
+    // The confirm card is gone (form values are retained for editing).
+    expect(screen.queryByTestId("address-confirm-card")).toBeNull();
+  });
+});

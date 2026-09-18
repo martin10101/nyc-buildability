@@ -55,7 +55,14 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
       <section className="card architect-map-card">
         <div className="architect-panel-heading">
           <h2>Site context</h2>
-          {siteZolaUrl ? <a href={siteZolaUrl} target="_blank" rel="noopener noreferrer">Open ZoLa ↗</a> : null}
+          {siteZolaUrl ? (
+            <a href={siteZolaUrl} target="_blank" rel="noopener noreferrer" data-testid="site-zola-link">Open ZoLa <span aria-hidden="true">↗</span></a>
+          ) : (
+            // DB-019b: honest absence when there is no canonical BBL, copy-matched
+            // to ZoningContextPanel's zoning-context-zola-absent note. Never a raw
+            // template-string URL for a lot the source did not identify.
+            <span className="section-note" data-testid="site-zola-absent">The city map link needs a valid BBL, which this lot did not provide.</span>
+          )}
         </div>
         <LotOutlineMap bbl={bbl} context/>
       </section>

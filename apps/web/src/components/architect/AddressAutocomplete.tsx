@@ -9,15 +9,25 @@ import {
 } from "@/lib/address-search";
 import { useAddressSuggestions } from "@/lib/architect/use-address-suggestions";
 
+/** The label of the explicit full-address action. DB-009: exported as the
+ * SINGLE source of truth for both the button below and the failure copy that
+ * names it, so the copy and the affordance it points at cannot drift apart
+ * silently (one shared string, asserted by the tests). */
+export const FULL_ADDRESS_SEARCH_LABEL = "Search this full address";
+
 /** Distinct, non-collapsing copy per failure reason (handoff §6): the old UI
  * folded timeout, source failure, and transport error into one "unavailable"
- * line. Each reason now reads differently and points at a real next step. */
+ * line. Each reason now reads differently and points at a real next step.
+ * DB-006: `rejected` (a 4xx the service will not accept) is its own honest,
+ * non-retry line. DB-009: the reasons that still render the full-address button
+ * name it by its exact label via FULL_ADDRESS_SEARCH_LABEL. */
 const ERROR_MESSAGES: Record<AddressSearchErrorReason, string> = {
-    rate_limited: "Address suggestions are rate-limited right now. Wait a moment, then search the full address, or use manual entry or BBL below.",
-    timeout: "The city’s address service is taking too long to suggest. Search the full address, or use manual entry or BBL below.",
-    source_unavailable: "The city’s address service is temporarily unavailable. Search the full address, or use manual entry or BBL below.",
-    unavailable: "Couldn’t reach the city’s address service. Check your connection, then search the full address, or use manual entry or BBL below.",
-    malformed: "The city’s address service returned a response we can’t read safely. Use manual entry or BBL below.",
+    rate_limited: `Address suggestions are rate-limited right now. Wait a moment, then use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+    timeout: `The city’s address service is taking too long to suggest. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+    source_unavailable: `The city’s address service is temporarily unavailable. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+    rejected: `The city’s address service didn’t accept that search. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+    unavailable: `Couldn’t reach the city’s address service. Check your connection, then use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+    malformed: `The city’s address service returned a response we can’t read safely. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
 };
 
 export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
@@ -161,7 +171,7 @@ export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
     </p>
     {trimmedLength >= 3 && !selected ? <div className="architect-search-actions">
       <button type="button" className="secondary-button" data-testid="full-address-search" onClick={runFullSearch} disabled={searching}>
-        Search this full address
+        {FULL_ADDRESS_SEARCH_LABEL}
       </button>
       {offerRecovery && onFallback ? <button type="button" className="secondary-button" data-testid="use-manual-entry" onClick={() => onFallback(text)}>
         Use manual entry with this address

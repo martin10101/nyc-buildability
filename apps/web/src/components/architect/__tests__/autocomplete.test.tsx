@@ -1,7 +1,7 @@
 import { cleanup, act, fireEvent, render, screen } from "@testing-library/react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AddressAutocomplete } from "../AddressAutocomplete";
+import { AddressAutocomplete, FULL_ADDRESS_SEARCH_LABEL } from "../AddressAutocomplete";
 import type { AddressSearchErrorReason, AddressSearchOutcome } from "@/lib/address-search";
 const search = vi.hoisted(() => vi.fn());
 const fullSearch = vi.hoisted(() => vi.fn());
@@ -48,6 +48,9 @@ describe("distinct failure recovery and the explicit full-address action (M5-T03
       ["rate_limited", /rate-limited/i],
       ["timeout", /taking too long/i],
       ["source_unavailable", /temporarily unavailable/i],
+      // DB-006: a 4xx the service will not accept reads as its own honest line,
+      // never the transient "temporarily unavailable" copy.
+      ["rejected", /didn.t accept that search/i],
       ["unavailable", /check your connection/i],
       ["malformed", /read safely/i],
     ];
@@ -60,6 +63,34 @@ describe("distinct failure recovery and the explicit full-address action (M5-T03
       // The typed text survives every failure — nothing is retyped.
       expect(screen.getByRole("combobox")).toHaveValue(`120 Broadway ${reason}`);
     }
+  });
+
+  it("AS-2 (DB-007): the timeout outcome STILL offers the explicit full-address search button", async () => {
+    // The recovery affordance the timeout copy points at must actually be
+    // present — the test fails if the button disappears on a timeout.
+    vi.useFakeTimers();
+    search.mockResolvedValue({ kind: "error", reason: "timeout" });
+    render(<AddressAutocomplete onPick={vi.fn()} onEdit={vi.fn()} inputRef={createRef()} />);
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "120 Broadway" } });
+    await act(async () => { vi.advanceTimersByTime(300); });
+    const button = screen.getByTestId("full-address-search");
+    expect(button).toBeInTheDocument();
+    // It is usable, not stuck disabled (nothing is searching at rest).
+    expect(button).not.toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent(/taking too long/i);
+  });
+
+  it("AS-4 (DB-009): the failure copy names the SAME string the button carries — one shared label, no silent drift", async () => {
+    // A malformed reply still renders the full-address button; its copy must
+    // name that button by exactly the label the button shows. Both read from
+    // FULL_ADDRESS_SEARCH_LABEL, so a rename cannot break only one side.
+    vi.useFakeTimers();
+    search.mockResolvedValue({ kind: "error", reason: "malformed" });
+    render(<AddressAutocomplete onPick={vi.fn()} onEdit={vi.fn()} inputRef={createRef()} />);
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "120 Broadway" } });
+    await act(async () => { vi.advanceTimersByTime(300); });
+    expect(screen.getByTestId("full-address-search")).toHaveTextContent(FULL_ADDRESS_SEARCH_LABEL);
+    expect(screen.getByRole("status")).toHaveTextContent(FULL_ADDRESS_SEARCH_LABEL);
   });
 
   it("distinguishes an incomplete address from a genuine no-match (neither is presented as a service failure)", async () => {

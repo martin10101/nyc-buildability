@@ -20,12 +20,17 @@ export interface AddressSuggestion {
     query: AddressQuery;
 }
 /** Distinct, non-collapsing failure reasons (handoff §6): a transient source
- * failure (5xx) is `source_unavailable` (retried, bounded); a transport/offline
- * failure is `unavailable`; a rate limit, malformed body, and deadline are their
- * own reasons. The UI must never fold these into one "unavailable" message. */
+ * failure (>= 500) is `source_unavailable` (retried, bounded); a client-side
+ * refusal (any other 4xx/non-2xx, e.g. 404/422) is `rejected` (NEVER retried —
+ * retrying cannot change a request the service will not accept); a transport/
+ * offline failure is `unavailable`; a rate limit (429), malformed body, and
+ * deadline are their own reasons. The UI must never fold these into one
+ * "unavailable" message. DB-006: `rejected` is the honest 4xx outcome that is
+ * distinct from — and never labelled — `source_unavailable`. */
 export type AddressSearchErrorReason =
     | "unavailable"
     | "source_unavailable"
+    | "rejected"
     | "rate_limited"
     | "malformed"
     | "timeout";
@@ -122,8 +127,16 @@ async function fetchGeoSearchOnce(endpoint: string, text: string, options: Addre
             const response = await (options.fetchImpl ?? fetch)(`${endpoint}?text=${encodeURIComponent(text.trim())}`, { signal: controller.signal, credentials: "omit", referrerPolicy: "no-referrer", headers: { Accept: "application/json" } });
             if (response.status === 429)
                 return { kind: "error", reason: "rate_limited" };
-            if (!response.ok)
+            // DB-006: only a transient server-side failure (>= 500) is a
+            // retryable `source_unavailable`; every other non-2xx (a 4xx the
+            // service will not accept — 404/422/400 — or any other non-ok
+            // status) is a distinct, non-retried `rejected`. Retrying a 4xx
+            // cannot change the answer, so it must not spend the retry bound
+            // nor borrow the transient-failure label.
+            if (response.status >= 500)
                 return { kind: "error", reason: "source_unavailable" };
+            if (!response.ok)
+                return { kind: "error", reason: "rejected" };
             if (!response.headers.get("content-type")?.includes("json"))
                 return { kind: "error", reason: "malformed" };
             let body: unknown;
