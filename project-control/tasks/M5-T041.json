@@ -63,15 +63,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Disjointness with M5-T040: never touch DevelopmentLimits/CalculationEvidence/ReportView, their tests, or any services/api path.",
     "Validator tightening is OPTIONAL; breaking one recorded fixture or web-e2e is a failure, not a tightening."
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:24.658009+00:00",
-  "updated_at": "2026-09-18T17:09:38.078133+00:00",
+  "updated_at": "2026-09-18T17:18:05.661318+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -84,5 +84,15 @@
   "directive_regime_entered_at": "2026-09-18T17:06:24.658009+00:00",
   "documented_test_commands": [
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t041",
+  "progress_log": [
+    {
+      "at": "2026-09-18T17:18:05.661318+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the seq-118 two-loop seam; awaiting loop-2 launch"
+    }
   ]
 }

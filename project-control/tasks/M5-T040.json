@@ -74,8 +74,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
     "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
@@ -83,7 +83,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:09.965148+00:00",
-  "updated_at": "2026-09-18T17:09:38.078133+00:00",
+  "updated_at": "2026-09-18T17:18:04.688618+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -114,5 +114,15 @@
     "python -m pytest tests/spatial/test_wide_street_live_provider.py -q",
     "python -m pytest tests/api tests/rules/test_rules_integration.py -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t040",
+  "progress_log": [
+    {
+      "at": "2026-09-18T17:18:04.688618+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the seq-118 two-loop seam; awaiting loop-1 launch"
+    }
   ]
 }
