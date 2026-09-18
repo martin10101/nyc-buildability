@@ -147,16 +147,18 @@ class PropertyRuleEvaluation:
     # rule's OWN byte-checked parameters (the higher wide value only for an
     # affirmative WITHIN determination, else the conservative value, else None);
     # ``wide_street_determination`` is a JSON-safe provenance summary (DRAFT).
-    # These are DELIBERATELY not part of as_dict()/the frozen rule_evaluation
-    # v1.0.0 contract (a future additive contract bump serializes the block); the
-    # determination's effect that DOES reach the response is carried by the
-    # existing coverage_status / professional_review_required / reasons fields.
+    # M5-T037: the rule_evaluation contract bump to v1.1.0 serializes these as the
+    # OPTIONAL ``wide_street`` block in as_dict() - emitted ONLY when a determination
+    # actually folded in (``wide_street_determination`` is not None), so a document
+    # with no determination stays a valid 1.0.0-shaped body. The determination's
+    # coverage effect continues to reach the response through the existing
+    # coverage_status / professional_review_required / reasons fields as well.
     wide_street_far_row: str | None = None
     wide_street_governing_far: float | None = None
     wide_street_determination: dict | None = None
 
     def as_dict(self) -> dict:
-        return {
+        document = {
             "bbl": self.bbl,
             "coverage_status": self.coverage_status,
             "data_completeness": self.data_completeness,
@@ -180,6 +182,17 @@ class PropertyRuleEvaluation:
             "coverage_source": self.coverage_source,
             "rule_conflict": (dict(self.rule_conflict) if self.rule_conflict is not None else None),
         }
+        # M5-T037 (rule_evaluation v1.1.0, additive): serialize the OPTIONAL
+        # wide-street block ONLY when a determination folded in (a wide-street-
+        # conditional district with a supplied determination). On every other path
+        # the key is ABSENT and the body stays valid under both the 1.0.0 and 1.1.0
+        # schema. The block is the DRAFT D-052 provenance summary already assembled
+        # by _wide_street_summary (far row, governing FAR, source versions, matched
+        # geometry refs, interpreted bounds, classification reasons, policy decision
+        # states, DRAFT label); it is never a Verified value.
+        if self.wide_street_determination is not None:
+            document["wide_street"] = dict(self.wide_street_determination)
+        return document
 
     def export(self) -> dict:
         """Serialize for a downstream consumer, fail-closed: raises

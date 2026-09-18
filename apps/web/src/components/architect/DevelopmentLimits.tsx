@@ -47,6 +47,39 @@ export function DraftHeadline({ scenario, evaluation = null, bbl = "" }: { scena
   </div>;
 }
 
+/**
+ * The wide-street conditional-FAR result (rule_evaluation 1.1.0 optional block).
+ * Answer-first and calm: WHAT was calculated (the conditional FAR row), its
+ * UNITS (a dimensionless ratio; floor area is FAR × lot area in sq ft), the
+ * CONDITIONS under which it applies (within 100 ft of a wide street; DRAFT
+ * pending qualified legal review), and a link to its SOURCES (the D-052
+ * provenance summary rendered in CalculationEvidence). professional_review_
+ * required is shown as the honest escalation it is — the higher wide-street FAR
+ * is never presented as the computed result on uncertainty (D-051/D-073-R003).
+ * Renders NOTHING when the document carries no block (a 1.0.0-shaped body), so
+ * no value is invented.
+ */
+function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvaluation | null; evidenceHref: string }) {
+  const wide = evaluation?.wide_street;
+  if (!wide) return null;
+  const review = wide.determination_state === "professional_review_required";
+  const within = wide.determination_state === "within_100ft_of_wide_street";
+  return <section className="architect-wide-street" data-testid="development-wide-street" aria-label="Wide-street conditional FAR">
+    <div className="architect-panel-heading"><h3>Wide-street conditional FAR</h3><span className="architect-status">Draft</span></div>
+    {review
+      ? <p className="architect-development-status" data-testid="wide-street-result">Professional review required — the higher wide-street floor-area ratio is withheld until a qualified reviewer confirms the determination.</p>
+      : <>
+          <p className="architect-development-value" data-testid="wide-street-result">{wide.governing_max_residential_far != null ? farValue(wide.governing_max_residential_far) : "Not calculated"}</p>
+          <p className="section-note">Wide-street conditional FAR — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
+          <p className="section-note">{within ? "Applies within 100 ft of a wide street." : "Outside 100 ft of a wide street; the conservative floor-area ratio governs."}</p>
+        </>}
+    <p className="section-note" data-testid="wide-street-draft">{wide.draft_label} · Pending qualified legal review (not verified).</p>
+    <p>{wide.reason}</p>
+    <p className="section-note">{wide.fallback_direction_note}</p>
+    <Link href={evidenceHref}>Wide-street sources and provenance →</Link>
+  </section>;
+}
+
 export function DevelopmentLimits({ profile, scenario, evaluation, onInspect }: {
   profile: PropertyProfile;
   scenario: Scenario | null;
@@ -78,6 +111,7 @@ export function DevelopmentLimits({ profile, scenario, evaluation, onInspect }: 
       </div>
     </div>
     <DraftHeadline scenario={matchedScenario} evaluation={evaluation} bbl={bbl}/>
+    <WideStreetResult evaluation={evaluation} evidenceHref={evidenceHref}/>
     <dl className="architect-bulk-rows">
       {BULK_ROWS.map(([key, label]) => {
         const row = bulkRow(matchedScenario, key, evaluation);

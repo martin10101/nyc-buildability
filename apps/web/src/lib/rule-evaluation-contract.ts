@@ -97,6 +97,30 @@ export const RULE_LIFECYCLE_STATUSES = [
   "published",
 ] as const satisfies readonly (RuleEvaluation["rule_lifecycle_statuses"][number])[];
 
+/** The closed set of published rule_evaluation contract versions (M5-T037: the
+ * additive 1.1.0 bump appends the OPTIONAL wide_street block; 1.0.0 stays valid
+ * because the block is optional and both versions remain admitted). */
+export const RULE_EVALUATION_CONTRACT_VERSIONS = [
+  "1.0.0",
+  "1.1.0",
+] as const satisfies readonly RuleEvaluation["contract_version"][];
+
+type WideStreetBlock = NonNullable<RuleEvaluation["wide_street"]>;
+
+/** The typed wide-street determination states (never collapsed). */
+export const WIDE_STREET_DETERMINATION_STATES = [
+  "within_100ft_of_wide_street",
+  "not_within_100ft_of_wide_street",
+  "professional_review_required",
+] as const satisfies readonly WideStreetBlock["determination_state"][];
+
+/** Which ZR 23-22 conditional-FAR row fired (`none` = no bonus granted). */
+export const WIDE_STREET_FAR_ROWS = [
+  "wide_street_row",
+  "standard_row",
+  "none",
+] as const satisfies readonly WideStreetBlock["far_row"][];
+
 /** Two-way equality proof: `true` only when A and B are the same union. */
 type MutuallyEqual<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never;
 
@@ -162,6 +186,28 @@ function checkStringArray(problems: Problems, path: string, value: unknown): voi
   value.forEach((item, index) => {
     if (typeof item !== "string") {
       problems.add(`${path}[${index}]`, "must be a string");
+    }
+  });
+}
+
+/** Array whose items are strings, or (when ``allowNull``) strings-or-null — the
+ * two shapes the D-052 provenance arrays use. */
+function checkArrayOf(
+  problems: Problems,
+  path: string,
+  value: unknown,
+  allowNull: boolean,
+): void {
+  if (!Array.isArray(value)) {
+    problems.add(path, "must be an array");
+    return;
+  }
+  value.forEach((item, index) => {
+    if (!(typeof item === "string" || (allowNull && item === null))) {
+      problems.add(
+        `${path}[${index}]`,
+        allowNull ? "must be a string or null" : "must be a string",
+      );
     }
   });
 }
@@ -283,6 +329,63 @@ function checkRuleConflict(problems: Problems, value: unknown): void {
 }
 
 /**
+ * Validate the OPTIONAL wide_street block (contract 1.1.0). ABSENT is valid (a
+ * 1.0.0-shaped body omits it); when PRESENT every documented key of the DRAFT
+ * D-052 provenance summary is shape-checked, so a malformed block fails TOTAL
+ * validation and never renders. No legal meaning is judged here — shape only.
+ */
+function checkWideStreet(problems: Problems, value: unknown): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) {
+    problems.add("wide_street", "must be an object when present");
+    return;
+  }
+  checkEnum(
+    problems,
+    "wide_street.determination_state",
+    value.determination_state,
+    WIDE_STREET_DETERMINATION_STATES,
+  );
+  checkEnum(problems, "wide_street.far_row", value.far_row, WIDE_STREET_FAR_ROWS);
+  if (
+    !(
+      value.governing_max_residential_far === null ||
+      typeof value.governing_max_residential_far === "number"
+    )
+  ) {
+    problems.add(
+      "wide_street.governing_max_residential_far",
+      "must be a number or null",
+    );
+  }
+  for (const key of [
+    "coverage_hint",
+    "draft_label",
+    "fallback_direction_note",
+    "reason",
+  ] as const) {
+    if (!isNonEmptyString(value[key])) {
+      problems.add(`wide_street.${key}`, "must be a non-empty string");
+    }
+  }
+  for (const key of ["exceptions_checked", "named_street_override_pending"] as const) {
+    if (typeof value[key] !== "boolean") {
+      problems.add(`wide_street.${key}`, "must be a boolean");
+    }
+  }
+  for (const key of [
+    "policy_decision_states",
+    "interpreted_bounds_summaries",
+    "classification_reasons",
+  ] as const) {
+    checkArrayOf(problems, `wide_street.${key}`, value[key], false);
+  }
+  for (const key of ["original_labels", "source_versions", "matched_geometry_refs"] as const) {
+    checkArrayOf(problems, `wide_street.${key}`, value[key], true);
+  }
+}
+
+/**
  * Validate an HTTP-200 body against the generated rule_evaluation types.
  * Returns the typed document ONLY when every documented check passes. A
  * `verified` top-level coverage_status is rejected (draft is never Verified).
@@ -295,9 +398,12 @@ export function validateRuleEvaluationDocument(
     return { ok: false, problems: ["rule_evaluation: response body is not a JSON object"] };
   }
 
-  if (body.contract_version !== "1.0.0") {
-    problems.add("contract_version", 'must be the string "1.0.0"');
-  }
+  checkEnum(
+    problems,
+    "contract_version",
+    body.contract_version,
+    RULE_EVALUATION_CONTRACT_VERSIONS,
+  );
   checkEvaluatedInput(problems, body.evaluated_input);
   checkEnum(problems, "coverage_status", body.coverage_status, DRAFT_COVERAGE_STATUSES);
   checkEnum(problems, "coverage_source", body.coverage_source, COVERAGE_SOURCES);
@@ -351,6 +457,7 @@ export function validateRuleEvaluationDocument(
   checkFamilyCoverage(problems, body.family_coverage);
   checkStringArray(problems, "reasons", body.reasons);
   checkRuleConflict(problems, body.rule_conflict);
+  checkWideStreet(problems, body.wide_street);
 
   if (problems.list.length > 0) {
     return { ok: false, problems: problems.list };

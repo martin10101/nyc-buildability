@@ -339,23 +339,29 @@ def _attested_wide_segments(
         geom_result = fetchers.fetch_segment_geometries_by_ids(chunk, correlation_id)
         if geom_result.exceeded_transfer_limit_on_last_page:
             return None
-        crs = geom_result.crs or {}
-        for entry in geom_result.entries:
-            if entry.status != GEOMETRY_OK:
-                continue
-            attested.append(
-                AttestedWideSegment(
-                    polyline=entry,
-                    wkid=crs.get("wkid"),
-                    latest_wkid=crs.get("latest_wkid", crs.get("latestWkid")),
-                    classification_basis=(
-                        "DCM effective_disposition=wide; ambiguity_class="
-                        f"{entry.segment.width_classification.ambiguity_class}"
-                    ),
-                    source_retrieved_at=geom_result.retrieved_at,
-                    source_raw_digest=entry.segment.streetwidth_raw,
+        # DB-020 (M5-T035 G1 F1): the attested provenance digest MUST be the
+        # geometry-page raw-body sha256 (SegmentGeometryPage.raw_digest), NOT the
+        # segment's free-text Streetwidth attribute (e.g. "80"). Walk the typed
+        # pages (never the flattened entries) so each attested segment stays bound
+        # to the retrieval identity and raw digest of the page it was parsed from.
+        for page in geom_result.pages:
+            crs = page.crs or {}
+            for entry in page.entries:
+                if entry.status != GEOMETRY_OK:
+                    continue
+                attested.append(
+                    AttestedWideSegment(
+                        polyline=entry,
+                        wkid=crs.get("wkid"),
+                        latest_wkid=crs.get("latest_wkid", crs.get("latestWkid")),
+                        classification_basis=(
+                            "DCM effective_disposition=wide; ambiguity_class="
+                            f"{entry.segment.width_classification.ambiguity_class}"
+                        ),
+                        source_retrieved_at=page.retrieved_at,
+                        source_raw_digest=page.raw_digest,
+                    )
                 )
-            )
     return attested
 
 

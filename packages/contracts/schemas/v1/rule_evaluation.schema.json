@@ -30,8 +30,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published rule_evaluation contract versions. 1.0.0 = M4-T005 initial shape. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. This is the version of THIS contract, distinct from evaluated_input.profile_contract_version (the version of the property_profile that was evaluated)."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published rule_evaluation contract versions. 1.0.0 = M4-T005 initial shape. 1.1.0 = M5-T037 additive bump that appends the OPTIONAL wide_street block (the ZR 23-22 conditional-FAR determination summary); a 1.0.0 document stays valid because the block is optional and 1.0.0 remains admitted. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. This is the version of THIS contract, distinct from evaluated_input.profile_contract_version (the version of the property_profile that was evaluated)."
     },
     "evaluated_input": {
       "$ref": "#/$defs/evaluated_input"
@@ -143,6 +143,7 @@
         { "type": "null" }
       ]
     },
+    "wide_street": { "$ref": "#/$defs/wide_street" },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid/ fixture (packages/contracts README convention). The evaluator NEVER emits this key; it is allowed here (optional) so an invalid fixture fails only for its stated defect under the additionalProperties:false guard, and so valid fixtures - which omit it - stay clean."
@@ -444,6 +445,105 @@
         "quote": { "type": "string" },
         "last_amended": { "type": ["string", "null"] },
         "provenance": { "type": "object" }
+      }
+    },
+    "wide_street": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "OPTIONAL wide-street conditional-FAR block (M5-T037, contract 1.1.0). Present ONLY when a wide-street determination folded into a wide-street-conditional ZR 23-22 district (R6/R7-1/R7-2/R8); ABSENT on every other path (default provider, non-conditional district, fail-safe). The DRAFT D-052 provenance summary produced by app.rules.integration._wide_street_summary: far_row is which conditional-FAR row fired; governing_max_residential_far is the dimensionless FAR that row selects from the rule's OWN byte-checked parameters (the higher wide value only for an affirmative WITHIN determination, the conservative value for NOT_WITHIN, null when no row fires); the provenance tuples carry the D-052 quintuple aggregated across the policy decisions. Never Verified - DRAFT pending G6; the higher wide-street FAR is withheld on uncertainty (D-051).",
+      "required": [
+        "determination_state",
+        "far_row",
+        "governing_max_residential_far",
+        "coverage_hint",
+        "exceptions_checked",
+        "named_street_override_pending",
+        "policy_decision_states",
+        "original_labels",
+        "source_versions",
+        "matched_geometry_refs",
+        "interpreted_bounds_summaries",
+        "classification_reasons",
+        "draft_label",
+        "fallback_direction_note",
+        "reason"
+      ],
+      "properties": {
+        "determination_state": {
+          "type": "string",
+          "enum": [
+            "within_100ft_of_wide_street",
+            "not_within_100ft_of_wide_street",
+            "professional_review_required"
+          ],
+          "description": "The typed wide-street determination state (never collapsed): a confident WITHIN or NOT_WITHIN draft outcome, or the honest professional_review_required fail-safe."
+        },
+        "far_row": {
+          "type": "string",
+          "enum": ["wide_street_row", "standard_row", "none"],
+          "description": "Which ZR 23-22 conditional-FAR row fired. 'none' means no row fired and NO FAR bonus was granted (professional review)."
+        },
+        "governing_max_residential_far": {
+          "description": "The dimensionless FAR the fired row selects from the rule's own parameters, or null when no row fired. Floor-area values are derived downstream (FAR x zoning-lot area, sq ft); this is the ratio only.",
+          "anyOf": [
+            { "type": "number" },
+            { "type": "null" }
+          ]
+        },
+        "coverage_hint": {
+          "type": "string",
+          "description": "The draft coverage the determination hands the integration layer (conditional for a confident row; professional_review_required on uncertainty). Never verified."
+        },
+        "exceptions_checked": {
+          "type": "boolean",
+          "description": "True only when the applicable zoning exceptions were checked AND every applicable one is inapplicable or resolved (the elevated criterion). The out-of-scope named-street override keeps this False for a possibly-affected lot."
+        },
+        "named_street_override_pending": {
+          "type": "boolean",
+          "description": "True when a candidate segment may fall under the out-of-scope named-street override / C5-3/C6-4/C6-6 alternate-width table, which is not implemented; such a lot fails safe to professional review."
+        },
+        "policy_decision_states": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "D-052 provenance: each candidate segment's width-policy decision_state (wide / narrow / unresolved / unknown), in order, never deduplicated."
+        },
+        "original_labels": {
+          "type": "array",
+          "items": { "type": ["string", "null"] },
+          "description": "D-052 provenance: each decision's original source width label (may be null when the source carried none)."
+        },
+        "source_versions": {
+          "type": "array",
+          "items": { "type": ["string", "null"] },
+          "description": "D-052 provenance: each decision's source version / last-edited stamp (may be null)."
+        },
+        "matched_geometry_refs": {
+          "type": "array",
+          "items": { "type": ["string", "null"] },
+          "description": "D-052 provenance: each decision's matched geometry reference (e.g. OBJECTID=...), may be null."
+        },
+        "interpreted_bounds_summaries": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "D-052 provenance: each decision's interpreted width-bounds description."
+        },
+        "classification_reasons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "D-052 provenance: each decision's human-readable classification reason."
+        },
+        "draft_label": {
+          "type": "string",
+          "description": "The permanent DRAFT marker on the determination (D-045-R009): never a Verified/published legal determination."
+        },
+        "fallback_direction_note": {
+          "type": "string",
+          "description": "The D-051 fallback-direction note: on uncertainty the higher wide-street FAR is withheld and the conservative row governs; validated for these rows only, not a universal claim."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Human-readable reason naming the row that governs and the DRAFT/pending-G6 status."
+        }
       }
     }
   }

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -29,6 +30,7 @@ from app.connectors.dcm_street_centerline_arcgis import (
     DcmTransport,
     UpstreamError,
     parse_segment_page,
+    raw_body_digest,
 )
 from app.connectors.dcm_street_centerline_geometry import parse_segment_geometry_page
 from app.connectors.mappluto_geometry_arcgis import (
@@ -154,8 +156,13 @@ def _geometries_double(
     features: list[dict], *, exceeded: bool = False
 ) -> SimpleNamespace:
     page = parse_segment_geometry_page(_transport(_dcm_page_body(features)), correlation_id=CID)
+    # DB-020: the provider walks geom_result.pages (never the flattened entries)
+    # so each attested segment carries the SegmentGeometryPage's own retrieval
+    # identity + raw-body digest. The real SegmentGeometryQueryResult exposes both
+    # ``pages`` and the flattened ``entries``; the double mirrors that.
     return SimpleNamespace(
         entries=page.entries,
+        pages=[page],
         exceeded_transfer_limit_on_last_page=exceeded,
         crs=dict(DCM_CRS_STAMP),
         retrieved_at="2026-09-17T00:00:00Z",
@@ -279,6 +286,33 @@ def test_wide_segment_yields_professional_review_never_fabricated_wide() -> None
     # The wide-disposed segment's geometry WAS fetched (the composition reached
     # the buffer stage before the EC-5 gate refused).
     assert counting.calls["geometries"] == 1
+
+
+# ---------------------------------------------------------------------------
+# DB-020 (M5-T035 G1 F1): the attested provenance digest is the geometry-PAGE
+# raw-body sha256, NEVER the segment's free-text Streetwidth attribute.
+# ---------------------------------------------------------------------------
+
+
+def test_db020_attested_segment_carries_geometry_page_digest_not_width_text() -> None:
+    # Before the fix, AttestedWideSegment.source_raw_digest carried the segment's
+    # Streetwidth text (e.g. "80"). It must carry the SegmentGeometryPage raw-body
+    # sha256 digest for the page the segment was parsed from.
+    features = [_feature(7, "80", WIDE_SEGMENT_PATHS)]
+    fetchers = _CountingFetchers(geometries=_geometries_double(features)).as_fetchers()
+    attested = provider._attested_wide_segments([7], fetchers, CID)
+    assert attested is not None
+    assert len(attested) == 1
+    digest = attested[0].source_raw_digest
+    assert digest is not None
+    # sha256-shaped, and exactly the page's own raw-body digest.
+    assert re.fullmatch(r"sha256:[0-9a-f]{64}", digest), digest
+    assert digest == raw_body_digest(_dcm_page_body(features))
+    # The pre-fix defect value (the Streetwidth text) is never used as the digest,
+    # even though the source attribute itself is preserved untouched on the segment.
+    assert digest != "80"
+    assert attested[0].polyline.segment.streetwidth_raw == "80"
+    assert digest != attested[0].polyline.segment.streetwidth_raw
 
 
 # ---------------------------------------------------------------------------
