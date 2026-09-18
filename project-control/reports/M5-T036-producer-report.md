@@ -203,3 +203,32 @@ panel (see D1). The computed-answer engine remains the differentiator.
 END OF REPORT. Web behavior stays UNVERIFIED until the orchestrator supplies web CI results on the
 pushed head tied to the resulting commit (AS-6). This cycle changed no implementation; it repairs
 evidence delivery only. Do not accept or merge on this report — the gates decide.
+
+---
+
+## Addendum 2026-09-17 — test-query fix only (run persistent2-local-02)
+
+OBSERVATION. Web CI on the harvested head reported ONE failing suite —
+`src/components/architect/__tests__/zoning-context-panel.test.tsx` — with
+`TestingLibraryElementError: Found multiple elements with the text: R3-2` (AS-1 test 1) and the same
+for `C1-4` (AS-1 populated-overlay test); summary `1 failed | 40 passed (41)` test files.
+
+ROOT CAUSE (evidence-bound, verify in source). Each designation value renders in the visible
+`.zoning-chip-code` div AND in its `ProvenanceDisclosure` rows — `original_value`
+(`ProvenanceDisclosure.tsx:55`) and `normalized_value` (`:57`) — so the shared list markup carries
+the value text on more than one element. `getByText(<exact value>)` therefore matches multiple
+elements and throws. The PRODUCTION panel is correct: the values render, which is why multiple
+matched. This is a test-query defect, not a component defect.
+
+FIX (test file only). In `zoning-context-panel.test.tsx` the six single-match designation-VALUE
+queries — `R3-2`, `C4-1`, `GI` (AS-1 line ~48), `INDIVIDUAL LANDMARK`, `Governors Island Historic
+District`, and `C1-4` (AS-1 populated overlay) — were changed from
+`getByText(v)` → `getAllByText(v).length` asserting `toBeGreaterThanOrEqual(1)`. `getAllByText`
+throws on zero matches, so each stays a REAL presence assertion; none was deleted, weakened to a
+null-tolerant `queryBy` form, or otherwise relaxed. The `"Source for <value>"` disclosure-summary
+labels, the honest empty-text assertions, the `getAllByText("Unknown — not supplied")` count, and
+all `getByTestId`/`queryByTestId` queries are unique single matches and were left unchanged.
+
+No production file and no other test file changed this cycle. `python tools/modularity_check.py
+--check` re-run below. Web behavior stays UNVERIFIED — CI on the re-pushed head is the executable
+authority.
