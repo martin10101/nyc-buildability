@@ -5,6 +5,10 @@ import { rememberAddress } from "@/lib/architect/selected-address";
 import type { AddressDocumentOutcome } from "@/lib/address-api";
 import { validateBblInput } from "@/lib/bbl";
 import { zolaLotUrl } from "@/lib/provenance-link";
+import {
+  ABSENT_BBL_MAP_LINK_NOTE,
+  ZOLA_LOT_LINK_LABEL,
+} from "@/components/architect/AddressAutocomplete";
 import { Meta } from "./AddressOutcomeCards";
 import { LotOutlineMap } from "./LotOutlineMap";
 
@@ -138,13 +142,12 @@ export function AddressConfirmCard({
             rel="noopener noreferrer"
             data-testid="zola-link"
           >
-            View this lot on the city&apos;s ZoLa map
+            {ZOLA_LOT_LINK_LABEL}
           </a>
         </p>
       ) : (
         <p className="section-note" data-testid="zola-link-absent">
-          The city&apos;s map link needs a valid BBL, which this result did
-          not provide.
+          {ABSENT_BBL_MAP_LINK_NOTE}
         </p>
       )}
 

@@ -268,4 +268,47 @@ describe("explicit full-address search — cancellation and request-generation p
   });
 });
 
+describe("DB-024(a) — a failed EXPLICIT full-address search never points back at itself", () => {
+  it("offers a genuinely different next step (manual entry / BBL), never the just-failed search", async () => {
+    vi.useFakeTimers();
+    // Typed suggestions come back empty (no typed-path error); the EXPLICIT
+    // full-address search itself then fails. The recovery copy must NOT send the
+    // user back to the search they just watched fail (the old circular copy).
+    search.mockResolvedValue({ kind: "suggestions", suggestions: [] });
+    fullSearch.mockResolvedValue({ kind: "error", reason: "source_unavailable" });
+    const onFallback = vi.fn();
+    render(<AddressAutocomplete onPick={vi.fn()} onEdit={vi.fn()} onFallback={onFallback} inputRef={createRef()} />);
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "120 Broadway, New York" } });
+    await act(async () => { vi.advanceTimersByTime(300); });
+    await act(async () => { fireEvent.click(screen.getByTestId("full-address-search")); });
+    const status = screen.getByRole("status");
+    // Non-circular: the copy never names the full-address search button again…
+    expect(status).not.toHaveTextContent(FULL_ADDRESS_SEARCH_LABEL);
+    // …and it names a genuinely different affordance that is actually present.
+    expect(status).toHaveTextContent(/manual entry/i);
+    expect(screen.getByTestId("use-manual-entry")).toBeInTheDocument();
+  });
+
+  it("keeps the TYPED-suggestion failure copy pointing at the full-address search (that path is not circular)", async () => {
+    vi.useFakeTimers();
+    // A typed-suggestion failure is different: the user has NOT tried the explicit
+    // full-address search, so naming it is a real next step — unchanged behavior.
+    search.mockResolvedValue({ kind: "error", reason: "source_unavailable" });
+    render(<AddressAutocomplete onPick={vi.fn()} onEdit={vi.fn()} inputRef={createRef()} />);
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "120 Broadway" } });
+    await act(async () => { vi.advanceTimersByTime(300); });
+    expect(screen.getByRole("status")).toHaveTextContent(FULL_ADDRESS_SEARCH_LABEL);
+  });
+});
+
+describe("DB-024(c) — the address-hint arrow glyph is decorative (aria-hidden)", () => {
+  it("hides the ↗ on the NYC Planning hint link and keeps its accessible name arrow-free", () => {
+    render(<AddressAutocomplete onPick={vi.fn()} onEdit={vi.fn()} inputRef={createRef()} />);
+    const link = screen.getByRole("link", { name: "NYC Planning address suggestions" });
+    const glyph = link.querySelector<HTMLElement>("span[aria-hidden='true']");
+    expect(glyph).not.toBeNull();
+    expect(glyph!.textContent).toBe("↗");
+  });
+});
+
 afterEach(cleanup);

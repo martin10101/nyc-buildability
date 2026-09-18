@@ -5,6 +5,7 @@ import { mappedFeatureView, type PropertyProfile } from "@/lib/contract";
 import { provenanceById, resolveFactProvenance } from "@/lib/provenance";
 import { formatValue } from "@/lib/format";
 import { zolaLotUrl } from "@/lib/provenance-link";
+import { ABSENT_BBL_MAP_LINK_NOTE, ZOLA_LOT_LINK_LABEL } from "./AddressAutocomplete";
 
 /**
  * DB-016 zoning-context panel (task M5-T036). Surfaces the official
@@ -55,11 +56,11 @@ export function ZoningContextPanel({ profile }: { profile: PropertyProfile }) {
             rel="noopener noreferrer"
             data-testid="zoning-context-zola-link"
           >
-            Open in ZoLa <span aria-hidden="true">↗</span>
+            {ZOLA_LOT_LINK_LABEL} <span aria-hidden="true">↗</span>
           </a>
         ) : (
           <span className="section-note" data-testid="zoning-context-zola-absent">
-            The city map link needs a valid BBL, which this lot did not provide.
+            {ABSENT_BBL_MAP_LINK_NOTE}
           </span>
         )}
       </div>

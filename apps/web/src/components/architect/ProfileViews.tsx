@@ -50,7 +50,7 @@ export function ZoningView({ profile, evaluation, scenario = null, onInspect }: 
       <summary>Draft rule result, conflicts and applicability</summary>
       <RuleEvaluationResult document={evaluation}/>
     </details> : null}
-    <Link className="primary-button" href={propertyHref(profile.identity.bbl, "evidence")}>Inspect calculation evidence →</Link>
+    <Link className="primary-button" href={propertyHref(profile.identity.bbl, "evidence")}>Inspect calculation evidence <span aria-hidden="true">→</span></Link>
   </>;
 }
 export function OpenIssues({ profile }: {

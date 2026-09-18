@@ -165,3 +165,18 @@ describe("rule_evaluation contract-version admission (M5-T037: 1.0.0 + additive 
     }
   });
 });
+
+describe("DB-025(e) — positive-shape validator: unknown keys are not rejected", () => {
+  // Backs the corrected module wording: the client checks DOCUMENTED keys
+  // positively and does NOT enforce additionalProperties — the server owns the
+  // closed schema. An unknown/extra top-level key must NOT fail total validation
+  // (a forward-compatible server field the client does not yet model still
+  // renders), and every recorded fixture stays valid.
+  it("accepts an otherwise-valid document carrying an unknown/extra top-level key", () => {
+    const doc = draftApplicableDoc();
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true); // baseline stays valid
+    (doc as unknown as Record<string, unknown>).server_only_future_field =
+      "ignored-by-the-client";
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+});

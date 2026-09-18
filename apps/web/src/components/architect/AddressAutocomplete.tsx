@@ -15,6 +15,21 @@ import { useAddressSuggestions } from "@/lib/architect/use-address-suggestions";
  * silently (one shared string, asserted by the tests). */
 export const FULL_ADDRESS_SEARCH_LABEL = "Search this full address";
 
+/** DB-024(b): the single shared "no canonical BBL, so no city-map link" note.
+ * AddressConfirmCard, PropertyOverview, and ZoningContextPanel render it
+ * BYTE-IDENTICALLY from here so the three honest-absence notes cannot drift into
+ * three near-duplicate literals (the same single-source-of-truth discipline as
+ * FULL_ADDRESS_SEARCH_LABEL; asserted via this import in the tests). */
+export const ABSENT_BBL_MAP_LINK_NOTE =
+    "The city map link needs a valid BBL, which this lot did not provide.";
+
+/** DB-024(d): one accessible name for every ZoLa lot-map link — the
+ * AddressConfirmCard action, the PropertyOverview site-context link, and the
+ * ZoningContextPanel link. Reading identically to assistive tech instead of
+ * drifting between "Open ZoLa", "Open in ZoLa", and a longer sentence. The
+ * validated zolaLotUrl helper is untouched; this is presentation only. */
+export const ZOLA_LOT_LINK_LABEL = "Open ZoLa";
+
 /** Distinct, non-collapsing copy per failure reason (handoff §6): the old UI
  * folded timeout, source failure, and transport error into one "unavailable"
  * line. Each reason now reads differently and points at a real next step.
@@ -28,6 +43,20 @@ const ERROR_MESSAGES: Record<AddressSearchErrorReason, string> = {
     rejected: `The city’s address service didn’t accept that search. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
     unavailable: `Couldn’t reach the city’s address service. Check your connection, then use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
     malformed: `The city’s address service returned a response we can’t read safely. Use the “${FULL_ADDRESS_SEARCH_LABEL}” button below, or use manual entry or BBL.`,
+};
+
+/** DB-024(a): copy for when the EXPLICIT full-address search ITSELF fails. The
+ * ERROR_MESSAGES above point back at the “${FULL_ADDRESS_SEARCH_LABEL}” button —
+ * which is CIRCULAR here, because the user just watched that exact search fail.
+ * These never name the just-failed search; they point at genuinely different
+ * next steps (the prefilled manual-entry recovery below, or the BBL lookup). */
+const FULL_SEARCH_ERROR_MESSAGES: Record<AddressSearchErrorReason, string> = {
+    rate_limited: `The full-address search is rate-limited right now. Use manual entry with this address below, or the BBL lookup.`,
+    timeout: `The full-address search is taking too long. Use manual entry with this address below, or the BBL lookup.`,
+    source_unavailable: `The city’s address service is temporarily unavailable. Use manual entry with this address below, or the BBL lookup.`,
+    rejected: `The city’s address service didn’t accept that search. Use manual entry with this address below, or the BBL lookup.`,
+    unavailable: `Couldn’t reach the city’s address service. Check your connection, then use manual entry with this address below, or the BBL lookup.`,
+    malformed: `The full-address search returned a response we can’t read safely. Use manual entry with this address below, or the BBL lookup.`,
 };
 
 export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
@@ -119,7 +148,7 @@ export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
             : incomplete
                 ? "Keep typing the full address (at least 3 characters)."
                 : outcome?.kind === "error"
-                    ? ERROR_MESSAGES[outcome.reason]
+                    ? (fullSearchActive ? FULL_SEARCH_ERROR_MESSAGES : ERROR_MESSAGES)[outcome.reason]
                     : outcome?.kind === "suggestions"
                         ? suggestions.length && open
                             ? `${suggestions.length} address suggestions. Use arrow keys to choose, then Enter.`
@@ -167,7 +196,7 @@ export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
         </span>
       </li>)}
     </ul> : <ul id="architect-address-options" role="listbox" aria-label="Official NYC address suggestions" hidden/>}
-    <p id="architect-address-hint" className="section-note">All five boroughs · <a href="https://geosearch.planninglabs.nyc/docs/" target="_blank" rel="noopener noreferrer">NYC Planning address suggestions ↗</a>
+    <p id="architect-address-hint" className="section-note">All five boroughs · <a href="https://geosearch.planninglabs.nyc/docs/" target="_blank" rel="noopener noreferrer">NYC Planning address suggestions <span aria-hidden="true">↗</span></a>
     </p>
     {trimmedLength >= 3 && !selected ? <div className="architect-search-actions">
       <button type="button" className="secondary-button" data-testid="full-address-search" onClick={runFullSearch} disabled={searching}>

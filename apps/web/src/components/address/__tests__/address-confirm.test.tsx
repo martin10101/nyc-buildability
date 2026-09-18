@@ -2,6 +2,10 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AddressResolutionScreen } from "@/components/address/AddressResolutionScreen";
 import { zolaLotUrl } from "@/lib/provenance-link";
+import {
+  ABSENT_BBL_MAP_LINK_NOTE,
+  ZOLA_LOT_LINK_LABEL,
+} from "@/components/architect/AddressAutocomplete";
 
 /**
  * M5-T016 acceptance pack — Address Confirm card + ZoLa deep-link + handoff
@@ -447,5 +451,35 @@ describe("S6 — hostile resolved fixture renders inert", () => {
     expect(
       (window as unknown as Record<string, unknown>).__pwned,
     ).toBeUndefined();
+  });
+});
+
+/* ================================================================ *
+ * S7 — DB-024(b)/(d): the confirm surface shares the ZoLa label and
+ * the absent-BBL note with ZoningContextPanel / PropertyOverview
+ * ================================================================ */
+
+describe("S7 — DB-024 shared ZoLa label and absent-BBL note on the confirm card", () => {
+  it("names its ZoLa action with the shared ZOLA_LOT_LINK_LABEL — one accessible name across all three ZoLa link sites", async () => {
+    await renderResolved();
+    const link = screen.getByTestId("zola-link");
+    // The SAME accessible name assistive tech reads on the ZoningContextPanel
+    // and PropertyOverview ZoLa links (DB-024(d)) — one shared label, resolved
+    // by role+name, with no per-site drift ("Open ZoLa" vs "Open in ZoLa").
+    expect(screen.getByRole("link", { name: ZOLA_LOT_LINK_LABEL })).toBe(link);
+    expect(link.textContent).toBe(ZOLA_LOT_LINK_LABEL);
+  });
+
+  it("renders the shared ABSENT_BBL_MAP_LINK_NOTE byte-identically when the BBL is not canonical", async () => {
+    const doc = resolvedDoc();
+    doc.canonical.bbl = "12345"; // fails validateBblInput -> honest absence, no link
+    await renderResolved(doc);
+    expect(screen.queryByTestId("zola-link")).toBeNull();
+    // Exact shared constant (DB-024(b)): the confirm card's absent note is
+    // byte-identical to the ZoningContextPanel and PropertyOverview notes —
+    // one single source of truth, asserted through the import.
+    expect(screen.getByTestId("zola-link-absent").textContent).toBe(
+      ABSENT_BBL_MAP_LINK_NOTE,
+    );
   });
 });

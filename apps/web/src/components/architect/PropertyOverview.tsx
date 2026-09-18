@@ -8,6 +8,7 @@ import { zolaLotUrl } from "@/lib/provenance-link";
 import { propertyHref } from "@/lib/architect/navigation";
 import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { FactsTable } from "@/components/property/FactsTable";
+import { ABSENT_BBL_MAP_LINK_NOTE, ZOLA_LOT_LINK_LABEL } from "./AddressAutocomplete";
 import { DevelopmentLimits } from "./DevelopmentLimits";
 import { ZoningContextPanel } from "./ZoningContextPanel";
 export { DraftHeadline } from "./DevelopmentLimits";
@@ -56,12 +57,14 @@ export function PropertyOverview({ profile, scenario, evaluation = null, onInspe
         <div className="architect-panel-heading">
           <h2>Site context</h2>
           {siteZolaUrl ? (
-            <a href={siteZolaUrl} target="_blank" rel="noopener noreferrer" data-testid="site-zola-link">Open ZoLa <span aria-hidden="true">↗</span></a>
+            <a href={siteZolaUrl} target="_blank" rel="noopener noreferrer" data-testid="site-zola-link">{ZOLA_LOT_LINK_LABEL} <span aria-hidden="true">↗</span></a>
           ) : (
-            // DB-019b: honest absence when there is no canonical BBL, copy-matched
-            // to ZoningContextPanel's zoning-context-zola-absent note. Never a raw
-            // template-string URL for a lot the source did not identify.
-            <span className="section-note" data-testid="site-zola-absent">The city map link needs a valid BBL, which this lot did not provide.</span>
+            // DB-019b/DB-024(b): honest absence when there is no canonical BBL,
+            // rendered from the single shared ABSENT_BBL_MAP_LINK_NOTE constant so
+            // this note stays byte-identical to the AddressConfirmCard and
+            // ZoningContextPanel notes. Never a raw template-string URL for a lot
+            // the source did not identify.
+            <span className="section-note" data-testid="site-zola-absent">{ABSENT_BBL_MAP_LINK_NOTE}</span>
           )}
         </div>
         <LotOutlineMap bbl={bbl} context/>

@@ -12,10 +12,14 @@
  * no schema is ever forked here.
  *
  * It then provides a RUNTIME validator that mirrors src/lib/validate-profile.ts:
- * every HTTP-200 rule-evaluation body is checked against the documented key set
- * and the contract-locked enums BEFORE anything renders. FAILURE IS TOTAL — the
- * caller receives only a bounded problem list, never a partially-usable
- * document — so nothing can be drawn from an invalid payload.
+ * every HTTP-200 rule-evaluation body has each DOCUMENTED key checked for the
+ * right shape and contract-locked enum value BEFORE anything renders. This is a
+ * POSITIVE-SHAPE check, not a closed-schema one: an unknown or extra top-level
+ * key is NOT rejected (there is no client-side additionalProperties
+ * enforcement), so the server stays authoritative on the full closed schema.
+ * FAILURE IS TOTAL — when a documented key is missing or malformed the caller
+ * receives only a bounded problem list, never a partially-usable document — so
+ * nothing can be drawn from an invalid payload.
  *
  * The DRAFT vocabulary deliberately EXCLUDES `verified`: a draft rule result is
  * never Verified (PRD sections 10-12). A body whose top-level coverage_status is
@@ -387,8 +391,10 @@ function checkWideStreet(problems: Problems, value: unknown): void {
 
 /**
  * Validate an HTTP-200 body against the generated rule_evaluation types.
- * Returns the typed document ONLY when every documented check passes. A
- * `verified` top-level coverage_status is rejected (draft is never Verified).
+ * Returns the typed document ONLY when every documented key passes its shape
+ * and enum check. Unknown/extra top-level keys are not rejected (positive-shape
+ * check; the server owns the closed schema). A `verified` top-level
+ * coverage_status is rejected (draft is never Verified).
  */
 export function validateRuleEvaluationDocument(
   body: unknown,

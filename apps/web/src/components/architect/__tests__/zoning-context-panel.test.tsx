@@ -3,7 +3,12 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { baseProfile } from "@/test-support/fixtures";
 import { ZoningContextPanel } from "../ZoningContextPanel";
 import { PropertyOverview } from "../PropertyOverview";
+import { ZoningView } from "../ProfileViews";
 import { ReportView } from "../ReportView";
+import {
+  ABSENT_BBL_MAP_LINK_NOTE,
+  ZOLA_LOT_LINK_LABEL,
+} from "../AddressAutocomplete";
 
 /**
  * M5-T036 acceptance pack — DB-016 zoning-context panel + DB-005 ZoLa
@@ -229,8 +234,8 @@ describe("AS-5 (DB-019a) — both ZoLa link glyphs are decorative (aria-hidden),
     expect(glyph).not.toBeNull();
     expect(glyph!.textContent).toBe("↗");
     // The decorative arrow is out of the accessible name — the link still
-    // resolves by its human name.
-    expect(within(panel).getByRole("link", { name: "Open in ZoLa" })).toBe(link);
+    // resolves by its human name (DB-024(d): the shared ZoLa link label).
+    expect(within(panel).getByRole("link", { name: ZOLA_LOT_LINK_LABEL })).toBe(link);
   });
 
   it("hides the ↗ glyph on the overview Site-context ZoLa link while keeping its name", () => {
@@ -239,7 +244,11 @@ describe("AS-5 (DB-019a) — both ZoLa link glyphs are decorative (aria-hidden),
     const glyph = link.querySelector<HTMLElement>("span[aria-hidden='true']");
     expect(glyph).not.toBeNull();
     expect(glyph!.textContent).toBe("↗");
-    expect(screen.getByRole("link", { name: "Open ZoLa" })).toBe(link);
+    // The overview nests ZoningContextPanel, whose ZoLa link now shares the SAME
+    // accessible name (DB-024(d)); scope to the map card so this asserts the
+    // site-context link specifically.
+    const mapCard = document.querySelector<HTMLElement>(".architect-map-card")!;
+    expect(within(mapCard).getByRole("link", { name: ZOLA_LOT_LINK_LABEL })).toBe(link);
   });
 });
 
@@ -251,11 +260,12 @@ describe("AS-6 (DB-019b) — PropertyOverview honest absent note on a non-canoni
     expect(screen.queryByTestId("site-zola-link")).toBeNull();
     const siteAbsent = screen.getByTestId("site-zola-absent");
     // PropertyOverview nests ZoningContextPanel, so its own absent note renders
-    // in the same tree — assert the two honest notes are the SAME copy (matched,
-    // not independently drifting literals).
+    // in the same tree — assert BOTH honest notes are byte-identical to the
+    // shared ABSENT_BBL_MAP_LINK_NOTE constant (single source of truth, DB-024(b)),
+    // never independently drifting literals.
     const panelAbsent = screen.getByTestId("zoning-context-zola-absent");
-    expect(siteAbsent.textContent).toBe(panelAbsent.textContent);
-    expect(siteAbsent.textContent).toContain("needs a valid BBL");
+    expect(siteAbsent.textContent).toBe(ABSENT_BBL_MAP_LINK_NOTE);
+    expect(panelAbsent.textContent).toBe(ABSENT_BBL_MAP_LINK_NOTE);
   });
 
   it("renders the honest absent note (no link, no crash) when the BBL is literally null", () => {
@@ -270,11 +280,11 @@ describe("AS-6 (DB-019b) — PropertyOverview honest absent note on a non-canoni
     renderOverview(profile);
     expect(screen.queryByTestId("site-zola-link")).toBeNull();
     const siteAbsent = screen.getByTestId("site-zola-absent");
-    // Same copy the nested panel shows for its own null-derived absence — the
-    // two honest notes stay matched, not independently drifting literals.
+    // Same shared constant on the null-BBL path too: both honest notes are
+    // byte-identical to ABSENT_BBL_MAP_LINK_NOTE (DB-024(b)), never drifting.
     const panelAbsent = screen.getByTestId("zoning-context-zola-absent");
-    expect(siteAbsent.textContent).toBe(panelAbsent.textContent);
-    expect(siteAbsent.textContent).toContain("needs a valid BBL");
+    expect(siteAbsent.textContent).toBe(ABSENT_BBL_MAP_LINK_NOTE);
+    expect(panelAbsent.textContent).toBe(ABSENT_BBL_MAP_LINK_NOTE);
   });
 
   it("with a canonical BBL the Site-context link renders and no absent note appears (prior rendering preserved)", () => {
@@ -308,5 +318,26 @@ describe("AS-7 (DB-019c) — landmark/historic rows surface the mapped-feature c
     expect(designations.querySelectorAll(".status-badge")).toHaveLength(0);
     // The honest Unknown rows are still both present.
     expect(within(panel).getAllByText("Unknown — not supplied")).toHaveLength(2);
+  });
+});
+
+describe("DB-024(c) — the ProfileViews 'Inspect calculation evidence' arrow is decorative", () => {
+  it("hides the → glyph (aria-hidden) and keeps the link's accessible name arrow-free", () => {
+    // ZoningView carries the primary "Inspect calculation evidence" action; its
+    // trailing → must be decorative (out of the accessible name), matching the
+    // accepted DB-019a arrow pattern used on the ZoLa links above.
+    render(
+      <ZoningView
+        profile={baseProfile()}
+        evaluation={null}
+        scenario={null}
+        onInspect={vi.fn()}
+      />,
+    );
+    // The link resolves by its arrow-free accessible name — the glyph is excluded.
+    const link = screen.getByRole("link", { name: "Inspect calculation evidence" });
+    const glyph = link.querySelector<HTMLElement>("span[aria-hidden='true']");
+    expect(glyph).not.toBeNull();
+    expect(glyph!.textContent).toBe("→");
   });
 });
