@@ -4,5 +4,31 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-073-BOOTSTRAP at capture; phase packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-073",
+   "task_id": "M5-T037",
+   "applicable_requirement_ids": [
+    "D-073-R003"
+   ],
+   "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db",
+   "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:38:49+00:00",
+   "requirements": [
+    {
+     "id": "D-073-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T037-DCV-verification.md) - FIRST verification of the milestone row, each element in source: end-to-end chain (live provider w/ DB-020 page-digest provenance -> D-051 fail-safe fold -> optional v1.1.0 block emitted only when a determination fired); result reaches the interface with WHAT/UNITS/CONDITIONS/SOURCES + Draft marking and the provenance link into the D-052 quintuple; report parity STRUCTURAL after the F1 correction (identical inspectability gate at ArchitectEntry.tsx:73 and ReportView.tsx:30 feeding the SAME shared components; parity + non-inspectable-withholding pinned by tests); calm presentation after the F2 correction (raw server strings only behind the evidence disclosure; jargon-guard test with real constants); honest escalation with no fabricated FAR; contract additivity proven (1.0.0 stays valid, malformed block fails total); CI all 20 green at 1c89922c independently re-verified via the check-runs API."
+     ],
+     "verified_at": "2026-09-18T10:38:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db"
+    }
+   ]
+  }
+ ]
 }

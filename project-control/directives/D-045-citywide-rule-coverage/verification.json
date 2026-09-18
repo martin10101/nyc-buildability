@@ -672,6 +672,42 @@
      "reviewed_sha": "f7c196ba9841d51f7fc999c93967a8569149b537"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M5-T037",
+   "applicable_requirement_ids": [
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db",
+   "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:38:49+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at HEAD fd2b8178 against frozen 1c89922c (verbatim return project-control/reports/M5-T037-DCV-verification.md): single bounded 20-path packet under the full G0-G5+HJ gated process, not monolithic; gates all PASS on record."
+     ],
+     "verified_at": "2026-09-18T10:38:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T037-DCV-verification.md): DRAFT/needs-review preserved on every surface (panel Draft marker, evidence Draft line, schema description 'Never Verified - DRAFT pending G6'); no compliance declaration; no new dependency (manifests byte-stable across the material span); PR #241 confirmed OPEN via gh; the higher wide-street FAR withheld on uncertainty (professional_review when governing is None)."
+     ],
+     "verified_at": "2026-09-18T10:38:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db"
+    }
+   ]
   }
  ]
 }

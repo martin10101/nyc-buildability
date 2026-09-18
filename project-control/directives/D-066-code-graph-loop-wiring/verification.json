@@ -187,6 +187,31 @@
      "reviewed_sha": "4b1f21210ea9ed0360f4bd8a3dc23e33ac0c4955"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T037",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db",
+   "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:38:49+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T037-DCV-verification.md): the packet carries the graph-derived navigation block naming the four api consumer surfaces + the strict web validator + the generated-TS never-hand-edit note, with the query.py --no-regen instruction and the advisory clause; packet-content obligation met."
+     ],
+     "verified_at": "2026-09-18T10:38:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1c89922c466444ee90bce32ab70f208e088862db"
+    }
+   ]
   }
  ]
 }
