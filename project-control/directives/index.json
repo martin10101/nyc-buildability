@@ -952,6 +952,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-072-up-to-three-loops/manifest.json"
+  },
+  {
+   "directive_id": "D-073",
+   "slug": "architect-outcome-next-phase",
+   "title": "Owner 2026-09-18: architect-outcome next phase - turn existing engineering into complete, dependable property analyses: reconcile actual state (built vs accepted vs merged vs deployed vs verified); land the M5-T035 street-data build through review; complete ONE street-dependent limit end-to-end (address -> calculation -> screen + report, same evidence); independent pre-established expectations on a fixed real-property validation set; four stopped properties as regression cases (never relax safety checks for optics); records-vs-allowances distinction; release the accepted panel via the existing process (one consolidated owner request if approval needed); architect-first sequencing; opus-4-8 xhigh subagents only; DB-012 as one owner decision package; consolidated plain-English milestone report with linked evidence, no undefined percentages.",
+   "status": "active",
+   "issued_at": "2026-09-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-073-architect-outcome-next-phase/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
