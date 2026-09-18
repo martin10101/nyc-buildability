@@ -54,8 +54,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Scope temptation: NO pipeline wiring, NO ArcGIS failover, NO zoning logic - module only (disjointness with the live M5-T040 lane depends on it).",
     "Never collapse the base-lot set or infer zoning; divergent-zoning is a legal surface downstream.",
@@ -63,7 +63,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T22:58:47.132575+00:00",
-  "updated_at": "2026-09-18T22:59:54.869154+00:00",
+  "updated_at": "2026-09-18T23:00:54.653547+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -79,5 +79,15 @@
     "python -m pytest tests/connectors/test_dtm_condo_soda.py -q",
     "python -m pytest tests/connectors -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t042",
+  "progress_log": [
+    {
+      "at": "2026-09-18T23:00:54.653547+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the loop-2 refeed seam; awaiting loop-2 launch run 07"
+    }
   ]
 }
