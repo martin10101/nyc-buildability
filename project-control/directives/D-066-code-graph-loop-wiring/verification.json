@@ -212,6 +212,31 @@
      "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T041",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "435d7b13d7d537108fddad73bdb84ae62ba83227",
+   "reviewed_manifest_sha256": "f087e85e859a26018a931bfdae00897ad44767ba78092d98fa5c4c4ee9f3d853",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T22:56:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T041-DCV.md, frozen head 843e23c4, material 740b6f2f): nav block present in the packet naming the web surface + the strict-validator consumer constraint + the query.py --no-regen instruction + the advisory clause; material diff = exactly the 10 apps/web files + producer report, all in allowed_paths, no services/api/schema/generated-TS, address-search.ts absent; validator change comment-only (zero behavior change) with CI run 35402081543 success at the material head. Restamped to 435d7b13 under the DCV five-condition pre-authorization - all five reproduced at record time: (1) apps/services/packages diff 843e23c4..435d7b13 EMPTY; (2) all 14 allowed_paths files byte-identical; (3) directive_refs + allowed_paths + evidence-map material_commit 740b6f2f unchanged; (4) only project-control/** touched; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-18T22:56:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "435d7b13d7d537108fddad73bdb84ae62ba83227"
+    }
+   ]
   }
  ]
 }

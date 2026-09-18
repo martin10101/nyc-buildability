@@ -63,15 +63,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Disjointness with M5-T040: never touch DevelopmentLimits/CalculationEvidence/ReportView, their tests, or any services/api path.",
     "Validator tightening is OPTIONAL; breaking one recorded fixture or web-e2e is a failure, not a tightening."
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:24.658009+00:00",
-  "updated_at": "2026-09-18T22:42:05.864015+00:00",
+  "updated_at": "2026-09-18T22:57:05.451581+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -101,5 +101,7 @@
       "status": "in_progress",
       "message": "Harvest (run 06, breaker at 4 rounds - report churn): FULL packet scope built and committed as material 740b6f2f (DB-024 a-d + DB-025 e with test assertions); orchestrator reproduced modularity 0 failures in-worktree; web AS-7 pending pushed-head CI; submit + review wave after CI conclusion"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-18T22:57:05.451581+00:00"
 }
