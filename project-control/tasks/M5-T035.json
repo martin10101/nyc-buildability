@@ -95,7 +95,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Scope magnets are OUT: named-street override table (DB-010), wide-street contract-surface bump (DB-014), context-panel parity (DB-016), split-lot apportionment (DB-001) - surface them in the report via discovery routing, never fix in-packet",
     "Zero-segment envelope result is honest absence, never a confident negative (D-051)",
@@ -105,7 +105,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-17T21:46:16.211907+00:00",
-  "updated_at": "2026-09-18T06:23:24.070059+00:00",
+  "updated_at": "2026-09-18T06:35:57.240524+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
