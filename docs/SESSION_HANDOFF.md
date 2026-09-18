@@ -14,7 +14,7 @@ launcher ACTIVE-TASK block pointed at that packet with a fresh run-id. The succe
 startup is then: verify state → revoke-all → launch → re-arm watcher. Crash/forced turnover is
 the ONLY exception (successor runs the seam as fallback and names the unplanned cause).
 
-## Handoff — seq 116: TWO-LOOP TRIAL LIVE-PROVEN; M5-T036 one step from acceptance
+## Handoff — seq 116: TWO-LOOP TRIAL LIVE-PROVEN; M5-T036 ACCEPTED (218th)
 
 Turnover reason: owner invoked `/session-handoff` (no argument). **D-070 note: NOT a finished
 seam — owner-directed turnover mid-acceptance** (recorded as the authorized exception; both
@@ -23,7 +23,7 @@ builds are complete, only orchestrator seam work remains).
 Generated 2026-09-18 ~05:5x UTC by session ctl24-5d. Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
 `5b9da18d` (PUSHED; CI green at 82143124, the material head). PR #241 OPEN — NEVER merge.
-**217 accepted** (M5-T036 becomes the 218th only at `accept`; never a percentage, D-059-R006).
+**218 accepted** (M5-T036 accepted in-session after the DCV returned; never a percentage, D-059-R006).
 Dirty at landing: ONLY conventional `.claude/agent-memory/**` + `scratchpad/` (leave them) —
 the gate side-effect files and the frozen-submission record were committed WITH this handoff.
 
@@ -38,14 +38,12 @@ the gate side-effect files and the frozen-submission record were committed WITH 
    producer report. The worktree's `tasks/M5-T035.json` edit is the ORCHESTRATOR's carryover
    note (attribution the last Codex review demanded — attest at the seam, exclude from the
    material commit).
-3. **M5-T036 (DB-016 context panel + DB-005 ZoLa unification) — built by loop-2, one step from
-   accept.** Material commits `657b238d` (build) + `82143124` (test-only rework). FIVE
+3. **M5-T036 (DB-016 context panel + DB-005 ZoLa unification) — ACCEPTED (218th), loop-2's first accepted increment.** Material commits `657b238d` (build) + `82143124` (test-only rework). FIVE
    independent reviews PASS + five delta-attestations at 82143124 (verbatim:
    `reports/M5-T036-G{1,2,3,4,5}.md`, `-HJ.md`, `-delta-attestations.md`); CI ALL GREEN at
-   82143124 incl. web-e2e (`-ci-evidence.md`); submitted → awaiting_gate; gates G0–G5 ALL
-   PASS recorded. The DCV subagent was mid-verification at turnover — **subagents die with
-   the session: RE-DISPATCH it** (pin current HEAD; applicable == cited == {D-066-R001,
-   D-071-R002}; material identity 82143124; ask the conditional-restamp ruling up front).
+   82143124 incl. web-e2e (`-ci-evidence.md`); gates G0–G5 PASS; DCV returned PASS on both rows
+   before landing; verification blocks restamped under its conditional pre-authorization;
+   accepted + pushed (seam commit 30fb6aa6). NOTHING remains on this task.
 4. **Second loop instance stood up and live-proven** (D-071): `C:\SupervisorController2`
    (byte-copy; runtime key `cfdedc11…`), own launcher `autostart-launch.ps1` there, shared
    model_selection. Both loops ran CONCURRENTLY with disjoint scopes, zero cross-writes
@@ -72,17 +70,14 @@ BOTH runtime keys (`9aca7075…` and `cfdedc11…`).
 
 ## NEXT ACTION (exact order)
 
-1. Re-dispatch the DCV for M5-T036 → assemble v2 verification blocks in D-066 + D-071
-   `verification.json` (mirror the M5-T034 block shape; reviewed_sha = DCV's verified head)
-   → `accept` M5-T036 → seam commit → push (218th).
-2. Harvest M5-T035: run the packet's documented python suites; commit the 11-file tree in
+1. Harvest M5-T035: run the packet's documented python suites; commit the 11-file tree in
    `wt-m5t035` (exclude the packet-copy edit); cherry-pick; push; CI; 5-reviewer wave
    (roster in packet) with the AS-3/DB-014 disposition stated up front — the response
    contract v1.0.0 deliberately does NOT expose the wide-street block (DB-014), so AS-3's
    endpoint proof = the FAR-effect via existing fields + server-side determination; rule it,
    don't let reviewers rediscover it. Then gates, DCV, accept.
-3. Owner decisions pending: DB-012 budget raise (above); nothing else waits on the owner.
-4. Next packets only AFTER both accepts, D-069 sweep at the seam, and D-070 finished-seam
+2. Owner decisions pending: DB-012 budget raise (above); nothing else waits on the owner.
+3. Next packets only AFTER the M5-T035 accept, D-069 sweep at the seam, and D-070 finished-seam
    discipline before any further handoff.
 
 ## STANDING (unchanged unless noted)
@@ -108,9 +103,8 @@ C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch candidate/D-024-mrl-option-b, 
 pull; Bootstrap Gate 0 (cwd = worktree root, /mcp empty); read CLAUDE.md and
 docs/SESSION_HANDOFF.md (seq 116) and its authoritative files; run python
 tools/project_control.py status and reconcile (ledger and git win). Both loops are DOWN at
-clean stops; M5-T036 is submitted with all gates PASS and needs: re-dispatch the
-directive-compliance verifier, assemble the two verification
-blocks, accept, push. Then harvest the completed M5-T035 build from wt-m5t035 per the
+clean stops; M5-T036 is ACCEPTED (218th) —
+nothing remains on it. Harvest the completed M5-T035 build from wt-m5t035 per the
 handoff's step 3 (state the AS-3/DB-014 disposition up front). Re-arm the dual watcher
 (BOTH ask stores, BOTH runtime keys) before relaunching any loop; any relaunch needs a
 fresh run-id and the D-070 finished-seam rule governs the next handoff. Owner replies:
