@@ -1,0 +1,22 @@
+{
+ "task_id": "M5-T037",
+ "material_commit": "a68757318958a7097a4994df48909f92661b5f28",
+ "producer": "backend-engineer",
+ "note": "Material commit = the cherry-pick of the wt-m5t037 build (16 files: both schema copies, generated TS, api serialization + provider fix + suites, web validator + display + parity tests, producer report; +1112/-54) onto candidate/D-024-mrl-option-b; produced by the loop-1 worker under supervisor runs persistent-local-42..44. Orchestrator re-ran all seven documented commands green at harvest in the worktree (ruff clean; tests/api 426; provider 28; rules-integration 49; typegen --check OK; typegen tests 29; modularity failures 0). Web AS-5/AS-6/AS-7 prove in CI on the pushed head (orchestrator captures). The worktree's packet-copy edit to tasks/M5-T037.json is the ORCHESTRATOR'S OWN packet repairs, excluded from the material commit and attested here.",
+ "requirements": {
+  "D-045-R008": [
+   "Bounded single-scope gated task: material diff = exactly the 16 in-scope files of the cross-layer contract co-land (closed-contract rule: both schema copies + generated TS + validator + display + report parity move together, deliberately ONE packet); gates G0,G1,G2,G3,G4,G5 required; directive_refs cite D-045-R008/R009 + D-066-R001 + D-073-R003; not monolithic - one contract increment."
+  ],
+  "D-045-R009": [
+   "Preservation upheld: no *.rule.json touched; the DSL trace output stays the conservative value with the wide-street row surfaced as a separately-labeled conditional block carrying the DRAFT marker and fallback-direction note; DRAFT/not_verified_disclaimer assertions unchanged in the endpoint suites; professional_review_required renders as the honest escalation with the higher FAR withheld (report-view test asserts no fabricated FAR); no published/verified/compliance claim introduced (producer report explicitly separates worker-tested from unverified)."
+  ],
+  "D-066-R001": [
+   "Contract-seam code-graph navigation block embedded in the packet (seam regen c759a049: 734/15427/6852) naming the four api consumer surfaces and the strict web validator, with the query.py --no-regen instruction and advisory clause; the build honored the impact set - all four consumer suites green (tests/api 426), the strict validator learned the optional block in the same change, and no consumer outside the packet's file list changed behavior contracts."
+  ],
+  "D-073-R003": [
+   "ONE street-dependent development limit wired end-to-end to the architect surface: the wide-street conditional FAR row serializes as the optional contract-v1.1.0 wide_street block (emitted only when a determination exists; DB-020 fixed FIRST so the serialized provenance carries the geometry-page raw digest, never the width text) and renders on DevelopmentLimits with WHAT (wide-street conditional FAR row), UNITS (dimensionless ratio; floor area sq ft), CONDITIONS (within 100 ft of a wide street; DRAFT pending G6), and SOURCES (D-052 provenance quintuple via CalculationEvidence).",
+   "Report parity from the SAME document: ReportView embeds the same DevelopmentLimits + CalculationEvidence components fed the identity-matched validated document - no second data path; report-view.test.tsx asserts byte-equal wide-street values across screen and report, the honest professional-review escalation with no fabricated FAR, and no invented block for a 1.0.0 document.",
+   "Calm presentation: answer first (the FAR row), DRAFT and unresolved conditions labeled, detailed provenance on demand through the existing evidence affordance; a malformed block fails TOTAL validation and never renders (strict web validator)."
+  ]
+ }
+}
