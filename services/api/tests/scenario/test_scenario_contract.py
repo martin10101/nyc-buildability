@@ -251,4 +251,7 @@ def test_property_profile_and_rule_evaluation_contracts_untouched():
         "enum"
     ] == ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"]
     rule_eval = _load(SCHEMA_DIR / "rule_evaluation.schema.json")
-    assert rule_eval["properties"]["contract_version"]["enum"] == ["1.0.0"]
+    # [ORCH-CORRECTED per api CI on f954aa59] M5-T037 is the accepted contract
+    # task that appends 1.1.0 (optional wide_street block); this guard admits
+    # exactly the sanctioned enum, as it did for each property_profile bump.
+    assert rule_eval["properties"]["contract_version"]["enum"] == ["1.0.0", "1.1.0"]
