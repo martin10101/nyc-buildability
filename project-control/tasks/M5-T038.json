@@ -63,15 +63,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PropertyOverview is widely consumed - additive-only change; the development-limits test file is the M5-T037 lane's scope (record, never edit).",
     "Copy changes ripple into snapshot-style assertions - update deliberately."
   ],
   "blockers": [],
   "created_at": "2026-09-18T07:28:56.340478+00:00",
-  "updated_at": "2026-09-18T10:00:05.706781+00:00",
+  "updated_at": "2026-09-18T10:10:36.767785+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -101,5 +101,7 @@
       "status": "in_progress",
       "message": "Harvest: loop-2 build committed as material d94bbcb6 (8 web files + report; +730/-16); web suites prove in CI on the pushed head; packet-copy edits attested as orchestrator repairs"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-18T10:10:36.767785+00:00"
 }
