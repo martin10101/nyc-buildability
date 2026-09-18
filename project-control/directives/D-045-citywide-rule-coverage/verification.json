@@ -587,7 +587,7 @@
     "D-045-R008",
     "D-045-R009"
    ],
-   "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8",
+   "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f",
    "reviewed_manifest_sha256": "5dd9966709d87fd16f3923043080a5a50ae266f6bbbf270706d3eed3877e2b02",
    "producer": "backend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -598,31 +598,31 @@
      "id": "D-045-R002",
      "state": "PASS",
      "evidence": [
-      "DCV verified at 9cb4535c against frozen material 97fa2eea (verbatim return project-control/reports/M5-T035-DCV-verification.md): wide_street_live_provider.py:367-461 composes the accepted geometry stack with every failure/insufficiency -> None (D-051 honest absence at 408-413), EC-5 unattested (138-161) so no fabricated within_100ft; endpoint decision-effect tests (wide row FAR 3.0 in reasons w/ conservative DSL trace 2.2; professional-review escalation; flag-off byte-identical zero-calls) run by the DCV itself, exit 0; suites reproduced green (76/69/54/65)."
+      "DCV verified at 9cb4535c against frozen material 97fa2eea (verbatim return project-control/reports/M5-T035-DCV-verification.md): wide_street_live_provider.py:367-461 composes the accepted geometry stack with every failure/insufficiency -> None (D-051 honest absence at 408-413), EC-5 unattested (138-161) so no fabricated within_100ft; endpoint decision-effect tests (wide row FAR 3.0 in reasons w/ conservative DSL trace 2.2; professional-review escalation; flag-off byte-identical zero-calls) run by the DCV itself, exit 0; suites reproduced green (76/69/54/65). Restamped to efd7c948 under the DCV's conditional pre-authorization (condition verified: git diff 97fa2eea..efd7c948 -- services/ apps/ packages/contracts/ deploy-checklist EMPTY; --stat control-plane only)."
      ],
      "verified_at": "2026-09-18T07:22:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8"
+     "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
     },
     {
      "id": "D-045-R008",
      "state": "PASS",
      "evidence": [
-      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): bounded single-scope packet - material diff = exactly the 10 allowed_paths files; gates G0-G5 all PASS on record; directive_refs cite D-045-R002/R008/R009; one wide-street wiring increment, not monolithic; campaign structure recorded at D-045 capture."
+      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): bounded single-scope packet - material diff = exactly the 10 allowed_paths files; gates G0-G5 all PASS on record; directive_refs cite D-045-R002/R008/R009; one wide-street wiring increment, not monolithic; campaign structure recorded at D-045 capture. Restamped to efd7c948 under the DCV's conditional pre-authorization (condition verified: git diff 97fa2eea..efd7c948 -- services/ apps/ packages/contracts/ deploy-checklist EMPTY; --stat control-plane only)."
      ],
      "verified_at": "2026-09-18T07:22:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8"
+     "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
     },
     {
      "id": "D-045-R009",
      "state": "PASS",
      "evidence": [
-      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): no *.rule.json touched (DRAFT/needs_review preserved); endpoint tests assert DRAFT-pending-G6 marker and not_verified_disclaimer; grep for published/verified/compliance claims empty; deploy checklist carries the honest-scope DRAFT note (RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md:405-406); no expansion/PR-241/real-URL touch."
+      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): no *.rule.json touched (DRAFT/needs_review preserved); endpoint tests assert DRAFT-pending-G6 marker and not_verified_disclaimer; grep for published/verified/compliance claims empty; deploy checklist carries the honest-scope DRAFT note (RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md:405-406); no expansion/PR-241/real-URL touch. Restamped to efd7c948 under the DCV's conditional pre-authorization (condition verified: git diff 97fa2eea..efd7c948 -- services/ apps/ packages/contracts/ deploy-checklist EMPTY; --stat control-plane only)."
      ],
      "verified_at": "2026-09-18T07:22:00+00:00",
      "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8"
+     "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
     }
    ]
   }
