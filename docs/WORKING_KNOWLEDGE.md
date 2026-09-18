@@ -380,3 +380,35 @@ Recorded because every one of these was discovered by a refusal mid-arc, not by 
   services (web + api). Scenario for 3022647515 fails closed on `spatial_intersection_absent`
   (profile carries no spatial_intersection section; integration.py:474 — district never
   guessed) — the geometry lane (B3 done, B4 next) + spatial layer is exactly this gap.
+
+
+## Seq-117 three-loop day (2026-09-18) — session lessons
+
+- **Consult THIS file at contract time, not after:** the checkpoint-envelope and full-path
+  worktree rules were ALREADY item 1 above, yet the three-loop seam re-hit both (claims made
+  with short worktree names; no envelope note) costing three one-time S4.5 stops. Contract
+  checklists beat recall. (Tier-1 line now exists in PROGRAM_KNOWLEDGE.)
+- **Agent-return truncation is routine for long reviewer reports:** returns clip mid-text
+  repeatedly; chase remainders via SendMessage in 2-4 rounds, save each part VERBATIM with
+  truncation points marked, and ask for "ONLY the remainder from <quote>" to keep rounds small.
+- **A copy-string change must sweep BOTH sibling vitest suites AND the e2e specs:** the F2
+  clean-line lowercase change broke a case-sensitive `toHaveTextContent` in the OTHER suite
+  (predicted independently by HJ + G4 before CI reported), and the DB-009 shared-constant
+  rewording broke a Playwright assertion. Grep the exact old sentence across apps/web
+  (components + __tests__ + e2e) before committing any user-facing copy change.
+- **`submit --sha` must equal live HEAD** (content identity stamped at HEAD, fail closed) —
+  if control-plane commits landed after the material cherry-pick, verify allowed_paths
+  byte-stability material..HEAD and submit at HEAD.
+- **DCV registry usage:** `directive_registry.load_registry()` (or `.load()` after
+  construction) — an unloaded instance falsely reports "directive does not exist".
+- **Breaker economics:** 8 consecutive_revision_loops trips in one day, every one at/near
+  completion (evidence packaging), zero code defects — each ~3-min recovery (archive fork if
+  CLI raced, clear-recovery, fresh run-id, relaunch). DB-012 (4→6) is the lever.
+- **Stale-snapshot class (DB-022):** a v1 zr snapshot predated its section's amendment while
+  the ACCEPTED capture lived in a task report; matcher-class packets must pin the snapshot
+  AND check its `section_last_amended` against the latest accepted capture. Sweep the other
+  v1 snapshots for the same class at the next research seam (WATCH).
+- **PASS-with-required-corrections at full depth:** HJ corrections → tagged [ORCH-CORRECTED]
+  edits → rework→in_progress→resubmit at new head → delta-attestations from ALL FIVE
+  reviewers (two rounds when a reviewer catches a defect IN the correction) → CI at the final
+  head → gates → DCV with multi-condition restamp — all evidence verbatim in the reports.

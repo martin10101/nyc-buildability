@@ -14,99 +14,81 @@ launcher ACTIVE-TASK block pointed at that packet with a fresh run-id. The succe
 startup is then: verify state → revoke-all → launch → re-arm watcher. Crash/forced turnover is
 the ONLY exception (successor runs the seam as fallback and names the unplanned cause).
 
-## Handoff — seq 116: TWO-LOOP TRIAL LIVE-PROVEN; M5-T036 ACCEPTED (218th)
+## Handoff — seq 117: THREE-LOOP DAY DELIVERED; 222 ACCEPTED; D-072/D-073 CAPTURED
 
-Turnover reason: owner invoked `/session-handoff` (no argument). **D-070 note: NOT a finished
-seam — owner-directed turnover mid-acceptance** (recorded as the authorized exception; both
-builds are complete, only orchestrator seam work remains).
-
-Generated 2026-09-18 ~05:5x UTC by session ctl24-5d. Root
+Written 2026-09-18 ~10:45 UTC by session ctl24-5e MID-SESSION at the owner's record-keeping
+reminder (not a turnover; the session continues toward the next contract seam). Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`5b9da18d` (PUSHED; CI green at 82143124, the material head). PR #241 OPEN — NEVER merge.
-**218 accepted** (M5-T036 accepted in-session after the DCV returned; never a percentage, D-059-R006).
-Dirty at landing: ONLY conventional `.claude/agent-memory/**` + `scratchpad/` (leave them) —
-the gate side-effect files and the frozen-submission record were committed WITH this handoff.
+`6504a2b0` (PUSHED; CI all-20 green at every accepted identity). PR #241 OPEN — NEVER merge.
+**222 accepted** (never a percentage, D-059-R006).
 
-## COMPLETED THIS SESSION (durable evidence)
+## COMPLETED THIS SESSION (durable evidence; all pushed)
 
-1. **D-070 captured** (finished-seam handoffs; preamble above) and **D-071 captured** (second
-   parallel loop authorized as a TWO-loop trial; DB-016 lane; 3D stays held).
-2. **M5-T035 contracted + BUILT (unharvested)** — DB-015 live wide-street provider + DCM
-   envelope predicate + DB-013 ceilings. Loop-1 runs 40+41 (both tripped the 4-cycle breaker;
-   run 41 finished the build): ~2,240 insertions across 11 files sit UNCOMMITTED in
-   `wt-m5t035`, incl. deploy-checklist rows, endpoint/connector/provider suites, 460-line
-   producer report. The worktree's `tasks/M5-T035.json` edit is the ORCHESTRATOR's carryover
-   note (attribution the last Codex review demanded — attest at the seam, exclude from the
-   material commit).
-3. **M5-T036 (DB-016 context panel + DB-005 ZoLa unification) — ACCEPTED (218th), loop-2's first accepted increment.** Material commits `657b238d` (build) + `82143124` (test-only rework). FIVE
-   independent reviews PASS + five delta-attestations at 82143124 (verbatim:
-   `reports/M5-T036-G{1,2,3,4,5}.md`, `-HJ.md`, `-delta-attestations.md`); CI ALL GREEN at
-   82143124 incl. web-e2e (`-ci-evidence.md`); gates G0–G5 PASS; DCV returned PASS on both rows
-   before landing; verification blocks restamped under its conditional pre-authorization;
-   accepted + pushed (seam commit 30fb6aa6). NOTHING remains on this task.
-4. **Second loop instance stood up and live-proven** (D-071): `C:\SupervisorController2`
-   (byte-copy; runtime key `cfdedc11…`), own launcher `autostart-launch.ps1` there, shared
-   model_selection. Both loops ran CONCURRENTLY with disjoint scopes, zero cross-writes
-   (D-071-R003 day-1: no machine contention observed; account usage not quantified).
-5. **Ops lessons landed in Tier 2:** asks live in TWO stores (journal `queued_asks` AND
-   `pending-approvals` — poll BOTH; run-40 had 6 unseen); reports must REFERENCE files, never
-   embed source (embedding blew the review-packet cap and burned loop-2 rounds);
-   `repair_forked_audit_chain.py` takes NO args and acts on the PRIMARY runtime — never
-   invoke it casually (it hit loop-1's healthy chain; restored byte-identical pre-append;
-   loop-2's real fork then archived manually). Loop-1 chain HEALTHY, loop-2 chain fresh at
-   genesis.
-6. Backlog: DB-016+DB-005 → QUEUED(M5-T036); DB-013/015/004 → QUEUED(M5-T035); +DB-017/018
-   (producer discoveries), +DB-019 (review polish trio).
+1. **D-072 captured** (owner: up to THREE loops side by side, zero conflict — the D-071-R001
+   third-loop decision; pairwise-disjoint allowed_paths verified before every launch; reduce
+   3→2→1 on contention). **D-073 captured** (the owner's 10-point architect-outcome phase
+   prompt, 11 requirements; DB-012 decision package delivered, owner answer pending).
+2. **M5-T035 ACCEPTED (219th)** — DB-015 live wide-street provider + DCM envelope predicate +
+   DB-013 ceilings. 4 reviews PASS at material 97fa2eea; DCV 4/4; seam c759a049.
+3. **THREE loops launched** (SupervisorController3 stood up, key 9df5e3ba…; triple watcher;
+   pairwise disjointness recorded in each G0; launch record
+   `project-control/reports/three-loop-launch-2026-09-18.md`). All three built their packets.
+4. **M5-T039 ACCEPTED (220th)** — DB-010 named-street matcher MODULE (tri-state fail-closed,
+   source-anchoring guard, 40 tests) + PHASE-0 zr-12-10 snapshot repair (the v1 snapshot was a
+   STALE pre-amendment draft — DB-022; repaired by byte-exact transcription from the accepted
+   M4-T018 capture, digest recomputed, both copies synced). The loop-3 worker's honest
+   blocker refusal (no code, no fabricated provenance) is the model behavior. G5 M1 =
+   REQUIRED-before-wiring hardening (DB-023 BINDS the wiring packet).
+5. **M5-T038 ACCEPTED (221st)** — DB-006 retry gate (`rejected` outcome), DB-007 tests,
+   DB-009 shared-constant copy, DB-019a/b/c. 4 reviews + HJ PASS; one [ORCH-CORRECTED] e2e
+   copy assertion out-of-scope; CI all 20 green at 8c089343.
+6. **M5-T037 ACCEPTED (222nd) — THE D-073-R003 MILESTONE PIECE**: rule_evaluation v1.1.0
+   (additive optional wide_street block, both schema copies, generated TS, strict web
+   validator) + DB-020 digest fix + DevelopmentLimits/CalculationEvidence display + ReportView
+   parity. HJ returned PASS-with-required-corrections (F1 report ungated-feed; F2 raw-jargon
+   panel); corrections applied as tagged rework (75daaebd + one-line casing fix) through the
+   full rework→resubmit→five-delta-attestation cycle; all five carry at 1c89922c; CI all 20
+   green; DCV PASS incl. the FIRST D-073-R003 verification; restamped to 1179357c under the
+   three-condition pre-authorization. The street-dependent FAR now reaches screen AND printed
+   brief from ONE validated document.
 
-## THE LOOPS (both DOWN at clean stops; no supervisor running; no pending asks)
+## THE LOOPS (all three DOWN at clean stops; all builds harvested and accepted)
 
-Loop-1 run 41 and loop-2 run 02 both closed benignly (breaker / unit-complete). Launcher
-ACTIVE-TASK blocks are STALE (point at burned run-ids — fresh id required on any relaunch).
-**DB-012 ESCALATION: THREE breaker trips today** (runs 40, 41, loop-2 run 01), all at/near
-build-complete with report/evidence churn. Owner option surfaced twice, unanswered: as admin
-edit `C:\Program Files\SupervisorConfig\config.toml` → `consecutive_revision_loops = 4` → 6.
-Watcher died with the session — re-arm per the Tier-2 pattern polling BOTH ask stores for
-BOTH runtime keys (`9aca7075…` and `cfdedc11…`).
+Run-ids burned through: loop-1 …-44, loop-2 …-05, loop-3 …-04 (fresh ids required on any
+relaunch). EIGHT consecutive_revision_loops breaker trips today (every restart was the
+4-round limit, never a code defect) — DB-012 decision (4→6, owner-only admin edit of
+`C:\Program Files\SupervisorConfig\config.toml`) delivered again, pending. All three audit
+chains were forked at various points by ask-answer CLI races (known mechanism) and repaired
+between runs (evidence-preserving archives). Watcher: triple watcher v4 armed this session
+(scratchpad `watcher_v4_triple.sh`; keys 9aca7075/cfdedc11/9df5e3ba); it dies with the
+session — RE-ARM on resume.
 
-## NEXT ACTION (exact order)
+## NEXT ACTION (exact order; D-072-R002 wants 2-3 loops fed)
 
-1. Harvest M5-T035: run the packet's documented python suites; commit the 11-file tree in
-   `wt-m5t035` (exclude the packet-copy edit); cherry-pick; push; CI; 5-reviewer wave
-   (roster in packet) with the AS-3/DB-014 disposition stated up front — the response
-   contract v1.0.0 deliberately does NOT expose the wide-street block (DB-014), so AS-3's
-   endpoint proof = the FAR-effect via existing fields + server-side determination; rule it,
-   don't let reviewers rediscover it. Then gates, DCV, accept.
-2. Owner decisions pending: DB-012 budget raise (above); nothing else waits on the owner.
-3. Next packets only AFTER the M5-T035 accept, D-069 sweep at the seam, and D-070 finished-seam
-   discipline before any further handoff.
+1. Contract the next disjoint packets: (a) **named-street WIRING** packet (provider/engine
+   integration of the accepted matcher) — its contract MUST cite DB-023 (G5 M1 structural
+   refusal + L1 construction validation + L2 bounded reprs) as binding preconditions and may
+   fold DB-025(a-c) display touches; (b) **small polish packet** (DB-024 + remaining DB-025);
+   loop-3 lane = record shortfall reason if no third disjoint local lane exists.
+2. Relaunch loops with fresh run-ids (full worktree paths in claims — see Tier-1 trap; seed
+   placeholders; pairwise disjointness recorded in G0s; deny stale asks BOTH stores first).
+3. Orchestrator-dispatched NETWORK research (not loops): condo→base-lot sources (DB-002) and
+   the validation collection expectations (D-073-R004; regression-property investigation
+   D-073-R005 — seed record `docs/research/live-case-regression-properties.md`).
+4. D-073-R007 release preparation (deploy checklist walk → ONE consolidated owner request).
+5. Owner decisions pending: DB-012 breaker raise. Nothing else waits on the owner.
 
 ## STANDING (unchanged unless noted)
 
 Open blockers B-001/B-010/B-011. Holds: PR #241, expansion §2, Tier D/Section 20. D-064
 comms (owner: simple English, no jargon/IDs). D-067 eager budget 10k. D-069 sweep at every
-seam. D-071 trial: two loops MAX; drop to one on sustained contention; 3D held. Campaign
-record `campaign_continuity --status` is stale (seq-71 era) — ledger wins, standing condition.
+seam. D-072 loops ≤3, pairwise-disjoint, stepwise reduction. Campaign record stale (ledger wins).
 
 ## AUTHORITATIVE FILES (smallest set)
 
-`project-control/state.json` + `tasks/M5-T03{5,6}.json` + `gates/M5-T036-G*.json` ·
-`reports/M5-T036-*.md|json` (wave + CI + evidence map + submission record) ·
-`wt-m5t035` working tree (the unharvested build) · `docs/DISCOVERY_BACKLOG.md` ·
-`docs/WORKING_KNOWLEDGE.md` (two-ask-stores + watcher pattern) ·
-`C:\SupervisorController{,2}\autostart-launch.ps1` (outside repo).
-
-## COPY INTO THE NEW SESSION
-
-Resume as monitor-only orchestrator for the NYC Buildability two-loop trial. Work from
-repository evidence, not assumptions about the old chat. First: verify repo root
-C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch candidate/D-024-mrl-option-b, HEAD, and
-pull; Bootstrap Gate 0 (cwd = worktree root, /mcp empty); read CLAUDE.md and
-docs/SESSION_HANDOFF.md (seq 116) and its authoritative files; run python
-tools/project_control.py status and reconcile (ledger and git win). Both loops are DOWN at
-clean stops; M5-T036 is ACCEPTED (218th) —
-nothing remains on it. Harvest the completed M5-T035 build from wt-m5t035 per the
-handoff's step 3 (state the AS-3/DB-014 disposition up front). Re-arm the dual watcher
-(BOTH ask stores, BOTH runtime keys) before relaunching any loop; any relaunch needs a
-fresh run-id and the D-070 finished-seam rule governs the next handoff. Owner replies:
-simple English only, no technical identifiers. Report READY TO RESUME or BLOCKED, then
-continue without repeating work.
+`project-control/state.json` + `tasks/M5-T03{5,7,8,9}.json` + `gates/M5-T03*-G*.json` ·
+`reports/M5-T03{5,7,8,9}-*` (verbatim waves + DCVs + CI evidence + submission records) ·
+`directives/D-072-up-to-three-loops/` + `D-073-architect-outcome-next-phase/` ·
+`docs/DISCOVERY_BACKLOG.md` (DB-001..DB-025 swept today) ·
+`docs/research/live-case-regression-properties.md` ·
+`C:\SupervisorController{,2,3}\autostart-launch.ps1` (outside repo).
