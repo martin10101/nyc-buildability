@@ -1,0 +1,83 @@
+{
+  "task_id": "M5-T042",
+  "title": "DTM condo billing-BBL to base-lot resolver (module only): deterministic typed resolver from the verified DB-002 research, no consumer wiring",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build the deterministic condo->base-lot resolver module per the verified research docs/research/condo-base-lot-resolution-sources.md: classify the lot number (7501-7599 billing / 1001-6999 unit / else not-a-condo); billing lot resolves to the SET of base BBLs via DOF DTM Condominiums p8u6-a6it; unit lot resolves via DTM Condominium Units eguu-7ie3; condo_key fallback for the 28 null-billing condos; honest condo_base_lot_unresolved when nothing resolves - never a fabricated base lot; every result carries provenance (dataset id, rowsUpdatedAt, retrieval time, condo_number). The module returns the full base-lot set and NEVER collapses it to one lot or one zoning determination (divergent-zoning handling is a qualified-human legal surface, downstream and out of scope). MODULE ONLY: no property-lookup or ZTLDB pipeline wiring, no route change - wiring is its own later packet",
+  "business_reason": "DB-002 / D-073-R008 next live-case priority: condo billing BBLs honestly return no data today (298 Wallabout, regression case 2); the verified DTM path converts that into a real zoning lookup once wired",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "REPORT DISCIPLINE (binding; the last two runs burned all four review rounds on report revisions, not code): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass. The review-round budget is 4 - spend it on code.",
+    "COMMAND CWD (binding; suites do NOT collect from repo root - known invocation artifact): run the first three documented commands from the services/api directory (plain `cd services/api` first; cwd persists; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T040/T041 contract seam). This packet creates a NEW LEAF connector module with NO consumers - property-lookup/ZTLDB wiring is deliberately a later packet, keeping this lane disjoint from the live M5-T040 wiring lane. Model the module on the existing SODA connectors services/api/app/connectors/pluto_soda.py and ztldb_soda.py (client construction, X-App-Token handling, typed parse, provenance capture, error taxonomy) - read them FIRST and mirror their idioms. Run `python tools/code_graph/query.py --no-regen impact <path>` before any broad sweep; graph is ADVISORY - verify in source.",
+    "SOLE SOURCE (binding): the verified research record docs/research/condo-base-lot-resolution-sources.md (DB-002 dispatch, retrieved 2026-09-18, raw official responses embedded). Implement ITS verified path exactly: PRIMARY = DOF DTM Condominiums Socrata p8u6-a6it (condo_billing_bbl -> one row per condo_base_bbl; text-typed 10-digit BBLs); REVERSE = DTM Condominium Units eguu-7ie3 (unit_bbl -> condo_base_bbl); FALLBACK = condo_key query for the 28 null-billing condos. Do NOT implement the ArcGIS failover in this packet (recorded as a later hardening option). NEVER use PLUTO appbbl as a base-lot source (proven single-valued/incomplete - research section 6.1); it may appear ONLY as an optional cross-check flag. No network in tests: fixtures come from the research record's embedded raw responses, byte-faithful. Validate every BBL against ^\\d{10}$ and fail closed on any other shape.",
+    "CONTRACT (binding): deterministic, typed, stdlib+existing-deps only. Input: a 10-digit BBL string. Classify by lot number (chars 6-10): 7501-7599 billing lot; 1001-6999 condo unit lot; anything else = NOT_A_CONDO (typed result, no lookup). Output: a typed result carrying the FULL SET of base BBLs (never assume one - the worked case 3022647515 resolves to TWO lots), the resolution path taken (billing/unit/condo_key), and provenance (dataset id, rowsUpdatedAt if available, retrieval timestamp, condo_number/condo_key). Empty/no-match or exhausted fallbacks = a typed honest CONDO_BASE_LOT_UNRESOLVED result - never a fabricated lot, never an exception for a well-formed input. The module makes NO zoning determination and NEVER collapses a multi-lot set; divergent-zoning handling is a downstream qualified-human legal surface (research section 7 step 6) - state that in the module docstring.",
+    "TESTS (binding): implement the research record's contract-test pack C1-C14 rows that apply to this module (C1-C7, C9 as an appbbl-independence assertion, C10 schema-shape guard against the stored fixture; C8/C11-C14 are wiring/live-era rows - record them as deferred in the report, do not fake them). Offline fixtures only; determinism (same input twice = same output); the placeholder test file already carries one passing test - keep the suite passing at every checkpoint.",
+    "Discovery routing (D-069): out-of-scope findings go in your report; never fix them in-packet. No WebFetch proposals (network default-deny; the connector's live behavior proves in a later wiring/verification packet). Run ruff from services/api cwd before every checkpoint. Thin client: no bulk downloads, no new dependencies (G5/dependency policy - the existing HTTP client stack only)."
+  ],
+  "outputs": [
+    "services/api/app/connectors/dtm_condo_soda.py: typed deterministic condo->base-lot-set resolver, fail-closed, full provenance, no consumer imports",
+    "services/api/tests/connectors/test_dtm_condo_soda.py: C1-C7/C9/C10-class offline fixture suite from the research record's raw responses",
+    "project-control/reports/M5-T042-producer-report.md (concise, file-referencing, one evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T033"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/dtm_condo_soda.py",
+    "services/api/tests/connectors/test_dtm_condo_soda.py",
+    "project-control/reports/M5-T042-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1: billing BBL 3022647515 fixture resolves to exactly the base-lot SET {3022640032, 3022640033} with path=billing, condo identifiers, and provenance fields populated.",
+    "AS-2: unit BBL 3022642601 fixture resolves to base 3022640032 with path=unit; a condo_key expansion returns the full set.",
+    "AS-3: nonexistent billing lot and a plain land lot both yield typed no-match handling per the documented rule (never an exception, never a lot); exhausted fallbacks yield CONDO_BASE_LOT_UNRESOLVED.",
+    "AS-4: a non-condo lot number returns NOT_A_CONDO with zero lookups; malformed BBL shapes fail closed.",
+    "AS-5: BBL shape guard: every returned BBL matches ^\\d{10}$; the PLUTO-style decimal serialization is rejected, and PLUTO appbbl is never consulted for the set.",
+    "AS-6: ruff clean; suite green offline; modularity clean; NO consumer file touched (module stays a leaf).",
+    "AS-7: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Scope temptation: NO pipeline wiring, NO ArcGIS failover, NO zoning logic - module only (disjointness with the live M5-T040 lane depends on it).",
+    "Never collapse the base-lot set or infer zoning; divergent-zoning is a legal surface downstream.",
+    "Report churn is the proven breaker cause - one concise evidence pass."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-18T22:58:47.132575+00:00",
+  "updated_at": "2026-09-18T22:59:54.869154+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-18T22:58:47.132575+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/connectors/test_dtm_condo_soda.py -q",
+    "python -m pytest tests/connectors -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
