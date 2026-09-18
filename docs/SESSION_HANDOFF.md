@@ -14,13 +14,20 @@ launcher ACTIVE-TASK block pointed at that packet with a fresh run-id. The succe
 startup is then: verify state → revoke-all → launch → re-arm watcher. Crash/forced turnover is
 the ONLY exception (successor runs the seam as fallback and names the unplanned cause).
 
-## Handoff — seq 117: THREE-LOOP DAY DELIVERED; 222 ACCEPTED; D-072/D-073 CAPTURED
+## Handoff — seq 117 (TURNOVER): THREE-LOOP DAY DELIVERED; 222 ACCEPTED; D-072/D-073 CAPTURED
 
-Written 2026-09-18 ~10:45 UTC by session ctl24-5e MID-SESSION at the owner's record-keeping
-reminder (not a turnover; the session continues toward the next contract seam). Root
+Turnover reason: owner invoked `/session-handoff` (no argument). **D-070 note: NOT a finished
+seam — owner-directed turnover** (recorded as the authorized exception): all four lanes are
+ACCEPTED and pushed, but the NEXT packets (wiring + polish) are not yet contracted; the
+successor runs that seam as step 1. Generated 2026-09-18 ~16:50 UTC by session ctl24-5e. Root
 `C:/Users/MLFLL/Downloads/nyc-zoning/ctl24`, branch `candidate/D-024-mrl-option-b`, HEAD
-`6504a2b0` (PUSHED; CI all-20 green at every accepted identity). PR #241 OPEN — NEVER merge.
-**222 accepted** (never a percentage, D-059-R006).
+`c7804770` (PUSHED == origin; CI at write: 17/20 complete-success on this docs-only head, 3
+finishing — every ACCEPTED material identity's CI is fully green and recorded per task).
+PR #241 OPEN — NEVER merge. **222 accepted** (never a percentage, D-059-R006). Dirty at
+landing: ONLY conventional `.claude/agent-memory/**` + `scratchpad/` (leave them). Sub-agents:
+all reviewers/DCVs completed and reconciled (verbatim reports on file); the triple watcher was
+stopped at landing (session-local — successor re-arms); all three loops DOWN at clean stops,
+no pending asks in either store at last check.
 
 ## COMPLETED THIS SESSION (durable evidence; all pushed)
 
@@ -92,3 +99,22 @@ seam. D-072 loops ≤3, pairwise-disjoint, stepwise reduction. Campaign record s
 `docs/DISCOVERY_BACKLOG.md` (DB-001..DB-025 swept today) ·
 `docs/research/live-case-regression-properties.md` ·
 `C:\SupervisorController{,2,3}\autostart-launch.ps1` (outside repo).
+
+## COPY INTO THE NEW SESSION
+
+Resume as monitor-only orchestrator for NYC Buildability. Work from repository evidence, not
+assumptions about the old chat. First: verify repo root
+C:\Users\MLFLL\Downloads\nyc-zoning\ctl24, branch candidate/D-024-mrl-option-b, HEAD, and
+pull; Bootstrap Gate 0 (cwd = worktree root, /mcp empty); read CLAUDE.md and
+docs/SESSION_HANDOFF.md (seq 117) and its authoritative files; run python
+tools/project_control.py status and reconcile (ledger and git win). All three loops are DOWN
+at clean stops; 222 tasks are accepted — nothing is in flight. Continue from NEXT ACTION
+step 1: contract the named-street WIRING packet (its contract MUST cite DB-023 as binding
+preconditions) and the small polish packet (DB-024/DB-025); use FULL worktree paths in
+claims and the checkpoint-envelope packet note (Tier-1/Tier-2 traps); seed placeholders;
+record pairwise disjointness in each G0; then relaunch loops with fresh run-ids (deny stale
+asks in BOTH stores for all THREE runtime keys first; re-arm the triple watcher) and
+dispatch the network research (condo DB-002; validation D-073-R004/R005) as orchestrator
+subagents, not loops. Owner replies: simple English only, no technical identifiers. Report
+READY TO RESUME or BLOCKED, then continue without repeating work. Owner decision still
+pending: DB-012 (raise consecutive_revision_loops 4 to 6; owner-only admin edit).
