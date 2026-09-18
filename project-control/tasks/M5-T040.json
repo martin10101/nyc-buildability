@@ -76,7 +76,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 45,
+  "progress_percent": 90,
   "risks": [
     "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
     "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:09.965148+00:00",
-  "updated_at": "2026-09-18T22:34:58.339867+00:00",
+  "updated_at": "2026-09-18T23:49:23.803225+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -131,6 +131,13 @@
       "percent": 45,
       "status": "in_progress",
       "message": "Harvest 1 (run 45, breaker at 4 rounds - report churn, not code): DB-023(a-d) + DB-021(a,b,c) + page-digest tests committed as material 987930a2; orchestrator reproduced ruff clean / 100 passed / modularity 0 failures in-worktree; wiring + DB-021(e) + DB-025(a-d) remain; relaunching run 46 with RUN-45 carryover block"
+    },
+    {
+      "at": "2026-09-18T23:49:23.803225+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvest 2 (run 46, breaker at 4 rounds again - DB-012 trip 11): FULL remaining scope built and committed as material (wiring truth table + provider status + DB-021e + DB-025a-c display gating); all five documented commands orchestrator-reproduced green in-worktree; web proves on pushed-head CI; submit + six-reviewer wave after CI"
     }
   ]
 }
