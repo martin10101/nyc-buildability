@@ -87,6 +87,31 @@
      "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T036",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5b9da18dd9ba7ab4ad0f7b23f09df3aafd8fe9a6",
+   "reviewed_manifest_sha256": "a40beb782b9ddb488ff3b33d1c9eb4d4c5ae0b48c6027b5fbf30bb49e1392876",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T05:55:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at 5b9da18d (report project-control/reports/M5-T036-DCV-verification.md): navigation block present in the packet with seam-regen counts 732/15341/6791 matching contract-seam commit 8dccf758, query.py --no-regen instruction and advisory clause in inputs AND review guidance; block pointers independently verified in actual source (five importer lines, zolaLotUrl, mappedFeatureView, ZoningSection arrays - all accurate); advisory-verified-in-source corroborated by the independent G3 return. Restamp condition (no allowed_paths change since 5b9da18d + nav-block input byte-stable) re-verified by the orchestrator at bc1fae15 before assembly."
+     ],
+     "verified_at": "2026-09-18T05:55:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "5b9da18dd9ba7ab4ad0f7b23f09df3aafd8fe9a6"
+    }
+   ]
   }
  ]
 }
