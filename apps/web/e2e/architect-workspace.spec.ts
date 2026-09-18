@@ -220,7 +220,10 @@ test("manual and BBL recovery remain reachable when suggestions fail", async ({ 
   // [ORCH-CORRECTED per web-e2e CI on 71d4abb3] M5-T032 replaces the single
   // generic "busy" message with distinct typed outcomes; a mocked 429 now
   // renders the rate-limited copy.
-  await expect(page.getByText("Address suggestions are rate-limited right now. Wait a moment, then search the full address, or use manual entry or BBL below.")).toBeVisible();
+  // [ORCH-CORRECTED per web-e2e CI on d94bbcb6] M5-T038 (DB-009) routes the
+  // failure copy through the shared FULL_ADDRESS_SEARCH_LABEL constant so the
+  // copy names the rendered button; the rate-limited sentence changed with it.
+  await expect(page.getByText("Address suggestions are rate-limited right now. Wait a moment, then use the “Search this full address” button below, or use manual entry or BBL.")).toBeVisible();
   await page.getByText("Enter address manually", { exact: true }).click();
   await expect(page.getByTestId("address-form")).toBeVisible();
   await page.getByText("Search by tax lot (BBL)", { exact: true }).click();
