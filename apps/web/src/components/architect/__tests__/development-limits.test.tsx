@@ -560,7 +560,9 @@ describe("M5-T037 — wide-street conditional FAR on the development-limits surf
     expect(within(panel).getByTestId("wide-street-result")).toHaveTextContent("3.44");
     expect(panel).toHaveTextContent("dimensionless ratio");
     expect(panel).toHaveTextContent("within 100 ft of a wide street");
-    expect(within(panel).getByTestId("wide-street-draft")).toHaveTextContent("Pending qualified legal review");
+    // [ORCH-CORRECTED per M5-T037 HJ delta-attestation] casing aligned to the
+    // F2 clean line ("Draft — pending qualified legal review (not verified).").
+    expect(within(panel).getByTestId("wide-street-draft")).toHaveTextContent("pending qualified legal review");
     expect(within(panel).getByRole("link", { name: /Wide-street sources and provenance/ })).toHaveAttribute(
       "href",
       `/property?ruleeval=on&bbl=${profile.identity.bbl}&view=evidence`,
