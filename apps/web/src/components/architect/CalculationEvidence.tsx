@@ -21,6 +21,24 @@ export function CalculationEvidence({ evaluation, scenario }: {
         </li>)}
       </ul> : null}
       {evaluation.evaluations.length === 0 ? <p>No applicable computation trace was returned. No result is inferred.</p> : null}
+      {evaluation.wide_street ? <section className="architect-trace architect-determination architect-wide-street-provenance" data-testid="wide-street-provenance">
+        <p className="architect-eyebrow">Wide-street determination</p>
+        <h3>Wide-street conditional FAR · D-052 provenance</h3>
+        <p className="architect-status">Draft · {evaluation.wide_street.draft_label} · Professional review required</p>
+        <p>{evaluation.wide_street.reason}</p>
+        <p className="section-note">Governing wide-street conditional FAR (dimensionless ratio): {evaluation.wide_street.governing_max_residential_far != null ? evaluation.wide_street.governing_max_residential_far : "withheld — professional review required"}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
+        <p className="section-note">{evaluation.wide_street.fallback_direction_note}</p>
+        <dl className="architect-definition-list">
+          <div><dt>Determination</dt><dd>{evaluation.wide_street.determination_state}</dd></div>
+          <div><dt>Conditional-FAR row</dt><dd>{evaluation.wide_street.far_row}</dd></div>
+          <div><dt>Exceptions checked</dt><dd>{evaluation.wide_street.exceptions_checked ? "yes" : "no"}</dd></div>
+          <div><dt>Named-street override pending</dt><dd>{evaluation.wide_street.named_street_override_pending ? "yes" : "no"}</dd></div>
+        </dl>
+        <details className="provenance-details">
+          <summary>Width-policy decisions and D-052 source provenance</summary>
+          <CapturedRecord value={evaluation.wide_street} label="Wide-street determination and D-052 provenance summary"/>
+        </details>
+      </section> : null}
       {traces.map((trace, index) => <details className="architect-trace architect-determination" key={`${trace.rule_id}-${index}`} open={trace.applicability_outcome}>
         <summary>{trace.applicability_outcome ? "Applicable determination" : "Other determination"} · {trace.rule_id || "Rule identifier not supplied"}</summary>
         <h3>{trace.rule_id || "Rule identifier not supplied"}</h3>

@@ -128,7 +128,7 @@ export interface EvaluationTrace {
   determination: unknown | null;
 }
 export interface RuleEvaluation {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   evaluated_input: EvaluatedInput;
   coverage_status: DraftCoverageStatus;
   coverage_source: "rule_evaluator" | "integration_fail_safe";
@@ -148,5 +148,22 @@ export interface RuleEvaluation {
   family_coverage: FamilyCoverage;
   reasons: string[];
   rule_conflict: RuleConflict | null;
+  wide_street?: {
+    determination_state: "within_100ft_of_wide_street" | "not_within_100ft_of_wide_street" | "professional_review_required";
+    far_row: "wide_street_row" | "standard_row" | "none";
+    governing_max_residential_far: number | null;
+    coverage_hint: string;
+    exceptions_checked: boolean;
+    named_street_override_pending: boolean;
+    policy_decision_states: string[];
+    original_labels: (string | null)[];
+    source_versions: (string | null)[];
+    matched_geometry_refs: (string | null)[];
+    interpreted_bounds_summaries: string[];
+    classification_reasons: string[];
+    draft_label: string;
+    fallback_direction_note: string;
+    reason: string;
+  };
   _expected_failure?: string;
 }

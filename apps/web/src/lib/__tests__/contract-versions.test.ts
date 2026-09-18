@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { SUPPORTED_CONTRACT_VERSIONS } from "@/lib/contract";
+import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
+import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 
 /**
  * Task M2-T010 (CT-S1/CT-S2): the client's runtime supported-contract-version
@@ -94,5 +97,71 @@ describe("drift regression — schema-ahead fixture fails loudly (CT-S2)", () =>
     expect(omittedVersions(clientAheadFixture, canonicalSchemaEnum())).toEqual([
       "9.9.9",
     ]);
+  });
+});
+
+describe("rule_evaluation contract-version admission (M5-T037: 1.0.0 + additive 1.1.0)", () => {
+  const block = {
+    determination_state: "within_100ft_of_wide_street",
+    far_row: "wide_street_row",
+    governing_max_residential_far: 3.44,
+    coverage_hint: "conditional",
+    exceptions_checked: true,
+    named_street_override_pending: false,
+    policy_decision_states: ["wide"],
+    original_labels: ["80"],
+    source_versions: ["2026-03-26"],
+    matched_geometry_refs: ["OBJECTID=12345"],
+    interpreted_bounds_summaries: ["mapped width 80 ft (>= 75 ft, wide)"],
+    classification_reasons: ["DCM effective_disposition=wide; ambiguity_class=none"],
+    draft_label: "DRAFT — not a verified legal determination",
+    fallback_direction_note: "On uncertainty the higher wide-street FAR is withheld.",
+    reason: "Wide-street row governs; DRAFT pending G6.",
+  } satisfies NonNullable<RuleEvaluation["wide_street"]>;
+
+  it("keeps a 1.0.0 document valid (no block) — the recorded web-e2e fixtures stay green", () => {
+    const doc = draftApplicableDoc();
+    expect(doc.contract_version).toBe("1.0.0");
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+
+  it("accepts a 1.1.0 document carrying the optional wide_street block", () => {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.1.0";
+    doc.wide_street = structuredClone(block);
+    const result = validateRuleEvaluationDocument(doc);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.document.wide_street?.governing_max_residential_far).toBe(3.44);
+    }
+  });
+
+  it("accepts a 1.1.0 document with NO block (the serializer emits 1.1.0 for every body)", () => {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.1.0";
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+
+  it("rejects a contract_version outside the published enum", () => {
+    const doc = draftApplicableDoc();
+    (doc as unknown as Record<string, unknown>).contract_version = "2.0.0";
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(false);
+  });
+
+  it("enforces the wide_street block shape when present (malformed block fails total validation)", () => {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.1.0";
+    const bad = structuredClone(block) as unknown as Record<string, unknown>;
+    bad.determination_state = "definitely_wide"; // not in the enum
+    bad.governing_max_residential_far = "3.44"; // string, not number | null
+    (doc as unknown as Record<string, unknown>).wide_street = bad;
+    const result = validateRuleEvaluationDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.startsWith("wide_street.determination_state"))).toBe(true);
+      expect(
+        result.problems.some((p) => p.startsWith("wide_street.governing_max_residential_far")),
+      ).toBe(true);
+    }
   });
 });

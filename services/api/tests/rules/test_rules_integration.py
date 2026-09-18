@@ -919,3 +919,62 @@ def test_m5t034_select_conditional_far_row_professional_review_grants_no_bonus()
     assert fold["far_row"] == FAR_ROW_NONE
     assert fold["governing_far"] is None
     assert fold["professional_review"] is True
+
+
+# --------------------------------------------------------------------------
+# M5-T037 - as_dict()/export() serialize the OPTIONAL wide_street block into the
+# rule_evaluation @ 1.1.0 document ONLY when a determination folded in (AS-3 at
+# the integration layer; the endpoint half is in tests/api/test_rule_evaluation_
+# api.py). A no-determination or non-conditional path leaves the key ABSENT so the
+# body stays valid under both the 1.0.0 and 1.1.0 schema.
+# --------------------------------------------------------------------------
+
+
+def test_m5t037_as_dict_emits_wide_street_block_on_within_wide_fold(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    document = result.as_dict()
+    assert "wide_street" in document
+    block = document["wide_street"]
+    # The block is the D-052 provenance summary (far row + higher governing FAR +
+    # provenance tuples + DRAFT marker), never a Verified value.
+    assert block["determination_state"] == DETERMINATION_WITHIN_WIDE
+    assert block["far_row"] == FAR_ROW_WIDE_STREET
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert "DRAFT" in block["draft_label"]
+    # export() (the fail-closed dict form) carries the same block and stays
+    # strict-JSON serializable; no Verified label anywhere.
+    export = result.export()
+    assert export["wide_street"] == block
+    assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(export)
+    json.dumps(export, allow_nan=False)
+
+
+def test_m5t037_as_dict_omits_wide_street_block_without_determination(registry):
+    # A conditional district (R6) evaluated with NO determination supplied leaves
+    # the key ABSENT (1.0.0-shaped body under the 1.1.0 schema).
+    result = ri.evaluate_property(_confident_profile("R6", area=10000.0), registry=registry)
+    assert "wide_street" not in result.as_dict()
+    assert "wide_street" not in result.export()
+
+
+def test_m5t037_as_dict_omits_wide_street_block_for_non_conditional_district(registry):
+    # A determination supplied for R5 (no wide_street_far_by_district parameter)
+    # never folds, so the key stays ABSENT - byte-identical to the no-block path.
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert "wide_street" not in result.as_dict()

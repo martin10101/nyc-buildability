@@ -51,8 +51,12 @@ __all__ = [
 ]
 
 # The contract version this serializer emits - a published value in the closed
-# rule_evaluation.schema.json contract_version enum (M4-T005 phase 1).
-RULE_EVALUATION_CONTRACT_VERSION = "1.0.0"
+# rule_evaluation.schema.json contract_version enum. Bumped to 1.1.0 (M5-T037)
+# when the additive, OPTIONAL wide_street block was appended to the contract; a
+# 1.0.0 consumer stays valid because 1.0.0 remains in the enum and the block is
+# optional. The serializer emits 1.1.0 for every document (the block appears only
+# when a wide-street determination folded in, carried through by as_dict()).
+RULE_EVALUATION_CONTRACT_VERSION = "1.1.0"
 
 # Runtime-bundled schema package (package DATA inside the installed app), the
 # same source app.profile.contract loads from. The bundle copies are
@@ -130,8 +134,9 @@ def serialize_rule_evaluation(
     profile_contract_version: str,
     as_of_date: str | None = None,
 ) -> dict:
-    """Map a :class:`PropertyRuleEvaluation` onto a rule_evaluation @ 1.0.0
-    document.
+    """Map a :class:`PropertyRuleEvaluation` onto a rule_evaluation @ 1.1.0
+    document (the additive, OPTIONAL wide_street block appears only when a
+    wide-street determination folded in; otherwise the body is 1.0.0-shaped).
 
     ``profile_contract_version`` is the ``contract_version`` of the evaluated
     property_profile instance (e.g. ``"1.4.0"``). ``as_of_date`` is the temporal

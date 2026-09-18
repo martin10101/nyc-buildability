@@ -65,6 +65,7 @@ from app.rules import coverage as cov
 from app.rules import integration as ri
 from app.rules.response import (
     RULE_EVALUATION_CONTRACT_VERSION,
+    RuleEvaluationContractError,
     compute_input_fingerprint,
     serialize_rule_evaluation,
     validate_rule_evaluation_document,
@@ -319,7 +320,11 @@ def test_as3_confident_supported_family_is_200_draft(client, monkeypatch, rule_e
     assert errors == [], [e.message for e in errors]
 
     # Draft (never verified), professional-review discipline, disclaimer.
-    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION
+    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION == "1.1.0"
+    # AS-3 (provider None omits the block): the default wide-street provider is
+    # off here (no override, flag unset) AND R5 is non-conditional, so the
+    # OPTIONAL wide_street block is ABSENT and the 1.1.0 body is still valid.
+    assert "wide_street" not in doc
     assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
     assert "verified" not in set(_coverage_values(doc))
     assert doc["not_verified_disclaimer"]
@@ -1107,16 +1112,16 @@ def test_m5t033_flag_on_healthy_connectors_is_not_absent_per_parcel(
 # dependency override (exactly as get_spatial_substrate_provider is overridden),
 # which is what "a provider returning a determination" means to this route.
 #
-# CONTRACT LIMITATION (surfaced here, routed as a discovery in the producer
-# report - NOT fixed in-packet): the wide-street row (wide_street_far_row), the
-# governing FAR (wide_street_governing_far), and the D-052 provenance summary
-# (wide_street_determination) are DELIBERATELY NOT part of the frozen
-# rule_evaluation @ 1.0.0 response contract (app.rules.integration.
-# PropertyRuleEvaluation.as_dict omits them; a future additive contract bump would
-# serialize the block). The determination's effect that DOES reach the response is
-# carried by coverage_status / professional_review_required / reasons. The
-# assertions below verify exactly those observable effects and pin the absence of
-# the structured block, rather than asserting a field the contract does not carry.
+# CONTRACT (M5-T037, rule_evaluation @ 1.1.0): the additive contract bump the
+# M5-T034 discovery called for has LANDED. app.rules.integration.
+# PropertyRuleEvaluation.as_dict now serializes the OPTIONAL top-level
+# ``wide_street`` block whenever a determination folded in (the D-052 provenance
+# summary: determination_state, far_row, governing_max_residential_far, the
+# provenance tuples, and the DRAFT marker). The determination's coverage effect
+# STILL also reaches the response through coverage_status /
+# professional_review_required / reasons (unchanged). The endpoint tests below now
+# assert the serialized block is present and correct on a within-wide document and
+# ABSENT on a no-determination document, alongside those observable effects.
 # ==========================================================================
 
 
@@ -1252,8 +1257,26 @@ def test_m5t035_within_wide_determination_fires_wide_row_via_endpoint(
     )
     assert expected_reason in doc["reasons"]
 
-    # CONTRACT LIMITATION (discovery-routed): the structured wide-street row /
-    # governing FAR / provenance summary are NOT part of rule_evaluation @ 1.0.0.
+    # M5-T037 (rule_evaluation @ 1.1.0): the structured wide_street block is now
+    # serialized on a within-wide document. It carries the fired row, the higher
+    # governing FAR selected server-side (3.0, never the rule's own DSL output),
+    # the D-052 provenance summary, and the DRAFT marker - never Verified.
+    assert doc["contract_version"] == "1.1.0"
+    block = doc["wide_street"]
+    assert block["determination_state"] == "within_100ft_of_wide_street"
+    assert block["far_row"] == "wide_street_row"
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["coverage_hint"] == WS_COVERAGE_CONDITIONAL
+    # Geometry/source provenance rides in the block (the OBJECTID ref the D-052
+    # decision matched); the raw geometry-page sha256 digest (DB-020) is asserted
+    # at the provider level in tests/spatial/test_wide_street_live_provider.py.
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert block["source_versions"] == ["dcm-streetwidth-v1"]
+    assert "DRAFT" in block["draft_label"]
+    assert "verified" not in block["draft_label"].lower() or "not a" in block["draft_label"].lower()
+    # The internal dataclass field NAMES are never top-level document keys (the
+    # serialized key is the single ``wide_street`` block above).
     for absent in ("wide_street_far_row", "wide_street_governing_far", "wide_street_determination"):
         assert absent not in doc
 
@@ -1323,3 +1346,101 @@ def test_m5t035_flag_off_default_wide_provider_zero_calls_byte_identical(client,
     # Zero wide-street connector calls with the flag off, asserted AFTER the request
     # (the provider's fail-safe except cannot hide a recorded call).
     assert recording.calls == {"lot": 0, "segments": 0, "geometries": 0}
+
+
+# ==========================================================================
+# M5-T037 AS-3 (serialization) - a typed within-wide determination through the
+# endpoint yields a schema-valid rule_evaluation @ 1.1.0 document CARRYING the
+# optional wide_street block; a provider that returns None (no determination)
+# yields a schema-valid 1.1.0 document with the block ABSENT. Validated against
+# BOTH schema copies: the canonical packages/contracts copy (the rule_eval_
+# validator fixture) AND the bundled app._contract_schemas copy (the route's own
+# pre-send validate_rule_evaluation_document, which must pass for the 200).
+# ==========================================================================
+
+
+def test_m5t037_as3_within_wide_serializes_block_and_none_omits_block_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    enable_flag(monkeypatch)
+    within = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T037 AS-3 fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+
+    # Branch 1: a within-wide determination -> the block is serialized.
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(within)
+    with_block = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # Canonical-schema valid (the bundled-schema validation already passed inside
+    # the route, which is why this was a 200 rather than a typed internal error).
+    assert list(rule_eval_validator.iter_errors(with_block)) == []
+    validate_rule_evaluation_document(with_block)  # bundled runtime schema, no raise
+    assert with_block["contract_version"] == "1.1.0"
+    block = with_block["wide_street"]
+    assert block["determination_state"] == "within_100ft_of_wide_street"
+    assert block["far_row"] == "wide_street_row"
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert "DRAFT" in block["draft_label"]
+    assert "verified" not in set(_coverage_values(with_block))
+
+    # Branch 2: provider None (explicit override) -> the block is ABSENT and the
+    # 1.1.0 body still validates against both schema copies.
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(None)
+    no_block = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    assert list(rule_eval_validator.iter_errors(no_block)) == []
+    validate_rule_evaluation_document(no_block)
+    assert no_block["contract_version"] == "1.1.0"
+    assert "wide_street" not in no_block
+    assert no_block["zoning_district"] == "R6"
+
+
+def test_m5t037_as2_schema_rejects_undocumented_extra_key_in_block_and_at_root(
+    client, monkeypatch, rule_eval_validator
+):
+    # additionalProperties:false must reject an undocumented key both INSIDE the
+    # new wide_street block and at the document ROOT, on BOTH schema copies (the
+    # canonical fixture validator and the bundled runtime validator). Built from a
+    # real endpoint-produced 1.1.0 document so the base shape is genuinely valid.
+    enable_flag(monkeypatch)
+    within = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T037 AS-2 fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(within)
+    doc = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The clean base document is valid on both copies.
+    assert "wide_street" in doc
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    validate_rule_evaluation_document(doc)
+
+    # Extra key INSIDE the wide_street block -> rejected by both schema copies.
+    bad_block = json.loads(json.dumps(doc))
+    bad_block["wide_street"]["undocumented_block_key"] = "x"
+    assert list(rule_eval_validator.iter_errors(bad_block)) != []
+    with pytest.raises(RuleEvaluationContractError):
+        validate_rule_evaluation_document(bad_block)
+
+    # Extra key at the document ROOT (not the fixture-only _expected_failure key)
+    # -> rejected by both schema copies.
+    bad_root = json.loads(json.dumps(doc))
+    bad_root["undocumented_root_key"] = 1
+    assert list(rule_eval_validator.iter_errors(bad_root)) != []
+    with pytest.raises(RuleEvaluationContractError):
+        validate_rule_evaluation_document(bad_root)

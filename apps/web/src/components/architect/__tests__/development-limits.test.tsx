@@ -523,3 +523,67 @@ describe("review cluster neighboring states", () => {
     expect(JSON.parse(raw.textContent!)).toEqual(scenario);
   });
 });
+
+describe("M5-T037 — wide-street conditional FAR on the development-limits surface (D-073-R003)", () => {
+  const block = {
+    determination_state: "within_100ft_of_wide_street",
+    far_row: "wide_street_row",
+    governing_max_residential_far: 3.44,
+    coverage_hint: "conditional",
+    exceptions_checked: true,
+    named_street_override_pending: false,
+    policy_decision_states: ["wide"],
+    original_labels: ["80"],
+    source_versions: ["2026-03-26"],
+    matched_geometry_refs: ["OBJECTID=12345"],
+    interpreted_bounds_summaries: ["mapped width 80 ft (>= 75 ft, wide)"],
+    classification_reasons: ["DCM effective_disposition=wide; ambiguity_class=none"],
+    draft_label: "DRAFT — not a verified legal determination",
+    fallback_direction_note:
+      "On uncertainty the higher wide-street FAR is withheld; the conservative row governs.",
+    reason: "Wide-street row governs: within 100 ft of a wide street; DRAFT pending G6.",
+  } satisfies NonNullable<RuleEvaluation["wide_street"]>;
+
+  function wideDoc(bbl: string): RuleEvaluation {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.1.0";
+    doc.evaluated_input.bbl = bbl;
+    doc.wide_street = structuredClone(block);
+    return doc;
+  }
+
+  it("shows the within-wide conditional FAR with units, conditions, DRAFT marker and a sources link", () => {
+    const { profile } = inputs();
+    const panel = show(profile, wideDoc(profile.identity.bbl)).container.querySelector<HTMLElement>(
+      '[data-testid="development-wide-street"]',
+    )!;
+    expect(within(panel).getByTestId("wide-street-result")).toHaveTextContent("3.44");
+    expect(panel).toHaveTextContent("dimensionless ratio");
+    expect(panel).toHaveTextContent("within 100 ft of a wide street");
+    expect(within(panel).getByTestId("wide-street-draft")).toHaveTextContent("Pending qualified legal review");
+    expect(within(panel).getByRole("link", { name: /Wide-street sources and provenance/ })).toHaveAttribute(
+      "href",
+      `/property?ruleeval=on&bbl=${profile.identity.bbl}&view=evidence`,
+    );
+  });
+
+  it("renders the honest professional-review escalation, never the higher FAR, on uncertainty", () => {
+    const { profile } = inputs();
+    const doc = wideDoc(profile.identity.bbl);
+    doc.wide_street!.determination_state = "professional_review_required";
+    doc.wide_street!.far_row = "none";
+    doc.wide_street!.governing_max_residential_far = null;
+    show(profile, doc);
+    expect(screen.getByTestId("wide-street-result")).toHaveTextContent("Professional review required");
+    expect(screen.queryByText(/3\.44/)).toBeNull();
+  });
+
+  it("adds no wide-street surface for a 1.0.0 document with no block, and still renders the evaluated-FAR row", () => {
+    const { profile } = inputs();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = profile.identity.bbl;
+    show(profile, doc);
+    expect(screen.queryByTestId("development-wide-street")).toBeNull();
+    expect(screen.getByTestId("development-evaluated-far")).toBeInTheDocument();
+  });
+});
