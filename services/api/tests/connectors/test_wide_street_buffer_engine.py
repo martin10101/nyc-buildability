@@ -51,6 +51,8 @@ from app.connectors.wide_street_buffer_engine import (
     BUFFER_QUAD_SEGS,
     EC2_UNDER_CLAIM_NOTICE,
     EXTENT_ABS_MAX_FT,
+    MAX_LOT_VERTICES,
+    MAX_PATHS_PER_SEGMENT,
     MAX_VERTICES_PER_PATH,
     MAX_WIDE_SEGMENTS,
     PINNED_GEOS_VERSION_STRING,
@@ -255,6 +257,74 @@ def test_per_segment_identity_is_visible() -> None:
     )
     ids = {c.segment_object_id for c in result.segment_contributions}
     assert ids == {11, 12}
+
+
+# ---------------------------------------------------------------------------
+# DB-013 defense-in-depth ceilings (M5-T035): lot-polygon vertex bound +
+# per-segment path-count bound, tested AT and BEYOND each bound. The bound is
+# monkeypatched to the fixture's ACTUAL count so "at" and "beyond" are exact
+# without building hundred-thousand-vertex fixtures.
+# ---------------------------------------------------------------------------
+
+
+def test_lot_vertex_bound_beyond_raises_input_bounds(monkeypatch) -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(20, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    count = engine._canonical_vertex_count(lot.assessment.canonical_geometry)
+    monkeypatch.setattr(engine, "MAX_LOT_VERTICES", count - 1)
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+    assert excinfo.value.detail["max"] == count - 1
+
+
+def test_lot_vertex_bound_at_bound_is_allowed(monkeypatch) -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(21, [[[-50.0, -1000.0], [-50.0, 1000.0]]])
+    count = engine._canonical_vertex_count(lot.assessment.canonical_geometry)
+    monkeypatch.setattr(engine, "MAX_LOT_VERTICES", count)  # exactly at the bound: allowed
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+
+
+def test_segment_path_count_bound_beyond_raises_input_bounds(monkeypatch) -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    # Two disjoint paths on one segment -> path_count == 2.
+    segment = _make_segment(
+        22, [[[-50.0, -1000.0], [-50.0, 1000.0]], [[-60.0, -1000.0], [-60.0, 1000.0]]]
+    )
+    path_count = segment.polyline.path_count
+    monkeypatch.setattr(engine, "MAX_PATHS_PER_SEGMENT", path_count - 1)
+    with pytest.raises(InputBoundsError) as excinfo:
+        compute_wide_street_buffer_intersection(
+            lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+        )
+    assert excinfo.value.error_type == "input_bounds_exceeded"
+    assert excinfo.value.detail["path_count"] == path_count
+
+
+def test_segment_path_count_bound_at_bound_is_allowed(monkeypatch) -> None:
+    lot = _make_lot(SQUARE_LOT_RINGS)
+    segment = _make_segment(
+        23, [[[-50.0, -1000.0], [-50.0, 1000.0]], [[-60.0, -1000.0], [-60.0, 1000.0]]]
+    )
+    path_count = segment.polyline.path_count
+    monkeypatch.setattr(engine, "MAX_PATHS_PER_SEGMENT", path_count)  # exactly at the bound
+    result = compute_wide_street_buffer_intersection(
+        lot, [segment], ec5_preconditions=EC5_CHECKED, correlation_id=CORRELATION_ID
+    )
+    assert result.status == STATUS_COMPUTED
+
+
+def test_db013_ceilings_are_above_real_world_sizes() -> None:
+    # A signal, not a re-derivation: the shipped ceilings sit orders of
+    # magnitude above any legitimate NYC lot or DCM block-face segment.
+    assert MAX_LOT_VERTICES >= 100_000
+    assert MAX_PATHS_PER_SEGMENT >= 1_000
 
 
 # ---------------------------------------------------------------------------
