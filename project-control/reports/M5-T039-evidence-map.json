@@ -1,0 +1,22 @@
+{
+ "task_id": "M5-T039",
+ "material_commit": "1564e5094c8adf53e96a8a3dd87c364ae2c811e4",
+ "producer": "backend-engineer",
+ "note": "Material commit = the cherry-pick of the wt-m5t039 build (5 files: matcher, 40-test suite, both snapshot copies, producer report v6; +1609/-36) onto candidate/D-024-mrl-option-b; produced by the loop-3 worker under supervisor runs persistent3-local-01..04 (runs 01-03 = the honest source blocker + two checkpoint-formality stops; run 04 = phase-0 snapshot repair + the matcher). Orchestrator independently reproduced all four documented commands green in the worktree before harvest (sync 14 incl. zr-12-10; ruff clean; 40 passed; modularity failures 0, matcher not flagged) and stamped the file digests (module 0446c364..., suite 9a940783...). The worktree's packet-copy edit to tasks/M5-T039.json is the ORCHESTRATOR'S OWN packet repairs (worktree full-path fix, checkpoint-envelope note, phase-0 amendment), deliberately excluded from the material commit and attested here.",
+ "requirements": {
+  "D-045-R002": [
+   "Geometry-adjacent A2 mechanic delivered with its data input REPAIRED first: phase 0 updated both zr-12-10 snapshot copies (canonical docs/research/zr-snapshots/v1/ + packaged services/api/app/_zr_snapshots/v1/, byte-identical via sync_zr_snapshots) to the amended 3/26/2026 'street, wide' text with a structured, digest-covered named-street table and the C5-3/C6-4/C6-6 alternate-width + 70-ft-connector fields, transcribed byte-exact from the accepted G1-reviewed M4-T018 reconciliation capture (channel sha 4a75e22f), digest recomputed, no network, no other source.",
+   "Matcher: services/api/app/rules/named_street_override.py - typed deterministic tri-state failing CLOSED to INDETERMINATE (unparseable locator, missing/degenerate bounds, boundary inclusive/exclusive ambiguity); construction-time _validate_against_source guard requires every normalized structured row field AND disposition to trace to the pinned source text (beyond quote-substring presence) - a divergent field fails construction; distinct override provenance (snapshot sha + section anchor + provision id + verbatim row) on every non-NOT_MATCHED result; NO fuzzy matching, NO geometry inference, NO numeric width computation.",
+   "Missing input -> honest not-assessed, never a manufactured number: the two real named rows return INDETERMINATE (mapped-public-park physical predicate unverifiable textually + G6-Q1); alternate-width districts return professional_review_required class; suite services/api/tests/rules/test_named_street_override.py (40 tests) proves rows, boundaries, normalization incl. the abbreviation limitation, provenance exactness, fail-closed divergence guards, and determinism with anti-tautology discipline (independent normalization, recomputed digests, production loader)."
+  ],
+  "D-045-R008": [
+   "Bounded single-scope gated task in the campaign lane: material diff = exactly the 5 in-scope files (module + suite + both snapshot copies + report); module-only, wiring deliberately deferred to a later packet for loop disjointness; gates G0,G2,G3,G4,G5 required; directive_refs cite D-045-R002/R008/R009 + D-066-R001; not monolithic."
+  ],
+  "D-045-R009": [
+   "Preservation upheld: module docstring states it implements the capture, not legal advice, DRAFT pending G6 (D-045-R009); no *.rule.json touched; the three open legal questions (G6-Q1 park-qualifier scope, G6-Q2 may-be-considered, G6-Q3 boundary inclusive/exclusive) are RECORDED and resolved at runtime only as conservative refusals (INDETERMINATE / professional_review_required) per the orchestrator ruling captured in the packet - neither question decided; no published/verified/compliance claim anywhere."
+  ],
+  "D-066-R001": [
+   "Contract-seam code-graph navigation block embedded in the packet (regenerated 2026-09-18 at the M5-T035 acceptance seam c759a049: 734 files/15427 nodes/6852 edges) with the new-leaf/no-consumer situation stated, the query.py --no-regen instruction, and the advisory clause; the build honored it - the module is a leaf with zero consumers and no consumer file changed."
+  ]
+ }
+}

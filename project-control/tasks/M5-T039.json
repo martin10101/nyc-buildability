@@ -54,15 +54,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Scope temptation: NO provider wiring, NO geometry - module only (disjointness with the M5-T037 lane depends on it).",
     "Normalization over-reach: rules must be derived from and cited to the snapshot text."
   ],
   "blockers": [],
   "created_at": "2026-09-18T07:28:57.006025+00:00",
-  "updated_at": "2026-09-18T07:43:21.910410+00:00",
+  "updated_at": "2026-09-18T09:10:28.495201+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -95,6 +95,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the three-loop seam; awaiting loop-3 launch"
+    },
+    {
+      "at": "2026-09-18T09:10:16.989264+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvest: loop-3 build committed as material 1564e509 (matcher + 40-test suite + repaired snapshot both copies + report v6); orchestrator independently reproduced all four documented commands green in the worktree; digests stamped; packet-copy edits attested as orchestrator repairs"
     }
   ]
 }
