@@ -41,15 +41,22 @@ function renderPanel(profile = baseProfile()) {
 describe("AS-1 — every present designation class, with provenance, nothing computed", () => {
   it("renders all districts (split-lot multiples), special districts, and landmark/historic values", () => {
     const panel = renderPanel();
-    // Split zoning lot: BOTH districts render, not just the first.
-    expect(within(panel).getByText("R3-2")).toBeInTheDocument();
-    expect(within(panel).getByText("C4-1")).toBeInTheDocument();
-    expect(within(panel).getByText("GI")).toBeInTheDocument();
+    // Split zoning lot: BOTH districts render, not just the first. Each value
+    // ALSO appears inside its own provenance disclosure (the original-value and
+    // normalized-value <dd> rows), so the shared list markup carries the value
+    // text on more than one element. Assert real presence with getAllByText
+    // (which throws when there are zero matches) rather than a single-match
+    // getByText that the intended duplication makes ambiguous.
+    expect(within(panel).getAllByText("R3-2").length).toBeGreaterThanOrEqual(1);
+    expect(within(panel).getAllByText("C4-1").length).toBeGreaterThanOrEqual(1);
+    expect(within(panel).getAllByText("GI").length).toBeGreaterThanOrEqual(1);
     // Landmark/historic values are shown verbatim from the profile.
-    expect(within(panel).getByText("INDIVIDUAL LANDMARK")).toBeInTheDocument();
     expect(
-      within(panel).getByText("Governors Island Historic District"),
-    ).toBeInTheDocument();
+      within(panel).getAllByText("INDIVIDUAL LANDMARK").length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      within(panel).getAllByText("Governors Island Historic District").length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it("carries per-value provenance disclosures for districts and flags", () => {
@@ -79,7 +86,10 @@ describe("AS-1 — every present designation class, with provenance, nothing com
       normalized_value: "C1-4",
     });
     const panel = renderPanel(profile);
-    expect(within(panel).getByText("C1-4")).toBeInTheDocument();
+    // The overlay value also renders inside its provenance disclosure rows, so
+    // it matches more than one element — assert presence with getAllByText.
+    expect(within(panel).getAllByText("C1-4").length).toBeGreaterThanOrEqual(1);
+    // The disclosure summary label stays a unique single match.
     expect(within(panel).getByText("Source for C1-4")).toBeInTheDocument();
     // The honest empty-overlay note is gone now that an overlay is present.
     expect(
