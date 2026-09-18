@@ -83,4 +83,58 @@ describe("M5-T037 — screen/report wide-street parity (D-073-R003)", () => {
     expect(screen.queryByTestId("development-wide-street")).toBeNull();
     expect(screen.queryByTestId("wide-street-provenance")).toBeNull();
   });
+
+  // [ORCH-CORRECTED per M5-T037 HJ F1] A validator-valid but NON-INSPECTABLE
+  // document that still carries a wide_street block must be withheld on the
+  // report exactly as every screen surface withholds it (the report feeds
+  // DevelopmentLimits the same inspectability-gated evaluation) — screen and
+  // report can never quietly disagree (D-073-R003).
+  it("withholds the wide-street panel on the report for a non-inspectable document, matching the screen", () => {
+    const profile = baseProfile();
+    const doc = wideStreetDoc(profile.identity.bbl);
+    doc.evaluations[0].rule_id = 123 as unknown as string;
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    expect(screen.queryByTestId("development-wide-street")).toBeNull();
+    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+    cleanup();
+    // The screen equivalent: the gate passes null to DevelopmentLimits.
+    render(<DevelopmentLimits profile={profile} scenario={null} evaluation={null} />);
+    expect(screen.queryByTestId("development-wide-street")).toBeNull();
+  });
+
+  // [ORCH-CORRECTED per M5-T037 HJ F2] The REAL server strings (verbatim from
+  // wide_street_wiring.py DRAFT_LABEL_NOTICE / FALLBACK_DIRECTION_NOTICE and a
+  // real fold reason) carry internal identifiers. The calm answer-first panel
+  // must never surface them; they belong behind the evidence disclosure. This
+  // fixture uses the actual constants so the jargon cannot silently return.
+  it("keeps real server jargon strings off the calm wide-street panel", () => {
+    const profile = baseProfile();
+    const doc = wideStreetDoc(profile.identity.bbl);
+    doc.wide_street!.draft_label =
+      "DRAFT - not a Verified determination (D-045-R009). This wide-street " +
+      "determination feeds a needs_review draft rule and is subject to G6 " +
+      "qualified-human legal review before any published/production use; the " +
+      "higher wide-street FAR is never a final result here.";
+    doc.wide_street!.fallback_direction_note =
+      "D-051 fallback direction (validated for the ZR 23-22 conditional-FAR " +
+      "rows only): on uncertainty the higher wide-street FAR is withheld and the " +
+      "conservative LOWER-FAR row governs (or the result fails safe to " +
+      "professional review). Because the wide-street value is the HIGHER FAR for " +
+      "these districts, withholding it can never overstate buildable floor area. " +
+      "This is not a universal 'narrow is always conservative' claim - each " +
+      "consuming rule validates its own direction (D-051).";
+    doc.wide_street!.reason =
+      "wide-street determination within_100ft_of_wide_street: the wide-street " +
+      "(higher) conditional-FAR row governs (max_residential_far 3.44); DRAFT pending G6.";
+    render(<DevelopmentLimits profile={profile} scenario={null} evaluation={doc} />);
+    const panel = screen.getByTestId("development-wide-street");
+    const text = panel.textContent ?? "";
+    for (const token of ["D-045-R009", "D-051", "needs_review", "within_100ft_of_wide_street", "ZR 23-22"]) {
+      expect(text).not.toContain(token);
+    }
+    expect(screen.getByTestId("wide-street-draft")).toHaveTextContent(
+      "Draft — pending qualified legal review (not verified).",
+    );
+    expect(screen.getByTestId("wide-street-result")).toHaveTextContent("3.44");
+  });
 });

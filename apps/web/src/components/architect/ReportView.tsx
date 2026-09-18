@@ -65,7 +65,11 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
     <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
     <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
-    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={identityEvaluation}/>
+    {/* [ORCH-CORRECTED per M5-T037 HJ F1] The report feeds DevelopmentLimits the same
+        inspectability-GATED evaluation every screen surface uses (and that
+        CalculationEvidence below already receives), so screen and report can never
+        quietly disagree on a non-inspectable document (D-073-R003). */}
+    <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation}/>
     <PropertyIssuesSummary profile={profile}/>
     <nav className="architect-report-contents" aria-label="Property brief contents">
       {[["brief-facts", "Facts"], ["brief-zoning", "Zoning"], ["brief-issues", "Issues & assumptions"], ["brief-calculations", "Calculations"], ["brief-sources", "Sources"]].map(([id, text]) => <a key={id} href={`#${id}`} onClick={() => { const section = document.getElementById(id); if (section instanceof HTMLDetailsElement) section.open = true; }}>{text}</a>)}

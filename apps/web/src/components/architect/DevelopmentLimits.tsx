@@ -73,9 +73,12 @@ function WideStreetResult({ evaluation, evidenceHref }: { evaluation: RuleEvalua
           <p className="section-note">Wide-street conditional FAR — a dimensionless ratio. Floor area = FAR × zoning-lot area (sq ft).</p>
           <p className="section-note">{within ? "Applies within 100 ft of a wide street." : "Outside 100 ft of a wide street; the conservative floor-area ratio governs."}</p>
         </>}
-    <p className="section-note" data-testid="wide-street-draft">{wide.draft_label} · Pending qualified legal review (not verified).</p>
-    <p>{wide.reason}</p>
-    <p className="section-note">{wide.fallback_direction_note}</p>
+    {/* [ORCH-CORRECTED per M5-T037 HJ F2] The primary panel keeps only clean,
+        human-phrased text. The server's raw draft_label / reason /
+        fallback_direction_note strings carry internal identifiers and engine
+        phrasing; they stay available verbatim behind the evidence disclosure
+        (CalculationEvidence), never on the calm answer-first surface. */}
+    <p className="section-note" data-testid="wide-street-draft">Draft — pending qualified legal review (not verified).</p>
     <Link href={evidenceHref}>Wide-street sources and provenance →</Link>
   </section>;
 }
