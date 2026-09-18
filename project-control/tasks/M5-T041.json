@@ -1,0 +1,88 @@
+{
+  "task_id": "M5-T041",
+  "title": "Address-flow + validator polish cluster: DB-024 copy/a11y quartet + DB-025(e) web-validator wording correction",
+  "task_type": "web",
+  "milestone_id": "M5",
+  "objective": "Close the DB-024 advisory cluster: (a) honest recovery copy when the full-address search itself fails (no circular retry suggestion); (b) one shared absent-BBL note constant used byte-identically by AddressConfirmCard, ZoningContextPanel, and PropertyOverview; (c) aria-hidden on the remaining decorative glyphs (address-hint arrow, ProfileViews/PropertyIssuesSummary arrow); (d) consistent ZoLa link accessible names; plus DB-025(e): correct or tighten the web rule-evaluation validator's positive-shape-only wording claim (server stays authoritative; recorded 1.0.0 fixtures stay valid)",
+  "business_reason": "DB-024/DB-025(e): accepted-review advisory findings on user-facing copy, accessibility, and a validator documentation claim - one bounded polish packet keeps the product surfaces honest and consistent",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T040/T041 contract seam, HEAD 198c24f8). This packet is web-only copy/a11y/wording: the address components (AddressResolutionScreen, AddressConfirmCard), AddressAutocomplete, PropertyOverview (defines PropertyIssuesSummary), ZoningContextPanel, ProfileViews, and their suites. apps/web/src/lib/rule-evaluation-contract.ts is the strict runtime validator consumed by the web data layer - its VALIDATION VERDICTS for every recorded fixture (1.0.0 and 1.1.0) must not change unless you deliberately tighten AND keep all fixtures valid. Use `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE (binding; DB-024 letter map): (a) HJ F1 - when the full-address search ITSELF fails, the recovery copy must offer a non-circular next step (today it suggests the full-address search the user just watched fail); (b) HJ F2 - ONE shared absent-BBL note constant rendered byte-identically by AddressConfirmCard, ZoningContextPanel, and PropertyOverview (home it with the existing shared FULL_ADDRESS_SEARCH_LABEL constant in AddressAutocomplete.tsx or another in-scope home per modularity); (c) HJ F3 - aria-hidden on the remaining decorative glyphs: the address-hint 'arrow-up-right' and the ProfileViews 'Inspect calculation evidence ->' arrow (match the accepted DB-019a pattern); (d) HJ F4 - one consistent ZoLa-link accessible-name pattern across the three link sites (the validated zolaLotUrl helper itself is untouched).",
+    "DB-025(e) (binding): the validator file's wording claims must match its actual behavior (positive-shape, documented-key-set check; NO client-side additionalProperties rejection; the server stays authoritative). EITHER correct the wording OR tighten the behavior - a tightening that invalidates ANY recorded fixture (1.0.0 or 1.1.0) or turns web-e2e red is a failure, not a tightening.",
+    "PRESERVATION (binding): no behavior change to retry/outcome classification (the accepted DB-006 'rejected' semantics stand; apps/web/src/lib/address-search.ts is NOT in allowed_paths); DRAFT/not-verified vocabulary unchanged; no contract schema or generated-TS change; no services/api path.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. Do not propose WebFetch (network is default-deny). Do not run or document npm/npx/node (web behavior proves ONLY in CI on the pushed head). Run ruff from services/api cwd before every checkpoint (api CI job step 1). Every checkpoint carries IMPLEMENTATION."
+  ],
+  "outputs": [
+    "DB-024 (a)-(d) closed: non-circular failure recovery copy, shared absent-BBL constant across the three surfaces, aria-hidden decorative glyphs, consistent ZoLa accessible names - with test assertions",
+    "DB-025(e) closed: validator wording matches behavior (or deliberate tightening with every recorded fixture still valid)",
+    "project-control/reports/M5-T041-producer-report.md to the reviewer honesty bar"
+  ],
+  "dependencies": [
+    "M5-T037",
+    "M5-T038"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/__tests__/address-resolution.test.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/components/architect/AddressAutocomplete.tsx",
+    "apps/web/src/components/architect/__tests__/autocomplete.test.tsx",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/ZoningContextPanel.tsx",
+    "apps/web/src/components/architect/ProfileViews.tsx",
+    "apps/web/src/components/architect/__tests__/zoning-context-panel.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/__tests__/contract-versions.test.ts",
+    "project-control/reports/M5-T041-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (a): a failed full-address search renders recovery copy naming a genuinely different next step - never the just-failed search; test asserts the non-circular copy.",
+    "AS-2 (b): one exported constant; AddressConfirmCard, ZoningContextPanel, and PropertyOverview render the byte-identical absent-BBL note; tests assert via the constant import.",
+    "AS-3 (c): the address-hint and ProfileViews arrows carry aria-hidden; accessible names exclude the glyphs; suites assert.",
+    "AS-4 (d): the three ZoLa link sites expose one consistent accessible-name pattern.",
+    "AS-5 (e): validator wording matches behavior, or the tightened behavior keeps every recorded fixture valid; contract-versions suite green.",
+    "AS-6: no retry/outcome semantic change (address-search.ts untouched, out of allowed_paths); modularity clean.",
+    "AS-7: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Disjointness with M5-T040: never touch DevelopmentLimits/CalculationEvidence/ReportView, their tests, or any services/api path.",
+    "Validator tightening is OPTIONAL; breaking one recorded fixture or web-e2e is a failure, not a tightening."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-18T17:06:24.658009+00:00",
+  "updated_at": "2026-09-18T17:09:38.078133+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-18T17:06:24.658009+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

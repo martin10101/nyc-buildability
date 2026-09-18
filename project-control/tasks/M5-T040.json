@@ -1,0 +1,118 @@
+{
+  "task_id": "M5-T040",
+  "title": "Named-street override WIRING: DB-023 hardening (binding preconditions) then provider/engine integration of the accepted matcher + DB-021 provider ceilings + DB-025(a-d) display gating",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close DB-023 (a)-(c) inside the matcher FIRST (structural refusal of matched_override on unresolved qualifiers or digest-covered structured fields; construction-time validation of provision_id/section_anchor failing closed; bounded raw-query reprs) plus advisory (d) word-boundary anchoring; then wire named_street_override into the wide-street attestation seam so exceptions_checked can become True ONLY when every candidate segment resolves NOT_MATCHED with fully-resolved inputs - MATCHED_OVERRIDE and INDETERMINATE stay professional-review refusals carrying distinct override provenance; add DB-021 provider ceilings (a: provider-side MAX_LOT_VERTICES pre-check, b: wide_object_ids cap pre-fetch, c: two-layer exceptions-attestation docstring, e: untested-branch coverage); gate DevelopmentLimits/CalculationEvidence/ReportView uniformly on determination_state with the DB-025(a-c) display corrections",
+  "business_reason": "DB-010 wiring is the step that lets the product honestly attest named-street exceptions were checked near Broadway W94-97 and Allen St instead of always refusing; DB-023 is the G5-ruled precondition before the matcher gains its first consumer",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "COMMAND CWD (binding; the rules/api suites do NOT collect from repo root - known invocation artifact): run the first four documented commands from the services/api directory (plain `cd services/api` first; the Bash tool keeps the working directory between commands; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; regenerated 2026-09-18 at the M5-T040/T041 contract seam, HEAD 198c24f8). Run `python tools/code_graph/query.py --no-regen impact <path>` BEFORE broad sweeps; graph is ADVISORY - verify every material conclusion in source. Impact set for this packet: wide_street_wiring.py is imported by integration.py (:56, :514-520), api/v1/rule_evaluation.py:74, spatial/wide_street_live_provider.py:100, and the suites test_rule_evaluation_api/test_rules_integration/test_wide_street_wiring; the provider is imported by api/v1/rule_evaluation.py:67 + its suites. named_street_override.py is currently a LEAF (only its own test imports it) - THIS packet creates its first consumer, which is exactly why DB-023 must close first. Any attestation-behavior change is visible to tests/api and tests/rules/test_rules_integration.py - both in allowed_paths and they MUST be green.",
+    "ORDER OF WORK (binding): (1) DB-023 FIRST - close the matcher hardening cluster before any consumer import lands (G5 M1 ruling, DISCOVERY_BACKLOG DB-023): (a) disposition_when_located is outside the digest cover - fix STRUCTURALLY (refuse matched_override whenever the row carries an unresolved qualifier) or digest-cover the structured fields; (b) validate block provision_id/section_anchor at construction, failing CLOSED on a malformed snapshot (today a KeyError escapes at match()); (c) bound the raw-query reprs in MatchResult.reason before wiring to user-reachable input; (d) advisory - word-boundary anchoring in _anchored_in (G3 A1). (2) DB-021 provider hardening: (a) provider-side MAX_LOT_VERTICES check before its own first canonical_to_shapely (~:282); (b) cap wide_object_ids before the geometry-fetch loop (the engine's 512 ceiling runs only after fetch); (c) docstring note on the two-layer ZR 12-10 exceptions attestation (width-policy 'checked' vs EC-5 'unattested'; the legal half stays in the G6 queue with DB-011); (e) direct tests for the segment_geometry_unexpected_error and _attested_lot sub-branches. (3) WIRING: integrate named_street_override into the named-street attestation seam (wide_street_wiring.NamedStreetOverrideStatus / _elevated_exceptions_checked and the provider's construction of that status).",
+    "WIRING SEMANTICS (binding, fail-closed; D-051 - this packet's fallback direction is refusal-to-professional-review, never a silent narrow/wide guess): exceptions_checked may become True ONLY when the matcher returns NOT_MATCHED for EVERY candidate segment with fully-resolved typed inputs (borough/CD + street name + cross-street bounds all present and normalized). MATCHED_OVERRIDE = professional-review-class refusal carrying the distinct override provenance (snapshot sha256, section anchor, provision id, verbatim matched row). INDETERMINATE, or ANY missing/unresolvable matcher input = the existing refusal stands unchanged. NEVER apply an alternate-width value numerically - the C5-3/C6-4/C6-6 alternate-width provisions stay professional_review_required-class output (M5-T039 orchestrator ruling; G6 legal queue).",
+    "CONTRACT PRESERVATION (binding): the rule_evaluation contract v1.1.0 is CLOSED for this packet - no schema copy, no generated TS, no integration.py/response.py serialization change (none of those files is in allowed_paths). If the existing determination vocabulary or provenance summary cannot honestly carry a named-street outcome, STOP that sub-scope and record the precise gap in your report - never fork a data path or widen the contract in-packet.",
+    "DISPLAY CONTRACT (D-073-R006, binding; DB-025 a-c): (a) CalculationEvidence renders the 'Professional review required' status line ONLY when determination_state says so - a confident within/not-within is not mislabeled; (b) DevelopmentLimits AND ReportView gate uniformly on determination_state (today one gates on state, the other on null-FAR, agreeing only via a server invariant); (c) no 'Wide-street conditional FAR' heading over the conservative value in the not-within case. Screen and report keep rendering from the SAME validated document. DRAFT-pending-G6 vocabulary and not_verified_disclaimer assertions unchanged (D-045-R009); never present a reference FAR as the computed result.",
+    "TESTS (binding): DB-023 regressions (a crafted snapshot flipping a qualified row to matched_override is REFUSED; malformed block fails closed at construction, never a KeyError at match(); MatchResult.reason reprs bounded); DB-025(d) multi-page DB-020 fixture (a page-2 segment carries page-2's raw digest, not page-1's); DB-021(e) branch coverage; the wiring truth table (all-NOT_MATCHED resolved -> attested; any MATCHED_OVERRIDE -> professional review + override provenance; any INDETERMINATE or missing input -> refusal unchanged); display cases per DB-025(a-c) incl. the shared screen/report fixture. Keep every suite green at every checkpoint.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. Do not propose WebFetch (network is default-deny). Do not run or document npm/npx/node (web behavior proves ONLY in CI on the pushed head). Run ruff from services/api cwd before every checkpoint (api CI job step 1). Every checkpoint carries IMPLEMENTATION."
+  ],
+  "outputs": [
+    "Hardened named_street_override.py: DB-023 (a)-(c) closed + (d) word-boundary anchoring, with regression tests",
+    "Provider hardening: MAX_LOT_VERTICES pre-check, wide_object_ids cap, two-layer attestation docstring, DB-021(e) branch tests, DB-025(d) multi-page digest fixture",
+    "Named-street wiring: attestation seam consumes the matcher fail-closed; exceptions_checked True only on fully-resolved all-NOT_MATCHED; override provenance on refusals; consumer suites green",
+    "Web: DevelopmentLimits/CalculationEvidence/ReportView gated uniformly on determination_state (DB-025 a-c) with updated tests",
+    "project-control/reports/M5-T040-producer-report.md to the reviewer honesty bar"
+  ],
+  "dependencies": [
+    "M5-T037",
+    "M5-T039"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/named_street_override.py",
+    "services/api/tests/rules/test_named_street_override.py",
+    "services/api/app/rules/wide_street_wiring.py",
+    "services/api/tests/rules/test_wide_street_wiring.py",
+    "services/api/app/spatial/wide_street_live_provider.py",
+    "services/api/tests/spatial/test_wide_street_live_provider.py",
+    "services/api/tests/rules/test_rules_integration.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_evidence_api.py",
+    "services/api/tests/api/test_scenario_api.py",
+    "services/api/tests/api/test_scenario_analysis_api.py",
+    "apps/web/src/components/architect/DevelopmentLimits.tsx",
+    "apps/web/src/components/architect/CalculationEvidence.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "project-control/reports/M5-T040-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (DB-023a): a crafted snapshot flipping a qualifier-carrying row to matched_override is refused (no MATCHED_OVERRIDE), regression-tested.",
+    "AS-2 (DB-023b): a snapshot block missing/mistyping provision_id or section_anchor fails CLOSED at construction - match() can never KeyError.",
+    "AS-3 (DB-023c): MatchResult.reason never embeds an unbounded raw-query repr (bounded length asserted in tests).",
+    "AS-4 (wiring): all-NOT_MATCHED with fully-resolved inputs -> exceptions_checked True; any MATCHED_OVERRIDE -> professional-review refusal carrying snapshot sha256 + section anchor + provision id + verbatim row; any INDETERMINATE or missing input -> refusal unchanged; no alternate-width value applied numerically anywhere.",
+    "AS-5 (hardening): provider MAX_LOT_VERTICES pre-check and wide_object_ids cap fail closed with tests; DB-025(d) multi-page fixture asserts the page-correct digest; DB-021(e) branches directly tested.",
+    "AS-6 (display, CI): the three surfaces gate uniformly on determination_state; CalculationEvidence review label conditional; not-within carries no conditional-FAR heading over the conservative value; screen and report agree from one shared fixture.",
+    "AS-7: ruff clean; all documented suites green; modularity clean; contract files byte-untouched (schemas, generated TS, integration.py, response.py).",
+    "AS-8: CI green on the pushed head (orchestrator captures); DRAFT/not-verified preservation grep-clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
+    "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
+    "Disjointness with M5-T041: never touch address components, PropertyOverview/ZoningContextPanel/ProfileViews/AddressAutocomplete, or apps/web/src/lib/*."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-18T17:06:09.965148+00:00",
+  "updated_at": "2026-09-18T17:09:38.078133+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R002",
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-18T17:06:09.965148+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/rules/test_named_street_override.py tests/rules/test_wide_street_wiring.py -q",
+    "python -m pytest tests/spatial/test_wide_street_live_provider.py -q",
+    "python -m pytest tests/api tests/rules/test_rules_integration.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

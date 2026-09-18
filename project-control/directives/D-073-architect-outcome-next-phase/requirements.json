@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 11,
  "producer": "orchestrator",
- "updated_at": "2026-09-18T07:33:23.503866+00:00",
+ "updated_at": "2026-09-18T17:09:38.078133+00:00",
  "requirements": [
   {
    "id": "D-073-R001",
@@ -178,7 +178,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-073-BOOTSTRAP"
+     "D-073-BOOTSTRAP",
+     "M5-T040"
     ],
     "task_types": [],
     "milestones": [],
