@@ -26,3 +26,20 @@ Captured 2026-09-18 ~10:05 UTC. Executable authority for AS-7 (and the AS-5/AS-6
 - **Harvest-local corroboration (orchestrator-run in wt-m5t037):** all seven documented
   commands green (ruff clean; tests/api 426; provider 28; rules-integration 49; typegen
   --check OK; typegen tests 29; modularity failures 0).
+
+
+---
+
+## ADDENDUM — CI at the FINAL corrected head 1c89922c (orchestrator-captured, ~10:30 UTC)
+
+The review cycle produced two tagged rework commits after the material commit (75daaebd =
+the HJ F1/F2 required corrections; the one-line casing alignment) resubmitted at head
+`1c89922c466444ee90bce32ab70f208e088862db`. Intermediate head 8240a497 went RED on exactly
+the single vitest casing assertion the HJ and G4 reviewers predicted BEFORE the run finished
+(1 failure / 2 cancelled-by-push / 17 success) — the prediction is itself recorded evidence.
+
+**Final head `1c89922c`: ALL 20 check runs `completed | success`** — including web (lint +
+typecheck + build) and web-e2e (vitest + Playwright vs recorded fixtures), proving the F1/F2
+corrected components, both new guard tests, and the casing-aligned suite green on the pushed
+head. This is the AS-7 authority for the accepted identity; all five reviewer attestations
+carry at this head.
