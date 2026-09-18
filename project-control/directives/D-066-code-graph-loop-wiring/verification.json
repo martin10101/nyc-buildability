@@ -112,6 +112,31 @@
      "reviewed_sha": "5d5c502baff07020a8a0c5e933da5d32e7374b72"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T035",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8",
+   "reviewed_manifest_sha256": "5dd9966709d87fd16f3923043080a5a50ae266f6bbbf270706d3eed3877e2b02",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T07:22:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): packet inputs[13] carries the contract-seam code-graph navigation block (regenerated 2026-09-17, 730 files/15339 nodes/6791 edges) with consumers/dependencies/impact set for the three target files, the query.py --no-regen instruction, and the advisory clause; outputs[31] repeats the citation. R002/R003 are reviewer-side duties not applicable to this task (cited==applicable set confirmed via registry)."
+     ],
+     "verified_at": "2026-09-18T07:22:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9cb4535c229bb7de4976f8e2d00bebca8ed37bd8"
+    }
+   ]
   }
  ]
 }
