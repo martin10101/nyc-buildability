@@ -1,0 +1,107 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-072",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-18T06:09:26.684709+00:00",
+ "requirements": [
+  {
+   "id": "D-072-R001",
+   "text": "Up to THREE concurrent build loops are AUTHORIZED (this is the new owner decision that D-071-R001 required before any third loop). Every loop, including a third instance, runs under the full D-071 isolation regime unchanged: its own supervisor runtime identity (a distinct --checkout deriving its own lock, journal, and audit chain), its own task worktree and branch, and a packet whose allowed_paths are DISJOINT from every other live loop packet. Integration stays sequential: the orchestrator merges each loop's finished work one at a time at seams (ADR-005 unchanged). Lane selection for any loop must come from released, non-held work; the expansion/3D hold is untouched.",
+   "source_ref": "source-001.md#owner-message-verbatim-appended-to-the-seq-116-resume-prompt",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-072-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-18"
+   },
+   "dependencies": [],
+   "required_harness": "Any third supervisor instance stands up with its own lock/journal/audit chain and launcher; the pre-launch overlap check covers ALL live loop packets; loops run concurrently without cross-writes.",
+   "required_evidence": "launcher + runtime state dirs per instance; G0 report overlap statement in each loop packet",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before acting; no third instance exists yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-072-R002",
+   "text": "Keep two, and when eligible work allows three, loops running side by side for throughput (owner: \"make sure 2 or even 3 loops are running side by side so we get more done\"). The orchestrator contracts enough disjoint-scope packets from released, non-held work to feed the running loops, and records the concrete reason whenever fewer than two loops are running (no eligible disjoint work, sustained machine/account contention, breaker stop awaiting owner decision, owner hold, or seam work in progress).",
+   "source_ref": "source-001.md#owner-message-verbatim-appended-to-the-seq-116-resume-prompt",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-072-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-18"
+   },
+   "dependencies": [
+    "D-072-R001"
+   ],
+   "required_harness": "At the next loop relaunch seam, two or more loops are launched on disjoint contracted packets (or the shortfall reason is recorded in the session record/handoff).",
+   "required_evidence": "launcher ACTIVE-TASK blocks with fresh run-ids per instance; the contracted packet files; handoff/session record naming the loop count and any shortfall reason",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before acting; both loops are down at clean stops pending the M5-T035 harvest seam.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-072-R003",
+   "text": "No conflict between loops (owner: \"make sure there is no confilig bettwen the loops\"): before ANY loop launch the orchestrator verifies zero allowed_paths overlap across ALL live loop packets (pairwise, not just against one peer) and records the check; no two loops ever share a worktree, branch, or supervisor runtime identity; the orchestrator alone integrates, sequentially at seams. On an observed cross-write, scope collision, or sustained machine/account contention, reduce the loop count stepwise (3 to 2 to 1) — D-071's drop-on-contention rule stands and now applies at each step.",
+   "source_ref": "source-001.md#owner-message-verbatim-appended-to-the-seq-116-resume-prompt",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-072-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-18"
+   },
+   "dependencies": [
+    "D-072-R001"
+   ],
+   "required_harness": "Pairwise allowed_paths overlap check across all live loop packets recorded before each launch; post-run integration confirms zero cross-writes.",
+   "required_evidence": "overlap-check record (G0 report or session/seam record) per launch wave; integration seam commits showing disjoint file sets",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before acting.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

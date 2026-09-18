@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-072",
+ "version": 1,
+ "slug": "up-to-three-loops",
+ "title": "Owner 2026-09-18: up to THREE concurrent build loops authorized (the new owner decision D-071-R001 required) - keep two-to-three loops running side by side for throughput, under the unchanged D-071 isolation regime (own runtime identity, own worktree/branch, disjoint allowed_paths verified pairwise before every launch, sequential integration); zero conflict between loops; reduce stepwise 3->2->1 on contention; 3D/expansion hold untouched.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-18",
+ "captured_at": "2026-09-18T06:09:26.684709+00:00",
+ "created_at": "2026-09-18T06:09:26.684709+00:00",
+ "updated_at": "2026-09-18T06:09:26.684709+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "dcd010939c9768ff5fdb94af55f544c6b3d5b7ce",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in the seq-116 resume prompt; supplies the new owner decision D-071-R001 required for a third loop."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-072-R001",
+  "D-072-R002",
+  "D-072-R003"
+ ],
+ "requirements_content_digest_sha256": "e1ce4f1e8b03ae035a819eacca60c504f34ee073f718e4a13a0a71dad532bf11",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-18T06:09:26.684709+00:00",
+   "content_digest_sha256": "63152e20606d81ad6a5b7dba06e6e6884d75cbeb0da174cff8d78cd0fb12a9b1"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "loop-count/isolation policy + optional third supervisor instance setup; no gate/hold/authority change; expansion hold untouched",
+  "notes": "Rows bind the non-ledger sentinel D-072-BOOTSTRAP; loop packets bind by applicability append at contract. Extends D-071 (supplies its R001 third-loop owner decision); D-071 stays active and is NOT superseded."
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-18T06:09:26.684709+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim from the seq-116 resume prompt before any loop relaunch or third-instance setup."
+  }
+ ]
+}

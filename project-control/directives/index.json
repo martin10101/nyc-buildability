@@ -940,6 +940,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-071-second-parallel-loop/manifest.json"
+  },
+  {
+   "directive_id": "D-072",
+   "slug": "up-to-three-loops",
+   "title": "Owner 2026-09-18: up to THREE concurrent build loops authorized (the new owner decision D-071-R001 required) - keep two-to-three loops running side by side for throughput, under the unchanged D-071 isolation regime (own runtime identity, own worktree/branch, disjoint allowed_paths verified pairwise before every launch, sequential integration); zero conflict between loops; reduce stepwise 3->2->1 on contention; 3D/expansion hold untouched.",
+   "status": "active",
+   "issued_at": "2026-09-18",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-072-up-to-three-loops/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
