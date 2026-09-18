@@ -55,14 +55,14 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Scope temptation: NO provider wiring, NO geometry - module only (disjointness with the M5-T037 lane depends on it).",
     "Normalization over-reach: rules must be derived from and cited to the snapshot text."
   ],
   "blockers": [],
   "created_at": "2026-09-18T07:28:57.006025+00:00",
-  "updated_at": "2026-09-18T09:10:28.495201+00:00",
+  "updated_at": "2026-09-18T09:19:35.224791+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
