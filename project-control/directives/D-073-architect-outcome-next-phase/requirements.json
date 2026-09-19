@@ -1,369 +1,370 @@
 {
- "schema": "directive_requirements/v1",
- "directive_id": "D-073",
- "version": 1,
- "requirement_count": 11,
- "producer": "orchestrator",
- "updated_at": "2026-09-19T06:37:18.827578+00:00",
- "requirements": [
-  {
-   "id": "D-073-R001",
-   "text": "Establish the actual current state, then proceed: reconcile the repository, the wt-m5t035 street-data workspace, and the versions running on the live frontend and backend; distinguish implemented-locally vs reviewed-and-accepted vs incorporated (merged/pushed) vs deployed vs verified-on-a-real-property, with concrete identifiers (commits/URLs); specifically reconcile the street-data implementation, its connection to the calculation, delivery of the calculated result to the interface, the accepted zoning panel (M5-T036), and the existing report/export path; update the task records and discovery list to one consistent account. Keep the check brief and move into execution — routine investigation/implementation already covered by existing authorization continues without a new plan-approval request.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 1)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "A recorded state reconciliation (session record or report) naming the five reconciled surfaces with identifiers, then continued execution in the same session.",
-   "required_evidence": "reconciliation record + updated discovery-backlog entries",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R002",
-   "text": "Finish the street-data implementation (the M5-T035 build in wt-m5t035) through the established review process: confirm it supplies what the intended calculation actually needs, preserves supporting evidence/provenance, and handles unavailable/incomplete/contradictory/unusable data appropriately; resolve material findings; incorporate the accepted changes into the shared repository. Apply the established street-width interpretation policies (D-052); a genuinely unresolved policy decision affecting a calculation is identified precisely as a dependency while independent work continues — NEVER silently turned into a coding assumption. Targeted new checks only where they address a concrete remaining risk or a required acceptance condition. Describe completion in working behavior and evidence, never line counts.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 2)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [
-    "D-073-R001"
-   ],
-   "required_harness": "M5-T035 completes its contracted gate chain (G0-G5 + DCV) and is accepted and pushed; policy dependencies, if any, recorded as named unresolved items rather than coded assumptions.",
-   "required_evidence": "M5-T035 gate reports, evidence map, acceptance record",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Build complete in wt-m5t035; harvest in progress at capture time.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": [
-     "M5-T035"
-    ]
-   }
-  },
-  {
-   "id": "D-073-R003",
-   "text": "Complete ONE street-dependent development limit end-to-end through the real user flow: a real address resolves to the correct property, the required street information is obtained, the applicable conditions are established, the calculation runs, and the result AND its evidence reach the interface. Remove any delivery gap that keeps an accepted, supported result inside an internal component. The displayed result identifies what was calculated, its units, the scenario/conditions under which it applies, and its sources. Carry the SAME result into the existing report/export from the same underlying calculation and evidence so screen and report cannot quietly disagree; if the report connection is unfinished, complete it within the existing design, or state explicitly that no usable report capability exists in scope and distinguish the screen-only demonstration from the screen-and-report milestone. Presentation stays calm: answer and material unresolved conditions first, detailed evidence on demand.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 3)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP",
-     "M5-T037"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [
-    "D-073-R002"
-   ],
-   "required_harness": "A contracted follow-up packet (result-to-screen wiring) carries this scope and cites this requirement; the end-to-end proof runs through the actual interface.",
-   "required_evidence": "the follow-up packet + its gate reports + interface/report agreement evidence",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Follow-up lane; not yet contracted at capture.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R004",
-   "text": "Independent expected results BEFORE judging success: create a small FIXED collection of real validation properties — ordinary in-scope positives, materially different street conditions, and cases whose correct outcome is a specific unresolved/unsupported result. Choose cases and document expected outcomes BEFORE consulting the application's answers; establish expectations from authoritative sources and applicable rules; the production calculation is never its own reference. If an expectation cannot be established confidently, classify that case accordingly and pick another supported positive. Verify the complete flow through the actual interface and existing report as applicable; record deployed versions and check date. Component evidence (passing internal test, successful data request, manually-fed calculation) never substitutes for the ordinary user path on real property data. State the scope of what the demonstration proves.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 4)",
-   "classification": "harness",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [
-    "D-073-R003"
-   ],
-   "required_harness": "A committed validation-collection record with pre-established expectations (dated, source-linked) preceding the recorded application outcomes.",
-   "required_evidence": "validation-collection file(s) + the milestone verification record",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R005",
-   "text": "Maintain the four previously stopped properties as explicit regression cases: 1279 37th Street Brooklyn; 298 Wallabout Street Brooklyn; 401 Columbia Street Brooklyn; 69-02 Kessel Street Queens. For each, record the precise stopping condition, its evidence, the affected calculations, and the capability/information needed to resolve it; distinguish genuine source uncertainty or split zoning from incomplete property-identity connections, unsupported rule coverage, data/geometry problems, and implementation defects. A refusal can be correct: a genuinely complicated lot stays unresolved until its conditions can be supported. Split zoning is never collapsed into one district by an unsupported shortcut; the condo case is resolved by connecting to the underlying land lot through authoritative records; boundary-confidence cases get data/logic investigation before any change proposal. PROHIBITION: protective thresholds are never relaxed merely to produce more successful-looking results — any check correction needs a defensible basis and preserves protection against unsupported conclusions. These cases need correct, specific outcomes and an explicit place in the remaining work, not forced positives; where an issue affects only part of an analysis, determine whether other results can safely remain available, with displayed values still sufficiently supported and the unresolved scope understandable in the interface.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 5)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "A per-property regression record (discovery backlog or dedicated file) carrying the four cases with cause class, evidence, affected calculations, and next capability.",
-   "required_evidence": "the regression-case records + their discovery-backlog rows",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Cases already on the discovery list; consolidated record owed.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R006",
-   "text": "Preserve the distinction between property records and calculated development allowances throughout interface and report: recorded existing-building information, city reference fields, and allowances calculated under stated conditions stay separate concepts. For 1279 37th Street: recorded built FAR 2.61 vs residential reference 3.00 — neither alone completes the property-specific analysis. A computed allowance is shown only when its applicable conditions are sufficiently established; an unresolved computation is explained without presenting a reference number as the calculated result. In-scope program-dependent scenarios (e.g. affordable housing) are presented separately with qualifying conditions; unfinished scenario support stays visible in the plan. A calculated floor-area allowance is distinguished from a complete determination of the buildable envelope — height, yards, setbacks, coverage, and other conditions need their own supported treatment.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 6)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP",
-     "M5-T040",
-     "M5-T045",
-     "M5-T046",
-     "M5-T047"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "UI/report packets in this phase carry this distinction in their acceptance scenarios.",
-   "required_evidence": "acceptance scenarios + gate reports of the affected packets",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R007",
-   "text": "Deliver the accepted panel (M5-T036) and the completed street calculation through the existing release process: address material integration issues; release through established deployment authorization; verify what the live frontend and backend actually serve afterward. If deployment requires an owner approval not already given, finish release preparation FIRST and present ONE concrete request naming the exact version, included changes, verification results, and recovery path. Deployment status vocabulary stays explicit: accepted, merged, and live-and-verified are different stages. Panel: preserve the displaying-vs-computing distinction; track the omitted flood information and remaining presentation work accurately. Address search: preserve the recovery improvements; investigate the six-second deadline from observed behavior; confirm complete-address search and manual fallback preserve user input and give an understandable outcome when the city's service is unavailable or slow.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 7)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [
-    "D-073-R002"
-   ],
-   "required_harness": "A release-preparation record culminating in either a verified deployment or one consolidated owner deployment request.",
-   "required_evidence": "release checklist rows + the owner request or post-deploy verification record",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R008",
-   "text": "Order remaining work around the architect's needs (sequencing): immediate delivery milestone = the completed street-dependent calculation reaching the user + the accepted panel through the release path; then live-case-driven priorities (condo-to-land-lot connection, geographic/coverage limitations); then assemble supported limits into one coherent property analysis (FAR, height, yards, setbacks, coverage, with their conditions), keeping conditional scenarios in sequence and an explicit supported-districts/conditions account so product claims match actual coverage. Permanent evidence storage, document-review capabilities, and the agreed building-code scope stay visible in the plan with genuine dependencies identified while independent zoning work continues. Reuse the existing architecture and completed components; preserve the default-deny MCP policy and existing SDK admission requirements.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 8)",
-   "classification": "sequencing",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "Packet contracting order in this phase follows the stated sequence; deviations recorded with reasons.",
-   "required_evidence": "the contracted packet chain + session/seam records",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R009",
-   "text": "Own the complete result across delegated tasks: sub-agents use ONLY the mandated claude-opus-4-8 at xhigh effort (D-064 unchanged; main session stays fable-5) — no silent substitution; if the required configuration is unavailable, report the specific conflict. The orchestrator remains responsible for integration across assignments: component acceptance feeds user-flow completion (inputs, calculation, output, interface, report). Keep the shared discovery list current: every material unresolved issue records what it prevents the architect from doing and the next concrete action. Continue unaffected work while any owner decision is pending; consolidate related blockers instead of repeatedly stopping for small questions.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 9)",
-   "classification": "obligation",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "Dispatch records show the mandated model/effort; discovery rows carry impact + next action.",
-   "required_evidence": "dispatch/session records + discovery backlog",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Captured before acting.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R010",
-   "text": "Review-round interruption (DB-012) handled separately as ONE owner decision package: show the current setting, the exact proposed adjustment, the reason for the recent stops, and which review protections would remain; preserve the existing owner-decision requirement (the config edit is owner-only) unless that decision has already been made.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 9, review-round paragraph)",
-   "classification": "decision",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [],
-   "required_harness": "A plain-English owner decision package delivered in-session covering the four named elements.",
-   "required_evidence": "the owner-facing message + the owner's recorded decision when given",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Owner decision outstanding (DB-012).",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  },
-  {
-   "id": "D-073-R011",
-   "text": "Owner reporting and continuation: at the next completed milestone deliver ONE consolidated plain-English report with technical evidence linked under the findings — what the architect can now do that was unavailable before; which changes are live; which properties were checked; what was independently expected; what the application returned; whether screen and report agree; for unresolved cases the exact missing information/capability, its effect, and the next action, distinguishing correct safety stops from implementation defects; direct links to commits, live pages, source evidence, and verification records (no unlinked placeholders); automated checks summarized while real property outcomes stay central; no completion percentage without a defined basis — state demonstrated capabilities, their scope, and remaining limitations. Proceed under existing authorization; when a genuine blocker needs the owner, finish useful independent work first and bring the specific decision with a recommendation. The next milestone = a real address producing a supported development limit the architect can inspect and use, with consistent evidence and report output, guiding subsequent work.",
-   "source_ref": "source-001.md#owner-message-verbatim-complete (item 10 + closing paragraphs)",
-   "classification": "return",
-   "binding": true,
-   "applicability": {
-    "task_ids": [
-     "D-073-BOOTSTRAP"
-    ],
-    "task_types": [],
-    "milestones": [],
-    "lifecycle_events": [],
-    "paths": [],
-    "effective_date": "2026-09-18"
-   },
-   "dependencies": [
-    "D-073-R003",
-    "D-073-R004"
-   ],
-   "required_harness": "The consolidated owner report exists at the milestone seam and follows the stated content contract.",
-   "required_evidence": "the owner milestone report (committed) with its links",
-   "producer": "orchestrator",
-   "independent_verifier": "directive-compliance-verifier",
-   "status": "pending",
-   "status_reason": "Milestone not yet reached at capture.",
-   "evidence_paths": [],
-   "reviewed_sha": null,
-   "maps_to": {
-    "files": [],
-    "tests": [],
-    "tasks": []
-   }
-  }
- ]
+  "schema": "directive_requirements/v1",
+  "directive_id": "D-073",
+  "version": 1,
+  "requirement_count": 11,
+  "producer": "orchestrator",
+  "updated_at": "2026-09-19T06:37:18.827578+00:00",
+  "requirements": [
+    {
+      "id": "D-073-R001",
+      "text": "Establish the actual current state, then proceed: reconcile the repository, the wt-m5t035 street-data workspace, and the versions running on the live frontend and backend; distinguish implemented-locally vs reviewed-and-accepted vs incorporated (merged/pushed) vs deployed vs verified-on-a-real-property, with concrete identifiers (commits/URLs); specifically reconcile the street-data implementation, its connection to the calculation, delivery of the calculated result to the interface, the accepted zoning panel (M5-T036), and the existing report/export path; update the task records and discovery list to one consistent account. Keep the check brief and move into execution — routine investigation/implementation already covered by existing authorization continues without a new plan-approval request.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 1)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "A recorded state reconciliation (session record or report) naming the five reconciled surfaces with identifiers, then continued execution in the same session.",
+      "required_evidence": "reconciliation record + updated discovery-backlog entries",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R002",
+      "text": "Finish the street-data implementation (the M5-T035 build in wt-m5t035) through the established review process: confirm it supplies what the intended calculation actually needs, preserves supporting evidence/provenance, and handles unavailable/incomplete/contradictory/unusable data appropriately; resolve material findings; incorporate the accepted changes into the shared repository. Apply the established street-width interpretation policies (D-052); a genuinely unresolved policy decision affecting a calculation is identified precisely as a dependency while independent work continues — NEVER silently turned into a coding assumption. Targeted new checks only where they address a concrete remaining risk or a required acceptance condition. Describe completion in working behavior and evidence, never line counts.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 2)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [
+        "D-073-R001"
+      ],
+      "required_harness": "M5-T035 completes its contracted gate chain (G0-G5 + DCV) and is accepted and pushed; policy dependencies, if any, recorded as named unresolved items rather than coded assumptions.",
+      "required_evidence": "M5-T035 gate reports, evidence map, acceptance record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Build complete in wt-m5t035; harvest in progress at capture time.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": [
+          "M5-T035"
+        ]
+      }
+    },
+    {
+      "id": "D-073-R003",
+      "text": "Complete ONE street-dependent development limit end-to-end through the real user flow: a real address resolves to the correct property, the required street information is obtained, the applicable conditions are established, the calculation runs, and the result AND its evidence reach the interface. Remove any delivery gap that keeps an accepted, supported result inside an internal component. The displayed result identifies what was calculated, its units, the scenario/conditions under which it applies, and its sources. Carry the SAME result into the existing report/export from the same underlying calculation and evidence so screen and report cannot quietly disagree; if the report connection is unfinished, complete it within the existing design, or state explicitly that no usable report capability exists in scope and distinguish the screen-only demonstration from the screen-and-report milestone. Presentation stays calm: answer and material unresolved conditions first, detailed evidence on demand.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 3)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP",
+          "M5-T037"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [
+        "D-073-R002"
+      ],
+      "required_harness": "A contracted follow-up packet (result-to-screen wiring) carries this scope and cites this requirement; the end-to-end proof runs through the actual interface.",
+      "required_evidence": "the follow-up packet + its gate reports + interface/report agreement evidence",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Follow-up lane; not yet contracted at capture.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R004",
+      "text": "Independent expected results BEFORE judging success: create a small FIXED collection of real validation properties — ordinary in-scope positives, materially different street conditions, and cases whose correct outcome is a specific unresolved/unsupported result. Choose cases and document expected outcomes BEFORE consulting the application's answers; establish expectations from authoritative sources and applicable rules; the production calculation is never its own reference. If an expectation cannot be established confidently, classify that case accordingly and pick another supported positive. Verify the complete flow through the actual interface and existing report as applicable; record deployed versions and check date. Component evidence (passing internal test, successful data request, manually-fed calculation) never substitutes for the ordinary user path on real property data. State the scope of what the demonstration proves.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 4)",
+      "classification": "harness",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [
+        "D-073-R003"
+      ],
+      "required_harness": "A committed validation-collection record with pre-established expectations (dated, source-linked) preceding the recorded application outcomes.",
+      "required_evidence": "validation-collection file(s) + the milestone verification record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R005",
+      "text": "Maintain the four previously stopped properties as explicit regression cases: 1279 37th Street Brooklyn; 298 Wallabout Street Brooklyn; 401 Columbia Street Brooklyn; 69-02 Kessel Street Queens. For each, record the precise stopping condition, its evidence, the affected calculations, and the capability/information needed to resolve it; distinguish genuine source uncertainty or split zoning from incomplete property-identity connections, unsupported rule coverage, data/geometry problems, and implementation defects. A refusal can be correct: a genuinely complicated lot stays unresolved until its conditions can be supported. Split zoning is never collapsed into one district by an unsupported shortcut; the condo case is resolved by connecting to the underlying land lot through authoritative records; boundary-confidence cases get data/logic investigation before any change proposal. PROHIBITION: protective thresholds are never relaxed merely to produce more successful-looking results — any check correction needs a defensible basis and preserves protection against unsupported conclusions. These cases need correct, specific outcomes and an explicit place in the remaining work, not forced positives; where an issue affects only part of an analysis, determine whether other results can safely remain available, with displayed values still sufficiently supported and the unresolved scope understandable in the interface.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 5)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "A per-property regression record (discovery backlog or dedicated file) carrying the four cases with cause class, evidence, affected calculations, and next capability.",
+      "required_evidence": "the regression-case records + their discovery-backlog rows",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Cases already on the discovery list; consolidated record owed.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R006",
+      "text": "Preserve the distinction between property records and calculated development allowances throughout interface and report: recorded existing-building information, city reference fields, and allowances calculated under stated conditions stay separate concepts. For 1279 37th Street: recorded built FAR 2.61 vs residential reference 3.00 — neither alone completes the property-specific analysis. A computed allowance is shown only when its applicable conditions are sufficiently established; an unresolved computation is explained without presenting a reference number as the calculated result. In-scope program-dependent scenarios (e.g. affordable housing) are presented separately with qualifying conditions; unfinished scenario support stays visible in the plan. A calculated floor-area allowance is distinguished from a complete determination of the buildable envelope — height, yards, setbacks, coverage, and other conditions need their own supported treatment.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 6)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP",
+          "M5-T040",
+          "M5-T045",
+          "M5-T046",
+          "M5-T047",
+          "M5-T050"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "UI/report packets in this phase carry this distinction in their acceptance scenarios.",
+      "required_evidence": "acceptance scenarios + gate reports of the affected packets",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R007",
+      "text": "Deliver the accepted panel (M5-T036) and the completed street calculation through the existing release process: address material integration issues; release through established deployment authorization; verify what the live frontend and backend actually serve afterward. If deployment requires an owner approval not already given, finish release preparation FIRST and present ONE concrete request naming the exact version, included changes, verification results, and recovery path. Deployment status vocabulary stays explicit: accepted, merged, and live-and-verified are different stages. Panel: preserve the displaying-vs-computing distinction; track the omitted flood information and remaining presentation work accurately. Address search: preserve the recovery improvements; investigate the six-second deadline from observed behavior; confirm complete-address search and manual fallback preserve user input and give an understandable outcome when the city's service is unavailable or slow.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 7)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [
+        "D-073-R002"
+      ],
+      "required_harness": "A release-preparation record culminating in either a verified deployment or one consolidated owner deployment request.",
+      "required_evidence": "release checklist rows + the owner request or post-deploy verification record",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R008",
+      "text": "Order remaining work around the architect's needs (sequencing): immediate delivery milestone = the completed street-dependent calculation reaching the user + the accepted panel through the release path; then live-case-driven priorities (condo-to-land-lot connection, geographic/coverage limitations); then assemble supported limits into one coherent property analysis (FAR, height, yards, setbacks, coverage, with their conditions), keeping conditional scenarios in sequence and an explicit supported-districts/conditions account so product claims match actual coverage. Permanent evidence storage, document-review capabilities, and the agreed building-code scope stay visible in the plan with genuine dependencies identified while independent zoning work continues. Reuse the existing architecture and completed components; preserve the default-deny MCP policy and existing SDK admission requirements.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 8)",
+      "classification": "sequencing",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "Packet contracting order in this phase follows the stated sequence; deviations recorded with reasons.",
+      "required_evidence": "the contracted packet chain + session/seam records",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R009",
+      "text": "Own the complete result across delegated tasks: sub-agents use ONLY the mandated claude-opus-4-8 at xhigh effort (D-064 unchanged; main session stays fable-5) — no silent substitution; if the required configuration is unavailable, report the specific conflict. The orchestrator remains responsible for integration across assignments: component acceptance feeds user-flow completion (inputs, calculation, output, interface, report). Keep the shared discovery list current: every material unresolved issue records what it prevents the architect from doing and the next concrete action. Continue unaffected work while any owner decision is pending; consolidate related blockers instead of repeatedly stopping for small questions.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 9)",
+      "classification": "obligation",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "Dispatch records show the mandated model/effort; discovery rows carry impact + next action.",
+      "required_evidence": "dispatch/session records + discovery backlog",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Captured before acting.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R010",
+      "text": "Review-round interruption (DB-012) handled separately as ONE owner decision package: show the current setting, the exact proposed adjustment, the reason for the recent stops, and which review protections would remain; preserve the existing owner-decision requirement (the config edit is owner-only) unless that decision has already been made.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 9, review-round paragraph)",
+      "classification": "decision",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [],
+      "required_harness": "A plain-English owner decision package delivered in-session covering the four named elements.",
+      "required_evidence": "the owner-facing message + the owner's recorded decision when given",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Owner decision outstanding (DB-012).",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    },
+    {
+      "id": "D-073-R011",
+      "text": "Owner reporting and continuation: at the next completed milestone deliver ONE consolidated plain-English report with technical evidence linked under the findings — what the architect can now do that was unavailable before; which changes are live; which properties were checked; what was independently expected; what the application returned; whether screen and report agree; for unresolved cases the exact missing information/capability, its effect, and the next action, distinguishing correct safety stops from implementation defects; direct links to commits, live pages, source evidence, and verification records (no unlinked placeholders); automated checks summarized while real property outcomes stay central; no completion percentage without a defined basis — state demonstrated capabilities, their scope, and remaining limitations. Proceed under existing authorization; when a genuine blocker needs the owner, finish useful independent work first and bring the specific decision with a recommendation. The next milestone = a real address producing a supported development limit the architect can inspect and use, with consistent evidence and report output, guiding subsequent work.",
+      "source_ref": "source-001.md#owner-message-verbatim-complete (item 10 + closing paragraphs)",
+      "classification": "return",
+      "binding": true,
+      "applicability": {
+        "task_ids": [
+          "D-073-BOOTSTRAP"
+        ],
+        "task_types": [],
+        "milestones": [],
+        "lifecycle_events": [],
+        "paths": [],
+        "effective_date": "2026-09-18"
+      },
+      "dependencies": [
+        "D-073-R003",
+        "D-073-R004"
+      ],
+      "required_harness": "The consolidated owner report exists at the milestone seam and follows the stated content contract.",
+      "required_evidence": "the owner milestone report (committed) with its links",
+      "producer": "orchestrator",
+      "independent_verifier": "directive-compliance-verifier",
+      "status": "pending",
+      "status_reason": "Milestone not yet reached at capture.",
+      "evidence_paths": [],
+      "reviewed_sha": null,
+      "maps_to": {
+        "files": [],
+        "tests": [],
+        "tasks": []
+      }
+    }
+  ]
 }

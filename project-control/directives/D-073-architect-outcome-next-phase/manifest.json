@@ -1,100 +1,106 @@
 {
- "schema": "directive_manifest/v1",
- "directive_id": "D-073",
- "version": 1,
- "slug": "architect-outcome-next-phase",
- "title": "Owner 2026-09-18: architect-outcome next phase - turn existing engineering into complete, dependable property analyses: reconcile actual state (built vs accepted vs merged vs deployed vs verified); land the M5-T035 street-data build through review; complete ONE street-dependent limit end-to-end (address -> calculation -> screen + report, same evidence); independent pre-established expectations on a fixed real-property validation set; four stopped properties as regression cases (never relax safety checks for optics); records-vs-allowances distinction; release the accepted panel via the existing process (one consolidated owner request if approval needed); architect-first sequencing; opus-4-8 xhigh subagents only; DB-012 as one owner decision package; consolidated plain-English milestone report with linked evidence, no undefined percentages.",
- "status": "active",
- "lifecycle_state": "active",
- "issued_by": "owner",
- "issued_at": "2026-09-18",
- "captured_at": "2026-09-18T06:16:33.161580+00:00",
- "created_at": "2026-09-18T06:16:33.161580+00:00",
- "updated_at": "2026-09-19T06:37:18.827578+00:00",
- "channel": "interactive_chat",
- "frozen_baseline_sha": "95b2641044f99023002bb25753c74fb5d3f3f189",
- "capture_head_sha": null,
- "owner_approval": {
-  "state": "authorized",
-  "note": "Owner pasted the guiding prompt directly ('Please follow this direction'); proceed-under-existing-authorization stated in the closing paragraph."
- },
- "requirements_file": "requirements.json",
- "verification_file": "verification.json",
- "final_reviewed_sha": null,
- "locked_requirement_ids": [
-  "D-073-R001",
-  "D-073-R002",
-  "D-073-R003",
-  "D-073-R004",
-  "D-073-R005",
-  "D-073-R006",
-  "D-073-R007",
-  "D-073-R008",
-  "D-073-R009",
-  "D-073-R010",
-  "D-073-R011"
- ],
- "requirements_content_digest_sha256": "2edea6eb0f368c2aa344787ac980760df85eeec529f39b5967e9d8f9be920884",
- "sources": [
-  {
-   "file": "source-001.md",
-   "kind": "original",
-   "sequence": 1,
-   "recorded_at": "2026-09-18T06:16:33.161580+00:00",
-   "content_digest_sha256": "4c9f220026c62a7523d9a815c5669b991dac220bc4543de481d712d9bf033762"
-  }
- ],
- "amendments": [],
- "supersedes": [],
- "superseded_by": null,
- "affected_tasks": [],
- "affected_prs": [],
- "affected_branches": [
-  "candidate/D-024-mrl-option-b"
- ],
- "scope": {
-  "kind": "process_knowledge",
-  "task_ids": [],
-  "task_types": [],
-  "allowed": "phase direction for the street-data lane, validation harness, release preparation, reporting; no gate/hold/authority change; expansion hold, PR #241 hold, Tier D/Section 20 untouched",
-  "notes": "Rows bind the non-ledger sentinel D-073-BOOTSTRAP; phase packets bind by applicability append at contract time (M5-T035 keeps its frozen citation set - R002 is enforced through the orchestrator's process, listed in affected_tasks only). Consistent with D-064 (model pin), D-069 (discovery list), D-071/D-072 (loops)."
- },
- "audit_log": [
-  {
-   "at": "2026-09-18T06:16:33.161580+00:00",
-   "actor": "orchestrator",
-   "action": "captured",
-   "note": "Captured verbatim mid-session, before the M5-T035 harvest commit and before any new packet contracting under this phase."
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-073",
+  "version": 1,
+  "slug": "architect-outcome-next-phase",
+  "title": "Owner 2026-09-18: architect-outcome next phase - turn existing engineering into complete, dependable property analyses: reconcile actual state (built vs accepted vs merged vs deployed vs verified); land the M5-T035 street-data build through review; complete ONE street-dependent limit end-to-end (address -> calculation -> screen + report, same evidence); independent pre-established expectations on a fixed real-property validation set; four stopped properties as regression cases (never relax safety checks for optics); records-vs-allowances distinction; release the accepted panel via the existing process (one consolidated owner request if approval needed); architect-first sequencing; opus-4-8 xhigh subagents only; DB-012 as one owner decision package; consolidated plain-English milestone report with linked evidence, no undefined percentages.",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-18",
+  "captured_at": "2026-09-18T06:16:33.161580+00:00",
+  "created_at": "2026-09-18T06:16:33.161580+00:00",
+  "updated_at": "2026-09-19T06:37:18.827578+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "95b2641044f99023002bb25753c74fb5d3f3f189",
+  "capture_head_sha": null,
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Owner pasted the guiding prompt directly ('Please follow this direction'); proceed-under-existing-authorization stated in the closing paragraph."
   },
-  {
-   "at": "2026-09-18T07:33:23.503866+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_bound",
-   "note": "M5-T037 bound to D-073-R003 as the street-limit end-to-end screen-wiring packet (loop-1 lane). Digest resynced same commit."
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-073-R001",
+    "D-073-R002",
+    "D-073-R003",
+    "D-073-R004",
+    "D-073-R005",
+    "D-073-R006",
+    "D-073-R007",
+    "D-073-R008",
+    "D-073-R009",
+    "D-073-R010",
+    "D-073-R011"
+  ],
+  "requirements_content_digest_sha256": "84c4249c23f48f5283237e13155b80f90ad7597b374dd9c0e71c8444180bed27",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-18T06:16:33.161580+00:00",
+      "content_digest_sha256": "4c9f220026c62a7523d9a815c5669b991dac220bc4543de481d712d9bf033762"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "process_knowledge",
+    "task_ids": [],
+    "task_types": [],
+    "allowed": "phase direction for the street-data lane, validation harness, release preparation, reporting; no gate/hold/authority change; expansion hold, PR #241 hold, Tier D/Section 20 untouched",
+    "notes": "Rows bind the non-ledger sentinel D-073-BOOTSTRAP; phase packets bind by applicability append at contract time (M5-T035 keeps its frozen citation set - R002 is enforced through the orchestrator's process, listed in affected_tasks only). Consistent with D-064 (model pin), D-069 (discovery list), D-071/D-072 (loops)."
   },
-  {
-   "at": "2026-09-18T17:09:38.078133+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_bound",
-   "note": "M5-T040 bound to D-073-R006: the DB-025(a-c) display contract gates all wide-street surfaces on determination_state so records vs calculated allowances stay distinct. Digest resynced same commit."
-  },
-  {
-   "at": "2026-09-19T03:10:52.966674+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_bound",
-   "note": "M5-T045 bound to D-073-R006: the condo multi-lot/resolved-identity display increment is contracted as a records-vs-allowances contract (recorded base lots and recorded zoning presented as records; computed allowances only under established conditions; unresolved explained honestly). Digest resynced same commit."
-  },
-  {
-   "at": "2026-09-19T04:11:44.431202+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_bound",
-   "note": "M5-T046 bound to D-073-R006: the confirm-arc identity display is contracted as a records display (entered input vs matched city address vs record address; no address line implies a computed value). Digest resynced same commit."
-  },
-  {
-   "at": "2026-09-19T06:37:18.827578+00:00",
-   "actor": "orchestrator",
-   "action": "applicability_bound",
-   "note": "M5-T047 bound to D-073-R006: the record-address line is contracted as a records display (city record, no computed value implied; honest absence; layout-neutral copy). Digest resynced same commit."
-  }
- ]
+  "audit_log": [
+    {
+      "at": "2026-09-18T06:16:33.161580+00:00",
+      "actor": "orchestrator",
+      "action": "captured",
+      "note": "Captured verbatim mid-session, before the M5-T035 harvest commit and before any new packet contracting under this phase."
+    },
+    {
+      "at": "2026-09-18T07:33:23.503866+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "M5-T037 bound to D-073-R003 as the street-limit end-to-end screen-wiring packet (loop-1 lane). Digest resynced same commit."
+    },
+    {
+      "at": "2026-09-18T17:09:38.078133+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "M5-T040 bound to D-073-R006: the DB-025(a-c) display contract gates all wide-street surfaces on determination_state so records vs calculated allowances stay distinct. Digest resynced same commit."
+    },
+    {
+      "at": "2026-09-19T03:10:52.966674+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "M5-T045 bound to D-073-R006: the condo multi-lot/resolved-identity display increment is contracted as a records-vs-allowances contract (recorded base lots and recorded zoning presented as records; computed allowances only under established conditions; unresolved explained honestly). Digest resynced same commit."
+    },
+    {
+      "at": "2026-09-19T04:11:44.431202+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "M5-T046 bound to D-073-R006: the confirm-arc identity display is contracted as a records display (entered input vs matched city address vs record address; no address line implies a computed value). Digest resynced same commit."
+    },
+    {
+      "at": "2026-09-19T06:37:18.827578+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bound",
+      "note": "M5-T047 bound to D-073-R006: the record-address line is contracted as a records display (city record, no computed value implied; honest absence; layout-neutral copy). Digest resynced same commit."
+    },
+    {
+      "at": "2026-09-19T10:03:09.469215+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-073-R006 applicability.task_ids += M5-T050 (DB-033 polish packet contract seam); requirements.json digest resynced to 84c4249c23f48f5283237e13155b80f90ad7597b374dd9c0e71c8444180bed27"
+    }
+  ]
 }

@@ -1,0 +1,103 @@
+{
+  "task_id": "M5-T050",
+  "title": "DB-033 confirm-arc polish + test hardening (T047-wave riders a-i)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the nine advisory T047-wave riders (DB-033) on the record-address confirm arc in one bounded polish/test-hardening packet: (a) record-line late-insert CLS, (b) raw-input a11y exposure via aria-label, (c) entered-note copy in the no-normalized-street case, (d) corner-lot why-they-differ note, (e) de-vacuate the G5-A1 length-bound tests (exact-512 boundary, non-empty features), (f) stale lot_geometry.py module docstring, (g) RA-3 reason assertion binding, (h) complete the client error-state coverage (6 of 6), (i) credentials-omit consistency + 422 json-safety parity + title-attr length bound. Zero behavior change outside the named display polish items; every other T047 accepted behavior stays byte-identical.",
+  "business_reason": "The 229th acceptance closed the record-address channel with nine advisory riders on the wave; DB-033 queues them as one small packet so the polish cannot silently decay into WATCH rot",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command. Web behavior proves ONLY in CI on the pushed head - no local npm/npx/node ever.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). AddressConfirmCard.tsx consumers: AddressResolutionScreen.tsx:19 (depth 1) -> address-confirm.test.tsx:3 + address-resolution.test.tsx:5 + architect/ArchitectEntry.tsx:14 + property/PropertyLookup.tsx:23 (depth 2; ALL out of scope - the card's props/exports must stay byte-compatible). record-address.ts consumers: AddressConfirmCard.tsx:12 + record-address.test.ts:2. lot_geometry.py consumers: app/main.py:33 (mount) + tests/api/test_lot_geometry_api.py:35. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE (binding; read docs/DISCOVERY_BACKLOG.md row DB-033 and the four gate returns project-control/reports/M5-T047-{G3,G4,G5,HJ}.md FIRST - they state each rider precisely): close ALL NINE riders, nothing else. WEB DISPLAY (AddressConfirmCard.tsx + address-confirm.test.tsx): (a) the record-address line's late insert must not shift settled layout (reserve the line's slot or equivalent CLS-neutral mechanism; assert the mechanism in a test); (b) the display-trimmed bolded entered value must expose the raw value to assistive tech via aria-label on the name-prohibited <strong> (keep the title attribute; test asserts the aria exposure); (c) in the no-normalized-street case the entered-note must not reference 'the city-matched address' line that is absent (conditional copy; test it); (d) when the record address differs, render one short neutral 'why they differ' note (corner/vanity lots carry one address-of-record class wording; a RECORD explanation, no computed value implied, D-073-R006; test it). WEB CLIENT (record-address.ts + record-address.test.ts): (h) cover all six typed error states the client can return (three are untested); (i) credentials 'omit' on every fetch path consistently, 422-response json-safety parity with the other error paths, and a length bound on the value placed into the title/aria attributes (bound generously, e.g. 512, truncation marker; tests for each). EQUALITY-GATE TESTS (address-search.ts + address-search.test.ts): (e) de-vacuate the G5-A1 length-bound tests - the over-length probe must carry NON-EMPTY features so the length guard (not the empty-features path) is what refuses, and add the exact-512 boundary case (512 accepted, 513 typed refusal); touch address-search.ts ONLY if the test proves the guard is genuinely masked (bounded to the guard). API (lot_geometry.py + test_lot_geometry_api.py): (f) correct the stale module docstring to name the record-address channel (comment-only change); (g) make the RA-3 reason assertion binding (remove the non-binding or-tail; assert the exact documented reason).",
+    "PRESERVATION (binding): every M5-T047/T046 accepted behavior stays byte-identical except the four named display polish items ((a)-(d)) whose tests are updated WITH the change; the record-address channel contract is UNCHANGED (no route/schema/response change; (f) is docstring-only); the equality-gate semantics are UNCHANGED ((e) is test-side unless the guard is proven masked); existing suites stay green at every commit; empty .test files fail vitest - keep every touched web test file green-non-empty.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "All nine DB-033 riders closed with tests (web display a-d, client h-i, equality-gate test hardening e, api f-g)",
+    "project-control/reports/M5-T050-producer-report.md (one concise evidence pass; per-rider file+line map)"
+  ],
+  "dependencies": [
+    "M5-T047"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/lot_geometry.py",
+    "services/api/tests/api/test_lot_geometry_api.py",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/lib/record-address.ts",
+    "apps/web/src/lib/__tests__/record-address.test.ts",
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/__tests__/address-search.test.ts",
+    "project-control/reports/M5-T050-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/architect/",
+    "services/api/app/connectors/",
+    "services/api/app/profile/",
+    "services/api/app/spatial/",
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (CLS, rider a): with the record-address response delayed (stubbed slow), the confirm card's settled layout does not shift when the line arrives - the slot/mechanism is asserted in a test; with the line absent the card renders as today.",
+    "AS-2 (a11y, rider b): the bolded entered value exposes the full raw value via aria-label (and keeps title); the test finds the raw value through the accessible name; the visible text stays display-trimmed.",
+    "AS-3 (copy, rider c): in the no-normalized-street case the entered-note renders without referencing the absent city-matched line; the normal case keeps the accepted layout-neutral wording byte-identical.",
+    "AS-4 (note, rider d): when record address differs from matched, one short neutral why-they-differ note renders as RECORD explanation (no computed value implied, D-073-R006); equal/absent -> no note.",
+    "AS-5 (equality-gate tests, rider e): the over-length refusal test carries non-empty features (the length guard itself refuses); exact-512 accepted, 513 typed refusal; no behavior change to address-search.ts unless the test proves the guard masked (then the bounded guard fix ships with the proof).",
+    "AS-6 (api, riders f+g): lot_geometry.py module docstring names the record-address channel (comment-only diff); the RA-3 reason assertion is binding (exact documented reason, no or-tail).",
+    "AS-7 (client, riders h+i): all six typed client error states covered; credentials 'omit' consistent on every fetch; 422 json-safety parity tested; title/aria value length-bounded with truncation marker.",
+    "AS-8 (compat + proof): every T047/T046 journey assertion green except those updated WITH riders a-d; ruff clean; documented api suites green offline from services/api; modularity exit 0; web tests prove in CI on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Riders are ADVISORY polish: any fix that wants to change the channel contract or equality-gate semantics beyond the bounded cases = STOP + discovery, never in-packet.",
+    "AddressResolutionScreen is FORBIDDEN here (T047 allowed it; the riders live on the card/client) - a rider fix forcing its edit = STOP + discovery.",
+    "Disjointness vs live M5-T048 (packages/contracts proposal contract): zero path overlap (mechanically recorded in G0).",
+    "The card is consumed by architect/property surfaces (out of scope): props/exports byte-compatible."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T09:59:46.206600+00:00",
+  "updated_at": "2026-09-19T09:59:46.633646+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T09:59:46.206600+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_lot_geometry_api.py -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
