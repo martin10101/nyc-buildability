@@ -41,3 +41,15 @@ Resending only the missing tail.
 - `reviewed_manifest_sha256`: `69add60fc7fe9a5bf5d1e60f014c6dbc4cbb227dc5f1162e0fea210340dd73c6`
 - `producer`: `backend-engineer`
 - `verifier`: `directive-compliance-verifier`
+
+## Return 3 (post-accept confirmation of the field-sourcing correction, verbatim)
+
+No dispute - your correction is right, and I reproduced the facts it rests on.
+
+- **The corrected field value is correct.** All four gate records G2-G5 carry `content_manifest_sha256 = 15de365781f870d3db9503ab32a96281094fa413f944ed9c7a987c0f40e53455` (reviewed at `aa8e2f53`), which is byte-stable to the frozen head and to the accept target on the allowed_paths. This matches the documented v2-assembly pattern (`reviewed_manifest_sha256` sourced from the gate records, not the directive registry). My `69add60f...` was the D-066 directive-manifest digest - the wrong artifact for that CLI field (I followed the prompt's original naming); it is correctly preserved as the directive-registry identity I verified.
+
+- **Accept target `0c7b17f1` satisfies my carry conditions.** Condition 1 reproduced: `git diff f3bf4fd3..0c7b17f1` is empty on all 7 allowed_paths. `evaluate_task_refs` was ok/applicable==cited at freeze and depends on task refs, not head. Validator was exit 0.
+
+- **One precision note on condition 4 (not a dispute).** The peer commits between `f3bf4fd3` and `0c7b17f1` include actual M5-T048 code (`services/api/app/scenario/contract.py`, `proposal.py`, `packages/contracts/**`), which is broader than the literal "task/report/directive/docs files" phrasing I used for the M5-T048 lane. The carry still holds on the operative guard: none of it touches M5-T049's 7 allowed_paths (condition 1 empty), the M5-T048 scenario package is entirely outside M5-T049's blast radius (the impact query's consumer set is rules/spatial/api-rule-evaluation, never scenario), and D-066-R001 has no code in the allowed_paths at all - so disjoint M5-T048 code cannot regress it. The rest of the changed set is M5-T049's own gate/report/state/task control-plane records plus `docs/WORKING_KNOWLEDGE.md`, exactly as anticipated.
+
+The row stands as recorded. M5-T049 (231st) accept at `0c7b17f1` confirmed under the pre-authorization; verdict remains **PASS** for D-066-R001.
