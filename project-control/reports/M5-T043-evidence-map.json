@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T043",
+  "material_commit": "f6e88222 (cherry-pick of worktree 342df579; 7 files, +829/-249)",
+  "producer_report": "project-control/reports/M5-T043-producer-report.md",
+  "requirements": {
+    "D-045-R008": [
+      "One bounded hardening/extraction increment on the B2 wiring surface: the material commit touches exactly 7 files, all inside allowed_paths; no *.rule.json; contract files (schemas, generated TS, integration.py, response.py) byte-untouched; consumer files unedited (the facade preserves every public import path - 475 consumer tests green, orchestrator-reproduced)."
+    ],
+    "D-045-R009": [
+      "DRAFT preservation: no published/verified/compliance claim introduced; the DRAFT/not-verified display assertions survive (report-view suite carries them); the guard hardening only TIGHTENS attestation (a previously-uncleariable hand-built shape now provably never clears); alternate-width stays professional-review-class; fail-closed direction preserved (D-051)."
+    ],
+    "D-066-R001": [
+      "The contract carried the navigation block naming the wiring consumers with exact anchors and the G3-ruled extraction seam; the extraction executed exactly that seam (named_street_override_status.py owns MatchedNamedStreetOverride + _fully_resolved_typed_inputs + build_named_street_override_status; wide_street_wiring re-exports as the compatibility facade); consumer suites in allowed_paths and green at harvest (101+39+475, orchestrator-reproduced); modularity outcome IMPROVED - both rules modules dropped off the warn list entirely (modularity_check exit 0, no wide_street_wiring/named_street_override_status review signals remain)."
+    ]
+  }
+}

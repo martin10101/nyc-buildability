@@ -1,0 +1,10 @@
+{
+  "task_id": "M5-T044",
+  "material_commit": "1fd07e9a (cherry-pick of worktree 36a510b4; 3 files, +583/-37)",
+  "producer_report": "project-control/reports/M5-T044-producer-report.md",
+  "requirements": {
+    "D-066-R001": [
+      "The contract carried the navigation block naming the leaf status, the two-file surface, and the pluto post-response-stamp precedent anchor. The producer stayed exactly inside it: material 1fd07e9a touches only the connector, its test, and the report; the module remains a LEAF (the producer's bounded grep and the orchestrator's harvest check both show zero production-consumer imports); the connectors-wide suite (880 passed, orchestrator-reproduced) proves no consumer surface regressed. The G5 must-fix (DB-029a) closed with ASCII-fullmatch guards at input AND response side plus canonical-value URL interpolation at all four sites, each forced by negative tests with zero transport calls; the optional $limit rider was deliberately surfaced-not-silently-dropped per D-069."
+    ]
+  }
+}
