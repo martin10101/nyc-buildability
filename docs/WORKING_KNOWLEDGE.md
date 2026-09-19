@@ -412,3 +412,31 @@ Recorded because every one of these was discovered by a refusal mid-arc, not by 
   edits → rework→in_progress→resubmit at new head → delta-attestations from ALL FIVE
   reviewers (two rounds when a reviewer catches a defect IN the correction) → CI at the final
   head → gates → DCV with multi-condition restamp — all evidence verbatim in the reports.
+
+## Seq-118 five-accept session (2026-09-18/19) — session lessons
+
+- **DCV restamps vs parallel lanes:** a disjoint peer material commit between freeze and
+  record voids literal all-product-dirs-empty conditions (M5-T040 needed a delta-attestation
+  EXTENSION); ask every DCV to state its disjoint-peer tolerance UP FRONT (M5-T042 onward all
+  did), and for tagged corrections get an AMENDED condition-1 ("byte-identical to material as
+  amended by exactly commit X") — the M5-T044 DCV wrote it cleanly.
+- **Tagged-correction cycle at speed:** G3 PASS-with-required-correction → one [ORCH-CORRECTED]
+  commit + mutation-sensitive test → rework→resubmit → SendMessage delta-attestations to the
+  four resumable reviewers (~1-2 min each; G4 re-ran its own mutation probe on the correction).
+- **Deny ALL asks before relaunch:** a run's unanswered asks survive its close; ONE hidden ask
+  (below a head-trimmed listing) fails preflight `pending_requests` → PAUSED_RECOVERY. List
+  pending-approvals untrimmed and deny everything, both stores, before every launch.
+- **Watchers:** plain background-bash watchers were killed repeatedly (external stops); the
+  harness Monitor tool (persistent) survived all evening — use it for loop watching and CI
+  waits. A single-cycle run close with `stopped=deny_and_continue` is a RESUMABLE park
+  (SAFE_CHECKPOINT), not a failure: clear asks and re-run the launcher (same run-id resumes).
+- **gitleaks FP class:** fixture VARIABLE NAMES containing KEY trip generic-api-key — inline
+  `# gitleaks:allow` on the line; never quote the flagged line verbatim in an evidence file
+  (it re-trips the hook on the evidence commit — reword descriptively).
+- **modularity_check cwd artifact:** exit 2 from `services/` cwd; repo root only.
+- **SODA null semantics (load-bearing for the condo wiring):** Socrata OMITS null columns —
+  the real null-billing shape is KEY ABSENCE (7/8-key object), so explicit-null synthetics are
+  byte-infaithful; pin the real captured fixture and assert key-absence tolerance. Free
+  freshness stamp: response header `X-SODA2-Truth-Last-Modified` == dataset `rowsUpdatedAt`.
+- **Submit CLI writes `reports/<task>.json`** (frozen-submission record) — stage it with the
+  submit commit (five were under-staged this session and swept at landing).
