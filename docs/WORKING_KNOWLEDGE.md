@@ -50,6 +50,15 @@ Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
   "self-resolved" while they sit unanswered. Poll BOTH; before any relaunch, `deny` each stale
   entry by exact request_id + digest (copy them from the pending-approvals JSON — one mistyped
   id = unknown_request), then re-list to confirm 0.
+  A journal-side `queued_asks` row with NO broker approval record (rotation pause /
+  turnover_refused / model-chain classes) is a genuine owner question the boot probe
+  `pending_requests` counts even when `pending-approvals` lists 0 - the launch REFUSES
+  (S11.5 unsafe_or_drifted, failed_probes=['pending_requests']). No CLI verb closes it
+  between runs (deny=unknown_request; resume-after-answer refuses outside WAIT_FOR_OWNER):
+  answer via the library on the closed journal - cli.DurableJournal(cli.runtime_dir_for
+  (checkout)/cli.DB_FILENAME).open(); journal.resolve_ask(ask_id, answer) (the gate-3
+  reconcile precedent; ask_id from status --json open_asks). Proven loop-2 run-13->14
+  seam, 2026-09-19.
 
 - The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
   Windows pids and reports the live supervisor as dead (false LOOP BREAK). Use
