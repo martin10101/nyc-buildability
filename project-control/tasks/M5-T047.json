@@ -72,8 +72,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PropertyOverview.tsx imports LotOutlineMap - both FORBIDDEN here; any change forcing their edit = STOP + discovery (M5-T045 owns the architect components, LIVE lane).",
     "Honest absence vs error must stay distinct; SODA key-absence is the null semantics (corpus assertion 7).",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T06:35:29.820911+00:00",
-  "updated_at": "2026-09-19T08:24:00.768219+00:00",
+  "updated_at": "2026-09-19T09:38:18.005773+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -114,5 +114,7 @@
       "status": "in_progress",
       "message": "Contracted + claimed at the M5-T046 acceptance seam (G0 PASS at 29855271; pairwise disjoint vs live M5-T045, intersection empty); scenarios AS-1..AS-8 in-packet; awaiting loop-2 launch run 11"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T09:38:18.005773+00:00"
 }

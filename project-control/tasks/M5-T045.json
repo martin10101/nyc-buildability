@@ -85,8 +85,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Divergent zoning across a condo's base lots must never collapse into a single answer; multi-lot is a records display, never an allowance.",
     "The condo step is a strict pre-lookup addition: non-condo and flag-off behavior must stay byte-identical (regression suites prove it).",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T03:07:46.431298+00:00",
-  "updated_at": "2026-09-19T08:34:45.403873+00:00",
+  "updated_at": "2026-09-19T09:38:21.209680+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -138,5 +138,7 @@
       "status": "in_progress",
       "message": "ORCH-SCOPE-DISPOSITION recorded pre-submit (run-49 wave finding): display deliverable = the reachable entered-vs-analysed identity increment (neutral wording where resolution meaning is not evidence-established); multi-lot/unresolved stay fully fail-closed backend-side with the professional-review fail-safe as their visible surface; the multi-lot records-view screen presentation SPLIT to the DB-031 follow-up packet; AS-3/AS-8 amended; builder/routes/schemas untouched. Run 50 (limit 6) completes the amended contract."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T09:38:21.209680+00:00"
 }

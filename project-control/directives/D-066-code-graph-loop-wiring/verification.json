@@ -359,6 +359,50 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T047",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "9c6050a5ffcf743061cbbfed94e60d2a6434c3862bc49bb177bd24a2fb2c53de",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T047-DCV.md, frozen identity ca94b2c3, material 7ecdcbf4 + tagged test-only correction d27a6a83): nav block in the packet with the load-bearing PropertyOverview->LotOutlineMap edge verified in source at PropertyOverview.tsx:10; consumer sweep outcome = the one affected out-of-scope consumer caught by CI and corrected per the M5-T023 precedent (G3 Surface 5); advisory-verified-in-source. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the four-condition pre-authorization - reproduced at record time: (1) all 10 allowed_paths + the corrected consumer test byte-identical ca94b2c3->record head (empty diff); (2) refs/allowed_paths/evidence-map unchanged, evaluate_task_refs ok; (3) D-066/D-073 active, R001/R006 unamended, digests match; (4) validator exit 0 at the record state; intervening commits are control-plane or the granted disjoint peers (T045 acceptance evidence, T048/T049 lanes)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T045",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "e0ac5bfdbaac9b5631cc6efb26729ea38c3118eda3b4a79d890b5117a567f74d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T045-DCV.md, frozen submission 2b851c18, material 28082288, CI-proven 21ee7379): seam-regenerated nav block (740/15648) in packet inputs[4] with the query.py instruction + advisory clause; the DCV independently grep-reproduced that the new symbols live ONLY in the four in-scope modules and NO forbidden path carries them; nav-block material claims verified in source (route consumer rule_evaluation.py:66, single live ztldb call live_provider.py). Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the five-condition pre-authorization - reproduced at record time: (1) all 17 allowed_paths byte-identical 28082288->record head (empty diff); (2) refs/paths/evidence-map unchanged, evaluate_task_refs ok; (3) directives active, R001/R006 unamended, digests match; (4) validator exit 0 at the record state; (5) intervening commits are control-plane or the granted disjoint peers (T047 acceptance evidence, T048/T049 lanes)."
+     ]
+    }
+   ]
   }
  ]
 }

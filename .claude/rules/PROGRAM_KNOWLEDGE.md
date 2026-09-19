@@ -151,7 +151,12 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   (`ledger_status_mismatch`, exit 11). Fix = `git -C <wt> reset --hard <claim-seam sha>`;
   a preflight refusal parks the journal in PREFLIGHT (no clear-recovery needed), same
   run-id relaunches (M5-T045 launch, 2026-09-19).
-  Ask-answer CLI verbs racing a LIVE loop fork its audit chain - repair between runs.
+  ANY audit-appending CLI verb racing a LIVE loop forks its chain - deny/approve-once AND
+  graceful-stop alike (store-side effects land; appends refuse). Repair between runs
+  (archive-to-forked-evidence; loop-2 needs a targeted script - the stock repair hardcodes
+  loop-1's runtime). Packet allowed_paths are GLOBS matched at LAUNCH (cached): a bare
+  directory prefix matches nothing - write `dir/**`; a mid-run packet fix needs a
+  graceful-stop + relaunch to apply.
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list

@@ -76,6 +76,50 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-073",
+   "task_id": "M5-T047",
+   "applicable_requirement_ids": [
+    "D-073-R006"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "9c6050a5ffcf743061cbbfed94e60d2a6434c3862bc49bb177bd24a2fb2c53de",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-073-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T047-DCV.md): the record-address channel returns an official RECORD with full provenance and three honest typed outcomes (address=null on absence; key-absence honored; typed faults never fake absence - lot_geometry.py L351-360/L432-464); record-address.ts RECORD-NOT-MEASUREMENT; the card's PLUTO city-record line shown only when differing (AddressConfirmCard.tsx:198-204) with the HJ A2/A3a polish; HJ PASS 'none of the three implies a computed value'; no scenario amendment on this packet. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced four-condition pre-authorization (see the D-066 row)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-073",
+   "task_id": "M5-T045",
+   "applicable_requirement_ids": [
+    "D-073-R006"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "e0ac5bfdbaac9b5631cc6efb26729ea38c3118eda3b4a79d890b5117a567f74d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-073-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T045-DCV.md) at the AMENDED scope (the pre-submit ORCH-SCOPE-DISPOSITION with its G0 re-record, verified clean; DB-031 recorded as the records-view successor): condo_resolution_report maps onto the EXISTING contract-1.3.0 channels with the machine token (zoning_crosscheck.py:524-633); ONE shared fail-safe ALLOW-LIST guard on screen and brief (PropertyOverview.tsx:116-123 / ReportView.tsx:38 - missing/malformed/unknown tokens withhold; G4 proved the deny-list mutant dies); base lots as RECORDS with record-not-allowance wording; neutral identity notice; HJ PASS - no computed allowance on any non-success condo path, via the display guard AND independently the backend build_live_substrate->None fail-safe. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced five-condition pre-authorization (see the D-066 row)."
+     ]
+    }
+   ]
   }
  ]
 }
