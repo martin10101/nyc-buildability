@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-075",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Both requirements bind the non-ledger sentinel D-075-BOOTSTRAP at capture; verification lands after the window closes, against the window's git/ledger/launcher evidence trail. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

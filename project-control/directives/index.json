@@ -976,6 +976,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-074-revision-loop-limit-six/manifest.json"
+  },
+  {
+   "directive_id": "D-075",
+   "slug": "ten-hour-build-window",
+   "title": "Owner 2026-09-19: keep the loops running for the next 10 hours and build out what still needs to be built - sustained continuity window over the released, non-held queue; all gates, holds, Tier D stops, and D-072 loop isolation unchanged",
+   "status": "active",
+   "issued_at": "2026-09-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-075-ten-hour-build-window/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

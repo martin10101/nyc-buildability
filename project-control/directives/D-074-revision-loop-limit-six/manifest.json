@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T05:18:29.777737+00:00",
  "created_at": "2026-09-19T05:18:29.777737+00:00",
- "updated_at": "2026-09-19T05:29:00.394600+00:00",
+ "updated_at": "2026-09-19T05:36:34.170475+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "e75adc47fa68482b791e4a39ae189af5d27dab7c",
  "capture_head_sha": null,
@@ -24,7 +24,7 @@
  "locked_requirement_ids": [
   "D-074-R001"
  ],
- "requirements_content_digest_sha256": "4891276fa8c5d4f0fde4186ba467e5a4e2f8b788d890add6db3aa223c77b2f83",
+ "requirements_content_digest_sha256": "3aa098afea4f619d51c46154e7825c742f6581ebff4c8082880c35e86475e815",
  "sources": [
   {
    "file": "source-001.md",
@@ -61,6 +61,12 @@
    "actor": "orchestrator",
    "action": "applied",
    "note": "R001 applied: owner performed the elevated copy (session-shell Program Files write is denied; two UAC prompts were canceled before the owner ran the one-line admin copy themselves); config now carries [limits] max_consecutive_revision_loops = 6; launch manifest re-recorded over 147 files (digest 88caea4f2f9f0b8b...) binding the new config, round-trip verified, and verify-controller passed independently. Effective at each loop's next launch; live runs 49/10 keep 4 per R001. Harness evidence (budget counter_limits = 6) to be captured at the next relaunch; requirement stays pending until independently verified."
+  },
+  {
+   "at": "2026-09-19T05:36:34.170475+00:00",
+   "actor": "orchestrator",
+   "action": "evidence_recorded",
+   "note": "R001 harness evidence: run persistent-local-50-m5t045 launched under the re-recorded manifest with counter_limits.consecutive_revision_loops = 6. Digest resynced same commit."
   }
  ]
 }

@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 1,
  "producer": "orchestrator",
- "updated_at": "2026-09-19T05:18:29.777737+00:00",
+ "updated_at": "2026-09-19T05:36:34.170475+00:00",
  "requirements": [
   {
    "id": "D-074-R001",
@@ -28,8 +28,12 @@
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "status_reason": "Captured before acting; applied and verified per the harness after capture.",
-   "evidence_paths": [],
+   "status_reason": "Applied and harness-evidenced (run-50 launch shows limit 6); awaiting independent DCV verification.",
+   "evidence_paths": [
+    "audit runtime: run persistent-local-50-m5t045 launch budget counter_limits.consecutive_revision_loops = 6 (2026-09-19, first launch after the re-recorded manifest; launcher exit 0 = manifest verification passed)",
+    "C:\\Program Files\\SupervisorConfig\\config.toml [limits] max_consecutive_revision_loops = 6 (owner-applied elevated copy)",
+    "record-manifest output: 147 files, digest 88caea4f2f9f0b8b..., round-trip verified; independent verify-controller PASS"
+   ],
    "reviewed_sha": null,
    "maps_to": {
     "files": [],

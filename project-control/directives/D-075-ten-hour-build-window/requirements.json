@@ -1,0 +1,72 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-075",
+ "version": 1,
+ "requirement_count": 2,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-19T05:33:21.799316+00:00",
+ "requirements": [
+  {
+   "id": "D-075-R001",
+   "text": "Sustained continuity for ~10 hours from issuance (2026-09-19 ~05:45 UTC to ~15:45 UTC): the orchestrator keeps the supervised build lanes continuously operating - after every clean stop (breaker trip, unit completion, run close) it executes the standard between-runs drill (deny parked asks, repair any audit-chain damage, harvest evidence) and relaunches or advances the lane without waiting for the owner; finished builds are harvested, submitted, independently reviewed, and accepted at seams per the normal gated process; a lane that finishes its packet is re-fed with the next contracted packet rather than left idle. Stops are permitted only for genuine blockers or owner-only decisions (Tier D / Section 20 / credentials / payment / production approval), which are surfaced plainly while other released lanes continue.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-075-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The session's monitor watcher stays armed for the window; every stop within the window shows a recorded recovery (relaunch or harvest) in git/ledger/launcher state rather than an unattended dead lane.",
+   "required_evidence": "git commits + ledger transitions + launcher ACTIVE-TASK/run-id history + DISCOVERY_BACKLOG seam notes covering the window",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; the window is in progress.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-075-R002",
+   "text": "Build-target selection: 'what still needs to be built' resolves to the RELEASED, NON-HELD queue as recorded in the ledger (project-control/) and the discovery backlog (docs/DISCOVERY_BACKLOG.md) - at issuance: finishing and accepting M5-T045 (condo billing-BBL live wiring) and M5-T046 (address-to-lot identity honesty), then the next released lanes the orchestrator contracts at seams under the existing directives. This directive grants NO new scope: the expansion/3D hold (§2), Tier D / Section 20 hard stops, the PR #241 hold, dependency-security policy, D-072's max-three pairwise-disjoint loops, and every gate stay unchanged; held work is never selected under this directive.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-075-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "Every packet contracted inside the window cites its normal directive_refs and passes G0 with the pairwise-disjointness record; no packet touches held scope.",
+   "required_evidence": "task packets + G0 reports contracted during the window",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; the window is in progress.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

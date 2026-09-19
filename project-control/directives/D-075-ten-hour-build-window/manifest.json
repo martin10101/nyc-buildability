@@ -1,0 +1,61 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-075",
+ "version": 1,
+ "slug": "ten-hour-build-window",
+ "title": "Owner 2026-09-19: keep the loops running for the next 10 hours and build out what still needs to be built - sustained continuity window over the released, non-held queue; all gates, holds, Tier D stops, and D-072 loop isolation unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-19",
+ "captured_at": "2026-09-19T05:33:21.799316+00:00",
+ "created_at": "2026-09-19T05:33:21.799316+00:00",
+ "updated_at": "2026-09-19T05:33:21.799316+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "4d4bb3b10e909a0e882d03b62e2de94e14d77784",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in interactive chat immediately after applying D-074; a duration/continuity directive over already-released work, granting no new scope."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-075-R001",
+  "D-075-R002"
+ ],
+ "requirements_content_digest_sha256": "d7235307a086e97e28b885ee2693f08a2d9cb57ead51f91d1a878b471793298e",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-19T05:33:21.799316+00:00",
+   "content_digest_sha256": "22148eb79d3ab7b06db637c3acf3d9f0ab61206e1d871ffcea551b19fb7d659f"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "sustained lane continuity + relaunch/harvest/contract cycling over released non-held work for the ~10h window from 2026-09-19T05:45Z",
+  "forbidden": "any held scope (expansion §2, PR #241), any Tier D / Section 20 action, any gate/authority/isolation change"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-19T05:33:21.799316+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). Window in progress at capture; both lanes live (M5-T045 run 49, M5-T046 run 10)."
+  }
+ ]
+}
