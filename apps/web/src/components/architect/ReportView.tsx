@@ -8,7 +8,8 @@ import { ZoningSection } from "@/components/property/ZoningSection";
 import { ScenarioConstraints } from "@/components/compare/ScenarioConstraints";
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { PropertyFacts, OpenIssues } from "./ProfileViews";
-import { PropertyIssuesSummary, CondoResolutionRecords, condoWithholdsAllowances } from "./PropertyOverview";
+import { PropertyIssuesSummary, CondoRecordsChannelSection, deriveCondoSurface } from "./PropertyOverview";
+import { useCondoRecords } from "@/lib/condo-records";
 import { DevelopmentLimits, IncompleteEvaluationNotice } from "./DevelopmentLimits";
 import { evaluationIsInspectable } from "@/lib/architect/development-limits";
 import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
@@ -28,14 +29,22 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     const matchedScenario = returnedScenario?.evaluated_input.bbl === bbl ? returnedScenario : null;
     const identityEvaluation = returnedEvaluation?.evaluated_input.bbl === bbl ? returnedEvaluation : null;
     const inspectableEvaluation = evaluationIsInspectable(identityEvaluation) ? identityEvaluation : null;
-    // D-073-R006: a multi-lot / unresolved condo billing-BBL profile withholds
-    // EVERY computed development allowance on the printed brief too — even when a
-    // scenario or rule evaluation matching this BBL is present and would otherwise
-    // be displayable — exactly as the screen (PropertyOverview) does. RECORDS
-    // still print (CondoResolutionRecords, AnalysisIdentityNotice); computed
-    // allowances never do. Screen and brief share this one guard so they can never
-    // disagree.
-    const condoWithholds = condoWithholdsAllowances(profile);
+    // D-073-R006 (M5-T052 reconciliation): the printed brief consumes the SAME
+    // shared condo-surface decision the screen (PropertyOverview) uses.
+    // deriveCondoSurface folds the ACCEPTED profile fail-safe guard
+    // (condoWithholdsAllowances — byte-unchanged) together with the live per-BBL
+    // records channel (useCondoRecords). The withhold is MONOTONIC: the profile
+    // guard stays fully authoritative and the channel may only ADD withholding
+    // (multi-lot / unresolved / typed resolver error), never remove it. So a
+    // multi-lot / unresolved / error condo withholds EVERY computed development
+    // allowance on the brief exactly as it does on the screen — even when a
+    // scenario or rule evaluation matching this BBL would otherwise be displayable.
+    // The records section, the substitution explanation, a profile/channel
+    // disagreement, and honest absence all render from this ONE decision, so the
+    // brief and the screen can never disagree.
+    const condoOutcome = useCondoRecords(bbl);
+    const condo = deriveCondoSurface(profile, condoOutcome);
+    const condoWithholds = condo.withholdAllowances;
     const scenario = condoWithholds ? null : matchedScenario;
     const evaluation = condoWithholds ? null : inspectableEvaluation;
     const [auditAppendix, setAuditAppendix] = useState(false);
@@ -74,17 +83,18 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     </section>
     <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
     <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
-    {/* M5-T045 (D-073-R006): the condo billing-BBL -> base-lot RECORDS reach the
-        printed brief from the SAME component the screen (PropertyOverview) uses,
-        so the records-vs-allowances distinction can never disagree across the two
-        surfaces (one data path, the existing conflict/note channels). */}
-    <CondoResolutionRecords profile={profile}/>
     <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
     {/* [ORCH-CORRECTED per M5-T037 HJ F1] The report feeds DevelopmentLimits the same
         inspectability-GATED evaluation every screen surface uses (and that
         CalculationEvidence below already receives), so screen and report can never
         quietly disagree on a non-inspectable document (D-073-R003). */}
     <DevelopmentLimits profile={profile} scenario={scenario} evaluation={evaluation}/>
+    {/* M5-T052 (D-073-R006): the condo RECORDS reach the printed brief from the
+        SAME shared decision and the SAME CondoRecordsChannelSection the screen
+        (PropertyOverview) uses, rendered UNDER the professional-review fail-safe
+        (DevelopmentLimits above) — records, substitution, a profile/channel
+        disagreement, and honest absence are one source of truth across surfaces. */}
+    <CondoRecordsChannelSection decision={condo}/>
     <PropertyIssuesSummary profile={profile}/>
     <nav className="architect-report-contents" aria-label="Property brief contents">
       {[["brief-facts", "Facts"], ["brief-zoning", "Zoning"], ["brief-issues", "Issues & assumptions"], ["brief-calculations", "Calculations"], ["brief-sources", "Sources"]].map(([id, text]) => <a key={id} href={`#${id}`} onClick={() => { const section = document.getElementById(id); if (section instanceof HTMLDetailsElement) section.open = true; }}>{text}</a>)}

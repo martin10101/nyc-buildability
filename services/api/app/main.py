@@ -29,6 +29,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.address_resolution import router as address_resolution_v1_router
+from app.api.v1.condo_records import router as condo_records_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.lot_geometry import router as lot_geometry_v1_router
 from app.api.v1.properties import router as properties_v1_router
@@ -161,6 +162,16 @@ def create_app() -> FastAPI:
     # the address confirm card; measurement stays owned by the EPSG:2263 path. See
     # app.api.v1.lot_geometry.
     application.include_router(lot_geometry_v1_router)
+    # Internal, feature-flag-gated CONDO-RECORDS endpoint (task M5-T052, DB-031).
+    # SAME posture as the routes above - ALWAYS registered but unreachable
+    # (generic 404, no OpenAPI entry) unless the EXISTING INTERNAL_RULE_EVAL_ENABLED
+    # flag is an explicit true token (the condo records view is part of the same
+    # internal property flow and app.config is out of the packet's scope, so it
+    # reuses that flag and adds no new one); absent/unknown -> disabled (fail
+    # safe). Surfaces the recorded base-lot(s) of a multi-lot condo as RECORDS
+    # under the professional-review fail-safe; makes no zoning determination and
+    # computes no allowance. See app.api.v1.condo_records.
+    application.include_router(condo_records_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
