@@ -98,17 +98,29 @@ EC5_CHECKED = Ec5AttestedPreconditions(
     attestation_note="both checks performed for this synthetic fixture",
 )
 
-# Named-street override table is a follow-up: not implemented, and (unless a
-# test says otherwise) no candidate segment is flagged as touching it.
+# The ZR 12-10 named-street override matcher is consulted for every determination
+# (build_named_street_override_status). OVERRIDE_CLEAR is the genuinely-resolved
+# status the matcher returns when every candidate segment cleared NOT_MATCHED with
+# fully-resolved inputs: the table was APPLIED (override_table_implemented=True)
+# and no designation applies. OVERRIDE_MAY_TOUCH is the fail-closed status when a
+# segment could not be resolved.
 OVERRIDE_CLEAR = NamedStreetOverrideStatus(
-    override_table_implemented=False,
+    override_table_implemented=True,
     segment_may_touch_named_override=False,
-    note="no candidate segment flagged as touching a named-street override",
+    note="every candidate segment resolved NOT_MATCHED with fully-resolved inputs",
 )
 OVERRIDE_MAY_TOUCH = NamedStreetOverrideStatus(
     override_table_implemented=False,
     segment_may_touch_named_override=True,
     note="a candidate segment may fall under Broadway W94-97 / Allen St override",
+)
+# DB-028(c): a hand-built inconsistent status (no touch flagged AND the override
+# table not applied) that build_named_street_override_status never emits. The
+# hardened guard must NOT let it clear the elevated exceptions_checked criterion.
+OVERRIDE_NOT_IMPLEMENTED = NamedStreetOverrideStatus(
+    override_table_implemented=False,
+    segment_may_touch_named_override=False,
+    note="hand-built inconsistent status: override table not applied, no touch flagged",
 )
 
 
@@ -464,6 +476,61 @@ def test_exceptions_checked_true_only_when_fully_resolved() -> None:
     )
     assert result.exceptions_checked is True
     assert result.named_street_override_pending is False
+
+
+def test_db028a_named_street_status_extracted_with_compatibility_facade() -> None:
+    # AS-1 / DB-028(a): the named-street status construction now lives in
+    # app.rules.named_street_override_status; wide_street_wiring re-exports the
+    # moved public symbols so every pre-existing import path keeps resolving to the
+    # SAME objects (compatibility facade; no consumer edits).
+    from app.rules import named_street_override_status as submodule
+    from app.rules import wide_street_wiring as facade
+
+    for name in (
+        "MatchedNamedStreetOverride",
+        "NamedStreetOverrideStatus",
+        "build_named_street_override_status",
+    ):
+        assert getattr(facade, name) is getattr(submodule, name)
+        assert name in facade.__all__
+        assert name in submodule.__all__
+
+
+def test_db028c_hand_built_not_implemented_status_never_clears_guard() -> None:
+    # AS-2 / DB-028(c): a hand-built status with segment_may_touch=False AND
+    # override_table_implemented=False (a shape build_named_street_override_status
+    # never emits) must NO LONGER clear the elevated attestation. Even with a
+    # confident wide decision and a within-100ft geometry, exceptions_checked stays
+    # False and the override stays pending, because the matcher never applied and
+    # resolved the table. The old boolean-pair guard let this slip through.
+    result = determine_wide_street_far(
+        [_wide_decision()],
+        lot=_make_lot(),
+        wide_segments=[_within_segment()],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=OVERRIDE_NOT_IMPLEMENTED,
+        correlation_id=CID,
+    )
+    assert result.exceptions_checked is False
+    assert result.named_street_override_pending is True
+    assert result.determination_state == DETERMINATION_PROFESSIONAL_REVIEW
+
+
+def test_db028d_no_policy_decisions_reports_exceptions_checked_false() -> None:
+    # AS-3 / DB-028(d): the no-policy-decisions professional-review branch must not
+    # report exceptions_checked=True via the vacuous all(()) -> True. With an
+    # otherwise-clearing OVERRIDE_CLEAR status but an EMPTY decision set, the
+    # elevated criterion is explicitly False - there is nothing to attest.
+    result = determine_wide_street_far(
+        [],
+        lot=_make_lot(),
+        wide_segments=[],
+        ec5_preconditions=EC5_CHECKED,
+        named_street_override=OVERRIDE_CLEAR,
+        correlation_id=CID,
+    )
+    assert result.determination_state == DETERMINATION_PROFESSIONAL_REVIEW
+    assert result.exceptions_checked is False
 
 
 def test_unresolved_decision_never_claims_exceptions_checked() -> None:

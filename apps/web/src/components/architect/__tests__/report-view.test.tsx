@@ -165,6 +165,21 @@ describe("M5-T040 — DB-025(a) calculation-evidence review label gates on deter
     expect(provenance).toHaveTextContent("Professional review required");
     expect(provenance).toHaveTextContent("withheld — professional review required");
   });
+
+  it("renders the defensive null-FAR fallback as 'Not calculated', never a professional-review phrase, for a non-review determination (DB-028h)", () => {
+    const profile = baseProfile();
+    const doc = wideStreetDoc(profile.identity.bbl); // within_100ft_of_wide_street (a non-review state)
+    // Degenerate/defensive shape: a CONFIDENT (non-review) determination whose FAR
+    // is nonetheless absent. The evidence must never borrow the professional-review
+    // phrase for a non-review state — the fallback reads "Not calculated", matching
+    // DevelopmentLimits, so the two surfaces stay consistent (DB-028h / HJ A1).
+    doc.wide_street!.governing_max_residential_far = null;
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    const provenance = screen.getByTestId("wide-street-provenance");
+    expect(provenance).toHaveTextContent("Wide-street conditional FAR (dimensionless ratio): Not calculated");
+    expect(provenance).not.toHaveTextContent("withheld — professional review required");
+    expect(provenance).not.toHaveTextContent("Professional review required");
+  });
 });
 
 describe("M5-T040 — DB-025(c) conservative-FAR labelling parity, screen and report (D-073-R006)", () => {

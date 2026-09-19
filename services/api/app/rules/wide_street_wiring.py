@@ -47,13 +47,18 @@ direction; this is not a universal "narrow is always safe" claim (cf. the ZR
 
 exceptions_checked ELEVATED criterion (M4-T021 G3 A1). ``exceptions_checked`` is
 reported True ONLY when the applicable zoning exceptions were checked AND every
-applicable one is either inapplicable or implemented/resolved. The 2-row
+applicable one is either inapplicable or resolved. The ZR 12-10 2-row
 named-street override table (Broadway W94-97 CD7; Allen St Rivington-Delancey
-CD3) and the C5-3/C6-4/C6-6 alternate-width clause are OUT OF SCOPE here
-(follow-up); a candidate segment that MAY fall under them can therefore never be
-reported ``exceptions_checked=True``, and a lot flagged as possibly touching a
-named-street override fails safe to professional review rather than claiming a
-wide determination on an unresolved exception (AS-4).
+CD3) IS consulted here - :func:`build_named_street_override_status` (extracted to
+:mod:`app.rules.named_street_override_status`) runs the accepted matcher over the
+candidate segments. A candidate segment the matcher could not resolve (missing
+community district or cross-street bounds, or an indeterminate locator) can
+therefore never be reported ``exceptions_checked=True``, and such a lot fails safe
+to professional review rather than claiming a wide determination on an unresolved
+exception (AS-4). A DEFINITIVE match is a qualified-legal determination whose
+designated-wide value is never applied numerically (M5-T039 ruling; the
+C5-3/C6-4/C6-6 alternate-width value stays in the G6 legal queue) - it too forces
+professional review.
 
 DRAFT-until-G6 (D-045-R009). Every determination carries the DRAFT marker and the
 D-052 provenance quintuple (original label, source version, matched geometry
@@ -86,11 +91,10 @@ from app.connectors.wide_street_buffer_engine import (
     WideStreetBufferResult,
     compute_wide_street_buffer_intersection,
 )
-from app.rules.named_street_override import (
-    MatchStatus,
-    NamedStreetOverrideMatcher,
-    OverrideQuery,
-    _normalize_cd,
+from app.rules.named_street_override_status import (
+    MatchedNamedStreetOverride,
+    NamedStreetOverrideStatus,
+    build_named_street_override_status,
 )
 
 __all__ = [
@@ -161,57 +165,6 @@ FALLBACK_DIRECTION_NOTICE = (
 
 
 @dataclass(frozen=True)
-class MatchedNamedStreetOverride:
-    """The distinct override provenance carried when a candidate segment
-    DEFINITIVELY matched a ZR 12-10 named-street override designation (M5-T040
-    wiring; AS-4). A match is a qualified-legal determination that the designated
-    street is WIDE regardless of its numeric width - so it is never applied
-    numerically here (M5-T039 ruling; the C5-3/C6-4/C6-6 alternate-width value
-    stays in the G6 legal queue) and forces a professional-review determination.
-
-    ``snapshot_sha256`` / ``section_anchor`` / ``provision_id`` /
-    ``matched_row_verbatim`` are the four provenance elements the refusal must
-    carry (from the matcher's :class:`OverrideProvenance`). ``reason`` is the
-    composed, user-reachable explanation folded into the determination's reason."""
-
-    provision_id: str | None
-    snapshot_sha256: str | None
-    section_anchor: str | None
-    matched_row_verbatim: str | None
-    reason: str
-
-
-@dataclass(frozen=True)
-class NamedStreetOverrideStatus:
-    """Attestation about the named-street override / alternate-width table
-    (M4-T021 G3 A1 elevated criterion; AS-4). Built either directly or, from
-    M5-T040, by :func:`build_named_street_override_status`, which runs the
-    accepted ZR 12-10 matcher over the candidate segments.
-
-    ``override_table_implemented`` - whether the ZR 12-10 named-street override
-    matcher (Broadway W94-97 CD7; Allen St Rivington-Delancey CD3) and the
-    C5-3/C6-4/C6-6 alternate-width clause were APPLIED for this determination.
-    ``build_named_street_override_status`` sets it True once the matcher actually
-    ran over every candidate segment; a hand-built status may leave it False.
-    ``segment_may_touch_named_override`` - whether any candidate segment may fall
-    under one of those provisions but could NOT be cleared. When True and the
-    table is not implemented (the matcher could not fully resolve the segment),
-    ``exceptions_checked`` can never be True and a ``wide``-tending lot fails safe
-    to professional review.
-    ``note`` - free-form provenance (required, may be explicitly None).
-    ``matched_override`` - set (non-None) ONLY when a candidate segment
-    DEFINITIVELY matched a named-street override designation with fully-resolved
-    inputs. It carries the distinct override provenance and forces a
-    professional-review determination; ``exceptions_checked`` is never True.
-    """
-
-    override_table_implemented: bool
-    segment_may_touch_named_override: bool
-    note: str | None
-    matched_override: MatchedNamedStreetOverride | None = None
-
-
-@dataclass(frozen=True)
 class WideStreetDetermination:
     """One lot's typed wide-street determination for the ZR 23-22 conditional-FAR
     rows. ``far_row`` names which row may fire; ``coverage_hint`` is the draft
@@ -276,18 +229,29 @@ def _elevated_exceptions_checked(
 
     A ``wide``/``narrow`` decision_state already implies the D-052
     ``exceptions_checked`` attestation held (the policy module returns
-    ``unresolved`` otherwise), but the elevated criterion is stricter: an
-    APPLICABLE-but-UNIMPLEMENTED exception, an unresolved candidate segment, or a
-    DEFINITIVE named-street override match all mean the exceptions are not fully
-    resolved, so this returns False even when the caller attested a check."""
+    ``unresolved`` otherwise), but the elevated criterion is stricter: a status
+    whose override table was not fully applied/resolved
+    (``override_table_implemented`` False), a DEFINITIVE named-street override
+    match, or an empty decision set all mean the exceptions are not fully resolved
+    for a confident determination, so this returns False even when the caller
+    attested a check."""
     if named_street_override.matched_override is not None:
         return False
-    if (
-        named_street_override.segment_may_touch_named_override
-        and not named_street_override.override_table_implemented
-    ):
+    # DB-028(c): the safe attestation path REQUIRES the matcher to have fully
+    # applied and resolved the override table (override_table_implemented=True). A
+    # status whose override table was not fully applied can never clear the
+    # elevated criterion - this rejects a hand-built may_touch=False/
+    # implemented=False status that the old boolean pair let slip through
+    # (attestation only tightens, never loosens;
+    # build_named_street_override_status never emits that shape).
+    if not named_street_override.override_table_implemented:
         return False
-    return all(d.decision_state in (DECISION_WIDE, DECISION_NARROW) for d in decisions)
+    # DB-028(d): with no supplied decisions there is nothing to attest, so the
+    # empty case is explicitly False - never the vacuous all(()) -> True that let
+    # the no-policy-decisions professional-review branch read exceptions_checked=True.
+    return bool(decisions) and all(
+        d.decision_state in (DECISION_WIDE, DECISION_NARROW) for d in decisions
+    )
 
 
 def _determination(
@@ -332,161 +296,6 @@ def _determination(
     )
 
 
-def _fully_resolved_typed_inputs(query: OverrideQuery) -> bool:
-    """True only when a candidate segment's locator is TYPED and NORMALIZED on
-    every dimension the ZR 12-10 matcher keys on: borough, street name, and BOTH
-    cross-street bounds are non-blank ``str`` values, and the community district
-    normalizes to a single integer (:func:`_normalize_cd`).
-
-    The matcher SHORT-CIRCUITS to ``NOT_MATCHED`` for an ordinary (non-override)
-    street WITHOUT ever inspecting the cross-street bounds, and it COERCES a
-    non-string locator (``str()`` / digit-scan) before it can reach that
-    short-circuit. So a ``NOT_MATCHED`` alone does NOT establish typed, normalized
-    inputs. The wiring re-establishes them here, INDEPENDENTLY of that coercing
-    short-circuit, before an all-``NOT_MATCHED`` result may attest
-    ``exceptions_checked``: a malformed-but-nonblank field (a non-string bound, a
-    list community district) can never clear the exception (D-051 fail-closed)."""
-    for field in (
-        query.borough,
-        query.street_name,
-        query.cross_street_from,
-        query.cross_street_to,
-    ):
-        if not isinstance(field, str) or not field.strip():
-            return False
-    cd = query.community_district
-    if isinstance(cd, bool) or not isinstance(cd, (int, str)):
-        return False
-    return _normalize_cd(cd) is not None
-
-
-def build_named_street_override_status(
-    matcher: NamedStreetOverrideMatcher,
-    segment_queries: Sequence[OverrideQuery],
-    *,
-    note: str | None = None,
-) -> NamedStreetOverrideStatus:
-    """Run the accepted ZR 12-10 named-street override matcher over the candidate
-    street segments and produce the wiring's :class:`NamedStreetOverrideStatus`,
-    fail-closed (D-051; M5-T040 wiring - the FIRST production consumer of
-    :mod:`app.rules.named_street_override`).
-
-    The matcher's typed tri-state drives the outcome:
-
-    * Any candidate segment returns ``MATCHED_OVERRIDE`` -> a DEFINITIVE
-      named-street override designation applies. The status carries the distinct
-      override provenance (:class:`MatchedNamedStreetOverride`: snapshot sha256,
-      section anchor, provision id, verbatim matched row) and forces a
-      professional-review determination; the designated-wide value is NEVER
-      applied numerically (M5-T039 ruling). Decisive - the first match wins.
-    * Every candidate segment returns ``NOT_MATCHED`` **with fully-resolved,
-      typed inputs** -> the override table was applied and no designation applies,
-      so the exception is genuinely CHECKED AND RESOLVED
-      (``override_table_implemented`` True, ``segment_may_touch`` False).
-      Fully-resolved is established INDEPENDENTLY of the matcher's coercing
-      NOT_MATCHED short-circuit (:func:`_fully_resolved_typed_inputs`): the
-      candidate's borough, street, and BOTH cross-street bounds must be non-blank
-      strings and the community district must normalize to a single int. The
-      matcher can reach NOT_MATCHED for an ordinary street WITHOUT inspecting the
-      bounds and coerces non-string locators, so a malformed-but-nonblank field
-      (a non-string bound, a list community district) can never attest here.
-    * Any ``INDETERMINATE``, any ``NOT_MATCHED`` on a segment whose locator is not
-      fully typed/normalized, or an empty candidate list -> the segment could not
-      be cleared, so the existing refusal stands unchanged (``segment_may_touch``
-      True, ``override_table_implemented`` False): ``exceptions_checked`` can never
-      be True. Missing/unresolvable/malformed input is a refusal, never a guessed
-      NOT_MATCHED.
-
-    Deterministic and side-effect-free; the matcher itself never fetches the
-    network. This decides NO legal question - a match escalates to a qualified
-    human (G6)."""
-    if not segment_queries:
-        return NamedStreetOverrideStatus(
-            override_table_implemented=False,
-            segment_may_touch_named_override=True,
-            note=(
-                note
-                or "no candidate street segment was supplied to the ZR 12-10 "
-                "named-street override matcher; the exception could not be checked, "
-                "so it is left unresolved (fail-closed)"
-            ),
-        )
-
-    unresolved = False
-    for query in segment_queries:
-        result = matcher.match(query)
-        if result.status is MatchStatus.MATCHED_OVERRIDE:
-            prov = result.provenance
-            snapshot_sha256 = prov.snapshot_sha256 if prov is not None else None
-            section_anchor = prov.section_anchor if prov is not None else None
-            matched_row_verbatim = (
-                prov.matched_row_verbatim if prov is not None else None
-            )
-            reason = (
-                "a candidate street segment DEFINITIVELY matched a ZR 12-10 "
-                "named-street override designation (provision "
-                f"{result.provision_id!r}; section anchor {section_anchor!r}; "
-                f"snapshot sha256 {snapshot_sha256}); the designated-wide override "
-                "is a qualified-legal determination, so the alternate/named-street "
-                "width is NOT applied numerically and the wide-street FAR is "
-                "withheld - professional review required (DRAFT, pending G6). "
-                f"Matched designation: {matched_row_verbatim!r}"
-            )
-            return NamedStreetOverrideStatus(
-                override_table_implemented=True,
-                segment_may_touch_named_override=True,
-                note=(
-                    note
-                    or "a candidate segment matched a ZR 12-10 named-street override "
-                    "designation (professional review)"
-                ),
-                matched_override=MatchedNamedStreetOverride(
-                    provision_id=result.provision_id,
-                    snapshot_sha256=snapshot_sha256,
-                    section_anchor=section_anchor,
-                    matched_row_verbatim=matched_row_verbatim,
-                    reason=reason,
-                ),
-            )
-        if result.status is MatchStatus.INDETERMINATE:
-            unresolved = True
-            continue
-        # NOT_MATCHED clears the exception for THIS segment only when the
-        # candidate's locator is TYPED and fully NORMALIZED - borough/street/both
-        # cross-streets non-blank strings and the community district a single int.
-        # The matcher can reach NOT_MATCHED via a short-circuit (an ordinary
-        # non-override street) WITHOUT inspecting the bounds, and it coerces
-        # non-string inputs along the way, so the wiring re-establishes typed,
-        # normalized inputs here rather than trusting that coerced NOT_MATCHED
-        # (AS-4; a malformed-but-nonblank field never attests exceptions_checked).
-        if not _fully_resolved_typed_inputs(query):
-            unresolved = True
-
-    if unresolved:
-        return NamedStreetOverrideStatus(
-            override_table_implemented=False,
-            segment_may_touch_named_override=True,
-            note=(
-                note
-                or "at least one candidate segment could not be resolved to "
-                "NOT_MATCHED with fully-resolved inputs (missing community district "
-                "or cross-street bounds, or an indeterminate locator); the ZR 12-10 "
-                "named-street override exception is unresolved (fail-closed)"
-            ),
-        )
-
-    return NamedStreetOverrideStatus(
-        override_table_implemented=True,
-        segment_may_touch_named_override=False,
-        note=(
-            note
-            or "every candidate segment resolved NOT_MATCHED with fully-resolved "
-            "inputs; the ZR 12-10 named-street override table was applied and no "
-            "designation applies to this lot"
-        ),
-    )
-
-
 def determine_wide_street_far(
     policy_decisions: Sequence[PolicyDecision],
     *,
@@ -506,10 +315,13 @@ def determine_wide_street_far(
     re-classifies width). This function never raises for a bad geometry/CRS/bound
     input: it maps every typed B4 engine failure to a professional-review
     determination."""
-    named_pending = (
-        named_street_override.segment_may_touch_named_override
-        and not named_street_override.override_table_implemented
-    )
+    # DB-028(c): the override exception is "pending" (unresolved) whenever the
+    # matcher did not fully apply/resolve the table for this determination - the
+    # not-pending safe path REQUIRES override_table_implemented=True. A hand-built
+    # may_touch=False/implemented=False status therefore no longer reads as cleared
+    # (build_named_street_override_status never emits that shape; this only tightens
+    # the inconsistent hand-built case, and attestation may only get stricter here).
+    named_pending = not named_street_override.override_table_implemented
     exceptions_checked = _elevated_exceptions_checked(policy_decisions, named_street_override)
 
     # 0. A DEFINITIVE named-street override match is decisive and preempts the
@@ -596,8 +408,9 @@ def determine_wide_street_far(
             lot_identity=lot.lot_identity,
         )
 
-    # 4. At least one wide decision. An unimplemented, possibly-applicable
-    #    named-street override blocks a confident wide determination (AS-4).
+    # 4. At least one wide decision. An unresolved named-street override - the
+    #    matcher was consulted but could not clear or match the candidate segment -
+    #    blocks a confident wide determination (AS-4).
     if named_pending:
         return _determination(
             determination_state=DETERMINATION_PROFESSIONAL_REVIEW,
@@ -606,11 +419,14 @@ def determine_wide_street_far(
             exceptions_checked=False,
             named_street_override_pending=True,
             reason=(
-                "a candidate segment may fall under the out-of-scope named-street "
+                "a candidate segment may fall under the ZR 12-10 named-street "
                 "override / C5-3/C6-4/C6-6 alternate-width table (Broadway W94-97 "
-                "CD7; Allen St Rivington-Delancey CD3), which is not implemented "
-                "here (follow-up); exceptions_checked cannot be asserted and the "
-                "wide-street FAR is withheld - professional review required"
+                "CD7; Allen St Rivington-Delancey CD3): the named-street override "
+                "matcher was consulted but could not resolve the candidate segment "
+                "(missing community district or cross-street bounds, or an "
+                "indeterminate locator), so the override exception is unresolved; "
+                "exceptions_checked cannot be asserted and the wide-street FAR is "
+                "withheld - professional review required"
             ),
             decisions=policy_decisions,
             buffer_result=None,

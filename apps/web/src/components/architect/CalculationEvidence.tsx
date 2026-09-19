@@ -41,7 +41,7 @@ export function CalculationEvidence({ evaluation, scenario }: {
         <h3>{wideValueLabel} · D-052 provenance</h3>
         <p className="architect-status">Draft · {evaluation.wide_street.draft_label}{wideReview ? " · Professional review required" : ""}</p>
         <p>{evaluation.wide_street.reason}</p>
-        <p className="section-note">{wideValueLabel} (dimensionless ratio): {wideReview ? "withheld — professional review required" : (evaluation.wide_street.governing_max_residential_far ?? "withheld — professional review required")}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
+        <p className="section-note">{wideValueLabel} (dimensionless ratio): {wideReview ? "withheld — professional review required" : (evaluation.wide_street.governing_max_residential_far ?? "Not calculated")}. Floor area is derived as FAR × zoning-lot area (sq ft).</p>
         <p className="section-note">{evaluation.wide_street.fallback_direction_note}</p>
         <dl className="architect-definition-list">
           <div><dt>Determination</dt><dd>{evaluation.wide_street.determination_state}</dd></div>

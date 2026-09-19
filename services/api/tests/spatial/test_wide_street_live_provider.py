@@ -565,6 +565,42 @@ def test_db021e_unexpected_wide_geometry_error_returns_none(caplog) -> None:
     assert any("error_type=RuntimeError" in line for line in lines)
 
 
+def test_db028e_named_street_matcher_load_failure_fails_safe_unresolved(
+    monkeypatch, caplog
+) -> None:
+    # AS-5 / DB-028(e): if the ZR 12-10 named-street override matcher LOADER raises,
+    # the provider seam must fail safe to an UNRESOLVED override status (never a
+    # cleared one), so the wide-street determination routes to professional review.
+    # The matcher is memoized with lru_cache, so clear it first to force the
+    # monkeypatched raising loader to actually run.
+    provider._named_street_matcher.cache_clear()
+
+    def _raising_loader() -> None:
+        raise RuntimeError("named-street snapshot store unavailable")
+
+    monkeypatch.setattr(provider, "load_default_matcher", _raising_loader)
+    seg_result = SimpleNamespace(
+        segments=[SimpleNamespace(borough="Manhattan", street_name="Broadway")]
+    )
+    try:
+        with caplog.at_level(
+            logging.WARNING, logger="app.spatial.wide_street_live_provider"
+        ):
+            status = provider._named_street_override_status(seg_result, CID)
+    finally:
+        # Never leave a poisoned/empty cache state to a sibling test.
+        provider._named_street_matcher.cache_clear()
+
+    # The unresolved fail-safe: the exception is NOT cleared and never a match.
+    assert status.override_table_implemented is False
+    assert status.segment_may_touch_named_override is True
+    assert status.matched_override is None
+    assert "could not be loaded" in (status.note or "")
+    lines = _fail_safe_lines(caplog)
+    assert any("event=named_override_matcher_unavailable" in line for line in lines)
+    assert any("error_type=RuntimeError" in line for line in lines)
+
+
 def _assessment(*, status: str = GEOMETRY_VALID, canonical=None) -> SimpleNamespace:
     return SimpleNamespace(
         status=status,
