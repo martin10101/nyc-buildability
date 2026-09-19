@@ -1,102 +1,84 @@
-# SESSION HANDOFF — seq 120 (2026-09-19, session seq 119 close; PLANNED finished-seam handoff, D-070)
+# SESSION HANDOFF — seq 120 (2026-09-19 ~17:10 UTC; session 5ecf00d5 "ctl24 seq-119 orchestrator"; reason: owner account switch — Fable allowance nearly consumed; PLANNED finished-seam close, D-070)
 
-Orientation only — the ledger (`python tools/project_control.py status`) wins on any conflict.
+Orientation only — the ledger (`python tools/project_control.py status`) and
+`project-control/campaigns/*.json` WIN over this prose.
 
-## D-070 preamble (permanent)
+## Identity (live at generation)
+Repo root/worktree C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 · branch
+`candidate/D-024-mrl-option-b` · HEAD `cef63700` == origin (pushed; the handoff commit
+follows it) · origin github.com/martin10101/nyc-buildability.git.
 
-A PLANNED handoff requires the seam DONE FIRST (sweep, next packet contracted+claimed+pushed,
-worktree, launcher pointed, fresh run-id) so the successor only verifies+launches;
-crash/forced turnover is the only fallback. THIS handoff is the planned kind, with one
-deliberate difference: the D-075 10-hour window ELAPSED at this close, so NO next packet is
-pre-contracted — the successor contracts the next lanes fresh at its first seam (see NEXT
-LANES below). Both loops are DOWN at clean seams by design; nothing is live.
+## State: 236 accepted; the D-075 10-hour window ELAPSED; nothing live
+This segment accepted SIX (231st–236th): M5-T049 extraction · M5-T048 proposal contract B0
+· M5-T050 confirm-arc polish · M5-T052 condo records view (DB-031 closed; guard-coherence
+ruling = one monotone deriveCondoSurface on both surfaces) · M5-T053 validation route +
+DB-034(a)/(b) gate (originating G5 findings formally CLOSED) · M5-T051 phase-B1 derivation
+(DB-034(c)/(e) closed; fixtures hand-recomputed by G4). Every acceptance: independent wave
++ DCV, zero blocking; two tagged-correction cycles (T052 report wording; T051 stale
+api-count 439→497 recorded in M5-T051-G2.md). CI green at every material head (last runs
+35454834946, 35455214032). Both supervisor loops DOWN at clean seams BY DESIGN (window
+elapsed); launchers still point at T053/T051 — retarget before any relaunch.
 
-## State at handoff
+## Sub-agents at close
+All reviewer/DCV subagents (t049/t050/t051/t052/t053-*) completed and idle — none live,
+none to resume. The loop watcher Monitor task (b0ary7e1o) was STOPPED at this handoff
+(loops closed; it only flapped on stale pids). Nothing unreconciled; no pending external
+effects; no unpushed commits (except this handoff commit itself, pushed with it).
 
-- **236 tasks accepted.** This session segment accepted SIX: M5-T049 (matcher extraction,
-  231st), M5-T048 (proposal contract B0, 232nd), M5-T050 (confirm-arc polish, 233rd),
-  M5-T052 (condo records view — DB-031 closed, 234th), M5-T053 (proposal validation route +
-  DB-034(a)/(b) gate, 235th), M5-T051 (phase B1 derivation — DB-034(c)/(e) closed, 236th).
-  Every acceptance: full independent wave + DCV, zero blocking; two G3
-  PASS-with-required-corrections cycles (T052 report wording) closed with delta-attestations.
-- Branch `candidate/D-024-mrl-option-b` pushed at the closing seam commit (236th acceptance);
-  CI green at every material head this segment (runs 35435873943, 35439235554, 35440808156,
-  35451055372, 35454834946, 35455214032).
-- Repo root C:\Users\MLFLL\Downloads\nyc-zoning\ctl24; loops' controllers
-  C:\SupervisorController{,2}; controller source wt-controller-src.
-- Worktrees wt-m5t048/49/50/51/52/53 are all HARVESTED (material cherry-picked); safe to
-  `git worktree remove` when convenient — verify `git -C <wt> status` clean first.
+## Uncommitted (deliberate; unchanged from session start + reviewer additions)
+13 files, ALL under `.claude/agent-memory/{human-journey-reviewer,qa-engineer}/` (reviewer
+project memories, AGENT_OPERATING_SYSTEM §7; never broad-added per the report-preservation
+rule). Enumerate with `git status --porcelain` — nothing else is dirty.
+
+## Validation at close (exact)
+`python tools/project_control.py status` → healthy, accepted count 236 (last six =
+T048/T049/T050/T051/T052/T053). `campaign_continuity --status` → prints the standing
+D-024 restriction set (all IN FORCE, incl. supervisor shadow-only, PR #241 never merged,
+expansion hold §2 minus the D-040/D-076 scoped releases). Foreground
+`validate_directive_compliance.py --check` exit 0 at the 236th-acceptance seam. Worktrees
+wt-m5t048/49/50/51/52/53 all harvested (removable once `git -C <wt> status` is clean).
 
 ## OWNER-ONLY pending
+The release execution — ONE ~10-minute pass; release-request-2026-09-18-seq118.md §§8–9
+(acceptances 228–236 all ride it; flags posture unchanged). Plus DB-030(a) question;
+WATCH rows DB-003/008/011 unchanged.
 
-- **The release execution** — one ~10-minute pass;
-  `project-control/reports/release-request-2026-09-18-seq118.md` §8-§9 (acceptances 228-236
-  all ride the same single pass; flags posture unchanged; deploy the then-current head).
-- DB-030(a) owner question and the WATCH rows (DB-003/008/011) — unchanged.
+## EXACT NEXT ACTION (successor's first seam; contract fresh — nothing pre-contracted)
+Contract **B2 rule-engine wiring** (producer rules-engineer per
+docs/PROPOSAL_EDITOR_PHASED_PLAN.md; B1 accepted) — BINDING preconditions on whichever
+packet first wires `derive_proposal` to a caller/route: LotContext list-size ceiling +
+coordinate finiteness + area_sq_ft bounded-repr (T051-G5, recorded at the T053 backlog
+sweep) + DB-034(d) emission. Then B3 UI (T053's route is its seam). Rider clusters DB-035
+/ DB-036 (incl. the slash-district sanitizer PRECONDITION on zoning propagation) as small
+packets or fold-ins. DB-026 second lane stays deferred. Stop conditions: any Tier D item;
+any owner hold; a gate FAIL.
 
-## NEXT LANES (contract fresh at the successor's first seam; per docs/PROPOSAL_EDITOR_PHASED_PLAN.md)
+## Loop drills (segment lessons; detail in WORKING_KNOWLEDGE + DISCOVERY_BACKLOG sweeps)
+Model-downgrade rotation collision (4x): deny parked asks, then `journal.resolve_ask()`
+on the journal-side `turnover_refused/...` open ask (library only — no CLI verb; via
+`cli.DurableJournal(cli.runtime_dir_for(checkout)/cli.DB_FILENAME).open()`), clear-recovery,
+fresh run-id. Crash w/o stop event → `recovery.reconcile_dispatch_intent(journal)` after
+read-only evidence. S14 missing-checkpoint post-edits → ASSESS FOR HARVEST first. v2
+`reviewed_manifest_sha256` = the gate records' content_manifest_sha256, never a registry
+digest. Producer suite counts can be stale-worktree-base — verify own-suite + ancestry.
 
-1. **B2 — rule-engine wiring** (producer rules-engineer per the plan row): the existing
-   rule families evaluated against proposal-derived facts. B1 (derivation) is ACCEPTED, so
-   B2 is contractable. BIND the recorded wiring preconditions on whichever packet first
-   wires `derive_proposal` to a route/caller: LotContext list-size ceiling + coordinate
-   finiteness guards + the area_sq_ft repr instance (T051-wave G5; recorded at the T053
-   backlog sweep), plus DB-034(d) version-emission at B2/B3.
-2. **B3 — editor UI increment 1** (frontend-engineer; the validation route from T053 is its
-   backend seam; DB-034(a)/(b) already closed there).
-3. **Rider clusters** DB-035 (confirm-arc residuals incl. the pixel-CLS e2e spec) and
-   DB-036 (condo-surface riders incl. the slash-district sanitizer PRECONDITION on any
-   zoning-propagation packet) — small packets or fold-ins.
-4. DB-026 second lane stays deliberately deferred (do-not-rush ruling).
+## Authoritative files (smallest set)
+CLAUDE.md · project-control/ (state.json, tasks/, gates/, directives/) ·
+docs/PROPOSAL_EDITOR_PHASED_PLAN.md · docs/DISCOVERY_BACKLOG.md (tail sweeps) ·
+project-control/reports/release-request-2026-09-18-seq118.md ·
+.claude/rules/PROGRAM_KNOWLEDGE.md · docs/WORKING_KNOWLEDGE.md.
 
-## Loop relaunch drill (unchanged, plus this segment's lessons)
-
-- Launchers: C:\SupervisorController{,2}\autostart-launch.ps1 — edit the ACTIVE-TASK block
-  (TaskPacket/Repo/Branch/RunId), fresh run-id every launch. Worktree AT/past the claim-seam
-  commit. Deny ALL parked asks in BOTH stores between runs (pending-approvals CLI per
-  checkout); never audit-append against a live run.
-- **Model-downgrade rotation collisions** (4x on loop-2 this segment): provider downgrades
-  the opus-4-8 worker mid-run → controller wants rotation → any outstanding parked ask makes
-  the seam non-quiet → S4.5 unsafe_seam stop. Work SURVIVES. Drill: deny parked asks, then
-  resolve the journal-side `turnover_refused/...` open ask via the library
-  (`cli.DurableJournal(cli.runtime_dir_for(checkout)/cli.DB_FILENAME).open();
-  journal.resolve_ask(ask_id, answer)` — ask_id from `status --json` open_asks; NO CLI verb
-  reaches it), clear-recovery, relaunch. Scratchpad scripts existed as
-  deny_all_2.py/resolve_ask_loop2.py (session-scoped; rewrite if needed).
-- **Crash class** (loop-2 run 16): supervisor dies with NO policy stop event → boot refuses
-  `unit_dispatch_unreconciled` → after read-only evidence (pending effects 0, children 0),
-  call `recovery.reconcile_dispatch_intent(journal)` (the gate-3 drill), then relaunch.
-- **S14 missing-checkpoint after completed edits** (loop-1 3x): worker context exhaustion at
-  ~230-245k live tokens; the build survives in the worktree — ASSESS FOR HARVEST before any
-  relaunch (suites in-worktree; if complete and remaining demands are orchestrator-side,
-  harvest).
-- Breaker at 6 (D-074): trips 19-20 this segment, both after substantive work — the raise
-  works; the pattern persists.
-
-## Segment lessons already in Tier-1/Tier-2 (verify before relying)
-
-- Journal-side queued_asks (turnover_refused class) block the `pending_requests` boot probe
-  even when `pending-approvals` lists 0 — resolve via journal.resolve_ask between runs
-  (docs/WORKING_KNOWLEDGE.md ask-mechanics section).
-- The `semantically_invalid/` third fixture class: the contracts CI job requires everything
-  under `invalid/` to fail SCHEMA validation; geometry invariants JSON Schema cannot express
-  live in `fixtures/semantically_invalid/<schema>/` (walked by api tests, not the CI schema
-  job). Precedent: M5-T048.
-- The sanitizer-boundary class (three hits this segment): boundedToken's [A-Za-z0-9._-]
-  corrupts ISO timestamps (fixed: boundedTimestamp) and WILL corrupt slash-districts
-  (M1-5/R7-2) if recorded_zoning is ever wired through it (DB-036(a) precondition).
-  Identifiers, timestamps, and district codes are different vocabularies.
-- v2 row `reviewed_manifest_sha256` = the TASK's allowed_paths git identity FROM THE GATE
-  RECORDS (content_manifest_sha256), never a directive-registry digest.
-- Producer full-suite counts can be stale-worktree-base (T051's "439 api" vs true 497):
-  verify the task's OWN suite + attribute deltas via byte-stability + ancestry before
-  treating a count mismatch as a failure.
-
-## Resume procedure (for the OWNER after the account switch)
-
-The conversation lives on this computer, not on the account: log out, log in with the other
-account, then from the SAME folder run `claude --resume` and pick this conversation
-(`claude --continue` if most recent). If not on Fable: `/model` → Fable, or
-`claude --model claude-fable-5 --resume`. If resume is unavailable, a FRESH session recovers
-from this file + the ledger: run the start-of-session routine, verify 236 accepted, and
-contract the NEXT LANES above at a fresh seam.
+## COPY INTO THE NEW SESSION
+Resume as the NYC Buildability orchestrator from durable evidence only (never assumptions
+about the prior conversation). First: verify cwd IS C:\Users\MLFLL\Downloads\nyc-zoning\ctl24
+(`git rev-parse --show-toplevel`), branch candidate/D-024-mrl-option-b, HEAD == origin, and
+Bootstrap Gate 0 (/mcp reports no servers) BEFORE any write. Read CLAUDE.md, this
+docs/SESSION_HANDOFF.md, then run `python tools/project_control.py status` and
+`python -m tools.agent_supervisor.campaign_continuity --status`; reconcile them against
+this handoff (they win). Expect 236 accepted, both loops down, no live agents, 13
+agent-memory files deliberately uncommitted. Report READY TO RESUME or BLOCKED. If ready:
+contract B2 per the EXACT NEXT ACTION above at a fresh seam (full contract drill: regen
+graph + nav block, binds + digest resyncs, seeds, G0 w/ disjointness, claim w/ FULL
+worktree path, launcher retarget + fresh run-id) — without repeating completed work or
+broadening scope. Owner replies: simple English (D-064). Stop for Tier D / owner holds;
+the release pass is OWNER-ONLY.
