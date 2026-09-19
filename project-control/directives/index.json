@@ -964,6 +964,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-073-architect-outcome-next-phase/manifest.json"
+  },
+  {
+   "directive_id": "D-074",
+   "slug": "revision-loop-limit-six",
+   "title": "Owner 2026-09-19: raise the supervisor consecutive-revision-loops breaker from 4 to 6 (the DB-012 pending decision) - orchestrator authorized to apply the immutable-config edit + manifest re-record; config-scoped only, no other limit/gate/hold/authority change",
+   "status": "active",
+   "issued_at": "2026-09-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-074-revision-loop-limit-six/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"

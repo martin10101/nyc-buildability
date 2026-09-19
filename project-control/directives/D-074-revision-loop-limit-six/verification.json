@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-074",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. The single requirement binds the non-ledger sentinel D-074-BOOTSTRAP at capture; verification lands when the applied change's harness evidence (next-launch budget counter_limits = 6 under a passing manifest verification) is independently checked. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

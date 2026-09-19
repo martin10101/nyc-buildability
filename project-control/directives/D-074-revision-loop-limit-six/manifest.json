@@ -1,0 +1,60 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-074",
+ "version": 1,
+ "slug": "revision-loop-limit-six",
+ "title": "Owner 2026-09-19: raise the supervisor consecutive-revision-loops breaker from 4 to 6 (the DB-012 pending decision) - orchestrator authorized to apply the immutable-config edit + manifest re-record; config-scoped only, no other limit/gate/hold/authority change",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-19",
+ "captured_at": "2026-09-19T05:18:29.777737+00:00",
+ "created_at": "2026-09-19T05:18:29.777737+00:00",
+ "updated_at": "2026-09-19T05:18:29.777737+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "e75adc47fa68482b791e4a39ae189af5d27dab7c",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in interactive chat ('I give u the permission to raise it to 6'), answering the orchestrator's immediately preceding 4-to-6 recommendation; resolves the DB-012 pending decision (16 trips at capture)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-074-R001"
+ ],
+ "requirements_content_digest_sha256": "4891276fa8c5d4f0fde4186ba467e5a4e2f8b788d890add6db3aa223c77b2f83",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-19T05:18:29.777737+00:00",
+   "content_digest_sha256": "8274128385123ad634a73420a94f82ed7ede712879732f6714507037fda5aba8"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "one supervisor breaker-limit raise (max_consecutive_revision_loops 4->6) via the immutable config [limits] table + launch-manifest re-record; applies from the next launch per loop",
+  "forbidden": "any other limit/config value, gate, hold, authority, isolation, or model-selection change; disturbing a live run to apply the limit"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-19T05:18:29.777737+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). Application + harness evidence recorded after capture; verification stays with directive-compliance-verifier."
+  }
+ ]
+}

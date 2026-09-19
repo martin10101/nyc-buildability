@@ -1,0 +1,41 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-074",
+ "version": 1,
+ "requirement_count": 1,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-19T05:18:29.777737+00:00",
+ "requirements": [
+  {
+   "id": "D-074-R001",
+   "text": "The supervisor circuit-breaker limit for consecutive revision loops is raised from 4 to 6, authorized by the owner for the orchestrator to apply. Concretely: add `max_consecutive_revision_loops = 6` under a `[limits]` table in the immutable controller config `C:\\Program Files\\SupervisorConfig\\config.toml` (the exact dataclass field name - unknown keys fail closed per config.py S2.2), then re-record the launch manifest that digest-pins that config (`python -m tools.agent_supervisor record-manifest --config \"C:\\Program Files\\SupervisorConfig\\config.toml\"` writing the manifest both launchers consume) so the next supervised launch on EVERY loop verifies and runs under the new limit. The change is config-scoped only: the code default in tools/agent_supervisor/config.py stays 4; no other limit, gate, hold, authority, isolation, or model-selection value changes; live in-flight runs keep the limit they launched with and are never disturbed mid-run to apply this.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-074-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The first supervised run launched after the change emits its budget counter_limits with consecutive_revision_loops = 6 (the launch-time audit budget event), and the launcher's manifest verification passes at that launch.",
+   "required_evidence": "config.toml [limits] content; record-manifest output/manifest digest; the next run's budget counter_limits audit line showing 6",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before acting; applied and verified per the harness after capture.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}
