@@ -85,8 +85,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 82,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Divergent zoning across a condo's base lots must never collapse into a single answer; multi-lot is a records display, never an allowance.",
     "The condo step is a strict pre-lookup addition: non-condo and flag-off behavior must stay byte-identical (regression suites prove it).",
@@ -98,7 +98,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T03:07:46.431298+00:00",
-  "updated_at": "2026-09-19T05:35:39.857378+00:00",
+  "updated_at": "2026-09-19T08:23:42.481676+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
