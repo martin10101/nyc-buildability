@@ -73,6 +73,17 @@ fail-safes (conservative FAR / no live spatial) with zero connector calls.
 
 ## 6. What this release does NOT include
 
-Named-street wiring (M5-T040, building now), polish cluster (M5-T041, building now),
-condo→base-lot resolution (research dispatched), split-lot apportionment (DB-001), any
-Supabase-backed feature (B-001), any public-launch affordance (D-043-R004), PR #241 merge.
+Split-lot apportionment (DB-001), the condo→base-lot LIVE wiring (the resolver module and
+its hardening are accepted but deliberately unconsumed until the wiring packet closes its
+preconditions), any Supabase-backed feature (B-001), any public-launch affordance
+(D-043-R004), PR #241 merge.
+
+## 7. Update 2026-09-19 (same request, newer head)
+
+Since this request was written, FOUR more pieces were accepted (224th-227th): the
+named-street WIRING (M5-T040 — the honest named-street refusal with legal citation now
+reaches screen and brief), the address/validator polish (M5-T041), the condo resolver
+module + its pre-wiring hardening (M5-T042/M5-T044), and the wiring-module extraction
+(M5-T043). All ride the same branch; at execution time deploy the then-current branch head
+(product-path diff from every accepted material verified control-plane-clean per task).
+Everything in §3-§5 is unchanged; the same one owner request stands.
