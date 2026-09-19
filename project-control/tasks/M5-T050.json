@@ -67,8 +67,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Riders are ADVISORY polish: any fix that wants to change the channel contract or equality-gate semantics beyond the bounded cases = STOP + discovery, never in-packet.",
     "AddressResolutionScreen is FORBIDDEN here (T047 allowed it; the riders live on the card/client) - a rider fix forcing its edit = STOP + discovery.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T09:59:46.206600+00:00",
-  "updated_at": "2026-09-19T10:05:03.112289+00:00",
+  "updated_at": "2026-09-19T11:53:33.649699+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",

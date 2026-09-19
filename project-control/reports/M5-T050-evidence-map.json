@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T050",
+  "material_commit": "bcfcc538c734da2f1c763f3351fb1fcc984518a1",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T050 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (project-control/tasks/M5-T050.json inputs[3]; G0 record M5-T050-G0.md) naming the card/client/route consumer sets with line anchors, instructing query.py --no-regen checks before sweeps, graph advisory.",
+      "Consumer compatibility verified in source and by suite: the card's props/exports stayed byte-compatible (its depth-2 consumers architect/property surfaces untouched and their suites green in CI run 35440808156); address-search.ts itself proved UNTOUCHED (rider e was test-side only), so its consumer surface is unchanged by construction."
+    ],
+    "D-073-R006": [
+      "The records-vs-allowances discipline holds on the polished surface: the record-address line and the new rider-d why-they-differ note render as RECORD explanations (city-record wording; no computed value implied); the note's copy states the corner/vanity one-address-of-record fact rather than any entitlement; honest absence preserved byte-for-byte in every non-shown outcome (loading/equal/absent/error/route-absent - the S11 delayed non-shown tests pin collapse-free absence).",
+      "No allowance-class wording entered the confirm arc: the packet's four display riders touched presentation mechanics (CLS, aria, conditional copy, title bound) with the shown record line's content byte-identical to the M5-T047 accepted wording."
+    ]
+  }
+}
