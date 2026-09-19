@@ -1,0 +1,109 @@
+{
+  "task_id": "M5-T046",
+  "title": "Address-to-lot identity honesty (DB-026): GeoSearch equality gate + typed no-match + confirm-arc address-of-record display",
+  "task_type": "web",
+  "milestone_id": "M5",
+  "objective": "Close the DB-026 identity gap in the LIVE address arc: (1) the web GeoSearch client (apps/web/src/lib/address-search.ts) currently trusts the top /search feature, but the captured corpus proves GeoSearch returns a plausible WRONG lot for nonsense input at identical confidence/match_type (fallback/0.8 on the true hit AND on garbage) - add the EQUALITY GATE: a feature counts as a match ONLY when its returned housenumber and normalized street equal the parsed input (documented normalization per the corpus: '37th'->'37'); match on addendum.pad.bbl, never on address-string or bin; a gate failure is a typed honest no-match (never a silently wrong lot); never gate on match_type/confidence; /autocomplete features omit those two keys entirely - the parser must tolerate their absence; (2) surface the resolved lot identity honestly on the confirm arc: entered input vs matched city address, BBL, and the lot's PLUTO address-of-record when it differs (the corner-lot case: entered '1279 37th Street' -> lot 3052960043 whose record address is '3622 13 AVENUE') as a RECORDS display (D-073-R006 class), using EXISTING data channels only - NO contract-shape change; (3) pin the case-1 regression offline: the captured corpus drives tests proving the true hit passes the gate, the GARAGE sibling and reverse frontage resolve to the same lot, and both failure probes (wrong-street, wrong-housenumber) are REFUSED by the gate; (4) author the GeoSearch source-registry draft record mirroring the committed shape. Geoclient server path (already integrated, M2-T021) is OUT of scope",
+  "business_reason": "The corpus proves a user typing a nonexistent address today can be silently landed on a real but WRONG lot - an identity-integrity hazard in the live product; DB-026's case-1 (corner-lot frontage) is the recorded live stop",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass. The review-round budget is 4 - spend it on code.",
+    "WEB VERIFICATION (binding; thin client): do NOT run or document npm/npx/node locally - web behavior proves ONLY in CI on the pushed head (the orchestrator captures CI evidence). The only locally documented command is the modularity check from the repo root. Never mark web behavior verified from local reasoning. Empty .test.ts/.test.tsx files fail vitest (no suite) - every test file keeps at least one passing test at every commit. DOM queries typed (querySelectorAll<HTMLElement>); deliberate invalid-shape probes as `as unknown as T`.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam, 743 files/15651 nodes). address-search.ts consumers: architect/AddressAutocomplete.tsx:4, lib/architect/use-address-suggestions.ts:3, lib/__tests__/address-search.test.ts:2, architect/__tests__/autocomplete.test.tsx:5. AddressAutocomplete consumers (depth 2): address/AddressConfirmCard.tsx:8, address/AddressResolutionScreen.tsx:17, address/__tests__/address-confirm.test.tsx:5, architect/PropertyOverview.tsx:11 (M5-T045-OWNED - do not touch), architect/ZoningContextPanel.tsx:8. The server Geoclient path (services/api/app/connectors/geoclient_address.py wired at api/v1/address_resolution.py) is INTEGRATED and OUT of this packet's scope. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE 1/2 - THE EQUALITY GATE (binding; read docs/research/db026-address-to-lot-fixture-capture.md sections 1-5 + assertions 1-4, and docs/research/db026-address-to-lot-source-recon.md first): the captured corpus proves /search returns confidence:0.8, match_type:'fallback' IDENTICALLY on the true hit, on a nonexistent street (returns a real WRONG lot), and on an out-of-range house number (returns a different house number) - and never an empty features array for these probes. In apps/web/src/lib/address-search.ts: (a) a /search feature counts as a MATCH only when its returned properties.housenumber equals the parsed input house number AND its normalized street equals the parsed input street (normalization documented against the corpus: '37th street'->'37 STREET'; define and test the ordinal/case rule; treat the corpus's parsed_text as the reference parse); (b) a feature failing the gate yields the EXISTING typed no-match outcome (the M5-T032 outcome vocabulary - extend honestly if a new distinction is needed, never overload), never a silently wrong lot; (c) lot identity binds to addendum.pad.bbl (never the address string or bin - the GARAGE sibling and reverse frontage are the same lot, different features); (d) match_type/confidence are RECORDED if already surfaced but never used as a success test; (e) /autocomplete features OMIT confidence and match_type entirely - the parser must tolerate their absence (corpus section 5); (f) suggestions (autocomplete) may stay permissive - the GATE applies where a single feature is promoted to THE resolved lot for analysis/confirm.",
+    "SCOPE 2/2 - DISPLAY + REGISTRY (binding): (g) confirm-arc identity honesty (D-073-R006 records class) on address/AddressConfirmCard.tsx / AddressResolutionScreen.tsx: show the entered input verbatim and the matched city address; when the matched frontage differs from the lot's PLUTO address-of-record AND that record address is available through an EXISTING data channel, show it as a record ('city record address: 3622 13 AVENUE') - if no existing channel carries it, ship the entered-vs-matched increment and report the record-address channel gap as a DISCOVERY (do NOT add a server endpoint or contract field); records stay records - no computed value is implied by any address line; (h) the case-1 regression pinned offline from the corpus: true hit passes the gate; '37th' variant matches ('37 STREET'); GARAGE + reverse frontage resolve to the same bbl 3052960043; the two failure probes are REFUSED with the typed no-match (assert NO lot is surfaced); (i) author docs/research/source-registry-drafts/geosearch.json mirroring the committed ztldb.json shape (endpoints /search + /autocomplete, addendum.pad.{bbl,bin,version} path, the body-only freshness stamp addendum.pad.version='26c', the no-Last-Modified header finding, the equality-gate requirement as the documented match discipline).",
+    "PRESERVATION (binding): the M5-T032 reliability outcomes (503/429/timeout/no-match/malformed, bounded retry, preserved input) stay byte-identical for their existing cases; the autocomplete suggestion UX stays permissive; no new dependency; no npm/package.json change; NO contract-shape change; NO services/api change; the Geoclient server path untouched; a11y intact on touched components (existing aria patterns).",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny; fixtures come from the captured corpus verbatim). Thin client: no local npm/node."
+  ],
+  "outputs": [
+    "Equality-gated GeoSearch match promotion in address-search.ts: typed no-match instead of silently wrong lots; pad.bbl as the lot identity; autocomplete-shape tolerance",
+    "Case-1 corner-lot regression pinned offline from the byte-faithful corpus (true hit + variants pass; both failure probes refused)",
+    "Confirm-arc identity display: entered input vs matched city address (+ record address where an existing channel carries it) as a records display",
+    "GeoSearch source-registry draft record mirroring the committed shape",
+    "project-control/reports/M5-T046-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T032"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/__tests__/address-search.test.ts",
+    "apps/web/src/lib/architect/use-address-suggestions.ts",
+    "apps/web/src/components/architect/AddressAutocomplete.tsx",
+    "apps/web/src/components/architect/__tests__/autocomplete.test.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "docs/research/source-registry-drafts/geosearch.json",
+    "project-control/reports/M5-T046-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/",
+    "packages/contracts/",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary): '1279 37 street brooklyn' (corpus section 1) promotes the true hit through the equality gate to bbl 3052960043; the confirm surface shows the entered input and the matched city address '1279 37 STREET'.",
+    "AS-2 (variant): '1279 37th street brooklyn' (corpus section 2) matches under the documented ordinal normalization to the same lot.",
+    "AS-3 (aliasing): the GARAGE sibling and the reverse frontage '3622 13 avenue brooklyn' (corpus sections 1/3) resolve to the SAME pad.bbl; identity is bound to pad.bbl, never the address string or bin.",
+    "AS-4 (failure/honesty): the nonexistent-street and out-of-range probes (corpus section 4) are REFUSED by the gate with the typed no-match; NO lot is surfaced; match_type/confidence are never consulted as a success test.",
+    "AS-5 (autocomplete shape): /autocomplete features (corpus section 5) parse without confidence/match_type; suggestions stay permissive while promotion stays gated.",
+    "AS-6 (records display): when the matched frontage differs from the lot's record address and an existing channel carries it, the record address is shown labeled as the city record - a records line, implying no computed value (D-073-R006); otherwise the gap is reported as a discovery, not built around.",
+    "AS-7 (regression): every existing M5-T032 reliability outcome and autocomplete behavior is byte-identical for its existing cases (existing suites green unchanged).",
+    "AS-8 (walkthrough): HJ walks the confirm arc for the corner-lot case and the refused-nonsense case on the CI-proven head: honest, clear, accessible.",
+    "AS-9: registry draft record present, mirroring the committed shape, with the body-only freshness stamp documented.",
+    "AS-10: modularity exit 0; all touched web test files carry passing tests; CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The gate must not break permissive autocomplete suggestions - only the promotion of a single feature to THE resolved lot is gated.",
+    "Normalization is corpus-anchored ('37th'->'37 STREET'); do not invent rules beyond what the corpus + existing code establish - unclear cases fail closed to no-match and are reported.",
+    "Disjointness with M5-T045 (live): never touch services/api/**, PropertyOverview/AnalysisIdentityNotice/ReportView or their named tests.",
+    "NO contract change, NO new server channel - a missing record-address channel is a discovery.",
+    "Web behavior proves only in CI; empty test files fail vitest."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T04:10:11.493999+00:00",
+  "updated_at": "2026-09-19T04:10:11.873967+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T04:10:11.493999+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

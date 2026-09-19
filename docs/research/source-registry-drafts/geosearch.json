@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "task": "M5-T046",
+  "note": "Seeded at the contract seam. The producer authors the real source-registry draft record here for NYC Planning Labs GeoSearch v2 (/search + /autocomplete), mirroring the committed ztldb.json shape field-for-field, from docs/research/db026-address-to-lot-source-recon.md and docs/research/db026-address-to-lot-fixture-capture.md: addendum.pad.{bbl,bin,version} path, body-only freshness stamp (addendum.pad.version, no Last-Modified header), and the equality-gate match discipline (match_type/confidence are non-discriminating)."
+}
