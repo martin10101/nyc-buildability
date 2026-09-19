@@ -634,6 +634,18 @@ describe("S9 — DB-026 autocomplete journey: typed text ≠ picked label ≠ ma
     expect(enteredStrong?.textContent).toBe(typed.trim());
     expect(enteredStrong?.getAttribute("title")).toBe(typed);
     expect(enteredStrong?.getAttribute("aria-label")).toBe(typed);
+    // DB-033 rider b: supported, name-permitting semantics (role="img", NOT the
+    // non-standard role="text") expose the entered value as the accessible NAME.
+    // This is the raw-vs-display-trimmed DIFFER case: the aria-label ATTRIBUTE
+    // keeps the untrimmed raw string, while the visible text and the computed
+    // accessible name are the display-trimmed value (the accessible-name
+    // computation normalizes the surrounding whitespace).
+    expect(enteredStrong).toHaveAttribute("role", "img");
+    expect(enteredStrong).toHaveAccessibleName(typed.trim());
+    expect(screen.getByRole("img", { name: typed.trim() })).toBe(enteredStrong);
+    expect(enteredStrong?.getAttribute("aria-label")).not.toBe(
+      enteredStrong?.textContent,
+    );
     expect(entered.textContent).toContain(typed.trim());
     // …distinct from the picked suggestion's city-shaped street…
     expect(entered.textContent).not.toContain("37 STREET");
@@ -782,5 +794,372 @@ describe("S10 — DB-032 record-address channel on the confirm card", () => {
       expect(card).toHaveAttribute("data-record-address-status", "error"),
     );
     expect(screen.queryByTestId("record-address")).toBeNull();
+  });
+});
+
+/* ================================================================ *
+ * S11 — DB-033 (M5-T050) confirm-arc polish riders: (a) late-insert CLS,
+ * (b) raw-input a11y exposure, (c) no-normalized-street copy, (d) corner-lot
+ * why-they-differ note, (i) title/aria length bound.
+ * ================================================================ */
+
+describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
+  const RECORD_SOURCE = {
+    source_id: "nyc-dcp-pluto-soda",
+    dataset_id: "64uk-42ks",
+    dataset_version: "26v2",
+    retrieved_at: "2026-09-19T04:00:03Z",
+    request_url: "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=3052960043",
+  };
+
+  function cornerDoc() {
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "1279";
+    doc.input_echo.street = "37 street";
+    doc.input_echo.borough = "Brooklyn";
+    doc.canonical.bbl = "3052960043";
+    doc.canonical.street_name_normalized = "37 STREET";
+    doc.canonical.borough_name = "BROOKLYN";
+    doc.canonical.zip_code = "11218";
+    return doc;
+  }
+
+  function recordResponse(over: Record<string, unknown> = {}, status = 200): Response {
+    const body =
+      status === 200
+        ? {
+            document_kind: "record_address",
+            bbl: "3052960043",
+            outcome: "address_of_record",
+            address: "3622 13 AVENUE",
+            reason: null,
+            source: RECORD_SOURCE,
+            ...over,
+          }
+        : over;
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { "content-type": "application/json", "X-Correlation-ID": HTTP_CID },
+    });
+  }
+
+  /** Route resolution → `doc`; record-address → `record` (a Response, or the
+   * literal "pending" to leave the fetch unresolved so the channel stays in its
+   * loading state); lot-geometry → the benign flag-off 404. */
+  function renderWithRecord(
+    doc: Record<string, unknown>,
+    record: Response | "pending",
+  ) {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/record-address")) {
+          return record === "pending"
+            ? new Promise<Response>(() => undefined)
+            : Promise.resolve(record.clone());
+        }
+        if (url.includes("/lot-geometry")) {
+          return Promise.resolve(
+            new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+          );
+        }
+        return Promise.resolve(jsonResponse(doc, 200));
+      }),
+    );
+    render(<AddressResolutionScreen />);
+    fillAndSubmit();
+  }
+
+  // The identity + order of a card's direct element children. `data-testid` when
+  // present, else the tag name — enough to prove the record note is a pure APPEND
+  // (nothing above it inserted, moved, or collapsed) without depending on the
+  // async LotOutlineMap child's internal markup.
+  const childIds = (el: Element): string[] =>
+    Array.from(el.children).map((c) => c.getAttribute("data-testid") ?? c.tagName);
+
+  it("rider a (CLS): the shown record note is the card's LAST child and follows the Continue action — out of the interactive flow, not an in-flow reservation", async () => {
+    renderWithRecord(cornerDoc(), recordResponse());
+    const card = await screen.findByTestId("address-confirm-card");
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "shown"),
+    );
+    const note = screen.getByTestId("record-address");
+    const cta = screen.getByTestId("confirm-continue");
+    // THE stability mechanism (not "no min-height" / "shared prose"): the record
+    // note renders OUTSIDE the interactive flow — it FOLLOWS the Continue action in
+    // the DOM and is the card's last element. A late insert below every settled
+    // element cannot move any of them, for a record address of any length or wrap.
+    expect(
+      cta.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(card.lastElementChild).toBe(note);
+    // The former approximate reservation (and its slot) no longer exist in any state.
+    expect(screen.queryByTestId("record-address-reserved")).toBeNull();
+    expect(screen.queryByTestId("record-address-slot")).toBeNull();
+    // The note still reads as a RECORD and carries the rider-d why explanation.
+    expect(note.querySelector("strong")?.textContent).toBe("3622 13 AVENUE");
+    expect(note.textContent).toContain("City record address");
+    expect(note.textContent).toContain("PLUTO");
+    expect(screen.getByTestId("record-address-why").textContent).toBe(
+      "A single tax lot can front on more than one street, so its address of record can differ from the frontage you searched.",
+    );
+  });
+
+  it("rider a (CLS): a DELAYED address_of_record is APPENDED as the last child only — the Continue action and every element above it are byte-identical across the resolve", async () => {
+    // A manually-controlled deferred record-address response: the card mounts with
+    // the channel loading (no note, no reservation), then the SAME mounted card
+    // receives the resolved record — a delayed response resolved IN PLACE.
+    let resolveRecord: (response: Response) => void = () => undefined;
+    const deferred = new Promise<Response>((resolve) => {
+      resolveRecord = resolve;
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/record-address")) return deferred;
+        if (url.includes("/lot-geometry")) {
+          return Promise.resolve(
+            new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+          );
+        }
+        return Promise.resolve(jsonResponse(cornerDoc(), 200));
+      }),
+    );
+    render(<AddressResolutionScreen />);
+    fillAndSubmit();
+
+    const card = await screen.findByTestId("address-confirm-card");
+    // Loading: the record note does NOT exist yet and there is NO reservation box —
+    // the card is exactly its no-record shape (the honest as-today presentation).
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "loading"),
+    );
+    expect(screen.queryByTestId("record-address")).toBeNull();
+    expect(screen.queryByTestId("record-address-reserved")).toBeNull();
+    expect(screen.queryByTestId("record-address-slot")).toBeNull();
+    // Snapshot the interactive action and the child order before the resolve, so we
+    // can prove the delayed line changes NOTHING above it.
+    const ctaBefore = screen.getByTestId("confirm-continue");
+    const ctaHtmlBefore = ctaBefore.outerHTML;
+    const childIdsBefore = childIds(card);
+
+    // Resolve the delayed response on the SAME mounted card.
+    resolveRecord(recordResponse());
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "shown"),
+    );
+
+    const note = screen.getByTestId("record-address");
+    const cta = screen.getByTestId("confirm-continue");
+    // The Continue action is the SAME node with byte-identical markup — it did not
+    // re-mount, change, or (given the append-only child order below) move.
+    expect(cta).toBe(ctaBefore);
+    expect(cta.outerHTML).toBe(ctaHtmlBefore);
+    // The ONLY DOM change is the record note APPENDED as the new last child: every
+    // pre-existing child keeps its identity and order, and the note sits after the
+    // Continue action. The mechanism is structural, not a height guess.
+    const childrenAfter = Array.from(card.children);
+    expect(childrenAfter[childrenAfter.length - 1]).toBe(note);
+    expect(childIds(card).slice(0, -1)).toEqual(childIdsBefore);
+    expect(
+      cta.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    // The arrived line reads as a RECORD (rider d why note intact).
+    expect(note.querySelector("strong")?.textContent).toBe("3622 13 AVENUE");
+    expect(note.textContent).toContain("can differ from the matched frontage");
+  });
+
+  it("rider a (CLS): an honest absence renders as today — no record note and no reserved box", async () => {
+    renderWithRecord(
+      cornerDoc(),
+      recordResponse({
+        outcome: "no_address_of_record",
+        address: null,
+        reason: "no address column",
+      }),
+    );
+    const card = await screen.findByTestId("address-confirm-card");
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "absent"),
+    );
+    // No line, and — critically — no leftover reserved box: the absent presentation
+    // is byte-identical to a card that never carried a record channel.
+    expect(screen.queryByTestId("record-address")).toBeNull();
+    expect(screen.queryByTestId("record-address-reserved")).toBeNull();
+    expect(screen.queryByTestId("record-address-slot")).toBeNull();
+  });
+
+  it.each([
+    {
+      label: "equal",
+      make: () => recordResponse({ bbl: "3052960043", address: "1279 37 STREET" }),
+      settled: "equal",
+    },
+    {
+      label: "absent",
+      make: () =>
+        recordResponse({
+          outcome: "no_address_of_record",
+          address: null,
+          reason: "no address column",
+        }),
+      settled: "absent",
+    },
+    {
+      label: "error",
+      make: () =>
+        recordResponse({ state: "source_unavailable", message: "SODA down" }, 502),
+      settled: "error",
+    },
+    {
+      label: "route-absent",
+      make: () =>
+        new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+      settled: "route-absent",
+    },
+  ])(
+    "rider a (CLS): a DELAYED $label outcome renders no record note and no reserved box — the card is byte-stable across the settle (honest as-today absent presentation)",
+    async ({ make, settled }) => {
+      // No reservation is made WHILE loading, so a delayed settle to any non-shown
+      // terminal collapses nothing — the card's direct children are identical before
+      // and after, the required absent-line presentation reached without a shift.
+      let resolveRecord: (response: Response) => void = () => undefined;
+      const deferred = new Promise<Response>((resolve) => {
+        resolveRecord = resolve;
+      });
+      vi.stubGlobal(
+        "fetch",
+        vi.fn((input: RequestInfo | URL) => {
+          const url = String(input);
+          if (url.includes("/record-address")) return deferred;
+          if (url.includes("/lot-geometry")) {
+            return Promise.resolve(
+              new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+            );
+          }
+          return Promise.resolve(jsonResponse(cornerDoc(), 200));
+        }),
+      );
+      render(<AddressResolutionScreen />);
+      fillAndSubmit();
+
+      const card = await screen.findByTestId("address-confirm-card");
+      // While the delayed response is in flight there is no note and no reserved box.
+      await waitFor(() =>
+        expect(card).toHaveAttribute("data-record-address-status", "loading"),
+      );
+      expect(screen.queryByTestId("record-address")).toBeNull();
+      expect(screen.queryByTestId("record-address-reserved")).toBeNull();
+      expect(screen.queryByTestId("record-address-slot")).toBeNull();
+      const childIdsBefore = childIds(card);
+
+      // Resolve LATE to the non-shown terminal.
+      resolveRecord(make());
+      await waitFor(() =>
+        expect(card).toHaveAttribute("data-record-address-status", settled),
+      );
+
+      // Still no note, no reserved box; the direct children are unchanged — nothing
+      // was inserted and nothing collapsed.
+      expect(screen.queryByTestId("record-address")).toBeNull();
+      expect(screen.queryByTestId("record-address-reserved")).toBeNull();
+      expect(childIds(card)).toEqual(childIdsBefore);
+    },
+  );
+
+  it("rider b (a11y): the entered value is exposed as the accessible name (role=img + aria-label), visible text stays trimmed", async () => {
+    await renderResolved();
+    // input_echo → enteredInput "120 BROADWAY, Manhattan" (no surrounding
+    // whitespace here; the whitespace raw-vs-trimmed DIFFER case is covered by S9).
+    const raw = "120 BROADWAY, Manhattan";
+    const entered = screen.getByTestId("entered-input");
+    const strong = entered.querySelector<HTMLElement>("strong");
+    // role="img" is a SUPPORTED, name-permitting ARIA role (unlike the
+    // non-standard role="text"): it makes the otherwise name-prohibited <strong> a
+    // named leaf, so the raw value is exposed to assistive tech as the accessible
+    // NAME, resolvable by role + name…
+    expect(strong).toHaveAttribute("role", "img");
+    expect(strong).toHaveAccessibleName(raw);
+    expect(screen.getByRole("img", { name: raw })).toBe(strong);
+    // …the title is kept for sighted hover, the aria-label carries the raw value,
+    // and the visible text stays trimmed.
+    expect(strong?.getAttribute("title")).toBe(raw);
+    expect(strong?.getAttribute("aria-label")).toBe(raw);
+    expect(strong?.textContent).toBe(raw);
+  });
+
+  it("rider c (copy): in the no-normalized-street case the entered note does NOT reference the absent city-matched line", async () => {
+    const doc = resolvedDoc();
+    // No printable matched line: no house number, no normalized street, no borough
+    // name → addressLine is empty and the fallback note renders instead.
+    doc.input_echo.house_number = "";
+    doc.input_echo.street = "my raw one-box entry";
+    doc.input_echo.borough = "";
+    doc.input_echo.zip = null;
+    doc.canonical.street_name_normalized = null;
+    doc.canonical.borough_name = null;
+    doc.canonical.zip_code = null;
+    await renderResolved(doc);
+    // The matched line is absent (the fallback note shows in its place).
+    expect(screen.queryByTestId("confirm-address")).toBeNull();
+    const entered = screen.getByTestId("entered-input");
+    expect(entered.textContent).toContain("my raw one-box entry");
+    // The note must NOT claim to show it "alongside the city-matched address".
+    expect(entered.textContent).not.toContain("city-matched address");
+    expect(entered.textContent).toContain(
+      "We show it as the address you searched for",
+    );
+  });
+
+  it("rider c (copy): the normal (matched present) case keeps the accepted wording byte-identical", async () => {
+    await renderResolved();
+    expect(screen.getByTestId("entered-input").textContent).toContain(
+      "We show it alongside the city-matched address so you can compare them; the identity we carry forward is the tax lot (BBL).",
+    );
+  });
+
+  it("rider d (note): when the record differs, one neutral RECORD why-they-differ note renders (no computed value implied)", async () => {
+    renderWithRecord(cornerDoc(), recordResponse());
+    const card = await screen.findByTestId("address-confirm-card");
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "shown"),
+    );
+    const why = screen.getByTestId("record-address-why");
+    expect(why.textContent).toContain("more than one street");
+    // It is a RECORD explanation — it states no measurement or computed value.
+    expect(why.textContent).not.toMatch(/\d/);
+  });
+
+  it("rider d (note): an equal record renders no line and therefore no why-they-differ note", async () => {
+    renderWithRecord(
+      resolvedDoc(),
+      recordResponse({ bbl: "1000477501", address: "120 BROADWAY" }),
+    );
+    const card = await screen.findByTestId("address-confirm-card");
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "equal"),
+    );
+    expect(screen.queryByTestId("record-address-why")).toBeNull();
+  });
+
+  it("rider i (title bound): an over-long entered value is length-bounded in the title/aria attributes with a truncation marker", async () => {
+    const doc = resolvedDoc();
+    const longEntry = "X".repeat(600);
+    doc.input_echo.house_number = "";
+    doc.input_echo.street = longEntry;
+    doc.input_echo.borough = "";
+    doc.input_echo.zip = null;
+    await renderResolved(doc);
+    const entered = screen.getByTestId("entered-input");
+    const strong = entered.querySelector<HTMLElement>("strong");
+    // Visible text is the full trimmed raw value (600 chars, nothing to trim).
+    expect(strong?.textContent).toBe(longEntry);
+    // The title/aria value is capped at 512 + a one-char truncation marker (513).
+    const title = strong?.getAttribute("title") ?? "";
+    expect(title.length).toBe(513);
+    expect(title.endsWith("…")).toBe(true);
+    expect(strong?.getAttribute("aria-label")).toBe(title);
   });
 });

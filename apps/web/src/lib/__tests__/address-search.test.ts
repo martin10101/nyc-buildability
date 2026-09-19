@@ -363,26 +363,78 @@ describe("M5-T047 gate riders (G4-A1 abbreviation fail-closed, G5-A1 length boun
     expect(resolveLotFromGeoSearch(body).kind).toBe("no_match");
   });
 
-  it("G5-A1: an over-length parsed street is refused with a typed no-match before any comparison", () => {
+  // DB-033 rider e: the two over-length probes below now carry a NON-EMPTY
+  // feature that WOULD equality-match the parsed input, so the refusal exercises
+  // the length guard itself (not the empty-features fall-through the M5-T047
+  // versions relied on). The guard is verifiably not masked in production (it
+  // runs before the feature loop), so no address-search.ts change ships — this is
+  // a test-side de-vacuation plus the exact off-by-one boundary case.
+  it("G5-A1 (de-vacuated): an over-length parsed street is refused BY THE LENGTH GUARD even though a feature would otherwise equality-match", () => {
     const longStreet = "A".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN + 1);
     const body = {
       type: "FeatureCollection",
       geocoding: { query: { parsed_text: { housenumber: "1279", street: longStreet } } },
-      features: [],
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            name: `1279 ${longStreet}`,
+            housenumber: "1279",
+            // Equal to the parsed street: WITHOUT the length guard this resolves;
+            // WITH it, the guard refuses before any comparison.
+            street: longStreet,
+            addendum: { pad: { bbl: "3052960043", bin: "3340270", version: "26c" } },
+          },
+        },
+      ],
     };
     const result = resolveLotFromGeoSearch(body);
     expect(result.kind).toBe("no_match");
     if (result.kind === "no_match") expect(result.input?.street).toBe(longStreet);
   });
 
-  it("G5-A1: an over-length parsed housenumber is likewise refused", () => {
+  it("G5-A1 (de-vacuated): an over-length parsed housenumber is likewise refused despite a would-match feature", () => {
     const longHouse = "1".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN + 1);
     const body = {
       type: "FeatureCollection",
       geocoding: { query: { parsed_text: { housenumber: longHouse, street: "37 street" } } },
-      features: [],
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            name: `${longHouse} 37 STREET`,
+            housenumber: longHouse,
+            street: "37 STREET",
+            addendum: { pad: { bbl: "3052960043", bin: "3340270", version: "26c" } },
+          },
+        },
+      ],
     };
     expect(resolveLotFromGeoSearch(body).kind).toBe("no_match");
+  });
+
+  it("G5-A1: the bound is inclusive — exactly 512 is accepted, 513 is a typed refusal (off-by-one boundary)", () => {
+    // Each body carries a feature whose street EQUALS the parsed street, so the
+    // ONLY thing that can flip resolved→no_match is the length guard's boundary.
+    const atBound = "A".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN); // exactly 512
+    const overBound = "A".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN + 1); // 513
+    const bodyFor = (street: string) => ({
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: "1279", street } } },
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            name: `1279 ${street}`,
+            housenumber: "1279",
+            street,
+            addendum: { pad: { bbl: "3052960043", bin: "3340270", version: "26c" } },
+          },
+        },
+      ],
+    });
+    expect(resolveLotFromGeoSearch(bodyFor(atBound)).kind).toBe("resolved");
+    expect(resolveLotFromGeoSearch(bodyFor(overBound)).kind).toBe("no_match");
   });
 
   it("G5-A1: a normal-length input at the bound is NOT refused by the length gate (no real address regressed)", () => {

@@ -556,7 +556,13 @@ def test_ra3_no_record_is_honest_absence(client, monkeypatch):
     body = resp.json()
     assert body["outcome"] == "no_record"
     assert body["address"] is None
-    assert "no PLUTO record" in body["reason"].lower() or body["reason"]
+    # DB-033 rider g: bind the reason to the EXACT documented no-match explanation
+    # the route passes through (fixture _pluto_no_match()); the former
+    # `... or body["reason"]` tail made the substring check non-load-bearing.
+    assert (
+        body["reason"]
+        == "No PLUTO record exists for BBL 3052960043 in dataset 64uk-42ks."
+    )
     assert body["source"]["dataset_version"] is None
 
 

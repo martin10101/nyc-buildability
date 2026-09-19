@@ -204,6 +204,11 @@ export async function fetchRecordAddress(
     try {
       response = await fetchImpl(url, {
         method: "GET",
+        // DB-033 rider i: send NO credentials on every record-address fetch,
+        // consistently with the address-search client (defense-in-depth: the API
+        // has no auth cookies, and an explicit omit removes any ambient-credential
+        // ambiguity across the address clients).
+        credentials: "omit",
         headers: { Accept: "application/json" },
         cache: "no-store",
         signal: controller.signal,

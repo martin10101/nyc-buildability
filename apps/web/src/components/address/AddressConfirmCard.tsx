@@ -16,6 +16,21 @@ import {
 import { Meta } from "./AddressOutcomeCards";
 import { LotOutlineMap } from "./LotOutlineMap";
 
+/** DB-033 rider i (M5-T047 G5 A3): the generous upper bound on the raw entered
+ * value copied into the title/aria attributes. Real addresses are far shorter;
+ * anything longer is truncated with a marker so the reflected attribute value is
+ * always bounded. */
+const ENTERED_TITLE_ATTR_MAX_LEN = 512;
+
+/** DB-033 rider a/d: the record-address line's fixed explanatory prose, held as
+ * constants. RECORD_ADDRESS_NOTE names the source; RECORD_ADDRESS_WHY is the one
+ * short neutral why-they-differ note. Both are RECORD explanations only; they
+ * imply no computed value (D-073-R006). */
+const RECORD_ADDRESS_NOTE =
+  "This is the address the city's official tax record (PLUTO) carries for this lot; it can differ from the matched frontage.";
+const RECORD_ADDRESS_WHY =
+  "A single tax lot can front on more than one street, so its address of record can differ from the frontage you searched.";
+
 /**
  * The Address Confirm card (task M5-T016, design spec sections 1/2-resolved/
  * 3/4, Packet 2): deliberately THIN — canonical address large, BBL, ZoLa
@@ -110,6 +125,17 @@ export function AddressConfirmCard({
           .filter(Boolean)
           .join(", ");
 
+  // DB-033 rider i (M5-T047 G5 A3): generously length-bound the RAW entered value
+  // placed into the title/aria attributes. A real address is far shorter than
+  // this; only an abusive over-long paste is capped, with a truncation marker, so
+  // the attribute value can never be an unbounded reflected string. The raw
+  // string is otherwise preserved VERBATIM (surrounding whitespace and all) — the
+  // bound touches length only, never trims meaningful characters.
+  const enteredTitle =
+    enteredInput.length > ENTERED_TITLE_ATTR_MAX_LEN
+      ? `${enteredInput.slice(0, ENTERED_TITLE_ATTR_MAX_LEN)}…`
+      : enteredInput;
+
   // DB-032 (M5-T046 HJ A1 / OQ-5): the lot's PLUTO address-of-record, fetched
   // read-only from the additive per-BBL record-address channel keyed by the
   // re-validated canonical BBL. It is shown as a labeled CITY RECORD only when
@@ -182,24 +208,27 @@ export function AddressConfirmCard({
         <p className="section-note" data-testid="entered-input">
           You searched for{" "}
           {/* HJ A3a: the bolded entered value renders display-TRIMMED, with the
-              TRUE raw string (surrounding whitespace and all) preserved in a
-              title/aria attribute — nothing the analyst typed is silently
-              rewritten, but blank-looking padding does not show. */}
-          <strong title={enteredInput} aria-label={enteredInput}>
+              TRUE raw string (surrounding whitespace and all) preserved in the
+              title/aria attributes — nothing the analyst typed is silently
+              rewritten, but blank-looking padding does not show.
+              DB-033 rider b (HJ A2): a bare <strong> maps to a name-prohibited
+              role, so an aria-label on it alone is ignored by conformant screen
+              readers. role="img" is a SUPPORTED, name-permitting ARIA role
+              (unlike the non-standard role="text"): it makes the <strong> a named
+              leaf, so the raw value is exposed as the accessible NAME while the
+              bold text still renders and the title is kept for sighted hover.
+              DB-033 rider i: the title/aria value is length-bounded (enteredTitle),
+              never an unbounded reflected string. */}
+          <strong role="img" title={enteredTitle} aria-label={enteredTitle}>
             {enteredInput.trim()}
           </strong>
-          {/* HJ A2: layout-neutral phrasing (no "above"/"below") — the note
-              reads correctly in any reading order. */}. We show it alongside the
-          city-matched address so you can compare them; the identity we carry
-          forward is the tax lot (BBL).
-        </p>
-      ) : null}
-
-      {showRecordAddress ? (
-        <p className="section-note" data-testid="record-address">
-          City record address: <strong>{recordAddress}</strong>. This is the
-          address the city&apos;s official tax record (PLUTO) carries for this
-          lot; it can differ from the matched frontage.
+          {/* HJ A2: layout-neutral phrasing (no "above"/"below") — the note reads
+              correctly in any reading order. DB-033 rider c: when the city
+              returned no printable matched line (addressLine empty), the note must
+              NOT reference the absent "city-matched address". */}
+          {addressLine
+            ? ". We show it alongside the city-matched address so you can compare them; the identity we carry forward is the tax lot (BBL)."
+            : ". We show it as the address you searched for; the identity we carry forward is the tax lot (BBL)."}
         </p>
       ) : null}
 
@@ -368,6 +397,37 @@ export function AddressConfirmCard({
         Not my property
       </button>
       <Meta correlationId={outcome.correlationId} />
+
+      {/* DB-033 rider a (HJ A1 CLS) — REVISED. The record line is a LATE async
+          insert. At its former position (between the entered note and the Continue
+          block) any reservation could only APPROXIMATE the real line's wrapped
+          height — the record address and how it wraps are unknown until the channel
+          settles — so a same-length stand-in wraps differently at the narrow
+          supported widths and still nudges the Continue button; and a delayed
+          settle to no-line collapses the reservation. The CLS-neutral mechanism that
+          needs no height guess: render the record note OUTSIDE the interactive block,
+          as the card's LAST child. A late insert below every settled/interactive
+          element cannot move any of them — at ANY width, for ANY wrapping, and for a
+          record address of ANY length — and when the outcome is non-shown
+          (loading / equal / absent / error / route-absent) nothing renders here, so
+          the absent presentation is byte-identical to today (no reserved box). jsdom
+          asserts the STRUCTURAL guarantee (this note follows the Continue action and
+          is the card's last child, and no reservation element exists in any state);
+          the pixel proof that the Continue CTA's position is byte-stable across the
+          resolve — at 360/768/1280 incl. a long permitted record address — is the CI
+          browser layout measurement, captured by the orchestrator (see the producer
+          report). */}
+      {showRecordAddress ? (
+        <p className="section-note" data-testid="record-address">
+          City record address: <strong>{recordAddress}</strong>.{" "}
+          {RECORD_ADDRESS_NOTE}{" "}
+          {/* DB-033 rider d (HJ A4): one short neutral why-they-differ note — a
+              RECORD explanation only, implying NO computed value (D-073-R006). It
+              renders only when the record line shows (the differ case); equal /
+              absent produce no line and so no note. */}
+          <span data-testid="record-address-why">{RECORD_ADDRESS_WHY}</span>
+        </p>
+      ) : null}
     </section>
   );
 }

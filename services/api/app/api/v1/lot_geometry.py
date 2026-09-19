@@ -33,6 +33,15 @@ suite runs fully OFFLINE against recorded fixtures.
 
 ``STATUS_STATE_MATRIX`` below is the single source of truth for every emitted
 (HTTP status, state) pair.
+
+This module ALSO hosts an additive sibling endpoint,
+``GET /api/v1/properties/{bbl}/record-address`` (task M5-T047, DB-032), which
+transports the lot's PLUTO address-of-record as a display-only city RECORD (the
+M5-T046 HJ A1 / OQ-5 gap). It is fully independent of the lot-geometry endpoint
+above: it reuses the same feature-flag gate, normalize-first / injected-fetch-seam
+discipline, typed-error taxonomy, and ``_assert_json_safe`` render guard, and owns
+its own ``RECORD_ADDRESS_STATUS_STATE_MATRIX``. Its full posture is documented in
+the section header at ``get_record_address`` below.
 """
 
 from __future__ import annotations
