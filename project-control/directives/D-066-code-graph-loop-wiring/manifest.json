@@ -27,7 +27,7 @@
     "D-066-R003",
     "D-066-R004"
   ],
-  "requirements_content_digest_sha256": "a92a984b801e9946a9f2f968bbc0e9a37b238968d53882fe16f164dc656b15d7",
+  "requirements_content_digest_sha256": "daf17bef3b6cac1ae443ae48558505da20395170f0a3d0168002a59845677448",
   "sources": [
     {
       "file": "source-001.md",
@@ -148,6 +148,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-066-R001 applicability.task_ids += M5-T050 (DB-033 polish packet contract seam); requirements.json digest resynced to a92a984b801e9946a9f2f968bbc0e9a37b238968d53882fe16f164dc656b15d7"
+    },
+    {
+      "at": "2026-09-19T11:57:50.504677+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-066-R001 applicability.task_ids += M5-T051 (phase-B1 derivation packet contract seam); requirements.json digest resynced to daf17bef3b6cac1ae443ae48558505da20395170f0a3d0168002a59845677448"
     }
   ]
 }

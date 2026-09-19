@@ -1,0 +1,106 @@
+{
+  "task_id": "M5-T051",
+  "title": "Phase B1 (D-076): deterministic proposal-derivation module with evidence records + the DB-034(c) wall hardening",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "From a VALIDATED proposed_massing block, derive the proposal's deterministic geometric FACTS - footprint area, lot coverage against the lot's recorded 2263 geometry, per-level areas, gross-vs-declared floor-area treatment with an explicit inclusions/exclusions vocabulary, wall setbacks from lot/street lines (consuming the existing street-width attestation seam READ-ONLY), and height per level - each carrying an evidence record; property tests against hand-computed fixtures. These are PROVIDED values (what the proposal offers), never allowances (what rules permit) - no rule evaluation, no requirement lookup, no allowance computed or implied (B2 territory). Also close DB-034(c): a wall segment referencing the repeated closing vertex is a degenerate zero-length wall - refuse it typed at the validation layer.",
+  "business_reason": "B0 gave proposals a validated contract shape; B1 turns a valid proposal into the deterministic fact set the rule engine (B2) and the editor (B3) both consume - the load-bearing middle of the proposal editor plan",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). proposal.py consumers: contract.py:21 (the validation thread) + test_scenario_proposal.py:44. contract.py consumers: api/v1/scenario.py:80 + api/v1/scenario_analysis.py:116 (both validate SERVER-CONSTRUCTED documents - no editor route exists yet), scenario/__init__.py:46, three test files. The lot-measurement path you CONSUME READ-ONLY: app/spatial/mappluto_geometry_arcgis.py (EPSG:2263 measurement geometry - never the 4326 display module) and the street seam app/spatial/wide_street_live_provider.py / the dcm street stack (attestation-gated street widths). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE 1/2 - DERIVATION MODULE (binding; read docs/PROPOSAL_EDITOR_PHASED_PLAN.md phase-B B1 row, docs/DISCOVERY_BACKLOG.md rows DB-034 + DB-013, and services/api/app/scenario/proposal.py FIRST): NEW focused module services/api/app/scenario/derivation.py deriving, from a proposed_massing block that has ALREADY passed validate_proposed_massing plus the lot's 2263 geometry supplied by the CALLER as an explicit parameter (no fetching, no network, no connector import - the module is pure computation): (1) footprint area (sf, shoelace on the 2263 outline, positive by validated simplicity); (2) lot coverage ratio (footprint / caller-supplied lot area, with the lot-area provenance carried through); (3) per-level areas (per-level outline where present, else the base outline; explicit which); (4) gross floor-area TREATMENT: a declared inclusions/exclusions VOCABULARY (an explicit enum of what the gross sum counts - e.g. per-level gross, no deductions at B1 - so B2/professionals can see exactly what the number is and is not; NEVER a 'zoning floor area' claim, that term implies rule treatment); (5) wall setbacks: for each NAMED exterior wall segment, the minimum distance (ft) from that segment to the caller-supplied lot-line segments and, where the caller supplies an attested street line for a frontage, to that street line - consuming the attestation OUTPUT shape read-only, never re-deriving street width; (6) height per level and cumulative height. EVERY derived value is returned in a typed EvidenceRecord carrying: value, unit, the exact input identifiers it was computed from (outline digest, lot geometry provenance passed by the caller, wall id), the method name, and the literal source_class 'proposed_derivation' - PROVIDED values, never allowances (D-076-R002): no rule evaluation, no requirement lookup, no 'permitted/required/allowed' vocabulary anywhere in code, fields, or messages. Bounded and fail-closed: refuse (typed, exact field) rather than guess on any geometric degeneracy; DB-013 ceilings inherited from the validated block.",
+    "SCOPE 2/2 - DB-034(c) HARDENING + TESTS (binding): (1) close DB-034(c) in services/api/app/scenario/proposal.py: a wall whose start/end indices reference the SAME point once the closing duplicate is collapsed (index n == index 0 on a closed ring) is a degenerate zero-length wall - refuse typed at proposed_massing.exterior_walls[i]; add the binding test in test_scenario_proposal.py; also add the ONE collinear/spike-outline test binding the cross==0/dot<0 reversal branch of _ring_is_simple (DB-034(e), G4-mutation-proven unbound). (2) NEW test file services/api/tests/scenario/test_scenario_derivation.py: PROPERTY TESTS against HAND-COMPUTED fixtures under services/api/tests/scenario/fixtures/derivation/** - at minimum: a hand-computed rectangle (exact area/coverage/setbacks), an L-shape (concave; hand-computed), a multi-level proposal with a smaller upper level, a wall-setback case with a hand-measured distance to a supplied lot line, and an attested-street-frontage case consuming a fixture attestation shape; plus invariance properties (vertex-order rotation does not change area; translation does not change area/coverage; degenerate inputs refuse typed). Fixtures are HAND-COMPUTED with the arithmetic shown in a comment/README - never derived by running the module itself (no self-proving fixtures).",
+    "PRESERVATION (binding): proposal.py changes are LIMITED to the DB-034(c) wall refusal + nothing else (its accepted validation semantics byte-preserved otherwise; the two new tests are additive); contract.py NOT in scope (no route/emission change - version-emission discipline stays recorded at DB-034(d) for B2/B3); every existing scenario/api suite green unchanged; no new dependency (stdlib math only, like proposal.py); no network in module or tests.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "services/api/app/scenario/derivation.py: typed, pure, bounded derivation of proposal FACTS with EvidenceRecords (footprint, coverage, per-level areas, gross-treatment vocabulary, wall setbacks incl. attested-street case, heights)",
+    "DB-034(c) degenerate-wall refusal + DB-034(e) collinear-branch test closed in proposal.py/test_scenario_proposal.py",
+    "Hand-computed derivation fixture pack + property tests (test_scenario_derivation.py + fixtures/derivation/**)",
+    "project-control/reports/M5-T051-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T048"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/derivation.py",
+    "services/api/app/scenario/proposal.py",
+    "services/api/tests/scenario/test_scenario_derivation.py",
+    "services/api/tests/scenario/test_scenario_proposal.py",
+    "services/api/tests/scenario/fixtures/derivation/**",
+    "project-control/reports/M5-T051-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/scenario.py",
+    "services/api/app/api/",
+    "services/api/app/rules/",
+    "services/api/app/spatial/",
+    "services/api/app/profile/",
+    "services/api/app/connectors/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary, hand-computed rectangle): a 100x80 ft rectangular proposal on a hand-specified lot yields footprint 8000 sf, the exact hand-computed coverage, per-level areas, heights, and wall setbacks matching the fixture's shown arithmetic; every value arrives in an EvidenceRecord naming its inputs, method, and source_class 'proposed_derivation'.",
+    "AS-2 (concave + multi-level): the L-shape fixture's hand-computed area is exact (shoelace handles concavity); a smaller upper level yields its own per-level area and the gross sum matches the declared inclusions/exclusions vocabulary; the vocabulary never claims 'zoning floor area'.",
+    "AS-3 (setbacks): the named wall's minimum distance to the supplied lot line equals the hand-measured fixture value (ft, 2263); with a fixture street-attestation supplied for a frontage the street-line setback derives and its EvidenceRecord carries the attestation identifiers; with NO attestation supplied the street-setback outcome is a typed honest absence, never a guess (D-051 fallback discipline: absence, not a default).",
+    "AS-4 (facts-not-allowances, D-076-R002): no derived output, field name, vocabulary entry, or message uses permitted/required/allowed/compliant language; the module performs no rule lookup; grep-clean for allowance-class terms outside disclaiming comments.",
+    "AS-5 (invariance properties): vertex-order rotation preserves area; translation preserves area/coverage/setback distances; property tests demonstrate both on at least two fixture shapes.",
+    "AS-6 (fail-closed): degenerate inputs (zero-length wall per DB-034(c), collapsed outline, missing per-level outline where the fixture demands one) refuse typed naming the exact field; the DB-034(e) collinear/spike outline test binds the reversal branch; no silent fallback anywhere.",
+    "AS-7 (purity + bounds): derivation.py imports stdlib only (math); no network/connector/file I/O; inputs arrive as parameters; DB-013 ceilings inherited (the module never iterates beyond the validated bounds).",
+    "AS-8 (proof): ruff clean; documented suites green offline from services/api; modularity exit 0 (derivation.py below warn tier or split with a facade); the unchanged B0 suites green (proposal.py semantics preserved apart from the new degenerate-wall refusal)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "FACTS vs ALLOWANCES is the load-bearing boundary (D-076-R002): a single 'required/permitted' output would misrepresent a proposal as a rule result - reviewers grep for it.",
+    "The lot geometry and street attestation arrive as CALLER-SUPPLIED parameters: importing spatial/ or connectors/ = STOP + discovery (those seams are forbidden paths).",
+    "Fixtures must be hand-computed with shown arithmetic - a fixture generated by the module is self-proving and worthless.",
+    "Disjointness vs M5-T050 (awaiting_gate: address confirm arc): zero path overlap (mechanically recorded in G0). proposal.py is SHARED with accepted M5-T048 history but no live lane holds it.",
+    "DB-034(a)/(b) (global vertex budget; string ceilings) bind the first packet wiring editor input (B3/route packet), NOT this one - surface, do not fix here beyond what DB-034(c)/(e) name."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T11:55:50.924733+00:00",
+  "updated_at": "2026-09-19T11:55:51.202650+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T11:55:50.924733+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
