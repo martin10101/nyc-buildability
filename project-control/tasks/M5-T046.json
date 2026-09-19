@@ -13,7 +13,8 @@
     "SCOPE 1/2 - THE EQUALITY GATE (binding; read docs/research/db026-address-to-lot-fixture-capture.md sections 1-5 + assertions 1-4, and docs/research/db026-address-to-lot-source-recon.md first): the captured corpus proves /search returns confidence:0.8, match_type:'fallback' IDENTICALLY on the true hit, on a nonexistent street (returns a real WRONG lot), and on an out-of-range house number (returns a different house number) - and never an empty features array for these probes. In apps/web/src/lib/address-search.ts: (a) a /search feature counts as a MATCH only when its returned properties.housenumber equals the parsed input house number AND its normalized street equals the parsed input street (normalization documented against the corpus: '37th street'->'37 STREET'; define and test the ordinal/case rule; treat the corpus's parsed_text as the reference parse); (b) a feature failing the gate yields the EXISTING typed no-match outcome (the M5-T032 outcome vocabulary - extend honestly if a new distinction is needed, never overload), never a silently wrong lot; (c) lot identity binds to addendum.pad.bbl (never the address string or bin - the GARAGE sibling and reverse frontage are the same lot, different features); (d) match_type/confidence are RECORDED if already surfaced but never used as a success test; (e) /autocomplete features OMIT confidence and match_type entirely - the parser must tolerate their absence (corpus section 5); (f) suggestions (autocomplete) may stay permissive - the GATE applies where a single feature is promoted to THE resolved lot for analysis/confirm.",
     "SCOPE 2/2 - DISPLAY + REGISTRY (binding): (g) confirm-arc identity honesty (D-073-R006 records class) on address/AddressConfirmCard.tsx / AddressResolutionScreen.tsx: show the entered input verbatim and the matched city address; when the matched frontage differs from the lot's PLUTO address-of-record AND that record address is available through an EXISTING data channel, show it as a record ('city record address: 3622 13 AVENUE') - if no existing channel carries it, ship the entered-vs-matched increment and report the record-address channel gap as a DISCOVERY (do NOT add a server endpoint or contract field); records stay records - no computed value is implied by any address line; (h) the case-1 regression pinned offline from the corpus: true hit passes the gate; '37th' variant matches ('37 STREET'); GARAGE + reverse frontage resolve to the same bbl 3052960043; the two failure probes are REFUSED with the typed no-match (assert NO lot is surfaced); (i) author docs/research/source-registry-drafts/geosearch.json mirroring the committed ztldb.json shape (endpoints /search + /autocomplete, addendum.pad.{bbl,bin,version} path, the body-only freshness stamp addendum.pad.version='26c', the no-Last-Modified header finding, the equality-gate requirement as the documented match discipline).",
     "PRESERVATION (binding): the M5-T032 reliability outcomes (503/429/timeout/no-match/malformed, bounded retry, preserved input) stay byte-identical for their existing cases; the autocomplete suggestion UX stays permissive; no new dependency; no npm/package.json change; NO contract-shape change; NO services/api change; the Geoclient server path untouched; a11y intact on touched components (existing aria patterns).",
-    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny; fixtures come from the captured corpus verbatim). Thin client: no local npm/node."
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny; fixtures come from the captured corpus verbatim). Thin client: no local npm/node.",
+    "[ORCH-SCOPE-ADJUDICATION 2026-09-19, pre-submit, option A] The run-10 producer established with call-path evidence (report section 5, verified against source at the material head) that the packet's premise was WRONG at HEAD: the web client NEVER promotes a GeoSearch feature to THE lot - suggestions structurally discard pad.bbl and stay permissive, and the only lot authority is the server Geoclient route (out of scope by design). There is therefore NO unsafe live GeoSearch promotion to protect. ADJUDICATION: (1) deliverables 1-4 (equality-gate library + corpus regression + geosearch registry draft + the LIVE confirm-arc entered-vs-matched display with raw typed-input preservation) ARE this packet's contracted deliverable; (2) NO new client-side GeoSearch lot-promotion or degraded-mode authority path is introduced - the server-Geoclient-mediated resolution is recorded as the live lot authority; (3) the equality-gate library + the registry draft's match discipline are BINDING on any FUTURE packet that introduces a GeoSearch promotion (the gate must be its guard - recorded in the geosearch.json registry draft and DB-026's closure note); (4) AS-1/AS-4 are satisfied at the library level driven by the byte-faithful corpus (their protective claim attaches to the promotion path that does not exist at HEAD). The live-protection objective is thus resolved by adjudication, not narrowed silently."
   ],
   "outputs": [
     "Equality-gated GeoSearch match promotion in address-search.ts: typed no-match instead of silently wrong lots; pad.bbl as the lot identity; autocomplete-shape tolerance",
@@ -47,16 +48,16 @@
     "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx"
   ],
   "acceptance_scenarios": [
-    "AS-1 (primary): '1279 37 street brooklyn' (corpus section 1) promotes the true hit through the equality gate to bbl 3052960043; the confirm surface shows the entered input and the matched city address '1279 37 STREET'.",
+    "AS-1 (primary, AMENDED per ORCH-SCOPE-ADJUDICATION): '1279 37 street brooklyn' (corpus section 1) resolves through the equality-gate LIBRARY to bbl 3052960043 (no live promotion path exists at HEAD to wire); the LIVE confirm surface shows the entered input verbatim and the matched city address.",
     "AS-2 (variant): '1279 37th street brooklyn' (corpus section 2) matches under the documented ordinal normalization to the same lot.",
     "AS-3 (aliasing): the GARAGE sibling and the reverse frontage '3622 13 avenue brooklyn' (corpus sections 1/3) resolve to the SAME pad.bbl; identity is bound to pad.bbl, never the address string or bin.",
-    "AS-4 (failure/honesty): the nonexistent-street and out-of-range probes (corpus section 4) are REFUSED by the gate with the typed no-match; NO lot is surfaced; match_type/confidence are never consulted as a success test.",
+    "AS-4 (failure/honesty, AMENDED per ORCH-SCOPE-ADJUDICATION): the nonexistent-street and out-of-range probes (corpus section 4) are REFUSED by the equality-gate LIBRARY with the typed no-match; NO lot is surfaced by the library; match_type/confidence are never consulted as a success test; the library + registry match discipline bind any future promotion path.",
     "AS-5 (autocomplete shape): /autocomplete features (corpus section 5) parse without confidence/match_type; suggestions stay permissive while promotion stays gated.",
     "AS-6 (records display): when the matched frontage differs from the lot's record address and an existing channel carries it, the record address is shown labeled as the city record - a records line, implying no computed value (D-073-R006); otherwise the gap is reported as a discovery, not built around.",
     "AS-7 (regression): every existing M5-T032 reliability outcome and autocomplete behavior is byte-identical for its existing cases (existing suites green unchanged).",
     "AS-8 (walkthrough): HJ walks the confirm arc for the corner-lot case and the refused-nonsense case on the CI-proven head: honest, clear, accessible.",
     "AS-9: registry draft record present, mirroring the committed shape, with the body-only freshness stamp documented.",
-    "AS-10: modularity exit 0; all touched web test files carry passing tests; CI green on the pushed head (orchestrator captures)."
+    "AS-1 (primary, AMENDED per ORCH-SCOPE-ADJUDICATION): '1279 37 street brooklyn' (corpus section 1) resolves through the equality-gate LIBRARY to bbl 3052960043 (no live promotion path exists at HEAD to wire); the LIVE confirm surface shows the entered input verbatim and the matched city address."
   ],
   "required_gates": [
     "G0",
@@ -76,17 +77,18 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 85,
   "risks": [
     "The gate must not break permissive autocomplete suggestions - only the promotion of a single feature to THE resolved lot is gated.",
     "Normalization is corpus-anchored ('37th'->'37 STREET'); do not invent rules beyond what the corpus + existing code establish - unclear cases fail closed to no-match and are reported.",
     "Disjointness with M5-T045 (live): never touch services/api/**, PropertyOverview/AnalysisIdentityNotice/ReportView or their named tests.",
     "NO contract change, NO new server channel - a missing record-address channel is a discovery.",
-    "Web behavior proves only in CI; empty test files fail vitest."
+    "Web behavior proves only in CI; empty test files fail vitest.",
+    "ADJUDICATED scope: no client-side lot-promotion path exists or is added; server Geoclient stays the sole live lot authority; the gate library binds future GeoSearch promotion packets."
   ],
   "blockers": [],
   "created_at": "2026-09-19T04:10:11.493999+00:00",
-  "updated_at": "2026-09-19T04:12:29.836467+00:00",
+  "updated_at": "2026-09-19T05:52:16.124814+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -114,6 +116,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the seq-119 second seam (G0 PASS at b25d417f; pairwise disjoint vs live M5-T045, intersection empty); scenarios AS-1..AS-10 in-packet; awaiting loop-2 launch run 09"
+    },
+    {
+      "at": "2026-09-19T05:52:16.124814+00:00",
+      "agent": "frontend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "ORCH-SCOPE-ADJUDICATION recorded pre-submit (option A): no live GeoSearch-to-lot promotion exists at HEAD (call-path evidence, report section 5) - deliverables 1-4 are the contracted deliverable; no new authority path; server Geoclient stays the live lot authority; gate library + registry match discipline bind any future promotion packet; AS-1/AS-4 amended to the library level. Material cherry-picked at 3182f0a2; modularity exit 0; CI + AS-8 evidence next"
     }
   ]
 }
