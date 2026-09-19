@@ -73,6 +73,15 @@ def _iter_coverage_values(node):
 
 VALID_FIXTURES = sorted((FIXTURE_ROOT / "valid" / "scenario").glob("*.json"))
 INVALID_FIXTURES = sorted((FIXTURE_ROOT / "invalid" / "scenario").glob("*.json"))
+# [ORCH-CORRECTED per contracts-CI] Fixtures whose defect the JSON Schema provably
+# CANNOT express (ring closure, non-self-intersection) live in a THIRD directory:
+# the contracts CI job's convention is that everything under fixtures/invalid/
+# must fail SCHEMA validation, and these are schema-valid by construction (the CI
+# validator walks only valid/ and invalid/, so this class is asserted here, at the
+# validator layer where the defect is actually caught).
+SEMANTICALLY_INVALID_FIXTURES = sorted(
+    (FIXTURE_ROOT / "semantically_invalid" / "scenario").glob("*.json")
+)
 
 
 def test_there_are_the_required_fixtures():
@@ -81,6 +90,10 @@ def test_there_are_the_required_fixtures():
     )
     assert len(INVALID_FIXTURES) >= 3, (
         "need >=3 invalid fixtures (verified, embedded profile, missing field)"
+    )
+    assert len(SEMANTICALLY_INVALID_FIXTURES) == 2, (
+        "need exactly the two schema-valid geometry fixtures (open ring, "
+        "self-intersecting) in semantically_invalid/scenario/"
     )
 
 
@@ -117,20 +130,27 @@ def test_valid_fixture_identifies_input_by_reference(fixture: Path):
         assert profile_key not in instance, f"unexpected embedded profile key {profile_key!r}"
 
 
-@pytest.mark.parametrize("fixture", INVALID_FIXTURES, ids=lambda p: p.name)
+@pytest.mark.parametrize(
+    "fixture", INVALID_FIXTURES + SEMANTICALLY_INVALID_FIXTURES, ids=lambda p: p.name
+)
 def test_invalid_fixture_rejected(fixture: Path):
     """Every invalid fixture is refused by the production contract gate.
 
-    Invalid fixtures split by WHERE the defect is caught:
+    Invalid fixtures split by WHERE the defect is caught, and live in the
+    directory matching that layer:
 
-    * STRUCTURAL - a defect the JSON Schema expresses and rejects directly: a
-      'verified' coverage_status, an embedded profile key, a missing required
-      field, and (M5-T048) a non-positive floor_to_floor_ft, which the schema
-      now rejects via ``exclusiveMinimum: 0`` on proposed_level.floor_to_floor_ft.
-    * SEMANTIC - a geometry invariant a JSON Schema provably cannot state: an
-      unclosed or self-intersecting proposed_massing outline. These fixtures are
-      STRUCTURALLY schema-valid and are refused only by app.scenario.proposal
-      through validate_scenario_document.
+    * STRUCTURAL (fixtures/invalid/scenario/) - a defect the JSON Schema
+      expresses and rejects directly: a 'verified' coverage_status, an embedded
+      profile key, a missing required field, and (M5-T048) a non-positive
+      floor_to_floor_ft, which the schema now rejects via ``exclusiveMinimum: 0``
+      on proposed_level.floor_to_floor_ft. The contracts CI job independently
+      requires every fixture in this directory to FAIL schema validation.
+    * SEMANTIC (fixtures/semantically_invalid/scenario/) - a geometry invariant
+      a JSON Schema provably cannot state: an unclosed or self-intersecting
+      proposed_massing outline. These fixtures are STRUCTURALLY schema-valid and
+      are refused only by app.scenario.proposal through
+      validate_scenario_document (the CI schema job deliberately does not walk
+      this directory).
 
     Asserting the whole contract gate (schema + strict-JSON guard +
     proposed_massing semantics) covers both classes; the per-fixture tests below
@@ -164,6 +184,9 @@ def test_invalid_missing_field_fixture_fails_on_required():
 # defect the JSON Schema provably cannot express (ring closure, non-self-
 # intersection): each is structurally schema-valid yet refused by
 # validate_scenario_document at the exact proposed_massing field it documents.
+# They live under fixtures/semantically_invalid/scenario/ (NOT invalid/), because
+# the contracts CI job requires everything under invalid/ to fail SCHEMA
+# validation - which these deliberately do not.
 # The negative-height fixture is NOT in this set: JSON Schema CAN express strict
 # positivity (exclusiveMinimum: 0), so it fails schema validation directly - see
 # test_proposed_massing_negative_height_fixture_fails_schema_validation below.
@@ -181,7 +204,7 @@ PROPOSED_MASSING_GEOMETRY_INVALID_FIXTURES = {
 def test_proposed_massing_geometry_fixture_is_schema_valid_but_semantically_refused(
     fixture_name: str, location: str
 ):
-    instance = _load(FIXTURE_ROOT / "invalid" / "scenario" / fixture_name)
+    instance = _load(FIXTURE_ROOT / "semantically_invalid" / "scenario" / fixture_name)
     # STRUCTURAL: the JSON Schema accepts the document (the defect is a geometry
     # invariant a JSON Schema cannot state).
     assert not list(_validator().iter_errors(instance)), (

@@ -335,3 +335,20 @@ outcomes; record G0–G5 with the named reviewers (`data-contract-verifier`, `co
 `qa-engineer`, `security-reviewer`, `directive-compliance-verifier`); push; capture AS-8 CI on the
 pushed head. **Do NOT accept until (a) the required cwd-correct + digest-bound evidence exists and
 (b) the AS-3 acceptance-wording reconciliation is decided.**
+
+
+## [ORCH-CORRECTED per contracts-CI, 2026-09-19] Semantic-fixture relocation (orchestrator addendum)
+
+The contracts CI job at the harvested head failed 2/11: the open-ring and self-intersecting
+fixtures under fixtures/invalid/scenario/ "unexpectedly PASSED validation" - by design, since
+their defects are geometry invariants a JSON Schema provably cannot express (this report's own
+layering section says exactly that). The CI job's convention is that everything under invalid/
+must fail SCHEMA validation; the packet's SCOPE input (orchestrator-authored) had directed the
+two fixtures there. Orchestrator correction, tagged: both fixtures moved verbatim (git mv, zero
+content change) to the new third class fixtures/semantically_invalid/scenario/ - which the CI
+schema job deliberately does not walk - and test_scenario_contract.py updated: a
+SEMANTICALLY_INVALID_FIXTURES glob, the exact-2 count assertion, the whole-gate refusal
+parametrization extended over both classes, and the dedicated schema-valid-but-semantically-refused
+test now loading from the new directory. The negative-height fixture stays under invalid/
+(exclusiveMinimum: 0 IS schema-expressible and the CI job rejects it correctly). Packet
+allowed_paths amended accordingly ([ORCH-PACKET-FIX 2]).
