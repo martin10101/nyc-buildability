@@ -54,6 +54,28 @@
      "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
     }
    ]
+  },
+  {
+   "directive_id": "D-073",
+   "task_id": "M5-T046",
+   "applicable_requirement_ids": [
+    "D-073-R006"
+   ],
+   "reviewed_sha": "d12112ca1bd98383153080d899d48bc0c7c102d8",
+   "reviewed_manifest_sha256": "1de6180b4891074b80756b2bdbda24f4947a3c8caeda5ca4f5dc9340ddeeec48",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T06:31:19.876587+00:00",
+   "requirements": [
+    {
+     "id": "D-073-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T046-DCV.md, frozen content identity c9113e09): confirm-arc entered-vs-matched records line (AddressConfirmCard.tsx:80-136) with records-semantics comment and journey tests S8/S9 (address-confirm.test.tsx:492-639); no computed value on the surface; record-address gap reported as an OQ-5 discovery, not built around; AS-6/AS-8 + HJ PASS ('nothing on screen claims a protection that does not exist'). Stamped at d12112ca1bd98383153080d899d48bc0c7c102d8 under the six-condition pre-authorization - all reproduced at record time (see the D-066 row for the condition list; identical checks)."
+     ]
+    }
+   ]
   }
  ]
 }

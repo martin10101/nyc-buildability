@@ -337,6 +337,28 @@
      "reviewed_sha": "41f847ef8de2b1bb1afbdc6d3bce8b623132f758"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T046",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d12112ca1bd98383153080d899d48bc0c7c102d8",
+   "reviewed_manifest_sha256": "1de6180b4891074b80756b2bdbda24f4947a3c8caeda5ca4f5dc9340ddeeec48",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T06:31:19.876587+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T046-DCV.md, frozen content identity c9113e09, material 3182f0a2 + test-only correction fb7af67d): nav block present in the packet (tasks/M5-T046.json input 3) with query.py --no-regen + advisory clause; the load-bearing no-production-importer conclusion reproduced by the DCV's own git grep in source; consumers/edges verified; graph advisory-verified-in-source (producer report s5; G0 report). Stamped at d12112ca1bd98383153080d899d48bc0c7c102d8 under the six-condition pre-authorization - all reproduced at record time: (1) all 10 allowed_paths byte-identical c9113e09->record head (empty diff); (2) refs/allowed_paths/evidence-map unchanged, evaluate_task_refs ok; (3) every intervening commit touches only project-control/** or paths disjoint from the M5-T046 surface (docs/PROPOSAL_EDITOR_PHASED_PLAN.md, docs/DISCOVERY_BACKLOG.md, .claude/rules/expansion-agent-dispatch-hold.md - the D-076 planning seam; zero overlap with the 10 allowed_paths); (4) packet nav-block + amended scenarios byte-stable; (5) D-066 active, R001 unamended, source digests match; (6) validator exit 0 at the record state."
+     ]
+    }
+   ]
   }
  ]
 }

@@ -76,8 +76,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The gate must not break permissive autocomplete suggestions - only the promotion of a single feature to THE resolved lot is gated.",
     "Normalization is corpus-anchored ('37th'->'37 STREET'); do not invent rules beyond what the corpus + existing code establish - unclear cases fail closed to no-match and are reported.",
@@ -88,7 +88,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T04:10:11.493999+00:00",
-  "updated_at": "2026-09-19T06:21:25.869473+00:00",
+  "updated_at": "2026-09-19T06:33:36.537031+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -124,5 +124,7 @@
       "status": "in_progress",
       "message": "ORCH-SCOPE-ADJUDICATION recorded pre-submit (option A): no live GeoSearch-to-lot promotion exists at HEAD (call-path evidence, report section 5) - deliverables 1-4 are the contracted deliverable; no new authority path; server Geoclient stays the live lot authority; gate library + registry match discipline bind any future promotion packet; AS-1/AS-4 amended to the library level. Material cherry-picked at 3182f0a2; modularity exit 0; CI + AS-8 evidence next"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T06:33:36.537031+00:00"
 }
