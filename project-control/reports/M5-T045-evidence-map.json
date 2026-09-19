@@ -1,0 +1,11 @@
+{
+  "task_id": "M5-T045",
+  "requirements": {
+    "D-066-R001": [
+      "Code graph regenerated at the contract seam (740 files/15648 nodes) with the navigation block embedded in the packet inputs (resolver leaf status, both recon-named consumer seams with line anchors, the single live ztldb call site, bbl primitives, the web consumer set). The producer verified the seams in source and the report anchors every claim by file:line; the live-provider condo step, the profile helper, and the display guard were all built exactly at the nav-named seams. Graph advisory; conclusions verified in source (packet input 4; producer report section 1; G0 report + addendum)."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances delivered under the recorded ORCH-SCOPE-DISPOSITION: the condo resolution reaches the profile ONLY through the existing contract-1.3.0 conflict/note channels with a machine outcome token; on screen AND the printed brief ONE shared condoWithholdsAllowances FAIL-SAFE ALLOW-LIST guard withholds every computed allowance unless the recognised resolved_single_base_lot success is present - a multi-lot conflict, unresolved/error, AND a missing/malformed/unknown token all withhold (screen + brief tests prove the withhold on otherwise-displayable evaluations); base lots render as RECORDS with explicit record-not-allowance wording; the entered-vs-analysed identity notice is neutral (no billing/base-lot inference) and states that no calculated allowance is shown; the multi-lot RECORDS-VIEW presentation is the recorded DB-031 follow-up, never silently narrowed. Amended AS-3/AS-8 carried; HJ walkthrough verifies on the CI-proven head."
+    ]
+  }
+}

@@ -13,7 +13,8 @@
     "SCOPE 1/2 - CONTRACT BUMP (binding; read docs/PROPOSAL_EDITOR_PHASED_PLAN.md phase B + B0 row, and the M5-T037 recipe FIRST): append '1.1.0' to the CLOSED contract-version enum in BOTH scenario.schema.json copies (byte-identical); add the OPTIONAL proposed_massing block under additionalProperties:false with: outline (EPSG:2263 feet vertex list, closed ring, bounded count), levels (count, per-level floor-to-floor height ft, optional per-level outline), named exterior wall segments (id + the two outline vertex indices they span), and the provenance stamp (author, kind - the literal 'proposed', editor_version, optional parent_scenario_id). 1.0.0 documents stay valid (all recorded fixtures green); a document emits 1.1.0 ONLY when the block is present; regenerate packages/contracts/generated/scenario.ts via the typegen script so the --check passes byte-identically; add at least TWO valid and THREE invalid fixtures under packages/contracts/fixtures/{valid,invalid}/scenario/ (open ring; self-intersecting outline; non-finite height).",
     "SCOPE 2/2 - VALIDATION MODULE (binding): NEW focused module services/api/app/scenario/proposal.py - validate_proposed_massing(...) consuming the parsed block: closed ring (first==last or explicit closure rule - document which), NON-self-intersecting outline (a deterministic segment-intersection check; shapely is available - is_valid/is_simple acceptable with the exact predicate documented), positive finite heights, level consistency (count matches records; per-level outlines each valid), unit sanity (2263 feet magnitudes - coordinate bounds for NYC), bounded ceilings (MAX_OUTLINE_VERTICES, MAX_LEVELS - the DB-013 typed fail-closed pattern), every failure a TYPED refusal naming the exact field; NO evaluation/derivation/builder change anywhere (B1/B2 territory); contract.py changes limited to admitting + threading the validated optional block and version. Answer the seven modularity boundary questions in your plan. PROPOSALS ARE A THIRD INPUT CLASS (D-076-R002 binding): never a city record, never a rule; kind stays the literal 'proposed'; nothing in this packet computes or implies an allowance.",
     "PRESERVATION (binding): every existing scenario behavior byte-identical for 1.0.0 documents (all scenario + api suites green unchanged); schema copies byte-identical to each other; typegen deterministic; no new dependency; no network in tests; NO builder/derive/api-route change; fixtures labeled; empty test files fail vitest-side only (py empties are fine, but seed real probes).",
-    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint.",
+    "[ORCH-PACKET-FIX 2026-09-19] The two fixture-directory allowed_paths entries were written as bare directory prefixes, which the broker's glob matcher does not treat as prefixes (S4.1 refused the first fixture write) - corrected to '**' globs in BOTH packet copies. No scope change: the same two fixture directories, now matchable."
   ],
   "outputs": [
     "scenario contract 1.1.0: optional proposed_massing block in BOTH schema copies (byte-identical) + regenerated TS types + valid/invalid fixtures; 1.0.0 documents untouched-valid",
@@ -27,8 +28,8 @@
   "allowed_paths": [
     "packages/contracts/schemas/v1/scenario.schema.json",
     "packages/contracts/generated/scenario.ts",
-    "packages/contracts/fixtures/valid/scenario/",
-    "packages/contracts/fixtures/invalid/scenario/",
+    "packages/contracts/fixtures/valid/scenario/**",
+    "packages/contracts/fixtures/invalid/scenario/**",
     "services/api/app/_contract_schemas/v1/scenario.schema.json",
     "services/api/app/scenario/contract.py",
     "services/api/app/scenario/proposal.py",
