@@ -25,6 +25,14 @@ from types import SimpleNamespace
 
 import pytest
 
+from app.connectors.condo_base_lot import (
+    OUTCOME_ERROR,
+    OUTCOME_MULTI_LOT,
+    OUTCOME_NOT_CONDO_BILLING,
+    OUTCOME_RESOLVED_SINGLE,
+    OUTCOME_UNRESOLVED,
+    CondoResolution,
+)
 from app.connectors.mappluto_geometry_arcgis import (
     CRS_STAMP,
     analyze_lot_geometry,
@@ -186,6 +194,36 @@ class RecordingFetchers:
 
 def _install(monkeypatch, fetchers: LiveSpatialFetchers) -> None:
     monkeypatch.setattr(live_provider, "_ACTIVE_FETCHERS", fetchers)
+
+
+# ---------------------------------------------------------------------------
+# Condo pre-lookup doubles (M5-T045). The condo seam runs BEFORE the zoning-lot
+# lookup; these fake it so tests stay offline. A recording resolver captures the
+# BBL it was asked to resolve, so a substitution vs pass-through is observable.
+# ---------------------------------------------------------------------------
+
+
+class _RecordingCondo:
+    """Condo resolver double returning a fixed CondoResolution and recording the
+    BBLs it was asked to resolve."""
+
+    def __init__(self, outcome):
+        self._outcome = outcome
+        self.calls: list[tuple[str, str]] = []
+
+    def __call__(self, bbl: str, correlation_id: str):
+        self.calls.append((bbl, correlation_id))
+        return self._outcome
+
+
+def _condo_pass_through(bbl: str):
+    return CondoResolution(
+        outcome=OUTCOME_NOT_CONDO_BILLING, input_bbl=bbl, correlation_id=CID
+    )
+
+
+def _install_condo(monkeypatch, resolver) -> None:
+    monkeypatch.setattr(live_provider, "_ACTIVE_CONDO_RESOLVER", resolver)
 
 
 def _fail_safe_lines(caplog) -> list[str]:
@@ -470,6 +508,10 @@ def test_m5t033_flag_on_connector_failure_absent_but_calls_and_logs(
         ztldb=ZtldbUpstreamError("canary-m5t033", correlation_id=CID)
     )
     _install(monkeypatch, recording.suite())
+    # Stub the condo pre-lookup to pass-through so the ztldb-error signature is
+    # isolated: parcel 3022647515 is a billing lot, but this test pins the ztldb
+    # failure branch, not condo resolution (covered by the M5-T045 tests below).
+    _install_condo(monkeypatch, lambda b, c: _condo_pass_through(b))
     with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
         assert default_live_substrate(bbl, CID) is None
     assert recording.ztldb_calls == [(bbl, CID)]
@@ -514,6 +556,10 @@ def test_m5t033_shared_connector_failure_is_uniform_absent_flag_on(
     exactly one payload-only connector_error line - signatures read at the runtime
     boundary, never from the response body."""
     monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    # Stub the condo pre-lookup to pass-through so every parcel reaches ztldb and
+    # the shared-fault signature is what is under test (billing lot 3022647515
+    # included); condo resolution itself is covered by the M5-T045 tests below.
+    _install_condo(monkeypatch, lambda b, c: _condo_pass_through(b))
     bbls = (*_D059_BBLS, _CONTROL_BBL)
     results = []
     with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
@@ -533,3 +579,99 @@ def test_m5t033_shared_connector_failure_is_uniform_absent_flag_on(
     assert len(lines) == len(bbls)
     assert all("event=connector_error" in line for line in lines)
     assert all("canary-shared" not in line for line in lines)
+
+
+# ---------------------------------------------------------------------------
+# M5-T045: condo billing-BBL -> base-lot PRE-LOOKUP wiring (AS-1, AS-3..AS-5).
+# The condo step runs BEFORE the zoning-lot lookup; a resolved single base lot
+# substitutes for the input, and multi-lot / unresolved / typed-error outcomes
+# fail-safe to None (absent substrate). Divergent zoning is never collapsed and
+# a substrate is never fabricated. Doubles keep the tests offline.
+# ---------------------------------------------------------------------------
+
+_BILLING_BBL = "3022647515"  # Brooklyn billing lot 7515 (DB-002 worked case)
+_BASE_LOT = "3022640032"
+
+
+def _condo(outcome, **kwargs) -> CondoResolution:
+    return CondoResolution(
+        outcome=outcome, input_bbl=_BILLING_BBL, correlation_id=CID, **kwargs
+    )
+
+
+def test_m5t045_as1_resolved_single_runs_pipeline_on_base_lot(caplog) -> None:
+    condo = _RecordingCondo(
+        _condo(
+            OUTCOME_RESOLVED_SINGLE,
+            base_bbls=(_BASE_LOT,),
+            resolved_base_bbl=_BASE_LOT,
+            condo_key="301313",
+        )
+    )
+    recording = RecordingFetchers()
+    with caplog.at_level(logging.INFO, logger="app.spatial.live_provider"):
+        record = build_live_substrate(
+            _BILLING_BBL, CID, fetchers=recording.suite(), condo_resolver=condo
+        )
+    # A real substrate composed by the engine, with the zoning-lot lookup run on
+    # the BASE lot, not the billing BBL.
+    assert isinstance(record, LotIntersectionRecord)
+    assert condo.calls == [(_BILLING_BBL, CID)]
+    assert recording.ztldb_calls == [(_BASE_LOT, CID)]
+    assert recording.lot_calls == [(_BASE_LOT, CID)]
+    # The substitution is recorded, payload-only (digit BBLs + our correlation id).
+    info = [
+        r.getMessage()
+        for r in caplog.records
+        if r.name == "app.spatial.live_provider" and "condo_resolution" in r.getMessage()
+    ]
+    assert len(info) == 1
+    assert f"input_bbl={_BILLING_BBL}" in info[0]
+    assert f"base_bbl={_BASE_LOT}" in info[0]
+    assert f"correlation_id={CID}" in info[0]
+
+
+@pytest.mark.parametrize(
+    ("outcome", "kwargs", "event"),
+    [
+        (
+            OUTCOME_MULTI_LOT,
+            {"base_bbls": (_BASE_LOT, "3022640033")},
+            "event=condo_multi_lot_set",
+        ),
+        (OUTCOME_UNRESOLVED, {}, "event=condo_unresolved"),
+        (OUTCOME_ERROR, {"error_type": "rate_limited"}, "event=condo_error"),
+    ],
+    ids=["multi-lot", "unresolved", "typed-error"],
+)
+def test_m5t045_condo_fail_safe_yields_absent_substrate_zero_lookups(
+    outcome, kwargs, event, caplog
+) -> None:
+    condo = _RecordingCondo(_condo(outcome, **kwargs))
+    recording = RecordingFetchers()  # healthy doubles that must never be reached
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        result = build_live_substrate(
+            _BILLING_BBL, CID, fetchers=recording.suite(), condo_resolver=condo
+        )
+    assert result is None
+    # No zoning-lot lookup happens on a fail-safe condo outcome (short-circuit).
+    assert condo.calls == [(_BILLING_BBL, CID)]
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+    lines = _fail_safe_lines(caplog)
+    assert len(lines) == 1
+    assert event in lines[0]
+    assert f"correlation_id={CID}" in lines[0]
+
+
+def test_m5t045_non_condo_passthrough_default_resolver_byte_identical() -> None:
+    """A non-condo BBL uses the DEFAULT condo seam (no double): classification is
+    pure, so it passes through with ZERO condo I/O and the pipeline runs on the
+    input BBL unchanged - byte-identical to the pre-M5-T045 behavior."""
+    recording = RecordingFetchers()
+    record = build_live_substrate(BBL, CID, fetchers=recording.suite())
+    assert isinstance(record, LotIntersectionRecord)
+    assert record.bbl == BBL
+    assert recording.ztldb_calls == [(BBL, CID)]
+    assert recording.lot_calls == [(BBL, CID)]

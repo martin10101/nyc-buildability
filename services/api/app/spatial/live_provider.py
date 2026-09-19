@@ -39,6 +39,7 @@ import os
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
+from app.connectors.condo_base_lot import resolve_condo_billing
 from app.connectors.mappluto_geometry_arcgis import fetch_lot_geometry
 from app.connectors.zoning_features_arcgis import (
     MAX_RESULT_RECORD_COUNT,
@@ -50,6 +51,7 @@ from .adapter import compose_from_connectors
 
 __all__ = [
     "LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR",
+    "CondoResolverSeam",
     "LiveSpatialFetchers",
     "build_live_substrate",
     "default_live_substrate",
@@ -136,6 +138,32 @@ _ACTIVE_FETCHERS = LiveSpatialFetchers(
 
 
 # ---------------------------------------------------------------------------
+# Condo billing-BBL -> base-lot pre-lookup step (M5-T045).
+#
+# A condo BILLING BBL (lot 7501-7599) has no zonable land parcel of its own; the
+# zoning-lot lookup must run on the condo's BASE land lot. This seam runs BEFORE
+# any zoning-lot fetch and is fail-safe: a resolved SINGLE base lot substitutes
+# for the input; a MULTI-LOT / UNRESOLVED / typed-ERROR outcome fail-safes to
+# None (absent substrate -> downstream professional review), never fabricating a
+# substrate and never collapsing a condo's divergent-zoning base lots. A non
+# condo-billing BBL is a pass-through (zero connector calls) so non-condo and
+# flag-off behavior stays byte-identical.
+# ---------------------------------------------------------------------------
+
+# (canonical_bbl, correlation_id) -> CondoResolution
+CondoResolverSeam = Callable[[str, str], object]
+
+
+def _live_resolve_condo(canonical_bbl: str, correlation_id: str) -> object:
+    return resolve_condo_billing(canonical_bbl, correlation_id=correlation_id)
+
+
+# Tests monkeypatch this attribute to inject a condo double, exactly like
+# _ACTIVE_FETCHERS. Classification is pure, so a non-condo BBL costs zero I/O.
+_ACTIVE_CONDO_RESOLVER: CondoResolverSeam = _live_resolve_condo
+
+
+# ---------------------------------------------------------------------------
 # Candidate-district derivation (official assignment -> bounded layer queries)
 # ---------------------------------------------------------------------------
 
@@ -190,21 +218,66 @@ def _fail_safe(event: str, correlation_id: str, exc: Exception | None = None) ->
     )
 
 
+def _record_condo_substitution(
+    input_bbl: str, base_bbl: str, condo_key: str | None, correlation_id: str
+) -> None:
+    """Payload-only record of a condo billing-BBL -> base-lot substitution.
+    Only digit-string BBLs / condo_key and our own correlation id are logged;
+    never an untrusted upstream string."""
+    logger.info(
+        "live_spatial_substrate condo_resolution input_bbl=%s base_bbl=%s "
+        "condo_key=%s correlation_id=%s",
+        input_bbl,
+        base_bbl,
+        condo_key if condo_key is not None else "none",
+        correlation_id,
+    )
+
+
 def build_live_substrate(
     canonical_bbl: str,
     correlation_id: str,
     *,
     fetchers: LiveSpatialFetchers,
+    condo_resolver: CondoResolverSeam | None = None,
 ) -> object | None:
     """Compose the live spatial substrate for one BBL, or ``None`` (absent ->
     downstream professional-review fail-safe) on ANY failure or partial input.
+
+    A condo billing-BBL is resolved to its base land lot BEFORE the zoning-lot
+    lookup (``condo_resolver``; defaults to the module seam): a resolved single
+    base lot substitutes for the input and the substitution is recorded; a
+    multi-lot / unresolved / typed-error condo outcome fail-safes to ``None``,
+    never fabricating a substrate and never collapsing divergent zoning. A non
+    condo-billing BBL passes through unchanged with zero condo I/O.
 
     Returns the engine's ``LotIntersectionRecord`` unmodified - its review /
     conflict / uncertain classes are the documented fail-safe outcomes and are
     never collapsed or upgraded here.
     """
+    resolve_condo = condo_resolver or _ACTIVE_CONDO_RESOLVER
     try:
-        ztldb_result = fetchers.fetch_ztldb(canonical_bbl, correlation_id)
+        # Condo pre-lookup step: resolve a billing BBL to its base land lot, or
+        # fail safe. Runs before any zoning-lot fetch.
+        condo = resolve_condo(canonical_bbl, correlation_id)
+        if getattr(condo, "is_fail_safe", False):
+            # multi-lot / unresolved / typed error -> absent substrate. Divergent
+            # zoning is never collapsed; a reference is never a computed answer.
+            _fail_safe(f"condo_{getattr(condo, 'outcome', 'fail_safe')}", correlation_id)
+            return None
+        if getattr(condo, "substitutes_base_lot", False):
+            substrate_bbl = getattr(condo, "resolved_base_bbl", None) or canonical_bbl
+            _record_condo_substitution(
+                canonical_bbl,
+                substrate_bbl,
+                getattr(condo, "condo_key", None),
+                correlation_id,
+            )
+        else:
+            # Not a condo-billing BBL: byte-identical prior behavior.
+            substrate_bbl = canonical_bbl
+
+        ztldb_result = fetchers.fetch_ztldb(substrate_bbl, correlation_id)
         queries = _candidate_layer_queries(
             getattr(ztldb_result, "zoning_assignment", None)
         )
@@ -214,7 +287,7 @@ def build_live_substrate(
             _fail_safe("no_candidate_districts", correlation_id)
             return None
 
-        lot_result = fetchers.fetch_lot(canonical_bbl, correlation_id)
+        lot_result = fetchers.fetch_lot(substrate_bbl, correlation_id)
 
         layer_results: list[object] = []
         for layer, field_name, value in queries:
@@ -245,5 +318,8 @@ def default_live_substrate(canonical_bbl: str, correlation_id: str) -> object | 
     if not live_spatial_provider_enabled():
         return None
     return build_live_substrate(
-        canonical_bbl, correlation_id, fetchers=_ACTIVE_FETCHERS
+        canonical_bbl,
+        correlation_id,
+        fetchers=_ACTIVE_FETCHERS,
+        condo_resolver=_ACTIVE_CONDO_RESOLVER,
     )

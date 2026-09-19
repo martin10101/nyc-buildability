@@ -8,7 +8,7 @@ import { ZoningSection } from "@/components/property/ZoningSection";
 import { ScenarioConstraints } from "@/components/compare/ScenarioConstraints";
 import { ScenarioAssumptions } from "@/components/compare/ScenarioAssumptions";
 import { PropertyFacts, OpenIssues } from "./ProfileViews";
-import { PropertyIssuesSummary } from "./PropertyOverview";
+import { PropertyIssuesSummary, CondoResolutionRecords, condoWithholdsAllowances } from "./PropertyOverview";
 import { DevelopmentLimits, IncompleteEvaluationNotice } from "./DevelopmentLimits";
 import { evaluationIsInspectable } from "@/lib/architect/development-limits";
 import { AdditionalZoningFlags } from "./AdditionalZoningFlags";
@@ -25,9 +25,19 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     // Retain original returns inside the print boundary. Only records associated
     // with the selected property may reach its result and calculation views.
     const bbl = profile.identity.bbl;
-    const scenario = returnedScenario?.evaluated_input.bbl === bbl ? returnedScenario : null;
+    const matchedScenario = returnedScenario?.evaluated_input.bbl === bbl ? returnedScenario : null;
     const identityEvaluation = returnedEvaluation?.evaluated_input.bbl === bbl ? returnedEvaluation : null;
-    const evaluation = evaluationIsInspectable(identityEvaluation) ? identityEvaluation : null;
+    const inspectableEvaluation = evaluationIsInspectable(identityEvaluation) ? identityEvaluation : null;
+    // D-073-R006: a multi-lot / unresolved condo billing-BBL profile withholds
+    // EVERY computed development allowance on the printed brief too — even when a
+    // scenario or rule evaluation matching this BBL is present and would otherwise
+    // be displayable — exactly as the screen (PropertyOverview) does. RECORDS
+    // still print (CondoResolutionRecords, AnalysisIdentityNotice); computed
+    // allowances never do. Screen and brief share this one guard so they can never
+    // disagree.
+    const condoWithholds = condoWithholdsAllowances(profile);
+    const scenario = condoWithholds ? null : matchedScenario;
+    const evaluation = condoWithholds ? null : inspectableEvaluation;
     const [auditAppendix, setAuditAppendix] = useState(false);
     const reportRef = useRef<HTMLDivElement | null>(null);
     const preparePrint = useRef<() => void>(() => undefined);
@@ -64,6 +74,11 @@ export function ReportView({ profile, scenario: returnedScenario, evaluation: re
     </section>
     <AnalysisIdentityNotice label="Scenario" requestedBbl={bbl} document={returnedScenario}/>
     <AnalysisIdentityNotice label="Rule evaluation" requestedBbl={bbl} document={returnedEvaluation}/>
+    {/* M5-T045 (D-073-R006): the condo billing-BBL -> base-lot RECORDS reach the
+        printed brief from the SAME component the screen (PropertyOverview) uses,
+        so the records-vs-allowances distinction can never disagree across the two
+        surfaces (one data path, the existing conflict/note channels). */}
+    <CondoResolutionRecords profile={profile}/>
     <IncompleteEvaluationNotice evaluation={identityEvaluation}/>
     {/* [ORCH-CORRECTED per M5-T037 HJ F1] The report feeds DevelopmentLimits the same
         inspectability-GATED evaluation every screen surface uses (and that

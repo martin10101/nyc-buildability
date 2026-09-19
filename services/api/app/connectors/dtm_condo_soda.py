@@ -102,7 +102,9 @@ __all__ = [
 logger = logging.getLogger("app.connectors.dtm_condo_soda")
 
 # --- Dataset identities (research section 2 / 10; DOF attribution) ----------
-SOURCE_ID = "nyc-dof-dtm-condo-soda"  # source_registry record deferred to the wiring packet
+# source_registry record: docs/research/source-registry-drafts/dtm-condo.json
+# (both DTM datasets, landed with the M5-T045 live wiring; DB-029b).
+SOURCE_ID = "nyc-dof-dtm-condo-soda"
 CONDO_DATASET_ID = "p8u6-a6it"  # DTM Condominiums (billing -> base lot set)
 UNIT_DATASET_ID = "eguu-7ie3"  # DTM Condominium Units (unit -> base lot)
 CONDO_BASE_URL = f"https://data.cityofnewyork.us/resource/{CONDO_DATASET_ID}.json"
@@ -198,7 +200,11 @@ _CONDO_KEY_RE = re.compile(r"\d{6}", re.ASCII)
 # Schema-drift 400 signature (Socrata platform behavior; same as the accepted
 # pluto_soda / ztldb_soda connectors).
 SCHEMA_DRIFT_ERROR_CODE = "query.soql.no-such-column"
-_ERROR_CODE_SAFE_RE = re.compile(r"^[A-Za-z0-9._-]{1,120}$")
+# M5-T045 rider (G5 F-consistency): matched with re.ASCII + .fullmatch like the
+# BBL / condo_key guards, so a code carrying a trailing newline or a Unicode
+# character fails the safe check and is repr()'d rather than logged verbatim.
+# ($-anchored .match used to accept a trailing "\n".)
+_ERROR_CODE_SAFE_RE = re.compile(r"[A-Za-z0-9._-]{1,120}", re.ASCII)
 
 DIVERGENT_ZONING_NOTICE = (
     "This resolver returns the full SET of base tax lots and makes NO zoning "
@@ -341,9 +347,30 @@ def _classify_400(body: str) -> str | None:
 def _sanitize_error_code(code: str | None) -> str | None:
     if code is None:
         return None
-    if _ERROR_CODE_SAFE_RE.match(code):
+    # M5-T045 rider (G5 F-consistency): .fullmatch, NOT .match, so a code that
+    # is safe only as a PREFIX (e.g. "no-such-column\n<injected>") fails the
+    # guard and is repr()'d rather than logged verbatim - the same anchor-tight
+    # posture the BBL / condo_key guards already use.
+    if _ERROR_CODE_SAFE_RE.fullmatch(code):
         return code
     return repr(code)
+
+
+def _limit_suffix(row_limit: int | None, *, correlation_id: str) -> str:
+    """M5-T045 rider (optional $limit defense-in-depth): append a SODA ``$limit``
+    to a keyed lookup so a drift that changes a key column's meaning cannot
+    return an unbounded page. Off by default (``None`` -> byte-identical URLs);
+    a caller opts in with a positive int. A non-positive / non-int value fails
+    closed rather than silently omitting the cap."""
+    if row_limit is None:
+        return ""
+    if not isinstance(row_limit, int) or isinstance(row_limit, bool) or row_limit <= 0:
+        raise SchemaDriftError(
+            "row_limit must be a positive int when supplied",
+            correlation_id=correlation_id,
+            detail={"row_limit": repr(row_limit)},
+        )
+    return f"&$limit={row_limit}"
 
 
 def classify_lot(bbl: str) -> str:
@@ -574,6 +601,7 @@ def resolve(
     correlation_id: str | None = None,
     app_token: str | None = None,
     dataset_rows_updated_at: dict[str, str] | None = None,
+    row_limit: int | None = None,
 ) -> CondoBaseLotResult:
     """Resolve a condominium BBL to the FULL SET of its base land tax lots.
 
@@ -628,9 +656,10 @@ def resolve(
     }
     notes: list[str] = []
     provenance: list[dict] = []
+    limit = _limit_suffix(row_limit, correlation_id=correlation_id)
 
     if lot_class == LOT_CLASS_BILLING:
-        url = f"{CONDO_BASE_URL}?condo_billing_bbl={canonical_bbl}"
+        url = f"{CONDO_BASE_URL}?condo_billing_bbl={canonical_bbl}{limit}"
         records = _fetch_rows(url, **fetch_kwargs)
         # G3 #1: stamp retrieved_at AFTER the successful response, per query
         # (the pluto_soda precedent) - a pre-request stamp could precede actual
@@ -671,7 +700,7 @@ def resolve(
         )
 
     # Unit lot: reverse-resolve, then expand by condo_key for the full set.
-    unit_url = f"{UNIT_BASE_URL}?unit_bbl={canonical_bbl}"
+    unit_url = f"{UNIT_BASE_URL}?unit_bbl={canonical_bbl}{limit}"
     unit_records = _fetch_rows(unit_url, **fetch_kwargs)
     retrieved_at = _rfc3339(clock())  # G3 #1: post-response stamp for the unit query
     provenance.append(
@@ -714,7 +743,7 @@ def resolve(
             )
         # Expand to the complete base-lot set so a multi-lot condo is never
         # collapsed to the single lot the unit sits on (research 7 step 3).
-        expand_url = f"{CONDO_BASE_URL}?condo_key={condo_key}"
+        expand_url = f"{CONDO_BASE_URL}?condo_key={condo_key}{limit}"
         expand_records = _fetch_rows(expand_url, **fetch_kwargs)
         # G3 #1: the expansion query gets its OWN post-response timestamp, so a
         # two-query resolve carries two distinct retrieved_at values.
@@ -767,6 +796,7 @@ def resolve_by_condo_key(
     correlation_id: str | None = None,
     app_token: str | None = None,
     dataset_rows_updated_at: dict[str, str] | None = None,
+    row_limit: int | None = None,
 ) -> CondoBaseLotResult:
     """Resolve the full base-lot set directly from a ``condo_key`` (research
     section 7 step 4a). This is the fallback for the 28 condos that carry a
@@ -791,7 +821,8 @@ def resolve_by_condo_key(
         )
     notes: list[str] = []
     provenance: list[dict] = []
-    url = f"{CONDO_BASE_URL}?condo_key={condo_key}"
+    limit = _limit_suffix(row_limit, correlation_id=correlation_id)
+    url = f"{CONDO_BASE_URL}?condo_key={condo_key}{limit}"
     records = _fetch_rows(
         url,
         transport=transport,

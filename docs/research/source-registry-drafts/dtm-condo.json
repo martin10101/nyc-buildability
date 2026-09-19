@@ -1,5 +1,112 @@
-{
-  "status": "placeholder",
-  "task": "M5-T045",
-  "note": "Seeded at the contract seam. The producer authors the real source-registry draft record here, covering BOTH Digital Tax Map datasets (p8u6-a6it condo units, eguu-7ie3 DTM lots), mirroring the committed ztldb.json shape field-for-field, from docs/research/condo-base-lot-resolution-sources.md, including the per-request freshness mechanism (X-SODA2-Truth-Last-Modified == rowsUpdatedAt) proven in docs/research/condo-null-billing-fixture-capture.md."
-}
+[
+  {
+    "source_id": "nyc-dof-dtm-condo-soda",
+    "agency": "NYC Department of Finance (DOF)",
+    "name": "Digital Tax Map: Condominiums — NYC Open Data tabular (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/p8u6-a6it.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "p8u6-a6it",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token via X-App-Token header (tokenless requests share a throttled IP pool; dev.socrata.com/docs/app-tokens). Optional per the platform model (DB-002 research §8.9); header only, never logged.",
+      "evidence": "SODA resource + metadata queried anonymously live 2026-09-18/19 (DB-002 §3; condo-null-billing-fixture-capture.md captures N1-N5, all HTTP 200, no 429)"
+    },
+    "rate_limits": {
+      "without_token": "throttled by IP in shared pool",
+      "with_token": "not throttled unless abusive/malicious",
+      "throttle_signal": "HTTP 429",
+      "evidence": "Socrata platform docs verified in M1-T001 (E7, dev.socrata.com/docs/app-tokens); connector maps 429 to a typed RateLimitedError after a bounded retry budget"
+    },
+    "update_frequency": "Cadence fields conflict on the record and both are captured verbatim (DB-002 §3.1, OQ-1): metadata custom fields state Update Frequency 'Weekly' / Data Change Frequency 'Daily' ('DOF Tax Map Unit makes daily edits … observed on DOF's Property Information Portal'), while the dataset description states 'Data is extracted from DOF's internal system on the last Friday of each month and refreshed on ArcGIS Online on the 1st.' PER-REQUEST FRESHNESS MECHANISM (proven in condo-null-billing-fixture-capture.md capture b/c): the response header X-SODA2-Truth-Last-Modified equals the dataset metadata rowsUpdatedAt for the same data-truth moment — both were 'Tue, 01 Sep 2026 14:05:56 GMT' == unix 1788271556 == 2026-09-01T14:05:56Z on 2026-09-19, so a connector can read freshness per response header without a separate metadata fetch and cross-check it against /api/views rowsUpdatedAt.",
+    "geographic_coverage": "All five boroughs; one row per (condo base lot, condo) pairing extracted from the specified DOF Digital Tax Map version. A condo billing BBL (billing lot 7501-7599) maps to one row PER base land lot, so a multi-lot condo returns several rows (worked case billing 3022647515 -> base lots 3022640032 and 3022640033; DB-002 §3.3). condo_billing_bbl is NULL for 28 condos (both count(condo_key) and count(distinct condo_key) over condo_billing_bbl IS NULL == 28; capture N4/N5), each single-base-lot — no multi-lot null-billing condo exists in this version (documented negative).",
+    "fields_available": {
+      "note": "Authoritative SODA column inventory: 9 columns from the columns array (DB-002 §3.2), mirrored in app.connectors.dtm_condo_soda.CONDO_COLUMNS. SODA OMITS blank/null fields per record: a null-billing record carries either 7 keys (no condo_name) or 8 keys (with condo_name) and NEVER a condo_billing_bbl key — the 'no billing lot assigned' signal is KEY ABSENCE, not an explicit JSON null (capture a byte-shape observations; DB-029c). BBL text columns are Socrata TEXT and arrive as clean zero-padded 10-digit strings (match ^[0-9]{10}$, no trailing '.0000' — contrast the PLUTO number-typed bbl trap).",
+      "columns": [
+        "condo_base_boro (text; one-digit borough of the base feature)",
+        "condo_base_block (number; five-digit block of the base feature)",
+        "condo_base_lot (number; four-digit lot of the base feature)",
+        "condo_base_bbl (text; Boro-Block-Lot concatenation of the base lot — the authoritative base land lot, zero-padded 10-digit string)",
+        "condo_base_bbl_key (text; condo_base_bbl + condo boro + condo number)",
+        "condo_key (number; condo Boro + 5-digit condo number in 6-digit format)",
+        "condo_number (text/number; the condo number)",
+        "condo_name (text; nullable — omitted when blank)",
+        "condo_billing_bbl (text; the 7501-7599 billing lot — nullable/omitted for the 28 null-billing condos)"
+      ],
+      "null_semantics": "Blank = omitted key on the SODA record (no sentinel). A parser MUST branch on key presence, never on an explicit null, for condo_billing_bbl and condo_name."
+    },
+    "terms_usage_notes": "DOF disclaimer (dataset description verbatim, DB-002 §3.1): 'This dataset reflects formal applications submitted to DOF but may not reflect the latest changes in other City systems … provided for informational purposes only and is not guaranteed to be accurate as of today's date.' The Digital Alteration Book (DAB) via the Property Information Portal is the authoritative log of why/when a condo's lot structure changed. NYC Open Data terms as verified in M1-T001.",
+    "connector_implementation": "IMPLEMENTED (task M5-T042, hardened M5-T044): services/api/app/connectors/dtm_condo_soda.py — deterministic, typed, fail-closed billing-BBL -> base-lot-SET resolver (never collapses a multi-lot set, makes NO zoning determination; DIVERGENT_ZONING_NOTICE carried on every resolved result). classify_lot ranges: billing 7501-7599, unit 1001-6999, else not-a-condo (zero lookups). resolve() follows the billing path against p8u6-a6it; a unit BBL resolves against eguu-7ie3 and is expanded by condo_key against p8u6-a6it for the FULL set; resolve_by_condo_key() is the fallback for the 28 null-billing condos. ASCII-fullmatch guards on the 10-digit BBL and 6-digit condo_key inputs and on every response-side condo_base_bbl; a no-such-column 400 is typed SchemaDriftError, 429/timeout/network map to typed RateLimitedError/SourceTimeoutError/SourceUnavailableError after a bounded retry. LIVE WIRING (task M5-T045): app.connectors.condo_base_lot.resolve_condo_billing is the policy seam consumers call BEFORE the zoning-lot lookup; app.spatial.live_provider inserts the condo step (fail-safe None on multi-lot / unresolved / error, resolved-single runs the pipeline on the base lot) and app.profile.zoning_crosscheck records the resolution through the existing contract-1.3.0 conflict/note channels.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version column in the data. Socrata rows last updated 2026-09-01T14:05:56Z (rowsUpdatedAt raw 1788271556; unchanged from the DB-002 capture through the 2026-09-19 fixture capture — viewLastModified advanced to 2026-09-18 for a metadata/view edit only, not a row reload).",
+    "health_status": "healthy — served HTTP 200 on every DB-002 and DB-029c live query; rows current at 2026-09-01. Confidence HIGH for the primary billing path (raw official responses; loop-closed against downstream ZTLDB), MEDIUM on cadence reconciliation and rarer edge cases (air/sub/REUC-lot condos, base-lot reuse).",
+    "known_limitations": [
+      "SODA omits blank/null fields per record; the null-billing signal is condo_billing_bbl KEY ABSENCE (7-or-8-key object), never an explicit null — a fixture modeling it as {\"condo_billing_bbl\": null} is byte-INFAITHFUL (DB-029c)",
+      "Cadence fields conflict (metadata 'Weekly'/'Daily' vs description 'monthly, last Friday extract') — OQ-1; per-request X-SODA2-Truth-Last-Modified is the reliable freshness signal",
+      "PLUTO appbbl is single-valued and structurally incomplete for multi-lot condos (returns only lot 32 for the two-lot worked case; DB-002 §6.1) — NEVER a base-lot source, at most a later cross-check flag",
+      "No multi-lot null-billing condo exists in this version (28 == 28) — a 2+-base-lot null-billing fixture cannot be captured, only labeled-synthetic",
+      "Legal handling of a condo whose base lots straddle two zoning lots is a downstream qualified-human surface (ZR 12-10) — never auto-collapsed by the resolver"
+    ],
+    "fallback_source": "DOF DTM ArcGIS feature server services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer, table CONDO (id 3) — returned the identical base-lot mapping (DB-002 §5); failover only, not implemented in the connector.",
+    "open_questions": [
+      "OQ-1: reconcile the conflicting cadence fields (Weekly/Daily vs monthly last-Friday extract) with DOF before asserting a refresh SLA",
+      "OQ-2: base-lot reality of a resolved condo_base_bbl (that it is a live zonable land lot) is confirmed downstream via ZTLDB fdkv-4t4z?bbl=…, not by this dataset"
+    ]
+  },
+  {
+    "source_id": "nyc-dof-dtm-condo-unit-soda",
+    "agency": "NYC Department of Finance (DOF)",
+    "name": "Digital Tax Map: Condominium Units — NYC Open Data tabular (SODA)",
+    "official_url": "https://data.cityofnewyork.us/api/views/eguu-7ie3.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "eguu-7ie3",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token via X-App-Token header (same platform model as p8u6-a6it); optional, header only, never logged.",
+      "evidence": "DOF DTM collection sibling of p8u6-a6it; queried live in DB-002 §4 (unit reverse resolve of unit BBL 3022642601 -> base lot 3022640032)"
+    },
+    "rate_limits": {
+      "without_token": "throttled by IP in shared pool",
+      "with_token": "not throttled unless abusive/malicious",
+      "throttle_signal": "HTTP 429",
+      "evidence": "Socrata platform docs verified in M1-T001 (E7); connector maps 429 to a typed RateLimitedError after a bounded retry budget"
+    },
+    "update_frequency": "Same DOF DTM release cadence as p8u6-a6it (extracted last Friday of the month, refreshed on the 1st; description verbatim). Reliability note (eguu-7ie3 description verbatim, DB-002 §3.1): 'To ensure reliability, the Tax Map alternates between Set A and Set B each month. If one set has issues, the previous month's copy remains online.' Per-request freshness via the same X-SODA2-Truth-Last-Modified == rowsUpdatedAt header mechanism.",
+    "geographic_coverage": "All five boroughs; one row per condominium UNIT. A unit BBL (the 1001-6999 series) maps to its condo_base_bbl plus condo_key, unit_designation and floor_text; the resolver expands by condo_key against p8u6-a6it so a multi-lot condo is never collapsed to the single lot the unit sits on (DB-002 §4).",
+    "fields_available": {
+      "note": "Authoritative SODA column inventory: 16 columns from the columns array (DB-002 §4.1), mirrored in app.connectors.dtm_condo_soda.UNIT_COLUMNS. SODA omits blank fields per record; BBL text columns arrive as zero-padded 10-digit strings.",
+      "columns": [
+        "condo_base_boro (text)",
+        "condo_base_block (number)",
+        "condo_base_lot (number)",
+        "condo_base_bbl (text; the base land lot for this unit)",
+        "condo_base_bbl_key (text)",
+        "condo_key (number; condo boro + 5-digit condo number)",
+        "condo_number (text/number)",
+        "unit_boro (text)",
+        "unit_block (number)",
+        "unit_lot (number; the 1001-6999 unit lot)",
+        "unit_bbl (text; the unit BBL entered by a user)",
+        "unit_designation (text; e.g. '1A')",
+        "floor_text (text)",
+        "model (text)",
+        "geometry_type (text)",
+        "effective_tax_year (text/number)"
+      ],
+      "null_semantics": "Blank = omitted key on the SODA record (no sentinel); parse on key presence."
+    },
+    "terms_usage_notes": "Same DOF disclaimer and DAB provenance channel as p8u6-a6it (DB-002 §3.1); NYC Open Data terms as verified in M1-T001.",
+    "connector_implementation": "IMPLEMENTED (task M5-T042): the unit path of services/api/app/connectors/dtm_condo_soda.py — resolve() reverse-resolves a unit BBL against eguu-7ie3, guards the response-side condo_key (6 ASCII digits) before interpolating it, then expands by condo_key against p8u6-a6it for the full base-lot set; the unit path is out of the M5-T045 LIVE seam scope (billing is the entry class) and stays available for a later unit-entry increment.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "No version column; rowsUpdatedAt raw 1788271541 = 2026-09-01T14:05:41Z at the DB-002 capture (metadata sibling of p8u6-a6it, dtm_condo_soda.RESEARCH_OBSERVED_ROWS_UPDATED_AT).",
+    "health_status": "healthy — served the unit reverse-resolve loop correctly in DB-002 §4; confidence HIGH for the reverse/unit path.",
+    "known_limitations": [
+      "A unit row may carry no condo_key; the resolver then returns the unit's DIRECT base lot(s) without condo_key expansion and surfaces an incompleteness note (never guesses the full set)",
+      "SODA omits blank fields; schema must come from the columns array, never from record keys",
+      "Number-typed BBL/block/lot serialize as strings; normalize to 10-digit BBL strings"
+    ],
+    "fallback_source": "DOF DTM ArcGIS feature server DTM_ETL_DAILY_view FeatureServer, table CONDO_UNIT (id 4) — identical mapping (DB-002 §5); failover only, not implemented.",
+    "open_questions": [
+      "OQ-1: reconcile the conflicting DTM cadence fields with DOF (shared with p8u6-a6it)"
+    ]
+  }
+]

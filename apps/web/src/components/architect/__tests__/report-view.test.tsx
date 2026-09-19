@@ -12,6 +12,7 @@ import { DevelopmentLimits } from "../DevelopmentLimits";
 import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
+import type { PropertyProfile } from "@/lib/contract";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
 afterEach(cleanup);
@@ -268,5 +269,130 @@ describe("M5-T040 — DB-025(c) conservative-FAR labelling parity, screen and re
     expect(screen.getByTestId("wide-street-result")).toHaveTextContent("Professional review required");
     expect(within(screen.getByTestId("wide-street-provenance")).getByRole("heading", { name: "Wide-street conditional FAR · D-052 provenance", hidden: true })).toBeInTheDocument();
     expect(screen.queryByText(/3\.44/)).toBeNull();
+  });
+});
+
+describe("M5-T045 — analysis identity record on the printed brief (D-073-R006)", () => {
+  // The printed brief renders the SAME AnalysisIdentityNotice the screen uses
+  // (ReportView -> AnalysisIdentityNotice), so the entered-vs-analyzed identity
+  // record and its fail-safe withhold reach print with no second data path.
+  it("prints a neutral entered-vs-analyzed withhold for a rule evaluation returned for another BBL", () => {
+    const profile = baseProfile();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = "5000010001"; // unrelated to the opened property
+    expect(doc.evaluated_input.bbl).not.toBe(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Rule evaluation identity mismatch");
+    expect(alert).toHaveTextContent("Results are withheld from this property");
+    expect(alert).toHaveTextContent(`You opened BBL ${profile.identity.bbl}`);
+    expect(alert).toHaveTextContent("no relationship between them is inferred");
+    expect(alert).toHaveTextContent("no calculated allowance is shown");
+    // (Neutral-wording / no-inference regex is asserted on a clean minimal
+    // document in condo-resolution-display.test.tsx; here the CapturedRecord dumps
+    // the full fixture JSON, so a whole-alert negative regex would be fragile.)
+    // Records vs allowances: the divergent identity's returned record is captured
+    // as a record; no computed wide-street FAR reaches the brief.
+    expect(screen.getByText("Returned rule evaluation record")).toBeInTheDocument();
+    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+  });
+
+  it("prints the missing-identity withhold when the analysis states no BBL", () => {
+    const profile = baseProfile();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = null;
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Rule evaluation identity missing");
+    expect(alert).toHaveTextContent("returned BBL not stated. Results are withheld from this property.");
+    expect(alert).toHaveTextContent("analyzed for an unstated identifier");
+  });
+
+  it("prints no identity withhold when the evaluation matches the opened property", () => {
+    const profile = baseProfile();
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = profile.identity.bbl;
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    expect(screen.queryByText(/Results are withheld from this property/)).toBeNull();
+  });
+});
+
+describe("M5-T045 — condo billing-BBL records reach the printed brief (D-073-R006)", () => {
+  // The printed brief renders the SAME CondoResolutionRecords the screen
+  // (PropertyOverview) uses, from the SAME existing conflict/note channels, so
+  // the records-vs-allowances distinction can never disagree across surfaces —
+  // there is no second data path.
+  function matchingDoc(bbl: string): RuleEvaluation {
+    const doc = draftApplicableDoc();
+    doc.evaluated_input.bbl = bbl;
+    return doc;
+  }
+
+  it("prints the resolved single base-lot record AND the computed allowance — the analysis ran on the substituted base lot", () => {
+    const profile = baseProfile();
+    profile.reproducibility!.connector_notes = [
+      "condo_resolution: [resolved_single_base_lot] billing BBL 1003037501 resolved to the single recorded base lot 1003030019 " +
+        "(source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it, condo_key=103343, retrieved 2026-09-01T14:05:56Z); " +
+        "the analysis substrate is the recorded base lot. RECORD, not a computed allowance.",
+    ];
+    // A recognised single-base-lot resolution does NOT withhold: the computed
+    // wide-street allowance still prints on the brief. This is the control the
+    // withhold cases below compare against (same evaluation, allowance suppressed).
+    const doc = wideStreetDoc(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    const records = screen.getByTestId("condo-resolution-records");
+    expect(records).toHaveTextContent("recorded base lot 1003030019");
+    expect(records).toHaveTextContent("not a computed development allowance");
+    expect(screen.getByTestId("wide-street-result")).toBeInTheDocument();
+  });
+
+  it("withholds the printed computed allowance for a condo note with a MISSING outcome token — fail-safe", () => {
+    const profile = baseProfile();
+    profile.reproducibility!.connector_notes = [
+      "condo_resolution: billing BBL 1003037501 mapped to a recorded base lot " +
+        "(source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it); no machine outcome token.",
+    ];
+    const doc = wideStreetDoc(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    // The record still prints; the computed wide-street allowance (which the same
+    // evaluation prints in the resolved-single control above) is withheld.
+    expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument();
+    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+  });
+
+  it("withholds the printed computed allowance for a condo note with an UNKNOWN outcome token — fail-safe on a token this build does not recognise", () => {
+    const profile = baseProfile();
+    profile.reproducibility!.connector_notes = [
+      "condo_resolution: [resolved_multi_condo_v2] billing BBL 1003037501 produced a future outcome " +
+        "this build does not recognise (source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it).",
+    ];
+    const doc = wideStreetDoc(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument();
+    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+  });
+
+  it("prints the multi-lot condo records with no computed allowance and no chosen answer", () => {
+    const profile = baseProfile();
+    profile.conflicts = [
+      {
+        field: "condo_base_lot_resolution",
+        values: [
+          { source_id: "nyc-dof-dtm-condo-soda", value: "1003030019", derivation: "recorded base tax lot (one of 2) - a RECORD, never a chosen answer" },
+          { source_id: "nyc-dof-dtm-condo-soda", value: "1003030025", derivation: "recorded base tax lot (one of 2) - a RECORD, never a chosen answer" },
+        ],
+        resolution: "unresolved",
+        reason: "condo billing BBL 1003037502 resolves to 2 base tax lots; presented as RECORDS with NO computed allowance.",
+      },
+    ] as unknown as PropertyProfile["conflicts"];
+    render(<ReportView profile={profile} scenario={null} evaluation={matchingDoc(profile.identity.bbl)} label="Test property" />);
+    expect(screen.getByTestId("condo-resolution-multilot")).toHaveTextContent("no computed allowance");
+    expect(screen.getAllByTestId("condo-base-lot-record")).toHaveLength(2);
+  });
+
+  it("prints no condo records for a non-condo profile (byte-identical)", () => {
+    const profile = baseProfile();
+    render(<ReportView profile={profile} scenario={null} evaluation={matchingDoc(profile.identity.bbl)} label="Test property" />);
+    expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
   });
 });

@@ -169,22 +169,46 @@ C3_UNIT_SPLIT_BODY = (
     '{"condo_base_bbl":"3022640033","count_unit_bbl":"6"}]'
 )
 
-# SYNTHETIC null-billing scenario fixture (clearly labeled, NOT an official
-# capture). The research embeds no byte-faithful raw response for a specific
-# NULL-billing condo (only the aggregate count 28, research 3.4). This shape is
-# structurally faithful to the 9-column Condominiums schema with
-# condo_billing_bbl = null, and exercises the condo_key fallback code path for a
-# null-billing condo. The OFFICIAL null-billing fixture stays a documented
-# source limitation for orchestrator resolution (never fabricated as official).
-SYNTHETIC_NULL_BILLING_CONDO_KEY_BODY = (
+# REAL byte-faithful NULL-billing capture (DB-029c;
+# docs/research/condo-null-billing-fixture-capture.md capture b). This is the
+# EXACT 229-byte body p8u6-a6it?condo_key=103343 returned (THE 128 HESTER STREET
+# CONDO, single base lot 1003030019). LOAD-BEARING: SODA OMITS null columns, so
+# the null-billing signal is condo_billing_bbl KEY ABSENCE - this record carries
+# 8 keys and NO condo_billing_bbl key, never an explicit JSON null. It replaces
+# the retired byte-infaithful explicit-null synthetic for the single-lot
+# null-billing branch (the branch the real corpus can produce).
+REAL_NULL_BILLING_103343_BODY = (
+    '[{"condo_base_boro":"1","condo_base_block":"303","condo_base_lot":"19",'
+    '"condo_base_bbl":"1003030019","condo_base_bbl_key":"1003030019103343",'
+    '"condo_key":"103343","condo_number":"3343",'
+    '"condo_name":"THE 128 HESTER STREET CONDO"}]'
+)
+
+# The minimal-shape null-billing record from the SAME capture (capture a,
+# condo_key 100355): 7 keys - NO condo_name AND NO condo_billing_bbl. Proves the
+# parser tolerates a 7-key object, not only the 8-key one (key-absence
+# tolerance, DB-029c).
+REAL_NULL_BILLING_100355_BODY = (
+    '[{"condo_base_boro":"1","condo_base_block":"1003","condo_base_lot":"1",'
+    '"condo_base_bbl":"1010030001","condo_base_bbl_key":"1010030001100355",'
+    '"condo_key":"100355","condo_number":"355"}]'
+)
+
+# LABELED SYNTHETIC (documented negative): NO multi-lot null-billing condo
+# exists citywide - both null-billing counts are 28, each single-base-lot
+# (capture N4/N5). This synthetic exercises ONLY the condo_key-expansion code
+# path for a 2+-base-lot key. It is byte-SHAPE faithful (condo_billing_bbl and
+# condo_name are OMITTED keys, never explicit null - the retired synthetic's
+# byte-infaithful explicit nulls are gone), but the multi-lot-null-billing
+# COMBINATION cannot occur in reality, so it is clearly labeled synthetic and
+# never presented as an official capture.
+SYNTHETIC_MULTI_LOT_KEY_ABSENT_BODY = (
     '[{"condo_base_boro":"3","condo_base_block":"9999","condo_base_lot":"40",'
     '"condo_base_bbl":"3099990040","condo_base_bbl_key":"3099990040309999",'
-    '"condo_key":"309999","condo_number":"9999","condo_name":null,'
-    '"condo_billing_bbl":null},'
+    '"condo_key":"309999","condo_number":"9999"},'
     '{"condo_base_boro":"3","condo_base_block":"9999","condo_base_lot":"41",'
     '"condo_base_bbl":"3099990041","condo_base_bbl_key":"3099990041309999",'
-    '"condo_key":"309999","condo_number":"9999","condo_name":null,'
-    '"condo_billing_bbl":null}]'
+    '"condo_key":"309999","condo_number":"9999"}]'
 )
 
 CONDO_URL = f"https://data.cityofnewyork.us/resource/{CONDO_DATASET_ID}.json"
@@ -404,17 +428,69 @@ def test_c6_condo_key_fallback_resolves_full_set() -> None:
     assert result.condo_key == "301313"
 
 
-def test_c6_null_billing_condo_resolves_via_condo_key_synthetic() -> None:
-    # Null-billing scenario (the 28 condos with a NULL condo_billing_bbl,
-    # research 3.4): they cannot be reached by the billing-BBL path and are
-    # resolved via condo_key. The fixture is SYNTHETIC and labeled - the
-    # research embeds no byte-faithful raw response for a specific null-billing
-    # condo, so the OFFICIAL null-billing fixture is a documented source
-    # limitation for orchestrator resolution, not fabricated here.
+def test_c6_real_null_billing_condo_103343_resolves_via_condo_key() -> None:
+    # DB-029c: the REAL captured null-billing condo (condo_key 103343, THE 128
+    # HESTER STREET CONDO). Its billing-BBL path would be empty (no billing lot
+    # assigned), so it is resolved via the condo_key fallback - proving step 4a
+    # resolves a real null-billing condo to its base land lot from byte-faithful
+    # official bytes, not a synthetic.
+    transport = RoutedTransport(
+        {
+            f"{CONDO_URL}?condo_key=103343": TransportResponse(
+                200, REAL_NULL_BILLING_103343_BODY
+            )
+        }
+    )
+    result = resolve_by_condo_key(
+        "103343", transport=transport, clock=FIXED_CLOCK, correlation_id=FIXED_CORR
+    )
+    assert result.status == STATUS_RESOLVED
+    assert result.resolution_path == PATH_CONDO_KEY
+    assert result.base_bbls == ["1003030019"]  # single base lot
+    assert result.condo_key == "103343"
+    assert result.condo_number == "3343"
+
+
+@pytest.mark.parametrize(
+    ("body", "expected_keys"),
+    [
+        (REAL_NULL_BILLING_103343_BODY, 8),  # carries condo_name
+        (REAL_NULL_BILLING_100355_BODY, 7),  # no condo_name AND no billing key
+    ],
+)
+def test_c6_null_billing_key_absence_is_tolerated(body: str, expected_keys: int) -> None:
+    # DB-029c KEY-ABSENCE tolerance: SODA omits null columns, so a null-billing
+    # record is a 7-OR-8-key object with condo_billing_bbl ABSENT (never an
+    # explicit JSON null). The parser must branch on key presence and never
+    # KeyError, resolving cleanly from either shape.
+    [record] = json.loads(body)
+    assert len(record) == expected_keys
+    assert "condo_billing_bbl" not in record  # the load-bearing key-absence fact
+    key = record["condo_key"]
+    transport = RoutedTransport(
+        {f"{CONDO_URL}?condo_key={key}": TransportResponse(200, body)}
+    )
+    result = resolve_by_condo_key(
+        key, transport=transport, clock=FIXED_CLOCK, correlation_id=FIXED_CORR
+    )
+    assert result.status == STATUS_RESOLVED
+    assert result.base_bbls == [record["condo_base_bbl"]]
+    assert result.condo_key == key
+
+
+def test_c6_labeled_synthetic_multi_lot_key_absent_expansion() -> None:
+    # LABELED SYNTHETIC (documented negative): no multi-lot null-billing condo
+    # exists citywide (28 == 28), so this exercises ONLY the 2+-base-lot
+    # condo_key expansion code path. It is byte-SHAPE faithful (billing / name
+    # keys OMITTED, never explicit null) but the combination is impossible in
+    # reality - never presented as an official capture.
+    for record in json.loads(SYNTHETIC_MULTI_LOT_KEY_ABSENT_BODY):
+        assert "condo_billing_bbl" not in record  # key-absent, not explicit null
+        assert "condo_name" not in record
     transport = RoutedTransport(
         {
             f"{CONDO_URL}?condo_key=309999": TransportResponse(
-                200, SYNTHETIC_NULL_BILLING_CONDO_KEY_BODY
+                200, SYNTHETIC_MULTI_LOT_KEY_ABSENT_BODY
             )
         }
     )
@@ -795,3 +871,134 @@ def test_f1_correction_condo_key_stamp_is_post_response() -> None:
     assert result.status == STATUS_RESOLVED
     assert result.retrieved_at == "2026-09-18T12:00:07Z"
     assert [p["retrieved_at"] for p in result.provenance] == ["2026-09-18T12:00:07Z"]
+
+
+# ===========================================================================
+# M5-T045 wiring-wave riders (DB-029; each closed with a named test/code change)
+# ===========================================================================
+
+
+def test_rider_error_code_sanitizer_uses_fullmatch_not_prefix() -> None:
+    # _ERROR_CODE_SAFE_RE fullmatch consistency: a code that is safe only as a
+    # PREFIX (a trailing newline + injected text) must be repr()'d, not returned
+    # verbatim - the anchor-tight posture the BBL / condo_key guards already use
+    # ($-anchored .match used to accept the trailing "\n").
+    from app.connectors.dtm_condo_soda import _sanitize_error_code
+
+    assert (
+        _sanitize_error_code("query.soql.no-such-column")
+        == "query.soql.no-such-column"
+    )
+    assert _sanitize_error_code(None) is None
+    leaky = "query.soql.no-such-column\n<injected>"
+    assert _sanitize_error_code(leaky) == repr(leaky)
+    unicode_code = _unicode_digits("123456")
+    assert _sanitize_error_code(unicode_code) == repr(unicode_code)
+
+
+def test_rider_400_leaky_error_code_is_repr_not_verbatim_in_detail() -> None:
+    # End-to-end: a 400 whose errorCode carries a trailing-newline injection is
+    # NOT the exact drift signature, so it is a typed SourceUnavailableError; its
+    # detail carries the repr()'d (never verbatim) code.
+    body = '{"errorCode":"query.soql.no-such-column\\n<x>"}'
+    transport = _AlwaysTransport(TransportResponse(400, body))
+    with pytest.raises(SourceUnavailableError) as excinfo:
+        resolve("3022647515", transport=transport, **_ERR_KW)
+    assert excinfo.value.detail["error_code"] == repr("query.soql.no-such-column\n<x>")
+
+
+def test_rider_row_limit_off_by_default_and_opt_in_appends_soda_limit() -> None:
+    # Optional $limit defense-in-depth: off by default (byte-identical URL); an
+    # opt-in appends a SODA $limit so a drift that changes a key column's meaning
+    # cannot return an unbounded page.
+    default_transport = _billing_transport()
+    _call("3022647515", default_transport)
+    assert default_transport.requested_urls == [
+        f"{CONDO_URL}?condo_billing_bbl=3022647515"
+    ]
+
+    limited = RoutedTransport(
+        {
+            f"{CONDO_URL}?condo_billing_bbl=3022647515&$limit=1000": TransportResponse(
+                200, BILLING_3022647515_BODY
+            )
+        }
+    )
+    result = resolve(
+        "3022647515",
+        transport=limited,
+        clock=FIXED_CLOCK,
+        correlation_id=FIXED_CORR,
+        row_limit=1000,
+    )
+    assert result.status == STATUS_RESOLVED
+    assert limited.requested_urls == [
+        f"{CONDO_URL}?condo_billing_bbl=3022647515&$limit=1000"
+    ]
+
+
+@pytest.mark.parametrize("bad_limit", [0, -5, 1.5, True, "1000"])
+def test_rider_row_limit_non_positive_int_fails_closed(bad_limit) -> None:
+    # A non-positive / non-int row_limit fails closed rather than silently
+    # dropping the cap; it raises BEFORE any transport call.
+    with pytest.raises(SchemaDriftError):
+        resolve(
+            "3022647515",
+            transport=_never_called,
+            clock=FIXED_CLOCK,
+            correlation_id=FIXED_CORR,
+            row_limit=bad_limit,  # type: ignore[arg-type]
+        )
+
+
+def test_rider_unit_response_condo_key_guard_rejects_bad_shape() -> None:
+    # Response-side condo_key guard (negative): a unit row whose condo_key is not
+    # an exact 6 ASCII-digit string fails closed BEFORE it is interpolated into
+    # the condo_key expansion URL. RoutedTransport has no expansion route, so the
+    # guard must fire FIRST as SchemaDriftError (never AssertionError).
+    leaky_unit_body = json.dumps(
+        [
+            {
+                "condo_base_bbl": "3022640032",
+                "unit_bbl": "3022642601",
+                "condo_key": "30131X",  # non-digit -> rejected before expansion
+            }
+        ]
+    )
+    transport = RoutedTransport(
+        {f"{UNIT_URL}?unit_bbl=3022642601": TransportResponse(200, leaky_unit_body)}
+    )
+    with pytest.raises(SchemaDriftError):
+        _call("3022642601", transport)
+    # Only the unit query was issued; the expansion was never reached.
+    assert transport.requested_urls == [f"{UNIT_URL}?unit_bbl=3022642601"]
+
+
+def test_rider_condo_key_invalid_shape_uses_documented_invalid_component_code() -> None:
+    # invalid_component documented-code assertion: resolve_by_condo_key raises the
+    # DOCUMENTED bbl.py 'invalid_component' code for a bad condo_key, never an
+    # ad-hoc string.
+    with pytest.raises(BBLValidationError) as excinfo:
+        resolve_by_condo_key("30131", transport=_never_called)  # only 5 digits
+    assert excinfo.value.code == "invalid_component"
+    assert excinfo.value.code in DOCUMENTED_BBL_CODES
+
+
+def test_rider_condo_key_canonical_value_interpolated_unchanged() -> None:
+    # Canonical-normalizer consistency: condo_key passes the same re.ASCII +
+    # fullmatch guard the BBL uses, so an accepted 6-digit key equals the value
+    # interpolated into the URL and echoed on the result - no hidden
+    # transformation, mirroring resolve()'s canonical-BBL interpolation.
+    transport = RoutedTransport(
+        {
+            f"{CONDO_URL}?condo_key=103343": TransportResponse(
+                200, REAL_NULL_BILLING_103343_BODY
+            )
+        }
+    )
+    result = resolve_by_condo_key(
+        "103343", transport=transport, clock=FIXED_CLOCK, correlation_id=FIXED_CORR
+    )
+    assert transport.requested_urls == [f"{CONDO_URL}?condo_key=103343"]
+    assert result.condo_key == "103343"
+    assert result.input_value == "103343"

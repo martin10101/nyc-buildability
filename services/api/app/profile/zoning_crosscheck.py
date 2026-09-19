@@ -53,6 +53,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from app.connectors.condo_base_lot import (
+    OUTCOME_ERROR,
+    OUTCOME_MULTI_LOT,
+    OUTCOME_RESOLVED_SINGLE,
+    OUTCOME_UNRESOLVED,
+    CondoResolution,
+)
+from app.connectors.dtm_condo_soda import (
+    CONDO_DATASET_ID,
+)
+from app.connectors.dtm_condo_soda import (
+    SOURCE_ID as CONDO_SOURCE_ID,
+)
 from app.connectors.pluto_soda import (
     DATASET_ID as PLUTO_DATASET_ID,
 )
@@ -73,9 +86,12 @@ from app.connectors.ztldb_soda import (
 )
 
 __all__ = [
+    "CONDO_RESOLUTION_FIELD",
+    "CONDO_RESOLUTION_NOTE_PREFIX",
     "GEOMETRIC_SOURCE_ID",
     "ZONING_CROSSCHECK_FIELD_MAP",
     "CrosscheckReport",
+    "condo_resolution_report",
     "crosscheck_lot_zoning",
     "external_observation",
     "geometric_zoning_observations",
@@ -446,4 +462,172 @@ def crosscheck_lot_zoning(
             f"kind={uncertainty['kind']} ({values}); both verbatim values "
             "preserved; formatting-level difference, not adjudicated."
         )
+    return report
+
+
+# ---------------------------------------------------------------------------
+# Condo billing-BBL resolution -> profile note/conflict channel (task M5-T045).
+#
+# A condo BILLING BBL (lot 7501-7599) has no zonable land parcel of its own; the
+# accepted resolver (app.connectors.dtm_condo_soda) resolves it to its base land
+# lot(s) and the seam (app.connectors.condo_base_lot) collapses that into ONE
+# typed CondoResolution outcome. condo_resolution_report maps that outcome onto
+# the SAME contract-1.3.0 conflict/note channels crosscheck_lot_zoning already
+# uses, so a RECORDED condo resolution reaches the profile through
+# build_property_profile(additional_conflicts=..., additional_notes=...) with NO
+# contract-shape change anywhere. RECORDS, never allowances (D-073-R006): a
+# resolved single base lot and every fail-safe outcome are recorded honestly; a
+# multi-lot condo's base lots are preserved as records and never collapsed; an
+# unresolved / error outcome never presents a reference number as a computed
+# result.
+# ---------------------------------------------------------------------------
+
+# Conflict/note ``field`` naming the condo billing-BBL -> base-lot resolution.
+# Deliberately DISTINCT from the zoning columns and NOT in the builder's
+# identity/critical gating set (app.profile.builder._IDENTITY_CONFLICT_FIELDS |
+# CRITICAL_COLUMNS): the resolution is a VISIBLE record here, while the actual
+# fail-safe (absent substrate -> professional review) is enforced at the
+# live-provider seam, never by silently gating readiness on this field.
+CONDO_RESOLUTION_FIELD = "condo_base_lot_resolution"
+
+# Prefix for the contract-safe reproducibility.connector_notes strings this
+# module emits (mirrors the existing ``ztldb_crosscheck:`` note convention).
+CONDO_RESOLUTION_NOTE_PREFIX = "condo_resolution"
+
+
+def _condo_provenance_suffix(resolution: CondoResolution) -> str:
+    """Human-readable provenance tail shared by the condo notes/conflict text.
+    Falls back to the connector's canonical source id / dataset id when an
+    outcome (e.g. a typed error) carries none, so the record is never blank."""
+    datasets = resolution.dataset_ids or (CONDO_DATASET_ID,)
+    return (
+        f"source {resolution.source_id or CONDO_SOURCE_ID}, "
+        f"dataset(s) {','.join(datasets)}, "
+        f"condo_key={resolution.condo_key or 'none'}, "
+        f"retrieved {resolution.retrieved_at or 'n/a'}"
+    )
+
+
+def _condo_note_prefix(resolution: CondoResolution) -> str:
+    """Note prefix carrying a MACHINE-READABLE outcome token in brackets right
+    after ``condo_resolution:`` (e.g. ``condo_resolution: [resolved_single_base_lot]``).
+    The web display parses this token - never the human prose - to distinguish a
+    resolved single base lot (the analysis ran on the substituted base lot, so
+    its computed allowances are valid) from the fail-safe outcomes (multi-lot /
+    unresolved / error) that must withhold every computed allowance
+    (D-073-R006). The token equals the seam's :data:`CondoResolution.outcome`
+    (``app.connectors.condo_base_lot`` ``OUTCOME_*``), so the two sides can never
+    drift."""
+    return f"{CONDO_RESOLUTION_NOTE_PREFIX}: [{resolution.outcome}]"
+
+
+def condo_resolution_report(resolution: CondoResolution) -> CrosscheckReport:
+    """Map a typed condo billing-BBL resolution onto a :class:`CrosscheckReport`
+    (the SAME ``conflicts`` / ``notes`` channels :func:`crosscheck_lot_zoning`
+    emits), so a recorded resolution reaches the profile through
+    ``build_property_profile(additional_conflicts=..., additional_notes=...)``
+    unchanged - NO contract-shape change.
+
+    RECORDS, never allowances (D-073-R006):
+
+    - :data:`~app.connectors.condo_base_lot.OUTCOME_RESOLVED_SINGLE`: a NOTE
+      recording the billing BBL -> single recorded base lot substitution (a
+      clean record, not a disagreement; no conflict, so the base lot's own facts
+      drive readiness).
+    - :data:`~app.connectors.condo_base_lot.OUTCOME_MULTI_LOT`: a conflict
+      (``resolution='unresolved'``) whose ``values`` list EVERY recorded base lot
+      as a separate record, plus a note. Divergent zoning is NEVER collapsed and
+      no base lot is chosen as THE answer - the base lots are records only, never
+      a computed allowance. (The conflict shape requires >= 2 values, which a
+      multi-lot set always has.)
+    - :data:`~app.connectors.condo_base_lot.OUTCOME_UNRESOLVED`: a NOTE stating
+      the honest no-result; no reference number is presented as a computed
+      result. Not a conflict - an absence has no second value to preserve and the
+      conflict shape requires two.
+    - :data:`~app.connectors.condo_base_lot.OUTCOME_ERROR`: a NOTE recording the
+      typed transport failure; the consumer fail-safes to professional review.
+    - not-condo-billing pass-through: an EMPTY report (nothing to record) so a
+      normal non-condo profile stays byte-identical.
+    """
+    report = CrosscheckReport()
+    suffix = _condo_provenance_suffix(resolution)
+
+    if resolution.outcome == OUTCOME_RESOLVED_SINGLE:
+        report.notes.append(
+            f"{_condo_note_prefix(resolution)} billing BBL {resolution.input_bbl} "
+            f"resolved to the single recorded base lot {resolution.resolved_base_bbl} "
+            f"({suffix}); the analysis substrate is the recorded base lot. "
+            "RECORD, not a computed allowance."
+        )
+        return report
+
+    if resolution.outcome == OUTCOME_MULTI_LOT:
+        base_bbls = list(resolution.base_bbls)
+        if len(base_bbls) >= 2:
+            report.conflicts.append(
+                {
+                    "field": CONDO_RESOLUTION_FIELD,
+                    "values": [
+                        {
+                            "source_id": resolution.source_id or CONDO_SOURCE_ID,
+                            "value": base_bbl,
+                            "derivation": (
+                                "recorded base tax lot for condo billing BBL "
+                                f"{resolution.input_bbl} ({suffix}); one of "
+                                f"{len(base_bbls)} base lots - a RECORD, never a "
+                                "chosen answer"
+                            ),
+                        }
+                        for base_bbl in base_bbls
+                    ],
+                    "resolution": "unresolved",
+                    "reason": (
+                        f"condo billing BBL {resolution.input_bbl} resolves to "
+                        f"{len(base_bbls)} base tax lots {base_bbls}; the base "
+                        "lots are presented as RECORDS with NO computed allowance. "
+                        "Divergent zoning across a condo's base lots is a "
+                        "downstream qualified-human legal surface and is never "
+                        f"collapsed here (D-073-R006). "
+                        f"{resolution.divergent_zoning_notice or ''}"
+                    ).strip(),
+                }
+            )
+            report.notes.append(
+                f"{_condo_note_prefix(resolution)} billing BBL {resolution.input_bbl} "
+                f"resolved to {len(base_bbls)} recorded base lots {base_bbls} "
+                f"({suffix}); presented as RECORDS with NO computed allowance "
+                "(divergent zoning is never collapsed - D-073-R006)."
+            )
+        else:
+            # Defensive: a multi-lot outcome without >= 2 recorded lots cannot
+            # arise from the seam, but never fabricate a conflict shape it cannot
+            # fill - record it as an honest fail-safe note instead.
+            report.notes.append(
+                f"{_condo_note_prefix(resolution)} billing BBL {resolution.input_bbl} "
+                f"reported a multi-lot outcome without >= 2 recorded base lots "
+                f"({suffix}); fail-safe, no computed allowance."
+            )
+        return report
+
+    if resolution.outcome == OUTCOME_UNRESOLVED:
+        report.notes.append(
+            f"{_condo_note_prefix(resolution)} billing BBL {resolution.input_bbl} "
+            f"matched no base-lot record and the fallbacks were exhausted "
+            f"({suffix}); honest unresolved result - no base lot is fabricated and "
+            "no reference number is presented as a computed result."
+        )
+        return report
+
+    if resolution.outcome == OUTCOME_ERROR:
+        report.notes.append(
+            f"{_condo_note_prefix(resolution)} billing BBL {resolution.input_bbl} "
+            f"resolution failed with a typed transport error "
+            f"(error_type={resolution.error_type or 'unknown'}; {suffix}); the "
+            "consumer fail-safes to professional review (never a fabricated base "
+            "lot)."
+        )
+        return report
+
+    # not-condo-billing pass-through: nothing to record; a normal non-condo
+    # profile stays byte-identical.
     return report
