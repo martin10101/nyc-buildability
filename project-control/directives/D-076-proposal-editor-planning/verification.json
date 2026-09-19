@@ -1,8 +1,47 @@
 {
- "schema": "directive_verification/v2",
- "directive_id": "D-076",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+  "schema": "directive_verification/v2",
+  "directive_id": "D-076",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
+  "verified_by": null,
+  "verified_at": "2026-09-19T11:49:14.717379+00:00",
+  "task_verifications": [
+    {
+      "directive_id": "D-076",
+      "task_id": "M5-T048",
+      "applicable_requirement_ids": [
+        "D-076-R001",
+        "D-076-R002",
+        "D-076-R003"
+      ],
+      "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
+      "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T11:49:14.717379+00:00",
+      "requirements": [
+        {
+          "id": "D-076-R001",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified: the increment equals the plan's B0 row exactly (proposed_massing input class, additive bump, server-side validation, typed refusals, NO evaluation change); name-status of both material commits entirely inside allowed_paths; builder/derive/api/rules/spatial/profile/connectors/web all untouched. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+          ]
+        },
+        {
+          "id": "D-076-R002",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified: proposals are a third input class - validate_proposed_massing returns None and computes NO allowance (grep-proven: allowance/far/floor_area/coverage/footprint/setback appear only in disclaiming docstrings); kind schema-enforced literal 'proposed'; contract.py threads without deriving. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+          ]
+        },
+        {
+          "id": "D-076-R003",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified: closed-enum additive append ['1.0.0','1.1.0']; both schema copies byte-identical (LF sha256 dc41be0e... both; G1 additionally reproduced RAW-byte equality); 1.0.0 documents stay valid; TS regenerated via the accepted typegen with --check byte-identity; the released phase-B slice respected (no 3D/19-pack/GDS/master-plan change; hold cross-reference in place). Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+          ]
+        }
+      ]
+    }
+  ]
 }

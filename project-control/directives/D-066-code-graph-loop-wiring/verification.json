@@ -3,7 +3,7 @@
   "directive_id": "D-066",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
   "verified_by": null,
-  "verified_at": "2026-09-19T10:36:28.931607+00:00",
+  "verified_at": "2026-09-19T11:49:14.717379+00:00",
   "task_verifications": [
     {
       "directive_id": "D-066",
@@ -423,6 +423,28 @@
           "evidence": [
             "DCV verified (project-control/reports/M5-T049-DCV.md, frozen submission f3bf4fd3, material d52b1402/cherry-pick b5d3343f, CI run 35435873943 all 12 jobs success): seam-regenerated nav block (747/15766) in packet inputs[3] with the query.py instruction + advisory clause; the DCV re-ran the packet-instructed impact query (exit 0, cache served) and got exactly the nav block's consumer set, and verified all four consumer imports in source at the claimed line anchors at the frozen head. Stamped at 0c7b17f111f85636ccafb4aeff10837117311de4 under the four-condition pre-authorization - reproduced at record time: (1) git diff f3bf4fd3..0c7b17f1 on all 7 allowed_paths EMPTY; (2) evaluate_task_refs ok, applicable==cited==[D-066-R001]; (3) foreground validator exit 0 at the target (run recorded in the seam commit); (4) the peer commits between freeze and target are the M5-T048 harvest material + gate/Tier-2/control-plane records - all inside the stated disjoint-peer tolerance. Manifest digest at record time equals the attested 69add60f... exactly.",
             "[ORCH-CORRECTED field-sourcing note] reviewed_manifest_sha256 is the task allowed_paths git-canonical content identity FROM THE GATE RECORDS (G2-G5 all stamp 15de365781f870d3db9503ab32a96281094fa413f944ed9c7a987c0f40e53455 at aa8e2f53; identical content at the accept target per the reproduced empty diffs). The DCV prompt had misnamed this field as the D-066 manifest.json digest; the DCV-computed directive-manifest digest 69add60f... remains recorded above as the directive-registry identity it verified."
+          ]
+        }
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "task_id": "M5-T048",
+      "applicable_requirement_ids": [
+        "D-066-R001"
+      ],
+      "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
+      "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T11:49:14.717379+00:00",
+      "requirements": [
+        {
+          "id": "D-066-R001",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (M5-T048-DCV.md, frozen submission 15c1b3a4, material 0c7b17f1+93f194c0, CI 35439235554 all green): seam-regenerated nav block (743/15656) in packet inputs[4] with the query.py instruction + advisory clause; all three required elements present. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
           ]
         }
       ]
