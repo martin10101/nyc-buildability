@@ -1,125 +1,147 @@
 {
- "schema": "directive_verification/v2",
- "directive_id": "D-073",
- "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-073-BOOTSTRAP at capture; phase packets are bound by applicability append at contract time. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": [
-  {
-   "directive_id": "D-073",
-   "task_id": "M5-T037",
-   "applicable_requirement_ids": [
-    "D-073-R003"
-   ],
-   "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79",
-   "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-18T10:38:49+00:00",
-   "requirements": [
+  "schema": "directive_verification/v2",
+  "directive_id": "D-073",
+  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-073-BOOTSTRAP at capture; phase packets are bound by applicability append at contract time. No completion claim exists at capture time.",
+  "verified_by": null,
+  "verified_at": "2026-09-19T12:10:56.750270+00:00",
+  "task_verifications": [
     {
-     "id": "D-073-R003",
-     "state": "PASS",
-     "evidence": [
-      "DCV verified (project-control/reports/M5-T037-DCV-verification.md) - FIRST verification of the milestone row, each element in source: end-to-end chain (live provider w/ DB-020 page-digest provenance -> D-051 fail-safe fold -> optional v1.1.0 block emitted only when a determination fired); result reaches the interface with WHAT/UNITS/CONDITIONS/SOURCES + Draft marking and the provenance link into the D-052 quintuple; report parity STRUCTURAL after the F1 correction (identical inspectability gate at ArchitectEntry.tsx:73 and ReportView.tsx:30 feeding the SAME shared components; parity + non-inspectable-withholding pinned by tests); calm presentation after the F2 correction (raw server strings only behind the evidence disclosure; jargon-guard test with real constants); honest escalation with no fabricated FAR; contract additivity proven (1.0.0 stays valid, malformed block fails total); CI all 20 green at 1c89922c independently re-verified via the check-runs API. Restamped to 1179357c under the DCV's three-condition pre-authorization (all three reproduced at record time: material dirs diff EMPTY; --stat project-control-only; both schema copies still blob 0f2eebd6)."
-     ],
-     "verified_at": "2026-09-18T10:38:49+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79"
-    }
-   ]
-  },
-  {
-   "directive_id": "D-073",
-   "task_id": "M5-T040",
-   "applicable_requirement_ids": [
-    "D-073-R006"
-   ],
-   "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9",
-   "reviewed_manifest_sha256": "f09b4a88cdb140cd8c87ab38f859979bd070559696b13fe3a2933812d57a0479",
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-19T00:15:00+00:00",
-   "requirements": [
+      "directive_id": "D-073",
+      "task_id": "M5-T037",
+      "applicable_requirement_ids": [
+        "D-073-R003"
+      ],
+      "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79",
+      "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-18T10:38:49+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R003",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (project-control/reports/M5-T037-DCV-verification.md) - FIRST verification of the milestone row, each element in source: end-to-end chain (live provider w/ DB-020 page-digest provenance -> D-051 fail-safe fold -> optional v1.1.0 block emitted only when a determination fired); result reaches the interface with WHAT/UNITS/CONDITIONS/SOURCES + Draft marking and the provenance link into the D-052 quintuple; report parity STRUCTURAL after the F1 correction (identical inspectability gate at ArchitectEntry.tsx:73 and ReportView.tsx:30 feeding the SAME shared components; parity + non-inspectable-withholding pinned by tests); calm presentation after the F2 correction (raw server strings only behind the evidence disclosure; jargon-guard test with real constants); honest escalation with no fabricated FAR; contract additivity proven (1.0.0 stays valid, malformed block fails total); CI all 20 green at 1c89922c independently re-verified via the check-runs API. Restamped to 1179357c under the DCV's three-condition pre-authorization (all three reproduced at record time: material dirs diff EMPTY; --stat project-control-only; both schema copies still blob 0f2eebd6)."
+          ],
+          "verified_at": "2026-09-18T10:38:49+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79"
+        }
+      ]
+    },
     {
-     "id": "D-073-R006",
-     "state": "PASS",
-     "evidence": [
-      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): records-vs-allowances distinction gated on determination_state on every wide-street surface; PLUTO reference rendered as a separate concept; no reference value presented as the computed result; structural screen/report parity from one document. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
-     ],
-     "verified_at": "2026-09-19T00:15:00+00:00",
-     "verified_by": "directive-compliance-verifier",
-     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
-    }
-   ]
-  },
-  {
-   "directive_id": "D-073",
-   "task_id": "M5-T046",
-   "applicable_requirement_ids": [
-    "D-073-R006"
-   ],
-   "reviewed_sha": "d12112ca1bd98383153080d899d48bc0c7c102d8",
-   "reviewed_manifest_sha256": "1de6180b4891074b80756b2bdbda24f4947a3c8caeda5ca4f5dc9340ddeeec48",
-   "producer": "frontend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-19T06:31:19.876587+00:00",
-   "requirements": [
+      "directive_id": "D-073",
+      "task_id": "M5-T040",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9",
+      "reviewed_manifest_sha256": "f09b4a88cdb140cd8c87ab38f859979bd070559696b13fe3a2933812d57a0479",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T00:15:00+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): records-vs-allowances distinction gated on determination_state on every wide-street surface; PLUTO reference rendered as a separate concept; no reference value presented as the computed result; structural screen/report parity from one document. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+          ],
+          "verified_at": "2026-09-19T00:15:00+00:00",
+          "verified_by": "directive-compliance-verifier",
+          "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+        }
+      ]
+    },
     {
-     "id": "D-073-R006",
-     "state": "PASS",
-     "evidence": [
-      "DCV verified (project-control/reports/M5-T046-DCV.md, frozen content identity c9113e09): confirm-arc entered-vs-matched records line (AddressConfirmCard.tsx:80-136) with records-semantics comment and journey tests S8/S9 (address-confirm.test.tsx:492-639); no computed value on the surface; record-address gap reported as an OQ-5 discovery, not built around; AS-6/AS-8 + HJ PASS ('nothing on screen claims a protection that does not exist'). Stamped at d12112ca1bd98383153080d899d48bc0c7c102d8 under the six-condition pre-authorization - all reproduced at record time (see the D-066 row for the condition list; identical checks)."
-     ]
-    }
-   ]
-  },
-  {
-   "directive_id": "D-073",
-   "task_id": "M5-T047",
-   "applicable_requirement_ids": [
-    "D-073-R006"
-   ],
-   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
-   "reviewed_manifest_sha256": "9c6050a5ffcf743061cbbfed94e60d2a6434c3862bc49bb177bd24a2fb2c53de",
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-19T09:33:36.477757+00:00",
-   "requirements": [
+      "directive_id": "D-073",
+      "task_id": "M5-T046",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "d12112ca1bd98383153080d899d48bc0c7c102d8",
+      "reviewed_manifest_sha256": "1de6180b4891074b80756b2bdbda24f4947a3c8caeda5ca4f5dc9340ddeeec48",
+      "producer": "frontend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T06:31:19.876587+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (project-control/reports/M5-T046-DCV.md, frozen content identity c9113e09): confirm-arc entered-vs-matched records line (AddressConfirmCard.tsx:80-136) with records-semantics comment and journey tests S8/S9 (address-confirm.test.tsx:492-639); no computed value on the surface; record-address gap reported as an OQ-5 discovery, not built around; AS-6/AS-8 + HJ PASS ('nothing on screen claims a protection that does not exist'). Stamped at d12112ca1bd98383153080d899d48bc0c7c102d8 under the six-condition pre-authorization - all reproduced at record time (see the D-066 row for the condition list; identical checks)."
+          ]
+        }
+      ]
+    },
     {
-     "id": "D-073-R006",
-     "state": "PASS",
-     "evidence": [
-      "DCV verified (M5-T047-DCV.md): the record-address channel returns an official RECORD with full provenance and three honest typed outcomes (address=null on absence; key-absence honored; typed faults never fake absence - lot_geometry.py L351-360/L432-464); record-address.ts RECORD-NOT-MEASUREMENT; the card's PLUTO city-record line shown only when differing (AddressConfirmCard.tsx:198-204) with the HJ A2/A3a polish; HJ PASS 'none of the three implies a computed value'; no scenario amendment on this packet. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced four-condition pre-authorization (see the D-066 row)."
-     ]
-    }
-   ]
-  },
-  {
-   "directive_id": "D-073",
-   "task_id": "M5-T045",
-   "applicable_requirement_ids": [
-    "D-073-R006"
-   ],
-   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
-   "reviewed_manifest_sha256": "e0ac5bfdbaac9b5631cc6efb26729ea38c3118eda3b4a79d890b5117a567f74d",
-   "producer": "backend-engineer",
-   "verifier": "directive-compliance-verifier",
-   "schema_version": "directive_verification/v2",
-   "verified_at": "2026-09-19T09:33:36.477757+00:00",
-   "requirements": [
+      "directive_id": "D-073",
+      "task_id": "M5-T047",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+      "reviewed_manifest_sha256": "9c6050a5ffcf743061cbbfed94e60d2a6434c3862bc49bb177bd24a2fb2c53de",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T09:33:36.477757+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (M5-T047-DCV.md): the record-address channel returns an official RECORD with full provenance and three honest typed outcomes (address=null on absence; key-absence honored; typed faults never fake absence - lot_geometry.py L351-360/L432-464); record-address.ts RECORD-NOT-MEASUREMENT; the card's PLUTO city-record line shown only when differing (AddressConfirmCard.tsx:198-204) with the HJ A2/A3a polish; HJ PASS 'none of the three implies a computed value'; no scenario amendment on this packet. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced four-condition pre-authorization (see the D-066 row)."
+          ]
+        }
+      ]
+    },
     {
-     "id": "D-073-R006",
-     "state": "PASS",
-     "evidence": [
-      "DCV verified (M5-T045-DCV.md) at the AMENDED scope (the pre-submit ORCH-SCOPE-DISPOSITION with its G0 re-record, verified clean; DB-031 recorded as the records-view successor): condo_resolution_report maps onto the EXISTING contract-1.3.0 channels with the machine token (zoning_crosscheck.py:524-633); ONE shared fail-safe ALLOW-LIST guard on screen and brief (PropertyOverview.tsx:116-123 / ReportView.tsx:38 - missing/malformed/unknown tokens withhold; G4 proved the deny-list mutant dies); base lots as RECORDS with record-not-allowance wording; neutral identity notice; HJ PASS - no computed allowance on any non-success condo path, via the display guard AND independently the backend build_live_substrate->None fail-safe. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced five-condition pre-authorization (see the D-066 row)."
-     ]
+      "directive_id": "D-073",
+      "task_id": "M5-T045",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+      "reviewed_manifest_sha256": "e0ac5bfdbaac9b5631cc6efb26729ea38c3118eda3b4a79d890b5117a567f74d",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T09:33:36.477757+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (M5-T045-DCV.md) at the AMENDED scope (the pre-submit ORCH-SCOPE-DISPOSITION with its G0 re-record, verified clean; DB-031 recorded as the records-view successor): condo_resolution_report maps onto the EXISTING contract-1.3.0 channels with the machine token (zoning_crosscheck.py:524-633); ONE shared fail-safe ALLOW-LIST guard on screen and brief (PropertyOverview.tsx:116-123 / ReportView.tsx:38 - missing/malformed/unknown tokens withhold; G4 proved the deny-list mutant dies); base lots as RECORDS with record-not-allowance wording; neutral identity notice; HJ PASS - no computed allowance on any non-success condo path, via the display guard AND independently the backend build_live_substrate->None fail-safe. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the same reproduced five-condition pre-authorization (see the D-066 row)."
+          ]
+        }
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "task_id": "M5-T050",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "6f74488d5ead45f4883e2c92fd8519940f4674d6",
+      "reviewed_manifest_sha256": "a64b27ea2a214e114be8f2da83397282cf9509cce8e88facd09b09d8c35072ad",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T12:10:56.750270+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified: the polished confirm-arc surface keeps the records-vs-allowances distinction - record line + rider-d why-note are RECORD explanations (digit-free test address-confirm.test.tsx:1132), rendering guarded to the differ case, honest absence in every non-shown outcome at terminal status, and the material diff introduces no allowance-class vocabulary (grep-proven on bcfcc538). Stamped at 6f74488d5ead45f4883e2c92fd8519940f4674d6 under the DCV pre-authorization (M5-T050-DCV.md) whose conditions the DCV itself already reproduced AT THIS HEAD: empty git diff ee1b361c..HEAD on all 9 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (M5-T051 seam + gate-record commits). Orchestrator re-ran the foreground validator after stamping (exit code recorded in the seam commit)."
+          ]
+        }
+      ]
     }
-   ]
-  }
- ]
+  ]
 }

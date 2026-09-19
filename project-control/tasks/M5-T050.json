@@ -67,8 +67,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Riders are ADVISORY polish: any fix that wants to change the channel contract or equality-gate semantics beyond the bounded cases = STOP + discovery, never in-packet.",
     "AddressResolutionScreen is FORBIDDEN here (T047 allowed it; the riders live on the card/client) - a rider fix forcing its edit = STOP + discovery.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T09:59:46.206600+00:00",
-  "updated_at": "2026-09-19T12:02:59.129558+00:00",
+  "updated_at": "2026-09-19T12:13:36.599490+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -109,5 +109,7 @@
       "status": "in_progress",
       "message": "Contracted + claimed at the M5-T049 harvest seam (G0 PASS at 6bfd999e; pairwise disjoint vs live M5-T048 and in-ledger M5-T049, both intersections empty); scenarios AS-1..AS-8 in-packet; loop-1 relaunch as run 54 next"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T12:13:36.599490+00:00"
 }
