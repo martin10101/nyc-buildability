@@ -145,6 +145,12 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - `claim --worktree` MUST be the FULL path (controller-authoritative): a short name
   lands in the packet, the worker echoes it, and S4.5 stops the run at the FIRST
   checkpoint (`checkpoint_field_mismatch`). Fix both packet copies + fresh run-id.
+- Create/advance the task worktree AT (or past) the CLAIM-SEAM commit, never the contract
+  head: `task_authority` corroborates the ctl24 packet against the WORKTREE's ledger copy
+  (`--repo`), and a pre-claim copy (backlog vs in_progress) refuses the launch
+  (`ledger_status_mismatch`, exit 11). Fix = `git -C <wt> reset --hard <claim-seam sha>`;
+  a preflight refusal parks the journal in PREFLIGHT (no clear-recovery needed), same
+  run-id relaunches (M5-T045 launch, 2026-09-19).
   Ask-answer CLI verbs racing a LIVE loop fork its audit chain - repair between runs.
 - Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
   web test placeholders with a trivial passing test; empty py test files are fine.
