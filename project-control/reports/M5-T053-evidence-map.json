@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T053",
+  "material_commit": "25617bbdc4a3c71d915f71ac81f0aa7dc24fd22a",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T053 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (project-control/tasks/M5-T053.json inputs[3]; G0 record M5-T053-G0.md) naming the validator's consumers with line anchors and flagging the LIVE M5-T051 lane's ownership of proposal.py explicitly - which drove the packet's structural disjointness design (the wrapper gate module).",
+      "The consumer discipline held in the material: proposal.py and tests/scenario/ are absent from the material commit (the live lane's files untouched); the gate imports the accepted validator read-only; main.py gained exactly one mount line; the unaffected suites stayed green in CI run 35454834946."
+    ],
+    "D-076-R001": [
+      "The increment is within the released phase-B slice as the plan's B1-parallel scaffold slot allows: validation-only wiring of editor input to the accepted B0 validator - NO storage, NO derivation, NO evaluation change (forbidden_paths pin builder/derive/rules/spatial/contract schemas; the diffs touch none), closing the DB-034(a)/(b) preconditions the T048 G5 gate bound to exactly this first wiring packet."
+    ],
+    "D-076-R002": [
+      "Proposals stay a third input class with nothing computed: the route's acceptance echo carries the block digest + the literal kind 'proposed' and ZERO derived values (AS-4 tests assert no area/coverage/height in the echo); refusals are typed field-naming messages with bounded-repr on embedded user values; the gate is monotone (only ADDS refusals over the accepted validator - the AS-6 property tests pin it)."
+    ]
+  }
+}
