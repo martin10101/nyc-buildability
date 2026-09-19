@@ -65,8 +65,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A pure extraction that quietly changes an error message, constant, or ordering is NOT pure - the unchanged suites are the proof; do not touch them except to MOVE whole test blocks.",
     "The facade must re-export everything consumers use, including exception types and constants.",
@@ -75,7 +75,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T08:14:33.764200+00:00",
-  "updated_at": "2026-09-19T10:18:00.445019+00:00",
+  "updated_at": "2026-09-19T10:40:01.456819+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -102,5 +102,7 @@
       "status": "in_progress",
       "message": "Contracted + claimed at the double-harvest seam; scenarios AS-1..AS-6 in-packet; awaiting loop-1 run 52"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T10:40:01.454809+00:00"
 }
