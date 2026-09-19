@@ -57,6 +57,11 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Transient c14 INVALID while the companion writes a directive = real signature (requirements
   lands before manifest): re-run validator at the settled head with a DIRECT exit code
   (`| tail` eats `$?`) before reacting.
+- DCV restamp pre-auths: with parallel lanes, a DISJOINT peer material commit landing between
+  freeze and record voids literal all-product-dirs-empty conditions — ask the DCV to state
+  its disjoint-peer tolerance UP FRONT (M5-T042 pattern); else a delta-attestation extension
+  is needed (M5-T040). Gitleaks false-positives on fixture VAR NAMES containing KEY: inline
+  `# gitleaks:allow` on that line; never quote the flagged line verbatim in evidence files.
 
 ## Dispatch / review mechanics
 
