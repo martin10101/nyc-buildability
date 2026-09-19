@@ -75,8 +75,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Contract is CLOSED in-packet: if v1.1.0 vocabulary cannot honestly carry a named-street outcome, STOP that sub-scope and report - never widen schemas here.",
     "Fail-closed discipline: missing CD/cross-street inputs are a refusal, never a guessed NOT_MATCHED.",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-18T17:06:09.965148+00:00",
-  "updated_at": "2026-09-18T23:56:55.232565+00:00",
+  "updated_at": "2026-09-19T00:17:27.789068+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -139,5 +139,7 @@
       "status": "in_progress",
       "message": "Harvest 2 (run 46, breaker at 4 rounds again - DB-012 trip 11): FULL remaining scope built and committed as material (wiring truth table + provider status + DB-021e + DB-025a-c display gating); all five documented commands orchestrator-reproduced green in-worktree; web proves on pushed-head CI; submit + six-reviewer wave after CI"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T00:17:27.789068+00:00"
 }

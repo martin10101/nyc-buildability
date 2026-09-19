@@ -708,6 +708,53 @@
      "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79"
     }
    ]
+  },
+  {
+   "directive_id": "D-045",
+   "task_id": "M5-T040",
+   "applicable_requirement_ids": [
+    "D-045-R002",
+    "D-045-R008",
+    "D-045-R009"
+   ],
+   "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9",
+   "reviewed_manifest_sha256": "f09b4a88cdb140cd8c87ab38f859979bd070559696b13fe3a2933812d57a0479",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T00:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-045-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): the named-street exceptions leg is wired fail-closed at the attestation seam (truth table walked in source; MATCHED_OVERRIDE/INDETERMINATE stay professional-review refusals with verbatim override provenance; exceptions_checked only on all-NOT_MATCHED fully-resolved; 98+475 suite proofs reproduced; CI 35407153078 success). Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+    },
+    {
+     "id": "D-045-R008",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): one bounded increment: 11-file material union entirely inside allowed_paths, no *.rule.json, contract files byte-untouched. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+    },
+    {
+     "id": "D-045-R009",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): no published/verified/compliance claim introduced (added-line grep clean except the preservation draft_label); DRAFT/not-verified assertions survive in the display tests; alternate-width stays professional_review_required-class. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+    }
+   ]
   }
  ]
 }

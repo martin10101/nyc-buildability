@@ -237,6 +237,31 @@
      "reviewed_sha": "435d7b13d7d537108fddad73bdb84ae62ba83227"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T040",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9",
+   "reviewed_manifest_sha256": "f09b4a88cdb140cd8c87ab38f859979bd070559696b13fe3a2933812d57a0479",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T00:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): the packet carried the seam navigation block with exact consumer anchors; consumer suites in allowed_paths and green (475 reproduced + CI); the wide_street_wiring.py modularity warning-tier crossing disclosed by producer and ruled acceptable-with-justification by G3. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+    }
+   ]
   }
  ]
 }
