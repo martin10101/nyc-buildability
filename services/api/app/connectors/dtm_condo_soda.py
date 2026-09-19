@@ -74,6 +74,8 @@ __all__ = [
     "CONDO_COLUMNS",
     "CONDO_DATASET_ID",
     "DIVERGENT_ZONING_NOTICE",
+    "INPUT_KIND_BBL",
+    "INPUT_KIND_CONDO_KEY",
     "LOT_CLASS_BILLING",
     "LOT_CLASS_NOT_A_CONDO",
     "LOT_CLASS_UNIT",
@@ -133,6 +135,13 @@ PATH_BILLING = "billing"
 PATH_UNIT = "unit"
 PATH_CONDO_KEY = "condo_key"
 
+# --- Input-identity vocabulary (G3 #3 / G4 #5; M5-T044 item f) --------------
+# Names what the result's ``input_value`` is, so a condo_key resolution no
+# longer overloads a BBL-named field or a filler lot_class. Module-internal
+# (this leaf has no consumer): tests and docstrings move together.
+INPUT_KIND_BBL = "bbl"
+INPUT_KIND_CONDO_KEY = "condo_key"
+
 # --- Schema shape guards (research section 3.2 / 4.1) ----------------------
 # Condominiums table: 9 columns; Condominium Units table: 16 columns. The
 # suite cross-checks these against the stored fixtures (schema-shape guard,
@@ -175,10 +184,16 @@ UNIT_COLUMNS: frozenset[str] = frozenset(
 # arrive as clean zero-padded 10-digit strings. The PLUTO number-type decimal
 # serialization ("3022640032.00000000") is REJECTED here - a base lot is only
 # ever accepted in this exact shape, fail-closed on anything else.
-_STRICT_BBL_RE = re.compile(r"^\d{10}$")
+#
+# G5 F1/F2 (M5-T044): matched with ``re.ASCII`` + ``.fullmatch`` so the guard
+# is anchor-tight. A ``$`` anchor would accept a trailing "\n" and a bare
+# ``\d`` would accept Unicode digits (Arabic-Indic etc.); ``re.ASCII`` pins
+# ``\d`` to ``[0-9]`` and ``fullmatch`` requires the WHOLE string to match, so
+# "3022647515\n", " 3022647515", and Unicode-digit strings all fail closed.
+_STRICT_BBL_RE = re.compile(r"\d{10}", re.ASCII)
 # condo_key is a 6-digit identifier: condo boro (1 digit) + 5-digit condo
-# number (research 3.2 field description).
-_CONDO_KEY_RE = re.compile(r"^\d{6}$")
+# number (research 3.2 field description). Same re.ASCII + fullmatch guard.
+_CONDO_KEY_RE = re.compile(r"\d{6}", re.ASCII)
 
 # Schema-drift 400 signature (Socrata platform behavior; same as the accepted
 # pluto_soda / ztldb_soda connectors).
@@ -267,13 +282,21 @@ class CondoBaseLotResult:
     ``provenance`` records one entry per SODA query actually performed
     (dataset id, request URL, retrieval timestamp, record count, and
     ``rows_updated_at`` when the caller supplies live dataset freshness).
+
+    ``input_value`` is the resolver input verbatim and ``input_kind`` names
+    what it is (:data:`INPUT_KIND_BBL` for :func:`resolve`,
+    :data:`INPUT_KIND_CONDO_KEY` for :func:`resolve_by_condo_key`) so a
+    condo_key resolution never masquerades as a BBL (G3 #3 / G4 #5).
+    ``lot_class`` is the input BBL's lot class and is ``None`` for a condo_key
+    input, which has no lot number.
     """
 
     status: str
-    input_bbl: str
-    lot_class: str
+    input_value: str
+    lot_class: str | None
     correlation_id: str
     retrieved_at: str
+    input_kind: str = INPUT_KIND_BBL
     resolution_path: str | None = None
     base_bbls: list[str] = field(default_factory=list)
     condo_number: str | None = None
@@ -327,13 +350,15 @@ def classify_lot(bbl: str) -> str:
     """Classify a canonical 10-digit BBL by its four-digit lot number
     (research section 7 step 1): billing (7501-7599), unit (1001-6999), or
     not-a-condo. Raises :class:`BBLValidationError` for any input that is not
-    an exact 10-digit string (fail-closed shape guard - the resolver's
-    contract input is a 10-digit BBL string)."""
-    if not isinstance(bbl, str) or not _STRICT_BBL_RE.match(bbl):
+    an exact 10 ASCII-digit string (fail-closed shape guard - the resolver's
+    contract input is a 10-digit BBL string). The error carries the documented
+    ``non_numeric`` code (G3 #2 / M5-T044 item e; ``bbl.py`` vocabulary), never
+    an ad-hoc one."""
+    if not isinstance(bbl, str) or not _STRICT_BBL_RE.fullmatch(bbl):
         raise BBLValidationError(
-            "wrong_shape",
-            "resolver input must be an exact 10-digit BBL string "
-            f"(^\\d{{10}}$); got {bbl!r}",
+            "non_numeric",
+            "resolver input must be an exact 10 ASCII-digit BBL string "
+            f"([0-9]{{10}}); got {bbl!r}",
             bbl,
         )
     # normalize_bbl re-validates borough/block/lot ranges (defense in depth).
@@ -473,10 +498,11 @@ def _collect_base_lots(
     notes: list[str],
 ) -> tuple[set[str], str | None, str | None]:
     """Extract the base-lot set plus condo identifiers from resource rows,
-    fail-closed on any drift. Every ``condo_base_bbl`` must match ``^\\d{10}$``
-    exactly (research 3.2 / C7): the PLUTO-style decimal serialization and any
-    other shape raise :class:`SchemaDriftError`. Unknown columns are recorded
-    as an advisory note, never trusted for values."""
+    fail-closed on any drift. Every ``condo_base_bbl`` must match the exact 10
+    ASCII-digit shape (``re.ASCII`` + ``fullmatch``, research 3.2 / C7; G5 F2):
+    the PLUTO-style decimal serialization, a Unicode-digit value, and a
+    trailing-newline value all raise :class:`SchemaDriftError`. Unknown columns
+    are recorded as an advisory note, never trusted for values."""
     base_bbls: set[str] = set()
     condo_numbers: set[str] = set()
     condo_keys: set[str] = set()
@@ -485,10 +511,11 @@ def _collect_base_lots(
         if unknown:
             notes.append(f"unknown_columns:{','.join(sorted(unknown))}")
         base = record.get("condo_base_bbl")
-        if not isinstance(base, str) or not _STRICT_BBL_RE.match(base):
+        if not isinstance(base, str) or not _STRICT_BBL_RE.fullmatch(base):
             raise SchemaDriftError(
-                "condo_base_bbl is missing or not an exact 10-digit string "
-                "(the PLUTO-style decimal serialization is rejected)",
+                "condo_base_bbl is missing or not an exact 10 ASCII-digit "
+                "string (the PLUTO-style decimal serialization, a Unicode-digit "
+                "value, and a trailing-newline value are all rejected)",
                 correlation_id=correlation_id,
                 detail={"url": url, "condo_base_bbl": repr(base)},
             )
@@ -566,15 +593,17 @@ def resolve(
     if app_token is None:
         app_token = os.environ.get(APP_TOKEN_ENV_VAR) or None
     lot_class = classify_lot(bbl)  # fail-closed shape guard, before any I/O
-    retrieved_at = _rfc3339(clock())
 
     if lot_class == LOT_CLASS_NOT_A_CONDO:
         return CondoBaseLotResult(
             status=STATUS_NOT_A_CONDO,
-            input_bbl=bbl,
+            input_value=bbl,
+            input_kind=INPUT_KIND_BBL,
             lot_class=lot_class,
             correlation_id=correlation_id,
-            retrieved_at=retrieved_at,
+            # No query is issued on this branch, so retrieved_at is stamped at
+            # classification time (there is no response to wait for).
+            retrieved_at=_rfc3339(clock()),
             notes=[
                 "lot number is outside the condo billing (7501-7599) and unit "
                 "(1001-6999) ranges; no condo resolution is performed and no "
@@ -582,6 +611,12 @@ def resolve(
             ],
         )
 
+    # G5 F1: interpolate the CANONICAL normalized value into every URL, never
+    # the raw input. classify_lot already accepts only an exact 10 ASCII-digit
+    # string, so raw == canonical for any accepted input; this makes that
+    # invariant explicit and keeps a non-canonical value from ever reaching the
+    # transport.
+    canonical_bbl = normalize_bbl(bbl).canonical
     fetch_kwargs = {
         "transport": transport,
         "timeout": timeout,
@@ -595,8 +630,12 @@ def resolve(
     provenance: list[dict] = []
 
     if lot_class == LOT_CLASS_BILLING:
-        url = f"{CONDO_BASE_URL}?condo_billing_bbl={bbl}"
+        url = f"{CONDO_BASE_URL}?condo_billing_bbl={canonical_bbl}"
         records = _fetch_rows(url, **fetch_kwargs)
+        # G3 #1: stamp retrieved_at AFTER the successful response, per query
+        # (the pluto_soda precedent) - a pre-request stamp could precede actual
+        # retrieval across retries.
+        retrieved_at = _rfc3339(clock())
         provenance.append(
             _provenance_entry(
                 dataset_id=CONDO_DATASET_ID,
@@ -632,8 +671,9 @@ def resolve(
         )
 
     # Unit lot: reverse-resolve, then expand by condo_key for the full set.
-    unit_url = f"{UNIT_BASE_URL}?unit_bbl={bbl}"
+    unit_url = f"{UNIT_BASE_URL}?unit_bbl={canonical_bbl}"
     unit_records = _fetch_rows(unit_url, **fetch_kwargs)
+    retrieved_at = _rfc3339(clock())  # G3 #1: post-response stamp for the unit query
     provenance.append(
         _provenance_entry(
             dataset_id=UNIT_DATASET_ID,
@@ -662,10 +702,23 @@ def resolve(
         )
     base_bbls = set(unit_bases)
     if condo_key is not None:
+        # G5 F1: the condo_key came from the unit response, so guard its shape
+        # before it is interpolated into the expansion URL (response-side, the
+        # same fail-closed posture as the condo_base_bbl guard).
+        if not _CONDO_KEY_RE.fullmatch(condo_key):
+            raise SchemaDriftError(
+                "condo_key on the unit response is not an exact 6 ASCII-digit "
+                "string; refusing to interpolate it into an expansion query",
+                correlation_id=correlation_id,
+                detail={"url": unit_url, "condo_key": repr(condo_key)},
+            )
         # Expand to the complete base-lot set so a multi-lot condo is never
         # collapsed to the single lot the unit sits on (research 7 step 3).
         expand_url = f"{CONDO_BASE_URL}?condo_key={condo_key}"
         expand_records = _fetch_rows(expand_url, **fetch_kwargs)
+        # G3 #1: the expansion query gets its OWN post-response timestamp, so a
+        # two-query resolve carries two distinct retrieved_at values.
+        retrieved_at = _rfc3339(clock())
         provenance.append(
             _provenance_entry(
                 dataset_id=CONDO_DATASET_ID,
@@ -729,11 +782,11 @@ def resolve_by_condo_key(
     correlation_id = correlation_id or uuid.uuid4().hex
     if app_token is None:
         app_token = os.environ.get(APP_TOKEN_ENV_VAR) or None
-    if not isinstance(condo_key, str) or not _CONDO_KEY_RE.match(condo_key):
+    if not isinstance(condo_key, str) or not _CONDO_KEY_RE.fullmatch(condo_key):
         raise BBLValidationError(
             "invalid_component",
-            "condo_key must be the 6-digit identifier (condo boro + 5-digit "
-            f"condo number, ^\\d{{6}}$); got {condo_key!r}",
+            "condo_key must be the 6 ASCII-digit identifier (condo boro + "
+            f"5-digit condo number, [0-9]{{6}}); got {condo_key!r}",
             condo_key,
         )
     retrieved_at = _rfc3339(clock())
@@ -770,8 +823,12 @@ def resolve_by_condo_key(
     if not base_bbls:
         return CondoBaseLotResult(
             status=STATUS_UNRESOLVED,
-            input_bbl=condo_key,
-            lot_class=LOT_CLASS_NOT_A_CONDO,
+            # G3 #3 / G4 #5: honest input identity - a condo_key input carries
+            # input_kind=condo_key and lot_class=None (it has no lot number),
+            # never an overloaded input_bbl / not_a_condo filler.
+            input_value=condo_key,
+            input_kind=INPUT_KIND_CONDO_KEY,
+            lot_class=None,
             resolution_path=None,
             correlation_id=correlation_id,
             retrieved_at=retrieved_at,
@@ -784,8 +841,9 @@ def resolve_by_condo_key(
         )
     return CondoBaseLotResult(
         status=STATUS_RESOLVED,
-        input_bbl=condo_key,
-        lot_class=LOT_CLASS_NOT_A_CONDO,
+        input_value=condo_key,
+        input_kind=INPUT_KIND_CONDO_KEY,
+        lot_class=None,
         resolution_path=PATH_CONDO_KEY,
         base_bbls=sorted(base_bbls),
         condo_number=condo_number,
@@ -798,7 +856,7 @@ def resolve_by_condo_key(
 
 
 def _resolved(
-    bbl: str,
+    input_value: str,
     lot_class: str,
     path: str,
     base_bbls: set[str],
@@ -816,7 +874,8 @@ def _resolved(
         )
     return CondoBaseLotResult(
         status=STATUS_RESOLVED,
-        input_bbl=bbl,
+        input_value=input_value,
+        input_kind=INPUT_KIND_BBL,
         lot_class=lot_class,
         resolution_path=path,
         base_bbls=sorted(base_bbls),
@@ -830,7 +889,7 @@ def _resolved(
 
 
 def _unresolved(
-    bbl: str,
+    input_value: str,
     lot_class: str,
     correlation_id: str,
     retrieved_at: str,
@@ -839,7 +898,8 @@ def _unresolved(
 ) -> CondoBaseLotResult:
     return CondoBaseLotResult(
         status=STATUS_UNRESOLVED,
-        input_bbl=bbl,
+        input_value=input_value,
+        input_kind=INPUT_KIND_BBL,
         lot_class=lot_class,
         resolution_path=None,
         correlation_id=correlation_id,

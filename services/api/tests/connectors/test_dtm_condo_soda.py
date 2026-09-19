@@ -25,6 +25,7 @@ is never called.
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 
 import pytest
@@ -35,6 +36,8 @@ from app.connectors.dtm_condo_soda import (
     CONDO_COLUMNS,
     CONDO_DATASET_ID,
     DIVERGENT_ZONING_NOTICE,
+    INPUT_KIND_BBL,
+    INPUT_KIND_CONDO_KEY,
     LOT_CLASS_BILLING,
     LOT_CLASS_NOT_A_CONDO,
     LOT_CLASS_UNIT,
@@ -47,12 +50,72 @@ from app.connectors.dtm_condo_soda import (
     STATUS_UNRESOLVED,
     UNIT_COLUMNS,
     UNIT_DATASET_ID,
+    RateLimitedError,
     SchemaDriftError,
+    SourceTimeoutError,
+    SourceUnavailableError,
     classify_lot,
     resolve,
     resolve_by_condo_key,
 )
-from app.resilience.transport import TransportResponse
+from app.resilience.transport import (
+    TransportFailure,
+    TransportResponse,
+    TransportTimeout,
+)
+
+# The documented BBLValidationError vocabulary (bbl.py:44-47). The condo
+# resolver's shape guard must raise ONE of these documented codes, never an
+# ad-hoc string like the retired "wrong_shape" (M5-T044 item e / G3 #2).
+DOCUMENTED_BBL_CODES = frozenset(
+    {
+        "empty",
+        "non_numeric",
+        "negative",
+        "non_integer_decimal",
+        "wrong_length",
+        "invalid_borough",
+        "invalid_block",
+        "invalid_lot",
+        "invalid_component",
+    }
+)
+
+
+def _unicode_digits(ascii_digits: str) -> str:
+    """Map an ASCII digit string to Arabic-Indic digits (U+0660..U+0669) - a
+    ``\\d`` (non-ASCII) match that ``re.ASCII`` + fullmatch must reject."""
+    return "".join(chr(0x0660 + int(c)) for c in ascii_digits)
+
+
+def _advancing_clock(moments: list[datetime]):
+    """A clock that returns each supplied moment once, in order. StopIteration
+    (too few moments) surfaces as a test error, never a silent reuse."""
+    iterator = iter(moments)
+    return lambda: next(iterator)
+
+
+class _AlwaysTransport:
+    """Transport stub that returns one fixed response (or raises one fixed
+    exception) for every call, regardless of URL - drives the error branches
+    that RoutedTransport (which asserts on unexpected URLs) cannot."""
+
+    def __init__(
+        self,
+        response: TransportResponse | None = None,
+        *,
+        exc: Exception | None = None,
+    ) -> None:
+        self.response = response
+        self.exc = exc
+        self.calls = 0
+
+    def __call__(self, url: str, headers: dict, timeout: float) -> TransportResponse:
+        self.calls += 1
+        if self.exc is not None:
+            raise self.exc
+        assert self.response is not None
+        return self.response
 
 # ---------------------------------------------------------------------------
 # Byte-faithful raw official responses embedded from the DB-002 research
@@ -427,3 +490,281 @@ def test_module_docstring_states_billing_path_and_boundary() -> None:
     doc = dtm_condo_soda.__doc__ or ""
     assert "billing-BBL" in doc
     assert "qualified-human" in doc
+
+
+# ===========================================================================
+# M5-T044 hardening coverage (DB-029 a, d-i)
+# ===========================================================================
+
+# --- (a) G5 F1/F3: hardened ASCII-fullmatch input guard, zero transport calls
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "3022647515\n",  # trailing newline (the $ anchor used to accept this)
+        "3022647515 ",  # trailing space
+        _unicode_digits("3022647515"),  # Unicode (Arabic-Indic) digits
+    ],
+)
+def test_a_bbl_guard_rejects_anchor_leak_no_transport(bad: str) -> None:
+    # A guard-failing input raises BBLValidationError BEFORE any I/O; if the
+    # transport were reached, _never_called would raise AssertionError instead,
+    # so catching BBLValidationError also proves zero transport calls.
+    with pytest.raises(BBLValidationError):
+        resolve(bad, transport=_never_called)
+
+
+@pytest.mark.parametrize(
+    "bad",
+    ["301313\n", "301313 ", _unicode_digits("301313")],
+)
+def test_a_condo_key_guard_rejects_anchor_leak_no_transport(bad: str) -> None:
+    with pytest.raises(BBLValidationError):
+        resolve_by_condo_key(bad, transport=_never_called)
+
+
+def test_a_url_carries_canonical_value() -> None:
+    # classify_lot accepts only an exact 10 ASCII-digit string, so the canonical
+    # value equals the accepted input; asserting the requested URL carries that
+    # value proves normalize_bbl(bbl).canonical (never a raw/other value) is
+    # interpolated at the f-string site.
+    transport = _billing_transport()
+    _call("3022647515", transport)
+    assert transport.requested_urls == [
+        f"{CONDO_URL}?condo_billing_bbl=3022647515"
+    ]
+
+
+def test_a_unit_and_expansion_urls_carry_canonical_value() -> None:
+    transport = RoutedTransport(
+        {
+            f"{UNIT_URL}?unit_bbl=3022642601": TransportResponse(200, UNIT_3022642601_BODY),
+            f"{CONDO_URL}?condo_key=301313": TransportResponse(200, CONDO_KEY_301313_BODY),
+        }
+    )
+    _call("3022642601", transport)
+    assert transport.requested_urls == [
+        f"{UNIT_URL}?unit_bbl=3022642601",
+        f"{CONDO_URL}?condo_key=301313",
+    ]
+
+
+# --- (a) G5 F2 (AS-2): response-side base-BBL guard rejects the leaky shapes
+def _billing_body_with_base(base_value: str) -> str:
+    return json.dumps(
+        [
+            {
+                "condo_base_bbl": base_value,
+                "condo_key": "301313",
+                "condo_number": "1313",
+                "condo_billing_bbl": "3022647515",
+            }
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    "base_value",
+    [_unicode_digits("3022640032"), "3022640032\n", "3022640032 "],
+)
+def test_a_response_base_bbl_leaky_shape_rejected(base_value: str) -> None:
+    transport = _billing_transport(_billing_body_with_base(base_value))
+    with pytest.raises(SchemaDriftError):
+        _call("3022647515", transport)
+
+
+# --- (d) G3 #1: per-query POST-response retrieved_at (AS-3) ------------------
+def test_d_two_query_resolve_has_distinct_post_response_timestamps() -> None:
+    transport = RoutedTransport(
+        {
+            f"{UNIT_URL}?unit_bbl=3022642601": TransportResponse(200, UNIT_3022642601_BODY),
+            f"{CONDO_URL}?condo_key=301313": TransportResponse(200, CONDO_KEY_301313_BODY),
+        }
+    )
+    clock = _advancing_clock(
+        [
+            datetime(2026, 9, 18, 12, 0, 0, tzinfo=UTC),  # after the unit query
+            datetime(2026, 9, 18, 12, 0, 5, tzinfo=UTC),  # after the expansion
+        ]
+    )
+    result = resolve(
+        "3022642601", transport=transport, clock=clock, correlation_id=FIXED_CORR
+    )
+    stamps = [p["retrieved_at"] for p in result.provenance]
+    assert stamps == ["2026-09-18T12:00:00Z", "2026-09-18T12:00:05Z"]
+    assert stamps[0] != stamps[1]  # each query stamped after its own response
+    # the result-level timestamp reflects the final (most recent) retrieval
+    assert result.retrieved_at == "2026-09-18T12:00:05Z"
+
+
+# --- (e) documented validation code (AS-4) ----------------------------------
+def test_e_classify_lot_uses_documented_validation_code() -> None:
+    with pytest.raises(BBLValidationError) as excinfo:
+        classify_lot("302264751X")
+    assert excinfo.value.code == "non_numeric"
+    assert excinfo.value.code in DOCUMENTED_BBL_CODES
+    assert excinfo.value.code != "wrong_shape"  # the retired ad-hoc code is gone
+
+
+# --- (f) honest input identity on condo_key results (AS-4) ------------------
+def test_f_condo_key_result_carries_honest_input_identity() -> None:
+    transport = RoutedTransport(
+        {f"{CONDO_URL}?condo_key=301313": TransportResponse(200, CONDO_KEY_301313_BODY)}
+    )
+    result = resolve_by_condo_key(
+        "301313", transport=transport, clock=FIXED_CLOCK, correlation_id=FIXED_CORR
+    )
+    assert result.input_kind == INPUT_KIND_CONDO_KEY
+    assert result.input_value == "301313"
+    assert result.lot_class is None  # a condo_key has no lot number
+
+
+def test_f_condo_key_unresolved_result_also_has_honest_identity() -> None:
+    transport = RoutedTransport(
+        {f"{CONDO_URL}?condo_key=999999": TransportResponse(200, EMPTY_BODY)}
+    )
+    result = resolve_by_condo_key(
+        "999999", transport=transport, clock=FIXED_CLOCK, correlation_id=FIXED_CORR
+    )
+    assert result.status == STATUS_UNRESOLVED
+    assert result.input_kind == INPUT_KIND_CONDO_KEY
+    assert result.input_value == "999999"
+    assert result.lot_class is None
+
+
+def test_f_bbl_result_carries_bbl_input_identity() -> None:
+    result = _call("3022647515", _billing_transport())
+    assert result.input_kind == INPUT_KIND_BBL
+    assert result.input_value == "3022647515"
+    assert result.lot_class == LOT_CLASS_BILLING
+
+
+# --- (g) dtm-local error branches (AS-5) ------------------------------------
+_ERR_KW = {"sleep": lambda _delay: None, "clock": FIXED_CLOCK, "correlation_id": FIXED_CORR}
+
+
+def test_g_400_schema_drift_is_typed() -> None:
+    transport = _AlwaysTransport(
+        TransportResponse(400, '{"errorCode":"query.soql.no-such-column"}')
+    )
+    with pytest.raises(SchemaDriftError):
+        resolve("3022647515", transport=transport, **_ERR_KW)
+
+
+def test_g_400_other_is_source_unavailable() -> None:
+    transport = _AlwaysTransport(
+        TransportResponse(400, '{"errorCode":"query.soql.malformed"}')
+    )
+    with pytest.raises(SourceUnavailableError):
+        resolve("3022647515", transport=transport, **_ERR_KW)
+
+
+def test_g_non_json_body_is_schema_drift() -> None:
+    transport = _AlwaysTransport(TransportResponse(200, "this is not json"))
+    with pytest.raises(SchemaDriftError):
+        resolve("3022647515", transport=transport, **_ERR_KW)
+
+
+def test_g_non_array_body_is_schema_drift() -> None:
+    transport = _AlwaysTransport(TransportResponse(200, "{}"))
+    with pytest.raises(SchemaDriftError):
+        resolve("3022647515", transport=transport, **_ERR_KW)
+
+
+def test_g_non_object_record_is_schema_drift() -> None:
+    transport = _AlwaysTransport(TransportResponse(200, "[1, 2, 3]"))
+    with pytest.raises(SchemaDriftError):
+        resolve("3022647515", transport=transport, **_ERR_KW)
+
+
+def test_g_rate_limited_terminal() -> None:
+    transport = _AlwaysTransport(TransportResponse(429, "{}"))
+    with pytest.raises(RateLimitedError):
+        resolve(
+            "3022647515", transport=transport, max_attempts=2, backoff_base=0.0, **_ERR_KW
+        )
+    assert transport.calls >= 2  # the bounded retry budget was actually spent
+
+
+def test_g_timeout_terminal() -> None:
+    transport = _AlwaysTransport(exc=TransportTimeout("read timed out"))
+    with pytest.raises(SourceTimeoutError):
+        resolve(
+            "3022647515", transport=transport, max_attempts=2, backoff_base=0.0, **_ERR_KW
+        )
+
+
+def test_g_network_failure_is_source_unavailable() -> None:
+    transport = _AlwaysTransport(exc=TransportFailure("dns failure"))
+    with pytest.raises(SourceUnavailableError):
+        resolve(
+            "3022647515", transport=transport, max_attempts=2, backoff_base=0.0, **_ERR_KW
+        )
+
+
+# --- (h) unit-path branches (AS-6) ------------------------------------------
+def test_h_unit_empty_is_unresolved_single_query() -> None:
+    transport = RoutedTransport(
+        {f"{UNIT_URL}?unit_bbl=3022642601": TransportResponse(200, EMPTY_BODY)}
+    )
+    result = _call("3022642601", transport)
+    assert result.status == STATUS_UNRESOLVED
+    assert result.base_bbls == []
+    assert [p["query_kind"] for p in result.provenance] == ["unit_bbl"]
+
+
+def test_h_unit_without_condo_key_returns_direct_lot_no_expansion() -> None:
+    # A unit row with a base lot but NO condo_key: the resolver returns the
+    # direct base lot, issues NO expansion query (RoutedTransport would raise on
+    # the unrouted condo_key URL), and surfaces the incompleteness note.
+    body = json.dumps(
+        [
+            {
+                "condo_base_bbl": "3022640032",
+                "unit_bbl": "3022642601",
+                "unit_designation": "1A",
+            }
+        ]
+    )
+    transport = RoutedTransport(
+        {f"{UNIT_URL}?unit_bbl=3022642601": TransportResponse(200, body)}
+    )
+    result = _call("3022642601", transport)
+    assert result.status == STATUS_RESOLVED
+    assert result.base_bbls == ["3022640032"]
+    assert result.condo_key is None
+    assert [p["query_kind"] for p in result.provenance] == ["unit_bbl"]
+    assert any("without condo_key expansion" in note for note in result.notes)
+
+
+# --- (i) runtime drift-note paths (AS-6) ------------------------------------
+def test_i_unknown_columns_note_is_recorded() -> None:
+    body = json.dumps(
+        [
+            {
+                "condo_base_bbl": "3022640032",
+                "condo_key": "301313",
+                "condo_number": "1313",
+                "surprise_column": "x",
+            }
+        ]
+    )
+    result = _call("3022647515", _billing_transport(body))
+    assert result.status == STATUS_RESOLVED
+    assert any(note.startswith("unknown_columns:surprise_column") for note in result.notes)
+
+
+def test_i_multiple_condo_keys_and_numbers_notes() -> None:
+    body = json.dumps(
+        [
+            {"condo_base_bbl": "3022640032", "condo_key": "301313", "condo_number": "1313"},
+            {"condo_base_bbl": "3022640033", "condo_key": "301314", "condo_number": "1314"},
+        ]
+    )
+    result = _call("3022647515", _billing_transport(body))
+    assert result.status == STATUS_RESOLVED
+    assert set(result.base_bbls) == {"3022640032", "3022640033"}
+    assert any(note.startswith("multiple_condo_keys:") for note in result.notes)
+    assert any(note.startswith("multiple_condo_numbers:") for note in result.notes)
+    # ambiguous identifiers are surfaced, never guessed into a single value
+    assert result.condo_key is None
+    assert result.condo_number is None
