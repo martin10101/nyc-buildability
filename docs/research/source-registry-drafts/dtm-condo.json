@@ -1,0 +1,5 @@
+{
+  "status": "placeholder",
+  "task": "M5-T045",
+  "note": "Seeded at the contract seam. The producer authors the real source-registry draft record here, covering BOTH Digital Tax Map datasets (p8u6-a6it condo units, eguu-7ie3 DTM lots), mirroring the committed ztldb.json shape field-for-field, from docs/research/condo-base-lot-resolution-sources.md, including the per-request freshness mechanism (X-SODA2-Truth-Last-Modified == rowsUpdatedAt) proven in docs/research/condo-null-billing-fixture-capture.md."
+}

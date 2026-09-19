@@ -1,0 +1,123 @@
+{
+  "task_id": "M5-T045",
+  "title": "Condo billing-BBL live wiring (DB-029): registry record + real null-billing fixture + base-lot resolution seams + records-vs-allowances multi-lot display",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire the accepted, hardened condo->base-lot resolver (dtm_condo_soda, leaf until now) into the live path so a condo billing BBL no longer dead-ends: (1) DB-029(b) source-registry draft records for DTM p8u6-a6it + eguu-7ie3 (mirror the committed ztldb.json shape) with the per-request freshness stamp noted (X-SODA2-Truth-Last-Modified == rowsUpdatedAt, proven in the fixture capture) - registry record lands BEFORE any live traffic; (2) DB-029(c) pin the REAL captured null-billing fixture (condo_key 103343) and assert KEY-ABSENCE tolerance (SODA omits null columns; 7-or-8-key object) - retire or re-label the byte-infaithful explicit-null synthetic; (3) a new seam-policy module app/connectors/condo_base_lot.py (beside bbl.py; transport stays in dtm_condo_soda.py) that classifies condo-billing input, invokes the resolver, and returns a typed fail-closed outcome (single base lot / multi-lot set / unresolved) with provenance; (4) wire it BEFORE the zoning-lot lookup at BOTH consumer seams - spatial/live_provider.py (fail-safe None on multi-lot or unresolved; never fabricate, never collapse divergent zoning) and the profile zoning_crosscheck seam (recorded resolution reaches the existing conflict/note channels; NO contract-shape change anywhere); (5) the D-073-R006 records-vs-allowances display increment: the resolved identity and the multi-lot case presented as RECORDS (billing BBL -> recorded base lot(s), recorded per-lot zoning) with computed allowances shown only when conditions are established, unresolved explained honestly, on screen AND printed brief; (6) the T044-wave riders on the connector",
+  "business_reason": "DB-002/DB-029 close-out: condo billing BBLs (lot 7501+) are a real user-entry class that today honestly dead-ends; the resolver module is accepted and hardened but unreachable (zero consumers)",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "REPORT DISCIPLINE (binding; recent runs burned all four review rounds on report revisions, not code): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass. The review-round budget is 4 - spend it on code.",
+    "COMMAND CWD (binding; suites do NOT collect from repo root - known invocation artifact): run the pytest/ruff commands from the services/api directory (plain `cd services/api` first; cwd persists; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command. Web tests prove ONLY in CI on the pushed head - never run or document npm/npx/node locally.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam, 740 files/15648 nodes). dtm_condo_soda.py is a LEAF (only tests/connectors/test_dtm_condo_soda.py imports it). spatial/live_provider.py consumers: app/api/v1/rule_evaluation.py:66 (the route seam), tests/spatial/test_live_provider.py:39-40, tests/api/test_rule_evaluation_api.py:98-100. profile/zoning_crosscheck.py has TEST-ONLY consumers (tests/profile/test_wave_integration.py:53, tests/profile/test_ztldb_crosscheck.py:43); app/profile/builder.py references it in docs only (:639) and consumes its conflict entries as data. The ONLY live app-side ztldb call today is live_provider.py:110 (fetch_by_bbl). Identity primitives: normalize_bbl in app/connectors/bbl.py:127. Web: PropertyOverview.tsx consumers = ArchitectEntry:24, ProfileViews:18, PropertyFacts:9, ReportView:11, ScenarioWorkspace:4, development-limits.test.tsx:4, zoning-context-panel.test.tsx:5. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE 1/3 - PRECONDITIONS (binding; DB-029 letter map - read docs/DISCOVERY_BACKLOG.md rows DB-029 + the 2026-09-19 recon + capture sweep lines first): (b) SOURCE-REGISTRY RECORD BEFORE ANY LIVE TRAFFIC (G1 A2; .claude/rules/backend-api.md 'no connector without a source_registry record'): author docs/research/source-registry-drafts/dtm-condo.json covering BOTH datasets (p8u6-a6it condo units, eguu-7ie3 DTM lots) by MIRRORING the committed ztldb.json shape field-for-field (invented shapes fail closed); source facts come from docs/research/condo-base-lot-resolution-sources.md; record the per-request freshness mechanism proven in the capture (response header X-SODA2-Truth-Last-Modified == rowsUpdatedAt). (c) REAL NULL-BILLING FIXTURE: pin the captured fixture from docs/research/condo-null-billing-fixture-capture.md (condo_key 103343, single base lot 1003030019) BYTE-FAITHFULLY into the test corpus and assert KEY-ABSENCE tolerance - SODA omits null columns entirely, so the real null-billing wire shape is a 7-or-8-key object with the key ABSENT, never an explicit null. The existing explicit-null synthetic is byte-infaithful: replace it wherever the real fixture covers the branch; keep only LABELED synthetics for branches the real corpus cannot produce (NO multi-lot null-billing condo exists citywide - documented negative, both counts 28).",
+    "SCOPE 2/3 - WIRING (binding): (1) NEW seam-policy module services/api/app/connectors/condo_base_lot.py beside bbl.py (transport stays in dtm_condo_soda.py; policy here): classify whether an input BBL is condo-billing class (lot 7501+ per the research), invoke the accepted resolver, and return a TYPED fail-closed outcome - resolved-single-base-lot / multi-lot-set / unresolved / not-condo-billing (pass-through) - carrying the resolution provenance (source, dataset, retrieved_at, condo_key). Answer the seven modularity boundary questions in your plan. (2) spatial/live_provider.py: insert the condo step BEFORE the zoning-lot lookup; resolved single base lot -> run the existing pipeline on the BASE lot with the resolution recorded; multi-lot or unresolved -> None (fail-safe to professional review) with a payload-only log line - NEVER fabricate a substrate, NEVER collapse divergent zoning across base lots; flag-off and non-condo behavior byte-identical. (3) profile seam (zoning_crosscheck.py): the recorded resolution reaches the profile through the EXISTING contract-1.3.0 conflict/note channels only - NO contract-shape change anywhere; if your plan finds a contract change unavoidable, STOP and report it as a discovery (the orchestrator splits a packet).",
+    "SCOPE 3/3 - DISPLAY + RIDERS (binding): (4) D-073-R006 records-vs-allowances display increment on PropertyOverview.tsx + AnalysisIdentityNotice.tsx + ReportView.tsx (screen AND printed brief): a resolved identity is shown as a RECORD ('you entered billing BBL X; the analysis ran on recorded base lot Y'); the multi-lot case presents the recorded base lots and their RECORDED zoning as records with NO computed allowance presented; an unresolved resolution is explained honestly without presenting any reference number as the calculated result. Recorded existing-building information, city reference fields, and calculated allowances stay separate concepts throughout. (5) T044-WAVE RIDERS on the connector (each closed with a named test or code change): response-side condo_key-guard negative test; optional $limit defense-in-depth; _ERROR_CODE_SAFE_RE fullmatch consistency; invalid_component documented-code assertion; condo_key canonical-normalizer consistency note. DB-029(k): hoist shared soda_errors/soda_request helpers ONLY if dtm_condo_soda.py approaches 750 SLOC.",
+    "PRESERVATION (binding): fail-closed everywhere - no fabricated value, no collapsed uncertainty, no silent winner between records; ZTLDB honest-absence behavior for non-condo lots byte-identical (regression suites prove it); the accepted resolver's result contract is consumed AS-IS (no meaning changes to its fields); the live path stays behind LIVE_SPATIAL_PROVIDER_ENABLED (absent -> disabled); fixtures byte-faithful with synthetics labeled; no new dependency; no network in tests; NO contract-schema change; empty .test.tsx files fail vitest - seed with a trivial passing test.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny). Thin client: no local npm/node, no new dependencies. Run `python -m ruff check .` from services/api cwd before every checkpoint."
+  ],
+  "outputs": [
+    "Source-registry draft record for BOTH DTM datasets mirroring the committed shape, landed before any live-traffic path (DB-029b)",
+    "REAL captured null-billing fixture pinned byte-faithfully with key-absence tolerance asserted; byte-infaithful explicit-null synthetic retired or re-labeled (DB-029c)",
+    "condo_base_lot.py seam-policy module + tests: typed fail-closed resolution outcomes with provenance",
+    "Both consumer seams wired pre-lookup: live provider fail-safe on multi-lot/unresolved; profile resolution note through existing channels; non-condo behavior byte-identical",
+    "D-073-R006 records-vs-allowances display increment on screen and printed brief (resolved identity + multi-lot records view)",
+    "T044-wave riders closed on the connector with named tests",
+    "project-control/reports/M5-T045-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T042",
+    "M5-T044"
+  ],
+  "allowed_paths": [
+    "docs/research/source-registry-drafts/dtm-condo.json",
+    "services/api/app/connectors/dtm_condo_soda.py",
+    "services/api/tests/connectors/test_dtm_condo_soda.py",
+    "services/api/app/connectors/condo_base_lot.py",
+    "services/api/tests/connectors/test_condo_base_lot.py",
+    "services/api/app/spatial/live_provider.py",
+    "services/api/tests/spatial/test_live_provider.py",
+    "services/api/app/profile/zoning_crosscheck.py",
+    "services/api/tests/profile/test_ztldb_crosscheck.py",
+    "services/api/tests/profile/test_wave_integration.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "project-control/reports/M5-T045-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/profile/builder.py",
+    "services/api/app/spatial/adapter.py",
+    "services/api/app/_contract_schemas/",
+    "services/api/app/rules/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary): a condo billing BBL (lot 75xx) entering the live provider resolves to its single base lot via the seam module and the zoning-lot lookup runs on the BASE lot, with the resolution recorded with provenance (offline stubs, zero network).",
+    "AS-2 (fixture): the REAL captured null-billing fixture (condo_key 103343) drives the null-billing path byte-faithfully; the parser tolerates KEY ABSENCE (7-and-8-key objects) and never requires an explicit null.",
+    "AS-3 (boundary/multi-lot): a condo resolving to MULTIPLE base lots yields the typed multi-lot outcome; the live provider returns None (fail-safe to professional review) with zero fabricated substrate and divergent zoning never collapsed; the display presents the recorded base lots as records with NO computed allowance.",
+    "AS-4 (missing/ambiguous): an unresolved resolution yields the typed unresolved outcome; provider None; the display explains it honestly without presenting a reference number as the calculated result (D-073-R006).",
+    "AS-5 (failure + regression): resolver transport errors (429/timeout/unavailable/drift) surface as typed failures and the provider fail-safes; a non-condo BBL bypasses the condo step entirely with byte-identical prior behavior; flag-off makes zero connector calls.",
+    "AS-6 (registry pre-live): the registry draft record exists for BOTH datasets, mirrors the committed ztldb.json shape, and lands in the same change-set as (in practice, before) any live-traffic wiring; the freshness mechanism is documented in it.",
+    "AS-7 (riders): each T044-wave rider is closed by a named test or code change (condo_key response-guard negative test; $limit; _ERROR_CODE_SAFE_RE fullmatch; invalid_component documented-code assertion; canonical-normalizer consistency note).",
+    "AS-8 (display walkthrough): on screen AND the printed brief, the resolved-identity note, the multi-lot records view, and the records-vs-allowances distinction are visible and accessible (HJ walkthrough).",
+    "AS-9: ruff clean; the documented api suites green offline from services/api cwd; modularity exit 0; the new web test file carries at least one passing test.",
+    "AS-10: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Divergent zoning across a condo's base lots must never collapse into a single answer; multi-lot is a records display, never an allowance.",
+    "The condo step is a strict pre-lookup addition: non-condo and flag-off behavior must stay byte-identical (regression suites prove it).",
+    "NO contract-schema change; if a plan step finds one unavoidable, stop and report - never fork a shape.",
+    "Registry record is the gating condition on live traffic (DB-029b / G1 A2).",
+    "Disjointness: never touch services/api/app/rules/**, profile/builder.py, spatial/adapter.py, or contract schemas.",
+    "Empty .test.tsx fails vitest (no suite); web behavior proves ONLY in CI on the pushed head."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T03:07:46.431298+00:00",
+  "updated_at": "2026-09-19T03:07:47.465497+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T03:07:46.439286+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/connectors/test_dtm_condo_soda.py tests/connectors/test_condo_base_lot.py -q",
+    "python -m pytest tests/spatial/test_live_provider.py tests/profile/test_ztldb_crosscheck.py tests/profile/test_wave_integration.py -q",
+    "python -m pytest tests/connectors tests/spatial tests/profile tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
