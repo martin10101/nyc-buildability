@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T06:12:50.269900+00:00",
  "created_at": "2026-09-19T06:12:50.269900+00:00",
- "updated_at": "2026-09-19T06:12:50.269900+00:00",
+ "updated_at": "2026-09-19T08:00:01.804751+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-076-R002",
   "D-076-R003"
  ],
- "requirements_content_digest_sha256": "20fa5db7436a19bb99961b8f98006305d79df426c216f5f3e450a3903c6322e0",
+ "requirements_content_digest_sha256": "9302ffa330e6ee72e15dec45f18e682da30d871851faef45b0c364174753219e",
  "sources": [
   {
    "file": "source-001.md",
@@ -57,6 +57,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). Plan authoring follows immediately; phase-B packets bind by applicability append at contract time."
+  },
+  {
+   "at": "2026-09-19T08:00:01.804751+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T048 bound to D-076-R001/R002/R003: the plan's B0 packet (its first named increment) carrying the R002 honesty rules as binding packet text (third input class, deterministic validation, no allowance implied) inside the R003-released phase-B slice. Digest resynced same commit."
   }
  ]
 }
