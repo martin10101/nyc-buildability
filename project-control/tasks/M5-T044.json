@@ -1,0 +1,82 @@
+{
+  "task_id": "M5-T044",
+  "title": "Condo resolver pre-wiring hardening (DB-029 a,d-i): ASCII fullmatch guards + canonical URL interpolation + error-branch and unit-path test coverage",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-029 pre-wiring items so the condo wiring packet can consume a hardened module: (a) replace the anchor-leaky shape guards with re.ASCII fullmatch for BBL and condo_key, interpolate the CANONICAL normalized value (never raw input) into every URL, apply the same ASCII-fullmatch fix to the response-side base-BBL guard, and add the negative tests (trailing newline, trailing space, Unicode digits - typed refusal, zero transport calls); (d) stamp retrieved_at post-response per query per the pluto precedent; (e) replace the undocumented wrong_shape validation code with a documented one; (f) stop overloading input_bbl/lot_class on condo_key results (dedicated input identity); (g) add dtm-local error-branch tests (400 drift vs non-drift, JSON guards, terminal typed errors); (h) add the unit-path branch tests (unit-empty unresolved; unit-row-without-condo_key no-expansion); (i) exercise the C10 runtime unknown-columns/multi-key note paths. Registry record + official null-billing fixture stay wiring-era (DB-029 b/c) - OUT of scope",
+  "business_reason": "DB-029(a) is the G5 must-fix-before-wiring precondition on the accepted condo resolver; the riders close every reviewer-named gap while the module is still a leaf",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "REPORT DISCIPLINE (binding; recent runs burned all four review rounds on report revisions, not code): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass. The review-round budget is 4 - spend it on code.",
+    "COMMAND CWD (binding; suites do NOT collect from repo root - known invocation artifact): run the pytest/ruff commands from the services/api directory (plain `cd services/api` first; cwd persists; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001). dtm_condo_soda.py is a LEAF (zero consumer imports - verified at the M5-T042 acceptance); its only test is tests/connectors/test_dtm_condo_soda.py. This packet stays inside those two files + the report. The sibling models remain pluto_soda.py / ztldb_soda.py (the retrieved_at POST-RESPONSE stamp precedent lives in pluto_soda.py ~:654-657). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE (binding; DB-029 letter map from the M5-T042 gate reports - read project-control/reports/M5-T042-G5.md F1-F3, -G3.md #1-4, -G4.md #3-4 first): (a) G5 F1+F2 MUST-FIX: replace _STRICT_BBL_RE/_CONDO_KEY_RE with re.ASCII fullmatch semantics ([0-9]{10} / [0-9]{6}); interpolate the CANONICAL normalized value (normalize_bbl(...).canonical), never the raw input, into every URL (all four f-string sites); apply the ASCII fullmatch fix to the response-side base-BBL guard; F3 negative tests: trailing newline, trailing space, Unicode-digit BBL and condo_key each yield the typed BBLValidationError-class refusal with ZERO transport calls; (d) G3 #1: retrieved_at stamped after each successful response, per query (unit + expansion get their own timestamps); (e) G3 #2: replace the undocumented 'wrong_shape' code with a documented vocabulary code; (f) G3 #3/G4 #5: give resolve_by_condo_key results an honest input identity (input_kind or equivalent) instead of overloading input_bbl/lot_class - module-internal, no consumer exists; (g) G3 #4/G4 #2: offline transport-stub tests for the 400 drift-vs-non-drift split, the non-JSON/non-array/non-object body guards, and the terminal RateLimited/Timeout/Unavailable surfacing; (h) G4 #3: unit-path branch tests (unit-empty -> UNRESOLVED; unit-row-without-condo_key -> direct base lots, no expansion, incompleteness note); (i) G4 #4: force the runtime unknown-columns and multiple-condo-keys note paths. OPTIONAL (j): an explicit $limit defense-in-depth. OUT OF SCOPE: source_registry record, official null-billing fixture, any consumer wiring (DB-029 b/c - wiring-era).",
+    "PRESERVATION (binding): the resolver's result contract stays honest and fail-closed; (f) may add fields/vocabulary but must not silently change the meaning of existing ones (the module has no consumer, so a clean rename is acceptable IF the tests and docstrings move together); fixtures stay byte-faithful (synthetics labeled); no new dependency; no network in tests; the module stays a LEAF.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny). Do not run or document npm/npx/node (web behavior proves ONLY in CI on the pushed head). Run ruff from services/api cwd before every checkpoint. Thin client: no new dependencies."
+  ],
+  "outputs": [
+    "Hardened guards: ASCII fullmatch + canonical-value URL interpolation + response-side guard fix, with the full negative-test set (G5 F1-F3 closed)",
+    "Per-query post-response retrieved_at; documented validation code; honest condo_key input identity",
+    "Error-branch, unit-path, and drift-note test coverage (G3 #4, G4 #2-4 closed)",
+    "project-control/reports/M5-T044-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T042"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/dtm_condo_soda.py",
+    "services/api/tests/connectors/test_dtm_condo_soda.py",
+    "project-control/reports/M5-T044-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (a): trailing-newline, trailing-space, and Unicode-digit BBLs and condo_keys each fail closed with the typed error and zero transport calls; every URL carries the canonical value.",
+    "AS-2 (a): the response-side base-BBL guard rejects Unicode-digit and trailing-newline values as drift.",
+    "AS-3 (d): a two-query resolve carries two distinct post-response retrieved_at values (fake clock advances between responses).",
+    "AS-4 (e/f): no undocumented validation code remains; condo_key results carry an honest input identity, with tests and docstrings updated together.",
+    "AS-5 (g): 400-drift vs 400-other, non-JSON/non-array/non-object bodies, and 429/timeout/unavailable terminal errors each forced by an offline stub test.",
+    "AS-6 (h/i): unit-empty and no-condo_key branches forced; unknown-columns and multiple-key note paths exercised.",
+    "AS-7: ruff clean; suite green offline; connectors-wide suite green; modularity exit 0; module still a leaf (zero consumer imports).",
+    "AS-8: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Hardening may only tighten acceptance; a previously-valid canonical input must still resolve identically.",
+    "Stay a leaf: no consumer import, no registry record, no live fixture capture (wiring-era).",
+    "Disjointness with M5-T043: never touch services/api/app/rules/**, spatial/**, or apps/web/**."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T00:29:59.323498+00:00",
+  "updated_at": "2026-09-19T00:31:24.330599+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T00:29:59.323498+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/connectors/test_dtm_condo_soda.py -q",
+    "python -m pytest tests/connectors -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

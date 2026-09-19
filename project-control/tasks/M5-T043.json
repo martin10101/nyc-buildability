@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T043",
+  "title": "Wide-street wiring module hardening + extraction (DB-028 a-e,h): named_street_override_status submodule with facade, doc/reason accuracy, guard hardening, display fallback alignment",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-028 build items before the wiring module grows further: (a) extract the named-street status construction (MatchedNamedStreetOverride, _fully_resolved_typed_inputs, build_named_street_override_status) into a new named_street_override_status.py submodule with a compatibility facade re-export from wide_street_wiring (public imports preserved, consumer suites untouched and green); (b) correct the stale module docstring and the branch-4 reason so both say the matcher IS consulted but could not resolve; (c) harden the safe-attestation guard to require override_table_implemented=True rather than trusting the boolean pair; (d) fix the all-empty-decisions attestation nit on the no-decisions professional-review branch; (e) add the direct matcher-load-failure fail-safe test on the provider; (h) align CalculationEvidence's defensive null-FAR fallback wording to 'Not calculated' so no non-review state can ever read 'professional review required'",
+  "business_reason": "DB-028: the G3 cohesion ruling names this extraction as required BEFORE the module's next growth (alternate-width leg / CD-cross-street connector); the guard and wording items close the reviewers' accuracy findings while the surface is fresh",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding; two S4.5 stops proved this): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values itself. If you do supply one, it must match EXACTLY full-length: 40-hex SHAs from `git rev-parse HEAD` (never --short), the FULL worktree path. Any abbreviated value stops the run.",
+    "REPORT DISCIPLINE (binding; recent runs burned all four review rounds on report revisions, not code): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; keep the report to one concise evidence pass. The review-round budget is 4 - spend it on code.",
+    "COMMAND CWD (binding; suites do NOT collect from repo root - known invocation artifact): run the pytest/ruff commands from the services/api directory (plain `cd services/api` first; cwd persists; `cd ../..` before the modularity check, which runs from the repo root). Never chain commands onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; from the 2026-09-18 seam analyses). wide_street_wiring.py (723 SLOC, warn tier, 27 SLOC below the justify threshold) is imported by integration.py (:56, :514-520), api/v1/rule_evaluation.py:74, spatial/wide_street_live_provider.py:100, and the suites test_rule_evaluation_api / test_rules_integration / test_wide_street_wiring. The EXTRACTION SEAM named by the G3 cohesion ruling (project-control/reports/M5-T040-G3.md finding 6): MatchedNamedStreetOverride + _fully_resolved_typed_inputs + build_named_street_override_status form a clean submodule; every existing public import MUST keep working through a compatibility re-export from wide_street_wiring (consumers and their suites are NOT edited and MUST stay green - tests/api and test_rules_integration are in allowed_paths only as green-keeping paths). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE (binding; DB-028 letter map from the M5-T040 gate reports - read project-control/reports/M5-T040-G3.md, -G5.md, -HJ.md, -G4.md findings first): (a) extract named_street_override_status.py with the facade re-export; behavior byte-equivalent (same truth table, same provenance); focused tests move with the code or stay green in place; (b) G3 A1/A2 - module docstring and the branch-4 named_pending reason must say the matcher IS consulted and could not resolve (missing CD/cross-street bounds), never 'not implemented'; (c) G3 A3 - _elevated_exceptions_checked and the named_pending derivation require override_table_implemented=True on the safe path (a hand-built may_touch=False/implemented=False status must NO LONGER clear) + regression test; (d) G3 A4 - the no-policy-decisions professional-review branch must not report exceptions_checked=True via all(()) - make the empty-decisions case explicitly False + test; (e) G3 A5 - direct test forcing the provider's matcher-load-failure fail-safe branch (cache_clear + raising loader) asserting the unresolved status, never a cleared one; (h) HJ A1 - CalculationEvidence's defensive null-FAR fallback reads 'Not calculated' (matching DevelopmentLimits), so no non-review state can ever render a professional-review phrase; assert in the report-view suite.",
+    "PRESERVATION (binding): the wiring truth table, provenance fields, and every consumer-visible behavior stay byte-equivalent except the two accuracy items (b)/(d) and the guard hardening (c) - which may only make attestation STRICTER, never looser. Contract v1.1.0 untouched (no schema/TS/integration.py/response.py). DRAFT/not-verified vocabulary unchanged (D-045-R009). Fail-closed direction preserved (D-051). If the extraction would change any public symbol path a consumer imports, STOP that sub-scope and report.",
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny). Do not run or document npm/npx/node (web behavior proves ONLY in CI on the pushed head). Run ruff from services/api cwd before every checkpoint. Thin client: no new dependencies."
+  ],
+  "outputs": [
+    "named_street_override_status.py extracted with compatibility facade; wide_street_wiring.py back under the warn threshold or documented; consumer suites green untouched",
+    "Guard hardening (c) + attestation fix (d) + accuracy fixes (b) with regression tests; provider matcher-load-failure test (e)",
+    "CalculationEvidence null-FAR fallback aligned to 'Not calculated' with assertion (h)",
+    "project-control/reports/M5-T043-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T040"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/wide_street_wiring.py",
+    "services/api/app/rules/named_street_override_status.py",
+    "services/api/tests/rules/test_wide_street_wiring.py",
+    "services/api/tests/spatial/test_wide_street_live_provider.py",
+    "services/api/tests/rules/test_rules_integration.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "apps/web/src/components/architect/CalculationEvidence.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "project-control/reports/M5-T043-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (a): the extracted submodule exists; wide_street_wiring re-exports the moved symbols; every pre-existing import path still resolves; the wiring/matcher/provider/consumer suites all green with zero consumer-file edits.",
+    "AS-2 (c): a hand-built status with segment_may_touch=False AND override_table_implemented=False no longer clears the attestation guard - regression test forces it.",
+    "AS-3 (d): the no-policy-decisions professional-review branch reports exceptions_checked=False - test forces the empty-decisions case.",
+    "AS-4 (b): module docstring and branch-4 reason accurately describe the consulted-but-unresolved matcher; no 'not implemented' phrasing survives (grep).",
+    "AS-5 (e): a raising matcher loader forces the provider fail-safe branch; the test asserts the unresolved status and no cleared attestation.",
+    "AS-6 (h, CI): no non-review determination_state can render a professional-review phrase on CalculationEvidence - the defensive fallback reads 'Not calculated'; asserted in the suite.",
+    "AS-7: ruff clean; documented suites green; modularity check exit 0 with wide_street_wiring.py improved or its tier documented; contract files byte-untouched.",
+    "AS-8: CI green on the pushed head (orchestrator captures); DRAFT preservation grep-clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Extraction must be behavior-preserving: any truth-table or provenance drift is a defect, not a refactor.",
+    "Guard hardening may only tighten; if a legitimate path would break, STOP and report.",
+    "Disjointness with M5-T044: never touch services/api/app/connectors/** or its tests."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T00:29:58.699542+00:00",
+  "updated_at": "2026-09-19T00:31:24.330599+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-045",
+      "requirement_ids": [
+        "D-045-R008",
+        "D-045-R009"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T00:29:58.699542+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/rules/test_wide_street_wiring.py tests/rules/test_named_street_override.py -q",
+    "python -m pytest tests/spatial/test_wide_street_live_provider.py -q",
+    "python -m pytest tests/api tests/rules/test_rules_integration.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

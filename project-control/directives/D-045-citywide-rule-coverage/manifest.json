@@ -10,7 +10,7 @@
  "issued_at": "2026-09-13",
  "captured_at": "2026-09-13T04:10:12+00:00",
  "created_at": "2026-09-13T04:10:12+00:00",
- "updated_at": "2026-09-18T17:09:38.078133+00:00",
+ "updated_at": "2026-09-19T00:31:24.330599+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
  "capture_head_sha": "7782be5981d28007075aa71e969df11774e44192",
@@ -33,7 +33,7 @@
   "D-045-R009",
   "D-045-R010"
  ],
- "requirements_content_digest_sha256": "d82511a156fc1e816cc1a6c79f8beccc8e22e2d304c667ea1b5c547d2030a151",
+ "requirements_content_digest_sha256": "0adf74009891f0d42e2a7413ea71043bbdc0e42b488c82be922eebae524961da",
  "sources": [
   {
    "file": "source-001.md",
@@ -148,6 +148,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "M5-T040 bound to D-045-R002/R008/R009 as the named-street wiring packet of the B2 street-width wave (bounded gated task; DRAFT preservation). Digest resynced same commit."
+  },
+  {
+   "at": "2026-09-19T00:31:24.330599+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T043 bound to D-045-R008/R009 (bounded hardening/extraction increment on the B2 wiring surface; DRAFT preservation). Digest resynced same commit."
   }
  ]
 }
