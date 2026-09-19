@@ -29,9 +29,9 @@ SHA-256 digests are LF-normalized (CRLF→LF before hashing), pasted verbatim.
 | `97b0f0ef30162768c444c6fd7c34f98316561580a11b636d561a3bfc414a9561` | apps/web/src/components/architect/AnalysisIdentityNotice.tsx (UNCHANGED from the accepted state — the ruling folds the explanation into the substitution record; in the index as an allowed_path the reviewers must confirm untouched) |
 | `22bf1b1264b3abf59406916a6c8879c44c826a02deb86712213fc94066ec0acc` | apps/web/src/components/architect/ReportView.tsx (the brief reads the SAME shared decision + section) |
 | `acc62445493fe086662ea0569bd2f6211316ed2902d5b218ec7928164e721c5c` | apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx (channel stubs; all outcome branches; token pin; heading semantics) |
-| `bf225ba69d933fdb801dcb77c360a2cda5e4a3ab0a5cab92b5a089f91325da4c` | project-control/reports/M5-T052-producer-report.md (leads with the guard-coherence ruling §1) |
+| `fa7c04127c2f17b8c1f5154e8ec51ef6bb841ef175370844c843e9e5a58a26fe` | project-control/reports/M5-T052-producer-report.md (leads with the guard-coherence ruling §1; digest updated after the tagged G3 report corrections — pre-correction digest bf225ba6…) |
 | `5631bfd0603bc51963d68118bdaf777820dd7541f559b093703f3fb19c142cd5` | apps/web/src/components/architect/__tests__/report-view.test.tsx (OUTSIDE allowed_paths — the tagged consumer-sweep fix, listed for reviewer completeness) |
 
 Orchestrator reproduced at harvest (wt-m5t052, documented cwds): ruff clean; 15 route +
-454 api + 697 rules tests; modularity exit 0 (PropertyOverview SHRANK). CI web proof:
+454 api + 697 rules tests; modularity exit 0 ([ORCH-CORRECTED per G3 F2]: PropertyOverview GREW 210->319 and stays below the warn tier; the earlier SHRANK wording mirrored the producer report's false claim). CI web proof:
 run 35451055372 at a6f35a0f (1151 vitest incl. the shared-decision suites + Playwright).

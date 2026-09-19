@@ -45,7 +45,10 @@ here re-states that same ruling; it did not originate with the code.
 - **Monotonicity (no weakening of the accepted guard):** the channel may only ADD
   withholding (`withholdAllowances = profileWithholds || channelWithholds`,
   `PropertyOverview.tsx:206`); the profile guard `condoWithholdsAllowances` is
-  byte-unchanged and stays fully authoritative. A transport failure / absent route
+  SEMANTICS-PRESERVING and stays fully authoritative ([ORCH-CORRECTED per G3 F1]:
+  the guard body was refactored to delegate to the NEW deriveCondoDisplay - the
+  refactor is provably behavior-equivalent per the unchanged profile-guard tests,
+  but 'byte-unchanged' was false as written). A transport failure / absent route
   is `unavailable`, which never withholds on its own; a profile↔channel
   disagreement fails safe (withhold) and is surfaced (`conflict`).
 - **Cross-boundary token pin:** the api emits the resolver's own
@@ -87,7 +90,8 @@ screen therefore keyed records off DIFFERENT sources — the exact G3-A2 incoher
   `CondoRecordsChannelSection` carries RECORD-class wording only (asserted by the
   grep-style negative test, §4).
 - `AnalysisIdentityNotice.tsx` unchanged; `condoWithholdsAllowances` /
-  `deriveCondoDisplay` byte-unchanged (still the accepted profile fail-safe the fold
+  `deriveCondoDisplay` semantics-preserving ([ORCH-CORRECTED per G3 F1] - a refactor
+  extracting deriveCondoDisplay, not a byte-identical body; still the accepted profile fail-safe the fold
   reads).
 
 ### Focused disagreement + coherence assertions, `condo-resolution-display.test.tsx`
@@ -148,7 +152,8 @@ The former `CondoResolutionRecords`-direct describe block is replaced by a
   named consumers; the only export removed (`CondoResolutionRecords`) was consumed
   ONLY by `ReportView.tsx` (in scope, updated) and the two condo test files —
   never by the five non-test PropertyOverview consumers. The fail-safe guard
-  semantics (`condoWithholdsAllowances`) are byte-unchanged — records never unlock
+  semantics (`condoWithholdsAllowances`) are PRESERVED ([ORCH-CORRECTED per G3 F1]:
+  semantics-preserving refactor, test-proven; not byte-identical) — records never unlock
   allowances (AS-6).
 - **Consumer sweep (native tools):** the consumers of the condo records testids are
   `PropertyOverview.tsx` (scope), `ReportView.tsx` (scope),
@@ -188,12 +193,14 @@ five documented_test_commands, ruff + api pytest from `services/api` (the api CI
 job's cwd), the modularity check from repo root:
 
 - cwd `services/api`: `python -m ruff check .` → **All checks passed!**
-- cwd `services/api`: `python -m pytest tests/api/test_condo_records_api.py -q` → **14 passed**.
-- cwd `services/api`: `python -m pytest tests/api -q` → **453 passed**.
+- cwd `services/api`: `python -m pytest tests/api/test_condo_records_api.py -q` → **15 passed** ([ORCH-CORRECTED per G3 A3/G4 A2] - stale-by-one self-report).
+- cwd `services/api`: `python -m pytest tests/api -q` → **454 passed** ([ORCH-CORRECTED per G3 A3/G4 A2]).
 - cwd `services/api`: `python -m pytest tests/rules -q` → **697 passed**.
 - cwd repo root: `python tools/modularity_check.py --check` → **selected 452 files;
   failures 0; warnings 20** (exit 0). None of the 20 warnings are this task's files:
-  `PropertyOverview.tsx` (which SHRANK — a component removed), `ReportView.tsx`,
+  `PropertyOverview.tsx` ([ORCH-CORRECTED per G3 F2]: it GREW 210->319 lines,
+  +165/-56 - deriveCondoSurface + CondoRecordsChannelSection outweigh the removed
+  CondoResolutionRecords - and stays well below the 600 warn tier), `ReportView.tsx`,
   `condo_records.py`, and `condo-records.ts` are all absent from the list.
 
 **Reconciliation with the supplied supervisor executions (AS-8 honesty).** Any
