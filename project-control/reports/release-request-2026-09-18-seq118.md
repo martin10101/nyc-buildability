@@ -87,3 +87,18 @@ module + its pre-wiring hardening (M5-T042/M5-T044), and the wiring-module extra
 (M5-T043). All ride the same branch; at execution time deploy the then-current branch head
 (product-path diff from every accepted material verified control-plane-clean per task).
 Everything in §3-§5 is unchanged; the same one owner request stands.
+
+## 8. Update 2026-09-19 (same request, overnight additions — 228th-230th)
+
+THREE more pieces were accepted in the overnight D-075 window: the address→lot identity
+honesty increment (M5-T046 — the entered-vs-matched confirm line, the equality-gate
+library binding any future GeoSearch promotion, and the geosearch source-registry
+record), the record-address display channel (M5-T047 — the confirm card now shows the
+lot's official PLUTO record address when it differs from the matched frontage, over an
+additive flag-gated route), and the condo billing-BBL live wiring (M5-T045 — the
+condo→base-lot step wired fail-closed at both consumer seams behind the existing live
+flag, with the registry records, the REAL key-absence fixture, and the identity-notice
+display; the multi-lot records view is the recorded DB-031 successor). All ride the
+same branch and the same flags posture (nothing newly enabled by default); at execution
+time deploy the then-current branch head. Everything in §3-§5 is unchanged; the same
+one owner request stands.
