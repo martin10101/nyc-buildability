@@ -53,8 +53,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Hardening may only tighten acceptance; a previously-valid canonical input must still resolve identically.",
     "Stay a leaf: no consumer import, no registry record, no live fixture capture (wiring-era).",
@@ -62,7 +62,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T00:29:59.323498+00:00",
-  "updated_at": "2026-09-19T00:31:24.330599+00:00",
+  "updated_at": "2026-09-19T00:32:17.859917+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -78,5 +78,15 @@
     "python -m pytest tests/connectors/test_dtm_condo_soda.py -q",
     "python -m pytest tests/connectors -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t044",
+  "progress_log": [
+    {
+      "at": "2026-09-19T00:32:17.859917+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the seq-118 hardening seam; awaiting loop-2 launch run 08"
+    }
   ]
 }
