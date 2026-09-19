@@ -789,7 +789,6 @@ def resolve_by_condo_key(
             f"5-digit condo number, [0-9]{{6}}); got {condo_key!r}",
             condo_key,
         )
-    retrieved_at = _rfc3339(clock())
     notes: list[str] = []
     provenance: list[dict] = []
     url = f"{CONDO_BASE_URL}?condo_key={condo_key}"
@@ -803,6 +802,9 @@ def resolve_by_condo_key(
         app_token=app_token,
         correlation_id=correlation_id,
     )
+    # [ORCH-CORRECTED per M5-T044-G3 F1] retrieved_at is stamped AFTER the
+    # successful fetch (the pluto post-response precedent), mirroring resolve().
+    retrieved_at = _rfc3339(clock())
     provenance.append(
         _provenance_entry(
             dataset_id=CONDO_DATASET_ID,

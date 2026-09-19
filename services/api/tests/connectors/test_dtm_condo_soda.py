@@ -768,3 +768,30 @@ def test_i_multiple_condo_keys_and_numbers_notes() -> None:
     # ambiguous identifiers are surfaced, never guessed into a single value
     assert result.condo_key is None
     assert result.condo_number is None
+
+
+# --- [ORCH-CORRECTED per M5-T044-G3 F1] resolve_by_condo_key post-response stamp
+def test_f1_correction_condo_key_stamp_is_post_response() -> None:
+    """The direct condo_key path stamps retrieved_at AFTER its successful fetch
+    (mirroring resolve(); the pluto post-response precedent). The clock supplies
+    exactly one post-fetch moment; a pre-fetch stamp would consume the moment
+    before the transport ran and a second clock call would StopIteration."""
+    calls: list[str] = []
+
+    def transport(url, headers, timeout):
+        calls.append(url)
+        return TransportResponse(200, CONDO_KEY_301313_BODY)
+
+    moments = iter([datetime(2026, 9, 18, 12, 0, 7, tzinfo=UTC)])
+
+    def clock():
+        # the transport MUST have been called before the stamp is taken
+        assert calls, "retrieved_at was stamped before the fetch ran"
+        return next(moments)
+
+    result = resolve_by_condo_key(
+        "301313", transport=transport, clock=clock, correlation_id=FIXED_CORR
+    )
+    assert result.status == STATUS_RESOLVED
+    assert result.retrieved_at == "2026-09-18T12:00:07Z"
+    assert [p["retrieved_at"] for p in result.provenance] == ["2026-09-18T12:00:07Z"]
