@@ -72,8 +72,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Schema copies drifting is fail-closed in CI - edit both, byte-identically, in the same change.",
     "Typegen must be run via the repo script only (deterministic output; --check is the proof).",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T07:59:00.098287+00:00",
-  "updated_at": "2026-09-19T07:59:00.422696+00:00",
+  "updated_at": "2026-09-19T08:01:00.782290+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -108,5 +108,15 @@
     "python packages/contracts/scripts/generate_ts_types.py --check",
     "python -m pytest packages/contracts/scripts/tests -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t048",
+  "progress_log": [
+    {
+      "at": "2026-09-19T08:01:00.782290+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the T047-harvest seam (G0 PASS at 7e7dd851; pairwise disjoint vs T045 and T047, intersections empty); scenarios AS-1..AS-8 in-packet; awaiting loop-2 run 12"
+    }
   ]
 }
