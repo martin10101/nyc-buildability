@@ -32,12 +32,23 @@ from fastapi.testclient import TestClient
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
-from app.api.v1.lot_geometry import STATUS_STATE_MATRIX, get_lot_outline_fetcher
+from app.api.v1.lot_geometry import (
+    RECORD_ADDRESS_STATUS_STATE_MATRIX,
+    STATUS_STATE_MATRIX,
+    get_lot_outline_fetcher,
+    get_pluto_record_fetch,
+)
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 from app.connectors.mappluto_lot_outline import (
     LotOutlineError,
     LotOutlineTransport,
     build_outline_query_url,
+)
+from app.connectors.pluto_soda import (
+    PlutoFetchResult,
+    RateLimitedError,
+    SourceTimeoutError,
+    SourceUnavailableError,
 )
 from app.main import app
 
@@ -386,3 +397,282 @@ def test_s6_generated_ts_covers_every_schema_key_enum_and_const():
 
     walk(schema)
     assert not missing, f"generated lot_geometry.ts is missing schema tokens: {missing}"
+
+
+# ===========================================================================
+# Record-address display channel (task M5-T047, DB-032) — the SIBLING endpoint
+# GET /api/v1/properties/{bbl}/record-address. Fully OFFLINE: the PLUTO record
+# transport seam is overridden via dependency injection with constructed
+# PlutoFetchResult objects (no network). The address fixture basis is corpus §6
+# (docs/research/db026-address-to-lot-fixture-capture.md): PLUTO.address
+# "3622 13 AVENUE", version "26v2" for bbl 3052960043, whose matched frontage is
+# "1279 37 STREET".
+# ===========================================================================
+
+RECORD_BBL = "3052960043"
+RECORD_URL = f"/api/v1/properties/{RECORD_BBL}/record-address"
+PLUTO_REQUEST_URL = (
+    "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=3052960043"
+)
+PLUTO_RETRIEVED_AT = "2026-09-19T04:00:03Z"
+
+
+def _address_fact(value: object) -> dict:
+    return {
+        "original_field_name": "address",
+        "original_value": value,
+        "normalized_value": value,
+    }
+
+
+def _pluto_ok(*, facts: list[dict], version: str | None = "26v2") -> PlutoFetchResult:
+    return PlutoFetchResult(
+        status="ok",
+        bbl=RECORD_BBL,
+        correlation_id="pluto-cid",
+        request_url=PLUTO_REQUEST_URL,
+        retrieved_at=PLUTO_RETRIEVED_AT,
+        dataset_version=version,
+        record_count=1,
+        facts=facts,
+    )
+
+
+def _pluto_no_match() -> PlutoFetchResult:
+    return PlutoFetchResult(
+        status="no_match",
+        bbl=RECORD_BBL,
+        correlation_id="pluto-cid",
+        request_url=PLUTO_REQUEST_URL,
+        retrieved_at=PLUTO_RETRIEVED_AT,
+        dataset_version=None,
+        record_count=0,
+        no_match_explanation=(
+            "No PLUTO record exists for BBL 3052960043 in dataset 64uk-42ks."
+        ),
+    )
+
+
+def install_record_result(result: PlutoFetchResult) -> None:
+    app.dependency_overrides[get_pluto_record_fetch] = (
+        lambda: lambda canonical_bbl, correlation_id: result
+    )
+
+
+def install_record_raising(exc: Exception) -> None:
+    def _provider():
+        def fetch(canonical_bbl: str, correlation_id: str):
+            raise exc
+
+        return fetch
+
+    app.dependency_overrides[get_pluto_record_fetch] = _provider
+
+
+def install_record_landmine() -> None:
+    def _provider():
+        def fetch(canonical_bbl: str, correlation_id: str):
+            raise AssertionError("record fetcher must not be invoked for this request")
+
+        return fetch
+
+    app.dependency_overrides[get_pluto_record_fetch] = _provider
+
+
+# ---------------------------------------------------------------------------
+# RA-1 — address_of_record (the corpus §6 corner-lot case)
+# ---------------------------------------------------------------------------
+
+
+def test_ra1_address_of_record_200(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_result(_pluto_ok(facts=[_address_fact("3622 13 AVENUE")]))
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 200
+    assert resp.headers["X-Correlation-ID"]
+    body = resp.json()
+    _assert_renderer_parity_safe(body)
+    assert body["document_kind"] == "record_address"
+    assert body["outcome"] == "address_of_record"
+    assert body["bbl"] == RECORD_BBL
+    # Verbatim PLUTO address-of-record — distinct from the matched frontage
+    # "1279 37 STREET".
+    assert body["address"] == "3622 13 AVENUE"
+    assert body["reason"] is None
+    assert body["source"]["source_id"] == "nyc-dcp-pluto-soda"
+    assert body["source"]["dataset_id"] == "64uk-42ks"
+    assert body["source"]["dataset_version"] == "26v2"
+    assert body["source"]["retrieved_at"] == PLUTO_RETRIEVED_AT
+    assert body["source"]["request_url"] == PLUTO_REQUEST_URL
+
+
+# ---------------------------------------------------------------------------
+# RA-2 — honest absence: PLUTO record present but the address column is absent
+# (SODA null-omission = key absence). Never a fabricated or empty-string line.
+# ---------------------------------------------------------------------------
+
+
+def test_ra2_no_address_column_is_honest_absence(client, monkeypatch):
+    enable_flag(monkeypatch)
+    # A record with facts but NO address fact (the column was null-omitted).
+    other = {
+        "original_field_name": "block",
+        "original_value": "5296",
+        "normalized_value": 5296,
+    }
+    install_record_result(_pluto_ok(facts=[other]))
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["outcome"] == "no_address_of_record"
+    assert body["address"] is None
+    assert body["reason"]  # a stated typed reason, never a fabricated line
+    # Provenance still travels (the retrieval that proved the absence is evidence).
+    assert body["source"]["dataset_version"] == "26v2"
+
+
+def test_ra2b_blank_address_value_is_honest_absence(client, monkeypatch):
+    enable_flag(monkeypatch)
+    # A drifted empty-string address must NOT become an empty record line.
+    install_record_result(_pluto_ok(facts=[_address_fact("   ")]))
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["outcome"] == "no_address_of_record"
+    assert body["address"] is None
+
+
+# ---------------------------------------------------------------------------
+# RA-3 — no PLUTO record for this BBL (e.g. a condo unit lot): honest typed
+# absence, never a fabricated line.
+# ---------------------------------------------------------------------------
+
+
+def test_ra3_no_record_is_honest_absence(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_result(_pluto_no_match())
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["outcome"] == "no_record"
+    assert body["address"] is None
+    assert "no PLUTO record" in body["reason"].lower() or body["reason"]
+    assert body["source"]["dataset_version"] is None
+
+
+# ---------------------------------------------------------------------------
+# RA-4 — a connector fault is a TYPED error, NEVER a fake absence.
+# ---------------------------------------------------------------------------
+
+
+def test_ra4_source_unavailable_maps_to_502(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_raising(
+        SourceUnavailableError("SODA unavailable", correlation_id="x", detail={})
+    )
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 502
+    body = resp.json()
+    assert body["state"] == "source_unavailable"
+    assert body["source_id"] == "nyc-dcp-pluto-soda"
+    # A fault is NEVER an outcome document (no fabricated absence).
+    assert "outcome" not in body
+    assert resp.headers["X-Correlation-ID"]
+
+
+def test_ra4_timeout_maps_to_504(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_raising(
+        SourceTimeoutError("SODA timed out", correlation_id="x", detail={})
+    )
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 504
+    assert resp.json()["state"] == "timeout"
+
+
+def test_ra4_rate_limited_maps_to_429(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_raising(
+        RateLimitedError("SODA throttled", correlation_id="x", detail={})
+    )
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 429
+    assert resp.json()["state"] == "rate_limited"
+
+
+def test_ra4_unexpected_exception_maps_to_generic_500(raw_client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_raising(RuntimeError("boom"))
+    resp = raw_client.get(RECORD_URL)
+    assert resp.status_code == 500
+    assert resp.json()["state"] == "internal_error"
+
+
+# ---------------------------------------------------------------------------
+# RA-5 — route posture: flag off / malformed BBL / GET-only / not in OpenAPI.
+# ---------------------------------------------------------------------------
+
+
+def test_ra5_flag_off_is_generic_404_no_leak(client, monkeypatch):
+    monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
+    install_record_landmine()  # a fetch here would be a boundary violation
+    resp = client.get(RECORD_URL)
+    assert resp.status_code == 404
+    assert resp.json() == {"detail": "Not Found"}
+    assert "X-Correlation-ID" not in resp.headers
+
+
+def test_ra5_malformed_bbl_is_422_with_correlation(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_landmine()  # 422 is pre-fetch: the seam must not run
+    resp = client.get("/api/v1/properties/not-a-bbl/record-address")
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["state"] == "validation_error"
+    assert resp.headers["X-Correlation-ID"]
+    assert "raw_value" in body["detail"]
+
+
+def test_ra5_get_only_post_is_405(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_record_landmine()
+    assert client.post(RECORD_URL).status_code == 405
+
+
+def test_ra5_not_in_openapi(client):
+    schema = client.get("/openapi.json").json()
+    assert "/api/v1/properties/{bbl}/record-address" not in schema.get("paths", {})
+
+
+# ---------------------------------------------------------------------------
+# RA-6 — every emitted (status, state) pair is in the record-address matrix.
+# ---------------------------------------------------------------------------
+
+
+def test_ra6_emitted_pairs_are_in_the_matrix(client, monkeypatch):
+    seen: set[tuple[int, str | None]] = set()
+
+    enable_flag(monkeypatch)
+    install_record_result(_pluto_ok(facts=[_address_fact("3622 13 AVENUE")]))
+    r = client.get(RECORD_URL)
+    seen.add((r.status_code, r.json().get("state")))
+
+    monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
+    install_record_landmine()
+    r = client.get(RECORD_URL)
+    seen.add((r.status_code, None))  # generic 404 sentinel
+
+    enable_flag(monkeypatch)
+    install_record_landmine()
+    r = client.get("/api/v1/properties/xx/record-address")
+    seen.add((r.status_code, r.json().get("state")))
+
+    install_record_raising(
+        SourceUnavailableError("down", correlation_id="x", detail={})
+    )
+    r = client.get(RECORD_URL)
+    seen.add((r.status_code, r.json().get("state")))
+
+    assert seen <= RECORD_ADDRESS_STATUS_STATE_MATRIX, (
+        f"emitted {seen - RECORD_ADDRESS_STATUS_STATE_MATRIX} not in matrix"
+    )

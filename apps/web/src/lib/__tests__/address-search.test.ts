@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ADDRESS_SEARCH_MAX_ATTEMPTS, fetchAddressSearch, fetchAddressSuggestions, parseAddressSuggestions, normalizeStreetForMatch, resolveLotFromGeoSearch, GEOSEARCH_AUTOCOMPLETE, GEOSEARCH_SEARCH } from "../address-search";
+import { ADDRESS_SEARCH_MAX_ATTEMPTS, fetchAddressSearch, fetchAddressSuggestions, parseAddressSuggestions, normalizeStreetForMatch, resolveLotFromGeoSearch, GEOSEARCH_AUTOCOMPLETE, GEOSEARCH_SEARCH, GEOSEARCH_RESOLVE_INPUT_MAX_LEN } from "../address-search";
 
 // Shape recorded from NYC DCP GeoSearch v2 (M5-T029 G1). PAD BBL is intentionally never consumed.
 const feature = (borough = "Manhattan") => ({ type: "Feature", properties: { source: "nycpad", housenumber: "120", street: "BROADWAY", borough, postalcode: "10271", label: "120 BROADWAY, New York, NY, USA", addendum: { pad: { bbl: "1000477501", version: "26c" } } }, geometry: { type: "Point", coordinates: [-74.010542, 40.708233] } });
@@ -328,5 +328,82 @@ describe("DB-026: GeoSearch address→lot equality gate (byte-faithful corpus)",
     expect(resolved.lot.matchType).toBeNull();
     expect(resolved.lot.confidence).toBeNull();
     expect(resolved.lot.padVersion).toBe("26c");
+  });
+});
+
+/**
+ * M5-T047 riders: two bounded gate-hardening cases carried by the record-address
+ * packet (DB-032). They touch only the equality gate's entry conditions and do
+ * not alter its match semantics.
+ */
+describe("M5-T047 gate riders (G4-A1 abbreviation fail-closed, G5-A1 length bound)", () => {
+  it("G4-A1: a /search-shaped body whose parsed street is an abbreviation ('37 st') fails closed to no_match — ST is not expanded", () => {
+    // Same true-hit lot shape as the corpus, but the parsed street is the
+    // abbreviated "37 st" (a street-TYPE abbreviation, never the contracted
+    // digit-run ordinal fold). Abbreviation expansion was never contracted, and
+    // unclear cases fail closed — so the gate refuses this to an honest no-match
+    // even though the feature itself is the canonical "37 STREET".
+    const body = {
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: "1279", street: "37 st" } } },
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            name: "1279 37 STREET",
+            housenumber: "1279",
+            street: "37 STREET",
+            confidence: 0.8,
+            match_type: "fallback",
+            addendum: { pad: { bbl: "3052960043", bin: "3340270", version: "26c" } },
+          },
+        },
+      ],
+    };
+    expect(resolveLotFromGeoSearch(body).kind).toBe("no_match");
+  });
+
+  it("G5-A1: an over-length parsed street is refused with a typed no-match before any comparison", () => {
+    const longStreet = "A".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN + 1);
+    const body = {
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: "1279", street: longStreet } } },
+      features: [],
+    };
+    const result = resolveLotFromGeoSearch(body);
+    expect(result.kind).toBe("no_match");
+    if (result.kind === "no_match") expect(result.input?.street).toBe(longStreet);
+  });
+
+  it("G5-A1: an over-length parsed housenumber is likewise refused", () => {
+    const longHouse = "1".repeat(GEOSEARCH_RESOLVE_INPUT_MAX_LEN + 1);
+    const body = {
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: longHouse, street: "37 street" } } },
+      features: [],
+    };
+    expect(resolveLotFromGeoSearch(body).kind).toBe("no_match");
+  });
+
+  it("G5-A1: a normal-length input at the bound is NOT refused by the length gate (no real address regressed)", () => {
+    // A boundary-length street that still equality-matches the returned feature
+    // resolves — proving the bound refuses only oversized input, not real ones.
+    const street = "37 STREET";
+    const body = {
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: "1279", street } } },
+      features: [
+        {
+          type: "Feature",
+          properties: {
+            name: "1279 37 STREET",
+            housenumber: "1279",
+            street: "37 STREET",
+            addendum: { pad: { bbl: "3052960043", bin: "3340270", version: "26c" } },
+          },
+        },
+      ],
+    };
+    expect(resolveLotFromGeoSearch(body).kind).toBe("resolved");
   });
 });

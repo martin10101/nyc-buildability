@@ -212,6 +212,13 @@ export async function fetchAddressSearch(text: string, options: AddressSearchOpt
  * typed no-match, never a silently wrong lot.
  * ------------------------------------------------------------------ */
 
+/** G5 A1 (M5-T047 rider): the generous upper bound on the parsed input the
+ * equality gate will consider. A parsed housenumber or street longer than this
+ * is refused with a typed no-match rather than run through normalization/compare
+ * — the gate never processes an unboundedly large reflected string. Real NYC
+ * addresses are far shorter, so no legitimate input is refused. */
+export const GEOSEARCH_RESOLVE_INPUT_MAX_LEN = 512;
+
 /** The parsed address components the gate compares a returned feature against.
  * GeoSearch echoes its own parse as `geocoding.query.parsed_text`; that is the
  * reference parse (corpus §1–§5) when a caller does not supply one. */
@@ -301,6 +308,15 @@ export function resolveLotFromGeoSearch(body: unknown, input?: GeoSearchParsedIn
     const data = body as Record<string, unknown>;
     const parsedInput = input ?? readParsedInput(data);
     if (data.type !== "FeatureCollection" || !Array.isArray(data.features) || parsedInput === null)
+        return { kind: "no_match", input: parsedInput };
+    // G5 A1 (M5-T047 rider): a generous length bound at the gate entry. A parsed
+    // housenumber/street longer than this is refused with a typed no-match before
+    // any normalization or comparison — the gate never processes an unboundedly
+    // large reflected string. Bounded generously so no real address is refused.
+    if (
+        parsedInput.houseNumber.length > GEOSEARCH_RESOLVE_INPUT_MAX_LEN ||
+        parsedInput.street.length > GEOSEARCH_RESOLVE_INPUT_MAX_LEN
+    )
         return { kind: "no_match", input: parsedInput };
     const wantHouse = parsedInput.houseNumber.trim();
     const wantStreet = normalizeStreetForMatch(parsedInput.street);

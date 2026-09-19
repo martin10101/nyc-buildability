@@ -43,13 +43,16 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
-/** M5-T023: the confirm card now mounts LotOutlineMap, which fetches the lot
- * outline. This pack is about the ADDRESS confirm surface, so lot-geometry calls
- * resolve to the benign flag-off 404 (route_absent) and are served WITHOUT
- * reaching — or counting against — the address-resolution spy the tests assert
- * on. Full lot-outline coverage lives in lot-outline-map.test.tsx. */
+/** M5-T023 / M5-T047: the confirm card mounts LotOutlineMap (fetches the lot
+ * outline) and the record-address channel (fetches PLUTO.address). This pack is
+ * about the ADDRESS confirm surface, so BOTH internal calls resolve to the
+ * benign flag-off 404 (route_absent) and are served WITHOUT reaching — or
+ * counting against — the address-resolution spy the tests assert on. Full
+ * lot-outline coverage lives in lot-outline-map.test.tsx; record-address
+ * coverage lives in the S10 block below (with its own routed stub) and in
+ * record-address.test.ts. */
 function lotGeometryStub(url: string): Response | null {
-  if (url.includes("/lot-geometry")) {
+  if (url.includes("/lot-geometry") || url.includes("/record-address")) {
     return new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 });
   }
   return null;
@@ -581,7 +584,7 @@ describe("S9 — DB-026 autocomplete journey: typed text ≠ picked label ≠ ma
       "fetch",
       vi.fn((input: RequestInfo | URL) => {
         const url = String(input);
-        if (url.includes("/lot-geometry")) {
+        if (url.includes("/lot-geometry") || url.includes("/record-address")) {
           return Promise.resolve(
             new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
           );
@@ -621,20 +624,163 @@ describe("S9 — DB-026 autocomplete journey: typed text ≠ picked label ≠ ma
     fireEvent.click(option);
     await screen.findByTestId("address-confirm-card");
 
-    // The entered-input record is the RAW typed text, verbatim — the exact
-    // <strong> textContent equals the typed string INCLUDING its surrounding
-    // whitespace (the card renders the original, never a trimmed rewrite).
+    // HJ A3a: the entered-input record renders DISPLAY-TRIMMED (the visible
+    // <strong> textContent is the typed string with surrounding whitespace
+    // removed), while the TRUE raw string — surrounding whitespace and all — is
+    // preserved verbatim in the title/aria-label attributes. Nothing the analyst
+    // typed is silently rewritten; blank-looking padding just does not show.
     const entered = screen.getByTestId("entered-input");
     const enteredStrong = entered.querySelector<HTMLElement>("strong");
-    expect(enteredStrong?.textContent).toBe(typed);
-    expect(entered.textContent).toContain(typed);
+    expect(enteredStrong?.textContent).toBe(typed.trim());
+    expect(enteredStrong?.getAttribute("title")).toBe(typed);
+    expect(enteredStrong?.getAttribute("aria-label")).toBe(typed);
+    expect(entered.textContent).toContain(typed.trim());
     // …distinct from the picked suggestion's city-shaped street…
     expect(entered.textContent).not.toContain("37 STREET");
     // …and distinct from the city-matched canonical address line.
     const matched = screen.getByTestId("confirm-address");
     expect(matched.textContent).toContain("37 STREET");
-    expect(matched.textContent).not.toContain(typed);
+    expect(matched.textContent).not.toContain(typed.trim());
     // The identity carried forward is the BBL, never an address string.
     expect(screen.getByTestId("resolved-bbl").textContent).toBe("3052960043");
+  });
+});
+
+/* ================================================================ *
+ * S10 — DB-032 (M5-T047): the lot's PLUTO address-of-record renders as a
+ * labeled CITY RECORD when it DIFFERS from the matched frontage; honest
+ * no-line when equal, absent, or on error (D-073-R006 records class).
+ * ================================================================ */
+
+describe("S10 — DB-032 record-address channel on the confirm card", () => {
+  const RECORD_SOURCE = {
+    source_id: "nyc-dcp-pluto-soda",
+    dataset_id: "64uk-42ks",
+    dataset_version: "26v2",
+    retrieved_at: "2026-09-19T04:00:03Z",
+    request_url: "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=3052960043",
+  };
+
+  function recordResponse(over: Record<string, unknown> = {}, status = 200): Response {
+    const body =
+      status === 200
+        ? {
+            document_kind: "record_address",
+            bbl: "3052960043",
+            outcome: "address_of_record",
+            address: "3622 13 AVENUE",
+            reason: null,
+            source: RECORD_SOURCE,
+            ...over,
+          }
+        : over;
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { "content-type": "application/json", "X-Correlation-ID": HTTP_CID },
+    });
+  }
+
+  /** Route by URL: the address resolution gets `doc`; the record-address
+   * channel gets `record`; the lot-geometry call gets the benign flag-off 404. */
+  function renderWithRecord(doc: Record<string, unknown>, record: Response) {
+    const recordFetch = vi.fn();
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/record-address")) {
+          recordFetch();
+          return Promise.resolve(record.clone());
+        }
+        if (url.includes("/lot-geometry")) {
+          return Promise.resolve(
+            new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+          );
+        }
+        return Promise.resolve(jsonResponse(doc, 200));
+      }),
+    );
+    render(<AddressResolutionScreen />);
+    fillAndSubmit();
+    return recordFetch;
+  }
+
+  /** The corner-lot resolved doc: matched frontage "1279 37 STREET", bbl
+   * 3052960043 (whose PLUTO address-of-record is "3622 13 AVENUE"). */
+  function cornerDoc() {
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "1279";
+    doc.input_echo.street = "37 street";
+    doc.input_echo.borough = "Brooklyn";
+    doc.canonical.bbl = "3052960043";
+    doc.canonical.street_name_normalized = "37 STREET";
+    doc.canonical.borough_name = "BROOKLYN";
+    doc.canonical.zip_code = "11218";
+    return doc;
+  }
+
+  it("AS-1: shows 'City record address: 3622 13 AVENUE' as a record, distinct from the matched frontage", async () => {
+    renderWithRecord(cornerDoc(), recordResponse());
+    const card = await screen.findByTestId("address-confirm-card");
+    const line = await screen.findByTestId("record-address");
+    // The settled channel reports "shown" — the terminal value that renders the
+    // line — distinct from the negative terminals asserted below.
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "shown"),
+    );
+    expect(line.textContent).toContain("3622 13 AVENUE");
+    // It reads as a RECORD (no computed value implied) and names the source.
+    expect(line.textContent).toContain("City record address");
+    expect(line.textContent).toContain("PLUTO");
+    // Distinct from the matched frontage line.
+    expect(screen.getByTestId("confirm-address").textContent).toContain("37 STREET");
+    expect(line.textContent).not.toContain("1279 37 STREET");
+  });
+
+  it("AS-2: when the record address equals the matched address, no duplicate record line renders", async () => {
+    // Plain happy path: matched "120 BROADWAY"; record also "120 BROADWAY".
+    renderWithRecord(
+      resolvedDoc(),
+      recordResponse({ bbl: "1000477501", address: "120 BROADWAY" }),
+    );
+    const card = await screen.findByTestId("address-confirm-card");
+    // Observe the SETTLED response — an address_of_record present but EQUAL to
+    // the matched frontage — before asserting the line is suppressed. Waiting on
+    // the terminal "equal" status (set only after the fetch resolves and state
+    // updates) rules out a false pass on the transient loading null.
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "equal"),
+    );
+    expect(screen.queryByTestId("record-address")).toBeNull();
+  });
+
+  it("AS-3: an honest absence (no address-of-record) renders no line and no placeholder", async () => {
+    renderWithRecord(
+      cornerDoc(),
+      recordResponse({ outcome: "no_address_of_record", address: null, reason: "no address column" }),
+    );
+    const card = await screen.findByTestId("address-confirm-card");
+    // The settled absence outcome — not the loading null — is what must produce
+    // no line: wait for the terminal "absent" status, then assert no line.
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "absent"),
+    );
+    expect(screen.queryByTestId("record-address")).toBeNull();
+  });
+
+  it("AS-3: a connector error renders no line and never blocks the card", async () => {
+    renderWithRecord(
+      cornerDoc(),
+      recordResponse({ state: "source_unavailable", message: "SODA down" }, 502),
+    );
+    // The card itself renders unaffected…
+    const card = await screen.findByTestId("address-confirm-card");
+    expect(screen.getByTestId("resolved-bbl").textContent).toBe("3052960043");
+    // …and the SETTLED typed-error outcome (terminal "error" status, applied
+    // only after the 502 is processed) renders no record line.
+    await waitFor(() =>
+      expect(card).toHaveAttribute("data-record-address-status", "error"),
+    );
+    expect(screen.queryByTestId("record-address")).toBeNull();
   });
 });

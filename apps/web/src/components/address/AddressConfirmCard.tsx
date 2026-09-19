@@ -9,6 +9,10 @@ import {
   ABSENT_BBL_MAP_LINK_NOTE,
   ZOLA_LOT_LINK_LABEL,
 } from "@/components/architect/AddressAutocomplete";
+import {
+  recordAddressDiffersFromMatched,
+  useRecordAddress,
+} from "@/lib/record-address";
 import { Meta } from "./AddressOutcomeCards";
 import { LotOutlineMap } from "./LotOutlineMap";
 
@@ -106,8 +110,55 @@ export function AddressConfirmCard({
           .filter(Boolean)
           .join(", ");
 
+  // DB-032 (M5-T046 HJ A1 / OQ-5): the lot's PLUTO address-of-record, fetched
+  // read-only from the additive per-BBL record-address channel keyed by the
+  // re-validated canonical BBL. It is shown as a labeled CITY RECORD only when
+  // it DIFFERS from the city-matched frontage (a corner/vanity lot whose
+  // address-of-record — e.g. "3622 13 AVENUE" — is not the searched "1279 37
+  // STREET"); equal / absent / error / still-loading -> honestly no line, and
+  // the fetch never blocks or materially reflows the card. This is a RECORD; it
+  // implies no computed value (D-073-R006). The hook runs unconditionally
+  // (bbl=null fires no request), so the surface inherits the same server-read
+  // INTERNAL_RULE_EVAL_ENABLED gate as the rest of the confirm tree.
+  const recordAddressOutcome = useRecordAddress(canonicalBbl);
+  const recordAddress =
+    recordAddressOutcome?.kind === "document" &&
+    recordAddressOutcome.view.outcome === "address_of_record"
+      ? recordAddressOutcome.view.address
+      : null;
+  // Compare against the SAME components the matched line is built from (matched
+  // house number + normalized street) so an equal record produces no line.
+  const matchedForCompare = [
+    view.inputEcho.houseNumber,
+    view.canonical.streetNameNormalized,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const showRecordAddress =
+    recordAddress !== null &&
+    recordAddressDiffersFromMatched(recordAddress, matchedForCompare);
+
+  // Settled-state signal (observability only; no visual effect). It reports the
+  // record-address channel's outcome AFTER the one bounded fetch resolves, never
+  // mid-flight: "loading" until the hook settles, then a terminal value naming
+  // why the line does or does not render. A negative test can wait for a
+  // terminal value and so observe the SETTLED response rather than the initial
+  // loading null (which is indistinguishable from a genuine no-line).
+  const recordAddressStatus: "loading" | "shown" | "equal" | "absent" | "route-absent" | "error" =
+    ((): "loading" | "shown" | "equal" | "absent" | "route-absent" | "error" => {
+      if (recordAddressOutcome === null) return "loading";
+      if (recordAddressOutcome.kind === "route_absent") return "route-absent";
+      if (recordAddressOutcome.kind !== "document") return "error";
+      if (showRecordAddress) return "shown";
+      return recordAddress !== null ? "equal" : "absent";
+    })();
+
   return (
-    <section className="card" data-testid="address-confirm-card">
+    <section
+      className="card"
+      data-testid="address-confirm-card"
+      data-record-address-status={recordAddressStatus}
+    >
       <h2 className="section-title" tabIndex={-1} data-outcome-heading>
         Is this the right lot?
       </h2>
@@ -129,9 +180,26 @@ export function AddressConfirmCard({
 
       {enteredInput ? (
         <p className="section-note" data-testid="entered-input">
-          You searched for <strong>{enteredInput}</strong>. The address above is
-          what the city matched to this lot; the tax lot (BBL) below is the
-          identity we carry forward.
+          You searched for{" "}
+          {/* HJ A3a: the bolded entered value renders display-TRIMMED, with the
+              TRUE raw string (surrounding whitespace and all) preserved in a
+              title/aria attribute — nothing the analyst typed is silently
+              rewritten, but blank-looking padding does not show. */}
+          <strong title={enteredInput} aria-label={enteredInput}>
+            {enteredInput.trim()}
+          </strong>
+          {/* HJ A2: layout-neutral phrasing (no "above"/"below") — the note
+              reads correctly in any reading order. */}. We show it alongside the
+          city-matched address so you can compare them; the identity we carry
+          forward is the tax lot (BBL).
+        </p>
+      ) : null}
+
+      {showRecordAddress ? (
+        <p className="section-note" data-testid="record-address">
+          City record address: <strong>{recordAddress}</strong>. This is the
+          address the city&apos;s official tax record (PLUTO) carries for this
+          lot; it can differ from the matched frontage.
         </p>
       ) : null}
 
