@@ -262,6 +262,31 @@
      "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T042",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d1d082db189191956d00a33e5733bfbb1829e625",
+   "reviewed_manifest_sha256": "1fa7ef47ef823b3fc1ebfe19635f0ce3e4f03e30e110b2a744f6ad2fabb58ab3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T00:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T042-DCV.md, frozen head 3bd6e304, material 0a6c43c9): nav block present with all four required elements (leaf status, SODA models to mirror, query.py instruction, advisory clause; the named model files exist at the frozen head); material diff = exactly the 3 allowed_paths files; zero consumer imports under app/ (leaf verified in source); suites reproduced green (26 + 852) and CI run 35407815825 success at c87aacbf with empty product-path diff to the material; modularity warn-tier signal disclosed. Restamped to d1d082db under the DCV five-condition pre-authorization WITH its explicit disjoint-peer tolerance - all five reproduced at record time: (1) the 3 own files byte-identical to material 0a6c43c9 (diff 0 lines); (2) packet directive_refs/allowed_paths and evidence-map material unchanged; (3) nav-block packet input byte-stable (lifecycle-only packet churn); (4) leaf invariant intact (grep shows only the 2 in-module self-references); (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:26:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d1d082db189191956d00a33e5733bfbb1829e625"
+    }
+   ]
   }
  ]
 }
