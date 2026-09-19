@@ -198,6 +198,20 @@ export interface CondoRecordsLookupOptions {
   timeoutMs?: number;
 }
 
+/** Bound a reflected ISO-8601 timestamp: the token charset PLUS the colon and
+ * plus-sign an ISO instant legitimately carries ([0-9A-Za-z.:+-]). boundedToken
+ * would strip the colons and silently corrupt the value (the sanitizer-boundary
+ * lesson: identifiers and timestamps are different vocabularies); anything
+ * outside the ISO charset is dropped, the result is capped, and an empty result
+ * is an explicit null - never an invented stamp. */
+function boundedTimestamp(value: unknown, max = 40): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const cleaned = value.replace(/[^0-9A-Za-z.:+-]/g, "").slice(0, max);
+  return cleaned === "" ? null : cleaned;
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -250,8 +264,8 @@ function queryProvenance(value: unknown): CondoRecordsQueryProvenance[] {
     entries.push({
       datasetId: boundedToken(record.dataset_id, 64),
       queryKind: boundedToken(record.query_kind, 48),
-      retrievedAt: boundedToken(record.retrieved_at, 40),
-      rowsUpdatedAt: boundedToken(record.rows_updated_at, 40),
+      retrievedAt: boundedTimestamp(record.retrieved_at),
+      rowsUpdatedAt: boundedTimestamp(record.rows_updated_at),
       recordCount:
         typeof record.record_count === "number" && Number.isFinite(record.record_count)
           ? record.record_count
@@ -277,7 +291,7 @@ function provenanceView(value: unknown): CondoRecordsProvenance {
   return {
     sourceId: boundedToken(record.source_id, 64),
     datasetIds,
-    retrievedAt: boundedToken(record.retrieved_at, 40),
+    retrievedAt: boundedTimestamp(record.retrieved_at),
     datasetVersion,
     queries,
   };
