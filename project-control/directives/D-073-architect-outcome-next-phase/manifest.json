@@ -34,7 +34,7 @@
     "D-073-R010",
     "D-073-R011"
   ],
-  "requirements_content_digest_sha256": "84c4249c23f48f5283237e13155b80f90ad7597b374dd9c0e71c8444180bed27",
+  "requirements_content_digest_sha256": "caae2da284ebebfc6dfae5f2e92ac8a2a74cea4182d4d1e6665d28b5059abfb1",
   "sources": [
     {
       "file": "source-001.md",
@@ -101,6 +101,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-073-R006 applicability.task_ids += M5-T050 (DB-033 polish packet contract seam); requirements.json digest resynced to 84c4249c23f48f5283237e13155b80f90ad7597b374dd9c0e71c8444180bed27"
+    },
+    {
+      "at": "2026-09-19T12:16:04.436543+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-073-R006 applicability.task_ids += M5-T052 (DB-031 records-view packet contract seam); requirements.json digest resynced to caae2da284ebebfc6dfae5f2e92ac8a2a74cea4182d4d1e6665d28b5059abfb1"
     }
   ]
 }

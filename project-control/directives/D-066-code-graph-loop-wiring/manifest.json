@@ -27,7 +27,7 @@
     "D-066-R003",
     "D-066-R004"
   ],
-  "requirements_content_digest_sha256": "daf17bef3b6cac1ae443ae48558505da20395170f0a3d0168002a59845677448",
+  "requirements_content_digest_sha256": "b2ee46449b6297eccb8dea533b421f2c4e0dd6268ae5d989efe7fa7e2e8ed67a",
   "sources": [
     {
       "file": "source-001.md",
@@ -154,6 +154,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-066-R001 applicability.task_ids += M5-T051 (phase-B1 derivation packet contract seam); requirements.json digest resynced to daf17bef3b6cac1ae443ae48558505da20395170f0a3d0168002a59845677448"
+    },
+    {
+      "at": "2026-09-19T12:16:04.436543+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-066-R001 applicability.task_ids += M5-T052 (DB-031 records-view packet contract seam); requirements.json digest resynced to b2ee46449b6297eccb8dea533b421f2c4e0dd6268ae5d989efe7fa7e2e8ed67a"
     }
   ]
 }

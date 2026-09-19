@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T052",
+  "title": "DB-031: multi-lot condo records-view channel + display (T045-wave riders; guard-coherence design answered)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Give the architect surface an honest RECORDS VIEW of a multi-lot condo: a real per-BBL production channel carrying the condo resolution report (the recorded billing lot, every recorded base lot, and each base lot's recorded zoning districts, all with provenance) plus the display section per D-073-R006 - records only, no aggregation, no computed value, the professional-review fail-safe preserved for every non-single outcome. ANSWER the T045 G3-A2 guard-coherence design question in the plan BEFORE implementing: when a condo resolves to a SINGLE base lot the substitution proceeds (the allow path) while the identity notice explains the substitution - versus the multi-lot/unresolved outcomes where the withhold guard governs; the plan documents which guard owns each outcome so the two can never disagree, and the display implements exactly that ruling. Carry the remaining T045-wave riders in-scope: route propagation of condo_resolution_report, the cross-boundary fail-safe token pin, the unit-BBL resolution increment, the substrate-record of the substitution, and the records-section heading semantics.",
+  "business_reason": "The 230th acceptance wired condo billing-BBL resolution fail-closed but deliberately split the multi-lot records VIEW out (DB-031): a professional reviewing a multi-lot condo today sees only the fail-safe stop with no view of what the city actually records - the honest records view is the missing half",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command. Web behavior proves ONLY in CI on the pushed head - no local npm/npx/node ever.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). PropertyOverview.tsx consumers (depth 1): ArchitectEntry.tsx:24, ProfileViews.tsx:18, PropertyFacts.tsx:9, ReportView.tsx:11, ScenarioWorkspace.tsx:4, __tests__/condo-resolution-display.test.tsx:12 - props/exports must stay byte-compatible. AnalysisIdentityNotice.tsx consumers: ArchitectEntry.tsx:21, ReportView.tsx:18, the same test file:11. The accepted condo resolver you consume READ-ONLY: services/api/app/rules/condo_base_lot.py (M5-T042/T045; resolve_condo_billing + CondoResolution + condo_resolution_report) reached through profile/zoning_crosscheck.py:524-633 (M5-T045 wiring; zoning_crosscheck consumed by profile/builder.py) and spatial/live_provider.py:47. Existing route modules for the channel-shape precedent: api/v1/lot_geometry.py (the T047 additive record-address sibling-endpoint precedent). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "DESIGN ANSWER REQUIRED FIRST (binding; the T045 G3-A2 load-bearing question): BEFORE any implementation checkpoint, your plan documents the guard-coherence ruling - (a) resolved-single outcome: substitution proceeds (the allow path the accepted resolver already provides) AND the identity notice EXPLAINS the substitution as a record ('analysis runs on the land parcel the city records for this condo'); (b) multi-lot outcome: the withhold guard governs (professional-review fail-safe stays the visible surface) AND the NEW records view shows what the city records - the recorded base lots and their recorded zoning - clearly labeled records, never inputs to a computation; (c) unresolved/error: withhold, no records view, honest absence. State the single source of truth that keeps the notice, the fail-safe allow-list guard (condoWithholdsAllowances, PropertyOverview.tsx:116-123 + ReportView.tsx:38), and the new records section from EVER disagreeing (one derived state, not three parallel conditionals) - the cross-boundary token pin rider means the SAME literal outcome token crosses the api/web boundary and is pinned by tests on BOTH sides.",
+    "SCOPE 1/2 - CHANNEL (binding; read docs/DISCOVERY_BACKLOG.md rows DB-031 + DB-029, project-control/reports/M5-T045-{G1,G3,G4,HJ}.md rider findings, and services/api/app/rules/condo_base_lot.py FIRST): NEW focused route module services/api/app/api/v1/condo_records.py (mounted in main.py) - a per-BBL GET returning the condo resolution REPORT: outcome token (single|multi_lot|not_condo|unresolved|error classes as the resolver defines them), the billing BBL, every recorded base lot (BBL + its recorded zoning districts with provenance as the resolver/crosscheck already carries them), retrieved_at + dataset version + source ids (provenance quintuple discipline), and the substrate-record of any substitution (rider G3-A4: when analysis substituted billing->base, the response RECORDS that substitution explicitly - which BBL was entered, which the analysis ran on, and why). BBL validated via normalize_bbl BEFORE any work; the resolver consumed READ-ONLY through its accepted entry points (condo_base_lot.py is NOT in scope; no connector import; no network in tests - recorded fixtures incl. the DB-029c key-absence fixture shape); unit-BBL increment (rider G3-A3): a unit BBL input resolves through the same accepted path to its billing/base outcome, tested; errors surface as the module's typed error discipline, never fake absence; NO contract-schema change, NO profile/builder change (an existing-channel proof beats a new schema - the route carries the resolver's OWN report shape).",
+    "SCOPE 2/2 - RECORDS-VIEW DISPLAY (binding): NEW client apps/web/src/lib/condo-records.ts (typed, credentials omit, bounded messages, typed error states - mirror the accepted record-address.ts discipline) + the records section on the architect surface: in PropertyOverview.tsx (and its ReportView brief line if the plan rules it in), for the MULTI-LOT outcome render 'City records for this condo' - the billing lot and each recorded base lot with its recorded zoning districts, labeled as records (D-073-R006 wording class; heading semantics rider HJ-A3: the section heading must say RECORDS, never 'analysis'/'zoning result' class words), the professional-review fail-safe line UNCHANGED above it; single outcome: the identity notice explains the substitution (existing notice adjusted only if your guard ruling requires); unresolved/error: no records section, honest absence. The condoWithholdsAllowances fail-safe guard stays authoritative for allowance display; the records section renders UNDER the withhold, never instead of it. Tests: __tests__/condo-resolution-display.test.tsx extended (all outcome branches, the token pin, heading semantics, absence cases) + a new client test file.",
+    "PRESERVATION (binding): every M5-T045 accepted behavior byte-identical except where the documented guard ruling requires the notice/display adjustment (tests updated WITH the change, each named in the report); PropertyOverview/AnalysisIdentityNotice props/exports byte-compatible for the six named consumers; the fail-safe allow-list guard semantics UNCHANGED (records never unlock allowances); api route additive (existing routes untouched); empty .test files fail vitest - keep every touched web test green-non-empty.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Guard-coherence ruling documented (the G3-A2 answer: one derived state governing notice + fail-safe + records section, token-pinned across the boundary)",
+    "Per-BBL condo-records route (typed, provenance-complete, substrate-record of substitution, unit-BBL increment) + typed web client",
+    "The multi-lot records view as a D-073-R006 records display under the unchanged professional-review fail-safe",
+    "project-control/reports/M5-T052-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T045"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_condo_records_api.py",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/__tests__/condo-records.test.ts",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "project-control/reports/M5-T052-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/condo_base_lot.py",
+    "services/api/app/profile/",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "services/api/app/scenario/",
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/",
+    "apps/web/src/components/address/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (design first): the guard-coherence ruling is documented in the plan/report BEFORE implementation checkpoints - one derived state, the outcome token pinned identically on both sides of the boundary; reviewers can point to the single source of truth.",
+    "AS-2 (multi-lot primary): for a recorded multi-lot condo fixture, the route returns the billing lot + every recorded base lot with recorded zoning + provenance; the screen renders the records section labeled as city records UNDER the unchanged professional-review fail-safe; no allowance value appears anywhere in the section.",
+    "AS-3 (single): a single-base-lot condo (the DB-029c real fixture shape, key-absence semantics) proceeds on the allow path; the identity notice explains the substitution as a record; the response's substrate-record names entered vs analyzed BBL.",
+    "AS-4 (unit BBL): a unit-BBL input resolves through the accepted path to its billing/base outcome (single-> proceeds, multi->withhold+records), tested at the route.",
+    "AS-5 (absence/error honesty): not-a-condo -> typed outcome, no records section, existing behavior untouched; resolver error -> typed error, withhold, no fabricated records; SODA key-absence tolerated per the accepted resolver semantics.",
+    "AS-6 (records discipline): heading + wording are RECORD class (HJ-A3 heading semantics: never analysis/result words); the D-073-R006 grep gate - no allowance-class vocabulary in the records section; the condoWithholdsAllowances guard byte-unchanged in semantics.",
+    "AS-7 (compat): the six PropertyOverview consumers + three AnalysisIdentityNotice consumers unbroken (props/exports byte-compatible); every prior M5-T045 journey assertion green except those the documented ruling updates WITH tests.",
+    "AS-8 (proof): ruff clean; documented api suites green offline from services/api; modularity exit 0 (new route + client below warn tier); web proves in CI on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The guard-coherence ruling is the load-bearing deliverable: implementing displays before documenting it = the exact incoherence G3-A2 warned about (three parallel conditionals drifting).",
+    "Records never unlock allowances: the fail-safe guard stays authoritative; a records section that reads like an analysis result fails HJ/G1.",
+    "main.py touch is the ONE mount line only - anything more = STOP + discovery.",
+    "Disjointness vs live M5-T051 (scenario derivation): zero path overlap (mechanically recorded in G0).",
+    "condo_base_lot.py and the profile/spatial wiring are ACCEPTED and forbidden - the route consumes the resolver's public entry points read-only."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T12:14:59.485773+00:00",
+  "updated_at": "2026-09-19T12:14:59.769717+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T12:14:59.486459+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_condo_records_api.py -q",
+    "python -m pytest tests/api -q",
+    "python -m pytest tests/rules -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
