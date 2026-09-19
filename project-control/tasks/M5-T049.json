@@ -65,8 +65,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "A pure extraction that quietly changes an error message, constant, or ordering is NOT pure - the unchanged suites are the proof; do not touch them except to MOVE whole test blocks.",
     "The facade must re-export everything consumers use, including exception types and constants.",
@@ -75,7 +75,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T08:14:33.764200+00:00",
-  "updated_at": "2026-09-19T08:14:34.043826+00:00",
+  "updated_at": "2026-09-19T08:15:57.221876+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -92,5 +92,15 @@
     "python -m pytest tests/spatial -q",
     "python -m pytest tests/api -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t049",
+  "progress_log": [
+    {
+      "at": "2026-09-19T08:15:57.221876+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the double-harvest seam; scenarios AS-1..AS-6 in-packet; awaiting loop-1 run 52"
+    }
   ]
 }
