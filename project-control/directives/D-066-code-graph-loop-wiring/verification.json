@@ -3,7 +3,7 @@
   "directive_id": "D-066",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
   "verified_by": null,
-  "verified_at": "2026-09-19T16:47:22.582647+00:00",
+  "verified_at": "2026-09-19T16:59:58.953298+00:00",
   "task_verifications": [
     {
       "directive_id": "D-066",
@@ -511,6 +511,28 @@
           "state": "PASS",
           "evidence": [
             "DCV verified (M5-T053-DCV.md, frozen submission 31cbc74b, material 25617bbd, CI 35454834946 all green first round): seam-regenerated nav block in packet inputs[3] with consumers + the query.py instruction + advisory clause; the nav block's LIVE-lane ownership flag drove the wrapper-gate disjointness, and the material commit touches neither proposal.py nor tests/scenario/. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+          ]
+        }
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "task_id": "M5-T051",
+      "applicable_requirement_ids": [
+        "D-066-R001"
+      ],
+      "reviewed_sha": "bdb54765f8828cb7d22dd1556f2d57ff77f4024c",
+      "reviewed_manifest_sha256": "bcacbc7d8b436b3c69023a9b7a69aaec50fe91c7491c974c22a4263c4bb2c809",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T16:59:58.953298+00:00",
+      "requirements": [
+        {
+          "id": "D-066-R001",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified (M5-T051-DCV.md, frozen submission ce11d09f, material f1ec64a8, CI 35455214032 all green first round): seam-regenerated nav block in packet inputs[3] with the query.py instruction + advisory clause; nav claims spot-verified in source. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
           ]
         }
       ]
