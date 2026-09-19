@@ -58,6 +58,12 @@ import {
 interface ResolutionResult {
   query: AddressQuery;
   outcome: AddressOutcome;
+  /** DB-026: the RAW one-box text the analyst typed before picking an
+   * autocomplete suggestion (architect arc only). Undefined on the manual and
+   * BBL paths, where the server input_echo already carries the verbatim entered
+   * values. Carried so the confirm card can show what was TYPED, kept distinct
+   * from the picked (city-shaped) suggestion and the city-matched address. */
+  typedInput?: string;
 }
 
 /** Loading card. LoadingStages is BBL-lookup copy, so the address flow has
@@ -137,7 +143,7 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
     }
   }, [result]);
 
-  const runResolve = useCallback(async (query: AddressQuery) => {
+  const runResolve = useCallback(async (query: AddressQuery, typedInput?: string) => {
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -150,7 +156,7 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
     }
     setLoadingQuery(null);
     setRetryFocus(false);
-    setResult({ query, outcome });
+    setResult({ query, outcome, typedInput });
   }, []);
 
   const onSubmit = useCallback(
@@ -242,6 +248,7 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
                 outcome={outcome}
                 onNotMyProperty={notMyProperty}
                 architect={architect}
+                typedInput={result?.typedInput}
               />
             );
           case "ambiguous":
@@ -298,9 +305,9 @@ export function AddressResolutionScreen({ architect = false }: { architect?: boo
           {architect ? "Find a property" : "Address lookup"}
         </h1>
         <p className="section-note">{architect ? "Search an address, then confirm the official lot match." : "Enter a street address for the city’s official Geoclient lot match."}</p>
-        {architect ? <AddressAutocomplete inputRef={autocompleteRef} onPick={query => {
+        {architect ? <AddressAutocomplete inputRef={autocompleteRef} onPick={(query, typedText) => {
           setValues({ houseNumber: query.houseNumber, street: query.street, borough: query.borough ?? "", zip: query.zip ?? "" });
-          void runResolve(query);
+          void runResolve(query, typedText);
         }} onEdit={() => { ++requestSeq.current; abortRef.current?.abort(); setLoadingQuery(null); setResult(null); }} onFallback={openManualFallback} /> : null}
         {architect ? <details className="provenance-details" open={manualOpen} onToggle={event => setManualOpen((event.currentTarget as HTMLDetailsElement).open)}><summary>Enter address manually</summary><AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} /></details> : <AddressForm values={values} onChange={setValues} onSubmit={onSubmit} streetInputRef={streetInputRef} />}
       </section>

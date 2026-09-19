@@ -21,7 +21,13 @@ describe("address suggestion interaction", () => {
     expect(screen.getByRole("option")).toHaveTextContent("QUEENS BOULEVARD");
     fireEvent.keyDown(screen.getByRole("combobox"), { key: "ArrowDown" });
     fireEvent.keyDown(screen.getByRole("combobox"), { key: "Enter" });
-    expect(onPick).toHaveBeenCalledWith({ houseNumber: "120-55", street: "QUEENS BOULEVARD", borough: "Queens", zip: null });
+    // DB-026: onPick carries the picked structured query AND the RAW typed text
+    // ("120 Queens"), which is DISTINCT from the picked city-shaped street
+    // ("QUEENS BOULEVARD") — the confirm surface shows the typed text verbatim.
+    expect(onPick).toHaveBeenCalledWith(
+      { houseNumber: "120-55", street: "QUEENS BOULEVARD", borough: "Queens", zip: null },
+      "120 Queens",
+    );
     expect(screen.getByRole("combobox")).toHaveAttribute("aria-expanded", "false");
   });
   it("ignores a stale suggestion response after the user edits the address", async () => {

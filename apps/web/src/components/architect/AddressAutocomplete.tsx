@@ -60,7 +60,12 @@ const FULL_SEARCH_ERROR_MESSAGES: Record<AddressSearchErrorReason, string> = {
 };
 
 export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
-    onPick: (query: AddressQuery) => void;
+    /** The picked suggestion's structured query PLUS the raw one-box text the
+     * analyst typed before picking. DB-026: the caller carries the typed text to
+     * the confirm surface so a city-shaped picked suggestion never masquerades as
+     * the verbatim entered input (the picked query re-resolves through Geoclient,
+     * which echoes the picked components, not the raw text). */
+    onPick: (query: AddressQuery, typedText: string) => void;
     onEdit: () => void;
     /** Hand the preserved typed text to the manual/Geoclient fallback so it is
      * prefilled, never retyped (handoff §6). Optional so callers can opt out. */
@@ -105,10 +110,13 @@ export function AddressAutocomplete({ onPick, onEdit, onFallback, inputRef }: {
     const choose = (item: AddressSuggestion) => {
         // Selecting a candidate supersedes any full search still in flight.
         cancelFullSearch();
+        // `text` is the raw one-box string as typed, captured BEFORE setText
+        // rewrites the field to the picked label — that raw text is what the
+        // confirm surface shows verbatim (DB-026 identity honesty).
+        onPick(item.query, text);
         setText(`${item.query.houseNumber} ${item.query.street}, ${item.borough}`);
         setSelected(true);
         setOpen(false);
-        onPick(item.query);
     };
 
     /** The explicit /search action for a complete pasted address (never

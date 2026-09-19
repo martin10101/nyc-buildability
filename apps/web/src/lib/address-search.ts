@@ -191,3 +191,152 @@ export async function fetchAddressSuggestions(text: string, options: AddressSear
 export async function fetchAddressSearch(text: string, options: AddressSearchOptions = {}): Promise<AddressSearchOutcome> {
     return fetchGeoSearchWithRetry(GEOSEARCH_SEARCH, text, options);
 }
+
+/* ------------------------------------------------------------------ *
+ * DB-026 — the GeoSearch address→lot IDENTITY gate.
+ *
+ * Suggestions (above) may stay permissive. This section governs the DISTINCT
+ * act of promoting a single GeoSearch feature to THE resolved lot for
+ * analysis/confirm. The captured corpus
+ * (docs/research/db026-address-to-lot-fixture-capture.md §1/§4, assertions
+ * 1–3) proves GeoSearch /search NEVER returns an empty features array for a
+ * bad address — a nonexistent street ("zzqqxx" → "1279 53 STREET") and an
+ * out-of-range house number ("99999" → "207") both return HTTP 200 with a
+ * plausible but WRONG real lot, at the SAME confidence:0.8 / match_type:
+ * "fallback" as the true hit. So neither field discriminates success. The
+ * only honest success test is field EQUALITY: the returned housenumber and
+ * NORMALIZED street must equal the parsed input. Lot identity binds to
+ * addendum.pad.bbl — never the address string or bin, because the true
+ * frontage, the GARAGE sibling, and the reverse address-of-record are three
+ * distinct features that share one bbl (§1/§3). A gate failure is an honest
+ * typed no-match, never a silently wrong lot.
+ * ------------------------------------------------------------------ */
+
+/** The parsed address components the gate compares a returned feature against.
+ * GeoSearch echoes its own parse as `geocoding.query.parsed_text`; that is the
+ * reference parse (corpus §1–§5) when a caller does not supply one. */
+export interface GeoSearchParsedInput {
+    houseNumber: string;
+    street: string;
+}
+
+/** A GeoSearch feature promoted to THE resolved lot through the equality gate. */
+export interface ResolvedGeoSearchLot {
+    /** addendum.pad.bbl — the lot IDENTITY (canonical 10-digit). */
+    bbl: string;
+    /** addendum.pad.bin — RECORDED, never the identity (siblings differ by bin). */
+    bin: string | null;
+    /** addendum.pad.version — the body-only PAD freshness stamp (e.g. "26c").
+     * GeoSearch exposes no Last-Modified/version HTTP header (corpus §8). */
+    padVersion: string | null;
+    /** The matched city address exactly as GeoSearch returned it. */
+    matchedName: string;
+    matchedHouseNumber: string;
+    matchedStreet: string;
+    /** RECORDED if present (/search), null on /autocomplete (corpus §5) —
+     * NEVER consulted as a success test. */
+    matchType: string | null;
+    confidence: number | null;
+}
+
+export type GeoSearchLotResolution =
+    | { kind: "resolved"; lot: ResolvedGeoSearchLot; input: GeoSearchParsedInput }
+    | { kind: "no_match"; input: GeoSearchParsedInput | null };
+
+/** Fold numeric ordinals immediately following a number: "37TH" → "37",
+ * "1ST" → "1". Only a digit run directly suffixed by ST/ND/RD/TH is folded,
+ * so "ST NICHOLAS AVENUE" and "37 ST" (spaced) are untouched. */
+const ORDINAL_SUFFIX = /\b(\d+)(?:ST|ND|RD|TH)\b/g;
+
+/** Corpus-anchored street normalization for the equality gate: upper-case,
+ * whitespace-collapsed, and numeric ordinals folded so the parsed input
+ * "37th street" and the returned "37 STREET" compare equal (corpus §1/§2).
+ * Deliberately NARROW: it never expands abbreviations or guesses — anything it
+ * cannot confidently fold simply fails the gate to an honest no-match rather
+ * than risking a wrong lot (packet risk 2, D-051 fail-closed-with-care). */
+export function normalizeStreetForMatch(street: string): string {
+    return street.trim().toUpperCase().replace(/\s+/g, " ").replace(ORDINAL_SUFFIX, "$1");
+}
+
+/** GeoSearch echoes its own parse of the query. Used as the reference parse
+ * when the caller supplies none; tolerant of the reduced /autocomplete shape
+ * (which still carries housenumber + street). */
+function readParsedInput(data: Record<string, unknown>): GeoSearchParsedInput | null {
+    const geocoding = data.geocoding;
+    if (!geocoding || typeof geocoding !== "object") return null;
+    const query = (geocoding as Record<string, unknown>).query;
+    if (!query || typeof query !== "object") return null;
+    const parsed = (query as Record<string, unknown>).parsed_text;
+    if (!parsed || typeof parsed !== "object") return null;
+    const p = parsed as Record<string, unknown>;
+    if (typeof p.housenumber !== "string" || typeof p.street !== "string") return null;
+    return { houseNumber: p.housenumber, street: p.street };
+}
+
+/** Read the `properties.addendum.pad` identity block, tolerating its absence. */
+function readPad(props: Record<string, unknown>): { bbl: string; bin: string | null; version: string | null } | null {
+    const addendum = props.addendum;
+    if (!addendum || typeof addendum !== "object") return null;
+    const pad = (addendum as Record<string, unknown>).pad;
+    if (!pad || typeof pad !== "object") return null;
+    const rec = pad as Record<string, unknown>;
+    if (typeof rec.bbl !== "string") return null;
+    return {
+        bbl: rec.bbl.trim(),
+        bin: typeof rec.bin === "string" ? rec.bin : null,
+        version: typeof rec.version === "string" ? rec.version : null,
+    };
+}
+
+/**
+ * Promote a GeoSearch response body to THE resolved lot under the equality
+ * gate, or return an honest typed no-match. `input` defaults to the body's own
+ * `geocoding.query.parsed_text`. The first feature whose returned housenumber
+ * equals the parsed input AND whose normalized street equals the parsed street
+ * AND that carries a canonical 10-digit `addendum.pad.bbl` wins; match_type and
+ * confidence are recorded on the result but are NEVER part of the test.
+ */
+export function resolveLotFromGeoSearch(body: unknown, input?: GeoSearchParsedInput): GeoSearchLotResolution {
+    if (!body || typeof body !== "object") return { kind: "no_match", input: input ?? null };
+    const data = body as Record<string, unknown>;
+    const parsedInput = input ?? readParsedInput(data);
+    if (data.type !== "FeatureCollection" || !Array.isArray(data.features) || parsedInput === null)
+        return { kind: "no_match", input: parsedInput };
+    const wantHouse = parsedInput.houseNumber.trim();
+    const wantStreet = normalizeStreetForMatch(parsedInput.street);
+    if (wantHouse === "" || wantStreet === "") return { kind: "no_match", input: parsedInput };
+    for (const feature of data.features) {
+        if (!feature || typeof feature !== "object") continue;
+        const rawProps = (feature as Record<string, unknown>).properties;
+        if (!rawProps || typeof rawProps !== "object") continue;
+        const props = rawProps as Record<string, unknown>;
+        const house = props.housenumber;
+        const street = props.street;
+        if (typeof house !== "string" || typeof street !== "string") continue;
+        // THE EQUALITY GATE. housenumber is exact; street is normalized. A
+        // fallback feature on a wrong street ("53 STREET" ≠ "37 STREET") or a
+        // substituted house number ("207" ≠ "99999") fails here — match_type
+        // and confidence are deliberately NOT read.
+        if (house.trim() !== wantHouse) continue;
+        if (normalizeStreetForMatch(street) !== wantStreet) continue;
+        const pad = readPad(props);
+        // Identity binds to a canonical pad.bbl; a matched frontage without one
+        // cannot be promoted (honest no-match, never a partial lot).
+        if (pad === null || !/^\d{10}$/.test(pad.bbl)) continue;
+        return {
+            kind: "resolved",
+            input: parsedInput,
+            lot: {
+                bbl: pad.bbl,
+                bin: pad.bin,
+                padVersion: pad.version,
+                matchedName: typeof props.name === "string" ? props.name : typeof props.label === "string" ? props.label : street,
+                matchedHouseNumber: house,
+                matchedStreet: street,
+                matchType: typeof props.match_type === "string" ? props.match_type : null,
+                confidence: typeof props.confidence === "number" ? props.confidence : null,
+            },
+        };
+    }
+    return { kind: "no_match", input: parsedInput };
+}

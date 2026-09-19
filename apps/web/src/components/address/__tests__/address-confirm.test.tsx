@@ -483,3 +483,158 @@ describe("S7 — DB-024 shared ZoLa label and absent-BBL note on the confirm car
     );
   });
 });
+
+/* ================================================================ *
+ * S8 — DB-026: the entered input is shown VERBATIM, distinct from the
+ * city-matched address (identity honesty, D-073-R006 records class)
+ * ================================================================ */
+
+describe("S8 — DB-026 entered-vs-matched identity honesty", () => {
+  it("AS-1/AS-6: shows the verbatim entered input alongside the distinct city-matched address for the corner-lot case", async () => {
+    // DB-026 case-1: the analyst types the 37-Street frontage; the city matches
+    // it to bbl 3052960043 (whose PLUTO address-of-record is on 13 Avenue). The
+    // typed input must survive VERBATIM (lower-case "37 street"), never silently
+    // replaced by the normalized match.
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "1279";
+    doc.input_echo.street = "37 street";
+    doc.input_echo.borough = "Brooklyn";
+    doc.canonical.bbl = "3052960043";
+    doc.canonical.street_name_normalized = "37 STREET";
+    doc.canonical.borough_name = "BROOKLYN";
+    doc.canonical.zip_code = "11218";
+    await renderResolved(doc);
+
+    // The entered input is preserved verbatim and kept distinct from the match.
+    const entered = screen.getByTestId("entered-input");
+    expect(entered.textContent).toContain("1279 37 street");
+    expect(entered.textContent).toContain("Brooklyn");
+    // The city-matched address is the normalized canonical form (a separate line).
+    const matched = screen.getByTestId("confirm-address");
+    expect(matched.textContent).toContain("37 STREET");
+    // The lot identity carried forward is the BBL — never the address string.
+    expect(screen.getByTestId("resolved-bbl").textContent).toBe("3052960043");
+  });
+
+  it("keeps the entered-input record present on the plain resolved happy path too", async () => {
+    await renderResolved();
+    expect(screen.getByTestId("entered-input").textContent).toContain(
+      "120 BROADWAY",
+    );
+  });
+});
+
+/* ================================================================ *
+ * S9 — DB-026 journey: the architect autocomplete arc keeps the RAW
+ * typed text distinct from BOTH the picked (city-shaped) suggestion
+ * label AND the city-matched address. On this arc the server input_echo
+ * carries the PICKED suggestion (Geoclient re-resolves the picked
+ * components), so the raw typed text must be threaded to the card
+ * explicitly or it silently collapses into the match.
+ * ================================================================ */
+
+describe("S9 — DB-026 autocomplete journey: typed text ≠ picked label ≠ matched address", () => {
+  /** A GeoSearch /autocomplete FeatureCollection whose single suggestion is
+   * already city-shaped ("37 STREET"), so its label differs from the raw
+   * one-box text the analyst types ("1279 37 st bk"). */
+  function geosearchSuggestions() {
+    return {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [-73.98522, 40.641968] },
+          properties: {
+            source: "nycpad",
+            housenumber: "1279",
+            street: "37 STREET",
+            borough: "Brooklyn",
+            postalcode: "11218",
+            label: "1279 37 STREET, Brooklyn, NY, USA",
+            addendum: { pad: { bbl: "3052960043", version: "26c" } },
+          },
+        },
+      ],
+    };
+  }
+
+  /** The Geoclient resolved document the PICK re-resolves to: input_echo carries
+   * the PICKED (city-shaped) components, canonical is the city match. Neither
+   * equals the raw typed "1279 37 st bk". */
+  function resolvedForPick() {
+    const doc = resolvedDoc();
+    doc.input_echo.house_number = "1279";
+    doc.input_echo.street = "37 STREET";
+    doc.input_echo.borough = "Brooklyn";
+    doc.canonical.bbl = "3052960043";
+    doc.canonical.street_name_normalized = "37 STREET";
+    doc.canonical.borough_name = "BROOKLYN";
+    doc.canonical.zip_code = "11218";
+    return doc;
+  }
+
+  /** Route by URL: the debounced type-ahead hits GeoSearch; the pick re-resolves
+   * through the Geoclient address endpoint; the confirm card's lot-outline call
+   * gets the benign flag-off 404. */
+  function stubArchitectFetch(doc: Record<string, unknown>) {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/lot-geometry")) {
+          return Promise.resolve(
+            new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 }),
+          );
+        }
+        if (url.includes("geosearch")) {
+          return Promise.resolve(jsonResponse(geosearchSuggestions(), 200));
+        }
+        return Promise.resolve(jsonResponse(doc, 200));
+      }),
+    );
+  }
+
+  it("AS-1/AS-6: types a raw one-box address, picks the city-shaped suggestion, and the confirm card still shows the VERBATIM typed text — distinct from the picked label and the matched address", async () => {
+    // Surrounding whitespace on the raw entry: the card must render the typed
+    // string UNCHANGED (trimming decides only whether it is blank), so the exact
+    // <strong> textContent below carries the leading/trailing spaces verbatim.
+    const typed = "  1279 37 st bk  ";
+    stubArchitectFetch(resolvedForPick());
+    render(<AddressResolutionScreen architect />);
+
+    // Type the raw one-box address into the autocomplete (labelled distinctly
+    // from the manual "Street" field, so this never targets the manual form).
+    fireEvent.change(screen.getByLabelText("Street address"), {
+      target: { value: typed },
+    });
+
+    // The debounced type-ahead returns a suggestion whose visible label is
+    // already city-shaped ("37 STREET"), NOT the raw "37 st bk" that was typed.
+    const option = await screen.findByRole(
+      "option",
+      { name: /1279 37 STREET/i },
+      { timeout: 2000 },
+    );
+    expect(option.textContent).not.toContain("st bk");
+
+    // Pick it → the confirm card resolves through Geoclient.
+    fireEvent.click(option);
+    await screen.findByTestId("address-confirm-card");
+
+    // The entered-input record is the RAW typed text, verbatim — the exact
+    // <strong> textContent equals the typed string INCLUDING its surrounding
+    // whitespace (the card renders the original, never a trimmed rewrite).
+    const entered = screen.getByTestId("entered-input");
+    const enteredStrong = entered.querySelector<HTMLElement>("strong");
+    expect(enteredStrong?.textContent).toBe(typed);
+    expect(entered.textContent).toContain(typed);
+    // …distinct from the picked suggestion's city-shaped street…
+    expect(entered.textContent).not.toContain("37 STREET");
+    // …and distinct from the city-matched canonical address line.
+    const matched = screen.getByTestId("confirm-address");
+    expect(matched.textContent).toContain("37 STREET");
+    expect(matched.textContent).not.toContain(typed);
+    // The identity carried forward is the BBL, never an address string.
+    expect(screen.getByTestId("resolved-bbl").textContent).toBe("3052960043");
+  });
+});

@@ -46,10 +46,17 @@ export function AddressConfirmCard({
   outcome,
   onNotMyProperty,
   architect = false,
+  typedInput,
 }: {
   outcome: AddressDocumentOutcome;
   onNotMyProperty: () => void;
   architect?: boolean;
+  /** DB-026: the RAW one-box text the analyst typed before picking an
+   * autocomplete suggestion (architect arc). When present it is shown VERBATIM
+   * as the entered input, so a picked (city-shaped) suggestion never masquerades
+   * as what was typed. Absent on the manual/BBL paths, where the server
+   * input_echo IS the verbatim entry. */
+  typedInput?: string;
 }) {
   const view = outcome.view;
   const validation =
@@ -69,6 +76,35 @@ export function AddressConfirmCard({
   ]
     .filter(Boolean)
     .join(", ");
+
+  // DB-026 identity honesty (D-073-R006 records class): the address the user
+  // typed VERBATIM, kept distinct from the city's matched line above so a
+  // corner/range/vanity frontage is never silently presented as the input.
+  // This is a RECORD — it implies no computed value. The lot's PLUTO
+  // address-of-record (which can differ again from the matched frontage) is
+  // NOT carried by this Geoclient channel; that gap is a reported discovery,
+  // not a built-around field (no server endpoint / contract change here).
+  //
+  // On the architect autocomplete arc the server input_echo carries the PICKED
+  // suggestion's components (already city-shaped), NOT the raw one-box text the
+  // analyst typed — so the typed text is threaded in explicitly (`typedInput`)
+  // and shown VERBATIM when present. Trimming decides ONLY whether the typed
+  // text is blank; the ORIGINAL string is what renders (its surrounding
+  // whitespace preserved), so nothing the analyst typed is silently rewritten.
+  // The manual/BBL paths pass no typedInput and fall back to input_echo, which
+  // IS the verbatim entry there.
+  const enteredInput =
+    typedInput && typedInput.trim().length > 0
+      ? typedInput
+      : [
+          [view.inputEcho.houseNumber, view.inputEcho.street]
+            .filter(Boolean)
+            .join(" "),
+          view.inputEcho.borough,
+          view.inputEcho.zip,
+        ]
+          .filter(Boolean)
+          .join(", ");
 
   return (
     <section className="card" data-testid="address-confirm-card">
@@ -90,6 +126,14 @@ export function AddressConfirmCard({
           normalized street — the lot identifier below is the result.
         </p>
       )}
+
+      {enteredInput ? (
+        <p className="section-note" data-testid="entered-input">
+          You searched for <strong>{enteredInput}</strong>. The address above is
+          what the city matched to this lot; the tax lot (BBL) below is the
+          identity we carry forward.
+        </p>
+      ) : null}
 
       {view.status === "resolved_with_warnings" ? (
         <div

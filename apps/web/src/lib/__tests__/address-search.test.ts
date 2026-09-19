@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ADDRESS_SEARCH_MAX_ATTEMPTS, fetchAddressSearch, fetchAddressSuggestions, parseAddressSuggestions, GEOSEARCH_AUTOCOMPLETE, GEOSEARCH_SEARCH } from "../address-search";
+import { ADDRESS_SEARCH_MAX_ATTEMPTS, fetchAddressSearch, fetchAddressSuggestions, parseAddressSuggestions, normalizeStreetForMatch, resolveLotFromGeoSearch, GEOSEARCH_AUTOCOMPLETE, GEOSEARCH_SEARCH } from "../address-search";
 
 // Shape recorded from NYC DCP GeoSearch v2 (M5-T029 G1). PAD BBL is intentionally never consumed.
 const feature = (borough = "Manhattan") => ({ type: "Feature", properties: { source: "nycpad", housenumber: "120", street: "BROADWAY", borough, postalcode: "10271", label: "120 BROADWAY, New York, NY, USA", addendum: { pad: { bbl: "1000477501", version: "26c" } } }, geometry: { type: "Point", coordinates: [-74.010542, 40.708233] } });
@@ -204,5 +204,110 @@ describe("AS-8: deterministic per-borough address-flow fixtures (M5-T032)", () =
     expect(result.kind === "suggestions" && result.suggestions[0].query).toEqual({ houseNumber: "120-55", street: "QUEENS BOULEVARD", borough: "Queens", zip: "11424" });
     const url = new URL(requestUrl);
     expect(url.origin + url.pathname).toBe(GEOSEARCH_SEARCH);
+  });
+});
+
+/**
+ * DB-026: the GeoSearch address→lot EQUALITY GATE, pinned offline from the
+ * byte-faithful corpus (docs/research/db026-address-to-lot-fixture-capture.md
+ * §1–§5). Every body below is the verbatim minified server response captured
+ * 2026-09-19; they prove the load-bearing hazard — GeoSearch /search returns a
+ * plausible WRONG lot for nonsense input at the SAME confidence:0.8 /
+ * match_type:"fallback" as the true hit — so ONLY field equality can refuse it.
+ */
+describe("DB-026: GeoSearch address→lot equality gate (byte-faithful corpus)", () => {
+  // §1 — /search size=3: true hit + GARAGE sibling (same bbl, other bin) + EAST 37 (different lot).
+  const SEARCH_1279_37_STREET_SIZE3 = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"1279 37 street brooklyn","size":3,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20,"parser":"pelias","parsed_text":{"subject":"1279 37 street","housenumber":"1279","street":"37 street","locality":"brooklyn","admin":"brooklyn"}},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790343142},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.98522,40.641968]},"properties":{"id":"1309911","gid":"nycpad:venue:1309911","layer":"venue","source":"nycpad","source_id":"1309911","country_code":"US","name":"1279 37 STREET","housenumber":"1279","street":"37 STREET","postalcode":"11218","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"1279 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3340270","version":"26c"}}}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.985331,40.642037]},"properties":{"id":"1309902","gid":"nycpad:venue:1309902","layer":"venue","source":"nycpad","source_id":"1309902","country_code":"US","name":"1279 GARAGE 37 STREET","housenumber":"1279 GARAGE","street":"37 STREET","postalcode":"11218","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"1279 GARAGE 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3123204","version":"26c"}}}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.93952,40.624792]},"properties":{"id":"1632496","gid":"nycpad:venue:1632496","layer":"venue","source":"nycpad","source_id":"1632496","country_code":"US","name":"1279 EAST 37 STREET","housenumber":"1279","street":"EAST 37 STREET","postalcode":"11210","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Flatlands","neighbourhood_gid":"whosonfirst:neighbourhood:85819585","label":"1279 EAST 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3076370038","bin":"3209116","version":"26c"}}}}],"bbox":[-73.985331,40.624792,-73.93952,40.642037]}`;
+  // §2 — /search "th" variant: parsed_text.street="37th street" resolves to the same canonical lot.
+  const SEARCH_1279_37TH_STREET = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"1279 37th street brooklyn","size":1,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20,"parser":"pelias","parsed_text":{"subject":"1279 37th street","housenumber":"1279","street":"37th street","locality":"brooklyn","admin":"brooklyn"}},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790357661},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.98522,40.641968]},"properties":{"id":"1309911","gid":"nycpad:venue:1309911","layer":"venue","source":"nycpad","source_id":"1309911","country_code":"US","name":"1279 37 STREET","housenumber":"1279","street":"37 STREET","postalcode":"11218","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"1279 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3340270","version":"26c"}}}}],"bbox":[-73.98522,40.641968,-73.98522,40.641968]}`;
+  // §3 — /search reverse frontage "3622 13 avenue": SAME bbl 3052960043, PLUTO-canonical name "3622 13 AVENUE".
+  const SEARCH_3622_13_AVENUE = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"3622 13 avenue brooklyn","size":1,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20,"parser":"pelias","parsed_text":{"subject":"3622 13 avenue","housenumber":"3622","street":"13 avenue","locality":"brooklyn","admin":"brooklyn"}},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790357962},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.98522,40.641968]},"properties":{"id":"1309903","gid":"nycpad:venue:1309903","layer":"venue","source":"nycpad","source_id":"1309903","country_code":"US","name":"3622 13 AVENUE","housenumber":"3622","street":"13 AVENUE","postalcode":"11218","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"3622 13 AVENUE, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3340270","version":"26c"}}}}],"bbox":[-73.98522,40.641968,-73.98522,40.641968]}`;
+  // §4a — nonexistent street "zzqqxx": HTTP 200 with a WRONG real lot "1279 53 STREET" at fallback/0.8.
+  const SEARCH_NONEXISTENT_STREET = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"1279 zzqqxx street brooklyn","size":1,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20,"parser":"pelias","parsed_text":{"subject":"1279 zzqqxx street","housenumber":"1279","street":"zzqqxx street","locality":"brooklyn","admin":"brooklyn"}},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790374793},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.994554,40.633088]},"properties":{"id":"1359602","gid":"nycpad:venue:1359602","layer":"venue","source":"nycpad","source_id":"1359602","country_code":"US","name":"1279 53 STREET","housenumber":"1279","street":"53 STREET","postalcode":"11219","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Borough Park","neighbourhood_gid":"whosonfirst:neighbourhood:420782907","label":"1279 53 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3056627501","bin":"3138712","version":"26c"}}}}],"bbox":[-73.994554,40.633088,-73.994554,40.633088]}`;
+  // §4b — out-of-range house number "99999": returns "207 37 STREET" (housenumber "207" ≠ query).
+  const SEARCH_OUT_OF_RANGE_HOUSE = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"99999 37 street brooklyn","size":1,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20,"parser":"pelias","parsed_text":{"subject":"99999 37 street","housenumber":"99999","street":"37 street","locality":"brooklyn","admin":"brooklyn"}},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790375009},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-74.008191,40.655949]},"properties":{"id":"758253","gid":"nycpad:venue:758253","layer":"venue","source":"nycpad","source_id":"758253","country_code":"US","name":"207 37 STREET","housenumber":"207","street":"37 STREET","postalcode":"11232","confidence":0.8,"match_type":"fallback","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Sunset Park","neighbourhood_gid":"whosonfirst:neighbourhood:85851575","label":"207 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3006950001","bin":"3336906","version":"26c"}}}}],"bbox":[-74.008191,40.655949,-74.008191,40.655949]}`;
+  // §5 — /autocomplete: feature properties OMIT confidence and match_type entirely.
+  const AUTOCOMPLETE_1279_37_ST = `{"geocoding":{"version":"0.2","attribution":"http://geosearch.planninglabs.nyc/attribution","query":{"text":"1279 37 st","parser":"pelias","parsed_text":{"subject":"1279 37 st","housenumber":"1279","street":"37 st"},"size":10,"private":false,"lang":{"name":"English","iso6391":"en","iso6393":"eng","via":"default","defaulted":true},"querySize":20},"engine":{"name":"Pelias","author":"Mapzen","version":"1.0"},"timestamp":1789790375218},"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.98522,40.641968]},"properties":{"id":"1309911","gid":"nycpad:venue:1309911","layer":"venue","source":"nycpad","source_id":"1309911","country_code":"US","name":"1279 37 STREET","housenumber":"1279","street":"37 STREET","postalcode":"11218","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"1279 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3340270","version":"26c"}}}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.985331,40.642037]},"properties":{"id":"1309902","gid":"nycpad:venue:1309902","layer":"venue","source":"nycpad","source_id":"1309902","country_code":"US","name":"1279 GARAGE 37 STREET","housenumber":"1279 GARAGE","street":"37 STREET","postalcode":"11218","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Kensington","neighbourhood_gid":"whosonfirst:neighbourhood:85828101","label":"1279 GARAGE 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3052960043","bin":"3123204","version":"26c"}}}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-73.93952,40.624792]},"properties":{"id":"1632496","gid":"nycpad:venue:1632496","layer":"venue","source":"nycpad","source_id":"1632496","country_code":"US","name":"1279 EAST 37 STREET","housenumber":"1279","street":"EAST 37 STREET","postalcode":"11210","accuracy":"point","country":"United States","country_gid":"whosonfirst:country:85633793","country_a":"USA","region":"New York","region_gid":"whosonfirst:region:85688543","region_a":"NY","county":"Kings County","county_gid":"whosonfirst:county:102082361","county_a":"BK","locality":"New York","locality_gid":"whosonfirst:locality:85977539","locality_a":"NYC","borough":"Brooklyn","borough_gid":"whosonfirst:borough:421205765","neighbourhood":"Flatlands","neighbourhood_gid":"whosonfirst:neighbourhood:85819585","label":"1279 EAST 37 STREET, Brooklyn, NY, USA","addendum":{"pad":{"bbl":"3076370038","bin":"3209116","version":"26c"}}}}],"bbox":[-73.985331,40.624792,-73.93952,40.642037]}`;
+  const parse = (body: string): unknown => JSON.parse(body);
+
+  it("AS-1: the true hit passes the gate → bbl 3052960043 + the matched city address, with match_type/confidence recorded but not tested", () => {
+    const result = resolveLotFromGeoSearch(parse(SEARCH_1279_37_STREET_SIZE3));
+    expect(result.kind).toBe("resolved");
+    if (result.kind !== "resolved") return;
+    expect(result.lot.bbl).toBe("3052960043");
+    expect(result.lot.matchedName).toBe("1279 37 STREET");
+    expect(result.lot.matchedHouseNumber).toBe("1279");
+    expect(result.lot.matchedStreet).toBe("37 STREET");
+    expect(result.lot.bin).toBe("3340270");
+    expect(result.lot.padVersion).toBe("26c");
+    // Recorded — but the fallback/0.8 pair is identical on the nonsense probes below,
+    // so it can never be the success test.
+    expect(result.lot.matchType).toBe("fallback");
+    expect(result.lot.confidence).toBe(0.8);
+  });
+
+  it("AS-2: the '37th' variant matches the SAME lot under the documented ordinal normalization", () => {
+    expect(normalizeStreetForMatch("37th street")).toBe("37 STREET");
+    expect(normalizeStreetForMatch("37 STREET")).toBe("37 STREET");
+    const result = resolveLotFromGeoSearch(parse(SEARCH_1279_37TH_STREET));
+    expect(result.kind === "resolved" && result.lot.bbl).toBe("3052960043");
+  });
+
+  it("AS-3: the reverse frontage and the GARAGE sibling bind to the SAME pad.bbl — never the address string or bin", () => {
+    const trueHit = resolveLotFromGeoSearch(parse(SEARCH_1279_37_STREET_SIZE3));
+    const reverse = resolveLotFromGeoSearch(parse(SEARCH_3622_13_AVENUE));
+    expect(trueHit.kind).toBe("resolved");
+    expect(reverse.kind).toBe("resolved");
+    if (trueHit.kind !== "resolved" || reverse.kind !== "resolved") return;
+    // Same lot; the two frontages carry DIFFERENT address strings.
+    expect(reverse.lot.bbl).toBe(trueHit.lot.bbl);
+    expect(reverse.lot.bbl).toBe("3052960043");
+    expect(reverse.lot.matchedName).toBe("3622 13 AVENUE");
+    expect(reverse.lot.matchedName).not.toBe(trueHit.lot.matchedName);
+    // The GARAGE sibling (feature 2 of §1) is the SAME bbl with a DIFFERENT bin —
+    // identity is the bbl, proving the gate keys on neither bin nor address string.
+    const features = (parse(SEARCH_1279_37_STREET_SIZE3) as { features: Array<{ properties: { name: string; addendum: { pad: { bbl: string; bin: string } } } }> }).features;
+    const garage = features.find((f) => f.properties.name === "1279 GARAGE 37 STREET");
+    expect(garage?.properties.addendum.pad.bbl).toBe("3052960043");
+    expect(garage?.properties.addendum.pad.bin).not.toBe(trueHit.lot.bin);
+  });
+
+  it("AS-4: the nonsense probes are REFUSED — a wrong street and an out-of-range house number surface NO lot", () => {
+    const wrongStreet = resolveLotFromGeoSearch(parse(SEARCH_NONEXISTENT_STREET));
+    const outOfRange = resolveLotFromGeoSearch(parse(SEARCH_OUT_OF_RANGE_HOUSE));
+    expect(wrongStreet.kind).toBe("no_match");
+    expect(outOfRange.kind).toBe("no_match");
+    expect("lot" in wrongStreet).toBe(false);
+    expect("lot" in outOfRange).toBe(false);
+  });
+
+  it("AS-4 (never consult match_type/confidence): a top-scored feature on the WRONG street is still refused by equality", () => {
+    // A feature scored confidence:1 / match_type:"exact" but on a mismatched
+    // street. If the gate ever peeked at those fields it would wrongly promote
+    // this — equality must still refuse it.
+    const body = {
+      type: "FeatureCollection",
+      geocoding: { query: { parsed_text: { housenumber: "1279", street: "37 street" } } },
+      features: [
+        { type: "Feature", properties: { name: "1279 99 STREET", housenumber: "1279", street: "99 STREET", confidence: 1, match_type: "exact", addendum: { pad: { bbl: "3000000001", bin: "3000001", version: "26c" } } } },
+      ],
+    };
+    expect(resolveLotFromGeoSearch(body).kind).toBe("no_match");
+  });
+
+  it("AS-5: /autocomplete features (which OMIT confidence/match_type) parse permissively AND still gate", () => {
+    const body = parse(AUTOCOMPLETE_1279_37_ST);
+    // Suggestions stay permissive — the autocomplete shape parses as before.
+    const suggestions = parseAddressSuggestions(body);
+    expect(suggestions?.length ?? 0).toBeGreaterThan(0);
+    // The gate tolerates the missing confidence/match_type keys (recorded null)
+    // and still promotes only the equality-matched feature.
+    const resolved = resolveLotFromGeoSearch(body);
+    expect(resolved.kind).toBe("resolved");
+    if (resolved.kind !== "resolved") return;
+    expect(resolved.lot.bbl).toBe("3052960043");
+    expect(resolved.lot.matchType).toBeNull();
+    expect(resolved.lot.confidence).toBeNull();
+    expect(resolved.lot.padVersion).toBe("26c");
   });
 });

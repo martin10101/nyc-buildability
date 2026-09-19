@@ -1,5 +1,63 @@
-{
-  "status": "placeholder",
-  "task": "M5-T046",
-  "note": "Seeded at the contract seam. The producer authors the real source-registry draft record here for NYC Planning Labs GeoSearch v2 (/search + /autocomplete), mirroring the committed ztldb.json shape field-for-field, from docs/research/db026-address-to-lot-source-recon.md and docs/research/db026-address-to-lot-fixture-capture.md: addendum.pad.{bbl,bin,version} path, body-only freshness stamp (addendum.pad.version, no Last-Modified header), and the equality-gate match discipline (match_type/confidence are non-discriminating)."
-}
+[
+  {
+    "source_id": "nyc-dcp-geosearch-v2",
+    "agency": "NYC Department of City Planning (DCP), Planning Labs",
+    "name": "NYC Planning Labs GeoSearch v2 — keyless address geocoder (Pelias over a normalized DCP PAD extract)",
+    "official_url": "https://geosearch.planninglabs.nyc/v2 (docs https://geosearch.planninglabs.nyc/docs/)",
+    "source_type": "official_geocoding_api_pelias",
+    "api_dataset_identifier": "Not a Socrata dataset — a Pelias geocoding service. Endpoints used: /v2/search (explicit full-address action) and /v2/autocomplete (type-ahead). Both are the SAME upstream service (docs/), so /search is a distinct user action, never an independent failover source (address-search.ts).",
+    "authentication": {
+      "required": false,
+      "recommended": "None — keyless GET. No endpoint demanded or offered authentication in the DB-026 capture.",
+      "evidence": "Live keyless GET verified 2026-09-19 (docs/research/db026-address-to-lot-fixture-capture.md §1–§8; CORS + docs previously verified M5-T029 G1). The set-cookie DO-LB value is an ephemeral 300s DigitalOcean load-balancer routing cookie, not a credential (§8)."
+    },
+    "rate_limits": {
+      "without_token": "No published rate limit; keyless shared service",
+      "with_token": "n/a (no token model)",
+      "throttle_signal": "HTTP 429 (address-search.ts maps 429 to a distinct rate_limited outcome; never retried)",
+      "evidence": "No 429 or auth demand occurred across the eight DB-026 captures (§1–§8); the web client retries ONLY a transient 5xx within a bounded budget and treats 429 as its own terminal reason."
+    },
+    "update_frequency": "Bounded by the DCP PAD release loaded behind Pelias. The ONLY currency signal is the in-body addendum.pad.version (observed 26c uniformly across every feature in captures §1–§5). There is NO Last-Modified and NO dataset/PAD version HTTP header (§8); the response carries only a weak validator etag (W/\"...\") and cache-control: public,private. The separate PAD Open Data mirror (bc8t-ecyu) is a frozen 2015 blobby-file download (rowsUpdatedAt 2015-06-08) and MUST NOT be used as a freshness signal (source-recon §3).",
+    "geographic_coverage": "All five NYC boroughs; addresses from the DCP Property Address Directory (PAD). PAD carries MULTIPLE frontages per lot (every building address and non-addressable frontage), so a single tax lot appears under several address features (e.g. bbl 3052960043 appears as '1279 37 STREET', '1279 GARAGE 37 STREET', and the record frontage '3622 13 AVENUE') — source-recon §3, fixture §1/§3.",
+    "fields_available": {
+      "note": "Per feature: geometry (Point, EPSG:4326 lon/lat — display only, never measurement) and properties. The load-bearing identity path is properties.addendum.pad.{bbl,bin,version}. GeoSearch echoes its own parse of the query at geocoding.query.parsed_text.{housenumber,street} — this is the reference parse the equality gate compares returned features against.",
+      "properties": [
+        "name / label (text) — the matched city address exactly as returned (e.g. '1279 37 STREET')",
+        "housenumber (text) — may be non-numeric ('1279 GARAGE'); compared verbatim (trimmed) by the gate",
+        "street (text, UPPER-CASE, e.g. '37 STREET', 'EAST 37 STREET', '13 AVENUE') — normalized for the gate",
+        "borough / postalcode / neighbourhood / county — administrative context",
+        "source (always 'nycpad' for the address features the web client accepts)",
+        "confidence (number) + match_type (text) — present on /search, OMITTED entirely on /autocomplete (§5); RECORDED but NON-DISCRIMINATING (see match discipline)",
+        "addendum.pad.bbl (text, canonical 10-digit) — the lot IDENTITY",
+        "addendum.pad.bin (text) — building id; RECORDED, never the identity (frontage vs garage differ by bin, same bbl)",
+        "addendum.pad.version (text, e.g. '26c') — the body-only PAD freshness stamp"
+      ],
+      "match_discipline_verbatim_basis": "GeoSearch /search NEVER returns an empty features array for a bad address: a nonexistent street ('1279 zzqqxx street' → '1279 53 STREET', bbl 3056627501) and an out-of-range house number ('99999 37 street' → '207 37 STREET', housenumber 207) both return HTTP 200 with a plausible but WRONG real lot at the SAME confidence:0.8 / match_type:'fallback' as the true hit (fixture §1/§4a/§4b; assertions 1–2). THEREFORE match_type and confidence are non-discriminating and MUST NOT be used as a success test. The ONLY honest success test is field EQUALITY: promote a feature to THE resolved lot only when its returned housenumber equals the parsed input AND its normalized street equals the parsed street; bind identity to addendum.pad.bbl (never the address string or bin). Documented normalization is corpus-anchored: numeric ordinals fold ('37th street' → '37 STREET'); unclear cases fail closed to no-match. Implemented in apps/web/src/lib/address-search.ts (resolveLotFromGeoSearch / normalizeStreetForMatch, task M5-T046).",
+      "null_semantics": "Feature properties omit fields that do not apply (e.g. /autocomplete omits confidence/match_type). Key ABSENCE is not evidence of a value — the parser must tolerate missing confidence/match_type and record them as null, never require them (assertion 4, fixture §5)."
+    },
+    "terms_usage_notes": "NYC Open Data / DCP Planning Labs public geocoder; keyless and CORS-enabled for browser use. Returned message/name/label fields echo address text and must be escaped on render (the web client renders through React text nodes and builds no URL from returned strings).",
+    "connector_implementation": "WEB client: apps/web/src/lib/address-search.ts. Suggestions (fetchAddressSuggestions / fetchAddressSearch → parseAddressSuggestions) stay PERMISSIVE and never consume the PAD BBL. The DISTINCT single-lot promotion path (resolveLotFromGeoSearch, task M5-T046, DB-026) applies the equality gate above and returns an honest typed no_match instead of a silently wrong lot. GeoSearch is the keyless CROSS-CHECK / degraded-mode resolver; the primary address→BBL resolver in production is the server Geoclient v2 path (services/api, task M2-T021) — OUT of the M5-T046 scope. No server endpoint or contract field was added for GeoSearch promotion.",
+    "last_successful_ingestion": null,
+    "latest_source_version": "addendum.pad.version = '26c' (body-only, observed uniformly 2026-09-19 across §1–§5 and §8). No HTTP version/Last-Modified header exists; the epoch-ms geocoding.timestamp is per-request and is NOT a dataset version.",
+    "health_status": "healthy — live-verified 2026-09-19 (8/8 captures HTTP 200, no errors, no rate-limits, no auth). NOTE: the absence of a clean no-match is a documented BEHAVIOR of the service, handled by the equality gate; it is not a health degradation.",
+    "known_limitations": [
+      "NO clean no-match: /search always returns a feature, even for nonsense input, at fallback/0.8 — consumers MUST equality-gate returned housenumber+normalized street (assertions 1–2)",
+      "match_type/confidence are non-discriminating (identical fallback/0.8 on true hit AND garbage) — never a success test",
+      "/autocomplete OMITS confidence and match_type entirely; its geocoding.query.parsed_text lacks locality/admin — a shared /search parser must not require those keys (assertion 4, §5)",
+      "No Last-Modified / dataset-version HTTP header and only a weak etag; freshness is body-only via addendum.pad.version (§8)",
+      "The PAD Open Data mirror bc8t-ecyu is a frozen 2015 file download, not a freshness signal (source-recon §3)",
+      "The lot's PLUTO/PTS address-of-record can DIFFER from the matched frontage (bbl 3052960043 matches '1279 37 STREET' but PLUTO.address = '3622 13 AVENUE') — GeoSearch does not carry the single address-of-record; that requires a separate BBL→PLUTO lookup (source-recon root cause; assertion 5)",
+      "One lot can carry MULTIPLE BINs (building bin 3340270 vs garage bin 3123204 on one bbl) — bin is recorded, not the identity (§1/§3)",
+      "Text-search only — cannot validate a bare BBL/BIN input (source-recon §2)",
+      "Feature geometry is EPSG:4326 (display only); measurement geometry comes from MapPLUTO/DTM in EPSG:2263 elsewhere"
+    ],
+    "fallback_source": "Primary address→BBL in production is the server Geoclient v2 path (Geosupport Function 1B, official geocoder of record; keyed, task M2-T021). GeoSearch v2 is the keyless cross-check / degraded-mode resolver and the autocomplete source. Then by resolved BBL: DTM TAX_LOT_POLYGON (i38t-6if2) for geometry and MapPLUTO (64uk-42ks) address for the displayable address-of-record (source-recon recommendation).",
+    "open_questions": [
+      "OQ-1: full street-normalization scope for the gate beyond the corpus ordinal rule (Queens hyphenated house numbers, abbreviations like 'ST'→'STREET', vanity/'ST NICHOLAS' cases) — current rule folds numeric ordinals only and fails unclear cases closed to no-match",
+      "OQ-2: BIN selection rule when a matched lot carries multiple BINs (record-address BIN vs all frontage BINs) — recon open question 4",
+      "OQ-3: handling of PAD pseudo-addresses (addrtype Q, BIN empty) and vanity addresses (addrtype V/R) if a match lands on one — recon open questions 5/6",
+      "OQ-4: cross-source freshness reconciliation (GeoSearch PAD 26c vs Geoclient server Geosupport release vs PLUTO version) — surface staleness, never hide it (recon open question 8)",
+      "OQ-5: the lot address-of-record ('3622 13 AVENUE') is NOT carried by any channel the confirm arc currently reads — surfacing it needs a BBL→PLUTO.address lookup; recorded as a DB-026 discovery for the orchestrator, NOT built in M5-T046 (no server endpoint / contract field added)"
+    ]
+  }
+]
