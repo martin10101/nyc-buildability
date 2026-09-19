@@ -988,6 +988,18 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-075-ten-hour-build-window/manifest.json"
+  },
+  {
+   "directive_id": "D-076",
+   "slug": "proposal-editor-planning",
+   "title": "Owner 2026-09-19 ('Plan it'): author the phased proposal-editor plan (editor -> assisted PDF import -> DWG later), grounded in the existing scenario engine, sequenced after the in-flight lanes; scoped release of the expansion-planning hold for this slice only; proposals stay labeled scenarios under records-vs-allowances; deterministic code calculates",
+   "status": "active",
+   "issued_at": "2026-09-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-076-proposal-editor-planning/manifest.json"
   }
  ],
  "updated_at": "2026-09-15T23:14:10.707758+00:00"
