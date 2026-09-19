@@ -1,0 +1,96 @@
+{
+  "task_id": "M5-T049",
+  "title": "Named-street matcher extraction (DB-030f): cohesion split of named_street_override.py with a compatibility facade, behavior byte-identical",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-030(f) modularity ruling: named_street_override.py (853 lines, above the warn tier) is split into focused parts (candidate seams: the snapshot-table data + its loader; the normalization/segment-matching engine; the public matcher API as a thin facade) with services/api/app/rules/named_street_override.py preserved as the COMPATIBILITY FACADE re-exporting the existing public interface so every consumer import keeps working UNCHANGED (named_street_override_status.py:33, wide_street_live_provider.py:104, both test files). Behavior BYTE-IDENTICAL: a pure extraction - no logic, vocabulary, threshold, or provenance change of any kind; focused tests move with the behavior they cover; the existing suites prove identity by passing unchanged. The M5-T043 extraction (named_street_override_status.py out of wide_street_wiring.py) is the accepted precedent - mirror its facade discipline",
+  "business_reason": "DB-030(f) binds the next matcher-touching packet; clearing the warn tier BEFORE the alternate-width leg or the CD/cross-street connector grows the file further",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code.",
+    "COMMAND CWD (binding): ruff + pytest from services/api; modularity from the repo root. Never chain onto a documented command. No local npm/node.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this seam, 747 files/15766 nodes). named_street_override.py consumers: app/rules/named_street_override_status.py:33, app/spatial/wide_street_live_provider.py:104, tests/rules/test_named_street_override.py:29, tests/rules/test_wide_street_wiring.py:68 - ALL must keep importing UNCHANGED through the facade. Depth-2: wide_street_wiring.py, rule_evaluation.py route, api tests (never touched here). The accepted M5-T043 facade extraction is the precedent - read its diff shape. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE (binding; read docs/DISCOVERY_BACKLOG.md row DB-030(f) + the G3 cohesion rulings in project-control/reports/M5-T043-G3.md first): split named_street_override.py into focused modules under services/api/app/rules/ - your plan names the exact split (candidate seams: the snapshot override-table data + loader; the normalization/segment-matching engine; the thin public facade) and answers the seven modularity boundary questions. named_street_override.py itself BECOMES the compatibility facade re-exporting the byte-same public interface (names, signatures, constants, exceptions). PURE EXTRACTION: zero behavior, vocabulary, threshold, provenance, or message change; focused tests MOVE with the behavior they cover into per-module test files (or stay - your plan decides; consumers' test files are NOT in scope and must pass unchanged); every new module below the warn tier with one clear responsibility.",
+    "PRESERVATION (binding): all four consumer imports work unchanged (no consumer file edited); the full existing rules + spatial + api suites pass UNCHANGED (they are the byte-identity proof); no new dependency; no network; NO change to the matcher's disposition semantics (MATCHED_OVERRIDE stays production-unreachable exactly as G1 recorded it).",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "named_street_override.py as a thin compatibility facade over focused extracted modules, all below the warn tier",
+    "Focused per-module tests moved with their behavior; every existing suite green UNCHANGED (byte-identity proof)",
+    "Modularity warn cleared for the matcher; boundary answers in the report",
+    "project-control/reports/M5-T049-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T043"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/named_street_override.py",
+    "services/api/app/rules/named_street_override_table.py",
+    "services/api/app/rules/named_street_override_matching.py",
+    "services/api/tests/rules/test_named_street_override.py",
+    "services/api/tests/rules/test_named_street_override_table.py",
+    "services/api/tests/rules/test_named_street_override_matching.py",
+    "project-control/reports/M5-T049-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/named_street_override_status.py",
+    "services/api/app/rules/wide_street_wiring.py",
+    "services/api/app/spatial/",
+    "services/api/app/api/",
+    "services/api/tests/rules/test_wide_street_wiring.py",
+    "services/api/tests/api/",
+    "apps/web/",
+    "services/api/app/scenario/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (identity): the FULL existing suites pass UNCHANGED - tests/rules, tests/spatial, tests/api - proving byte-identical behavior; no consumer file is edited.",
+    "AS-2 (facade): named_street_override.py re-exports the byte-same public interface; all four graph-named consumer imports resolve exactly as before.",
+    "AS-3 (cohesion): every resulting module sits below the 600-line warn tier with one named responsibility; the modularity checker no longer warns on the matcher; the seven boundary answers are in the report.",
+    "AS-4 (test locality): moved tests cover the same behaviors in their new homes; no assertion weakened or deleted; test counts reconciled in the report.",
+    "AS-5: ruff clean; documented suites green from services/api; modularity exit 0.",
+    "AS-6: CI green on the pushed head (orchestrator captures)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A pure extraction that quietly changes an error message, constant, or ordering is NOT pure - the unchanged suites are the proof; do not touch them except to MOVE whole test blocks.",
+    "The facade must re-export everything consumers use, including exception types and constants.",
+    "Disjointness: T045 (in harvest), T047 (in review), T048 (live loop-2) - zero path overlap; forbidden_paths pin every neighbor.",
+    "If the split forces any consumer edit, STOP and report - that contradicts the facade premise."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T08:14:33.764200+00:00",
+  "updated_at": "2026-09-19T08:14:34.043826+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T08:14:33.764200+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/rules -q",
+    "python -m pytest tests/spatial -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
