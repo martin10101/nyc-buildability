@@ -4,18 +4,21 @@
 // DevelopmentLimits (the FAR row) and CalculationEvidence (the D-052
 // provenance) components the screen uses, so parity is structural — there is no
 // second data path. These tests prove it at the surface.
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { CONDO_OUTCOME_MULTI_LOT, CONDO_OUTCOME_RESOLVED_SINGLE } from "@/lib/condo-records";
 import { baseProfile } from "@/test-support/fixtures";
 import { ReportView } from "../ReportView";
 import { DevelopmentLimits } from "../DevelopmentLimits";
 import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
-import type { PropertyProfile } from "@/lib/contract";
 
 vi.mock("@/components/address/LotOutlineMap", () => ({ LotOutlineMap: () => <div>Map presentation seam</div> }));
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 const WIDE_STREET_BLOCK = {
   determination_state: "within_100ft_of_wide_street",
@@ -317,82 +320,162 @@ describe("M5-T045 — analysis identity record on the printed brief (D-073-R006)
   });
 });
 
-describe("M5-T045 — condo billing-BBL records reach the printed brief (D-073-R006)", () => {
-  // The printed brief renders the SAME CondoResolutionRecords the screen
-  // (PropertyOverview) uses, from the SAME existing conflict/note channels, so
-  // the records-vs-allowances distinction can never disagree across surfaces —
-  // there is no second data path.
+describe("M5-T045/M5-T052 — condo records reach the printed brief through the shared decision (D-073-R006)", () => {
+  // [ORCH-CORRECTED per M5-T052 producer report §5 — consumer sweep] The printed
+  // brief renders the SAME CondoRecordsChannelSection the screen (PropertyOverview)
+  // uses, and BOTH surfaces read the ONE shared deriveCondoSurface decision (the
+  // M5-T052 guard-coherence ruling): the profile fail-safe guard folded with the
+  // production condo-records CHANNEL state, so the records-vs-allowances
+  // distinction can never disagree across surfaces — there is no second data path.
+  // ReportView therefore reads the live channel (useCondoRecords -> global fetch);
+  // every render below stubs that channel deterministically, mirroring
+  // condo-resolution-display.test.tsx.
   function matchingDoc(bbl: string): RuleEvaluation {
     const doc = draftApplicableDoc();
     doc.evaluated_input.bbl = bbl;
     return doc;
   }
 
-  it("prints the resolved single base-lot record AND the computed allowance — the analysis ran on the substituted base lot", () => {
+  function channelResponse(body: unknown, status = 200): Response {
+    return {
+      status,
+      headers: { get: () => null },
+      json: async () => body,
+    } as unknown as Response;
+  }
+
+  function stubChannel(body: unknown, status = 200) {
+    const fetchMock = vi.fn(async () => channelResponse(body, status));
+    vi.stubGlobal("fetch", fetchMock);
+    return fetchMock;
+  }
+
+  function channelProvenance() {
+    return {
+      source_id: "nyc-dof-dtm-condo-soda",
+      dataset_ids: ["p8u6-a6it"],
+      retrieved_at: "2026-09-01T14:05:56Z",
+      dataset_version: "2026-08-30T00:00:00Z",
+      queries: [
+        {
+          dataset_id: "p8u6-a6it",
+          query_kind: "condo_billing_bbl",
+          retrieved_at: "2026-09-01T14:05:56Z",
+          record_count: 2,
+          rows_updated_at: "2026-08-30T00:00:00Z",
+        },
+      ],
+    };
+  }
+
+  function channelSingleDoc() {
+    return {
+      document_kind: "condo_records",
+      bbl: "1003031001",
+      outcome: CONDO_OUTCOME_RESOLVED_SINGLE,
+      billing_bbl: "1003031001",
+      base_lots: [{ bbl: "1003030019", recorded_zoning: null }],
+      substitution: {
+        entered_bbl: "1003031001",
+        analyzed_bbl: "1003030019",
+        note: "Analysis runs on the recorded base tax lot the city records for this condo.",
+      },
+      condo_key: "103343",
+      condo_number: "3343",
+      resolution_path: "unit",
+      provenance: channelProvenance(),
+      notes: [],
+      reason: null,
+      error_type: null,
+      divergent_zoning_notice: null,
+    };
+  }
+
+  function channelMultiLotDoc() {
+    return {
+      document_kind: "condo_records",
+      bbl: "1003037502",
+      outcome: CONDO_OUTCOME_MULTI_LOT,
+      billing_bbl: "1003037502",
+      base_lots: [
+        { bbl: "1003030019", recorded_zoning: null },
+        { bbl: "1003030025", recorded_zoning: "R7-2" },
+      ],
+      substitution: null,
+      condo_key: "103344",
+      condo_number: "3344",
+      resolution_path: "billing",
+      provenance: channelProvenance(),
+      notes: [],
+      reason: null,
+      error_type: null,
+      divergent_zoning_notice:
+        "Divergent zoning across a condo's base lots is a qualified-human legal question.",
+    };
+  }
+
+  it("prints the substitution record AND the computed allowance on the resolved-single allow path", async () => {
     const profile = baseProfile();
-    profile.reproducibility!.connector_notes = [
-      "condo_resolution: [resolved_single_base_lot] billing BBL 1003037501 resolved to the single recorded base lot 1003030019 " +
-        "(source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it, condo_key=103343, retrieved 2026-09-01T14:05:56Z); " +
-        "the analysis substrate is the recorded base lot. RECORD, not a computed allowance.",
-    ];
-    // A recognised single-base-lot resolution does NOT withhold: the computed
-    // wide-street allowance still prints on the brief. This is the control the
-    // withhold cases below compare against (same evaluation, allowance suppressed).
+    stubChannel(channelSingleDoc());
+    // The resolved-single channel outcome does NOT withhold: the substitution is
+    // EXPLAINED as a matched-identity record and the computed wide-street
+    // allowance still prints. This is the control the withhold cases below
+    // compare against (same evaluation, allowance suppressed there).
     const doc = wideStreetDoc(profile.identity.bbl);
     render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
-    const records = screen.getByTestId("condo-resolution-records");
-    expect(records).toHaveTextContent("recorded base lot 1003030019");
-    expect(records).toHaveTextContent("not a computed development allowance");
+    await waitFor(() => expect(screen.getByTestId("condo-substitution-record")).toBeInTheDocument());
     expect(screen.getByTestId("wide-street-result")).toBeInTheDocument();
+    // The allow path shows the substitution record, never the multi-lot records section.
+    expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
   });
 
-  it("withholds the printed computed allowance for a condo note with a MISSING outcome token — fail-safe", () => {
+  it("withholds the printed computed allowance for a condo note with a MISSING outcome token — the profile fail-safe alone decides", async () => {
     const profile = baseProfile();
     profile.reproducibility!.connector_notes = [
       "condo_resolution: billing BBL 1003037501 mapped to a recorded base lot " +
         "(source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it); no machine outcome token.",
     ];
+    const fetchMock = stubChannel({ detail: "Not Found" }, 404); // route absent -> channel never withholds on its own
     const doc = wideStreetDoc(profile.identity.bbl);
     render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
-    // The record still prints; the computed wide-street allowance (which the same
-    // evaluation prints in the resolved-single control above) is withheld.
-    expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument();
-    expect(screen.queryByTestId("wide-street-result")).toBeNull();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    // The profile guard withholds; a note-only profile is NOT a records case
+    // (honest absence — no records section is fabricated from prose).
+    await waitFor(() => expect(screen.queryByTestId("wide-street-result")).toBeNull());
+    expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
   });
 
-  it("withholds the printed computed allowance for a condo note with an UNKNOWN outcome token — fail-safe on a token this build does not recognise", () => {
+  it("withholds the printed computed allowance for a condo note with an UNKNOWN outcome token — fail-safe on a token this build does not recognise", async () => {
     const profile = baseProfile();
     profile.reproducibility!.connector_notes = [
       "condo_resolution: [resolved_multi_condo_v2] billing BBL 1003037501 produced a future outcome " +
         "this build does not recognise (source nyc-dof-dtm-condo-soda, dataset(s) p8u6-a6it).",
     ];
+    const fetchMock = stubChannel({ detail: "Not Found" }, 404);
     const doc = wideStreetDoc(profile.identity.bbl);
     render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
-    expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    await waitFor(() => expect(screen.queryByTestId("wide-street-result")).toBeNull());
+    expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
+  });
+
+  it("prints the multi-lot condo records from the channel with the computed allowance withheld", async () => {
+    const profile = baseProfile();
+    stubChannel(channelMultiLotDoc());
+    const doc = wideStreetDoc(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    await waitFor(() => expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument());
+    expect(screen.getAllByTestId("condo-base-lot-record")).toHaveLength(2);
+    // multi-lot -> the withhold guard governs; the records render UNDER it.
     expect(screen.queryByTestId("wide-street-result")).toBeNull();
   });
 
-  it("prints the multi-lot condo records with no computed allowance and no chosen answer", () => {
+  it("prints no condo records for a non-condo profile (byte-identical)", async () => {
     const profile = baseProfile();
-    profile.conflicts = [
-      {
-        field: "condo_base_lot_resolution",
-        values: [
-          { source_id: "nyc-dof-dtm-condo-soda", value: "1003030019", derivation: "recorded base tax lot (one of 2) - a RECORD, never a chosen answer" },
-          { source_id: "nyc-dof-dtm-condo-soda", value: "1003030025", derivation: "recorded base tax lot (one of 2) - a RECORD, never a chosen answer" },
-        ],
-        resolution: "unresolved",
-        reason: "condo billing BBL 1003037502 resolves to 2 base tax lots; presented as RECORDS with NO computed allowance.",
-      },
-    ] as unknown as PropertyProfile["conflicts"];
+    const fetchMock = stubChannel({ detail: "Not Found" }, 404);
     render(<ReportView profile={profile} scenario={null} evaluation={matchingDoc(profile.identity.bbl)} label="Test property" />);
-    expect(screen.getByTestId("condo-resolution-multilot")).toHaveTextContent("no computed allowance");
-    expect(screen.getAllByTestId("condo-base-lot-record")).toHaveLength(2);
-  });
-
-  it("prints no condo records for a non-condo profile (byte-identical)", () => {
-    const profile = baseProfile();
-    render(<ReportView profile={profile} scenario={null} evaluation={matchingDoc(profile.identity.bbl)} label="Test property" />);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
     expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
+    expect(screen.queryByTestId("condo-substitution-record")).toBeNull();
   });
 });
