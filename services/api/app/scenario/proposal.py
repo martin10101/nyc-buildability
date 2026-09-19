@@ -405,6 +405,26 @@ def _validate_walls(walls: object, vertex_count: int, field: str) -> None:
                 f"(got {wall['start_vertex_index']})",
                 field=wf,
             )
+        # DB-034(c): two DISTINCT indices can still reference the SAME ring point
+        # when one is the repeated closing vertex - index (vertex_count - 1)
+        # duplicates index 0 on a closed ring. Distinctness by INDEX (above) does
+        # not catch it; collapse the closing duplicate by index and refuse a wall
+        # whose endpoints coincide - a degenerate zero-length wall. ``vertex_count``
+        # counts the closing duplicate, so the distinct-ring length is one less; it
+        # is >= 3 here because ``_validate_outline`` has already accepted the ring.
+        ring_length = vertex_count - 1
+        if (
+            wall["start_vertex_index"] % ring_length
+            == wall["end_vertex_index"] % ring_length
+        ):
+            raise ProposedMassingError(
+                f"{wf} start_vertex_index ({wall['start_vertex_index']}) and "
+                f"end_vertex_index ({wall['end_vertex_index']}) reference the same ring "
+                f"point once the repeated closing vertex is collapsed (index "
+                f"{vertex_count - 1} duplicates index 0); a wall from a point to itself "
+                "is a degenerate zero-length wall",
+                field=wf,
+            )
 
 
 def _validate_provenance(provenance: object, field: str) -> None:

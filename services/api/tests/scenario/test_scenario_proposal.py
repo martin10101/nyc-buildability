@@ -593,3 +593,73 @@ def test_input_block_is_not_mutated() -> None:
     snapshot = copy.deepcopy(block)
     validate_proposed_massing(block)
     assert block == snapshot
+
+
+# ---------------------------------------------------------------------------
+# DB-034(c): a wall referencing the repeated closing vertex is a degenerate
+# zero-length wall (two DISTINCT indices, the SAME ring point)
+# ---------------------------------------------------------------------------
+
+
+def test_wall_referencing_closing_vertex_refused() -> None:
+    # The valid outline has 5 positions (indices 0..4); index 4 is the repeated
+    # closing vertex and duplicates index 0. A wall 0 -> 4 therefore spans a point
+    # to ITSELF - a degenerate zero-length wall - even though 0 != 4 as indices.
+    block = _valid_block()
+    block["exterior_walls"][0] = {
+        "id": "degenerate",
+        "start_vertex_index": 0,
+        "end_vertex_index": 4,
+    }
+    with pytest.raises(ProposedMassingError) as exc:
+        validate_proposed_massing(block)
+    assert exc.value.field == "proposed_massing.exterior_walls[0]"
+    assert "closing vertex" in str(exc.value)
+
+
+def test_wall_referencing_closing_vertex_reversed_refused() -> None:
+    # The same degeneracy the other way round: 4 -> 0 is also point-to-itself.
+    block = _valid_block()
+    block["exterior_walls"][0] = {
+        "id": "degenerate",
+        "start_vertex_index": 4,
+        "end_vertex_index": 0,
+    }
+    with pytest.raises(ProposedMassingError) as exc:
+        validate_proposed_massing(block)
+    assert exc.value.field == "proposed_massing.exterior_walls[0]"
+
+
+def test_wall_between_first_and_closing_neighbour_ok() -> None:
+    # A wall from the closing-vertex index to a genuinely different point (4 -> 1,
+    # i.e. point 0 -> point 1) is NOT degenerate and stays valid.
+    block = _valid_block()
+    block["exterior_walls"][0] = {
+        "id": "wraps",
+        "start_vertex_index": 4,
+        "end_vertex_index": 1,
+    }
+    assert validate_proposed_massing(block) is None
+
+
+# ---------------------------------------------------------------------------
+# DB-034(e): bind the cross==0 / dot<0 reversal branch of _ring_is_simple
+# ---------------------------------------------------------------------------
+
+
+def test_collinear_degenerate_outline_refused() -> None:
+    # A fully-collinear "triangle" A-B-C-A: three DISTINCT vertices all on one line.
+    # It has no zero-length edge and, with only three vertices, no NON-adjacent edge
+    # pair - so ONLY the 180-degree reversal-spike branch (cross == 0 and dot < 0)
+    # of _ring_is_simple can refuse it. This binds that mutation-unbound branch.
+    block = _valid_block()
+    block["outline"]["vertices"] = [
+        [_X0, _Y0],
+        [_X0 + 100.0, _Y0],
+        [_X0 + 50.0, _Y0],  # collinear with the two above
+        [_X0, _Y0],
+    ]
+    with pytest.raises(ProposedMassingError) as exc:
+        validate_proposed_massing(block)
+    assert exc.value.field == "proposed_massing.outline"
+    assert "self-intersecting" in str(exc.value)
