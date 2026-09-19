@@ -14,7 +14,8 @@
     "SCOPE 2/3 - WIRING (binding): (1) NEW seam-policy module services/api/app/connectors/condo_base_lot.py beside bbl.py (transport stays in dtm_condo_soda.py; policy here): classify whether an input BBL is condo-billing class (lot 7501+ per the research), invoke the accepted resolver, and return a TYPED fail-closed outcome - resolved-single-base-lot / multi-lot-set / unresolved / not-condo-billing (pass-through) - carrying the resolution provenance (source, dataset, retrieved_at, condo_key). Answer the seven modularity boundary questions in your plan. (2) spatial/live_provider.py: insert the condo step BEFORE the zoning-lot lookup; resolved single base lot -> run the existing pipeline on the BASE lot with the resolution recorded; multi-lot or unresolved -> None (fail-safe to professional review) with a payload-only log line - NEVER fabricate a substrate, NEVER collapse divergent zoning across base lots; flag-off and non-condo behavior byte-identical. (3) profile seam (zoning_crosscheck.py): the recorded resolution reaches the profile through the EXISTING contract-1.3.0 conflict/note channels only - NO contract-shape change anywhere; if your plan finds a contract change unavoidable, STOP and report it as a discovery (the orchestrator splits a packet).",
     "SCOPE 3/3 - DISPLAY + RIDERS (binding): (4) D-073-R006 records-vs-allowances display increment on PropertyOverview.tsx + AnalysisIdentityNotice.tsx + ReportView.tsx (screen AND printed brief): a resolved identity is shown as a RECORD ('you entered billing BBL X; the analysis ran on recorded base lot Y'); the multi-lot case presents the recorded base lots and their RECORDED zoning as records with NO computed allowance presented; an unresolved resolution is explained honestly without presenting any reference number as the calculated result. Recorded existing-building information, city reference fields, and calculated allowances stay separate concepts throughout. (5) T044-WAVE RIDERS on the connector (each closed with a named test or code change): response-side condo_key-guard negative test; optional $limit defense-in-depth; _ERROR_CODE_SAFE_RE fullmatch consistency; invalid_component documented-code assertion; condo_key canonical-normalizer consistency note. DB-029(k): hoist shared soda_errors/soda_request helpers ONLY if dtm_condo_soda.py approaches 750 SLOC.",
     "PRESERVATION (binding): fail-closed everywhere - no fabricated value, no collapsed uncertainty, no silent winner between records; ZTLDB honest-absence behavior for non-condo lots byte-identical (regression suites prove it); the accepted resolver's result contract is consumed AS-IS (no meaning changes to its fields); the live path stays behind LIVE_SPATIAL_PROVIDER_ENABLED (absent -> disabled); fixtures byte-faithful with synthetics labeled; no new dependency; no network in tests; NO contract-schema change; empty .test.tsx files fail vitest - seed with a trivial passing test.",
-    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny). Thin client: no local npm/node, no new dependencies. Run `python -m ruff check .` from services/api cwd before every checkpoint."
+    "Discovery routing (D-069): surface out-of-scope findings in your report; never fix them in-packet. No WebFetch (network default-deny). Thin client: no local npm/node, no new dependencies. Run `python -m ruff check .` from services/api cwd before every checkpoint.",
+    "[ORCH-SCOPE-DISPOSITION 2026-09-19, pre-submit] The run-49 review wave surfaced that the MULTI-LOT RECORDS-VIEW display (and the unresolved-outcome profile presentation) cannot demonstrate a real production data flow without touching builder/routes/contract schemas - exactly the boundary this packet forbids. DISPOSITION (recorded by the orchestrator, the packet's own STOP+discovery rule applied): (1) this packet's DISPLAY deliverable is the REACHABLE identity increment - the entered-vs-analysed identity display on screen AND printed brief, using neutral entered-versus-analyzed wording wherever the condo billing-to-base-lot resolution MEANING is not established by evidence (never inferred from bare BBL inequality), covering differing/equal/absent identities and the unrelated-mismatch case, records kept separate from calculated allowances; (2) the multi-lot and unresolved outcomes remain FULLY fail-closed in the backend (live provider returns None -> the evaluator's existing professional-review fail-safe IS their visible surface this packet); (3) the multi-lot RECORDS-VIEW screen presentation is SPLIT to a named follow-up packet that may design its data channel properly (DB-031 row) - it is NOT deferred silently, it is a recorded successor; (4) no builder/routes/schema file is touched under any reading. AS-3 and AS-8 are amended accordingly (below)."
   ],
   "outputs": [
     "Source-registry draft record for BOTH DTM datasets mirroring the committed shape, landed before any live-traffic path (DB-029b)",
@@ -58,12 +59,12 @@
   "acceptance_scenarios": [
     "AS-1 (primary): a condo billing BBL (lot 75xx) entering the live provider resolves to its single base lot via the seam module and the zoning-lot lookup runs on the BASE lot, with the resolution recorded with provenance (offline stubs, zero network).",
     "AS-2 (fixture): the REAL captured null-billing fixture (condo_key 103343) drives the null-billing path byte-faithfully; the parser tolerates KEY ABSENCE (7-and-8-key objects) and never requires an explicit null.",
-    "AS-3 (boundary/multi-lot): a condo resolving to MULTIPLE base lots yields the typed multi-lot outcome; the live provider returns None (fail-safe to professional review) with zero fabricated substrate and divergent zoning never collapsed; the display presents the recorded base lots as records with NO computed allowance.",
+    "AS-3 (boundary/multi-lot, AMENDED per ORCH-SCOPE-DISPOSITION): a condo resolving to MULTIPLE base lots yields the typed multi-lot outcome; the live provider returns None (fail-safe to professional review) with zero fabricated substrate and divergent zoning never collapsed; the professional-review fail-safe is the visible surface for this case in this packet (the multi-lot records-view presentation is the recorded follow-up packet, DB-031).",
     "AS-4 (missing/ambiguous): an unresolved resolution yields the typed unresolved outcome; provider None; the display explains it honestly without presenting a reference number as the calculated result (D-073-R006).",
     "AS-5 (failure + regression): resolver transport errors (429/timeout/unavailable/drift) surface as typed failures and the provider fail-safes; a non-condo BBL bypasses the condo step entirely with byte-identical prior behavior; flag-off makes zero connector calls.",
     "AS-6 (registry pre-live): the registry draft record exists for BOTH datasets, mirrors the committed ztldb.json shape, and lands in the same change-set as (in practice, before) any live-traffic wiring; the freshness mechanism is documented in it.",
     "AS-7 (riders): each T044-wave rider is closed by a named test or code change (condo_key response-guard negative test; $limit; _ERROR_CODE_SAFE_RE fullmatch; invalid_component documented-code assertion; canonical-normalizer consistency note).",
-    "AS-8 (display walkthrough): on screen AND the printed brief, the resolved-identity note, the multi-lot records view, and the records-vs-allowances distinction are visible and accessible (HJ walkthrough).",
+    "AS-8 (display walkthrough, AMENDED per ORCH-SCOPE-DISPOSITION): on screen AND the printed brief, the entered-vs-analysed identity display is honest and accessible across differing/equal/absent identity cases and the unrelated-mismatch case, with neutral wording wherever resolution meaning is not evidence-established; records stay separate from calculated allowances (HJ walkthrough).",
     "AS-9: ruff clean; the documented api suites green offline from services/api cwd; modularity exit 0; the new web test file carries at least one passing test.",
     "AS-10: CI green on the pushed head (orchestrator captures)."
   ],
@@ -85,18 +86,19 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 82,
   "risks": [
     "Divergent zoning across a condo's base lots must never collapse into a single answer; multi-lot is a records display, never an allowance.",
     "The condo step is a strict pre-lookup addition: non-condo and flag-off behavior must stay byte-identical (regression suites prove it).",
     "NO contract-schema change; if a plan step finds one unavoidable, stop and report - never fork a shape.",
     "Registry record is the gating condition on live traffic (DB-029b / G1 A2).",
     "Disjointness: never touch services/api/app/rules/**, profile/builder.py, spatial/adapter.py, or contract schemas.",
-    "Empty .test.tsx fails vitest (no suite); web behavior proves ONLY in CI on the pushed head."
+    "Empty .test.tsx fails vitest (no suite); web behavior proves ONLY in CI on the pushed head.",
+    "AMENDED scope: the multi-lot records-view display is OUT (follow-up DB-031); builder/routes/schemas stay untouchable; neutral identity wording where resolution meaning is not established."
   ],
   "blockers": [],
   "created_at": "2026-09-19T03:07:46.431298+00:00",
-  "updated_at": "2026-09-19T03:18:44.814076+00:00",
+  "updated_at": "2026-09-19T05:34:57.787965+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -128,6 +130,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the seq-119 resume seam (G0 PASS at 890a9ed0); scenarios recorded in-packet (AS-1..AS-10); awaiting loop-1 launch with a fresh run-id"
+    },
+    {
+      "at": "2026-09-19T05:34:57.787965+00:00",
+      "agent": "backend-engineer",
+      "percent": 82,
+      "status": "in_progress",
+      "message": "ORCH-SCOPE-DISPOSITION recorded pre-submit (run-49 wave finding): display deliverable = the reachable entered-vs-analysed identity increment (neutral wording where resolution meaning is not evidence-established); multi-lot/unresolved stay fully fail-closed backend-side with the professional-review fail-safe as their visible surface; the multi-lot records-view screen presentation SPLIT to the DB-031 follow-up packet; AS-3/AS-8 amended; builder/routes/schemas untouched. Run 50 (limit 6) completes the amended contract."
     }
   ]
 }
