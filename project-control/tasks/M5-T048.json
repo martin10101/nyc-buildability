@@ -75,8 +75,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "Schema copies drifting is fail-closed in CI - edit both, byte-identically, in the same change.",
     "Typegen must be run via the repo script only (deterministic output; --check is the proof).",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T07:59:00.098287+00:00",
-  "updated_at": "2026-09-19T11:07:14.582531+00:00",
+  "updated_at": "2026-09-19T11:30:58.489672+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
