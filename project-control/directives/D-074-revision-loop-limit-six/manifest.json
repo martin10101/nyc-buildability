@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T05:18:29.777737+00:00",
  "created_at": "2026-09-19T05:18:29.777737+00:00",
- "updated_at": "2026-09-19T05:18:29.777737+00:00",
+ "updated_at": "2026-09-19T05:29:00.394600+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "e75adc47fa68482b791e4a39ae189af5d27dab7c",
  "capture_head_sha": null,
@@ -55,6 +55,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). Application + harness evidence recorded after capture; verification stays with directive-compliance-verifier."
+  },
+  {
+   "at": "2026-09-19T05:29:00.394600+00:00",
+   "actor": "orchestrator",
+   "action": "applied",
+   "note": "R001 applied: owner performed the elevated copy (session-shell Program Files write is denied; two UAC prompts were canceled before the owner ran the one-line admin copy themselves); config now carries [limits] max_consecutive_revision_loops = 6; launch manifest re-recorded over 147 files (digest 88caea4f2f9f0b8b...) binding the new config, round-trip verified, and verify-controller passed independently. Effective at each loop's next launch; live runs 49/10 keep 4 per R001. Harness evidence (budget counter_limits = 6) to be captured at the next relaunch; requirement stays pending until independently verified."
   }
  ]
 }
