@@ -102,3 +102,15 @@ display; the multi-lot records view is the recorded DB-031 successor). All ride 
 same branch and the same flags posture (nothing newly enabled by default); at execution
 time deploy the then-current branch head. Everything in §3-§5 is unchanged; the same
 one owner request stands.
+
+
+## 9. Acceptances 231-236 ride the same single owner pass (2026-09-19, session seq 119 close)
+
+Six further acceptances landed after section 8, all fully reviewed (independent waves + DCV,
+zero blocking): M5-T049 (internal matcher extraction - no product-visible change), M5-T048
+(proposal scenario contract 1.1.0 - flag-gated, no live route change), M5-T050 (confirm-arc
+polish riders - behind the existing address flags), M5-T052 (condo records view - behind
+INTERNAL_RULE_EVAL_ENABLED like its siblings), M5-T053 (proposal validation route - same
+flag posture, include_in_schema=False), M5-T051 (derivation module - pure library, no route).
+FLAGS POSTURE UNCHANGED; nothing new becomes publicly reachable. The one owner pass described
+in sections 1-7 covers everything through the 236th acceptance: deploy the then-current head.
