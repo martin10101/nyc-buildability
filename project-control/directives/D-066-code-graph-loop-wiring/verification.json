@@ -312,6 +312,31 @@
      "reviewed_sha": "088a26f68ffcf8363d7c5496172409758f2e40f5"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T044",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "41f847ef8de2b1bb1afbdc6d3bce8b623132f758",
+   "reviewed_manifest_sha256": "2f3d0ab61dc82ec3694d79fe59da3f6f7435edc546815008ff9146f630958232",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T02:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T044-DCV.md, frozen head 20c597c1, material 1fd07e9a) and delta-attested EXTENDED on the tagged correction a471e376 (M5-T044-delta-attestations.md): nav block with all five elements; material = exactly the 3 allowed files; zero consumer imports (leaf verified in source at the corrected head); suites reproduced (55 focused / 881 connectors-wide / ruff clean); scope boundaries honored (no registry record, no fixture capture, no consumer wiring). Restamped to 41f847ef under the AMENDED five-condition pre-authorization - all reproduced at record time: (1-amended) both code files byte-identical to a471e376 and the producer report byte-identical to 1fd07e9a, with a471e376 the ONLY material change over 1fd07e9a; (2) refs/allowed_paths unchanged, evaluate_task_refs ok; (3) D-066 active, R001 unamended; (4) leaf intact, corrected-head CI 35414107043 success at 880a154d; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T02:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "41f847ef8de2b1bb1afbdc6d3bce8b623132f758"
+    }
+   ]
   }
  ]
 }

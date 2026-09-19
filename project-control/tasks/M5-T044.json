@@ -53,8 +53,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Hardening may only tighten acceptance; a previously-valid canonical input must still resolve identically.",
     "Stay a leaf: no consumer import, no registry record, no live fixture capture (wiring-era).",
@@ -62,7 +62,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T00:29:59.323498+00:00",
-  "updated_at": "2026-09-19T01:54:53.220553+00:00",
+  "updated_at": "2026-09-19T02:04:25.466101+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -109,5 +109,7 @@
       "status": "in_progress",
       "message": "Correction committed; resubmitting at the corrected head for delta-attestation by the four reviewers"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T02:04:25.466101+00:00"
 }
