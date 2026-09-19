@@ -33,6 +33,7 @@ from app.api.v1.condo_records import router as condo_records_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.lot_geometry import router as lot_geometry_v1_router
 from app.api.v1.properties import router as properties_v1_router
+from app.api.v1.proposal_validation import router as proposal_validation_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
 from app.api.v1.scenario_analysis import router as scenario_analysis_v1_router
@@ -172,6 +173,17 @@ def create_app() -> FastAPI:
     # under the professional-review fail-safe; makes no zoning determination and
     # computes no allowance. See app.api.v1.condo_records.
     application.include_router(condo_records_v1_router)
+    # Internal, feature-flag-gated PROPOSAL-VALIDATION endpoint (task M5-T053, D-076 phase
+    # B3-scaffold slice 1). SAME posture as the routes above - ALWAYS registered but
+    # unreachable (generic 404, no OpenAPI entry) unless the EXISTING INTERNAL_RULE_EVAL_ENABLED
+    # flag is an explicit true token (the proposal editor is part of the same internal property
+    # flow and app.config is out of the packet's scope, so it reuses that flag and adds no new
+    # one); absent/unknown -> disabled (fail safe). Stateless VALIDATION ONLY: it runs the
+    # DB-034(a)/(b) input gate + the accepted proposed-massing validator over an editor-authored
+    # proposed_massing block and returns typed field refusals or an acceptance echo (block
+    # digest + the literal kind 'proposed'); it stores nothing and derives no allowance
+    # (D-076-R002). See app.api.v1.proposal_validation.
+    application.include_router(proposal_validation_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:
