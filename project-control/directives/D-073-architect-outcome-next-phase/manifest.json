@@ -10,7 +10,7 @@
  "issued_at": "2026-09-18",
  "captured_at": "2026-09-18T06:16:33.161580+00:00",
  "created_at": "2026-09-18T06:16:33.161580+00:00",
- "updated_at": "2026-09-19T04:11:44.431202+00:00",
+ "updated_at": "2026-09-19T06:37:18.827578+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "95b2641044f99023002bb25753c74fb5d3f3f189",
  "capture_head_sha": null,
@@ -34,7 +34,7 @@
   "D-073-R010",
   "D-073-R011"
  ],
- "requirements_content_digest_sha256": "4404da0574e544bfe170acbd2a7b3a7df339b1d513560b12d7d87989bc5865a5",
+ "requirements_content_digest_sha256": "2edea6eb0f368c2aa344787ac980760df85eeec529f39b5967e9d8f9be920884",
  "sources": [
   {
    "file": "source-001.md",
@@ -89,6 +89,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "M5-T046 bound to D-073-R006: the confirm-arc identity display is contracted as a records display (entered input vs matched city address vs record address; no address line implies a computed value). Digest resynced same commit."
+  },
+  {
+   "at": "2026-09-19T06:37:18.827578+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T047 bound to D-073-R006: the record-address line is contracted as a records display (city record, no computed value implied; honest absence; layout-neutral copy). Digest resynced same commit."
   }
  ]
 }

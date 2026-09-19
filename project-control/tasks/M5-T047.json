@@ -1,0 +1,108 @@
+{
+  "task_id": "M5-T047",
+  "title": "Record-address display channel (DB-032): PLUTO address-of-record to the confirm card through the lot-geometry route + T046 in-scope riders",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the M5-T046 OQ-5 / HJ-A1 gap: surface the lot's PLUTO address-of-record on the confirm card as a labeled city RECORD when it differs from the matched frontage. (1) Channel: extend the existing per-BBL confirm-arc route module services/api/app/api/v1/lot_geometry.py ADDITIVELY (the producer plan picks: an additive response field on the existing endpoint or a sibling endpoint in the same module) to carry PLUTO.address + PLUTO version with provenance, fetched read-only through the accepted pluto connector path with the existing resilience/error discipline; absent/null address = honest absence, never a fabricated line; NO contract-schema file changes, NO builder/profile change. (2) Display: AddressConfirmCard shows 'city record address: <address>' as a records line (D-073-R006) when it differs from the matched address, honestly absent otherwise; layout-neutral copy for the entered-vs-matched note while touching it (HJ A2); display-trim of surrounding whitespace with the true value preserved in a title/aria attribute (HJ A3a). (3) Riders in-scope: G5-A1 length bound at the gate entry of resolveLotFromGeoSearch; G4-A1 one /search-shaped abbreviation fixture asserting fail-closed. Case-1 fixture basis: corpus section 6 (PLUTO.address '3622 13 AVENUE' for bbl 3052960043, matched frontage '1279 37 STREET')",
+  "business_reason": "Two analysts entering different frontages of the same corner lot currently see different matched addresses with no record-address anchor (M5-T046 HJ A1); the channel gap was the recorded discovery of the 228th acceptance",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command. Web behavior proves ONLY in CI on the pushed head - no local npm/npx/node ever.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam, 743 files/15656 nodes). lot_geometry.py consumers: app/main.py:33 (mount) + tests/api/test_lot_geometry_api.py:35. LotOutlineMap.tsx consumers: address/AddressConfirmCard.tsx:13, address/__tests__/lot-outline-map.test.tsx:5, AND architect/PropertyOverview.tsx:9 (M5-T045-OWNED, LIVE - which is WHY LotOutlineMap.tsx is FORBIDDEN in this packet; the record-address line lives on AddressConfirmCard directly). AddressConfirmCard consumers: AddressResolutionScreen.tsx:19. The pluto read path: app/connectors/pluto_soda.py fetch_by_bbl (+ app/resilience/fetcher.py wrapper) - consumed READ-ONLY, not in scope. bbl identity primitives: app/connectors/bbl.py. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "SCOPE 1/2 - CHANNEL (binding; read project-control/reports/M5-T046-HJ.md finding A1, M5-T046-producer-report.md section 7, docs/research/db026-address-to-lot-fixture-capture.md section 6, and docs/DISCOVERY_BACKLOG.md row DB-032 FIRST): extend services/api/app/api/v1/lot_geometry.py ADDITIVELY so the confirm arc can obtain the lot's PLUTO address-of-record per-BBL - your plan picks ONE of: (a) an additive optional field on the existing endpoint response, or (b) a sibling endpoint in the same route module; either way: BBL validated via normalize_bbl BEFORE any fetch; the PLUTO row fetched through the accepted connector/resilience path (read-only consumption - pluto_soda.py is NOT in your scope); response carries address verbatim + PLUTO version + retrieved_at + source id (provenance); PLUTO address null/omitted (SODA omits null columns - key ABSENCE) = an honest typed absence, never a fabricated or empty-string line; connector errors surface as the route's existing typed error discipline, never a fake absence; NO contract-schema file change, NO profile/builder change, NO new dependency, no network in tests (offline stubs + the corpus section 6 row as fixture basis).",
+    "SCOPE 2/2 - DISPLAY + RIDERS (binding): (1) AddressConfirmCard.tsx: when the record address arrives and DIFFERS from the matched city address, render one records line ('City record address: 3622 13 AVENUE' class wording) - a RECORD, implying no computed value (D-073-R006); equal -> no duplicate line; absent/error -> honestly absent (no placeholder); loading must not block or reflow the existing card materially. (2) While touching the card, apply HJ A2: make the entered-vs-matched note layout-neutral ('the city-matched address' / 'the tax lot (BBL) we carry forward' class wording, no above/below), and HJ A3a: display-trim the bolded entered value's surrounding whitespace with the TRUE raw value preserved in a title/aria attribute (update the S9 whitespace-exact assertion accordingly - assert the trimmed rendering AND the preserved raw attribute). (3) Riders: add a length bound at resolveLotFromGeoSearch's gate entry (G5 A1; bound generously, e.g. 512, typed refusal beyond); add ONE /search-shaped abbreviation fixture asserting the gate fails closed (G4 A1) - these touch address-search.ts + its test only in those bounded ways. OUT of scope: LotOutlineMap.tsx, PropertyOverview/AnalysisIdentityNotice/ReportView (M5-T045-owned), any borough-disambiguation or ambiguity-vocabulary change (G3 A1/A2 stay future-promotion riders), services/api/app/profile/**, contract schemas.",
+    "PRESERVATION (binding): every M5-T046 accepted behavior stays byte-identical except the two named HJ polish items (A2 copy, A3a display-trim) whose tests are updated WITH the change; the equality-gate semantics change ONLY by the additive length bound; existing lot-outline behavior untouched; api route backward-compatible (existing consumers unchanged); fixtures byte-faithful, synthetics labeled; empty .test files fail vitest - keep every touched web test file green-non-empty at every commit.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Additive per-BBL record-address channel on the lot-geometry route with provenance and honest-absence semantics (DB-032 closed at the channel level)",
+    "Confirm-card record-address line as a records display + the HJ A2/A3a polish with updated tests",
+    "Equality-gate length bound + /search abbreviation fail-closed fixture (T046 riders G5-A1/G4-A1 closed)",
+    "project-control/reports/M5-T047-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T046"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/lot_geometry.py",
+    "services/api/tests/api/test_lot_geometry_api.py",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/src/lib/record-address.ts",
+    "apps/web/src/lib/__tests__/record-address.test.ts",
+    "apps/web/src/lib/address-search.ts",
+    "apps/web/src/lib/__tests__/address-search.test.ts",
+    "project-control/reports/M5-T047-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/architect/",
+    "services/api/app/connectors/",
+    "services/api/app/profile/",
+    "services/api/app/spatial/",
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary): for bbl 3052960043 (corpus section 6 fixture basis) the channel returns PLUTO.address '3622 13 AVENUE' + version '26v2' with provenance, and the confirm card renders the record-address line labeled as a city record, distinct from the matched frontage '1279 37 STREET' (offline stubs).",
+    "AS-2 (equal): when record address == matched address (normalized comparison the plan documents), no duplicate line renders.",
+    "AS-3 (absence): PLUTO row absent / address key omitted (key-absence semantics) -> typed honest absence, no line, no placeholder; connector error -> the route's existing typed error, and the card renders without the line (never blocks).",
+    "AS-4 (records discipline): the record-address line implies no computed value; entered-vs-matched note reads layout-neutral (HJ A2); the bolded entered value renders display-trimmed with the raw value preserved in a title/aria attribute, S9 updated to assert both (HJ A3a).",
+    "AS-5 (riders): resolveLotFromGeoSearch refuses an over-length parsed input with a typed outcome (G5 A1); a /search-shaped abbreviation body fails closed to no_match (G4 A1).",
+    "AS-6 (compat): the existing lot-outline consumers are byte-compatible (PropertyOverview untouched and unbroken - its suite green); all prior M5-T046 journey assertions green except the two deliberately updated HJ-polish assertions.",
+    "AS-7: ruff clean; documented api suites green offline from services/api; modularity exit 0; web tests prove in CI on the pushed head (orchestrator captures).",
+    "AS-8 (walkthrough): HJ walks the corner-lot confirm journey - entered, matched, and city-record lines all present, honest, accessible."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "PropertyOverview.tsx imports LotOutlineMap - both FORBIDDEN here; any change forcing their edit = STOP + discovery (M5-T045 owns the architect components, LIVE lane).",
+    "Honest absence vs error must stay distinct; SODA key-absence is the null semantics (corpus assertion 7).",
+    "Additive-only route change; a contract-schema need = STOP + discovery.",
+    "Disjointness vs live M5-T045: zero path overlap (mechanically recorded in G0)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T06:35:29.820911+00:00",
+  "updated_at": "2026-09-19T06:35:30.169074+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T06:35:29.820911+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_lot_geometry_api.py -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
