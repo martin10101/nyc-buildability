@@ -296,13 +296,32 @@ describe("DB-026: GeoSearch address→lot equality gate (byte-faithful corpus)",
   });
 
   it("AS-5: /autocomplete features (which OMIT confidence/match_type) parse permissively AND still gate", () => {
+    // [ORCH-CORRECTED per the packet's fail-closed normalization rule] The corpus
+    // §5 query is the abbreviated "1279 37 st"; its parsed street "37 st" is a
+    // street-TYPE abbreviation, not the contracted digit-run ordinal fold
+    // ("37th" → "37"). Abbreviation expansion (ST→STREET) was never contracted,
+    // and unclear cases fail closed to no-match — so the gate's honest outcome
+    // for this body is no_match, while the SHAPE still parses without
+    // confidence/match_type and suggestions stay permissive (the pick flow and
+    // server resolution are unaffected; there is no live promotion path).
     const body = parse(AUTOCOMPLETE_1279_37_ST);
     // Suggestions stay permissive — the autocomplete shape parses as before.
     const suggestions = parseAddressSuggestions(body);
     expect(suggestions?.length ?? 0).toBeGreaterThan(0);
-    // The gate tolerates the missing confidence/match_type keys (recorded null)
-    // and still promotes only the equality-matched feature.
+    // The gate tolerates the missing confidence/match_type keys and runs to an
+    // honest outcome; the abbreviated input fails closed rather than being
+    // loosely matched.
     const resolved = resolveLotFromGeoSearch(body);
+    expect(resolved.kind).toBe("no_match");
+  });
+
+  it("AS-5b: an /autocomplete-shaped body with an equality-matching parse gates to resolved (missing keys recorded null)", () => {
+    // Same corpus §5 body untouched, with the unabbreviated reference parse
+    // (the form the corpus's own /search queries demonstrate) supplied through
+    // the gate's explicit input parameter, so the equality gate can hold and
+    // the absent confidence/match_type keys must be tolerated and recorded
+    // null on the resolved lot.
+    const resolved = resolveLotFromGeoSearch(parse(AUTOCOMPLETE_1279_37_ST), { houseNumber: "1279", street: "37 street" });
     expect(resolved.kind).toBe("resolved");
     if (resolved.kind !== "resolved") return;
     expect(resolved.lot.bbl).toBe("3052960043");
