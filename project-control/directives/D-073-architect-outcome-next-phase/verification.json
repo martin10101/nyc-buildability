@@ -3,7 +3,7 @@
   "directive_id": "D-073",
   "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-073-BOOTSTRAP at capture; phase packets are bound by applicability append at contract time. No completion claim exists at capture time.",
   "verified_by": null,
-  "verified_at": "2026-09-19T12:10:56.750270+00:00",
+  "verified_at": "2026-09-19T15:47:41.593840+00:00",
   "task_verifications": [
     {
       "directive_id": "D-073",
@@ -139,6 +139,28 @@
           "state": "PASS",
           "evidence": [
             "DCV verified: the polished confirm-arc surface keeps the records-vs-allowances distinction - record line + rider-d why-note are RECORD explanations (digit-free test address-confirm.test.tsx:1132), rendering guarded to the differ case, honest absence in every non-shown outcome at terminal status, and the material diff introduces no allowance-class vocabulary (grep-proven on bcfcc538). Stamped at 6f74488d5ead45f4883e2c92fd8519940f4674d6 under the DCV pre-authorization (M5-T050-DCV.md) whose conditions the DCV itself already reproduced AT THIS HEAD: empty git diff ee1b361c..HEAD on all 9 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (M5-T051 seam + gate-record commits). Orchestrator re-ran the foreground validator after stamping (exit code recorded in the seam commit)."
+          ]
+        }
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "task_id": "M5-T052",
+      "applicable_requirement_ids": [
+        "D-073-R006"
+      ],
+      "reviewed_sha": "396081b594b1ca46f9fc858f552526217f81eb00",
+      "reviewed_manifest_sha256": "6ae71aeed51165b2800ae4106ee9f33a7ef97b985d62f97c60a786b93211d1cd",
+      "producer": "backend-engineer",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-19T15:47:41.593840+00:00",
+      "requirements": [
+        {
+          "id": "D-073-R006",
+          "state": "PASS",
+          "evidence": [
+            "DCV verified: the records-vs-allowances separation is the packet's core deliverable - records render UNDER the fail-safe with RECORD-class wording (grep-gated tests), the ONE deriveCondoSurface decision is monotone (channel only ADDS withholding; accepted profile guard authoritative, semantics-preserving refactor per the attested G3 record), no allowance vocabulary in records/substitution/conflict sections, honest absence on unresolved/error, both surfaces (screen + brief) read the same decision. Stamped at 396081b594b1ca46f9fc858f552526217f81eb00 under the DCV pre-authorization (M5-T052-DCV.md) whose conditions the DCV itself reproduced AT 396081b5: empty git diff e9abeaaf..target on all 10 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
           ]
         }
       ]

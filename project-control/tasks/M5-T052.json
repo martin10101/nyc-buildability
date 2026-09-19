@@ -74,8 +74,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The guard-coherence ruling is the load-bearing deliverable: implementing displays before documenting it = the exact incoherence G3-A2 warned about (three parallel conditionals drifting).",
     "Records never unlock allowances: the fail-safe guard stays authoritative; a records section that reads like an analysis result fails HJ/G1.",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T12:14:59.485773+00:00",
-  "updated_at": "2026-09-19T15:38:24.105817+00:00",
+  "updated_at": "2026-09-19T15:50:16.509620+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -132,5 +132,7 @@
       "status": "in_progress",
       "message": "corrections applied; re-freezing"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T15:50:16.509620+00:00"
 }
