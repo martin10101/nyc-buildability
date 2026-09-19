@@ -63,9 +63,15 @@ function jsonResponse(
  * resolve to the benign flag-off 404 and are served WITHOUT reaching — or
  * counting against — the resolution spy the tests assert on (its call order and
  * count are unchanged). Lot-outline behavior is covered in
- * lot-outline-map.test.tsx. */
+ * lot-outline-map.test.tsx.
+ * [ORCH-CORRECTED per M5-T047] The confirm card now also issues a sibling
+ * record-address fetch (GET /api/v1/properties/{bbl}/record-address); it is
+ * served the same benign 404 (the client's first-class route_absent outcome)
+ * through this same side stub, so the resolution spy's call order, count, and
+ * queued mock responses stay exactly as each test scripted them. Record-address
+ * behavior is covered in record-address.test.ts and address-confirm.test.tsx. */
 function lotGeometryStub(url: string): Response | null {
-  if (url.includes("/lot-geometry")) {
+  if (url.includes("/lot-geometry") || url.includes("/record-address")) {
     return new Response(JSON.stringify({ detail: "Not Found" }), { status: 404 });
   }
   return null;
