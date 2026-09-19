@@ -65,8 +65,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A pure extraction that quietly changes an error message, constant, or ordering is NOT pure - the unchanged suites are the proof; do not touch them except to MOVE whole test blocks.",
     "The facade must re-export everything consumers use, including exception types and constants.",
@@ -75,7 +75,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T08:14:33.764200+00:00",
-  "updated_at": "2026-09-19T08:15:57.221876+00:00",
+  "updated_at": "2026-09-19T10:08:11.930968+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
