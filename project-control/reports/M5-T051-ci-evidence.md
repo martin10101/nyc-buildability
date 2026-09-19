@@ -9,4 +9,4 @@ Head: `f1ec64a8` (the M5-T051 material cherry-pick).
 - First CI round for this task: no lost rounds.
 
 Orchestrator-reproduced at harvest (wt-m5t051, documented cwds): ruff clean; 568 scenario +
-439 api tests; modularity exit 0.
+439 api tests in the worktree ([ORCH-CORRECTED per G4-1]: stale base; TRUE count at the frozen head = 497, G4-executed - see M5-T051-G2.md); modularity exit 0.

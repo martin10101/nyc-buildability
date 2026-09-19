@@ -21,7 +21,7 @@ SHA-256 digests are LF-normalized (CRLF→LF before hashing), pasted verbatim.
 | `f19e3e53d53e46204dca5630eb45338ffc5ff8af9cc95653a67ac765dce520bc` | project-control/reports/M5-T051-producer-report.md (producer evidence, verbatim from the worktree) |
 
 Orchestrator reproduced at harvest (wt-m5t051, documented cwds): ruff clean; pytest
-tests/scenario 568 passed; tests/api 439 passed; modularity exit 0. Note the run history:
+tests/scenario 568 passed; tests/api 439 passed IN THE WORKTREE ([ORCH-CORRECTED per G4-1]: the stale worktree-base count; the TRUE count at the frozen head is 497 - see M5-T051-G2.md); modularity exit 0. Note the run history:
 four of the five runs ended at provider-side model-downgrade rotation collisions (runs
 15/17/18) or a supervisor crash (run 16) — never a build failure; the work accumulated
 across runs and the drills preserved it (recorded in the backlog sweeps).
