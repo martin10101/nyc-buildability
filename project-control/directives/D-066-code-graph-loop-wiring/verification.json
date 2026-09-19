@@ -287,6 +287,31 @@
      "reviewed_sha": "d1d082db189191956d00a33e5733bfbb1829e625"
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T043",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "088a26f68ffcf8363d7c5496172409758f2e40f5",
+   "reviewed_manifest_sha256": "69eaf84c81eabc546a2f3258bb8ba1703b3cf3fdcef50b439d43d7e97fa42714",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T02:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T043-DCV.md, frozen head 20c597c1, material f6e88222): the packet nav block named the consumers and the G3 extraction seam; the extraction executed exactly that seam with an identity-asserting facade test; modularity improved - both owned rules modules off the warn list (checker exit 0 reproduced by three reviewers). Restamped to 088a26f6 under the DCV five-condition peer-tolerant pre-authorization - all reproduced at record time: every M5-T043 allowed_path byte-identical 20c597c1..088a26f6; the only non-control-plane changes in that range are the two disjoint M5-T044 connector files (explicitly tolerated); refs/paths/evidence-map unchanged; validator exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T02:00:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "088a26f68ffcf8363d7c5496172409758f2e40f5"
+    }
+   ]
   }
  ]
 }

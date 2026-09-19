@@ -60,8 +60,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Extraction must be behavior-preserving: any truth-table or provenance drift is a defect, not a refactor.",
     "Guard hardening may only tighten; if a legitimate path would break, STOP and report.",
@@ -69,7 +69,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T00:29:58.699542+00:00",
-  "updated_at": "2026-09-19T01:38:50.325764+00:00",
+  "updated_at": "2026-09-19T01:58:55.659401+00:00",
   "directive_refs": [
     {
       "directive_id": "D-045",
@@ -110,5 +110,7 @@
       "status": "in_progress",
       "message": "Harvest (run 47, breaker at 4 rounds - DB-012 trip 13, report-reviewability churn: the Codex reviewer demanded embedded hunks, the opposite of the packet's reference-only discipline): full DB-028 scope built and committed as material; orchestrator reproduced all five commands green; both rules modules now below the modularity warn tier; submit + wave after CI"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T01:58:55.659401+00:00"
 }
