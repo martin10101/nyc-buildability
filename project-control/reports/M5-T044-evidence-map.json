@@ -1,10 +1,11 @@
 {
   "task_id": "M5-T044",
-  "material_commit": "1fd07e9a (cherry-pick of worktree 36a510b4; 3 files, +583/-37)",
+  "material_commit": "1fd07e9a (cherry-pick of worktree 36a510b4) + a471e376 ([ORCH-CORRECTED per M5-T044-G3 F1] post-response stamp on resolve_by_condo_key + mutation-sensitive timing test)",
   "producer_report": "project-control/reports/M5-T044-producer-report.md",
   "requirements": {
     "D-066-R001": [
-      "The contract carried the navigation block naming the leaf status, the two-file surface, and the pluto post-response-stamp precedent anchor. The producer stayed exactly inside it: material 1fd07e9a touches only the connector, its test, and the report; the module remains a LEAF (the producer's bounded grep and the orchestrator's harvest check both show zero production-consumer imports); the connectors-wide suite (880 passed, orchestrator-reproduced) proves no consumer surface regressed. The G5 must-fix (DB-029a) closed with ASCII-fullmatch guards at input AND response side plus canonical-value URL interpolation at all four sites, each forced by negative tests with zero transport calls; the optional $limit rider was deliberately surfaced-not-silently-dropped per D-069."
+      "The contract carried the navigation block naming the leaf status, the two-file surface, and the pluto post-response-stamp precedent anchor. The producer stayed exactly inside it: material 1fd07e9a touches only the connector, its test, and the report; the module remains a LEAF (the producer's bounded grep and the orchestrator's harvest check both show zero production-consumer imports); the connectors-wide suite (880 passed, orchestrator-reproduced) proves no consumer surface regressed. The G5 must-fix (DB-029a) closed with ASCII-fullmatch guards at input AND response side plus canonical-value URL interpolation at all four sites, each forced by negative tests with zero transport calls; the optional $limit rider was deliberately surfaced-not-silently-dropped per D-069.",
+      "Correction cycle: G3 returned PASS-with-required-correction F1 (resolve_by_condo_key pre-fetch retrieved_at, the one G3#1 sub-point left open); applied as the tagged orchestrator correction a471e376 inside the same two allowed-path code files (55 passed / 881 connectors-wide / ruff clean reproduced); the remaining reviewer riders (condo_key response-guard negative test, $limit, _ERROR_CODE_SAFE_RE fullmatch) are routed to the wiring packet via the discovery ledger."
     ]
   }
 }
