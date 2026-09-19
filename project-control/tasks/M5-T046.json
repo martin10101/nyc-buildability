@@ -77,7 +77,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "The gate must not break permissive autocomplete suggestions - only the promotion of a single feature to THE resolved lot is gated.",
     "Normalization is corpus-anchored ('37th'->'37 STREET'); do not invent rules beyond what the corpus + existing code establish - unclear cases fail closed to no-match and are reported.",
@@ -88,7 +88,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T04:10:11.493999+00:00",
-  "updated_at": "2026-09-19T06:09:27.325217+00:00",
+  "updated_at": "2026-09-19T06:21:25.869473+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
