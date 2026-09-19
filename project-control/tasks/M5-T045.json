@@ -84,8 +84,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "Divergent zoning across a condo's base lots must never collapse into a single answer; multi-lot is a records display, never an allowance.",
     "The condo step is a strict pre-lookup addition: non-condo and flag-off behavior must stay byte-identical (regression suites prove it).",
@@ -96,7 +96,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T03:07:46.431298+00:00",
-  "updated_at": "2026-09-19T03:07:47.465497+00:00",
+  "updated_at": "2026-09-19T03:18:44.814076+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -119,5 +119,15 @@
     "python -m pytest tests/spatial/test_live_provider.py tests/profile/test_ztldb_crosscheck.py tests/profile/test_wave_integration.py -q",
     "python -m pytest tests/connectors tests/spatial tests/profile tests/api -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t045",
+  "progress_log": [
+    {
+      "at": "2026-09-19T03:18:44.814076+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the seq-119 resume seam (G0 PASS at 890a9ed0); scenarios recorded in-packet (AS-1..AS-10); awaiting loop-1 launch with a fresh run-id"
+    }
   ]
 }
