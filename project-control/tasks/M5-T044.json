@@ -54,7 +54,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "Hardening may only tighten acceptance; a previously-valid canonical input must still resolve identically.",
     "Stay a leaf: no consumer import, no registry record, no live fixture capture (wiring-era).",
@@ -62,7 +62,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T00:29:59.323498+00:00",
-  "updated_at": "2026-09-19T00:32:17.859917+00:00",
+  "updated_at": "2026-09-19T01:31:26.868829+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -87,6 +87,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the seq-118 hardening seam; awaiting loop-2 launch run 08"
+    },
+    {
+      "at": "2026-09-19T01:31:26.868829+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Harvest (run 08, breaker at 4 rounds - DB-012 trip 14): full DB-029 a,d-i scope built and committed as material; orchestrator reproduced ruff/54/880/modularity green in-worktree; submit + wave after combined-head CI"
     }
   ]
 }
