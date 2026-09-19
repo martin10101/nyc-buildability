@@ -26,7 +26,7 @@
     "D-076-R002",
     "D-076-R003"
   ],
-  "requirements_content_digest_sha256": "b239221e27598b605a99992a0731fc6f31336b26b29e4e5d8bf9549fd1f3c7f5",
+  "requirements_content_digest_sha256": "cb1675d1608081d51ed76d70aac427d970fcedd7241bb7d9d9466d1da641b5ee",
   "sources": [
     {
       "file": "source-001.md",
@@ -69,6 +69,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T051 (phase-B1 derivation packet contract seam); requirements.json digest resynced to b239221e27598b605a99992a0731fc6f31336b26b29e4e5d8bf9549fd1f3c7f5"
+    },
+    {
+      "at": "2026-09-19T14:52:46.942192+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T053 (B3-scaffold slice-1 packet contract seam); requirements.json digest resynced to cb1675d1608081d51ed76d70aac427d970fcedd7241bb7d9d9466d1da641b5ee"
     }
   ]
 }

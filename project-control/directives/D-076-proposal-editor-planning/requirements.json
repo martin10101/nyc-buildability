@@ -16,7 +16,8 @@
         "task_ids": [
           "D-076-BOOTSTRAP",
           "M5-T048",
-          "M5-T051"
+          "M5-T051",
+          "M5-T053"
         ],
         "task_types": [],
         "milestones": [],
@@ -49,7 +50,8 @@
         "task_ids": [
           "D-076-BOOTSTRAP",
           "M5-T048",
-          "M5-T051"
+          "M5-T051",
+          "M5-T053"
         ],
         "task_types": [],
         "milestones": [],

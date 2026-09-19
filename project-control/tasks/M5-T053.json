@@ -1,0 +1,104 @@
+{
+  "task_id": "M5-T053",
+  "title": "Phase B3-scaffold slice 1 (D-076): proposal validation route + the DB-034(a)/(b) input hardening",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire editor input to the accepted B0 proposal validator through ONE stateless route - POST proposal validation returning the validator's typed field-naming refusals verbatim (or the clean acceptance echo) - and close the two security preconditions DB-034 binds to exactly this packet BEFORE the route ships: (a) a GLOBAL vertex budget across the base outline plus every per-level outline (the per-outline ceilings alone leave a ~2.5e8-segment-test worst case); (b) a MAX_STRING_LEN ceiling on every user-authored string field (author, editor_version, wall ids, parent_scenario_id) plus bounded-repr on every user value embedded in a refusal message (the DB-023c precedent). No storage, no derivation, no evaluation - validation only (B1/B2 territory untouched); the B3 UI packet consumes this route later.",
+  "business_reason": "The proposal editor (B3) cannot exist without a safe way to send editor-authored geometry to the validator; DB-034 makes the input hardening a precondition of the FIRST wiring packet - this one",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). proposal.py consumers: contract.py:21 (validation thread) + test_scenario_proposal.py:44 - and the LIVE M5-T051 lane is editing BOTH files in its own worktree (see DISJOINTNESS below). Route-module precedent: api/v1/lot_geometry.py (T047) and api/v1/condo_records.py (T052, in review) - mirror their typed-error and mounting discipline; main.py mount consumers: every tests/api suite boots the app. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph is ADVISORY - verify in source.",
+    "DISJOINTNESS CONSTRAINT (binding; D-072): the LIVE M5-T051 lane owns services/api/app/scenario/proposal.py and tests/scenario/** right now - those are FORBIDDEN here. Your hardening layer therefore lives in a NEW focused module services/api/app/scenario/proposal_input_gate.py that wraps the ACCEPTED validator: it enforces the global vertex budget and the string ceilings/bounded-repr BEFORE delegating to validate_proposed_massing (imported read-only), and the route calls ONLY the gate. When M5-T051 lands, a follow-up may fold the gate inward if reviewers prefer - record that as the module's docstring note; the wrapper is the disjointness-correct home TODAY and is a legitimate boundary (input-gate vs semantic-validation responsibilities).",
+    "SCOPE (binding; read docs/DISCOVERY_BACKLOG.md row DB-034 items (a)+(b), docs/PROPOSAL_EDITOR_PHASED_PLAN.md phase-B B3 row, services/api/app/scenario/proposal.py (READ-ONLY), and project-control/reports/M5-T048-G5.md FIRST): (1) NEW module services/api/app/scenario/proposal_input_gate.py - validate_proposed_massing_input(block): FIRST a global vertex budget MAX_TOTAL_VERTICES (base outline + all per-level outlines summed; pick a defensible ceiling, e.g. 5000, documented against the G5 worst-case arithmetic) enforced by O(1)/O(n) counting BEFORE any quadratic work; SECOND a MAX_STRING_LEN ceiling (e.g. 512) on author, editor_version, parent_scenario_id, and every wall id, with typed refusals naming the exact field; THIRD bounded-repr (the DB-023c pattern - cap + explicit truncation marker) applied to ANY user value the gate or its refusals embed; THEN delegate to the accepted validate_proposed_massing unchanged. (2) NEW route module services/api/app/api/v1/proposal_validation.py mounted in main.py (one line): POST accepting a JSON body bounded by an explicit request-size ceiling (documented; oversized -> typed 413-class refusal BEFORE parsing where the framework allows), running the strict-JSON guard discipline (NaN/Infinity refused - mirror contract.py's allow_nan=False pattern), then the gate; response: acceptance echo (the validated block's digest + the literal kind 'proposed' + NO derived values, D-076-R002) or the typed refusal (field + reason, bounded strings, no stack traces, no server internals). NO storage, NO derivation, NO evaluation, NO contract-schema change. (3) Tests services/api/tests/api/test_proposal_validation_api.py: the global-budget boundary (at-budget accepted, one-over refused typed, and a many-levels-times-many-vertices probe that the per-outline ceilings alone would admit), string-ceiling boundaries per field, bounded-repr assertions on refusal messages (attacker-length wall id never echoes unbounded), oversized-body refusal, NaN/Infinity refusal at the route, the acceptance echo shape (no derived values), and the B0 fixtures pass through unchanged (valid fixtures accepted; the semantically_invalid fixtures refused with the SAME fields the B0 tests pin).",
+    "PRESERVATION (binding): validate_proposed_massing and every accepted B0 behavior byte-identical (proposal.py untouched - forbidden); the gate NEVER weakens a B0 refusal (everything B0 refuses, the gate+delegate still refuses; the gate only ADDS refusals); existing suites green unchanged; no new dependency; no network in tests.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "services/api/app/scenario/proposal_input_gate.py: the DB-034(a)/(b) input gate (global vertex budget, string ceilings, bounded-repr) wrapping the accepted validator read-only",
+    "services/api/app/api/v1/proposal_validation.py: the stateless POST validation route (bounded body, strict-JSON, typed refusals verbatim, acceptance echo with zero derived values)",
+    "test_proposal_validation_api.py: budget/ceiling boundaries, bounded-repr, oversized-body, non-finite, B0-fixture passthrough",
+    "project-control/reports/M5-T053-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T048"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/proposal_input_gate.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_proposal_validation_api.py",
+    "project-control/reports/M5-T053-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/scenario/contract.py",
+    "services/api/app/scenario/derivation.py",
+    "services/api/tests/scenario/",
+    "packages/contracts/",
+    "services/api/app/_contract_schemas/",
+    "services/api/app/rules/",
+    "services/api/app/profile/",
+    "services/api/app/spatial/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (global budget, the G5-A1 closure): a proposal whose per-outline counts each sit under MAX_OUTLINE_VERTICES but whose SUM exceeds MAX_TOTAL_VERTICES is refused typed BEFORE any quadratic work (asserted via the counting-before-simplicity structure + the many-levels probe); at-budget accepted; one-over refused.",
+    "AS-2 (string ceilings + bounded-repr, the G5-A2 closure): each user-authored string field refuses typed past MAX_STRING_LEN at its exact boundary; an attacker-length wall id in a duplicate-id refusal echoes only the bounded-repr form (cap + truncation marker), never the full value.",
+    "AS-3 (route discipline): oversized body -> typed refusal before parse where the framework allows; NaN/Infinity -> typed refusal (strict-JSON); malformed JSON -> typed refusal; no stack trace, no internal path, no server detail in any response.",
+    "AS-4 (acceptance echo, D-076-R002): a valid proposal returns the echo - block digest + the literal kind 'proposed' + NO derived value of any kind (no area, no coverage, no height sum); grep-clean for allowance-class vocabulary.",
+    "AS-5 (B0 passthrough): every packages/contracts fixtures/valid/scenario proposal block accepted; both semantically_invalid geometry fixtures refused at the SAME field the B0 tests pin (the gate delegates faithfully; nothing weakened).",
+    "AS-6 (monotone gate): property - for every refusal case in the B0 focused suite's vocabulary, gate(block) refuses whenever validate_proposed_massing(block) refuses (spot-proven across the fixture classes).",
+    "AS-7 (purity + disjointness): the gate imports the validator read-only; proposal.py and tests/scenario/ untouched (the LIVE M5-T051 lane owns them); main.py diff is the one mount line.",
+    "AS-8 (proof): ruff clean; documented suites green offline from services/api; modularity exit 0; the unchanged scenario/api suites green."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "DISJOINTNESS vs live M5-T051 is structural: proposal.py + tests/scenario/ are FORBIDDEN; the wrapper-module design exists exactly for this - do not 'improve' it by editing the validator.",
+    "The gate must be monotone (only ADD refusals): weakening any B0 refusal is a G5 failure class.",
+    "No storage/derivation: the echo carries a digest and the kind literal, never a computed value.",
+    "The budget/ceiling constants need documented arithmetic against the G5 worst case, not arbitrary numbers."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-19T14:51:30.600436+00:00",
+  "updated_at": "2026-09-19T14:51:30.960057+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-19T14:51:30.600436+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_proposal_validation_api.py -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

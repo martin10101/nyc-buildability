@@ -27,7 +27,7 @@
     "D-066-R003",
     "D-066-R004"
   ],
-  "requirements_content_digest_sha256": "b2ee46449b6297eccb8dea533b421f2c4e0dd6268ae5d989efe7fa7e2e8ed67a",
+  "requirements_content_digest_sha256": "5f094db12c92028d683a35b834cd2f489818ce0ae36064effc51a2ce16e723fb",
   "sources": [
     {
       "file": "source-001.md",
@@ -160,6 +160,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-066-R001 applicability.task_ids += M5-T052 (DB-031 records-view packet contract seam); requirements.json digest resynced to b2ee46449b6297eccb8dea533b421f2c4e0dd6268ae5d989efe7fa7e2e8ed67a"
+    },
+    {
+      "at": "2026-09-19T14:52:46.942192+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_bind",
+      "detail": "D-066-R001 applicability.task_ids += M5-T053 (B3-scaffold slice-1 packet contract seam); requirements.json digest resynced to 5f094db12c92028d683a35b834cd2f489818ce0ae36064effc51a2ce16e723fb"
     }
   ]
 }
