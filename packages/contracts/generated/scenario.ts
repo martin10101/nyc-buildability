@@ -69,7 +69,7 @@ export interface IntegrityCheck {
   note: string;
 }
 export interface Scenario {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   scenario_kind: "preliminary" | "no_scenario" | "unsupported";
   coverage_status: DraftCoverageStatus;
   data_completeness: DataCompleteness;
@@ -110,6 +110,32 @@ export interface Scenario {
       };
     };
     assumptions: ScenarioAssumption[];
+  };
+  proposed_massing?: {
+    outline: {
+      srid: 2263;
+      vertices: number[][];
+    };
+    levels: {
+      level_index: number;
+      floor_count: number;
+      floor_to_floor_ft: number;
+      outline?: {
+        srid: 2263;
+        vertices: number[][];
+      } | null;
+    }[];
+    exterior_walls: {
+      id: NonEmptyString;
+      start_vertex_index: number;
+      end_vertex_index: number;
+    }[];
+    provenance: {
+      author: NonEmptyString;
+      kind: "proposed";
+      editor_version: NonEmptyString;
+      parent_scenario_id?: string | null;
+    };
   };
   _expected_failure?: string;
 }

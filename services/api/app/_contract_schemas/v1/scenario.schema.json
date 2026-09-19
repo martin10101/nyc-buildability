@@ -27,8 +27,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published scenario contract versions. 1.0.0 = M5-T001 initial foundation shape. New versions are admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published scenario contract versions. 1.0.0 = M5-T001 initial foundation shape. 1.1.0 = M5-T048 (phase B0, D-076) additive bump that appends the OPTIONAL proposed_massing INPUT-CLASS block (an architect-proposed building: a lot-anchored EPSG:2263 outline, per-level records, named exterior wall segments, and a provenance stamp with kind='proposed'). A 1.0.0 document stays valid because the block is optional and 1.0.0 remains admitted; a document emits 1.1.0 only when the block is present. A proposed building is a THIRD input class - never a city record, never a rule (D-076-R002); this block carries no allowance and no derived value. New versions are admitted only by an accepted contract task that appends to this enum."
     },
     "scenario_kind": {
       "type": "string",
@@ -103,6 +103,9 @@
     },
     "unused_draft_zoning_floor_area": {
       "$ref": "#/$defs/unused_draft_zoning_floor_area"
+    },
+    "proposed_massing": {
+      "$ref": "#/$defs/proposed_massing"
     },
     "_expected_failure": {
       "type": "string",
@@ -413,6 +416,126 @@
               "type": ["object", "null"]
             }
           }
+        }
+      }
+    },
+    "proposed_massing": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "OPTIONAL proposed-massing INPUT CLASS (scenario contract 1.1.0, task M5-T048 phase B0). A THIRD input class (D-076-R002): an architect-proposed building is NEVER a city record and NEVER a rule - it carries no allowance, no derived area/coverage/FAR, and no rule comparison (that is phase B1/B2). Present ONLY on a 1.1.0 document that declares a proposal; ABSENT on every prior-shape (1.0.0) document. Server-side validation (app.scenario.proposal.validate_proposed_massing) enforces the closed non-self-intersecting outline, level consistency, EPSG:2263 unit sanity, and the DB-013 bounded ceilings with TYPED refusals; this schema fixes only the structural shape.",
+      "required": ["outline", "levels", "exterior_walls", "provenance"],
+      "properties": {
+        "outline": {
+          "$ref": "#/$defs/proposed_outline"
+        },
+        "levels": {
+          "type": "array",
+          "description": "Per-level records in level_index order. Bounded and consistency-checked server-side: level_index values must be contiguous from 0, and every floor-to-floor height must be finite and strictly positive.",
+          "items": { "$ref": "#/$defs/proposed_level" }
+        },
+        "exterior_walls": {
+          "type": "array",
+          "description": "Named exterior wall segments, each spanning two outline vertices by index. The indices are bounds-checked against the outline vertex list server-side; distance-to-lot-line / street-line derivations are phase B1, never here.",
+          "items": { "$ref": "#/$defs/proposed_wall_segment" }
+        },
+        "provenance": {
+          "$ref": "#/$defs/proposed_provenance"
+        }
+      }
+    },
+    "proposed_outline": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A lot-anchored building outline as an EXPLICITLY CLOSED ring in EPSG:2263 (US survey feet): the first and last vertex are identical and the vertex count is bounded server-side. No area or dimension is derived here (phase B1).",
+      "required": ["srid", "vertices"],
+      "properties": {
+        "srid": {
+          "type": "integer",
+          "enum": [2263],
+          "description": "EPSG:2263 (NAD83 / New York Long Island, US survey feet) - the authoritative measurement CRS. The literal 2263; a display-CRS (4326) outline never enters this input class."
+        },
+        "vertices": {
+          "type": "array",
+          "description": "Ordered [x, y] vertices in EPSG:2263 feet forming an explicitly closed ring (first == last). Non-self-intersection, NYC coordinate bounds, and the MAX_OUTLINE_VERTICES ceiling are enforced server-side.",
+          "items": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        }
+      }
+    },
+    "proposed_level": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One vertical level record. The set of level_index values across the levels array must equal {0..N-1} (contiguous, unique - checked server-side); a differing per-level outline is optional and is validated as a closed simple outline when present.",
+      "required": ["level_index", "floor_count", "floor_to_floor_ft"],
+      "properties": {
+        "level_index": {
+          "type": "integer",
+          "description": "Zero-based position of this level in the stack. A level_index set that is not contiguous from 0 is a typed refusal."
+        },
+        "floor_count": {
+          "type": "integer",
+          "description": "Number of identical floors this record represents (>= 1, bounded server-side)."
+        },
+        "floor_to_floor_ft": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Floor-to-floor height in feet. The schema enforces strict positivity (exclusiveMinimum 0); the server additionally enforces finiteness and a sane upper building bound and re-checks positivity as defense in depth (app.scenario.proposal). Never NaN/Infinity."
+        },
+        "outline": {
+          "description": "Optional per-level outline used ONLY where this level differs from the base outline; validated as a closed simple outline when present, else null or absent.",
+          "anyOf": [
+            { "$ref": "#/$defs/proposed_outline" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "proposed_wall_segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One named exterior wall segment spanning two outline vertices by index. The indices are bounds-checked against the outline vertex list server-side; ids must be unique.",
+      "required": ["id", "start_vertex_index", "end_vertex_index"],
+      "properties": {
+        "id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable, non-empty, unique label for the wall segment (e.g. 'north', 'street_frontage')."
+        },
+        "start_vertex_index": {
+          "type": "integer",
+          "description": "Index into outline.vertices of the segment start (0-based, in range, and different from end_vertex_index)."
+        },
+        "end_vertex_index": {
+          "type": "integer",
+          "description": "Index into outline.vertices of the segment end (0-based, in range, and different from start_vertex_index)."
+        }
+      }
+    },
+    "proposed_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The proposal provenance stamp. kind is the literal 'proposed' - this input class is never a city record and never a rule (D-076-R002).",
+      "required": ["author", "kind", "editor_version"],
+      "properties": {
+        "author": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Who authored the proposal (e.g. the architect identity or editor account). Non-empty; recorded, never a legal attestation."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["proposed"],
+          "description": "The literal 'proposed'. A proposed building is a THIRD input class - never 'record', never 'rule' (D-076-R002)."
+        },
+        "editor_version": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Version of the proposal editor that produced the block (provenance of the tool, non-empty)."
+        },
+        "parent_scenario_id": {
+          "description": "Optional id of the scenario this proposal was derived from; null or absent when the proposal stands alone.",
+          "type": ["string", "null"]
         }
       }
     }

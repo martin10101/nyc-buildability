@@ -24,6 +24,8 @@ import pytest
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
+from app.scenario.contract import ScenarioContractError, validate_scenario_document
+
 REPO_ROOT = Path(__file__).resolve().parents[4]
 SCHEMA_DIR = REPO_ROOT / "packages" / "contracts" / "schemas" / "v1"
 FIXTURE_ROOT = REPO_ROOT / "packages" / "contracts" / "fixtures"
@@ -117,11 +119,27 @@ def test_valid_fixture_identifies_input_by_reference(fixture: Path):
 
 @pytest.mark.parametrize("fixture", INVALID_FIXTURES, ids=lambda p: p.name)
 def test_invalid_fixture_rejected(fixture: Path):
+    """Every invalid fixture is refused by the production contract gate.
+
+    Invalid fixtures split by WHERE the defect is caught:
+
+    * STRUCTURAL - a defect the JSON Schema expresses and rejects directly: a
+      'verified' coverage_status, an embedded profile key, a missing required
+      field, and (M5-T048) a non-positive floor_to_floor_ft, which the schema
+      now rejects via ``exclusiveMinimum: 0`` on proposed_level.floor_to_floor_ft.
+    * SEMANTIC - a geometry invariant a JSON Schema provably cannot state: an
+      unclosed or self-intersecting proposed_massing outline. These fixtures are
+      STRUCTURALLY schema-valid and are refused only by app.scenario.proposal
+      through validate_scenario_document.
+
+    Asserting the whole contract gate (schema + strict-JSON guard +
+    proposed_massing semantics) covers both classes; the per-fixture tests below
+    pin each defect at its exact layer.
+    """
     instance = _load(fixture)
     assert "_expected_failure" in instance, "invalid fixture must document its defect"
-    assert list(_validator().iter_errors(instance)), (
-        f"invalid fixture {fixture.name} unexpectedly validated"
-    )
+    with pytest.raises(ScenarioContractError):
+        validate_scenario_document(instance)
 
 
 def test_invalid_verified_fixture_fails_on_coverage_enum():
@@ -140,6 +158,61 @@ def test_invalid_missing_field_fixture_fails_on_required():
     instance = _load(FIXTURE_ROOT / "invalid" / "scenario" / "missing_scenario_kind.json")
     messages = " ".join(e.message for e in _validator().iter_errors(instance))
     assert "scenario_kind" in messages and "required" in messages.lower()
+
+
+# The proposed_massing GEOMETRY invalid fixtures (M5-T048) carry a SEMANTIC
+# defect the JSON Schema provably cannot express (ring closure, non-self-
+# intersection): each is structurally schema-valid yet refused by
+# validate_scenario_document at the exact proposed_massing field it documents.
+# The negative-height fixture is NOT in this set: JSON Schema CAN express strict
+# positivity (exclusiveMinimum: 0), so it fails schema validation directly - see
+# test_proposed_massing_negative_height_fixture_fails_schema_validation below.
+PROPOSED_MASSING_GEOMETRY_INVALID_FIXTURES = {
+    "proposed_massing_open_ring.json": "proposed_massing.outline",
+    "proposed_massing_self_intersecting.json": "proposed_massing.outline",
+}
+
+
+@pytest.mark.parametrize(
+    ("fixture_name", "location"),
+    sorted(PROPOSED_MASSING_GEOMETRY_INVALID_FIXTURES.items()),
+    ids=lambda item: item if isinstance(item, str) else "",
+)
+def test_proposed_massing_geometry_fixture_is_schema_valid_but_semantically_refused(
+    fixture_name: str, location: str
+):
+    instance = _load(FIXTURE_ROOT / "invalid" / "scenario" / fixture_name)
+    # STRUCTURAL: the JSON Schema accepts the document (the defect is a geometry
+    # invariant a JSON Schema cannot state).
+    assert not list(_validator().iter_errors(instance)), (
+        f"{fixture_name} should be structurally schema-valid; its defect is a "
+        "geometry invariant the schema cannot express"
+    )
+    # SEMANTIC: the contract gate refuses it, naming the exact field.
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(instance)
+    assert exc.value.location == location
+
+
+def test_proposed_massing_negative_height_fixture_fails_schema_validation():
+    """The negative floor-to-floor height fixture is refused at the SCHEMA layer.
+
+    JSON Schema CAN express strict positivity - proposed_level.floor_to_floor_ft
+    carries ``exclusiveMinimum: 0`` - so this fixture (floor_to_floor_ft = -10.0)
+    fails JSON Schema validation directly, independent of the semantic module.
+    This is the schema-level rejection coverage AS-3 asks for on the height case;
+    ring closure and non-self-intersection remain inexpressible in JSON Schema
+    and are covered through the semantic gate above. The whole contract gate
+    (which runs schema validation) refuses it too.
+    """
+    instance = _load(
+        FIXTURE_ROOT / "invalid" / "scenario" / "proposed_massing_negative_height.json"
+    )
+    messages = " | ".join(e.message for e in _validator().iter_errors(instance))
+    assert messages, "negative-height fixture must fail schema validation"
+    assert "minimum" in messages.lower()
+    with pytest.raises(ScenarioContractError):
+        validate_scenario_document(instance)
 
 
 # ---------------------------------------------------------------------------
@@ -255,3 +328,205 @@ def test_property_profile_and_rule_evaluation_contracts_untouched():
     # task that appends 1.1.0 (optional wide_street block); this guard admits
     # exactly the sanctioned enum, as it did for each property_profile bump.
     assert rule_eval["properties"]["contract_version"]["enum"] == ["1.0.0", "1.1.0"]
+
+
+# ---------------------------------------------------------------------------
+# Scenario contract 1.1.0 (task M5-T048, phase B0, D-076): the OPTIONAL
+# proposed_massing INPUT CLASS - version selection, unchanged-legacy behavior,
+# and the STRUCTURAL vs SEMANTIC validation split.
+#
+# STRUCTURAL vs SEMANTIC (documented distinction). JSON Schema fixes the shape -
+# key presence, types, the srid=[2263] and kind=['proposed'] enums,
+# additionalProperties:false, AND strict positivity of floor_to_floor_ft
+# (exclusiveMinimum: 0). The remaining invariants split two ways:
+#
+#   (A) Expressible in JSON Schema but enforced in app.scenario.proposal BY
+#       DESIGN, not by necessity: NYC EPSG:2263 per-coordinate bounds
+#       (prefixItems + minimum/maximum), the sane floor-to-floor upper bound
+#       (maximum), and the DB-013 count ceilings (maxItems on vertices/levels/
+#       walls; maximum/minimum on floor_count). The module owns them so every
+#       refusal is a TYPED ProposedMassingError naming the exact field and the
+#       numeric bounds live once as MAX_*/NYC_2263_* constants (no schema/code
+#       duplication across the two byte-identical copies). It re-checks
+#       positivity as defense in depth.
+#   (B) NOT expressible in JSON Schema - genuine cross-value/geometry invariants:
+#       ring closure (first==last, cross-element equality), non-self-intersection
+#       (a predicate over all edges), distinct non-closing vertices (partial-
+#       array uniqueness), level-index contiguity {0..N-1} (a set tied to the
+#       array length), and wall start/end indices in range of the outline vertex
+#       count and distinct (a cross-field reference). These REQUIRE the module.
+#       (Height finiteness is a third case: no real JSON document can carry
+#       NaN/Infinity, so the schema never sees it; the module's finiteness check
+#       guards in-memory floats as defense in depth.)
+#
+# validate_scenario_document surfaces each (A)/(B) defect as a
+# ScenarioContractError naming the exact field. A document carrying a (B) defect
+# is STRUCTURALLY schema-valid but SEMANTICALLY refused.
+# ---------------------------------------------------------------------------
+
+BASE_1_0_0_DOC = FIXTURE_ROOT / "valid" / "scenario" / "preliminary_r5_cap.json"
+
+# A base X/Y comfortably inside the generous NYC EPSG:2263 unit-sanity bounds.
+_PX, _PY = 986000.0, 200000.0
+
+
+def _valid_proposed_block() -> dict:
+    """A minimal, fully-valid proposed_massing block (fresh copy each call)."""
+    return {
+        "outline": {
+            "srid": 2263,
+            "vertices": [
+                [_PX, _PY],
+                [_PX + 100.0, _PY],
+                [_PX + 100.0, _PY + 80.0],
+                [_PX, _PY + 80.0],
+                [_PX, _PY],
+            ],
+        },
+        "levels": [
+            {"level_index": 0, "floor_count": 1, "floor_to_floor_ft": 12.0},
+            {"level_index": 1, "floor_count": 4, "floor_to_floor_ft": 10.0},
+        ],
+        "exterior_walls": [
+            {"id": "south", "start_vertex_index": 0, "end_vertex_index": 1},
+            {"id": "east", "start_vertex_index": 1, "end_vertex_index": 2},
+        ],
+        "provenance": {
+            "author": "architect@example.com",
+            "kind": "proposed",
+            "editor_version": "proposal-editor/0.1.0",
+            "parent_scenario_id": None,
+        },
+    }
+
+
+def _doc_with_block(*, contract_version: str, block: dict) -> dict:
+    """The known-good 1.0.0 fixture reparsed fresh, restamped, plus a block."""
+    doc = _load(BASE_1_0_0_DOC)
+    doc["contract_version"] = contract_version
+    doc["proposed_massing"] = block
+    return doc
+
+
+# --- schema shape ----------------------------------------------------------
+
+
+def test_contract_version_enum_admits_exactly_1_0_0_and_1_1_0():
+    for schema_path in (SCENARIO_SCHEMA, BUNDLE_DIR / "scenario.schema.json"):
+        enum = _load(schema_path)["properties"]["contract_version"]["enum"]
+        assert enum == ["1.0.0", "1.1.0"]
+
+
+def test_proposed_massing_is_optional_not_required():
+    schema = _load(SCENARIO_SCHEMA)
+    assert "proposed_massing" in schema["properties"]
+    assert "proposed_massing" not in schema["required"]
+
+
+def test_proposed_massing_def_structural_shape():
+    defs = _load(SCENARIO_SCHEMA)["$defs"]
+    block = defs["proposed_massing"]
+    assert block["additionalProperties"] is False
+    assert set(block["required"]) == {"outline", "levels", "exterior_walls", "provenance"}
+    assert defs["proposed_outline"]["properties"]["srid"]["enum"] == [2263]
+    assert defs["proposed_provenance"]["properties"]["kind"]["enum"] == ["proposed"]
+
+
+# --- version selection + threading -----------------------------------------
+
+
+def test_legacy_1_0_0_document_without_block_validates_unchanged():
+    doc = _load(BASE_1_0_0_DOC)
+    assert "proposed_massing" not in doc
+    assert doc["contract_version"] == "1.0.0"
+    validate_scenario_document(doc)  # no raise: the block path is inert on 1.0.0
+
+
+def test_valid_block_on_1_1_0_document_validates():
+    doc = _doc_with_block(contract_version="1.1.0", block=_valid_proposed_block())
+    validate_scenario_document(doc)  # no raise
+
+
+def test_block_present_but_1_0_0_version_is_refused():
+    doc = _doc_with_block(contract_version="1.0.0", block=_valid_proposed_block())
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(doc)
+    assert exc.value.location == "contract_version"
+
+
+# --- structural (schema) vs semantic (module) split ------------------------
+
+
+def test_open_ring_block_is_structurally_valid_but_semantically_refused():
+    block = _valid_proposed_block()
+    block["outline"]["vertices"] = block["outline"]["vertices"][:-1]  # drop closing vertex
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    # JSON Schema CANNOT express ring closure: the document is structurally valid.
+    assert not list(_validator().iter_errors(doc))
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(doc)
+    assert exc.value.location == "proposed_massing.outline"
+
+
+def test_self_intersecting_block_semantically_refused():
+    block = _valid_proposed_block()
+    block["outline"]["vertices"] = [
+        [_PX, _PY],
+        [_PX + 10.0, _PY + 10.0],
+        [_PX + 10.0, _PY],
+        [_PX, _PY + 10.0],
+        [_PX, _PY],
+    ]
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    assert not list(_validator().iter_errors(doc))
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(doc)
+    assert exc.value.location == "proposed_massing.outline"
+
+
+def test_level_count_mismatch_block_semantically_refused():
+    block = _valid_proposed_block()
+    block["levels"][1]["level_index"] = 5  # {0, 5} with 2 records -> not {0, 1}
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    assert not list(_validator().iter_errors(doc))
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(doc)
+    assert exc.value.location == "proposed_massing.levels"
+
+
+def test_non_finite_height_block_refused_by_json_safety_guard():
+    block = _valid_proposed_block()
+    block["levels"][0]["floor_to_floor_ft"] = float("inf")
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    # A non-finite value can never be strict-JSON serialized; the NaN/Infinity
+    # guard fires first, refusing the document at the root.
+    with pytest.raises(ScenarioContractError) as exc:
+        validate_scenario_document(doc)
+    assert exc.value.location == "<root>"
+
+
+# --- schema-layer structural refusals (srid + kind) ------------------------
+
+
+def test_schema_rejects_outline_srid_not_2263():
+    block = _valid_proposed_block()
+    block["outline"]["srid"] = 4326
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    messages = " ".join(e.message for e in _validator().iter_errors(doc))
+    assert "2263" in messages
+
+
+def test_schema_rejects_provenance_kind_not_proposed():
+    block = _valid_proposed_block()
+    block["provenance"]["kind"] = "record"
+    doc = _doc_with_block(contract_version="1.1.0", block=block)
+    messages = " ".join(e.message for e in _validator().iter_errors(doc))
+    assert "proposed" in messages
+
+
+# --- additive preservation: legacy docs unaffected by the bump -------------
+
+
+@pytest.mark.parametrize("fixture", VALID_FIXTURES, ids=lambda p: p.name)
+def test_existing_valid_fixtures_pass_server_validation(fixture: Path):
+    validate_scenario_document(_load(fixture))
