@@ -67,8 +67,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "DISJOINTNESS vs live M5-T051 is structural: proposal.py + tests/scenario/ are FORBIDDEN; the wrapper-module design exists exactly for this - do not 'improve' it by editing the validator.",
     "The gate must be monotone (only ADD refusals): weakening any B0 refusal is a G5 failure class.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T14:51:30.600436+00:00",
-  "updated_at": "2026-09-19T16:39:52.151334+00:00",
+  "updated_at": "2026-09-19T16:50:02.944347+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -110,5 +110,7 @@
       "status": "in_progress",
       "message": "Contracted + claimed at the M5-T052 harvest seam (G0 PASS; structurally disjoint vs live M5-T051); scenarios AS-1..AS-8 in-packet; loop-1 relaunch as run 57 next"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-19T16:50:02.944347+00:00"
 }
