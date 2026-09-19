@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-19T12:14:59.485773+00:00",
-  "updated_at": "2026-09-19T15:25:19.743174+00:00",
+  "updated_at": "2026-09-19T15:33:49.520205+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -117,6 +117,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the M5-T050 acceptance seam (G0 PASS; pairwise disjoint vs live M5-T051); scenarios AS-1..AS-8 in-packet; loop-1 relaunch as run 55 next"
+    },
+    {
+      "at": "2026-09-19T15:33:47.764405+00:00",
+      "agent": "backend-engineer",
+      "percent": 95,
+      "status": "rework",
+      "message": "G3 PASS-with-required-corrections cycle: the two false report claims (byte-unchanged guard; SHRANK) + count harmonization applied as tagged [ORCH-CORRECTED per G3] edits; resubmitting at the corrected head"
+    },
+    {
+      "at": "2026-09-19T15:33:48.170915+00:00",
+      "agent": "backend-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "corrections applied; re-freezing"
     }
   ]
 }
