@@ -374,3 +374,59 @@ def test_created_confirmation_surfaces_on_the_condo_records_document(monkeypatch
     assert after["base_lots"] == before["base_lots"]
     assert after["substitution"] is None
     assert "far" not in str(after).lower()
+
+
+# ---------------------------------------------------------------------------
+# [ORCH-CORRECTED per T059 G3-C1 / G5-F1] rework binding (seq 122)
+# ---------------------------------------------------------------------------
+def test_cross_condo_revoke_is_a_typed_refusal_and_leaves_the_record_active(
+    monkeypatch,
+):
+    """A revoke addressed at a property whose condo differs from the record's is
+    a typed not-found (mirroring supersede's binding) and the record stays
+    ACTIVE - the G5-F1 cross-property class cannot terminate another condo's
+    site definition."""
+    enable_flag(monkeypatch)
+    store = InMemorySiteDefinitionStore()
+    app_a = _sd_app(store, _multi_lot())
+    app_b = _sd_app(store, _multi_lot(condo_key="999999"))
+    client_a = TestClient(app_a, raise_server_exceptions=False)
+    client_b = TestClient(app_b, raise_server_exceptions=False)
+
+    created = client_a.post(
+        f"/api/v1/properties/{BILLING_BBL}/site-definition-confirmations",
+        json={
+            "parcels": list(PARCELS),
+            "confirmer": {"name": "Dana Reviewer", "role": "qualified_professional"},
+        },
+    )
+    assert created.status_code == 201, created.json()
+    record_id = created.json()["record_id"]
+
+    crossed = client_b.post(
+        f"/api/v1/properties/{BILLING_BBL}/site-definition-confirmations/"
+        f"{record_id}/revoke",
+        json={
+            "confirmer": {"name": "Mallory", "role": "user"},
+            "reason": "cross-condo attempt",
+        },
+    )
+    assert crossed.status_code == 404, crossed.json()
+    assert crossed.json()["state"] == "not_found"
+
+    still = client_a.get(
+        f"/api/v1/properties/{BILLING_BBL}/site-definition-confirmations"
+    )
+    assert still.status_code == 200
+    assert still.json()["status"] == "confirmed"
+    assert still.json()["active_confirmation"]["record_id"] == record_id
+
+    bound = client_a.post(
+        f"/api/v1/properties/{BILLING_BBL}/site-definition-confirmations/"
+        f"{record_id}/revoke",
+        json={
+            "confirmer": {"name": "Dana Reviewer", "role": "qualified_professional"},
+            "reason": "legitimate revocation at the addressed property",
+        },
+    )
+    assert bound.status_code == 200, bound.json()

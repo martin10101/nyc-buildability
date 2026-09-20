@@ -333,3 +333,42 @@ M5-T058 substitution stamp both land.
 `AnalysisIdentityNotice.tsx` — all untouched (confirmed against `git status`). No new dependency, no new
 flag (reuses `INTERNAL_RULE_EVAL_ENABLED`). Unmounted route preserved; calculation boundaries preserved.
 Not committed / pushed / merged / accepted — left for orchestrator integration.
+
+## 12.1 [ORCH-CORRECTED] Rework identity + capture (wave findings G3-C1/G5-F1, G4-C-1, G4-C-2; 2026-09-20, seq 122)
+
+The independent wave at frozen f58f4d89 ruled G3 PASS w/ blocking C1, G4 PASS w/ blocking C-1 +
+C-2, G5 PASS (F1 = the same revoke defect, ruled a mount precondition), HJ PASS, DCV PASS (F-1
+evidence-map count corrected outside the material identity; the R003 accept-time condition -
+M5-T058 accepts first - stands). The blocking findings were repaired as ONE tagged cluster
+([ORCH-CORRECTED per ...] comments in code):
+
+- G3-C1/G5-F1: `revoke` is now BOUND to the addressed property's condo - the route re-reads the
+  resolver for the path BBL (mirroring supersede) and `SiteDefinitionStore.revoke` takes a
+  REQUIRED `condo_key` the in-memory impl enforces (typed not-found on a cross-condo attempt);
+  bound by the record-layer test and the end-to-end cross-condo API regression (404 `not_found`,
+  record stays active, bound revoke still succeeds).
+- G4-C-1: `list_for_condo_key` now carries a monotone insertion-sequence secondary sort key, so
+  the ABC's newest-first contract is TRUE on a same-instant `confirmed_at` tie (the prior
+  comment's reverse-insertion claim was false under a stable sort and is corrected); bound by a
+  same-instant supersession-chain ordering test.
+- G4-C-2: `store.create` refuses a `supersedes_id`-carrying record with the new typed
+  `OrphanSupersedeError` (reject_code `supersede_via_create_refused`; exported via the facade) -
+  supersession is the only path that appends the replaced record's status flip; bound by a test.
+
+Changed files (6; the other 8 packet paths byte-unchanged from SS9): corrected LF-sha256:
+
+| Artifact | LF-sha256 |
+|---|---|
+| `services/api/app/site_definition/records.py` | `1b27ba9aac485eb6f2cb2b178e2e3889ab91cc622c451f48f041d3aea17a57e3` |
+| `services/api/app/site_definition/store.py` | `55373905c6cfbee41f1df2fd77dd61fb6f862b28aec9a320d2cf644970e829ff` |
+| `services/api/app/site_definition/__init__.py` | `5d1cb028563f47fdc89c7f4d7671c4ce2c0ba2fbc1d5eb84b87ff88203c32614` |
+| `services/api/app/api/v1/site_definition.py` | `06fced165e84f4896dcfc29b02886bb6cc6e262ac2d1fe7f0b02407a0c3dba59` |
+| `services/api/tests/site_definition/test_site_definition_records.py` | `212281fb4d185e2b9096742adda9f2521317ae4e31aca99891e1fc3660e24bf0` |
+| `services/api/tests/api/test_site_definition_api.py` | `d58690cbe9d47030c5e3980796c48fd259d4ee147df4b5a1c76d5d175940622a` |
+
+Orchestrator re-capture at this snapshot (explicit cwd): `python -m ruff check .` clean exit 0;
+`python -m pytest tests/site_definition tests/api -q` -> **582 passed** (578 + 4 rework
+bindings); `python -m pytest tests/rules -q` -> **726 passed**; `python
+tools/modularity_check.py --check` exit 0 (pre-existing tools/* warns only). Advisory findings
+NOT taken in-packet (G3 F-2..F-8, G4 A-1..A-8, G5 F2..F7, HJ-1..11) route to the discovery
+backlog / slice 2. CI at the pushed rework head is the remaining PENDING proof.

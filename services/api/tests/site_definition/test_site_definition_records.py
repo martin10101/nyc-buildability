@@ -42,6 +42,7 @@ from app.site_definition import (
     DuplicateActiveConfirmationError,
     InMemorySiteDefinitionStore,
     InvalidConfirmerError,
+    OrphanSupersedeError,
     ParcelSetMismatchError,
     ResolutionProvenanceSnapshot,
     SiteDefinitionConfirmation,
@@ -233,9 +234,16 @@ def test_revoke_requires_a_reason_and_is_terminal():
     record = store.create(_make()).record
     actor = make_confirmer("Dana Reviewer", "qualified_professional")
     with pytest.raises(TransitionReasonRequiredError):
-        store.revoke(record.record_id, reason="  ", actor=actor, at=LATER_AT.isoformat())
+        store.revoke(
+            record.record_id,
+            condo_key=CONDO_KEY,
+            reason="  ",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
     view = store.revoke(
         record.record_id,
+        condo_key=CONDO_KEY,
         reason="parcels no longer treated as one site",
         actor=actor,
         at=LATER_AT.isoformat(),
@@ -244,7 +252,11 @@ def test_revoke_requires_a_reason_and_is_terminal():
     # Terminal: a revoked record cannot be revoked or superseded again.
     with pytest.raises(ConfirmationNotActiveError):
         store.revoke(
-            record.record_id, reason="again", actor=actor, at=LATER_AT.isoformat()
+            record.record_id,
+            condo_key=CONDO_KEY,
+            reason="again",
+            actor=actor,
+            at=LATER_AT.isoformat(),
         )
     with pytest.raises(ConfirmationNotActiveError):
         store.supersede(
@@ -261,7 +273,13 @@ def test_after_revoke_a_fresh_create_is_allowed_again():
     store = InMemorySiteDefinitionStore()
     first = store.create(_make()).record
     actor = make_confirmer("Dana Reviewer", "user")
-    store.revoke(first.record_id, reason="start over", actor=actor, at=LATER_AT.isoformat())
+    store.revoke(
+        first.record_id,
+        condo_key=CONDO_KEY,
+        reason="start over",
+        actor=actor,
+        at=LATER_AT.isoformat(),
+    )
     # No active record now, so a new create is not a duplicate.
     second = store.create(_make(confirmed_at=LATER_AT)).record
     assert second.record_id != first.record_id
@@ -273,7 +291,13 @@ def test_supersede_or_revoke_of_an_unknown_record_is_not_found():
     store = InMemorySiteDefinitionStore()
     actor = make_confirmer("Dana Reviewer", "user")
     with pytest.raises(ConfirmationNotFoundError):
-        store.revoke("nope", reason="x", actor=actor, at=LATER_AT.isoformat())
+        store.revoke(
+            "nope",
+            condo_key=CONDO_KEY,
+            reason="x",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -306,7 +330,13 @@ def test_block_with_only_revoked_history_is_unconfirmed_but_lists_the_chain():
     store = InMemorySiteDefinitionStore()
     record = store.create(_make()).record
     actor = make_confirmer("Dana Reviewer", "user")
-    store.revoke(record.record_id, reason="withdrawn", actor=actor, at=LATER_AT.isoformat())
+    store.revoke(
+        record.record_id,
+        condo_key=CONDO_KEY,
+        reason="withdrawn",
+        actor=actor,
+        at=LATER_AT.isoformat(),
+    )
     views = store.list_for_condo_key(CONDO_KEY)
     block = build_site_definition_block(condo_key=CONDO_KEY, views=views)
     assert block["status"] == SITE_DEFINITION_STATUS_UNCONFIRMED
@@ -331,3 +361,58 @@ def test_a_later_differing_resolver_set_is_a_surfaced_discrepancy_not_a_status_c
         "1003030019",
         "1003030099",
     ]
+
+
+# ---------------------------------------------------------------------------
+# [ORCH-CORRECTED per T059 G3-C1, G4-C-1, G4-C-2] rework bindings (seq 122)
+# ---------------------------------------------------------------------------
+def test_revoke_is_bound_to_the_condo_key_of_the_addressed_property():
+    # G3-C1/G5-F1: a revoke addressed at a DIFFERENT condo is a typed not-found
+    # and the record stays ACTIVE - mirroring supersede's binding.
+    store = InMemorySiteDefinitionStore()
+    record = store.create(_make()).record
+    actor = make_confirmer("Dana Reviewer", "qualified_professional")
+    with pytest.raises(ConfirmationNotFoundError):
+        store.revoke(
+            record.record_id,
+            condo_key="some-other-condo",
+            reason="cross-condo attempt",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
+    assert store.get(record.record_id).status is ConfirmationStatus.ACTIVE
+
+
+def test_same_instant_pair_lists_newest_first():
+    # G4-C-1: on a confirmed_at TIE the later-inserted (newer) record lists
+    # first - the ABC's newest-first contract, now deterministic by the
+    # insertion-sequence secondary key.
+    store = InMemorySiteDefinitionStore()
+    first = store.create(_make()).record
+    superseding = _make(
+        supersedes_id=first.record_id,
+        reason="tie-break probe: replace at the same instant",
+    )
+    # Same confirmed_at as the record it supersedes (a coarse-clock durable
+    # store can produce this legally).
+    assert superseding.confirmed_at == first.confirmed_at
+    second = store.supersede(first.record_id, superseding).record
+    chain = store.list_for_condo_key(CONDO_KEY)
+    assert [view.record.record_id for view in chain] == [
+        second.record_id,
+        first.record_id,
+    ]
+    assert chain[0].status is ConfirmationStatus.ACTIVE
+
+
+def test_create_refuses_a_supersedes_id_carrying_record():
+    # G4-C-2: create() is not a supersession path - an orphan supersedes_id
+    # would mint an ACTIVE record whose chain reference the transition log
+    # never flipped.
+    store = InMemorySiteDefinitionStore()
+    orphan = _make(
+        supersedes_id="some-other-record",
+        reason="orphan probe",
+    )
+    with pytest.raises(OrphanSupersedeError):
+        store.create(orphan)

@@ -190,6 +190,16 @@ class DuplicateActiveConfirmationError(SiteDefinitionError):
     reject_code = "duplicate_active_confirmation"
 
 
+class OrphanSupersedeError(SiteDefinitionError):
+    """A ``supersedes_id``-carrying confirmation offered to ``create`` instead of
+    ``supersede`` ([ORCH-CORRECTED per T059 G4-C-2]). Admitting it would mint an
+    ACTIVE record whose chain reference the transition log never flipped — an
+    append-only-integrity hole; the supersede operation is the only path that
+    records the replaced record's status change."""
+
+    reject_code = "supersede_via_create_refused"
+
+
 class TransitionReasonRequiredError(SiteDefinitionError):
     """A supersede or revoke without a non-empty human reason (the
     ``TransitionReasonRequired`` precedent). A status change with no stated reason

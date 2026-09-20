@@ -497,9 +497,15 @@ async def revoke_site_definition_confirmation(
     bbl: str,
     record_id: str,
     request: Request,
+    resolve: SiteDefinitionResolver = Depends(get_site_definition_resolver),  # noqa: B008
     store: SiteDefinitionStore = Depends(get_site_definition_store),  # noqa: B008
 ) -> JSONResponse:
-    """Revoke an active confirmation (terminal; reason REQUIRED)."""
+    """Revoke an active confirmation (terminal; reason REQUIRED).
+
+    [ORCH-CORRECTED per T059 G3-C1/G5-F1] The revocation is BOUND to the condo
+    of the property in the request path, mirroring supersede: the resolver is
+    re-read for ``{bbl}`` and the stored record must belong to the same condo
+    key — a record of another property is a typed not-found, never revoked."""
     if not internal_rule_eval_enabled():
         return _not_found()
     correlation_id = uuid.uuid4().hex
@@ -511,6 +517,10 @@ async def revoke_site_definition_confirmation(
     if body_refusal is not None:
         return body_refusal
     assert block is not None
+    resolution, resolve_refusal = _resolve_multi_lot(canonical, correlation_id, resolve)
+    if resolve_refusal is not None:
+        return resolve_refusal
+    assert resolution is not None
     confirmer = block.get("confirmer")
     confirmer_map = confirmer if isinstance(confirmer, dict) else {}
     try:
@@ -518,6 +528,7 @@ async def revoke_site_definition_confirmation(
         reason = block.get("reason")
         view = store.revoke(
             record_id,
+            condo_key=resolution.condo_key or canonical,
             reason=reason if isinstance(reason, str) else "",
             actor=actor,
             at=datetime.now(UTC).isoformat(),

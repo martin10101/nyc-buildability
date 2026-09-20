@@ -27,6 +27,7 @@ from app.site_definition.records import (
     ConfirmationStatus,
     ConfirmationView,
     DuplicateActiveConfirmationError,
+    OrphanSupersedeError,
     SiteConfirmer,
     SiteDefinitionConfirmation,
     StatusTransition,
@@ -75,10 +76,22 @@ class SiteDefinitionStore(ABC):
 
     @abstractmethod
     def revoke(
-        self, record_id: str, *, reason: str, actor: SiteConfirmer, at: str
+        self,
+        record_id: str,
+        *,
+        condo_key: str,
+        reason: str,
+        actor: SiteConfirmer,
+        at: str,
     ) -> ConfirmationView:
         """Revoke the ACTIVE record ``record_id`` (reason required); append a
-        terminal revoked transition. Returns the revoked record's view."""
+        terminal revoked transition. Returns the revoked record's view.
+
+        [ORCH-CORRECTED per T059 G3-C1/G5-F1] ``condo_key`` BINDS the revocation
+        to the condo the caller addressed: implementations MUST refuse (typed
+        not-found, mirroring :meth:`supersede`'s binding) when the stored record's
+        ``condo_key`` differs — the path identity is the route's only resource
+        scoping, and an unbound revoke is a cross-property IDOR at mount time."""
 
 
 class InMemorySiteDefinitionStore(SiteDefinitionStore):
@@ -90,6 +103,13 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         # Insertion-ordered immutable records, and the append-only transition log.
         self._records: dict[str, SiteDefinitionConfirmation] = {}
         self._transitions: list[StatusTransition] = []
+        # [ORCH-CORRECTED per T059 G4-C-1] monotone insertion sequence: the
+        # deterministic tie-breaker that makes "newest first" TRUE on a
+        # same-instant confirmed_at pair (Python's stable sort preserves
+        # insertion order for equal keys, so a timestamp alone cannot honor
+        # the ABC's newest-first contract on a tie).
+        self._insertion_seq: dict[str, int] = {}
+        self._next_seq = 0
 
     # -- derivation (the append-only log is the source of truth for status) ---
     def _current_status(self, record_id: str) -> ConfirmationStatus:
@@ -145,7 +165,24 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         return record
 
     # -- operations ----------------------------------------------------------
+    def _record_insert(self, confirmation: SiteDefinitionConfirmation) -> None:
+        self._records[confirmation.record_id] = confirmation
+        self._insertion_seq[confirmation.record_id] = self._next_seq
+        self._next_seq += 1
+
     def create(self, confirmation: SiteDefinitionConfirmation) -> ConfirmationView:
+        # [ORCH-CORRECTED per T059 G4-C-2] a supersedes_id-carrying record MUST
+        # go through supersede() (which flips the old record's status as an
+        # appended transition); admitting it here would create an ACTIVE record
+        # whose chain reference points at nothing the log ever flipped — an
+        # append-only-integrity hole at the public ABC boundary.
+        if confirmation.supersedes_id is not None:
+            raise OrphanSupersedeError(
+                "a confirmation that supersedes another record "
+                f"({confirmation.supersedes_id!r}) cannot be created directly; "
+                "use the supersede operation so the superseded record's status "
+                "change is appended to the transition log"
+            )
         active = self._active_record_for(confirmation.condo_key)
         if active is not None:
             raise DuplicateActiveConfirmationError(
@@ -154,7 +191,7 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
                 "supersede it instead of creating a duplicate - only one site "
                 "definition is active per condo at a time"
             )
-        self._records[confirmation.record_id] = confirmation
+        self._record_insert(confirmation)
         return self._view(confirmation)
 
     def get(self, record_id: str) -> ConfirmationView:
@@ -171,9 +208,19 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
             for record in self._records.values()
             if record.condo_key == condo_key
         ]
-        # Newest first: by confirmed_at (RFC 3339 sorts lexically), then by the
-        # reverse of insertion order so a same-instant pair is still deterministic.
-        views.sort(key=lambda view: view.record.confirmed_at, reverse=True)
+        # Newest first: by confirmed_at (RFC 3339 sorts lexically) with the
+        # insertion sequence as the deterministic secondary key, so a
+        # same-instant pair lists the LATER-inserted record first — the
+        # newest-first contract holds even on a timestamp tie.
+        # [ORCH-CORRECTED per T059 G4-C-1: the prior comment claimed reverse
+        # insertion order on ties, but a stable reverse sort preserves it.]
+        views.sort(
+            key=lambda view: (
+                view.record.confirmed_at,
+                self._insertion_seq.get(view.record.record_id, -1),
+            ),
+            reverse=True,
+        )
         return tuple(views)
 
     def supersede(
@@ -197,7 +244,7 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
                 "a superseding confirmation must belong to the same condo key as "
                 "the record it supersedes"
             )
-        self._records[new_confirmation.record_id] = new_confirmation
+        self._record_insert(new_confirmation)
         self._transitions.append(
             StatusTransition(
                 record_id=old_id,
@@ -212,13 +259,27 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         return self._view(new_confirmation)
 
     def revoke(
-        self, record_id: str, *, reason: str, actor: SiteConfirmer, at: str
+        self,
+        record_id: str,
+        *,
+        condo_key: str,
+        reason: str,
+        actor: SiteConfirmer,
+        at: str,
     ) -> ConfirmationView:
         if not isinstance(reason, str) or not reason.strip():
             raise TransitionReasonRequiredError(
                 "a reason is required to revoke a site-definition confirmation"
             )
-        self._require_active(record_id)
+        record = self._require_active(record_id)
+        # [ORCH-CORRECTED per T059 G3-C1/G5-F1] the revocation is BOUND to the
+        # condo the caller addressed, mirroring supersede's binding: a record
+        # belonging to a different condo is a typed not-found, never revoked.
+        if record.condo_key != condo_key:
+            raise ConfirmationNotFoundError(
+                "the confirmation being revoked must belong to the same condo "
+                "key as the property addressed by the request path"
+            )
         self._transitions.append(
             StatusTransition(
                 record_id=record_id,
