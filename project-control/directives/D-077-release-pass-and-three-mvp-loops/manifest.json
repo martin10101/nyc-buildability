@@ -10,7 +10,7 @@
   "issued_at": "2026-09-19",
   "captured_at": "2026-09-20T03:32:52+00:00",
   "created_at": "2026-09-20T03:32:52+00:00",
-  "updated_at": "2026-09-20T03:46:03+00:00",
+  "updated_at": "2026-09-20T06:15:56+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "9c5870ed5eb394208a149797ca60f81add422682",
   "capture_head_sha": null,
@@ -27,7 +27,7 @@
     "D-077-R003",
     "D-077-R004"
   ],
-  "requirements_content_digest_sha256": "95080f6e13888a6ca67490f75518dce32cd8da14dbf144198619a00220580a81",
+  "requirements_content_digest_sha256": "da58b2e8f39b0fa92f32f3fcc971f927f4ac4bb03a6d111abe05c03fd50cdd90",
   "sources": [
     {
       "file": "source-001.md",
@@ -64,6 +64,12 @@
       "actor": "orchestrator",
       "action": "applicability_append",
       "note": "Bound the D-077 three-lane contract seam: M5-T054 (phase B2 proposal-conditioned rule checks; first production caller of derive_proposal - the T051-G5 wiring preconditions bind in-packet), M5-T055 (DB-035 confirm-arc rider cluster), M5-T056 (DB-036 condo-surface rider cluster). Append-only, task_ids only; no requirement text changed. Digest resynced 89ff0708 -> 95080f6e in the SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-20T06:15:56+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound M5-T057 (phase B3 slice 1: proposal-check route carrying BP-1..BP-7 + T053 residuals + G4 fold-ins) to D-077-R002/D-077-R003. Append-only, task_ids only. Digest resynced 95080f6e -> da58b2e8 SAME commit (c14)."
     }
   ]
 }

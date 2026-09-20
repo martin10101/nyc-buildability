@@ -1,0 +1,113 @@
+{
+  "task_id": "M5-T057",
+  "title": "Phase B3 slice 1 (D-076): proposal-check route - check_proposal endpoint carrying BP-1..BP-7, T053-wave residual closures, and the G4 fold-in tests",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire the accepted B2 proposal-check engine to its first (internal, flag-gated) HTTP seam: a proposal-checks endpoint that accepts a proposed_massing payload + lot context, runs the B0 validation and the B2 check_proposal engine, and returns the grouped PASS/FAIL/COULD-NOT-CHECK results with numeric shortfalls for the editor UI (B3 slice 2) to consume. The route is the trust boundary: all seven G5-recorded preconditions BP-1..BP-7 are enforced here. Also close the four T053-wave route residuals (400-cap truncation branch, 500-path, surrogate strict-JSON guard half, shared-flag coupling note) and bind the four G4-advisory branches of the B2 module with tests (AMBIGUOUS_RULE, NO_APPLICABLE_RULE, commensurable MINIMUM direction, street-line finiteness + LotContext type guard).",
+  "business_reason": "B2 gave us the check engine; this route is the ONE trust boundary between editor input and that engine - it carries every security precondition the G5 wave recorded, and it is the seam the editor UI (B3 slice 2) will call",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph current at this contract seam). The accepted seams you CONSUME READ-ONLY: app/rules/proposal_checks.py (B2 engine - check_proposal is the ONLY entry you may call, never derive_proposal directly: BP-1), app/scenario/proposal_input_gate.py (T053's DB-034(a)/(b) input gate - reuse it; if it is insufficient for this route, surface a discovery, never edit it), app/scenario/proposal.py (validator), app/scenario/derivation.py (LotContext types). api/v1/proposal_validation.py (T053's route; consumed by main.py + its test file) is IN scope ONLY for the four residual closures. main.py mounts routers (T053 precedent at its condo/validation mounts). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; the graph is ADVISORY - verify in source.",
+    "SCOPE 1/3 - THE CHECK ROUTE (binding; read docs/PROPOSAL_EDITOR_PHASED_PLAN.md phase-B B3 row, project-control/reports/M5-T054-G5.md (BP-1..BP-7 verbatim), M5-T054-G4.md (G4-1..G4-4), docs/DISCOVERY_BACKLOG.md rows DB-034/DB-035/DB-036, and api/v1/proposal_validation.py FIRST): NEW route module services/api/app/api/v1/proposal_checks_api.py mounted in main.py - internal, flag-gated on the EXISTING INTERNAL_RULE_EVAL_ENABLED (flag off = the same not-found behavior as T053's route; include_in_schema=False; no new flag, no new public surface). POST payload: the proposed_massing block + lot context (area, provenance, lot-line segments, optional attested street lines) + lot rule facts + scenario_label/proposal_id. Behavior: (1) request boundary FIRST - reuse the T053 input-gate discipline for size/strings (read-only reuse); enforce BP-2 (scenario_label + proposal_id: explicit length caps and a conservative charset, typed refusal) and BP-7 (bounded request body; this is an internal route - no auth change in this packet, record the disposition that authn/tenancy arrive with the public exposure packet); (2) BP-4 compute budget - enforce ROUTE-LEVEL practical caps TIGHTER than the library ceilings (exterior walls and lot-line segments capped so the documented worst-case wall-by-segment product stays under ~1e6 segment tests; show the arithmetic in a comment + test), typed refusal naming the cap; (3) BP-5 - validate lot_rule_facts VALUE types/domains against the evaluator's input vocabulary before feeding (bad type/domain = typed 422 naming the exact field; unmapped keys are surfaced in the response as unmapped, never fed); (4) call check_proposal ONCE (BP-1) and serialize the grouped report (results with provided/required/unit/shortfall, could_not_check reasons, summary counts incl. could_not_check_count) for the editor; (5) BP-3 - EVERY error path length-caps embedded values: wrap the call so a propagated ProposalDerivationError/ProposedMassingError detail is length-capped before serialization (the B0 validator's uncapped vertex repr class from G5-3 must never reach a response uncapped); (6) BP-6/DB-034(d) - this route emits NO scenario document and NO contract version; prove it and record the disposition (emission stays with the scenario-workspace save path, B3 slice 2 territory).",
+    "SCOPE 2/3 - T053 ROUTE RESIDUALS (binding): in api/v1/proposal_validation.py + tests/api/test_proposal_validation_api.py close the four recorded residuals: (a) the 400-cap truncation branch gets a binding test (an over-cap payload whose refusal detail is truncated to the exact cap); (b) the 500-path gets a test (a forced internal error returns the typed bounded 500, no stack/value leak); (c) the surrogate half of the strict-JSON guard gets a test (a lone-surrogate payload refuses typed); (d) the shared-flag coupling note: add the explicit test that BOTH routes (validation + checks) gate on the same flag and their off-behavior is identical (the coupling is deliberate; the test documents it).",
+    "SCOPE 3/3 - G4 FOLD-IN TESTS (binding): in services/api/tests/rules/test_proposal_checks.py add the four binding tests the G4 wave recorded (M5-T054-G4.md): (1) AMBIGUOUS_RULE - two usable same-family rules yield could_not_check/ambiguous_rule with required_value None (never picks a winner); (2) NO_APPLICABLE_RULE - an applicable-elsewhere rule with non-matching facts yields could_not_check/no_applicable_rule; (3) a commensurable MINIMUM-direction check exercising _compare's minimum branch end-to-end (PASS when provided>=required; FAIL with shortfall = required-provided); (4) street-line coordinate finiteness + the lot-must-be-LotContext guard refusals. Use the existing fixture registry pattern; hand-computed values with shown arithmetic; NO edit to app/rules/proposal_checks.py itself (its behavior is accepted - these tests BIND existing behavior).",
+    "PRESERVATION (binding): app/rules/**, app/scenario/** (incl. proposal_input_gate.py), packages/contracts/**, apps/web/** are READ-ONLY; proposal_validation.py changes are LIMITED to the residual closures (accepted semantics byte-preserved otherwise); main.py change is the one mount line (T053 precedent); every existing suite green unchanged; no new dependency; no new flag; modularity: the route module focused and below warn tier.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "services/api/app/api/v1/proposal_checks_api.py: the flag-gated internal check endpoint enforcing BP-1..BP-7 (request caps, value validation, capped error details, bounded compute, single check_proposal call, no emission)",
+    "T053 residual closures in proposal_validation.py + its test file (400-cap truncation, 500-path, surrogate guard, shared-flag coupling test)",
+    "G4-1..G4-4 binding tests in tests/rules/test_proposal_checks.py (no engine edit)",
+    "services/api/tests/api/test_proposal_checks_api.py: route test pack incl. the rectangle fixture end-to-end through HTTP",
+    "project-control/reports/M5-T057-producer-report.md (one concise evidence pass incl. the BP-6/BP-7 dispositions)"
+  ],
+  "dependencies": [
+    "M5-T054"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_proposal_checks_api.py",
+    "services/api/tests/api/test_proposal_validation_api.py",
+    "services/api/tests/rules/test_proposal_checks.py",
+    "project-control/reports/M5-T057-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "services/api/app/profile/",
+    "packages/contracts/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (end-to-end): the B2 rectangle fixture posted through the route returns the exact accepted arithmetic (coverage FAIL 0.125 shortfall; height PASS 30<=60 attested / COULD_NOT_CHECK unattested; the two non-commensurable checks COULD_NOT_CHECK) with the scenario label and summary counts; flag off returns the same not-found as T053's route.",
+    "AS-2 (BP-2/BP-3): an over-length or bad-charset scenario_label/proposal_id refuses typed at the boundary; a payload engineered to raise the B0 validator's vertex-repr error returns a response whose embedded detail is length-capped (the uncapped-repr class provably cannot reach a client).",
+    "AS-3 (BP-4): route-level caps documented with shown worst-case arithmetic (<~1e6 segment tests); at-cap payload completes, above-cap refuses typed naming the cap; no unbounded compute path.",
+    "AS-4 (BP-5): a lot_rule_facts value of the wrong type/domain refuses typed naming the field; unmapped keys are surfaced as unmapped in the response and never fed to the evaluator.",
+    "AS-5 (BP-1/BP-6): the route's only engine entry is check_proposal (grep + import proof); no scenario document or contract version is constructed anywhere in the route (disposition recorded for the B3 slice-2 save path).",
+    "AS-6 (T053 residuals): the four named branches each have a binding test (400-cap truncation exactness, bounded 500, lone-surrogate refusal, shared-flag coupling equivalence).",
+    "AS-7 (G4 fold-ins): AMBIGUOUS_RULE, NO_APPLICABLE_RULE, the commensurable MINIMUM branch, and the street-line-finiteness + LotContext-type guards each bound by a test with hand-shown values; app/rules/proposal_checks.py byte-unchanged.",
+    "AS-8 (proof): ruff clean; `python -m pytest tests/api -q` and `python -m pytest tests/rules -q` green offline from services/api; modularity exit 0; every pre-existing suite green; CI green at the pushed head."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The route is the FUTURE public trust boundary: G5 will verify each BP CLOSED at this seam - a missed cap or an uncapped error path fails the wave.",
+    "proposal_input_gate.py and the B2 engine are accepted read-only seams: needing to edit either = STOP + discovery.",
+    "Disjointness: M5-T055/M5-T056 are awaiting_gate with frozen path identities - this packet touches NONE of their files (mechanically recorded in G0); main.py is shared history but held by no live lane.",
+    "The shared-flag coupling is deliberate (T053 record) - document it with the test, do not introduce a second flag.",
+    "No emission here: constructing a scenario document in this route would bypass the input-gate string bounds (the exact DB-034(d) hazard)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T06:14:44.693588+00:00",
+  "updated_at": "2026-09-20T06:14:45.251727+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T06:14:44.693588+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api -q",
+    "python -m pytest tests/rules -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
