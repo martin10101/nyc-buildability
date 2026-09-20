@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-082",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

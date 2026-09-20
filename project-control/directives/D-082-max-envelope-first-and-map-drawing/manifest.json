@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-082",
+ "version": 1,
+ "slug": "max-envelope-first-and-map-drawing",
+ "title": "Owner 2026-09-20 ('Go ahead and build it but ... first and formust the AI should calculate what's the Max'): post-B3 checkpoint PASSED for the named continuation - deterministic maximum-buildable-envelope calculation (all rules included, per-dimension binding-rule provenance, honest gaps) presented FIRST as the leading answer, one-action adoption into the editor; manual entry (numeric editor + the released map-drawing slice w/ 4326-to-2263 bridge) stays the option; phase C/D NOT released; holds/gates unchanged; scenario emission stays deferred",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-20",
+ "captured_at": "2026-09-20T23:05:00+00:00",
+ "created_at": "2026-09-20T23:05:00+00:00",
+ "updated_at": "2026-09-20T23:05:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "0981d0bb0baccc0076ddafef4c39db19c9a97cb1",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction at the D-076-R003 named post-B3 owner-review checkpoint, in reply to the orchestrator's checkpoint question and after the owner's own usability probe; passes the checkpoint for the named continuation and adds the maximum-first requirement."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-082-R001",
+  "D-082-R002",
+  "D-082-R003"
+ ],
+ "requirements_content_digest_sha256": "bed1283fb3b4a3b22228f427eca8f2ef48c1b82039e1adaa135beba50178ca82",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T23:05:00+00:00",
+   "content_digest_sha256": "517294704489cc4034f1d9969de8f99722dd513099dfa1be9d904e7ab1795041"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_feature",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "the maximum-envelope-first capability (deterministic engine + leading UX + one-action adoption) and the map-drawing input slice (outline drawing + 4326-to-2263 bridge into the accepted draft model), contracted at seams under the normal gated process",
+  "forbidden": "phase C (assisted PDF import) / phase D on this authority; any held surface (expansion section 2 minus the D-040/D-076 scoped releases); scenario emission/persistence of the computed maximum; any LLM-calculated legal value (permanent principle 1 - deterministic code calculates)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T23:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 244 accepted; M5-T060 (phase B3 slice 2) accepted this session with the D-076-R003 checkpoint queued and B4+ deliberately not contracted; loops 2/3 building T062/T063; loop-1 idle - the first D-082 increment contracts for it at this seam. frozen_baseline_sha = the 0981d0bb T060-acceptance-seam head (git-resolved full sha, this capture's parent)."
+  }
+ ]
+}

@@ -1,0 +1,103 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-082",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T23:05:00+00:00",
+ "requirements": [
+  {
+   "id": "D-082-R001",
+   "text": "Post-B3 checkpoint PASSED for the named continuation ('Go ahead and build it'): the B-track proceeds with (a) the maximum-envelope-first capability (R002/R003) and (b) the map-drawing input slice (the B3-deferred outline drawing on the lot map + the 4326-to-2263 bridge feeding the SAME draft model), contracted at seams under the normal gated process. Boundary: phase C (assisted PDF import) and phase D are NOT released by this directive; the expansion/3D hold (section 2 minus the D-040/D-076 scoped releases), Tier D / Section 20 hard stops, PR #241, dependency security, and all gates stand unchanged; scenario emission/persistence stays deferred per the recorded B3 posture (the computed maximum is presented and checked live, not persisted as a scenario document).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-082-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Packets contracted under this directive cite it; no packet touches phase-C/D scope or held surfaces on its authority; the ledger shows the continuation contracted at seams with G0 records.",
+   "required_evidence": "Task packets + G0 records + gate/DCV records for each increment.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; first increment contracts this session.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-082-R002",
+   "text": "MAXIMUM-FIRST CALCULATION ('first and formust the AI should calculate what's the Max? Height width and so on ... before it even looks at the way the designer is going to calculate ... the maximum approach possible ... with all the rules included'): the system computes the maximum buildable envelope for the analyzed lot - height, footprint/width, floor area, and the shape constraints the rules impose (setback/yard/wall-placement classes as computable) - under ALL applicable rules, BEFORE any designer input exists. Permanent-principle mapping (binding): DETERMINISTIC CODE computes the envelope (the rules/scenario engine), never an LLM; every computed dimension carries provenance naming the BINDING rule; where a rule cannot be computed for the lot, the gap is shown honestly (the COULD_NOT_CHECK discipline) - never guessed, never silently omitted; the computed maximum must itself PASS the existing proposal-checks engine when expressed as a massing (the generator-checker consistency proof).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-082-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Executable acceptance scenarios proving: per-dimension rule provenance; the every-rule-included conservatism (the binding constraint per dimension is the tightest applicable rule); honest gaps; the generator's output re-checked green by the accepted checker; determinism (same lot + same rules = byte-stable output).",
+   "required_evidence": "Engine module + tests + gate wave records at the increment's acceptance.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-082-R003",
+   "text": "MAX LEADS, MANUAL STAYS ('if the designer wants to do it manually, that's an option ... but the a i's answer should always be. The designers in terms of usability'): the computed maximum is the LEADING answer in the product experience - the designer sees it first (before entering anything) and can adopt it as the starting draft in the editor with one action; manual entry (the accepted numeric editor, and the map-drawing input once built) remains fully available as the option. Honesty discipline unchanged and binding: the computed maximum is labeled as a rules-derived estimate - not a city record, not a permit, professional review required (D-076-R002 / D-073-R006 vocabulary); adopting it into the editor keeps every downstream value labeled proposed.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-082-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "UI acceptance scenarios proving: the maximum renders before designer input; one-action adoption into the editor; manual paths intact; the estimate labeling present on every max-derived surface.",
+   "required_evidence": "Web increment + specs + HJ walkthrough at the increment's acceptance.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

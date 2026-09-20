@@ -1060,7 +1060,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-081-season-restart-three-loops/manifest.json"
+  },
+  {
+   "directive_id": "D-082",
+   "slug": "max-envelope-first-and-map-drawing",
+   "title": "Owner 2026-09-20 ('Go ahead and build it but ... first and formust the AI should calculate what's the Max'): post-B3 checkpoint PASSED for the named continuation - deterministic maximum-buildable-envelope calculation (all rules included, per-dimension binding-rule provenance, honest gaps) presented FIRST as the leading answer, one-action adoption into the editor; manual entry (numeric editor + the released map-drawing slice w/ 4326-to-2263 bridge) stays the option; phase C/D NOT released; holds/gates unchanged; scenario emission stays deferred",
+   "status": "active",
+   "issued_at": "2026-09-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-082-max-envelope-first-and-map-drawing/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T16:38:00+00:00"
+ "updated_at": "2026-09-20T23:05:00+00:00"
 }
