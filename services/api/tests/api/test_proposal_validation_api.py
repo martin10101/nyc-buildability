@@ -653,6 +653,9 @@ def test_residual_a_400_char_message_cap_truncation_branch(client, monkeypatch):
     assert "truncated" in message
     # Cap (400) + a short truncation marker naming the true length; comfortably under 500.
     assert 400 < len(message) < 500
+    # [ORCH-CORRECTED per G3-F4/G4-F-1]: bind the cap VALUE exactly - the marker begins at
+    # exactly the 400-char prefix boundary, so cap drift (e.g. 400 -> 450) fails here.
+    assert message.index("...<truncated;") == 400
 
 
 def test_residual_b_forced_internal_error_is_bounded_500(client, monkeypatch):

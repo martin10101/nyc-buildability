@@ -23,8 +23,11 @@ enforced here, in order, fail-closed:
   boundary (typed refusal); they are copied into every result and rendered by B3.
 * BP-4 - ROUTE-LEVEL practical caps TIGHTER than the B2 library ceilings so the documented
   worst-case wall-by-segment distance-test product stays well under ~1e6 (see the arithmetic on
-  :data:`ROUTE_MAX_EXTERIOR_WALLS` below). The outline-simplicity work is separately bounded by the
-  reused DB-034(a) global vertex budget.
+  :data:`ROUTE_MAX_EXTERIOR_WALLS` below). The O(n^2) outline-simplicity work is ALSO route-capped
+  ([ORCH-CORRECTED per G5-F2]): :data:`ROUTE_MAX_TOTAL_OUTLINE_POSITIONS` bounds the total outline
+  positions far below the inherited DB-034(a) budget, and the two CPU-bound validation/check calls
+  run off the event loop via ``run_in_threadpool`` so a worst-case request cannot stall the worker
+  process's other endpoints.
 * BP-5 - the mapped ``lot_rule_facts`` are validated against the evaluator's OWN declared input
   vocabulary before anything is fed: a bad VALUE TYPE, or a string value outside an
   enum-constrained input's declared DOMAIN (derived from the registry's rule input specs - never
@@ -36,7 +39,12 @@ enforced here, in order, fail-closed:
 * BP-3 - EVERY error path length-caps any embedded value: a propagated
   ``ProposalCheckError`` / ``ProposalDerivationError`` / ``ProposedMassingError`` detail (including
   the B0 validator's uncapped bad-vertex ``repr`` from G5-3) is passed through
-  :func:`_bounded_message` before it can reach a client.
+  :func:`_bounded_message` before it can reach a client, and the refusal ``field`` key is capped
+  by :func:`_bounded_field` on every response AND log path ([ORCH-CORRECTED per G3-F1/G5-F1/G5-F4]).
+  The lot-side caller ids (``lot.lot_line_segments[].id`` / ``lot.street_lines[].wall_id``) are
+  bounded at the boundary with the BP-2 label discipline, and the caller-supplied provenance /
+  attestation objects and ``lot_rule_facts`` KEYS are size/charset-bounded too, so no unbounded
+  caller string can ride a refusal field, a 200-path provenance echo, or a log record.
 
 Every non-disabled response carries ``X-Correlation-ID``. The exact emitted (HTTP status, state)
 pairs are the single source of truth :data:`PROPOSAL_CHECKS_STATUS_STATE_MATRIX`; the 200 report
@@ -45,6 +53,7 @@ carries NO ``state`` (pair ``(200, None)``), mirroring the accepted sibling rout
 
 from __future__ import annotations
 
+import functools
 import json
 import logging
 import re
@@ -53,6 +62,7 @@ from typing import Any, cast
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool
 
 # Reuse the accepted T053 request-boundary primitives (read-only reuse per the packet): the raw
 # body ceiling + bounded-streaming accumulator, the Content-Length fast-path parser, and the
@@ -78,15 +88,26 @@ from app.scenario.derivation import (
     ProposalDerivationError,
 )
 from app.scenario.proposal import ProposedMassingError
-from app.scenario.proposal_input_gate import validate_proposed_massing_input
+
+# _total_position_count is the gate's OWN O(n) position counter (read-only reuse, the same
+# private-reuse pattern as the T053 body primitives above): the route's BP-4 outline cap must
+# count positions EXACTLY the way the DB-034(a) budget does, never a second parallel definition.
+from app.scenario.proposal_input_gate import (
+    MAX_TOTAL_VERTICES,
+    _total_position_count,
+    validate_proposed_massing_input,
+)
 
 __all__ = [
     "MAX_BODY_BYTES",
+    "MAX_FIELD_LEN",
     "MAX_LABEL_LEN",
+    "MAX_PROVENANCE_BYTES",
     "PROPOSAL_CHECKS_STATUS_STATE_MATRIX",
     "ROUTE_MAX_EXTERIOR_WALLS",
     "ROUTE_MAX_LOT_LINE_SEGMENTS",
     "ROUTE_MAX_STREET_LINES",
+    "ROUTE_MAX_TOTAL_OUTLINE_POSITIONS",
     "get_proposal_check_registry",
     "router",
 ]
@@ -106,6 +127,17 @@ MAX_LABEL_LEN = 200
 #: it), so the entire string, not a prefix, must be in the charset.
 _LABEL_CHARSET = re.compile(r"[A-Za-z0-9 ._:\-]+")
 
+# --- BP-3: refusal-field + provenance-object bounds ([ORCH-CORRECTED per G3-F1/G5-F1]) ---------
+#: Hard cap on the refusal ``field`` value on EVERY response and log path. A legitimate field is
+#: a dotted path of literal segments, integer indexes, and (route-bounded) short ids - it can
+#: never legitimately approach this length, so anything longer is truncated with a marker before
+#: it can reach a client or a log record (the G3-F1/G5-F1 uncapped-reflection class).
+MAX_FIELD_LEN = 200
+#: Serialized-size ceiling for the small caller-supplied objects the engine republishes verbatim
+#: into results (``lot.area_provenance`` -> ``provided_provenance``; each street line's
+#: ``attestation``): a large/deeply nested blob is refused typed here (G5-F1 200-path exposure).
+MAX_PROVENANCE_BYTES = 2048
+
 # --- BP-4: route-level compute caps, TIGHTER than the B2 library ceilings ---------------------
 # The dominating cost inside the single derive_proposal call is the wall x lot-line and
 # wall x street-line distance tests (M5-T054 G5-2). The B2 library ceilings admit
@@ -117,11 +149,31 @@ _LABEL_CHARSET = re.compile(r"[A-Za-z0-9 ._:\-]+")
 # worst-case OPERATION-COUNT bound the route caps impose on the derivation's dominating loop,
 # independent of the payload's contents - a bounded compute budget, not a wall-clock/timing
 # guarantee (throughput depends on the host). Each cap is strictly below its B2 counterpart.
-# (The per-outline simplicity work is bounded separately by the reused DB-034(a) global vertex
-# budget, MAX_TOTAL_VERTICES = 5000.)
+#
+# [ORCH-CORRECTED per G5-F2] The O(n^2) outline-SIMPLICITY pass is a SECOND compute surface the
+# product above does not cover, and this route runs the block validation TWICE (the explicit
+# input-gate call, then check_proposal's own internal validate) - under the inherited DB-034(a)
+# budget alone (MAX_TOTAL_VERTICES = 5000) that admitted ~2 x 5000^2/2 = 2.5e7 pair tests
+# (~17 s measured). ROUTE_MAX_TOTAL_OUTLINE_POSITIONS caps the total outline positions at 1200,
+# counted with the gate's OWN counter, so the simplicity work is bounded at
+#     2 passes x 1200 x 1199 / 2  ~= 1.44e6 pair tests.
+# The route's TOTAL documented worst case is therefore ~600,000 + ~1,440,000 ~= 2.0e6 bounded
+# operations (~12x tighter than the inherited budget's simplicity term alone), and BOTH CPU-bound
+# calls run off the event loop via run_in_threadpool so even the at-cap case cannot stall the
+# worker's other endpoints.
 ROUTE_MAX_EXTERIOR_WALLS = 500
 ROUTE_MAX_LOT_LINE_SEGMENTS = 800
 ROUTE_MAX_STREET_LINES = 400
+ROUTE_MAX_TOTAL_OUTLINE_POSITIONS = 1200
+
+# Import-time guard (same pattern as the BP-5 fact-type table): the route's outline cap must stay
+# STRICTLY below the inherited DB-034(a) budget or the "tighter than the library ceiling" claim
+# silently rots.
+if ROUTE_MAX_TOTAL_OUTLINE_POSITIONS >= MAX_TOTAL_VERTICES:
+    raise ValueError(
+        "ROUTE_MAX_TOTAL_OUTLINE_POSITIONS must be strictly below the inherited "
+        f"MAX_TOTAL_VERTICES ({MAX_TOTAL_VERTICES})"
+    )
 
 # --- BP-5: mapped lot_rule_fact value types + domains (the evaluator input vocabulary) --------
 # A caller fact whose KEY is not in CALLER_RULE_INPUT_NAMES is never fed (the B2 engine records it
@@ -214,18 +266,28 @@ def _not_found() -> JSONResponse:
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
+def _bounded_field(field: str | None) -> str | None:
+    """BP-3 ([ORCH-CORRECTED per G3-F1/G5-F1]): hard-cap a refusal ``field`` before it reaches a
+    client OR a log record. Legitimate dotted field paths are short; the truncation marker names
+    the original length only (never more of the value)."""
+    if field is None or len(field) <= MAX_FIELD_LEN:
+        return field
+    return field[:MAX_FIELD_LEN] + f"...<truncated; {len(field)} chars total>"
+
+
 def _validation_error(
     message: str, correlation_id: str, *, field: str | None = None
 ) -> JSONResponse:
     """Typed (422, "validation_error") with a BOUNDED reason (BP-3), optionally naming the exact
-    ``field``. Never a traceback / path / secret / internal string."""
+    ``field`` (itself bounded by :func:`_bounded_field` - the G3-F1/G5-F1 class). Never a
+    traceback / path / secret / internal string."""
     body: dict[str, object] = {
         "state": "validation_error",
         "message": _bounded_message(message),
         "correlation_id": correlation_id,
     }
     if field is not None:
-        body["field"] = field
+        body["field"] = _bounded_field(field)
     return _json(422, body, correlation_id)
 
 
@@ -293,6 +355,30 @@ def _validate_lot_rule_fact_types(facts: dict) -> None:
         # else: unmapped -> not validated, never fed (B2 engine records it as unmapped).
 
 
+def _validate_lot_rule_fact_keys(facts: dict) -> None:
+    """BP-2-discipline bound on EVERY ``lot_rule_facts`` KEY ([ORCH-CORRECTED per G3-F3/G5-F1]):
+    unmapped keys are surfaced verbatim in the 200 body's ``unmapped_lot_facts`` and rendered by
+    B3, so a key gets the same length + conservative-charset ceiling as a label (every mapped key
+    already conforms). The refusal echoes the key's LENGTH only, never the key."""
+    for key in facts:
+        if not isinstance(key, str) or not key:
+            raise _FieldRefusal(
+                "lot_rule_facts keys must be non-empty strings", field="lot_rule_facts"
+            )
+        if len(key) > MAX_LABEL_LEN:
+            raise _FieldRefusal(
+                f"a lot_rule_facts key exceeds MAX_LABEL_LEN ({MAX_LABEL_LEN}); "
+                f"got {len(key)} characters",
+                field="lot_rule_facts",
+            )
+        if not _LABEL_CHARSET.fullmatch(key):
+            raise _FieldRefusal(
+                "a lot_rule_facts key contains characters outside the allowed set "
+                "[A-Za-z0-9 ._:-]",
+                field="lot_rule_facts",
+            )
+
+
 def _derive_enum_domains(registry: RuleRegistry) -> dict[str, frozenset[str]]:
     """The accepted-value domain of each mapped caller input, taken from the registry's OWN
     declared input vocabulary (``InputSpec.enum``) - never an invented list. An input is
@@ -342,11 +428,31 @@ def _to_point(value: Any) -> Any:
     return value
 
 
+def _require_bounded_object(value: dict, field: str) -> dict:
+    """Size-bound a small caller-supplied object the engine republishes verbatim into results
+    ([ORCH-CORRECTED per G5-F1]): refuse typed when its strict-JSON serialization exceeds
+    MAX_PROVENANCE_BYTES. Never echoes the value (only the byte count)."""
+    try:
+        encoded = json.dumps(value, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except Exception:
+        raise _FieldRefusal(f"{field} is not strict-JSON serializable", field=field) from None
+    if len(encoded) > MAX_PROVENANCE_BYTES:
+        raise _FieldRefusal(
+            f"{field} exceeds MAX_PROVENANCE_BYTES ({MAX_PROVENANCE_BYTES}); "
+            f"got {len(encoded)} bytes",
+            field=field,
+        )
+    return value
+
+
 def _build_lot_context(lot: object) -> LotContext:
-    """Construct a :class:`LotContext` from the request ``lot`` object, DEFENSIVELY: only the
-    outer shapes are checked here (the object, its two list fields). Coordinate/area finiteness
-    and the list-size ceilings are left to :func:`check_proposal`'s own preconditions (BP-1), so
-    the deep refusals carry the engine's exact dotted fields."""
+    """Construct a :class:`LotContext` from the request ``lot`` object, DEFENSIVELY: the outer
+    shapes are checked here, and ([ORCH-CORRECTED per G3-F1/G5-F1]) the caller-supplied ids and
+    republished objects are BOUNDED here - `lot.lot_line_segments[].id` / `street_lines[].wall_id`
+    get the BP-2 label discipline (they ride engine field paths, 200-path provenance ids, and
+    logs), and `area_provenance` / `attestation` get the serialized-size ceiling. Coordinate/area
+    finiteness and the list-size ceilings stay with :func:`check_proposal`'s own preconditions
+    (BP-1), so the deep refusals carry the engine's exact dotted fields."""
     if not isinstance(lot, dict):
         raise _FieldRefusal("lot must be an object", field="lot")
     # The values are untrusted, dynamic JSON. check_proposal enforces the REAL runtime contract
@@ -358,6 +464,7 @@ def _build_lot_context(lot: object) -> LotContext:
         raise _FieldRefusal(
             "lot.area_provenance must be an object", field="lot.area_provenance"
         )
+    _require_bounded_object(area_provenance, "lot.area_provenance")
     lot_line_raw = lot.get("lot_line_segments", [])
     if not isinstance(lot_line_raw, list):
         raise _FieldRefusal(
@@ -375,9 +482,12 @@ def _build_lot_context(lot: object) -> LotContext:
                 field=f"lot.lot_line_segments[{idx}]",
             )
         seg = cast("dict[str, Any]", seg)
+        # [ORCH-CORRECTED per G3-F1/G5-F1]: the id rides engine refusal field paths, 200-path
+        # provenance ids, and log records - BP-2 label discipline, refused typed here.
+        seg_id = _require_label(seg.get("id"), f"lot.lot_line_segments[{idx}].id")
         segments.append(
             LotLineSegment(
-                id=cast(str, seg.get("id")),
+                id=seg_id,
                 start=_to_point(seg.get("start")),
                 end=_to_point(seg.get("end")),
             )
@@ -396,9 +506,12 @@ def _build_lot_context(lot: object) -> LotContext:
                 f"lot.street_lines[{idx}].attestation must be an object",
                 field=f"lot.street_lines[{idx}].attestation",
             )
+        _require_bounded_object(attestation, f"lot.street_lines[{idx}].attestation")
+        # [ORCH-CORRECTED per G3-F1/G5-F1]: same BP-2 discipline as the lot-line ids above.
+        wall_id = _require_label(line.get("wall_id"), f"lot.street_lines[{idx}].wall_id")
         streets.append(
             AttestedStreetLine(
-                wall_id=cast(str, line.get("wall_id")),
+                wall_id=wall_id,
                 start=_to_point(line.get("start")),
                 end=_to_point(line.get("end")),
                 attestation=attestation,
@@ -437,6 +550,15 @@ def _enforce_route_caps(proposed_massing: dict, lot: dict) -> None:
             f"lot.street_lines has {len(streets)} entries, above the route cap "
             f"ROUTE_MAX_STREET_LINES ({ROUTE_MAX_STREET_LINES})",
             field="lot.street_lines",
+        )
+    # [ORCH-CORRECTED per G5-F2]: bound the O(n^2) outline-simplicity surface too, counted with
+    # the gate's OWN counter (an O(n) len-sum - cheap), BEFORE any validation pass runs.
+    total_positions = _total_position_count(proposed_massing)
+    if total_positions > ROUTE_MAX_TOTAL_OUTLINE_POSITIONS:
+        raise _FieldRefusal(
+            f"proposed_massing outlines carry {total_positions} total positions, above the "
+            f"route cap ROUTE_MAX_TOTAL_OUTLINE_POSITIONS ({ROUTE_MAX_TOTAL_OUTLINE_POSITIONS})",
+            field="proposed_massing",
         )
 
 
@@ -521,23 +643,25 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
         )
 
         _enforce_route_caps(proposed_massing, lot)  # BP-4 (cheap, before any heavy work)
+        _validate_lot_rule_fact_keys(lot_rule_facts)  # BP-2 discipline on keys ([ORCH-CORRECTED])
         _validate_lot_rule_fact_types(lot_rule_facts)  # BP-5 (mapped value types)
 
         # BP-7/BP-3: the reused DB-034(a)/(b) input gate hardens the untrusted block (global
         # vertex budget + string ceilings) THEN runs the accepted B0 validator; a refusal is a
         # typed ProposedMassingError naming the exact field with a bounded message.
-        validate_proposed_massing_input(proposed_massing)
+        # [ORCH-CORRECTED per G5-F2]: CPU-bound O(n^2) work runs OFF the event loop.
+        await run_in_threadpool(validate_proposed_massing_input, proposed_massing)
 
         lot_context = _build_lot_context(lot)
     except _FieldRefusal as exc:
         logger.info("proposal_checks_v1 refused field=%s correlation_id=%s",
-                    exc.field, correlation_id)
+                    _bounded_field(exc.field), correlation_id)
         return _validation_error(exc.message, correlation_id, field=exc.field)
     except ProposedMassingError as exc:
         # From the input gate / B0 validator (includes the G5-3 uncapped bad-vertex repr class):
         # BP-3 caps the detail via _bounded_message.
         logger.info("proposal_checks_v1 block_refused field=%s correlation_id=%s",
-                    exc.field, correlation_id)
+                    _bounded_field(exc.field), correlation_id)
         return _validation_error(str(exc), correlation_id, field=exc.field)
 
     # BP-5 (domains): resolve the engine's effective registry ONCE and reject any mapped fact
@@ -553,28 +677,32 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
         _validate_lot_rule_fact_domains(lot_rule_facts, registry)
     except _FieldRefusal as exc:
         logger.info("proposal_checks_v1 domain_refused field=%s correlation_id=%s",
-                    exc.field, correlation_id)
+                    _bounded_field(exc.field), correlation_id)
         return _validation_error(exc.message, correlation_id, field=exc.field)
 
     # BP-1: the ONLY engine entry, called EXACTLY ONCE, with that same effective registry. BP-3:
     # every propagated error detail is length-capped before it reaches the client; an unexpected
     # defect is a generic 500 (no str(exc)/traceback leak).
+    # [ORCH-CORRECTED per G5-F2]: the CPU-bound engine call runs OFF the event loop.
     try:
-        report = check_proposal(
-            proposed_massing,
-            lot_context,
-            lot_rule_facts,
-            scenario_label=scenario_label,
-            proposal_id=proposal_id,
-            registry=registry,
+        report = await run_in_threadpool(
+            functools.partial(
+                check_proposal,
+                proposed_massing,
+                lot_context,
+                lot_rule_facts,
+                scenario_label=scenario_label,
+                proposal_id=proposal_id,
+                registry=registry,
+            )
         )
     except ProposalCheckError as exc:  # a BP-1 wiring precondition (list ceiling / finiteness)
         logger.info("proposal_checks_v1 precondition_refused field=%s correlation_id=%s",
-                    exc.field, correlation_id)
+                    _bounded_field(exc.field), correlation_id)
         return _validation_error(str(exc), correlation_id, field=exc.field)
     except (ProposalDerivationError, ProposedMassingError) as exc:  # degenerate/invalid geometry
         logger.info("proposal_checks_v1 derivation_refused field=%s correlation_id=%s",
-                    exc.field, correlation_id)
+                    _bounded_field(exc.field), correlation_id)
         return _validation_error(str(exc), correlation_id, field=exc.field)
     except Exception:
         logger.error("proposal_checks_v1 unexpected_error stage=check correlation_id=%s",

@@ -289,6 +289,9 @@ def test_bp3_uncapped_vertex_repr_is_length_capped(client, monkeypatch):
     assert "x" * 450 not in message
     assert "truncated" in message
     assert len(message) < 500
+    # [ORCH-CORRECTED per G4-F-1]: bind the cap VALUE exactly (the marker starts at exactly the
+    # 400-char prefix boundary), not just a <500 window a drifted cap could still satisfy.
+    assert message.index("...<truncated;") == 400
 
 
 def test_bp3_propagated_derivation_error_is_typed_and_bounded(client, monkeypatch):
@@ -480,7 +483,11 @@ def test_bp5_in_domain_street_width_class_is_accepted(client_with_registry, monk
 # ---------------------------------------------------------------------------
 def test_bp1_only_check_proposal_entry_is_called():
     source = Path(mod.__file__).read_text(encoding="utf-8")
-    assert "check_proposal(" in source  # the single engine entry is invoked
+    # [ORCH-CORRECTED per G5-F2]: the engine call is now offloaded via
+    # functools.partial(check_proposal, ...) inside run_in_threadpool, so the entry reference is
+    # the partial target rather than a direct call token. The invocation-count property is bound
+    # separately by test_bp1_check_proposal_called_exactly_once (the stronger G4-gap-5 binding).
+    assert "functools.partial(" in source and "check_proposal," in source
     assert "derive_proposal(" not in source  # never the derivation entry directly
     assert not hasattr(mod, "derive_proposal")
 
@@ -557,3 +564,204 @@ def test_missing_proposed_massing_is_422(client, monkeypatch):
     resp = client.post(_URL, json=body)
     assert resp.status_code == 422
     assert resp.json()["field"] == "proposed_massing"
+
+
+# ---------------------------------------------------------------------------
+# [ORCH-CORRECTED per G3-F1/F2, G4 gaps 1/2/5, G5-F1/F2] rework bindings (seq 122)
+# ---------------------------------------------------------------------------
+def test_bounded_field_helper_caps_hard():
+    # BP-3 (G3-F1/G5-F1): the refusal `field` is capped on every response/log path.
+    long_field = "A" * 10_000
+    bounded = mod._bounded_field(long_field)
+    assert bounded is not None
+    assert bounded.startswith("A" * mod.MAX_FIELD_LEN)
+    assert bounded.endswith("chars total>")
+    assert len(bounded) < mod.MAX_FIELD_LEN + 50
+    assert mod._bounded_field(None) is None
+    assert mod._bounded_field("lot.area_sq_ft") == "lot.area_sq_ft"
+
+
+def test_lot_line_id_over_cap_refused_and_bounded(client, monkeypatch):
+    # G5-F1 root fix: an attacker-length lot-line id is refused typed AT THE BOUNDARY; it can
+    # reach neither a 422 field, a 200 provenance id, nor a log record. Removing the id bound
+    # flips this red: the (geometrically valid) payload would then return 200.
+    _enable_flag(monkeypatch)
+    evil = "<script>alert(1)</script>" + "A" * 100_000
+    lot = _minimal_lot()
+    lot["lot_line_segments"] = [{"id": evil, "start": [_X0, _Y0], "end": [_X0, _Y0 + 1.0]}]
+    resp = client.post(_URL, json=_minimal_body(lot=lot))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot.lot_line_segments[0].id"
+    blob = json.dumps(body)
+    assert "<script>" not in blob
+    assert "A" * 250 not in blob
+    assert len(blob) < 2_000
+
+
+def test_street_wall_id_bad_charset_refused(client, monkeypatch):
+    _enable_flag(monkeypatch)
+    lot = _minimal_lot()
+    lot["street_lines"] = [
+        {"wall_id": "<b>south</b>", "start": [_X0, _Y0], "end": [_X0 + 1.0, _Y0],
+         "attestation": {}}
+    ]
+    resp = client.post(_URL, json=_minimal_body(lot=lot))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot.street_lines[0].wall_id"
+    assert "<b>" not in json.dumps(body)
+
+
+def test_area_provenance_over_ceiling_refused(client, monkeypatch):
+    # G5-F1 200-path: the caller blob the engine republishes verbatim is size-bounded, typed.
+    _enable_flag(monkeypatch)
+    lot = _minimal_lot()
+    lot["area_provenance"] = {"evil": "v" * (mod.MAX_PROVENANCE_BYTES + 100)}
+    resp = client.post(_URL, json=_minimal_body(lot=lot))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot.area_provenance"
+    assert "MAX_PROVENANCE_BYTES" in body["message"]
+    assert "v" * 100 not in json.dumps(body)
+
+
+def test_street_attestation_over_ceiling_refused(client, monkeypatch):
+    _enable_flag(monkeypatch)
+    lot = _minimal_lot()
+    lot["street_lines"] = [
+        {"wall_id": "south", "start": [_X0, _Y0], "end": [_X0 + 1.0, _Y0],
+         "attestation": {"blob": "w" * (mod.MAX_PROVENANCE_BYTES + 100)}}
+    ]
+    resp = client.post(_URL, json=_minimal_body(lot=lot))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot.street_lines[0].attestation"
+    assert "w" * 100 not in json.dumps(body)
+
+
+def test_lot_rule_facts_key_bound_and_unmapped_stays_bounded(
+    client_with_registry, monkeypatch, case
+):
+    # G3-F3 / G5-F1 200-path: fact KEYS get the BP-2 label discipline (they are surfaced in
+    # unmapped_lot_facts and rendered by B3); a conforming unmapped key still surfaces (BP-5).
+    _enable_flag(monkeypatch)
+    bad_charset = _payload(
+        case, attested=True, lot_rule_facts={"<img src=x onerror=alert(1)>": True}
+    )
+    resp = client_with_registry.post(_URL, json=bad_charset)
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot_rule_facts"
+    assert "<img" not in json.dumps(body)
+
+    over_len = _payload(
+        case, attested=True, lot_rule_facts={"k" * (MAX_LABEL_LEN + 1): True}
+    )
+    resp2 = client_with_registry.post(_URL, json=over_len)
+    assert resp2.status_code == 422
+    assert "k" * 50 not in json.dumps(resp2.json())
+
+    facts = dict(case["lot_rule_facts_attested"])
+    facts["mystery_fact"] = True
+    resp3 = client_with_registry.post(_URL, json=_payload(case, attested=True,
+                                                          lot_rule_facts=facts))
+    assert resp3.status_code == 200, resp3.json()
+    assert "mystery_fact" in resp3.json()["unmapped_lot_facts"]
+
+
+def test_forced_500_is_generic_and_bounded(client, monkeypatch):
+    # G3-F2(b) / G4 gap 1: a REAL 500 emission from THIS route (registry unavailable). Exact
+    # key set = any added leak field fails; no exception text/path reaches the client.
+    _enable_flag(monkeypatch)
+
+    def boom():
+        raise RuntimeError("boom-internal-secret")
+
+    monkeypatch.setattr(mod, "get_proposal_check_registry", boom)
+    resp = client.post(_URL, json=_minimal_body())
+    assert resp.status_code == 500
+    body = resp.json()
+    assert set(body) == {"state", "message", "correlation_id"}
+    assert body["state"] == "internal_error"
+    blob = json.dumps(body).lower()
+    for bad in ("boom", "runtimeerror", "traceback", "/services/api"):
+        assert bad not in blob
+
+
+def test_lone_surrogate_body_refused_typed(client, monkeypatch):
+    # G4 gap 2: the checks route's OWN strict-JSON guard, surrogate half (the NaN half is bound
+    # elsewhere). The raw \ud800 escape parses, then trips the renderer-parity guard.
+    _enable_flag(monkeypatch)
+    raw = (
+        '{"proposed_massing": {"a": 1}, "lot": {}, "lot_rule_facts": {}, '
+        '"scenario_label": "s", "proposal_id": "p", "x": "\\ud800"}'
+    )
+    resp = client.post(_URL, content=raw.encode("ascii"), headers=_JSON_HEADERS)
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["state"] == "validation_error"
+    assert "surrogate" in body["message"]
+
+
+def test_bp1_check_proposal_called_exactly_once(client_with_registry, monkeypatch, case):
+    # G4 gap 5: bind "exactly ONCE", not just "which entry" - a second call flips this red.
+    calls: list[int] = []
+    real = mod.check_proposal
+
+    def spy(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(mod, "check_proposal", spy)
+    _enable_flag(monkeypatch)
+    resp = client_with_registry.post(_URL, json=_payload(case, attested=True))
+    assert resp.status_code == 200, resp.json()
+    assert len(calls) == 1
+
+
+def test_bp4_outline_position_over_cap_refused(client, monkeypatch):
+    # G5-F2: the O(n^2) simplicity surface is route-capped BEFORE any validation pass.
+    _enable_flag(monkeypatch)
+    block = _valid_block()
+    n = mod.ROUTE_MAX_TOTAL_OUTLINE_POSITIONS + 1
+    block["outline"]["vertices"] = [[_X0 + i, _Y0] for i in range(n)]
+    resp = client.post(_URL, json=_minimal_body(proposed_massing=block))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "proposed_massing"
+    assert "ROUTE_MAX_TOTAL_OUTLINE_POSITIONS" in body["message"]
+
+
+def test_bp4_corrected_worst_case_arithmetic():
+    # G5-F2: the documented worst case now covers BOTH compute surfaces - the wall-by-segment
+    # product AND the double O(n^2) simplicity pass under the route's outline cap - and the
+    # outline cap sits strictly below the inherited DB-034(a) budget (also an import-time guard).
+    from app.scenario.proposal_input_gate import MAX_TOTAL_VERTICES
+    product = ROUTE_MAX_EXTERIOR_WALLS * (
+        ROUTE_MAX_LOT_LINE_SEGMENTS + ROUTE_MAX_STREET_LINES
+    )
+    n = mod.ROUTE_MAX_TOTAL_OUTLINE_POSITIONS
+    simplicity_two_passes = 2 * (n * (n - 1) // 2)
+    assert product == 600_000
+    assert simplicity_two_passes == 1_438_800
+    assert product + simplicity_two_passes < 2_100_000
+    assert n < MAX_TOTAL_VERTICES
+
+
+def test_cpu_bound_calls_run_off_the_event_loop(client_with_registry, monkeypatch, case):
+    # G5-F2: both CPU-bound calls (gate+B0 validation, engine check) are offloaded through
+    # run_in_threadpool - removing either offload flips this red.
+    offloaded: list[str] = []
+    real = mod.run_in_threadpool
+
+    async def spy(fn, *args, **kwargs):
+        offloaded.append(getattr(fn, "func", fn).__name__)
+        return await real(fn, *args, **kwargs)
+
+    monkeypatch.setattr(mod, "run_in_threadpool", spy)
+    _enable_flag(monkeypatch)
+    resp = client_with_registry.post(_URL, json=_payload(case, attested=True))
+    assert resp.status_code == 200, resp.json()
+    assert "validate_proposed_massing_input" in offloaded
+    assert "check_proposal" in offloaded

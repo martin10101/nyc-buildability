@@ -72,11 +72,28 @@ were consumed strictly read-only (BP-1 / preservation).
   evaluate against the same accepted registry; `derive_proposal` is never called (proven by
   `test_bp1_only_check_proposal_entry_is_called`).
 - **BP-3 capped error paths** — every typed refusal routes through `_validation_error` →
-  `_bounded_message` (217–229); the input-gate/B0 `ProposedMassingError` (incl. the G5-3 uncapped
+  `_bounded_message`; the input-gate/B0 `ProposedMassingError` (incl. the G5-3 uncapped
   bad-vertex `repr`), `ProposalCheckError`, and `ProposalDerivationError` are each caught and
-  length-capped (532–578); any unexpected exception is a generic 500 that logs only the correlation
-  id (`_internal_error_500`, 244–255; 579–582). The single (status, state) source of truth is
-  `PROPOSAL_CHECKS_STATUS_STATE_MATRIX` (139–147).
+  length-capped; any unexpected exception is a generic 500 that logs only the correlation
+  id (`_internal_error_500`). The single (status, state) source of truth is
+  `PROPOSAL_CHECKS_STATUS_STATE_MATRIX`.
+  **[ORCH-CORRECTED per G3-F1 / G5-F1 / G5-F4]** The original submission's claim that "EVERY
+  error path length-caps any embedded value" was FALSE for the refusal `field` key (serialized
+  and logged uncapped) and for the lot-side caller ids/objects the engine republishes on the 200
+  path. The rework closes the class at both halves: `_bounded_field` caps `field` on every
+  response AND log path; `lot.lot_line_segments[].id` / `lot.street_lines[].wall_id` now get the
+  BP-2 label discipline at `_build_lot_context`; `lot.area_provenance` and each street-line
+  `attestation` get a serialized-size ceiling (`MAX_PROVENANCE_BYTES`); every `lot_rule_facts`
+  KEY gets the label length/charset bound. Each bound carries a binding test (the rework block
+  at the tail of `test_proposal_checks_api.py`).
+  **[ORCH-CORRECTED per G5-F2]** The BP-4 claim covered only the wall-by-segment product; the
+  O(n²) outline-simplicity surface escaped it (double validation pass under the inherited
+  5000-vertex budget, ~17 s measured single-request CPU on the event loop). The rework adds
+  `ROUTE_MAX_TOTAL_OUTLINE_POSITIONS` (1200, counted with the gate's own counter, import-time
+  guarded strictly below `MAX_TOTAL_VERTICES`) and moves both CPU-bound calls off the event loop
+  via `run_in_threadpool`; the corrected worst case (product 600,000 + 2-pass simplicity
+  1,438,800 ≈ 2.0e6 bounded operations) is documented in the module comment and bound by
+  `test_bp4_corrected_worst_case_arithmetic` + `test_cpu_bound_calls_run_off_the_event_loop`.
 - **BP-6 no emission** — the 200 body is `report.as_dict()` + the correlation id ONLY (584–593);
   no scenario document, no contract version, no derived-record emission is constructed anywhere in
   the route. A defense-in-depth strict-JSON re-encode guards the response (588–592).
@@ -251,3 +268,35 @@ raw transcript retained in the session capture file):
 This satisfies §7(a)/(b): explicit-cwd captures + digest binding are now orchestrator-provided;
 the worker's historical pass counts remain labeled unverified in §4 and are superseded by this
 capture. CI at the pushed head remains the remaining PENDING proof.
+
+## 8.2 [ORCH-CORRECTED] Rework identity + capture (wave findings G3-F1/F2/F4, G4 gaps 1/2/5 + F-1, G5-F1/F2/F4; 2026-09-20, seq 122)
+
+The independent wave at frozen `2b5edbc3` ruled G3 FAIL / G4 PASS / G5 FAIL; the blocking
+findings (uncapped refusal `field` + unbounded lot-side ids/objects reaching 422/200/log
+surfaces; the O(n²) outline-simplicity compute escape on the event loop) were repaired as ONE
+tagged correction cluster — see the §2 BP-3 [ORCH-CORRECTED] entries for the mechanism and the
+`[ORCH-CORRECTED …]` comments in the code. Changes: `proposal_checks_api.py` (field cap, id/
+object/fact-key bounds, outline-position cap + import-time guard, threadpool offload, corrected
+worst-case arithmetic comment, docstring honesty), 12 new binding tests appended to
+`test_proposal_checks_api.py` (+ the BP-1 source assertion updated for the partial call shape),
+and the exact-cap assertions tightened in both route test files (G3-F4/G4-F-1). `main.py` and
+`test_proposal_checks.py` (rules) are byte-unchanged from §8.
+
+Corrected LF-sha256 identity (CRLF→LF before hashing) at the rework snapshot:
+
+| # | Artifact | LF-sha256 | lines |
+|---|---|---|---|
+| 1 | `services/api/app/api/v1/proposal_checks_api.py` | `ccfe7c993a73ce6d03f414f2980c676bc977890f1bad60f35dca0ec64b3b96f6` | 721 |
+| 2 | `services/api/app/main.py` (byte-unchanged) | `97983f0ce86f119e495d618d91f3dc67653c74b153c07b481dbe8b2c39bbd9d6` | 210 |
+| 3 | `services/api/tests/api/test_proposal_checks_api.py` | `0d1cd1acfe6ed566c8cefc3b99bb812578b51a289b66f54ebf61906b86362219` | 767 |
+| 4 | `services/api/tests/api/test_proposal_validation_api.py` | `cd3bf12ebc044107f8b916d1aaa1f67a93808b31884e1335c438664692be0a05` | 714 |
+| 5 | `services/api/tests/rules/test_proposal_checks.py` (byte-unchanged) | `9d150fa4a8d7a2151058f53992e4c1ecd565bbc16472a3200f240daa25dd70ce` | 782 |
+
+Orchestrator re-capture at this snapshot (explicit cwd, raw transcripts in the session capture):
+`python -m ruff check .` → clean, exit 0; `python -m pytest tests/api -q` → **552 passed**
+(540 prior + 12 rework bindings), exit 0; `python -m pytest tests/rules -q` → **726 passed**,
+exit 0 (both from `wt-m5t057/services/api`); `python tools/modularity_check.py --check` →
+exit 0 from the worktree root (pre-existing `tools/*` warns only; the route module at 721 lines
+stays below the warn tier and absent from the warn list). Advisory findings NOT taken in-packet
+(G3-F5/F6/F7, G5-F3/F5/F6, G4 gaps 3/4) route to the discovery backlog for B3 slice 2.
+CI at the pushed rework head is the remaining PENDING proof for this identity.
