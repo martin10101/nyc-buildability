@@ -1,0 +1,18 @@
+{
+  "task_id": "M5-T060",
+  "producer_agent": "frontend-engineer",
+  "report_file": "project-control/reports/M5-T060-producer-report.md",
+  "submitted_at": "2026-09-20T22:08:31.777929+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T060-evidence-map.json",
+  "content_manifest_sha256": "0b9ff84b481d309ae2e6fdb99b49f13d742180fe2d7034e446adcd1867ee9126",
+  "reviewed_sha": "d7d45e84ae81e16da6325827e1aef28977944ebf",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-076-R001",
+    "D-076-R002",
+    "D-077-R002",
+    "D-077-R003"
+  ],
+  "updated_at": "2026-09-20T22:08:33.951790+00:00"
+}
