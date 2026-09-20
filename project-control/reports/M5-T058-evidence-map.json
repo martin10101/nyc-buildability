@@ -1,0 +1,38 @@
+{
+ "task_id": "M5-T058",
+ "material_commit": "7d02eddc (clean cherry-pick of worktree producer commit 3bd196de; 19 files, ALL-MATCH LF-normalized digest verification post-pick); companion orchestrator consumer fix 817a6546 ([ORCH-CORRECTED] frozen-contract guard admits 1.2.0, outside allowed_paths per the routed-sweep rule, M5-T037/f954aa59 precedent)",
+ "produced_at": "2026-09-20T18:55:00+00:00",
+ "producer": "backend-engineer (loop-2 worker, runs persistent2-local-21..25; unit closed at the S13.8 consecutive_revision_loops breaker after the in-loop reviewer converged the report to evidence-handoff honesty; orchestrator harvest with supervisor-owned evidence collection per the reviewer's final REVISE demand - explicit cwd, interpreter version, preserved failed-transcript characterization, CI/commit/push orchestrator-owned)",
+ "requirements": {
+  "D-066-R001": [
+   "Code graph regenerated at the M5-T058/M5-T059 contract seam before the packets were authored (recorded at the 2fba5ed3/f86ae735 seam; D-066 manifest audit entry 2026-09-20T07:53:11Z) with the graph-derived navigation block in the packet inputs; the material's consumer sweep at harvest additionally caught the one out-of-allowed-paths consumer the graph names for the rule_evaluation contract - the frozen-contract guard test - which was fixed as the routed [ORCH-CORRECTED] orchestrator commit 817a6546 rather than left silently red."
+  ],
+  "D-077-R002": [
+   "This packet is the loop-2 lane under the full contract drill: contracted at the recorded seam with binds + digest resyncs, seeds, G0 pairwise-disjointness record, claimed with the FULL worktree path wt-m5t058, built by the supervised loop-2 worker across runs persistent2-local-21..25 (12/19 files by run 23, completed by run 25), harvested by the orchestrator at the lane's breaker close without owner round-trips per D-080."
+  ],
+  "D-077-R003": [
+   "Scope stayed inside the released, non-held queue: the substitution-stamp increment named by D-078-R003 pairing, touching exactly the packet's 19 allowed_paths across schema/generated/api/web/fixtures/report; no held surface touched; the M5-T060 B3-UI lane and the parked M5-T059 surface are disjoint (G0 record)."
+  ],
+  "D-078-R002": [
+   "The human-only site-determination boundary holds in the material: the substitution stamp records WHICH lot an analysis ran on ('analyzed on lot X' identity surfaced via AnalysisIdentityNotice and the contract's substitution block) and never auto-selects or infers an assembly; where no confirmation exists the honest refusal vocabulary replaces the generic spatial_intersection_absent without defaulting a site; web notice copy renders the identity as display-only provenance, not an input the system chose."
+  ],
+  "D-078-R003": [
+   "Sequencing honored: contracted AFTER M5-T056 accepted (the recon-section-5 frozen-surface conflict window closed); this is the substitution-stamp half of the D-078 pair carrying condo resolution across the substrate seam with contract 1.2.0; the paired M5-T059 accept remains parked BEHIND this task per its DCV section 7 pre-auth (T058-first), which the orchestrator will satisfy at accept time."
+  ]
+ },
+ "orchestrator_evidence": {
+  "note": "Supervisor-owned evidence collection demanded by the in-loop reviewer's final REVISE (digest-bound executions, explicit cwd, interpreter version, actual outcomes, failed transcripts preserved and characterized, CI/commit/push orchestrator-owned). Commands run fresh by the orchestrator in wt-m5t058 at the reviewed tree; LF-normalized digests of all 19 files verified byte-equal (ALL-MATCH) after cherry-pick into ctl24 at 7d02eddc; digest list in the harvest record (scratchpad t058-digests capture reproduced in the gate reports).",
+  "interpreter": "Python 3.11.9 (local thin client; the tests/documents tree and one ast.parse guard need CI's 3.12 - recorded interpreter artifact)",
+  "commands": [
+   {"argv": "python -m ruff check .", "cwd": "wt-m5t058/services/api", "exit": 0, "output_tail": "All checks passed!"},
+   {"argv": "python -m pytest tests/api/test_rule_evaluation_api.py tests/contracts/test_rule_evaluation_contract.py tests/rules/test_rules_integration.py tests/spatial/test_live_provider.py -q", "cwd": "wt-m5t058/services/api", "exit": 0, "output_tail": "168 passed in 24.79s"},
+   {"argv": "python -m pytest -q --ignore=tests/documents", "cwd": "wt-m5t058/services/api", "exit": 1, "output_tail": "2 failed, 3086 passed in 203.25s - failure 1 is tests/contracts/test_contract_serializers.py ast.parse-ing documents/units.py PEP-695 syntax under local 3.11 (recorded interpreter artifact, proves on CI 3.12); failure 2 was tests/scenario/test_scenario_contract.py frozen-contract guard pinning the pre-1.2.0 enum - the legitimate consumer of this contract change, fixed as the routed [ORCH-CORRECTED] commit 817a6546 and green after the update (60 passed)"},
+   {"argv": "python tools/modularity_check.py --check", "cwd": "wt-m5t058 (repo root)", "exit": 0, "output_tail": "failures 0; warnings 20 (all pre-existing)"},
+   {"argv": "python -m pytest tests/scenario/test_scenario_contract.py -q", "cwd": "ctl24/services/api (post-guard-fix verification)", "exit": 0, "output_tail": "60 passed in 2.99s"}
+  ],
+  "web_evidence": "Thin client: the 8 web/contract-TS files prove ONLY in CI on the pushed head 817a6546 (vitest/typecheck/lint/e2e in the web jobs); submit occurs only after that CI completes green.",
+  "reviewed_file_digests": {
+   "note": "sha256 over LF-normalized bytes of each of the 19 changed files at 3bd196de/7d02eddc; values are content digests of repository files, not credentials; enumerated per-file in the gate wave reports rather than inline here (gitleaks generic-api-key FP on api-named keys adjacent to hex)"
+  }
+ }
+}
