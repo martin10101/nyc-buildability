@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-20T06:06:06.492959+00:00",
+ "verified_at": "2026-09-20T07:02:39.286353+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -555,6 +555,50 @@
      "state": "PASS",
      "evidence": [
       "DCV verified (M5-T054-DCV.md row 1): seam-regenerated NAV block in the packet naming derivation.py's sole consumer (first production caller) + evaluator/integration consumer sets with line anchors; consumer discipline held (material ba0cf6b0 = 9 allowed-path files only; evaluator/integration/registry/response/rulesets/scenario byte-preserved; 722+568 suites green + CI 35491182686). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T055",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "824b14bc2b5fafd063a490440a58ccb30d52ea19",
+   "reviewed_manifest_sha256": "0e1f9fb9a5273fabbf80158bd8054d8ea28015ac47bc3893e8b9569d64e5b735",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T055-DCV.md): graph-derived NAV block in the packet with consumer line anchors verified in source (AddressResolutionScreen.tsx:19 chain); producer copy-sweep + consumer sweep reproduced (no missed consumer, no red left silent); material touched only the 4 allowed files. Advisory (non-blocking): carry the literal query.py --no-regen wording in future NAV blocks - adopted as a contract-seam habit. Stamped at 824b14bc2b5fafd063a490440a58ccb30d52ea19 under the DCV restamp pre-authorization as EXTENDED to the corrected identity (M5-T055-DCV.md): spec blob 75d80a88 + the four unchanged artifact blobs reproduced at this head; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T054/T056/T057/D-078 peers."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T056",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae",
+   "reviewed_manifest_sha256": "2399272a9c3d41c7ca649d24afaf0ae1e116b1551efa46cca74147b5f880631f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T056-DCV.md): NAV block present with query.py instruction; nav claims source-accurate (condo-records.ts consumers, main.py:32/:175 mount, bbl.ts:36 read-only); producer honored it (bbl.ts/bounded.ts byte-unchanged; PropertyOverview props stable; ReportView untouched with the shared-section inheritance proven). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078."
      ]
     }
    ]

@@ -60,8 +60,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "responsive-a11y.spec.ts is the EXISTING M2-T002 S6 suite - extend it; every pre-existing test stays byte-preserved and green.",
     "The (b) reading-order move is exactly the kind of change that reintroduces CLS - the (a) spec must prove the NEW placement, not the old one.",
@@ -71,7 +71,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T03:42:02.410140+00:00",
-  "updated_at": "2026-09-20T06:34:08.104756+00:00",
+  "updated_at": "2026-09-20T07:07:17.622261+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -121,5 +121,7 @@
       "status": "in_progress",
       "message": "[ORCH-CORRECTED per G4-1 + CI 35493851185] spec-side settle hardening applied: terminal-map-state poll (fallback surfaces or architect-map-status with no Preparing/loading) + a 500ms double-read CTA quiescence check before the before-measurement; exact-equality assertion unchanged; component untouched"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-20T07:07:17.622261+00:00"
 }
