@@ -69,8 +69,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "The M5-T058 lane is LIVE on the adjacent rule_evaluation surface - this packet touches NONE of it (G0 records the disjointness).",
     "Numeric bounds must be registry-derived with the every-declaring-rule conservatism - a single invented or over-narrowed limit is a legal-value fabrication and fails the wave.",
@@ -79,7 +79,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T12:27:56.630392+00:00",
-  "updated_at": "2026-09-20T12:27:56.922414+00:00",
+  "updated_at": "2026-09-20T12:30:27.733984+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -108,5 +108,15 @@
     "python -m ruff check .",
     "python -m pytest tests/api -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t061",
+  "progress_log": [
+    {
+      "at": "2026-09-20T12:30:27.733984+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the T059 delta-wave-close seam (G0 PASS; disjoint vs live T058/T060 + parked T059); loop-3 relaunch as run 07 next"
+    }
   ]
 }
