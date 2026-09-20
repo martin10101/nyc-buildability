@@ -475,3 +475,28 @@ targeted copy keyed by that instance's checkout key (launcher `$CheckoutKey`) be
 never point the stock script at the wrong store. `clear-recovery` on a forked audit chain
 fails on the AUDIT APPEND even when the journal transition is valid — archive-repair the fork
 first, then re-check (the journal may already rest at PREFLIGHT).
+
+## Deficit convergence: the two loop-worker no-checkpoint stops of 2026-09-20 (seq 122) - CLOSED at run-61 relaunch
+
+Two runs parked PAUSED_RECOVERY with the SAME S14 wording ("missing_checkpoint") but DIFFERENT
+mechanisms - the audit stream discriminates them, the S14 reason string does NOT:
+
+- **run persistent2-local-21-m5t058**: `events: 2, context_tokens: 0, observed_models: []` -
+  the worker CLI never initialized a session (no ~/.claude/projects dir created), sat the full
+  1500s, exited rc 0. SILENT-START class. One occurrence; single retry (run 22) succeeded.
+- **run persistent-local-60-m5t060**: `events: 902, context_tokens: 7.4M, observed_models:
+  [claude-opus-4-8]`, session file exists, worktree carries 10+ files of real cycle-1 edits -
+  the worker was PRODUCTIVELY MID-BUILD and hit the 1500s unit timeout before its first
+  checkpoint. TIMEOUT-UNDER-LOAD class: at that instant the machine ran 0.6GB free of 7.8GB RAM
+  with the T059 FIVE-reviewer wave + the loop-2 worker + the orchestrator all live.
+
+**Rule: never diagnose a missing_checkpoint stop from the S14 reason string - read the run's
+audit `events`/`context_tokens`/`observed_models` triple and the worktree diff first.**
+
+Repairs (operational, no repo code): (1) loop-1 unit-timeout 1500 -> 2400 for the large frontend
+packet (first cycles explore + scaffold; 25 min was insufficient under load); (2) concurrency
+conduct - while TWO loop workers are live, dispatch reviewer waves in batches of <= 3 agents and
+never launch a loop during an active full wave (the 7.8GB thin client cannot host 8+ model
+processes); (3) the silent-start class keeps the recorded single-retry drill (recurrence of THAT
+class specifically = reopen convergence). Verification: run-61 first cycle reaches
+CHECKPOINT_RECEIVED. Evidence frozen in both stores' audit.jsonl + journals.
