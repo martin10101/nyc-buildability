@@ -249,11 +249,57 @@ for (const viewport of VIEWPORTS) {
         .first(),
     ).toBeVisible({ timeout: 15_000 });
 
+    // [ORCH-CORRECTED per G4-1 + CI run 35493851185] The lot-outline surface being
+    // VISIBLE is not the same as being HEIGHT-STABLE: the basemap/labels status line
+    // (LotOutlineMap `architect-map-status`, ABOVE the CTA) appears once the map
+    // context exists and its text changes from "Preparing…/loading" to terminal
+    // "loaded/unavailable" as tiles finish. In CI that settle landed BETWEEN the two
+    // measurements and moved the CTA 27px at 360/768 (desktop had settled in time) —
+    // the exact environmental class the G4 review flagged. Wait for the map region's
+    // terminal state before the "before" measurement: either a terminal fallback
+    // surface, or the live map with every context layer terminal.
+    await expect
+      .poll(
+        async () => {
+          for (const fallbackId of [
+            "lot-outline-webgl-unavailable",
+            "lot-outline-empty",
+            "lot-outline-review",
+            "lot-outline-unavailable",
+          ]) {
+            if ((await page.getByTestId(fallbackId).count()) > 0) return "terminal";
+          }
+          const mapStatus = page.locator(".architect-map-status");
+          if ((await mapStatus.count()) === 0) return "no-status-line-yet";
+          const text = await mapStatus.innerText();
+          return text.includes("Preparing") || text.includes("loading")
+            ? "layers-pending"
+            : "terminal";
+        },
+        { timeout: 15_000 },
+      )
+      .toBe("terminal");
+
     // The record channel is still loading: no note yet (the honest as-today shape).
     await expect(card).toHaveAttribute("data-record-address-status", "loading");
     await expect(page.getByTestId("record-address")).toHaveCount(0);
 
-    const ctaTopBefore = await ctaDocumentTop(page);
+    // Belt-and-braces layout quiescence: two CTA reads 500ms apart must agree before
+    // the value counts as the "before" measurement (guards any remaining async
+    // above-CTA settle — fonts, late tiles — without weakening the exact-equality
+    // assertion that follows).
+    let ctaTopBefore = await ctaDocumentTop(page);
+    await expect
+      .poll(
+        async () => {
+          const previous = ctaTopBefore;
+          await page.waitForTimeout(500);
+          ctaTopBefore = await ctaDocumentTop(page);
+          return ctaTopBefore === previous;
+        },
+        { timeout: 10_000 },
+      )
+      .toBe(true);
 
     // Release the long, DIFFERING record address → the note inserts below the CTA.
     releaseRecord();
