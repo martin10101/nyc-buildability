@@ -10,7 +10,7 @@
   "issued_at": "2026-09-18",
   "captured_at": "2026-09-18T06:16:33.161580+00:00",
   "created_at": "2026-09-18T06:16:33.161580+00:00",
-  "updated_at": "2026-09-19T06:37:18.827578+00:00",
+  "updated_at": "2026-09-20T03:46:03+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "95b2641044f99023002bb25753c74fb5d3f3f189",
   "capture_head_sha": null,
@@ -34,7 +34,7 @@
     "D-073-R010",
     "D-073-R011"
   ],
-  "requirements_content_digest_sha256": "caae2da284ebebfc6dfae5f2e92ac8a2a74cea4182d4d1e6665d28b5059abfb1",
+  "requirements_content_digest_sha256": "64afe8141ee95483081c79318db3e89f86e0659b492bbc06c9364e049fb1a8ab",
   "sources": [
     {
       "file": "source-001.md",
@@ -107,6 +107,12 @@
       "actor": "orchestrator",
       "action": "applicability_bind",
       "detail": "D-073-R006 applicability.task_ids += M5-T052 (DB-031 records-view packet contract seam); requirements.json digest resynced to caae2da284ebebfc6dfae5f2e92ac8a2a74cea4182d4d1e6665d28b5059abfb1"
+    },
+    {
+      "at": "2026-09-20T03:46:03+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound the D-077 three-lane contract seam: M5-T054 (phase B2 proposal-conditioned rule checks; first production caller of derive_proposal - the T051-G5 wiring preconditions bind in-packet), M5-T055 (DB-035 confirm-arc rider cluster), M5-T056 (DB-036 condo-surface rider cluster). Append-only, task_ids only; no requirement text changed. Digest resynced caae2da2 -> 64afe814 in the SAME commit (c14)."
     }
   ]
 }

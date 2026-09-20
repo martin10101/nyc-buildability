@@ -1,0 +1,114 @@
+{
+  "task_id": "M5-T056",
+  "title": "DB-036 condo-surface rider cluster: entered-vs-billing BBL labels, zoning-status parsing, dangling reference, headings outline, retrievedAt value pins, 422 repr cap",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close the six foldable DB-036 riders from the accepted M5-T052 wave on the condo records surfaces: (b) parse the entered BBL client-side and label billing separately so a real unit-BBL input never renders 'not recorded (unknown)' under a 'Condo lot you entered' label; (c) remove/repair the dangling 'professional-review determination above' reference when the withheld panel shows no such label; (e) parse recorded_zoning_status + recorded_zoning_dependency so the named ZTLDB gap surfaces and the divergent notice shows only when zoning is recorded; (f) records-section headings become real h2/h3 in the heading outline; (g) value-pin the retrievedAt round-trip at the client levels so a selective boundedTimestamp revert cannot escape the suite; (h) length-cap the 422 detail.raw_value repr api-side as defense-in-depth. NOT in scope: DB-036(a) slash-district sanitizer (binds the zoning-propagation packet) and DB-036(d) coupling decision (binds substrate-substitution).",
+  "business_reason": "The accepted condo records view carries six foldable advisory riders from its wave (DB-036); closing them as one cluster keeps the condo surfaces honest (entered vs billing BBL, zoning-status visibility, heading outline, timestamp value pins) and caps the one api repr edge",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). NO npm/npx/node locally (thin client) - web suites prove ONLY in CI on the pushed head. Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). lib/condo-records.ts is consumed by architect/PropertyOverview.tsx:10, architect/ReportView.tsx:12, condo-resolution-display.test.tsx:13, report-view.test.tsx:9 and lib/__tests__/condo-records.test.ts:14. PropertyOverview.tsx is consumed by ArchitectEntry.tsx:24, ProfileViews.tsx:18, PropertyFacts.tsx:9, ReportView.tsx:11, ScenarioWorkspace.tsx:4 + three architect test files - keep its public props stable. api/v1/condo_records.py is mounted by app/main.py:32 and tested by tests/api/test_condo_records_api.py. The existing BBL parser lives in apps/web/src/lib/bbl.ts - consume it READ-ONLY, never re-implement parsing. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; the graph is ADVISORY - verify in source.",
+    "SCOPE 1/2 - WEB RIDERS (binding; read docs/DISCOVERY_BACKLOG.md row DB-036, project-control/reports/M5-T052-producer-report.md, and the condo surfaces FIRST) - close riders (b), (c), (e), (f), (g): (b) parse the ENTERED BBL client-side (existing lib/bbl.ts, read-only) and label it separately from the BILLING BBL - a real unit-BBL input never renders 'not recorded (unknown)' under a 'Condo lot you entered' label; the two identities get their own labels. (c) remove or repair the dangling 'professional-review determination above' reference wherever the withheld panel shows no such label. (e) parse recorded_zoning_status AND recorded_zoning_dependency in lib/condo-records.ts so the named ZTLDB gap actually surfaces on the surfaces that show zoning, and the divergent-zoning notice shows ONLY when zoning is actually recorded. (f) records-section headings become real h2/h3 elements present in the heading outline (carried from T045; assert the outline in a test). (g) value-pin the retrievedAt round-trip at the client levels: tests assert the exact timestamp VALUE end-to-end so a selective boundedTimestamp revert cannot escape the suite.",
+    "SCOPE 2/2 - API RIDER (binding) - close rider (h): in services/api/app/api/v1/condo_records.py length-cap the 422 detail.raw_value repr (defense-in-depth; DB-023c/DB-034(b) class) with the binding test in tests/api/test_condo_records_api.py; response behavior otherwise byte-identical.",
+    "PRESERVATION (binding): the T052 guard-coherence ruling is untouchable - ONE monotone deriveCondoSurface decision governs BOTH surfaces (screen and brief); no second decision point, no weakened withhold; the fail-safe direction unchanged; sanitizer boundaries respected (timestamps stay boundedTimestamp; the boundedToken charset is NOT touched - DB-036(a) slash-district work binds the future zoning-propagation packet, NOT this one; DB-036(d) coupling binds substrate-substitution, NOT this one); flags posture unchanged; every existing suite green.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Condo surfaces closing DB-036(b)/(c)/(e)/(f): entered-vs-billing BBL labels, dangling-reference repair, recorded_zoning_status/dependency parsing with honest notice gating, real h2/h3 records headings",
+    "DB-036(g) retrievedAt value-pin tests at the client levels",
+    "DB-036(h) 422 detail.raw_value repr cap in condo_records.py + binding api test",
+    "project-control/reports/M5-T056-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T052"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "apps/web/src/components/architect/__tests__/report-view.test.tsx",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/__tests__/condo-records.test.ts",
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/tests/api/test_condo_records_api.py",
+    "project-control/reports/M5-T056-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/address/",
+    "apps/web/src/lib/bbl.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/e2e/",
+    "services/api/app/connectors/",
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (entered vs billing): entering a real condo unit BBL shows the entered BBL under its own label and the billing BBL under its own label; 'not recorded (unknown)' never renders for a successfully parsed entered BBL; parsing uses the existing lib/bbl.ts read-only.",
+    "AS-2 (dangling reference): with the withheld panel showing no professional-review label, no text references 'the professional-review determination above'; a test binds the withheld rendering.",
+    "AS-3 (zoning-status honesty): recorded_zoning_status and recorded_zoning_dependency are parsed; the ZTLDB-gap surfaces where zoning is shown; the divergent-zoning notice renders ONLY when zoning is actually recorded - a no-zoning fixture shows no divergence notice.",
+    "AS-4 (heading outline): the records-section headings are h2/h3 elements and appear in the document heading outline; a test asserts the outline (typed DOM queries per the web test rules).",
+    "AS-5 (value pins): client tests assert the exact retrievedAt VALUE through the round-trip; reverting boundedTimestamp to boundedToken makes the suite fail (mutation-style assertion on the preserved characters).",
+    "AS-6 (repr cap): a 422 from condo_records.py embeds detail.raw_value only through a length-capped repr; the api test binds the cap; every other response byte-identical.",
+    "AS-7 (guard coherence preserved): the single monotone deriveCondoSurface decision still governs both surfaces; no new decision point; the existing withhold tests green unchanged.",
+    "AS-8 (proof): ruff clean; `python -m pytest tests/api -q` green offline from services/api; web suites green in CI at the pushed head; modularity exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The guard-coherence ruling (ONE deriveCondoSurface decision, both surfaces) is accepted law - any second decision point or weakened withhold fails review.",
+    "Sanitizer boundaries: timestamps/districts/identifiers are different vocabularies - do not touch boundedToken's charset; DB-036(a) and (d) explicitly bind OTHER future packets.",
+    "PropertyOverview has five production consumers - keep its public props stable; sweep consumers on any prop change.",
+    "Disjointness vs M5-T054 (api rules) and M5-T055 (address confirm arc + e2e): zero path overlap, recorded mechanically in G0.",
+    "Web behavior proves ONLY in CI on the pushed head (thin client)."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T03:42:05.048634+00:00",
+  "updated_at": "2026-09-20T03:42:06.071040+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T03:42:05.048634+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_condo_records_api.py -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

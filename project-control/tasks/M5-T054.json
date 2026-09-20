@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T054",
+  "title": "Phase B2 (D-076): proposal-conditioned rule checks - wire derive_proposal facts into the rule engine with COULD-NOT-CHECK first-class + the T051-G5 wiring preconditions",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire the accepted B1 derivation module into the existing deterministic rule engine as a NEW focused module: evaluate the existing published/needs_review rule families (yards, coverage, FAR, height/setback where street width is attested) against proposal-derived FACTS; every result carries the proposal scenario label and provenance; COULD-NOT-CHECK stays a first-class outcome; the first production caller of derive_proposal, so the four recorded wiring preconditions (LotContext list-size ceiling, caller-coordinate finiteness, area_sq_ft bounded-repr, DB-034(d) emission disposition) bind in-packet.",
+  "business_reason": "B1 turned a valid proposal into deterministic facts; B2 makes those facts mean something - the existing rule engine evaluates them so the editor (B3) can show an architect exactly which rules pass, fail (with numeric shortfalls), or could not be checked",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). derive_proposal lives in services/api/app/scenario/derivation.py (READ-ONLY import; its only current consumer is its own test file - THIS packet is the first production caller, which is why the wiring preconditions bind here). Rule engine: app/rules/evaluator.py (consumed by rules/__init__.py:18, registry.py:18 + the whole tests/rules suite); app/rules/integration.py is the EXISTING evaluation-thread seam (consumed by api/v1/evidence.py:95, rule_evaluation.py:60, scenario.py:73, scenario_analysis.py:116, rules/response.py:43) - study how it threads inputs, labels results, and carries provenance, but do NOT modify it. Rulesets: app/rules/rulesets/*.rule.json (read-only). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; the graph is ADVISORY - verify in source.",
+    "SCOPE 1/2 - PROPOSAL CHECKS MODULE (binding; read docs/PROPOSAL_EDITOR_PHASED_PLAN.md phase-B B2 row, docs/DISCOVERY_BACKLOG.md rows DB-034 + the T053/T051 seam sweeps, services/api/app/scenario/derivation.py, and app/rules/evaluator.py + integration.py FIRST): NEW focused module services/api/app/rules/proposal_checks.py that, given a VALIDATED proposed_massing block, a caller-supplied LotContext, and caller-supplied lot rule-input facts (zoning district etc. - same read-only discipline as B1: no fetching, no network, no connector import; everything arrives as parameters), does exactly this: (1) enforces the WIRING PRECONDITIONS before any derivation call - a LotContext list-size ceiling (lot_line_segments and street_lines each bounded by an explicit named constant; typed refusal naming the exact field and count), caller-coordinate finiteness guards (every coordinate and area_sq_ft must be finite; NaN/inf refuses typed BEFORE any EvidenceRecord can carry it), and the area_sq_ft bounded-repr instance (DB-034(b) class: any refusal message embeds the offending value only through a length-capped repr); (2) calls derive_proposal exactly once per evaluation and maps the returned facts into the evaluator's input vocabulary through an EXPLICIT declared fact-mapping table (which EvidenceRecord feeds which rule input - auditable data, never a silent dict merge); (3) evaluates the existing published/needs_review rule families (yards, coverage, FAR, height/setback where the caller supplies an attested street width - consuming the attestation OUTPUT shape read-only, never re-deriving width) via the EXISTING evaluator - no new rule logic, no ruleset edits; (4) every result carries the proposal's scenario label and provenance (scenario/proposal identifier, the derivation record ids it consumed, source_class) and results group into PASS / FAIL / COULD_NOT_CHECK with COULD_NOT_CHECK a first-class typed outcome carrying its missing-input reason (absent fact, unattested street width, rule input a flat proposal cannot supply) - never a default, and never a fail-closed-to-narrow guess: any fallback direction must be the consuming rule's own validated one (D-051); (5) numeric shortfalls: where a rule FAILs, the result carries provided value, required value, and unit so B3 can render 'rear yard: 18 ft provided; 20 ft required; 2 ft short'.",
+    "SCOPE 2/2 - DB-034(d) DISPOSITION + TESTS (binding): (1) DB-034(d) emission: this module must emit NO scenario documents - prove it (no contract/builder import, no version emission anywhere) and record in the producer report the disposition that the emits-1.1.0-only-when-block-present invariant rides to the first EMITTING packet (B3); if any code path here does construct a scenario document, enforce the invariant at that seam instead and say so. (2) NEW test file services/api/tests/rules/test_proposal_checks.py with fixtures under services/api/tests/rules/fixtures/proposal_checks/**: at minimum - a hand-built rectangle proposal on a fixture lot where one yard-class rule PASSes and one coverage-class rule FAILs with the exact hand-computed shortfall (arithmetic shown in the fixture); an unattested-street case where height/setback returns COULD_NOT_CHECK naming the missing attestation; a preconditions block (list-ceiling refusal, NaN/inf refusal, oversized-area capped repr); a label-propagation test (every result carries the scenario label + derivation record ids); and proof that a rule family with no proposal-relevant input never silently PASSes (COULD_NOT_CHECK or an explicit exclusion record).",
+    "PRESERVATION (binding): app/rules/evaluator.py, integration.py, registry.py, response.py, rulesets/** and app/scenario/** are READ-ONLY (byte-preserved); every existing rules/scenario/api suite green unchanged; no new dependency (stdlib only); NO route or api/ change (route wiring is B3's seam); modularity: proposal_checks.py stays a focused module below the warn tier or splits with a facade.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "services/api/app/rules/proposal_checks.py: typed, pure, bounded proposal-conditioned rule evaluation (preconditions gate, explicit fact mapping, existing-evaluator wiring, labeled PASS/FAIL/COULD_NOT_CHECK results with numeric shortfalls)",
+    "services/api/tests/rules/test_proposal_checks.py + hand-computed fixtures under services/api/tests/rules/fixtures/proposal_checks/**",
+    "project-control/reports/M5-T054-producer-report.md (one concise evidence pass, incl. the DB-034(d) no-emission disposition)"
+  ],
+  "dependencies": [
+    "M5-T051"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/proposal_checks.py",
+    "services/api/tests/rules/test_proposal_checks.py",
+    "services/api/tests/rules/fixtures/proposal_checks/**",
+    "project-control/reports/M5-T054-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/evaluator.py",
+    "services/api/app/rules/integration.py",
+    "services/api/app/rules/registry.py",
+    "services/api/app/rules/response.py",
+    "services/api/app/rules/rulesets/",
+    "services/api/app/scenario/",
+    "services/api/app/api/",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "packages/contracts/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary, hand-computed): the rectangle-proposal fixture yields one yard-class PASS and one coverage-class FAIL whose provided/required/unit values match the fixture's shown arithmetic exactly; every result carries the proposal scenario label, the derivation record ids consumed, and source provenance.",
+    "AS-2 (COULD_NOT_CHECK first-class): with no attested street width supplied, height/setback families return typed COULD_NOT_CHECK naming the missing attestation - never a default width, never a silent PASS or FAIL; the fallback direction of any consuming rule is its own validated one (D-051).",
+    "AS-3 (wiring preconditions, T051-G5 + DB-034(b)): oversized lot_line_segments or street_lines refuse typed naming the field and count; a NaN/inf coordinate or area refuses BEFORE derive_proposal runs (no EvidenceRecord ever carries a non-finite value); refusal detail embeds offending values only via a length-capped repr.",
+    "AS-4 (facts-vs-allowances honesty, D-076-R002): results distinguish proposal-PROVIDED values from rule-REQUIRED values explicitly; the grouped summary always carries the COULD_NOT_CHECK count so a passing subset is never presentable as whole-building approval.",
+    "AS-5 (explicit fact mapping): the fact-mapping table is declared, auditable data; no rule input is fed by an unmapped value; a rule family with no proposal-relevant input surfaces as COULD_NOT_CHECK or an explicit exclusion record, never a silent PASS.",
+    "AS-6 (DB-034(d) disposition): grep + import proof that the module constructs no scenario document and emits no contract version; the producer report records that the 1.1.0-emission invariant rides to the first emitting packet (B3).",
+    "AS-7 (purity + bounds): no network/connector/file I/O; all inputs arrive as parameters; iteration is bounded by the validated block plus the packet's explicit ceilings.",
+    "AS-8 (proof): ruff clean; `python -m pytest tests/rules -q` and `python -m pytest tests/scenario -q` green offline from services/api; modularity exit 0; every pre-existing suite green unchanged."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "FACTS vs ALLOWANCES stays the load-bearing boundary (D-076-R002): provided values come from the proposal, required values from rules - conflating them misrepresents a proposal as compliant; reviewers grep for it.",
+    "The module is the FIRST production caller of derive_proposal - the T051-G5 preconditions (list ceiling, finiteness, area repr) bind HERE and G5 will verify each (D-077-R004).",
+    "Lot facts and street attestations are CALLER-SUPPLIED parameters: importing spatial/ or connectors/ = STOP + discovery (forbidden paths).",
+    "Disjointness vs M5-T055 (address confirm arc) and M5-T056 (condo surfaces): zero path overlap, recorded mechanically in G0.",
+    "No route in-packet: wiring a FastAPI route here would collide with B3's seam - the api/ tree is forbidden."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T03:41:44.712887+00:00",
+  "updated_at": "2026-09-20T03:41:45.058377+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003",
+        "D-077-R004"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T03:41:44.712887+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/rules -q",
+    "python -m pytest tests/scenario -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

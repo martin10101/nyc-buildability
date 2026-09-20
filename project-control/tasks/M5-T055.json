@@ -1,0 +1,101 @@
+{
+  "task_id": "M5-T055",
+  "title": "DB-035 confirm-arc rider cluster: CLS pixel-proof e2e + record-note reading order + accessible-name truncation honesty + no-street copy trim",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close the four advisory DB-035 riders from the accepted M5-T050 wave on the address confirm arc: (a) the definitive pixel-level CLS proof for the record-note late insert as a new Playwright spec (CTA Y-position byte-stable at 360/768/1280 incl. a long record address); (b) move the record note after Not-my-property but BEFORE Meta (content-before-footer reading order); (c) fix the >512-char truncated accessible-name announcement so the announced name matches the visible full-length text honestly; (d) trim the redundant no-street copy - with the copy-sweep discipline across components, unit tests and e2e.",
+  "business_reason": "The accepted confirm arc carries four advisory residuals from its own review wave (DB-035); closing them as one small cluster keeps the address journey honest (accessible-name truthfulness, reading order) and pins the CLS-free record-note insert with a pixel-level proof",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): the modularity check runs from repo root. NO npm/npx/node locally (thin client) - vitest + Playwright suites prove ONLY in CI on the pushed head; never claim web behavior verified from local reasoning. Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam). AddressConfirmCard.tsx is consumed by AddressResolutionScreen.tsx:19, which is consumed by address-confirm.test.tsx / address-resolution.test.tsx, architect/ArchitectEntry.tsx:14 and property/PropertyLookup.tsx:23 - a copy or structure change here can break tests you do not own. COPY-SWEEP DISCIPLINE (binding): before finishing, grep every changed sentence across components + __tests__ + e2e; route out-of-scope red consumers to the orchestrator in the report, never leave one silent.",
+    "SCOPE (binding; read docs/DISCOVERY_BACKLOG.md row DB-035, project-control/reports/M5-T050-producer-report.md, and AddressConfirmCard.tsx FIRST) - close the four DB-035 riders: (a) ADD to the EXISTING Playwright spec apps/web/e2e/responsive-a11y.spec.ts (the M2-T002 S6 responsive/a11y suite - read it first; reuse its VIEWPORTS constant and helpers) the pixel-level CLS proof for the record-note late insert: the primary CTA's Y-position is byte-stable before/after the note inserts at 360, 768 and 1280 widths, including a LONG record address; extend the existing suite in place; every pre-existing S6 test stays byte-preserved and green. (b) Move the record note AFTER the 'Not my property' action but BEFORE the <Meta> footer block - content-before-footer reading order; only the non-interactive footer may shift; the spec from (a) proves the NEW placement. (c) >512-char entries: the accessible name must match what the eye sees - either announce the full visible text, or truncate BOTH the visible text and the accessible name at the same boundary with a full-value affordance; never announce a truncation the visible text does not show. (d) Trim the redundant no-street copy (the T050 rider-c wording) - one clear sentence; copy-sweep per the navigation block.",
+    "PRESERVATION (binding): display semantics, flag gating, and every accepted behavior of the confirm arc stay unchanged apart from the four riders; the CLS-correctness of the record-note insert is preserved through the (b) move and proven by (a); no new route, no new api call, no api/ change; every existing web suite green in CI at the pushed head.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client."
+  ],
+  "outputs": [
+    "apps/web/e2e/responsive-a11y.spec.ts (existing S6 suite, extended): pixel-level CLS proof for the record-note insert (CTA Y-position byte-stable at 360/768/1280 incl. long record address)",
+    "AddressConfirmCard.tsx: record-note reading-order move + accessible-name truncation honesty + no-street copy trim, with updated unit tests",
+    "project-control/reports/M5-T055-producer-report.md (one concise evidence pass)"
+  ],
+  "dependencies": [
+    "M5-T050"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "apps/web/e2e/responsive-a11y.spec.ts",
+    "apps/web/e2e/confirm-journey.spec.ts",
+    "project-control/reports/M5-T055-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/architect/",
+    "apps/web/src/lib/",
+    "apps/web/src/components/address/AddressResolutionScreen.tsx",
+    "apps/web/src/components/address/AddressForm.tsx",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (CLS pixel proof): the extended responsive-a11y spec asserts the primary CTA's Y-position is byte-stable across the record-note insert at 360, 768 and 1280 widths, including a long record address, with the note in its NEW (b) position; the spec fails if the CTA moves by a single pixel.",
+    "AS-2 (reading order): the record note renders after 'Not my property' and before the <Meta> footer; a unit test asserts the DOM order; only the non-interactive footer shifts on insert.",
+    "AS-3 (accessible-name honesty): for a >512-char entry the announced name and the visible text agree - same content or same truncation boundary with a full-value affordance; a unit test binds the equality.",
+    "AS-4 (copy trim + sweep): the redundant no-street sentence is gone; grep evidence in the report shows the old sentence absent across components, __tests__ and e2e; no out-of-scope consumer left red.",
+    "AS-5 (no behavior drift): flag gating and confirm-arc semantics unchanged; no new route or api call; address-confirm unit suite green.",
+    "AS-6 (proof): vitest + Playwright suites green in CI at the pushed head (web proves ONLY in CI); modularity exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "responsive-a11y.spec.ts is the EXISTING M2-T002 S6 suite - extend it; every pre-existing test stays byte-preserved and green.",
+    "The (b) reading-order move is exactly the kind of change that reintroduces CLS - the (a) spec must prove the NEW placement, not the old one.",
+    "Copy changes have broken sibling tests twice before (T038 precedent) - the copy-sweep is binding.",
+    "Disjointness vs M5-T054 (api rules) and M5-T056 (condo/architect surfaces): zero path overlap, recorded mechanically in G0.",
+    "Web behavior proves ONLY in CI on the pushed head (thin client) - never claim local verification."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T03:42:02.410140+00:00",
+  "updated_at": "2026-09-20T03:42:03.550801+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T03:42:02.415423+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}
