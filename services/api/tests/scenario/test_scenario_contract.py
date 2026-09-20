@@ -350,7 +350,15 @@ def test_property_profile_and_rule_evaluation_contracts_untouched():
     # [ORCH-CORRECTED per api CI on f954aa59] M5-T037 is the accepted contract
     # task that appends 1.1.0 (optional wide_street block); this guard admits
     # exactly the sanctioned enum, as it did for each property_profile bump.
-    assert rule_eval["properties"]["contract_version"]["enum"] == ["1.0.0", "1.1.0"]
+    # [ORCH-CORRECTED at the M5-T058 harvest] M5-T058 is the sanctioning
+    # contract task that appends 1.2.0 (substitution stamp); guard updated by
+    # the orchestrator as the routed out-of-scope consumer fix (M5-T037
+    # precedent above) — the sweep caught this file pinning the pre-1.2.0 enum.
+    assert rule_eval["properties"]["contract_version"]["enum"] == [
+        "1.0.0",
+        "1.1.0",
+        "1.2.0",
+    ]
 
 
 # ---------------------------------------------------------------------------
