@@ -1,0 +1,124 @@
+{
+  "task_id": "M5-T065",
+  "title": "D-082 map-drawing input slice: draw the outline on the lot map + server-side 4326-to-2263 bridge feeding the accepted draft model (manual option, B3-deferred items now released)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Build the released map-drawing input path (D-082-R001): the architect draws the building outline directly on the existing LotOutlineMap (click-to-place vertices, keyboard-operable editing per the accepted a11y bar), the drawn 4326 positions are converted to EPSG:2263 by a NEW small flag-gated api endpoint that reuses the backend's EXISTING projection machinery (measurement math stays server-side and deterministic - no client-side transform, no new web dependency), and the converted vertices land in the accepted proposal draft model exactly as if typed (the numeric table stays visible and editable - manual remains the option per D-082-R003); display-only honesty preserved (the drawn shape is proposed input, never a record); typed bounded refusals on the bridge (out-of-NYC bounds, degenerate shapes, over-cap vertex counts mirror the route constants)",
+  "business_reason": "The owner's checkpoint ruling: typing coordinates is the option, not the front door - drawing on the map is how an architect actually sketches a massing guess; the bridge keeps every measurement in the deterministic backend per the 2263-measurement doctrine",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local commands: `python -m ruff check .` + the api pytest from services/api (for the bridge endpoint), `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 783 files/16559 nodes/7258 edges): ProposalEditor.tsx + proposal-draft.ts + the editor specs + e2e are FREE (M5-T060 accepted); LotOutlineMap.tsx is READ-ONLY (compose, never edit - the accepted display component); the HELD M5-T063 surface (bounded.ts, condo-records.ts, rule-evaluation.ts, PropertyOverview, AnalysisIdentityNotice + their specs, address-confirm spec) is FORBIDDEN until its acceptance; the LIVE M5-T062 lane holds services/api site_definition + main.py. Server side read-only seams: app/connectors/mappluto_geometry_arcgis.py (the AUTHORITATIVE 2263 lot geometry - measurement) and app/connectors/mappluto_lot_outline.py (the 4326 DISPLAY ring); wide_street_buffer_engine.py documents the no-reprojection doctrine. Run `python tools/code_graph/query.py --no-regen impact <path>` before sweeps; graph ADVISORY.",
+    "SCOPE (binding; D-082-R001/R003 + the no-reprojection doctrine are the spec - read project-control/directives/D-082-max-envelope-first-and-map-drawing/source-001.md and the wide_street_buffer_engine.py doctrine notes FIRST): (1) NEW web component apps/web/src/components/architect/ProposalOutlineDraw.tsx - draw the outline over the existing LotOutlineMap composition (click-to-place vertices + keyboard-operable placement/adjustment/deletion per the accepted a11y bar incl. focus management on delete - the DB-043(a) lesson applies FROM THE START); the drawn shape is PROPOSED input, labeled so; (2) NEW api endpoint services/api/app/api/v1/outline_bridge.py (flag-gated, UNMOUNTED - main.py FORBIDDEN, tests mount via TestClient; mount rides a later seam): converts the drawn 4326 positions to EPSG:2263 by CORRESPONDENCE, NOT projection math - the endpoint fetches the SAME lot's accepted 4326 display ring and authoritative 2263 geometry (both from the accepted connectors, read-only), fits the affine correspondence between the two representations of the SAME parcel, maps the drawn vertices through it, and returns 2263 vertices WITH the fit residual surfaced honestly; it REFUSES typed when the residual exceeds a conservative bound, when a drawn vertex falls outside a bounded neighborhood of the lot, on degenerate shapes, and on over-cap vertex counts (mirror the route constants). HARD CONSTRAINTS: NO new dependency (no pyproj - a dependency admission is an owner-review path, route it as a blocker if the correspondence approach proves untenable); NO hand-rolled general CRS/Lambert math; every returned coordinate carries the correspondence provenance (method, residual, source rings' identities); (3) wire adoption: the converted vertices land in the accepted draft model exactly as if typed (the numeric table stays visible, editable, and authoritative - manual remains the option per D-082-R003); (4) client lib apps/web/src/lib/outline-bridge-api.ts with the full typed decode matrix (the proposal-checks client discipline); (5) specs: component interaction (incl. keyboard + focus-on-delete), bridge client matrix, api endpoint tests (residual bound, out-of-neighborhood refusal, degenerate, over-cap, flag-off sentinel, correspondence provenance), e2e extension of the proposal journey with a drawn outline via stubbed bridge responses.",
+    "PRESERVATION (binding): LotOutlineMap.tsx, the HELD T063 files, the LIVE T062 surface (site_definition/** + main.py), app/connectors/**, app/rules/**, app/scenario/**, packages/contracts/** are READ-ONLY; the accepted numeric editor flow stays byte-compatible (drawing is ADDITIVE - every T060 spec stays green unchanged); no new dependency; measurement honesty: the 2263 values shown to the user are the BRIDGE's output with its residual disclosed - never presented as survey-grade; D-076-R002 proposed-not-a-record labeling on every drawn surface.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client."
+  ],
+  "outputs": [
+    "Map-drawing input path: keyboard-operable outline drawing over the accepted lot map, correspondence-bridged to authoritative 2263 with honest residual disclosure, feeding the accepted draft model additively (manual stays the option)",
+    "Flag-gated UNMOUNTED outline-bridge endpoint w/ typed refusals + correspondence provenance",
+    "project-control/reports/M5-T065-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T060"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-draw.test.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/lib/architect/__tests__/proposal-draft.test.ts",
+    "apps/web/src/lib/outline-bridge-api.ts",
+    "apps/web/src/lib/__tests__/outline-bridge-api.test.ts",
+    "apps/web/e2e/proposal-editor.spec.ts",
+    "services/api/app/api/v1/outline_bridge.py",
+    "services/api/tests/api/test_outline_bridge.py",
+    "project-control/reports/M5-T065-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/architect/LotOutlineMap.tsx",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/test-support/rule-evaluation-fixtures.ts",
+    "services/api/app/main.py",
+    "services/api/app/site_definition/",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/connectors/",
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (drawing): vertices placed/adjusted/deleted by mouse AND keyboard only; focus managed on delete (the DB-043(a) remedy applied from the start); the drawn shape labeled proposed input.",
+    "AS-2 (bridge honesty): the endpoint returns 2263 vertices with correspondence provenance (method, residual, source-ring identities); a residual over the bound REFUSES typed; out-of-neighborhood, degenerate, and over-cap inputs refuse typed and bounded; flag-off = the 404 sentinel; UNMOUNTED (main.py untouched).",
+    "AS-3 (no-reprojection doctrine): zero new dependencies (lockfile/requirements untouched); no general CRS math anywhere in the packet (grep-provable); the only geometry sources are the two accepted connector representations of the SAME parcel, read-only.",
+    "AS-4 (adoption + manual): converted vertices land in the draft model exactly as if typed; the numeric table remains visible, editable, authoritative; every accepted T060 spec stays green unchanged; the check loop runs on the drawn shape end-to-end (e2e with stubbed bridge).",
+    "AS-5 (decode matrix): the bridge client decodes the full typed matrix incl. the residual-refusal and neighborhood-refusal distinctly (mutation-sensitive specs).",
+    "AS-6 (preservation): held/live surfaces untouched; api suite + ruff + modularity green locally where runnable; web proof = CI at the pushed head."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The correspondence bridge is the packet's hard problem: if the affine fit residual proves untenable for real lots, STOP and surface it as a discovery/blocker naming the pyproj-admission alternative (an owner-review dependency path) - never hand-roll projection math and never ship an undisclosed-error transform.",
+    "The HELD T063 surface and the LIVE T062 lane border this packet on both sides - G0 records the three-way disjointness; touch neither.",
+    "LotOutlineMap is compose-only; editing it regresses the accepted display surface.",
+    "Presenting bridge output as survey-grade measurement would violate the measurement-honesty doctrine - the residual disclosure is load-bearing."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T23:04:59.347291+00:00",
+  "updated_at": "2026-09-20T23:04:59.623387+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001",
+        "D-082-R003"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T23:04:59.347291+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api/test_outline_bridge.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

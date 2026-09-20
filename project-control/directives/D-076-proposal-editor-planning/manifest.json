@@ -1,104 +1,110 @@
 {
-  "schema": "directive_manifest/v1",
-  "directive_id": "D-076",
-  "version": 1,
-  "slug": "proposal-editor-planning",
-  "title": "Owner 2026-09-19 ('Plan it'): author the phased proposal-editor plan (editor -> assisted PDF import -> DWG later), grounded in the existing scenario engine, sequenced after the in-flight lanes; scoped release of the expansion-planning hold for this slice only; proposals stay labeled scenarios under records-vs-allowances; deterministic code calculates",
-  "status": "active",
-  "lifecycle_state": "active",
-  "issued_by": "owner",
-  "issued_at": "2026-09-19",
-  "captured_at": "2026-09-19T06:12:50.269900+00:00",
-  "created_at": "2026-09-19T06:12:50.269900+00:00",
-  "updated_at": "2026-09-20T12:35:00+00:00",
-  "channel": "interactive_chat",
-  "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
-  "capture_head_sha": null,
-  "owner_approval": {
-    "state": "authorized",
-    "note": "Direct owner reply 'Plan it' to the orchestrator's offer that defined the referent verbatim (plan the proposal editor as the next phase, sequenced after the two in-flight tasks, feeding the loops as they finish) and flagged the expansion-hold overlap explicitly."
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-076",
+ "version": 1,
+ "slug": "proposal-editor-planning",
+ "title": "Owner 2026-09-19 ('Plan it'): author the phased proposal-editor plan (editor -> assisted PDF import -> DWG later), grounded in the existing scenario engine, sequenced after the in-flight lanes; scoped release of the expansion-planning hold for this slice only; proposals stay labeled scenarios under records-vs-allowances; deterministic code calculates",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-19",
+ "captured_at": "2026-09-19T06:12:50.269900+00:00",
+ "created_at": "2026-09-19T06:12:50.269900+00:00",
+ "updated_at": "2026-09-20T23:07:52.888851+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner reply 'Plan it' to the orchestrator's offer that defined the referent verbatim (plan the proposal editor as the next phase, sequenced after the two in-flight tasks, feeding the loops as they finish) and flagged the expansion-hold overlap explicitly."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-076-R001",
+  "D-076-R002",
+  "D-076-R003"
+ ],
+ "requirements_content_digest_sha256": "3bee28c5091cfe682a534fab99d62d33b6dcf9866318b5ef0083708b54783e5c",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-19T06:12:50.269900+00:00",
+   "content_digest_sha256": "aca8907a65ea1f00c62cc4df3c44e1101565b518875775dbb7a9393e2f669536"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_planning",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "authoring the phased proposal-editor plan + contracting its phase-B increments under the gated process as current lanes finish",
+  "forbidden": "reviving the 19-task expansion pack / 9 contracts / GDS P1-P8 wholesale; 3D-massing beyond phase B pending the plan's owner-review checkpoint; any gate/hold/authority change; Tier D actions"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-19T06:12:50.269900+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). Plan authoring follows immediately; phase-B packets bind by applicability append at contract time."
   },
-  "requirements_file": "requirements.json",
-  "verification_file": "verification.json",
-  "final_reviewed_sha": null,
-  "locked_requirement_ids": [
-    "D-076-R001",
-    "D-076-R002",
-    "D-076-R003"
-  ],
-  "requirements_content_digest_sha256": "e22a07218e68aec3eb28d2d0b9c542496bdec0a7178ebf86ba5b8997bf45ad5e",
-  "sources": [
-    {
-      "file": "source-001.md",
-      "kind": "original",
-      "sequence": 1,
-      "recorded_at": "2026-09-19T06:12:50.269900+00:00",
-      "content_digest_sha256": "aca8907a65ea1f00c62cc4df3c44e1101565b518875775dbb7a9393e2f669536"
-    }
-  ],
-  "amendments": [],
-  "supersedes": [],
-  "superseded_by": null,
-  "affected_tasks": [],
-  "affected_prs": [],
-  "affected_branches": [
-    "candidate/D-024-mrl-option-b"
-  ],
-  "scope": {
-    "kind": "product_planning",
-    "task_ids": [],
-    "task_types": [],
-    "allowed": "authoring the phased proposal-editor plan + contracting its phase-B increments under the gated process as current lanes finish",
-    "forbidden": "reviving the 19-task expansion pack / 9 contracts / GDS P1-P8 wholesale; 3D-massing beyond phase B pending the plan's owner-review checkpoint; any gate/hold/authority change; Tier D actions"
+  {
+   "at": "2026-09-19T08:00:01.804751+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "M5-T048 bound to D-076-R001/R002/R003: the plan's B0 packet (its first named increment) carrying the R002 honesty rules as binding packet text (third input class, deterministic validation, no allowance implied) inside the R003-released phase-B slice. Digest resynced same commit."
   },
-  "audit_log": [
-    {
-      "at": "2026-09-19T06:12:50.269900+00:00",
-      "actor": "orchestrator",
-      "action": "captured",
-      "note": "Captured verbatim before acting (D-001 discipline). Plan authoring follows immediately; phase-B packets bind by applicability append at contract time."
-    },
-    {
-      "at": "2026-09-19T08:00:01.804751+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_bound",
-      "note": "M5-T048 bound to D-076-R001/R002/R003: the plan's B0 packet (its first named increment) carrying the R002 honesty rules as binding packet text (third input class, deterministic validation, no allowance implied) inside the R003-released phase-B slice. Digest resynced same commit."
-    },
-    {
-      "at": "2026-09-19T11:57:50.504677+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_bind",
-      "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T051 (phase-B1 derivation packet contract seam); requirements.json digest resynced to b239221e27598b605a99992a0731fc6f31336b26b29e4e5d8bf9549fd1f3c7f5"
-    },
-    {
-      "at": "2026-09-19T14:52:46.942192+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_bind",
-      "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T053 (B3-scaffold slice-1 packet contract seam); requirements.json digest resynced to cb1675d1608081d51ed76d70aac427d970fcedd7241bb7d9d9466d1da641b5ee"
-    },
-    {
-      "at": "2026-09-20T03:46:03+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound the D-077 three-lane contract seam: M5-T054 (phase B2 proposal-conditioned rule checks; first production caller of derive_proposal - the T051-G5 wiring preconditions bind in-packet), M5-T055 (DB-035 confirm-arc rider cluster), M5-T056 (DB-036 condo-surface rider cluster). Append-only, task_ids only; no requirement text changed. Digest resynced cb1675d1 -> e282bf5d in the SAME commit (c14)."
-    },
-    {
-      "at": "2026-09-20T06:15:56+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound M5-T057 (phase B3 slice 1: proposal-check route carrying BP-1..BP-7 + T053 residuals + G4 fold-ins) to D-076-R001/D-076-R002. Append-only, task_ids only. Digest resynced e282bf5d -> fe4275ed SAME commit (c14)."
-    },
-    {
-      "at": "2026-09-20T10:05:00+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound M5-T060 (B3 slice 2: numeric-authority editor + run-check + client-local variations; drawing/transform/emission deferred to the post-B3 checkpoint per R003's named review) to D-076-R001/R002. Append-only, task_ids only. Digest resynced fe4275ed -> 720fb66a SAME commit (c14)."
-    },
-    {
-      "at": "2026-09-20T12:35:00+00:00",
-      "actor": "orchestrator",
-      "action": "applicability_append",
-      "note": "Bound M5-T061 to D-076-R001/R002 (hardening of the B3 route artifact; boundary honesty rules bind - registry-derived bounds only, never invented limits). Append-only, task_ids only. Digest resynced 720fb66a -> e22a0721 SAME commit (c14)."
-    }
-  ]
+  {
+   "at": "2026-09-19T11:57:50.504677+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T051 (phase-B1 derivation packet contract seam); requirements.json digest resynced to b239221e27598b605a99992a0731fc6f31336b26b29e4e5d8bf9549fd1f3c7f5"
+  },
+  {
+   "at": "2026-09-19T14:52:46.942192+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "detail": "D-076-R001+D-076-R002 applicability.task_ids += M5-T053 (B3-scaffold slice-1 packet contract seam); requirements.json digest resynced to cb1675d1608081d51ed76d70aac427d970fcedd7241bb7d9d9466d1da641b5ee"
+  },
+  {
+   "at": "2026-09-20T03:46:03+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound the D-077 three-lane contract seam: M5-T054 (phase B2 proposal-conditioned rule checks; first production caller of derive_proposal - the T051-G5 wiring preconditions bind in-packet), M5-T055 (DB-035 confirm-arc rider cluster), M5-T056 (DB-036 condo-surface rider cluster). Append-only, task_ids only; no requirement text changed. Digest resynced cb1675d1 -> e282bf5d in the SAME commit (c14)."
+  },
+  {
+   "at": "2026-09-20T06:15:56+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M5-T057 (phase B3 slice 1: proposal-check route carrying BP-1..BP-7 + T053 residuals + G4 fold-ins) to D-076-R001/D-076-R002. Append-only, task_ids only. Digest resynced e282bf5d -> fe4275ed SAME commit (c14)."
+  },
+  {
+   "at": "2026-09-20T10:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M5-T060 (B3 slice 2: numeric-authority editor + run-check + client-local variations; drawing/transform/emission deferred to the post-B3 checkpoint per R003's named review) to D-076-R001/R002. Append-only, task_ids only. Digest resynced fe4275ed -> 720fb66a SAME commit (c14)."
+  },
+  {
+   "at": "2026-09-20T12:35:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound M5-T061 to D-076-R001/R002 (hardening of the B3 route artifact; boundary honesty rules bind - registry-derived bounds only, never invented limits). Append-only, task_ids only. Digest resynced 720fb66a -> e22a0721 SAME commit (c14)."
+  },
+  {
+   "at": "2026-09-20T23:07:52.888851+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T064 (max-envelope engine slice 1) and/or M5-T065 (map-drawing input + correspondence bridge) at the seq-123 D-082 contract seam; graph regenerated at this seam (783/16559/7258) before authoring; digest resync same commit."
+  }
+ ]
 }

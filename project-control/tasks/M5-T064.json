@@ -1,0 +1,117 @@
+{
+  "task_id": "M5-T064",
+  "title": "D-082 max-envelope engine slice 1: deterministic maximum-buildable-envelope derivation (rectangle-prism class) w/ per-dimension binding-rule provenance, honest gaps, and generator-checker consistency",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Implement the deterministic maximum-envelope generator the owner directed at the post-B3 checkpoint (D-082-R002): given the analyzed lot's context and the applicable ruleset, derive the maximum buildable envelope for the rectangle-prism massing class the accepted checker already prices - the binding value per dimension (max lot coverage ratio, max floor area / FAR, max height, and the setback/yard constraints as computable), each carrying provenance naming the BINDING rule and the rules it out-competed; where a dimension's rule cannot be computed for the lot, emit an honest gap in the COULD_NOT_CHECK vocabulary (never a guessed number, never a silent omission); express the result as a candidate proposal draft in the accepted proposed_massing shape and PROVE generator-checker consistency by running the accepted check_proposal engine on it (every computable check passes at the derived values; the at-cap boundary semantics match the checker's); deterministic (same lot + same registry = byte-stable output); expose it via a flag-gated internal route mirroring the proposal-checks route discipline (bounded typed refusals, same status-state matrix class, no persistence)",
+  "business_reason": "The owner's checkpoint directive: the smartest calculation comes first - the architect sees the rules-derived maximum before designing anything; this engine slice is the foundation the max-first UX (D-082-R003) and the map-drawing editor both consume",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam BEFORE this packet was written: 783 files/16559 nodes/7258 edges): the engine seam you CONSUME read-only is app/rules/proposal_checks.py (check_proposal, CALLER_RULE_INPUT_NAMES, the rectangle arithmetic) - consumed today by _proposal_fact_domains.py:36, proposal_checks_api.py:97, and the two test files ONLY; also read-only: app/api/v1/_proposal_fact_domains.py (derive_input_domains - the registry-derived bounds combinators you MIRROR for the envelope directions), app/rules/models.py InputSpec (minimum/maximum/exclusive_*), app/scenario/proposal_input_gate.py + app/scenario/proposal.py (the massing shape + validation), app/rules/rulesets/*.rule.json (the rules whose bounds you derive from - NEVER hand-copied values). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE (binding; D-082-R002 is the spec - read project-control/directives/D-082-max-envelope-first-and-map-drawing/{source-001.md,requirements.json} FIRST): NEW module services/api/app/scenario/max_envelope.py - derive_max_envelope(lot_context, registry) computing, for the rectangle-prism massing class the accepted checker prices: (a) the BINDING value per dimension (max lot coverage ratio, max floor area/FAR, max building height, and the setback/yard constraints exactly as far as the registry's rules make them computable for this lot) - every value REGISTRY-DERIVED via the same every-declaring-rule conservatism as derive_input_domains, never an invented or hand-copied number; (b) per-dimension provenance: the BINDING rule id + the competing rule ids it out-bound; (c) HONEST GAPS: any dimension whose governing rules cannot be computed for this lot emits a typed gap entry in the COULD_NOT_CHECK vocabulary with the reason - never a guessed number, never silently dropped; (d) a candidate proposed_massing draft (accepted shape, srid 2263) saturating the computable binding values on a rectangle footprint fitted to the lot's 2263 geometry class the checker accepts; (e) GENERATOR-CHECKER CONSISTENCY: the module (and tests) run check_proposal on the candidate - every computable check returns PASS at the derived values (at-cap semantics identical to the checker's); (f) DETERMINISM: same lot_context + same registry = byte-stable output (test-pinned). NEW route services/api/app/api/v1/max_envelope_api.py - flag-gated internal POST (mirror the proposal-checks route discipline: same flag class, bounded typed refusals, (200/404/413/422/500)-class matrix, no persistence, bounded echoes) returning the envelope + provenance + gaps + the candidate draft. THE ROUTE SHIPS UNMOUNTED - main.py is FORBIDDEN (the LIVE M5-T062 lane holds it); tests mount via TestClient directly (the accepted M5-T059 pattern); the mount line rides a later orchestrator seam.",
+    "PRESERVATION (binding): app/rules/**, app/scenario/proposal*.py, app/api/v1/proposal_checks_api.py, _proposal_fact_domains.py, main.py, app/site_definition/** (LIVE T062 lane), rule_evaluation/live_provider surfaces, packages/contracts/**, apps/web/** are READ-ONLY; no new dependency; no new flag beyond the ONE route flag (mirror the existing class); every derived value carries provenance; D-076-R002 honesty (the envelope is a rules-derived estimate, not a record - the route response says so in a fixed field); modularity - keep the generator and the route as separate focused modules.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Deterministic max-envelope generator (rectangle-prism class) w/ per-dimension binding-rule provenance, honest gaps, generator-checker consistency proof, and byte-stable determinism",
+    "Flag-gated UNMOUNTED internal route exposing the envelope (mount rides a later seam)",
+    "project-control/reports/M5-T064-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T061"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/max_envelope.py",
+    "services/api/app/api/v1/max_envelope_api.py",
+    "services/api/tests/scenario/test_max_envelope.py",
+    "services/api/tests/api/test_max_envelope_api.py",
+    "project-control/reports/M5-T064-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/rules/",
+    "services/api/app/scenario/proposal.py",
+    "services/api/app/scenario/proposal_input_gate.py",
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/api/v1/_proposal_fact_domains.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/site_definition/",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "packages/contracts/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (registry-derived binding values): for the accepted rectangle fixture lot, every envelope dimension equals the tightest applicable rule's declared bound (value-pinned against the ruleset fixtures); a registry where a direction is unbounded yields an honest unbounded/gap entry, never an invented ceiling; no hand-copied constant exists (every bound cites the registry lookup).",
+    "AS-2 (provenance): each dimension names its binding rule id and the out-competed rule ids; mutation-flipping the binding rule in a test registry flips the named id (test-pinned).",
+    "AS-3 (honest gaps): a lot/registry combination whose yard/setback rules cannot be computed emits the typed gap with reason; the gap appears in the route response; nothing is silently omitted (enumerate-the-dimensions test).",
+    "AS-4 (generator-checker consistency): check_proposal on the emitted candidate returns PASS for every computable check at the derived values; the at-cap-exact boundary matches the checker's semantics (a +epsilon mutation FAILs the check).",
+    "AS-5 (determinism + route discipline): byte-stable output across repeated calls; the route refuses typed and bounded (over-cap body, malformed, flag-off 404 sentinel); UNMOUNTED (absent from the app's openapi; main.py untouched); no persistence.",
+    "AS-6 (preservation): full api suite green; ruff clean; modularity exit 0; CI green at the pushed head; zero edits outside the five allowed_paths."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "main.py is HELD by the live M5-T062 lane - the route ships unmounted; touching main.py fails G0 disjointness and the wave.",
+    "An invented or over-narrowed bound is a legal-value fabrication - every number must trace to the registry (the D-051/D-076-R002 lineage).",
+    "The setback/yard dimensions may be honestly non-computable for many lots today - the HONEST GAP path is a first-class output, not an error.",
+    "Generator-checker inconsistency (an emitted max that the checker refuses) is the defining failure of this packet - AS-4 is the core proof."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T23:04:58.497224+00:00",
+  "updated_at": "2026-09-20T23:04:58.809706+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001",
+        "D-082-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T23:04:58.497224+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/scenario/test_max_envelope.py tests/api/test_max_envelope_api.py -q",
+    "python -m pytest tests/api tests/scenario tests/rules -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

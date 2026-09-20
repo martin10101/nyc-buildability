@@ -1,118 +1,122 @@
 {
-  "schema": "directive_requirements/v1",
-  "directive_id": "D-076",
-  "version": 1,
-  "requirement_count": 3,
-  "producer": "orchestrator",
-  "updated_at": "2026-09-20T12:35:00+00:00",
-  "requirements": [
-    {
-      "id": "D-076-R001",
-      "text": "Author the phased implementation plan for the proposal-editor track as a reviewable repository document, following the owner-endorsed order: phase A = the dependable per-property calculations already underway (the in-flight lanes; no new work created by this directive); phase B = a simple proposal editor (building outline on the lot, exterior wall positions, floors, heights; every change re-runs the EXISTING deterministic rules/scenario engine; each variation saved as a comparable, clearly-labeled proposed scenario; shortfalls stated numerically); phase C = assisted PDF drawing import (select sheet, confirm units/scale, confirm which lines are the building outline / property line / street frontage, ask only for unresolved inputs, then the SAME engine checks it); phase D = DWG and richer-model support, only after the confirm-and-check workflow is proven on real architect files. The plan must ground phase B in the existing scenario machinery (services/api/app/scenario/) and the existing evaluation/evidence contracts rather than inventing a parallel concept, and must state the packet-sized first increments with their gate/reviewer shape.",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "authorization",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-076-BOOTSTRAP",
-          "M5-T048",
-          "M5-T051",
-          "M5-T053",
-          "M5-T054",
-          "M5-T057",
-          "M5-T060",
-          "M5-T061"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "The plan document exists in docs/, is committed and pushed, names phase-B first packets concretely, and is announced to the owner in plain English.",
-      "required_evidence": "the committed plan document + the owner-facing summary",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance; plan authoring is the immediate next action.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    },
-    {
-      "id": "D-076-R002",
-      "text": "Honesty and boundary rules the plan (and every packet contracted from it) must carry: a proposed building is a third input class - never a city record and never a rule; every proposal-derived number is labeled as a proposed scenario under the D-073-R006 records-vs-allowances discipline; AI may assist recognition (drawing lines, suggested boundaries, annotations) but every measurement and rule comparison runs through the tested deterministic calculation code; a drawing-derived total is never auto-treated as zoning floor area (inclusions/exclusions applied explicitly); supported-check pass/fail/could-not-check stay distinct on screen and no passing subset is ever presented as whole-building approval; disagreements between a survey/drawing and city mapping stay visible, never silently reconciled.",
-      "source_ref": "source-001.md#context-orchestrator-interpretation-notes-the-owner-text-above-is-the-authority",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-076-BOOTSTRAP",
-          "M5-T048",
-          "M5-T051",
-          "M5-T053",
-          "M5-T054",
-          "M5-T057",
-          "M5-T060",
-          "M5-T061"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "Every phase-B+ packet contracted from the plan cites D-076:D-076-R002 and carries these rules as binding packet text with matching acceptance scenarios.",
-      "required_evidence": "task packets + gate reports of the packets contracted from the plan",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    },
-    {
-      "id": "D-076-R003",
-      "text": "Scoped hold release, precisely bounded: this directive releases the expansion-planning hold (.claude/rules/expansion-agent-dispatch-hold.md section 2) ONLY for (a) authoring the phased plan document and (b) contracting the plan's phase-B proposal-editor increments under the normal gated process as the current lanes finish. Everything else in that hold STANDS: the 19-task expansion pack and its 9 contracts are not revived, GDS P1-P8 are not applied, no master plan or MASTER_EXECUTION_PLAN changes on the pack's instruction, and 3D-massing/visual-scene work beyond phase B's flat outline-and-heights editor stays held pending the plan's own named owner-review checkpoint. Tier D / Section 20 stops, PR #241, and all gates unchanged.",
-      "source_ref": "source-001.md#context-orchestrator-interpretation-notes-the-owner-text-above-is-the-authority",
-      "classification": "authorization",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-076-BOOTSTRAP",
-          "M5-T048"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "The hold notice gains a dated cross-reference recording this scoped release (the D-040 pattern); no packet outside the released slice cites this directive.",
-      "required_evidence": "the hold-notice cross-reference + the packets' directive_refs",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    }
-  ]
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-076",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T23:07:52.888851+00:00",
+ "requirements": [
+  {
+   "id": "D-076-R001",
+   "text": "Author the phased implementation plan for the proposal-editor track as a reviewable repository document, following the owner-endorsed order: phase A = the dependable per-property calculations already underway (the in-flight lanes; no new work created by this directive); phase B = a simple proposal editor (building outline on the lot, exterior wall positions, floors, heights; every change re-runs the EXISTING deterministic rules/scenario engine; each variation saved as a comparable, clearly-labeled proposed scenario; shortfalls stated numerically); phase C = assisted PDF drawing import (select sheet, confirm units/scale, confirm which lines are the building outline / property line / street frontage, ask only for unresolved inputs, then the SAME engine checks it); phase D = DWG and richer-model support, only after the confirm-and-check workflow is proven on real architect files. The plan must ground phase B in the existing scenario machinery (services/api/app/scenario/) and the existing evaluation/evidence contracts rather than inventing a parallel concept, and must state the packet-sized first increments with their gate/reviewer shape.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-076-BOOTSTRAP",
+     "M5-T048",
+     "M5-T051",
+     "M5-T053",
+     "M5-T054",
+     "M5-T057",
+     "M5-T060",
+     "M5-T061",
+     "M5-T064",
+     "M5-T065"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The plan document exists in docs/, is committed and pushed, names phase-B first packets concretely, and is announced to the owner in plain English.",
+   "required_evidence": "the committed plan document + the owner-facing summary",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; plan authoring is the immediate next action.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-076-R002",
+   "text": "Honesty and boundary rules the plan (and every packet contracted from it) must carry: a proposed building is a third input class - never a city record and never a rule; every proposal-derived number is labeled as a proposed scenario under the D-073-R006 records-vs-allowances discipline; AI may assist recognition (drawing lines, suggested boundaries, annotations) but every measurement and rule comparison runs through the tested deterministic calculation code; a drawing-derived total is never auto-treated as zoning floor area (inclusions/exclusions applied explicitly); supported-check pass/fail/could-not-check stay distinct on screen and no passing subset is ever presented as whole-building approval; disagreements between a survey/drawing and city mapping stay visible, never silently reconciled.",
+   "source_ref": "source-001.md#context-orchestrator-interpretation-notes-the-owner-text-above-is-the-authority",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-076-BOOTSTRAP",
+     "M5-T048",
+     "M5-T051",
+     "M5-T053",
+     "M5-T054",
+     "M5-T057",
+     "M5-T060",
+     "M5-T061",
+     "M5-T064",
+     "M5-T065"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "Every phase-B+ packet contracted from the plan cites D-076:D-076-R002 and carries these rules as binding packet text with matching acceptance scenarios.",
+   "required_evidence": "task packets + gate reports of the packets contracted from the plan",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-076-R003",
+   "text": "Scoped hold release, precisely bounded: this directive releases the expansion-planning hold (.claude/rules/expansion-agent-dispatch-hold.md section 2) ONLY for (a) authoring the phased plan document and (b) contracting the plan's phase-B proposal-editor increments under the normal gated process as the current lanes finish. Everything else in that hold STANDS: the 19-task expansion pack and its 9 contracts are not revived, GDS P1-P8 are not applied, no master plan or MASTER_EXECUTION_PLAN changes on the pack's instruction, and 3D-massing/visual-scene work beyond phase B's flat outline-and-heights editor stays held pending the plan's own named owner-review checkpoint. Tier D / Section 20 stops, PR #241, and all gates unchanged.",
+   "source_ref": "source-001.md#context-orchestrator-interpretation-notes-the-owner-text-above-is-the-authority",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-076-BOOTSTRAP",
+     "M5-T048"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The hold notice gains a dated cross-reference recording this scoped release (the D-040 pattern); no packet outside the released slice cites this directive.",
+   "required_evidence": "the hold-notice cross-reference + the packets' directive_refs",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
 }
