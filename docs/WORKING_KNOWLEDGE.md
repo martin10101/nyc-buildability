@@ -449,3 +449,29 @@ Recorded because every one of these was discovered by a refusal mid-arc, not by 
   freshness stamp: response header `X-SODA2-Truth-Last-Modified` == dataset `rowsUpdatedAt`.
 - **Submit CLI writes `reports/<task>.json`** (frozen-submission record) — stage it with the
   submit commit (five were under-staged this session and swept at landing).
+
+## Loop stop drill: rotation_refused over a parked broker ask (run persistent2-local-19, 2026-09-20 seq 121)
+
+Same resolution as the seq-119 model-downgrade collision, but a DIFFERENT trigger: the worker
+tried one undocumented Bash command -> the broker parked an operator ASK (correct; left
+unanswered per the autonomous model) -> at the next session-rotation point the S11.3
+unsafe_seam gate refused to rotate over the outstanding approval -> unsafe stop exit 11
+`rotation_refused`, journal PAUSED_RECOVERY. The WORK SURVIVES (cycle-1 edits intact in the
+task worktree; here all four in-scope M5-T055 files were already edited).
+
+Fix (loops-down write-verbs only, ~3 min):
+1. `pending-approvals --checkout <C:/SupervisorControllerN>` -> `deny <id> <digest>` the CLI-store ask.
+2. The SAME ask also lives in the JOURNAL store plus the `turnover_refused/<run-id>/N` ask —
+   no CLI verb; resolve BOTH via the library:
+   `cli.DurableJournal(cli.runtime_dir_for(checkout)/cli.DB_FILENAME).open()` -> `open_asks()`
+   -> `resolve_ask(ask_id, answer)` (signature `(ask_id, answer) -> bool`).
+3. `clear-recovery --checkout ...` (journal rests at PREFLIGHT).
+4. Fresh `--run-id` in the launcher ACTIVE-TASK block; relaunch; worker resumes on the
+   surviving worktree edits.
+
+Related (same seam, loop-3/loop-2 boot repairs): the STOCK repair_forked_audit_chain.py and
+reconcile_dispatch_intent.py both HARDCODE loop-1's runtime key — for instance 2/3 write a
+targeted copy keyed by that instance's checkout key (launcher `$CheckoutKey`) before running;
+never point the stock script at the wrong store. `clear-recovery` on a forked audit chain
+fails on the AUDIT APPEND even when the journal transition is valid — archive-repair the fork
+first, then re-check (the journal may already rest at PREFLIGHT).
