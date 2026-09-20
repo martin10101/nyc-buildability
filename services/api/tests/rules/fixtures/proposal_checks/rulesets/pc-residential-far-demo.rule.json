@@ -1,0 +1,35 @@
+{
+  "rule_id": "pc-residential-far-demo",
+  "rule_version": "0.0.1-draft",
+  "family": "residential_far",
+  "title": "SYNTHETIC maximum residential floor area (M5-T054 proposal-checks wiring proof)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "description": "SYNTHETIC fixture (M5-T054, D-076 phase B2) proving the proposal-checks module wires a computed floor-area ceiling (lot area x FAR) through the EXISTING evaluator and compares the proposal-PROVIDED gross floor area against it. Illustrative values only; not a Verified determination and not an official capture.",
+  "citations": [
+    {"snapshot_id": "pc-demo-synthetic", "section": "SYNTHETIC-FAR", "quote": "SYNTHETIC (illustrative, not verbatim): the maximum residential floor area ratio in the indicated district is 1.50.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5"], "description": "District governing the lot."},
+    {"name": "lot_area_sq_ft", "type": "number", "required": true, "unit": "square_feet", "exclusive_minimum": 0, "description": "Zoning-lot area in square feet; strictly positive."}
+  ],
+  "outputs": [
+    {"name": "max_residential_far", "type": "number", "unit": "far", "description": "Maximum residential floor area ratio."},
+    {"name": "max_residential_floor_area_sq_ft", "type": "number", "unit": "square_feet", "description": "Maximum residential floor area = lot area x FAR."}
+  ],
+  "parameters": [
+    {"name": "standard_far_by_district", "value": {"R5": 1.5}, "citation_ref": "pc-demo-synthetic", "note": "SYNTHETIC illustrative maximum residential FAR by district (R5 = 1.50)."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "far", "op": "identity", "args": [{"param_select": {"map": "standard_far_by_district", "key_input": "zoning_district"}}], "note": "Select the maximum residential FAR for the district."},
+      {"id": "floor_area", "op": "multiply", "args": [{"input": "lot_area_sq_ft"}, {"step": "far"}], "note": "Maximum residential floor area = lot area (sq ft) x FAR."}
+    ],
+    "outputs": {
+      "max_residential_far": {"step": "far"},
+      "max_residential_floor_area_sq_ft": {"step": "floor_area"}
+    }
+  },
+  "limitations": ["SYNTHETIC representability fixture; illustrative values; requires official capture + G6 before any use."]
+}
