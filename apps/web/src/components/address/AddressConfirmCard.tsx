@@ -16,12 +16,6 @@ import {
 import { Meta } from "./AddressOutcomeCards";
 import { LotOutlineMap } from "./LotOutlineMap";
 
-/** DB-033 rider i (M5-T047 G5 A3): the generous upper bound on the raw entered
- * value copied into the title/aria attributes. Real addresses are far shorter;
- * anything longer is truncated with a marker so the reflected attribute value is
- * always bounded. */
-const ENTERED_TITLE_ATTR_MAX_LEN = 512;
-
 /** DB-033 rider a/d: the record-address line's fixed explanatory prose, held as
  * constants. RECORD_ADDRESS_NOTE names the source; RECORD_ADDRESS_WHY is the one
  * short neutral why-they-differ note. Both are RECORD explanations only; they
@@ -125,16 +119,19 @@ export function AddressConfirmCard({
           .filter(Boolean)
           .join(", ");
 
-  // DB-033 rider i (M5-T047 G5 A3): generously length-bound the RAW entered value
-  // placed into the title/aria attributes. A real address is far shorter than
-  // this; only an abusive over-long paste is capped, with a truncation marker, so
-  // the attribute value can never be an unbounded reflected string. The raw
-  // string is otherwise preserved VERBATIM (surrounding whitespace and all) — the
-  // bound touches length only, never trims meaningful characters.
-  const enteredTitle =
-    enteredInput.length > ENTERED_TITLE_ATTR_MAX_LEN
-      ? `${enteredInput.slice(0, ENTERED_TITLE_ATTR_MAX_LEN)}…`
-      : enteredInput;
+  // DB-035 rider c (M5-T055; supersedes DB-033 rider i): the accessible NAME
+  // must match what the eye sees. The RAW entered value is placed into the
+  // title/aria attributes UNBOUNDED — byte-identical to the string already
+  // rendered unbounded as the visible text node below — so the announced name
+  // always equals the full visible text (never a truncation the eye does not
+  // show). The former 512-char attribute cap was cosmetic, not a security
+  // control: the identical reflected string is already fully present as visible
+  // text, React escapes both alike (inert, non-executable), so capping only the
+  // attribute prevented no exposure while creating the announced-vs-visible
+  // mismatch. The raw string is preserved VERBATIM (surrounding whitespace and
+  // all); the accessible-name computation normalizes that surrounding whitespace
+  // to exactly the display-trimmed visible text (the S9/rider-b honest case).
+  const enteredTitle = enteredInput;
 
   // DB-032 (M5-T046 HJ A1 / OQ-5): the lot's PLUTO address-of-record, fetched
   // read-only from the additive per-BBL record-address channel keyed by the
@@ -217,18 +214,22 @@ export function AddressConfirmCard({
               (unlike the non-standard role="text"): it makes the <strong> a named
               leaf, so the raw value is exposed as the accessible NAME while the
               bold text still renders and the title is kept for sighted hover.
-              DB-033 rider i: the title/aria value is length-bounded (enteredTitle),
-              never an unbounded reflected string. */}
+              DB-035 rider c: the title/aria value (enteredTitle) is the FULL raw
+              entered value — the announced name matches the full visible text
+              honestly, never a truncation the eye does not show. */}
           <strong role="img" title={enteredTitle} aria-label={enteredTitle}>
             {enteredInput.trim()}
           </strong>
           {/* HJ A2: layout-neutral phrasing (no "above"/"below") — the note reads
               correctly in any reading order. DB-033 rider c: when the city
               returned no printable matched line (addressLine empty), the note must
-              NOT reference the absent "city-matched address". */}
+              NOT reference the absent "city-matched address". DB-035 rider d
+              (M5-T055): the no-street branch is trimmed to one clear sentence —
+              "You searched for X" already states it is the entered value, so the
+              former "We show it as the address you searched for" was redundant. */}
           {addressLine
             ? ". We show it alongside the city-matched address so you can compare them; the identity we carry forward is the tax lot (BBL)."
-            : ". We show it as the address you searched for; the identity we carry forward is the tax lot (BBL)."}
+            : ". The identity we carry forward is the tax lot (BBL)."}
         </p>
       ) : null}
 
@@ -396,27 +397,26 @@ export function AddressConfirmCard({
       >
         Not my property
       </button>
-      <Meta correlationId={outcome.correlationId} />
 
-      {/* DB-033 rider a (HJ A1 CLS) — REVISED. The record line is a LATE async
-          insert. At its former position (between the entered note and the Continue
-          block) any reservation could only APPROXIMATE the real line's wrapped
-          height — the record address and how it wraps are unknown until the channel
-          settles — so a same-length stand-in wraps differently at the narrow
-          supported widths and still nudges the Continue button; and a delayed
-          settle to no-line collapses the reservation. The CLS-neutral mechanism that
-          needs no height guess: render the record note OUTSIDE the interactive block,
-          as the card's LAST child. A late insert below every settled/interactive
-          element cannot move any of them — at ANY width, for ANY wrapping, and for a
-          record address of ANY length — and when the outcome is non-shown
-          (loading / equal / absent / error / route-absent) nothing renders here, so
-          the absent presentation is byte-identical to today (no reserved box). jsdom
-          asserts the STRUCTURAL guarantee (this note follows the Continue action and
-          is the card's last child, and no reservation element exists in any state);
-          the pixel proof that the Continue CTA's position is byte-stable across the
-          resolve — at 360/768/1280 incl. a long permitted record address — is the CI
-          browser layout measurement, captured by the orchestrator (see the producer
-          report). */}
+      {/* DB-033 rider a (HJ A1 CLS), placement REVISED by DB-035 rider b
+          (M5-T055). The record line is a LATE async insert. The CLS-neutral
+          mechanism that needs no height guess: render the record note OUTSIDE the
+          interactive block — AFTER the Continue action AND the "Not my property"
+          action, so a late insert below every settled/interactive element cannot
+          move any of them at ANY width, for ANY wrapping, and for a record address
+          of ANY length. DB-035 rider b restores content-before-footer reading
+          order by placing this note BEFORE the non-interactive <Meta> reference-id
+          footer (only that footer — never an interactive element — shifts down on
+          the insert). When the outcome is non-shown (loading / equal / absent /
+          error / route-absent) nothing renders here, so the absent presentation is
+          byte-identical to today (no reserved box). jsdom asserts the STRUCTURAL
+          guarantee (this note follows both actions and precedes the Meta footer,
+          the Continue action's node is byte-stable across the resolve, and no
+          reservation element exists in any state); the pixel proof that the
+          Continue CTA's Y-position is byte-stable across the resolve — at
+          360/768/1280 incl. a long permitted record address, with this NEW
+          placement — is the responsive-a11y Playwright layout measurement
+          (see the producer report). */}
       {showRecordAddress ? (
         <p className="section-note" data-testid="record-address">
           City record address: <strong>{recordAddress}</strong>.{" "}
@@ -428,6 +428,7 @@ export function AddressConfirmCard({
           <span data-testid="record-address-why">{RECORD_ADDRESS_WHY}</span>
         </p>
       ) : null}
+      <Meta correlationId={outcome.correlationId} />
     </section>
   );
 }

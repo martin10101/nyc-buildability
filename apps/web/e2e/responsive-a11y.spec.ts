@@ -141,3 +141,152 @@ test("S6/D3: coverage legend explains every status present WITHOUT hover", async
     "Official sources disagree; both values are shown, nothing was resolved.",
   );
 });
+
+/* ================================================================ *
+ * DB-035 rider a + b (M5-T055): the definitive PIXEL-level CLS proof for the
+ * address confirm card's record-note LATE async insert.
+ *
+ * The record note is rendered OUTSIDE the interactive block — after the Continue
+ * CTA and the "Not my property" action, and (rider b) BEFORE the non-interactive
+ * <Meta> reference-id footer. This spec proves in a real browser that the primary
+ * CTA's document Y-position is byte-stable across the async insert at 360/768/1280,
+ * including a LONG record address that wraps across multiple lines; it fails if the
+ * CTA's document-top changes by any amount (exact equality, not a sub-pixel tolerance).
+ *
+ * The record-address channel is intercepted in the browser (page.route) so the
+ * spec controls exactly WHEN — and with what long, differing address — the note
+ * inserts; the address resolution and lot-outline calls still hit the real fixture
+ * harness (e2e/harness/fixture_api.py). The route is held pending so the card first
+ * renders in its loading (no-note) shape, the CTA is measured, then the SAME mounted
+ * card receives the resolved long record and the CTA is measured again.
+ * ================================================================ */
+
+// A long PLUTO address-of-record that DIFFERS from the matched "100 OUTLINE AVENUE"
+// frontage and wraps across multiple lines at the narrow 360px width. It is well
+// under the client's 600-char reflected-text bound (src/lib/bounded.ts), so it
+// renders in full with no truncation marker — the worst realistic wrapping case.
+const LONG_RECORD_ADDRESS =
+  "1200 EXAMPLE INTERNATIONAL COMMERCE PARKWAY AND MEMORIAL BOULEVARD EXTENSION, SUITE 4400, BROOKLYN NAVY YARD ANNEX BUILDING 292";
+
+function recordAddressBody(): string {
+  return JSON.stringify({
+    document_kind: "record_address",
+    bbl: "1008350041",
+    outcome: "address_of_record",
+    address: LONG_RECORD_ADDRESS,
+    reason: null,
+    source: {
+      source_id: "nyc-dcp-pluto-soda",
+      dataset_id: "64uk-42ks",
+      dataset_version: "26v2",
+      retrieved_at: "2026-09-19T04:00:03Z",
+    },
+  });
+}
+
+/** Resolve the OUTLINE AVENUE test address to its confirm card (matched frontage
+ * "100 OUTLINE AVENUE"), exactly as the lot-outline walkthrough does. */
+async function resolveToConfirmCard(page: Page): Promise<void> {
+  await page.goto("/property?ruleeval=on");
+  await page.getByText("Enter address manually", { exact: true }).click();
+  const form = page.getByTestId("address-form");
+  await form.getByLabel("House number", { exact: true }).fill("100");
+  await form.getByLabel("Street", { exact: true }).fill("OUTLINE AVENUE");
+  await form.getByLabel("Borough", { exact: true }).selectOption("Manhattan");
+  await form.getByTestId("address-submit").click();
+  await expect(page.getByTestId("address-confirm-card")).toBeVisible({
+    timeout: 15_000,
+  });
+}
+
+/** The Continue CTA's document-absolute top (viewport top + scroll offset), in CSS
+ * px. An insert strictly BELOW the CTA cannot change this value, so it is a scroll-
+ * independent measure of whether the CTA moved. */
+async function ctaDocumentTop(page: Page): Promise<number> {
+  return page.getByTestId("confirm-continue").evaluate((el) => {
+    const rect = el.getBoundingClientRect();
+    return rect.top + window.scrollY;
+  });
+}
+
+for (const viewport of VIEWPORTS) {
+  test(`DB-035 rider a (CLS pixel proof): the Continue CTA Y-position is byte-stable across the long record-note insert at ${viewport.name}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+
+    // Hold the record-address response pending so the card first renders in its
+    // no-note (loading) shape; release it only after the "before" measurement. The
+    // fulfilled response carries permissive CORS (the client fetches the API origin
+    // with credentials omitted — src/lib/record-address.ts).
+    let releaseRecord: () => void = () => undefined;
+    const recordGate = new Promise<void>((resolve) => {
+      releaseRecord = resolve;
+    });
+    await page.route("**/record-address**", async (route) => {
+      await recordGate;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        headers: { "access-control-allow-origin": "*" },
+        body: recordAddressBody(),
+      });
+    });
+
+    await resolveToConfirmCard(page);
+    const card = page.getByTestId("address-confirm-card");
+
+    // The lot-outline surface (ABOVE the CTA) settles to a terminal state first, so
+    // the ONLY layout change between the two CTA measurements is the record note
+    // inserting BELOW the CTA — nothing above it moves for any other reason.
+    await expect(
+      page
+        .getByTestId("lot-outline-map")
+        .or(page.getByTestId("lot-outline-webgl-unavailable"))
+        .or(page.getByTestId("lot-outline-empty"))
+        .or(page.getByTestId("lot-outline-review"))
+        .or(page.getByTestId("lot-outline-unavailable"))
+        .first(),
+    ).toBeVisible({ timeout: 15_000 });
+
+    // The record channel is still loading: no note yet (the honest as-today shape).
+    await expect(card).toHaveAttribute("data-record-address-status", "loading");
+    await expect(page.getByTestId("record-address")).toHaveCount(0);
+
+    const ctaTopBefore = await ctaDocumentTop(page);
+
+    // Release the long, DIFFERING record address → the note inserts below the CTA.
+    releaseRecord();
+    await expect(card).toHaveAttribute("data-record-address-status", "shown", {
+      timeout: 15_000,
+    });
+    const note = page.getByTestId("record-address");
+    await expect(note).toBeVisible();
+    await expect(note).toContainText(LONG_RECORD_ADDRESS);
+
+    const ctaTopAfter = await ctaDocumentTop(page);
+
+    // THE pixel proof: the CTA's document-top is byte-identical across the async
+    // insert of the long record note — it did not move at all. Exact equality, not
+    // a sub-pixel tolerance: the note inserts strictly BELOW the CTA in DOM order,
+    // so an unchanged document-absolute top is the honest expectation and the spec
+    // fails if the value changes by any amount.
+    expect(
+      ctaTopAfter,
+      `CTA moved from ${ctaTopBefore} to ${ctaTopAfter} at ${viewport.name}`,
+    ).toBe(ctaTopBefore);
+
+    // Rider b placement, proven in the browser: the inserted note sits BELOW the
+    // Continue CTA (out of the interactive flow) and ABOVE the non-interactive Meta
+    // reference-id footer — content-before-footer reading order.
+    const ctaBox = await page.getByTestId("confirm-continue").boundingBox();
+    const noteBox = await note.boundingBox();
+    const metaBox = await page.getByTestId("correlation-id").boundingBox();
+    expect(ctaBox && noteBox && metaBox).toBeTruthy();
+    if (ctaBox && noteBox && metaBox) {
+      // note starts at or below the CTA's bottom edge; the footer at or below the note.
+      expect(noteBox.y).toBeGreaterThanOrEqual(ctaBox.y + ctaBox.height - 1);
+      expect(metaBox.y).toBeGreaterThanOrEqual(noteBox.y + noteBox.height - 1);
+    }
+  });
+}

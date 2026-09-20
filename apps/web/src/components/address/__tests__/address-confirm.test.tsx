@@ -878,7 +878,7 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
   const childIds = (el: Element): string[] =>
     Array.from(el.children).map((c) => c.getAttribute("data-testid") ?? c.tagName);
 
-  it("rider a (CLS): the shown record note is the card's LAST child and follows the Continue action — out of the interactive flow, not an in-flow reservation", async () => {
+  it("rider a (CLS) + rider b (reading order): the shown record note follows BOTH interactive actions and precedes the non-interactive Meta footer — out of the interactive flow, not an in-flow reservation", async () => {
     renderWithRecord(cornerDoc(), recordResponse());
     const card = await screen.findByTestId("address-confirm-card");
     await waitFor(() =>
@@ -886,14 +886,29 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
     );
     const note = screen.getByTestId("record-address");
     const cta = screen.getByTestId("confirm-continue");
+    const notMyProperty = screen.getByTestId("not-my-property");
+    // DB-035 rider b: content-before-footer reading order — the metadata footer's
+    // reference id is the card's LAST element.
+    const metaRef = screen.getByTestId("correlation-id");
     // THE stability mechanism (not "no min-height" / "shared prose"): the record
-    // note renders OUTSIDE the interactive flow — it FOLLOWS the Continue action in
-    // the DOM and is the card's last element. A late insert below every settled
-    // element cannot move any of them, for a record address of any length or wrap.
+    // note renders OUTSIDE the interactive flow — it FOLLOWS both the Continue and
+    // the "Not my property" actions in the DOM. A late insert below every settled
+    // interactive element cannot move any of them, for a record address of any
+    // length or wrap.
     expect(
       cta.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    expect(card.lastElementChild).toBe(note);
+    expect(
+      notMyProperty.compareDocumentPosition(note) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    // DB-035 rider b: the note precedes the non-interactive Meta footer (only that
+    // footer, never an interactive element, shifts down on the insert). The note
+    // is NO LONGER the card's last child — the Meta footer is.
+    expect(
+      note.compareDocumentPosition(metaRef) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(card.lastElementChild).toContainElement(metaRef);
     // The former approximate reservation (and its slot) no longer exist in any state.
     expect(screen.queryByTestId("record-address-reserved")).toBeNull();
     expect(screen.queryByTestId("record-address-slot")).toBeNull();
@@ -954,15 +969,26 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
     const note = screen.getByTestId("record-address");
     const cta = screen.getByTestId("confirm-continue");
     // The Continue action is the SAME node with byte-identical markup — it did not
-    // re-mount, change, or (given the append-only child order below) move.
+    // re-mount, change, or (given the insert-below-the-actions child order below) move.
     expect(cta).toBe(ctaBefore);
     expect(cta.outerHTML).toBe(ctaHtmlBefore);
-    // The ONLY DOM change is the record note APPENDED as the new last child: every
-    // pre-existing child keeps its identity and order, and the note sits after the
-    // Continue action. The mechanism is structural, not a height guess.
+    // DB-035 rider b: the ONLY DOM change is the record note inserted immediately
+    // BEFORE the non-interactive Meta footer (the card's last child). Every child
+    // through the "Not my property" action keeps its identity and order; only the
+    // footer shifts down one slot. The note sits after the Continue action. The
+    // mechanism is structural, not a height guess.
+    const idsAfter = childIds(card);
+    // The Meta footer is still the last child (content-before-footer order).
+    expect(idsAfter[idsAfter.length - 1]).toBe(
+      childIdsBefore[childIdsBefore.length - 1],
+    );
+    // The record note is the new second-to-last child, immediately before the footer.
+    expect(idsAfter[idsAfter.length - 2]).toBe("record-address");
     const childrenAfter = Array.from(card.children);
-    expect(childrenAfter[childrenAfter.length - 1]).toBe(note);
-    expect(childIds(card).slice(0, -1)).toEqual(childIdsBefore);
+    expect(childrenAfter[childrenAfter.length - 2]).toBe(note);
+    // Everything before the inserted note equals everything before the footer previously
+    // (no interactive element inserted, moved, or collapsed).
+    expect(idsAfter.slice(0, -2)).toEqual(childIdsBefore.slice(0, -1));
     expect(
       cta.compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
@@ -1108,8 +1134,17 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
     expect(entered.textContent).toContain("my raw one-box entry");
     // The note must NOT claim to show it "alongside the city-matched address".
     expect(entered.textContent).not.toContain("city-matched address");
-    expect(entered.textContent).toContain(
+    // DB-035 rider d (M5-T055): the redundant "We show it as the address you
+    // searched for" sentence is trimmed — "You searched for X" already states it is
+    // the entered value. What remains is one clear identity sentence.
+    expect(entered.textContent).not.toContain(
       "We show it as the address you searched for",
+    );
+    expect(entered.textContent).toContain(
+      "You searched for",
+    );
+    expect(entered.textContent).toContain(
+      "The identity we carry forward is the tax lot (BBL).",
     );
   });
 
@@ -1144,7 +1179,7 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
     expect(screen.queryByTestId("record-address-why")).toBeNull();
   });
 
-  it("rider i (title bound): an over-long entered value is length-bounded in the title/aria attributes with a truncation marker", async () => {
+  it("rider c (a11y honesty): an over-long entered value announces the FULL visible text — the accessible name matches what the eye sees, never a truncation the visible text does not show (supersedes the DB-033 rider-i 512 attribute cap)", async () => {
     const doc = resolvedDoc();
     const longEntry = "X".repeat(600);
     doc.input_echo.house_number = "";
@@ -1156,10 +1191,15 @@ describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
     const strong = entered.querySelector<HTMLElement>("strong");
     // Visible text is the full trimmed raw value (600 chars, nothing to trim).
     expect(strong?.textContent).toBe(longEntry);
-    // The title/aria value is capped at 512 + a one-char truncation marker (513).
-    const title = strong?.getAttribute("title") ?? "";
-    expect(title.length).toBe(513);
-    expect(title.endsWith("…")).toBe(true);
-    expect(strong?.getAttribute("aria-label")).toBe(title);
+    // DB-035 rider c: THE equality binding — the announced accessible NAME is the
+    // full visible text, NOT a 513-char truncation. No "…" marker is announced that
+    // the eye does not see; the title/aria attributes carry the full raw value.
+    expect(strong?.getAttribute("title")).toBe(longEntry);
+    expect(strong?.getAttribute("aria-label")).toBe(longEntry);
+    expect(strong).toHaveAccessibleName(longEntry);
+    // The accessible name equals the visible text exactly (announced === seen).
+    expect(strong).toHaveAccessibleName(strong?.textContent ?? "");
+    // No truncation marker anywhere — the former dishonest 513-char cap is gone.
+    expect(strong?.getAttribute("aria-label")?.endsWith("…")).toBe(false);
   });
 });
