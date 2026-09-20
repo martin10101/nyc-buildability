@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-079",
+ "version": 1,
+ "slug": "live-loop-handoffs",
+ "title": "Owner 2026-09-20 (with /session-handoff): handoffs carry an exact file map of all knowledge/record markdown + the minimum per-lane loop-continuation facts; loops KEEP RUNNING across handoffs and /clear (planned handoffs may leave lanes live - adjusts the D-070 seam-first preference, crash fallback unchanged); successors identity-check then continue immediately without re-running the recorded validation battery; ledger authority unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-20",
+ "captured_at": "2026-09-20T07:15:00+00:00",
+ "created_at": "2026-09-20T07:15:00+00:00",
+ "updated_at": "2026-09-20T07:15:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "5f52d1533561ffd42690caa04355db06ee88fed4",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction accompanying their /session-handoff invocation (spoken-style; 'season handle' = session handoff). A handoff-discipline directive; changes no gate, hold, Tier D stop, or ledger authority."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-079-R001",
+  "D-079-R002",
+  "D-079-R003",
+  "D-079-R004"
+ ],
+ "requirements_content_digest_sha256": "b360dd098d37343cf6169cc107aa3d6f233984cd58d0f6c7250280db18c23a88",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T07:15:00+00:00",
+   "content_digest_sha256": "d0f0149f0046f7e6719bbdb843efcf09b01b32bda50fa0425540ae39c5beb2a9"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "handoff documents with the exact file map + minimal lane table; planned handoffs over live lanes; identity-check-then-continue successor resumes",
+  "forbidden": "stopping detached supervisors for a handoff; successor audit-writing verbs against a live loop; skipping full reconciliation on crash/forced turnover or on contradiction; treating handoff prose as overriding the ledger"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T07:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 239 accepted (T054/T055/T056 all accepted this session); loop-1 LIVE on M5-T057 run persistent-local-59; loops 2/3 down clean awaiting next packets; the /session-handoff skill itself is user-invocation-only, so the owner re-runs it as a standalone message."
+  }
+ ]
+}

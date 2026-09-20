@@ -1024,7 +1024,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-078-condo-site-definition-flow/manifest.json"
+  },
+  {
+   "directive_id": "D-079",
+   "slug": "live-loop-handoffs",
+   "title": "Owner 2026-09-20 (with /session-handoff): handoffs carry an exact file map of all knowledge/record markdown + the minimum per-lane loop-continuation facts; loops KEEP RUNNING across handoffs and /clear (planned handoffs may leave lanes live - adjusts the D-070 seam-first preference, crash fallback unchanged); successors identity-check then continue immediately without re-running the recorded validation battery; ledger authority unchanged",
+   "status": "active",
+   "issued_at": "2026-09-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-079-live-loop-handoffs/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T06:20:00+00:00"
+ "updated_at": "2026-09-20T07:15:00+00:00"
 }
