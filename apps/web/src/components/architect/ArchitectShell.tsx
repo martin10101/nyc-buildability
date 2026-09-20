@@ -3,7 +3,7 @@ import Link from "next/link";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { useState, type ReactNode } from "react";
 import { propertyHref, VIEW_LABELS, type WorkspaceView } from "@/lib/architect/navigation";
-const PRIMARY: WorkspaceView[] = ["overview", "facts", "zoning", "scenarios", "evidence", "documents", "issues", "report"];
+const PRIMARY: WorkspaceView[] = ["overview", "facts", "zoning", "scenarios", "proposal", "evidence", "documents", "issues", "report"];
 const PLANNED: WorkspaceView[] = ["envelope", "units", "financials"];
 export function ArchitectShell({ bbl, active, children, surveyEnabled = false }: {
     bbl?: string | null;

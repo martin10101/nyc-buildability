@@ -27,6 +27,7 @@ import { EvidenceWorkspace } from "./EvidenceWorkspace";
 import { EvidenceInspector } from "./EvidenceInspector";
 import { ScenarioWorkspace } from "./ScenarioWorkspace";
 import { ReportView } from "./ReportView";
+import { ProposalEditor } from "./ProposalEditor";
 import { IncompleteEvaluationNotice } from "./DevelopmentLimits";
 function PropertySearch() {
     const router = useRouter();
@@ -83,7 +84,7 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
     useEffect(() => { setAddress(recalledAddress(bbl)); setSelection("calculation"); setInspectorSelection(null); }, [bbl]);
     useEffect(() => { headingRef.current?.focus(); }, [view]);
     const label = address?.label ?? profile.identity.address?.normalized_address ?? `BBL ${bbl}`;
-    const showInspector = !["overview", "evidence", "report", "documents", "envelope", "units", "financials"].includes(view) || inspectorSelection !== null;
+    const showInspector = !["overview", "proposal", "evidence", "report", "documents", "envelope", "units", "financials"].includes(view) || inspectorSelection !== null;
     const openEvidence = () => { setSelection(inspectorSelection ?? "calculation"); router.push(propertyHref(bbl, "evidence")); };
     const closeInspector = useCallback(() => setInspectorSelection(null), []);
     const inspect = (id: string) => { setInspectorSelection(id); };
@@ -137,6 +138,9 @@ function LoadedWorkspace({ profile, view, surveyEnabled }: {
             break;
         case "report":
             content = <ReportView profile={profile} evaluation={returnedEvaluation} scenario={returnedScenario} label={label}/>;
+            break;
+        case "proposal":
+            content = <ProposalEditor bbl={bbl}/>;
             break;
         default: content = <PlannedView label={VIEW_LABELS[view]}/>;
     }

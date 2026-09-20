@@ -180,6 +180,13 @@ describe("connected architect entry", () => {
     expect(screen.getByRole("heading", { name: "Units is not available in this version" })).toBeInTheDocument();
     expect(screen.queryByTestId("architect-cap")).not.toBeInTheDocument();
   });
+  it("renders the additive proposal-editor view inside the gated architect tree", () => {
+    state.params.set("view", "proposal");
+    render(<ArchitectEntry />);
+    expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Proposal editor" })).toBeInTheDocument();
+    expect(screen.getByTestId("editor-honesty")).toHaveTextContent("not a city record");
+  });
 });
 
 afterEach(cleanup);

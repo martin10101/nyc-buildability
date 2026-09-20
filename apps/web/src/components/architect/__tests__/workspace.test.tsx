@@ -12,6 +12,11 @@ describe("architect workspace safety", () => {
     expect(propertyHref("javascript:alert(1)", "facts")).toBe("/property?ruleeval=on");
     expect(readWorkspaceView("made-up")).toBe("overview");
   });
+  it("routes the additive proposal view without disturbing the existing views", () => {
+    expect(readWorkspaceView("proposal")).toBe("proposal");
+    expect(propertyHref("1000010010", "proposal")).toBe("/property?ruleeval=on&bbl=1000010010&view=proposal");
+    expect(readWorkspaceView("made-up")).toBe("overview");
+  });
   it("exposes every captured source value and review metadata without unsafe links", () => {
     const profile = baseProfile();
     const record = { ...profile.provenance[0], original_value: "RAW-CAPTURE", normalized_value: "NORMALIZED-CAPTURE", request_url: "javascript:alert(1)", user_confirmed_or_overridden: "overridden" as const, conflict_status: "conflicting" as const };
