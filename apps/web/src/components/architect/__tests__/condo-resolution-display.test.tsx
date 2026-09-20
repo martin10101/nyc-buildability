@@ -83,15 +83,22 @@ function channelProvenance() {
   };
 }
 
+const CHANNEL_ZONING_DEPENDENCY =
+  "Recorded zoning per base lot is not carried by the DOF DTM condo base-lot channel; " +
+  "it requires the ZTLDB / spatial zoning-by-BBL lookup (out of scope).";
+
 function channelMultiLotDoc() {
   return {
     document_kind: "condo_records",
     bbl: "1003037502",
     outcome: CONDO_OUTCOME_MULTI_LOT,
+    entered_bbl: "1003037502",
+    entered_lot_class: "billing",
     billing_bbl: "1003037502",
+    billing_bbl_status: "recorded",
     base_lots: [
-      { bbl: "1003030019", recorded_zoning: null },
-      { bbl: "1003030025", recorded_zoning: "R7-2" },
+      { bbl: "1003030019", recorded_zoning: null, recorded_zoning_status: "unknown" },
+      { bbl: "1003030025", recorded_zoning: "R7-2", recorded_zoning_status: "recorded" },
     ],
     substitution: null,
     condo_key: "103344",
@@ -102,6 +109,26 @@ function channelMultiLotDoc() {
     reason: null,
     error_type: null,
     divergent_zoning_notice: CHANNEL_DIVERGENT,
+    recorded_zoning_dependency: CHANNEL_ZONING_DEPENDENCY,
+  };
+}
+
+// A UNIT-BBL multi-lot input with NO recorded zoning on any base lot: the
+// divergent-zoning notice must NOT show (nothing to diverge), the recorded-zoning
+// gap note MUST show, and the entered unit BBL is labelled separately from the
+// (unknown) billing lot (DB-036(b)/(e)).
+function channelMultiLotNoZoningDoc() {
+  return {
+    ...channelMultiLotDoc(),
+    bbl: "1003031001",
+    entered_bbl: "1003031001",
+    entered_lot_class: "unit",
+    billing_bbl: null,
+    billing_bbl_status: "unknown",
+    base_lots: [
+      { bbl: "1003030019", recorded_zoning: null, recorded_zoning_status: "unknown" },
+      { bbl: "1003030025", recorded_zoning: null, recorded_zoning_status: "unknown" },
+    ],
   };
 }
 
@@ -110,8 +137,11 @@ function channelSingleDoc() {
     document_kind: "condo_records",
     bbl: "1003031001",
     outcome: CONDO_OUTCOME_RESOLVED_SINGLE,
-    billing_bbl: "1003031001",
-    base_lots: [{ bbl: "1003030019", recorded_zoning: null }],
+    entered_bbl: "1003031001",
+    entered_lot_class: "unit",
+    billing_bbl: null,
+    billing_bbl_status: "unknown",
+    base_lots: [{ bbl: "1003030019", recorded_zoning: null, recorded_zoning_status: "unknown" }],
     substitution: {
       entered_bbl: "1003031001",
       analyzed_bbl: "1003030019",
@@ -406,14 +436,18 @@ describe("CondoRecordsChannelSection on the printed brief — the SHARED surface
     // The accepted profile guard (a multi-lot conflict) withholds; the live
     // channel reports a single base lot. The brief fails safe (withhold), shows
     // the honest disagreement notice, and never prints records or a substitution —
-    // the professional-review determination above governs.
+    // the development limits above govern.
     const decision = await decisionFor(multiLotProfile(), channelSingleDoc());
     expect(decision.withholdAllowances).toBe(true);
     expect(decision.conflict).toBe(true);
     render(<CondoRecordsChannelSection decision={decision} />);
     const conflict = screen.getByTestId("condo-records-conflict");
     expect(conflict).toHaveTextContent("differ on this condo");
-    expect(conflict).toHaveTextContent("professional-review determination above governs");
+    // DB-036(c): the panel points at the development limits above, never a
+    // dangling "professional-review determination above" reference (the withheld
+    // panel shows no such label).
+    expect(conflict).toHaveTextContent("development limits above govern");
+    expect(conflict.textContent ?? "").not.toMatch(/professional-review determination above/i);
     expect(conflict.textContent ?? "").not.toMatch(/allowance/i);
     expect(screen.queryByTestId("condo-resolution-records")).toBeNull();
     expect(screen.queryByTestId("condo-substitution-record")).toBeNull();
@@ -667,5 +701,96 @@ describe("deriveCondoSurface — one coherent condo-surface decision", () => {
     expect(decision.withholdAllowances).toBe(true);
     expect(decision.showSubstitution).toBe(false);
     expect(decision.conflict).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CondoRecordsChannelSection — DB-036 rider RENDERING (M5-T056). The parsing is
+// pinned in lib/__tests__/condo-records.test.ts; these render the SHARED section
+// component (used identically on the screen and the brief) to prove the entered-
+// vs-billing labels, the repaired dangling reference, honest zoning-notice gating
+// (no-zoning vs mixed), real h2 heading levels in the outline, and the exact
+// retrievedAt VALUE on the surface.
+// ---------------------------------------------------------------------------
+describe("CondoRecordsChannelSection — DB-036 rider rendering (M5-T056)", () => {
+  async function renderSection(body: unknown, status = 200) {
+    const decision = deriveCondoSurface(baseProfile(), await channelOutcome(body, status));
+    render(<CondoRecordsChannelSection decision={decision} />);
+    return decision;
+  }
+
+  it("(b) labels the ENTERED unit BBL separately from the billing lot — a unit input never renders under the billing label", async () => {
+    await renderSection(channelMultiLotNoZoningDoc());
+    const entered = screen.getByTestId("condo-entered-lot");
+    const billing = screen.getByTestId("condo-billing-lot");
+    // The entered unit BBL renders under its OWN label...
+    expect(entered).toHaveTextContent("Condo lot you entered: 1003031001");
+    // ...and the billing lot is an explicit unknown (the unit input has no recorded
+    // billing lot), never the entered unit BBL relabelled as billing.
+    expect(billing).toHaveTextContent("Condo billing lot: not recorded (unknown)");
+    expect(billing.textContent ?? "").not.toContain("1003031001");
+  });
+
+  it("(b) a billing-class input labels entered and billing as the SAME recorded lot", async () => {
+    await renderSection(channelMultiLotDoc());
+    expect(screen.getByTestId("condo-entered-lot")).toHaveTextContent(
+      "Condo lot you entered: 1003037502",
+    );
+    expect(screen.getByTestId("condo-billing-lot")).toHaveTextContent(
+      "Condo billing lot: 1003037502",
+    );
+  });
+
+  it("(c) the records section carries NO dangling professional-review reference — it points at the development limits above", async () => {
+    await renderSection(channelMultiLotDoc());
+    const section = screen.getByTestId("condo-resolution-records");
+    expect(section.textContent ?? "").not.toMatch(/professional-review determination above/i);
+    expect(section).toHaveTextContent("under the development limits above");
+  });
+
+  it("(e) NO recorded zoning: the divergent notice is absent and the ZTLDB gap note names the source in plain language", async () => {
+    await renderSection(channelMultiLotNoZoningDoc());
+    // Nothing to diverge when no base lot carries recorded zoning.
+    expect(screen.queryByTestId("condo-divergent-notice")).toBeNull();
+    const gap = screen.getByTestId("condo-zoning-dependency");
+    expect(gap).toHaveTextContent("Zoning Tax Lot Database (ZTLDB)");
+    // All base lots unknown -> the copy speaks to "these base lots", not a partial gap.
+    expect(gap).toHaveTextContent("not yet shown for these base lots");
+    // Never leaks the api's machine-facing dependency string ("out of scope" jargon).
+    expect(gap.textContent ?? "").not.toMatch(/out of scope/i);
+  });
+
+  it("(e) MIXED zoning: the divergent notice AND a PARTIAL ZTLDB gap note show, and the copy never implies the recorded district is unavailable", async () => {
+    // channelMultiLotDoc has one recorded base lot (R7-2) and one unknown.
+    await renderSection(channelMultiLotDoc());
+    expect(screen.getByTestId("condo-divergent-notice")).toHaveTextContent(
+      "qualified-human legal question",
+    );
+    const gap = screen.getByTestId("condo-zoning-dependency");
+    expect(gap).toHaveTextContent("Zoning Tax Lot Database (ZTLDB)");
+    // Partial gap: the copy scopes to "every base lot" and explicitly protects the
+    // recorded district shown above — it never claims recorded zoning is globally
+    // unavailable.
+    expect(gap).toHaveTextContent("not yet shown for every base lot");
+    expect(gap).toHaveTextContent("recorded districts shown above are unaffected");
+  });
+
+  it("(f) the records-section and substitution headings are real h2 elements present in the heading outline", async () => {
+    await renderSection(channelMultiLotDoc());
+    expect(
+      screen.getByRole("heading", { level: 2, name: "City records for this condo" }),
+    ).toBeInTheDocument();
+    cleanup();
+    await renderSection(channelSingleDoc());
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Recorded base lot for this condo" }),
+    ).toBeInTheDocument();
+  });
+
+  it("(g) the exact retrievedAt timestamp VALUE renders on the records provenance line", async () => {
+    await renderSection(channelMultiLotDoc());
+    const provenance = screen.getByTestId("condo-records-provenance");
+    expect(provenance).toHaveTextContent("retrieved: 2026-09-01T14:05:56Z");
+    expect(provenance).toHaveTextContent("dataset version: 2026-08-30T00:00:00Z");
   });
 });

@@ -30,6 +30,9 @@ const RETRIEVED_AT = "2026-09-01T14:05:56Z";
 const ROWS_UPDATED_AT = "2026-08-30T00:00:00Z";
 const DIVERGENT_NOTICE =
   "Divergent zoning across a condo's base lots is a qualified-human legal question.";
+const ZONING_DEPENDENCY =
+  "Recorded zoning per base lot is not carried by the DOF DTM condo base-lot channel; " +
+  "it requires the ZTLDB / spatial zoning-by-BBL lookup (out of scope, routed to the orchestrator).";
 
 const BILLING_BBL = "1003037501";
 const BILLING_MULTI_BBL = "1003037502";
@@ -81,10 +84,13 @@ function multiLotDoc() {
     document_kind: "condo_records",
     bbl: BILLING_MULTI_BBL,
     outcome: CONDO_OUTCOME_MULTI_LOT,
+    entered_bbl: BILLING_MULTI_BBL,
+    entered_lot_class: "billing",
     billing_bbl: BILLING_MULTI_BBL,
+    billing_bbl_status: "recorded",
     base_lots: [
-      { bbl: BASE_BBL, recorded_zoning: null },
-      { bbl: BASE_BBL_2, recorded_zoning: "R6" },
+      { bbl: BASE_BBL, recorded_zoning: null, recorded_zoning_status: "unknown" },
+      { bbl: BASE_BBL_2, recorded_zoning: "R6", recorded_zoning_status: "recorded" },
     ],
     substitution: null,
     condo_key: "103344",
@@ -95,6 +101,7 @@ function multiLotDoc() {
     reason: null,
     error_type: null,
     divergent_zoning_notice: DIVERGENT_NOTICE,
+    recorded_zoning_dependency: ZONING_DEPENDENCY,
   };
 }
 
@@ -105,8 +112,14 @@ function unitSingleDoc() {
     document_kind: "condo_records",
     bbl: UNIT_BBL,
     outcome: CONDO_OUTCOME_RESOLVED_SINGLE,
-    billing_bbl: UNIT_BBL,
-    base_lots: [{ bbl: BASE_BBL, recorded_zoning: null }],
+    entered_bbl: UNIT_BBL,
+    entered_lot_class: "unit",
+    // A UNIT-class input resolves through a path that returns the base lots but
+    // NOT the billing lot, so the billing lot is a LABELLED unknown (null) — never
+    // the entered unit BBL relabelled as billing (DB-036(b)).
+    billing_bbl: null,
+    billing_bbl_status: "unknown",
+    base_lots: [{ bbl: BASE_BBL, recorded_zoning: null, recorded_zoning_status: "unknown" }],
     substitution: {
       entered_bbl: UNIT_BBL,
       analyzed_bbl: BASE_BBL,
@@ -165,6 +178,13 @@ describe("fetchCondoRecords — 200 records documents", () => {
     expect(view.provenance.queries).toHaveLength(1);
     expect(view.provenance.queries[0].rowsUpdatedAt).toBe(ROWS_UPDATED_AT);
     expect(view.provenance.queries[0].recordCount).toBe(2);
+    // DB-036(g) value pin (client level 1 — fetchCondoRecords): the retrievedAt
+    // round-trip preserves the EXACT ISO timestamp, colons and all. This is a
+    // mutation-style pin: reverting boundedTimestamp to boundedToken would strip
+    // the ":" characters ("2026-09-01T140556Z") and fail this assertion.
+    expect(view.provenance.retrievedAt).toBe(RETRIEVED_AT);
+    expect(view.provenance.retrievedAt).toContain(":");
+    expect(view.provenance.queries[0].retrievedAt).toBe(RETRIEVED_AT);
     // Multi-lot carries the no-collapse notice and NO substitution.
     expect(view.divergentZoningNotice).toBe(DIVERGENT_NOTICE);
     expect(view.substitution).toBeNull();
@@ -176,15 +196,22 @@ describe("fetchCondoRecords — 200 records documents", () => {
     });
     const { view } = asDocument(outcome);
     expect(view.outcome).toBe(CONDO_OUTCOME_RESOLVED_SINGLE);
-    // Billing BBL is the entered unit BBL for a unit input.
-    expect(view.billingBbl).toBe(UNIT_BBL);
+    // DB-036(b): the ENTERED unit BBL is carried under its own identity; the
+    // billing lot is a LABELLED unknown for a unit input (null), never the entered
+    // unit BBL relabelled as billing.
+    expect(view.enteredBbl).toBe(UNIT_BBL);
+    expect(view.enteredLotClass).toBe("unit");
+    expect(view.billingBbl).toBeNull();
+    expect(view.billingBblStatus).toBe("unknown");
     // The substrate record names entered vs analyzed explicitly.
     expect(view.substitution?.enteredBbl).toBe(UNIT_BBL);
     expect(view.substitution?.analyzedBbl).toBe(BASE_BBL);
     // The analyzed base lot differs from the entered unit BBL — never conflated.
     expect(view.substitution?.analyzedBbl).not.toBe(view.substitution?.enteredBbl);
-    expect(view.billingBbl).not.toBe(view.substitution?.analyzedBbl);
-    expect(view.baseLots).toEqual([{ bbl: BASE_BBL, recordedZoning: null }]);
+    expect(view.enteredBbl).not.toBe(view.substitution?.analyzedBbl);
+    expect(view.baseLots).toEqual([
+      { bbl: BASE_BBL, recordedZoning: null, recordedZoningStatus: "unknown" },
+    ]);
     expect(view.provenance.datasetVersion).toBe(ROWS_UPDATED_AT);
   });
 
@@ -378,5 +405,67 @@ describe("channelWithholdsAllowances — monotonic condo fail-safe", () => {
     expect(channelWithholdsAllowances({ kind: "loading" })).toBe(false);
     expect(channelWithholdsAllowances({ kind: "idle" })).toBe(false);
     expect(channelWithholdsAllowances({ kind: "unavailable", reason: "network_error" })).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// DB-036 rider parsing (M5-T056): entered vs billing identity, per-lot zoning
+// status, the recorded-zoning dependency, and the retrievedAt value pin.
+// ---------------------------------------------------------------------------
+describe("condo-records — DB-036 rider parsing (M5-T056)", () => {
+  it("(b) parses the ENTERED BBL through lib/bbl.ts and keeps it distinct from the billing lot", async () => {
+    const { view } = asDocument(
+      await fetchCondoRecords(BILLING_MULTI_BBL, { fetchImpl: once(makeResponse(multiLotDoc())) }),
+    );
+    // A billing-class input: entered == billing (both labelled recorded).
+    expect(view.enteredBbl).toBe(BILLING_MULTI_BBL);
+    expect(view.enteredLotClass).toBe("billing");
+    expect(view.billingBbl).toBe(BILLING_MULTI_BBL);
+    expect(view.billingBblStatus).toBe("recorded");
+  });
+
+  it("(b) a malformed entered_bbl is an explicit null, never an invented value", async () => {
+    const doc = { ...multiLotDoc(), entered_bbl: "not-a-bbl" };
+    const { view } = asDocument(
+      await fetchCondoRecords(BILLING_MULTI_BBL, { fetchImpl: once(makeResponse(doc)) }),
+    );
+    expect(view.enteredBbl).toBeNull();
+  });
+
+  it("(e) parses recorded_zoning_status per base lot and the recorded_zoning_dependency", async () => {
+    const { view } = asDocument(
+      await fetchCondoRecords(BILLING_MULTI_BBL, { fetchImpl: once(makeResponse(multiLotDoc())) }),
+    );
+    expect(view.baseLots[0].recordedZoningStatus).toBe("unknown");
+    expect(view.baseLots[1].recordedZoningStatus).toBe("recorded");
+    expect(view.recordedZoningDependency).toBe(ZONING_DEPENDENCY);
+  });
+
+  it("(e) recorded_zoning_status falls back to a value derived from recordedZoning when the source omits it", async () => {
+    const doc = {
+      ...multiLotDoc(),
+      base_lots: [
+        { bbl: BASE_BBL, recorded_zoning: null }, // no status field
+        { bbl: BASE_BBL_2, recorded_zoning: "R6" }, // no status field
+      ],
+    };
+    const { view } = asDocument(
+      await fetchCondoRecords(BILLING_MULTI_BBL, { fetchImpl: once(makeResponse(doc)) }),
+    );
+    expect(view.baseLots[0].recordedZoningStatus).toBe("unknown");
+    expect(view.baseLots[1].recordedZoningStatus).toBe("recorded");
+  });
+
+  it("(g) value-pins the retrievedAt round-trip char-for-char (kills a boundedTimestamp->boundedToken revert)", async () => {
+    const { view } = asDocument(
+      await fetchCondoRecords(UNIT_BBL, { fetchImpl: once(makeResponse(unitSingleDoc())) }),
+    );
+    // The colons are the characters boundedToken would strip; pin them explicitly.
+    expect(view.provenance.retrievedAt).toBe(RETRIEVED_AT);
+    expect(view.provenance.retrievedAt).toBe("2026-09-01T14:05:56Z");
+    expect(view.provenance.datasetVersion).toBe(ROWS_UPDATED_AT);
+    expect(view.provenance.datasetVersion).toBe("2026-08-30T00:00:00Z");
+    expect(view.provenance.queries[0].retrievedAt).toBe(RETRIEVED_AT);
+    expect(view.provenance.queries[0].rowsUpdatedAt).toBe(ROWS_UPDATED_AT);
   });
 });

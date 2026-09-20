@@ -561,3 +561,65 @@ def test_status_state_matrix_membership(client, monkeypatch):
     install_billing(_resolved_single())
     resp = client.get(_url(BILLING_BBL))
     assert (resp.status_code, resp.json().get("state")) in CONDO_RECORDS_STATUS_STATE_MATRIX
+
+
+# ---------------------------------------------------------------------------
+# 422 detail.raw_value repr length cap (DB-036(h); the DB-023c / DB-034(b)
+# bounded-repr class, defense-in-depth). The repr is already sanitized in
+# app.connectors.bbl; the route only bounds its LENGTH so an oversized entered
+# value cannot flood the error body, the logs, or a client accessibility tree.
+# ---------------------------------------------------------------------------
+def test_capped_raw_value_leaves_short_repr_byte_identical():
+    # An ordinary malformed-input repr (well under the cap) is returned unchanged,
+    # so every ordinary 422 body stays byte-identical to before the cap existed.
+    short = repr("not-a-bbl")
+    assert len(short) <= condo_records_mod.MAX_RAW_VALUE_REPR_CHARS
+    assert condo_records_mod._capped_raw_value(short) == short
+
+
+def test_capped_raw_value_truncates_oversized_repr():
+    # An oversized repr is capped to the ceiling plus the explicit marker.
+    oversized = repr("9" * (condo_records_mod.MAX_RAW_VALUE_REPR_CHARS * 2))
+    assert len(oversized) > condo_records_mod.MAX_RAW_VALUE_REPR_CHARS
+    capped = condo_records_mod._capped_raw_value(oversized)
+    assert capped == (
+        oversized[: condo_records_mod.MAX_RAW_VALUE_REPR_CHARS]
+        + condo_records_mod._RAW_VALUE_TRUNCATION_MARKER
+    )
+    assert capped.endswith(condo_records_mod._RAW_VALUE_TRUNCATION_MARKER)
+    assert len(capped) == (
+        condo_records_mod.MAX_RAW_VALUE_REPR_CHARS
+        + len(condo_records_mod._RAW_VALUE_TRUNCATION_MARKER)
+    )
+
+
+def test_422_oversized_bbl_raw_value_is_length_capped(client, monkeypatch):
+    # End-to-end: an oversized entered BBL yields a typed 422 whose detail.raw_value
+    # is length-capped, while the state/code contract is intact and no resolver runs.
+    enable_flag(monkeypatch)
+    install_billing_landmine()
+    install_unit_landmine()
+    resp = client.get(_url("9" * 400))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["state"] == "validation_error"
+    assert "code" in body["detail"]
+    raw = body["detail"]["raw_value"]
+    assert raw.endswith(condo_records_mod._RAW_VALUE_TRUNCATION_MARKER)
+    assert len(raw) == (
+        condo_records_mod.MAX_RAW_VALUE_REPR_CHARS
+        + len(condo_records_mod._RAW_VALUE_TRUNCATION_MARKER)
+    )
+
+
+def test_422_short_bbl_raw_value_is_uncapped_and_verbatim(client, monkeypatch):
+    # A short malformed input passes through the cap unchanged: its repr is present
+    # verbatim with no truncation marker, proving the cap only bounds length.
+    enable_flag(monkeypatch)
+    install_billing_landmine()
+    install_unit_landmine()
+    resp = client.get(_url("not-a-bbl"))
+    assert resp.status_code == 422
+    raw = resp.json()["detail"]["raw_value"]
+    assert condo_records_mod._RAW_VALUE_TRUNCATION_MARKER not in raw
+    assert raw == repr("not-a-bbl")

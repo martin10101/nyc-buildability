@@ -132,6 +132,16 @@ BILLING_STATUS_RECORDED = "recorded"
 BILLING_STATUS_UNKNOWN = "unknown"
 BILLING_STATUS_NOT_APPLICABLE = "not_applicable"
 
+# Defense-in-depth length cap for the reflected raw_value repr embedded in a 422
+# validation detail (DB-036(h); the DB-023c / DB-034(b) bounded-repr class). The
+# BBL arrives as a URL path segment, but a hostile or oversized entered value must
+# never let the echoed repr flood the error body, the logs, or a client's
+# accessibility tree. The BBLValidationError payload's raw_value is ALREADY
+# repr()-sanitized in app.connectors.bbl; this caps its LENGTH only. A repr at or
+# under the cap is returned byte-identically, so every ordinary 422 is unchanged.
+MAX_RAW_VALUE_REPR_CHARS = 256
+_RAW_VALUE_TRUNCATION_MARKER = "...[truncated]"
+
 # The concrete dependency that must be resolved (by the orchestrator, OUTSIDE
 # this packet's forbidden connector/spatial/profile paths) before a base lot can
 # carry recorded zoning. Surfaced in the payload whenever any base lot's zoning
@@ -216,6 +226,16 @@ def _not_found() -> JSONResponse:
     NO correlation id and NO body hint, so a disabled feature is
     indistinguishable from a route that does not exist (fail-safe disable)."""
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+def _capped_raw_value(raw_value_repr: str) -> str:
+    """Length-cap the reflected raw_value repr embedded in a 422 detail (DB-036(h),
+    defense-in-depth). The repr is already sanitized in app.connectors.bbl; this
+    only bounds its LENGTH so an oversized entered value cannot flood the error
+    body. A repr at or under the cap is returned unchanged (byte-identical 422)."""
+    if len(raw_value_repr) <= MAX_RAW_VALUE_REPR_CHARS:
+        return raw_value_repr
+    return raw_value_repr[:MAX_RAW_VALUE_REPR_CHARS] + _RAW_VALUE_TRUNCATION_MARKER
 
 
 def _internal_error_500(correlation_id: str) -> JSONResponse:
@@ -571,7 +591,10 @@ def get_condo_records(
                 "state": "validation_error",
                 "message": payload["message"],
                 "correlation_id": correlation_id,
-                "detail": {"code": payload["code"], "raw_value": payload["raw_value"]},
+                "detail": {
+                    "code": payload["code"],
+                    "raw_value": _capped_raw_value(payload["raw_value"]),
+                },
             },
             correlation_id,
         )

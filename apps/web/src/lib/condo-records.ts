@@ -34,6 +34,7 @@
 
 import { useEffect, useState } from "react";
 import { apiBaseUrl } from "./api";
+import { validateBblInput } from "./bbl";
 import { boundedText, boundedToken } from "./bounded";
 
 export const DEFAULT_CONDO_RECORDS_TIMEOUT_MS = 12_000;
@@ -82,6 +83,12 @@ export interface CondoBaseLotRecord {
   /** The recorded zoning district for this base lot, or null when the resolver
    * carries none (it makes no zoning determination). Never fabricated. */
   recordedZoning: string | null;
+  /** EXPLICIT availability label for the recorded zoning ("recorded" | "unknown"),
+   * mirrored from the api's recorded_zoning_status so the client honestly gates the
+   * divergent-zoning notice (only when zoning is actually recorded) and the
+   * recorded-zoning gap note (only when at least one base lot's zoning is unknown).
+   * Falls back to a value derived from recordedZoning when the source omits it. */
+  recordedZoningStatus: string;
 }
 
 /** One recorded SODA query the resolver actually performed. Per-record
@@ -121,9 +128,24 @@ export interface CondoSubstitutionRecord {
 export interface CondoRecordsView {
   /** RAW outcome string for branching (one of CONDO_RECORDS_OUTCOMES). */
   outcome: CondoRecordsChannelOutcome;
+  /** The BBL the user actually entered (unit OR billing), validated through the
+   * shared client BBL parser (lib/bbl.ts, read-only). It is labelled separately
+   * from the recorded billing lot so a real unit-BBL input renders under its own
+   * "Condo lot you entered" label instead of the billing lot's unknown. Null only
+   * when the source omitted or malformed it. */
+  enteredBbl: string | null;
+  /** The lot class of the entered BBL ("billing" | "unit" | ...), when the source
+   * carries it; null otherwise. */
+  enteredLotClass: string | null;
   /** The condo billing/unit lot the records are recorded FOR; null for a
    * non-condo input. */
   billingBbl: string | null;
+  /** EXPLICIT availability label for the billing lot ("recorded" | "unknown" |
+   * "not_applicable"), mirrored from the api's billing_bbl_status. A unit-class
+   * input resolves through a path that returns the base lots but not the billing
+   * lot, so its billing lot is a labelled unknown — never the entered unit BBL
+   * relabelled as billing. Null only when the source omitted it. */
+  billingBblStatus: string | null;
   /** Every recorded base tax lot as a RECORD (empty on non-condo / unresolved /
    * error). */
   baseLots: CondoBaseLotRecord[];
@@ -133,6 +155,12 @@ export interface CondoRecordsView {
   condoNumber: string | null;
   /** The permanent no-collapse boundary notice, present only on multi-lot. */
   divergentZoningNotice: string | null;
+  /** The api's recorded_zoning_dependency: present only when at least one base
+   * lot's recorded zoning is a genuine unknown, so the surface can honestly
+   * explain the gap (recorded zoning comes from a separate zoning-by-lot source
+   * not yet connected) rather than showing a bare "unknown". Null when every base
+   * lot carries recorded zoning. */
+  recordedZoningDependency: string | null;
   /** A bounded human reason for an outcome that carries no records; null
    * otherwise. */
   reason: string | null;
@@ -231,6 +259,19 @@ function boundedBbl(value: unknown): string | null {
   return boundedToken(value, 20);
 }
 
+/** Parse a reflected ENTERED BBL through the shared client BBL validator
+ * (lib/bbl.ts, read-only): a well-formed 10-digit BBL is carried as the canonical
+ * value so the surface can label it under its own "Condo lot you entered" heading,
+ * distinct from the recorded billing lot; anything else is an explicit null (never
+ * an invented value). This keeps the ENTERED identity (what the user typed)
+ * separate from the recorded BILLING lot the resolver returns, so a real unit-BBL
+ * input never renders "not recorded (unknown)" under the entered label. */
+function enteredBblValue(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const result = validateBblInput(value);
+  return result.ok ? result.canonical : null;
+}
+
 function baseLotRecords(value: unknown): CondoBaseLotRecord[] {
   if (!Array.isArray(value)) return [];
   const records: CondoBaseLotRecord[] = [];
@@ -240,7 +281,12 @@ function baseLotRecords(value: unknown): CondoBaseLotRecord[] {
     const bbl = boundedBbl(record.bbl);
     if (bbl === null) continue; // never render a base lot without a recorded BBL
     const zoning = boundedToken(record.recorded_zoning, 32);
-    records.push({ bbl, recordedZoning: zoning });
+    // Mirror the api's explicit availability label; fall back to a value derived
+    // from the recorded zoning so the status is always present and honest.
+    const status =
+      boundedToken(record.recorded_zoning_status, 16) ??
+      (zoning !== null ? "recorded" : "unknown");
+    records.push({ bbl, recordedZoning: zoning, recordedZoningStatus: status });
   }
   return records;
 }
@@ -300,7 +346,10 @@ function provenanceView(value: unknown): CondoRecordsProvenance {
 function documentView(record: Record<string, unknown>): CondoRecordsView {
   return {
     outcome: record.outcome as CondoRecordsChannelOutcome,
+    enteredBbl: enteredBblValue(record.entered_bbl),
+    enteredLotClass: boundedToken(record.entered_lot_class, 16),
     billingBbl: boundedBbl(record.billing_bbl),
+    billingBblStatus: boundedToken(record.billing_bbl_status, 16),
     baseLots: baseLotRecords(record.base_lots),
     substitution: substitutionRecord(record.substitution),
     condoKey: boundedToken(record.condo_key, 32),
@@ -308,6 +357,10 @@ function documentView(record: Record<string, unknown>): CondoRecordsView {
     divergentZoningNotice:
       typeof record.divergent_zoning_notice === "string"
         ? boundedText(record.divergent_zoning_notice, "") || null
+        : null,
+    recordedZoningDependency:
+      typeof record.recorded_zoning_dependency === "string"
+        ? boundedText(record.recorded_zoning_dependency, "") || null
         : null,
     reason:
       typeof record.reason === "string" ? boundedText(record.reason, "") || null : null,

@@ -470,6 +470,27 @@ describe("M5-T045/M5-T052 — condo records reach the printed brief through the 
     expect(screen.queryByTestId("wide-street-result")).toBeNull();
   });
 
+  // DB-036(f)/(g) on the BRIEF: the same shared section renders a real h2 heading
+  // in the brief's outline and value-pins the EXACT retrievedAt timestamp end-to-
+  // end on the printed provenance line — proving the value survives the round-trip
+  // on the brief surface too (a selective boundedTimestamp revert would fail here).
+  it("prints the condo records under a real h2 heading and shows the EXACT retrieved timestamp value on the brief", async () => {
+    const profile = baseProfile();
+    stubChannel(channelMultiLotDoc());
+    const doc = wideStreetDoc(profile.identity.bbl);
+    render(<ReportView profile={profile} scenario={null} evaluation={doc} label="Test property" />);
+    await waitFor(() => expect(screen.getByTestId("condo-resolution-records")).toBeInTheDocument());
+    expect(
+      screen.getByRole("heading", { level: 2, name: "City records for this condo" }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("condo-records-provenance")).toHaveTextContent(
+      "retrieved: 2026-09-01T14:05:56Z",
+    );
+    expect(screen.getByTestId("condo-records-provenance")).toHaveTextContent(
+      "dataset version: 2026-08-30T00:00:00Z",
+    );
+  });
+
   it("prints no condo records for a non-condo profile (byte-identical)", async () => {
     const profile = baseProfile();
     const fetchMock = stubChannel({ detail: "Not Found" }, 404);

@@ -225,10 +225,10 @@ export function CondoRecordsChannelSection({ decision }: {
     // analyzed — a city record of the mapping, not a computed result.
     if (showSubstitution && recordsView) {
         const sub = recordsView.substitution;
-        const entered = sub?.enteredBbl ?? recordsView.billingBbl ?? "the condo lot you entered";
+        const entered = sub?.enteredBbl ?? recordsView.enteredBbl ?? recordsView.billingBbl ?? "the condo lot you entered";
         const analyzed = sub?.analyzedBbl ?? recordsView.baseLots[0]?.bbl ?? "the recorded base lot";
         return <section className="card architect-condo-substitution" role="group" aria-label="Recorded base lot for this condo" data-testid="condo-substitution-record">
-      <strong>Recorded base lot for this condo</strong>
+      <h2>Recorded base lot for this condo</h2>
       <p className="section-note">The analysis runs on the land parcel the city records for this condo. You entered {entered}; the city records base tax lot {analyzed} as this condo&apos;s land, and the analysis runs on that recorded base lot. This is a city record of the mapping, stated as entered versus analyzed.</p>
       <p className="section-note" data-testid="condo-substitution-provenance">Source: {recordsView.provenance.sourceId ?? "not recorded (unknown)"} · dataset(s): {recordsView.provenance.datasetIds.length ? recordsView.provenance.datasetIds.join(", ") : "not recorded (unknown)"} · dataset version: {recordsView.provenance.datasetVersion ?? "not recorded (unknown)"} · retrieved: {recordsView.provenance.retrievedAt ?? "not recorded (unknown)"}</p>
     </section>;
@@ -236,14 +236,39 @@ export function CondoRecordsChannelSection({ decision }: {
     // Multi-lot records view (the D-073-R006 records display). The professional-
     // review fail-safe above governs; these are city records, shown for reference.
     if (showRecords && recordsView) {
+        // Honest zoning gating (DB-036(e)): the divergent-zoning notice is a
+        // legal question only when zoning is ACTUALLY recorded for a base lot;
+        // the recorded-zoning gap note surfaces only when at least one base lot's
+        // zoning is a genuine unknown. Both derive from the parsed per-lot status.
+        const anyZoningRecorded = recordsView.baseLots.some(lot => lot.recordedZoningStatus === "recorded");
+        const anyZoningUnknown = recordsView.baseLots.some(lot => lot.recordedZoningStatus !== "recorded");
+        // DB-036(e): name the concrete lot-level zoning source in plain language
+        // (the city's Zoning Tax Lot Database, ZTLDB) and scope the sentence to
+        // what is actually missing. When SOME base lots already carry a recorded
+        // district, the copy must NOT imply that the recorded zoning shown above is
+        // unavailable — only that it is not yet shown for EVERY base lot. When NO
+        // base lot carries recorded zoning the gap covers all of them.
+        const zoningGapNote = anyZoningRecorded
+          ? "Recorded zoning is not yet shown for every base lot above. New York City keeps lot-level zoning in a separate database — the Zoning Tax Lot Database (ZTLDB) — that is not connected here; the base lots marked not recorded are city identity records whose zoning is left as an explicit unknown rather than guessed, while the recorded districts shown above are unaffected."
+          : "Recorded zoning is not yet shown for these base lots. New York City keeps lot-level zoning in a separate database — the Zoning Tax Lot Database (ZTLDB) — that is not connected here, so the base lots above are shown as city identity records only, and their zoning is left as an explicit unknown rather than guessed.";
+        // Entered vs billing are DISTINCT identifiers (DB-036(b)): the entered BBL
+        // is what the user typed (validated via lib/bbl.ts); the billing lot is
+        // recorded only for a billing-class input and is a labelled unknown for a
+        // unit-class input — never the entered unit BBL relabelled as billing.
+        const enteredLot = recordsView.enteredBbl ?? "not recorded (unknown)";
+        const billingLot = recordsView.billingBblStatus === "recorded" && recordsView.billingBbl
+          ? recordsView.billingBbl
+          : "not recorded (unknown)";
         return <section className="card architect-condo-records" role="group" aria-label="City records for this condo" data-testid="condo-resolution-records">
-      <strong>City records for this condo</strong>
-      <p className="section-note">These are the tax lots the city records for the condo lot you entered. They are city records of the condo&apos;s land, shown for reference under the professional-review determination above.{conflict ? " The property record and the city records channel differ on this condo; the lots below are what the city records channel returned." : ""}</p>
-      <p className="architect-condo-billing-lot section-note" data-testid="condo-billing-lot">Condo lot you entered: {recordsView.billingBbl ?? "not recorded (unknown)"}</p>
+      <h2>City records for this condo</h2>
+      <p className="section-note">These are the tax lots the city records for the condo lot you entered. They are city records of the condo&apos;s land, shown for reference under the development limits above.{conflict ? " The property record and the city records channel differ on this condo; the lots below are what the city records channel returned." : ""}</p>
+      <p className="architect-condo-entered-lot section-note" data-testid="condo-entered-lot">Condo lot you entered: {enteredLot}</p>
+      <p className="architect-condo-billing-lot section-note" data-testid="condo-billing-lot">Condo billing lot: {billingLot}</p>
       <ul>
         {recordsView.baseLots.map((lot, index) => <li key={`base-${index}`} className="architect-condo-record" data-testid="condo-base-lot-record">Recorded base lot {lot.bbl} <span className="section-note" data-testid="condo-base-lot-zoning">— recorded zoning: {lot.recordedZoning ?? "not recorded (unknown)"}</span></li>)}
       </ul>
-      {recordsView.divergentZoningNotice ? <p className="section-note" data-testid="condo-divergent-notice">{recordsView.divergentZoningNotice}</p> : null}
+      {anyZoningRecorded && recordsView.divergentZoningNotice ? <p className="section-note" data-testid="condo-divergent-notice">{recordsView.divergentZoningNotice}</p> : null}
+      {anyZoningUnknown && recordsView.recordedZoningDependency ? <p className="section-note" data-testid="condo-zoning-dependency">{zoningGapNote}</p> : null}
       <p className="section-note" data-testid="condo-records-provenance">Source: {recordsView.provenance.sourceId ?? "not recorded (unknown)"} · dataset(s): {recordsView.provenance.datasetIds.length ? recordsView.provenance.datasetIds.join(", ") : "not recorded (unknown)"} · dataset version: {recordsView.provenance.datasetVersion ?? "not recorded (unknown)"} · retrieved: {recordsView.provenance.retrievedAt ?? "not recorded (unknown)"}</p>
     </section>;
     }
@@ -252,7 +277,7 @@ export function CondoRecordsChannelSection({ decision }: {
     // fail-safe above governs; surface the difference honestly, show no records.
     if (conflict) {
         return <section className="card architect-condo-records" role="status" data-testid="condo-records-conflict">
-      <p className="section-note">The city records channel and the property record differ on this condo, so no city records are shown here. The professional-review determination above governs.</p>
+      <p className="section-note">The city records channel and the property record differ on this condo, so no city records are shown here. The development limits above govern.</p>
     </section>;
     }
     // loading / unavailable / unresolved / typed resolver error / non-condo:
