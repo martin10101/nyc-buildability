@@ -69,8 +69,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The M5-T058 lane is LIVE on the adjacent rule_evaluation surface - this packet touches NONE of it (G0 records the disjointness).",
     "Numeric bounds must be registry-derived with the every-declaring-rule conservatism - a single invented or over-narrowed limit is a legal-value fabrication and fails the wave.",
@@ -79,7 +79,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T12:27:56.630392+00:00",
-  "updated_at": "2026-09-20T12:30:27.733984+00:00",
+  "updated_at": "2026-09-20T18:39:46.490482+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -117,6 +117,27 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the T059 delta-wave-close seam (G0 PASS; disjoint vs live T058/T060 + parked T059); loop-3 relaunch as run 07 next"
+    },
+    {
+      "at": "2026-09-20T18:32:34.355669+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Loop-3 unit closed at the S13.8 consecutive_revision_loops breaker (6 REVISE cycles converging the report to supervisor-outcome honesty); orchestrator harvest: fresh explicit-cwd evidence (ruff 0, pytest tests/api 591 passed, targeted 67 passed, modularity 0), material cherry-picked to 1f1db078 with ALL-MATCH LF digests, pushed; CI pending; submit at green head next"
+    },
+    {
+      "at": "2026-09-20T18:39:38.390318+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "rework",
+      "message": "Re-freeze walk only: evidence-map digest section restructured (path/sha256_lf entry objects) to clear a gitleaks generic-api-key false positive on _api.py-keyed hex lines; material identity untouched at 1f1db078"
+    },
+    {
+      "at": "2026-09-20T18:39:39.879961+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Re-freeze walk step 2: returning to in_progress to resubmit at the unchanged material head"
     }
   ]
 }
