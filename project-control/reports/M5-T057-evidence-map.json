@@ -1,7 +1,7 @@
 {
   "task_id": "M5-T057",
-  "material_commit": "3dbd056d",
-  "produced_at": "2026-09-20T08:00:00+00:00",
+  "material_commit": "3dbd056d + ca5c8895 (rework [ORCH-CORRECTED], cherry-pick of worktree c09f87d6)",
+  "produced_at": "2026-09-20T09:12:00+00:00",
   "producer": "backend-engineer (loop-1 run persistent-local-59-m5t057; unit complete at the consecutive_revision_loops breaker stop; orchestrator harvest)",
   "requirements": {
     "D-066-R001": [
@@ -15,7 +15,7 @@
       "The proposal stays a third input class at the route boundary: the route emits NO scenario document and NO contract version (BP-6/DB-034(d) disposition, report SS5; AS-5 test), enforces BP-1..BP-7 (single check_proposal entry, bounded request body, route-level compute caps with shown arithmetic, value-domain validation with unmapped keys surfaced never fed, length-capped error details), and the could-not-check honesty channel rides the serialized report (could_not_check reasons + counts; AS-1). No proposal-derived number is presented as a city record or rule output anywhere in the route."
     ],
     "D-077-R002": [
-      "Lane packet built under the three-loop drill: contracted+claimed at seam 0099bbb2/848703a7 with binds, digest resyncs, seeds, G0 disjointness record, FULL worktree path wt-m5t057, worktree at the claim-seam commit, launcher retargeted with fresh run-id persistent-local-59-m5t057. Harvested at the loop's breaker close per the drill: worktree output committed fcc58e24, cherry-picked 3dbd056d, orchestrator-captured suites (ruff 0, api 540 passed, rules 726 passed, modularity exit 0, explicit services/api cwd - report SS8.1), submitted at the CI-green head for the independent wave."
+      "Lane packet built under the three-loop drill: contracted+claimed at seam 0099bbb2/848703a7 with binds, digest resyncs, seeds, G0 disjointness record, FULL worktree path wt-m5t057, worktree at the claim-seam commit, launcher retargeted with fresh run-id persistent-local-59-m5t057. Harvested at the loop's breaker close per the drill: worktree output committed fcc58e24, cherry-picked 3dbd056d, orchestrator-captured suites at both identities (initial SS8.1: ruff 0/api 540/rules 726/modularity 0; rework SS8.2: ruff 0/api 552/rules 726/modularity 0, explicit services/api cwd). The independent wave at frozen 2b5edbc3 returned G3 FAIL/G4 PASS/G5 FAIL/DCV FAIL(D-066-R001); the blocking findings were repaired as one tagged [ORCH-CORRECTED] cluster (rework material ca5c8895) and the task resubmitted at the corrected CI-green head for delta-attestation by the SAME four reviewers - the full lane-cycling drill including its rework leg."
     ],
     "D-077-R003": [
       "Task selected from the RELEASED, NON-HELD queue only: B3 is the next phase-B increment in the recorded order of docs/PROPOSAL_EDITOR_PHASED_PLAN.md after B2 (M5-T054) accepted; no held work touched (expansion hold minus D-040/D-076 releases, PR #241, Tier D all untouched); the route is internal flag-gated with no new public surface."
