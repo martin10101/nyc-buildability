@@ -625,3 +625,87 @@ def test_status_state_matrix_is_the_documented_set():
             (500, "internal_error"),
         }
     )
+
+
+# ---------------------------------------------------------------------------
+# M5-T057 SCOPE 2 - T053 route residual closures (four recorded branches).
+# ---------------------------------------------------------------------------
+_CHECKS_URL = "/api/v1/proposal-checks"
+
+
+def test_residual_a_400_char_message_cap_truncation_branch(client, monkeypatch):
+    """(a) The 400-char refusal-message cap (`_bounded_message`) truncation branch. A 2-element
+    vertex whose first element is a >400-char string is NOT a wall id / provenance string, so it
+    passes the DB-034(b) gate ceilings and reaches the accepted B0 validator, which embeds an
+    UNCAPPED repr of the bad vertex (>400 chars). The route's message cap must truncate it to the
+    exact cap with an explicit marker - the uncapped repr can never reach a client."""
+    _enable_flag(monkeypatch)
+    attacker = "q" * 600
+    block = _valid_block()
+    block["outline"]["vertices"][0] = [attacker, _Y0]
+    resp = client.post(_URL, json=block)
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "proposed_massing.outline.vertices[0]"
+    message = body["message"]
+    assert attacker not in message
+    assert "q" * 450 not in message  # far more than the 400-char cap is never echoed
+    assert "truncated" in message
+    # Cap (400) + a short truncation marker naming the true length; comfortably under 500.
+    assert 400 < len(message) < 500
+
+
+def test_residual_b_forced_internal_error_is_bounded_500(client, monkeypatch):
+    """(b) The generic 500 path. A forced internal defect inside the validate stage returns the
+    typed bounded 500 with NO stack trace / value leak (only a correlation id)."""
+    _enable_flag(monkeypatch)
+
+    def _boom(_block):
+        raise RuntimeError("boom-with-secret-/services/api/path")
+
+    monkeypatch.setattr(
+        "app.api.v1.proposal_validation.validate_proposed_massing_input", _boom
+    )
+    resp = client.post(_URL, json=_valid_block())
+    assert resp.status_code == 500
+    body = resp.json()
+    assert set(body) == {"state", "message", "correlation_id"}
+    assert body["state"] == "internal_error"
+    assert body["correlation_id"]
+    blob = json.dumps(body).lower()
+    for leak in ("boom", "runtimeerror", "traceback", "/services/api", "\\services\\api"):
+        assert leak not in blob
+
+
+def test_residual_c_lone_surrogate_body_refused_typed(client, monkeypatch):
+    """(c) The surrogate half of the strict-JSON guard. A body carrying a lone (unpaired)
+    surrogate parses via json.loads but is refused by the renderer-parity guard BEFORE it can
+    reach the digest or raise mid-response."""
+    _enable_flag(monkeypatch)
+    raw = b'{"provenance": {"author": "\\ud800"}}'  # a lone high surrogate escape
+    resp = client.post(_URL, content=raw, headers=_JSON_HEADERS)
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["state"] == "validation_error"
+    assert "surrogate" in body["message"]
+
+
+def test_residual_d_both_routes_share_one_flag_and_off_behaviour(client, monkeypatch):
+    """(d) The deliberate shared-flag coupling. Both the validation and the checks routes gate on
+    the SAME INTERNAL_RULE_EVAL_ENABLED flag, and their flag-off behaviour is identical: a generic
+    404 with no correlation id. The coupling is intentional (the proposal editor is one internal
+    flow); this test documents it rather than introducing a second flag."""
+    # Flag OFF (fixture default): both routes are a byte-identical generic 404, no leak.
+    for url in (_URL, _CHECKS_URL):
+        off = client.post(url, json=_valid_block())
+        assert off.status_code == 404
+        assert off.json() == {"detail": "Not Found"}
+        assert "X-Correlation-ID" not in off.headers
+
+    # Flag ON: both routes become reachable (an empty body earns each route's typed 422, i.e.
+    # NOT the disabled 404) - the single flag flips both together.
+    _enable_flag(monkeypatch)
+    for url in (_URL, _CHECKS_URL):
+        on = client.post(url, content=b"", headers=_JSON_HEADERS)
+        assert on.status_code == 422
+        assert on.json()["state"] == "validation_error"

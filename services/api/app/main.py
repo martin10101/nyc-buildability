@@ -33,6 +33,7 @@ from app.api.v1.condo_records import router as condo_records_v1_router
 from app.api.v1.evidence import router as evidence_v1_router
 from app.api.v1.lot_geometry import router as lot_geometry_v1_router
 from app.api.v1.properties import router as properties_v1_router
+from app.api.v1.proposal_checks_api import router as proposal_checks_v1_router
 from app.api.v1.proposal_validation import router as proposal_validation_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
@@ -184,6 +185,19 @@ def create_app() -> FastAPI:
     # digest + the literal kind 'proposed'); it stores nothing and derives no allowance
     # (D-076-R002). See app.api.v1.proposal_validation.
     application.include_router(proposal_validation_v1_router)
+    # Internal, feature-flag-gated PROPOSAL-CHECKS endpoint (task M5-T057, D-076 phase B3 slice
+    # 1). SAME posture as the routes above - ALWAYS registered but unreachable (generic 404, no
+    # OpenAPI entry) unless the EXISTING INTERNAL_RULE_EVAL_ENABLED flag is an explicit true token
+    # (the proposal editor is part of the same internal property flow and app.config is out of the
+    # packet's scope, so it reuses that flag and adds no new one); absent/unknown -> disabled (fail
+    # safe). It runs the DB-034(a)/(b) input gate + the accepted B2 check engine
+    # (app.rules.proposal_checks.check_proposal) over an editor-authored proposed_massing block
+    # plus a caller lot context and lot rule facts, and returns the grouped PASS/FAIL/
+    # COULD_NOT_CHECK report with numeric shortfalls; it is the trust boundary carrying every
+    # G5-recorded precondition BP-1..BP-7. It stores nothing, derives no city record, and emits NO
+    # scenario document or contract version (D-076-R002 / DB-034(d)). See
+    # app.api.v1.proposal_checks_api.
+    application.include_router(proposal_checks_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:

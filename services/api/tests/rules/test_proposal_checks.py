@@ -592,3 +592,191 @@ def test_no_finite_value_reaches_math_isfinite_helper():
     assert pc._is_finite_number(float("inf")) is False
     assert pc._is_finite_number(10**400) is False
     assert math.isfinite(3.0)  # sanity
+
+
+# ---------------------------------------------------------------------------
+# M5-T057 SCOPE 3 - G4 fold-in tests (M5-T054 G4-1..G4-4). These BIND existing,
+# correct, fail-closed behaviour of the ACCEPTED B2 module; app/rules/proposal_checks.py is
+# byte-unchanged. G4-1/G4-2 need two/zero applicable rules in one family - impossible with the
+# committed one-rule-per-family fixtures - so they drive check_proposal with a minimal registry
+# double returning hand-authored traces (no new fixture ruleset files, which are out of scope).
+# ---------------------------------------------------------------------------
+
+#: A coverage status the module treats as a usable allowance (read from the module itself so the
+#: test can never drift from the accepted _USABLE_COVERAGE set).
+_USABLE_COVERAGE_STATUS = next(iter(pc._USABLE_COVERAGE))
+
+
+class _FakeResult:
+    def __init__(self, trace: dict) -> None:
+        self._trace = trace
+
+    def export(self) -> dict:
+        return self._trace
+
+
+class _FakeRegistry:
+    """A minimal RuleRegistry double: it returns hand-authored evaluator traces for named rule
+    ids in a family, so _select_allowance's multi-usable (AMBIGUOUS) and zero-applicable
+    (NO_APPLICABLE) branches are bound without adding fixture ruleset files."""
+
+    def __init__(self, family_rule_ids: dict, traces: dict) -> None:
+        self._family_rule_ids = family_rule_ids
+        self._traces = traces
+
+    def family_coverage(self, family: str) -> dict:
+        rule_ids = self._family_rule_ids.get(family)
+        return {"rule_ids": list(rule_ids)} if rule_ids else {"family": family}
+
+    def evaluate(self, rule_id: str, _inputs: dict) -> _FakeResult:
+        return _FakeResult(self._traces[rule_id])
+
+
+def _coverage_trace(rule_id: str, *, applicable: bool, output: float = 0.5) -> dict:
+    return {
+        "rule_id": rule_id,
+        "rule_version": "1.0.0",
+        "rule_status": "published",
+        "applicability_outcome": applicable,
+        "coverage_status": _USABLE_COVERAGE_STATUS,
+        "outputs": {"max_lot_coverage_ratio": output},
+        "citations": (),
+    }
+
+
+def _minimum_trace(rule_id: str, *, required: float) -> dict:
+    """A usable, applicable trace whose single output is a MINIMUM-direction allowance the
+    injected min-setback check compares against."""
+    return {
+        "rule_id": rule_id,
+        "rule_version": "1.0.0",
+        "rule_status": "published",
+        "applicability_outcome": True,
+        "coverage_status": _USABLE_COVERAGE_STATUS,
+        "outputs": {"min_required_setback_ft": required},
+        "citations": (),
+    }
+
+
+def test_g4_1_ambiguous_rule_never_picks_a_winner(case):
+    """G4-1: two usable same-family rules independently produce the allowance output -> the check
+    is COULD_NOT_CHECK/ambiguous_rule with required_value None (which governs is a legal
+    determination the module never makes). The PROVIDED fact is still recorded."""
+    registry = _FakeRegistry(
+        {"lot_coverage": ["cov-a", "cov-b"]},
+        {
+            "cov-a": _coverage_trace("cov-a", applicable=True),
+            "cov-b": _coverage_trace("cov-b", applicable=True),
+        },
+    )
+    report = pc.check_proposal(
+        case["block"], _lot_from(case), {"zoning_district": "R5"},
+        scenario_label="scenario-A-baseline", registry=registry,
+    )
+    res = _by_id(report)["lot_coverage_ratio"]
+    assert res.outcome is pc.CheckOutcome.COULD_NOT_CHECK
+    assert res.could_not_check_reason is pc.CouldNotCheckReason.AMBIGUOUS_RULE
+    assert res.required_value is None
+    assert res.provided_value == pytest.approx(0.625)
+
+
+def test_g4_2_no_applicable_rule_is_visible_not_a_silent_pass(case):
+    """G4-2: a rule applicable ELSEWHERE (applicability_outcome False for these facts) yields
+    COULD_NOT_CHECK/no_applicable_rule - a visible not-applicable, never a silent PASS."""
+    registry = _FakeRegistry(
+        {"lot_coverage": ["cov-elsewhere"]},
+        {"cov-elsewhere": _coverage_trace("cov-elsewhere", applicable=False)},
+    )
+    report = pc.check_proposal(
+        case["block"], _lot_from(case), {"zoning_district": "R5"},
+        scenario_label="scenario-A-baseline", registry=registry,
+    )
+    res = _by_id(report)["lot_coverage_ratio"]
+    assert res.outcome is pc.CheckOutcome.COULD_NOT_CHECK
+    assert res.could_not_check_reason is pc.CouldNotCheckReason.NO_APPLICABLE_RULE
+    assert res.required_value is None
+
+
+def test_g4_3_minimum_branch_end_to_end(case, monkeypatch):
+    """G4-3: the commensurable MINIMUM branch exercised END-TO-END through check_proposal, not
+    only via a direct _compare call. The sole PROPOSAL_CHECKS MINIMUM entry (rear_yard_depth) is
+    semantic-gapped -> COULD_NOT_CHECK before any comparison, so we monkeypatch in ONE
+    commensurable MINIMUM check over the real derived ``min_lot_line_setback`` (10.0 ft for the
+    fixture rectangle: west wall x=1000000 minus lot line x=999990) and drive the whole pipeline
+    - preconditions, single derivation, allowance selection, comparison, grouping/counts - with a
+    registry double supplying the allowance. Hand-computed against the derived provided value 10.0
+    ft: PASS when provided >= required (inclusive at equality); FAIL with shortfall = required -
+    provided."""
+    min_check = pc.ProposalCheck(
+        check_id="min_setback_probe",
+        family="min_setback_family",
+        required_output="min_required_setback_ft",
+        provided_fact="min_lot_line_setback",
+        direction=pc.CheckDirection.MINIMUM,
+        unit="feet",
+        label="probe minimum setback",
+    )
+    monkeypatch.setattr(pc, "PROPOSAL_CHECKS", (min_check,))
+
+    def run(required: float) -> tuple[pc.CheckResult, pc.ProposalCheckReport]:
+        registry = _FakeRegistry(
+            {"min_setback_family": ["min-a"]},
+            {"min-a": _minimum_trace("min-a", required=required)},
+        )
+        report = pc.check_proposal(
+            case["block"], _lot_from(case), {"zoning_district": "R5"},
+            scenario_label="scenario-A-baseline", registry=registry,
+        )
+        # exactly one grouped result, so the summary counts reflect this branch alone.
+        assert report.pass_count + report.fail_count + report.could_not_check_count == 1
+        return _by_id(report)["min_setback_probe"], report
+
+    # PASS: derived provided 10.0 ft >= required 5.0 ft -> PASS, no shortfall.
+    passed, passed_report = run(5.0)
+    assert passed.outcome is pc.CheckOutcome.PASS
+    assert passed.provided_value == pytest.approx(10.0)
+    assert passed.required_value == pytest.approx(5.0)
+    assert passed.shortfall is None
+    assert passed_report.pass_count == 1
+
+    # Equality boundary: provided 10.0 ft >= required 10.0 ft -> PASS (inclusive floor).
+    boundary, _ = run(10.0)
+    assert boundary.outcome is pc.CheckOutcome.PASS
+    assert boundary.shortfall is None
+
+    # FAIL: provided 10.0 ft < required 15.0 ft -> FAIL, shortfall = 15 - 10 = 5.0 ft.
+    failed, failed_report = run(15.0)
+    assert failed.outcome is pc.CheckOutcome.FAIL
+    assert failed.provided_value == pytest.approx(10.0)
+    assert failed.required_value == pytest.approx(15.0)
+    assert failed.shortfall == pytest.approx(5.0)
+    assert failed_report.fail_count == 1
+
+    # Direct _compare micro-check of the same operator (kept for operator-level clarity).
+    assert pc._compare(pc.CheckDirection.MINIMUM, 10.0, 10.0) == (pc.CheckOutcome.PASS, None)
+
+
+def test_g4_4_non_lotcontext_and_street_line_finiteness_guards(case):
+    """G4-4: two defensive wiring guards. (i) a lot that is not a LotContext is refused typed
+    (field 'lot'); (ii) a non-finite STREET-line coordinate is refused before derivation (the
+    finiteness loop previously bound only for lot lines)."""
+    with pytest.raises(pc.ProposalCheckError) as exc_type:
+        pc.check_proposal(case["block"], {"area_sq_ft": 8000.0}, scenario_label="s")
+    assert exc_type.value.field == "lot"
+
+    lot = LotContext(
+        area_sq_ft=8000.0,
+        area_provenance={},
+        lot_line_segments=(),
+        street_lines=(
+            AttestedStreetLine(
+                wall_id="W-S",
+                start=(math.nan, 200000.0),
+                end=(1000100.0, 200000.0),
+                attestation={},
+            ),
+        ),
+    )
+    with pytest.raises(pc.ProposalCheckError) as exc_fin:
+        pc.check_proposal(case["block"], lot, scenario_label="s")
+    assert exc_fin.value.field == "lot.street_lines['W-S'].start"
