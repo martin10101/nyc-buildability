@@ -524,13 +524,20 @@ export function announcementForRuleEvaluation(outcome: RuleEvaluationOutcome): s
       // A substrate_substitution stamp renders the visible "analyzed on the base
       // lot" record (AnalysisIdentityNotice); announce the same entered-vs-analyzed
       // specifics so the announced text matches the visible label (DB-042(c)/HJ-3).
-      // Gated on a well-formed stamp (a real, different analyzed base lot), the
-      // same shape the visible record requires.
+      // [ORCH-CORRECTED per M5-T063 G3-F1/G4-C-1] Gated on the same in-document
+      // CORRESPONDENCE the visible stampLegitimate guard enforces — the stamp's
+      // entered_bbl must equal evaluated_input.bbl (a merely well-formed shape is
+      // NOT enough; a non-corresponding stamp is ignored by the visible record and
+      // must fall through to the generic classifier here too, never be announced
+      // as a substitution). The visible guard's additional requestedBbl check is
+      // out of this function's reach and is guarded upstream at the call site.
       const substitution = document.substrate_substitution;
       if (
         substitution &&
         typeof substitution.entered_bbl === "string" &&
         substitution.entered_bbl.length > 0 &&
+        typeof document.evaluated_input.bbl === "string" &&
+        substitution.entered_bbl === document.evaluated_input.bbl &&
         typeof substitution.analyzed_bbl === "string" &&
         substitution.analyzed_bbl.length > 0 &&
         substitution.analyzed_bbl !== substitution.entered_bbl

@@ -540,4 +540,27 @@ describe("announcementForRuleEvaluation — condo specifics match the visible la
     expect(message).not.toMatch(/\bverified\b/i);
     expect(message).not.toMatch(/\bbest\b/i);
   });
+
+  // [ORCH-CORRECTED per M5-T063 G3-F1/G4-C-1] The announcer must mirror the
+  // visible stampLegitimate correspondence discipline: a stamp whose entered_bbl
+  // disagrees with evaluated_input.bbl is IGNORED by the visible record
+  // (analysis-identity-substitution.test.tsx pins that), so the announcer must
+  // fall through to the generic classifier — never announce a substitution the
+  // sighted surface does not show. Mutation-sensitive: removing the
+  // entered_bbl === evaluated_input.bbl gate flips this red.
+  it("announces the GENERIC string for a non-corresponding stamp (entered_bbl !== evaluated_input.bbl)", () => {
+    const doc = substitutionStampDoc();
+    // Contract-shape-valid but non-corresponding: the stamp names a different
+    // entered lot than the document's evaluated identity.
+    doc.substrate_substitution!.entered_bbl = "4000010001";
+    const message = announcementForRuleEvaluation({
+      kind: "evaluation",
+      document: doc,
+      correlationId: null,
+    });
+    expect(message).toBe(GENERIC_APPLICABLE_DRAFT);
+    expect(message).not.toContain("base tax lot");
+    expect(message).not.toContain("4000010001");
+    expect(message).not.toContain(SUBSTITUTION_ANALYZED_BBL);
+  });
 });
