@@ -1,0 +1,135 @@
+{
+  "task_id": "M5-T058",
+  "title": "D-078 pair 1/2: condo substrate-substitution stamp - carry CondoResolution across the spatial substrate seam, additive rule_evaluation contract 1.2.0 (substrate_substitution block + condo_base_lot_unresolved honest-refusal vocabulary), AnalysisIdentityNotice substitution display (DB-036(d) closure)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "The substitution already happens one layer too deep to be visible: build_live_substrate resolves a condo billing BBL to its base lot and runs the whole spatial pipeline on the base lot, but the typed CondoResolution is discarded at the seam boundary and survives only as a log line. Carry the resolution across the substrate seam and stamp every derived result: a new OPTIONAL top-level substrate_substitution block (additive contract 1.2.0, M5-T037 wide_street precedent) reusing the accepted {entered_bbl, analyzed_bbl, note} substitution shape extended with the CondoResolution provenance; rename the condo-caused refusal honestly (condo_base_lot_unresolved instead of the generic spatial_intersection_absent); teach AnalysisIdentityNotice that a STAMPED substitution is legitimate (closing DB-036(d)) while an unstamped identity mismatch still withholds. Never auto-pick a base lot on multi-lot/unresolved outcomes (D-078-R002): the honest refusal stands until the D-078 site-definition confirmation flow (the paired packet) supplies a human confirmation.",
+  "business_reason": "The owner's live 298 Wallabout case showed real allowances computed on land the user cannot see named anywhere: results must say 'analyzed on lot X' with provenance, and condo-caused refusals must say why honestly - the trust seam of the D-078 flow",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. The review-round budget is spent on code, not reports.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Web suites prove ONLY in CI on the pushed head - never mark web behavior verified from local reasoning. Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam, 764 files/16164 nodes). Target-file impact sets: live_provider.py <- api/v1/rule_evaluation.py:66 + tests (spatial/test_live_provider.py, api/test_rule_evaluation_api.py). rules/integration.py <- evidence.py:95, rule_evaluation.py:60, scenario.py:73, scenario_analysis.py:101, rules/response.py:43 + three rules test files + tools/residential_validation.py:406. rules/response.py <- the same four routes + api tests. api/v1/rule_evaluation.py <- evidence.py:82, scenario.py:60, scenario_analysis.py:88, main.py:37. The THREE consumers evidence.py/scenario.py/scenario_analysis.py are FORBIDDEN paths: every change to integration.py/response.py/live_provider.py/rule_evaluation.py must be provably invisible to them (their suites green byte-unchanged). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; the graph is ADVISORY - verify in source.",
+    "SCOPE 1/4 - CONTRACT 1.2.0 (binding; read project-control/reports/condo-substrate-substitution-recon-2026-09-20.md IN FULL first - it is this packet's map; then the M5-T037 wide_street precedent in git history for the additive-bump mechanics): additive contract bump in packages/contracts/schemas/v1/rule_evaluation.schema.json AND the byte-identical copy services/api/app/_contract_schemas/v1/rule_evaluation.schema.json AND the generated packages/contracts/generated/rule_evaluation.ts: (a) contract_version enum grows to ['1.0.0','1.1.0','1.2.0']; (b) NEW OPTIONAL top-level `substrate_substitution` object - REUSE the accepted substitution triple shape {entered_bbl, analyzed_bbl, note} (api/v1/condo_records.py _substitution_record, :442-460 - reuse the SHAPE, never invent a second one) extended with the CondoResolution provenance fields (condo_key, resolution_path, source_id, dataset_ids, retrieved_at - mirror connectors/condo_base_lot.py CondoResolution :88-140) plus a machine-readable mixed-substrate visibility field (the substituted path's lot area/geometry describe the BASE lot while PLUTO identity facts describe the billing lot - the stamp makes that visible, recon Q5); (c) fail_safe_reason enum grows `condo_base_lot_unresolved`. additionalProperties:false discipline maintained everywhere; documents without the block (1.0.0/1.1.0) stay valid; both schema copies byte-identical (contract test proves it).",
+    "SCOPE 2/4 - SEAM CARRY (binding): app/spatial/live_provider.py stops discarding the CondoResolution: (a) on the substitutes_base_lot path (:258-290) the resolution rides WITH the substrate to the rule-evaluation consumer, and app/rules/integration.py + app/rules/response.py stamp the substrate_substitution block into the evaluation document; (b) evaluated_input.bbl REMAINS the ENTERED BBL (orchestrator ruling - the stamp alone carries entered-vs-analyzed; response.py :154-161 unchanged in that respect); (c) on the condo fail-safe path (multi_lot_set/unresolved/typed-error -> None substrate today, :263-267) the condo CAUSE must reach integration.py's absent-substrate branch (:617-633) so the refusal is honestly named condo_base_lot_unresolved - genuinely-absent-geometry non-condo cases KEEP spatial_intersection_absent; (d) NEVER auto-pick a base lot on any multi-lot/unresolved outcome (D-078-R002 prohibition; the human site-definition confirmation is the PAIRED packet, not this one); (e) the widening is COMPATIBLE: evidence.py/scenario.py/scenario_analysis.py and their SpatialSubstrateProvider usage keep working byte-unchanged (forbidden paths; design the carry so old consumers observe the old contract); (f) no second SODA call on any path (single resolution reused; call-count asserted in tests).",
+    "SCOPE 3/4 - WEB HONESTY DISPLAY (binding): apps/web/src/lib/rule-evaluation-contract.ts learns 1.2.0 + the optional block + the new fail_safe_reason (enum :88-95); apps/web/src/lib/architect/development-limits.ts label map (:156 region) gets a plain-language label for condo_base_lot_unresolved (the land is a condo whose base lots could not be resolved to a single lot; a site-definition confirmation is needed); apps/web/src/components/architect/AnalysisIdentityNotice.tsx learns the substitution branch: a document CARRYING substrate_substitution renders an 'analyzed on lot <analyzed>, entered <entered>' substitution notice as LEGITIMATE (the identity-mismatch/results-withheld branch must NOT fire for a stamped substitution - DB-036(d) closure) and an UNSTAMPED mismatch still withholds exactly as today (both directions tested). NEW spec apps/web/src/components/architect/__tests__/analysis-identity-substitution.test.tsx binds both directions (the seeded placeholder test is replaced); contract-versions.test.ts + development-limits.test.tsx + test-support/rule-evaluation-fixtures.ts extended for 1.2.0. DOM queries typed per CODING_RULES; deliberate invalid-shape probes as `as unknown as T`.",
+    "SCOPE 4/4 - TESTS (binding): the headline NEW fixture is end-to-end billing BBL -> base lot -> real substrate -> STAMPED result (recon SS6: no such fixture exists; extend the M5-T045 block in tests/spatial/test_live_provider.py :585-680 and tests/api/test_rule_evaluation_api.py); the condo_base_lot_unresolved refusal path bound in tests/rules/test_rules_integration.py (:374-385 pattern) AND the unchanged generic spatial_intersection_absent non-condo case bound beside it; tests/contracts/test_rule_evaluation_contract.py proves 1.2.0 round-trip + byte-identical schema copies + old-document validity; provenance byte-match asserted (stamp fields == the CondoResolution record's).",
+    "PRESERVATION (binding): app/connectors/** (condo_base_lot.py + dtm_condo_soda.py are COMPLETE accepted seams - read-only; insufficiency = STOP + discovery, never an edit), app/profile/**, app/scenario/**, app/rules/rulesets/**, api/v1/{evidence,scenario,scenario_analysis,condo_records}.py, main.py, and the T057 lane files (api/v1/proposal_checks_api.py, api/v1/proposal_validation.py + their tests) are READ-ONLY; every existing suite green unchanged; no new dependency; no new flag (the carry rides the existing live-spatial gating); modularity: check `python tools/modularity_check.py --report` before substantially growing live_provider.py or integration.py - split with a compatibility facade rather than crossing a threshold.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Additive 1.2.0 rule_evaluation contract (both schema copies byte-identical + regenerated TS): optional substrate_substitution block (accepted triple shape + CondoResolution provenance + mixed-substrate visibility) + condo_base_lot_unresolved fail_safe_reason",
+    "live_provider.py carrying the CondoResolution across the seam (substitution AND fail-safe cause), compatibly for the three untouched consumers; integration.py/response.py stamping the block; evaluated_input.bbl unchanged (entered)",
+    "Honest condo refusal: condo-caused absent substrate names condo_base_lot_unresolved; non-condo absent keeps spatial_intersection_absent",
+    "Web: 1.2.0 contract mirror, refusal label, AnalysisIdentityNotice substitution branch (stamped = legitimate display, unstamped mismatch still withholds) + the new analysis-identity-substitution spec (DB-036(d) closed)",
+    "End-to-end stamped-result fixture + refusal/compatibility/provenance test pack across the four api test files",
+    "project-control/reports/M5-T058-producer-report.md (one concise evidence pass; digest-bound SS8-style evidence handoff)"
+  ],
+  "dependencies": [
+    "M5-T045",
+    "M5-T056"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/rule_evaluation.schema.json",
+    "packages/contracts/generated/rule_evaluation.ts",
+    "services/api/app/_contract_schemas/v1/rule_evaluation.schema.json",
+    "services/api/app/spatial/live_provider.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/rules/integration.py",
+    "services/api/app/rules/response.py",
+    "services/api/tests/spatial/test_live_provider.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/rules/test_rules_integration.py",
+    "services/api/tests/contracts/test_rule_evaluation_contract.py",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/architect/development-limits.ts",
+    "apps/web/src/lib/__tests__/contract-versions.test.ts",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/__tests__/analysis-identity-substitution.test.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/test-support/rule-evaluation-fixtures.ts",
+    "project-control/reports/M5-T058-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/connectors/",
+    "services/api/app/profile/",
+    "services/api/app/scenario/",
+    "services/api/app/rules/rulesets/",
+    "services/api/app/main.py",
+    "services/api/app/api/v1/evidence.py",
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/tests/api/test_proposal_checks_api.py",
+    "services/api/tests/api/test_proposal_validation_api.py",
+    "services/api/tests/rules/test_proposal_checks.py",
+    "apps/web/src/lib/condo-records.ts"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary, the headline fixture): a single-base-lot condo billing BBL end-to-end - resolution carried (not discarded), substrate fetched for the base lot exactly once, the evaluation document carries substrate_substitution {entered_bbl=billing, analyzed_bbl=base, note, condo provenance fields byte-matching the CondoResolution, mixed-substrate visibility}, evaluated_input.bbl == the ENTERED billing BBL, contract_version 1.2.0, document validates against BOTH schema copies.",
+    "AS-2 (honest refusal): the 3022647515 class (multi_lot_set) - NO base-lot auto-pick, zero geometry lookups, refusal reasons[0] == condo_base_lot_unresolved; a non-condo genuinely-absent-geometry case beside it still yields spatial_intersection_absent; unresolved + typed-error condo outcomes covered.",
+    "AS-3 (compatibility): evidence/scenario/scenario_analysis suites green BYTE-UNCHANGED (no edits to their files or observed provider contract); pre-1.2.0 documents (no block) still validate; the SODA resolver is called at most once per evaluation (call-count assertion).",
+    "AS-4 (web honesty): a STAMPED document renders the substitution notice and the identity-mismatch/results-withheld branch does NOT fire; an UNSTAMPED entered-vs-evaluated mismatch still withholds exactly as today - both directions bound in analysis-identity-substitution.test.tsx; condo_base_lot_unresolved has a plain-language label in the development-limits map; web proof in CI only.",
+    "AS-5 (provenance): every stamp field traces to the CondoResolution record (condo_key, resolution_path, source_id, dataset_ids, retrieved_at) - asserted by byte-comparison in the end-to-end fixture; no stamp field is invented or defaulted.",
+    "AS-6 (proof): ruff clean from services/api; `python -m pytest tests/api tests/spatial tests/rules tests/contracts -q` green offline from services/api; modularity exit 0; every pre-existing suite green; CI green at the pushed head."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Seam-widening compatibility is the design core: the three forbidden consumers must observe the OLD provider contract byte-unchanged - a signature break there fails G3 and the wave.",
+    "The condo-cause carry on the None-substrate path must not leak condo internals into non-condo refusals (the generic reason must survive for genuinely absent geometry).",
+    "The frozen T057 lane holds main.py + the proposal route/test files - this packet touches NONE of them (G0 records the pairwise disjointness, incl. vs the planned M5-T059 site-definition lane).",
+    "Two schema copies + generated TS must stay byte-identical/consistent - drift is a contract-test red and has cost CI rounds before.",
+    "AnalysisIdentityNotice's withhold branch is an accepted SAFETY behavior: only a STAMPED substitution may legitimize a mismatch; weakening the unstamped path fails the wave (DB-036(d) is closed by adding the stamped branch, not by relaxing the guard).",
+    "D-078-R002 prohibition: any code path that auto-selects a base lot on a multi-lot outcome is a hard wave FAIL regardless of test coverage."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T07:48:35.169888+00:00",
+  "updated_at": "2026-09-20T07:48:35.602628+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    },
+    {
+      "directive_id": "D-078",
+      "requirement_ids": [
+        "D-078-R002",
+        "D-078-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T07:48:35.169888+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api tests/spatial tests/rules tests/contracts -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

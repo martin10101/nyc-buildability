@@ -10,7 +10,7 @@
  "issued_at": "2026-09-20",
  "captured_at": "2026-09-20T06:20:00+00:00",
  "created_at": "2026-09-20T06:20:00+00:00",
- "updated_at": "2026-09-20T06:20:00+00:00",
+ "updated_at": "2026-09-20T07:53:11+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "848703a726ae8b707f016b76747bf2a712934358",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-078-R002",
   "D-078-R003"
  ],
- "requirements_content_digest_sha256": "40d7c53b442b36af91589f5374712020e22a3c005037913545ecccb7bef07b54",
+ "requirements_content_digest_sha256": "26fb3c183cdc715aa8894dc5aefc279c47dcfb63ea12af9c837ac5d6f4223fad",
  "sources": [
   {
    "file": "source-001.md",
@@ -57,6 +57,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). At capture: 237 accepted (M5-T054 accepted this session); T055/T056 awaiting_gate with waves running; M5-T057 contracted/claimed for loop-1; the recon (condo-substrate-substitution-recon-2026-09-20.md) + backlog row DB-037(d) already recorded the design and sequencing."
+  },
+  {
+   "at": "2026-09-20T07:53:11+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_append",
+   "note": "Bound the D-078 delivering pair contracted at the seq-122 seam (R003 sequencing satisfied: M5-T056 accepted 239th): M5-T058 (substrate-substitution stamp; R002+R003) and M5-T059 (site-definition confirmation slice 1; R001+R002+R003). Append-only, task_ids only; no requirement text changed. Digest resynced 40d7c53b -> 26fb3c18 SAME commit (c14)."
   }
  ]
 }

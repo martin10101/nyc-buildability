@@ -1,0 +1,137 @@
+{
+  "task_id": "M5-T059",
+  "title": "D-078 pair 2/2: multi-lot condo site-definition confirmation, slice 1 - typed append-only confirmation record + abstract store (B-001-deferred persistence, in-memory impl) + unmounted flag-gated internal API + condo-records surfacing + DB-038(f) riders; NO calculation-path change",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Give the D-078 site-definition confirmation its substrate: a typed, append-only, provenance-carrying SiteDefinitionConfirmation record (who confirmed, when, exactly which parcels; status active/superseded/revoked with a required-reason supersession chain; never edited in place) in a NEW app/site_definition package, an abstract SiteDefinitionStore with an in-memory/CI implementation on the documents/storage.py B-001 deferral precedent, and an UNMOUNTED flag-gated internal API (create/list/supersede/revoke) tested via a locally-built FastAPI app so main.py (held by the live M5-T057 lane) is untouched. Surface recorded confirmations (or explicit unconfirmed status) read-only on the condo-records multi-lot document and PropertyOverview, and fold in both DB-038(f) riders. The confirmation is HUMAN professional input (D-078-R002): the system never auto-selects, and slice 1 changes NO calculation path - the unconfirmed honest refusal stays byte-identical. Calculations-on-confirmed-combined-land is a later slice, after this record substrate and the M5-T058 substitution stamp both land.",
+  "business_reason": "The owner authorized the one-click site-definition flow (treat lots 32+33 as one site); this slice makes the confirmation a durable, auditable, supersedable record with honest limits (self-attested identity labeled, ephemeral store labeled) instead of a UI gesture with nothing underneath",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Web suites prove ONLY in CI on the pushed head. Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam, 764 files/16164 nodes). Read-only seams you CONSUME: app/connectors/condo_base_lot.py (CondoResolution :87-140; OUTCOME_MULTI_LOT :77; multi-lot construction :247-252 keeps resolved_base_bbl=None DELIBERATELY - a consumer physically cannot pick one; condo_key :108); app/documents/storage.py:1-16 (the B-001 interface-now/impl-later precedent), correction_history.py:1-45 (append-only invariants: immutable original, no edit/delete/reorder, strict chronology, state chaining, closed HUMAN-only authority), review_authz.py:63/112/155 (role gating user/qualified_professional), state.py:170 (TransitionReasonRequired); api/v1/proposal_validation.py:120-226 (POST body-ceiling discipline to MIRROR read-only: _declared_content_length, _read_body_within_ceiling, _payload_too_large, _bounded_message, include_in_schema=False) - it is HELD by the live M5-T057 lane, read-only. condo_records.py consumers: web lib/condo-records.ts -> PropertyOverview.tsx/ReportView.tsx. Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE 1/4 - THE RECORD + STORE (binding; NEW package services/api/app/site_definition/ - records.py + store.py + __init__.py exports): typed frozen SiteDefinitionConfirmation: record_id (uuid4), condo_key (PRIMARY key attribute), billing_bbl, entered_bbl, parcels (sorted tuple of base BBLs - STRICT equality with the resolver's base_bbls at confirmation time is validated at create; a subset/superset is a typed refusal, looser binding is itself a legal determination), confirmer {name/role from the closed human vocabulary (review_authz precedent), attestation_status: 'unauthenticated_self_attested' (auth is B-001-blocked; the label is LOUD and typed; a confirmation with this status is REFUSED for any calculation use - and slice 1 has no calculation use at all)}, confirmed_at (tz-aware), status (active|superseded|revoked - ONE field), supersedes_id/superseded_by_id chain, reason (REQUIRED on supersede and revoke - TransitionReasonRequired precedent), note, resolution provenance snapshot (source_id, dataset_ids, retrieved_at, resolution_path - byte-copied from the CondoResolution that showed the parcels). Append-only invariants per correction_history.py: records are NEVER edited in place; supersede = new record + chain links + old status flip recorded as an appended transition; ONE active record per condo_key (duplicate create = typed 409-class refusal; supersede is the only replacement path). If a LATER resolution returns different base_bbls, the system may surface the factual discrepancy (recorded parcels vs current resolver output) but NEVER changes the confirmation's status itself - status changes only by human act (D-078-R002). SiteDefinitionStore ABC + InMemorySiteDefinitionStore, docstring stating PLAINLY: in-memory confirmations do not survive a process restart; the production durable store is DEFERRED under B-001 (documents/storage.py precedent) and the API route stays UNMOUNTED until durability + authentication exist.",
+    "SCOPE 2/4 - THE UNMOUNTED INTERNAL API (binding; NEW services/api/app/api/v1/site_definition.py): APIRouter, flag-gated on the EXISTING internal_rule_eval_enabled() (NO new flag; flag off = same not-found sentinel class as the other internal routes), include_in_schema=False, store via Depends injection. POST /properties/{bbl}/site-definition-confirmations (create; body ceiling + bounded refusal messages mirroring proposal_validation.py's discipline; 422 malformed BBL; strict parcel-set validation against a caller-supplied resolution snapshot is NOT trusted - the route re-reads the resolver seam via injected dependency to validate parcel equality), GET (list incl. superseded/revoked chain, newest first), POST .../{id}/supersede and .../{id}/revoke (reason REQUIRED). The router is NOT mounted in main.py (HELD by the live T057 lane; the one-line mount lands in a later packet) - production-unreachable is the SAFE state for a write-shaped endpoint and the report records that disposition. Tests build a LOCAL FastAPI() + include_router + TestClient inside the new test module (first such precedent - recorded in the report; app.dependency_overrides works identically).",
+    "SCOPE 3/4 - READ-ONLY SURFACING + DB-038(f) RIDERS (binding): api/v1/condo_records.py multi-lot document gains an ADDITIVE 'site_definition' block (recorded confirmation(s) or explicit null + status 'unconfirmed'); the block's ASSEMBLY lives in the new site_definition package and is imported (condo_records.py is at 647 raw lines - thin headroom; keep the in-file delta small); the document is route-local (no contract-schema change, condo_records.py:57-59). Web: lib/condo-records.ts parses the block into CondoRecordsView (read-only; NO mutation client in slice 1); PropertyOverview.tsx renders the recorded confirmation (or 'not confirmed') inside the multi-lot branch (:237-277, after the base-lot list :268). RIDER DB-038(f)-1 (HJ A4): when enteredLot === billingLot render the billing-class parenthetical/collapse at PropertyOverview.tsx:258-266 instead of the redundant identical pair. RIDER DB-038(f)-2 (G3-1): lib/condo-records.ts substitutionRecord() :294-302 swaps boundedBbl(record.entered_bbl) for the strict enteredBblValue() parser already at :269-273. apps/web/src/lib/bbl.ts and bounded.ts stay BYTE-UNTOUCHED (DB-036(a) is bound to a different packet). DOM queries typed per CODING_RULES; invalid-shape probes as `as unknown as T`.",
+    "SCOPE 4/4 - PROHIBITIONS AS TESTS (binding; D-078-R002): (a) NO code path reads a confirmation to select a substrate or alter any calculation - channelWithholdsAllowances (condo-records.ts:613-619) and deriveCondoSurface (PropertyOverview.tsx:197-214) behaviorally unchanged, the unconfirmed multi-lot refusal byte-identical (bound by tests on both api and web sides); (b) no endpoint or function returns a SELECTED site absent a recorded human confirmation; (c) records carry provenance + supersession and are never edited in place (mutation attempts are typed refusals); (d) an unauthenticated_self_attested confirmation is marked refused-for-calculation in its typed surface.",
+    "PRESERVATION (binding): app/main.py, app/connectors/**, app/documents/** (reuse via READ-ONLY imports), app/spatial/**, app/rules/**, app/profile/**, app/scenario/**, api/v1/{rule_evaluation,evidence,scenario,scenario_analysis,lot_geometry,proposal_checks_api,proposal_validation}.py, packages/contracts/**, apps/web/src/lib/{bbl,bounded,rule-evaluation-contract}.ts, LotOutlineMap.tsx (DB-038(e) CLS coupling) are READ-ONLY; every existing suite green unchanged; no new dependency; no new flag; the multi-parcel MAP display + the confirm BUTTON/mutation client are slice 2 (deliberately absent here).",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "services/api/app/site_definition/{__init__.py,records.py,store.py}: the typed append-only confirmation record + invariants + ABC store + in-memory impl (B-001 deferral posture documented)",
+    "services/api/app/api/v1/site_definition.py: unmounted, flag-gated internal create/list/supersede/revoke API with proposal_validation-grade body discipline",
+    "Additive site_definition block on the condo-records multi-lot document (assembly in the new package) + web read-only surfacing in condo-records.ts/PropertyOverview.tsx",
+    "Both DB-038(f) rider fixes (HJ A4 billing-class redundancy; G3-1 strict entered-BBL parser in substitutionRecord)",
+    "Prohibition test pack: no calculation-path change, no auto-selection, append-only integrity, refused-for-calculation labeling",
+    "project-control/reports/M5-T059-producer-report.md (one concise evidence pass; digest-bound evidence handoff; records the unmounted-route + first local-FastAPI-test precedents)"
+  ],
+  "dependencies": [
+    "M5-T045",
+    "M5-T056"
+  ],
+  "allowed_paths": [
+    "services/api/app/site_definition/__init__.py",
+    "services/api/app/site_definition/records.py",
+    "services/api/app/site_definition/store.py",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/tests/site_definition/__init__.py",
+    "services/api/tests/site_definition/test_site_definition_records.py",
+    "services/api/tests/api/test_site_definition_api.py",
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/tests/api/test_condo_records_api.py",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/__tests__/condo-records.test.ts",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "project-control/reports/M5-T059-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/connectors/",
+    "services/api/app/documents/",
+    "services/api/app/spatial/",
+    "services/api/app/rules/",
+    "services/api/app/profile/",
+    "services/api/app/scenario/",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/evidence.py",
+    "services/api/app/api/v1/scenario.py",
+    "services/api/app/api/v1/scenario_analysis.py",
+    "services/api/app/api/v1/lot_geometry.py",
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "packages/contracts/",
+    "apps/web/src/lib/bbl.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary): a multi-lot resolution (the 3022647515 class: base lots 3022640032+3022640033) -> create with the exact parcel set succeeds; the record carries confirmer + attestation_status 'unauthenticated_self_attested' + tz-aware confirmed_at + the resolution provenance snapshot byte-matching the CondoResolution; list returns it active; the condo-records document's site_definition block shows it; PropertyOverview renders it inside the multi-lot branch.",
+    "AS-2 (strict parcel binding): create with a subset, superset, or reordered-but-different parcel set vs the resolver's base_bbls = typed refusal naming the mismatch; sorted-tuple normalization means order alone never refuses.",
+    "AS-3 (append-only + chain): supersede requires a reason and yields a NEW active record chained (supersedes_id/superseded_by_id) with the old one superseded via an appended transition - never an in-place edit (mutation attempt = typed refusal); revoke requires a reason and is terminal; a second create while one is active = typed duplicate refusal (single active per condo_key); the full chain is listable.",
+    "AS-4 (prohibitions): NO calculation path reads confirmations - channelWithholdsAllowances + deriveCondoSurface unchanged and the unconfirmed multi-lot refusal byte-identical (api + web tests); no code path returns a selected site absent a recorded confirmation; the refused-for-calculation label rides the self-attested status.",
+    "AS-5 (route discipline): flag off = not-found sentinel; malformed BBL = 422; over-ceiling body = bounded typed refusal (proposal_validation discipline mirrored); router UNMOUNTED - main.py byte-unchanged, tests run against a locally-built FastAPI app; the production-unreachable disposition recorded in the report.",
+    "AS-6 (DB-038(f) riders): entered==billing renders the collapsed/parenthetical billing-class line (HJ A4); substitutionRecord's entered fallback uses the strict validateBblInput-backed parser (G3-1) - both bound by web tests; bbl.ts/bounded.ts byte-untouched.",
+    "AS-7 (proof): ruff clean from services/api; `python -m pytest tests/site_definition tests/api -q` green offline from services/api; modularity exit 0 (condo_records.py stays under its tier - assembly extracted to the new package); every pre-existing suite green; CI green at the pushed head (web proof in CI only)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "D-078-R002 is a hard boundary: ANY auto-selection, defaulting, or system-driven status change of a site definition fails the wave regardless of coverage; even staleness handling only SURFACES a factual discrepancy.",
+    "The self-attested identity gap (auth B-001-blocked) must be loud and typed, never papered over - reviewers will probe whether an unauthenticated confirmation could ever reach a calculation (slice 1 answer: no calculation path exists, proven by tests).",
+    "main.py is HELD by the live M5-T057 lane: the mount line is deliberately ABSENT; wiring it here = scope breach + lane collision.",
+    "condo_records.py headroom is thin (647 raw lines): grow it by an import + a small additive block only; the assembly lives in the new package.",
+    "First local-FastAPI() test precedent in this suite: keep it inside the new test modules only; converting existing app.main tests is out of scope.",
+    "In-memory store semantics must be stated plainly in code + report (does not survive restart); implying durability would be a false-provenance defect."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T07:51:22.695811+00:00",
+  "updated_at": "2026-09-20T07:51:22.980037+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    },
+    {
+      "directive_id": "D-078",
+      "requirement_ids": [
+        "D-078-R001",
+        "D-078-R002",
+        "D-078-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T07:51:22.695811+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/site_definition tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
