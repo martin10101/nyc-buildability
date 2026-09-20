@@ -66,8 +66,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 10,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "FACTS vs ALLOWANCES stays the load-bearing boundary (D-076-R002): provided values come from the proposal, required values from rules - conflating them misrepresents a proposal as compliant; reviewers grep for it.",
     "The module is the FIRST production caller of derive_proposal - the T051-G5 preconditions (list ceiling, finiteness, area repr) bind HERE and G5 will verify each (D-077-R004).",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T03:41:44.712887+00:00",
-  "updated_at": "2026-09-20T03:56:03.449034+00:00",
+  "updated_at": "2026-09-20T03:56:27.558446+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -109,5 +109,14 @@
     "python -m pytest tests/scenario -q",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t054"
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t054",
+  "progress_log": [
+    {
+      "at": "2026-09-20T03:56:27.558446+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the D-077 three-lane seam (G0 PASS at 29c5bc0b; pairwise disjoint EMPTY x3); loop launch next with a fresh run-id"
+    }
+  ]
 }
