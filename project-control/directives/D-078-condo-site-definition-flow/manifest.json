@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-078",
+ "version": 1,
+ "slug": "condo-site-definition-flow",
+ "title": "Owner 2026-09-20 ('Lets do it'): build the multi-lot condo site-definition confirmation flow - parcels shown on the map, an architect/reviewer explicitly confirms the site assembly, every calculation then runs on the confirmed combined land with the confirmation recorded in the evidence trail; human-only determination (never auto-picked); pairs with the substitution-stamp work and contracts after M5-T056 accepts; gates/holds/Tier D unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-20",
+ "captured_at": "2026-09-20T06:20:00+00:00",
+ "created_at": "2026-09-20T06:20:00+00:00",
+ "updated_at": "2026-09-20T06:20:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "848703a726ae8b707f016b76747bf2a712934358",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in interactive chat ('Lets do it'), quoting back the orchestrator's proposed design for the live 298 Wallabout multi-lot condo case. Authorizes the feature under the normal gated process; the site determination itself stays a human professional act (R002)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-078-R001",
+  "D-078-R002",
+  "D-078-R003"
+ ],
+ "requirements_content_digest_sha256": "40d7c53b442b36af91589f5374712020e22a3c005037913545ecccb7bef07b54",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T06:20:00+00:00",
+   "content_digest_sha256": "567a6a506e6d109b0b950fd1ae61e63b0aafe92e2bb660101654e518ace2576a"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "multi-lot condo site-definition confirmation flow (map parcel display, explicit human confirmation, combined-land computation, evidence-trail record) + the paired substitution-stamp packets, contracted at seams after M5-T056 accepts under the normal gated process",
+  "forbidden": "any auto/inferred/default site selection (the determination is human-only); weakening the honest refusal where no confirmation exists; any held scope; any Tier D / Section 20 action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T06:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 237 accepted (M5-T054 accepted this session); T055/T056 awaiting_gate with waves running; M5-T057 contracted/claimed for loop-1; the recon (condo-substrate-substitution-recon-2026-09-20.md) + backlog row DB-037(d) already recorded the design and sequencing."
+  }
+ ]
+}

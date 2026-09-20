@@ -1,0 +1,103 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-078",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T06:20:00+00:00",
+ "requirements": [
+  {
+   "id": "D-078-R001",
+   "text": "Build the multi-lot condo SITE-DEFINITION confirmation flow ('Lets do it'): when a condo's land resolves to more than one base tax lot (the multi_lot_set outcome, e.g. billing 3022647515 -> base lots 3022640032 + 3022640033), the product shows the parcels on the map and lets an architect or reviewer explicitly confirm the site definition ('treat lots 32+33 as one site'); after confirmation, every calculation runs on the confirmed combined land; the confirmation is recorded in the evidence trail and its provenance (who confirmed, when, exactly which parcels) rides every result derived from it. One-click UX target for the human step. Delivered as normal gated packets (recon: project-control/reports/condo-substrate-substitution-recon-2026-09-20.md; backlog row DB-037(d)).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-078-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "The delivering packets' acceptance scenarios cover: the multi-lot outcome renders the parcels; an explicit confirmation act; post-confirmation calculations on the combined land; the recorded confirmation visible in the evidence trail; and the no-confirmation path unchanged (honest refusal).",
+   "required_evidence": "Task packets + gate records + the confirmation record schema/provenance implementation at their frozen heads.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; packets contract at seams after M5-T056 accepts (surface conflicts recorded in the recon section 5).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-078-R002",
+   "text": "Human-only site determination boundary: the site-definition confirmation is a HUMAN professional input (architect/reviewer) - the system NEVER auto-selects, infers, or defaults a zoning-lot assembly (which parcels form the site is a legal determination; permanent principle 1 / the G6 class); wherever no confirmation exists, today's honest refusal behavior stands unchanged; a recorded confirmation is revocable/supersedable with its own audit trail and never silently edited.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-078-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Tests prove: no code path selects a site without a recorded human confirmation; the unconfirmed path refuses honestly; confirmations carry provenance and supersession, never in-place edits.",
+   "required_evidence": "The delivering packets' test suites + G5/G3 reviewer rulings on the boundary.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-078-R003",
+   "text": "Sequencing: the flow pairs with the substitution-stamp work (carry the condo resolution across the substrate seam; stamp results 'analyzed on lot X'; honest refusal vocabulary instead of the generic spatial_intersection_absent) and contracts at seams AFTER M5-T056 accepts (its frozen surface conflicts with several proposed paths - recon section 5); the single-base-lot substitution stamp and the multi-lot confirmation flow may land as separate packets in that order; nothing here alters the phase-B proposal-editor order, any hold, or any Tier D stop.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-078-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Contract seams show M5-T056 accepted before any D-078 packet claims; G0 disjointness records per packet.",
+   "required_evidence": "The ledger sequence + G0 records of the D-078 packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

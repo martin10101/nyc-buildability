@@ -1012,7 +1012,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-077-release-pass-and-three-mvp-loops/manifest.json"
+  },
+  {
+   "directive_id": "D-078",
+   "slug": "condo-site-definition-flow",
+   "title": "Owner 2026-09-20 ('Lets do it'): build the multi-lot condo site-definition confirmation flow - parcels shown on the map, an architect/reviewer explicitly confirms the site assembly, every calculation then runs on the confirmed combined land with the confirmation recorded in the evidence trail; human-only determination (never auto-picked); pairs with the substitution-stamp work and contracts after M5-T056 accepts; gates/holds/Tier D unchanged",
+   "status": "active",
+   "issued_at": "2026-09-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-078-condo-site-definition-flow/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T03:32:52+00:00"
+ "updated_at": "2026-09-20T06:20:00+00:00"
 }
