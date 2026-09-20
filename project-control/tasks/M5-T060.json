@@ -132,7 +132,6 @@
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-09-20T09:52:14.429818+00:00",
   "documented_test_commands": [
-    "(CI-only) npm --prefix apps/web run lint && typecheck && test && e2e - proven on the pushed head, never run locally",
     "python tools/modularity_check.py --check"
   ],
   "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t060",
