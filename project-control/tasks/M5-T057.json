@@ -68,8 +68,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "The route is the FUTURE public trust boundary: G5 will verify each BP CLOSED at this seam - a missed cap or an uncapped error path fails the wave.",
     "proposal_input_gate.py and the B2 engine are accepted read-only seams: needing to edit either = STOP + discovery.",
@@ -79,7 +79,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T06:14:44.693588+00:00",
-  "updated_at": "2026-09-20T06:14:45.251727+00:00",
+  "updated_at": "2026-09-20T06:17:00.931291+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -109,5 +109,15 @@
     "python -m pytest tests/api -q",
     "python -m pytest tests/rules -q",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t057",
+  "progress_log": [
+    {
+      "at": "2026-09-20T06:17:00.931291+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the M5-T054 acceptance seam (G0 PASS; disjoint vs frozen T055/T056); loop-1 relaunch as run 59 next"
+    }
   ]
 }
