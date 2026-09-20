@@ -82,3 +82,20 @@ I verified the 4 material files' blob identity is byte-stable across `db445634`/
 1. **D-066-R001 advisory:** decide whether to require the missing explicit `query.py --no-regen` instruction in the packet NAV block. My assessment: substance is met (graph regenerated + embedded, conclusions verified in source, no missed consumer; query.py guidance auto-injected repo-wide) — recommend recording SATISFIED and **not** forcing a packet edit (a post-submit packet edit would invalidate frozen identity for no compliance gain); instead carry the exact `query.py --no-regen` wording forward in future NAV blocks.
 2. **Re-run** `test_directive_compliance.py` and `validate_directive_compliance.py --check` at a quiescent moment (companion loop paused) to record their clean exit codes; my git-blob reproduction already establishes registry integrity.
 3. **Hold acceptance for web-suite CI green** at the pushed head (AS-6) per the thin-client rule — the standard orchestrator-held condition, not a verification gap.
+
+---
+
+## Delta-attestation / restamp EXTENSION (saved VERBATIM; after the [ORCH-CORRECTED] spec fix)
+
+**Verdict: PASS CARRIES. Restamp pre-authorization EXTENDED to the corrected identity.**
+
+I reviewed only `git diff db0cf0f8..05f1aea2 -- apps/web/e2e/responsive-a11y.spec.ts` plus the identity of the other artifacts, as requested. All four requirement rulings (D-066-R001, D-073-R006, D-077-R002, D-077-R003) stand unchanged; the correction touches none of their evidence.
+
+- Correction is spec-only + identity-preserving: `05f1aea2` touches the spec (material) + state/task lifecycle files only; `AddressConfirmCard.tsx` blob byte-identical (`50877465`); `LotOutlineMap.tsx` not in the diff.
+- Other four artifacts byte-unchanged from db0cf0f8 (same blobs at `05f1aea2`): component `50877465`, unit test `5aa054c3`, report `e94dad18`, evidence map `354b35d9`.
+- The exact-equality assertion is intact (`.toBe(ctaTopBefore)` at `:323`); no tolerance introduced; the diff adds the terminal-map-state poll + 500ms double-read quiescence gate BEFORE the "before" measurement — hardens quiescence, does not relax the CLS contract.
+- Additivity vs S6 holds (only deletion = `const`→`let` inside the added block). D-077-R003 additive-extension ruling preserved.
+- CI GREEN independently confirmed: run 35494571792 success at `bd408ab9`; `05f1aea2` is its ancestor and the spec blob at both is `75d80a88` — the green run covers the corrected spec; discharges AS-6 and my recommendation 3.
+- Extended restamp terms: spec at blob `75d80a88` + the other four artifacts at their unchanged blobs; manifest carried from the gate records; validator exit 0 + evaluate_task_refs applicable==cited at the restamp head. Disjoint-peer tolerance unchanged.
+
+No new findings; the single D-066-R001 advisory remains non-blocking.
