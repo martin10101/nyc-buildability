@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-081",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Both requirements bind the non-ledger sentinel D-081-BOOTSTRAP at capture: this is a session-operating directive (the relaunch round and its boundary), verified against the supervisor audit stores, launcher state, and the session record — not against a single packet. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

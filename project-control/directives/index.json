@@ -1048,7 +1048,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-080-nonstop-three-loop-build/manifest.json"
+  },
+  {
+   "directive_id": "D-081",
+   "slug": "season-restart-three-loops",
+   "title": "Owner 2026-09-20 ('This is the new season start up the 3 loops'): successor-session authorization to execute the seq-122 recorded relaunch drill for all three lanes (audit-triple diagnosis, deny stale asks both stores, clear-recovery, fresh run-ids, relaunch, watcher re-arm) and continue under D-080 nonstop; ONE relaunch round - recurrence of the simultaneous stop class reopens deficit convergence; NO stop condition lifted",
+   "status": "active",
+   "issued_at": "2026-09-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-081-season-restart-three-loops/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T08:10:00+00:00"
+ "updated_at": "2026-09-20T16:38:00+00:00"
 }
