@@ -2,7 +2,46 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-20T06:06:06.492959+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T054",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003",
+    "D-077-R004"
+   ],
+   "reviewed_sha": "ca5585572546f26c7a41504a4e9e2d9b58560b16",
+   "reviewed_manifest_sha256": "7b69e1e66219434dbbe16e972d9dd925f1a694c848757357a27aa8a38f790081",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T06:06:06.492959+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 4): lane-1 of the three D-077 lanes ran the full drill (contract 29c5bc0b, G0 455e598e, claim seam 92b0d265, full worktree path, loop-1 run persistent-local-58, harvest per the S14 pattern, submit at frozen 622757b1, independent wave G3/G4/G5/DCV all PASS zero blocking); pairwise disjointness vs T055/T056 independently reproduced (overlap = empty set). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 5): released non-held scope only - B2 in the plan's recorded order (B1 accepted 236th before contract); material = 9 allowed-path files in the api rules tree + report; no held surface (expansion section 2, PR #241, Tier D, contracts, web) touched. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-077-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 6): all four wiring preconditions bound and tested IN CODE at the first derive_proposal caller - list ceilings (MAX_LOT_LINE_SEGMENTS=1000/MAX_STREET_LINES=500, typed field+count), finiteness enforced at check_proposal:706 BEFORE derivation at :707 (ProposalCheckError proves pre-derivation refusal; no EvidenceRecord can carry NaN/inf), _capped_repr@120 on every refusal (DB-034(b)), and the DB-034(d) no-emission proof (grep+import tested) with the invariant disposition riding to B3. G5 additionally rules all three T051-G5 preconditions CLOSED and binds BP-1..BP-7 on B3. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  }
+ ]
 }

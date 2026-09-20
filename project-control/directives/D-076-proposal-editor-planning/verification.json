@@ -1,107 +1,137 @@
 {
-  "schema": "directive_verification/v2",
-  "directive_id": "D-076",
-  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
-  "verified_by": null,
-  "verified_at": "2026-09-19T16:59:58.953298+00:00",
-  "task_verifications": [
+ "schema": "directive_verification/v2",
+ "directive_id": "D-076",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-20T06:06:06.492959+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T048",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002",
+    "D-076-R003"
+   ],
+   "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
+   "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T11:49:14.717379+00:00",
+   "requirements": [
     {
-      "directive_id": "D-076",
-      "task_id": "M5-T048",
-      "applicable_requirement_ids": [
-        "D-076-R001",
-        "D-076-R002",
-        "D-076-R003"
-      ],
-      "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
-      "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
-      "producer": "backend-engineer",
-      "verifier": "directive-compliance-verifier",
-      "schema_version": "directive_verification/v2",
-      "verified_at": "2026-09-19T11:49:14.717379+00:00",
-      "requirements": [
-        {
-          "id": "D-076-R001",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: the increment equals the plan's B0 row exactly (proposed_massing input class, additive bump, server-side validation, typed refusals, NO evaluation change); name-status of both material commits entirely inside allowed_paths; builder/derive/api/rules/spatial/profile/connectors/web all untouched. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
-          ]
-        },
-        {
-          "id": "D-076-R002",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: proposals are a third input class - validate_proposed_massing returns None and computes NO allowance (grep-proven: allowance/far/floor_area/coverage/footprint/setback appear only in disclaiming docstrings); kind schema-enforced literal 'proposed'; contract.py threads without deriving. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
-          ]
-        },
-        {
-          "id": "D-076-R003",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: closed-enum additive append ['1.0.0','1.1.0']; both schema copies byte-identical (LF sha256 dc41be0e... both; G1 additionally reproduced RAW-byte equality); 1.0.0 documents stay valid; TS regenerated via the accepted typegen with --check byte-identity; the released phase-B slice respected (no 3D/19-pack/GDS/master-plan change; hold cross-reference in place). Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
-          ]
-        }
-      ]
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the increment equals the plan's B0 row exactly (proposed_massing input class, additive bump, server-side validation, typed refusals, NO evaluation change); name-status of both material commits entirely inside allowed_paths; builder/derive/api/rules/spatial/profile/connectors/web all untouched. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
     },
     {
-      "directive_id": "D-076",
-      "task_id": "M5-T053",
-      "applicable_requirement_ids": [
-        "D-076-R001",
-        "D-076-R002"
-      ],
-      "reviewed_sha": "ce11d09fea402cbfd5b0b0a64b4cc717790e6e09",
-      "reviewed_manifest_sha256": "9b8d80183dc72dfae6254f40bb7eebb18b624578a2a9de30706fa7a10ab804f0",
-      "producer": "backend-engineer",
-      "verifier": "directive-compliance-verifier",
-      "schema_version": "directive_verification/v2",
-      "verified_at": "2026-09-19T16:47:22.582647+00:00",
-      "requirements": [
-        {
-          "id": "D-076-R001",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: validation-only wiring within the released phase-B slice - the 5 allowed_paths and nothing else; NO storage/derivation/evaluation; forbidden paths untouched; no 3D/pack/GDS/master-plan change. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
-          ]
-        },
-        {
-          "id": "D-076-R002",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: the acceptance echo = result/kind-literal/block_digest/correlation_id with the exact-key-set test + the zero-derived-value grep; the input gate is monotone over the accepted validator (counts first, delegates unchanged last, same-field spot proofs); the third-input-class discipline holds. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
-          ]
-        }
-      ]
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: proposals are a third input class - validate_proposed_massing returns None and computes NO allowance (grep-proven: allowance/far/floor_area/coverage/footprint/setback appear only in disclaiming docstrings); kind schema-enforced literal 'proposed'; contract.py threads without deriving. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
     },
     {
-      "directive_id": "D-076",
-      "task_id": "M5-T051",
-      "applicable_requirement_ids": [
-        "D-076-R001",
-        "D-076-R002"
-      ],
-      "reviewed_sha": "bdb54765f8828cb7d22dd1556f2d57ff77f4024c",
-      "reviewed_manifest_sha256": "bcacbc7d8b436b3c69023a9b7a69aaec50fe91c7491c974c22a4263c4bb2c809",
-      "producer": "backend-engineer",
-      "verifier": "directive-compliance-verifier",
-      "schema_version": "directive_verification/v2",
-      "verified_at": "2026-09-19T16:59:58.953298+00:00",
-      "requirements": [
-        {
-          "id": "D-076-R001",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: the increment equals the plan's B1 row 1:1 (title/gates/producer/scope); material name-status = only the in-scope files; NO rules/api/contract/spatial/master-plan/GDS/3D change. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
-          ]
-        },
-        {
-          "id": "D-076-R002",
-          "state": "PASS",
-          "evidence": [
-            "DCV verified: facts never allowances - source_class 'proposed_derivation' on every EvidenceRecord; the declared gross-treatment vocabulary (never 'zoning floor area'); the binding no-allowance-language test; typed honest absence on the unattested street case; grep-clean module. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
-          ]
-        }
-      ]
+     "id": "D-076-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: closed-enum additive append ['1.0.0','1.1.0']; both schema copies byte-identical (LF sha256 dc41be0e... both; G1 additionally reproduced RAW-byte equality); 1.0.0 documents stay valid; TS regenerated via the accepted typegen with --check byte-identity; the released phase-B slice respected (no 3D/19-pack/GDS/master-plan change; hold cross-reference in place). Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T053",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "ce11d09fea402cbfd5b0b0a64b4cc717790e6e09",
+   "reviewed_manifest_sha256": "9b8d80183dc72dfae6254f40bb7eebb18b624578a2a9de30706fa7a10ab804f0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:47:22.582647+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: validation-only wiring within the released phase-B slice - the 5 allowed_paths and nothing else; NO storage/derivation/evaluation; forbidden paths untouched; no 3D/pack/GDS/master-plan change. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the acceptance echo = result/kind-literal/block_digest/correlation_id with the exact-key-set test + the zero-derived-value grep; the input gate is monotone over the accepted validator (counts first, delegates unchanged last, same-field spot proofs); the third-input-class discipline holds. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T051",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "bdb54765f8828cb7d22dd1556f2d57ff77f4024c",
+   "reviewed_manifest_sha256": "bcacbc7d8b436b3c69023a9b7a69aaec50fe91c7491c974c22a4263c4bb2c809",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:59:58.953298+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the increment equals the plan's B1 row 1:1 (title/gates/producer/scope); material name-status = only the in-scope files; NO rules/api/contract/spatial/master-plan/GDS/3D change. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: facts never allowances - source_class 'proposed_derivation' on every EvidenceRecord; the declared gross-treatment vocabulary (never 'zoning floor area'); the binding no-allowance-language test; typed honest absence on the unattested street case; grep-clean module. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T054",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "ca5585572546f26c7a41504a4e9e2d9b58560b16",
+   "reviewed_manifest_sha256": "7b69e1e66219434dbbe16e972d9dd925f1a694c848757357a27aa8a38f790081",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T06:06:06.492959+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 2): the increment equals the plan's B2 row verbatim (existing rule families vs proposal-derived facts through the EXISTING evaluator; scenario label on every result; COULD-NOT-CHECK first-class; numeric shortfalls provided/required/unit); no route change (api/ forbidden and absent from the material commit). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 3): facts-vs-allowances structural (provided_value = PROVIDED fact source_class proposed_derivation; required_value = rule OUTPUT; derived facts never fed as rule INPUTS; summary always carries could_not_check_count); the AS-1 [ORCH-SCOPE-DISPOSITION] (G2 record + report section 4) ruled CONSISTENT with the requirement text - the commensurability refusal IS the mandated honesty; all four reviewers concurred explicitly. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  }
+ ]
 }
