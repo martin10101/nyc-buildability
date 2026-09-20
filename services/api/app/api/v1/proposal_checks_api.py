@@ -20,7 +20,9 @@ enforced here, in order, fail-closed:
   exposure packet, recorded here as a disposition, not implemented (the route is unreachable
   without the internal flag).
 * BP-2 - ``scenario_label`` / ``proposal_id`` are length-capped and charset-restricted at the
-  boundary (typed refusal); they are copied into every result and rendered by B3.
+  boundary (typed refusal); they are copied into every result and rendered by B3. The same label
+  discipline is applied to ``proposed_massing.exterior_walls[].id`` (M5-T061 / DB-039(h)) so a
+  block wall id and a street line's ``wall_id`` - which share one identity space - cannot diverge.
 * BP-4 - ROUTE-LEVEL practical caps TIGHTER than the B2 library ceilings so the documented
   worst-case wall-by-segment distance-test product stays well under ~1e6 (see the arithmetic on
   :data:`ROUTE_MAX_EXTERIOR_WALLS` below). The O(n^2) outline-simplicity work is ALSO route-capped
@@ -29,11 +31,16 @@ enforced here, in order, fail-closed:
   run off the event loop via ``run_in_threadpool`` so a worst-case request cannot stall the worker
   process's other endpoints.
 * BP-5 - the mapped ``lot_rule_facts`` are validated against the evaluator's OWN declared input
-  vocabulary before anything is fed: a bad VALUE TYPE, or a string value outside an
-  enum-constrained input's declared DOMAIN (derived from the registry's rule input specs - never
-  an invented list), is a typed 422 naming the exact field, refused BEFORE the engine runs. An
-  UNMAPPED key is never fed and is surfaced in the response's ``unmapped_lot_facts`` (the B2
-  engine drops it - no silent dict merge).
+  vocabulary before anything is fed: a bad VALUE TYPE, a string value outside an enum-constrained
+  input's declared DOMAIN, OR a numeric value outside an input's declared numeric bounds
+  (minimum / maximum / exclusive_* - both DERIVED from the registry's rule input specs, never an
+  invented list or limit; M5-T061 / DB-039(d)), is a typed 422 naming the exact field, refused
+  BEFORE the engine runs. That whole ``lot_rule_facts`` discipline (the boundary label primitives,
+  the value-type table, the fact-key bound, and the registry-derived enum/numeric checks) lives in
+  the sibling :mod:`app.api.v1._proposal_fact_domains` module - extracted at the M5-T061 seam once
+  the numeric-bound derivation crossed the route's modularity tier; the route imports every name it
+  needs and its public surface is unchanged. An UNMAPPED key is never fed and is surfaced in the
+  response's ``unmapped_lot_facts`` (the B2 engine drops it - no silent dict merge).
 * BP-1 - the ONLY engine entry called is :func:`check_proposal` (never ``derive_proposal``
   directly), so the B2 wiring preconditions (list ceilings, coordinate/area finiteness) all apply.
 * BP-3 - EVERY error path length-caps any embedded value: a propagated
@@ -56,13 +63,25 @@ from __future__ import annotations
 import functools
 import json
 import logging
-import re
 import uuid
 from typing import Any, cast
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
+
+# BP-5 caller-fact vocabulary discipline (extracted at the M5-T061 seam - DB-039). The route shares
+# these names so a single _FieldRefusal identity crosses both modules (the handler's ``except``
+# must catch refusals raised inside the extracted validators too), and the boundary label + fact
+# checks stay one cohesive responsibility. NOTHING in that module imports the route -> no cycle.
+from app.api.v1._proposal_fact_domains import (
+    MAX_LABEL_LEN,
+    _FieldRefusal,
+    _require_label,
+    _validate_lot_rule_fact_domains,
+    _validate_lot_rule_fact_keys,
+    _validate_lot_rule_fact_types,
+)
 
 # Reuse the accepted T053 request-boundary primitives (read-only reuse per the packet): the raw
 # body ceiling + bounded-streaming accumulator, the Content-Length fast-path parser, and the
@@ -76,7 +95,6 @@ from app.api.v1.proposal_validation import (
 )
 from app.config import internal_rule_eval_enabled
 from app.rules.proposal_checks import (
-    CALLER_RULE_INPUT_NAMES,
     ProposalCheckError,
     check_proposal,
 )
@@ -115,17 +133,6 @@ __all__ = [
 logger = logging.getLogger("app.api.v1.proposal_checks_api")
 
 router = APIRouter(prefix="/api/v1", tags=["proposal_checks"])
-
-# --- BP-2: scenario_label / proposal_id boundary limits ---------------------------------------
-#: Length cap for ``scenario_label`` / ``proposal_id`` at the boundary (generous for a real label,
-#: far below any paste/injection length). Both are reflected into every result and rendered by B3.
-MAX_LABEL_LEN = 200
-#: Conservative charset: alphanumerics, space, and a small set of id-safe punctuation. Anything
-#: else (control chars incl. a trailing newline, markup, quotes, path separators) is a typed
-#: refusal. Matched with ``fullmatch`` over the WHOLE value: an unanchored ``re.match`` (or a
-#: trailing ``$``) accepts a value with a trailing newline ("foo\n" - ``$`` matches just before
-#: it), so the entire string, not a prefix, must be in the charset.
-_LABEL_CHARSET = re.compile(r"[A-Za-z0-9 ._:\-]+")
 
 # --- BP-3: refusal-field + provenance-object bounds ([ORCH-CORRECTED per G3-F1/G5-F1]) ---------
 #: Hard cap on the refusal ``field`` value on EVERY response and log path. A legitimate field is
@@ -166,26 +173,14 @@ ROUTE_MAX_LOT_LINE_SEGMENTS = 800
 ROUTE_MAX_STREET_LINES = 400
 ROUTE_MAX_TOTAL_OUTLINE_POSITIONS = 1200
 
-# Import-time guard (same pattern as the BP-5 fact-type table): the route's outline cap must stay
-# STRICTLY below the inherited DB-034(a) budget or the "tighter than the library ceiling" claim
-# silently rots.
+# Import-time guard (same pattern as the extracted BP-5 fact-type table): the route's outline cap
+# must stay STRICTLY below the inherited DB-034(a) budget or the "tighter than the library ceiling"
+# claim silently rots.
 if ROUTE_MAX_TOTAL_OUTLINE_POSITIONS >= MAX_TOTAL_VERTICES:
     raise ValueError(
         "ROUTE_MAX_TOTAL_OUTLINE_POSITIONS must be strictly below the inherited "
         f"MAX_TOTAL_VERTICES ({MAX_TOTAL_VERTICES})"
     )
-
-# --- BP-5: mapped lot_rule_fact value types + domains (the evaluator input vocabulary) --------
-# A caller fact whose KEY is not in CALLER_RULE_INPUT_NAMES is never fed (the B2 engine records it
-# as unmapped). For the mapped keys we validate the VALUE type here, and - for enum-constrained
-# string inputs - the VALUE DOMAIN against the registry's OWN declared enum vocabulary (see
-# _derive_enum_domains; never an invented list), both typed-and-field-named, fail-closed BEFORE
-# the engine runs. The evaluator stays fail-closed on anything the boundary does not narrow.
-_BOOL_FACTS = frozenset(
-    {"overlay_present", "special_district_present", "historic_district", "large_site"}
-)
-_STR_FACTS = frozenset({"zoning_district", "street_width_class", "site_class"})
-_NUM_FACTS = frozenset({"lot_depth_ft"})
 
 # --- (status, state) matrix (single source of truth) ------------------------------------------
 PROPOSAL_CHECKS_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozenset(
@@ -197,30 +192,6 @@ PROPOSAL_CHECKS_STATUS_STATE_MATRIX: frozenset[tuple[int, str | None]] = frozens
         (500, "internal_error"),  # unexpected internal defect (generic)
     }
 )
-
-
-def _assert_fact_type_table_covers_vocabulary() -> None:
-    """Import-time guard: the BP-5 value-type table partitions the engine's caller-input
-    vocabulary exactly, so a new mapped input can never silently skip type validation."""
-    typed = _BOOL_FACTS | _STR_FACTS | _NUM_FACTS
-    if typed != set(CALLER_RULE_INPUT_NAMES):
-        raise ValueError(
-            "BP-5 lot_rule_fact type table is out of step with CALLER_RULE_INPUT_NAMES "
-            f"(typed={sorted(typed)}, vocabulary={sorted(CALLER_RULE_INPUT_NAMES)})"
-        )
-
-
-_assert_fact_type_table_covers_vocabulary()
-
-
-class _FieldRefusal(Exception):
-    """An internal typed boundary refusal carrying the exact ``field`` and a message, mapped to a
-    (422, "validation_error") response by the route. Never escapes this module."""
-
-    def __init__(self, message: str, *, field: str | None = None) -> None:
-        super().__init__(message)
-        self.message = message
-        self.field = field
 
 
 def get_proposal_check_registry() -> RuleRegistry | None:
@@ -242,7 +213,11 @@ def _effective_registry() -> RuleRegistry:
     :func:`get_proposal_check_registry` supplies it, else the lazily-loaded, cached production
     registry. Resolving it HERE (rather than passing ``None`` to :func:`check_proposal`) lets the
     route validate ``lot_rule_facts`` domains against the SAME accepted vocabulary the engine uses
-    and then call :func:`check_proposal` exactly once with it (BP-1 unchanged)."""
+    and then call :func:`check_proposal` exactly once with it (BP-1 unchanged).
+
+    DB-039(i): this resolves the lazy global ON THE EVENT LOOP and MUST NOT be called inside a
+    :func:`run_in_threadpool` hop - a first-touch race between concurrent worker threads could
+    otherwise load and cache the production registry twice."""
     global _PRODUCTION_REGISTRY
     injected = get_proposal_check_registry()
     if injected is not None:
@@ -317,108 +292,6 @@ def _internal_error_500(correlation_id: str) -> JSONResponse:
     )
 
 
-def _require_label(value: object, field: str) -> str:
-    """BP-2: a required label/id string - non-empty, within MAX_LABEL_LEN, conservative charset.
-    The refusal never echoes the offending value (only its length)."""
-    if not isinstance(value, str) or not value.strip():
-        raise _FieldRefusal(f"{field} must be a non-empty string", field=field)
-    if len(value) > MAX_LABEL_LEN:
-        raise _FieldRefusal(
-            f"{field} exceeds MAX_LABEL_LEN ({MAX_LABEL_LEN}); got {len(value)} characters",
-            field=field,
-        )
-    if not _LABEL_CHARSET.fullmatch(value):
-        raise _FieldRefusal(
-            f"{field} contains characters outside the allowed set "
-            "[A-Za-z0-9 ._:-] (the whole value, including any trailing newline, is checked)",
-            field=field,
-        )
-    return value
-
-
-def _validate_lot_rule_fact_types(facts: dict) -> None:
-    """BP-5: type-check the VALUES of the mapped caller facts (the evaluator input vocabulary).
-    A caller fact whose key is not mapped is untouched here (the B2 engine surfaces it as
-    unmapped and never feeds it). A bad type is a typed refusal naming the exact field; the
-    refusal never echoes the offending value."""
-    for key, value in facts.items():
-        field = f"lot_rule_facts.{key}"
-        if key in _BOOL_FACTS:
-            if not isinstance(value, bool):
-                raise _FieldRefusal(f"{field} must be a boolean", field=field)
-        elif key in _STR_FACTS:
-            if not isinstance(value, str) or not value.strip():
-                raise _FieldRefusal(f"{field} must be a non-empty string", field=field)
-        elif key in _NUM_FACTS:
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
-                raise _FieldRefusal(f"{field} must be a number", field=field)
-        # else: unmapped -> not validated, never fed (B2 engine records it as unmapped).
-
-
-def _validate_lot_rule_fact_keys(facts: dict) -> None:
-    """BP-2-discipline bound on EVERY ``lot_rule_facts`` KEY ([ORCH-CORRECTED per G3-F3/G5-F1]):
-    unmapped keys are surfaced verbatim in the 200 body's ``unmapped_lot_facts`` and rendered by
-    B3, so a key gets the same length + conservative-charset ceiling as a label (every mapped key
-    already conforms). The refusal echoes the key's LENGTH only, never the key."""
-    for key in facts:
-        if not isinstance(key, str) or not key:
-            raise _FieldRefusal(
-                "lot_rule_facts keys must be non-empty strings", field="lot_rule_facts"
-            )
-        if len(key) > MAX_LABEL_LEN:
-            raise _FieldRefusal(
-                f"a lot_rule_facts key exceeds MAX_LABEL_LEN ({MAX_LABEL_LEN}); "
-                f"got {len(key)} characters",
-                field="lot_rule_facts",
-            )
-        if not _LABEL_CHARSET.fullmatch(key):
-            raise _FieldRefusal(
-                "a lot_rule_facts key contains characters outside the allowed set "
-                "[A-Za-z0-9 ._:-]",
-                field="lot_rule_facts",
-            )
-
-
-def _derive_enum_domains(registry: RuleRegistry) -> dict[str, frozenset[str]]:
-    """The accepted-value domain of each mapped caller input, taken from the registry's OWN
-    declared input vocabulary (``InputSpec.enum``) - never an invented list. An input is
-    domain-enforced only when EVERY rule that declares it constrains it with an ``enum`` (so a
-    value outside the union would already fail closed in every declaring rule); if any rule
-    declares it as a free, enum-less input the boundary does not narrow it. Restricted to the
-    caller-mappable names (a rule-only input is irrelevant at this boundary)."""
-    declared: dict[str, set[str]] = {}
-    free: set[str] = set()
-    for rule_id in registry.rule_ids():
-        for spec in registry.rule(rule_id).inputs:
-            if spec.name not in CALLER_RULE_INPUT_NAMES:
-                continue
-            if spec.enum:
-                declared.setdefault(spec.name, set()).update(spec.enum)
-            else:
-                free.add(spec.name)
-    return {
-        name: frozenset(values) for name, values in declared.items() if name not in free
-    }
-
-
-def _validate_lot_rule_fact_domains(facts: dict, registry: RuleRegistry) -> None:
-    """BP-5 (domains): refuse a mapped caller fact whose string value is outside the registry's
-    declared enum domain for that input, typed and field-named, BEFORE the engine runs. Only
-    enum-constrained inputs are narrowed (see :func:`_derive_enum_domains`); a free input and an
-    unmapped key are untouched. Type validation has already run, so mapped string facts are
-    strings here; the refusal echoes the ACCEPTED set, never the offending value."""
-    domains = _derive_enum_domains(registry)
-    if not domains:
-        return
-    for key, value in facts.items():
-        allowed = domains.get(key)
-        if allowed is not None and isinstance(value, str) and value not in allowed:
-            raise _FieldRefusal(
-                f"lot_rule_facts.{key} is not one of the accepted values {sorted(allowed)}",
-                field=f"lot_rule_facts.{key}",
-            )
-
-
 def _to_point(value: Any) -> Any:
     """A JSON coordinate arrives as a 2-element list; hand it on as a tuple so it matches the
     accepted LotContext shape. Any other shape is passed through unchanged for the B2 engine's own
@@ -443,6 +316,23 @@ def _require_bounded_object(value: dict, field: str) -> dict:
             field=field,
         )
     return value
+
+
+def _validate_exterior_wall_ids(proposed_massing: dict) -> None:
+    """DB-039(h): a ``proposed_massing.exterior_walls[].id`` shares the SAME identity space as a
+    street line's ``wall_id`` (already charset-bound at this boundary), so a wall id that IS a
+    string gets the BP-2 label discipline here - otherwise a matching pair could DIVERGE (a wall id
+    carrying markup would round-trip while the equal street ``wall_id`` is refused). A non-string /
+    missing id is left to the B0 validator's own shape refusal (which names the exact field), and
+    the gate's wider 512-char id ceiling remains upstream. Pre-existing block ids outside the label
+    charset therefore now refuse at THIS internal (flag-gated) route - no public caller exists yet.
+    Cheap O(walls) over the already-count-capped list; the refusal echoes the id's length only."""
+    walls = proposed_massing.get("exterior_walls")
+    if not isinstance(walls, list):
+        return
+    for idx, wall in enumerate(walls):
+        if isinstance(wall, dict) and isinstance(wall.get("id"), str):
+            _require_label(wall["id"], f"proposed_massing.exterior_walls[{idx}].id")
 
 
 def _build_lot_context(lot: object) -> LotContext:
@@ -621,7 +511,9 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
             correlation_id,
         )
 
-    # Boundary field extraction + the BP-2 / BP-4 / BP-5 refusals, each typed and field-named.
+    # Boundary field extraction + the BP-2 / BP-4 / BP-5-type refusals, each typed and field-named.
+    # (The heavier O(n^2) input gate and _build_lot_context are deferred to AFTER the cheap
+    # registry-derived domain/bounds check below - DB-039(e).)
     try:
         proposed_massing = body.get("proposed_massing")
         if not isinstance(proposed_massing, dict):
@@ -643,31 +535,21 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
         )
 
         _enforce_route_caps(proposed_massing, lot)  # BP-4 (cheap, before any heavy work)
+        _validate_exterior_wall_ids(proposed_massing)  # BP-2/DB-039(h) wall-id charset alignment
         _validate_lot_rule_fact_keys(lot_rule_facts)  # BP-2 discipline on keys ([ORCH-CORRECTED])
         _validate_lot_rule_fact_types(lot_rule_facts)  # BP-5 (mapped value types)
-
-        # BP-7/BP-3: the reused DB-034(a)/(b) input gate hardens the untrusted block (global
-        # vertex budget + string ceilings) THEN runs the accepted B0 validator; a refusal is a
-        # typed ProposedMassingError naming the exact field with a bounded message.
-        # [ORCH-CORRECTED per G5-F2]: CPU-bound O(n^2) work runs OFF the event loop.
-        await run_in_threadpool(validate_proposed_massing_input, proposed_massing)
-
-        lot_context = _build_lot_context(lot)
     except _FieldRefusal as exc:
         logger.info("proposal_checks_v1 refused field=%s correlation_id=%s",
                     _bounded_field(exc.field), correlation_id)
         return _validation_error(exc.message, correlation_id, field=exc.field)
-    except ProposedMassingError as exc:
-        # From the input gate / B0 validator (includes the G5-3 uncapped bad-vertex repr class):
-        # BP-3 caps the detail via _bounded_message.
-        logger.info("proposal_checks_v1 block_refused field=%s correlation_id=%s",
-                    _bounded_field(exc.field), correlation_id)
-        return _validation_error(str(exc), correlation_id, field=exc.field)
 
-    # BP-5 (domains): resolve the engine's effective registry ONCE and reject any mapped fact
-    # whose string value is outside that registry's OWN declared enum vocabulary, field-named,
-    # BEFORE the engine runs. Resolving the registry can only fail on a genuine internal defect
-    # (e.g. a missing ruleset dir) -> a generic 500, never a client-shaped error.
+    # BP-5 (domains + bounds) / DB-039(e): resolve the engine's effective registry ONCE and run the
+    # CHEAP registry-derived enum-domain + numeric-bound check immediately after the value-type
+    # check and BEFORE the expensive O(n^2) input gate, so a fact outside the registry's OWN
+    # declared vocabulary refuses without paying for the gate. DB-039(i): _effective_registry
+    # resolves the lazy global HERE, on the event loop, and NEVER inside a run_in_threadpool hop.
+    # Resolution can only fail on a genuine internal defect (e.g. a missing ruleset dir) -> a
+    # generic 500, never a client-shaped error (recorded at this new, earlier position).
     try:
         registry = _effective_registry()
     except Exception:
@@ -679,6 +561,25 @@ async def post_proposal_checks(request: Request) -> JSONResponse:
         logger.info("proposal_checks_v1 domain_refused field=%s correlation_id=%s",
                     _bounded_field(exc.field), correlation_id)
         return _validation_error(exc.message, correlation_id, field=exc.field)
+
+    # BP-7/BP-3: the reused DB-034(a)/(b) input gate hardens the untrusted block (global vertex
+    # budget + string ceilings) THEN runs the accepted B0 validator; a refusal is a typed
+    # ProposedMassingError naming the exact field with a bounded message. _build_lot_context shapes
+    # the lot object (and bounds its caller ids/objects). Both run AFTER the cheap domain check.
+    # [ORCH-CORRECTED per G5-F2]: CPU-bound O(n^2) work runs OFF the event loop.
+    try:
+        await run_in_threadpool(validate_proposed_massing_input, proposed_massing)
+        lot_context = _build_lot_context(lot)
+    except _FieldRefusal as exc:
+        logger.info("proposal_checks_v1 lot_refused field=%s correlation_id=%s",
+                    _bounded_field(exc.field), correlation_id)
+        return _validation_error(exc.message, correlation_id, field=exc.field)
+    except ProposedMassingError as exc:
+        # From the input gate / B0 validator (includes the G5-3 uncapped bad-vertex repr class):
+        # BP-3 caps the detail via _bounded_message.
+        logger.info("proposal_checks_v1 block_refused field=%s correlation_id=%s",
+                    _bounded_field(exc.field), correlation_id)
+        return _validation_error(str(exc), correlation_id, field=exc.field)
 
     # BP-1: the ONLY engine entry, called EXACTLY ONCE, with that same effective registry. BP-3:
     # every propagated error detail is length-capped before it reaches the client; an unexpected

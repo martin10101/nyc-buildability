@@ -27,10 +27,12 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 import pytest
 from fastapi.testclient import TestClient
 
+from app.api.v1 import _proposal_fact_domains as fd
 from app.api.v1 import proposal_checks_api as mod
 from app.api.v1.proposal_checks_api import (
     MAX_BODY_BYTES,
@@ -42,8 +44,31 @@ from app.api.v1.proposal_checks_api import (
 )
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
 from app.main import app
+from app.rules.models import InputSpec
 from app.rules.registry import RuleRegistry
 from app.rules.snapshots import SnapshotStore
+
+
+# ---------------------------------------------------------------------------
+# M5-T061 / DB-039: a minimal duck-typed registry for the registry-DERIVED domain/bounds unit
+# tests. derive_input_domains only reads rule_ids() and rule(id).inputs (each an InputSpec), so a
+# tiny stand-in lets us assert the numeric-bound derivation against KNOWN specs without touching
+# the (forbidden) fixture rulesets. Instances are weakref-able, so input_domains_for's
+# WeakKeyDictionary memo keys them correctly.
+class _FakeRule:
+    def __init__(self, inputs):
+        self.inputs = inputs
+
+
+class _FakeRegistry:
+    def __init__(self, rules: dict):
+        self._rules = rules
+
+    def rule_ids(self):
+        return list(self._rules)
+
+    def rule(self, rule_id):
+        return self._rules[rule_id]
 
 _URL = "/api/v1/proposal-checks"
 _JSON_HEADERS = {"content-type": "application/json"}
@@ -765,3 +790,351 @@ def test_cpu_bound_calls_run_off_the_event_loop(client_with_registry, monkeypatc
     assert resp.status_code == 200, resp.json()
     assert "validate_proposed_massing_input" in offloaded
     assert "check_proposal" in offloaded
+
+
+# ===========================================================================
+# M5-T061 / DB-039 route-hardening fold-ins
+# ===========================================================================
+# AS-1 (numeric bounds): registry-DERIVED numeric acceptance windows, never an invented limit.
+# ---------------------------------------------------------------------------
+def _num_input(**bounds) -> InputSpec:
+    return InputSpec(name="lot_depth_ft", type="number", required=True, **bounds)
+
+
+def test_derive_input_domains_numeric_bounds_are_registry_derived():
+    # DB-039(d): each kept bound is copied from an InputSpec field; the window rejects out-of-range
+    # values in EACH direction and accepts an in-range value (mutation-flips-red per direction).
+    reg = _FakeRegistry({"r1": _FakeRule([_num_input(minimum=10.0, maximum=500.0)])})
+    bounds = fd.derive_input_domains(cast(RuleRegistry, reg)).numeric["lot_depth_ft"]
+    assert bounds.minimum == 10.0 and bounds.maximum == 500.0
+    assert bounds.refusal_reason(5.0) is not None  # below the declared floor
+    assert bounds.refusal_reason(600.0) is not None  # above the declared ceiling
+    assert bounds.refusal_reason(100.0) is None  # inside the window
+
+
+def test_derive_input_domains_exclusive_bounds_reject_the_endpoint():
+    reg = _FakeRegistry({"r1": _FakeRule([_num_input(exclusive_minimum=0.0)])})
+    bounds = fd.derive_input_domains(cast(RuleRegistry, reg)).numeric["lot_depth_ft"]
+    assert bounds.exclusive_minimum == 0.0
+    assert bounds.refusal_reason(0.0) is not None  # exclusive: the endpoint itself is refused
+    assert bounds.refusal_reason(0.5) is None
+
+
+def test_numeric_bound_only_when_every_declaring_rule_bounds_the_direction():
+    # DB-039(d) conservatism: a direction is bounded only when EVERY declaring rule bounds it, and
+    # the kept bound is the MOST PERMISSIVE. r2 leaves the upper open -> no ceiling is enforced.
+    reg = _FakeRegistry(
+        {
+            "r1": _FakeRule([_num_input(minimum=10.0, maximum=500.0)]),
+            "r2": _FakeRule([_num_input(minimum=20.0)]),  # no maximum
+        }
+    )
+    bounds = fd.derive_input_domains(cast(RuleRegistry, reg)).numeric["lot_depth_ft"]
+    assert bounds.minimum == 10.0  # most-permissive floor across the two rules
+    assert bounds.maximum is None and bounds.exclusive_maximum is None
+    assert bounds.refusal_reason(10.0) is None  # inclusive floor endpoint accepted
+    assert bounds.refusal_reason(9.0) is not None  # below every rule's floor
+    assert bounds.refusal_reason(1e9) is None  # a rule leaves the ceiling open -> fed unchanged
+
+
+def test_numeric_input_left_unbounded_has_no_window():
+    # A caller-mappable numeric that no rule bounds is absent from the numeric map (fed unchanged).
+    reg = _FakeRegistry({"r1": _FakeRule([_num_input()])})
+    assert "lot_depth_ft" not in fd.derive_input_domains(cast(RuleRegistry, reg)).numeric
+
+
+def test_route_numeric_fact_out_of_bounds_refused_before_engine(client, monkeypatch):
+    # AS-1 end-to-end: an out-of-bounds numeric fact is a typed 422 naming the field, BEFORE the
+    # engine or gate runs; the offending value is never echoed.
+    reg = _FakeRegistry(
+        {
+            "r1": _FakeRule(
+                [
+                    InputSpec(name="zoning_district", type="string", required=True,
+                              enum=("R5",)),
+                    _num_input(minimum=10.0, maximum=1000.0),
+                ]
+            )
+        }
+    )
+    fd.clear_input_domain_cache()
+    monkeypatch.setattr(mod, "get_proposal_check_registry", lambda: reg)
+    _enable_flag(monkeypatch)
+    resp = client.post(
+        _URL,
+        json=_minimal_body(lot_rule_facts={"zoning_district": "R5", "lot_depth_ft": 999999.0}),
+    )
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "lot_rule_facts.lot_depth_ft"
+    assert "999999" not in json.dumps(body)  # the value is never echoed (accepted range only)
+
+
+# ---------------------------------------------------------------------------
+# AS-2 (ordering): the cheap registry-derived domain/bounds check runs BEFORE the O(n^2) gate.
+# ---------------------------------------------------------------------------
+def test_domain_check_runs_before_the_input_gate(client_with_registry, monkeypatch):
+    # An out-of-domain fact refuses WITHOUT paying the O(n^2) input gate: the gate spy must record
+    # ZERO calls. Restoring the old ordering (gate first) flips this red.
+    calls: list[int] = []
+    real = mod.validate_proposed_massing_input
+
+    def spy(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(mod, "validate_proposed_massing_input", spy)
+    _enable_flag(monkeypatch)
+    resp = client_with_registry.post(
+        _URL, json=_minimal_body(lot_rule_facts={"zoning_district": "R6"})
+    )
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot_rule_facts.zoning_district"
+    assert calls == []  # the expensive gate never ran - the domain check fired first
+
+
+def test_registry_unavailable_500_is_recorded_before_the_gate(client, monkeypatch):
+    # AS-2: the registry-unavailable path stays a bounded 500, now at its earlier position (before
+    # the gate). The gate must NOT run when the registry cannot be resolved.
+    calls: list[int] = []
+    real = mod.validate_proposed_massing_input
+
+    def spy(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+
+    def boom():
+        raise RuntimeError("registry-load-failed")
+
+    monkeypatch.setattr(mod, "validate_proposed_massing_input", spy)
+    monkeypatch.setattr(mod, "get_proposal_check_registry", boom)
+    _enable_flag(monkeypatch)
+    resp = client.post(_URL, json=_minimal_body())
+    assert resp.status_code == 500
+    assert resp.json()["state"] == "internal_error"
+    assert calls == []  # resolved (and failed) before the gate ran
+
+
+# ---------------------------------------------------------------------------
+# AS-3 (memoization): the derivation runs once per registry object across repeated requests.
+# ---------------------------------------------------------------------------
+def test_domain_derivation_memoized_once_per_registry(client_with_registry, monkeypatch, case):
+    fd.clear_input_domain_cache()
+    calls: list[int] = []
+    real = fd.derive_input_domains
+
+    def spy(registry):
+        calls.append(1)
+        return real(registry)
+
+    monkeypatch.setattr(fd, "derive_input_domains", spy)
+    _enable_flag(monkeypatch)
+    for _ in range(3):
+        resp = client_with_registry.post(_URL, json=_payload(case, attested=True))
+        assert resp.status_code == 200, resp.json()
+    assert len(calls) == 1  # derived ONCE for the injected registry, then served from the memo
+
+
+def test_test_injected_registry_derives_its_own_domains(client_with_registry, monkeypatch):
+    # The memo is keyed by registry identity: the test-injected fixture registry derives its OWN
+    # (fixture) vocabulary, so R6 (absent from the fixture's zoning_district enum) refuses.
+    fd.clear_input_domain_cache()
+    _enable_flag(monkeypatch)
+    resp = client_with_registry.post(
+        _URL, json=_minimal_body(lot_rule_facts={"zoning_district": "R6"})
+    )
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot_rule_facts.zoning_district"
+
+
+# ---------------------------------------------------------------------------
+# AS-4 (wall-id charset): exterior_walls[].id gets the BP-2 label discipline.
+# ---------------------------------------------------------------------------
+def test_wall_id_bad_charset_refused(client, monkeypatch):
+    # DB-039(h): a block wall id shares one identity space with a street line's wall_id (already
+    # charset-bound), so a wall id with markup refuses typed AT THE BOUNDARY. Removing
+    # _validate_exterior_wall_ids flips this red (the markup id would ride through to the gate).
+    _enable_flag(monkeypatch)
+    block = _valid_block()
+    block["exterior_walls"] = [
+        {"id": "<b>south</b>", "start_vertex_index": 0, "end_vertex_index": 1}
+    ]
+    resp = client.post(_URL, json=_minimal_body(proposed_massing=block))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "proposed_massing.exterior_walls[0].id"
+    assert "<b>" not in json.dumps(body)
+
+
+def test_wall_id_over_length_refused_length_only(client, monkeypatch):
+    _enable_flag(monkeypatch)
+    block = _valid_block()
+    block["exterior_walls"] = [
+        {"id": "w" * (MAX_LABEL_LEN + 1), "start_vertex_index": 0, "end_vertex_index": 1}
+    ]
+    resp = client.post(_URL, json=_minimal_body(proposed_massing=block))
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["field"] == "proposed_massing.exterior_walls[0].id"
+    assert "MAX_LABEL_LEN" in body["message"]
+    assert "w" * 50 not in json.dumps(body)  # the value is never echoed - length only
+
+
+def test_wall_id_non_string_left_to_the_validator(client, monkeypatch):
+    # The route wall-id guard only narrows STRING ids (so a matching string pair cannot diverge);
+    # a non-string id is left to the B0 validator's own shape refusal. Because the validator names
+    # the SAME field for a bad wall id, the discriminator is the ORDERING: the route guard sits
+    # BEFORE the gate, so if it had fired the gate would never run. Proof: the gate DOES run for a
+    # non-string id (spy records the call), i.e. the route guard skipped it.
+    calls: list[int] = []
+    real = mod.validate_proposed_massing_input
+
+    def spy(*args, **kwargs):
+        calls.append(1)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(mod, "validate_proposed_massing_input", spy)
+    _enable_flag(monkeypatch)
+    block = _valid_block()
+    block["exterior_walls"] = [{"id": 123, "start_vertex_index": 0, "end_vertex_index": 1}]
+    resp = client.post(_URL, json=_minimal_body(proposed_massing=block))
+    assert resp.status_code == 422
+    assert calls == [1]  # the gate ran - the route guard did not short-circuit the non-string id
+
+
+def test_wall_id_conforming_round_trips_the_accepted_arithmetic(
+    client_with_registry, monkeypatch, case
+):
+    # AS-4 positive: the fixture's conforming wall ids (W-S/W-E/W-N/W-W - the same charset a street
+    # wall_id must satisfy) still round-trip the accepted rectangle arithmetic byte-identically.
+    _enable_flag(monkeypatch)
+    resp = client_with_registry.post(_URL, json=_payload(case, attested=True))
+    assert resp.status_code == 200, resp.json()
+    cov = _by_id(resp.json()["results"])["lot_coverage_ratio"]
+    assert cov["provided_value"] == pytest.approx(0.625)
+    assert cov["shortfall"] == pytest.approx(0.125)
+
+
+# ---------------------------------------------------------------------------
+# AS-5 (coverage closure): at-cap-exact boundaries + every _build_lot_context shape branch.
+# ---------------------------------------------------------------------------
+def test_at_cap_scenario_label_accepted(client_with_registry, monkeypatch, case):
+    # label == MAX_LABEL_LEN is accepted (the refusal fires only ABOVE the cap); 201 is covered by
+    # test_bp2_over_length_scenario_label_refused.
+    _enable_flag(monkeypatch)
+    label = "s" * MAX_LABEL_LEN
+    resp = client_with_registry.post(
+        _URL, json=_payload(case, attested=True, scenario_label=label)
+    )
+    assert resp.status_code == 200, resp.json()
+    assert resp.json()["scenario_label"] == label
+
+
+def test_body_at_exact_ceiling_passes_the_size_gate(client, monkeypatch):
+    # body == MAX_BODY_BYTES is NOT 413 (413 fires only ABOVE the ceiling): the exactly-at-ceiling
+    # whitespace body passes the size gate and is refused later as a 422 empty body. A `>=` size
+    # gate would 413 here (mutation-flips-red).
+    _enable_flag(monkeypatch)
+    resp = client.post(_URL, content=b" " * MAX_BODY_BYTES, headers=_JSON_HEADERS)
+    assert resp.status_code == 422
+    assert resp.json()["state"] == "validation_error"
+
+
+def test_body_at_exact_ceiling_valid_payload_returns_200(
+    client_with_registry, monkeypatch, case
+):
+    # AS-5 at-cap-exact (body -> 200): a VALID payload padded with trailing JSON whitespace to
+    # EXACTLY MAX_BODY_BYTES passes the size gate (==ceiling is accepted; >ceiling is the 413 of
+    # test_oversized_body_is_413_before_parse) and runs end-to-end to a real 200 report. json.loads
+    # ignores the trailing spaces, so the padded body is the SAME accepted request sitting at the
+    # exact byte ceiling. A `>=` size gate would 413 here (mutation-flips-red).
+    _enable_flag(monkeypatch)
+    raw = json.dumps(_payload(case, attested=True)).encode("utf-8")
+    assert len(raw) <= MAX_BODY_BYTES
+    padded = raw + b" " * (MAX_BODY_BYTES - len(raw))
+    assert len(padded) == MAX_BODY_BYTES  # the request body is exactly at the ceiling
+    resp = client_with_registry.post(_URL, content=padded, headers=_JSON_HEADERS)
+    assert resp.status_code == 200, resp.text
+    cov = _by_id(resp.json()["results"])["lot_coverage_ratio"]
+    assert cov["provided_value"] == pytest.approx(0.625)  # a real derivation ran at the ceiling
+
+
+def test_at_wall_cap_exact_returns_200_for_a_valid_solid(
+    client_with_registry, monkeypatch, case
+):
+    # AS-5 at-cap-exact (walls -> 200): a VALID solid carrying EXACTLY ROUTE_MAX_EXTERIOR_WALLS
+    # walls runs end-to-end and returns 200 with the accepted rectangle arithmetic byte-identical.
+    # The 500 walls all name the base outline's south edge (indices 0->1, distinct in-range, unique
+    # ids) - each is B0-valid, the count check accepts ==cap (>cap only refuses), and the derivation
+    # is driven by the outline so coverage stays 0.625. A cap of 499 would trip the count refusal at
+    # 500; 501 is the typed refusal (test_bp4_over_wall_cap_refused) - the two bracket the boundary.
+    _enable_flag(monkeypatch)
+    block = {
+        **case["block"],
+        "exterior_walls": [
+            {"id": f"W{i}", "start_vertex_index": 0, "end_vertex_index": 1}
+            for i in range(ROUTE_MAX_EXTERIOR_WALLS)
+        ],
+    }
+    assert len(block["exterior_walls"]) == ROUTE_MAX_EXTERIOR_WALLS == 500
+    resp = client_with_registry.post(
+        _URL, json=_payload(case, attested=True, proposed_massing=block)
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert "ROUTE_MAX_EXTERIOR_WALLS" not in json.dumps(body)  # the count cap did NOT trip
+    cov = _by_id(body["results"])["lot_coverage_ratio"]
+    assert cov["provided_value"] == pytest.approx(0.625)  # a real derivation ran, not a refusal
+    assert cov["shortfall"] == pytest.approx(0.125)
+
+
+def test_at_street_line_cap_exact_returns_200(client_with_registry, monkeypatch, case):
+    # AS-5 at-cap-exact (street lines -> 200): a VALID lot carrying EXACTLY ROUTE_MAX_STREET_LINES
+    # attested street lines runs end-to-end and returns 200 with the accepted arithmetic. Each line
+    # is finite EPSG:2263 geometry naming the fixture's W-S frontage wall; the count check accepts
+    # ==cap (>cap only refuses) and 400 <= MAX_STREET_LINES (500) clears the engine's wiring
+    # ceiling. 401 is the typed refusal (test_bp4_over_street_line_cap_refused) - the two bracket
+    # the boundary.
+    _enable_flag(monkeypatch)
+    lot = {
+        **case["lot"],
+        "street_lines": [
+            {"wall_id": "W-S", "start": [999990.0, 199990.0], "end": [999990.0, 200060.0],
+             "attestation": {}}
+            for _ in range(ROUTE_MAX_STREET_LINES)
+        ],
+    }
+    assert len(lot["street_lines"]) == ROUTE_MAX_STREET_LINES == 400
+    resp = client_with_registry.post(_URL, json=_payload(case, attested=True, lot=lot))
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert "ROUTE_MAX_STREET_LINES" not in json.dumps(body)  # the count cap did NOT trip
+    cov = _by_id(body["results"])["lot_coverage_ratio"]
+    assert cov["provided_value"] == pytest.approx(0.625)  # a real derivation ran, not a refusal
+
+
+def test_lot_rule_facts_not_object_is_422(client, monkeypatch):
+    _enable_flag(monkeypatch)
+    resp = client.post(_URL, json=_minimal_body(lot_rule_facts=[1, 2, 3]))
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot_rule_facts"
+
+
+def test_build_lot_context_shape_refusals_each_bound():
+    # AS-5: every _build_lot_context shape-refusal branch names its exact field. Each assertion
+    # flips red if that branch's guard is removed.
+    def field_of(bad) -> str | None:
+        with pytest.raises(mod._FieldRefusal) as excinfo:
+            mod._build_lot_context(bad)
+        return excinfo.value.field
+
+    assert field_of("not-an-object") == "lot"
+    assert field_of({"area_provenance": "x"}) == "lot.area_provenance"
+    assert field_of({"lot_line_segments": "x"}) == "lot.lot_line_segments"
+    assert field_of({"street_lines": "x"}) == "lot.street_lines"
+    assert field_of({"lot_line_segments": ["not-an-object"]}) == "lot.lot_line_segments[0]"
+    assert field_of({"street_lines": ["not-an-object"]}) == "lot.street_lines[0]"
+    assert (
+        field_of({"street_lines": [{"wall_id": "s", "attestation": "x"}]})
+        == "lot.street_lines[0].attestation"
+    )
