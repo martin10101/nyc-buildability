@@ -460,6 +460,24 @@ describe("condo-records — DB-036 rider parsing (M5-T056)", () => {
     expect(view.baseLots[1].recordedZoningStatus).toBe("recorded");
   });
 
+  it("(a) recorded zoning flows through boundedZoningDistrict — a slash mixed-use district survives byte-exact (kills a boundedZoningDistrict->boundedToken revert)", async () => {
+    const doc = {
+      ...multiLotDoc(),
+      base_lots: [
+        { bbl: BASE_BBL, recorded_zoning: "M1-5/R7-2", recorded_zoning_status: "recorded" },
+        { bbl: BASE_BBL_2, recorded_zoning: "R6", recorded_zoning_status: "recorded" },
+      ],
+    };
+    const { view } = asDocument(
+      await fetchCondoRecords(BILLING_MULTI_BBL, { fetchImpl: once(makeResponse(doc)) }),
+    );
+    // The '/' is the character boundedToken would strip; pin it explicitly so a
+    // revert to the token sanitizer fails here (DB-036(a) precondition).
+    expect(view.baseLots[0].recordedZoning).toBe("M1-5/R7-2");
+    expect(view.baseLots[0].recordedZoning).not.toBe("M1-5R7-2");
+    expect(view.baseLots[1].recordedZoning).toBe("R6");
+  });
+
   it("(g) value-pins the retrievedAt round-trip char-for-char (kills a boundedTimestamp->boundedToken revert)", async () => {
     const { view } = asDocument(
       await fetchCondoRecords(UNIT_BBL, { fetchImpl: once(makeResponse(unitSingleDoc())) }),

@@ -12,10 +12,14 @@ import {
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import { jsonResponse } from "@/test-support/fixtures";
 import {
+  condoUnresolvedDoc,
   draftApplicableDoc,
   missingEvidenceDoc,
   ruleConflictDoc,
   spatialUncertaintyDoc,
+  SUBSTITUTION_ANALYZED_BBL,
+  SUBSTITUTION_ENTERED_BBL,
+  substitutionStampDoc,
   unsupportedDoc,
 } from "@/test-support/rule-evaluation-fixtures";
 
@@ -488,5 +492,52 @@ describe("announcementForRuleEvaluation", () => {
       expect(message.length).toBeGreaterThan(0);
     }
     expect(announcementForRuleEvaluation({ kind: "aborted" })).toBe("");
+  });
+});
+
+describe("announcementForRuleEvaluation — condo specifics match the visible label (DB-042(c)/HJ-3)", () => {
+  // The generic strings the classifier would otherwise announce; the condo
+  // announcements must NOT trail them (they must be strictly more specific).
+  const GENERIC_MISSING_EVIDENCE = announcementForRuleEvaluation({
+    kind: "evaluation",
+    document: missingEvidenceDoc(),
+    correlationId: null,
+  });
+  const GENERIC_APPLICABLE_DRAFT = announcementForRuleEvaluation({
+    kind: "evaluation",
+    document: draftApplicableDoc(),
+    correlationId: null,
+  });
+
+  it("names the condo/site-confirmation specifics for a condo_base_lot_unresolved fail-safe", () => {
+    const message = announcementForRuleEvaluation({
+      kind: "evaluation",
+      document: condoUnresolvedDoc(),
+      correlationId: null,
+    });
+    // The visible label is "Condo base lot needs site confirmation"; the
+    // announcement must carry the same specificity, never the generic string.
+    expect(message).toContain("condo billing lot");
+    expect(message).toContain("site-definition confirmation");
+    expect(message).not.toBe(GENERIC_MISSING_EVIDENCE);
+    expect(message).not.toMatch(/\bverified\b/i);
+    expect(message).not.toMatch(/\bbest\b/i);
+  });
+
+  it("names entered-vs-analyzed base lots for a substrate_substitution stamp", () => {
+    const message = announcementForRuleEvaluation({
+      kind: "evaluation",
+      document: substitutionStampDoc(),
+      correlationId: null,
+    });
+    // The visible record is "analyzed on the base lot"; the announcement names
+    // both the recorded base tax lot and the entered condo billing lot.
+    expect(message).toContain("base tax lot");
+    expect(message).toContain(SUBSTITUTION_ANALYZED_BBL);
+    expect(message).toContain(SUBSTITUTION_ENTERED_BBL);
+    expect(message).toContain("not a computed allowance");
+    expect(message).not.toBe(GENERIC_APPLICABLE_DRAFT);
+    expect(message).not.toMatch(/\bverified\b/i);
+    expect(message).not.toMatch(/\bbest\b/i);
   });
 });

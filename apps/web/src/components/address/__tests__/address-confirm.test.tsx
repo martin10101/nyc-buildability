@@ -799,11 +799,14 @@ describe("S10 — DB-032 record-address channel on the confirm card", () => {
 
 /* ================================================================ *
  * S11 — DB-033 (M5-T050) confirm-arc polish riders: (a) late-insert CLS,
- * (b) raw-input a11y exposure, (c) no-normalized-street copy, (d) corner-lot
- * why-they-differ note, (i) title/aria length bound.
+ * (b) raw-input a11y exposure, (c) no-normalized-street copy + a11y honesty
+ * (announce the full visible text), (d) corner-lot why-they-differ note. Rider
+ * (i)'s original 512 title/aria length cap was SUPERSEDED by rider (c) (the
+ * accessible name matches the full visible text; see the final case below), so
+ * it is no longer a separate rider — DB-038(b) label hygiene.
  * ================================================================ */
 
-describe("S11 — DB-033 confirm-arc polish riders (a-d, i)", () => {
+describe("S11 — DB-033 confirm-arc polish riders (a-d; rider-i cap superseded by rider-c a11y honesty)", () => {
   const RECORD_SOURCE = {
     source_id: "nyc-dcp-pluto-soda",
     dataset_id: "64uk-42ks",

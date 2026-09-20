@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   boundedText,
   boundedToken,
+  boundedZoningDistrict,
   MAX_REFLECTED_TEXT_LENGTH,
+  MAX_ZONING_DISTRICT_LENGTH,
   TRUNCATION_MARKER,
 } from "@/lib/bounded";
 
@@ -53,5 +55,52 @@ describe("boundedToken", () => {
     expect(boundedToken(undefined)).toBeNull();
     expect(boundedToken("<<<>>>")).toBeNull();
     expect(boundedToken("")).toBeNull();
+  });
+
+  // AS-1 spec-pin: boundedToken's charset is UNCHANGED and still strips the slash
+  // of a mixed-use district. This is exactly why recorded zoning must NOT flow
+  // through it — it is the "before" half of the DB-036(a) sanitizer-boundary
+  // distinction that boundedZoningDistrict below closes.
+  it("still strips the '/' in a slash mixed-use district (why boundedZoningDistrict exists)", () => {
+    expect(boundedToken("M1-5/R7-2")).toBe("M1-5R7-2");
+  });
+});
+
+describe("boundedZoningDistrict (DB-036(a) recorded-zoning precondition)", () => {
+  it("admits plain, numbered, and suffixed districts byte-exact", () => {
+    expect(boundedZoningDistrict("M1-5")).toBe("M1-5");
+    expect(boundedZoningDistrict("R7-2")).toBe("R7-2");
+    expect(boundedZoningDistrict("R6")).toBe("R6");
+    expect(boundedZoningDistrict("R10H")).toBe("R10H");
+    expect(boundedZoningDistrict("C6-4")).toBe("C6-4");
+  });
+
+  it("PRESERVES the slash of a special mixed-use district (the whole point)", () => {
+    expect(boundedZoningDistrict("M1-5/R7-2")).toBe("M1-5/R7-2");
+    expect(boundedZoningDistrict("M1-6/R10")).toBe("M1-6/R10");
+  });
+
+  it("strips the markup delimiters (< and >) and control/whitespace chars, keeping the district charset — including the '/' the closing tag shares with a mixed-use district", () => {
+    // The '<' and '>' delimiters are dropped, so no tag can ever form (and React
+    // escapes the reflected text regardless). The '/' of the "</script>" closing
+    // tag survives because it is a legitimate mixed-use-district character the
+    // charset MUST admit (M1-5/R7-2) — the residue "scriptM1-5/R7-2/script" is
+    // inert plain text, never markup. Pinning the exact residue keeps the slash
+    // behaviour (and the removal of the delimiters) mutation-sensitive.
+    expect(boundedZoningDistrict("<script>M1-5/R7-2</script>")).toBe("scriptM1-5/R7-2/script");
+    expect(boundedZoningDistrict(`M1-5${String.fromCharCode(7)}/R7-2`)).toBe("M1-5/R7-2");
+    expect(boundedZoningDistrict("M1-5 / R7-2")).toBe("M1-5/R7-2");
+  });
+
+  it("length-caps an over-long value to the district bound", () => {
+    expect(boundedZoningDistrict("R".repeat(500))?.length).toBe(MAX_ZONING_DISTRICT_LENGTH);
+  });
+
+  it("returns null for non-strings and for a fully-hostile or empty value", () => {
+    expect(boundedZoningDistrict(null)).toBeNull();
+    expect(boundedZoningDistrict(undefined)).toBeNull();
+    expect(boundedZoningDistrict(42)).toBeNull();
+    expect(boundedZoningDistrict("<<<>>>")).toBeNull();
+    expect(boundedZoningDistrict("")).toBeNull();
   });
 });

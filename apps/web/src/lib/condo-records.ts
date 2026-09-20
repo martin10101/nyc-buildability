@@ -35,7 +35,7 @@
 import { useEffect, useState } from "react";
 import { apiBaseUrl } from "./api";
 import { validateBblInput } from "./bbl";
-import { boundedText, boundedToken } from "./bounded";
+import { boundedText, boundedToken, boundedZoningDistrict } from "./bounded";
 
 export const DEFAULT_CONDO_RECORDS_TIMEOUT_MS = 12_000;
 
@@ -207,7 +207,12 @@ export interface CondoRecordsView {
   substitution: CondoSubstitutionRecord | null;
   condoKey: string | null;
   condoNumber: string | null;
-  /** The permanent no-collapse boundary notice, present only on multi-lot. */
+  /** The no-collapse boundary notice for divergent recorded zoning across a
+   * condo's base lots, present only on multi-lot. DB-038(c): it is NOT shown
+   * unconditionally — the surface gates it on zoning being ACTUALLY recorded for
+   * a base lot (there is nothing to diverge when every lot's zoning is a genuine
+   * unknown), so today, while lot-level zoning is not yet connected, it stays
+   * dormant rather than "permanent". */
   divergentZoningNotice: string | null;
   /** The api's recorded_zoning_dependency: present only when at least one base
    * lot's recorded zoning is a genuine unknown, so the surface can honestly
@@ -338,7 +343,10 @@ function baseLotRecords(value: unknown): CondoBaseLotRecord[] {
     if (record === null) continue;
     const bbl = boundedBbl(record.bbl);
     if (bbl === null) continue; // never render a base lot without a recorded BBL
-    const zoning = boundedToken(record.recorded_zoning, 32);
+    // DB-036(a): recorded zoning passes through the district-aware sanitizer,
+    // NOT boundedToken — a slash mixed-use district (M1-5/R7-2) must render
+    // byte-exact, and boundedToken would strip the '/' and corrupt it.
+    const zoning = boundedZoningDistrict(record.recorded_zoning, 32);
     // Mirror the api's explicit availability label; fall back to a value derived
     // from the recorded zoning so the status is always present and honest.
     const status =

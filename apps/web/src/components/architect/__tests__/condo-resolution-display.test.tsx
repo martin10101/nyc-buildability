@@ -796,6 +796,24 @@ describe("CondoRecordsChannelSection — DB-036 rider rendering (M5-T056)", () =
     expect(provenance).toHaveTextContent("retrieved: 2026-09-01T14:05:56Z");
     expect(provenance).toHaveTextContent("dataset version: 2026-08-30T00:00:00Z");
   });
+
+  it("(a) a slash mixed-use district renders byte-exact on the base-lot record — the '/' survives (through boundedZoningDistrict)", async () => {
+    const slashDoc = {
+      ...channelMultiLotDoc(),
+      base_lots: [
+        { bbl: "1003030019", recorded_zoning: "M1-5/R7-2", recorded_zoning_status: "recorded" },
+        { bbl: "1003030025", recorded_zoning: "R7-2", recorded_zoning_status: "recorded" },
+      ],
+    };
+    await renderSection(slashDoc);
+    const records = screen.getAllByTestId("condo-base-lot-zoning");
+    // AS-2: the district shows with the slash intact. A boundedToken revert would
+    // render the stripped "M1-5R7-2" here, so both directions are pinned.
+    expect(records[0]).toHaveTextContent("recorded zoning: M1-5/R7-2");
+    expect(records[0].textContent ?? "").toContain("M1-5/R7-2");
+    expect(records[0].textContent ?? "").not.toContain("M1-5R7-2");
+    expect(records[1]).toHaveTextContent("recorded zoning: R7-2");
+  });
 });
 
 // ---------------------------------------------------------------------------

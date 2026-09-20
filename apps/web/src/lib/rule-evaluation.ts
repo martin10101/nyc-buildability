@@ -509,10 +509,43 @@ const PRESENTATION_ANNOUNCEMENTS: Record<RuleEvalPresentation, string> = {
     "Draft rule evaluation loaded: professional review required; the evidence needed for a draft determination is missing.",
 };
 
+// DB-042(c)/HJ-3: the screen-reader announcement must carry the SAME specificity
+// as the visible label. A condo_base_lot_unresolved fail-safe shows the visible
+// "Condo base lot needs site confirmation" line; the generic classifier would
+// announce it only as "missing_evidence", so the announced text would trail the
+// visible text. Name the condo/site-confirmation specifics instead.
+const CONDO_BASE_LOT_UNRESOLVED_ANNOUNCEMENT =
+  "Draft rule evaluation withheld: this condo billing lot resolves to more than one recorded base lot, or to none, so a site-definition confirmation is required before development limits can be shown; professional review required.";
+
 export function announcementForRuleEvaluation(outcome: RuleEvaluationOutcome): string {
   switch (outcome.kind) {
-    case "evaluation":
-      return PRESENTATION_ANNOUNCEMENTS[classifyRuleEvaluation(outcome.document)];
+    case "evaluation": {
+      const document = outcome.document;
+      // A substrate_substitution stamp renders the visible "analyzed on the base
+      // lot" record (AnalysisIdentityNotice); announce the same entered-vs-analyzed
+      // specifics so the announced text matches the visible label (DB-042(c)/HJ-3).
+      // Gated on a well-formed stamp (a real, different analyzed base lot), the
+      // same shape the visible record requires.
+      const substitution = document.substrate_substitution;
+      if (
+        substitution &&
+        typeof substitution.entered_bbl === "string" &&
+        substitution.entered_bbl.length > 0 &&
+        typeof substitution.analyzed_bbl === "string" &&
+        substitution.analyzed_bbl.length > 0 &&
+        substitution.analyzed_bbl !== substitution.entered_bbl
+      ) {
+        return (
+          `Draft rule evaluation loaded: analyzed on the recorded base tax lot ${substitution.analyzed_bbl} ` +
+          `for the condo billing lot ${substitution.entered_bbl} you entered — a city record of the resolution, ` +
+          "not a computed allowance; professional review required."
+        );
+      }
+      if (document.fail_safe_reason === "condo_base_lot_unresolved") {
+        return CONDO_BASE_LOT_UNRESOLVED_ANNOUNCEMENT;
+      }
+      return PRESENTATION_ANNOUNCEMENTS[classifyRuleEvaluation(document)];
+    }
     case "feature_unavailable":
       return "Draft rule evaluation is not available in this environment.";
     case "no_match":

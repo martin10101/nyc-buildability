@@ -72,6 +72,25 @@ describe("M5-T058 — corresponding stamp renders a legitimate substitution reco
   });
 });
 
+describe("DB-042(d)/(e) — the substitution record defines billing/base inline and uses consistent-domain wording", () => {
+  it("defines 'billing lot' and 'base' on first use and reads as a city record (guard behaviour unchanged)", () => {
+    const doc = substitutionStampDoc();
+    renderNotice(SUBSTITUTION_ENTERED_BBL, doc);
+
+    const notice = screen.getByTestId(SUB_TESTID);
+    // DB-042(e): the analyst is told, inline on first use, that the entered BBL is
+    // a condo billing lot and what the base lot is — no undefined jargon.
+    expect(notice).toHaveTextContent("condo billing lot (the single tax lot a condo is billed under)");
+    expect(notice).toHaveTextContent("the land parcel the city records as this condo");
+    // DB-042(d): consistent-domain "city record" framing shared with the
+    // condo-records section, still disclaiming a computed allowance.
+    expect(notice).toHaveTextContent("a city record of the documented resolution");
+    expect(notice).toHaveTextContent("not a computed allowance");
+    // The record branch stays non-alarming (no withhold alert fires).
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+});
+
 describe("M5-T058 — an UNSTAMPED entered-vs-analyzed mismatch still withholds", () => {
   it("withholds with the neutral entered-vs-analyzed alert (no stamp present)", () => {
     const doc = draftApplicableDoc();

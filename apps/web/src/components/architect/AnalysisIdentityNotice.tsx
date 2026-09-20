@@ -63,7 +63,7 @@ export function AnalysisIdentityNotice({ label, requestedBbl, document }: {
         const analyzedBase = substitution!.analyzed_bbl as string;
         return <section className="architect-note" data-testid={`analysis-identity-substitution-${label.toLowerCase().replace(/\s+/g, "-")}`} data-identity-state="substituted">
       <strong>{label} analyzed on the base lot</strong>
-      <p>You entered BBL {requestedBbl}; this {label.toLowerCase()} was analyzed on the recorded base tax lot BBL {analyzedBase}. The billing lot and the base lot are recorded as entered versus analyzed — a record of the city&rsquo;s documented resolution, not a computed allowance.</p>
+      <p>You entered BBL {requestedBbl}, a condo billing lot (the single tax lot a condo is billed under); this {label.toLowerCase()} was analyzed on the recorded base tax lot BBL {analyzedBase} — the land parcel the city records as this condo&rsquo;s base. The billing lot and the base lot are recorded as entered versus analyzed — a city record of the documented resolution, not a computed allowance.</p>
       <CapturedRecord value={document} label={`Returned ${label.toLowerCase()} record`}/>
     </section>;
     }
