@@ -625,7 +625,7 @@
   {
    "directive_id": "D-046",
    "slug": "parallel-family-production",
-   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
+   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and \u00a7G unchanged; backoff under resource pressure, never quality.",
    "status": "active",
    "issued_at": "2026-09-13",
    "issued_by": "owner",
@@ -1000,7 +1000,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-076-proposal-editor-planning/manifest.json"
+  },
+  {
+   "directive_id": "D-077",
+   "slug": "release-pass-and-three-mvp-loops",
+   "title": "Owner 2026-09-19: execute the pending web release pass now (owner-only, orchestrator supplies plain-English steps; release-request seq118 sections 1-9, acceptances 228-236) and spin up three concurrent supervised loop lanes to build the rest of the MVP - released, non-held queue only (phase B2-B5 per the proposal-editor plan + DB-035/DB-036 riders); fills the D-072 three-loop ceiling without raising it; all gates, holds, Tier D stops unchanged",
+   "status": "active",
+   "issued_at": "2026-09-19",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-077-release-pass-and-three-mvp-loops/manifest.json"
   }
  ],
- "updated_at": "2026-09-15T23:14:10.707758+00:00"
+ "updated_at": "2026-09-20T03:32:52+00:00"
 }

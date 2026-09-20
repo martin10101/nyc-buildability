@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-077",
+ "version": 1,
+ "slug": "release-pass-and-three-mvp-loops",
+ "title": "Owner 2026-09-19: execute the pending web release pass now (owner-only, orchestrator supplies plain-English steps; release-request seq118 sections 1-9, acceptances 228-236) and spin up three concurrent supervised loop lanes to build the rest of the MVP - released, non-held queue only (phase B2-B5 per the proposal-editor plan + DB-035/DB-036 riders); fills the D-072 three-loop ceiling without raising it; all gates, holds, Tier D stops unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-19",
+ "captured_at": "2026-09-20T03:32:52+00:00",
+ "created_at": "2026-09-20T03:32:52+00:00",
+ "updated_at": "2026-09-20T03:32:52+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "9c5870ed5eb394208a149797ca60f81add422682",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in interactive chat as the first message of the resumed session (seq 121, after the seq-120 planned handoff). The release EXECUTION stays owner-only (Tier D); the loop instruction authorizes filling the existing D-072 three-loop ceiling over already-released work, granting no new scope."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-077-R001",
+  "D-077-R002",
+  "D-077-R003",
+  "D-077-R004"
+ ],
+ "requirements_content_digest_sha256": "89ff070839a1a69ad4da449b5fa45d6a08ece526a414971981e5ad55420f4e0a",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T03:32:52+00:00",
+   "content_digest_sha256": "35653195792e83641c805936da52f0ccd6862520b98f708c345b4923a0e42640"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "owner-executed release pass per release-request-2026-09-18-seq118.md sections 1-9; three concurrent disjoint supervised loop lanes over the released non-held MVP queue (phase B2-B5 order per docs/PROPOSAL_EDITOR_PHASED_PLAN.md + DB-035/DB-036 riders), contracted/claimed/launched at fresh seams under the full drill",
+  "forbidden": "any orchestrator-side production/deploy/flag action; any held scope (expansion section 2 minus D-040/D-076 releases, PR #241); any Tier D / Section 20 action; raising the D-072 three-loop ceiling; phase C before B3 accepted+walked; phase D"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T03:32:52+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 236 accepted, both loops down at clean seams (seq-120 planned handoff), no live agents; validator exit 0 at HEAD 9c5870ed."
+  }
+ ]
+}
