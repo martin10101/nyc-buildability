@@ -30,8 +30,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0", "1.1.0"],
-      "description": "CLOSED enum of published rule_evaluation contract versions. 1.0.0 = M4-T005 initial shape. 1.1.0 = M5-T037 additive bump that appends the OPTIONAL wide_street block (the ZR 23-22 conditional-FAR determination summary); a 1.0.0 document stays valid because the block is optional and 1.0.0 remains admitted. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. This is the version of THIS contract, distinct from evaluated_input.profile_contract_version (the version of the property_profile that was evaluated)."
+      "enum": ["1.0.0", "1.1.0", "1.2.0"],
+      "description": "CLOSED enum of published rule_evaluation contract versions. 1.0.0 = M4-T005 initial shape. 1.1.0 = M5-T037 additive bump that appends the OPTIONAL wide_street block (the ZR 23-22 conditional-FAR determination summary). 1.2.0 = M5-T058 additive bump that appends the OPTIONAL substrate_substitution block (the condo billing-BBL -> base-lot substitution stamp). A 1.0.0 or 1.1.0 document stays valid because both blocks are optional and both earlier versions remain admitted. New versions are admitted only by an accepted contract task that appends to this enum; arbitrary versions are rejected. This is the version of THIS contract, distinct from evaluated_input.profile_contract_version (the version of the property_profile that was evaluated)."
     },
     "evaluated_input": {
       "$ref": "#/$defs/evaluated_input"
@@ -74,7 +74,8 @@
             "data_conflict",
             "geometry_uncertain",
             "inconsistent_confident_geometry",
-            "rule_conflict"
+            "rule_conflict",
+            "condo_base_lot_unresolved"
           ]
         },
         { "type": "null" }
@@ -144,6 +145,7 @@
       ]
     },
     "wide_street": { "$ref": "#/$defs/wide_street" },
+    "substrate_substitution": { "$ref": "#/$defs/substrate_substitution" },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid/ fixture (packages/contracts README convention). The evaluator NEVER emits this key; it is allowed here (optional) so an invalid fixture fails only for its stated defect under the additionalProperties:false guard, and so valid fixtures - which omit it - stay clean."
@@ -543,6 +545,89 @@
         "reason": {
           "type": "string",
           "description": "Human-readable reason naming the row that governs and the DRAFT/pending-G6 status."
+        }
+      }
+    },
+    "substrate_substitution": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "OPTIONAL condo billing-BBL -> base-lot substitution stamp (M5-T058, contract 1.2.0). Present ONLY when the spatial analysis substituted a single resolved condo base lot for the entered billing BBL (an app.connectors.condo_base_lot.CondoResolution with outcome resolved_single_base_lot); ABSENT on every other path (non-condo input, flag off, a multi-lot / unresolved / typed-error condo outcome, or a non-condo absent substrate). Reuses the accepted {entered_bbl, analyzed_bbl, note} substitution triple (app.api.v1.condo_records._substitution_record) EXTENDED with the CondoResolution provenance (condo_key, resolution_path, source_id, dataset_ids, retrieved_at) and a machine-readable mixed-substrate visibility block: the analyzed (base) lot supplies the lot area and geometry while the entered (billing) lot supplies the PLUTO identity facts, so a reader can see exactly which substrate each fact came from. evaluated_input.bbl REMAINS the entered billing BBL; this stamp alone carries entered-vs-analyzed. A RECORD of a resolution the city documents, NEVER a computed allowance and NEVER an auto-selected base lot (a multi-lot / unresolved outcome exposes no single analyzed lot, so no substitution stamp is emitted).",
+      "required": [
+        "entered_bbl",
+        "analyzed_bbl",
+        "note",
+        "condo_key",
+        "resolution_path",
+        "source_id",
+        "dataset_ids",
+        "retrieved_at",
+        "mixed_substrate"
+      ],
+      "properties": {
+        "entered_bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The condo BILLING BBL the user entered - the same value as evaluated_input.bbl (the stamp never moves evaluated_input.bbl to the base lot)."
+        },
+        "analyzed_bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The single resolved base land lot the spatial analysis actually ran on (CondoResolution.resolved_base_bbl)."
+        },
+        "note": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Plain-language record that the analysis runs on the recorded base tax lot; the entered billing lot and the analyzed base lot are recorded as entered versus analyzed, a record and not a computed allowance."
+        },
+        "condo_key": {
+          "description": "The CondoResolution condo_key (the DOF condo identifier), or null when the source omitted it.",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ]
+        },
+        "resolution_path": {
+          "description": "How the base lot was resolved (CondoResolution.resolution_path), or null when the source omitted it.",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ]
+        },
+        "source_id": {
+          "description": "Official source id of the condo resolution (the DOF Digital Tax Map condo channel), or null when the source omitted it.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "dataset_ids": {
+          "type": "array",
+          "description": "Dataset ids the resolver used, carried verbatim from the CondoResolution (never fabricated).",
+          "items": { "type": "string" }
+        },
+        "retrieved_at": {
+          "description": "When the condo resolution was retrieved (ISO-8601), carried verbatim from the CondoResolution, or null when the source omitted it.",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ]
+        },
+        "mixed_substrate": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Machine-readable visibility of the mixed substrate: which lot each class of fact describes. On the substituted path the lot area and geometry describe the analyzed base lot while the PLUTO identity facts describe the entered billing lot; the stamp makes that split explicit so a reader never conflates them.",
+          "required": ["lot_facts_substrate", "identity_facts_substrate", "note"],
+          "properties": {
+            "lot_facts_substrate": {
+              "$ref": "common.schema.json#/$defs/non_empty_string",
+              "description": "Which lot supplies the lot area and geometry: 'analyzed_base_lot'."
+            },
+            "identity_facts_substrate": {
+              "$ref": "common.schema.json#/$defs/non_empty_string",
+              "description": "Which lot supplies the PLUTO identity facts: 'entered_billing_lot'."
+            },
+            "note": {
+              "$ref": "common.schema.json#/$defs/non_empty_string",
+              "description": "Plain-language description of the mixed substrate for a reader."
+            }
+          }
         }
       }
     }

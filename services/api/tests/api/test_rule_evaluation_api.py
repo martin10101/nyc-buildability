@@ -46,7 +46,7 @@ from referencing import Registry, Resource
 from app.api.v1 import rule_evaluation as rule_eval_module
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.rule_evaluation import (
-    get_spatial_substrate_provider,
+    get_resolved_spatial_substrate_provider,
     get_wide_street_determination_provider,
 )
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
@@ -98,8 +98,11 @@ from app.rules.wide_street_wiring import (
 from app.spatial import live_provider as live_provider_module
 from app.spatial import wide_street_live_provider as wide_provider_module
 from app.spatial.live_provider import (
+    CONDO_BASE_LOT_UNRESOLVED_CAUSE,
     LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR,
     LiveSpatialFetchers,
+    LiveSubstrateResult,
+    build_substrate_substitution_stamp,
 )
 from app.spatial.wide_street_live_provider import (
     LIVE_WIDE_STREET_PROVIDER_ENABLED_ENV_VAR,
@@ -168,8 +171,22 @@ def install_fetcher(script_factory) -> None:
 
 
 def install_substrate(substrate) -> None:
-    app.dependency_overrides[get_spatial_substrate_provider] = (
-        lambda: (lambda canonical_bbl, correlation_id: substrate)
+    """Override the route's RESOLVED spatial provider (M5-T058) so existing tests
+    pass a substrate exactly as before: it rides as LiveSubstrateResult.substrate
+    with no substitution stamp and no condo cause (the non-condo path)."""
+    app.dependency_overrides[get_resolved_spatial_substrate_provider] = (
+        lambda: (
+            lambda canonical_bbl, correlation_id: LiveSubstrateResult(substrate=substrate)
+        )
+    )
+
+
+def install_resolved_substrate(result: LiveSubstrateResult) -> None:
+    """Override the route's RESOLVED spatial provider with a full
+    LiveSubstrateResult (M5-T058: carries a substitution stamp and/or the
+    condo-unresolved cause across the seam)."""
+    app.dependency_overrides[get_resolved_spatial_substrate_provider] = (
+        lambda: (lambda canonical_bbl, correlation_id: result)
     )
 
 
@@ -320,11 +337,13 @@ def test_as3_confident_supported_family_is_200_draft(client, monkeypatch, rule_e
     assert errors == [], [e.message for e in errors]
 
     # Draft (never verified), professional-review discipline, disclaimer.
-    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION == "1.1.0"
+    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION == "1.2.0"
     # AS-3 (provider None omits the block): the default wide-street provider is
-    # off here (no override, flag unset) AND R5 is non-conditional, so the
-    # OPTIONAL wide_street block is ABSENT and the 1.1.0 body is still valid.
+    # off here (no override, flag unset) AND R5 is non-conditional, so BOTH the
+    # OPTIONAL wide_street and substrate_substitution blocks are ABSENT and the
+    # 1.0.0-shaped body stays valid under the additive 1.2.0 schema.
     assert "wide_street" not in doc
+    assert "substrate_substitution" not in doc
     assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
     assert "verified" not in set(_coverage_values(doc))
     assert doc["not_verified_disclaimer"]
@@ -475,6 +494,97 @@ def test_as8_split_lot_preserves_share_ranges(client, monkeypatch, rule_eval_val
     assert candidates["R5"]["share_min"] == 0.55 and candidates["R5"]["share_max"] == 0.65
     assert candidates["R6"]["share_min"] == 0.35 and candidates["R6"]["share_max"] == 0.45
     assert doc["spatial_uncertainty"]["professional_review_required"] is True
+
+
+# ==========================================================================
+# M5-T058 - condo substrate-substitution stamp (contract 1.2.0) threaded
+# through the endpoint, and the honest condo_base_lot_unresolved refusal.
+# ==========================================================================
+
+
+def _resolution_double():
+    """A resolved-single CondoResolution-shaped double with every provenance
+    field populated (the route only reads the stamp the provider already built)."""
+    return SimpleNamespace(
+        resolved_base_bbl="1000010050",
+        condo_key="301313",
+        resolution_path="dtm_condo_soda_single_base_lot",
+        source_id="dof_dtm_condo",
+        dataset_ids=("dtm-condo-2026-09",),
+        retrieved_at="2026-09-06T00:00:00Z",
+    )
+
+
+def test_m5t058_route_stamps_substrate_substitution(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-1: a resolved-single condo substitution rides across the seam and the
+    endpoint stamps the OPTIONAL substrate_substitution block onto a 1.2.0
+    document; evaluated_input.bbl stays the ENTERED billing BBL."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    stamp = build_substrate_substitution_stamp(BBL, _resolution_double())
+    install_resolved_substrate(
+        LiveSubstrateResult(substrate=confident_r5_substrate(), substitution_stamp=stamp)
+    )
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["contract_version"] == "1.2.0"
+    # The stamp carries entered-vs-analyzed; evaluated_input.bbl is NOT moved.
+    assert doc["evaluated_input"]["bbl"] == BBL
+    assert doc["zoning_district"] == "R5"  # analysis ran on the base-lot substrate
+    block = doc["substrate_substitution"]
+    assert block == stamp  # serialized verbatim, nothing re-derived
+    assert block["entered_bbl"] == BBL
+    assert block["analyzed_bbl"] == "1000010050"
+    assert block["condo_key"] == "301313"
+    assert block["dataset_ids"] == ["dtm-condo-2026-09"]
+    assert block["mixed_substrate"]["lot_facts_substrate"] == "analyzed_base_lot"
+    assert block["mixed_substrate"]["identity_facts_substrate"] == "entered_billing_lot"
+
+
+def test_m5t058_route_condo_unresolved_names_reason_no_stamp(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-2: a condo billing BBL whose base lot could not be resolved to a single
+    lot fails safe with the HONEST condo_base_lot_unresolved reason (not the
+    generic spatial_intersection_absent) and carries NO substitution stamp."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_resolved_substrate(
+        LiveSubstrateResult(
+            substrate=None, fail_safe_cause=CONDO_BASE_LOT_UNRESOLVED_CAUSE
+        )
+    )
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # a fail-safe result is a normal document
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "condo_base_lot_unresolved"
+    assert doc["zoning_district"] is None  # no base lot auto-selected (D-078-R002)
+    assert doc["evaluations"] == []
+    assert "substrate_substitution" not in doc  # no single analyzed lot to stamp
+
+
+def test_m5t058_route_non_condo_absent_keeps_generic_reason(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-2 companion: a genuinely-absent non-condo substrate (no condo cause)
+    still fails safe with the generic spatial_intersection_absent reason."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_resolved_substrate(LiveSubstrateResult(substrate=None))
+
+    doc = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert "substrate_substitution" not in doc
 
 
 # ==========================================================================
@@ -750,7 +860,7 @@ _R32_X, _R32_Y = 997482.04, 163293.94  # interior probe of the real ZF03 polygon
 
 def _uninstall_substrate_override() -> None:
     """Route the request through the route's DEFAULT spatial provider."""
-    app.dependency_overrides.pop(get_spatial_substrate_provider, None)
+    app.dependency_overrides.pop(get_resolved_spatial_substrate_provider, None)
 
 
 def _live_lot_double(bbl: str, correlation_id: str):
@@ -1257,11 +1367,12 @@ def test_m5t035_within_wide_determination_fires_wide_row_via_endpoint(
     )
     assert expected_reason in doc["reasons"]
 
-    # M5-T037 (rule_evaluation @ 1.1.0): the structured wide_street block is now
-    # serialized on a within-wide document. It carries the fired row, the higher
-    # governing FAR selected server-side (3.0, never the rule's own DSL output),
-    # the D-052 provenance summary, and the DRAFT marker - never Verified.
-    assert doc["contract_version"] == "1.1.0"
+    # M5-T037 wide_street block, carried on a now-1.2.0-versioned document
+    # (additive M5-T058 bump): the structured wide_street block is serialized on a
+    # within-wide document. It carries the fired row, the higher governing FAR
+    # selected server-side (3.0, never the rule's own DSL output), the D-052
+    # provenance summary, and the DRAFT marker - never Verified.
+    assert doc["contract_version"] == "1.2.0"
     block = doc["wide_street"]
     assert block["determination_state"] == "within_100ft_of_wide_street"
     assert block["far_row"] == "wide_street_row"
@@ -1381,7 +1492,7 @@ def test_m5t037_as3_within_wide_serializes_block_and_none_omits_block_via_endpoi
     # the route, which is why this was a 200 rather than a typed internal error).
     assert list(rule_eval_validator.iter_errors(with_block)) == []
     validate_rule_evaluation_document(with_block)  # bundled runtime schema, no raise
-    assert with_block["contract_version"] == "1.1.0"
+    assert with_block["contract_version"] == "1.2.0"
     block = with_block["wide_street"]
     assert block["determination_state"] == "within_100ft_of_wide_street"
     assert block["far_row"] == "wide_street_row"
@@ -1392,7 +1503,7 @@ def test_m5t037_as3_within_wide_serializes_block_and_none_omits_block_via_endpoi
     assert "verified" not in set(_coverage_values(with_block))
 
     # Branch 2: provider None (explicit override) -> the block is ABSENT and the
-    # 1.1.0 body still validates against both schema copies.
+    # 1.0.0-shaped body still validates against both schema copies under 1.2.0.
     install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
     install_substrate(confident_district_substrate("R6"))
     install_wide_street_provider(None)
@@ -1400,7 +1511,7 @@ def test_m5t037_as3_within_wide_serializes_block_and_none_omits_block_via_endpoi
 
     assert list(rule_eval_validator.iter_errors(no_block)) == []
     validate_rule_evaluation_document(no_block)
-    assert no_block["contract_version"] == "1.1.0"
+    assert no_block["contract_version"] == "1.2.0"
     assert "wide_street" not in no_block
     assert no_block["zoning_district"] == "R6"
 

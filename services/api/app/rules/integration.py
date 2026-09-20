@@ -93,6 +93,13 @@ FAILSAFE_INCONSISTENT_CONFIDENT = "inconsistent_confident_geometry"
 # applicable to the same inputs for overlapping outputs (a legal ambiguity the
 # engine surfaces for professional review; it never picks a governing rule).
 FAILSAFE_RULE_CONFLICT = "rule_conflict"
+# M5-T058 (contract 1.2.0): a condo BILLING BBL that resolved to a multi-lot /
+# unresolved / typed-error outcome. The substrate is absent for a NAMED reason -
+# the condo's base lot could not be resolved to a single lot - so the refusal is
+# honest instead of the generic FAILSAFE_SPATIAL_ABSENT. A base lot is never
+# auto-selected on a multi-lot outcome (D-078-R002); the human site-definition
+# confirmation is the paired M5-T059 flow, not this evaluator.
+FAILSAFE_CONDO_BASE_LOT_UNRESOLVED = "condo_base_lot_unresolved"
 
 _COVERAGE_SOURCE_EVALUATOR = "rule_evaluator"
 _COVERAGE_SOURCE_FAIL_SAFE = "integration_fail_safe"
@@ -156,6 +163,17 @@ class PropertyRuleEvaluation:
     wide_street_far_row: str | None = None
     wide_street_governing_far: float | None = None
     wide_street_determination: dict | None = None
+    # M5-T058: condo billing-BBL -> base-lot substitution stamp. Populated ONLY
+    # when the spatial substrate came from a single resolved condo base lot
+    # substituted for the entered billing BBL; ``None`` on every other path (non
+    # condo input, flag off, a multi-lot / unresolved / typed-error condo outcome,
+    # or a non-condo absent substrate). The rule_evaluation contract bump to v1.2.0
+    # serializes it as the OPTIONAL top-level ``substrate_substitution`` block in
+    # as_dict() - emitted ONLY when a substitution folded in, so a document with no
+    # substitution stays a valid 1.0.0/1.1.0-shaped body. A RECORD of a documented
+    # resolution, never a computed allowance; evaluated_input.bbl stays the ENTERED
+    # billing BBL and this stamp alone carries entered-vs-analyzed.
+    substrate_substitution: dict | None = None
 
     def as_dict(self) -> dict:
         document = {
@@ -192,6 +210,14 @@ class PropertyRuleEvaluation:
         # states, DRAFT label); it is never a Verified value.
         if self.wide_street_determination is not None:
             document["wide_street"] = dict(self.wide_street_determination)
+        # M5-T058 (rule_evaluation v1.2.0, additive): serialize the OPTIONAL
+        # substrate_substitution block ONLY when a condo base-lot substitution
+        # folded in. On every other path the key is ABSENT and the body stays
+        # valid under the 1.0.0, 1.1.0 and 1.2.0 schema. The block is a RECORD of
+        # a documented resolution (entered-vs-analyzed BBLs, provenance carried
+        # verbatim, mixed-substrate visibility); it is never a Verified value.
+        if self.substrate_substitution is not None:
+            document["substrate_substitution"] = dict(self.substrate_substitution)
         return document
 
     def export(self) -> dict:
@@ -397,9 +423,16 @@ def _fail_safe(
     spatial_context: dict | None,
     spatial_uncertainty: dict,
     family_coverage: dict,
+    substrate_substitution: dict | None = None,
 ) -> PropertyRuleEvaluation:
     """Build a fail-safe result: professional review (or data conflict) with NO
-    guessed district and NO computed value; uncertainty preserved."""
+    guessed district and NO computed value; uncertainty preserved.
+
+    ``substrate_substitution`` (M5-T058) rides along ONLY when a condo base-lot
+    substitution folded in and the analysis then fail-safed on the BASE lot's own
+    substrate (e.g. the base lot itself is geometry-uncertain). It is never set on
+    the condo-unresolved absent-substrate path (no single analyzed lot exists to
+    stamp)."""
     return PropertyRuleEvaluation(
         bbl=bbl,
         coverage_status=coverage_status,
@@ -420,6 +453,7 @@ def _fail_safe(
         family_coverage=family_coverage,
         reasons=[reason],
         coverage_source=_COVERAGE_SOURCE_FAIL_SAFE,
+        substrate_substitution=substrate_substitution,
     )
 
 
@@ -583,6 +617,8 @@ def evaluate_property(
     registry: RuleRegistry | None = None,
     as_of_date: str | None = None,
     wide_street_determination: WideStreetDetermination | None = None,
+    substrate_substitution: dict | None = None,
+    spatial_absent_condo_unresolved: bool = False,
 ) -> PropertyRuleEvaluation:
     """Map a canonical property profile into the rules evaluator and evaluate the
     draft R5 residential-FAR family. Pure and deterministic: the same profile
@@ -608,6 +644,18 @@ def evaluate_property(
     professional_review_required. When omitted (the default and every
     non-conditional district) NOTHING here runs and the result is byte-identical
     to before, so the flat R1-R12 rules and every existing caller are unaffected.
+
+    ``substrate_substitution`` (optional, M5-T058) is the additive
+    ``substrate_substitution`` stamp built by the live provider when a single
+    resolved condo base lot was substituted for the entered billing BBL; it rides
+    onto the result unchanged (a RECORD, never re-derived here) and reaches the
+    contract-1.2.0 document via as_dict(). ``spatial_absent_condo_unresolved``
+    (optional, M5-T058) names an ABSENT substrate honestly: when True and the
+    substrate is absent, the fail-safe reason is
+    :data:`FAILSAFE_CONDO_BASE_LOT_UNRESOLVED` instead of the generic
+    :data:`FAILSAFE_SPATIAL_ABSENT` (a condo billing BBL whose base lot could not
+    be resolved to a single lot). Both default to the pre-M5-T058 behavior, so
+    every existing caller is byte-identical.
     """
     registry = registry or _default_registry()
     family_coverage = registry.family_coverage(TARGET_FAMILY)
@@ -617,16 +665,33 @@ def evaluate_property(
     spatial = profile.get("spatial_intersection")
     if not isinstance(spatial, dict):
         # RI-S3: no spatial substrate -> no lot-level district is known. Never
-        # guess one from PLUTO zonedist; fail safe with no value.
-        return _fail_safe(
-            bbl=bbl,
-            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
-            fail_safe_reason=FAILSAFE_SPATIAL_ABSENT,
-            reason=(
+        # guess one from PLUTO zonedist; fail safe with no value. M5-T058: name a
+        # condo-caused absence honestly - a condo billing BBL whose base lot could
+        # not be resolved to a single lot - instead of the generic spatial-absent
+        # reason a genuinely-absent non-condo lot keeps. No base lot is auto-picked
+        # (D-078-R002); no substitution stamp exists on this path (no single
+        # analyzed lot to stamp).
+        if spatial_absent_condo_unresolved:
+            fail_safe_reason = FAILSAFE_CONDO_BASE_LOT_UNRESOLVED
+            reason = (
+                "the entered BBL is a condominium billing lot whose base tax lot "
+                "could not be resolved to a single lot (multiple base lots, no "
+                "match, or an upstream error); no base lot is auto-selected and "
+                "the analysis fails safe - a site-definition confirmation is "
+                "required before results can be computed"
+            )
+        else:
+            fail_safe_reason = FAILSAFE_SPATIAL_ABSENT
+            reason = (
                 "property profile carries no spatial_intersection section; the "
                 "lot-level zoning-district assignment is unknown and must not be "
                 "guessed - professional review required"
-            ),
+            )
+        return _fail_safe(
+            bbl=bbl,
+            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+            fail_safe_reason=fail_safe_reason,
+            reason=reason,
             spatial_context=None,
             spatial_uncertainty=_empty_uncertainty(),
             family_coverage=family_coverage,
@@ -655,6 +720,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     if lot_overall_class == _LOT_DATA_CONFLICT:
@@ -672,6 +738,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     if lot_overall_class != _LOT_SINGLE_DISTRICT_CONFIDENT or professional_review_required:
@@ -692,6 +759,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     # --- Confident path: exactly one interior_confident base-zoning district. ---
@@ -711,6 +779,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     lot_area_sq_ft, lot_area_source = _lot_area(profile, spatial)
@@ -833,6 +902,7 @@ def evaluate_property(
         wide_street_far_row=ws_far_row,
         wide_street_governing_far=ws_governing_far,
         wide_street_determination=ws_summary,
+        substrate_substitution=substrate_substitution,
     )
     # Defensive fail-close: this function can never return a Verified draft.
     assert_not_verified(result)
@@ -853,4 +923,5 @@ __all__ = [
     "FAILSAFE_GEOMETRY_UNCERTAIN",
     "FAILSAFE_INCONSISTENT_CONFIDENT",
     "FAILSAFE_RULE_CONFLICT",
+    "FAILSAFE_CONDO_BASE_LOT_UNRESOLVED",
 ]

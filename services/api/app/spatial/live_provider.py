@@ -50,11 +50,16 @@ from app.connectors.ztldb_soda import fetch_by_bbl
 from .adapter import compose_from_connectors
 
 __all__ = [
+    "CONDO_BASE_LOT_UNRESOLVED_CAUSE",
     "LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR",
     "CondoResolverSeam",
     "LiveSpatialFetchers",
+    "LiveSubstrateResult",
     "build_live_substrate",
+    "build_live_substrate_resolved",
+    "build_substrate_substitution_stamp",
     "default_live_substrate",
+    "default_live_substrate_resolved",
     "live_spatial_provider_enabled",
 ]
 
@@ -234,6 +239,187 @@ def _record_condo_substitution(
     )
 
 
+# ---------------------------------------------------------------------------
+# Condo substrate-substitution stamp + resolved-substrate carry (M5-T058).
+#
+# build_live_substrate historically DISCARDED the CondoResolution at the seam
+# boundary - the substitution survived only as a log line. build_live_substrate_
+# resolved carries the resolution ACROSS the seam in a typed LiveSubstrateResult
+# so the rule-evaluation route can stamp the additive rule_evaluation
+# substrate_substitution block (contract 1.2.0) and name a condo-caused refusal
+# honestly (condo_base_lot_unresolved) instead of the generic
+# spatial_intersection_absent. build_live_substrate REMAINS the byte-identical
+# ``object | None`` seam the three other route consumers (evidence / scenario /
+# scenario_analysis) still call, now delegating here for its return.
+# ---------------------------------------------------------------------------
+
+# The honest fail-safe cause carried when the substrate is absent BECAUSE a condo
+# billing BBL resolved to a multi-lot / unresolved / typed-error outcome (never an
+# auto-picked base lot, D-078-R002). Equals the rule_evaluation contract 1.2.0
+# fail_safe_reason token; app.rules.integration maps it onto its
+# FAILSAFE_CONDO_BASE_LOT_UNRESOLVED. A genuinely-absent non-condo substrate
+# carries None here and keeps the generic spatial_intersection_absent reason.
+CONDO_BASE_LOT_UNRESOLVED_CAUSE = "condo_base_lot_unresolved"
+
+# Fixed plain-language records for the substitution stamp (a RECORD of a
+# documented resolution, never a computed allowance).
+_SUBSTITUTION_STAMP_NOTE = (
+    "This analysis runs on the recorded base tax lot for the entered "
+    "condominium billing lot. The entered billing lot and the analyzed base lot "
+    "are recorded as entered versus analyzed - a record of the city's documented "
+    "resolution, not a computed allowance."
+)
+_MIXED_SUBSTRATE_LOT_FACTS = "analyzed_base_lot"
+_MIXED_SUBSTRATE_IDENTITY_FACTS = "entered_billing_lot"
+_MIXED_SUBSTRATE_NOTE = (
+    "The lot area and geometry describe the analyzed base lot; the PLUTO identity "
+    "facts describe the entered billing lot."
+)
+
+
+@dataclass(frozen=True)
+class LiveSubstrateResult:
+    """The composed live substrate PLUS the condo resolution that produced it.
+
+    ``substrate`` is the composed M2-T013 record or ``None`` - byte-identical to
+    the historical :func:`build_live_substrate` return. ``substitution_stamp`` is
+    the additive rule_evaluation ``substrate_substitution`` block, present ONLY
+    when a single resolved condo base lot was substituted AND a real substrate
+    composed; ``None`` on every other path. ``fail_safe_cause`` is
+    :data:`CONDO_BASE_LOT_UNRESOLVED_CAUSE` when the substrate is absent BECAUSE a
+    condo outcome fail-safed (multi-lot / unresolved / typed error), else ``None``
+    (a genuinely-absent non-condo substrate keeps the generic reason).
+    ``resolution`` carries the raw CondoResolution when the condo pre-lookup ran,
+    for provenance; ``None`` on a non-condo pass-through or flag-off.
+    """
+
+    substrate: object | None
+    substitution_stamp: dict | None = None
+    fail_safe_cause: str | None = None
+    resolution: object | None = None
+    # True when the live substrate path actually ran (flag on) - even if it
+    # fail-safed to an absent substrate. False ONLY for the settings-gated
+    # flag-off no-op default, which composes nothing and issues zero connector
+    # calls; the rule-evaluation route treats that no-op as "no resolved opinion"
+    # and defers to the legacy object|None substrate provider (so a test/consumer
+    # that injects a substrate through the unwidened seam is still honored).
+    evaluated: bool = True
+
+
+def build_substrate_substitution_stamp(input_bbl: str, resolution: object) -> dict:
+    """Build the additive ``substrate_substitution`` block from a resolved-single
+    :class:`~app.connectors.condo_base_lot.CondoResolution`.
+
+    Reuses the accepted ``{entered_bbl, analyzed_bbl, note}`` substitution triple
+    (``app.api.v1.condo_records._substitution_record`` shape) EXTENDED with the
+    resolution provenance carried verbatim (never fabricated) and the machine
+    readable mixed-substrate visibility block. The caller guarantees
+    ``resolution.substitutes_base_lot`` is True, so ``resolved_base_bbl`` is a
+    single resolved base land lot (D-078-R002: never an auto-picked one)."""
+    return {
+        "entered_bbl": input_bbl,
+        "analyzed_bbl": getattr(resolution, "resolved_base_bbl", None),
+        "note": _SUBSTITUTION_STAMP_NOTE,
+        "condo_key": getattr(resolution, "condo_key", None),
+        "resolution_path": getattr(resolution, "resolution_path", None),
+        "source_id": getattr(resolution, "source_id", None),
+        "dataset_ids": list(getattr(resolution, "dataset_ids", ()) or ()),
+        "retrieved_at": getattr(resolution, "retrieved_at", None),
+        "mixed_substrate": {
+            "lot_facts_substrate": _MIXED_SUBSTRATE_LOT_FACTS,
+            "identity_facts_substrate": _MIXED_SUBSTRATE_IDENTITY_FACTS,
+            "note": _MIXED_SUBSTRATE_NOTE,
+        },
+    }
+
+
+def build_live_substrate_resolved(
+    canonical_bbl: str,
+    correlation_id: str,
+    *,
+    fetchers: LiveSpatialFetchers,
+    condo_resolver: CondoResolverSeam | None = None,
+) -> LiveSubstrateResult:
+    """Compose the live substrate AND carry the condo resolution across the seam.
+
+    Identical composition and fail-safe contract to :func:`build_live_substrate`
+    (which now delegates here for its ``object | None`` return), extended to a
+    typed :class:`LiveSubstrateResult`: a resolved-single substitution rides WITH
+    the substrate as a ``substitution_stamp``; a condo multi-lot / unresolved /
+    typed-error outcome fail-safes to an absent substrate carrying
+    :data:`CONDO_BASE_LOT_UNRESOLVED_CAUSE` (never an auto-picked base lot,
+    D-078-R002); a non-condo path (or a non-condo absent substrate) carries
+    neither, so the generic spatial_intersection_absent reason survives. The condo
+    resolver is called AT MOST ONCE per evaluation."""
+    resolve_condo = condo_resolver or _ACTIVE_CONDO_RESOLVER
+    try:
+        # Condo pre-lookup step: resolve a billing BBL to its base land lot, or
+        # fail safe. Runs before any zoning-lot fetch.
+        condo = resolve_condo(canonical_bbl, correlation_id)
+        if getattr(condo, "is_fail_safe", False):
+            # multi-lot / unresolved / typed error -> absent substrate, named
+            # honestly for the condo cause. Divergent zoning is never collapsed
+            # and no base lot is ever auto-selected (D-078-R002).
+            _fail_safe(f"condo_{getattr(condo, 'outcome', 'fail_safe')}", correlation_id)
+            return LiveSubstrateResult(
+                substrate=None,
+                fail_safe_cause=CONDO_BASE_LOT_UNRESOLVED_CAUSE,
+                resolution=condo,
+            )
+        if getattr(condo, "substitutes_base_lot", False):
+            substrate_bbl = getattr(condo, "resolved_base_bbl", None) or canonical_bbl
+            _record_condo_substitution(
+                canonical_bbl,
+                substrate_bbl,
+                getattr(condo, "condo_key", None),
+                correlation_id,
+            )
+            stamp = build_substrate_substitution_stamp(canonical_bbl, condo)
+            resolution = condo
+        else:
+            # Not a condo-billing BBL: byte-identical prior behavior, no stamp.
+            substrate_bbl = canonical_bbl
+            stamp = None
+            resolution = None
+
+        ztldb_result = fetchers.fetch_ztldb(substrate_bbl, correlation_id)
+        queries = _candidate_layer_queries(
+            getattr(ztldb_result, "zoning_assignment", None)
+        )
+        if not queries:
+            # no_record / empty assignment: no candidate set to verify against;
+            # an empty-district composition would fabricate a geometric claim. The
+            # condo resolved fine (if it substituted), so this is a genuine absent
+            # substrate, NOT a condo-cause refusal.
+            _fail_safe("no_candidate_districts", correlation_id)
+            return LiveSubstrateResult(substrate=None, resolution=resolution)
+
+        lot_result = fetchers.fetch_lot(substrate_bbl, correlation_id)
+
+        layer_results: list[object] = []
+        for layer, field_name, value in queries:
+            layer_result = fetchers.fetch_district_layer(
+                layer, field_name, value, correlation_id
+            )
+            if bool(getattr(layer_result, "exceeded_transfer_limit", False)):
+                # Partial district page: the containing polygon may be missing,
+                # so any composition would rest on incomplete official data.
+                _fail_safe("district_page_partial", correlation_id)
+                return LiveSubstrateResult(substrate=None, resolution=resolution)
+            layer_results.append(layer_result)
+
+        substrate = compose_from_connectors(lot_result, layer_results, ztldb_result)
+        return LiveSubstrateResult(
+            substrate=substrate, substitution_stamp=stamp, resolution=resolution
+        )
+    except Exception as exc:  # noqa: BLE001 - fail-safe boundary, typed log only
+        # Typed connector errors (upstream, timeout, rate-limit, drift, CRS,
+        # disallowed value, budget, circuit) and any unexpected defect all land
+        # here: absent substrate, never a fabricated one and never a 500.
+        _fail_safe("connector_error", correlation_id, exc)
+        return LiveSubstrateResult(substrate=None)
+
+
 def build_live_substrate(
     canonical_bbl: str,
     correlation_id: str,
@@ -254,60 +440,18 @@ def build_live_substrate(
     Returns the engine's ``LotIntersectionRecord`` unmodified - its review /
     conflict / uncertain classes are the documented fail-safe outcomes and are
     never collapsed or upgraded here.
+
+    Delegates to :func:`build_live_substrate_resolved` and returns ONLY the
+    substrate, so the three route consumers that do not carry the substitution
+    (evidence / scenario / scenario_analysis) observe the exact prior
+    ``object | None`` contract (a single condo-resolver call, no double SODA).
     """
-    resolve_condo = condo_resolver or _ACTIVE_CONDO_RESOLVER
-    try:
-        # Condo pre-lookup step: resolve a billing BBL to its base land lot, or
-        # fail safe. Runs before any zoning-lot fetch.
-        condo = resolve_condo(canonical_bbl, correlation_id)
-        if getattr(condo, "is_fail_safe", False):
-            # multi-lot / unresolved / typed error -> absent substrate. Divergent
-            # zoning is never collapsed; a reference is never a computed answer.
-            _fail_safe(f"condo_{getattr(condo, 'outcome', 'fail_safe')}", correlation_id)
-            return None
-        if getattr(condo, "substitutes_base_lot", False):
-            substrate_bbl = getattr(condo, "resolved_base_bbl", None) or canonical_bbl
-            _record_condo_substitution(
-                canonical_bbl,
-                substrate_bbl,
-                getattr(condo, "condo_key", None),
-                correlation_id,
-            )
-        else:
-            # Not a condo-billing BBL: byte-identical prior behavior.
-            substrate_bbl = canonical_bbl
-
-        ztldb_result = fetchers.fetch_ztldb(substrate_bbl, correlation_id)
-        queries = _candidate_layer_queries(
-            getattr(ztldb_result, "zoning_assignment", None)
-        )
-        if not queries:
-            # no_record / empty assignment: no candidate set to verify against;
-            # an empty-district composition would fabricate a geometric claim.
-            _fail_safe("no_candidate_districts", correlation_id)
-            return None
-
-        lot_result = fetchers.fetch_lot(substrate_bbl, correlation_id)
-
-        layer_results: list[object] = []
-        for layer, field_name, value in queries:
-            layer_result = fetchers.fetch_district_layer(
-                layer, field_name, value, correlation_id
-            )
-            if bool(getattr(layer_result, "exceeded_transfer_limit", False)):
-                # Partial district page: the containing polygon may be missing,
-                # so any composition would rest on incomplete official data.
-                _fail_safe("district_page_partial", correlation_id)
-                return None
-            layer_results.append(layer_result)
-
-        return compose_from_connectors(lot_result, layer_results, ztldb_result)
-    except Exception as exc:  # noqa: BLE001 - fail-safe boundary, typed log only
-        # Typed connector errors (upstream, timeout, rate-limit, drift, CRS,
-        # disallowed value, budget, circuit) and any unexpected defect all land
-        # here: absent substrate, never a fabricated one and never a 500.
-        _fail_safe("connector_error", correlation_id, exc)
-        return None
+    return build_live_substrate_resolved(
+        canonical_bbl,
+        correlation_id,
+        fetchers=fetchers,
+        condo_resolver=condo_resolver,
+    ).substrate
 
 
 def default_live_substrate(canonical_bbl: str, correlation_id: str) -> object | None:
@@ -318,6 +462,26 @@ def default_live_substrate(canonical_bbl: str, correlation_id: str) -> object | 
     if not live_spatial_provider_enabled():
         return None
     return build_live_substrate(
+        canonical_bbl,
+        correlation_id,
+        fetchers=_ACTIVE_FETCHERS,
+        condo_resolver=_ACTIVE_CONDO_RESOLVER,
+    )
+
+
+def default_live_substrate_resolved(
+    canonical_bbl: str, correlation_id: str
+) -> LiveSubstrateResult:
+    """The gated DEFAULT provider behind the rule-evaluation route's RESOLVED
+    seam (``get_resolved_spatial_substrate_provider()``): flag off (default) ->
+    an empty :class:`LiveSubstrateResult` (absent substrate, no stamp, no condo
+    cause) with zero connector calls; flag on -> the live composition carrying the
+    condo resolution. Exactly one condo-resolver call per evaluation, and the
+    three other route consumers keep calling :func:`default_live_substrate`
+    unchanged (no widening of their seam)."""
+    if not live_spatial_provider_enabled():
+        return LiveSubstrateResult(substrate=None, evaluated=False)
+    return build_live_substrate_resolved(
         canonical_bbl,
         correlation_id,
         fetchers=_ACTIVE_FETCHERS,

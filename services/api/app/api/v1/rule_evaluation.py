@@ -63,7 +63,12 @@ from app.rules.response import (
     serialize_rule_evaluation,
     validate_rule_evaluation_document,
 )
-from app.spatial.live_provider import default_live_substrate
+from app.spatial.live_provider import (
+    CONDO_BASE_LOT_UNRESOLVED_CAUSE,
+    LiveSubstrateResult,
+    default_live_substrate,
+    default_live_substrate_resolved,
+)
 from app.spatial.wide_street_live_provider import default_live_wide_street_determination
 
 if TYPE_CHECKING:  # pragma: no cover - typing only; importing the wiring at
@@ -74,6 +79,7 @@ if TYPE_CHECKING:  # pragma: no cover - typing only; importing the wiring at
     from app.rules.wide_street_wiring import WideStreetDetermination
 
 __all__ = [
+    "get_resolved_spatial_substrate_provider",
     "get_spatial_substrate_provider",
     "get_wide_street_determination_provider",
     "router",
@@ -117,8 +123,38 @@ def _default_spatial_substrate(canonical_bbl: str, correlation_id: str) -> objec
 def get_spatial_substrate_provider() -> SpatialSubstrateProvider:
     """Dependency returning the server-side spatial-substrate provider (override
     point for tests). The default is the settings-gated live provider: flag off
-    (the default) yields no substrate -> honest fail-safe."""
+    (the default) yields no substrate -> honest fail-safe.
+
+    Retained UNCHANGED for the three other route consumers (evidence / scenario /
+    scenario_analysis), which observe the exact ``object | None`` contract; this
+    route uses :func:`get_resolved_spatial_substrate_provider` (M5-T058) instead."""
     return _default_spatial_substrate
+
+
+# (canonical_bbl, correlation_id) -> a LiveSubstrateResult carrying the M2-T013
+# substrate PLUS the condo resolution that produced it (M5-T058). Used ONLY by
+# THIS route so the additive substrate_substitution stamp and the honest
+# condo-unresolved refusal can be threaded into the evaluation document. The three
+# OTHER route consumers keep the unchanged SpatialSubstrateProvider seam above -
+# their observed contract is not widened. A single condo-resolver call per
+# evaluation (no double SODA): this route calls ONLY the resolved provider.
+ResolvedSpatialSubstrateProvider = Callable[[str, str], LiveSubstrateResult]
+
+
+def _default_resolved_spatial_substrate(
+    canonical_bbl: str, correlation_id: str
+) -> LiveSubstrateResult:
+    return default_live_substrate_resolved(canonical_bbl, correlation_id)
+
+
+def get_resolved_spatial_substrate_provider() -> ResolvedSpatialSubstrateProvider:
+    """Dependency returning the server-side RESOLVED spatial-substrate provider
+    (override point for tests). The default is the settings-gated live provider:
+    flag off (the default) yields an empty LiveSubstrateResult (absent substrate,
+    no stamp, no condo cause) with zero connector calls -> honest fail-safe. The
+    substrate is taken from ``.substrate`` exactly as before; the ``.substitution_
+    stamp`` and ``.fail_safe_cause`` carry the M5-T058 additions."""
+    return _default_resolved_spatial_substrate
 
 
 # ---------------------------------------------------------------------------
@@ -205,6 +241,9 @@ def _internal_error_500(correlation_id: str) -> JSONResponse:
 def get_rule_evaluation(
     bbl: str,
     fetcher: PlutoFetcher = Depends(get_pluto_fetcher),  # noqa: B008
+    resolved_substrate_provider: ResolvedSpatialSubstrateProvider = Depends(  # noqa: B008
+        get_resolved_spatial_substrate_provider
+    ),
     substrate_provider: SpatialSubstrateProvider = Depends(  # noqa: B008
         get_spatial_substrate_provider
     ),
@@ -297,8 +336,30 @@ def get_rule_evaluation(
 
         # Rebuild the profile from the TRUSTED server-side path. The spatial
         # substrate comes from the injected server-side provider, never the
-        # request. A None substrate is exactly the PLUTO-only build.
-        substrate = substrate_provider(normalized.canonical, correlation_id)
+        # request. A None substrate is exactly the PLUTO-only build. M5-T058: the
+        # resolved provider carries the condo resolution across the seam alongside
+        # the substrate (a single condo-resolver call), so the substitution stamp
+        # and the honest condo-unresolved refusal can be threaded below.
+        substrate_result = resolved_substrate_provider(
+            normalized.canonical, correlation_id
+        )
+        if substrate_result.evaluated:
+            # The live resolved path ran (flag on): use its substrate AND the
+            # condo carry - a single condo-resolver call. An absent substrate here
+            # is a genuine live fail-safe, named honestly below.
+            substrate = substrate_result.substrate
+            substitution_stamp = substrate_result.substitution_stamp
+            spatial_absent_condo_unresolved = (
+                substrate_result.fail_safe_cause == CONDO_BASE_LOT_UNRESOLVED_CAUSE
+            )
+        else:
+            # Flag-off no-op default: defer to the legacy object|None substrate
+            # provider - the UNWIDENED seam the three other route consumers
+            # (evidence / scenario / scenario_analysis) and their tests inject
+            # through. No condo carry exists on this path.
+            substrate = substrate_provider(normalized.canonical, correlation_id)
+            substitution_stamp = None
+            spatial_absent_condo_unresolved = False
         profile = build_property_profile(result, spatial_intersection=substrate)
 
         # Validate the rebuilt profile against its canonical schema before it is
@@ -333,8 +394,18 @@ def get_rule_evaluation(
         # wired yet), never the request; when present it drives conditional-FAR
         # row selection server-side in evaluate_property.
         wide_street_determination = wide_street_provider(normalized.canonical, correlation_id)
+        # M5-T058: thread the condo carry into the evaluator. The substitution
+        # stamp (present only when a single resolved condo base lot was
+        # substituted for the entered billing BBL) rides onto the result as the
+        # additive substrate_substitution block; the honest condo-unresolved cause
+        # renames an ABSENT-substrate refusal from the generic
+        # spatial_intersection_absent to condo_base_lot_unresolved. Both are the
+        # evaluator's pre-M5-T058 defaults on every non-condo path.
         evaluation = evaluate_property(
-            profile, wide_street_determination=wide_street_determination
+            profile,
+            wide_street_determination=wide_street_determination,
+            substrate_substitution=substitution_stamp,
+            spatial_absent_condo_unresolved=spatial_absent_condo_unresolved,
         )
         document = serialize_rule_evaluation(
             evaluation,

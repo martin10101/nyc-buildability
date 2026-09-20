@@ -128,7 +128,7 @@ export interface EvaluationTrace {
   determination: unknown | null;
 }
 export interface RuleEvaluation {
-  contract_version: "1.0.0" | "1.1.0";
+  contract_version: "1.0.0" | "1.1.0" | "1.2.0";
   evaluated_input: EvaluatedInput;
   coverage_status: DraftCoverageStatus;
   coverage_source: "rule_evaluator" | "integration_fail_safe";
@@ -136,7 +136,7 @@ export interface RuleEvaluation {
   needs_review: boolean;
   professional_review_required: boolean;
   fail_safe: boolean;
-  fail_safe_reason: ("spatial_intersection_absent" | "spatial_context_incomplete" | "data_conflict" | "geometry_uncertain" | "inconsistent_confident_geometry" | "rule_conflict") | null;
+  fail_safe_reason: ("spatial_intersection_absent" | "spatial_context_incomplete" | "data_conflict" | "geometry_uncertain" | "inconsistent_confident_geometry" | "rule_conflict" | "condo_base_lot_unresolved") | null;
   rule_lifecycle_statuses: ("discovered" | "extracted_draft" | "needs_review" | "published")[];
   not_verified_disclaimer: NonEmptyString;
   zoning_district: NonEmptyString | null;
@@ -164,6 +164,21 @@ export interface RuleEvaluation {
     draft_label: string;
     fallback_direction_note: string;
     reason: string;
+  };
+  substrate_substitution?: {
+    entered_bbl: Bbl;
+    analyzed_bbl: Bbl;
+    note: NonEmptyString;
+    condo_key: string | null;
+    resolution_path: string | null;
+    source_id: NonEmptyString | null;
+    dataset_ids: string[];
+    retrieved_at: string | null;
+    mixed_substrate: {
+      lot_facts_substrate: NonEmptyString;
+      identity_facts_substrate: NonEmptyString;
+      note: NonEmptyString;
+    };
   };
   _expected_failure?: string;
 }

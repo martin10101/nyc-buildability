@@ -92,6 +92,11 @@ export const FAIL_SAFE_REASONS = [
   "geometry_uncertain",
   "inconsistent_confident_geometry",
   "rule_conflict",
+  // M5-T058 (contract 1.2.0): a condo billing BBL whose base lot could not be
+  // resolved to a single lot (multi-lot / unresolved / typed-error outcome). The
+  // honest name for an absent substrate a condo cause produced; a genuinely
+  // absent non-condo substrate keeps spatial_intersection_absent.
+  "condo_base_lot_unresolved",
 ] as const satisfies readonly NonNullable<RuleEvaluation["fail_safe_reason"]>[];
 
 export const RULE_LIFECYCLE_STATUSES = [
@@ -101,12 +106,15 @@ export const RULE_LIFECYCLE_STATUSES = [
   "published",
 ] as const satisfies readonly (RuleEvaluation["rule_lifecycle_statuses"][number])[];
 
-/** The closed set of published rule_evaluation contract versions (M5-T037: the
- * additive 1.1.0 bump appends the OPTIONAL wide_street block; 1.0.0 stays valid
- * because the block is optional and both versions remain admitted). */
+/** The closed set of published rule_evaluation contract versions. M5-T037: the
+ * additive 1.1.0 bump appends the OPTIONAL wide_street block. M5-T058: the
+ * additive 1.2.0 bump appends the OPTIONAL substrate_substitution block (the
+ * condo billing-BBL -> base-lot substitution stamp). 1.0.0 and 1.1.0 stay valid
+ * because both blocks are optional and every earlier version remains admitted. */
 export const RULE_EVALUATION_CONTRACT_VERSIONS = [
   "1.0.0",
   "1.1.0",
+  "1.2.0",
 ] as const satisfies readonly RuleEvaluation["contract_version"][];
 
 type WideStreetBlock = NonNullable<RuleEvaluation["wide_street"]>;
@@ -390,6 +398,47 @@ function checkWideStreet(problems: Problems, value: unknown): void {
 }
 
 /**
+ * Validate the OPTIONAL substrate_substitution block (contract 1.2.0, M5-T058).
+ * ABSENT is valid (a 1.0.0/1.1.0-shaped body omits it); when PRESENT every
+ * documented key of the condo billing-BBL -> base-lot substitution stamp is
+ * shape-checked, so a malformed block fails TOTAL validation and never renders.
+ * A RECORD of a documented resolution, never a computed allowance — no legal or
+ * substitution meaning is judged here, only shape. Positive-shape only: the
+ * server owns the closed schema (additionalProperties:false).
+ */
+function checkSubstrateSubstitution(problems: Problems, value: unknown): void {
+  if (value === undefined) return;
+  if (!isRecord(value)) {
+    problems.add("substrate_substitution", "must be an object when present");
+    return;
+  }
+  for (const key of ["entered_bbl", "analyzed_bbl", "note"] as const) {
+    if (!isNonEmptyString(value[key])) {
+      problems.add(`substrate_substitution.${key}`, "must be a non-empty string");
+    }
+  }
+  for (const key of ["condo_key", "resolution_path", "retrieved_at"] as const) {
+    if (!(value[key] === null || typeof value[key] === "string")) {
+      problems.add(`substrate_substitution.${key}`, "must be a string or null");
+    }
+  }
+  if (!(value.source_id === null || isNonEmptyString(value.source_id))) {
+    problems.add("substrate_substitution.source_id", "must be a non-empty string or null");
+  }
+  checkStringArray(problems, "substrate_substitution.dataset_ids", value.dataset_ids);
+  const mixed = value.mixed_substrate;
+  if (!isRecord(mixed)) {
+    problems.add("substrate_substitution.mixed_substrate", "must be an object");
+    return;
+  }
+  for (const key of ["lot_facts_substrate", "identity_facts_substrate", "note"] as const) {
+    if (!isNonEmptyString(mixed[key])) {
+      problems.add(`substrate_substitution.mixed_substrate.${key}`, "must be a non-empty string");
+    }
+  }
+}
+
+/**
  * Validate an HTTP-200 body against the generated rule_evaluation types.
  * Returns the typed document ONLY when every documented key passes its shape
  * and enum check. Unknown/extra top-level keys are not rejected (positive-shape
@@ -464,6 +513,7 @@ export function validateRuleEvaluationDocument(
   checkStringArray(problems, "reasons", body.reasons);
   checkRuleConflict(problems, body.rule_conflict);
   checkWideStreet(problems, body.wide_street);
+  checkSubstrateSubstitution(problems, body.substrate_substitution);
 
   if (problems.list.length > 0) {
     return { ok: false, problems: problems.list };

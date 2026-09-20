@@ -52,11 +52,14 @@ __all__ = [
 
 # The contract version this serializer emits - a published value in the closed
 # rule_evaluation.schema.json contract_version enum. Bumped to 1.1.0 (M5-T037)
-# when the additive, OPTIONAL wide_street block was appended to the contract; a
-# 1.0.0 consumer stays valid because 1.0.0 remains in the enum and the block is
-# optional. The serializer emits 1.1.0 for every document (the block appears only
-# when a wide-street determination folded in, carried through by as_dict()).
-RULE_EVALUATION_CONTRACT_VERSION = "1.1.0"
+# when the additive, OPTIONAL wide_street block was appended, then to 1.2.0
+# (M5-T058) when the additive, OPTIONAL substrate_substitution block (the condo
+# billing-BBL -> base-lot substitution stamp) was appended; a 1.0.0/1.1.0
+# consumer stays valid because both versions remain in the enum and both blocks
+# are optional. The serializer emits 1.2.0 for every document (each optional block
+# appears only when it folded in - a wide-street determination or a condo base-lot
+# substitution - carried through by as_dict()).
+RULE_EVALUATION_CONTRACT_VERSION = "1.2.0"
 
 # Runtime-bundled schema package (package DATA inside the installed app), the
 # same source app.profile.contract loads from. The bundle copies are
@@ -134,9 +137,10 @@ def serialize_rule_evaluation(
     profile_contract_version: str,
     as_of_date: str | None = None,
 ) -> dict:
-    """Map a :class:`PropertyRuleEvaluation` onto a rule_evaluation @ 1.1.0
-    document (the additive, OPTIONAL wide_street block appears only when a
-    wide-street determination folded in; otherwise the body is 1.0.0-shaped).
+    """Map a :class:`PropertyRuleEvaluation` onto a rule_evaluation @ 1.2.0
+    document (the additive, OPTIONAL wide_street and substrate_substitution blocks
+    appear only when they folded in - a wide-street determination or a condo
+    base-lot substitution respectively; otherwise the body is 1.0.0-shaped).
 
     ``profile_contract_version`` is the ``contract_version`` of the evaluated
     property_profile instance (e.g. ``"1.4.0"``). ``as_of_date`` is the temporal

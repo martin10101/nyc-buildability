@@ -4,7 +4,11 @@ import { describe, expect, it } from "vitest";
 import { SUPPORTED_CONTRACT_VERSIONS } from "@/lib/contract";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
-import { draftApplicableDoc } from "@/test-support/rule-evaluation-fixtures";
+import {
+  condoUnresolvedDoc,
+  draftApplicableDoc,
+  substitutionStampDoc,
+} from "@/test-support/rule-evaluation-fixtures";
 
 /**
  * Task M2-T010 (CT-S1/CT-S2): the client's runtime supported-contract-version
@@ -163,6 +167,99 @@ describe("rule_evaluation contract-version admission (M5-T037: 1.0.0 + additive 
         result.problems.some((p) => p.startsWith("wide_street.governing_max_residential_far")),
       ).toBe(true);
     }
+  });
+});
+
+describe("rule_evaluation contract-version admission (M5-T058: additive 1.2.0 substrate_substitution)", () => {
+  const substitution = {
+    entered_bbl: "3022647515",
+    analyzed_bbl: "3022640032",
+    note:
+      "This analysis runs on the recorded base tax lot for the entered condominium " +
+      "billing lot; the entered billing lot and the analyzed base lot are recorded as " +
+      "entered versus analyzed, a record and not a computed allowance.",
+    condo_key: "301313",
+    resolution_path: "dof_dtm_condo",
+    source_id: "nyc-dof-dtm-condo",
+    dataset_ids: ["dtm-condo-2026-07"],
+    retrieved_at: "2026-09-06T00:00:00Z",
+    mixed_substrate: {
+      lot_facts_substrate: "analyzed_base_lot",
+      identity_facts_substrate: "entered_billing_lot",
+      note:
+        "The lot area and geometry describe the analyzed base lot; the PLUTO identity " +
+        "facts describe the entered billing lot.",
+    },
+  } satisfies NonNullable<RuleEvaluation["substrate_substitution"]>;
+
+  it("accepts a 1.2.0 document carrying the optional substrate_substitution block", () => {
+    const doc = substitutionStampDoc();
+    expect(doc.contract_version).toBe("1.2.0");
+    const result = validateRuleEvaluationDocument(doc);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.document.substrate_substitution?.entered_bbl).toBe("3022647515");
+      expect(result.document.substrate_substitution?.analyzed_bbl).toBe("3022640032");
+      expect(result.document.substrate_substitution?.mixed_substrate.lot_facts_substrate).toBe(
+        "analyzed_base_lot",
+      );
+    }
+  });
+
+  it("accepts a 1.2.0 document with NO block (the block is optional; the serializer omits it off-path)", () => {
+    const doc = draftApplicableDoc();
+    doc.contract_version = "1.2.0";
+    expect(doc.substrate_substitution).toBeUndefined();
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+
+  it("keeps a 1.0.0 document valid with no substrate_substitution block (old documents stay valid)", () => {
+    const doc = draftApplicableDoc();
+    expect(doc.contract_version).toBe("1.0.0");
+    expect(doc.substrate_substitution).toBeUndefined();
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+
+  it("admits the new condo_base_lot_unresolved fail-safe reason", () => {
+    const doc = condoUnresolvedDoc();
+    expect(doc.fail_safe_reason).toBe("condo_base_lot_unresolved");
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
+  });
+
+  it("rejects a fail_safe_reason outside the documented enum", () => {
+    const doc = condoUnresolvedDoc();
+    (doc as unknown as Record<string, unknown>).fail_safe_reason = "condo_substrate_missing";
+    const result = validateRuleEvaluationDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.startsWith("fail_safe_reason"))).toBe(true);
+    }
+  });
+
+  it("enforces the substrate_substitution block shape when present (malformed block fails total validation)", () => {
+    const doc = substitutionStampDoc();
+    const bad = structuredClone(substitution) as unknown as Record<string, unknown>;
+    bad.entered_bbl = 3022647515; // number, not a non-empty string
+    (bad.mixed_substrate as Record<string, unknown>).lot_facts_substrate = ""; // empty string
+    (doc as unknown as Record<string, unknown>).substrate_substitution = bad;
+    const result = validateRuleEvaluationDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some((p) => p.startsWith("substrate_substitution.entered_bbl"))).toBe(
+        true,
+      );
+      expect(
+        result.problems.some((p) =>
+          p.startsWith("substrate_substitution.mixed_substrate.lot_facts_substrate"),
+        ),
+      ).toBe(true);
+    }
+  });
+
+  it("does not reject a document only because it carries an extra top-level key beside the stamp (positive-shape)", () => {
+    const doc = substitutionStampDoc();
+    (doc as unknown as Record<string, unknown>).server_only_future_field = "ignored-by-the-client";
+    expect(validateRuleEvaluationDocument(doc).ok).toBe(true);
   });
 });
 

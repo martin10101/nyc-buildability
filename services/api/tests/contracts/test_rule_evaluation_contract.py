@@ -244,3 +244,168 @@ def test_property_profile_contract_still_1_4_0_closed_enum() -> None:
 def test_existing_property_profile_fixtures_still_validate(fixture: Path) -> None:
     schema = _load(SCHEMA_DIR / "property_profile.schema.json")
     jsonschema.Draft202012Validator(schema, registry=_registry()).validate(_load(fixture))
+
+
+# ---------------------------------------------------------------------------
+# M5-T058: additive contract 1.2.0 — the OPTIONAL substrate_substitution block
+# (condo billing-BBL -> base-lot substitution stamp) + the condo_base_lot_
+# unresolved honest-refusal vocabulary. Documents are built INLINE from the
+# committed valid fixtures because packages/contracts/fixtures is a forbidden
+# edit target for this packet, so no new fixture file is added; the block shape
+# mirrors app.spatial.live_provider.build_substrate_substitution_stamp.
+# ---------------------------------------------------------------------------
+
+BASE_VALID = FIXTURE_ROOT / "valid" / "rule_evaluation" / "supported_family_draft.json"
+BASE_FAIL_SAFE = FIXTURE_ROOT / "valid" / "rule_evaluation" / "professional_review_fail_safe.json"
+
+SUBSTRATE_SUBSTITUTION_BLOCK = {
+    "entered_bbl": "3022647515",
+    "analyzed_bbl": "3022640032",
+    "note": (
+        "This analysis runs on the recorded base tax lot for the entered "
+        "condominium billing lot; the entered billing lot and the analyzed base "
+        "lot are recorded as entered versus analyzed, a record and not a "
+        "computed allowance."
+    ),
+    "condo_key": "301313",
+    "resolution_path": "dof_dtm_condo",
+    "source_id": "nyc-dof-dtm-condo",
+    "dataset_ids": ["dtm-condo-2026-07"],
+    "retrieved_at": "2026-09-06T00:00:00Z",
+    "mixed_substrate": {
+        "lot_facts_substrate": "analyzed_base_lot",
+        "identity_facts_substrate": "entered_billing_lot",
+        "note": (
+            "The lot area and geometry describe the analyzed base lot; the "
+            "PLUTO identity facts describe the entered billing lot."
+        ),
+    },
+}
+
+
+def _stamped_1_2_0_document() -> dict:
+    """The committed conditional-draft fixture promoted to a 1.2.0 document that
+    CARRIES the optional substrate_substitution stamp. evaluated_input.bbl stays
+    the ENTERED billing BBL — the stamp alone carries entered-vs-analyzed."""
+    doc = _load(BASE_VALID)
+    doc["contract_version"] = "1.2.0"
+    doc["evaluated_input"]["bbl"] = SUBSTRATE_SUBSTITUTION_BLOCK["entered_bbl"]
+    doc["substrate_substitution"] = json.loads(json.dumps(SUBSTRATE_SUBSTITUTION_BLOCK))
+    return doc
+
+
+def test_m5t058_contract_version_enum_admits_1_2_0_additively() -> None:
+    """1.2.0 is appended, not substituted: the closed enum is exactly the three
+    published rule_evaluation versions."""
+    schema = _load(RULE_EVAL_SCHEMA)
+    assert schema["properties"]["contract_version"]["enum"] == ["1.0.0", "1.1.0", "1.2.0"]
+    # substrate_substitution is OPTIONAL — never added to the required list.
+    assert "substrate_substitution" not in schema["required"]
+    assert "substrate_substitution" in schema["properties"]
+
+
+def test_m5t058_stamped_1_2_0_document_round_trips() -> None:
+    """AS-1/AS-5: a 1.2.0 document carrying the substrate_substitution stamp
+    validates, and the block survives a JSON round-trip byte-for-byte (every
+    field preserved, entered_bbl == evaluated_input.bbl)."""
+    doc = _stamped_1_2_0_document()
+    _validator().validate(doc)  # raises on failure
+    round_tripped = json.loads(json.dumps(doc))
+    assert round_tripped["substrate_substitution"] == SUBSTRATE_SUBSTITUTION_BLOCK
+    assert (
+        round_tripped["substrate_substitution"]["entered_bbl"]
+        == round_tripped["evaluated_input"]["bbl"]
+    )
+    # Both schema copies admit the identical document (byte-identity proven
+    # separately; here the runtime bundle validates the same instance).
+    bundle_schema = _load(BUNDLE_DIR / "rule_evaluation.schema.json")
+    jsonschema.Draft202012Validator(bundle_schema, registry=_registry()).validate(doc)
+
+
+def test_m5t058_optional_block_absent_still_validates_at_1_2_0() -> None:
+    """Optional-block absence: a 1.2.0 document that OMITS the block validates
+    (the serializer emits it only on the substituted path)."""
+    doc = _load(BASE_VALID)
+    doc["contract_version"] = "1.2.0"
+    assert "substrate_substitution" not in doc
+    _validator().validate(doc)
+
+
+def test_m5t058_old_documents_stay_valid_without_the_block() -> None:
+    """Old-document validity: 1.0.0 and 1.1.0 documents with no block remain
+    valid — the additive block and enum member never became required."""
+    for version in ("1.0.0", "1.1.0"):
+        doc = _load(BASE_VALID)
+        doc["contract_version"] = version
+        assert "substrate_substitution" not in doc
+        _validator().validate(doc)
+
+
+def test_m5t058_substrate_substitution_is_a_closed_object() -> None:
+    """Closed object shapes: an unexpected key anywhere in the block (top level
+    OR the nested mixed_substrate) is rejected (additionalProperties:false)."""
+    top = _stamped_1_2_0_document()
+    top["substrate_substitution"]["unexpected_key"] = "x"
+    top_messages = " ".join(e.message for e in _validator().iter_errors(top))
+    assert "unexpected_key" in top_messages and "dditional" in top_messages
+
+    nested = _stamped_1_2_0_document()
+    nested["substrate_substitution"]["mixed_substrate"]["unexpected_key"] = "x"
+    nested_messages = " ".join(e.message for e in _validator().iter_errors(nested))
+    assert "unexpected_key" in nested_messages and "dditional" in nested_messages
+
+
+def test_m5t058_substrate_substitution_required_fields_enforced() -> None:
+    """Every documented stamp field is required; removing any one fails
+    validation for its stated defect."""
+    for field in (
+        "entered_bbl",
+        "analyzed_bbl",
+        "note",
+        "condo_key",
+        "resolution_path",
+        "source_id",
+        "dataset_ids",
+        "retrieved_at",
+        "mixed_substrate",
+    ):
+        doc = _stamped_1_2_0_document()
+        del doc["substrate_substitution"][field]
+        errors = list(_validator().iter_errors(doc))
+        assert errors, f"removing substrate_substitution.{field} should fail validation"
+        assert any("required" in e.message and field in e.message for e in errors), field
+
+
+def test_m5t058_fail_safe_reason_admits_condo_base_lot_unresolved() -> None:
+    """New refusal reason: condo_base_lot_unresolved is admitted, and a fail-safe
+    document naming it validates with NO substitution stamp (a multi-lot /
+    unresolved outcome exposes no single analyzed lot to stamp)."""
+    schema = _load(RULE_EVAL_SCHEMA)
+    enum = next(
+        branch["enum"]
+        for branch in schema["properties"]["fail_safe_reason"]["anyOf"]
+        if "enum" in branch
+    )
+    assert "condo_base_lot_unresolved" in enum
+
+    doc = _load(BASE_FAIL_SAFE)
+    doc["contract_version"] = "1.2.0"
+    doc["fail_safe_reason"] = "condo_base_lot_unresolved"
+    assert "substrate_substitution" not in doc
+    _validator().validate(doc)
+
+
+def test_m5t058_unknown_fail_safe_reason_rejected() -> None:
+    doc = _load(BASE_FAIL_SAFE)
+    doc["fail_safe_reason"] = "condo_substrate_missing"
+    assert list(_validator().iter_errors(doc)), (
+        "an undocumented fail_safe_reason must be rejected"
+    )
+
+
+def test_m5t058_contract_version_outside_enum_rejected() -> None:
+    """The rule_evaluation contract_version enum is closed at 1.2.0: 1.3.0 (a
+    property_profile version) is NOT a rule_evaluation contract version."""
+    doc = _stamped_1_2_0_document()
+    doc["contract_version"] = "1.3.0"
+    assert list(_validator().iter_errors(doc))

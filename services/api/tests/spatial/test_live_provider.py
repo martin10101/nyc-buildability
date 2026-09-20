@@ -46,11 +46,16 @@ from app.connectors.zoning_features_arcgis import (
 from app.connectors.ztldb_soda import UpstreamError as ZtldbUpstreamError
 from app.spatial import live_provider
 from app.spatial.live_provider import (
+    CONDO_BASE_LOT_UNRESOLVED_CAUSE,
     LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR,
     LiveSpatialFetchers,
+    LiveSubstrateResult,
     _candidate_layer_queries,
     build_live_substrate,
+    build_live_substrate_resolved,
+    build_substrate_substitution_stamp,
     default_live_substrate,
+    default_live_substrate_resolved,
     live_spatial_provider_enabled,
 )
 from app.spatial.models import (
@@ -675,3 +680,185 @@ def test_m5t045_non_condo_passthrough_default_resolver_byte_identical() -> None:
     assert record.bbl == BBL
     assert recording.ztldb_calls == [(BBL, CID)]
     assert recording.lot_calls == [(BBL, CID)]
+
+
+# ---------------------------------------------------------------------------
+# M5-T058: carry the CondoResolution ACROSS the substrate seam so the resolution
+# can be STAMPED onto the evaluation document (build_live_substrate_resolved ->
+# LiveSubstrateResult) instead of being discarded as a log line, and name a
+# condo-caused absent substrate honestly (condo_base_lot_unresolved) rather than
+# the generic spatial_intersection_absent. No base lot is ever auto-picked on a
+# multi-lot / unresolved outcome (D-078-R002). build_live_substrate stays the
+# byte-identical object|None seam the other three route consumers call.
+# ---------------------------------------------------------------------------
+
+
+def _resolved_single_resolution() -> CondoResolution:
+    """A resolved-single CondoResolution with EVERY provenance field populated,
+    so the stamp's byte-match against the record is unambiguous (AS-5)."""
+    return _condo(
+        OUTCOME_RESOLVED_SINGLE,
+        base_bbls=(_BASE_LOT,),
+        resolved_base_bbl=_BASE_LOT,
+        condo_key="301313",
+        resolution_path="dtm_condo_soda_single_base_lot",
+        source_id="dof_dtm_condo",
+        dataset_ids=("dtm-condo-2026-09",),
+        retrieved_at="2026-09-06T00:00:00Z",
+    )
+
+
+def test_m5t058_as1_resolved_single_carries_stamp_and_provenance() -> None:
+    """AS-1/AS-5: a resolved single base lot rides WITH the substrate as a
+    substrate_substitution stamp, the pipeline runs on the BASE lot exactly once,
+    and every stamp field byte-matches the CondoResolution (nothing invented)."""
+    resolution = _resolved_single_resolution()
+    condo = _RecordingCondo(resolution)
+    recording = RecordingFetchers()
+    result = build_live_substrate_resolved(
+        _BILLING_BBL, CID, fetchers=recording.suite(), condo_resolver=condo
+    )
+    assert isinstance(result, LiveSubstrateResult)
+    # A real substrate composed on the BASE lot, resolution carried (not discarded).
+    assert isinstance(result.substrate, LotIntersectionRecord)
+    assert result.fail_safe_cause is None
+    assert result.resolution is resolution
+    # Single condo-resolver call; the zoning-lot lookup runs on the BASE lot.
+    assert condo.calls == [(_BILLING_BBL, CID)]
+    assert recording.ztldb_calls == [(_BASE_LOT, CID)]
+    assert recording.lot_calls == [(_BASE_LOT, CID)]
+    # The stamp equals the pure builder's output for this resolution: every
+    # provenance field traces to the record, nothing defaulted or fabricated.
+    stamp = result.substitution_stamp
+    assert stamp is not None
+    assert stamp == build_substrate_substitution_stamp(_BILLING_BBL, resolution)
+    assert stamp["entered_bbl"] == _BILLING_BBL
+    assert stamp["analyzed_bbl"] == _BASE_LOT
+    assert stamp["condo_key"] == "301313"
+    assert stamp["resolution_path"] == "dtm_condo_soda_single_base_lot"
+    assert stamp["source_id"] == "dof_dtm_condo"
+    assert stamp["dataset_ids"] == ["dtm-condo-2026-09"]
+    assert isinstance(stamp["dataset_ids"], list)
+    assert stamp["retrieved_at"] == "2026-09-06T00:00:00Z"
+    assert isinstance(stamp["note"], str) and stamp["note"]
+    # Mixed-substrate visibility: base lot supplies geometry, billing lot identity.
+    assert stamp["mixed_substrate"]["lot_facts_substrate"] == "analyzed_base_lot"
+    assert stamp["mixed_substrate"]["identity_facts_substrate"] == "entered_billing_lot"
+    assert isinstance(stamp["mixed_substrate"]["note"], str) and stamp["mixed_substrate"]["note"]
+
+
+@pytest.mark.parametrize(
+    ("outcome", "kwargs"),
+    [
+        (OUTCOME_MULTI_LOT, {"base_bbls": (_BASE_LOT, "3022640033")}),
+        (OUTCOME_UNRESOLVED, {}),
+        (OUTCOME_ERROR, {"error_type": "rate_limited"}),
+    ],
+    ids=["multi-lot", "unresolved", "typed-error"],
+)
+def test_m5t058_as2_condo_fail_safe_names_cause_no_auto_pick(outcome, kwargs) -> None:
+    """AS-2: a multi-lot / unresolved / typed-error condo outcome fail-safes to an
+    ABSENT substrate carrying the honest condo cause, with NO base lot auto-picked
+    (D-078-R002: zero geometry/lot lookups) and NO substitution stamp."""
+    resolution = _condo(outcome, **kwargs)
+    condo = _RecordingCondo(resolution)
+    recording = RecordingFetchers()  # healthy doubles that must never be reached
+    result = build_live_substrate_resolved(
+        _BILLING_BBL, CID, fetchers=recording.suite(), condo_resolver=condo
+    )
+    assert result.substrate is None
+    assert result.fail_safe_cause == CONDO_BASE_LOT_UNRESOLVED_CAUSE
+    assert result.substitution_stamp is None
+    assert result.resolution is resolution
+    # No auto-pick of any base lot: the pipeline never runs past the condo step.
+    assert condo.calls == [(_BILLING_BBL, CID)]
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m5t058_as2_genuine_absent_non_condo_keeps_no_condo_cause() -> None:
+    """AS-2: a genuinely-absent non-condo substrate (no candidate districts) does
+    NOT carry the condo cause - the generic spatial_intersection_absent reason
+    survives for it (fail_safe_cause is None)."""
+    recording = RecordingFetchers(ztldb=_ztldb_result())  # no districts -> no queries
+    result = build_live_substrate_resolved(BBL, CID, fetchers=recording.suite())
+    assert result.substrate is None
+    assert result.fail_safe_cause is None
+    assert result.substitution_stamp is None
+    # A non-condo pass-through reached ztldb (proving genuine, not a condo cause).
+    assert recording.ztldb_calls == [(BBL, CID)]
+    assert recording.lot_calls == []
+
+
+def test_m5t058_resolved_base_lot_absent_substrate_no_stamp() -> None:
+    """A resolved-single condo whose BASE lot then has no candidate districts:
+    the substrate is genuinely absent (no single analyzed lot to stamp), so no
+    substitution stamp and no condo-unresolved cause - the resolution is still
+    carried for provenance."""
+    resolution = _resolved_single_resolution()
+    condo = _RecordingCondo(resolution)
+    recording = RecordingFetchers(ztldb=_ztldb_result())  # base lot: no districts
+    result = build_live_substrate_resolved(
+        _BILLING_BBL, CID, fetchers=recording.suite(), condo_resolver=condo
+    )
+    assert result.substrate is None
+    assert result.substitution_stamp is None
+    assert result.fail_safe_cause is None
+    assert result.resolution is resolution
+    assert recording.ztldb_calls == [(_BASE_LOT, CID)]
+
+
+def test_m5t058_as3_build_live_substrate_delegates_substrate_only() -> None:
+    """AS-3: the legacy build_live_substrate seam still returns object|None,
+    equal to build_live_substrate_resolved(...).substrate, with a SINGLE condo
+    call (no double SODA) - the three other route consumers are unwidened."""
+    resolution = _resolved_single_resolution()
+    condo_legacy = _RecordingCondo(resolution)
+    condo_resolved = _RecordingCondo(resolution)
+    legacy = build_live_substrate(
+        _BILLING_BBL, CID, fetchers=RecordingFetchers().suite(), condo_resolver=condo_legacy
+    )
+    resolved = build_live_substrate_resolved(
+        _BILLING_BBL, CID, fetchers=RecordingFetchers().suite(), condo_resolver=condo_resolved
+    )
+    assert isinstance(legacy, LotIntersectionRecord)
+    assert isinstance(resolved.substrate, LotIntersectionRecord)
+    assert legacy.bbl == resolved.substrate.bbl
+    # Exactly one condo-resolver call per evaluation on BOTH seams.
+    assert condo_legacy.calls == [(_BILLING_BBL, CID)]
+    assert condo_resolved.calls == [(_BILLING_BBL, CID)]
+
+
+def test_m5t058_default_resolved_flag_off_empty_result_zero_calls(monkeypatch) -> None:
+    """AS-3: the gated default RESOLVED provider yields an empty LiveSubstrateResult
+    (absent substrate, no stamp, no cause) with ZERO connector calls when the flag
+    is off - parity with the unresolved default provider's flag-off branch."""
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = RecordingFetchers()
+    _install(monkeypatch, recording.suite())
+    result = default_live_substrate_resolved(BBL, CID)
+    assert isinstance(result, LiveSubstrateResult)
+    assert result.substrate is None
+    assert result.substitution_stamp is None
+    assert result.fail_safe_cause is None
+    assert recording.lot_calls == []
+    assert recording.ztldb_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m5t058_default_resolved_flag_on_carries_stamp_single_call(monkeypatch) -> None:
+    """AS-1/AS-3: flag on, the default RESOLVED provider composes the live
+    substrate AND carries the stamp, with exactly one condo-resolver call."""
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    resolution = _resolved_single_resolution()
+    condo = _RecordingCondo(resolution)
+    recording = RecordingFetchers()
+    _install(monkeypatch, recording.suite())
+    _install_condo(monkeypatch, condo)
+    result = default_live_substrate_resolved(_BILLING_BBL, CID)
+    assert isinstance(result.substrate, LotIntersectionRecord)
+    assert result.substitution_stamp == build_substrate_substitution_stamp(
+        _BILLING_BBL, resolution
+    )
+    assert condo.calls == [(_BILLING_BBL, CID)]

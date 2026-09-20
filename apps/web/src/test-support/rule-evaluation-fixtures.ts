@@ -42,6 +42,58 @@ export function spatialUncertaintyDoc(): RuleEvaluation {
   return clone(splitLotSpatialUncertainty);
 }
 
+/** M5-T058 entered condo BILLING BBL and its single resolved base tax lot. */
+export const SUBSTITUTION_ENTERED_BBL = "3022647515";
+export const SUBSTITUTION_ANALYZED_BBL = "3022640032";
+
+/**
+ * A rule_evaluation @ 1.2.0 document CARRYING the OPTIONAL substrate_substitution
+ * stamp: the entered condo billing BBL was legitimately analyzed on its single
+ * resolved base tax lot. evaluated_input.bbl STAYS the entered billing BBL (the
+ * stamp alone carries entered-vs-analyzed), so a consumer sees a legitimate
+ * substitution, never an identity mismatch (DB-036(d) closure). Derived from the
+ * conditional draft fixture so the analysis is a real result, not a fail-safe.
+ */
+export function substitutionStampDoc(): RuleEvaluation {
+  const doc = draftApplicableDoc();
+  doc.contract_version = "1.2.0";
+  doc.evaluated_input.bbl = SUBSTITUTION_ENTERED_BBL;
+  doc.substrate_substitution = {
+    entered_bbl: SUBSTITUTION_ENTERED_BBL,
+    analyzed_bbl: SUBSTITUTION_ANALYZED_BBL,
+    note:
+      "This analysis runs on the recorded base tax lot for the entered " +
+      "condominium billing lot; the entered billing lot and the analyzed base " +
+      "lot are recorded as entered versus analyzed, a record and not a computed " +
+      "allowance.",
+    condo_key: "301313",
+    resolution_path: "dof_dtm_condo",
+    source_id: "nyc-dof-dtm-condo",
+    dataset_ids: ["dtm-condo-2026-07"],
+    retrieved_at: "2026-09-06T00:00:00Z",
+    mixed_substrate: {
+      lot_facts_substrate: "analyzed_base_lot",
+      identity_facts_substrate: "entered_billing_lot",
+      note:
+        "The lot area and geometry describe the analyzed base lot; the PLUTO " +
+        "identity facts describe the entered billing lot.",
+    },
+  };
+  return doc;
+}
+
+/**
+ * State 3 variant — condo-caused honest refusal (fail_safe,
+ * condo_base_lot_unresolved). Derived from the committed fail-safe fixture by
+ * renaming the fail-safe reason; NO substitution stamp exists (a multi-lot /
+ * unresolved / typed-error outcome exposes no single analyzed lot to stamp).
+ */
+export function condoUnresolvedDoc(): RuleEvaluation {
+  const doc = missingEvidenceDoc();
+  doc.fail_safe_reason = "condo_base_lot_unresolved";
+  return doc;
+}
+
 /**
  * State 4 — conflicting rules. Derived from the committed fail-safe fixture by
  * attaching the typed rule_conflict object the serializer emits for a detected

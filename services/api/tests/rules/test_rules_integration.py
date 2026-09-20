@@ -978,3 +978,143 @@ def test_m5t037_as_dict_omits_wide_street_block_for_non_conditional_district(reg
         wide_street_determination=det,
     )
     assert "wide_street" not in result.as_dict()
+
+
+# --------------------------------------------------------------------------
+# M5-T058 - the condo substrate-substitution carry at the EVALUATOR seam:
+#   (a) an ABSENT substrate caused by an unresolved condo base lot is named
+#       HONESTLY (condo_base_lot_unresolved), while a genuinely-absent non-condo
+#       substrate keeps the generic spatial_intersection_absent reason - both
+#       default to the pre-M5-T058 behavior so every existing caller is
+#       byte-identical (AS-2);
+#   (b) a supplied substrate_substitution stamp rides onto the result verbatim
+#       (a RECORD, never re-derived) and serializes as the OPTIONAL top-level
+#       substrate_substitution block ONLY when supplied - additive, so a document
+#       with no substitution stays a valid 1.0.0/1.1.0-shaped body (AS-1/AS-5).
+# No base lot is ever auto-selected on a multi-lot/unresolved outcome
+# (D-078-R002); the absent-substrate refusal path carries NO stamp (there is no
+# single analyzed lot to stamp). The stamp is a plain dict literal here (the
+# evaluator carries it opaquely); the live provider's build_substrate_
+# substitution_stamp shape + provenance byte-match are proved in
+# tests/spatial/test_live_provider.py.
+# --------------------------------------------------------------------------
+
+_SUBSTITUTION_STAMP = {
+    "entered_bbl": "3022647515",
+    "analyzed_bbl": "3022640050",
+    "note": "analyzed on the recorded base tax lot; entered vs analyzed record",
+    "condo_key": "301313",
+    "resolution_path": "dtm_condo_soda_single_base_lot",
+    "source_id": "dof_dtm_condo",
+    "dataset_ids": ["dtm-condo-2026-09"],
+    "retrieved_at": "2026-09-06T00:00:00Z",
+    "mixed_substrate": {
+        "lot_facts_substrate": "analyzed_base_lot",
+        "identity_facts_substrate": "entered_billing_lot",
+        "note": "lot area/geometry describe the base lot; PLUTO identity the billing lot",
+    },
+}
+
+
+def test_m5t058_absent_substrate_condo_unresolved_names_honest_reason(registry):
+    # AS-2: a condo billing BBL whose base lot could not be resolved to a single
+    # lot -> the ABSENT-substrate refusal is named honestly, NOT the generic
+    # spatial_intersection_absent. No district, no value, no auto-picked base lot
+    # (D-078-R002), and NO substitution stamp (no single analyzed lot exists).
+    result = ri.evaluate_property(
+        _profile(None, bbl="3022647515"),
+        registry=registry,
+        spatial_absent_condo_unresolved=True,
+    )
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_CONDO_BASE_LOT_UNRESOLVED
+    assert result.fail_safe_reason == "condo_base_lot_unresolved"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert result.zoning_district is None
+    assert result.evaluations == []
+    assert result.needs_review is True
+    # The refusal is honest about the condo cause and the human next step.
+    joined = " ".join(result.reasons).lower()
+    assert "no base lot is auto-selected" in joined
+    assert "site-definition confirmation" in joined
+    # No stamp on the absent path; the block is ABSENT from the document.
+    assert result.substrate_substitution is None
+    assert "substrate_substitution" not in result.as_dict()
+
+
+def test_m5t058_absent_substrate_non_condo_keeps_generic_reason(registry):
+    # AS-2 companion: with the new flag defaulted OFF (a genuinely-absent non-condo
+    # substrate) the generic spatial_intersection_absent reason survives, byte-
+    # identical to the pre-M5-T058 behavior. Never leak the condo cause here.
+    result = ri.evaluate_property(_profile(None, bbl="3052960043"), registry=registry)
+    assert result.fail_safe_reason == ri.FAILSAFE_SPATIAL_ABSENT
+    assert result.fail_safe_reason == "spatial_intersection_absent"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert "substrate_substitution" not in result.as_dict()
+
+
+def test_m5t058_absent_substrate_flag_default_is_pre_m5t058_byte_identical(registry):
+    # The additive params default to the old behavior: an absent-substrate result
+    # with both new params defaulted is byte-identical to one built without them.
+    with_defaults = ri.evaluate_property(
+        _profile(None, bbl="3052960043"),
+        registry=registry,
+        spatial_absent_condo_unresolved=False,
+        substrate_substitution=None,
+    ).export()
+    legacy = ri.evaluate_property(_profile(None, bbl="3052960043"), registry=registry).export()
+    assert (
+        json.dumps(with_defaults, sort_keys=True) == json.dumps(legacy, sort_keys=True)
+    )
+
+
+def test_m5t058_confident_result_carries_substitution_stamp_verbatim(registry):
+    # AS-1/AS-5: a supplied stamp rides onto a confident result unchanged (a
+    # RECORD, never re-derived) and serializes as the OPTIONAL top-level block.
+    result = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0),
+        registry=registry,
+        substrate_substitution=_SUBSTITUTION_STAMP,
+    )
+    assert result.zoning_district == "R5"  # analysis ran on the base-lot substrate
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    document = result.as_dict()
+    assert document["substrate_substitution"] == _SUBSTITUTION_STAMP
+    # A distinct copy, never the same object (frozen dataclass copies on as_dict).
+    assert document["substrate_substitution"] is not _SUBSTITUTION_STAMP
+    # export() carries the same block and stays strict-JSON serializable.
+    export = result.export()
+    assert export["substrate_substitution"] == _SUBSTITUTION_STAMP
+    json.dumps(export, allow_nan=False)
+    # Additive: the ONLY difference from the no-stamp path is the extra block.
+    without = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry
+    ).export()
+    assert "substrate_substitution" not in without
+    export.pop("substrate_substitution")
+    assert json.dumps(export, sort_keys=True) == json.dumps(without, sort_keys=True)
+
+
+def test_m5t058_stamp_survives_base_lot_uncertain_fail_safe(registry):
+    # A substitution DID happen (billing -> single base lot), but the base lot's
+    # own substrate is geometry-uncertain -> the result fail-safes on the base
+    # lot while STILL carrying the substitution stamp (the substitution and the
+    # base-lot uncertainty are independent facts; the stamp records the former).
+    record = _record(
+        LOT_BOUNDARY_UNCERTAIN,
+        [
+            _pair("R5", PAIR_NEAR_BOUNDARY_UNCERTAIN, share=(0.55, 0.60, 0.65)),
+            _pair("R6", PAIR_NEAR_BOUNDARY_UNCERTAIN, share=(0.35, 0.40, 0.45)),
+        ],
+        professional_review_required=True,
+        review_reasons=["lot_overall_class=boundary_uncertain"],
+    )
+    result = ri.evaluate_property(
+        _profile(_spatial_section(record)),
+        registry=registry,
+        substrate_substitution=_SUBSTITUTION_STAMP,
+    )
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_GEOMETRY_UNCERTAIN
+    assert result.zoning_district is None
+    assert result.as_dict()["substrate_substitution"] == _SUBSTITUTION_STAMP

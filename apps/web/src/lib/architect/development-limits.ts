@@ -159,6 +159,9 @@ const FAILURE_LABELS: Record<NonNullable<RuleEvaluation["fail_safe_reason"]>, st
   geometry_uncertain: "Lot boundary requires review",
   inconsistent_confident_geometry: "Conflicting boundary results",
   rule_conflict: "Conflicting rule results",
+  // M5-T058: the land is a condo whose base lots could not be resolved to a
+  // single lot; a site-definition confirmation is needed before results compute.
+  condo_base_lot_unresolved: "Condo base lot needs site confirmation",
 };
 
 export function calculationStatus(evaluation: RuleEvaluation | null, scenario: Scenario | null, bbl: string): string {

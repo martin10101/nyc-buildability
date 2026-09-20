@@ -11,8 +11,8 @@ import type { Scenario } from "@/lib/scenario-contract";
 import { validateScenarioDocument } from "@/lib/scenario-contract";
 import type { RuleEvaluation } from "@/lib/rule-evaluation-contract";
 import { validateRuleEvaluationDocument } from "@/lib/rule-evaluation-contract";
-import { draftApplicableDoc, missingEvidenceDoc, ruleConflictDoc } from "@/test-support/rule-evaluation-fixtures";
-import { bulkRow, evaluatedResidentialFar, evaluationIsInspectable, scenarioCap } from "@/lib/architect/development-limits";
+import { condoUnresolvedDoc, draftApplicableDoc, missingEvidenceDoc, ruleConflictDoc } from "@/test-support/rule-evaluation-fixtures";
+import { bulkRow, calculationStatus, evaluatedResidentialFar, evaluationIsInspectable, scenarioCap } from "@/lib/architect/development-limits";
 import { zolaLotUrl } from "@/lib/provenance-link";
 import scenarioFixture from "../../../../../../packages/contracts/fixtures/valid/scenario/preliminary_r5_cap.json";
 import r5Snapshot from "../../../../../../services/api/app/_zr_snapshots/v1/zr-23-21.snapshot.json";
@@ -521,6 +521,40 @@ describe("review cluster neighboring states", () => {
     expect(disclosure).toHaveTextContent("15,000");
     const raw = screen.getByText("Complete scenario record").closest("details")!.querySelector("pre")!;
     expect(JSON.parse(raw.textContent!)).toEqual(scenario);
+  });
+});
+
+describe("M5-T058 — condo base-lot unresolved refusal label (DB-036(d) honest refusal)", () => {
+  it("labels a condo_base_lot_unresolved fail-safe 'Condo base lot needs site confirmation'", () => {
+    const { profile } = inputs();
+    const evaluation = condoUnresolvedDoc();
+    evaluation.evaluated_input.bbl = profile.identity.bbl;
+    expect(evaluation.fail_safe_reason).toBe("condo_base_lot_unresolved");
+    expect(calculationStatus(evaluation, null, profile.identity.bbl)).toBe(
+      "Condo base lot needs site confirmation",
+    );
+  });
+
+  it("surfaces the condo refusal label on the development-limits surface and withholds computed values", () => {
+    const { profile } = inputs();
+    const evaluation = condoUnresolvedDoc();
+    evaluation.evaluated_input.bbl = profile.identity.bbl;
+    show(profile, evaluation);
+    expect(screen.getByText("Condo base lot needs site confirmation")).toBeInTheDocument();
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    // A condo-caused refusal never borrows the generic spatial label.
+    expect(screen.queryByText("Zoning boundary check unavailable")).toBeNull();
+  });
+
+  it("keeps the generic spatial label for a non-condo absent substrate (spatial_intersection_absent)", () => {
+    const { profile } = inputs();
+    const evaluation = missingEvidenceDoc();
+    evaluation.evaluated_input.bbl = profile.identity.bbl;
+    expect(evaluation.fail_safe_reason).toBe("spatial_intersection_absent");
+    expect(calculationStatus(evaluation, null, profile.identity.bbl)).toBe(
+      "Zoning boundary check unavailable",
+    );
   });
 });
 
