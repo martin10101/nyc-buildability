@@ -1,0 +1,19 @@
+{
+  "task_id": "M5-T056",
+  "material_commit": "5b7b4b30b8c8e53287f682182ba85da246560dac",
+  "requirements": {
+    "D-066-R001": [
+      "The packet was contracted with a seam-regenerated NAV BLOCK (tasks/M5-T056.json; G0 record M5-T056-G0.md) naming the condo-records.ts and PropertyOverview consumer sets, the condo_records.py mount point, and bbl.ts as read-only; the producer consumed bbl.ts read-only (report section 1) and kept PropertyOverview's public props stable; ReportView.tsx was in-scope but needed NO change (the shared-section inheritance proves through the ONE component - report section 5).",
+      "Material commit 5b7b4b30 touches exactly 8 allowed-path files (7 code/test + report) with per-file git blob digest bindings recorded in the report sections 1-7 and the orchestrator digest capture appended at harvest; no forbidden path touched."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances preserved: the T052 guard-coherence ruling untouched (ONE monotone deriveCondoSurface decision on both surfaces - report section 9 preservation binding); entered/billing BBLs display as city records under distinct labels with 'not recorded (unknown)' honesty; the divergent-zoning notice gates on actually-recorded zoning; timestamps stay boundedTimestamp and the boundedToken charset is untouched (DB-036(a) preserved for its bound packet)."
+    ],
+    "D-077-R002": [
+      "Lane-3 of the three D-077 lanes: contracted/claimed at the 92b0d265 seam (G0 PASS at 29c5bc0b), built by loop-3 runs 04-05 (audit-fork archive-repair recorded), unit complete at the circuit-breaker stop, harvested on the task branch 7a10fb05 with orchestrator self-checks green in-worktree (ruff clean; tests/api 501 passed; modularity exit 0) and integrated as 5b7b4b30."
+    ],
+    "D-077-R003": [
+      "Released, non-held scope: the six foldable DB-036 riders from the accepted M5-T052 wave, with the two NON-scope riders (a)/(d) explicitly preserved OPEN for their bound future packets; no held surface touched; web suites prove ONLY in CI at the pushed head (CI pending at submit; acceptance waits for green)."
+    ]
+  }
+}

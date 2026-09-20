@@ -1,0 +1,19 @@
+{
+  "task_id": "M5-T055",
+  "material_commit": "db445634695301c421e8bc84e73a1b4527adaa38",
+  "requirements": {
+    "D-066-R001": [
+      "The packet was contracted with a seam-regenerated NAV BLOCK (tasks/M5-T055.json; G0 record M5-T055-G0.md) naming the AddressConfirmCard consumer chain with line anchors and the binding copy-sweep discipline; the producer executed the sweep with recorded rg commands and hits (report 'Copy sweep' section) including the consumer check on address-resolution.test.tsx - no out-of-scope red left silent.",
+      "Material commit db445634 touches exactly 4 allowed-path files (AddressConfirmCard.tsx, address-confirm.test.tsx, the EXISTING responsive-a11y.spec.ts extended in place, the producer report); confirm-journey.spec.ts was in-scope but needed no change; no forbidden path touched."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances preserved: the record note remains a display-only city-record channel (no computed value introduced); the (d) copy trim keeps the tax-lot identity sentence and the accepted matched-present wording byte-identical; flag gating and display semantics unchanged (PRESERVATION section + AS-5)."
+    ],
+    "D-077-R002": [
+      "Lane-2 of the three D-077 lanes: contracted/claimed at the 92b0d265 seam (G0 PASS at 29c5bc0b), built by loop-2 runs 19-20 (rotation_refused drill applied between runs, recorded in WORKING_KNOWLEDGE), unit complete at the circuit-breaker stop, harvested on the task branch d6f9b63c and integrated as db445634; submitted for the independent wave at the frozen head."
+    ],
+    "D-077-R003": [
+      "Released, non-held scope: the DB-035 rider cluster from the accepted M5-T050 wave; 4 files all inside allowed_paths; no held surface touched; web behavior proves ONLY in CI at the pushed head per the thin-client rule (CI pending at submit; acceptance waits for green)."
+    ]
+  }
+}
