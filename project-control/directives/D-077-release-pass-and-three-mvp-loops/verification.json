@@ -80,7 +80,7 @@
     "D-077-R002",
     "D-077-R003"
    ],
-   "reviewed_sha": "03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae",
+   "reviewed_sha": "8705be52a202d813e444056f46d64ff335025852",
    "reviewed_manifest_sha256": "2399272a9c3d41c7ca649d24afaf0ae1e116b1551efa46cca74147b5f880631f",
    "producer": "frontend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -91,14 +91,14 @@
      "id": "D-077-R002",
      "state": "PASS",
      "evidence": [
-      "DCV verified (M5-T056-DCV.md): lane-3 full drill reproduced (contract 29c5bc0b, G0 PASS at 29c5bc0b, claim seams 455e598e/92b0d265 with the FULL worktree path, harvest 7a10fb05, integration 5b7b4b30, in-worktree self-checks + G4 re-run + CI api/web green at the byte-stable material). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078."
+      "DCV verified (M5-T056-DCV.md): lane-3 full drill reproduced (contract 29c5bc0b, G0 PASS at 29c5bc0b, claim seams 455e598e/92b0d265 with the FULL worktree path, harvest 7a10fb05, integration 5b7b4b30, in-worktree self-checks + G4 re-run + CI api/web green at the byte-stable material). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
      ]
     },
     {
      "id": "D-077-R003",
      "state": "PASS",
      "evidence": [
-      "DCV verified (M5-T056-DCV.md): released non-held scope; riders (a)/(d) explicitly preserved OPEN for their bound packets (boundedToken charset untouched, timestamps stay boundedTimestamp); zero forbidden paths. Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078."
+      "DCV verified (M5-T056-DCV.md): released non-held scope; riders (a)/(d) explicitly preserved OPEN for their bound packets (boundedToken charset untouched, timestamps stay boundedTimestamp); zero forbidden paths. Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
      ]
     }
    ]

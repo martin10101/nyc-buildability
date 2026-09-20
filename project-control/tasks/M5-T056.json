@@ -70,8 +70,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The guard-coherence ruling (ONE deriveCondoSurface decision, both surfaces) is accepted law - any second decision point or weakened withhold fails review.",
     "Sanitizer boundaries: timestamps/districts/identifiers are different vocabularies - do not touch boundedToken's charset; DB-036(a) and (d) explicitly bind OTHER future packets.",
@@ -81,7 +81,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T03:42:05.048634+00:00",
-  "updated_at": "2026-09-20T07:00:56.539059+00:00",
+  "updated_at": "2026-09-20T07:07:56.471075+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -120,5 +120,7 @@
       "status": "in_progress",
       "message": "Contracted + claimed at the D-077 three-lane seam (G0 PASS at 29c5bc0b; pairwise disjoint EMPTY x3); loop launch next with a fresh run-id"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-20T07:07:56.471075+00:00"
 }

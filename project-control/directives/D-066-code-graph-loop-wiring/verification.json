@@ -587,7 +587,7 @@
    "applicable_requirement_ids": [
     "D-066-R001"
    ],
-   "reviewed_sha": "03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae",
+   "reviewed_sha": "8705be52a202d813e444056f46d64ff335025852",
    "reviewed_manifest_sha256": "2399272a9c3d41c7ca649d24afaf0ae1e116b1551efa46cca74147b5f880631f",
    "producer": "frontend-engineer",
    "verifier": "directive-compliance-verifier",
@@ -598,7 +598,7 @@
      "id": "D-066-R001",
      "state": "PASS",
      "evidence": [
-      "DCV verified (M5-T056-DCV.md): NAV block present with query.py instruction; nav claims source-accurate (condo-records.ts consumers, main.py:32/:175 mount, bbl.ts:36 read-only); producer honored it (bbl.ts/bounded.ts byte-unchanged; PropertyOverview props stable; ReportView untouched with the shared-section inheritance proven). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078."
+      "DCV verified (M5-T056-DCV.md): NAV block present with query.py instruction; nav claims source-accurate (condo-records.ts consumers, main.py:32/:175 mount, bbl.ts:36 read-only); producer honored it (bbl.ts/bounded.ts byte-unchanged; PropertyOverview props stable; ReportView untouched with the shared-section inheritance proven). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
      ]
     }
    ]
