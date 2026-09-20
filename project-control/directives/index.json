@@ -625,7 +625,7 @@
   {
    "directive_id": "D-046",
    "slug": "parallel-family-production",
-   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and \u00a7G unchanged; backoff under resource pressure, never quality.",
+   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
    "status": "active",
    "issued_at": "2026-09-13",
    "issued_by": "owner",
@@ -1036,7 +1036,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-079-live-loop-handoffs/manifest.json"
+  },
+  {
+   "directive_id": "D-080",
+   "slug": "nonstop-three-loop-build",
+   "title": "Owner 2026-09-20 ('keep the loops running nonstop all 3 build build build'): continuous unattended three-lane operation while the owner sleeps - keep all three loops building, harvest/submit/review/accept/re-feed at seams without waiting for owner replies; re-affirms D-077-R002 cycling under ADR-006 Tier A; NO stop condition lifted (Tier D, holds, gate FAILs, dependency security, D-076-R003 post-B3 owner checkpoint all stand)",
+   "status": "active",
+   "issued_at": "2026-09-20",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-080-nonstop-three-loop-build/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T07:15:00+00:00"
+ "updated_at": "2026-09-20T08:10:00+00:00"
 }
