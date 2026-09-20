@@ -91,7 +91,7 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "D-078-R002 is a hard boundary: ANY auto-selection, defaulting, or system-driven status change of a site definition fails the wave regardless of coverage; even staleness handling only SURFACES a factual discrepancy.",
@@ -103,7 +103,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T07:51:22.695811+00:00",
-  "updated_at": "2026-09-20T11:59:06.517041+00:00",
+  "updated_at": "2026-09-20T12:11:52.745546+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
