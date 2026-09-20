@@ -102,6 +102,36 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T057",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "2fbd661e0afdd664d5d83daafd46ebf9ef9bfec1",
+   "reviewed_manifest_sha256": "c662a1cd6f34419ac384b10b2f11533b51d0765cfe3fe3ae566bbfcc82eab9f9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T09:34:29.968177+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED including the rework leg as the drill itself (M5-T057-DCV.md delta SSB row 4): full contract drill reproduced (binds+resyncs, seeds, G0 disjointness, FULL worktree path, worktree at claim seam, fresh run-id); harvest at the breaker close; the wave's G3/G5/DCV FAILs handled by ONE bounded tagged correction cluster ca5c8895 -> legal ledger walk (awaiting_gate->rework->in_progress->submit) -> delta re-attestation by the SAME four reviewers, all PASS at a0cb3b79 -> gates re-recorded at this head. Lane cycling continued throughout (loops 2/3 building; loop-2 run-21 stall recovered by the clear-recovery drill). Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED (M5-T057-DCV.md delta SSB row 5): released non-held queue only (B2->B3 order), no held-scope artifact in either material commit, no new public surface (include_in_schema=False on the existing internal flag; no new flag), PR #241 OPEN unmerged, nothing merged to main, no dependency/deploy/workflow file touched, D-072 three-lane ceiling unchanged. Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    }
+   ]
   }
  ]
 }
