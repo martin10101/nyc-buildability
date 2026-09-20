@@ -162,6 +162,66 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill (seam binds+resyncs, seeds, G0 pairwise disjointness, FULL worktree path wt-m5t058 in the packet, claim+progress 20); loop-2 runs 21-25 built the 19-file material; orchestrator harvest at the S13.8 breaker with supervisor-owned explicit-cwd evidence per the in-loop reviewer's rev7 evidence-handoff demand; producer commit 3bd196de cherry-picked to 7d02eddc with the DCV-reproduced --ignore-cr-at-eol empty diff."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: exactly the 19 allowed_paths in the material commit (one-for-one vs the packet); no held surface; the [ORCH-CORRECTED] 817a6546 guard admission ruled SANCTIONED (routed-sweep remedy, M5-T037/f954aa59 precedent, exactly the enum admission)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED at 03882888: full contract drill for the loop-3 lane (seam binds, seeds w/ the F-1 count correction recorded, G0 disjointness, FULL worktree path wt-m5t059, claim); loop-3 build harvested at the breaker; the blocking C1/C-1/C-2 findings closed by ONE tagged [ORCH-CORRECTED] cluster with delta re-attestation by the SAME five reviewers, all PASS at the corrected identity."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: exactly the 14 allowed_paths; site_definition route UNMOUNTED (no main.py edit - the mount is the named slice-2 packet under the DB-040 preconditions); no held surface."
+     ]
+    }
+   ]
   }
  ]
 }

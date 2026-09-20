@@ -90,8 +90,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Seam-widening compatibility is the design core: the three forbidden consumers must observe the OLD provider contract byte-unchanged - a signature break there fails G3 and the wave.",
     "The condo-cause carry on the None-substrate path must not leak condo internals into non-condo refusals (the generic reason must survive for genuinely absent geometry).",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T07:48:35.169888+00:00",
-  "updated_at": "2026-09-20T21:16:56.323127+00:00",
+  "updated_at": "2026-09-20T21:36:14.452554+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -148,5 +148,7 @@
       "status": "in_progress",
       "message": "Loop-2 unit closed at the S13.8 consecutive_revision_loops breaker (rev7 evidence-handoff); orchestrator harvest: fresh explicit-cwd evidence (Python 3.11.9; ruff 0, targeted 4-file pytest 168 passed, sweep-minus-documents 3086 passed w/ both failures characterized, modularity 0), material cherry-picked to 7d02eddc ALL-MATCH digests + routed [ORCH-CORRECTED] frozen-contract-guard fix 817a6546, pushed; web proof = CI at 817a6546 (running); submit at green head next"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-20T21:36:14.452554+00:00"
 }

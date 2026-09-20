@@ -4,5 +4,74 @@
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-078-BOOTSTRAP at capture; they re-bind to the delivering packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": null,
  "verified_at": null,
- "task_verifications": []
+ "task_verifications": [
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (task-verified for M5-T058's applicable portions): no code path auto-selects a base lot (fail-safe branch returns substrate=None + CONDO_BASE_LOT_UNRESOLVED_CAUSE; substitution only on OUTCOME_RESOLVED_SINGLE via resolved_base_bbl, never indexing base_bbls); honest refusal vocabulary condo_base_lot_unresolved only for the condo cause; stamp provenance carried verbatim; web notice display-only with the correspondence-gated guard that never relaxes the withhold. Reproduced tests: no_auto_pick parametrized (zero geometry lookups), route stamp + refusal tests within the 168."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted after M5-T056 accepted (07:07:56Z < 07:48:35Z); additive 1.2.0 proven (enum grown, block optional, old documents valid, mirrors byte-identical); accept ORDER honored - this acceptance precedes M5-T059's, which follows immediately under its own delta pre-auth."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED as TASK-VERIFIED for M5-T059 (explicitly NOT a directive-complete stamp, per the pre-auth voiding clause): slice 1 delivers the site-definition confirmation RECORD substrate (records module + ABC/in-memory store + unmounted route + condo-records display channel); the confirm UX, multi-parcel map, and calculations-on-combined-land are later slices."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: the confirmation is a human professional input by construction (record carries confirmer identity; revocation/supersession paths exist; the G3/G4/G5 blocking findings on cross-condo revoke binding closed mutation-proven at 03882888); no auto-selection anywhere; honest refusal stands where no confirmation exists."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: the pairing/sequencing condition (accept AFTER M5-T058) is satisfied AT THIS ACCEPT - M5-T058 accepted immediately prior in the same seam; contracted after M5-T056 per the capture record."
+     ]
+    }
+   ]
+  }
+ ]
 }

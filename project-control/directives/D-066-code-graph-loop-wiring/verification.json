@@ -646,6 +646,50 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (M5-T058-DCV.md section 2): graph regenerated at the 2fba5ed3/f86ae735 contract seam (D-066 manifest audit 2026-09-20T07:53:11Z, 764 files/16164 nodes) with the navigation block in packet inputs[4] naming the per-target impact sets and the three forbidden consumers; the graph was demonstrably USED - the harvest sweep caught the out-of-allowed-paths frozen-contract guard consumer and fixed it as 817a6546 rather than leaving it red."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED (M5-T059-DCV.md): graph regenerated at the same 2fba5ed3/f86ae735 seam binding both D-078 packets; navigation block embedded in the T059 packet; rulings re-affirmed at the corrected identity 03882888."
+     ]
+    }
+   ]
   }
  ]
 }
