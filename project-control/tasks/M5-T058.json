@@ -91,7 +91,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Seam-widening compatibility is the design core: the three forbidden consumers must observe the OLD provider contract byte-unchanged - a signature break there fails G3 and the wave.",
     "The condo-cause carry on the None-substrate path must not leak condo internals into non-condo refusals (the generic reason must survive for genuinely absent geometry).",
@@ -102,7 +102,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T07:48:35.169888+00:00",
-  "updated_at": "2026-09-20T21:02:02.320652+00:00",
+  "updated_at": "2026-09-20T21:16:56.323127+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",

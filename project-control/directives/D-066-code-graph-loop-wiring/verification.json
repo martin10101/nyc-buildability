@@ -624,6 +624,28 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (M5-T061-DCV.md section 3): graph regenerated at the 64a6f984 contract seam (D-066 manifest audit entry 2026-09-20T12:35:00; packet counts 782 files/16416 nodes/7200 edges distinct from the prior seam's 764) with the navigation block in the packet inputs; the consumer claim (main.py:36 mount + the test file only, no cycle) independently verified in source by the DCV and G3."
+     ]
+    }
+   ]
   }
  ]
 }

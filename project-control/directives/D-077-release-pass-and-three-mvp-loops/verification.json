@@ -132,6 +132,36 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill reproduced (64a6f984 contract seam with binds+digest resyncs+seeds+G0 disjointness; a444708d claim with the FULL worktree path wt-m5t061; loop-3 runs persistent3-local-07/-08; orchestrator harvest at the S13.8 consecutive_revision_loops breaker with supervisor-owned explicit-cwd evidence per the in-loop reviewer's six-REVISE handoff demand); wave G3/G4/G5 all PASS zero corrections at the frozen identity."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: material commit touches exactly the four allowed_paths (git diff-tree); DB-039 closure items a/b/d/e/g/h/i ruled CLOSED by G5; no held surface (no 3D/massing/19-task pack/GDS); M5-T058 HELD rule-evaluation surface untouched (peer-commit disjointness verified both directions)."
+     ]
+    }
+   ]
   }
  ]
 }

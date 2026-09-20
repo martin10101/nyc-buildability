@@ -162,6 +162,36 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B hardening of the released proposal-checks route (the B3 HTTP seam onto the accepted B2 engine) inside docs/PROPOSAL_EDITOR_PHASED_PLAN.md scope; no new flag (reuses INTERNAL_RULE_EVAL_ENABLED), no new dependency, (200/404/413/422/500) matrix unchanged (PROPOSAL_CHECKS_STATUS_STATE_MATRIX byte-checked)."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: proposal is a third input class validated only against registry-declared vocabulary/bounds (derive_input_domains copies every bound from InputSpec fields - no invented limit); route stores nothing and emits no scenario document; typed bounded refusals echo range/length only; producer-report honesty intact at the frozen identity (LF digest match, no post-hoc rewrite). Corroborated by G5's independent adversarial numeric-bypass probe (all refused typed, no echo)."
+     ]
+    }
+   ]
   }
  ]
 }
