@@ -1,0 +1,23 @@
+{
+  "task_id": "M5-T057",
+  "material_commit": "3dbd056d",
+  "produced_at": "2026-09-20T08:00:00+00:00",
+  "producer": "backend-engineer (loop-1 run persistent-local-59-m5t057; unit complete at the consecutive_revision_loops breaker stop; orchestrator harvest)",
+  "requirements": {
+    "D-066-R001": [
+      "Code graph regenerated at the T057 contract seam (commit 0099bbb2) and the graph-derived navigation block embedded in the packet inputs (accepted seams consumed read-only: proposal_checks.py engine entry, proposal_input_gate.py, proposal.py, derivation.py; T053 route + main.py mount precedent); the packet instructs `python tools/code_graph/query.py --no-regen impact <path>` before any sweep. The producer's route module consumes exactly the named seams (check_proposal is the only engine entry - AS-5 grep/import proof in the report SS3)."
+    ],
+    "D-076-R001": [
+      "The material commit 3dbd056d delivers phase B3 slice 1 of docs/PROPOSAL_EDITOR_PHASED_PLAN.md in the plan's recorded order (B2 accepted M5-T054 237th -> B3 route now): services/api/app/api/v1/proposal_checks_api.py wires the accepted B2 check_proposal engine to its first internal flag-gated HTTP seam, returning the grouped PASS/FAIL/COULD-NOT-CHECK report with numeric shortfalls for the B3 slice-2 editor UI. Producer report SS1-SS3 maps scope to implementation with line anchors."
+    ],
+    "D-076-R002": [
+      "The proposal stays a third input class at the route boundary: the route emits NO scenario document and NO contract version (BP-6/DB-034(d) disposition, report SS5; AS-5 test), enforces BP-1..BP-7 (single check_proposal entry, bounded request body, route-level compute caps with shown arithmetic, value-domain validation with unmapped keys surfaced never fed, length-capped error details), and the could-not-check honesty channel rides the serialized report (could_not_check reasons + counts; AS-1). No proposal-derived number is presented as a city record or rule output anywhere in the route."
+    ],
+    "D-077-R002": [
+      "Lane packet built under the three-loop drill: contracted+claimed at seam 0099bbb2/848703a7 with binds, digest resyncs, seeds, G0 disjointness record, FULL worktree path wt-m5t057, worktree at the claim-seam commit, launcher retargeted with fresh run-id persistent-local-59-m5t057. Harvested at the loop's breaker close per the drill: worktree output committed fcc58e24, cherry-picked 3dbd056d, orchestrator-captured suites (ruff 0, api 540 passed, rules 726 passed, modularity exit 0, explicit services/api cwd - report SS8.1), submitted at the CI-green head for the independent wave."
+    ],
+    "D-077-R003": [
+      "Task selected from the RELEASED, NON-HELD queue only: B3 is the next phase-B increment in the recorded order of docs/PROPOSAL_EDITOR_PHASED_PLAN.md after B2 (M5-T054) accepted; no held work touched (expansion hold minus D-040/D-076 releases, PR #241, Tier D all untouched); the route is internal flag-gated with no new public surface."
+    ]
+  }
+}
