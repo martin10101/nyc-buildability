@@ -1,0 +1,26 @@
+{
+  "task_id": "M5-T059",
+  "material_commit": "2fbd661e (cherry-pick of worktree 48fe290b)",
+  "produced_at": "2026-09-20T09:55:00+00:00",
+  "producer": "backend-engineer (loop-3 run persistent3-local-06-m5t059; unit complete at the consecutive_revision_loops breaker stop; orchestrator harvest)",
+  "requirements": {
+    "D-066-R001": [
+      "Code graph regenerated AT the M5-T058/M5-T059 contract seam BEFORE the packets were written (764 files/16164 nodes/7116 edges, D-066 manifest audit entry 2026-09-20T07:53:11Z) and the graph-derived navigation block embedded in the packet inputs (read-only consumed seams: condo_base_lot.py CondoResolution/multi-lot construction, documents/{storage,correction_history,review_authz,state}.py precedents, proposal_validation.py body discipline); the packet instructs `python tools/code_graph/query.py --no-regen impact <path>` before any sweep, advisory-only with source verification. Producer consumed exactly the named seams (documents/** and connectors/** untouched - read-only imports only)."
+    ],
+    "D-077-R002": [
+      "Lane packet built under the three-loop drill: contracted+claimed at seam 2fba5ed3/f86ae735 with binds+digest resyncs (D-078 R001-R003, D-077 R002/R003, D-066 R001), 10 seeded placeholders, G0 pairwise-disjointness record (EMPTY x3 vs live T057 lane + paired T058), FULL worktree path wt-m5t059, worktree created AT the claim-seam commit f86ae735, launcher-3 retargeted with fresh run-id persistent3-local-06-m5t059 after the deny-stale-asks drill (zero unanswered asks verified in both journals). Harvested at the loop's breaker close: worktree output committed 48fe290b (13 files, all inside allowed_paths), cherry-picked 2fbd661e, orchestrator-captured suites with explicit cwd (report SS10.1: ruff 0; pytest tests/site_definition tests/api 578 passed; tests/rules regression 726 passed; modularity exit 0), submitted at the CI-green head (CI 35502941971 success at fc2910af containing the material - the web proof for the PropertyOverview/condo-records surfacing)."
+    ],
+    "D-077-R003": [
+      "Task selected from the released, non-held queue: a 'subsequent released lane contracted at seams under existing directives' (D-078, owner-authorized 2026-09-20) - not phase-B scope and altering nothing in the phase-B order; no held work touched (expansion hold minus D-040/D-076 releases, PR #241, Tier D untouched); the new internal API is UNMOUNTED and flag-gated - no new public surface; no new dependency; no new flag; D-072 three-lane ceiling unchanged."
+    ],
+    "D-078-R001": [
+      "Slice 1 of the confirmation flow delivered as a normal gated packet: the typed append-only SiteDefinitionConfirmation record (exact parcels as a sorted tuple strictly equal to the resolver's base_bbls at create; confirmer identity+role; tz-aware confirmed_at; status active/superseded/revoked with supersedes/superseded_by chain; reason required on supersede/revoke; the CondoResolution provenance snapshot byte-copied) in the NEW services/api/app/site_definition package + SiteDefinitionStore ABC with in-memory impl (B-001 deferral stated plainly in code per the documents/storage.py precedent) + the unmounted flag-gated internal create/list/supersede/revoke API + read-only surfacing on the condo-records multi-lot document and PropertyOverview (recorded confirmation or explicit unconfirmed status). The confirmation is recorded evidence with provenance riding every surfaced record. The confirm-button UX, multi-parcel map display, and calculations-on-confirmed-combined-land are the recorded LATER slices (packet objective + report SS5/SS11 dispositions); the harness's per-scenario coverage is the packet's AS-1..AS-7 with the acceptance evidence in the producer report."
+    ],
+    "D-078-R002": [
+      "The prohibition is enforced as executable tests (packet SCOPE 4/4; AS-4): NO code path reads a confirmation to select a substrate or alter any calculation (channelWithholdsAllowances + deriveCondoSurface behaviorally unchanged; the unconfirmed multi-lot refusal byte-identical - bound on api and web sides); no endpoint returns a selected site absent a recorded human confirmation; records are never edited in place (mutation attempts are typed refusals; supersession is an appended chain with required reason); the unauthenticated self-attested confirmer identity is LOUDLY typed (attestation_status 'unauthenticated_self_attested') and marked refused-for-calculation; a later differing resolution only SURFACES the factual discrepancy - status changes only by human act."
+    ],
+    "D-078-R003": [
+      "Sequencing honored: contracted at the seq-122 seam AFTER M5-T056 accepted (239th; G0 records it); pairwise-disjoint from the M5-T058 substitution-stamp lane (intersection EMPTY, G0); the pair's landing order is preserved by ACCEPTANCE sequencing - M5-T059's accept is held until M5-T058 accepts (recorded in the G0 sequencing section and the acceptance-seam sweep line); nothing altered in the phase-B order, holds, or Tier D stops."
+    ]
+  }
+}
