@@ -222,6 +222,36 @@
      ]
     }
    ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T060",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "254841936d9ac14650f0b92a617ff78c3652941a",
+   "reviewed_manifest_sha256": "0b9ff84b481d309ae2e6fdb99b49f13d742180fe2d7034e446adcd1867ee9126",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T22:39:17.557850+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill (5b4836be seam binds+resyncs+seeds+G0 disjointness; ae20de35 packet fix after the documented-command PolicyError; ee07a10d claim with the FULL worktree path wt-m5t060); loop-1 runs 60-64 through the recorded stop classes (timeout raise, envelope refusal, silent-start single-retry); orchestrator harvest at the S13.8 breaker under the in-loop reviewer's explicit no-code-change ruling; material 258cd17a cherry-picked to d7d45e84 ALL-MATCH."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: B3 slice 2 in the recorded plan order (B3-after-T057 satisfied); exactly the 18 allowed_paths; no held surface; T058-HELD fixtures and T059-HELD PropertyOverview untouched. SEQUENCING FLAG recorded: this acceptance REACHES the D-076-R003 named post-B3 owner-review checkpoint - the owner review is queued and B4+/map-drawing/emission work is NOT contracted on this acceptance's authority."
+     ]
+    }
+   ]
   }
  ]
 }
