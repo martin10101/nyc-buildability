@@ -93,8 +93,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "The T058/T059 lanes hold adjacent web files (contract mirror, fixtures, PropertyOverview, condo lib): every one is FORBIDDEN here; needing any = STOP + discovery, never an edit.",
     "The mirror-validation trap: client mirrors must cite the route constants and NEVER become the authority - a drift test per mirrored cap is the guard; the server refusal remains the truth surface.",
@@ -106,7 +106,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T09:52:14.429818+00:00",
-  "updated_at": "2026-09-20T09:52:15.076710+00:00",
+  "updated_at": "2026-09-20T09:55:15.782305+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -134,5 +134,15 @@
   "documented_test_commands": [
     "(CI-only) npm --prefix apps/web run lint && typecheck && test && e2e - proven on the pushed head, never run locally",
     "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t060",
+  "progress_log": [
+    {
+      "at": "2026-09-20T09:55:15.782305+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Contracted + claimed at the T057-acceptance seam (G0 PASS; disjoint vs live T058 + frozen T059; graph regenerated pre-authoring); loop-1 relaunch as run 60 next"
+    }
   ]
 }
