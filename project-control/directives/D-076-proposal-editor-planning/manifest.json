@@ -10,7 +10,7 @@
   "issued_at": "2026-09-19",
   "captured_at": "2026-09-19T06:12:50.269900+00:00",
   "created_at": "2026-09-19T06:12:50.269900+00:00",
-  "updated_at": "2026-09-20T10:05:00+00:00",
+  "updated_at": "2026-09-20T12:35:00+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
   "capture_head_sha": null,
@@ -26,7 +26,7 @@
     "D-076-R002",
     "D-076-R003"
   ],
-  "requirements_content_digest_sha256": "720fb66aef417a736e2b1d3d3589b3848070942b6df5293dedbc816d80567ec5",
+  "requirements_content_digest_sha256": "e22a07218e68aec3eb28d2d0b9c542496bdec0a7178ebf86ba5b8997bf45ad5e",
   "sources": [
     {
       "file": "source-001.md",
@@ -93,6 +93,12 @@
       "actor": "orchestrator",
       "action": "applicability_append",
       "note": "Bound M5-T060 (B3 slice 2: numeric-authority editor + run-check + client-local variations; drawing/transform/emission deferred to the post-B3 checkpoint per R003's named review) to D-076-R001/R002. Append-only, task_ids only. Digest resynced fe4275ed -> 720fb66a SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-20T12:35:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound M5-T061 to D-076-R001/R002 (hardening of the B3 route artifact; boundary honesty rules bind - registry-derived bounds only, never invented limits). Append-only, task_ids only. Digest resynced 720fb66a -> e22a0721 SAME commit (c14)."
     }
   ]
 }

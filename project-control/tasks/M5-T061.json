@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T061",
+  "title": "DB-039 route hardening: proposal-checks boundary fold-ins from the T057 wave (registry-derived numeric bounds, domain-check ordering, enum-domain memoization, block wall-id charset alignment, at-cap-exact + shape-refusal coverage, import-time-guard blast-radius note)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Fold the T057 wave's advisory hardening into the accepted proposal-checks route as one bounded packet (DB-039 items a/b/d/e/g/h/i): extend the registry-derived domain discipline to the declared numeric InputSpec bounds (minimum/maximum/exclusive_* - never an invented limit; huge/negative numerics refuse typed before feeding), reorder the cheap registry domain check ahead of the expensive O(n2) input gate, memoize the per-request enum-domain derivation beside the registry cache, align proposed_massing.exterior_walls[].id to the BP-2 label discipline (it must equal a street line's wall_id which IS charset-bound - the current asymmetry lets a matching pair diverge), close the at-cap-exact coverage for the remaining boundaries (walls 500, street lines 400, label 200, body ceiling) and the _build_lot_context shape-refusal branches, document the import-time vocabulary guard's whole-app blast radius, and add the registry-resolution-stays-before-the-threadpool-hop comment (lazy-global race hazard). Behavior narrows only at boundaries the wave named; the accepted engine and all consumers stay byte-unchanged.",
+  "business_reason": "The route is the future public trust boundary; the wave paid for these findings with reproductions - folding them now while the file is free is cheaper than rediscovering them at public exposure",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam BEFORE this packet was written: 782 files/16416 nodes/7200 edges): proposal_checks_api.py is consumed by main.py:36 (mount, FORBIDDEN here) + tests/api/test_proposal_checks_api.py ONLY - the change surface is closed. Read-only seams you CONSUME: app/rules/proposal_checks.py (engine; CALLER_RULE_INPUT_NAMES; byte-unchanged), app/rules/models.py InputSpec (minimum/maximum/exclusive_minimum/exclusive_maximum :29-32 - the registry's OWN declared numeric bounds), app/scenario/proposal_input_gate.py (_total_position_count; MAX_TOTAL_VERTICES), app/api/v1/proposal_validation.py (body primitives). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE (binding; the findings ARE the spec - read project-control/reports/M5-T057-G3.md and M5-T057-G5.md finding sections + docs/DISCOVERY_BACKLOG.md DB-039 row FIRST): in services/api/app/api/v1/proposal_checks_api.py ONLY: (a) DB-039(a)/G3-F5: memoize the domain derivation per registry object (cache beside _PRODUCTION_REGISTRY; the test-injected registry path stays correct - key the memo by registry identity); (b) DB-039(b)/G3-F6: module-docstring note that the import-time vocabulary guard fails the WHOLE app at boot (deliberate fail-closed; blast radius exceeds the flag); (c) DB-039(d)/G5-F3: extend _derive_enum_domains into _derive_input_domains applying the registry's declared numeric bounds (minimum/maximum/exclusive_*) with the SAME every-declaring-rule-constrains conservatism - an out-of-bounds numeric fact refuses typed naming the field BEFORE feeding; NEVER an invented limit; (d) DB-039(e)/G5-F5: run the cheap registry-derived domain/bounds check immediately after _validate_lot_rule_fact_types and BEFORE the O(n2) input gate (registry resolution moves earlier; its registry-unavailable 500 path must stay a 500, tested); (e) DB-039(h)/G3-delta-charset: apply the BP-2 label discipline (_require_label) to proposed_massing.exterior_walls[].id at the route boundary (it must be able to EQUAL a street line's wall_id which is already charset-bound; refusal echoes length only) - note in the report that pre-existing block ids outside the charset now refuse at THIS internal route (no public caller exists; the gate's 512 ceiling remains upstream); (f) DB-039(i): the registry-resolution-before-threadpool-hop comment (lazy global _PRODUCTION_REGISTRY must never resolve inside run_in_threadpool - race hazard). In tests/api/test_proposal_checks_api.py: (g) DB-039(g)/G4-gaps-3-4: at-cap-exact tests for exterior walls (500), street lines (400), scenario_label (200), MAX_BODY_BYTES (exact ceiling); the _build_lot_context shape-refusal branches (lot not object / area_provenance / lot_line_segments / street_lines not arrays / element not object / attestation not object / lot_rule_facts not object) each bound; numeric-bounds + ordering + memoization + wall-id-charset tests (each guard mutation-flips a test red); the domain-check-early ordering bound (an out-of-domain fact refuses WITHOUT paying the O(n2) gate - assert via a call-count/ordering spy on the gate).",
+    "PRESERVATION (binding): app/rules/**, app/scenario/**, app/spatial/**, app/connectors/**, app/profile/**, main.py, packages/contracts/**, apps/web/** and every OTHER route file are READ-ONLY; the M5-T058 lane holds rule_evaluation/live_provider/integration/response + their tests - touch NOTHING of that surface; the (200,None)/(404,None)/(413)/(422)/(500) matrix is unchanged; the accepted AS-1 arithmetic and all existing tests stay green (except where a NEW boundary legitimately narrows: any existing test feeding an out-of-bounds numeric or bad-charset wall id must be updated WITH a comment naming this packet's item); no new dependency; no new flag; modularity - the route is 721 lines: check --report; extracting the fact-validation block into a sibling module app/api/v1/_proposal_fact_domains.py IS permitted if the file would cross its tier (add it to the report + keep the route's public surface identical).",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Hardened proposal-checks boundary: registry-derived numeric bounds + early domain/bounds ordering + memoized derivation + wall-id charset alignment + guard-blast-radius and threadpool-ordering documentation",
+    "Closed coverage: at-cap-exact for all four remaining boundaries + every _build_lot_context shape refusal + mutation-sensitive tests for each new guard",
+    "project-control/reports/M5-T061-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T057"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/api/v1/_proposal_fact_domains.py",
+    "services/api/tests/api/test_proposal_checks_api.py",
+    "project-control/reports/M5-T061-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/main.py",
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "services/api/app/profile/",
+    "services/api/app/site_definition/",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/proposal_validation.py",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/tests/api/test_rule_evaluation_api.py",
+    "services/api/tests/api/test_proposal_validation_api.py",
+    "services/api/tests/spatial/",
+    "services/api/tests/rules/",
+    "packages/contracts/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (numeric bounds): a lot_rule_facts numeric outside a registry-declared bound (e.g. a huge or negative value where every declaring rule constrains it) refuses typed naming the field BEFORE the engine or gate runs; a numeric any declaring rule leaves unbounded is fed unchanged; no invented limit exists (every bound cites InputSpec fields; mutation-flips-red per guard).",
+    "AS-2 (ordering): an out-of-domain/out-of-bounds fact refuses WITHOUT paying the O(n2) input gate (ordering bound by a spy/call-count assertion); the registry-unavailable path remains a bounded 500 recorded at its (new, earlier) position.",
+    "AS-3 (memoization): the domain/bounds derivation runs once per registry object across repeated requests (spy-counted); the test-injected registry still derives its own domains correctly.",
+    "AS-4 (wall-id charset): an exterior_walls[].id outside the label charset or over 200 chars refuses typed echoing length only; a conforming id matching a street wall_id still round-trips the accepted AS-1 arithmetic byte-identically.",
+    "AS-5 (coverage closure): at-cap-exact passes (200) for walls=500, street_lines=400, label=200, body==MAX_BODY_BYTES; above each = the typed refusal; every _build_lot_context shape branch bound.",
+    "AS-6 (preservation): the accepted rectangle arithmetic, the full existing suite, and the (status,state) matrix unchanged; any legitimately narrowed test updated with a comment naming the item; ruff clean; modularity exit 0 (sibling-module extraction recorded if used); CI green at the pushed head."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The M5-T058 lane is LIVE on the adjacent rule_evaluation surface - this packet touches NONE of it (G0 records the disjointness).",
+    "Numeric bounds must be registry-derived with the every-declaring-rule conservatism - a single invented or over-narrowed limit is a legal-value fabrication and fails the wave.",
+    "Ordering move must not change WHICH refusal wins for multi-defect payloads in ways that break accepted tests silently - any narrowed behavior is named in the report.",
+    "The route is at 721 lines: crossing the tier without the permitted extraction fails modularity CI."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T12:27:56.630392+00:00",
+  "updated_at": "2026-09-20T12:27:56.922414+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T12:27:56.630392+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
