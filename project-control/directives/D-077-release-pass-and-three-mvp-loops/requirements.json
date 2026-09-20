@@ -1,151 +1,155 @@
 {
-  "schema": "directive_requirements/v1",
-  "directive_id": "D-077",
-  "version": 1,
-  "requirement_count": 4,
-  "producer": "orchestrator",
-  "updated_at": "2026-09-20T12:35:00+00:00",
-  "requirements": [
-    {
-      "id": "D-077-R001",
-      "text": "Release pass now ('lets do the push to web now'): the orchestrator delivers the owner a plain-English, step-by-step instruction set for executing the pending single release pass (project-control/reports/release-request-2026-09-18-seq118.md sections 1-7 as ridden by sections 8-9: acceptances 228-236, deploy the then-current branch head, flags posture unchanged, one ~10-minute sitting) and stands by to answer questions. The EXECUTION itself remains OWNER-ONLY (production approval, Tier D / Section 20): the orchestrator performs no production deploy, flag flip, credential entry, or dashboard action itself.",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-077-BOOTSTRAP"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "The instruction set is delivered in the owner chat in simple English (D-064) and points only at the already-reviewed release request document; no new production action is taken by the orchestrator.",
-      "required_evidence": "The owner-facing instruction message in session; the unchanged release request document; absence of any orchestrator-side production/deploy/flag commit or action.",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance; instructions delivered in the same session turn.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    },
-    {
-      "id": "D-077-R002",
-      "text": "Three loop lanes ('spint up 3 codex loops'): stand up THREE concurrent supervised build loops at fresh seams - each lane a normally contracted, claimed ledger packet with the full contract drill (binds + digest resyncs, seeds, G0 with the pairwise-disjointness record, claim with the FULL worktree path, worktree at/past the claim-seam commit, launcher retargeted with a fresh run-id) - and keep the lanes cycling (harvest, submit, independent review waves, accept at seams, re-feed finished lanes with the next released packet) until the released MVP queue is delivered or a genuine stop condition (blocker, Tier D / owner-only decision, gate FAIL, owner hold) is reached. Three lanes fills the D-072 maximum of three pairwise-disjoint loops and does not raise it.",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-077-BOOTSTRAP",
-          "M5-T054",
-          "M5-T055",
-          "M5-T056",
-          "M5-T057",
-          "M5-T058",
-          "M5-T059",
-          "M5-T060",
-          "M5-T061"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "Launcher ACTIVE-TASK/run-id state, ledger transitions, and worktree layout show three disjoint claimed lanes; every relaunch follows the between-runs drill; no two lanes share an allowed_paths file.",
-      "required_evidence": "Task packets + G0 disjointness records + claim/progress ledger entries + launcher state for the three lanes; DISCOVERY_BACKLOG seam notes.",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance; lanes contracted at the next seams.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    },
-    {
-      "id": "D-077-R003",
-      "text": "MVP-queue resolution and scope boundary: 'the rest of the mvp' resolves to the RELEASED, NON-HELD queue only - phase B packets B2 through B5 in the recorded order of docs/PROPOSAL_EDITOR_PHASED_PLAN.md (B2 rule wiring next, then B3 live UI, then B4/B5; the named owner-review checkpoint after B3 per D-076-R003 stands), the DB-035 and DB-036 rider clusters, and subsequent released lanes contracted at seams under existing directives. This directive grants NO new scope: the expansion/3D hold (section 2, minus the D-040/D-076 scoped releases), Tier D / Section 20 hard stops, the PR #241 hold, the dependency-security policy, D-072 loop isolation, and every G0-G7 gate stay unchanged; phase C starts only after B3 is accepted and walked; phase D is not authorized; held work is never selected under this directive.",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "obligation",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-077-BOOTSTRAP",
-          "M5-T054",
-          "M5-T055",
-          "M5-T056",
-          "M5-T057",
-          "M5-T058",
-          "M5-T059",
-          "M5-T060",
-          "M5-T061"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "Every packet contracted under this directive cites its normal directive_refs and passes G0; no packet touches held scope; B-phase ordering per the plan is visible in the contract sequence.",
-      "required_evidence": "Task packets + G0 reports contracted under this directive; the unchanged hold notices.",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    },
-    {
-      "id": "D-077-R004",
-      "text": "Wiring preconditions carry-through (re-affirmed from the seq-120 handoff / T051-G5 + T053-seam records): whichever packet FIRST wires derive_proposal to a caller or route (B2 or B3) must bind, in-packet, the recorded preconditions - a LotContext list-size ceiling (lot-line/street-line lists), caller-coordinate finiteness guards (no NaN reaching an EvidenceRecord), the area_sq_ft bounded-repr instance (DB-034(b) fold-in), and DB-034(d) emission (the emits-1.1.0-only-when-block-present invariant enforced at the wiring seam).",
-      "source_ref": "source-001.md#owner-message-verbatim",
-      "classification": "sequencing",
-      "binding": true,
-      "applicability": {
-        "task_ids": [
-          "D-077-BOOTSTRAP",
-          "M5-T054"
-        ],
-        "task_types": [],
-        "milestones": [],
-        "lifecycle_events": [],
-        "paths": [],
-        "effective_date": "2026-09-19"
-      },
-      "dependencies": [],
-      "required_harness": "The derive_proposal-wiring packet's acceptance scenarios name each precondition; its gate wave confirms each closed or explicitly re-routed with reviewer sign-off.",
-      "required_evidence": "The wiring packet's task JSON, scenario pack, and gate records naming the four preconditions.",
-      "producer": "orchestrator",
-      "independent_verifier": "directive-compliance-verifier",
-      "status": "pending",
-      "status_reason": "Captured at issuance; binds at the B2/B3 contract seam.",
-      "evidence_paths": [],
-      "reviewed_sha": null,
-      "maps_to": {
-        "files": [],
-        "tests": [],
-        "tasks": []
-      }
-    }
-  ]
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-077",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T21:43:57.752870+00:00",
+ "requirements": [
+  {
+   "id": "D-077-R001",
+   "text": "Release pass now ('lets do the push to web now'): the orchestrator delivers the owner a plain-English, step-by-step instruction set for executing the pending single release pass (project-control/reports/release-request-2026-09-18-seq118.md sections 1-7 as ridden by sections 8-9: acceptances 228-236, deploy the then-current branch head, flags posture unchanged, one ~10-minute sitting) and stands by to answer questions. The EXECUTION itself remains OWNER-ONLY (production approval, Tier D / Section 20): the orchestrator performs no production deploy, flag flip, credential entry, or dashboard action itself.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-077-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The instruction set is delivered in the owner chat in simple English (D-064) and points only at the already-reviewed release request document; no new production action is taken by the orchestrator.",
+   "required_evidence": "The owner-facing instruction message in session; the unchanged release request document; absence of any orchestrator-side production/deploy/flag commit or action.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; instructions delivered in the same session turn.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-077-R002",
+   "text": "Three loop lanes ('spint up 3 codex loops'): stand up THREE concurrent supervised build loops at fresh seams - each lane a normally contracted, claimed ledger packet with the full contract drill (binds + digest resyncs, seeds, G0 with the pairwise-disjointness record, claim with the FULL worktree path, worktree at/past the claim-seam commit, launcher retargeted with a fresh run-id) - and keep the lanes cycling (harvest, submit, independent review waves, accept at seams, re-feed finished lanes with the next released packet) until the released MVP queue is delivered or a genuine stop condition (blocker, Tier D / owner-only decision, gate FAIL, owner hold) is reached. Three lanes fills the D-072 maximum of three pairwise-disjoint loops and does not raise it.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-077-BOOTSTRAP",
+     "M5-T054",
+     "M5-T055",
+     "M5-T056",
+     "M5-T057",
+     "M5-T058",
+     "M5-T059",
+     "M5-T060",
+     "M5-T061",
+     "M5-T062",
+     "M5-T063"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "Launcher ACTIVE-TASK/run-id state, ledger transitions, and worktree layout show three disjoint claimed lanes; every relaunch follows the between-runs drill; no two lanes share an allowed_paths file.",
+   "required_evidence": "Task packets + G0 disjointness records + claim/progress ledger entries + launcher state for the three lanes; DISCOVERY_BACKLOG seam notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; lanes contracted at the next seams.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-077-R003",
+   "text": "MVP-queue resolution and scope boundary: 'the rest of the mvp' resolves to the RELEASED, NON-HELD queue only - phase B packets B2 through B5 in the recorded order of docs/PROPOSAL_EDITOR_PHASED_PLAN.md (B2 rule wiring next, then B3 live UI, then B4/B5; the named owner-review checkpoint after B3 per D-076-R003 stands), the DB-035 and DB-036 rider clusters, and subsequent released lanes contracted at seams under existing directives. This directive grants NO new scope: the expansion/3D hold (section 2, minus the D-040/D-076 scoped releases), Tier D / Section 20 hard stops, the PR #241 hold, the dependency-security policy, D-072 loop isolation, and every G0-G7 gate stay unchanged; phase C starts only after B3 is accepted and walked; phase D is not authorized; held work is never selected under this directive.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-077-BOOTSTRAP",
+     "M5-T054",
+     "M5-T055",
+     "M5-T056",
+     "M5-T057",
+     "M5-T058",
+     "M5-T059",
+     "M5-T060",
+     "M5-T061",
+     "M5-T062",
+     "M5-T063"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "Every packet contracted under this directive cites its normal directive_refs and passes G0; no packet touches held scope; B-phase ordering per the plan is visible in the contract sequence.",
+   "required_evidence": "Task packets + G0 reports contracted under this directive; the unchanged hold notices.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-077-R004",
+   "text": "Wiring preconditions carry-through (re-affirmed from the seq-120 handoff / T051-G5 + T053-seam records): whichever packet FIRST wires derive_proposal to a caller or route (B2 or B3) must bind, in-packet, the recorded preconditions - a LotContext list-size ceiling (lot-line/street-line lists), caller-coordinate finiteness guards (no NaN reaching an EvidenceRecord), the area_sq_ft bounded-repr instance (DB-034(b) fold-in), and DB-034(d) emission (the emits-1.1.0-only-when-block-present invariant enforced at the wiring seam).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-077-BOOTSTRAP",
+     "M5-T054"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-19"
+   },
+   "dependencies": [],
+   "required_harness": "The derive_proposal-wiring packet's acceptance scenarios name each precondition; its gate wave confirms each closed or explicitly re-routed with reviewer sign-off.",
+   "required_evidence": "The wiring packet's task JSON, scenario pack, and gate records naming the four preconditions.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; binds at the B2/B3 contract seam.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
 }

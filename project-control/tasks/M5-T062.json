@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T062",
+  "title": "D-078 slice 2a: site-definition mount hardening (DB-040 api preconditions a-e,i-l + n-api + flag-gated mount)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the DB-040 mount-packet api preconditions on the accepted slice-1 site-definition substrate and mount the route flag-gated: swap the revoke status/binding check order so every cross-property probe reads 404 (no status oracle), rebind revoke on the stored record's condo_key without requiring a live multi-lot resolution (degraded resolver must not block the only human withdrawal path - D-051 fail-direction), add length caps (note ~2000, confirmer.name ~200, list-result cap), chain-depth/list caps plus a condo_key index, a record-id collision guard with typed refusal, a distinct error class for parcel-shape refusals (not invalid_confirmer), close the condo_key None write/read asymmetry, enforce the SITE_DEFINITION_STATUS_STATE_MATRIX on emissions, format/annotate the fractional-second timestamp ahead of the decimal-gated records section, and close the G4 A-1..A-8 api test items; then add the flag-gated mount line in main.py (default OFF in production until B-001 auth; the DB-040(f) read-authorization posture stays deferred behind the flag)",
+  "business_reason": "The refusal copy shipped by the accepted substitution stamp names site confirmation as the next step; this packet makes the record substrate mountable so the confirm slice can follow, closing the security preconditions the T059 wave priced before any mount line",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD (binding): run ruff + api pytest from services/api (`cd services/api` first; cwd persists; `cd ../..` before the modularity check from repo root). Never chain onto a documented command.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam BEFORE this packet was written: 783 files/16500 nodes/7221 edges): site_definition.py is consumed by tests/api/test_site_definition_api.py ONLY (route currently UNMOUNTED - this packet adds the flag-gated mount in main.py). site_definition/records.py + store.py consumed by the route + tests/site_definition. main.py mounts every route: your ONLY permitted main.py change is the one flag-gated include_router line + its flag import (mirror the INTERNAL_RULE_EVAL_ENABLED pattern). Read-only seams you CONSUME: app/connectors/condo_base_lot.py (CondoResolution outcomes), the accepted condo_records.py channel (FORBIDDEN to edit). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE (binding; the findings ARE the spec - read docs/DISCOVERY_BACKLOG.md DB-040 row + project-control/reports/M5-T059-G3.md / M5-T059-G4.md / M5-T059-G5.md finding sections FIRST): close the DB-040 mount preconditions in the site_definition surface: (a) revoke checks BINDING (condo_key match) before STATUS so every cross-property probe reads 404, never a 409 status oracle; (b) revoke binds on the STORED record's condo_key without requiring a live multi-lot resolution - a degraded resolver must never block withdrawal (D-051 fail-direction; degraded-case tests); (c) length caps: note <=2000, confirmer.name <=200, bounded list results; (d) supersession chain-depth cap + list caps + a condo_key index replacing the O(n2) scan; (e) _record_insert collision guard (typed refusal on an existing id); (i) parcel-shape refusals get their OWN error class (never invalid_confirmer); (j) close the condo_key None write/read asymmetry + test; (k) enforce SITE_DEFINITION_STATUS_STATE_MATRIX on every emission; (l) format/annotate the fractional-second timestamp ahead of the decimal-gated records section; (n) the G4 A-1..A-8 api items THAT LIVE IN THIS SURFACE (flag-off sentinel on all routes, streaming-413 branch, entered!=billing fixture, named 298-Wallabout fixture exercised end-to-end, frozen-ness/isolation gaps, replace brittle substring guards); THEN the flag-gated mount line in main.py, default OFF (the DB-040(f) read-auth posture stays deferred BEHIND the flag - never mount unauthenticated-on in production config).",
+    "PRESERVATION (binding): app/api/v1/condo_records.py, app/connectors/**, app/rules/**, app/scenario/**, app/spatial/**, app/profile/**, every other route file, packages/contracts/**, apps/web/** are READ-ONLY; the M5-T060 lane holds the apps/web proposal-editor surface and the M5-T063 lane holds the web condo surface - touch NOTHING of either; the accepted slice-1 record semantics (revocable/supersedable, honest unconfirmed refusal) stay; no new dependency; no new flag beyond the ONE mount flag; modularity - check --report before growing any file past its tier.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client. Run `python -m ruff check .` from services/api before every checkpoint."
+  ],
+  "outputs": [
+    "Mount-hardened site-definition api: no cross-property oracle, degraded-resolver-safe revoke, caps/index/collision guards, typed parcel-shape refusals, matrix-enforced emissions, closed G4 api items",
+    "The flag-gated mount line (default OFF) making the confirm slice contractable",
+    "project-control/reports/M5-T062-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T059"
+  ],
+  "allowed_paths": [
+    "services/api/app/site_definition/__init__.py",
+    "services/api/app/site_definition/records.py",
+    "services/api/app/site_definition/store.py",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/main.py",
+    "services/api/tests/site_definition/test_site_definition_records.py",
+    "services/api/tests/api/test_site_definition_api.py",
+    "project-control/reports/M5-T062-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/app/api/v1/rule_evaluation.py",
+    "services/api/app/api/v1/proposal_checks_api.py",
+    "services/api/app/connectors/",
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/spatial/",
+    "services/api/app/profile/",
+    "services/api/tests/api/test_condo_records_api.py",
+    "packages/contracts/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (no oracle): a revoke probe against a record belonging to a DIFFERENT condo returns 404 regardless of the record's status; the 409-class response is reachable only for the record's OWN condo binding (order bound by test).",
+    "AS-2 (degraded-safe revoke): with the resolver returning multi-lot/unresolved/typed-error, revoking an EXISTING confirmation still succeeds on the stored condo_key (D-051 fail-direction tests each degraded class).",
+    "AS-3 (caps/guards): note>2000, name>200, over-cap lists, chain past the depth cap, and an id collision each refuse typed WITHOUT touching store state; the condo_key index removes the O(n2) scan (lookup path asserted).",
+    "AS-4 (typed shape refusals + matrix): parcel-shape defects refuse under their own error class; every emission conforms to SITE_DEFINITION_STATUS_STATE_MATRIX (enforcement test); the condo_key None asymmetry is closed both directions.",
+    "AS-5 (mount): with the flag OFF the app boots byte-identically (route absent from openapi, 404 sentinel on all site_definition paths); with the flag ON in tests the mounted routes serve; production default stays OFF pending B-001 auth (asserted from config).",
+    "AS-6 (preservation): full api suite + condo_records suite green; ruff clean; modularity exit 0; CI green at the pushed head; the accepted slice-1 semantics unchanged except where a DB-040 item legitimately narrows (each named in the report)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "main.py is the whole-app mount surface: anything beyond the one flag-gated include line + import is out of scope and fails review.",
+    "The M5-T063 lane holds the web condo surface and M5-T060 holds the proposal-editor web surface - G0 records three-way disjointness; touch neither.",
+    "DB-040(f) read-auth is DEFERRED behind the flag - mounting default-ON would ship self-attested personal data unauthenticated.",
+    "Fail-direction on revoke must follow D-051: refusing withdrawal on a degraded resolver is the WRONG direction and fails the wave."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T21:40:33.153398+00:00",
+  "updated_at": "2026-09-20T21:40:33.632446+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    },
+    {
+      "directive_id": "D-078",
+      "requirement_ids": [
+        "D-078-R001",
+        "D-078-R002",
+        "D-078-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T21:40:33.153398+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/site_definition tests/api/test_site_definition_api.py -q",
+    "python -m pytest tests/api -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

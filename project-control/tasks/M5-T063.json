@@ -1,0 +1,112 @@
+{
+  "task_id": "M5-T063",
+  "title": "Web condo rider cluster: DB-036(a) boundedZoningDistrict sanitizer precondition + recorded-zoning status parsing/gating (DB-036(e)/DB-038(c)) + T058-wave HJ copy/announcer riders (DB-042 c,d,e) + DB-038(b) label hygiene",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Land the named zoning-readiness preconditions and the accepted-wave web riders as one bounded web packet: add a boundedZoningDistrict helper to the shared sanitizer lib (boundedTimestamp precedent) whose charset admits the slash mixed-use district class (M1-5/R7-2) and wire recorded_zoning through it wherever the condo channel renders it (DB-036(a) - MUST land before any packet emits non-null recorded zoning); parse recorded_zoning_status and recorded_zoning_dependency in the condo-records client and gate the divergence notice on actually-recorded zoning so the named ZTLDB gap surfaces honestly (DB-036(e) + DB-038(c) reword); make the OutcomeAnnouncer copy for condo_base_lot_unresolved and the substitution record match the visible labels' specificity (DB-042(c)/HJ-3); reduce the two parallel base-lot surfaces' redundancy with consistent-domain wording and add the inline billing/base definition on first use (DB-042(d)/(e)); fix the stale test-suite labels (DB-038(b))",
+  "business_reason": "The sanitizer precondition is the recorded prerequisite for every future zoning emission (silent corruption of slash districts otherwise); the rider items close the accepted waves' priced advisories while the condo web surface is free between lanes",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head; never mark web behavior verified from local reasoning. The only local command is `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES (querySelectorAll<HTMLElement>); deliberate invalid-shape probes as `as unknown as T`; no empty spec files.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam BEFORE this packet was written: 783 files/16500 nodes/7221 edges): bounded.ts is the SHARED sanitizer lib (15+ consumers - your change is ADDITIVE ONLY: one new helper + tests; existing helpers byte-unchanged). condo-records.ts is consumed by PropertyOverview.tsx and its tests. PropertyOverview.tsx is consumed by ArchitectEntry/ProfileViews/PropertyFacts/ReportView/ScenarioWorkspace (ALL READ-ONLY here; ArchitectEntry belongs to the LIVE M5-T060 lane) - keep PropertyOverview's export surface/props byte-compatible. rule-evaluation.ts holds announcementForRuleEvaluation (:512). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE (binding; the findings ARE the spec - read docs/DISCOVERY_BACKLOG.md rows DB-036 items (a)(e), DB-038 items (b)(c), DB-042 items (c)(d)(e) + project-control/reports/M5-T058-HJ.md FIRST): (1) DB-036(a) PRECONDITION: add boundedZoningDistrict to apps/web/src/lib/bounded.ts (boundedTimestamp precedent) admitting the slash mixed-use district class (M1-5/R7-2 style, suffixed variants) with length bound + tests incl. the slash class and hostile strings; wire recorded_zoning rendering in condo-records.ts through it (boundedToken would strip the slash); (2) DB-036(e)+DB-038(c): parse recorded_zoning_status + recorded_zoning_dependency in condo-records.ts; gate the divergence notice so it renders only when zoning is actually recorded, and surface the named ZTLDB gap honestly when it is not; reword the dormant-branch copy; (3) DB-042(c)/HJ-3: make announcementForRuleEvaluation announce condo_base_lot_unresolved and the substitution record with the same specificity as the visible labels (screen-reader text must not trail visible text); (4) DB-042(d)/(e): consistent-domain wording across the two base-lot surfaces (identity notice vs condo-records section) + inline definition of billing/base on first use in AnalysisIdentityNotice; (5) DB-038(b): fix the stale S11 describe label in address-confirm.test.tsx. Each behavior change carries a mutation-sensitive spec assertion.",
+    "PRESERVATION (binding): every EXISTING bounded.ts helper, the accepted withhold guard direction in AnalysisIdentityNotice (stampLegitimate correspondence gating + role=alert withhold branch), PropertyOverview's props/export surface, and all T060-lane files (ArchitectEntry/ArchitectShell/navigation/architect.css/proposal-editor files/entry+workspace tests) are READ-ONLY or byte-compatible; the api layer (services/api/**) and packages/contracts/** are READ-ONLY; no new dependency; recorded_zoning stays DISPLAY-ONLY provenance (records-vs-allowances, D-073-R006 - never an allowance input).",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client."
+  ],
+  "outputs": [
+    "boundedZoningDistrict sanitizer (the recorded zoning-emission precondition) wired into the condo channel rendering",
+    "Honest recorded-zoning status/dependency parsing + divergence-notice gating; announcer specificity; consistent base-lot wording + inline definitions; label hygiene",
+    "project-control/reports/M5-T063-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T058"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/__tests__/bounded.test.ts",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/__tests__/condo-records.test.ts",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/lib/__tests__/rule-evaluation.test.ts",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/__tests__/analysis-identity-substitution.test.tsx",
+    "apps/web/src/components/address/__tests__/address-confirm.test.tsx",
+    "project-control/reports/M5-T063-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/ArchitectShell.tsx",
+    "apps/web/src/lib/architect/navigation.ts",
+    "apps/web/src/app/property/architect.css",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/ProposalCheckReport.tsx",
+    "apps/web/src/components/architect/ProposalVariations.tsx",
+    "apps/web/src/components/architect/__tests__/entry.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/test-support/",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (sanitizer): boundedZoningDistrict admits M1-5, R7-2, M1-5/R7-2 (slash preserved byte-exact) and suffixed variants; refuses/bounds hostile strings (markup, control chars, over-length); every existing bounded.ts helper byte-unchanged (spec-pinned).",
+    "AS-2 (honest gating): with no recorded zoning, the divergence notice does NOT render and the ZTLDB gap is surfaced honestly; with recorded zoning present (fixture), the district renders through boundedZoningDistrict (slash intact) and the divergence notice gates on actual divergence.",
+    "AS-3 (announcer): the screen-reader announcement for condo_base_lot_unresolved names the condo/site-confirmation specifics, and the substitution case names entered-vs-analyzed - matching the visible labels (spec asserts the strings).",
+    "AS-4 (wording/definitions): the two base-lot surfaces use consistent domain wording; billing/base defined inline on first use; the withhold guard direction and stampLegitimate correspondence gating stay behaviorally unchanged (both-directions specs stay green in direction).",
+    "AS-5 (hygiene): the S11 describe label names its true scope; no empty spec files; typed DOM queries.",
+    "AS-6 (preservation): PropertyOverview consumers unaffected (props/export surface compatible); full web suites green in CI at the pushed head; modularity exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "bounded.ts is shared by 15+ consumers - anything beyond the ONE additive helper is out of scope.",
+    "The M5-T060 lane is LIVE on ArchitectEntry/Shell/navigation/css and the proposal-editor files - G0 records disjointness; touch nothing of it.",
+    "recorded_zoning is display-only provenance under D-073-R006 - wiring it anywhere near an allowance computation fails the wave.",
+    "Softening the accepted withhold guard while editing AnalysisIdentityNotice copy is the classic regression here - the both-directions specs must stay green in direction."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T21:40:46.960473+00:00",
+  "updated_at": "2026-09-20T21:40:47.266782+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-073",
+      "requirement_ids": [
+        "D-073-R006"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T21:40:46.960473+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}
