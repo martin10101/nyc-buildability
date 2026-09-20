@@ -5,7 +5,8 @@ Orientation only — the ledger (`python tools/project_control.py status`) and
 
 ## Identity (live at generation)
 Repo root/worktree C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 · branch
-`candidate/D-024-mrl-option-b` · HEAD `61a1f036`-pre (the handoff commit follows; pushed) ·
+`candidate/D-024-mrl-option-b` · generated at HEAD `0c8d4e71` (the handoff commit `5b198189`
+and this identity correction follow it; all pushed) ·
 origin github.com/martin10101/nyc-buildability.git.
 
 ## State: 239 accepted; RELEASE EXECUTED; D-077/D-078/D-079 captured; loop-1 LIVE
