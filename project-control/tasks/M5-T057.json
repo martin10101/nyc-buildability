@@ -68,8 +68,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 80,
   "risks": [
     "The route is the FUTURE public trust boundary: G5 will verify each BP CLOSED at this seam - a missed cap or an uncapped error path fails the wave.",
     "proposal_input_gate.py and the B2 engine are accepted read-only seams: needing to edit either = STOP + discovery.",
@@ -79,7 +79,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T06:14:44.693588+00:00",
-  "updated_at": "2026-09-20T08:07:34.110214+00:00",
+  "updated_at": "2026-09-20T08:59:30.374855+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -118,6 +118,20 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Contracted + claimed at the M5-T054 acceptance seam (G0 PASS; disjoint vs frozen T055/T056); loop-1 relaunch as run 59 next"
+    },
+    {
+      "at": "2026-09-20T08:59:29.957184+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "rework",
+      "message": "Wave complete at frozen 2b5edbc3: G3 FAIL (F1 uncapped refusal field on the new lot surface), G4 PASS (mutation-proven guards; gaps 1/2/5 recommended), G5 FAIL (F1 lot-id reflection incl. 200-path/logs; F2 O(n2) outline-validation compute escape ~17s on the event loop), DCV FAIL (D-066-R001 regen conjunct not performed at the 0099bbb2 seam; evidence-map row contradicted). One bounded [ORCH-CORRECTED] cluster next: field/id/provenance/fact-key bounds + sync handler + outline-position cap + binding tests (field bound, forced-500, surrogate, call-once spy, exact-cap) + evidence-map/G0 correction + graph-confirmed impact set; then resubmit + delta-attestations to the same four reviewers"
+    },
+    {
+      "at": "2026-09-20T08:59:30.374855+00:00",
+      "agent": "backend-engineer",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Rework in progress: applying the tagged correction cluster in wt-m5t057"
     }
   ]
 }
