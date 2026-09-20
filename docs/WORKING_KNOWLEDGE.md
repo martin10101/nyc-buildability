@@ -500,3 +500,26 @@ never launch a loop during an active full wave (the 7.8GB thin client cannot hos
 processes); (3) the silent-start class keeps the recorded single-retry drill (recurrence of THAT
 class specifically = reopen convergence). Verification: run-61 first cycle reaches
 CHECKPOINT_RECEIVED. Evidence frozen in both stores' audit.jsonl + journals.
+
+## Deficit convergence: silent-start class, third occurrence (2026-09-20 seq 123) - CLOSED at run-27 relaunch
+
+Third occurrence of the worker-CLI silent-start class (after run persistent2-local-21 seq-122
+and run persistent-local-63 cycle-3 seq-123): run persistent2-local-26-m5t062 cycle 1 - the
+supervisor spawned claude.exe under job_object containment and recorded a session id, but the
+CLI NEVER created its ~/.claude/projects session dir and emitted ZERO events (audit triple
+events:2/context_tokens:0/observed_models:[]), sat the full 1500s unit timeout, rc 0.
+
+Causal trace (bounded): the hang is INSIDE the worker CLI's startup - the supervisor side is
+healthy (preflight verified, dispatch recorded, containment up), and the CLI writes nothing to
+trace. Discriminating evidence: loop-3's worker (run persistent3-local-09) launched THIRTEEN
+seconds later from the same launcher pattern and initialized normally (session file + real
+cycle-1 edits) - so the class is a NONDETERMINISTIC startup race (shared-CLI-state/credential
+contention or auth refresh hang are the candidates), not machine-wide pressure, not the packet,
+not the worktree.
+
+Repairs (operational): (1) the single-retry drill stays the remedy - now proven 2/2 (run 22
+after 21; run 64 after 63's cycle-3 instance); (2) NEW conduct: stagger loop launches >=60s
+apart and never inside a reviewer-wave dispatch window (runs 26/09 were 13s apart); (3) the
+class signature for fast diagnosis: spawn-ok + session-id recorded + NO session dir + events
+<=2 + ctx 0. A FOURTH occurrence despite staggered launches = open a blocker with the frozen
+evidence and raise the worker-CLI version question with the owner (the flip is owner-only).
