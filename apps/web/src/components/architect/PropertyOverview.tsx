@@ -9,12 +9,14 @@ import { zolaLotUrl } from "@/lib/provenance-link";
 import { propertyHref } from "@/lib/architect/navigation";
 import {
   CONDO_OUTCOME_RESOLVED_SINGLE,
+  SITE_DEFINITION_STATUS_CONFIRMED,
   channelWithholdsAllowances,
   deriveCondoChannelState,
   useCondoRecords,
   type CondoChannelState,
   type CondoRecordsOutcome,
   type CondoRecordsView,
+  type SiteDefinitionView,
 } from "@/lib/condo-records";
 import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { FactsTable } from "@/components/property/FactsTable";
@@ -212,6 +214,38 @@ export function deriveCondoSurface(profile: PropertyProfile, outcome: CondoRecor
     const recordsView = channel.kind === "multi_lot" || channel.kind === "single" ? channel.view : null;
     return { withholdAllowances, showRecords, showSubstitution, conflict, channel, recordsView };
 }
+// M5-T059 (D-078): READ-ONLY surfacing of a recorded human site-definition
+// confirmation on the multi-lot records view. It shows a recorded HUMAN act (or
+// an explicit "not confirmed"); it NEVER selects a site and NEVER changes a
+// calculation (D-078-R002). RECORD-class wording only, and no decimal figures —
+// this renders INSIDE the records section the D-073-R006 grep gate covers. Two
+// honest limits are surfaced loudly: a self-attested confirmation is refused for
+// any calculation use (B-001), and a later resolution differing from the recorded
+// parcels is a surfaced discrepancy for professional review, never a status
+// change.
+function CondoSiteDefinitionRecord({ siteDefinition }: {
+    siteDefinition: SiteDefinitionView;
+}) {
+    const confirmation = siteDefinition.activeConfirmation;
+    if (siteDefinition.status === SITE_DEFINITION_STATUS_CONFIRMED && confirmation) {
+        const confirmedBy = confirmation.confirmerName ?? "an unnamed person";
+        const role = confirmation.confirmerRole ? ` (${confirmation.confirmerRole})` : "";
+        const on = confirmation.confirmedAt ? ` on ${confirmation.confirmedAt}` : "";
+        const parcels = confirmation.parcels.length ? confirmation.parcels.join(", ") : "the recorded base lots";
+        return <div className="architect-condo-site-definition section-note" role="group" aria-label="Recorded site definition for this condo" data-testid="condo-site-definition">
+      <p data-testid="condo-site-definition-status">Site definition: a person has recorded a confirmation to treat these base lots as one site. This is a recorded human decision, shown for reference under the development limits above; the system never selects a site on its own.</p>
+      <p data-testid="condo-site-definition-confirmer">Confirmed by {confirmedBy}{role}{on}. Recorded base lots: {parcels}.</p>
+      {confirmation.refusedForCalculation ? <p data-testid="condo-site-definition-refused">This confirmation is self-attested — the person&apos;s identity is not yet verified — so it is recorded for reference only and is refused for any calculation use.</p> : null}
+      {siteDefinition.parcelDiscrepancy ? <p data-testid="condo-site-definition-discrepancy">The base lots the city records now differ from the lots in this confirmation. This is surfaced for professional review and does not change the confirmation, which changes only by a human act.</p> : null}
+    </div>;
+    }
+    // Unconfirmed wording is accurate for a REVOKED/SUPERSEDED history: when a
+    // confirmation was recorded before but none is currently active, "no one has
+    // recorded a confirmation" would be false, so the copy states the honest
+    // reason the site is unconfirmed instead.
+    const hasHistory = siteDefinition.confirmationCount > 0;
+    return <p className="architect-condo-site-definition section-note" data-testid="condo-site-definition-unconfirmed" data-history={hasHistory ? "revoked-or-superseded" : "none"}>{hasHistory ? "Site definition: not confirmed. A previously recorded confirmation to treat these base lots as one site is no longer active — it was revoked or superseded and none has replaced it — so the site is unconfirmed and the development limits above stand on their honest unconfirmed footing." : "Site definition: not confirmed. No one has recorded a confirmation to treat these base lots as one site, so the site is unconfirmed and the development limits above stand on their honest unconfirmed footing."}</p>;
+}
 // The production channel-driven condo section on the architect SCREEN. Renders
 // UNDER the professional-review fail-safe (development limits), never instead of
 // it. RECORDS/records-class wording ONLY — no allowance-class vocabulary lives
@@ -259,14 +293,29 @@ export function CondoRecordsChannelSection({ decision }: {
         const billingLot = recordsView.billingBblStatus === "recorded" && recordsView.billingBbl
           ? recordsView.billingBbl
           : "not recorded (unknown)";
+        // DB-038(f)-1 (HJ A4): for a billing-class input the entered lot IS the
+        // billing lot, so two identical "you entered" / "billing lot" lines are
+        // redundant. Collapse them into ONE line with a billing-class
+        // parenthetical, but ONLY when the entered BBL equals the RECORDED billing
+        // lot; a unit input (billing lot a labelled unknown) keeps the two distinct
+        // lines, which is the honest non-redundant case.
+        const enteredEqualsBilling =
+          recordsView.enteredBbl !== null &&
+          recordsView.billingBblStatus === "recorded" &&
+          recordsView.enteredBbl === recordsView.billingBbl;
         return <section className="card architect-condo-records" role="group" aria-label="City records for this condo" data-testid="condo-resolution-records">
       <h2>City records for this condo</h2>
       <p className="section-note">These are the tax lots the city records for the condo lot you entered. They are city records of the condo&apos;s land, shown for reference under the development limits above.{conflict ? " The property record and the city records channel differ on this condo; the lots below are what the city records channel returned." : ""}</p>
+      {enteredEqualsBilling
+        ? <p className="architect-condo-entered-lot section-note" data-testid="condo-entered-lot">Condo lot you entered: {enteredLot} (also the condo billing lot the city records for it)</p>
+        : <>
       <p className="architect-condo-entered-lot section-note" data-testid="condo-entered-lot">Condo lot you entered: {enteredLot}</p>
       <p className="architect-condo-billing-lot section-note" data-testid="condo-billing-lot">Condo billing lot: {billingLot}</p>
+      </>}
       <ul>
         {recordsView.baseLots.map((lot, index) => <li key={`base-${index}`} className="architect-condo-record" data-testid="condo-base-lot-record">Recorded base lot {lot.bbl} <span className="section-note" data-testid="condo-base-lot-zoning">— recorded zoning: {lot.recordedZoning ?? "not recorded (unknown)"}</span></li>)}
       </ul>
+      {recordsView.siteDefinition ? <CondoSiteDefinitionRecord siteDefinition={recordsView.siteDefinition} /> : null}
       {anyZoningRecorded && recordsView.divergentZoningNotice ? <p className="section-note" data-testid="condo-divergent-notice">{recordsView.divergentZoningNotice}</p> : null}
       {anyZoningUnknown && recordsView.recordedZoningDependency ? <p className="section-note" data-testid="condo-zoning-dependency">{zoningGapNote}</p> : null}
       <p className="section-note" data-testid="condo-records-provenance">Source: {recordsView.provenance.sourceId ?? "not recorded (unknown)"} · dataset(s): {recordsView.provenance.datasetIds.length ? recordsView.provenance.datasetIds.join(", ") : "not recorded (unknown)"} · dataset version: {recordsView.provenance.datasetVersion ?? "not recorded (unknown)"} · retrieved: {recordsView.provenance.retrievedAt ?? "not recorded (unknown)"}</p>

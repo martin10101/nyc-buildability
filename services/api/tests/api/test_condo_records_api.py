@@ -26,6 +26,7 @@ Coverage:
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime
 
 import pytest
 from fastapi.testclient import TestClient
@@ -34,6 +35,7 @@ import app.api.v1.condo_records as condo_records_mod
 from app.api.v1.condo_records import (
     CONDO_RECORDS_STATUS_STATE_MATRIX,
     get_condo_billing_resolver,
+    get_condo_site_definition_store,
     get_condo_unit_resolver,
 )
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
@@ -55,6 +57,11 @@ from app.connectors.dtm_condo_soda import (
     SourceUnavailableError,
 )
 from app.main import app
+from app.site_definition import (
+    InMemorySiteDefinitionStore,
+    ResolutionProvenanceSnapshot,
+    create_confirmation,
+)
 
 BILLING_BBL = "1003037501"  # boro 1, block 00303, lot 7501 -> billing class
 BILLING_MULTI_BBL = "1003037502"
@@ -623,3 +630,101 @@ def test_422_short_bbl_raw_value_is_uncapped_and_verbatim(client, monkeypatch):
     raw = resp.json()["detail"]["raw_value"]
     assert condo_records_mod._RAW_VALUE_TRUNCATION_MARKER not in raw
     assert raw == repr("not-a-bbl")
+
+
+# ---------------------------------------------------------------------------
+# Site-definition surfacing on the (mounted) condo-records document (M5-T059,
+# D-078). READ-ONLY, ADDITIVE, multi-lot-only. Reading a confirmation never
+# selects a site or changes any calculation - the outcome and base-lot records
+# stay byte-identical; only the additive ``site_definition`` block appears.
+# ---------------------------------------------------------------------------
+def _install_active_confirmation() -> InMemorySiteDefinitionStore:
+    store = InMemorySiteDefinitionStore()
+    store.create(
+        create_confirmation(
+            condo_key=CONDO_KEY,
+            billing_bbl=BILLING_MULTI_BBL,
+            entered_bbl=BILLING_MULTI_BBL,
+            proposed_parcels=["1003030019", "1003030025"],
+            resolver_base_bbls=["1003030019", "1003030025"],
+            confirmer_name="Dana Reviewer",
+            confirmer_role="qualified_professional",
+            # A realistic tz-aware instant WITH fractional seconds.
+            confirmed_at=datetime(2026, 9, 20, 8, 23, 30, 89123, tzinfo=UTC),
+            provenance=ResolutionProvenanceSnapshot(
+                source_id=SOURCE_ID,
+                dataset_ids=(CONDO_DATASET_ID,),
+                retrieved_at=RETRIEVED_AT,
+                resolution_path="billing",
+            ),
+        )
+    )
+    app.dependency_overrides[get_condo_site_definition_store] = lambda: store
+    return store
+
+
+def test_multi_lot_document_surfaces_recorded_confirmation(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_unit_landmine()
+    install_billing(_multi_lot())
+    _install_active_confirmation()
+    resp = client.get(_url(BILLING_MULTI_BBL))
+    assert resp.status_code == 200
+    body = resp.json()
+    _assert_renderer_parity_safe(body)
+    assert body["outcome"] == OUTCOME_MULTI_LOT
+    block = body["site_definition"]
+    assert block["status"] == "confirmed"
+    assert block["condo_key"] == CONDO_KEY
+    active = block["active_confirmation"]
+    assert active["status"] == "active"
+    assert active["attestation_status"] == "unauthenticated_self_attested"
+    assert active["refused_for_calculation"] is True
+    assert active["parcels"] == ["1003030019", "1003030025"]
+    # Fractional-second timestamp survives to the surface (not trimmed to whole s).
+    assert active["confirmed_at"] == "2026-09-20T08:23:30.089123+00:00"
+    # Additive only: no substitution, no allowance vocabulary.
+    assert body["substitution"] is None
+    assert "far" not in json.dumps(body).lower()
+
+
+def test_multi_lot_document_is_unconfirmed_with_no_confirmation(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_unit_landmine()
+    install_billing(_multi_lot())
+    app.dependency_overrides[get_condo_site_definition_store] = (
+        InMemorySiteDefinitionStore
+    )
+    resp = client.get(_url(BILLING_MULTI_BBL))
+    body = resp.json()
+    block = body["site_definition"]
+    assert block["status"] == "unconfirmed"
+    assert block["active_confirmation"] is None
+    assert block["confirmations"] == []
+
+
+def test_prohibition_surfacing_is_additive_only(client, monkeypatch):
+    # The multi-lot records document is byte-identical WITH and WITHOUT a recorded
+    # confirmation, except for the additive site_definition block: reading a
+    # confirmation never selects a site or changes any calculation (D-078-R002).
+    enable_flag(monkeypatch)
+    install_unit_landmine()
+    install_billing(_multi_lot())
+    app.dependency_overrides[get_condo_site_definition_store] = (
+        InMemorySiteDefinitionStore
+    )
+    without = client.get(_url(BILLING_MULTI_BBL)).json()
+    _install_active_confirmation()
+    with_conf = client.get(_url(BILLING_MULTI_BBL)).json()
+    without.pop("site_definition", None)
+    with_conf.pop("site_definition", None)
+    assert without == with_conf
+
+
+def test_single_document_has_no_site_definition_block(client, monkeypatch):
+    enable_flag(monkeypatch)
+    install_unit_landmine()
+    install_billing(_resolved_single())
+    resp = client.get(_url(BILLING_BBL))
+    assert resp.status_code == 200
+    assert "site_definition" not in resp.json()

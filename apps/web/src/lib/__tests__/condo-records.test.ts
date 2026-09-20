@@ -17,6 +17,10 @@ import {
   CONDO_OUTCOME_NOT_CONDO_BILLING,
   CONDO_OUTCOME_RESOLVED_SINGLE,
   CONDO_OUTCOME_UNRESOLVED,
+  SITE_DEFINITION_ATTESTATION_SELF_ATTESTED,
+  SITE_DEFINITION_CONFIRMATION_STATUS_ACTIVE,
+  SITE_DEFINITION_STATUS_CONFIRMED,
+  SITE_DEFINITION_STATUS_UNCONFIRMED,
   channelWithholdsAllowances,
   deriveCondoChannelState,
   fetchCondoRecords,
@@ -467,5 +471,205 @@ describe("condo-records — DB-036 rider parsing (M5-T056)", () => {
     expect(view.provenance.datasetVersion).toBe("2026-08-30T00:00:00Z");
     expect(view.provenance.queries[0].retrievedAt).toBe(RETRIEVED_AT);
     expect(view.provenance.queries[0].rowsUpdatedAt).toBe(ROWS_UPDATED_AT);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Site-definition block parsing (M5-T059, D-078). READ-ONLY surfacing of a
+// recorded human confirmation on the multi-lot document. The parser hardening is
+// pinned here: an empty/malformed/non-active confirmation can never read as a
+// recorded active confirmation, and a self-attested identity always retains the
+// calculation-refusal flag even if the payload supplies false. Realistic
+// fractional-second timestamps are used.
+// ---------------------------------------------------------------------------
+const SD_CONFIRMED_AT = "2026-09-20T08:23:30.089123+00:00";
+
+function confirmationPayload(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    record_id: "rec-abc123",
+    condo_key: "103344",
+    billing_bbl: BILLING_MULTI_BBL,
+    entered_bbl: BILLING_MULTI_BBL,
+    parcels: [BASE_BBL, BASE_BBL_2],
+    confirmer: { name: "Dana Reviewer", role: "qualified_professional" },
+    attestation_status: SITE_DEFINITION_ATTESTATION_SELF_ATTESTED,
+    refused_for_calculation: true,
+    confirmed_at: SD_CONFIRMED_AT,
+    supersedes_id: null,
+    reason: null,
+    note: null,
+    provenance: {},
+    status: SITE_DEFINITION_CONFIRMATION_STATUS_ACTIVE,
+    superseded_by_id: null,
+    transitions: [],
+    ...overrides,
+  };
+}
+
+function siteDefBlock(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    condo_key: "103344",
+    status: SITE_DEFINITION_STATUS_CONFIRMED,
+    active_confirmation: confirmationPayload(),
+    confirmations: [confirmationPayload()],
+    parcel_discrepancy: null,
+    note: "recorded human confirmation",
+    ...overrides,
+  };
+}
+
+async function siteDefinitionFor(block: unknown) {
+  const { view } = asDocument(
+    await fetchCondoRecords(BILLING_MULTI_BBL, {
+      fetchImpl: once(makeResponse({ ...multiLotDoc(), site_definition: block })),
+    }),
+  );
+  return view.siteDefinition;
+}
+
+describe("condo-records — site-definition block parsing (M5-T059, D-078)", () => {
+  it("pins the block status + attestation literals to the api vocabulary", () => {
+    expect(SITE_DEFINITION_STATUS_CONFIRMED).toBe("confirmed");
+    expect(SITE_DEFINITION_STATUS_UNCONFIRMED).toBe("unconfirmed");
+    expect(SITE_DEFINITION_ATTESTATION_SELF_ATTESTED).toBe("unauthenticated_self_attested");
+    expect(SITE_DEFINITION_CONFIRMATION_STATUS_ACTIVE).toBe("active");
+  });
+
+  it("AS-1: a confirmed active block parses the recorded confirmation for display", async () => {
+    const sd = await siteDefinitionFor(siteDefBlock());
+    expect(sd).not.toBeNull();
+    expect(sd?.status).toBe("confirmed");
+    expect(sd?.activeConfirmation).not.toBeNull();
+    expect(sd?.activeConfirmation?.confirmerName).toBe("Dana Reviewer");
+    expect(sd?.activeConfirmation?.confirmerRole).toBe("qualified_professional");
+    expect(sd?.activeConfirmation?.parcels).toEqual([BASE_BBL, BASE_BBL_2]);
+    expect(sd?.activeConfirmation?.refusedForCalculation).toBe(true);
+    // A realistic fractional-second timestamp survives char-for-char (never a
+    // fixture trimmed to whole seconds to dodge the ISO display gate).
+    expect(sd?.activeConfirmation?.confirmedAt).toBe(SD_CONFIRMED_AT);
+    expect(sd?.activeConfirmation?.confirmedAt).toContain(".");
+    expect(sd?.confirmationCount).toBe(1);
+  });
+
+  it("hardening: an EMPTY active_confirmation with status confirmed reads UNCONFIRMED", async () => {
+    const sd = await siteDefinitionFor(siteDefBlock({ active_confirmation: {} }));
+    expect(sd?.status).toBe("unconfirmed");
+    expect(sd?.activeConfirmation).toBeNull();
+  });
+
+  it("hardening: a NON-ACTIVE (revoked) active_confirmation cannot render as active", async () => {
+    const sd = await siteDefinitionFor(
+      siteDefBlock({ active_confirmation: confirmationPayload({ status: "revoked" }) }),
+    );
+    expect(sd?.status).toBe("unconfirmed");
+    expect(sd?.activeConfirmation).toBeNull();
+  });
+
+  it("hardening: an active_confirmation missing a record_id cannot render as active", async () => {
+    const sd = await siteDefinitionFor(
+      siteDefBlock({ active_confirmation: confirmationPayload({ record_id: null }) }),
+    );
+    expect(sd?.status).toBe("unconfirmed");
+    expect(sd?.activeConfirmation).toBeNull();
+  });
+
+  it("hardening: a malformed (non-object) active_confirmation reads unconfirmed", async () => {
+    const sd = await siteDefinitionFor(
+      siteDefBlock({ active_confirmation: "definitely-confirmed" }),
+    );
+    expect(sd?.status).toBe("unconfirmed");
+    expect(sd?.activeConfirmation).toBeNull();
+  });
+
+  it("defect 2: a self-attested confirmation stays refused-for-calculation even if the payload supplies false", async () => {
+    const sd = await siteDefinitionFor(
+      siteDefBlock({
+        active_confirmation: confirmationPayload({ refused_for_calculation: false }),
+      }),
+    );
+    expect(sd?.activeConfirmation?.refusedForCalculation).toBe(true);
+  });
+
+  it("a missing refused_for_calculation flag defaults to refused (fail-safe)", async () => {
+    const conf = confirmationPayload();
+    delete conf.refused_for_calculation;
+    const sd = await siteDefinitionFor(
+      siteDefBlock({ active_confirmation: conf, confirmations: [conf] }),
+    );
+    expect(sd?.activeConfirmation?.refusedForCalculation).toBe(true);
+  });
+
+  it("the refusal override is SCOPED to self-attestation: another attestation with false is not forced", async () => {
+    const conf = confirmationPayload({
+      attestation_status: "future_authenticated_scheme",
+      refused_for_calculation: false,
+    });
+    const sd = await siteDefinitionFor(
+      siteDefBlock({ active_confirmation: conf, confirmations: [conf] }),
+    );
+    expect(sd?.activeConfirmation?.refusedForCalculation).toBe(false);
+  });
+
+  it("unconfirmed WITH a revoked history: status unconfirmed, but the chain count is surfaced", async () => {
+    const revoked = confirmationPayload({ status: "revoked", record_id: "rec-old" });
+    const sd = await siteDefinitionFor(
+      siteDefBlock({
+        status: SITE_DEFINITION_STATUS_UNCONFIRMED,
+        active_confirmation: null,
+        confirmations: [revoked],
+      }),
+    );
+    expect(sd?.status).toBe("unconfirmed");
+    expect(sd?.activeConfirmation).toBeNull();
+    expect(sd?.confirmationCount).toBe(1);
+  });
+
+  it("parses a surfaced parcel discrepancy (never a status change)", async () => {
+    const sd = await siteDefinitionFor(
+      siteDefBlock({
+        parcel_discrepancy: {
+          recorded_parcels: [BASE_BBL, BASE_BBL_2],
+          current_resolver_parcels: [BASE_BBL, "1003030099"],
+        },
+      }),
+    );
+    expect(sd?.status).toBe("confirmed");
+    expect(sd?.parcelDiscrepancy).toEqual({
+      recordedParcels: [BASE_BBL, BASE_BBL_2],
+      currentResolverParcels: [BASE_BBL, "1003030099"],
+    });
+  });
+
+  it("a non-multi-lot document carries no site_definition block (null)", async () => {
+    const { view } = asDocument(
+      await fetchCondoRecords(UNIT_BBL, { fetchImpl: once(makeResponse(unitSingleDoc())) }),
+    );
+    expect(view.siteDefinition).toBeNull();
+  });
+});
+
+describe("condo-records — substitutionRecord strict entered-BBL parser (DB-038(f)-2, G3-1)", () => {
+  it("parses a valid entered_bbl through the shared BBL validator (canonical)", async () => {
+    const { view } = asDocument(
+      await fetchCondoRecords(UNIT_BBL, { fetchImpl: once(makeResponse(unitSingleDoc())) }),
+    );
+    expect(view.substitution?.enteredBbl).toBe(UNIT_BBL);
+  });
+
+  it("a non-canonical substitution entered_bbl is an explicit null, not a sanitized token", async () => {
+    // "abcd" would survive the looser boundedBbl cleaner as a token; the strict
+    // validateBblInput-backed parser rejects it -> null, proving the G3-1 swap.
+    const doc = unitSingleDoc();
+    doc.substitution = { ...doc.substitution, entered_bbl: "abcd" };
+    const { view } = asDocument(
+      await fetchCondoRecords(UNIT_BBL, { fetchImpl: once(makeResponse(doc)) }),
+    );
+    expect(view.substitution?.enteredBbl).toBeNull();
+    // The analyzed BBL (parsed via boundedBbl) is unaffected.
+    expect(view.substitution?.analyzedBbl).toBe(BASE_BBL);
   });
 });

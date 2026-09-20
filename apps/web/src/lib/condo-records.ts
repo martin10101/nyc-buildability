@@ -124,6 +124,60 @@ export interface CondoSubstitutionRecord {
   note: string | null;
 }
 
+// --- Site-definition confirmation surfacing (M5-T059, D-078) -----------------
+// READ-ONLY view of the api's additive `site_definition` block on a multi-lot
+// document. Slice 1 has NO mutation client: this parses the recorded human
+// confirmation(s) for display; it never selects a site and never drives a
+// calculation (D-078-R002).
+export const SITE_DEFINITION_STATUS_CONFIRMED = "confirmed";
+export const SITE_DEFINITION_STATUS_UNCONFIRMED = "unconfirmed";
+/** The self-attested attestation-status literal, pinned to the api's
+ * AttestationStatus.UNAUTHENTICATED_SELF_ATTESTED. A confirmation carrying it is
+ * ALWAYS refused for any calculation use, regardless of what the payload's
+ * refused_for_calculation flag claims — identity is not yet verified (B-001), so
+ * the loud refusal can never be cleared by an untrusted body. */
+export const SITE_DEFINITION_ATTESTATION_SELF_ATTESTED =
+  "unauthenticated_self_attested";
+/** The ACTIVE confirmation-status literal, pinned to the api's
+ * ConfirmationStatus.ACTIVE. Only a confirmation whose OWN derived status is
+ * active may surface as the recorded active confirmation. */
+export const SITE_DEFINITION_CONFIRMATION_STATUS_ACTIVE = "active";
+
+/** One recorded confirmation, bounded for display. */
+export interface SiteDefinitionConfirmationView {
+  recordId: string | null;
+  status: string | null;
+  confirmerName: string | null;
+  confirmerRole: string | null;
+  attestationStatus: string | null;
+  /** True when the confirmation is refused for any calculation use (a
+   * self-attested confirmation is, until authentication exists — B-001). Defaults
+   * to TRUE (fail-safe) when the source omits or malforms it. */
+  refusedForCalculation: boolean;
+  confirmedAt: string | null;
+  parcels: string[];
+  reason: string | null;
+  note: string | null;
+}
+
+/** The additive `site_definition` block: the recorded human confirmation of a
+ * multi-lot site, or an explicit UNCONFIRMED status. Never a system selection. */
+export interface SiteDefinitionView {
+  /** "confirmed" | "unconfirmed" (bounded; defaults to "unconfirmed"). */
+  status: string;
+  condoKey: string | null;
+  /** The single ACTIVE confirmation, or null when unconfirmed. */
+  activeConfirmation: SiteDefinitionConfirmationView | null;
+  /** Count of recorded confirmations in the chain (active + superseded + revoked). */
+  confirmationCount: number;
+  /** A surfaced factual discrepancy between the recorded parcels and the current
+   * resolver output; never changes the confirmation's status (D-078-R002). */
+  parcelDiscrepancy: {
+    recordedParcels: string[];
+    currentResolverParcels: string[];
+  } | null;
+}
+
 /** Bounded display view of a 200 condo_records document. */
 export interface CondoRecordsView {
   /** RAW outcome string for branching (one of CONDO_RECORDS_OUTCOMES). */
@@ -167,6 +221,10 @@ export interface CondoRecordsView {
   /** The typed resolver error class, present only on the `error` outcome. */
   errorType: string | null;
   provenance: CondoRecordsProvenance;
+  /** The recorded site-definition confirmation surfacing (M5-T059), present only
+   * on a multi-lot document that carries the additive `site_definition` block;
+   * null otherwise. Read-only display of a human act, never a system selection. */
+  siteDefinition: SiteDefinitionView | null;
 }
 
 export interface CondoRecordsDocumentOutcome {
@@ -295,7 +353,12 @@ function substitutionRecord(value: unknown): CondoSubstitutionRecord | null {
   const record = asRecord(value);
   if (record === null) return null;
   return {
-    enteredBbl: boundedBbl(record.entered_bbl),
+    // DB-038(f)-2 (G3-1): the ENTERED BBL is parsed through the strict
+    // validateBblInput-backed parser (enteredBblValue), not the looser
+    // boundedBbl token cleaner, so a non-canonical entered value is an explicit
+    // null instead of a sanitized-but-invalid token — the same discipline the
+    // top-level entered_bbl already uses.
+    enteredBbl: enteredBblValue(record.entered_bbl),
     analyzedBbl: boundedBbl(record.analyzed_bbl),
     note: typeof record.note === "string" ? boundedText(record.note, "") || null : null,
   };
@@ -343,6 +406,109 @@ function provenanceView(value: unknown): CondoRecordsProvenance {
   };
 }
 
+/** Bound a parcel-set array (base-lot BBLs) to a de-duplication-free list of plain
+ * tokens, dropping any entry that is absent or unusable — never an invented BBL. */
+function boundedParcels(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((entry) => boundedBbl(entry))
+    .filter((entry): entry is string => entry !== null);
+}
+
+/** Parse ONE recorded confirmation (the api's ConfirmationView payload) into a
+ * bounded display view. READ-ONLY: this never selects a site (D-078-R002).
+ *
+ * The refused-for-calculation flag is fail-safe. A SELF-ATTESTED confirmation is
+ * ALWAYS refused for calculation (its identity is not yet verified — B-001), so
+ * the flag is forced TRUE regardless of what the payload claims: an untrusted
+ * body supplying `refused_for_calculation: false` can never clear the loud
+ * refusal on a self-attested record. For any other attestation the flag still
+ * defaults to TRUE and is cleared only by an explicit boolean `false`, so a
+ * missing or malformed flag can never read as calculation-eligible (slice 1 has
+ * no calculation path regardless). */
+function siteDefinitionConfirmationView(
+  value: unknown,
+): SiteDefinitionConfirmationView | null {
+  const record = asRecord(value);
+  if (record === null) return null;
+  const confirmer = asRecord(record.confirmer) ?? {};
+  const attestationStatus = boundedToken(record.attestation_status, 48);
+  const selfAttested =
+    attestationStatus === SITE_DEFINITION_ATTESTATION_SELF_ATTESTED;
+  const refusedForCalculation = selfAttested
+    ? true
+    : record.refused_for_calculation !== false;
+  return {
+    recordId: boundedToken(record.record_id, 64),
+    status: boundedToken(record.status, 16),
+    confirmerName:
+      typeof confirmer.name === "string" ? boundedText(confirmer.name, "") || null : null,
+    confirmerRole: boundedToken(confirmer.role, 32),
+    attestationStatus,
+    refusedForCalculation,
+    confirmedAt: boundedTimestamp(record.confirmed_at),
+    parcels: boundedParcels(record.parcels),
+    reason:
+      typeof record.reason === "string" ? boundedText(record.reason, "") || null : null,
+    note: typeof record.note === "string" ? boundedText(record.note, "") || null : null,
+  };
+}
+
+/** Parse the block's `active_confirmation`, returning it ONLY when it is a
+ * well-formed ACTIVE confirmation — its OWN derived status is "active" AND it
+ * carries a record id. An empty ({}), malformed, or non-active (superseded /
+ * revoked) payload yields null, so it can never render as a recorded active
+ * confirmation even if the block's top-level status wrongly claims "confirmed". */
+function activeConfirmationView(
+  value: unknown,
+): SiteDefinitionConfirmationView | null {
+  const confirmation = siteDefinitionConfirmationView(value);
+  if (confirmation === null) return null;
+  if (
+    confirmation.status !== SITE_DEFINITION_CONFIRMATION_STATUS_ACTIVE ||
+    confirmation.recordId === null
+  ) {
+    return null;
+  }
+  return confirmation;
+}
+
+/** Parse the api's additive `site_definition` block on a multi-lot document.
+ * READ-ONLY surfacing of a recorded human confirmation (or an explicit
+ * UNCONFIRMED status); never a system selection (D-078-R002). The block is
+ * CONFIRMED only when BOTH the top-level status is the exact "confirmed" literal
+ * AND a well-formed ACTIVE confirmation is present; otherwise it fails safe to
+ * UNCONFIRMED, so an empty, malformed, or non-active confirmation can never read
+ * as a confirmed site. Returns null when the block is absent (a non-multi-lot
+ * document carries none). */
+function siteDefinitionView(value: unknown): SiteDefinitionView | null {
+  const record = asRecord(value);
+  if (record === null) return null;
+  const activeConfirmation = activeConfirmationView(record.active_confirmation);
+  const status =
+    activeConfirmation !== null &&
+    boundedToken(record.status, 16) === SITE_DEFINITION_STATUS_CONFIRMED
+      ? SITE_DEFINITION_STATUS_CONFIRMED
+      : SITE_DEFINITION_STATUS_UNCONFIRMED;
+  const confirmations = Array.isArray(record.confirmations)
+    ? record.confirmations
+    : [];
+  const discrepancy = asRecord(record.parcel_discrepancy);
+  return {
+    status,
+    condoKey: boundedToken(record.condo_key, 32),
+    activeConfirmation,
+    confirmationCount: confirmations.length,
+    parcelDiscrepancy:
+      discrepancy === null
+        ? null
+        : {
+            recordedParcels: boundedParcels(discrepancy.recorded_parcels),
+            currentResolverParcels: boundedParcels(discrepancy.current_resolver_parcels),
+          },
+  };
+}
+
 function documentView(record: Record<string, unknown>): CondoRecordsView {
   return {
     outcome: record.outcome as CondoRecordsChannelOutcome,
@@ -366,6 +532,7 @@ function documentView(record: Record<string, unknown>): CondoRecordsView {
       typeof record.reason === "string" ? boundedText(record.reason, "") || null : null,
     errorType: boundedToken(record.error_type, 48),
     provenance: provenanceView(record.provenance),
+    siteDefinition: siteDefinitionView(record.site_definition),
   };
 }
 

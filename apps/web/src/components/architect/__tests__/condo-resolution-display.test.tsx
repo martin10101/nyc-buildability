@@ -731,14 +731,17 @@ describe("CondoRecordsChannelSection — DB-036 rider rendering (M5-T056)", () =
     expect(billing.textContent ?? "").not.toContain("1003031001");
   });
 
-  it("(b) a billing-class input labels entered and billing as the SAME recorded lot", async () => {
+  it("(f)-1 a billing-class input COLLAPSES entered and billing into ONE line (no redundant identical pair)", async () => {
+    // DB-038(f)-1 (HJ A4): when the entered BBL IS the recorded billing lot, the
+    // two identical "you entered" / "billing lot" lines are redundant, so they
+    // collapse into one line carrying a billing-class parenthetical — and the
+    // separate billing-lot line is gone (a unit input keeps them distinct, proven
+    // by the "(b) labels the ENTERED unit BBL separately" case above).
     await renderSection(channelMultiLotDoc());
     expect(screen.getByTestId("condo-entered-lot")).toHaveTextContent(
-      "Condo lot you entered: 1003037502",
+      "Condo lot you entered: 1003037502 (also the condo billing lot the city records for it)",
     );
-    expect(screen.getByTestId("condo-billing-lot")).toHaveTextContent(
-      "Condo billing lot: 1003037502",
-    );
+    expect(screen.queryByTestId("condo-billing-lot")).toBeNull();
   });
 
   it("(c) the records section carries NO dangling professional-review reference — it points at the development limits above", async () => {
@@ -792,5 +795,167 @@ describe("CondoRecordsChannelSection — DB-036 rider rendering (M5-T056)", () =
     const provenance = screen.getByTestId("condo-records-provenance");
     expect(provenance).toHaveTextContent("retrieved: 2026-09-01T14:05:56Z");
     expect(provenance).toHaveTextContent("dataset version: 2026-08-30T00:00:00Z");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CondoSiteDefinitionRecord — recorded site-definition surfacing (M5-T059,
+// D-078). The section RENDERS a recorded HUMAN site-definition confirmation (or
+// an explicit "not confirmed") INSIDE the multi-lot records view. Slice 1 has NO
+// mutation client and NO calculation path: this is read-only surfacing of a human
+// act (D-078-R002). The parsing hardening is pinned in
+// lib/__tests__/condo-records.test.ts; these prove the RENDERED surface — the
+// billing-lot collapse, the active confirmation with a fractional-second
+// timestamp, the loud self-attested refusal, absent-vs-revoked history, a
+// malformed/non-active confirmation failing safe to unconfirmed, the surfaced
+// discrepancy, and — the calculation/refusal regression — that a recorded
+// confirmation NEVER unlocks the withheld allowances.
+// ---------------------------------------------------------------------------
+describe("CondoSiteDefinitionRecord — recorded site-definition surfacing (M5-T059, D-078)", () => {
+  // A realistic tz-aware instant WITH fractional seconds (what datetime.now(UTC)
+  // produces) — never a fixture trimmed to whole seconds to dodge a display gate.
+  const SD_CONFIRMED_AT = "2026-09-20T08:23:30.089123+00:00";
+
+  function confirmation(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+    return {
+      record_id: "rec-abc123",
+      condo_key: "103344",
+      billing_bbl: "1003037502",
+      entered_bbl: "1003037502",
+      parcels: ["1003030019", "1003030025"],
+      confirmer: { name: "Dana Reviewer", role: "qualified_professional" },
+      attestation_status: "unauthenticated_self_attested",
+      refused_for_calculation: true,
+      confirmed_at: SD_CONFIRMED_AT,
+      status: "active",
+      supersedes_id: null,
+      superseded_by_id: null,
+      reason: null,
+      note: null,
+      transitions: [],
+      provenance: {},
+      ...overrides,
+    };
+  }
+
+  function siteDefBlock(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+    return {
+      condo_key: "103344",
+      status: "confirmed",
+      active_confirmation: confirmation(),
+      confirmations: [confirmation()],
+      parcel_discrepancy: null,
+      note: "recorded human confirmation",
+      ...overrides,
+    };
+  }
+
+  function docWithSiteDefinition(sd: unknown) {
+    return { ...channelMultiLotDoc(), site_definition: sd };
+  }
+
+  async function renderSection(sd: unknown) {
+    const decision = deriveCondoSurface(baseProfile(), await channelOutcome(docWithSiteDefinition(sd)));
+    render(<CondoRecordsChannelSection decision={decision} />);
+    return decision;
+  }
+
+  it("renders an active confirmation: the confirmer, the fractional-second timestamp, and the recorded parcels", async () => {
+    await renderSection(siteDefBlock());
+    const group = screen.getByTestId("condo-site-definition");
+    expect(group).toBeInTheDocument();
+    expect(screen.getByTestId("condo-site-definition-status")).toHaveTextContent(
+      "a person has recorded a confirmation to treat these base lots as one site",
+    );
+    const confirmer = screen.getByTestId("condo-site-definition-confirmer");
+    expect(confirmer).toHaveTextContent("Confirmed by Dana Reviewer (qualified_professional)");
+    // The realistic fractional-second timestamp renders on the surface char-for-char.
+    expect(confirmer).toHaveTextContent(`on ${SD_CONFIRMED_AT}`);
+    expect(confirmer).toHaveTextContent("Recorded base lots: 1003030019, 1003030025");
+    // RECORD-class wording only — a recorded human act, never allowance vocabulary.
+    expect(group.textContent ?? "").not.toMatch(/allowance/i);
+  });
+
+  it("surfaces the self-attested refusal loudly (identity unverified, refused for any calculation use)", async () => {
+    await renderSection(siteDefBlock());
+    const refused = screen.getByTestId("condo-site-definition-refused");
+    expect(refused).toHaveTextContent("self-attested");
+    expect(refused).toHaveTextContent("refused for any calculation use");
+  });
+
+  it("keeps the refusal note even when the payload claims refused_for_calculation false (self-attested is fail-safe)", async () => {
+    await renderSection(
+      siteDefBlock({
+        active_confirmation: confirmation({ refused_for_calculation: false }),
+        confirmations: [confirmation({ refused_for_calculation: false })],
+      }),
+    );
+    expect(screen.getByTestId("condo-site-definition-refused")).toBeInTheDocument();
+  });
+
+  it("no discrepancy note when the recorded parcels match the current resolver set", async () => {
+    await renderSection(siteDefBlock());
+    expect(screen.queryByTestId("condo-site-definition-discrepancy")).toBeNull();
+  });
+
+  it("unconfirmed with NO history: states plainly that no one has recorded a confirmation", async () => {
+    await renderSection(siteDefBlock({ status: "unconfirmed", active_confirmation: null, confirmations: [] }));
+    const unconfirmed = screen.getByTestId("condo-site-definition-unconfirmed");
+    expect(unconfirmed).toHaveAttribute("data-history", "none");
+    expect(unconfirmed).toHaveTextContent("No one has recorded a confirmation to treat these base lots as one site");
+    expect(screen.queryByTestId("condo-site-definition")).toBeNull();
+  });
+
+  it("unconfirmed WITH a revoked/superseded history: states the prior confirmation is no longer active", async () => {
+    const revoked = confirmation({ status: "revoked", record_id: "rec-old" });
+    await renderSection(siteDefBlock({ status: "unconfirmed", active_confirmation: null, confirmations: [revoked] }));
+    const unconfirmed = screen.getByTestId("condo-site-definition-unconfirmed");
+    expect(unconfirmed).toHaveAttribute("data-history", "revoked-or-superseded");
+    expect(unconfirmed).toHaveTextContent("no longer active");
+    expect(unconfirmed).toHaveTextContent("revoked or superseded");
+  });
+
+  it("a malformed / non-active confirmation can never render as active — it fails safe to unconfirmed", async () => {
+    // The block's top-level status wrongly claims "confirmed", but the active
+    // confirmation is a NON-ACTIVE (superseded) record: it must never render as a
+    // recorded active confirmation.
+    const superseded = confirmation({ status: "superseded" });
+    await renderSection(siteDefBlock({ status: "confirmed", active_confirmation: superseded, confirmations: [superseded] }));
+    expect(screen.queryByTestId("condo-site-definition")).toBeNull();
+    expect(screen.getByTestId("condo-site-definition-unconfirmed")).toBeInTheDocument();
+  });
+
+  it("surfaces a parcel discrepancy for professional review WITHOUT changing the confirmation (D-078-R002)", async () => {
+    await renderSection(
+      siteDefBlock({
+        parcel_discrepancy: {
+          recorded_parcels: ["1003030019", "1003030025"],
+          current_resolver_parcels: ["1003030019", "1003030099"],
+        },
+      }),
+    );
+    // Still confirmed — a later differing resolver set is a SURFACED discrepancy,
+    // never a status change.
+    expect(screen.getByTestId("condo-site-definition")).toBeInTheDocument();
+    const discrepancy = screen.getByTestId("condo-site-definition-discrepancy");
+    expect(discrepancy).toHaveTextContent("differ");
+    expect(discrepancy).toHaveTextContent("does not change the confirmation");
+  });
+
+  it("regression: a recorded site-definition confirmation NEVER unlocks the withheld allowances — records only (D-078-R002)", async () => {
+    // The calculation/refusal regression: a channel-confirmed multi-lot condo
+    // still withholds EVERY computed allowance even with an ACTIVE, confirmed
+    // site-definition record present. Surfacing a confirmation is additive; it is a
+    // record, not an allowance, and slice 1 has no calculation path at all.
+    const { profile, evaluation, scenario } = displayableInputs();
+    stubChannel(docWithSiteDefinition(siteDefBlock()));
+    render(<PropertyOverview profile={profile} scenario={scenario} evaluation={evaluation} onInspect={vi.fn()} />);
+    await waitFor(() => expect(screen.getByTestId("condo-site-definition")).toBeInTheDocument());
+    expect(screen.getByTestId("development-evaluated-far")).toHaveTextContent("Not calculated");
+    expect(screen.getByTestId("architect-cap")).toHaveTextContent("Not calculated");
+    // The self-attested refusal rides along with the surfaced record.
+    expect(screen.getByTestId("condo-site-definition-refused")).toBeInTheDocument();
+    // RECORDS not allowances: the confirmation carries no allowance vocabulary.
+    expect(screen.getByTestId("condo-site-definition").textContent ?? "").not.toMatch(/allowance/i);
   });
 });

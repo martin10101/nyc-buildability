@@ -97,12 +97,18 @@ from app.connectors.dtm_condo_soda import (
 from app.connectors.dtm_condo_soda import (
     resolve as dtm_resolve,
 )
+from app.site_definition import (
+    SiteDefinitionStore,
+    build_site_definition_block,
+    default_site_definition_store,
+)
 
 __all__ = [
     "CONDO_RECORDS_STATUS_STATE_MATRIX",
     "CondoBillingResolver",
     "CondoUnitResolver",
     "get_condo_billing_resolver",
+    "get_condo_site_definition_store",
     "get_condo_unit_resolver",
     "router",
 ]
@@ -211,6 +217,24 @@ def get_condo_billing_resolver() -> CondoBillingResolver:
 def get_condo_unit_resolver() -> CondoUnitResolver:
     """Dependency returning the unit-resolution seam (test override point)."""
     return _default_unit_resolver
+
+
+# Site-definition confirmations (M5-T059, D-078). The multi-lot document surfaces
+# any RECORDED human site-definition confirmation (or an explicit unconfirmed
+# status) read-only; the assembly lives in the site_definition package. Reading a
+# confirmation NEVER selects a site or changes any calculation (D-078-R002): this
+# is additive surfacing only.
+def get_condo_site_definition_store() -> SiteDefinitionStore:
+    """Dependency returning the store the condo-records document reads recorded
+    site-definition confirmations from (test override point).
+
+    Binds to the ONE shared package default (``default_site_definition_store``) -
+    the SAME object the (unmounted) write API writes to - so a confirmation
+    created there surfaces on this read document through the same binding. In
+    production the write route is unmounted, so the shared default is empty and
+    this document honestly shows "unconfirmed"; tests override it with a fresh
+    store."""
+    return default_site_definition_store()
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
@@ -566,6 +590,9 @@ def get_condo_records(
     bbl: str,
     resolve_billing: CondoBillingResolver = Depends(get_condo_billing_resolver),  # noqa: B008
     resolve_unit: CondoUnitResolver = Depends(get_condo_unit_resolver),  # noqa: B008
+    site_definition_store: SiteDefinitionStore = Depends(  # noqa: B008
+        get_condo_site_definition_store
+    ),
 ) -> JSONResponse:
     """Transport the condo records view for one BBL. Feature-flag gated OFF by
     default (reuses INTERNAL_RULE_EVAL_ENABLED), mirroring the sibling routes."""
@@ -637,6 +664,16 @@ def get_condo_records(
     #    the document keeps the entered BBL and the condo billing lot distinct.
     try:
         document = _build_document(canonical, resolution, lot_class)
+        # M5-T059 (D-078): additive, READ-ONLY site-definition surfacing on the
+        # multi-lot document only. Recorded confirmation(s) or an explicit
+        # unconfirmed status; the assembly lives in the site_definition package.
+        # Reading a confirmation never selects a site or changes any calculation.
+        if resolution.outcome == OUTCOME_MULTI_LOT and resolution.condo_key is not None:
+            document["site_definition"] = build_site_definition_block(
+                condo_key=resolution.condo_key,
+                views=site_definition_store.list_for_condo_key(resolution.condo_key),
+                resolver_base_bbls=resolution.base_bbls,
+            )
         _assert_json_safe(document)
     except Exception:
         logger.error(
