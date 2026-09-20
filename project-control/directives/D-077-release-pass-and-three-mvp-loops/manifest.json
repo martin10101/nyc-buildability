@@ -10,7 +10,7 @@
   "issued_at": "2026-09-19",
   "captured_at": "2026-09-20T03:32:52+00:00",
   "created_at": "2026-09-20T03:32:52+00:00",
-  "updated_at": "2026-09-20T07:53:11+00:00",
+  "updated_at": "2026-09-20T10:05:00+00:00",
   "channel": "interactive_chat",
   "frozen_baseline_sha": "9c5870ed5eb394208a149797ca60f81add422682",
   "capture_head_sha": null,
@@ -27,7 +27,7 @@
     "D-077-R003",
     "D-077-R004"
   ],
-  "requirements_content_digest_sha256": "1bd42450bfdf6cdbc3b2953e696848576d19962eeb65fcbf3bdc3921a8fd2c6b",
+  "requirements_content_digest_sha256": "39cb1ec0f10a1071b93e65371e3f178518782c5bc8a743398059fa974cf7b29f",
   "sources": [
     {
       "file": "source-001.md",
@@ -76,6 +76,12 @@
       "actor": "orchestrator",
       "action": "applicability_append",
       "note": "Bound the two re-feed lane packets M5-T058 (loop-2) + M5-T059 (loop-3) to D-077-R002/R003 (lane drill + released-queue boundary; D-078 packets are 'subsequent released lanes contracted at seams under existing directives'). Append-only, task_ids only. Digest resynced da58b2e8 -> 1bd42450 SAME commit (c14)."
+    },
+    {
+      "at": "2026-09-20T10:05:00+00:00",
+      "actor": "orchestrator",
+      "action": "applicability_append",
+      "note": "Bound the loop-1 re-feed packet M5-T060 to D-077-R002/R003 (lane drill continues; next released phase-B increment after M5-T057 accepted 240th). Append-only, task_ids only. Digest resynced 1bd42450 -> 39cb1ec0 SAME commit (c14)."
     }
   ]
 }

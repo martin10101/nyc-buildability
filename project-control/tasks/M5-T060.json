@@ -1,0 +1,138 @@
+{
+  "task_id": "M5-T060",
+  "title": "Phase B3 slice 2 (D-076): proposal editor UI increment 1 - numeric 2263 draft authority (vertex table + levels/walls), run-check against the T057 route with typed-refusal decode, grouped shortfall report, client-local proposed variations; map composed read-only for context; NO drawing/transform/emission this increment (CRS bridge + scenario emission routed to the post-B3 owner checkpoint)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Give the architect the first working proposal-editing experience over the accepted B3 route: a keyboard-first draft editor whose AUTHORITY is a numeric 2263 vertex/levels/walls model (display CRS stays display-only - the recorded measurement law; no client-side transform exists and none is added), the existing lot-outline map COMPOSED read-only beside it for context, a run-check action that POSTs the draft to /api/v1/proposal-checks and renders the grouped PASS/FAIL/COULD_NOT_CHECK report with numeric shortfalls exactly per the plan's phrasing ('18 ft provided; 20 ft required; 2 ft short'), and a client-local variations list - each variation labeled PROPOSED, never a city record, explicitly ephemeral (this browser session only; the platform is stateless and scenario-document emission is a deliberately deferred packet). Map-based outline drawing and the 4326-to-2263 bridge (a new-dependency/measurement design fork) plus scenario emission are OUT of this increment and are the named design questions for the D-076-R003 post-B3 owner checkpoint report.",
+  "business_reason": "The owner demo after B3 needs a real editing-and-checking experience that is honest about what the numbers are; this increment delivers the check loop end-to-end with the strongest a11y shape (numeric table as the primary input) without smuggling in measurement dishonesty or an unadmitted dependency",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields (branch, worktree, starting_sha, current_sha) entirely - the controller fills the authoritative values. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass.",
+    "THIN CLIENT (binding): NEVER run or document npm/npx/node locally - web behavior (vitest, typecheck, lint, e2e) proves ONLY in CI on the pushed head; never mark web behavior verified from local reasoning. The only local commands are `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES (querySelectorAll<HTMLElement>); deliberate invalid-shape probes as `as unknown as T`; no empty .test/.spec files (seeded placeholders are trivially passing - replace, never empty).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam BEFORE this packet was written: 772 files/16400 nodes/7195 edges). Mount-surface impact: ArchitectEntry.tsx <- app/property/{page,compare/page,confirm/page}.tsx + __tests__/entry.test.tsx. navigation.ts <- ArchitectEntry, ArchitectShell, DevelopmentLimits, ProfileViews, PropertyOverview (T059-HELD FILE - never edit it; an ADDITIVE view entry is file-disjoint but must not change its rendered behavior for existing views), __tests__/workspace.test.tsx. ArchitectShell.tsx <- ArchitectEntry + SurveyWorkspace. Read-only seams you CONSUME: services/api/app/api/v1/proposal_checks_api.py (the route contract: POST /api/v1/proposal-checks, request {proposed_massing, lot, lot_rule_facts, scenario_label, proposal_id}; (status,state) matrix (200,None)/(404,None)/(413,payload_too_large)/(422,validation_error incl. a `field` key)/(500,internal_error); caps MAX_LABEL_LEN 200 charset [A-Za-z0-9 ._:-], ROUTE_MAX_EXTERIOR_WALLS 500, ROUTE_MAX_LOT_LINE_SEGMENTS 800, ROUTE_MAX_STREET_LINES 400, ROUTE_MAX_TOTAL_OUTLINE_POSITIONS 1200, MAX_BODY_BYTES, MAX_PROVENANCE_BYTES 2048, lot ids BP-2-bounded); apps/web/src/lib/scenario-api.ts (the client discipline to COPY: status-state matrix mirror, Content-Length bound before parse, boundedText/boundedToken on every reflected string, AbortController+timeout, feature_unavailable 404, announcement copy, recoverable-outcome gating); apps/web/src/lib/surveyReview/api.ts postInit/decodeError (the POST + typed-refusal-decode precedent); apps/web/src/lib/rule-evaluation.ts ruleEvaluationSurfaceEnabled (the flag inheritance - NO new flag); components/address/LotOutlineMap.tsx (COMPOSE read-only via import - NEVER edit the file; DB-038(e) CLS coupling); services/api/tests/api/test_proposal_checks_api.py rectangle fixture arithmetic (the AS-1 numbers). Run `python tools/code_graph/query.py --no-regen impact <path>` before any sweep; graph ADVISORY - verify in source.",
+    "SCOPE 1/4 - DRAFT MODEL + CLIENT (binding): NEW apps/web/src/lib/architect/proposal-draft.ts - the draft model (2263 vertices as the AUTHORITY, levels {level_index, floor_count, floor_to_floor_ft}, exterior walls {id, start/end vertex index}, scenario_label, proposal_id, plus the lot-context fields the route needs: area_sq_ft + area_provenance + lot_line_segments + street_lines w/ attestation - all numeric-entry, honestly labeled as caller-attested inputs) with MIRROR validation of the route's caps/charsets/finiteness (a mirror, NEVER an authority - the server refusal remains the truth; every mirrored constant carries a comment naming its route source). NEW apps/web/src/lib/proposal-checks-api.ts - the typed POST client copying scenario-api.ts discipline EXACTLY (matrix mirror incl. the NEW `field` key decode on 422; Content-Length bound; bounded strings; timeout; announcements; recoverable gating; fetchImpl injection for tests).",
+    "SCOPE 2/4 - EDITOR + REPORT + VARIATIONS (binding): NEW components/architect/ProposalEditor.tsx (container: the numeric vertex table as the PRIMARY, keyboard-first input; levels/walls forms; run-check button; composes <LotOutlineMap bbl context> READ-ONLY beside the form with copy 'map shows the recorded lot for reference - display only'); NEW ProposalCheckReport.tsx (grouped PASS/FAIL/COULD_NOT_CHECK with icon+text never color-only; numeric shortfalls rendered in the plan's phrasing '<provided> provided; <required> required; <shortfall> short' with units; COULD_NOT_CHECK reasons first-class; semantic_gap prose behind a disclosure; EVERY echoed value (ids, unmapped_lot_facts, provenance) through boundedText - the DB-039(k) render-escaping obligation, bound by test; no dangerouslySetInnerHTML anywhere in the packet); NEW ProposalVariations.tsx (client-local list: {label, draft, last report}; save/select/compare two side by side; explicit copy: 'Proposed - your input, not a city record' AND 'kept in this browser session only - not saved'). Mount: add view 'proposal' via navigation.ts (+label) + one case arm in ArchitectEntry.tsx (+ ArchitectShell nav entry only if it enumerates views) - reachable ONLY inside the existing ruleEvaluationSurfaceEnabled-gated tree (no new flag); new CSS classes in app/property/architect.css only - NEVER touch .architect-map-status (DB-038(e)).",
+    "SCOPE 3/4 - HONESTY + DEFERRALS (binding; D-076-R002): a proposed building is a THIRD input class - every number the editor shows from a check is labeled proposed-derived, never a record or an allowance; the variations list is ephemeral client state (platform stateless; NO scenario-document construction, NO contract_version anywhere in this packet - packages/contracts and the scenario save/emission path are FORBIDDEN; grep-provable). The 4326->2263 bridge, map DRAWING, and scenario emission are OUT: record each as a disposition in the report, and author the packet's contribution to the D-076-R003 post-B3 owner checkpoint report as a short section in the producer report (plain-English: what works now, the CRS/dependency fork options, the emission question).",
+    "SCOPE 4/4 - TESTS (binding): unit/component specs for draft-model mirror validation (each mirrored cap has a test naming the route constant), client matrix decode (200/404-off/413/422-with-field/500 + timeout + non-JSON), editor keyboard flow (add/edit/delete vertex + level + wall via keyboard only), report rendering (shortfall phrasing pinned to the T057 rectangle-fixture arithmetic: coverage FAIL 0.125 shortfall, height PASS 30<=60, two COULD_NOT_CHECK w/ reasons; bounded-echo test with markup-shaped ids proving text-rendered), variations save/compare + ephemerality copy, honesty labels present; e2e/proposal-editor.spec.ts walks the journey with fetchImpl-injected route responses; update the FREE __tests__/entry.test.tsx + workspace.test.tsx for the new view (they enumerate views); test-support/proposal-check-fixtures.ts NEW (never touch the T058-HELD rule-evaluation-fixtures.ts).",
+    "PRESERVATION (binding): ScenarioWorkspace.tsx props/behavior untouched (a T058-held test renders it - the file is FORBIDDEN); every T058 lane file, every T059 lane file, LotOutlineMap.tsx + its tests, AddressConfirmCard.tsx, packages/contracts/**, ALL services/api/**, package.json/package-lock.json (NO new dependency) are FORBIDDEN; existing views' behavior byte-stable except the additive nav entry; every existing suite green in CI.",
+    "Discovery routing (D-069): surface out-of-scope findings in the report; never fix in-packet. No WebFetch. Thin client."
+  ],
+  "outputs": [
+    "proposal-draft.ts (2263 numeric authority + mirrored validation) + proposal-checks-api.ts (typed client, scenario-api discipline, field-bearing 422 decode)",
+    "ProposalEditor.tsx (keyboard-first tables/forms + read-only map composition) + ProposalCheckReport.tsx (grouped results, plan-phrased shortfalls, bounded echoes, disclosure for semantic_gap) + ProposalVariations.tsx (client-local, honestly-labeled, ephemeral)",
+    "Mount: 'proposal' view via navigation.ts + ArchitectEntry case (+Shell if enumerating) inside the existing internal-flag gate; new CSS classes only",
+    "Test pack: mirror-validation, client-matrix, keyboard-flow, report-arithmetic (rectangle fixture), bounded-echo, variations, honesty labels, entry/workspace view-list updates, e2e journey spec",
+    "Producer report incl. the three dispositions (no drawing / no transform / no emission) and the plain-English post-B3 checkpoint section (D-076-R003 input)"
+  ],
+  "dependencies": [
+    "M5-T057"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/proposal-checks-api.ts",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/lib/__tests__/proposal-checks-api.test.ts",
+    "apps/web/src/lib/architect/__tests__/proposal-draft.test.ts",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/ProposalCheckReport.tsx",
+    "apps/web/src/components/architect/ProposalVariations.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-check-report.test.tsx",
+    "apps/web/src/components/architect/__tests__/entry.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/test-support/proposal-check-fixtures.ts",
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/ArchitectShell.tsx",
+    "apps/web/src/lib/architect/navigation.ts",
+    "apps/web/src/app/property/architect.css",
+    "apps/web/e2e/proposal-editor.spec.ts",
+    "project-control/reports/M5-T060-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/",
+    "packages/contracts/",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/src/components/architect/ScenarioWorkspace.tsx",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/components/architect/__tests__/condo-resolution-display.test.tsx",
+    "apps/web/src/components/architect/__tests__/development-limits.test.tsx",
+    "apps/web/src/components/architect/__tests__/analysis-identity-substitution.test.tsx",
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/__tests__/condo-records.test.ts",
+    "apps/web/src/lib/rule-evaluation-contract.ts",
+    "apps/web/src/lib/architect/development-limits.ts",
+    "apps/web/src/lib/__tests__/contract-versions.test.ts",
+    "apps/web/src/test-support/rule-evaluation-fixtures.ts",
+    "apps/web/src/lib/scenario-contract.ts",
+    "apps/web/src/lib/scenario-bounds.ts",
+    "apps/web/src/lib/scenario-api.ts"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (primary, arithmetic-pinned): the rectangle-fixture draft entered through the editor and run against a fetchImpl-injected route response reproduces the accepted arithmetic in the UI - coverage FAIL with shortfall 0.125 rendered as '<provided> provided; <required> required; <shortfall> short' with units, height PASS 30<=60, two COULD_NOT_CHECK with their reasons shown first-class and semantic_gap behind a disclosure.",
+    "AS-2 (honesty, D-076-R002): 'Proposed - your input, not a city record' present on editor, report, and variations; the ephemerality copy present ('this browser session only - not saved'); PASS/FAIL/COULD_NOT_CHECK distinguished by icon+text, never color alone; nothing labels a proposal-derived number as a record or allowance.",
+    "AS-3 (typed refusals + bounded echoes): the client decodes the route's full (status,state) matrix incl. the 422 `field` key, 413, generic 500, and flag-off 404 -> feature_unavailable; mirror validation blocks over-cap/bad-charset drafts client-side naming the route constant; a markup-shaped id echoed by a mocked response renders as TEXT with boundedText applied (DB-039(k)); no dangerouslySetInnerHTML in the packet (grep-proved by test).",
+    "AS-4 (variations): save/list/select/compare-two works with client-local state only; re-running a check updates the variation's stored report; no network write, no scenario document, no contract_version token anywhere in the packet (grep-proved).",
+    "AS-5 (a11y/keyboard): the full journey - add vertices, edit a coordinate, add a level and a wall, run check, read results, save a variation - completes keyboard-only in the e2e spec; the numeric table is the primary input, labeled; announcements on check outcomes per the existing OutcomeAnnouncer pattern.",
+    "AS-6 (mount + gating): the 'proposal' view reachable only inside the existing ruleEvaluationSurfaceEnabled gate; existing views' behavior unchanged (entry/workspace tests updated for the new entry, everything else byte-stable); LotOutlineMap composed read-only with the display-only reference copy; ScenarioWorkspace untouched.",
+    "AS-7 (proof): CI green at the pushed head (lint, typecheck, vitest, e2e); modularity exit 0; no new dependency; every pre-existing suite green."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The T058/T059 lanes hold adjacent web files (contract mirror, fixtures, PropertyOverview, condo lib): every one is FORBIDDEN here; needing any = STOP + discovery, never an edit.",
+    "The mirror-validation trap: client mirrors must cite the route constants and NEVER become the authority - a drift test per mirrored cap is the guard; the server refusal remains the truth surface.",
+    "ScenarioWorkspace renders inside a T058-HELD test: changing its props breaks a frozen lane - the file is forbidden; compose beside it.",
+    "navigation.ts is imported by the T059-HELD PropertyOverview.tsx: the view addition must be additive-only with no behavioral change to existing views (entry/workspace tests prove the list; PropertyOverview is never edited).",
+    "DB-039(k) is a UI obligation in THIS packet: the report renderer displays route-echoed caller strings (wall ids <=512 charset-free; provenance values <=2048B) - text rendering + boundedText everywhere, bound by the markup-echo test.",
+    "No map drawing/transform/emission: implementing any of the three here is scope breach - they are the owner-checkpoint questions (D-076-R003).",
+    "Web proof is CI-only (thin client): a local-reasoning verification claim fails the wave."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-20T09:52:14.429818+00:00",
+  "updated_at": "2026-09-20T09:52:15.076710+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-20T09:52:14.429818+00:00",
+  "documented_test_commands": [
+    "(CI-only) npm --prefix apps/web run lint && typecheck && test && e2e - proven on the pushed head, never run locally",
+    "python tools/modularity_check.py --check"
+  ]
+}
