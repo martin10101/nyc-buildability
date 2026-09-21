@@ -22,7 +22,7 @@ HEAD `0287d325` (pushed; == origin) · origin github.com/martin10101/nyc-buildab
 ## LANES (launchers = C:\SupervisorController{,2,3}\autostart-launch.ps1)
 | Lane | Packet | State |
 |---|---|---|
-| loop-1 | M5-T068 max-envelope test hardening (DB-046 a-f, TEST-ONLY wall; wt-m5t068) | LIVE run persistent-local-67 (launched 00:32) |
+| loop-1 | M5-T068 max-envelope test hardening (DB-046 a-f, TEST-ONLY wall; wt-m5t068) | run-67 CLOSED 01:57 at the S13.8 breaker cycle 6 (the evidence-stalemate class; unit complete — both test files + producer report dirty in wt-m5t068; 10 stale asks queued) → HARVEST per the drill |
 | loop-2 | M5-T069 supersede message unification (DB-040 s, FROZEN-order constraint; wt-m5t069) | LIVE run persistent2-local-29 (launched 01:45) |
 | loop-3 | idle | re-feed AFTER the T066 accept (candidate: the D-082-R003 max-renders-first UI surfacing — needs the editor surface T066 frees — or a DB-045 item) |
 
