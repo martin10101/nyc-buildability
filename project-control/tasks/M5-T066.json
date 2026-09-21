@@ -72,7 +72,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 85,
   "risks": [
     "The accepted address-confirm surface consumes LotOutlineMap: any non-additive change regresses accepted evidence - additive optional prop only, absent-prop path byte-equivalent, proven by the unchanged accepted specs.",
     "MapLibre pointer events do not exist in jsdom: unit specs assert the wiring/state contract; real pointer behavior proves ONLY in the Playwright e2e in CI - never mark click behavior verified from local reasoning; jsdom getContext/WebGL console noise is not the failure signal.",
@@ -81,7 +81,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T02:46:14.527580+00:00",
-  "updated_at": "2026-09-21T03:58:07.833634+00:00",
+  "updated_at": "2026-09-21T05:29:25.475821+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -131,6 +131,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "T065-acceptance-seam widening applied (DB-045 e/f/g): proposal-draft.ts + test into allowed_paths for the HJ-2 adoption-reconciliation fix; binding inputs HJ-1/HJ-2/HJ-4; AS-6 added; G0 re-recorded at 1986f589. Launch hold RELEASED (T065 accepted); loop-3 relaunch next"
+    },
+    {
+      "at": "2026-09-21T05:29:25.474944+00:00",
+      "agent": "frontend-engineer",
+      "percent": 85,
+      "status": "claimed",
+      "message": "Loop-3 run-13 closed at the S13.8 breaker cycle 6 (evidence-stalemate class; delivery complete incl. the new ProposalOutlineMap wrapper via the packet glob + the HJ-2 reconciliation fold-in). Harvest: 5 stale asks denied both stores; modularity exit 0 (the single documented local check - web proofs CI-only); material 0f1ffc1b cherry-picked to abfd182b ALL-MATCH x11. Push + CI next; submit at the green head"
     }
   ]
 }
