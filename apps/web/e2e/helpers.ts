@@ -25,7 +25,9 @@ export async function tabUntil(
     await page.keyboard.press("Tab");
     const matched = await page.evaluate(({ id, textContains }) => {
       const el = document.activeElement as HTMLElement | null;
-      if (!el) return false;
+      // A Tab wrap parks focus on <body>, whose textContent is the whole page —
+      // it would match ANY textContains. Never treat the wrap step as a match.
+      if (!el || el === document.body || el === document.documentElement) return false;
       if (id && el.id === id) return true;
       if (textContains && (el.textContent ?? "").includes(textContains)) return true;
       return false;
