@@ -74,8 +74,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 95,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The correspondence bridge is the packet's hard problem: if the affine fit residual proves untenable for real lots, STOP and surface it as a discovery/blocker naming the pyproj-admission alternative (an owner-review dependency path) - never hand-roll projection math and never ship an undisclosed-error transform.",
     "The HELD T063 surface and the LIVE T062 lane border this packet on both sides - G0 records the three-way disjointness; touch neither.",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T23:04:59.347291+00:00",
-  "updated_at": "2026-09-21T02:57:09.348794+00:00",
+  "updated_at": "2026-09-21T02:57:18.245124+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
