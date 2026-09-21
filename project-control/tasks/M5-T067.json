@@ -1,0 +1,101 @@
+{
+  "task_id": "M5-T067",
+  "title": "D-078 site-definition store hardening residuals (DB-040 q+r): supersede scope-before-status reorder + revoke not-found message unification, mutation-tested",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the two LOW security residuals the M5-T062 G5 review routed onward, in the accepted site-definition store: (q) reorder supersede() to bind the property/condo scope BEFORE the ACTIVE-status check, exactly mirroring the accepted revoke() discipline, so a cross-property probe of a known foreign record reads an indistinguishable 404 whatever the record's status (today store.py:312-337 calls _require_active before the condo_key binding - a 409-vs-404 status oracle); (r) emit an IDENTICAL not-found message for revoke's two not-found branches (today a non-existent id echoes 'no site-definition confirmation exists...' while an existing-but-foreign id returns the static 'must belong to the property addressed...' - an existence oracle via message text given a known uuid4 id). Both closures proven by mutation-sensitive tests (reordering reverted -> test red; message texts diverged -> test red); every existing store/api/consumer test stays green unchanged; no behavior change on any legitimate same-property path.",
+  "business_reason": "The G5 review closed the revoke oracle but found supersede retains the exact same class; closing both now keeps the record substrate oracle-free BEFORE any mount/auth work exposes it",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST (the api CI job's first step), then the documented pytest; `python tools/modularity_check.py --check` from repo root.",
+    "SPEC SOURCE (binding): the two findings are specified verbatim in project-control/reports/M5-T062-G5.md sections LOW-1 and LOW-2 - implement exactly those remediations (reorder supersede to mirror revoke's scope-before-status at store.py:390-418; identical message text for both revoke not-found branches). No scope creep: no auth work (B-001-bound), no mount changes, no new refusal codes, no contract changes.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 793 files/16728 nodes/7304 edges): store.py is consumed via site_definition/__init__.py by api/v1/site_definition.py (routes - FORBIDDEN, no route change needed) and api/v1/condo_records.py (read path - FORBIDDEN). CONSUMER SWEEP DUTY: tests/api/test_condo_records_api.py and any suite asserting revoke/supersede message TEXT are outside your scope - if your message unification reddens one, STOP and report the exact failing assertion to the orchestrator in your checkpoint (never edit out-of-scope tests, never weaken your change to dodge them).",
+    "BEHAVIOR PRESERVATION (binding): every legitimate same-property path is byte-identical in status/state/refusal code; the ONLY observable changes are (q) foreign-record supersede probes now read 404 regardless of status and (r) the two revoke not-found messages become one identical text. All 68 existing scoped tests must stay green (adjusting only assertions that pin the OLD oracle/message behavior, each adjustment named in the report)."
+  ],
+  "outputs": [
+    "Oracle-free supersede (scope-before-status, mirroring revoke) + unified revoke not-found message, both mutation-tested",
+    "project-control/reports/M5-T067-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T062"
+  ],
+  "allowed_paths": [
+    "services/api/app/site_definition/store.py",
+    "services/api/tests/site_definition/test_site_definition_records.py",
+    "services/api/tests/api/test_site_definition_api.py",
+    "project-control/reports/M5-T067-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/site_definition/__init__.py",
+    "services/api/app/site_definition/records.py",
+    "services/api/app/api/v1/site_definition.py",
+    "services/api/app/api/v1/condo_records.py",
+    "services/api/app/main.py",
+    "services/api/app/connectors/",
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "apps/web/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (supersede oracle closed): a cross-property probe of a foreign record via supersede returns (404, not_found) whether the foreign record is ACTIVE, revoked, or superseded - proven by tests covering all three statuses; the same-property supersede of a non-active record still returns its 409 typed refusal.",
+    "AS-2 (mutation sensitivity q): reverting the reorder (status check first) turns at least one test red.",
+    "AS-3 (message unification): revoke's non-existent-id and existing-but-foreign-id branches return byte-identical status, state, refusal code AND message text - proven by a direct equality assertion between the two responses' bodies.",
+    "AS-4 (mutation sensitivity r): diverging either message text turns the equality assertion red.",
+    "AS-5 (preservation): the full site_definition + api scoped suites pass; no legitimate-path behavior change; no contract/route/flag change (main.py and routes untouched - forbidden)."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Message-text assertions may exist in out-of-scope suites (test_condo_records_api.py) - the consumer-sweep duty routes them to the orchestrator instead of silent scope creep.",
+    "supersede's insert path must keep raising BEFORE any mutation on the foreign-probe branch - the reorder must not move the collision/chain-depth guards.",
+    "This packet deliberately excludes auth (B-001-bound) and the mount surface; adding either fails the scope gate."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-21T03:11:18.688813+00:00",
+  "updated_at": "2026-09-21T03:11:18.959185+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-078",
+      "requirement_ids": [
+        "D-078-R001",
+        "D-078-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-21T03:11:18.688813+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/site_definition tests/api/test_site_definition_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}
