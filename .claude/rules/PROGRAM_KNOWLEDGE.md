@@ -165,3 +165,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   web test placeholders with a trivial passing test; empty py test files are fine.
 - `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list
   shapes fail closed). Git-Bash-parsed CLI digests carry \r — strip before `deny`.
+- Reviewer returns TRUNCATE mid-report routinely (5x seq 124): dispatch prompts MUST require
+  an explicit END-OF-REPORT marker + proactive short-part splitting; on truncation, ask the
+  SAME reviewer for the remainder FROM THE EXACT cut phrase (never the whole report again),
+  then join verbatim at that point with the transmission history noted in the record header.
+- Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
+  (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
