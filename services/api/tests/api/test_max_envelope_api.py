@@ -1,1 +1,274 @@
-"""M5-T064 placeholder test module (seeded; replaced by the producer)."""
+"""Acceptance pack for POST /api/v1/max-envelope (task M5-T064, D-082).
+
+Fully OFFLINE and deterministic. The route is the trust boundary onto the accepted max-envelope
+engine; it ships UNMOUNTED (main.py is held by the live M5-T062 lane), so every test mounts the
+router on a FRESH ``FastAPI()`` via ``TestClient`` (the accepted M5-T059 pattern) and one test
+asserts the route is ABSENT from the real app. It is feature-flag gated OFF by default (reuses
+``INTERNAL_RULE_EVAL_ENABLED``), mirroring the sibling internal routes.
+
+- AS-5 (route discipline): 200 returns the envelope (dimensions + candidate + disclosure) with an
+  X-Correlation-ID header; flag off -> the same generic 404 as an unmounted path; UNMOUNTED from
+  the real app; typed + bounded refusals; the documented (status, state) matrix; no persistence.
+- AS-3 (honest gaps in the response): the non-commensurable FAR / rear-yard gaps appear in the 200
+  body; nothing is silently omitted.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+
+from app.api.v1 import max_envelope_api as mod
+from app.api.v1.max_envelope_api import (
+    MAX_BODY_BYTES,
+    MAX_ENVELOPE_STATUS_STATE_MATRIX,
+    router,
+)
+from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
+from app.rules.registry import RuleRegistry
+from app.rules.snapshots import SnapshotStore
+
+_B2 = Path(__file__).resolve().parents[1] / "rules" / "fixtures" / "proposal_checks"
+_URL = "/api/v1/max-envelope"
+_JSON_HEADERS = {"content-type": "application/json"}
+
+#: A supported axis-aligned rectangular lot (80 x 100 = 8000 sq ft) at a real interior 2263 SW
+#: corner, so the engine can fit + contain a candidate to it (not a fixed-anchor schematic).
+_LOT_ANCHOR = (985000.0, 195000.0)
+_LOT = {
+    "area_sq_ft": 8000.0,
+    "area_provenance": {"source_id": "synthetic"},
+    "lot_line_segments": [
+        {"id": "L-S", "start": [985000.0, 195000.0], "end": [985080.0, 195000.0]},
+        {"id": "L-E", "start": [985080.0, 195000.0], "end": [985080.0, 195100.0]},
+        {"id": "L-N", "start": [985080.0, 195100.0], "end": [985000.0, 195100.0]},
+        {"id": "L-W", "start": [985000.0, 195100.0], "end": [985000.0, 195000.0]},
+    ],
+    "street_lines": [],
+}
+_FACTS = {"zoning_district": "R5", "street_width_class": "wide"}
+
+
+def _enable(monkeypatch) -> None:
+    monkeypatch.setenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, "1")
+
+
+def _body(**overrides) -> dict:
+    body = {"lot": _LOT, "lot_rule_facts": _FACTS, "label": "env-A"}
+    body.update(overrides)
+    return body
+
+
+def _pair(response) -> tuple[int, str | None]:
+    try:
+        state = response.json().get("state")
+    except ValueError:  # pragma: no cover - all our responses are JSON
+        state = None
+    return response.status_code, state
+
+
+@pytest.fixture
+def fixture_registry() -> RuleRegistry:
+    return RuleRegistry(_B2 / "rulesets", snapshots=SnapshotStore(_B2 / "snapshots")).load()
+
+
+@pytest.fixture
+def mounted_app() -> FastAPI:
+    app = FastAPI()
+    app.include_router(router)
+    return app
+
+
+@pytest.fixture
+def client(mounted_app, monkeypatch, fixture_registry):
+    """A client over a fresh app with the flag ON and the SYNTHETIC fixture registry injected."""
+    _enable(monkeypatch)
+    monkeypatch.setattr(mod, "get_max_envelope_registry", lambda: fixture_registry)
+    with TestClient(mounted_app, raise_server_exceptions=False) as test_client:
+        yield test_client
+
+
+# ---------------------------------------------------------------------------
+# AS-5 / AS-3: the happy path.
+# ---------------------------------------------------------------------------
+
+
+def test_200_returns_the_envelope(client):
+    resp = client.post(_URL, json=_body())
+    assert resp.status_code == 200
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+    assert resp.headers.get("X-Correlation-ID")
+    doc = resp.json()
+
+    assert doc["massing_class"] == "rectangle_prism"
+    assert doc["label"] == "env-A"
+    assert doc["disclosure"] and "ESTIMATE" in doc["disclosure"]
+    assert doc["summary"]["total"] == 4
+    assert doc["correlation_id"] == resp.headers["X-Correlation-ID"]
+
+    dims = {d["dimension_id"]: d for d in doc["dimensions"]}
+    assert dims["max_lot_coverage_ratio"]["binding_value"] == pytest.approx(0.5)
+    assert dims["max_lot_coverage_ratio"]["binding_rule_id"] == "pc-lot-coverage-demo"
+    assert dims["max_building_height"]["binding_value"] == pytest.approx(60.0)
+
+    # AS-3: honest gaps present in the response, nothing silently omitted.
+    non_commensurable = "non_commensurable_with_massing"
+    assert dims["max_residential_floor_area_sq_ft"]["gap_reason"] == non_commensurable
+    assert dims["min_rear_yard_depth_ft"]["gap_reason"] == non_commensurable
+
+    # A candidate the engine proved consistent; it is a proposed_massing block, not a scenario doc.
+    assert doc["candidate"]["provenance"]["kind"] == "proposed"
+    assert doc["candidate_consistency"]["saturating_checks"] == {
+        "lot_coverage_ratio": "pass", "building_height": "pass",
+    }
+
+    # The candidate is FITTED to the actual lot geometry (anchored at the real lot, contained) -
+    # not a fixed-anchor schematic. The placement is explicit in the response.
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "fitted"
+    assert placement["contained"] is True
+    assert placement["footprint"]["anchor_x"] == _LOT_ANCHOR[0]
+    assert placement["footprint"]["anchor_y"] == _LOT_ANCHOR[1]
+    assert doc["candidate"]["outline"]["vertices"][0] == [_LOT_ANCHOR[0], _LOT_ANCHOR[1]]
+    # AS-5 (no persistence / no emission): no scenario document keys.
+    for scenario_key in ("scenario_id", "contract_version", "constraint_completeness"):
+        assert scenario_key not in doc
+
+
+# ---------------------------------------------------------------------------
+# AS-5: flag off + UNMOUNTED.
+# ---------------------------------------------------------------------------
+
+
+def test_flag_off_is_a_generic_404(mounted_app, monkeypatch):
+    """No flag -> the same generic 404 as an unmounted path: no body hint, no correlation id."""
+    monkeypatch.delenv(INTERNAL_RULE_EVAL_ENABLED_ENV_VAR, raising=False)
+    with TestClient(mounted_app, raise_server_exceptions=False) as client:
+        resp = client.post(_URL, json=_body())
+    assert resp.status_code == 404
+    assert resp.json() == {"detail": "Not Found"}
+    assert "X-Correlation-ID" not in resp.headers
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+
+
+def test_route_is_unmounted_in_the_real_app():
+    """The route ships UNMOUNTED: main.py is held by the live M5-T062 lane, so the path is absent
+    from the real app's routes (and, being include_in_schema=False, from its OpenAPI)."""
+    from app.main import app as real_app
+
+    real_paths = {getattr(route, "path", None) for route in real_app.routes}
+    assert _URL not in real_paths
+    assert _URL not in real_app.openapi().get("paths", {})
+
+
+# ---------------------------------------------------------------------------
+# AS-5: bounded body, malformed body, typed refusals.
+# ---------------------------------------------------------------------------
+
+
+def test_413_oversized_body(client):
+    resp = client.post(_URL, content=b"x" * (MAX_BODY_BYTES + 1), headers=_JSON_HEADERS)
+    assert resp.status_code == 413
+    assert _pair(resp) == (413, "payload_too_large")
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+
+
+@pytest.mark.parametrize("raw", [b"", b"   ", b"not json", b"[]", b'"a string"'])
+def test_422_malformed_body(client, raw):
+    resp = client.post(_URL, content=raw, headers=_JSON_HEADERS)
+    assert resp.status_code == 422
+    assert _pair(resp) == (422, "validation_error")
+
+
+def test_422_nan_is_refused(client):
+    resp = client.post(_URL, content=b'{"lot": {"area_sq_ft": NaN}}', headers=_JSON_HEADERS)
+    assert resp.status_code == 422
+    assert _pair(resp) == (422, "validation_error")
+
+
+def test_422_bad_label_charset(client):
+    resp = client.post(_URL, json=_body(label="bad\nlabel"))
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "label"
+
+
+def test_422_lot_not_an_object(client):
+    resp = client.post(_URL, json=_body(lot="not-an-object"))
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot"
+
+
+def test_422_bad_lot_rule_fact_type(client):
+    resp = client.post(_URL, json=_body(lot_rule_facts={"zoning_district": 123}))
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot_rule_facts.zoning_district"
+
+
+def test_422_lot_rule_fact_outside_registry_domain(client):
+    """A mapped fact outside the registry's OWN declared vocabulary refuses typed, before the
+    engine runs (street_width_class is enum-constrained to wide/narrow by the fixture rule)."""
+    resp = client.post(
+        _URL, json=_body(lot_rule_facts={"zoning_district": "R5", "street_width_class": "bogus"})
+    )
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot_rule_facts.street_width_class"
+
+
+def test_422_bad_lot_area_is_a_precondition_refusal(client):
+    """A non-finite lot area is a typed precondition refusal from the engine (422), naming the
+    field - never a 500 and never a fabricated envelope."""
+    resp = client.post(_URL, json=_body(lot={**_LOT, "area_sq_ft": "huge"}))
+    assert resp.status_code == 422
+    assert resp.json()["field"] == "lot.area_sq_ft"
+
+
+def test_bad_charset_field_is_bounded(client):
+    # A deep/odd field never rides unbounded; the refusal message stays short.
+    resp = client.post(_URL, json=_body(label="x" * 5000))
+    assert resp.status_code == 422
+    assert len(resp.json()["message"]) < 1000
+
+
+# ---------------------------------------------------------------------------
+# AS-5: determinism through the route (same body -> same envelope, modulo correlation id).
+# ---------------------------------------------------------------------------
+
+
+def test_route_output_is_deterministic(client):
+    a = client.post(_URL, json=_body()).json()
+    b = client.post(_URL, json=_body()).json()
+    a.pop("correlation_id")
+    b.pop("correlation_id")
+    assert a == b
+
+
+def test_no_candidate_when_a_saturating_dimension_is_a_gap(client):
+    """With no attested street width the height dimension is an honest gap, so no candidate is
+    emitted - the route still returns 200 with every dimension enumerated."""
+    resp = client.post(_URL, json=_body(lot_rule_facts={"zoning_district": "R5"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert doc["candidate"] is None
+    assert doc["candidate_consistency"] is None
+    assert doc["summary"]["total"] == 4
+    assert len(doc["dimensions"]) == 4
+    height = {d["dimension_id"]: d for d in doc["dimensions"]}["max_building_height"]
+    assert height["gap_reason"] == "allowance_unresolved"
+
+
+def test_no_candidate_when_lot_geometry_is_unsupported(client):
+    """A lot with no supplied lot-line geometry cannot be fitted, so the route returns 200 with no
+    candidate and an EXPLICIT typed placement gap - never a fixed-anchor schematic. The binding
+    values still stand."""
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": []}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert doc["candidate"] is None
+    assert doc["candidate_consistency"] is None
+    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+    dims = {d["dimension_id"]: d for d in doc["dimensions"]}
+    assert dims["max_lot_coverage_ratio"]["binding_value"] == pytest.approx(0.5)
+    assert dims["max_building_height"]["binding_value"] == pytest.approx(60.0)
