@@ -1,0 +1,30 @@
+{
+ "task_id": "M5-T064",
+ "material_commit": "409a8a7d (cherry-pick of the in-worktree material commit 70ee0e4f; 5 files, ALL-MATCH LF-normalized digest verification post-pick; CI at the pushed harvest head 366a50be = run completed SUCCESS)",
+ "produced_at": "2026-09-21T04:00:00+00:00",
+ "producer": "scenario-optimization-engineer (loop-1 worker; run persistent-local-65 killed mid-build by the opus session limit with the mid-build worktree preserved; run persistent-local-66 resumed on the preserved worktree and closed at the S13.8 consecutive_revision_loops breaker cycle 6 - the evidence-stalemate class; the final unit was evidence repackaging only, code untouched; orchestrator harvest: fresh explicit-cwd suites ruff 0, scoped 56 passed, full api+scenario+rules 1949 passed, modularity exit 0)",
+ "requirements": {
+  "D-082-R001": [
+   "The authorized continuation increment (a): the maximum-envelope capability contracted at the db81c35f seam under the normal gated process (G0 at db81c35f, claim f98924e5 with the FULL worktree path wt-m5t064); the route ships flag-gated UNMOUNTED (main.py untouched - it was held by the then-live T062 lane; mount-absence tested); phase C/D untouched; scenario emission stays deferred (the computed maximum is presented and checked live, never persisted as a scenario document)."
+  ],
+  "D-082-R002": [
+   "Deterministic code computes the maximum BEFORE any designer input: engine services/api/app/scenario/max_envelope.py - public entry derive_max_envelope (L938-998), dimension table ENVELOPE_DIMENSIONS (L226-265) resolving height/footprint/floor-area/shape constraints under ALL applicable rules via _build_rule_inputs/_family_traces/_select_binding (L405-510); every computed dimension carries provenance naming the BINDING rule; gaps are honest COULD_NOT_CHECK (never guessed, never silently omitted - AS packs pin this); the generator-checker consistency proof _verify_consistency (L900-930) expresses the computed maximum as a massing and REUSES the accepted proposal-checks engine to prove it passes - the R002 consistency obligation in code, mutation-tested.",
+   "No LLM anywhere in the computation path; conflict advisories surfaced typed (_conflict_advisory L513-529); acceptance packs test_max_envelope.py (643 lines, AS-1..AS-6 incl. fitted placement + drift guard) + route pack test_max_envelope_api.py (275 lines: happy path, flag-off/UNMOUNTED, bounded typed refusals, determinism, gap paths); 56 scoped + 1949 full suite green at harvest and in CI run at 366a50be."
+  ],
+  "D-066-R001": [
+   "Graph regenerated at the db81c35f contract seam (783/16559/7258 in the packet's navigation block); block constraints honored: main.py untouched (the mount held), rules/checker modules imported read-only, exactly the 5 allowed_paths changed."
+  ],
+  "D-076-R001": [
+   "Grounded in the EXISTING deterministic engine: the envelope derivation consumes the accepted rules/scenario machinery and the consistency proof runs the accepted checker - no parallel calculation concept introduced."
+  ],
+  "D-076-R002": [
+   "The computed maximum is deterministic-code output with binding-rule provenance per dimension, honest COULD_NOT_CHECK gaps, and the checker-consistency proof; nothing is presented as a record - it is a computed envelope under the named rules; typed bounded refusals at the route boundary mirror the accepted route discipline."
+  ],
+  "D-077-R002": [
+   "Full lane drill under interruption: run-65 killed mid-build by the opus session limit (mid-build worktree PRESERVED - 5 dirty files); asks denied both stores, clear-recovery, fresh run-id 66 relaunch (stagger conduct honored); run-66 resumed the preserved work and closed at the S13.8 breaker; orchestrator harvest with fresh explicit-cwd suites; material committed in-worktree 70ee0e4f, cherry-picked 409a8a7d ALL-MATCH x5; submit at the CI-green-verified head."
+  ],
+  "D-077-R003": [
+   "Scope inside the released D-082 queue (the max-envelope capability the owner checkpoint authorized); exactly the packet's 5 allowed_paths changed; no forbidden path (main.py/rules/site_definition/apps/web all untouched); zero new dependencies; UNMOUNTED default-off - no new production surface."
+  ]
+ }
+}

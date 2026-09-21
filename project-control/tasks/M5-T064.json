@@ -66,8 +66,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 95,
   "risks": [
     "main.py is HELD by the live M5-T062 lane - the route ships unmounted; touching main.py fails G0 disjointness and the wave.",
     "An invented or over-narrowed bound is a legal-value fabrication - every number must trace to the registry (the D-051/D-076-R002 lineage).",
@@ -76,7 +76,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T23:04:58.497224+00:00",
-  "updated_at": "2026-09-21T03:51:39.558240+00:00",
+  "updated_at": "2026-09-21T04:00:38.554044+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -129,6 +129,13 @@
       "percent": 85,
       "status": "claimed",
       "message": "Loop-1 run-66 closed at the S13.8 consecutive_revision_loops breaker cycle 6 (the evidence-stalemate class; unit complete, no scoped code defect recorded). Orchestrator harvest: 3 stale asks denied both stores; fresh explicit-cwd suites in wt-m5t064 - ruff 0, scoped 56 passed, full api+scenario+rules 1949 passed, modularity exit 0; material committed 70ee0e4f in-worktree, cherry-picked to 409a8a7d ALL-MATCH x5 (LF-normalized). Submit at the CI-green head next; wave after the T065 lane clears the reviewer cap"
+    },
+    {
+      "at": "2026-09-21T04:00:38.552033+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Harvest verified: CI SUCCESS at 366a50be (the material head); evidence map authored (7 requirement ids); submitting at this seam"
     }
   ]
 }
