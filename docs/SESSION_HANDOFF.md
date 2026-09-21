@@ -1,94 +1,80 @@
-# SESSION HANDOFF — seq 123 (2026-09-21 ~02:10 UTC; session 278946a1 "ctl24 seq-123 orchestrator"; reason: owner-invoked /session-handoff at 85% context, coinciding with the opus-4-8 session-limit event that killed three running reviewers)
+# SESSION HANDOFF — seq 124 (2026-09-21 ~06:00 UTC; session "ctl24 seq-124 orchestrator" / session_01TPcgNyEXPvzdME82dT2SVJ; reason: owner-invoked /session-handoff at 65% context)
 
 Orientation only — the ledger (`python tools/project_control.py status`) and
 `project-control/` WIN over this prose.
 
 ## Identity (live at generation)
 Repo root C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 · branch `candidate/D-024-mrl-option-b` ·
-HEAD `c0d69934` (pushed; == origin) · origin github.com/martin10101/nyc-buildability.git.
+HEAD `0287d325` (pushed; == origin) · origin github.com/martin10101/nyc-buildability.git.
 
-## State: 244 accepted; four accepts this session; D-082 live; opus limit killed the in-flight reviews
-This session (owner's "new season" restart + checkpoint conversation):
-- **FOUR ACCEPTS (241st-244th):** M5-T061 (route hardening; wave zero corrections), M5-T058
-  (substitution stamp; six verdicts), M5-T059 (parked accept executed under its DCV §7 pre-auth,
-  T058-first honored), M5-T060 (proposal editor = **PHASE B3 COMPLETE**).
-- **D-081** captured (season-restart relaunch round). **D-082** captured: the owner PASSED the
-  D-076-R003 post-B3 checkpoint at the checkpoint conversation — maximum-envelope-first
-  (deterministic, binding-rule provenance, honest gaps, generator-checker consistency) LEADS the
-  UX; manual (numeric + the released map-drawing slice w/ correspondence bridge) stays the option;
-  phase C/D NOT released; scenario emission stays deferred.
-- **T063 FAIL→fix cycle closed:** G3+G4 independently caught ONE shared defect (announcer
-  correspondence gate); [ORCH-CORRECTED] 853a1d25 + delta re-attestations ALL PASS.
-- **T062 CI-red root-caused via a throwaway diagnostic branch:** fastapi-0.139 _IncludedRouter
-  layout blinded the mount-test introspection (the mount WORKED); fixed 099c32a7 (evidence-api
-  precedent). Trap + method in WORKING_KNOWLEDGE tail.
-- **OPUS-4-8 SESSION LIMIT (resets 22:00 America/New_York; hit ~20:55 ET):** killed T062-G5,
-  T062-DCV, T063-DCV mid-run and (most likely) loop-1's worker. By generation time (22:07 ET) the
-  reset has passed — reviewer dispatches may resume immediately.
+## State: 249 accepted — FIVE this session; D-082 continuation cycling nonstop
+- **FIVE ACCEPTS (245th–249th):** M5-T063 (condo riders; fresh post-reset DCV), M5-T062
+  (site-definition mount hardening; the seq-123-killed G5/DCV re-dispatched fresh, G2/G3/G4
+  CLI-recorded from the committed verbatim reports w/ identity notes), M5-T065 (map-drawing
+  slice; its CI red root-caused to the SHARED e2e tabUntil helper — `<body>` false-match at
+  Tab wrap, fixed [ORCH-CORRECTED] a3173987, now a CODING_RULES line), M5-T064 (max-envelope
+  engine slice 1 — D-082-R002 maximum-first w/ genuine generator-checker proof; runs 65→66
+  opus-kill resume arc), M5-T067 (DB-040 q+r store oracles closed; G4 ran LIVE mutant
+  harnesses elevating the producer's honest [PREDICTED] claims to OBSERVED).
+- Validator direct exit 0 x3 (two accept seams + the settled T068-seam run after a documented
+  mid-seam c14 read-race transient); CI green at every load-bearing head.
 
-## LANES (all three DOWN at generation; launchers = C:\SupervisorController{,2,3}\autostart-launch.ps1)
-| Lane | Packet | State | Next |
-|---|---|---|---|
-| loop-1 | M5-T064 max-envelope engine (wt-m5t064, 5 dirty files) | run-65 closed cycle-6 missing_checkpoint (426 events/3.4M ctx — likely the opus-limit kill mid-build) | inspect audit triple → deny asks → clear-recovery → bump run-id 65→66 → relaunch (stagger ≥60s from any other launch) |
-| loop-2 | idle | T062 awaiting_gate | re-feed AFTER T062 accepts (candidate: the DB-040/DB-042 auth-adjacent follow-ups or the next released packet) |
-| loop-3 | idle | T065 harvested | re-feed with **T066 = map-CLICK interaction slice** (see next actions) after the T065 wave; FIRST deny its 9 CLI + 9 journal stale asks |
+## LANES (launchers = C:\SupervisorController{,2,3}\autostart-launch.ps1)
+| Lane | Packet | State |
+|---|---|---|
+| loop-1 | M5-T068 max-envelope test hardening (DB-046 a-f, TEST-ONLY wall; wt-m5t068) | LIVE run persistent-local-67 (launched 00:32) |
+| loop-2 | M5-T069 supersede message unification (DB-040 s, FROZEN-order constraint; wt-m5t069) | LIVE run persistent2-local-29 (launched 01:45) |
+| loop-3 | idle | re-feed AFTER the T066 accept (candidate: the D-082-R003 max-renders-first UI surfacing — needs the editor surface T066 frees — or a DB-045 item) |
 
-## Task state (ledger-verified at write)
-- **M5-T062 awaiting_gate** at 0366210c (material 0539cc84 + 099c32a7): G3 PASS + G4 PASS recorded
-  (2 LOW advisories F1/F2 → auth packet); **G5 + DCV must be re-dispatched fresh** (killed by the
-  limit; prompts reconstructable from M5-T062-G3.md context + the packet).
-- **M5-T063 awaiting_gate** at corrected 853a1d25: G2-G5 PASS recorded + HJ PASS (all verbatim
-  reports committed); **DCV must be re-dispatched fresh** (3h grind then killed). On its PASS:
-  accept (#245), sweep (DB-036(e)/DB-038(b,c)/DB-042(c,d,e) closures + the four HJ advisories +
-  G5-F1 client-validator item as a new DB row).
-- **M5-T065 in_progress 85%:** material d3793c2e pushed (12 files ALL-MATCH), **CI FAILED at
-  d3793c2e — UNINVESTIGATED** (first successor action). [ORCH-SCOPE-DISPOSITION] recorded in the
-  progress log: click-to-place was UNDELIVERABLE inside the packet's own compose-only wall
-  (orchestrator scoping error, honestly surfaced by the producer report's banner); the delivered
-  surface (correspondence bridge w/ residual+ambiguity gates, typed client, keyboard vertex entry,
-  adoption) is this slice; **T066 (map-CLICK layer, LotOutlineMap or a wrapper IN scope)**
-  contracts as loop-3's next feed. Submit blocked on the CI diagnosis.
-- **M5-T064 in_progress 20%:** loop-1 mid-build (wt-m5t064 5 dirty files), unharvested.
-
-## FILE MAP
-- Ledger: project-control/{state.json,tasks/,gates/,blockers/}; directives D-001..D-082
-  (validator: direct exit code, settled heads).
-- Wave records: reports/M5-T06{1,2,3}-{G*,HJ,DCV,evidence-map}*.md/json; T060 accept records.
-- docs/DISCOVERY_BACKLOG.md: DB-041/DB-042/DB-043 rows + the 241st/242nd+243rd/244th sweeps
-  (T063's acceptance sweep still pending its DCV+accept).
-- docs/WORKING_KNOWLEDGE.md tail: silent-start convergence (3rd occurrence closed; stagger rule);
-  fastapi-0.139 trap + throwaway-diagnostic-branch method.
-- Uncommitted (deliberate): .claude/agent-memory/** (never broad-added); .claude/rules/
-  PROGRAM_KNOWLEDGE.md edit (classifier blocks .claude commits this session — content: classifier
-  batch-shape lesson; re-attempt or fold at a permitted seam); scratchpad/ (loop_watcher.py labels
-  T064/T062/T065; re-arm under persistent Monitor).
+## M5-T066 (map-CLICK slice) — awaiting_gate, wave nearly complete
+Frozen submit head **84132df5** (material abfd182b, ALL-MATCH x11; CI SUCCESS first round at
+2578329c incl. the new pointer e2e). Recorded: G0, G2, G3 (PASS; CR-1 latent street_lines
+wall_id reconciliation + 3 nits), G4 (PASS; all six AS mutation-STRONG; the deleted T065 unit
+test ruled CORRECT — it pinned pre-HJ-2 buggy semantics). **HJ: VERDICT PASS delivered; the
+verbatim report is INCOMPLETE** — head + resend part 1/3 arrived (through "Run check →
+recovery"); parts 2-3 never landed before handoff (session-bound agent, unreachable by a
+successor). **SEC + DCV NOT yet dispatched.** Successor: dispatch a FRESH HJ re-walk (clean
+path; preserved portions are in this transcript only, so do not label any partial file
+"verbatim complete") + SEC + DCV, then accept (#250) + sweep (fold G3 CR-1..4, G4 gaps 1-3,
+HJ advisories into a DB row; loop-3 re-feed).
 
 ## EXACT NEXT ACTION (successor)
-1. **T065 CI red:** `gh run list --branch candidate/D-024-mrl-option-b` → inspect the failed job at
-   d3793c2e (--log-failed). If it is a test-portability/spec issue: one tagged [ORCH-CORRECTED]
-   fix + fresh CI (the T062 drill). Then submit T065 at the green head + 5-reviewer wave (incl. HJ;
-   the wave judges the delivered surface AGAINST the recorded scope disposition).
-2. **Re-dispatch fresh** (limit has reset): T062-G5 + T062-DCV; T063-DCV. On T063-DCV PASS →
-   accept #245 + sweep. On T062's G5+DCV PASS → accept + re-feed loop-2.
-3. **Loop-1:** inspect run-65 down-state (audit triple), deny asks, clear-recovery, relaunch run 66
-   (unit-timeout already 2400).
-4. **Contract T066** (map-click slice, D-082-R001; LotOutlineMap or an interactive wrapper in
-   allowed_paths; graph regen at the seam; disjointness vs live lanes) → loop-3 re-feed (deny its
-   18 stale asks first).
-5. Keep ≤3 reviewers while 2+ loops live; stagger loop launches ≥60s; sha discipline: NEVER retype —
-   always `$(git rev-parse ...)` inline (three retype slips this session, all caught fail-closed).
-Stop conditions: Tier D; owner holds (expansion §2 minus D-040/D-076/D-082 releases; PR #241);
-phase C/D NOT released; scenario emission deferred; a 4th silent-start = blocker + owner
-CLI-version question.
+1. **T066 wave close:** dispatch fresh HJ + SEC + DCV at frozen 84132df5 (disjoint-peer
+   tolerance + restamp predicate up front; require END-OF-REPORT markers + short-part
+   splitting — the truncation drill, PROGRAM_KNOWLEDGE). On PASS: v2 rows (D-082 R001/R003,
+   D-066 R001, D-076 R001/R002, D-077 R002/R003), dry-run, accept #250, sweep, re-feed loop-3.
+2. **Harvest loops on breaker close** (the proven drill: inspect journal triple, deny asks
+   BOTH stores, fresh explicit-cwd suites, in-worktree commit, cherry-pick ALL-MATCH,
+   push+CI monitor, submit at green, wave). T068 = test-only (expect 62+ scoped); T069 =
+   store message unification (expect 74+ scoped; FROZEN-order check in review).
+3. **Re-arm the loop watcher** (the seq-123 persistent Monitor died with this session;
+   scratchpad/loop_watcher.py labels are stale — relabel T068/T069/T066).
+4. Conduct: ≤3 reviewers while 2+ loops live; stagger launches ≥60s; deny stale asks BOTH
+   stores before every relaunch (`resume-after-answer` exits WAIT_FOR_OWNER; `clear-recovery`
+   only exits PAUSED_RECOVERY); sha discipline `$(git rev-parse ...)` inline; broker-cwd
+   [BLOCKED]-evidence class is normal (T067 G2 precedent).
+Stop conditions: Tier D / Section 20; PR #241; expansion §2 hold (minus D-040/D-076/D-082
+releases); phase C/D NOT released; scenario emission deferred; supervisor SHADOW-ONLY.
+
+## Dirty files (deliberate, unstaged by policy)
+`.claude/agent-memory/**` (never broad-added); `scratchpad/` (operator tooling incl.
+loop_watcher.py). Nothing else — all work pushed at 0287d325.
+
+## FILE MAP (smallest authoritative set)
+Ledger: project-control/{state.json,tasks/,gates/,blockers/}; directives D-001..D-082.
+Wave records: reports/M5-T06{2..7}-{G*,HJ,SEC,DCV,evidence-map}*; T063..T067 accept commits.
+docs/DISCOVERY_BACKLOG.md tail: DB-044/045/046 rows + the 245th–249th sweeps.
+PROGRAM_KNOWLEDGE tail: truncation drill; resume-after-answer verb.
 
 ## COPY INTO THE NEW SESSION
 Resume as the NYC Buildability orchestrator. D-079 FAST RESUME: identity check only — cwd IS
 C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`git rev-parse --show-toplevel`), branch
-candidate/D-024-mrl-option-b, HEAD == origin (c0d69934 at generation), Bootstrap Gate 0 (/mcp
-empty) — then read docs/SESSION_HANDOFF.md and CONTINUE from EXACT NEXT ACTION. Do NOT re-run the
-recorded battery (validator exit 0 at every seq-123 seam; 244 accepted). The opus-4-8 limit that
-killed the in-flight reviewers reset at 22:00 ET — re-dispatch T062-G5/T062-DCV/T063-DCV fresh,
-diagnose the T065 CI red (the fastapi-layout drill is the precedent), relaunch loop-1, contract
-T066 (map-click slice) for loop-3. All three loops are DOWN; deny stale asks in BOTH stores before
-every relaunch; stagger launches ≥60s. D-080 nonstop + D-082 apply; owner replies in simple
-English (D-064). Stop for Tier D items and owner holds.
+candidate/D-024-mrl-option-b, HEAD == origin (0287d325 at generation), Bootstrap Gate 0 (/mcp
+empty) — then read docs/SESSION_HANDOFF.md and CONTINUE from EXACT NEXT ACTION. Do NOT re-run
+the recorded battery (validator exit 0 at every seq-124 seam; 249 accepted). T066 needs a
+FRESH HJ + SEC + DCV at frozen 84132df5, then accept #250 + loop-3 re-feed. Loops 1 (T068)
+and 2 (T069) are LIVE detached — harvest on breaker close per the recorded drill; deny stale
+asks in BOTH stores before any relaunch; stagger ≥60s; re-arm the loop watcher. Reviewer
+dispatches MUST require END-OF-REPORT markers + short-part splitting (the truncation drill).
+D-080 nonstop + D-082 apply; owner replies in simple English (D-064). Stop for Tier D items
+and owner holds (PR #241; expansion §2 minus releases; phase C/D unreleased).
