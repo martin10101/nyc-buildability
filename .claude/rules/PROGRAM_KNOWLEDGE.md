@@ -136,6 +136,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
 - Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
   owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
+  It can also block on BATCH SHAPE alone (`set -e` + shell-function wrapper over 14 denies,
+  seq 123): the identical verbs pass as plain single/sequential commands — reshape, don't
+  re-batch. And retype digests EXACTLY (an ab→af slip cost a deny round; the error echoes
+  the stored digest).
 - Fable exhaustion kills the loop (`REFUSED unsafe exit 11
   fable_exhaustion_turnover_recorded`): the worker-pin flip is OWNER-ONLY (controller S3.2
   rule 6) AND classifier-blocked — open a blocker with the one-line edit, never retry past it;
