@@ -272,3 +272,114 @@ def test_no_candidate_when_lot_geometry_is_unsupported(client):
     dims = {d["dimension_id"]: d for d in doc["dimensions"]}
     assert dims["max_lot_coverage_ratio"]["binding_value"] == pytest.approx(0.5)
     assert dims["max_building_height"]["binding_value"] == pytest.approx(60.0)
+
+
+# ---------------------------------------------------------------------------
+# DB-046 (M5-T068): the (500, internal_error) matrix row exercised LIVE. A generator-checker
+# inconsistency and a genuine internal defect both map to the bounded generic 500 - the fixed
+# body, NO exception detail/traceback leaked, X-Correlation-ID present. TEST-ONLY.
+# ---------------------------------------------------------------------------
+
+
+class _StubCheck:
+    def __init__(self, check_id, outcome, provided_value=0.6, required_value=0.5) -> None:
+        self.check_id = check_id
+        self.outcome = outcome
+        self.provided_value = provided_value
+        self.required_value = required_value
+
+
+class _StubReport:
+    def __init__(self, results) -> None:
+        self.results = results
+
+    def as_dict(self) -> dict:
+        return {"summary": {}}
+
+
+def test_500_generator_checker_inconsistency_is_a_bounded_generic_error(client, monkeypatch):
+    """DB-046(d) route side: a generator-checker inconsistency (the engine's candidate FAILs its
+    own checker -> MaxEnvelopeError field 'candidate.max_lot_coverage_ratio') maps to the
+    documented bounded generic 500 - never a 422, and never leaking the internal invariant
+    field/detail.
+
+    This does NOT merely observe *some* 500. A spy wraps the route's engine entry
+    (``mod.derive_max_envelope``): it runs the REAL engine with its imported ``check_proposal``
+    patched to FAIL the saturating lot-coverage check, OBSERVES that the engine raised exactly
+    ``MaxEnvelopeError`` with ``field == 'candidate.max_lot_coverage_ratio'``, and RE-RAISES that
+    same error unchanged so the route's own MaxEnvelopeError handler (the ``candidate.*`` -> 500
+    branch) processes it. An unrelated generic exception (or a stub that only incidentally 500s
+    for the wrong reason, or a checker patch that silently missed and let the candidate pass)
+    could never satisfy the type+field observation, and a mutant routing ``candidate.*`` to 422
+    would leave ``resp.status_code`` != 500 - either way this test goes red."""
+    import app.scenario.max_envelope as engine
+    from app.rules.proposal_checks import CheckOutcome
+    from app.scenario.max_envelope import MaxEnvelopeError
+
+    def _failing(candidate, lot, facts, *, scenario_label, registry):
+        return _StubReport(
+            [
+                _StubCheck("lot_coverage_ratio", CheckOutcome.FAIL),
+                _StubCheck("building_height", CheckOutcome.PASS),
+            ]
+        )
+
+    monkeypatch.setattr(engine, "check_proposal", _failing)
+
+    # Spy over the route's engine entry: run the REAL engine, observe the specific fail-closed
+    # invariant error it raises, then re-raise it unchanged for the route to handle.
+    real_derive = engine.derive_max_envelope
+    observed: dict[str, object] = {}
+
+    def _observing_derive(*args, **kwargs):
+        try:
+            return real_derive(*args, **kwargs)
+        except MaxEnvelopeError as exc:
+            observed["type"] = type(exc).__name__
+            observed["field"] = exc.field
+            raise  # re-raise for route handling (the candidate.* -> 500 branch)
+
+    monkeypatch.setattr(mod, "derive_max_envelope", _observing_derive)
+
+    resp = client.post(_URL, json=_body())
+
+    # The REAL engine raised EXACTLY the fail-closed generator-checker invariant - not an
+    # incidental generic exception; this is what pins the intended candidate.* -> 500 branch.
+    assert observed == {
+        "type": "MaxEnvelopeError",
+        "field": "candidate.max_lot_coverage_ratio",
+    }
+
+    assert resp.status_code == 500
+    assert _pair(resp) == (500, "internal_error")
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+    body = resp.json()
+    assert body["message"] == "unexpected internal error; see server logs by correlation id"
+    assert "candidate" not in resp.text  # the internal invariant field never leaks to the client
+    assert resp.headers.get("X-Correlation-ID")
+    assert body["correlation_id"] == resp.headers["X-Correlation-ID"]
+
+
+def test_500_registry_unavailable_is_a_bounded_generic_error(mounted_app, monkeypatch):
+    """DB-046(e): a genuine internal defect (registry resolution raising) produces the documented
+    (500, internal_error) LIVE - the fixed generic body, NO exception message/type/traceback
+    leaked, and the X-Correlation-ID header present. Previously this matrix row was asserted only
+    by frozenset membership, never by a live response."""
+    _enable(monkeypatch)
+    secret = "boom-secret-detail-should-never-leak"
+
+    def _raise():
+        raise RuntimeError(secret)
+
+    monkeypatch.setattr(mod, "get_max_envelope_registry", _raise)
+    with TestClient(mounted_app, raise_server_exceptions=False) as internal_client:
+        resp = internal_client.post(_URL, json=_body())
+    assert resp.status_code == 500
+    assert _pair(resp) == (500, "internal_error")
+    assert _pair(resp) in MAX_ENVELOPE_STATUS_STATE_MATRIX
+    body = resp.json()
+    assert body["message"] == "unexpected internal error; see server logs by correlation id"
+    assert secret not in resp.text  # no exception message leaked
+    assert "RuntimeError" not in resp.text  # no exception type / traceback leaked
+    assert resp.headers.get("X-Correlation-ID")
+    assert body["correlation_id"] == resp.headers["X-Correlation-ID"]

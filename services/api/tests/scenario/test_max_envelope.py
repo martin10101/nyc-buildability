@@ -640,3 +640,163 @@ def test_real_registry_compatibility():
         me.EnvelopeGapReason.NON_COMMENSURABLE_WITH_MASSING
     )
     assert envelope.candidate is None  # no coverage cap -> no footprint
+
+
+# ---------------------------------------------------------------------------
+# DB-046 hardening (M5-T068): fail-closed raise, multi-floor consistency, populated conflict
+# advisory, lot-area drift guard, and the out-of-2263-bounds geometry gap. TEST-ONLY - the
+# engine and route are byte-frozen accepted material; every gap closes with test code alone.
+# ---------------------------------------------------------------------------
+
+
+class _StubCheck:
+    """A minimal duck-typed check result - the shape ``_verify_consistency`` reads off
+    ``check_proposal(...).results`` (check_id + outcome, plus the provided/required values the
+    fail-closed raise interpolates into its message)."""
+
+    def __init__(
+        self, check_id: str, outcome: pc.CheckOutcome,
+        provided_value: float = 0.6, required_value: float = 0.5,
+    ) -> None:
+        self.check_id = check_id
+        self.outcome = outcome
+        self.provided_value = provided_value
+        self.required_value = required_value
+
+
+class _StubReport:
+    def __init__(self, results: list) -> None:
+        self.results = results
+
+    def as_dict(self) -> dict:
+        return {"summary": {"total": len(self.results)}}
+
+
+class _ConflictRegistry(_FakeRegistry):
+    """A registry double whose fail-closed FH-2 detector reports the lot_coverage output as
+    contested by two rules - exercising ``_conflict_advisory``'s populated (dict) branch."""
+
+    def detect_conflicts(self, family: str, _inputs: dict) -> dict | None:
+        if family != "lot_coverage":
+            return None
+        return {
+            "competing_output_names": ("max_lot_coverage_ratio",),
+            "competing_rules": ({"rule_id": "cov-a"}, {"rule_id": "cov-b"}),
+            "note": "two lot_coverage rules bound the same output; professional review required",
+        }
+
+
+def test_lot_area_input_matches_accepted_checker():
+    """DB-046(c) drift guard: the engine's lot-area evaluator input name is pinned byte-identical
+    to the accepted checker's private constant (mirroring
+    ``test_usable_coverage_matches_accepted_checker``), so the two can never silently diverge."""
+    assert me._LOT_AREA_INPUT == pc._LOT_AREA_INPUT
+
+
+def test_as4_multi_floor_height_flows_through_the_full_consistency_proof():
+    """DB-046(a): a binding height >100 ft yields a MULTI-FLOOR candidate that PASSes the FULL
+    generator-checker consistency proof - both saturating checks pass and an INDEPENDENT
+    check_proposal re-run confirms building_height at the multi-floor cap (never exceeding it)."""
+    from app.scenario.proposal import MAX_FLOOR_TO_FLOOR_FT
+
+    registry = _FakeRegistry(
+        {"lot_coverage": ["cov"], "residential_height_setback": ["h"]},
+        {
+            "cov": _trace("cov", "max_lot_coverage_ratio", 0.5),
+            "h": _trace("h", "max_building_height", 250.0),
+        },
+    )
+    lot = _lot(8000.0)
+    envelope = me.derive_max_envelope(lot, {"zoning_district": "R5"}, registry=registry)
+    assert envelope.candidate is not None
+    # >100 ft was split into >1 equal floors, each within the accepted per-floor bound.
+    level = envelope.candidate["levels"][0]
+    assert level["floor_count"] > 1
+    assert level["floor_to_floor_ft"] <= MAX_FLOOR_TO_FLOOR_FT
+    # the FULL consistency proof (the engine's own check_proposal run) PASSed BOTH saturating dims.
+    saturating = envelope.candidate_consistency["saturating_checks"]
+    assert saturating["building_height"] == "pass"
+    assert saturating["lot_coverage_ratio"] == "pass"
+    # independent re-run of the accepted checker over the multi-floor candidate: at cap, PASS.
+    report = pc.check_proposal(
+        envelope.candidate, lot, {"zoning_district": "R5"}, scenario_label="verify",
+        registry=registry,
+    )
+    height = {r.check_id: r for r in report.results}["building_height"]
+    assert height.outcome is pc.CheckOutcome.PASS
+    # the checker computed the MULTI-FLOOR cumulative (ftf x floor_count) at the 250 ft cap - the
+    # ULP-stepped total never exceeds the allowance (approx bounds it above and below).
+    assert height.provided_value == pytest.approx(250.0, rel=1e-6)
+
+
+def test_conflict_advisory_populated_branch_is_surfaced_never_resolved():
+    """DB-046(b): a registry whose FH-2 detector reports a competing output surfaces a typed
+    ``conflict_advisory`` on that dimension (listing the competing rule ids + the note) and NEVER
+    resolves a winner - the binding stays the tightest, the dimension is not a gap; a dimension
+    the detector does not flag carries no advisory."""
+    registry = _ConflictRegistry(
+        {"lot_coverage": ["cov-a", "cov-b"], "residential_height_setback": ["h-a"]},
+        {
+            "cov-a": _trace("cov-a", "max_lot_coverage_ratio", 0.5),
+            "cov-b": _trace("cov-b", "max_lot_coverage_ratio", 0.6),
+            "h-a": _trace("h-a", "max_building_height", 50.0),
+        },
+    )
+    envelope = me.derive_max_envelope(_lot(8000.0), {"zoning_district": "R5"}, registry=registry)
+    coverage = _by_dim(envelope)["max_lot_coverage_ratio"]
+    assert coverage.conflict_advisory is not None
+    assert coverage.conflict_advisory["competing_rule_ids"] == ["cov-a", "cov-b"]
+    assert coverage.conflict_advisory["note"]
+    # never resolved: the binding is still the tightest usable allowance, not a gap.
+    assert coverage.binding_value == pytest.approx(0.5)
+    assert coverage.binding_rule_id == "cov-a"
+    assert coverage.gap_reason is None
+    # a dimension the detector does not flag (height) carries NO advisory.
+    assert _by_dim(envelope)["max_building_height"].conflict_advisory is None
+    # and the advisory survives serialization on the dimension doc.
+    doc = envelope.as_dict()
+    cov_doc = {d["dimension_id"]: d for d in doc["dimensions"]}["max_lot_coverage_ratio"]
+    assert cov_doc["conflict_advisory"]["competing_rule_ids"] == ["cov-a", "cov-b"]
+
+
+def test_fail_closed_raise_on_saturating_checker_fail(fixture_registry, monkeypatch):
+    """DB-046(d) engine side: when the accepted checker FAILs the engine's OWN candidate on a
+    saturating dimension, ``derive_max_envelope`` fails closed with
+    ``MaxEnvelopeError(field='candidate.<dim>')`` - the defining failure mode of this slice. The
+    ENGINE's imported ``check_proposal`` reference is patched (not the source module) so the patch
+    actually bites, and a call counter proves the raise fired (not a vacuous pass). A mutant that
+    turned the ``raise`` into a silent pass would make this test red."""
+    calls: list[str] = []
+
+    def _failing_check_proposal(candidate, lot, facts, *, scenario_label, registry):
+        calls.append(scenario_label)
+        return _StubReport(
+            [
+                _StubCheck("lot_coverage_ratio", pc.CheckOutcome.FAIL),
+                _StubCheck("building_height", pc.CheckOutcome.PASS),
+            ]
+        )
+
+    monkeypatch.setattr(me, "check_proposal", _failing_check_proposal)
+    with pytest.raises(me.MaxEnvelopeError) as exc:
+        me.derive_max_envelope(_lot(8000.0), _ATTESTED, registry=fixture_registry)
+    assert exc.value.field == "candidate.max_lot_coverage_ratio"
+    assert calls  # the patched checker actually ran - the raise fired, not a silent pass
+
+
+def test_out_of_2263_bounds_lot_is_a_geometry_unsupported_gap(fixture_registry):
+    """DB-046(f): a valid axis-aligned lot rectangle anchored OUTSIDE the accepted EPSG:2263 NYC
+    bounds (a wrong-unit / wrong-CRS lot) is a typed LOT_GEOMETRY_UNSUPPORTED gap with NO candidate
+    - the BOUNDS branch specifically (``lot_rectangle`` is populated), never a fabricated
+    candidate; the binding values still stand."""
+    lot = _lot(8000.0, anchor=(0.0, 0.0))  # a consistent 80x100 rectangle far outside NYC bounds
+    envelope = me.derive_max_envelope(lot, _ATTESTED, registry=fixture_registry)
+    assert envelope.candidate is None
+    assert envelope.candidate_consistency is None
+    placement = envelope.candidate_placement
+    assert placement.status is me.CandidatePlacementStatus.LOT_GEOMETRY_UNSUPPORTED
+    assert "EPSG:2263 NYC bounds" in placement.detail
+    assert placement.lot_rectangle is not None  # the geometry parsed; the BOUNDS check rejected it
+    # the binding values still stand (a geometry gap never touches dimension resolution).
+    assert _by_dim(envelope)["max_lot_coverage_ratio"].binding_value == pytest.approx(0.5)
+    assert _by_dim(envelope)["max_building_height"].binding_value == pytest.approx(60.0)
