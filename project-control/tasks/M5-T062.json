@@ -67,8 +67,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "main.py is the whole-app mount surface: anything beyond the one flag-gated include line + import is out of scope and fails review.",
     "The M5-T063 lane holds the web condo surface and M5-T060 holds the proposal-editor web surface - G0 records three-way disjointness; touch neither.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T21:40:33.153398+00:00",
-  "updated_at": "2026-09-20T21:45:47.474528+00:00",
+  "updated_at": "2026-09-21T00:34:21.104638+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -117,6 +117,20 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + claimed at the seq-123 re-feed seam (G0 PASS at fffbd002; disjoint vs live T060 and peer T063); loop-2 relaunch as run 26 next"
+    },
+    {
+      "at": "2026-09-21T00:02:20.563769+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "claimed",
+      "message": "Loop-2 unit closed at the S13.8 breaker (run-27 revised-handoff convergence); orchestrator harvest: fresh explicit-cwd evidence (ruff 0, targeted 68 passed, tests/api 611 passed, modularity 0), material cherry-picked to 0539cc84 ALL-MATCH (8 files), pushed; CI pending; submit at green head next"
+    },
+    {
+      "at": "2026-09-21T00:26:20.054268+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "claimed",
+      "message": "CI red at 0539cc84 root-caused via a throwaway diagnostic branch (run 35547075092): fastapi-0.139 _IncludedRouter layout made the mount tests' app.routes introspection blind to included routers - the MOUNT ITSELF WORKS (env/flag/modules proven correct); tagged test-portability fix 099c32a7 (the evidence-api flatten precedent) pushed; CI at the corrected head running; submit at green"
     }
   ]
 }
