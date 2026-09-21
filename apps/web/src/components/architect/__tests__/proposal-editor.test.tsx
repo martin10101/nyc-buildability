@@ -101,6 +101,66 @@ describe("ProposalEditor", () => {
     expect(compare.querySelectorAll(".proposal-compare-column")).toHaveLength(2);
   });
 
+  it("adopts map-drawn vertices into the numeric outline table exactly as if typed (M5-T065)", async () => {
+    const bridgeBody = {
+      document_kind: "outline_bridge",
+      bbl: "1000010010",
+      srid: 2263,
+      vertices: [
+        { x: 1000020, y: 200010 },
+        { x: 1000080, y: 200010 },
+        { x: 1000080, y: 200030 },
+      ],
+      correspondence: {
+        method: "affine_least_squares_2d",
+        alignment: "forward+offset0",
+        alignment_winding: "forward",
+        alignment_offset: 0,
+        control_point_count: 4,
+        candidates_evaluated: 8,
+        rms_residual_ft: 0.0004,
+        max_residual_ft: 0.0009,
+        residual_bound_ft: 2.0,
+        runner_up_rms_residual_ft: 55.2,
+        alignment_separation_ft: 55.19,
+        alignment_separation_min_ft: 2.0,
+        source_display_ring: { crs: "EPSG:4326", source_id: "nyc-dcp-mappluto-lot-outline", representation: "lot_outline_display" },
+        source_authoritative_ring: { crs: "EPSG:2263", source_id: "nyc-dcp-mappluto-arcgis", representation: "lot_geometry_authoritative" },
+      },
+      disclosure: "Approximate PROPOSED input, not a survey and not a city record.",
+      correlation_id: "cid",
+    };
+    const text = JSON.stringify(bridgeBody);
+    const bridgeStub = (async () =>
+      new Response(text, {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": String(new TextEncoder().encode(text).length),
+          "X-Correlation-ID": "cid",
+        },
+      })) as typeof fetch;
+
+    render(<ProposalEditor bbl="1000010010" fetchImpl={bridgeStub} />);
+    // The rectangle seed starts with 5 numeric vertices (the authority).
+    expect(screen.getAllByLabelText(/^Vertex \d+ X coordinate$/)).toHaveLength(5);
+
+    // Draw three points and convert them through the (stubbed) bridge.
+    const addDrawn = screen.getByRole("button", { name: "Add drawn point" });
+    fireEvent.click(addDrawn);
+    fireEvent.click(addDrawn);
+    fireEvent.click(addDrawn);
+    fireEvent.click(screen.getByTestId("outline-draw-convert"));
+    await screen.findByTestId("outline-draw-bridged");
+
+    // The converted 2263 vertices land in the numeric table exactly as if typed;
+    // the table stays the visible, editable authority (manual remains the option).
+    const xs = screen.getAllByLabelText(/^Vertex \d+ X coordinate$/) as HTMLInputElement[];
+    expect(xs).toHaveLength(3);
+    expect(xs[0].value).toBe("1000020");
+    expect((screen.getByLabelText("Vertex 2 Y coordinate") as HTMLInputElement).value).toBe("200030");
+  });
+
   it("carries no dangerouslySetInnerHTML and no scenario contract_version token in the packet source", () => {
     const files = [
       "../ProposalEditor.tsx",

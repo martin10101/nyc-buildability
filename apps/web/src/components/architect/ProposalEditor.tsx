@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import {
   addLevel,
   addVertex,
   addWall,
+  adoptOutlineVertices,
   rectangleSampleDraft,
   removeLevel,
   removeVertex,
@@ -17,6 +17,7 @@ import {
   updateWall,
   validateDraft,
   type DraftProblem,
+  type DraftVertex,
   type ProposalDraft,
   type ProposalVariation,
 } from "@/lib/architect/proposal-draft";
@@ -26,6 +27,7 @@ import {
   type ProposalCheckOutcome,
 } from "@/lib/proposal-checks-api";
 import { ProposalCheckReport } from "./ProposalCheckReport";
+import { ProposalOutlineDraw } from "./ProposalOutlineDraw";
 import { ProposalVariations } from "./ProposalVariations";
 
 /**
@@ -36,9 +38,13 @@ import { ProposalVariations } from "./ProposalVariations";
  * renders the grouped report; saved variations are client-local and ephemeral.
  *
  * The recorded lot-outline map is COMPOSED read-only beside the form for
- * context only (display CRS is display-only; nothing is measured from it). Map
- * DRAWING, the 4326->2263 bridge, and scenario emission are OUT of this
- * increment (the named D-076-R003 owner-checkpoint questions).
+ * context only (display CRS is display-only; nothing is measured from it). When
+ * a BBL is present, the released map-drawing input (task M5-T065, D-082-R001) is
+ * offered beside it: the architect sketches a 4326 outline, the server bridges
+ * it to authoritative EPSG:2263 by correspondence (no client-side transform),
+ * and the converted vertices land in this numeric draft EXACTLY as if typed —
+ * the table stays the visible, editable authority (manual remains the option,
+ * D-082-R003). Scenario emission stays deferred.
  */
 
 let variationSeq = 0;
@@ -92,6 +98,20 @@ export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchI
     setActiveId(id);
     setAnnouncement("Saved the current proposal as a variation (this browser session only).");
   }, [draft, outcome]);
+
+  // Adopt map-drawn vertices into the numeric draft EXACTLY as if typed (task
+  // M5-T065, D-082-R001/R003): the converted EPSG:2263 vertices from the
+  // outline-bridge replace the draft outline, the numeric table stays the
+  // visible/editable authority, and a fresh check must be run on the adopted
+  // shape (the old outcome no longer describes the current draft).
+  const adoptDrawnOutline = useCallback((vertices: DraftVertex[]) => {
+    setDraft((d) => adoptOutlineVertices(d, vertices));
+    setDraftProblems([]);
+    setOutcome(null);
+    setAnnouncement(
+      `Adopted ${vertices.length} drawn points into the numeric outline — proposed input you can edit; run the check when ready.`,
+    );
+  }, []);
 
   const selectVariation = useCallback(
     (id: string) => {
@@ -362,11 +382,7 @@ export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchI
         <aside className="proposal-editor-aside">
           {bbl ? (
             <div className="proposal-map-context" data-testid="proposal-map-context">
-              <p className="section-note">
-                The map shows the recorded lot for reference — display only. It is not the proposal, and
-                nothing here is measured from it.
-              </p>
-              <LotOutlineMap bbl={bbl} context />
+              <ProposalOutlineDraw bbl={bbl} onAdopt={adoptDrawnOutline} fetchImpl={fetchImpl} />
             </div>
           ) : null}
           <ProposalCheckReport outcome={outcome} checking={checking} />

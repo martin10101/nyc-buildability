@@ -3,6 +3,7 @@ import {
   addLevel,
   addVertex,
   addWall,
+  adoptOutlineVertices,
   draftIsRunnable,
   emptyDraft,
   MIRROR_MAX_LABEL_LEN,
@@ -147,5 +148,25 @@ describe("draft helpers", () => {
   it("marks a runnable sample runnable and an empty draft not", () => {
     expect(draftIsRunnable(rectangleSampleDraft())).toBe(true);
     expect(draftIsRunnable(emptyDraft())).toBe(false);
+  });
+
+  it("adopts bridged 2263 vertices into the outline, replacing it and leaving levels/walls intact", () => {
+    const base = rectangleSampleDraft();
+    const adopted = adoptOutlineVertices(base, [
+      { x: 1000020, y: 200010 },
+      { x: 1000080, y: 200010 },
+      { x: 1000080, y: 200030 },
+    ]);
+    expect(adopted.vertices).toEqual([
+      { x: 1000020, y: 200010 },
+      { x: 1000080, y: 200010 },
+      { x: 1000080, y: 200030 },
+    ]);
+    // Only the outline is replaced; the rest of the draft is preserved.
+    expect(adopted.levels).toEqual(base.levels);
+    expect(adopted.exterior_walls).toEqual(base.exterior_walls);
+    expect(adopted.scenario_label).toBe(base.scenario_label);
+    // Immutable: the source draft is untouched.
+    expect(base.vertices).toHaveLength(5);
   });
 });

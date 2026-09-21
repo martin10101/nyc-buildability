@@ -263,6 +263,20 @@ export function updateVertex(draft: ProposalDraft, index: number, patch: Partial
 export function removeVertex(draft: ProposalDraft, index: number): ProposalDraft {
   return { ...draft, vertices: removeAt(draft.vertices, index) };
 }
+/**
+ * Replace the draft outline with vertices adopted from the map-drawing bridge
+ * (task M5-T065, D-082-R001). The bridge returns EPSG:2263 vertices converted
+ * from a map drawing by correspondence to the official parcel geometry; they
+ * land in the numeric AUTHORITY here EXACTLY as if the analyst had typed them —
+ * the table stays visible, editable, and authoritative (manual remains the
+ * option, D-082-R003). Pure/immutable: only the vertices are replaced; levels,
+ * walls, and lot inputs are untouched (the analyst still supplies those). The
+ * incoming coordinates are the bridge's output with its residual disclosed by
+ * the caller — never presented here as survey-grade.
+ */
+export function adoptOutlineVertices(draft: ProposalDraft, vertices: DraftVertex[]): ProposalDraft {
+  return { ...draft, vertices: vertices.map((v) => ({ x: v.x, y: v.y })) };
+}
 export function addLevel(draft: ProposalDraft, level: DraftLevel): ProposalDraft {
   return { ...draft, levels: [...draft.levels, level] };
 }
