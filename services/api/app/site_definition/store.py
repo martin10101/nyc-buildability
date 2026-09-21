@@ -201,20 +201,6 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
                 return record
         return None
 
-    def _require_active(self, record_id: str) -> SiteDefinitionConfirmation:
-        record = self._records.get(record_id)
-        if record is None:
-            raise ConfirmationNotFoundError(
-                f"no site-definition confirmation exists for record id {record_id!r}"
-            )
-        if self._current_status(record_id) is not ConfirmationStatus.ACTIVE:
-            raise ConfirmationNotActiveError(
-                f"confirmation {record_id!r} is "
-                f"{self._current_status(record_id).value!r}, not active; a "
-                "superseded or revoked confirmation cannot be superseded or revoked"
-            )
-        return record
-
     # -- operations ----------------------------------------------------------
     def _record_insert(self, confirmation: SiteDefinitionConfirmation) -> None:
         # The SINGLE insertion point for both create and supersede, so every
@@ -312,7 +298,18 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
     def supersede(
         self, old_id: str, new_confirmation: SiteDefinitionConfirmation
     ) -> ConfirmationView:
-        old = self._require_active(old_id)
+        # [DB-040(a)/(q) — M5-T067] SCOPE before STATUS, mirroring :meth:`revoke`.
+        # Look the record up DIRECTLY (never a status-first existence+ACTIVE
+        # helper) so the property/condo scope binding is evaluated BEFORE the
+        # ACTIVE-status check: a cross-property probe of a KNOWN foreign record is
+        # then an indistinguishable 404 whatever the record's status, closing the
+        # 409(non-active)-vs-404(active) status oracle the status-first order
+        # leaked. The 409 conflict stays reachable only on the record's OWN binding.
+        old = self._records.get(old_id)
+        if old is None:
+            raise ConfirmationNotFoundError(
+                f"no site-definition confirmation exists for record id {old_id!r}"
+            )
         if new_confirmation.supersedes_id != old_id:
             raise ConfirmationNotFoundError(
                 "the superseding confirmation must reference the record it "
@@ -325,10 +322,22 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
             raise TransitionReasonRequiredError(
                 "a superseding confirmation must carry the reason for the change"
             )
+        # SCOPE: the superseding confirmation's condo grouping (server-resolved
+        # from the addressed property) must match the stored record's; a
+        # foreign-property probe carries a different condo_key and is a 404 HERE,
+        # before the status read below.
         if new_confirmation.condo_key != old.condo_key:
             raise ConfirmationNotFoundError(
                 "a superseding confirmation must belong to the same condo key as "
                 "the record it supersedes"
+            )
+        # STATUS: checked AFTER the scope check, so a non-active OWN record is the
+        # 409 conflict while every foreign-property probe already 404'd above.
+        if self._current_status(old_id) is not ConfirmationStatus.ACTIVE:
+            raise ConfirmationNotActiveError(
+                f"confirmation {old_id!r} is "
+                f"{self._current_status(old_id).value!r}, not active; a "
+                "superseded or revoked confirmation cannot be superseded or revoked"
             )
         # [DB-040(d)] the per-condo chain-depth cap is enforced in
         # :meth:`_record_insert` (the single insertion point), which raises BEFORE
@@ -387,14 +396,20 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
             raise TransitionReasonRequiredError(
                 "a reason is required to revoke a site-definition confirmation"
             )
-        # [DB-040(a)] SCOPE before STATUS. Look the record up directly (not via
-        # _require_active) so the property scoping is evaluated first: a record of
-        # another property is an indistinguishable not-found whatever its status,
-        # so no cross-property status oracle (409-active vs 404-non-active) leaks.
+        # [DB-040(a)] SCOPE before STATUS. Look the record up directly so the
+        # property scoping is evaluated first: a record of another property is an
+        # indistinguishable not-found whatever its status, so no cross-property
+        # status oracle (409-active vs 404-non-active) leaks.
         record = self._records.get(record_id)
         if record is None:
+            # [DB-040(r) — M5-T067] IDENTICAL not-found text to the foreign-scope
+            # branch below (KEEP BYTE-FOR-BYTE IN SYNC; the equality tests
+            # test_revoke_not_found_message_* guard against drift). Given a known,
+            # unguessable record id, a missing id and a foreign id must be
+            # indistinguishable, so the message must NOT disclose existence.
             raise ConfirmationNotFoundError(
-                f"no site-definition confirmation exists for record id {record_id!r}"
+                "no site-definition confirmation matching that record id exists "
+                "for the property addressed by the request path"
             )
         # [DB-040(a)/(b)] the revocation is SCOPED to the property the caller
         # addressed, by a deterministic association that survives a degraded
@@ -404,9 +419,13 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         if not self._matches_addressed_property(
             record, addressed_bbl=addressed_bbl, condo_key=condo_key
         ):
+            # [DB-040(r) — M5-T067] IDENTICAL not-found text to the missing-record
+            # branch above (KEEP BYTE-FOR-BYTE IN SYNC; see that branch's note) so
+            # a foreign record cannot be distinguished from a non-existent one by
+            # the message wording alone.
             raise ConfirmationNotFoundError(
-                "the confirmation being revoked must belong to the property "
-                "addressed by the request path"
+                "no site-definition confirmation matching that record id exists "
+                "for the property addressed by the request path"
             )
         # Status check AFTER the scope check, so a non-active OWN record is the 409
         # conflict while every foreign-property probe is already a 404 above.

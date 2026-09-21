@@ -717,3 +717,124 @@ def test_confirmed_at_display_drops_fractional_seconds_while_the_record_keeps_th
     assert "." not in display
     assert record.to_payload()["confirmed_at_display"] == display
     assert confirmed_at_display("not-a-timestamp") == "not-a-timestamp"
+
+
+# ---------------------------------------------------------------------------
+# M5-T067 — DB-040(q)/(r) store hardening residuals (M5-T062 G5 LOW-1/LOW-2)
+# ---------------------------------------------------------------------------
+# (q) supersede now binds SCOPE before STATUS, exactly mirroring revoke, so a
+# cross-property probe of a KNOWN foreign record reads an indistinguishable 404
+# whatever the record's status; the 409-class NotActive is reachable only on the
+# record's OWN binding. (r) revoke's two not-found branches emit byte-identical
+# message text, so the message cannot distinguish a missing id from a foreign one.
+def _foreign_supersede_probe(old_id: str) -> SiteDefinitionConfirmation:
+    # A superseding confirmation whose condo_key is FOREIGN to the probed record.
+    # The route resolves condo_key server-side from the ADDRESSED property, so a
+    # cross-property probe necessarily carries a different condo_key.
+    return _make(
+        condo_key="some-other-condo",
+        supersedes_id=old_id,
+        reason="cross-property supersede probe",
+    )
+
+
+# AS-1 (supersede oracle closed) + AS-2 (mutation sensitivity q): reverting the
+# reorder (status check first) reddens the superseded/revoked cases below, which
+# would then raise the 409-class ConfirmationNotActiveError instead of the
+# 404-class ConfirmationNotFoundError.
+@pytest.mark.parametrize("status_label", ["active", "superseded", "revoked"])
+def test_supersede_foreign_probe_is_404_whatever_the_record_status(status_label):
+    store = InMemorySiteDefinitionStore()
+    original = store.create(_make()).record
+    actor = make_confirmer("Dana Reviewer", "user")
+    if status_label == "superseded":
+        store.supersede(
+            original.record_id,
+            _make(
+                confirmed_at=LATER_AT,
+                supersedes_id=original.record_id,
+                reason="own supersede at the addressed property",
+            ),
+        )
+    elif status_label == "revoked":
+        store.revoke(
+            original.record_id,
+            addressed_bbl=BILLING_BBL,
+            condo_key=CONDO_KEY,
+            reason="own revoke at the addressed property",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
+    before = [v.record.record_id for v in store.list_for_condo_key(CONDO_KEY)]
+    # FOREIGN-condo supersede probe -> 404-class NotFound (scope-before-status),
+    # NEVER the 409-class NotActive, for every one of the three statuses.
+    with pytest.raises(ConfirmationNotFoundError):
+        store.supersede(
+            original.record_id, _foreign_supersede_probe(original.record_id)
+        )
+    # The refused probe mutated NOTHING: neither the addressed condo's chain nor
+    # the foreign condo gained a record (the scope check raises before any insert).
+    after = [v.record.record_id for v in store.list_for_condo_key(CONDO_KEY)]
+    assert after == before
+    assert store.list_for_condo_key("some-other-condo") == ()
+
+
+def test_supersede_of_a_non_active_own_record_is_still_the_409_conflict():
+    # AS-1: the 409 NotActive stays reachable ONLY on the record's OWN binding - a
+    # SAME-condo supersede of a non-active record passes the scope check, so the
+    # status check fires and it is the typed conflict (never a 404).
+    store = InMemorySiteDefinitionStore()
+    original = store.create(_make()).record
+    actor = make_confirmer("Dana Reviewer", "user")
+    store.revoke(
+        original.record_id,
+        addressed_bbl=BILLING_BBL,
+        condo_key=CONDO_KEY,
+        reason="own revoke",
+        actor=actor,
+        at=LATER_AT.isoformat(),
+    )
+    with pytest.raises(ConfirmationNotActiveError):
+        store.supersede(
+            original.record_id,
+            _make(
+                supersedes_id=original.record_id,
+                reason="own supersede of a revoked record",
+            ),
+        )
+
+
+# AS-3 (message unification) + AS-4 (mutation sensitivity r): revoke's
+# non-existent-id and existing-but-foreign-id branches return byte-identical
+# message text AND reject_code. Diverging either literal reddens the equality
+# assertion below.
+def test_revoke_not_found_message_is_identical_for_missing_and_foreign_ids():
+    store = InMemorySiteDefinitionStore()
+    record = store.create(_make()).record
+    actor = make_confirmer("Dana Reviewer", "user")
+    # Branch 1: a NON-EXISTENT record id at the OWN condo (healthy scope).
+    with pytest.raises(ConfirmationNotFoundError) as missing:
+        store.revoke(
+            "does-not-exist",
+            addressed_bbl=BILLING_BBL,
+            condo_key=CONDO_KEY,
+            reason="probe a non-existent id",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
+    # Branch 2: an EXISTING but FOREIGN record id (foreign condo scope).
+    with pytest.raises(ConfirmationNotFoundError) as foreign:
+        store.revoke(
+            record.record_id,
+            addressed_bbl="9999999999",
+            condo_key="some-other-condo",
+            reason="probe a foreign id",
+            actor=actor,
+            at=LATER_AT.isoformat(),
+        )
+    # Byte-identical message text AND reject_code -> no existence oracle via text.
+    assert str(missing.value) == str(foreign.value)
+    assert missing.value.reject_code == foreign.value.reject_code
+    # And the unified text echoes NEITHER probed id (it discloses no existence).
+    assert "does-not-exist" not in str(missing.value)
+    assert record.record_id not in str(foreign.value)

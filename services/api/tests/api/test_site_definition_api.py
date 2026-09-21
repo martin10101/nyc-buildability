@@ -780,3 +780,55 @@ def test_named_wallabout_condo_confirmation_end_to_end(monkeypatch):
     )
     assert revoked.status_code == 200, revoked.json()
     assert revoked.json()["status"] == "revoked"
+
+
+# ===========================================================================
+# M5-T067 — DB-040(r) revoke not-found message unification over the route
+# ===========================================================================
+def test_revoke_not_found_response_is_identical_for_missing_and_foreign_ids(monkeypatch):
+    # [DB-040(r) / M5-T062 G5 LOW-2] over the route: a non-existent record id and
+    # an existing-but-foreign record id yield byte-identical status, state,
+    # reject_code AND message - so the response body carries no existence oracle
+    # (only the per-request correlation_id differs, which discloses nothing).
+    enable_flag(monkeypatch)
+    store = InMemorySiteDefinitionStore()
+    app_a = _sd_app(store, _multi_lot())
+    app_b = _sd_app(store, _multi_lot(condo_key="999999"))
+    client_a = TestClient(app_a, raise_server_exceptions=False)
+    client_b = TestClient(app_b, raise_server_exceptions=False)
+    created = client_a.post(_url(), json=_create_body())
+    assert created.status_code == 201, created.json()
+    record_id = created.json()["record_id"]
+    # Branch 1: a NON-EXISTENT record id at the addressed property (condo A).
+    missing = client_a.post(
+        f"{_url()}/does-not-exist-0000/revoke",
+        json={"confirmer": _confirmer(), "reason": "probe a non-existent id"},
+    )
+    # Branch 2: the EXISTING record probed from a FOREIGN condo (condo B).
+    foreign = client_b.post(
+        f"{_url()}/{record_id}/revoke",
+        json={"confirmer": _confirmer(), "reason": "probe a foreign id"},
+    )
+    assert missing.status_code == foreign.status_code == 404, (
+        missing.json(),
+        foreign.json(),
+    )
+    mb, fb = missing.json(), foreign.json()
+    assert mb["state"] == fb["state"] == "not_found"
+    assert mb["reject_code"] == fb["reject_code"] == "confirmation_not_found"
+    assert mb["message"] == fb["message"]
+    # DIRECT equality of the FULL response bodies once the ONLY per-request field
+    # - the uuid4 correlation_id, which discloses nothing about existence - is
+    # removed: state, reject_code AND message are then byte-identical, so the
+    # whole body carries no existence oracle (not merely the fields checked one by
+    # one above). [DB-040(r) / M5-T062 G5 LOW-2]
+    assert "correlation_id" in mb and "correlation_id" in fb
+    assert {k: v for k, v in mb.items() if k != "correlation_id"} == {
+        k: v for k, v in fb.items() if k != "correlation_id"
+    }
+    # The message echoes NEITHER probed id, so it discloses no existence.
+    assert "does-not-exist-0000" not in mb["message"]
+    assert record_id not in fb["message"]
+    # The record is untouched by either refused probe.
+    still = client_a.get(_url())
+    assert still.json()["active_confirmation"]["record_id"] == record_id
