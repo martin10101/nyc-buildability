@@ -1,0 +1,116 @@
+{
+  "task_id": "M5-T066",
+  "title": "D-082 map-CLICK interaction slice: click-to-place/adjust outline vertices ON the lot map, feeding the accepted drawing+bridge+adoption path (the T065 scope-disposition follow-up; map surface IN scope)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Deliver the map-click interaction layer the T065 packet's compose-only wall made undeliverable (recorded [ORCH-SCOPE-DISPOSITION], owner capability authorized under D-082-R001): the architect clicks on the existing lot map to place outline vertices (and click-selects a placed vertex to adjust or delete it), the clicked 4326 positions enter the SAME drawn-outline state the accepted keyboard/numeric path uses - one draft model, one correspondence bridge, one adoption path, zero new math and zero new dependencies. The map surface is IN scope this time: extend LotOutlineMap.tsx ONLY additively (an optional interaction callback prop; absent prop = byte-equivalent display behavior for the accepted address-confirm consumers) or compose a new interaction wrapper over it. Keyboard operability remains complete and equal (click is an addition, never a replacement - the accepted a11y bar); honesty labels unchanged (drawn shape = proposed input, never a record).",
+  "business_reason": "The owner's checkpoint ruling made map drawing the front door; T065 delivered the bridge+adoption spine with keyboard entry, and honestly surfaced that click-on-map needs the map surface in scope - this slice finishes the interaction the owner asked for",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local commands: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 793 files/16728 nodes/7304 edges): LotOutlineMap.tsx consumers = AddressConfirmCard.tsx (ACCEPTED address-confirm display surface, FORBIDDEN - your LotOutlineMap change must be an additive OPTIONAL interaction prop; with the prop absent the rendered behavior is byte-equivalent and every accepted lot-outline-map/address-confirm spec stays green unchanged), PropertyOverview.tsx (HELD T063 surface, FORBIDDEN), ProposalOutlineDraw.tsx (T065-delivered, IN scope - the click layer wires here), lot-outline-map.test.tsx (IN scope). ProposalEditor.tsx composes ProposalOutlineDraw (IN scope). The T065 lib spine (outline-bridge-api.ts, proposal-draft.ts) is FORBIDDEN: clicked vertices enter the SAME drawn-outline state the keyboard path uses - one draft model, one bridge, one adoption path, never a second route.",
+    "SEQUENCING (binding): this packet executes only AFTER M5-T065 is accepted - ProposalOutlineDraw.tsx, ProposalEditor.tsx, and the e2e spec are frozen T065 acceptance evidence until then; the orchestrator holds the launch. If you are running, that hold has been released.",
+    "MAP INTERACTION (binding): use the MapLibre GL JS event surface the shipped LotOutlineMap already owns (map click -> lngLat). No new dependency (lockfile untouched). No client-side coordinate transforms or measurements - clicked positions are display 4326 until the accepted bridge converts them (2263 measurement doctrine). Keyboard operability stays complete and equal: click is an addition, never a replacement (the accepted a11y bar); focus management keeps the DB-043(a) remedy intact."
+  ],
+  "outputs": [
+    "Click-to-place/adjust/delete outline vertices ON the lot map, feeding the accepted drawing-bridge-adoption path (one draft model; keyboard parity preserved; honesty labels unchanged)",
+    "Additive-optional interaction surface on LotOutlineMap (absent prop = byte-equivalent accepted display) and/or a composing interaction wrapper; accepted display consumers untouched",
+    "project-control/reports/M5-T066-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T065"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
+    "apps/web/src/components/architect/ProposalOutlineMap*.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-map*.test.tsx",
+    "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-draw.test.tsx",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+    "apps/web/e2e/proposal-editor.spec.ts",
+    "project-control/reports/M5-T066-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/lib/condo-records.ts",
+    "apps/web/src/lib/rule-evaluation.ts",
+    "apps/web/src/lib/outline-bridge-api.ts",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/test-support/rule-evaluation-fixtures.ts",
+    "apps/web/e2e/helpers.ts",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (click placement): clicking the lot map appends a drawn vertex at the clicked 4326 position into the SAME drawn-outline state as keyboard entry; vertex list and map presentation stay in sync; the drawn shape stays labeled proposed input, never a record.",
+    "AS-2 (click adjust/delete): a placed vertex can be selected and adjusted and deleted via the map interaction; every interaction keeps a keyboard-equivalent path; focus management on delete preserves the DB-043(a) remedy.",
+    "AS-3 (display-surface safety): with no interaction prop, LotOutlineMap behavior is byte-equivalent to the accepted display; ALL accepted lot-outline-map, address-confirm, T060, and T065 specs stay green unchanged.",
+    "AS-4 (end-to-end): the Playwright drawing journey extends with pointer click-to-place through bridge + adoption + check (stubbed bridge asserting the same request contracts); the keyboard-only journey REMAINS and stays green.",
+    "AS-5 (no new math/deps): zero new dependencies (lockfile untouched); no client-side CRS math anywhere in the packet (grep-provable); the only conversion path is the accepted T065 bridge."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The accepted address-confirm surface consumes LotOutlineMap: any non-additive change regresses accepted evidence - additive optional prop only, absent-prop path byte-equivalent, proven by the unchanged accepted specs.",
+    "MapLibre pointer events do not exist in jsdom: unit specs assert the wiring/state contract; real pointer behavior proves ONLY in the Playwright e2e in CI - never mark click behavior verified from local reasoning; jsdom getContext/WebGL console noise is not the failure signal.",
+    "Shared-file freeze: ProposalOutlineDraw/ProposalEditor/e2e spec are frozen T065 acceptance evidence until T065 accepts - the orchestrator holds the launch on that boundary.",
+    "The e2e keyboard journeys rely on the tabUntil body-wrap guard (a3173987, helpers.ts FORBIDDEN here) - extend journeys with the existing helper, never a local variant."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-21T02:46:14.527580+00:00",
+  "updated_at": "2026-09-21T02:46:14.922829+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001",
+        "D-082-R003"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R001",
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-21T02:46:14.527580+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ]
+}

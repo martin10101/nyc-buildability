@@ -10,7 +10,7 @@
  "issued_at": "2026-09-19",
  "captured_at": "2026-09-19T06:12:50.269900+00:00",
  "created_at": "2026-09-19T06:12:50.269900+00:00",
- "updated_at": "2026-09-20T23:07:52.888851+00:00",
+ "updated_at": "2026-09-21T02:47:48.914379+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "665d3d0bb965b5a3d097803428a3f69294fb84b7",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-076-R002",
   "D-076-R003"
  ],
- "requirements_content_digest_sha256": "3bee28c5091cfe682a534fab99d62d33b6dcf9866318b5ef0083708b54783e5c",
+ "requirements_content_digest_sha256": "089782b5eac1a9e92c68bf10570ee0a10ef7cd3aa3d2743accd3020d676d5857",
  "sources": [
   {
    "file": "source-001.md",
@@ -105,6 +105,12 @@
    "actor": "orchestrator",
    "action": "applicability_bind",
    "note": "Bound M5-T064 (max-envelope engine slice 1) and/or M5-T065 (map-drawing input + correspondence bridge) at the seq-123 D-082 contract seam; graph regenerated at this seam (783/16559/7258) before authoring; digest resync same commit."
+  },
+  {
+   "at": "2026-09-21T02:47:48.914379+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T066 (map-CLICK interaction slice, the recorded T065 [ORCH-SCOPE-DISPOSITION] follow-up; map surface in scope) at the seq-124 contract seam; graph regenerated at this seam (793/16728/7304) before authoring; digest resync same commit."
   }
  ]
 }
