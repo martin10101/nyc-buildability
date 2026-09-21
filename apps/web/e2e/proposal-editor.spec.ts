@@ -346,3 +346,83 @@ test("AS-4: draw an outline, bridge it to 2263, adopt into the numeric table, th
   await page.keyboard.press("Enter");
   await expect(page.getByTestId("proposal-check-summary")).toBeVisible();
 });
+
+test("AS-1 pointer: click the lot map to place outline points, then bridge -> adopt -> check the drawn shape", async ({ page }) => {
+  // Task M5-T066 (D-082-R001): the POINTER placement journey. The architect
+  // clicks the recorded lot map to place drawn outline points, which enter the
+  // SAME drawn-outline state the keyboard path fills (one draft model). The
+  // stubs are identical to the AS-4 keyboard-draw journey: the bridge asserts a
+  // 4326 outline of at least a triangle BEFORE returning the canned 2263
+  // correspondence, and the check asserts the ADOPTED 2263 vertices — a wrong or
+  // missing request can never be papered over by the response.
+  await page.route("**/api/v1/outline-bridge", async (route) => {
+    const request = route.request();
+    const body = request.postDataJSON() as { srid: number; drawn_vertices: Array<[number, number]> };
+    expect(request.method(), "the outline bridge must be POSTed").toBe("POST");
+    expect(body.srid, "drawn positions are the display 4326 CRS").toBe(4326);
+    expect(body.drawn_vertices.length, "an outline is at least a triangle").toBeGreaterThanOrEqual(3);
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "X-Correlation-ID": "e2e-bridge" },
+      body: JSON.stringify(BRIDGE_BODY),
+    });
+  });
+  await page.route("**/api/v1/proposal-checks", async (route) => {
+    const body = route.request().postDataJSON() as { proposed_massing: { outline: { srid: number; vertices: Array<[number, number]> } } };
+    expect(route.request().method()).toBe("POST");
+    expect(body.proposed_massing.outline.srid).toBe(2263);
+    expect(body.proposed_massing.outline.vertices).toEqual(BRIDGED_2263);
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "X-Correlation-ID": "e2e-drawn" },
+      body: JSON.stringify(DRAWN_REPORT),
+    });
+  });
+
+  // BBL 1000010010 renders a real single-lot polygon; the CI browser has WebGL,
+  // so the interactive map paints (the same premise architect-workspace.spec's
+  // settledMap relies on).
+  await openProposalEditor(page, "1000010010");
+  await expect(page.getByRole("heading", { name: "Proposal editor" })).toBeVisible();
+  await expect(page.getByTestId("outline-draw-honesty")).toContainText("not a city record");
+
+  // The interactive lot map must render before it can be clicked. Scope to the
+  // drawing wrapper so no other map surface is matched.
+  const drawSurface = page.getByTestId("proposal-outline-map");
+  await expect(drawSurface.getByTestId("lot-outline")).toHaveAttribute(
+    "data-parcel-state",
+    "rendered",
+    { timeout: 15_000 },
+  );
+  const canvas = drawSurface.getByTestId("lot-outline-map").locator("canvas").first();
+  await expect(canvas).toBeVisible();
+  const box = await canvas.boundingBox();
+  if (!box) throw new Error("the lot-outline map canvas has no layout box");
+
+  // Place three WELL-SEPARATED points by real pointer clicks on empty parcel
+  // area (never on a prior vertex circle), so the map runtime PLACES a new drawn
+  // point each time — the pointer equivalent of the keyboard Add path.
+  await canvas.click({ position: { x: box.width * 0.3, y: box.height * 0.32 } });
+  await canvas.click({ position: { x: box.width * 0.72, y: box.height * 0.34 } });
+  await canvas.click({ position: { x: box.width * 0.5, y: box.height * 0.72 } });
+
+  // The clicks landed in the drawn-points table (shared state) and enabled
+  // Convert at three points.
+  await expect(page.getByLabel("Drawn point 0 longitude")).toBeVisible();
+  await expect(page.getByLabel("Drawn point 2 longitude")).toBeVisible();
+  await expect(page.getByTestId("outline-draw-convert")).toBeEnabled();
+
+  // Convert the drawn outline -> bridge (stubbed) -> adopt into the numeric table.
+  await page.getByTestId("outline-draw-convert").click();
+  await expect(page.getByTestId("outline-draw-bridged")).toBeVisible();
+  await expect(page.getByLabel("Vertex 0 X coordinate")).toHaveValue("1000020");
+  await expect(page.getByLabel("Vertex 2 Y coordinate")).toHaveValue("200030");
+  await expect(page.getByTestId("outline-draw-status")).toContainText("not a city record");
+
+  // Run the check on the ADOPTED shape; the adopted 2263 vertices were asserted
+  // inside the check stub before the canned report was served.
+  await page.getByTestId("run-check").click();
+  await expect(page.getByTestId("proposal-check-summary")).toBeVisible();
+});

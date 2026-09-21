@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import {
   addLevel,
   addVertex,
   addWall,
   adoptOutlineVertices,
+  danglingWallIds,
   rectangleSampleDraft,
   removeLevel,
   removeVertex,
@@ -64,6 +65,12 @@ export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchI
   const [draftProblems, setDraftProblems] = useState<DraftProblem[]>([]);
   const [variations, setVariations] = useState<ProposalVariation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  // Mirror of the current draft so adoption can report exactly which walls it
+  // reconciles WITHOUT reading stale closure state or nesting setState calls.
+  const draftRef = useRef(draft);
+  useEffect(() => {
+    draftRef.current = draft;
+  }, [draft]);
 
   const runCheck = useCallback(async () => {
     const problems = validateDraft(draft);
@@ -105,11 +112,19 @@ export function ProposalEditor({ bbl, fetchImpl }: { bbl?: string | null; fetchI
   // visible/editable authority, and a fresh check must be run on the adopted
   // shape (the old outcome no longer describes the current draft).
   const adoptDrawnOutline = useCallback((vertices: DraftVertex[]) => {
+    // DB-045(f)/HJ-2: adopting an outline with a different vertex count would
+    // orphan exterior walls that reference removed vertices. adoptOutlineVertices
+    // reconciles by dropping them; announce exactly which so the change is never
+    // silent (the frontend "no silent scenario-changing default" rule).
+    const dropped = danglingWallIds(draftRef.current.exterior_walls, vertices.length);
     setDraft((d) => adoptOutlineVertices(d, vertices));
     setDraftProblems([]);
     setOutcome(null);
     setAnnouncement(
-      `Adopted ${vertices.length} drawn points into the numeric outline — proposed input you can edit; run the check when ready.`,
+      `Adopted ${vertices.length} drawn points into the numeric outline — proposed input you can edit; run the check when ready.` +
+        (dropped.length
+          ? ` Removed ${dropped.length} wall${dropped.length === 1 ? "" : "s"} that referenced deleted vertices (${dropped.join(", ")}); re-add walls if needed.`
+          : ""),
     );
   }, []);
 

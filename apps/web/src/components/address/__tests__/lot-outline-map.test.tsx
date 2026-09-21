@@ -47,6 +47,12 @@ const mocks = vi.hoisted(() => {
     sourceLoaded: true,
     renderListeners: [] as Array<() => void>,
     errorListeners: [] as Array<(event?: { sourceId?: string }) => void>,
+    // Task M5-T066 interaction support: recorded click listeners, the features
+    // a drawn-vertex-layer query returns (a hit vs an empty click), and the
+    // GeoJSON sources so getSource/setData can be observed.
+    clickListeners: [] as Array<(event?: unknown) => void>,
+    overlayHit: [] as Array<{ properties?: Record<string, unknown> | null }>,
+    sources: {} as Record<string, { setData: ReturnType<typeof vi.fn> }>,
   };
 
   class MockMap {
@@ -68,6 +74,7 @@ const mocks = vi.hoisted(() => {
     }
     on(type: string, cb: (event?: { sourceId?: string }) => void) {
       if (type === "error") state.errorListeners.push(cb);
+      if (type === "click") state.clickListeners.push(cb as (event?: unknown) => void);
       if (type === "render") {
         state.renderListeners.push(cb);
         if (state.autoRender) queueMicrotask(cb);
@@ -80,10 +87,21 @@ const mocks = vi.hoisted(() => {
     getLayer(id: string) {
       return addLayer.mock.calls.find(([layer]) => (layer as { id: string }).id === id)?.[0];
     }
-    queryRenderedFeatures() {
+    // Supports BOTH the parcel-render observer form `queryRenderedFeatures({ layers })`
+    // and the click hit-test form `queryRenderedFeatures(point, { layers })`. A
+    // query against the drawn-vertex layer returns the configured overlay hit;
+    // any other query returns the lot-outline features the observer needs.
+    queryRenderedFeatures(arg1?: unknown, arg2?: unknown) {
+      const options = (arg2 ?? arg1) as { layers?: string[] } | undefined;
+      const layers = options?.layers ?? [];
+      if (layers.includes("proposal-drawn-outline-points")) return state.overlayHit;
       return ["lot-outline-fill", "lot-outline-line"].map(id => ({ source: "lot-outline", layer: { id } }));
     }
+    getSource(id: string) {
+      return state.sources[id];
+    }
     addSource(id: string, source: unknown) {
+      state.sources[id] = { setData: vi.fn() };
       addSource(id, source);
     }
     addLayer(layer: unknown) {
@@ -128,6 +146,9 @@ const mocks = vi.hoisted(() => {
     },
     fireMapError(sourceId?: string) {
       state.errorListeners.forEach((cb) => cb(sourceId ? { sourceId } : undefined));
+    },
+    fireMapClick(event?: unknown) {
+      state.clickListeners.forEach((cb) => cb(event));
     },
   };
 });
@@ -187,6 +208,9 @@ afterEach(() => {
   mocks.setStyleAlreadyLoaded(false);
   mocks.state.errorListeners.length = 0;
   mocks.state.renderListeners.length = 0;
+  mocks.state.clickListeners.length = 0;
+  mocks.state.overlayHit.length = 0;
+  for (const key of Object.keys(mocks.state.sources)) delete mocks.state.sources[key];
   mocks.state.autoRender = true;
   mocks.state.sourceLoaded = true;
   vi.useRealTimers();
@@ -474,6 +498,139 @@ describe("lotOutlineFitBoundsOptions — D-056-R002 framing fix", () => {
     expect(options.maxZoom).toBeGreaterThan(18);
     expect(options.padding).toBe(24);
     expect(options.duration).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task M5-T066 — additive map-CLICK interaction. Real pointer geometry only
+// proves in the Playwright e2e (jsdom has no MapLibre pointer/WebGL); these are
+// the WIRING/state guards: byte-equivalent display when the props are absent,
+// and the click/overlay contract when present.
+// ---------------------------------------------------------------------------
+describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
+  beforeEach(() => enableWebgl());
+
+  const emptyOverlay = { type: "FeatureCollection" as const, features: [] };
+  const singleLot = () => fetchReturning(jsonResponse(fixture("single_lot_polygon")));
+
+  it("AS-3 byte-equivalence: with no interaction props, NO click listener attaches and only the 2 lot-outline layers are added", async () => {
+    render(<LotOutlineMap bbl="1008350041" fetchImpl={singleLot()} />);
+    await screen.findByTestId("lot-outline-map");
+    await waitFor(() => expect(mocks.addSource).toHaveBeenCalled());
+    expect(mocks.addLayer).toHaveBeenCalledTimes(2);
+    expect(mocks.state.clickListeners).toHaveLength(0);
+  });
+
+  it("AS-1: registers a click listener and reports the display 4326 position on an empty-area click", async () => {
+    const onOutlineMapClick = vi.fn();
+    render(
+      <LotOutlineMap
+        bbl="1008350041"
+        fetchImpl={singleLot()}
+        onOutlineMapClick={onOutlineMapClick}
+        onDrawnVertexClick={vi.fn()}
+        drawnOverlay={emptyOverlay}
+      />,
+    );
+    await screen.findByTestId("lot-outline-map");
+    await waitFor(() => expect(mocks.state.clickListeners.length).toBeGreaterThan(0));
+    act(() => mocks.fireMapClick({ point: { x: 10, y: 10 }, lngLat: { lng: -73.98, lat: 40.75 } }));
+    expect(onOutlineMapClick).toHaveBeenCalledWith({ lng: -73.98, lat: 40.75 });
+  });
+
+  it("AS-2: a click that lands on a drawn vertex routes to onDrawnVertexClick, never a place", async () => {
+    const onOutlineMapClick = vi.fn();
+    const onDrawnVertexClick = vi.fn();
+    mocks.state.overlayHit.push({ properties: { index: 2 } });
+    render(
+      <LotOutlineMap
+        bbl="1008350041"
+        fetchImpl={singleLot()}
+        onOutlineMapClick={onOutlineMapClick}
+        onDrawnVertexClick={onDrawnVertexClick}
+        drawnOverlay={emptyOverlay}
+      />,
+    );
+    await screen.findByTestId("lot-outline-map");
+    // The drawn-vertex hit test is guarded on the overlay layer's existence, so
+    // wait until the overlay source + its 2 layers are installed (addLayer x4 =
+    // the 2 lot-outline layers + the 2 overlay layers) before firing the click.
+    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(4));
+    act(() => mocks.fireMapClick({ point: { x: 5, y: 5 }, lngLat: { lng: -73.98, lat: 40.75 } }));
+    expect(onDrawnVertexClick).toHaveBeenCalledWith(2);
+    expect(onOutlineMapClick).not.toHaveBeenCalled();
+  });
+
+  it("AS-2 early-click guard: a click BEFORE the overlay layer is installed places a point and never queries the missing drawn-vertex layer", async () => {
+    // Map never reaches 'rendered' (no parcel render), so the overlay effect
+    // never installs its source/layers — reproducing the real window between the
+    // click listener attaching (at construction) and overlay readiness.
+    mocks.state.autoRender = false;
+    // A hit WOULD be returned if the (absent) drawn-vertex layer were queried.
+    mocks.state.overlayHit.push({ properties: { index: 3 } });
+    const onOutlineMapClick = vi.fn();
+    const onDrawnVertexClick = vi.fn();
+    render(
+      <LotOutlineMap
+        bbl="1008350041"
+        fetchImpl={singleLot()}
+        onOutlineMapClick={onOutlineMapClick}
+        onDrawnVertexClick={onDrawnVertexClick}
+        drawnOverlay={emptyOverlay}
+      />,
+    );
+    await screen.findByTestId("lot-outline-map");
+    await waitFor(() => expect(mocks.state.clickListeners.length).toBeGreaterThan(0));
+    // The drawn-vertex layer is NOT installed (map not ready).
+    expect(
+      mocks.addLayer.mock.calls.some(
+        ([layer]) => (layer as { id?: string }).id === "proposal-drawn-outline-points",
+      ),
+    ).toBe(false);
+    act(() => mocks.fireMapClick({ point: { x: 5, y: 5 }, lngLat: { lng: -73.98, lat: 40.75 } }));
+    // Guarded: with no drawn-vertex layer to hit, the click PLACES a point and
+    // the configured overlayHit is NEVER consulted. Reverting the getLayer guard
+    // turns this red (the unguarded query returns the hit and routes to select).
+    expect(onOutlineMapClick).toHaveBeenCalledWith({ lng: -73.98, lat: 40.75 });
+    expect(onDrawnVertexClick).not.toHaveBeenCalled();
+  });
+
+  it("AS-1 sync: renders the drawn overlay as its own source + 2 layers, then updates it in place via setData (never a second source)", async () => {
+    const overlay2 = {
+      type: "FeatureCollection" as const,
+      features: [
+        {
+          type: "Feature" as const,
+          properties: { index: 0, selected: false },
+          geometry: { type: "Point" as const, coordinates: [-73.98, 40.75] as [number, number] },
+        },
+      ],
+    };
+    const { rerender } = render(
+      <LotOutlineMap
+        bbl="1008350041"
+        fetchImpl={singleLot()}
+        onOutlineMapClick={vi.fn()}
+        onDrawnVertexClick={vi.fn()}
+        drawnOverlay={emptyOverlay}
+      />,
+    );
+    await screen.findByTestId("lot-outline-map");
+    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(4));
+    expect(mocks.addSource).toHaveBeenCalledWith("proposal-drawn-outline", expect.anything());
+    const overlaySource = mocks.state.sources["proposal-drawn-outline"];
+    expect(overlaySource).toBeDefined();
+    rerender(
+      <LotOutlineMap
+        bbl="1008350041"
+        fetchImpl={singleLot()}
+        onOutlineMapClick={vi.fn()}
+        onDrawnVertexClick={vi.fn()}
+        drawnOverlay={overlay2}
+      />,
+    );
+    await waitFor(() => expect(overlaySource.setData).toHaveBeenCalledWith(overlay2));
+    expect(mocks.addLayer).toHaveBeenCalledTimes(4);
   });
 });
 

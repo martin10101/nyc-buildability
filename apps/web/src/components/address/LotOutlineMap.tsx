@@ -54,9 +54,28 @@ interface MapLike extends Omit<ZoningContextMap, "on" | "off">, ParcelRenderMap 
   isStyleLoaded(): boolean;
   addSource(id: string, source: unknown): void;
   addLayer(layer: unknown): void;
+  getSource(id: string): { setData(data: unknown): void } | undefined;
   addControl(control: unknown, position?: string): void;
   fitBounds(bounds: [[number, number], [number, number]], options?: unknown): void;
   remove(): void;
+}
+
+/**
+ * A local view of the two-argument `queryRenderedFeatures(point, { layers })`
+ * MapLibre overload used ONLY for click hit-testing the drawn-vertex layer.
+ * ParcelRenderMap declares the one-argument options form for parcel-render
+ * observation, so this is kept as a separate structural type (a cast at the one
+ * call site) rather than widening MapLike's method signature.
+ */
+interface PointQueryMap {
+  /** Presence check used to GUARD the hit test — the drawn-vertex layer only
+   * exists after the overlay effect installs it, so an early click must confirm
+   * the layer before querying it (see the click handler). */
+  getLayer(id: string): unknown;
+  queryRenderedFeatures(
+    point: unknown,
+    options: { layers: string[] },
+  ): Array<{ properties?: Record<string, unknown> | null }>;
 }
 interface MapConstructor {
   new (options: unknown): MapLike;
@@ -216,6 +235,42 @@ const EMPTY_STYLE = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// Optional map-CLICK interaction layer (task M5-T066, D-082-R001). Purely
+// ADDITIVE: with none of the interaction props supplied the map behaves EXACTLY
+// as the accepted display surface (no click listener attaches, no overlay
+// source/layers are added), so the address-confirm consumer is byte-equivalent.
+// When wired, the map renders a proposed-outline overlay (the analyst's DRAWN
+// display-4326 points — never a city record, never measured here) and reports
+// clicks to the caller, which owns the single drawn-outline state.
+// ---------------------------------------------------------------------------
+const DRAWN_OVERLAY_SOURCE = "proposal-drawn-outline";
+const DRAWN_OVERLAY_LINE = "proposal-drawn-outline-line";
+const DRAWN_OVERLAY_POINTS = "proposal-drawn-outline-points";
+
+/** A GeoJSON FeatureCollection carrying the caller's drawn points (display
+ * 4326) as Point features whose `index` maps back to the caller's state and
+ * whose `selected` drives the highlight paint, plus an optional connecting
+ * LineString. Built by the interaction wrapper (ProposalOutlineMap); this module
+ * only renders/updates it. */
+export interface DrawnOverlayData {
+  type: "FeatureCollection";
+  features: Array<{
+    type: "Feature";
+    properties: Record<string, unknown>;
+    geometry:
+      | { type: "Point"; coordinates: [number, number] }
+      | { type: "LineString"; coordinates: Array<[number, number]> };
+  }>;
+}
+
+/** The minimal MapLibre click-event shape this module consumes: the map pixel
+ * (for hit-testing the drawn-vertex layer) and the display 4326 position. */
+export interface OutlineMapClickEvent {
+  point: { x: number; y: number };
+  lngLat: { lng: number; lat: number };
+}
+
 /** A one-line screen-reader summary of the current state, derived
  * deterministically from the typed outcome (no legal semantics, no invented
  * values). */
@@ -284,10 +339,23 @@ export function LotOutlineMap({
   bbl,
   fetchImpl,
   context = false,
+  onOutlineMapClick,
+  onDrawnVertexClick,
+  drawnOverlay,
 }: {
   bbl: string;
   fetchImpl?: typeof fetch;
   context?: boolean;
+  /** Additive (task M5-T066): when supplied, a map click reports the display
+   * 4326 position (or, when it lands on a drawn vertex, calls
+   * `onDrawnVertexClick`). Absent = byte-equivalent accepted display behavior. */
+  onOutlineMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  /** Called with the drawn-point index when a click lands on a rendered drawn
+   * vertex (select/adjust). Only consulted when `onOutlineMapClick` is set. */
+  onDrawnVertexClick?: (index: number) => void;
+  /** The caller's drawn points as a GeoJSON overlay to render on the map. Absent
+   * = no overlay is added (byte-equivalent display). */
+  drawnOverlay?: DrawnOverlayData;
 }) {
   const [contextLayers, setContextLayers] = useState<Record<string, "loading" | "ready" | "error">>({ "nyc-basemap": "loading", "nyc-labels": "loading" });
   const [mapReady, setMapReady] = useState(false);
@@ -300,6 +368,16 @@ export function LotOutlineMap({
   const [mapRenderFailed, setMapRenderFailed] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLike | null>(null);
+  // Latest interaction callbacks, read by the map's click listener without
+  // re-creating the map when the parent re-renders with new handler identities
+  // (the map is expensive to rebuild; only geometry/context/interactivity do).
+  const interactionRef = useRef({ onOutlineMapClick, onDrawnVertexClick });
+  interactionRef.current = { onOutlineMapClick, onDrawnVertexClick };
+  // Interaction is enabled purely by the presence of a click handler. This is
+  // stable per consumer (a component either draws or displays), so it can gate
+  // the map-build effect without causing churn — and keeps every display-only
+  // consumer byte-equivalent (no click listener, no overlay).
+  const interactive = onOutlineMapClick != null;
 
   // Detect WebGL once on mount (client-only, so SSR and the first client render
   // agree on the loading skeleton and no hydration mismatch occurs).
@@ -403,6 +481,45 @@ export function LotOutlineMap({
           setContextLayers(current => ({ ...current, [event!.sourceId!]: "error" }));
         } else failRender();
       });
+      // Additive map-CLICK interaction (task M5-T066): a click on a rendered
+      // drawn vertex selects/adjusts it (onDrawnVertexClick); any other click
+      // reports the display 4326 position (onOutlineMapClick). NO client-side
+      // CRS math — the position stays display 4326 until the accepted bridge
+      // converts it. Callbacks are read from a ref so a re-render never rebuilds
+      // the map. Registered only when interactive, so display consumers are
+      // byte-equivalent.
+      if (interactive) {
+        map.on("click", (event) => {
+          if (cancelled || failed) return;
+          const clickEvent = event as unknown as OutlineMapClickEvent | undefined;
+          if (!clickEvent?.lngLat) return;
+          const { onOutlineMapClick: clickCb, onDrawnVertexClick: vertexCb } = interactionRef.current;
+          if (vertexCb && clickEvent.point) {
+            // GUARD the hit test: the drawn-vertex layer is installed only once
+            // the overlay effect runs (map ready + a drawnOverlay). A click that
+            // arrives BEFORE that readiness — the click listener attaches at map
+            // construction, well before the overlay layer — must NOT query a
+            // layer that does not exist: real MapLibre fires an "error" event for
+            // an unknown layer id in queryRenderedFeatures, which the error
+            // handler above would route to failRender and tear the map down.
+            // With no drawn-vertex layer there is nothing to hit anyway, so fall
+            // through to placing a point; the query runs only once getLayer
+            // confirms the layer is present.
+            const queryMap = map as unknown as PointQueryMap;
+            if (queryMap.getLayer(DRAWN_OVERLAY_POINTS)) {
+              const hits = queryMap.queryRenderedFeatures(clickEvent.point, {
+                layers: [DRAWN_OVERLAY_POINTS],
+              });
+              const hit = hits.find((feature) => typeof feature.properties?.index === "number");
+              if (hit) {
+                vertexCb(hit.properties!.index as number);
+                return;
+              }
+            }
+          }
+          clickCb?.({ lng: clickEvent.lngLat.lng, lat: clickEvent.lngLat.lat });
+        });
+      }
       if (context) map.on("sourcedata", event => {
         if (!cancelled && !failed && event?.isSourceLoaded && contextLayerName(event.sourceId)) {
           setContextLayers(current => ({ ...current, [event.sourceId!]: current[event.sourceId!] === "error" ? "error" : "ready" }));
@@ -453,7 +570,45 @@ export function LotOutlineMap({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [geometry, context]);
+  }, [geometry, context, interactive]);
+
+  // Render/update the drawn-outline overlay (task M5-T066). Runs only once the
+  // parcel map is ready and only when a `drawnOverlay` is supplied, so display
+  // consumers never add these layers. The overlay is added once, then updated
+  // in place via setData on every change (adding a point, selecting, moving,
+  // deleting) — the map presentation stays in sync with the caller's single
+  // drawn-outline state. Nothing here measures the coordinates; they are the
+  // display 4326 sketch.
+  useEffect(() => {
+    if (!drawnOverlay || !mapReady) return;
+    const map = mapRef.current;
+    if (!map) return;
+    const existing = map.getSource(DRAWN_OVERLAY_SOURCE);
+    if (existing) {
+      existing.setData(drawnOverlay);
+      return;
+    }
+    map.addSource(DRAWN_OVERLAY_SOURCE, { type: "geojson", data: drawnOverlay });
+    map.addLayer({
+      id: DRAWN_OVERLAY_LINE,
+      type: "line",
+      source: DRAWN_OVERLAY_SOURCE,
+      filter: ["==", ["geometry-type"], "LineString"],
+      paint: { "line-color": "#b0402f", "line-width": 2, "line-dasharray": [2, 1] },
+    });
+    map.addLayer({
+      id: DRAWN_OVERLAY_POINTS,
+      type: "circle",
+      source: DRAWN_OVERLAY_SOURCE,
+      filter: ["==", ["geometry-type"], "Point"],
+      paint: {
+        "circle-radius": ["case", ["get", "selected"], 8, 6],
+        "circle-color": ["case", ["get", "selected"], "#7a1f12", "#d1543f"],
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2,
+      },
+    });
+  }, [drawnOverlay, mapReady]);
 
   return (
     <section

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ProposalOutlineDraw } from "../ProposalOutlineDraw";
 
 /**
@@ -9,11 +9,45 @@ import { ProposalOutlineDraw } from "../ProposalOutlineDraw";
  * successful convert adopts the bridged EPSG:2263 vertices into the numeric
  * draft while a typed refusal produces NO coordinates and is announced
  * distinctly. The read-only LotOutlineMap is mocked (no WebGL in jsdom).
+ *
+ * Task M5-T066 (D-082-R001) adds PARENT INTEGRATION coverage: the real
+ * ProposalOutlineMap wrapper renders here (only the leaf LotOutlineMap is
+ * mocked), so the pointer callbacks the map runtime would fire — place / select
+ * / move — are captured and driven directly, proving the map and the keyboard
+ * table share ONE drawn-outline state (select/move/delete + deletion focus + the
+ * persistent 1–2-point hint). Real MapLibre pointer geometry proves in the
+ * Playwright e2e; this is the jsdom wiring/state guard.
  */
 
+// Capture the props ProposalOutlineMap passes down to the (mocked) LotOutlineMap,
+// so a test can invoke the map's click callbacks exactly as the runtime would.
+interface CapturedLotMapProps {
+  bbl: string;
+  onOutlineMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  onDrawnVertexClick?: (index: number) => void;
+  drawnOverlay?: { features: Array<{ properties: Record<string, unknown>; geometry: { type: string } }> };
+}
+let lastLotMapProps: CapturedLotMapProps | null = null;
+
 vi.mock("@/components/address/LotOutlineMap", () => ({
-  LotOutlineMap: ({ bbl }: { bbl: string }) => <div data-testid="mock-lot-map">map {bbl}</div>,
+  LotOutlineMap: (props: CapturedLotMapProps) => {
+    lastLotMapProps = props;
+    return <div data-testid="mock-lot-map">map {props.bbl}</div>;
+  },
 }));
+
+/** Place a point by simulating a map click (nothing selected → place; a
+ * selection → move) exactly as ProposalOutlineMap routes the runtime event. */
+function mapClick(lngLat: { lng: number; lat: number }): void {
+  act(() => lastLotMapProps!.onOutlineMapClick!(lngLat));
+}
+/** Click a drawn vertex on the map (select/deselect toggle). */
+function mapVertexClick(index: number): void {
+  act(() => lastLotMapProps!.onDrawnVertexClick!(index));
+}
+function pointFeatureCount(): number {
+  return (lastLotMapProps?.drawnOverlay?.features ?? []).filter((f) => f.geometry.type === "Point").length;
+}
 
 const BBL = "1000010010";
 
@@ -71,7 +105,10 @@ function addPoints(n: number): void {
   for (let i = 0; i < n; i += 1) fireEvent.click(addBtn);
 }
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  lastLotMapProps = null;
+});
 
 describe("ProposalOutlineDraw", () => {
   it("labels the drawn shape as proposed input and gates convert until 3 points exist", () => {
@@ -155,5 +192,98 @@ describe("ProposalOutlineDraw", () => {
     await waitFor(() => expect(screen.getByTestId("outline-draw-status")).toBeInTheDocument());
     expect(screen.getByTestId("outline-draw-status")).toHaveAttribute("data-outcome-kind", "out_of_neighborhood");
     expect(onAdopt).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Task M5-T066 — PARENT INTEGRATION: pointer (map) and keyboard share ONE
+// drawn-outline state. The real ProposalOutlineMap wrapper renders (only the
+// leaf LotOutlineMap is mocked), so the place/select/move callbacks are driven
+// exactly as the map runtime would. Real pointer geometry proves in the e2e.
+// ---------------------------------------------------------------------------
+describe("ProposalOutlineDraw — shared pointer/keyboard state (M5-T066)", () => {
+  it("AS-1: map clicks and keyboard entry append into the SAME table and the overlay stays in sync", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    // No points yet: the empty-state row and an overlay with no point features.
+    expect(screen.getByTestId("outline-draw-empty")).toBeInTheDocument();
+    expect(pointFeatureCount()).toBe(0);
+
+    // Place two points by MAP CLICK (pointer path), nothing selected.
+    mapClick({ lng: -73.9998, lat: 40.7001 });
+    mapClick({ lng: -73.9992, lat: 40.7001 });
+    // Add the third by the KEYBOARD path (Add drawn point + typed coordinates).
+    addPoints(1);
+    fireEvent.change(screen.getByLabelText("Drawn point 2 longitude"), { target: { value: "-73.9992" } });
+    fireEvent.change(screen.getByLabelText("Drawn point 2 latitude"), { target: { value: "40.7003" } });
+
+    // All three landed in ONE table (one draft model): clicked rows carry the
+    // clicked coordinates, the keyboard row carries the typed ones.
+    expect((screen.getByLabelText("Drawn point 0 longitude") as HTMLInputElement).value).toBe("-73.9998");
+    expect((screen.getByLabelText("Drawn point 1 longitude") as HTMLInputElement).value).toBe("-73.9992");
+    expect((screen.getByLabelText("Drawn point 2 latitude") as HTMLInputElement).value).toBe("40.7003");
+    // Convert enables at 3 points; the map overlay renders all three points.
+    expect(screen.getByTestId("outline-draw-convert")).toBeEnabled();
+    expect(pointFeatureCount()).toBe(3);
+  });
+
+  it("AS-2: a placed point is selected then MOVED by a map click, with the keyboard-equivalent Select/Deselect toggle", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    mapClick({ lng: -73.9998, lat: 40.7001 });
+    mapClick({ lng: -73.9992, lat: 40.7001 });
+
+    // Select point 0 via a map-vertex click; the row shows the keyboard-equivalent
+    // Deselect control pressed, and the overlay marks that point selected.
+    mapVertexClick(0);
+    expect(screen.getByRole("button", { name: "Deselect drawn point 0" })).toHaveAttribute("aria-pressed", "true");
+    const selected = lastLotMapProps!.drawnOverlay!.features.find(
+      (f) => f.geometry.type === "Point" && f.properties.index === 0,
+    );
+    expect(selected!.properties.selected).toBe(true);
+
+    // With a selection, a map click MOVES that point (not a place — count stays 2).
+    mapClick({ lng: -73.999, lat: 40.7005 });
+    expect(screen.getAllByRole("button", { name: /^Delete drawn point/ })).toHaveLength(2);
+    expect((screen.getByLabelText("Drawn point 0 longitude") as HTMLInputElement).value).toBe("-73.999");
+    expect((screen.getByLabelText("Drawn point 0 latitude") as HTMLInputElement).value).toBe("40.7005");
+
+    // Deselect via the map (click the same vertex again) → back to a placing map.
+    mapVertexClick(0);
+    expect(screen.getByRole("button", { name: "Select drawn point 0" })).toHaveAttribute("aria-pressed", "false");
+    // A subsequent click now PLACES (count grows to 3), proving deselection stuck.
+    mapClick({ lng: -73.9992, lat: 40.7003 });
+    expect(screen.getAllByRole("button", { name: /^Delete drawn point/ })).toHaveLength(3);
+  });
+
+  it("AS-2: deleting a SELECTED drawn point via the table clears the selection and keeps focus on a delete control (DB-043(a))", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    mapClick({ lng: -73.9998, lat: 40.7001 });
+    mapClick({ lng: -73.9992, lat: 40.7001 });
+    mapClick({ lng: -73.9992, lat: 40.7003 });
+
+    mapVertexClick(1);
+    expect(screen.getByRole("button", { name: "Deselect drawn point 1" })).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByLabelText("Delete drawn point 1"));
+    // Focus is never lost: it lands on the delete control that slid into index 1.
+    expect(document.activeElement).toBe(screen.getByLabelText("Delete drawn point 1"));
+    expect(screen.getAllByRole("button", { name: /^Delete drawn point/ })).toHaveLength(2);
+    // The removed row's selection was reconciled away — no row is left selected.
+    expect(screen.queryByRole("button", { name: /^Deselect drawn point/ })).toBeNull();
+  });
+
+  it("HJ-4: a persistent 'need at least 3 points' hint shows only while 1–2 points exist", () => {
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    expect(screen.queryByTestId("outline-draw-min-hint")).toBeNull(); // 0 points
+
+    mapClick({ lng: -73.9998, lat: 40.7001 }); // 1 point
+    expect(screen.getByTestId("outline-draw-min-hint")).toHaveTextContent("Add 2 more points");
+
+    mapClick({ lng: -73.9992, lat: 40.7001 }); // 2 points (singular copy)
+    expect(screen.getByTestId("outline-draw-min-hint")).toHaveTextContent("Add 1 more point");
+    expect(screen.getByTestId("outline-draw-min-hint")).not.toHaveTextContent("Add 1 more points");
+
+    mapClick({ lng: -73.9992, lat: 40.7003 }); // 3 points → hint gone, convert enabled
+    expect(screen.queryByTestId("outline-draw-min-hint")).toBeNull();
+    expect(screen.getByTestId("outline-draw-convert")).toBeEnabled();
   });
 });

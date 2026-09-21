@@ -4,6 +4,7 @@ import {
   addVertex,
   addWall,
   adoptOutlineVertices,
+  danglingWallIds,
   draftIsRunnable,
   emptyDraft,
   MIRROR_MAX_LABEL_LEN,
@@ -150,23 +151,75 @@ describe("draft helpers", () => {
     expect(draftIsRunnable(emptyDraft())).toBe(false);
   });
 
-  it("adopts bridged 2263 vertices into the outline, replacing it and leaving levels/walls intact", () => {
-    const base = rectangleSampleDraft();
-    const adopted = adoptOutlineVertices(base, [
+  it("adopts an EQUAL-count outline, replacing the vertices and leaving levels/walls intact (accepted T065 semantics)", () => {
+    const base = rectangleSampleDraft(); // 5 vertices, 4 walls referencing indices 0-3
+    const nextOutline = [
       { x: 1000020, y: 200010 },
-      { x: 1000080, y: 200010 },
-      { x: 1000080, y: 200030 },
-    ]);
-    expect(adopted.vertices).toEqual([
+      { x: 1000090, y: 200010 },
+      { x: 1000090, y: 200040 },
+      { x: 1000020, y: 200040 },
       { x: 1000020, y: 200010 },
-      { x: 1000080, y: 200010 },
-      { x: 1000080, y: 200030 },
-    ]);
-    // Only the outline is replaced; the rest of the draft is preserved.
+    ];
+    const adopted = adoptOutlineVertices(base, nextOutline);
+    expect(adopted.vertices).toEqual(nextOutline);
+    // Equal count keeps every wall (all indices stay in range) and levels intact.
     expect(adopted.levels).toEqual(base.levels);
     expect(adopted.exterior_walls).toEqual(base.exterior_walls);
     expect(adopted.scenario_label).toBe(base.scenario_label);
     // Immutable: the source draft is untouched.
     expect(base.vertices).toHaveLength(5);
+  });
+
+  // -------------------------------------------------------------------------
+  // AS-6 / DB-045(f) / HJ-2 — adoption reconciliation: adopting a DIFFERENT
+  // vertex count must never leave a wall pointing at a removed vertex.
+  // -------------------------------------------------------------------------
+  it("AS-6: adopting a SMALLER outline drops the walls that would dangle, leaving NO out-of-range wall reference", () => {
+    const base = rectangleSampleDraft(); // walls reference vertex indices up to 3
+    // Adopt only 3 vertices: valid indices are now 0,1,2 — walls touching 3 dangle.
+    const adopted = adoptOutlineVertices(base, [
+      { x: 1000020, y: 200010 },
+      { x: 1000080, y: 200010 },
+      { x: 1000080, y: 200030 },
+    ]);
+    expect(adopted.vertices).toHaveLength(3);
+    // MUTATION GUARD: every surviving wall references an in-range vertex — the
+    // model can never carry a dangling reference after adoption. Reverting the
+    // reconciliation (keeping base.exterior_walls) turns this red, because
+    // W-N (end 3) and W-W (start 3) point past the new 3-vertex outline.
+    for (const wall of adopted.exterior_walls) {
+      expect(wall.start_vertex_index).toBeLessThan(adopted.vertices.length);
+      expect(wall.end_vertex_index).toBeLessThan(adopted.vertices.length);
+    }
+    // The two south/east walls (indices 0-1, 1-2) survive; the two that touch
+    // vertex 3 are dropped.
+    expect(adopted.exterior_walls.map((w) => w.id)).toEqual(["W-S", "W-E"]);
+    // Levels are still untouched by an outline replacement.
+    expect(adopted.levels).toEqual(base.levels);
+  });
+
+  it("AS-6: adopting a LARGER outline keeps every wall (all indices stay in range), mirroring equal-count preservation", () => {
+    const base = rectangleSampleDraft(); // walls reference vertex indices 0-3
+    const larger = Array.from({ length: 7 }, (_, i) => ({ x: 1_000_000 + i, y: 200_000 }));
+    const adopted = adoptOutlineVertices(base, larger);
+    expect(adopted.vertices).toHaveLength(7);
+    // Every original wall index (max 3) is still in range under 7 vertices, so
+    // nothing is dropped — the accepted preservation semantics extend to a
+    // larger-count adoption, not just the equal-count case.
+    expect(adopted.exterior_walls).toEqual(base.exterior_walls);
+    expect(adopted.levels).toEqual(base.levels);
+  });
+
+  it("danglingWallIds reports exactly the walls whose endpoints fall outside the new outline", () => {
+    const base = rectangleSampleDraft();
+    // A 3-vertex outline invalidates the walls that reference vertex index 3.
+    expect(danglingWallIds(base.exterior_walls, 3)).toEqual(["W-N", "W-W"]);
+    // An equal-or-larger outline dangles nothing.
+    expect(danglingWallIds(base.exterior_walls, 5)).toEqual([]);
+    expect(danglingWallIds(base.exterior_walls, 8)).toEqual([]);
+    // A non-integer/negative endpoint is treated as dangling (can never index).
+    expect(danglingWallIds([{ id: "W-bad", start_vertex_index: -1, end_vertex_index: 0 }], 5)).toEqual([
+      "W-bad",
+    ]);
   });
 });

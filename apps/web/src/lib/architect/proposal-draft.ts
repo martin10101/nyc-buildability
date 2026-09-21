@@ -263,19 +263,59 @@ export function updateVertex(draft: ProposalDraft, index: number, patch: Partial
 export function removeVertex(draft: ProposalDraft, index: number): ProposalDraft {
   return { ...draft, vertices: removeAt(draft.vertices, index) };
 }
+/** True when an exterior wall's endpoints both reference a vertex index that
+ * exists in an outline of `vertexCount` vertices. A wall with a non-integer or
+ * out-of-range endpoint would dangle after the outline is replaced. */
+function wallReferencesInRange(wall: DraftWall, vertexCount: number): boolean {
+  return (
+    Number.isInteger(wall.start_vertex_index) &&
+    Number.isInteger(wall.end_vertex_index) &&
+    wall.start_vertex_index >= 0 &&
+    wall.start_vertex_index < vertexCount &&
+    wall.end_vertex_index >= 0 &&
+    wall.end_vertex_index < vertexCount
+  );
+}
+
+/**
+ * The ids of exterior walls that would DANGLE if the outline were replaced with
+ * an outline of `vertexCount` vertices — i.e. walls whose start/end vertex index
+ * no longer exists (task M5-T066, DB-045(f)/HJ-2). validateDraft does NOT catch
+ * a wall pointing at a removed vertex, so adoption uses this to reconcile the
+ * model and the editor uses it to announce exactly what was dropped (never a
+ * silent structural change).
+ */
+export function danglingWallIds(walls: DraftWall[], vertexCount: number): string[] {
+  return walls.filter((w) => !wallReferencesInRange(w, vertexCount)).map((w) => w.id);
+}
+
 /**
  * Replace the draft outline with vertices adopted from the map-drawing bridge
  * (task M5-T065, D-082-R001). The bridge returns EPSG:2263 vertices converted
  * from a map drawing by correspondence to the official parcel geometry; they
  * land in the numeric AUTHORITY here EXACTLY as if the analyst had typed them —
  * the table stays visible, editable, and authoritative (manual remains the
- * option, D-082-R003). Pure/immutable: only the vertices are replaced; levels,
- * walls, and lot inputs are untouched (the analyst still supplies those). The
- * incoming coordinates are the bridge's output with its residual disclosed by
- * the caller — never presented here as survey-grade.
+ * option, D-082-R003). Pure/immutable: levels and lot inputs are untouched (the
+ * analyst still supplies those). The incoming coordinates are the bridge's
+ * output with its residual disclosed by the caller — never presented here as
+ * survey-grade.
+ *
+ * RECONCILIATION (task M5-T066, DB-045(f)/HJ-2): the outline can be replaced
+ * with a DIFFERENT vertex count than the current draft. Exterior walls address
+ * vertices by index, so a smaller-count adoption would leave walls pointing at
+ * removed vertices — a dangling reference validateDraft does not catch. Adoption
+ * therefore drops every wall whose endpoints no longer exist, so the result is
+ * ALWAYS internally consistent. An equal- or larger-count adoption keeps every
+ * wall (all indices stay in range), preserving the accepted equal-count
+ * semantics. Lot-line segments reference explicit coordinates, not vertex
+ * indices, so they can never dangle on an outline replacement and are untouched.
  */
 export function adoptOutlineVertices(draft: ProposalDraft, vertices: DraftVertex[]): ProposalDraft {
-  return { ...draft, vertices: vertices.map((v) => ({ x: v.x, y: v.y })) };
+  const nextVertices = vertices.map((v) => ({ x: v.x, y: v.y }));
+  const exterior_walls = draft.exterior_walls.filter((w) =>
+    wallReferencesInRange(w, nextVertices.length),
+  );
+  return { ...draft, vertices: nextVertices, exterior_walls };
 }
 export function addLevel(draft: ProposalDraft, level: DraftLevel): ProposalDraft {
   return { ...draft, levels: [...draft.levels, level] };

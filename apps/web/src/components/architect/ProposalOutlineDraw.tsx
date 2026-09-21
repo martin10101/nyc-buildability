@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LotOutlineMap } from "@/components/address/LotOutlineMap";
 import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
+import { ProposalOutlineMap } from "./ProposalOutlineMap";
 import type { DraftVertex } from "@/lib/architect/proposal-draft";
 import {
   announcementForOutlineBridge,
@@ -68,6 +68,11 @@ export function ProposalOutlineDraw({
   const [converting, setConverting] = useState(false);
   const [outcome, setOutcome] = useState<OutlineBridgeOutcome | null>(null);
   const [announcement, setAnnouncement] = useState("");
+  // The point selected on the map (or via the table's Select control). A
+  // selected point is what a map click MOVES; selecting also drives the map
+  // highlight and the selected-row styling. null = nothing selected (a map
+  // click PLACES a new point).
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   // Focus-on-delete: the delete handler records the intended focus target
   // (a row index, or -1 for the Add button) and a useEffect applies it AFTER
   // the remove re-render, never synchronously against a remounting node.
@@ -92,8 +97,35 @@ export function ProposalOutlineDraw({
     setPoints((ps) => [...ps, { lng: Number.NaN, lat: Number.NaN }]);
   }, []);
 
+  // Place a point from a map click (finite display 4326 position). Appends into
+  // the SAME points state the keyboard path uses (AS-1) — one drawn-outline
+  // model. No selection is made, so consecutive clicks keep placing.
+  const placePoint = useCallback((lngLat: { lng: number; lat: number }) => {
+    setPoints((ps) => [...ps, { lng: lngLat.lng, lat: lngLat.lat }]);
+  }, []);
+
   const updatePoint = useCallback((index: number, patch: Partial<DrawnPoint>) => {
     setPoints((ps) => ps.map((p, i) => (i === index ? { ...p, ...patch } : p)));
+  }, []);
+
+  // Move the currently-selected point to a clicked map position (AS-2 adjust via
+  // the map). The keyboard equivalent is editing the row's lng/lat inputs.
+  const moveSelectedPoint = useCallback(
+    (lngLat: { lng: number; lat: number }) => {
+      setSelectedIndex((sel) => {
+        if (sel !== null) {
+          setPoints((ps) => ps.map((p, i) => (i === sel ? { lng: lngLat.lng, lat: lngLat.lat } : p)));
+        }
+        return sel;
+      });
+    },
+    [],
+  );
+
+  // Toggle selection of a point (AS-2 select) — from a map-vertex click or the
+  // table's Select control (keyboard equivalent).
+  const selectPoint = useCallback((index: number) => {
+    setSelectedIndex((sel) => (sel === index ? null : index));
   }, []);
 
   const deletePoint = useCallback((index: number) => {
@@ -103,6 +135,12 @@ export function ProposalOutlineDraw({
       // else the previous row, else the Add button when the list is now empty.
       setPendingFocus(next.length === 0 ? -1 : Math.min(index, next.length - 1));
       return next;
+    });
+    // Reconcile the selection so it never dangles past the removed row.
+    setSelectedIndex((sel) => {
+      if (sel === null) return null;
+      if (sel === index) return null;
+      return sel > index ? sel - 1 : sel;
     });
   }, []);
 
@@ -128,18 +166,27 @@ export function ProposalOutlineDraw({
       <header className="proposal-outline-draw-head">
         <h3>Draw the outline</h3>
         <p className="proposal-honesty" data-testid="outline-draw-honesty">
-          Proposed — your sketch, not a city record. Place points over the lot below, then convert them
-          to numeric coordinates. The conversion is approximate proposed input with its fit accuracy
-          disclosed — not a survey. The numbers table stays editable; typing coordinates is always an option.
+          Proposed — your sketch, not a city record. Click the lot map to place points (or add and type
+          them by keyboard below), then convert them to numeric coordinates. The conversion is approximate
+          proposed input with its fit accuracy disclosed — not a survey. The numbers table stays editable;
+          typing coordinates is always an option.
         </p>
       </header>
 
       <div className="proposal-outline-draw-map" data-testid="outline-draw-map-context">
         <p className="section-note">
-          The map shows the recorded lot for reference — display only. Nothing is measured from it; your
-          drawing is converted to official-grid feet on the server.
+          The map shows the recorded lot for reference. Nothing is measured from it; your drawing is
+          converted to official-grid feet on the server.
         </p>
-        <LotOutlineMap bbl={bbl} context />
+        <ProposalOutlineMap
+          bbl={bbl}
+          points={points}
+          selectedIndex={selectedIndex}
+          onPlace={placePoint}
+          onSelect={selectPoint}
+          onMoveSelected={moveSelectedPoint}
+          fetchImpl={fetchImpl}
+        />
       </div>
 
       <table className="proposal-outline-draw-table">
@@ -154,7 +201,7 @@ export function ProposalOutlineDraw({
         </thead>
         <tbody ref={listRef}>
           {points.map((p, i) => (
-            <tr key={i}>
+            <tr key={i} data-selected={i === selectedIndex} className={i === selectedIndex ? "is-selected" : undefined}>
               <th scope="row">{i}</th>
               <td>
                 <input
@@ -173,6 +220,15 @@ export function ProposalOutlineDraw({
                 />
               </td>
               <td>
+                <button
+                  type="button"
+                  data-point-select={i}
+                  aria-pressed={i === selectedIndex}
+                  aria-label={`${i === selectedIndex ? "Deselect" : "Select"} drawn point ${i}`}
+                  onClick={() => selectPoint(i)}
+                >
+                  {i === selectedIndex ? "Deselect" : "Select"}
+                </button>
                 <button
                   type="button"
                   data-point-delete={i}
@@ -208,6 +264,15 @@ export function ProposalOutlineDraw({
           {converting ? "Converting…" : "Convert to numeric outline"}
         </button>
       </div>
+
+      {drawnCount > 0 && drawnCount < MIN_DRAWN_VERTICES ? (
+        // HJ-4 (DB-045(g)): a persistent hint while Convert stays disabled with
+        // 1-2 points — an outline needs at least a triangle.
+        <p className="section-note" role="status" data-testid="outline-draw-min-hint">
+          Add {MIN_DRAWN_VERTICES - drawnCount} more point{MIN_DRAWN_VERTICES - drawnCount === 1 ? "" : "s"} to
+          convert — an outline needs at least {MIN_DRAWN_VERTICES} points (you have {drawnCount}).
+        </p>
+      ) : null}
 
       {outcome !== null && outcome.kind !== "aborted" ? (
         <section
