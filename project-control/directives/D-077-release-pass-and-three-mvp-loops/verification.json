@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T03:03:09.428806+00:00",
+ "verified_at": "2026-09-21T03:08:27.520557+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -279,6 +279,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: scope = the DB-036 rider cluster expressly named in the released queue (+ DB-038/DB-042 riders); normal directive_refs cited (applicable==cited, selective-citation guard independently grepped); G0 PASS at fffbd002; zero forbidden/held files touched; report M5-T063-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:27.520557+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill (G0 PASS at fffbd002; claim with the FULL worktree path wt-m5t062; progress 20->85; loop-2 run 27 built the 8-file material through the S13.8 breaker close; submitted at the CI-green head 0366210c - run 35547702435, 18/18 green, independently reproduced); report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: scope inside the released DB-040/D-078 site-definition queue; exactly the 8 allowed_paths; no held web lanes or forbidden paths; mount ships DEFAULT OFF (no new production surface); report M5-T062-DCV.md."
      ]
     }
    ]

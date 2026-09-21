@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T03:03:09.428806+00:00",
+ "verified_at": "2026-09-21T03:08:27.520557+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -731,6 +731,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (fresh seq-124 dispatch at frozen 853a1d25, byte-stable to HEAD over all 12 allowed_paths): packet inputs[3] carries the regenerated 783-file/16500-node navigation block naming key consumers (bounded.ts additive-only, PropertyOverview read-only consumers, rule-evaluation.ts announcer) + the query.py --no-regen instruction; conclusions verified in source by HJ/G3/G4; report M5-T063-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:27.520557+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh seq-124 dispatch at frozen 0366210c, all 8 allowed_paths byte-stable to HEAD): packet inputs carry the fffbd002-seam navigation block (783/16500/7221); material's only main.py change is the flag-gated include_router block + imports (main.py:203-218); condo_records/connectors consumed read-only; report M5-T062-DCV.md."
      ]
     }
    ]

@@ -67,8 +67,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "main.py is the whole-app mount surface: anything beyond the one flag-gated include line + import is out of scope and fails review.",
     "The M5-T063 lane holds the web condo surface and M5-T060 holds the proposal-editor web surface - G0 records three-way disjointness; touch neither.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T21:40:33.153398+00:00",
-  "updated_at": "2026-09-21T03:07:49.012287+00:00",
+  "updated_at": "2026-09-21T03:08:57.636175+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -132,5 +132,7 @@
       "status": "claimed",
       "message": "CI red at 0539cc84 root-caused via a throwaway diagnostic branch (run 35547075092): fastapi-0.139 _IncludedRouter layout made the mount tests' app.routes introspection blind to included routers - the MOUNT ITSELF WORKS (env/flag/modules proven correct); tagged test-portability fix 099c32a7 (the evidence-api flatten precedent) pushed; CI at the corrected head running; submit at green"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-21T03:08:57.636175+00:00"
 }

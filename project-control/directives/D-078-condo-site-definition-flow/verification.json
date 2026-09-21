@@ -3,7 +3,7 @@
  "directive_id": "D-078",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-078-BOOTSTRAP at capture; they re-bind to the delivering packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": null,
+ "verified_at": "2026-09-21T03:08:41.213723+00:00",
  "task_verifications": [
   {
    "directive_id": "D-078",
@@ -69,6 +69,44 @@
      "state": "PASS",
      "evidence": [
       "DCV delta SATISFIED: the pairing/sequencing condition (accept AFTER M5-T058) is satisfied AT THIS ACCEPT - M5-T058 accepted immediately prior in the same seam; contracted after M5-T056 per the capture record."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:41.213723+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (task-scoped slice 2a): flag-gated mount default OFF (site_definition_write_enabled false on absent/empty/unknown, site_definition.py:121-135; router registered only when true; three-layer default-OFF tests + the non-vacuous fastapi-0.139 introspection fix); record substrate hardened; 298-Wallabout multi-lot flow end-to-end; all green in CI 35547702435; report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: no auto-selection - create requires an explicit human confirmer + parcels from the request body (site_definition.py:492-533); revoke binds on the STORED record scope-before-status and never re-selects (store.py:350-431); AS-1 no cross-property status oracle + AS-2 degraded-safe revoke reproduced in source with green mutation-resistant tests; report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: sequencing honored - M5-T056 accepted (239th) before T062's G0 at fffbd002; the T058/T059 pair accepted; T062 is the recorded DB-040 successor slice; no phase order, hold, or Tier-D stop altered; report M5-T062-DCV.md."
      ]
     }
    ]
