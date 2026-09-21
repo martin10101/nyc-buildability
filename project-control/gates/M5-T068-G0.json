@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T068",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T068-G0.md",
+  "reviewed_at": "2026-09-21T04:31:37.948876+00:00",
+  "content_manifest_sha256": "c17f467dbd93202f0846ed6207d4f561d39e5627c9fd7dd4d01c299d06058901",
+  "reviewed_sha": "5aebc26c7a8c3ca92e4f7c96c4e68a9f828e4bd7",
+  "updated_at": "2026-09-21T04:31:40.083739+00:00"
+}
