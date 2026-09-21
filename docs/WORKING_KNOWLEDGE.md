@@ -523,3 +523,19 @@ apart and never inside a reviewer-wave dispatch window (runs 26/09 were 13s apar
 class signature for fast diagnosis: spawn-ok + session-id recorded + NO session dir + events
 <=2 + ctx 0. A FOURTH occurrence despite staggered launches = open a blocker with the frozen
 evidence and raise the worker-CLI version question with the owner (the flip is owner-only).
+
+## fastapi 0.139 route-layout trap (2026-09-20 seq 123, T062 CI red + diagnostic branch)
+
+The pinned CI fastapi (0.139.0, starlette>=1.0) records each `include_router` call as ONE
+`_IncludedRouter` entry in `app.routes` with `path=None`; the prefixed APIRoute objects live
+under `entry.original_router.routes`. Older fastapi (local 3.11 env) flattens them into
+`app.routes` directly. CONSEQUENCE: any test introspecting `app.routes` paths without
+expanding sees NO included routes on CI - a mount-PRESENCE assert fails while the mount
+itself works, and mount-ABSENCE asserts pass only vacuously. Local pass + CI fail on a
+route-introspection test = check this FIRST. Canonical fix pattern (two precedents now):
+`tests/api/test_evidence_api.py::_flattened_route_list` and
+`tests/api/test_site_definition_api.py::_registered_paths` - expand
+`original_router.routes` in place (no-op on the old layout), filter non-str paths.
+Diagnosis method that settled it in ONE round: a THROWAWAY diagnostic branch off the failing
+head with the assert message carrying env/flag/module-file/version/paths (CI runs on every
+push), read the AssertionError payload from the failed log, delete the branch.
