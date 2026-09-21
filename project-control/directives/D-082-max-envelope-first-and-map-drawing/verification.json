@@ -3,7 +3,7 @@
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-09-21T03:55:56.560960+00:00",
+ "verified_at": "2026-09-21T04:28:14.407410+00:00",
  "task_verifications": [
   {
    "directive_id": "D-082",
@@ -31,6 +31,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED for the delivered slice under the recorded [ORCH-SCOPE-DISPOSITION]: manual stays the option - adoptOutlineVertices replaces only vertices (unit-tested levels/walls preservation), numeric table stays visible/editable/authoritative, adoption resets the outcome forcing a fresh check; the max-first render clause is carried by M5-T064; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R002"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 812a5860, 5 paths blob-stable to HEAD): the authorized max-envelope continuation contracted at db81c35f under the gated process; route UNMOUNTED (main.py reference-free + non-vacuous mount-absence test) and flag-gated default-off; no scenario document or contract version emitted; phase C/D untouched; report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: deterministic maximum-first IN CODE - derive_max_envelope pure computation, registry-derived values with tightest-rule binding selection, per-dimension binding-rule provenance (id/version/out-competed/citations), honest typed gaps always enumerated, and the generator-checker consistency proof reusing the accepted check_proposal fail-closed; AS-2 registry-flip + AS-4 epsilon-mutation teeth verified; CI green at 366a50be; report M5-T064-DCV.md."
      ]
     }
    ]

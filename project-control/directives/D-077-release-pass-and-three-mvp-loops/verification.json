@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T03:55:56.560960+00:00",
+ "verified_at": "2026-09-21T04:28:14.407410+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -339,6 +339,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: released phase-B scope only (D-082-R001 atop the B3-complete editor); exactly the 12 allowed_paths; zero new dependencies; the click-layer routed to the NEW contracted M5-T066, not scope-crept; phase C/D untouched; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill through the interruption arc (run-65 opus-kill w/ preserved worktree -> run-66 resume -> S13.8 breaker close -> orchestrator harvest w/ fresh explicit-cwd suites; in-worktree commit 70ee0e4f cherry-picked 409a8a7d ALL-MATCH x5; FULL worktree path); report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the D-082-released capability only; exactly the 5 allowed_paths; every forbidden path untouched; zero new dependencies; UNMOUNTED default-off = no new production surface; report M5-T064-DCV.md."
      ]
     }
    ]

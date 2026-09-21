@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 3,
  "producer": "orchestrator",
- "updated_at": "2026-09-21T02:47:48.914379+00:00",
+ "updated_at": "2026-09-21T04:30:44.180400+00:00",
  "requirements": [
   {
    "id": "D-082-R001",
@@ -49,7 +49,8 @@
    "applicability": {
     "task_ids": [
      "D-082-BOOTSTRAP",
-     "M5-T064"
+     "M5-T064",
+     "M5-T068"
     ],
     "task_types": [],
     "milestones": [],

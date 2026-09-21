@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T03:55:56.560960+00:00",
+ "verified_at": "2026-09-21T04:28:14.407410+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -249,6 +249,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: proposed third-input-class never a record ('your sketch, not a city record'; server disclosure 'not a survey'); every measurement server-side deterministic (client computes no coordinate); residual disclosed verbatim never laundered; adoption forces a fresh distinct-outcome check; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: grounded in the existing scenario machinery - consumes check_proposal, validate_proposed_massing, LotContext, and the accepted RuleRegistry; the candidate is the accepted B0 massing shape; no parallel concept; report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the fixed ENVELOPE_DISCLOSURE marks every output a rules-derived ESTIMATE never a record/permit/approval with professional review required; gaps kept distinct from binding values (XOR invariant test); every value carries provenance; report M5-T064-DCV.md."
      ]
     }
    ]
