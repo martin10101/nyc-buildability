@@ -68,7 +68,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "main.py is the whole-app mount surface: anything beyond the one flag-gated include line + import is out of scope and fails review.",
     "The M5-T063 lane holds the web condo surface and M5-T060 holds the proposal-editor web surface - G0 records three-way disjointness; touch neither.",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T21:40:33.153398+00:00",
-  "updated_at": "2026-09-21T03:01:33.564432+00:00",
+  "updated_at": "2026-09-21T03:07:49.012287+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
