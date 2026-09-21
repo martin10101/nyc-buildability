@@ -325,8 +325,28 @@ def test_list_returns_the_whole_chain_newest_first(monkeypatch):
 # exposes no site-definition route (M5-T062 makes the mount flag-gated, default
 # off; AS-5 exercises the on/off registration below).
 # ---------------------------------------------------------------------------
+def _registered_paths(application):
+    # [ORCH-CORRECTED per CI 35546337617] fastapi>=0.139 (starlette>=1.0) records
+    # each include_router call as ONE _IncludedRouter entry (path is None) whose
+    # original_router.routes holds the prefixed APIRoute objects; older versions
+    # flatten them into app.routes directly. Introspecting app.routes without
+    # expanding therefore MISSES every included route on the pinned CI fastapi
+    # (the mount-presence assert failed in CI while the mount itself worked, and
+    # the absence asserts passed only vacuously). Expand in place — the same
+    # pattern as tests/api/test_evidence_api.py::_flattened_route_list — a no-op
+    # on the old layout.
+    paths = set()
+    for route in application.routes:
+        inner = getattr(getattr(route, "original_router", None), "routes", None)
+        for r in inner if inner is not None else [route]:
+            path = getattr(r, "path", None)
+            if isinstance(path, str):
+                paths.add(path)
+    return paths
+
+
 def test_router_is_not_mounted_in_main_app_by_default():
-    paths = {getattr(route, "path", "") for route in main_app.routes}
+    paths = _registered_paths(main_app)
     assert not any("site-definition-confirmations" in path for path in paths)
 
 
@@ -683,7 +703,7 @@ def test_flag_off_the_app_registers_no_site_definition_route(monkeypatch):
     # site-definition route: any path hits FastAPI's generic unmounted 404.
     monkeypatch.delenv(SITE_DEFINITION_WRITE_ENABLED_ENV_VAR, raising=False)
     application = create_app()
-    paths = {getattr(r, "path", "") for r in application.routes}
+    paths = _registered_paths(application)  # [ORCH-CORRECTED per CI 35546337617]
     assert not any("site-definition-confirmations" in p for p in paths)
     client = TestClient(application)
     resp = client.post(_url(), json=_create_body())
@@ -697,7 +717,7 @@ def test_flag_on_the_app_mounts_the_site_definition_routes_and_they_serve(monkey
     monkeypatch.setenv(SITE_DEFINITION_WRITE_ENABLED_ENV_VAR, "1")
     enable_flag(monkeypatch)  # INTERNAL_RULE_EVAL_ENABLED for the handler
     application = create_app()
-    paths = {getattr(r, "path", "") for r in application.routes}
+    paths = _registered_paths(application)  # [ORCH-CORRECTED per CI 35546337617]
     assert any("site-definition-confirmations" in p for p in paths)
     store = InMemorySiteDefinitionStore()
     application.dependency_overrides[get_site_definition_resolver] = lambda: (
