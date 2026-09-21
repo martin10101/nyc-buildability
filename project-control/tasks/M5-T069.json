@@ -1,0 +1,99 @@
+{
+  "task_id": "M5-T069",
+  "title": "Site-definition store: supersede not-found message unification (DB-040 s) - the last known store oracle, mirroring the accepted T067 revoke fix",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close DB-040(s), the G5-LOW-1 the M5-T067 security review surfaced with a reproduction (M5-T067-G5.md): supersede's not-found branches still emit divergent text - the missing-record branch echoes the probed id while the existing-but-foreign branch returns distinct static text, and the supersedes_id-mismatch branch is a third divergent message that fires only when the record exists. Unify ALL not-found-class supersede refusal messages to identical text with NO id echo, mirroring the accepted revoke unification byte-for-byte in discipline: same exception class, same refusal code, byte-identical message across the missing and foreign branches; the supersedes_id-mismatch branch must either share that identical text or be proven to fire identically for missing and existing records (no existence signal either way). Store-level and route-level equality tests mirroring the accepted T067 pair; mutation-sensitive both ways; every legitimate same-property path byte-preserved; the scope-before-status order and insert guards UNTOUCHED.",
+  "business_reason": "The security sweep says this is the last known existence oracle in the store - closing it now means the record substrate goes into the future mount/auth work oracle-free",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form the accepted T067 report used is the standard - route what you cannot run to harvest, never fake it.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands run from the worktree root, so the scoped pytest may be [BLOCKED] for you - route it to harvest exactly as T067 did.",
+    "SPEC SOURCE (binding): project-control/reports/M5-T067-G5.md finding G5-LOW-1 (verbatim text + reproduction recipe) and the accepted revoke unification in the same store (the (r) fix, M5-T067 material) - mirror its discipline exactly. The scope-before-status order (the accepted (q) fix) and the _record_insert guards are FROZEN behavior: your diff must not reorder any check, only unify message text (and remove id echoes).",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated this session: 793/16728/7304): store.py consumers = the routes (api/v1/, FORBIDDEN) + condo_records read path (FORBIDDEN); consumer-sweep duty: no out-of-scope suite pins the old supersede message texts - verify by grep and report; if one does, STOP and report the exact assertion (never edit out-of-scope tests).",
+    "BEHAVIOR PRESERVATION (binding): the ONLY observable change is supersede's not-found-class message text (unified, no id echo); every status/state/refusal-code pair byte-identical; the existing 74 scoped tests stay green unchanged (adjusting only assertions that pin the OLD supersede message texts, each named in the report)."
+  ],
+  "outputs": [
+    "Oracle-free supersede messages (unified not-found-class text, no id echo), mutation-tested at store and route level",
+    "project-control/reports/M5-T069-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T067"
+  ],
+  "allowed_paths": [
+    "services/api/app/site_definition/store.py",
+    "services/api/tests/site_definition/test_site_definition_records.py",
+    "services/api/tests/api/test_site_definition_api.py",
+    "project-control/reports/M5-T069-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/site_definition/__init__.py",
+    "services/api/app/site_definition/records.py",
+    "services/api/app/api/v1/",
+    "services/api/app/main.py",
+    "services/api/app/scenario/",
+    "services/api/app/rules/",
+    "apps/web/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (unification): supersede's missing-record and existing-but-foreign probes return byte-identical exception class, refusal code, AND message text, with neither echoing the probed id - direct equality assertions at store level and route level (full-body equality minus correlation_id), mirroring the accepted revoke pair.",
+    "AS-2 (third branch): the supersedes_id-mismatch refusal either shares the identical not-found text or is proven by test to respond identically for missing and existing records - no existence signal from any supersede refusal.",
+    "AS-3 (mutation sensitivity): diverging any unified literal, or reintroducing an id echo, turns a test red.",
+    "AS-4 (frozen order): the scope-before-status order and the insert guards are byte-untouched - the diff contains no reordering; the accepted T067 tests (foreign-probe 404 across all three statuses; own-record 409; after==before) stay green unchanged.",
+    "AS-5 (preservation): full scoped suite green; any adjusted pre-existing assertion pins only the OLD supersede message text and is named in the report; ruff clean; modularity exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The supersedes_id-mismatch branch fires before the scope check - unifying its text versus proving response-identity are different designs; the producer chooses and JUSTIFIES one in the report (the packet accepts either, AS-2).",
+    "Message-text assertions may exist pinning the old supersede texts - the consumer-sweep duty routes out-of-scope hits to the orchestrator.",
+    "This packet must not touch ordering: a reorder = scope violation even if tests stay green."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-21T05:43:39.087057+00:00",
+  "updated_at": "2026-09-21T05:43:40.391124+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-078",
+      "requirement_ids": [
+        "D-078-R001",
+        "D-078-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-21T05:43:39.089200+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/site_definition tests/api/test_site_definition_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

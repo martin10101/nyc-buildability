@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T04:28:14.407410+00:00",
+ "verified_at": "2026-09-21T05:42:55.233545+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -369,6 +369,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the D-082-released capability only; exactly the 5 allowed_paths; every forbidden path untouched; zero new dependencies; UNMOUNTED default-off = no new production surface; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill (contract f102a14c, claim 0b6799fc FULL worktree path, loop-2 run-28 build, breaker-close harvest, cherry-pick 4e1491f8 ALL-MATCH x4, submit at the CI-green-verified head); report M5-T067-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released store-hardening increment on the just-accepted D-078 surface; exactly the 4 allowed_paths; every forbidden path untouched; zero new dependencies; no held/Tier-D scope; report M5-T067-DCV.md."
      ]
     }
    ]

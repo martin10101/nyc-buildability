@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T04:28:14.407410+00:00",
+ "verified_at": "2026-09-21T05:42:55.233545+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -797,6 +797,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: packet carries the db81c35f-seam navigation block (783/16559/7258) with the query.py --no-regen instruction; conclusions verified in source; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block with the consumer-sweep duty; producer swept via Grep, G3 verified who-consumes in source (one _require_active caller; no out-of-scope suite pins message text); tests/api 650 green; report M5-T067-DCV.md."
      ]
     }
    ]

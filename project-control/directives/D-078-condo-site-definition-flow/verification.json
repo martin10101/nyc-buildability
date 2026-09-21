@@ -3,7 +3,7 @@
  "directive_id": "D-078",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-078-BOOTSTRAP at capture; they re-bind to the delivering packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": "2026-09-21T03:08:41.213723+00:00",
+ "verified_at": "2026-09-21T05:42:55.233545+00:00",
  "task_verifications": [
   {
    "directive_id": "D-078",
@@ -107,6 +107,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: sequencing honored - M5-T056 accepted (239th) before T062's G0 at fffbd002; the T058/T059 pair accepted; T062 is the recorded DB-040 successor slice; no phase order, hold, or Tier-D stop altered; report M5-T062-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 4ed36c5e; manifest 8e662633 independently re-derived matching all four gate records): supersede reordered scope-before-status exactly per the M5-T062-G5 LOW-1 remediation (_require_active deleted, single caller swept); revoke's not-found branches byte-identical per LOW-2; only the 4 allowed_paths changed; no route/mount/contract change; report M5-T067-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: refusal ordering/message change only - no auto-selection introduced; _record_insert collision/chain guards unmoved; legitimate same-property paths keep status/state/refusal code; refused probes mutate nothing (after==before pinned); the G4 reviewer's LIVE mutant harnesses elevated the mutation claims to OBSERVED; report M5-T067-DCV.md."
      ]
     }
    ]
