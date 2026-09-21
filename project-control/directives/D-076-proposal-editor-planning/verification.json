@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-20T06:06:06.492959+00:00",
+ "verified_at": "2026-09-21T03:55:56.560960+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -219,6 +219,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: proposed-not-a-record labels on all three surfaces; no emission/persistence (no contract_version, no browser storage); typed bounded refusals with every reflected server string bounded; the client mirror value-for-value equal to the route source and documented as never widening server authority ('computes no legal value... the server refusal remains the single truth surface'); pass/fail/could-not-check distinct by icon+text with the announcer leading on fail/CNC counts. Corroborated independently by G3 (value-by-value mirror check), SEC (rendering/ephemerality walkthrough), and HJ (honesty framing judged strong)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B increment grounded in the EXISTING engine - the bridge reuses the two accepted connector representations of the SAME parcel read-only; adoption feeds the accepted draft model and the accepted proposal-checks engine (e2e AS-4 runs the check on the adopted shape); no parallel concept; report M5-T065-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: proposed third-input-class never a record ('your sketch, not a city record'; server disclosure 'not a survey'); every measurement server-side deterministic (client computes no coordinate); residual disclosed verbatim never laundered; adoption forces a fresh distinct-outcome check; report M5-T065-DCV.md."
      ]
     }
    ]

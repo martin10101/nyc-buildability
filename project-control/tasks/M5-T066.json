@@ -11,7 +11,8 @@
     "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local commands: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
     "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 793 files/16728 nodes/7304 edges): LotOutlineMap.tsx consumers = AddressConfirmCard.tsx (ACCEPTED address-confirm display surface, FORBIDDEN - your LotOutlineMap change must be an additive OPTIONAL interaction prop; with the prop absent the rendered behavior is byte-equivalent and every accepted lot-outline-map/address-confirm spec stays green unchanged), PropertyOverview.tsx (HELD T063 surface, FORBIDDEN), ProposalOutlineDraw.tsx (T065-delivered, IN scope - the click layer wires here), lot-outline-map.test.tsx (IN scope). ProposalEditor.tsx composes ProposalOutlineDraw (IN scope). The T065 lib spine (outline-bridge-api.ts, proposal-draft.ts) is FORBIDDEN: clicked vertices enter the SAME drawn-outline state the keyboard path uses - one draft model, one bridge, one adoption path, never a second route.",
     "SEQUENCING (binding): this packet executes only AFTER M5-T065 is accepted - ProposalOutlineDraw.tsx, ProposalEditor.tsx, and the e2e spec are frozen T065 acceptance evidence until then; the orchestrator holds the launch. If you are running, that hold has been released.",
-    "MAP INTERACTION (binding): use the MapLibre GL JS event surface the shipped LotOutlineMap already owns (map click -> lngLat). No new dependency (lockfile untouched). No client-side coordinate transforms or measurements - clicked positions are display 4326 until the accepted bridge converts them (2263 measurement doctrine). Keyboard operability stays complete and equal: click is an addition, never a replacement (the accepted a11y bar); focus management keeps the DB-043(a) remedy intact."
+    "MAP INTERACTION (binding): use the MapLibre GL JS event surface the shipped LotOutlineMap already owns (map click -> lngLat). No new dependency (lockfile untouched). No client-side coordinate transforms or measurements - clicked positions are display 4326 until the accepted bridge converts them (2263 measurement doctrine). Keyboard operability stays complete and equal: click is an addition, never a replacement (the accepted a11y bar); focus management keeps the DB-043(a) remedy intact.",
+    "T065-WAVE FOLD-INS (binding; DB-045 e/f/g): (1) HJ-1 copy honesty - the drawing-section copy must describe the interaction that EXISTS: once click-to-place lands the current copy becomes true; until your click layer renders, never ship copy describing a map gesture the surface does not have. (2) HJ-2 adoption reconciliation - adoptOutlineVertices (proposal-draft.ts, NOW IN SCOPE with its test) replaces only vertices while DraftWall rows keep start_vertex_index/end_vertex_index; adopting an outline with a different vertex count leaves dangling wall references that validateDraft does not catch. On adoption, reconcile: drop or re-index walls/lot-line segments that reference removed vertices (or surface a typed 'walls reference removed vertices' warning) - mutation-tested (a dangling-wall draft after adoption must be impossible or visibly warned, and reverting the reconciliation turns a test red). Preserve the existing levels/walls-preservation unit test semantics for the equal-count case. (3) HJ-4 - show a persistent 'need at least 3 points' hint while Convert is disabled with 1-2 points."
   ],
   "outputs": [
     "Click-to-place/adjust/delete outline vertices ON the lot map, feeding the accepted drawing-bridge-adoption path (one draft model; keyboard parity preserved; honesty labels unchanged)",
@@ -31,7 +32,9 @@
     "apps/web/src/components/architect/ProposalEditor.tsx",
     "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
     "apps/web/e2e/proposal-editor.spec.ts",
-    "project-control/reports/M5-T066-producer-report.md"
+    "project-control/reports/M5-T066-producer-report.md",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/lib/architect/__tests__/proposal-draft.test.ts"
   ],
   "forbidden_paths": [
     "apps/web/src/components/address/AddressConfirmCard.tsx",
@@ -41,7 +44,6 @@
     "apps/web/src/lib/condo-records.ts",
     "apps/web/src/lib/rule-evaluation.ts",
     "apps/web/src/lib/outline-bridge-api.ts",
-    "apps/web/src/lib/architect/proposal-draft.ts",
     "apps/web/src/test-support/rule-evaluation-fixtures.ts",
     "apps/web/e2e/helpers.ts",
     "services/api/",
@@ -52,7 +54,8 @@
     "AS-2 (click adjust/delete): a placed vertex can be selected and adjusted and deleted via the map interaction; every interaction keeps a keyboard-equivalent path; focus management on delete preserves the DB-043(a) remedy.",
     "AS-3 (display-surface safety): with no interaction prop, LotOutlineMap behavior is byte-equivalent to the accepted display; ALL accepted lot-outline-map, address-confirm, T060, and T065 specs stay green unchanged.",
     "AS-4 (end-to-end): the Playwright drawing journey extends with pointer click-to-place through bridge + adoption + check (stubbed bridge asserting the same request contracts); the keyboard-only journey REMAINS and stays green.",
-    "AS-5 (no new math/deps): zero new dependencies (lockfile untouched); no client-side CRS math anywhere in the packet (grep-provable); the only conversion path is the accepted T065 bridge."
+    "AS-5 (no new math/deps): zero new dependencies (lockfile untouched); no client-side CRS math anywhere in the packet (grep-provable); the only conversion path is the accepted T065 bridge.",
+    "AS-6 (adoption reconciliation, DB-045(f)): adopting a drawn outline whose vertex count differs from the current draft leaves NO dangling wall/lot-line vertex references - reconciled or typed-warned, mutation-tested; the equal-count adoption preserves walls/levels exactly as the accepted T065 unit test pins."
   ],
   "required_gates": [
     "G0",

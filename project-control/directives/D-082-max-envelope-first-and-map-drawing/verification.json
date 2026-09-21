@@ -3,6 +3,37 @@
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
  "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_at": "2026-09-21T03:55:56.560960+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 65faee54; 12 paths byte-stable to HEAD): keyboard-operable outline over the READ-ONLY composed LotOutlineMap; correspondence-not-projection bridge (no CRS lib, grep-proven) flag-gated OFF and UNMOUNTED (main.py reference-free + mount-absence test); adoption into the SAME accepted draft model; phase C/D not entered, emission deferred, no dependency touched; report M5-T065-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for the delivered slice under the recorded [ORCH-SCOPE-DISPOSITION]: manual stays the option - adoptOutlineVertices replaces only vertices (unit-tested levels/walls preservation), numeric table stays visible/editable/authoritative, adoption resets the outcome forcing a fresh check; the max-first render clause is carried by M5-T064; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
 }
