@@ -27,18 +27,38 @@ from app.site_definition.records import (
     ConfirmationStatus,
     ConfirmationView,
     DuplicateActiveConfirmationError,
+    ListResultTooLargeError,
     OrphanSupersedeError,
+    RecordIdCollisionError,
     SiteConfirmer,
     SiteDefinitionConfirmation,
     StatusTransition,
+    SupersessionChainTooDeepError,
     TransitionReasonRequiredError,
 )
 
 __all__ = [
+    "MAX_CONFIRMATIONS_PER_CONDO_KEY",
+    "MAX_LIST_RESULTS",
     "InMemorySiteDefinitionStore",
     "SiteDefinitionStore",
     "default_site_definition_store",
 ]
+
+# [DB-040(d) / T059 G5-F3] Bounds on a single condo_key's confirmation chain and
+# on a list response, so the process-wide store cannot grow (or serialize) an
+# unbounded set. The chain cap counts EVERY record recorded for a condo (active,
+# superseded, revoked) and is enforced at the single insertion point
+# (:meth:`_record_insert`), so it binds create AND supersede alike - the bound
+# cannot be bypassed by revoking and re-creating, because revoke frees no slot in
+# an append-only store. The list cap is defense-in-depth on the response and a
+# ``list`` that would exceed it is a TYPED refusal (never a silent truncation).
+#
+# INVARIANT: MAX_CONFIRMATIONS_PER_CONDO_KEY <= MAX_LIST_RESULTS, so a single
+# condo's list can never legitimately exceed the list cap; the list refusal is a
+# durable-implementation backstop, not a path the in-memory store can trip.
+MAX_CONFIRMATIONS_PER_CONDO_KEY = 200
+MAX_LIST_RESULTS = 200
 
 
 class SiteDefinitionStore(ABC):
@@ -79,7 +99,8 @@ class SiteDefinitionStore(ABC):
         self,
         record_id: str,
         *,
-        condo_key: str,
+        addressed_bbl: str,
+        condo_key: str | None,
         reason: str,
         actor: SiteConfirmer,
         at: str,
@@ -87,11 +108,28 @@ class SiteDefinitionStore(ABC):
         """Revoke the ACTIVE record ``record_id`` (reason required); append a
         terminal revoked transition. Returns the revoked record's view.
 
-        [ORCH-CORRECTED per T059 G3-C1/G5-F1] ``condo_key`` BINDS the revocation
-        to the condo the caller addressed: implementations MUST refuse (typed
-        not-found, mirroring :meth:`supersede`'s binding) when the stored record's
-        ``condo_key`` differs — the path identity is the route's only resource
-        scoping, and an unbound revoke is a cross-property IDOR at mount time."""
+        [DB-040(a)/(b)] The revocation is SCOPED to the property the caller
+        addressed, and the scope is evaluated BEFORE the ACTIVE-status check so a
+        record belonging to another property is an indistinguishable ``404``
+        whatever its status (a status-before-scope order leaks a cross-property
+        status oracle — 409 for a non-active foreign record vs 404 for an active
+        one). The scope is a DETERMINISTIC association that does NOT require a
+        healthy live resolution:
+
+        - ``condo_key`` is the resolved condo grouping when live resolution is
+          HEALTHY; then it is authoritative and the stored record must belong to
+          it (mirrors :meth:`supersede`'s binding).
+        - ``condo_key`` is ``None`` only when the caller's resolver DEGRADED
+          (unresolved / typed error / raised) and produced no condo id. This is
+          NEVER permission to skip property scoping: implementations MUST fall
+          back to the property identity the confirmation RECORDED at creation — the
+          ``addressed_bbl`` (always available from the request path) must equal the
+          record's own ``billing_bbl`` / ``entered_bbl``. A foreign-property probe
+          then still fails to match (a different property carries a different BBL),
+          while a legitimate withdrawal at the record's own property still
+          succeeds. Refusing a withdrawal because the resolver is unhealthy is the
+          WRONG fail-direction (D-051); revoke is the only human path to undo a
+          confirmation and must stay available under a degraded resolver."""
 
 
 class InMemorySiteDefinitionStore(SiteDefinitionStore):
@@ -110,26 +148,36 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         # the ABC's newest-first contract on a tie).
         self._insertion_seq: dict[str, int] = {}
         self._next_seq = 0
+        # [DB-040(d) / T059 G5-F3] Indexes replacing the O(n) full scans: record
+        # ids per condo_key (insertion order) and transitions per record. Without
+        # them _current_status/_superseded_by scan the whole transition log per
+        # record, making list_for_condo_key O(n^2) on the process-wide store.
+        self._by_condo_key: dict[str, list[str]] = {}
+        self._transitions_by_record: dict[str, list[StatusTransition]] = {}
 
     # -- derivation (the append-only log is the source of truth for status) ---
+    # [DB-040(d)] Each reads the per-record transition index, not the whole log.
     def _current_status(self, record_id: str) -> ConfirmationStatus:
-        status = ConfirmationStatus.ACTIVE
-        for transition in self._transitions:
-            if transition.record_id == record_id:
-                status = transition.to_status
-        return status
+        record_transitions = self._transitions_by_record.get(record_id)
+        if not record_transitions:
+            return ConfirmationStatus.ACTIVE
+        return record_transitions[-1].to_status
 
     def _superseded_by(self, record_id: str) -> str | None:
-        for transition in self._transitions:
-            if (
-                transition.record_id == record_id
-                and transition.to_status is ConfirmationStatus.SUPERSEDED
-            ):
+        for transition in self._transitions_by_record.get(record_id, ()):
+            if transition.to_status is ConfirmationStatus.SUPERSEDED:
                 return transition.superseded_by_id
         return None
 
     def _transitions_for(self, record_id: str) -> tuple[StatusTransition, ...]:
-        return tuple(t for t in self._transitions if t.record_id == record_id)
+        return tuple(self._transitions_by_record.get(record_id, ()))
+
+    def _append_transition(self, transition: StatusTransition) -> None:
+        """Append to both the flat log and the per-record index (kept in sync)."""
+        self._transitions.append(transition)
+        self._transitions_by_record.setdefault(transition.record_id, []).append(
+            transition
+        )
 
     def _view(self, record: SiteDefinitionConfirmation) -> ConfirmationView:
         return ConfirmationView(
@@ -139,14 +187,17 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
             transitions=self._transitions_for(record.record_id),
         )
 
+    def _records_for_condo_key(
+        self, condo_key: str
+    ) -> list[SiteDefinitionConfirmation]:
+        # [DB-040(d)] index lookup, not a full-store scan.
+        return [self._records[rid] for rid in self._by_condo_key.get(condo_key, ())]
+
     def _active_record_for(
         self, condo_key: str
     ) -> SiteDefinitionConfirmation | None:
-        for record in self._records.values():
-            if (
-                record.condo_key == condo_key
-                and self._current_status(record.record_id) is ConfirmationStatus.ACTIVE
-            ):
+        for record in self._records_for_condo_key(condo_key):
+            if self._current_status(record.record_id) is ConfirmationStatus.ACTIVE:
                 return record
         return None
 
@@ -166,9 +217,39 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
 
     # -- operations ----------------------------------------------------------
     def _record_insert(self, confirmation: SiteDefinitionConfirmation) -> None:
+        # The SINGLE insertion point for both create and supersede, so every
+        # append-only guard lives here ONCE and neither path can bypass it. Both
+        # guards raise BEFORE any mutation, so a refused insert leaves the records,
+        # transitions, and indexes byte-unchanged.
+        #
+        # [DB-040(e) / T059 G5-F4] collision guard: an id already present would
+        # otherwise silently overwrite a frozen, immutable original.
+        if confirmation.record_id in self._records:
+            raise RecordIdCollisionError(
+                "a site-definition confirmation already exists for record id "
+                f"{confirmation.record_id!r}; the store is append-only and never "
+                "overwrites an immutable record"
+            )
+        # [DB-040(d) / T059 G5-F3] chain-depth cap counting EVERY record for the
+        # condo. Enforced here (not only in supersede) so create cannot grow the
+        # chain past the bound by revoke-then-recreate cycles: revoke frees no
+        # slot in an append-only store, so the cap counts total records.
+        if (
+            len(self._by_condo_key.get(confirmation.condo_key, ()))
+            >= MAX_CONFIRMATIONS_PER_CONDO_KEY
+        ):
+            raise SupersessionChainTooDeepError(
+                "this condo has reached the maximum of "
+                f"{MAX_CONFIRMATIONS_PER_CONDO_KEY} recorded site-definition "
+                "confirmations; no further confirmation can be recorded for it "
+                "(the store is append-only, so revoking does not free a slot)"
+            )
         self._records[confirmation.record_id] = confirmation
         self._insertion_seq[confirmation.record_id] = self._next_seq
         self._next_seq += 1
+        self._by_condo_key.setdefault(confirmation.condo_key, []).append(
+            confirmation.record_id
+        )
 
     def create(self, confirmation: SiteDefinitionConfirmation) -> ConfirmationView:
         # [ORCH-CORRECTED per T059 G4-C-2] a supersedes_id-carrying record MUST
@@ -203,11 +284,16 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         return self._view(record)
 
     def list_for_condo_key(self, condo_key: str) -> tuple[ConfirmationView, ...]:
-        views = [
-            self._view(record)
-            for record in self._records.values()
-            if record.condo_key == condo_key
-        ]
+        # [DB-040(d)] index lookup, not a full-store scan.
+        record_ids = self._by_condo_key.get(condo_key, ())
+        # [DB-040(d)] defense-in-depth cap on the response size, as a TYPED REFUSAL
+        # rather than a silent truncation: a truncated list would hide
+        # legally-sensitive records with no signal that history was dropped. The
+        # in-memory store cannot trip this (the chain cap is <= the list cap), so
+        # it is a durable-implementation backstop at the store boundary.
+        if len(record_ids) > MAX_LIST_RESULTS:
+            raise ListResultTooLargeError(condo_key, len(record_ids), MAX_LIST_RESULTS)
+        views = [self._view(self._records[rid]) for rid in record_ids]
         # Newest first: by confirmed_at (RFC 3339 sorts lexically) with the
         # insertion sequence as the deterministic secondary key, so a
         # same-instant pair lists the LATER-inserted record first — the
@@ -244,8 +330,12 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
                 "a superseding confirmation must belong to the same condo key as "
                 "the record it supersedes"
             )
+        # [DB-040(d)] the per-condo chain-depth cap is enforced in
+        # :meth:`_record_insert` (the single insertion point), which raises BEFORE
+        # any mutation - so an over-cap supersede appends neither the new record
+        # nor the old record's superseded transition (state stays unchanged).
         self._record_insert(new_confirmation)
-        self._transitions.append(
+        self._append_transition(
             StatusTransition(
                 record_id=old_id,
                 from_status=ConfirmationStatus.ACTIVE,
@@ -258,29 +348,75 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         )
         return self._view(new_confirmation)
 
+    def _matches_addressed_property(
+        self,
+        record: SiteDefinitionConfirmation,
+        *,
+        addressed_bbl: str,
+        condo_key: str | None,
+    ) -> bool:
+        """Deterministic association between the addressed property and a stored
+        record, holding even when live resolution DEGRADES ([DB-040(a)/(b)]).
+
+        - Healthy resolution (``condo_key`` present): the resolved condo grouping
+          is authoritative; the record must belong to it (mirrors supersede).
+        - Degraded resolution (``condo_key`` is ``None``): fall back to the
+          property identity the confirmation RECORDED at creation - the
+          ``addressed_bbl`` from the request path must equal the record's own
+          ``billing_bbl`` / ``entered_bbl``. This needs NO live resolver, so a
+          foreign-property probe (a different BBL) cannot match while a legitimate
+          withdrawal at the record's own property still succeeds. ``condo_key`` of
+          ``None`` is NEVER treated as permission to skip property scoping."""
+        if condo_key is not None:
+            return record.condo_key == condo_key
+        return addressed_bbl in (record.billing_bbl, record.entered_bbl)
+
     def revoke(
         self,
         record_id: str,
         *,
-        condo_key: str,
+        addressed_bbl: str,
+        condo_key: str | None,
         reason: str,
         actor: SiteConfirmer,
         at: str,
     ) -> ConfirmationView:
         if not isinstance(reason, str) or not reason.strip():
+            # Checked BEFORE the record lookup, so it discloses nothing about
+            # whether a record id exists or which property it belongs to.
             raise TransitionReasonRequiredError(
                 "a reason is required to revoke a site-definition confirmation"
             )
-        record = self._require_active(record_id)
-        # [ORCH-CORRECTED per T059 G3-C1/G5-F1] the revocation is BOUND to the
-        # condo the caller addressed, mirroring supersede's binding: a record
-        # belonging to a different condo is a typed not-found, never revoked.
-        if record.condo_key != condo_key:
+        # [DB-040(a)] SCOPE before STATUS. Look the record up directly (not via
+        # _require_active) so the property scoping is evaluated first: a record of
+        # another property is an indistinguishable not-found whatever its status,
+        # so no cross-property status oracle (409-active vs 404-non-active) leaks.
+        record = self._records.get(record_id)
+        if record is None:
             raise ConfirmationNotFoundError(
-                "the confirmation being revoked must belong to the same condo "
-                "key as the property addressed by the request path"
+                f"no site-definition confirmation exists for record id {record_id!r}"
             )
-        self._transitions.append(
+        # [DB-040(a)/(b)] the revocation is SCOPED to the property the caller
+        # addressed, by a deterministic association that survives a degraded
+        # resolver (see :meth:`_matches_addressed_property`). A degraded resolver
+        # never blocks the only human withdrawal path (D-051), and condo_key=None
+        # is never permission to skip scoping.
+        if not self._matches_addressed_property(
+            record, addressed_bbl=addressed_bbl, condo_key=condo_key
+        ):
+            raise ConfirmationNotFoundError(
+                "the confirmation being revoked must belong to the property "
+                "addressed by the request path"
+            )
+        # Status check AFTER the scope check, so a non-active OWN record is the 409
+        # conflict while every foreign-property probe is already a 404 above.
+        if self._current_status(record_id) is not ConfirmationStatus.ACTIVE:
+            raise ConfirmationNotActiveError(
+                f"confirmation {record_id!r} is "
+                f"{self._current_status(record_id).value!r}, not active; a "
+                "superseded or revoked confirmation cannot be superseded or revoked"
+            )
+        self._append_transition(
             StatusTransition(
                 record_id=record_id,
                 from_status=ConfirmationStatus.ACTIVE,

@@ -60,6 +60,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 __all__ = [
+    "MAX_CONFIRMER_NAME_CHARS",
+    "MAX_NOTE_CHARS",
     "SITE_DEFINITION_STATUS_CONFIRMED",
     "SITE_DEFINITION_STATUS_UNCONFIRMED",
     "AttestationStatus",
@@ -69,19 +71,34 @@ __all__ = [
     "ConfirmationView",
     "ConfirmerRole",
     "DuplicateActiveConfirmationError",
+    "FieldTooLongError",
     "InvalidConfirmerError",
+    "ListResultTooLargeError",
     "ParcelSetMismatchError",
+    "ParcelShapeError",
+    "RecordIdCollisionError",
     "ResolutionProvenanceSnapshot",
     "SiteConfirmer",
     "SiteDefinitionConfirmation",
     "SiteDefinitionError",
     "StatusTransition",
+    "SupersessionChainTooDeepError",
     "TransitionReasonRequiredError",
     "build_site_definition_block",
+    "confirmed_at_display",
     "create_confirmation",
     "make_confirmer",
     "normalize_parcels",
 ]
+
+# ------------------------------------------------------------------- field caps
+# [DB-040(c) / T059 G5-F2] Server-side length caps on the free-text fields a
+# confirmation stores and echoes. Slice 1 is unmounted, but the mount packet must
+# not ship an endpoint that stores an unbounded ``note`` or ``confirmer.name`` (a
+# paste / generation error, or an inflated response document). A value past the
+# cap is a TYPED refusal, never a silent truncation of a legally-sensitive record.
+MAX_NOTE_CHARS = 2000
+MAX_CONFIRMER_NAME_CHARS = 200
 
 # The condo-records document's ``site_definition`` block status vocabulary: a
 # recorded ACTIVE confirmation makes the site CONFIRMED; the honest default (no
@@ -173,12 +190,41 @@ class ParcelSetMismatchError(SiteDefinitionError):
         )
 
 
+class ParcelShapeError(SiteDefinitionError):
+    """The ``parcels`` value is the wrong SHAPE - not an array, a non-string /
+    blank entry, or empty ([DB-040(i) / T059 G3-F-2/A-6]). Distinct from
+    :class:`ParcelSetMismatchError` (a well-formed set that is not the resolver's
+    lots) and from :class:`InvalidConfirmerError` (a confirmer defect): a
+    malformed parcel array is a parcel problem, so it must not be mislabelled as a
+    confirmer refusal (the wrong ``reject_code`` misdirects the caller)."""
+
+    reject_code = "parcel_set_shape"
+
+
 class InvalidConfirmerError(SiteDefinitionError):
     """The confirmer's name or role is not the closed HUMAN vocabulary (a blank
-    name, or a role outside ``user``/``qualified_professional``). An AI, model,
-    agent, service, or system identity is unrepresentable and refused."""
+    name, a name past :data:`MAX_CONFIRMER_NAME_CHARS`, or a role outside
+    ``user``/``qualified_professional``). An AI, model, agent, service, or system
+    identity is unrepresentable and refused."""
 
     reject_code = "invalid_confirmer"
+
+
+class FieldTooLongError(SiteDefinitionError):
+    """A stored free-text field exceeds its server-side length cap ([DB-040(c) /
+    T059 G5-F2]). Carries the field name and cap so the refusal names the exact
+    limit; the value is never echoed unbounded (the API layer bounds it)."""
+
+    reject_code = "field_too_long"
+
+    def __init__(self, field: str, limit: int, actual: int) -> None:
+        self.field = field
+        self.limit = limit
+        self.actual = actual
+        super().__init__(
+            f"{field} must be at most {limit} characters; got {actual} - a "
+            "confirmation record does not store unbounded free text"
+        )
 
 
 class DuplicateActiveConfirmationError(SiteDefinitionError):
@@ -198,6 +244,49 @@ class OrphanSupersedeError(SiteDefinitionError):
     records the replaced record's status change."""
 
     reject_code = "supersede_via_create_refused"
+
+
+class RecordIdCollisionError(SiteDefinitionError):
+    """A record whose ``record_id`` already exists was offered to the store
+    ([DB-040(e) / T059 G5-F4]). The store is append-only, so silently overwriting
+    a frozen record would destroy an immutable original; the collision is a typed
+    refusal instead. Unreachable from the route (ids are server uuid4) but the
+    store is a public interface a durable implementation must honor."""
+
+    reject_code = "record_id_collision"
+
+
+class SupersessionChainTooDeepError(SiteDefinitionError):
+    """A create OR supersede would grow a condo's confirmation chain past the
+    store's depth cap ([DB-040(d) / T059 G5-F3]). An unbounded chain is a memory /
+    response-size DoS axis on the process-wide store. The cap counts EVERY record
+    recorded for the condo (active, superseded, and revoked); revoke does not free
+    a slot because the store is append-only, so the bound cannot be bypassed by
+    revoking and re-creating - both paths mint a record and both are capped."""
+
+    reject_code = "supersession_chain_too_deep"
+
+
+class ListResultTooLargeError(SiteDefinitionError):
+    """A ``list`` would return more confirmations than the response cap
+    ([DB-040(d) / T059 G5-F3]). The store refuses with a TYPED error rather than
+    SILENTLY TRUNCATING the list: a truncated response would hide legally-sensitive
+    records without any signal that history was dropped. Unreachable through the
+    in-memory store (the per-condo chain cap is <= the list cap, so a single
+    condo's list can never exceed it), but the ABC is a public interface a durable
+    implementation must honor, so the refusal lives at the store boundary."""
+
+    reject_code = "list_result_too_large"
+
+    def __init__(self, condo_key: str, actual: int, limit: int) -> None:
+        self.condo_key = condo_key
+        self.actual = actual
+        self.limit = limit
+        super().__init__(
+            f"the confirmation history for this condo ({actual} records) exceeds "
+            f"the maximum list size of {limit}; the store refuses rather than "
+            "silently truncating a legally-sensitive record set"
+        )
 
 
 class TransitionReasonRequiredError(SiteDefinitionError):
@@ -307,6 +396,8 @@ class SiteDefinitionConfirmation:
             "attestation_status": self.attestation_status.value,
             "refused_for_calculation": self.refused_for_calculation,
             "confirmed_at": self.confirmed_at,
+            # [DB-040(l)] decimal-free display form beside the exact instant.
+            "confirmed_at_display": confirmed_at_display(self.confirmed_at),
             "supersedes_id": self.supersedes_id,
             "reason": self.reason,
             "note": self.note,
@@ -372,20 +463,20 @@ def normalize_parcels(parcels: object) -> tuple[str, ...]:
     non-list/tuple, a non-string entry, or a blank entry is a typed refusal - a
     malformed parcel set can never silently become a site definition."""
     if not isinstance(parcels, (list, tuple)):
-        raise InvalidConfirmerError(
+        raise ParcelShapeError(
             "parcels must be an array of base-lot BBL strings, got "
             f"{type(parcels).__name__}"
         )
     cleaned: set[str] = set()
     for entry in parcels:
         if not isinstance(entry, str) or not entry.strip():
-            raise InvalidConfirmerError(
+            raise ParcelShapeError(
                 "every parcel must be a non-empty base-lot BBL string; a blank or "
                 "non-string parcel is not a recorded lot"
             )
         cleaned.add(entry.strip())
     if not cleaned:
-        raise InvalidConfirmerError(
+        raise ParcelShapeError(
             "a site definition needs at least one recorded base lot; the parcel "
             "set is empty"
         )
@@ -397,6 +488,13 @@ def _validate_confirmer(name: object, role: object) -> SiteConfirmer:
         raise InvalidConfirmerError(
             "confirmer name must be a non-empty string - an anonymous self "
             "attestation is not identity evidence"
+        )
+    cleaned_name = name.strip()
+    if len(cleaned_name) > MAX_CONFIRMER_NAME_CHARS:
+        # [DB-040(c) / T059 G5-F2] cap the stored, echoed confirmer name.
+        raise InvalidConfirmerError(
+            f"confirmer name must be at most {MAX_CONFIRMER_NAME_CHARS} "
+            f"characters; got {len(cleaned_name)}"
         )
     if not isinstance(role, str):
         raise InvalidConfirmerError(
@@ -411,7 +509,7 @@ def _validate_confirmer(name: object, role: object) -> SiteConfirmer:
             f"(supported: {supported}); exact match only - no AI, model, agent, "
             "service, or system identity can author a confirmation"
         ) from exc
-    return SiteConfirmer(name=name.strip(), role=confirmer_role)
+    return SiteConfirmer(name=cleaned_name, role=confirmer_role)
 
 
 def make_confirmer(name: object, role: object) -> SiteConfirmer:
@@ -429,6 +527,25 @@ def _require_reason(reason: object) -> str:
             "definition change with no stated reason is not reviewable"
         )
     return reason.strip()
+
+
+def confirmed_at_display(confirmed_at_iso: str) -> str:
+    """Render a stored RFC 3339 ``confirmed_at`` for DISPLAY with WHOLE-SECOND
+    precision (no fractional part), while the record keeps the full-precision
+    instant ([DB-040(l) / T059 G3-F-6]).
+
+    ``confirmed_at`` is a real ``datetime.now(UTC)`` instant, so it always carries
+    fractional seconds (e.g. ``…T08:23:30.089123+00:00``). A renderer that prints
+    it verbatim inside the records section trips that section's decimal gate
+    (``/\\d+\\.\\d+/``). Emitting a decimal-free ``confirmed_at_display`` beside
+    the exact value lets the confirmed branch render a human timestamp without
+    weakening the gate or losing the recorded precision. If the stored value ever
+    fails to parse it is returned unchanged (never a raise on a display helper)."""
+    try:
+        parsed = datetime.fromisoformat(confirmed_at_iso)
+    except ValueError:
+        return confirmed_at_iso
+    return parsed.replace(microsecond=0).isoformat()
 
 
 def _confirmed_at_iso(confirmed_at: datetime) -> str:
@@ -479,6 +596,9 @@ def create_confirmation(
         raise SiteDefinitionError(
             f"note, when present, must be a string, got {type(note).__name__}"
         )
+    if isinstance(note, str) and len(note) > MAX_NOTE_CHARS:
+        # [DB-040(c) / T059 G5-F2] cap the stored, echoed note.
+        raise FieldTooLongError("note", MAX_NOTE_CHARS, len(note))
     creation_reason: str | None = None
     if supersedes_id is not None:
         creation_reason = _require_reason(reason)

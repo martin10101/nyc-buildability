@@ -38,6 +38,8 @@ from app.api.v1.proposal_validation import router as proposal_validation_v1_rout
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
 from app.api.v1.scenario_analysis import router as scenario_analysis_v1_router
+from app.api.v1.site_definition import router as site_definition_v1_router
+from app.api.v1.site_definition import site_definition_write_enabled
 
 API_VERSION = "0.1.0"
 
@@ -198,6 +200,22 @@ def create_app() -> FastAPI:
     # scenario document or contract version (D-076-R002 / DB-034(d)). See
     # app.api.v1.proposal_checks_api.
     application.include_router(proposal_checks_v1_router)
+    # Internal, DEFAULT-OFF, flag-gated WRITE route for multi-lot site-definition
+    # confirmations (task M5-T062, D-078 slice 2a, DB-040(f)). UNLIKE the routes
+    # above (always registered, gated only at the handler by INTERNAL_RULE_EVAL_ENABLED),
+    # this WRITE route's REGISTRATION is gated on a DEDICATED default-off flag
+    # (SITE_DEFINITION_WRITE_ENABLED): production sets nothing, so the route is
+    # ABSENT from the app entirely - any site-definition path hits FastAPI's generic
+    # 404, byte-identical to an unmounted path. It stays off until B-001
+    # authentication and a durable store land: it records self-attested identity on
+    # an ephemeral store, so mounting it unauthenticated in production would ship
+    # self-attested personal data with no read-authorization (the DB-040(f) posture
+    # stays deferred BEHIND this flag). Turning ON the general INTERNAL_RULE_EVAL_ENABLED
+    # flag (for the read surfaces) does NOT expose it - the write route needs BOTH
+    # this registration flag AND that handler flag to serve. See
+    # app.api.v1.site_definition.
+    if site_definition_write_enabled():
+        application.include_router(site_definition_v1_router)
 
     @application.get("/api/v1/health")
     def health() -> dict[str, str]:

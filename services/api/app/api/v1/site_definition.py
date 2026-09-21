@@ -41,8 +41,9 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import uuid
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Mapping
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Request
@@ -59,10 +60,16 @@ from app.site_definition import (
     ConfirmationNotActiveError,
     ConfirmationNotFoundError,
     DuplicateActiveConfirmationError,
+    FieldTooLongError,
+    InvalidConfirmerError,
+    ListResultTooLargeError,
     ParcelSetMismatchError,
+    ParcelShapeError,
+    RecordIdCollisionError,
     ResolutionProvenanceSnapshot,
     SiteDefinitionError,
     SiteDefinitionStore,
+    SupersessionChainTooDeepError,
     TransitionReasonRequiredError,
     build_site_definition_block,
     create_confirmation,
@@ -73,10 +80,12 @@ from app.site_definition import (
 __all__ = [
     "MAX_BODY_BYTES",
     "SITE_DEFINITION_STATUS_STATE_MATRIX",
+    "SITE_DEFINITION_WRITE_ENABLED_ENV_VAR",
     "SiteDefinitionResolver",
     "get_site_definition_resolver",
     "get_site_definition_store",
     "router",
+    "site_definition_write_enabled",
 ]
 
 logger = logging.getLogger("app.api.v1.site_definition")
@@ -90,6 +99,40 @@ MAX_BODY_BYTES = 65536  # 64 KiB
 # A reflected refusal message is bounded to this many characters so a user value a
 # typed refusal embeds can never be echoed unbounded.
 _MAX_REFUSAL_MESSAGE_CHARS = 400
+
+# ---------------------------------------------------------------------------
+# DEDICATED, DEFAULT-OFF mount gate for the WRITE route (DB-040(f)). This is the
+# ONE new flag the mount packet introduces. It gates REGISTRATION in main.py
+# (``main.py`` calls ``include_router`` only when this is an explicit true token),
+# so an OFF value means the write routes are ABSENT from the app entirely - a
+# request to any site-definition path hits FastAPI's own generic 404, byte-
+# identical to an unmounted path. It is DELIBERATELY separate from the
+# ``INTERNAL_RULE_EVAL_ENABLED`` flag that gates the read surfaces: enabling the
+# general internal flag (e.g. to expose the read-only condo-records document) must
+# NOT expose this unauthenticated, ephemeral, self-attested WRITE route. Both must
+# stay off in production until B-001 authentication and a durable store land; the
+# DB-040(f) read-authorization posture for confirmer identity is deferred behind
+# this gate. Mirrors the ``app.config`` fail-safe pattern: absent / empty /
+# unknown -> OFF (only an explicit true token turns it on).
+SITE_DEFINITION_WRITE_ENABLED_ENV_VAR = "SITE_DEFINITION_WRITE_ENABLED"
+_MOUNT_TRUE_TOKENS = frozenset({"1", "true", "yes", "on"})
+
+
+def site_definition_write_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the site-definition WRITE route may be MOUNTED (registered).
+
+    Returns True ONLY for an explicit true token in
+    :data:`SITE_DEFINITION_WRITE_ENABLED_ENV_VAR`; absent / empty / unknown -> False
+    (fail safe), so production (which sets nothing) never registers the route. Read
+    each call so a test can flip it with ``monkeypatch.setenv`` and rebuild the app.
+    Independent of the handler-level ``internal_rule_eval_enabled`` gate: the write
+    route requires BOTH to serve, and this one is what keeps it off in a config that
+    turns the general internal flag on for the reads."""
+    source = os.environ if env is None else env
+    raw = source.get(SITE_DEFINITION_WRITE_ENABLED_ENV_VAR)
+    if raw is None:
+        return False
+    return raw.strip().lower() in _MOUNT_TRUE_TOKENS
 
 # ---------------------------------------------------------------------------
 # EXACT (HTTP status, state) pair matrix - the single source of truth for every
@@ -123,7 +166,21 @@ _REFUSAL_STATUS: dict[type[SiteDefinitionError], tuple[int, str]] = {
     DuplicateActiveConfirmationError: (409, "conflict"),
     ConfirmationNotActiveError: (409, "conflict"),
     ConfirmationNotFoundError: (404, "not_found"),
+    # [DB-040(e)] an id collision is a state conflict; [DB-040(d)] a chain past
+    # the depth cap, and a list past the response cap, are likewise conflicts. All
+    # are unreachable from this route (server uuid4 ids; the caps are far above any
+    # per-request chain, and the chain cap is <= the list cap) but are mapped
+    # explicitly so a library-boundary refusal stays inside the matrix.
+    RecordIdCollisionError: (409, "conflict"),
+    SupersessionChainTooDeepError: (409, "conflict"),
+    ListResultTooLargeError: (409, "conflict"),
     ParcelSetMismatchError: (422, "validation_error"),
+    # [DB-040(i)] a parcel-SHAPE defect gets its own class and maps to a
+    # validation error - NOT mislabelled invalid_confirmer (its reject_code
+    # already distinguishes it in the body).
+    ParcelShapeError: (422, "validation_error"),
+    InvalidConfirmerError: (422, "validation_error"),
+    FieldTooLongError: (422, "validation_error"),
     TransitionReasonRequiredError: (422, "validation_error"),
 }
 
@@ -155,6 +212,37 @@ def get_site_definition_store() -> SiteDefinitionStore:
 
 
 def _json(status_code: int, body: dict, correlation_id: str) -> JSONResponse:
+    """The SINGLE matrix-checked emission point ([DB-040(k)]). Every non-sentinel
+    response this module returns passes through here, and its ``(status, state)``
+    pair is asserted against :data:`SITE_DEFINITION_STATUS_STATE_MATRIX` - the
+    matrix's documentation as "the single source of truth for every emission path"
+    is now ENFORCED, not decorative. ``state`` is ``body["state"]`` for a typed
+    response, or ``None`` for a success document (which carries no ``state`` key).
+
+    An off-matrix pair is a SERVER programming error, never a caller error: it
+    FAILS CLOSED to the in-matrix ``(500, "internal_error")`` rather than emit an
+    undocumented pair (and cannot recurse - the fallback builds its response
+    directly). The generic unmounted/flag-off sentinel (:func:`_not_found`) is the
+    one deliberate exception: it is ``(404, None)`` - in the matrix - but must be
+    byte-identical to FastAPI's default (no correlation header), so it is built
+    directly."""
+    state = body.get("state")
+    if (status_code, state) not in SITE_DEFINITION_STATUS_STATE_MATRIX:
+        logger.error(
+            "site_definition_v1 off_matrix_emission status=%d state=%r correlation_id=%s",
+            status_code,
+            state,
+            correlation_id,
+        )
+        return JSONResponse(
+            status_code=500,
+            content={
+                "state": "internal_error",
+                "message": "unexpected internal error; see server logs by correlation id",
+                "correlation_id": correlation_id,
+            },
+            headers={"X-Correlation-ID": correlation_id},
+        )
     return JSONResponse(
         status_code=status_code,
         content=body,
@@ -321,9 +409,11 @@ def _resolve_multi_lot(
     correlation_id: str,
     resolver: SiteDefinitionResolver,
 ) -> tuple[CondoResolution | None, JSONResponse | None]:
-    """Re-read the resolver seam and require a MULTI-LOT outcome (a site
-    definition treats two or more base lots as one site). Anything else is a typed
-    422 - there is no multi-lot site to confirm."""
+    """Re-read the resolver seam and require a MULTI-LOT outcome with a condo key
+    (a site definition treats two or more base lots as one KEYED site). Anything
+    else is a typed 422 - there is no multi-lot site to confirm. Used by CREATE
+    and SUPERSEDE only; revoke must not require a healthy multi-lot resolution
+    (D-051), so it resolves the condo key best-effort instead."""
     try:
         resolution = resolver(canonical, correlation_id)
     except Exception:
@@ -340,7 +430,60 @@ def _resolve_multi_lot(
             "or more recorded base lots, so there is nothing to treat as one site",
             correlation_id,
         )
+    # [DB-040(j)] close the condo_key None write/read asymmetry AT THE WRITE SIDE:
+    # a multi-lot resolution with no condo key cannot be KEYED, so a confirmation
+    # recorded for it could never be surfaced by the read document (which keys on
+    # condo_key). Refuse rather than record an un-surfaceable confirmation - the
+    # write and read now agree in both directions on a null condo key (write
+    # refuses; read shows nothing).
+    if resolution.condo_key is None:
+        return None, _error(
+            422,
+            "validation_error",
+            "this multi-lot resolution carries no condo key, so a site definition "
+            "cannot be recorded for it (a confirmation with no condo key could "
+            "never be surfaced on the records document)",
+            correlation_id,
+        )
     return resolution, None
+
+
+def _resolve_condo_key_best_effort(
+    canonical: str,
+    correlation_id: str,
+    resolver: SiteDefinitionResolver,
+) -> str | None:
+    """Best-effort condo grouping for the REVOKE binding ([DB-040(a)/(b)], D-051).
+
+    Revoke is the ONLY human path to withdraw a confirmation, so - UNLIKE create /
+    supersede (which require a healthy multi-lot resolution via
+    :func:`_resolve_multi_lot`) - it must NOT be blocked by a degraded resolver.
+    Refusing a withdrawal because live resolution is unhealthy is the WRONG
+    fail-direction (D-051). This resolves the condo key best-effort:
+
+    - a HEALTHY multi-lot resolution carrying a condo key -> that key is
+      authoritative (the stored record must belong to it, mirroring supersede's
+      binding);
+    - ANY degraded outcome (a resolver exception, or a non-multi-lot / unresolved /
+      error / null-condo-key resolution) -> ``None``.
+
+    ``None`` is NEVER "skip scoping": the store treats it as "fall back to the
+    record's own recorded ``addressed_bbl``" (see
+    :meth:`InMemorySiteDefinitionStore._matches_addressed_property`), so a
+    foreign-property probe still fails while a legitimate withdrawal at the
+    record's own property still succeeds. Never raises - a resolver failure is a
+    degraded (``None``) key, not a 500."""
+    try:
+        resolution = resolver(canonical, correlation_id)
+    except Exception:
+        logger.info(
+            "site_definition_v1 revoke_resolver_degraded stage=resolve correlation_id=%s",
+            correlation_id,
+        )
+        return None
+    if resolution.outcome == OUTCOME_MULTI_LOT and resolution.condo_key is not None:
+        return resolution.condo_key
+    return None
 
 
 @router.post(
@@ -502,10 +645,18 @@ async def revoke_site_definition_confirmation(
 ) -> JSONResponse:
     """Revoke an active confirmation (terminal; reason REQUIRED).
 
-    [ORCH-CORRECTED per T059 G3-C1/G5-F1] The revocation is BOUND to the condo
-    of the property in the request path, mirroring supersede: the resolver is
-    re-read for ``{bbl}`` and the stored record must belong to the same condo
-    key — a record of another property is a typed not-found, never revoked."""
+    [DB-040(a)/(b), D-051] The revocation is SCOPED to the property in the request
+    path, but the scope is evaluated in the store BEFORE the ACTIVE-status check so
+    every cross-property probe reads an indistinguishable 404 (no 409-vs-404 status
+    oracle). The binding is a DETERMINISTIC association that survives a degraded
+    resolver: the resolver is re-read best-effort for ``{bbl}``
+    (:func:`_resolve_condo_key_best_effort`);
+    a healthy multi-lot resolution's condo key is authoritative, and ANY degraded
+    outcome yields ``None``, which the store resolves against the record's own
+    recorded ``addressed_bbl`` rather than skipping the scope check. Revoke is the
+    only human path to undo a confirmation, so - unlike create / supersede - it is
+    NEVER blocked by an unhealthy resolver (refusing withdrawal on a degraded
+    resolver is the wrong fail-direction, D-051)."""
     if not internal_rule_eval_enabled():
         return _not_found()
     correlation_id = uuid.uuid4().hex
@@ -517,10 +668,9 @@ async def revoke_site_definition_confirmation(
     if body_refusal is not None:
         return body_refusal
     assert block is not None
-    resolution, resolve_refusal = _resolve_multi_lot(canonical, correlation_id, resolve)
-    if resolve_refusal is not None:
-        return resolve_refusal
-    assert resolution is not None
+    # Best-effort condo key (None when the resolver degrades); NOT _resolve_multi_lot,
+    # which would 422/500 a degraded resolver and block the only withdrawal path.
+    condo_key = _resolve_condo_key_best_effort(canonical, correlation_id, resolve)
     confirmer = block.get("confirmer")
     confirmer_map = confirmer if isinstance(confirmer, dict) else {}
     try:
@@ -528,7 +678,8 @@ async def revoke_site_definition_confirmation(
         reason = block.get("reason")
         view = store.revoke(
             record_id,
-            condo_key=resolution.condo_key or canonical,
+            addressed_bbl=canonical,
+            condo_key=condo_key,
             reason=reason if isinstance(reason, str) else "",
             actor=actor,
             at=datetime.now(UTC).isoformat(),
