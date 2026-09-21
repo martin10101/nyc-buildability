@@ -81,7 +81,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T02:46:14.527580+00:00",
-  "updated_at": "2026-09-21T02:55:01.449312+00:00",
+  "updated_at": "2026-09-21T03:58:07.833634+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -124,6 +124,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + claimed at the seq-124 seam (claim-then-hold per D-070): packet, binds, G0 recorded; wt-m5t066 to be created at the claim-seam commit; LAUNCH HELD until the M5-T065 accept (three shared files)"
+    },
+    {
+      "at": "2026-09-21T03:58:07.833634+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "T065-acceptance-seam widening applied (DB-045 e/f/g): proposal-draft.ts + test into allowed_paths for the HJ-2 adoption-reconciliation fix; binding inputs HJ-1/HJ-2/HJ-4; AS-6 added; G0 re-recorded at 1986f589. Launch hold RELEASED (T065 accepted); loop-3 relaunch next"
     }
   ]
 }
