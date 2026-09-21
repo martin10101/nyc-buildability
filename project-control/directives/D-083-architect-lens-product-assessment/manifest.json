@@ -1,0 +1,72 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-083",
+ "version": 1,
+ "slug": "architect-lens-product-assessment",
+ "title": "Owner 2026-09-21 (relayed architect-lens assessment: 'Yes—the overall direction is right ... I would be careful about the claim maximum allowed building'): direction validated; binding presentation/flow requirements for future increments - claim-class vocabulary (regulatory limit / generated building option / demonstrated maximum; interim 'Preliminary development limits' wording), answer-first property flow, no unrestricted green pass under unevaluated rules, design-tool ergonomics direction, input-precision (sketch vs survey) provenance, actionable check feedback, site-boundary provenance labels, independent-example evidence standard for maximum claims; import route = pending owner decision (phase C/D still NOT released); owner return item on converter/calculator gating; three-property uncoached demo protocol",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-21",
+ "captured_at": "2026-09-21T06:22:00+00:00",
+ "created_at": "2026-09-21T06:22:00+00:00",
+ "updated_at": "2026-09-21T06:22:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner-relayed architect-lens assessment sent in-channel mid-session without qualification; treated as binding product direction for FUTURE increments. It validates the current direction and adds presentation/flow/evidence requirements. Items that would enter unreleased scope (the phase-C/D import route) are captured as a pending owner decision (R007), never an authorization; no hold is lifted, no accepted work is altered."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-083-R001",
+  "D-083-R002",
+  "D-083-R003",
+  "D-083-R004",
+  "D-083-R005",
+  "D-083-R006",
+  "D-083-R007",
+  "D-083-R008",
+  "D-083-R009",
+  "D-083-R010",
+  "D-083-R011",
+  "D-083-R012",
+  "D-083-R013"
+ ],
+ "requirements_content_digest_sha256": "c0c0a12a0adebe0559ba3383362fcd32a5b2295db3ca1b18f4106db24fc77c2b",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-21T06:22:00+00:00",
+   "content_digest_sha256": "7f11a99fb557355d18a4e2d13103fe882d2e88e6572f5f7fd6cd3ca39185293e"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_direction",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "presentation vocabulary, flow sequencing, provenance labeling, evidence standards, and editor-ergonomics direction for future max-envelope surfacing, proposal-editor, check-feedback, and site-definition increments, contracted at seams under the normal gated process",
+  "forbidden": "phase C (CAD/PDF import) / phase D on this authority (R007 is a pending decision, not a release); any held surface (expansion section 2 minus the D-040/D-076/D-082 scoped releases); retro-invalidating accepted work; any LLM-calculated legal value (permanent principle 1)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-21T06:22:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 249 accepted; the M5-T066 review wave (fresh HJ + SEC + DCV at frozen 84132df5) in flight with SEC PASS and HJ PASS already returned; T068 harvest pending; loop-2 LIVE on T069. frozen_baseline_sha = defe3013 (the seq-124 handoff-amendment head, this capture's parent). Immediate planning effect: the loop-3 re-feed candidate (D-082-R003 max-renders-first UI surfacing) must carry R001/R002/R003/R004 vocabulary and flow requirements at its contract seam. R011 (converter/calculator gating explanation) owed to the owner this session."
+  }
+ ]
+}

@@ -1072,7 +1072,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-082-max-envelope-first-and-map-drawing/manifest.json"
+  },
+  {
+   "directive_id": "D-083",
+   "slug": "architect-lens-product-assessment",
+   "title": "Owner 2026-09-21 (relayed architect-lens assessment: 'Yes—the overall direction is right ... I would be careful about the claim maximum allowed building'): direction validated; binding presentation/flow requirements for future increments - claim-class vocabulary (regulatory limit / generated building option / demonstrated maximum; interim 'Preliminary development limits' wording), answer-first property flow, no unrestricted green pass under unevaluated rules, design-tool ergonomics direction, input-precision (sketch vs survey) provenance, actionable check feedback, site-boundary provenance labels, independent-example evidence standard for maximum claims; import route = pending owner decision (phase C/D still NOT released); owner return item on converter/calculator gating; three-property uncoached demo protocol",
+   "status": "active",
+   "issued_at": "2026-09-21",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-083-architect-lens-product-assessment/manifest.json"
   }
  ],
- "updated_at": "2026-09-20T23:05:00+00:00"
+ "updated_at": "2026-09-21T06:22:00+00:00"
 }

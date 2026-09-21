@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-083",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}
