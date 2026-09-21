@@ -1,0 +1,30 @@
+{
+ "task_id": "M5-T065",
+ "material_commit": "d3793c2e (cherry-pick of the loop-3 worker material; 12 files, ALL-MATCH LF-normalized digest verification post-pick, pushed 2026-09-21T00:51Z) - NO later material change: the [ORCH-CORRECTED] a3173987 fixed the SHARED e2e helper apps/web/e2e/helpers.ts (OUTSIDE this task's allowed_paths): the AS-4 CI red at d3793c2e (run 35549026019) was tabUntil false-matching <body> textContent at the Tab wrap, not a material defect; CI GREEN at a3173987 (run 35554705276, 6m22s); task surface byte-stable d3793c2e -> submit head",
+ "produced_at": "2026-09-21T03:00:00+00:00",
+ "producer": "frontend-engineer (loop-3 worker, runs persistent3-local-10..12; unit closed at STOP_FOR_OWNER with the honesty-banner evidence handoff - DEMONSTRATED behavior split from the OUTSTANDING click-to-place scope gap, which the orchestrator resolved by the recorded [ORCH-SCOPE-DISPOSITION]: delivered surface = this slice, map-CLICK layer = M5-T066 contracted at c40c60db with the map surface in scope; harvested worker suites: ruff 0, bridge tests 38 passed, services/api pytest 632 passed, modularity 0; commit/push/CI orchestrator-owned)",
+ "requirements": {
+  "D-082-R001": [
+   "The authorized map-drawing input slice is contracted and built under the normal gated process (db81c35f contract seam, f98924e5 claim, ledger M5-T065): keyboard-operable outline input over the accepted read-only lot map (ProposalOutlineDraw.tsx), the flag-gated UNMOUNTED 4326->2263 correspondence bridge (outline_bridge.py; residual disclosed with refusal bound; typed out-of-neighborhood/degenerate/over-cap refusals; main.py untouched), and additive adoption into the accepted draft model - producer report section 1 anchors.",
+   "Boundary honored: phase C/D untouched, scenario emission untouched, no held surface entered; the objective's click-to-place ON the map was honestly surfaced as undeliverable inside the packet's compose-only wall (report honesty banner + section 3.1) and is contracted separately as M5-T066 under the same authorization - never claimed done here."
+  ],
+  "D-082-R003": [
+   "Manual stays the option: the numeric vertex table remains visible, editable, and authoritative after adoption (ProposalEditor.tsx adoption wiring + proposal-editor.test.tsx adoption specs); bridged vertices land exactly as if typed (adoptOutlineVertices in proposal-draft.ts + unit test); every accepted T060 spec stayed green unchanged in CI at the green head (run 35554705276)."
+  ],
+  "D-066-R001": [
+   "Graph regenerated at the db81c35f contract seam before authoring (783/16559/7258 in the packet's navigation block); block constraints honored in the material: LotOutlineMap.tsx composed READ-ONLY and untouched (compose-only, context mode - report 1a), the HELD M5-T063 surface untouched, the accepted T060 editor files extended only where FREE."
+  ],
+  "D-076-R001": [
+   "This is a phase-B increment of the authored phased plan (docs/PROPOSAL_EDITOR_PHASED_PLAN.md): building-outline input on the lot feeding the EXISTING deterministic rules/scenario engine - the bridge reuses the two accepted connector representations of the same parcel (no new math path), and the check loop runs the accepted proposal-checks engine on the adopted shape (e2e AS-4 journey)."
+  ],
+  "D-076-R002": [
+   "Third-input-class honesty carried: the drawn shape is labeled proposed input, never a record ('not a city record' honesty line asserted in the AS-4 e2e + component specs); every measurement runs through the deterministic server bridge (no client-side CRS math - grep-provable, AS-3/AS-5); correspondence provenance (method, residual, source-ring identities) returned and surfaced."
+  ],
+  "D-077-R002": [
+   "Full lane drill: db81c35f seam (binds + digest resyncs + seeds + G0 four-way disjointness) -> f98924e5 claim (FULL worktree path wt-m5t065) -> loop-3 runs 10-12 built the 12-file material -> STOP_FOR_OWNER close -> orchestrator harvest, cherry-pick d3793c2e ALL-MATCH x12, push, CI diagnosis ([ORCH-CORRECTED] a3173987 on the shared helper), submit at the green-verified head; the lane re-feeds with M5-T066 (contracted c40c60db, launch held on the T065 accept)."
+  ],
+  "D-077-R003": [
+   "Scope inside the released queue (phase-B map-drawing slice released by D-082-R001 on top of the B3-complete editor): exactly the packet's 12 allowed_paths changed vs the f98924e5 base (producer report digest-binding table); no forbidden path touched; zero new dependencies (both lockfiles untouched); the click-layer follow-up routed to a new contracted task, not scope-crept here."
+  ]
+ }
+}

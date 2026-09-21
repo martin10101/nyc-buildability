@@ -74,8 +74,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 95,
   "risks": [
     "The correspondence bridge is the packet's hard problem: if the affine fit residual proves untenable for real lots, STOP and surface it as a discovery/blocker naming the pyproj-admission alternative (an owner-review dependency path) - never hand-roll projection math and never ship an undisclosed-error transform.",
     "The HELD T063 surface and the LIVE T062 lane border this packet on both sides - G0 records the three-way disjointness; touch neither.",
@@ -84,7 +84,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T23:04:59.347291+00:00",
-  "updated_at": "2026-09-21T00:52:42.734764+00:00",
+  "updated_at": "2026-09-21T02:57:09.348794+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -136,6 +136,13 @@
       "percent": 85,
       "status": "claimed",
       "message": "Loop-3 unit closed at a STOP_FOR_OWNER that resolves to TWO facts: (1) the standard supervisor-evidence handoff (harvested: ruff 0, bridge 38 passed, tests/api 632 passed, modularity 0; material cherry-picked to d3793c2e ALL-MATCH x12, pushed, CI running); (2) an HONEST SCOPE GAP the producer surfaced instead of faking - click-to-place ON the map cannot be built while LotOutlineMap is compose-only (the packet's own wall), so the delivered input is keyboard/numeric vertex entry + the full correspondence bridge + adoption. ORCH SCOPE DISPOSITION (Tier A, to be recorded in G2 at submit): the delivered surface is this slice; the map-CLICK interaction layer contracts as the immediate follow-up slice WITH the map surface in scope (the owner already authorized the capability under D-082-R001); the wave reviews the delivered material against this disposition"
+    },
+    {
+      "at": "2026-09-21T02:57:09.348794+00:00",
+      "agent": "frontend-engineer",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "Harvest complete + CI green: material d3793c2e (ALL-MATCH x12); AS-4 CI red root-caused to the SHARED tabUntil helper (body false-match at Tab wrap), fixed [ORCH-CORRECTED] a3173987 OUTSIDE this task's surface; CI 35554705276 GREEN at a3173987; task surface byte-stable; evidence map authored; submitting at this seam under the recorded [ORCH-SCOPE-DISPOSITION]"
     }
   ]
 }
