@@ -27,3 +27,6 @@
 - DO run api pytest from `services/api` cwd — the rules suite ALONE from repo root fails
   collection with `No module named 'app'` (invocation artifact, not a defect; it has faked a
   16-error red twice).
+- DON'T match focus by `activeElement.textContent` without excluding body/documentElement -
+  a Tab wrap parks focus on `<body>` whose textContent is the WHOLE page, so any textContains
+  false-matches with nothing focused (e2e tabUntil trap, fixed a3173987).
