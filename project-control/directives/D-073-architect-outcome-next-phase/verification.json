@@ -3,7 +3,7 @@
  "directive_id": "D-073",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-073-BOOTSTRAP at capture; phase packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-20T07:02:39.286353+00:00",
+ "verified_at": "2026-09-21T03:03:18.611156+00:00",
  "task_verifications": [
   {
    "directive_id": "D-073",
@@ -205,6 +205,28 @@
      "state": "PASS",
      "evidence": [
       "DCV verified (M5-T056-DCV.md): records-vs-allowances held (records section labeled reference-under-development-limits; entered/billing honesty with 'not recorded (unknown)'; divergent notice gated on actually-recorded zoning; the T052 ONE-decision guard preserved; boundedToken charset untouched with DB-036(a) preserved for its bound packet). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-073",
+   "task_id": "M5-T063",
+   "applicable_requirement_ids": [
+    "D-073-R006"
+   ],
+   "reviewed_sha": "9a3d4883044f5ff575f06f5f000f3326641a6224",
+   "reviewed_manifest_sha256": "1cac065f15115a458a56b6dde7c78b68d847edc707f821a534477dd044020ebf",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:03:18.611156+00:00",
+   "requirements": [
+    {
+     "id": "D-073-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: recorded_zoning stays DISPLAY-ONLY - boundedZoningDistrict sanitizes (bounded.ts:90-99), rendered as an inert text node (PropertyOverview.tsx:316), notices gate on anyZoningRecorded/anyZoningUnknown; channelWithholdsAllowances (condo-records.ts:787) keys ONLY on channel kind - records never unlock allowances; announcer copy states 'a city record of the resolution, not a computed allowance'; report M5-T063-DCV.md."
      ]
     }
    ]

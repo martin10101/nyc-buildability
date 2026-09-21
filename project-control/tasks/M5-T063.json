@@ -72,8 +72,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "bounded.ts is shared by 15+ consumers - anything beyond the ONE additive helper is out of scope.",
     "The M5-T060 lane is LIVE on ArchitectEntry/Shell/navigation/css and the proposal-editor files - G0 records disjointness; touch nothing of it.",
@@ -82,7 +82,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-20T21:40:46.960473+00:00",
-  "updated_at": "2026-09-20T23:36:22.481960+00:00",
+  "updated_at": "2026-09-21T03:05:40.909006+00:00",
   "directive_refs": [
     {
       "directive_id": "D-066",
@@ -139,5 +139,7 @@
       "status": "in_progress",
       "message": "Re-freeze walk: returning to in_progress to resubmit at the corrected head 853a1d25 (CI all green there incl. the new non-corresponding-stamp regression test)"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-21T03:05:40.909006+00:00"
 }

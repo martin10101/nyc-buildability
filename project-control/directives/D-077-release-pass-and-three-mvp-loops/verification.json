@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-20T07:02:39.286353+00:00",
+ "verified_at": "2026-09-21T03:03:09.428806+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -249,6 +249,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: B3 slice 2 in the recorded plan order (B3-after-T057 satisfied); exactly the 18 allowed_paths; no held surface; T058-HELD fixtures and T059-HELD PropertyOverview untouched. SEQUENCING FLAG recorded: this acceptance REACHES the D-076-R003 named post-B3 owner-review checkpoint - the owner review is queued and B4+/map-drawing/emission work is NOT contracted on this acceptance's authority."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T063",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "9a3d4883044f5ff575f06f5f000f3326641a6224",
+   "reviewed_manifest_sha256": "1cac065f15115a458a56b6dde7c78b68d847edc707f821a534477dd044020ebf",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:03:09.428806+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 records the three-way disjointness (T063xT060 EMPTY, T063xT062 EMPTY); claim with the FULL worktree path wt-m5t063; material commits f33b752c+853a1d25 touch only allowed_paths; the genuine G3/G4 FAIL->delta-PASS cycle closed at the corrected identity with the SAME reviewers; report M5-T063-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: scope = the DB-036 rider cluster expressly named in the released queue (+ DB-038/DB-042 riders); normal directive_refs cited (applicable==cited, selective-citation guard independently grepped); G0 PASS at fffbd002; zero forbidden/held files touched; report M5-T063-DCV.md."
      ]
     }
    ]

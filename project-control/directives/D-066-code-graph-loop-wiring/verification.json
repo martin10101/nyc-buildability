@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-20T07:02:39.286353+00:00",
+ "verified_at": "2026-09-21T03:03:09.428806+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -709,6 +709,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (M5-T060-DCV.md section 3): graph regenerated at the 5b4836be contract seam (seam-specific counts 772/16400/7195 vs the later seam's 783/16500/7221) with the navigation block in packet inputs[3] (mount-surface impact, held files flagged, advisory clause); producer report records source-verified consumption; the G3 consumer sweep independently confirmed the additive mount breaks no silent consumer."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T063",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9a3d4883044f5ff575f06f5f000f3326641a6224",
+   "reviewed_manifest_sha256": "1cac065f15115a458a56b6dde7c78b68d847edc707f821a534477dd044020ebf",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:03:09.428806+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh seq-124 dispatch at frozen 853a1d25, byte-stable to HEAD over all 12 allowed_paths): packet inputs[3] carries the regenerated 783-file/16500-node navigation block naming key consumers (bounded.ts additive-only, PropertyOverview read-only consumers, rule-evaluation.ts announcer) + the query.py --no-regen instruction; conclusions verified in source by HJ/G3/G4; report M5-T063-DCV.md."
      ]
     }
    ]
