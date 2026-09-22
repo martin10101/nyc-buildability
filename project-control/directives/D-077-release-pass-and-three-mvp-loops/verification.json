@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T06:26:00+00:00",
+ "verified_at": "2026-09-22T21:47:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -429,6 +429,66 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: released D-082 scope only - exactly 11 material files all within allowed_paths (new wrapper matches the packet glob); every forbidden path untouched; zero new dependencies; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T068",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "9f035ad43e2e54475d026cd0f7503e28e5a3cdc9b89c1d2463efbef8a3c80097",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T22:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: lane drill verified in git objects - contract 5aebc26c -> claim 63c15a0c (FULL worktree path) -> loop-1 run-67 breaker-close harvest -> in-worktree 4e49d8e7 cherry-picked 5aad9007 ALL-MATCH -> submit at the CI-green head (run 35769445255 SUCCESS, corroborated by the DCV's local ruff+63-passed reproduction); report M5-T068-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: TEST-ONLY scope - exactly 3 allowed_paths, 443 insertions / 0 deletions; forbidden engine/route/main blobs parent==child; zero dependency changes; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: lane drill w/ the broker-boundary honesty class - run-29 PAUSED_RECOVERY missing-checkpoint close, delivered-uncommitted candidate harvested per the producer recipe (six-mutation matrix at :878/:907, hash-verified restores), in-worktree c96e5387 cherry-picked 463f98f9 ALL-MATCH, submit at the CI-green head (run 35769445255 SUCCESS); the DCV reproduced ruff/77-passed/modularity and killed both new tests with its own constant mutation; G4 LIVE-OBSERVED A1/B1/C1; report M5-T069-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released scope only - exactly the 4 allowed_paths; no forbidden path; zero dependency changes; report M5-T069-DCV.md."
      ]
     }
    ]

@@ -2,8 +2,8 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-078",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-078-BOOTSTRAP at capture; they re-bind to the delivering packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": "2026-09-21T05:42:55.233545+00:00",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-22T21:47:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-078",
@@ -137,6 +137,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: refusal ordering/message change only - no auto-selection introduced; _record_insert collision/chain guards unmoved; legitimate same-property paths keep status/state/refusal code; refused probes mutate nothing (after==before pinned); the G4 reviewer's LIVE mutant harnesses elevated the mutation claims to OBSERVED; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 141007c3; own live store probe): all three supersede not-found branches return byte-identical text == the shared _NOT_FOUND_FOR_ADDRESSED_PROPERTY constant with no id echo; scope-before-status order byte-preserved vs the accepted T067 state (control-flow anchors diffed; only raise-arg text changed); G5 by the ORIGINAL T067 LOW-1 finder declares the oracle CLOSED; report M5-T069-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the material diff is exclusively one string constant + message-text substitution + pure test additions - no auto-selection/inference/defaulting path added anywhere; the human-only site-determination boundary untouched; report M5-T069-DCV.md."
      ]
     }
    ]

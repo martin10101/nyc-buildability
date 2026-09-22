@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T06:26:00+00:00",
+ "verified_at": "2026-09-22T21:47:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -841,6 +841,50 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming LotOutlineMap consumers (AddressConfirmCard/PropertyOverview FORBIDDEN and verified untouched in material; ProposalOutlineDraw the actual wiring point); exactly the packet's allowed_paths changed; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T068",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "9f035ad43e2e54475d026cd0f7503e28e5a3cdc9b89c1d2463efbef8a3c80097",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T22:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block; the no-consumer advisory conclusion re-derived in source (no import of the test modules anywhere); TEST-ONLY wall honored, exactly the 3 allowed_paths changed; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming store.py consumers (routes + condo_records FORBIDDEN); consumer sweep reproduced (no old supersede literal survives in code/tests outside the out-of-scope get()); exactly the 4 allowed_paths changed; report M5-T069-DCV.md."
      ]
     }
    ]
