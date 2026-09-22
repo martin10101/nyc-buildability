@@ -58,7 +58,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "The supersedes_id-mismatch branch fires before the scope check - unifying its text versus proving response-identity are different designs; the producer chooses and JUSTIFIES one in the report (the packet accepts either, AS-2).",
     "Message-text assertions may exist pinning the old supersede texts - the consumer-sweep duty routes out-of-scope hits to the orchestrator.",
@@ -66,7 +66,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T05:43:39.087057+00:00",
-  "updated_at": "2026-09-22T21:34:47.909783+00:00",
+  "updated_at": "2026-09-22T21:36:50.809225+00:00",
   "directive_refs": [
     {
       "directive_id": "D-078",
