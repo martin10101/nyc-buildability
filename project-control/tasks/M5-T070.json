@@ -1,0 +1,132 @@
+{
+ "task_id": "M5-T070",
+ "title": "D-082-R003 + D-083 max-first UI surfacing: the 'Preliminary development limits' panel renders the computed envelope FIRST on the architect surface (claim-class vocabulary, per-dimension binding-rule provenance, honest gaps, no unrestricted green pass) with one-action adoption into the editor; stubbed unmounted route, web-only",
+ "task_type": "frontend",
+ "milestone_id": "M5",
+ "objective": "Surface the accepted T064 max-envelope capability as the LEADING answer in the architect experience (D-082-R003): a Preliminary-development-limits panel renders BEFORE any designer input on the architect surface, showing each envelope dimension with its binding rule (id+version+citations), out-competed rules, conflict advisories surfaced-never-resolved, and honest typed gaps; the D-083 claim-class vocabulary is BINDING (per-rule ceilings labeled as regulatory limits under the interim 'Preliminary development limits' heading; the emitted candidate labeled 'Generated building option'; NEVER an unqualified maximum-allowed-building claim; when any gap exists the aggregate presentation stays visibly incomplete - no unrestricted green state); one action adopts the generated candidate as the starting draft in the accepted proposal editor (every downstream value stays labeled proposed); manual entry paths remain fully available and unchanged. Web-only against the UNMOUNTED POST /api/v1/max-envelope contract (fetch behind the existing preview gating; e2e proves via a stubbed route asserting the request/response contract exactly as T065/T066 did for the bridge); no mounting, no services/api change, no new dependencies.",
+ "business_reason": "The owner's D-082 ruling made the computed maximum the leading answer; T064 delivered the engine and the owner-relayed architect assessment (D-083) set the honest vocabulary and answer-first flow this panel must carry",
+ "inputs": [
+  "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+  "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass. Your in-run suite outcomes are YOUR outcomes - record them with explicit cwd; the supervisor re-collects evidence at harvest.",
+  "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local commands: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
+  "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 795 files/16876 nodes/7377 edges): ProposalEditor.tsx consumers = ArchitectEntry.tsx (depth 1, IN scope - the panel composes ADDITIVELY above/before the editor there) and proposal-editor.test.tsx (IN scope); ArchitectEntry.tsx consumers = app/property/{page,confirm/page,compare/page}.tsx (ACCEPTED surfaces, FORBIDDEN - they must render unchanged; the panel's absence/loading/failure path must leave the current experience intact) and entry.test.tsx (IN scope). proposal-draft.ts (IN scope) is the ONE draft model - adoption seeds it; outline-bridge-api.ts, ProposalOutlineDraw.tsx, ProposalOutlineMap.tsx, LotOutlineMap.tsx are FROZEN T065/T066 acceptance evidence (FORBIDDEN).",
+  "MAX-ENVELOPE CONTRACT (binding; exact names - never guess): POST /api/v1/max-envelope is UNMOUNTED (services/api FORBIDDEN; mounting is a later release seam). The response envelope = MaxEnvelope.as_dict(): massing_class, label, disclosure, dimensions[] (dimension_id, family, required_output, direction, unit, label, saturating, binding_value, binding_rule_id, binding_rule_version, coverage_status, out_competed_rule_ids, rule_citations, gap_reason, conflict_advisory, detail - exactly one of binding_value/gap_reason set), candidate, candidate_notes, candidate_placement {status, detail, lot_rectangle, footprint, contained}, candidate_consistency, summary {binding, gap, saturating_binding, total}, rule_input_bindings, unmapped_lot_facts. The server ENVELOPE_DISCLOSURE text renders VERBATIM on the panel. e2e proves via a stubbed route asserting the exact request contract (the T065/T066 stub precedent); unit fixtures mirror as_dict() byte-shape.",
+  "D-083 VOCABULARY WALL (binding; D-083-R001/R002/R004): the panel heading class is 'Preliminary development limits'; the emitted candidate is labeled 'Generated building option'; NEVER an unqualified 'maximum allowed building'/'demonstrated maximum' claim anywhere in the new copy (grep-provable); per-dimension ceilings are NEVER presented as one permitted building (the candidate is the only building-shaped claim, and it is labeled a checked OPTION); when summary.gap > 0 the aggregate presentation stays VISIBLY INCOMPLETE ('could not check N of M' class) - no unrestricted green/complete aggregate state exists while any gap or conflict advisory is present.",
+  "ANSWER-FIRST (D-083-R003, scoped to this surface): the panel renders from the architect surface's existing lot context BEFORE any designer input exists (no outline, level, or draft entry needed to see the limits); testing a design stays a chosen next step; manual entry (numeric editor + the accepted T066 drawing) remains fully available and visibly unchanged."
+ ],
+ "outputs": [
+  "Preliminary-development-limits panel rendering FIRST on the architect surface: per-dimension binding rule (id+version+citations), out-competed rules, conflict advisories surfaced-never-resolved, typed honest gaps, verbatim server disclosure, claim-class vocabulary",
+  "One-action adoption of the Generated building option into the accepted draft model (labeled proposed; impossible when no candidate exists); manual paths untouched",
+  "project-control/reports/M5-T070-producer-report.md (one concise evidence pass; digest-bound handoff)"
+ ],
+ "dependencies": [
+  "M5-T064",
+  "M5-T066"
+ ],
+ "allowed_paths": [
+  "apps/web/src/components/architect/MaxEnvelopePanel.tsx",
+  "apps/web/src/components/architect/__tests__/max-envelope-panel.test.tsx",
+  "apps/web/src/lib/architect/max-envelope-api.ts",
+  "apps/web/src/lib/architect/__tests__/max-envelope-api.test.ts",
+  "apps/web/src/components/architect/ArchitectEntry.tsx",
+  "apps/web/src/components/architect/__tests__/entry.test.tsx",
+  "apps/web/src/components/architect/ProposalEditor.tsx",
+  "apps/web/src/components/architect/__tests__/proposal-editor.test.tsx",
+  "apps/web/src/lib/architect/proposal-draft.ts",
+  "apps/web/src/lib/architect/__tests__/proposal-draft.test.ts",
+  "apps/web/e2e/proposal-editor.spec.ts",
+  "project-control/reports/M5-T070-producer-report.md"
+ ],
+ "forbidden_paths": [
+  "services/api/",
+  "packages/contracts/",
+  "apps/web/src/components/address/",
+  "apps/web/src/components/architect/PropertyOverview.tsx",
+  "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+  "apps/web/src/components/architect/ProposalOutlineMap.tsx",
+  "apps/web/src/components/architect/AnalysisIdentityNotice.tsx",
+  "apps/web/src/lib/outline-bridge-api.ts",
+  "apps/web/src/lib/bounded.ts",
+  "apps/web/src/lib/condo-records.ts",
+  "apps/web/src/lib/rule-evaluation.ts",
+  "apps/web/src/app/",
+  "apps/web/e2e/helpers.ts"
+ ],
+ "acceptance_scenarios": [
+  "AS-1 (limits lead): on the architect surface, the panel renders BEFORE any designer input - each dimension row shows label + value + unit + binding_rule_id + binding_rule_version and an out-competed count; the server disclosure string renders verbatim; a gap dimension shows its typed gap_reason instead of a value; conflict advisories render both competing rule ids, surfaced-never-resolved.",
+  "AS-2 (claim classes, D-083-R001/R002): the heading class is 'Preliminary development limits'; the candidate section is 'Generated building option'; grep across the packet's new/changed web files proves the ABSENCE of unqualified 'maximum allowed building'/'demonstrated maximum' copy; no sum/composition of per-dimension ceilings is ever presented as one building.",
+  "AS-3 (no unrestricted green, D-083-R004): with summary.gap > 0 or any conflict advisory, the aggregate state is visibly incomplete and no complete/green aggregate exists; MUTATION-TESTED - flipping the fixture's gap row to binding (or removing the advisory) must flip the asserted aggregate state.",
+  "AS-4 (adoption): one action adopts the Generated building option as the starting draft in the accepted editor (seeded from candidate footprint + heights through the ONE draft model in proposal-draft.ts); every downstream value stays labeled proposed; adoption is disabled/absent when candidate is null or placement is not a contained FITTED; manual paths (numeric editor + T066 drawing) remain visible and functional after adoption.",
+  "AS-5 (contract fidelity + no mount): the client targets POST /api/v1/max-envelope with the exact request contract; e2e stubs the route and asserts the request body; services/api untouched (the route stays unmounted); zero new dependencies (lockfile untouched); no client-side CRS math (grep-provable).",
+  "AS-6 (display-surface safety + degradation): ALL accepted T060/T065/T066 specs stay green unchanged; the property/confirm/compare pages render unchanged (ArchitectEntry additive-only); when the max fetch is absent/loading/failed the surface degrades to the CURRENT accepted experience with a typed failure card - never a dead surface, never a fabricated limit."
+ ],
+ "required_gates": [
+  "G0",
+  "G2",
+  "G3",
+  "G4"
+ ],
+ "producer_agent": null,
+ "reviewer_agents": [
+  "code-reviewer",
+  "qa-engineer",
+  "security-reviewer",
+  "human-journey-reviewer",
+  "directive-compliance-verifier"
+ ],
+ "status": "backlog",
+ "progress_percent": 0,
+ "risks": [
+  "ArchitectEntry is consumed by three ACCEPTED property pages (graph-verified) - the panel must compose additively; absence/loading/failure = the current accepted experience, proven by the unchanged accepted specs.",
+  "The route is UNMOUNTED: real end-to-end proves only at the later mount/release seam; the packet's proof is the stubbed contract + unit fixtures mirroring as_dict() exactly (never guess field names).",
+  "Adoption must reuse the accepted draft model and stay a pure seeding (no second math path, no client CRS math; heights/footprint numbers pass through as server-provided 2263 values).",
+  "MapLibre/jsdom WebGL console noise is not a failure signal; web behavior proves ONLY in CI on the pushed head.",
+  "D-083 vocabulary is BINDING on this packet - copy review (HJ) will gate on the claim classes and the incomplete-aggregate rule."
+ ],
+ "blockers": [],
+ "created_at": "2026-09-21T06:54:27.601280+00:00",
+ "updated_at": "2026-09-21T06:54:28.713060+00:00",
+ "directive_refs": [
+  {
+   "directive_id": "D-082",
+   "requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "requirement_ids": [
+    "D-083-R001",
+    "D-083-R002",
+    "D-083-R003",
+    "D-083-R004"
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "requirement_ids": [
+    "D-066-R001"
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ]
+  }
+ ],
+ "directive_regime_version": "1.0",
+ "directive_regime_entered_at": "2026-09-21T06:54:27.605734+00:00",
+ "documented_test_commands": [
+  "python tools/modularity_check.py --check"
+ ]
+}

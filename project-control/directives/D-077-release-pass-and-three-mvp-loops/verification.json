@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T05:42:55.233545+00:00",
+ "verified_at": "2026-09-21T06:26:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -399,6 +399,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: released store-hardening increment on the just-accepted D-078 surface; exactly the 4 allowed_paths; every forbidden path untouched; zero new dependencies; no held/Tier-D scope; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill reproduced - contract c40c60db, claim-then-hold until the T065 accept, widening 1986f589 w/ G0 re-record, loop-3 run-13 breaker-close harvest, in-worktree 0f1ffc1b cherry-picked abfd182b (LF-normalized 11/11 ALL-MATCH reproduced), submit at CI-green head (run 35564724576 SUCCESS); FULL worktree path in packet; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released D-082 scope only - exactly 11 material files all within allowed_paths (new wrapper matches the packet glob); every forbidden path untouched; zero new dependencies; report M5-T066-DCV.md."
      ]
     }
    ]

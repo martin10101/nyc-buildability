@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T05:42:55.233545+00:00",
+ "verified_at": "2026-09-21T06:26:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -819,6 +819,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block with the consumer-sweep duty; producer swept via Grep, G3 verified who-consumes in source (one _require_active caller; no out-of-scope suite pins message text); tests/api 650 green; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming LotOutlineMap consumers (AddressConfirmCard/PropertyOverview FORBIDDEN and verified untouched in material; ProposalOutlineDraw the actual wiring point); exactly the packet's allowed_paths changed; report M5-T066-DCV.md."
      ]
     }
    ]

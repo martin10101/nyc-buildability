@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 13,
  "producer": "orchestrator",
- "updated_at": "2026-09-21T06:20:00+00:00",
+ "updated_at": "2026-09-22T18:40:00+00:00",
  "requirements": [
   {
    "id": "D-083-R001",
@@ -13,7 +13,10 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP",
+     "M5-T070"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -29,7 +32,11 @@
    "status_reason": "Captured at issuance; binds the D-082-R003 UI surfacing increment at its contract seam.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R002",
@@ -38,7 +45,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP",
+     "M5-T070"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -54,7 +64,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R003",
@@ -63,7 +77,10 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP",
+     "M5-T070"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -79,7 +96,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R004",
@@ -88,7 +109,10 @@
    "classification": "prohibition",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP",
+     "M5-T070"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -104,7 +128,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R005",
@@ -113,7 +141,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -129,7 +159,11 @@
    "status_reason": "Captured at issuance; sequencing owned by replanning.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R006",
@@ -138,7 +172,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -154,7 +190,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R007",
@@ -163,7 +203,9 @@
    "classification": "decision",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -179,7 +221,11 @@
    "status_reason": "Owner decision pending; nothing contracted on this row.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R008",
@@ -188,7 +234,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -204,7 +252,11 @@
    "status_reason": "Captured at issuance; sequencing owned by replanning.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R009",
@@ -213,7 +265,9 @@
    "classification": "evidence",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -229,7 +283,11 @@
    "status_reason": "Captured at issuance; no class-c claim exists in the product today.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R010",
@@ -238,7 +296,9 @@
    "classification": "obligation",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -254,7 +314,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R011",
@@ -263,7 +327,9 @@
    "classification": "return",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -279,7 +345,11 @@
    "status_reason": "Captured at issuance; answer owed this session.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R012",
@@ -288,7 +358,9 @@
    "classification": "evidence",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -304,7 +376,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-083-R013",
@@ -313,7 +389,9 @@
    "classification": "sequencing",
    "binding": true,
    "applicability": {
-    "task_ids": ["D-083-BOOTSTRAP"],
+    "task_ids": [
+     "D-083-BOOTSTRAP"
+    ],
     "task_types": [],
     "milestones": [],
     "lifecycle_events": [],
@@ -329,7 +407,11 @@
    "status_reason": "Captured at issuance.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   }
  ]
 }

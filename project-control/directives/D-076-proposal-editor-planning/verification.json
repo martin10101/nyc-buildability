@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-21T04:28:14.407410+00:00",
+ "verified_at": "2026-09-21T06:26:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -279,6 +279,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: the fixed ENVELOPE_DISCLOSURE marks every output a rules-derived ESTIMATE never a record/permit/approval with professional review required; gaps kept distinct from binding values (XOR invariant test); every value carries provenance; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B increment over the existing engine - the click layer is pure input UI feeding the accepted drawing-bridge-adoption spine (outline-bridge-api FORBIDDEN and untouched); no new math path; e2e runs the accepted check on the adopted shape; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: third-input-class honesty preserved and improved - HJ-1 copy describes the interaction that exists; proposed-not-a-record labels retained; NO client CRS math (grep-proven); keyboard parity complete (click is an addition); DB-043(a) focus remedy intact; HJ-4 persistent min-hint; report M5-T066-DCV.md."
      ]
     }
    ]

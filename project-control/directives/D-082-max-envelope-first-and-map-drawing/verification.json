@@ -2,8 +2,8 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": "2026-09-21T04:28:14.407410+00:00",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-21T06:26:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-082",
@@ -61,6 +61,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED: deterministic maximum-first IN CODE - derive_max_envelope pure computation, registry-derived values with tightest-rule binding selection, per-dimension binding-rule provenance (id/version/out-competed/citations), honest typed gaps always enumerated, and the generator-checker consistency proof reusing the accepted check_proposal fail-closed; AS-2 registry-flip + AS-4 epsilon-mutation teeth verified; CI green at 366a50be; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 84132df5; disjoint-peer tolerance verified 11/11 blob-MATCH to HEAD): map-CLICK slice under the T065 [ORCH-SCOPE-DISPOSITION] - NEW ProposalOutlineMap interactive wrapper + three additive-optional props on LotOutlineMap gated by interactive = onOutlineMapClick != null (absent prop = byte-equivalent accepted display); phase C/D untouched; zero dependency files; contract c40c60db / widening 1986f589 verified as commits; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: clicked display-4326 positions enter the SAME points state as keyboard entry (one draft model, one bridge, one adoption); numeric table retained as the authority (EPSG:2263 caption); HJ-2/AS-6 adoption reconciliation real (adoptOutlineVertices filters exterior_walls, danglingWallIds exported) and MUTATION-TESTED; dropped walls announced, never silent; report M5-T066-DCV.md."
      ]
     }
    ]

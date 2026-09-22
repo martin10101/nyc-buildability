@@ -10,7 +10,7 @@
  "issued_at": "2026-09-21",
  "captured_at": "2026-09-21T06:22:00+00:00",
  "created_at": "2026-09-21T06:22:00+00:00",
- "updated_at": "2026-09-21T06:22:00+00:00",
+ "updated_at": "2026-09-22T18:40:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
  "capture_head_sha": null,
@@ -36,7 +36,7 @@
   "D-083-R012",
   "D-083-R013"
  ],
- "requirements_content_digest_sha256": "c0c0a12a0adebe0559ba3383362fcd32a5b2295db3ca1b18f4106db24fc77c2b",
+ "requirements_content_digest_sha256": "37ed6d5dd4c2f6c0c4a6c03df95d5b679afc52b082f311f133d4372434924d72",
  "sources": [
   {
    "file": "source-001.md",
@@ -67,6 +67,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). At capture: 249 accepted; the M5-T066 review wave (fresh HJ + SEC + DCV at frozen 84132df5) in flight with SEC PASS and HJ PASS already returned; T068 harvest pending; loop-2 LIVE on T069. frozen_baseline_sha = defe3013 (the seq-124 handoff-amendment head, this capture's parent). Immediate planning effect: the loop-3 re-feed candidate (D-082-R003 max-renders-first UI surfacing) must carry R001/R002/R003/R004 vocabulary and flow requirements at its contract seam. R011 (converter/calculator gating explanation) owed to the owner this session."
+  },
+  {
+   "at": "2026-09-22T18:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T070 (D-082-R003 + D-083 max-first UI surfacing: the Preliminary-development-limits panel w/ claim-class vocabulary, honest gaps, one-action adoption; stubbed unmounted route, web-only) at the seq-125 T066-acceptance seam; graph regenerated at this seam (795/16876/7377) before authoring; digest resync same commit."
   }
  ]
 }
