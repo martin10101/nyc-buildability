@@ -1,113 +1,123 @@
 {
- "task_id": "M5-T071",
- "title": "T066-wave hardening: DB-047(d) no-map instruction-copy gating + DB-047(e) Convert finiteness gate + DB-048 flaky count-assertion hardening - drawing-surface only, disjoint from the live T070 lane",
- "task_type": "frontend",
- "milestone_id": "M5",
- "objective": "Close three recorded T066-wave riders on the accepted drawing surface: (d) the ProposalOutlineMap instruction copy must describe only interactions that EXIST - gate the click-the-map lead on the map actually rendering (condo unit lot / multiple_features / invalid_geometry / no-WebGL render the typed fallback and keyboard-only copy); (e) Convert must not enable on point COUNT alone - add a finiteness gate so keyboard rows added-but-untyped (NaN lng/lat) cannot launch a doomed bridge round-trip, and the wrapper status must not announce points the overlay filters out; (48) harden the DB-048 flaky AS-1 sync spec in lot-outline-map.test.tsx - replace the exact cross-render mock-call tally (expected-4-got-6 class) with argument/final-state or monotonic assertions that stay deterministic under extra effect passes. Every finite-value flow stays byte-identical (ProposalEditor composes this surface from the LIVE T070 lane - zero behavior change for valid inputs, proven by the unchanged accepted specs).",
- "business_reason": "The T066 wave recorded these as the highest-value non-blocking riders; the flake also cost a CI round on an unrelated push - hardening now keeps the drawing surface honest and the pipeline quiet",
- "inputs": [
-  "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
-  "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; explicit cwd on every recorded command.",
-  "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local command: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
-  "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 799 files/16885 nodes/7381 edges): ProposalOutlineDraw.tsx consumers = ProposalEditor.tsx (FORBIDDEN - it is a LIVE M5-T070 lane file; your changes must be BEHAVIOR-COMPATIBLE for every finite-value flow so its specs stay green unchanged) and proposal-outline-draw.test.tsx (IN scope). ProposalOutlineMap.tsx consumers = ProposalOutlineDraw.tsx (IN scope) + its test (IN scope). LotOutlineMap.tsx is FORBIDDEN (accepted display surface) - the DB-048 hardening is TEST-SIDE ONLY (lot-outline-map.test.tsx IN scope; assertions change, the component does not).",
-  "CROSS-LANE WALL (binding): M5-T070 is LIVE on ArchitectEntry/ProposalEditor/proposal-draft/max-envelope files and e2e/proposal-editor.spec.ts - ALL FORBIDDEN here. Do not add or modify any e2e spec in this packet; unit/component specs only. Every accepted T060/T065/T066 spec outside your two test files must stay green unchanged.",
-  "DB-047(d) COPY GATING (binding): the instruction copy 'Click the lot map to place...' renders ONLY when the interactive map actually rendered; in the typed-fallback states (condo unit lot, multiple_features, invalid_geometry, no-WebGL) the section leads with the keyboard-entry copy and never invites a map gesture. Mutation-tested: forcing the fallback state with the click-copy assertion present must go red if the gating is reverted.",
-  "DB-047(e) FINITENESS GATE (binding): canConvert requires >= MIN_DRAWN_VERTICES FINITE points (Number.isFinite on both lng and lat); the wrapper/status point count reports FINITE points (matching what the overlay renders); a persistent hint explains why Convert is disabled when non-finite rows exist. NO change to any finite-value flow: placing/typing valid points, converting, adopting behave byte-identically (the accepted specs prove it). The bridge request contract is untouched (outline-bridge-api.ts FORBIDDEN).",
-  "DB-048 FLAKE HARDENING (binding; test-side only): in lot-outline-map.test.tsx, the AS-1 sync spec's exact cross-render call tally (the 'expected 4, got 6' timing flake, DB-048) is replaced with deterministic assertions - final rendered state, call ARGUMENTS (last-call payload), or monotonic (>=) counts; never an exact tally of calls across renders/effects anywhere in the file. The spec must still redden for the defects it guards (a second source added instead of setData; stale overlay payload)."
- ],
- "outputs": [
-  "Instruction copy that describes only interactions that exist (fallback states lead keyboard-only)",
-  "Convert finiteness gate + truthful point-count status (finite-value flows byte-identical)",
-  "Deterministic AS-1 sync spec (no exact cross-render tallies) that keeps its defect teeth",
-  "project-control/reports/M5-T071-producer-report.md (one concise evidence pass; digest-bound handoff)"
- ],
- "dependencies": [
-  "M5-T066"
- ],
- "allowed_paths": [
-  "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
-  "apps/web/src/components/architect/__tests__/proposal-outline-draw.test.tsx",
-  "apps/web/src/components/architect/ProposalOutlineMap.tsx",
-  "apps/web/src/components/architect/__tests__/proposal-outline-map.test.tsx",
-  "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
-  "project-control/reports/M5-T071-producer-report.md"
- ],
- "forbidden_paths": [
-  "apps/web/src/components/address/LotOutlineMap.tsx",
-  "apps/web/src/components/address/AddressConfirmCard.tsx",
-  "apps/web/src/components/architect/ProposalEditor.tsx",
-  "apps/web/src/components/architect/ArchitectEntry.tsx",
-  "apps/web/src/components/architect/PropertyOverview.tsx",
-  "apps/web/src/components/architect/MaxEnvelopePanel.tsx",
-  "apps/web/src/lib/architect/proposal-draft.ts",
-  "apps/web/src/lib/architect/max-envelope-api.ts",
-  "apps/web/src/lib/outline-bridge-api.ts",
-  "apps/web/e2e/",
-  "services/api/",
-  "packages/contracts/"
- ],
- "acceptance_scenarios": [
-  "AS-1 (copy gating, DB-047 d): with a drawable single-lot map the click-to-place lead renders; in EACH typed fallback state (no-polygon/condo unit, multiple_features, invalid_geometry, no-WebGL) the click lead is ABSENT and the keyboard-entry copy leads; mutation - reverting the gate turns a fallback-state spec red.",
-  "AS-2 (finiteness gate, DB-047 e): three keyboard rows added-but-untyped (NaN) leave Convert DISABLED with a visible reason hint; typing the third row's finite values enables Convert; the announced point count equals the FINITE count (matches the overlay); mutation - reverting to count-only enablement turns a spec red.",
-  "AS-3 (finite-flow byte-compatibility): every accepted proposal-outline-draw/proposal-outline-map spec that exercises finite values passes unchanged; no prop contract of ProposalOutlineDraw/ProposalOutlineMap changes in a way ProposalEditor consumes (its composition untouched - grep-provable no ProposalEditor edit).",
-  "AS-4 (DB-048 hardening): the AS-1 sync spec in lot-outline-map.test.tsx contains NO exact equality on cross-render call counts (grep-provable); it still asserts one-source-only + in-place setData semantics via final state/arguments/monotonic counts; the file's other specs untouched semantics.",
-  "AS-5 (teeth retention): the hardened spec reds under (a) a simulated second-source addition and (b) a stale overlay payload - proven by mutation notes or live mutant runs in the producer report.",
-  "AS-6 (scope): exactly the packet's allowed_paths change; zero new dependencies; no e2e spec touched; modularity exit 0."
- ],
- "required_gates": [
-  "G0",
-  "G2",
-  "G3",
-  "G4"
- ],
- "producer_agent": null,
- "reviewer_agents": [
-  "code-reviewer",
-  "qa-engineer",
-  "security-reviewer",
-  "human-journey-reviewer",
-  "directive-compliance-verifier"
- ],
- "status": "backlog",
- "progress_percent": 0,
- "risks": [
-  "ProposalEditor (LIVE T070 lane) composes ProposalOutlineDraw - any behavior change for finite inputs cross-lane reds T070's specs; the finiteness gate must only ADD a disable condition for non-finite rows.",
-  "jsdom cannot exercise real WebGL fallbacks - fallback states are driven via the existing typed context/mocks; real browser proof stays with the accepted e2e (untouched here).",
-  "The hardened AS-1 spec must not become tautological - AS-5 requires demonstrated teeth."
- ],
- "blockers": [],
- "created_at": "2026-09-22T22:06:15.268062+00:00",
- "updated_at": "2026-09-22T22:06:16.512315+00:00",
- "directive_refs": [
-  {
-   "directive_id": "D-082",
-   "requirement_ids": [
-    "D-082-R001"
-   ]
-  },
-  {
-   "directive_id": "D-076",
-   "requirement_ids": [
-    "D-076-R002"
-   ]
-  },
-  {
-   "directive_id": "D-066",
-   "requirement_ids": [
-    "D-066-R001"
-   ]
-  },
-  {
-   "directive_id": "D-077",
-   "requirement_ids": [
-    "D-077-R002",
-    "D-077-R003"
-   ]
-  }
- ],
- "directive_regime_version": "1.0",
- "directive_regime_entered_at": "2026-09-22T22:06:15.268062+00:00",
- "documented_test_commands": [
-  "python tools/modularity_check.py --check"
- ]
+  "task_id": "M5-T071",
+  "title": "T066-wave hardening: DB-047(d) no-map instruction-copy gating + DB-047(e) Convert finiteness gate + DB-048 flaky count-assertion hardening - drawing-surface only, disjoint from the live T070 lane",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Close three recorded T066-wave riders on the accepted drawing surface: (d) the ProposalOutlineMap instruction copy must describe only interactions that EXIST - gate the click-the-map lead on the map actually rendering (condo unit lot / multiple_features / invalid_geometry / no-WebGL render the typed fallback and keyboard-only copy); (e) Convert must not enable on point COUNT alone - add a finiteness gate so keyboard rows added-but-untyped (NaN lng/lat) cannot launch a doomed bridge round-trip, and the wrapper status must not announce points the overlay filters out; (48) harden the DB-048 flaky AS-1 sync spec in lot-outline-map.test.tsx - replace the exact cross-render mock-call tally (expected-4-got-6 class) with argument/final-state or monotonic assertions that stay deterministic under extra effect passes. Every finite-value flow stays byte-identical (ProposalEditor composes this surface from the LIVE T070 lane - zero behavior change for valid inputs, proven by the unchanged accepted specs).",
+  "business_reason": "The T066 wave recorded these as the highest-value non-blocking riders; the flake also cost a CI round on an unrelated push - hardening now keeps the drawing surface honest and the pipeline quiet",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; every checkpoint carries IMPLEMENTATION; one concise evidence pass; explicit cwd on every recorded command.",
+    "COMMAND CWD + THIN CLIENT (binding): NEVER run or document npm/npx/node - web behavior proves ONLY in CI on the pushed head. Local command: `python tools/modularity_check.py --check` from repo root. DOM queries typed per CODING_RULES; no empty spec files.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph REGENERATED at this contract seam: 799 files/16885 nodes/7381 edges): ProposalOutlineDraw.tsx consumers = ProposalEditor.tsx (FORBIDDEN - it is a LIVE M5-T070 lane file; your changes must be BEHAVIOR-COMPATIBLE for every finite-value flow so its specs stay green unchanged) and proposal-outline-draw.test.tsx (IN scope). ProposalOutlineMap.tsx consumers = ProposalOutlineDraw.tsx (IN scope) + its test (IN scope). LotOutlineMap.tsx is FORBIDDEN (accepted display surface) - the DB-048 hardening is TEST-SIDE ONLY (lot-outline-map.test.tsx IN scope; assertions change, the component does not).",
+    "CROSS-LANE WALL (binding): M5-T070 is LIVE on ArchitectEntry/ProposalEditor/proposal-draft/max-envelope files and e2e/proposal-editor.spec.ts - ALL FORBIDDEN here. Do not add or modify any e2e spec in this packet; unit/component specs only. Every accepted T060/T065/T066 spec outside your two test files must stay green unchanged.",
+    "DB-047(d) COPY GATING (binding): the instruction copy 'Click the lot map to place...' renders ONLY when the interactive map actually rendered; in the typed-fallback states (condo unit lot, multiple_features, invalid_geometry, no-WebGL) the section leads with the keyboard-entry copy and never invites a map gesture. Mutation-tested: forcing the fallback state with the click-copy assertion present must go red if the gating is reverted.",
+    "DB-047(e) FINITENESS GATE (binding): canConvert requires >= MIN_DRAWN_VERTICES FINITE points (Number.isFinite on both lng and lat); the wrapper/status point count reports FINITE points (matching what the overlay renders); a persistent hint explains why Convert is disabled when non-finite rows exist. NO change to any finite-value flow: placing/typing valid points, converting, adopting behave byte-identically (the accepted specs prove it). The bridge request contract is untouched (outline-bridge-api.ts FORBIDDEN).",
+    "DB-048 FLAKE HARDENING (binding; test-side only): in lot-outline-map.test.tsx, the AS-1 sync spec's exact cross-render call tally (the 'expected 4, got 6' timing flake, DB-048) is replaced with deterministic assertions - final rendered state, call ARGUMENTS (last-call payload), or monotonic (>=) counts; never an exact tally of calls across renders/effects anywhere in the file. The spec must still redden for the defects it guards (a second source added instead of setData; stale overlay payload)."
+  ],
+  "outputs": [
+    "Instruction copy that describes only interactions that exist (fallback states lead keyboard-only)",
+    "Convert finiteness gate + truthful point-count status (finite-value flows byte-identical)",
+    "Deterministic AS-1 sync spec (no exact cross-render tallies) that keeps its defect teeth",
+    "project-control/reports/M5-T071-producer-report.md (one concise evidence pass; digest-bound handoff)"
+  ],
+  "dependencies": [
+    "M5-T066"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/ProposalOutlineDraw.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-draw.test.tsx",
+    "apps/web/src/components/architect/ProposalOutlineMap.tsx",
+    "apps/web/src/components/architect/__tests__/proposal-outline-map.test.tsx",
+    "apps/web/src/components/address/__tests__/lot-outline-map.test.tsx",
+    "project-control/reports/M5-T071-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/components/address/LotOutlineMap.tsx",
+    "apps/web/src/components/address/AddressConfirmCard.tsx",
+    "apps/web/src/components/architect/ProposalEditor.tsx",
+    "apps/web/src/components/architect/ArchitectEntry.tsx",
+    "apps/web/src/components/architect/PropertyOverview.tsx",
+    "apps/web/src/components/architect/MaxEnvelopePanel.tsx",
+    "apps/web/src/lib/architect/proposal-draft.ts",
+    "apps/web/src/lib/architect/max-envelope-api.ts",
+    "apps/web/src/lib/outline-bridge-api.ts",
+    "apps/web/e2e/",
+    "services/api/",
+    "packages/contracts/"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 (copy gating, DB-047 d): with a drawable single-lot map the click-to-place lead renders; in EACH typed fallback state (no-polygon/condo unit, multiple_features, invalid_geometry, no-WebGL) the click lead is ABSENT and the keyboard-entry copy leads; mutation - reverting the gate turns a fallback-state spec red.",
+    "AS-2 (finiteness gate, DB-047 e): three keyboard rows added-but-untyped (NaN) leave Convert DISABLED with a visible reason hint; typing the third row's finite values enables Convert; the announced point count equals the FINITE count (matches the overlay); mutation - reverting to count-only enablement turns a spec red.",
+    "AS-3 (finite-flow byte-compatibility): every accepted proposal-outline-draw/proposal-outline-map spec that exercises finite values passes unchanged; no prop contract of ProposalOutlineDraw/ProposalOutlineMap changes in a way ProposalEditor consumes (its composition untouched - grep-provable no ProposalEditor edit).",
+    "AS-4 (DB-048 hardening): the AS-1 sync spec in lot-outline-map.test.tsx contains NO exact equality on cross-render call counts (grep-provable); it still asserts one-source-only + in-place setData semantics via final state/arguments/monotonic counts; the file's other specs untouched semantics.",
+    "AS-5 (teeth retention): the hardened spec reds under (a) a simulated second-source addition and (b) a stale overlay payload - proven by mutation notes or live mutant runs in the producer report.",
+    "AS-6 (scope): exactly the packet's allowed_paths change; zero new dependencies; no e2e spec touched; modularity exit 0."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "claimed",
+  "progress_percent": 20,
+  "risks": [
+    "ProposalEditor (LIVE T070 lane) composes ProposalOutlineDraw - any behavior change for finite inputs cross-lane reds T070's specs; the finiteness gate must only ADD a disable condition for non-finite rows.",
+    "jsdom cannot exercise real WebGL fallbacks - fallback states are driven via the existing typed context/mocks; real browser proof stays with the accepted e2e (untouched here).",
+    "The hardened AS-1 spec must not become tautological - AS-5 requires demonstrated teeth."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-22T22:06:15.268062+00:00",
+  "updated_at": "2026-09-22T22:08:46.837900+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-082",
+      "requirement_ids": [
+        "D-082-R001"
+      ]
+    },
+    {
+      "directive_id": "D-076",
+      "requirement_ids": [
+        "D-076-R002"
+      ]
+    },
+    {
+      "directive_id": "D-066",
+      "requirement_ids": [
+        "D-066-R001"
+      ]
+    },
+    {
+      "directive_id": "D-077",
+      "requirement_ids": [
+        "D-077-R002",
+        "D-077-R003"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-22T22:06:15.268062+00:00",
+  "documented_test_commands": [
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m5t071",
+  "progress_log": [
+    {
+      "at": "2026-09-22T22:08:46.837900+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted + claimed at the 251st/252nd acceptance seam (D-070 finished-seam): packet, binds (5 ids), G0 recorded; wt-m5t071 at the claim-seam commit; loop-1 relaunch next"
+    }
+  ]
 }
