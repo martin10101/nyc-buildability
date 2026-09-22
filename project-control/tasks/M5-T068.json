@@ -52,10 +52,11 @@
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
-    "directive-compliance-verifier"
+    "directive-compliance-verifier",
+    "backend-engineer"
   ],
   "status": "claimed",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "Monkeypatching the checker must target the ENGINE's imported reference (max_envelope.check_proposal), not the source module, or the patch silently misses - a vacuous-pass hazard the report must prove against (assert the raise actually fired).",
     "Forcing a live 500 must not weaken the leak assertions - the test asserts what the body does NOT contain (exception text) as well as what it does.",
@@ -63,7 +64,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T04:29:30.741886+00:00",
-  "updated_at": "2026-09-22T18:45:14.985650+00:00",
+  "updated_at": "2026-09-22T20:49:05.872791+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -107,6 +108,13 @@
       "percent": 85,
       "status": "claimed",
       "message": "Harvested from the loop-1 run-67 S13.8 breaker close (evidence-stalemate class): 10 stale asks denied BOTH stores; fresh explicit-cwd suites ruff clean + 63 passed + modularity 0; in-worktree 4e49d8e7 cherry-picked 5aad9007 ALL-MATCH x3. Push + CI next; submit at the green head"
+    },
+    {
+      "at": "2026-09-22T20:49:05.872219+00:00",
+      "agent": "qa-engineer",
+      "percent": 95,
+      "status": "claimed",
+      "message": "CI green at a66cf818 (run 35769445255; api job green both attempts - attempt 1's sole red was the DB-048 unrelated web flake, zero-delta rerun green); evidence map authored (4 ids); roster amended +backend-engineer for G4 (producer=qa-engineer structural rule); submitting"
     }
   ]
 }

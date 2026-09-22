@@ -63,6 +63,11 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   is needed (M5-T040). Gitleaks false-positives on fixture VAR NAMES containing KEY: inline
   `# gitleaks:allow` on that line; never quote the flagged line verbatim in evidence files.
 
+- `accept` fail-closes unless EVERY v2 row's reviewed_sha == the LIVE HEAD at accept time -
+  assemble v2 rows and accept BACK-TO-BACK (a disjoint material commit between them forces a
+  DCV-predicate restamp: T066 a234a508->5aad9007); the full validator now runs ~12 min wall
+  (verification-row growth) - sequence the one-budgeted-run-per-seam so accept never waits.
+
 ## Dispatch / review mechanics
 
 - Producers: unnamed spawns only (named = readonly-guard silent denial), isolation worktree,
