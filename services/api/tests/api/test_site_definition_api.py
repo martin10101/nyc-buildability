@@ -832,3 +832,55 @@ def test_revoke_not_found_response_is_identical_for_missing_and_foreign_ids(monk
     # The record is untouched by either refused probe.
     still = client_a.get(_url())
     assert still.json()["active_confirmation"]["record_id"] == record_id
+
+
+# ===========================================================================
+# M5-T069 — DB-040(s) supersede not-found message unification over the route
+# ===========================================================================
+def test_supersede_not_found_response_is_identical_for_missing_and_foreign_ids(monkeypatch):
+    # [DB-040(s) / M5-T067 G5 LOW-1] over the route: a non-existent record id and an
+    # existing-but-foreign record id yield byte-identical status, state, reject_code
+    # AND message on SUPERSEDE - so the response body carries no existence oracle
+    # (only the per-request correlation_id differs). Mirrors the accepted revoke pair
+    # test_revoke_not_found_response_is_identical_for_missing_and_foreign_ids.
+    enable_flag(monkeypatch)
+    store = InMemorySiteDefinitionStore()
+    app_a = _sd_app(store, _multi_lot())
+    app_b = _sd_app(store, _multi_lot(condo_key="999999"))
+    client_a = TestClient(app_a, raise_server_exceptions=False)
+    client_b = TestClient(app_b, raise_server_exceptions=False)
+    created = client_a.post(_url(), json=_create_body())
+    assert created.status_code == 201, created.json()
+    record_id = created.json()["record_id"]
+    # Branch 1: a NON-EXISTENT record id at the addressed property (condo A).
+    missing = client_a.post(
+        f"{_url()}/does-not-exist-0000/supersede",
+        json=_create_body(reason="probe a non-existent id"),
+    )
+    # Branch 2: the EXISTING record probed from a FOREIGN condo (condo B) - the
+    # route resolves condo_key server-side, so the superseding record carries the
+    # foreign condo_key and hits the scope-before-status 404.
+    foreign = client_b.post(
+        f"{_url()}/{record_id}/supersede",
+        json=_create_body(reason="probe a foreign id"),
+    )
+    assert missing.status_code == foreign.status_code == 404, (
+        missing.json(),
+        foreign.json(),
+    )
+    mb, fb = missing.json(), foreign.json()
+    assert mb["state"] == fb["state"] == "not_found"
+    assert mb["reject_code"] == fb["reject_code"] == "confirmation_not_found"
+    assert mb["message"] == fb["message"]
+    # DIRECT equality of the FULL response bodies once the ONLY per-request field -
+    # the uuid4 correlation_id, which discloses nothing about existence - is removed.
+    assert "correlation_id" in mb and "correlation_id" in fb
+    assert {k: v for k, v in mb.items() if k != "correlation_id"} == {
+        k: v for k, v in fb.items() if k != "correlation_id"
+    }
+    # The message echoes NEITHER probed id, so it discloses no existence.
+    assert "does-not-exist-0000" not in mb["message"]
+    assert record_id not in fb["message"]
+    # Neither refused probe mutated the record: it stays active and unsuperseded.
+    still = client_a.get(_url())
+    assert still.json()["active_confirmation"]["record_id"] == record_id

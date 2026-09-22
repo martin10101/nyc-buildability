@@ -60,6 +60,20 @@ __all__ = [
 MAX_CONFIRMATIONS_PER_CONDO_KEY = 200
 MAX_LIST_RESULTS = 200
 
+# [DB-040(r)/(s) — M5-T067/T069] The ONE byte-identical not-found-class refusal
+# text shared by BOTH revoke and supersede. Every not-found-class refusal on either
+# operation — a missing record id, an existing-but-foreign record, and (supersede
+# only) a supersedes_id mismatch — raises ConfirmationNotFoundError with THIS exact
+# text and NO id echo, so no refusal message discloses whether a probed id exists or
+# which property it belongs to. Both operations reference this single constant so
+# the branches cannot drift apart; the store- and route-level equality tests
+# (test_*_not_found_*_identical_for_missing_and_foreign_ids) guard against any
+# divergence or re-introduced id echo.
+_NOT_FOUND_FOR_ADDRESSED_PROPERTY = (
+    "no site-definition confirmation matching that record id exists "
+    "for the property addressed by the request path"
+)
+
 
 class SiteDefinitionStore(ABC):
     """Append-only store of site-definition confirmations.
@@ -307,15 +321,17 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         # leaked. The 409 conflict stays reachable only on the record's OWN binding.
         old = self._records.get(old_id)
         if old is None:
-            raise ConfirmationNotFoundError(
-                f"no site-definition confirmation exists for record id {old_id!r}"
-            )
+            # [DB-040(s) — M5-T069] SAME unified not-found text (no id echo) as the
+            # foreign-scope branch below and revoke's two branches, so a missing id
+            # is byte-indistinguishable from an existing one. KEEP IN SYNC via the
+            # shared _NOT_FOUND_FOR_ADDRESSED_PROPERTY constant.
+            raise ConfirmationNotFoundError(_NOT_FOUND_FOR_ADDRESSED_PROPERTY)
         if new_confirmation.supersedes_id != old_id:
-            raise ConfirmationNotFoundError(
-                "the superseding confirmation must reference the record it "
-                f"supersedes ({old_id!r}); it references "
-                f"{new_confirmation.supersedes_id!r}"
-            )
+            # [DB-040(s)] This mismatch branch fires ONLY when the record EXISTS
+            # (old is not None above), so any divergent message here would itself be
+            # an existence signal. It shares the identical unified text and echoes
+            # neither id, so it discloses no existence for missing vs existing (AS-2).
+            raise ConfirmationNotFoundError(_NOT_FOUND_FOR_ADDRESSED_PROPERTY)
         if new_confirmation.reason is None:
             # create_confirmation guarantees this when supersedes_id is set; guard
             # anyway so a hand-built record can never skip the required reason.
@@ -327,10 +343,11 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         # foreign-property probe carries a different condo_key and is a 404 HERE,
         # before the status read below.
         if new_confirmation.condo_key != old.condo_key:
-            raise ConfirmationNotFoundError(
-                "a superseding confirmation must belong to the same condo key as "
-                "the record it supersedes"
-            )
+            # [DB-040(s) — M5-T069] SAME unified not-found text (no id echo) as the
+            # missing-record branch above, so a foreign-property probe of a KNOWN
+            # record is byte-identical to a missing id — the supersede existence
+            # oracle the M5-T067 G5 review surfaced (LOW-1) is closed (AS-1).
+            raise ConfirmationNotFoundError(_NOT_FOUND_FOR_ADDRESSED_PROPERTY)
         # STATUS: checked AFTER the scope check, so a non-active OWN record is the
         # 409 conflict while every foreign-property probe already 404'd above.
         if self._current_status(old_id) is not ConfirmationStatus.ACTIVE:
@@ -403,14 +420,12 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
         record = self._records.get(record_id)
         if record is None:
             # [DB-040(r) — M5-T067] IDENTICAL not-found text to the foreign-scope
-            # branch below (KEEP BYTE-FOR-BYTE IN SYNC; the equality tests
-            # test_revoke_not_found_message_* guard against drift). Given a known,
-            # unguessable record id, a missing id and a foreign id must be
-            # indistinguishable, so the message must NOT disclose existence.
-            raise ConfirmationNotFoundError(
-                "no site-definition confirmation matching that record id exists "
-                "for the property addressed by the request path"
-            )
+            # branch below, and (M5-T069) to supersede's not-found branches — now
+            # enforced structurally by the shared _NOT_FOUND_FOR_ADDRESSED_PROPERTY
+            # constant. Given a known, unguessable record id, a missing id and a
+            # foreign id must be indistinguishable, so the message must NOT disclose
+            # existence. The equality tests test_revoke_not_found_message_* guard it.
+            raise ConfirmationNotFoundError(_NOT_FOUND_FOR_ADDRESSED_PROPERTY)
         # [DB-040(a)/(b)] the revocation is SCOPED to the property the caller
         # addressed, by a deterministic association that survives a degraded
         # resolver (see :meth:`_matches_addressed_property`). A degraded resolver
@@ -420,13 +435,10 @@ class InMemorySiteDefinitionStore(SiteDefinitionStore):
             record, addressed_bbl=addressed_bbl, condo_key=condo_key
         ):
             # [DB-040(r) — M5-T067] IDENTICAL not-found text to the missing-record
-            # branch above (KEEP BYTE-FOR-BYTE IN SYNC; see that branch's note) so
-            # a foreign record cannot be distinguished from a non-existent one by
-            # the message wording alone.
-            raise ConfirmationNotFoundError(
-                "no site-definition confirmation matching that record id exists "
-                "for the property addressed by the request path"
-            )
+            # branch above (shared _NOT_FOUND_FOR_ADDRESSED_PROPERTY constant, see
+            # that branch's note) so a foreign record cannot be distinguished from a
+            # non-existent one by the message wording alone.
+            raise ConfirmationNotFoundError(_NOT_FOUND_FOR_ADDRESSED_PROPERTY)
         # Status check AFTER the scope check, so a non-active OWN record is the 409
         # conflict while every foreign-property probe is already a 404 above.
         if self._current_status(record_id) is not ConfirmationStatus.ACTIVE:

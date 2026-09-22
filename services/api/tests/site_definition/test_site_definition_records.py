@@ -838,3 +838,74 @@ def test_revoke_not_found_message_is_identical_for_missing_and_foreign_ids():
     # And the unified text echoes NEITHER probed id (it discloses no existence).
     assert "does-not-exist" not in str(missing.value)
     assert record.record_id not in str(foreign.value)
+
+
+# ---------------------------------------------------------------------------
+# M5-T069 — DB-040(s) supersede not-found message unification (M5-T067 G5 LOW-1)
+# ---------------------------------------------------------------------------
+# The last known store existence oracle: supersede's not-found branches emitted
+# DIVERGENT text (the missing-record branch echoed old_id; the foreign-scope branch
+# and the supersedes_id-mismatch branch used distinct static text that fired only
+# when the record existed). All not-found-class supersede refusals now raise the
+# SAME byte-identical text as revoke — one shared constant, NO id echo — so no
+# supersede refusal distinguishes a missing id from an existing one. Mirrors the
+# accepted revoke pair (test_revoke_not_found_message_is_identical_for_missing_and_foreign_ids).
+_UNIFIED_NOT_FOUND_TEXT = (
+    "no site-definition confirmation matching that record id exists "
+    "for the property addressed by the request path"
+)
+
+
+# AS-1 (supersede oracle closed) + AS-3 (mutation sensitivity): a missing old_id
+# and an existing-but-foreign record return byte-identical class, reject_code AND
+# message, echoing neither id. Diverging any unified literal, or re-introducing an
+# id echo, reddens an assertion below.
+def test_supersede_not_found_message_is_identical_for_missing_and_foreign_ids():
+    store = InMemorySiteDefinitionStore()
+    record = store.create(_make()).record
+    # Branch 1: a NON-EXISTENT old_id (the superseding record references it, so it
+    # passes the supersedes_id check and the missing-record branch fires first).
+    with pytest.raises(ConfirmationNotFoundError) as missing:
+        store.supersede(
+            "does-not-exist",
+            _make(supersedes_id="does-not-exist", reason="probe a non-existent id"),
+        )
+    # Branch 2: an EXISTING but FOREIGN record (foreign condo scope); supersedes_id
+    # matches old_id, so it passes the mismatch check and reaches the scope branch.
+    with pytest.raises(ConfirmationNotFoundError) as foreign:
+        store.supersede(record.record_id, _foreign_supersede_probe(record.record_id))
+    # Byte-identical message AND reject_code -> no existence oracle via text.
+    assert str(missing.value) == str(foreign.value)
+    assert missing.value.reject_code == foreign.value.reject_code
+    # The unified text echoes NEITHER probed id, and equals revoke's unified text
+    # byte-for-byte (both operations share the ONE constant).
+    assert "does-not-exist" not in str(missing.value)
+    assert record.record_id not in str(foreign.value)
+    assert str(missing.value) == _UNIFIED_NOT_FOUND_TEXT
+
+
+# AS-2 (third branch): the supersedes_id-mismatch refusal fires ONLY when the
+# record EXISTS, so a divergent message there would itself be an existence signal.
+# It shares the identical unified text and responds identically for a mismatch on
+# an existing record vs a missing old_id — no existence signal either way.
+def test_supersede_supersedes_id_mismatch_shares_the_unified_not_found_text():
+    store = InMemorySiteDefinitionStore()
+    record = store.create(_make()).record
+    # Existing old_id, but the superseding record references a DIFFERENT id.
+    with pytest.raises(ConfirmationNotFoundError) as mismatch:
+        store.supersede(
+            record.record_id,
+            _make(supersedes_id="a-different-id", reason="supersedes_id mismatch probe"),
+        )
+    # A MISSING old_id whose superseding record references that same missing id.
+    with pytest.raises(ConfirmationNotFoundError) as missing:
+        store.supersede(
+            "no-such-id", _make(supersedes_id="no-such-id", reason="missing probe")
+        )
+    # Byte-identical text AND reject_code for the mismatch (record exists) and the
+    # missing (record absent) -> the mismatch branch discloses no existence.
+    assert str(mismatch.value) == str(missing.value) == _UNIFIED_NOT_FOUND_TEXT
+    assert mismatch.value.reject_code == missing.value.reject_code
+    # No id echo: neither the probed old_id nor the mismatched supersedes_id leaks.
+    assert record.record_id not in str(mismatch.value)
+    assert "a-different-id" not in str(mismatch.value)
