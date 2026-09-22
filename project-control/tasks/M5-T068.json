@@ -55,7 +55,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 85,
   "risks": [
     "Monkeypatching the checker must target the ENGINE's imported reference (max_envelope.check_proposal), not the source module, or the patch silently misses - a vacuous-pass hazard the report must prove against (assert the raise actually fired).",
     "Forcing a live 500 must not weaken the leak assertions - the test asserts what the body does NOT contain (exception text) as well as what it does.",
@@ -63,7 +63,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T04:29:30.741886+00:00",
-  "updated_at": "2026-09-21T04:31:44.342987+00:00",
+  "updated_at": "2026-09-22T18:45:14.985650+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -100,6 +100,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + claimed at the seq-124 T064-acceptance seam; wt-m5t068 at the claim-seam commit; loop-1 launcher retarget + staggered launch next"
+    },
+    {
+      "at": "2026-09-22T18:45:14.985650+00:00",
+      "agent": "qa-engineer",
+      "percent": 85,
+      "status": "claimed",
+      "message": "Harvested from the loop-1 run-67 S13.8 breaker close (evidence-stalemate class): 10 stale asks denied BOTH stores; fresh explicit-cwd suites ruff clean + 63 passed + modularity 0; in-worktree 4e49d8e7 cherry-picked 5aad9007 ALL-MATCH x3. Push + CI next; submit at the green head"
     }
   ]
 }

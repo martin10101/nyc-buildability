@@ -58,7 +58,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 85,
   "risks": [
     "The supersedes_id-mismatch branch fires before the scope check - unifying its text versus proving response-identity are different designs; the producer chooses and JUSTIFIES one in the report (the packet accepts either, AS-2).",
     "Message-text assertions may exist pinning the old supersede texts - the consumer-sweep duty routes out-of-scope hits to the orchestrator.",
@@ -66,7 +66,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T05:43:39.087057+00:00",
-  "updated_at": "2026-09-21T05:45:03.386946+00:00",
+  "updated_at": "2026-09-22T18:45:16.075422+00:00",
   "directive_refs": [
     {
       "directive_id": "D-078",
@@ -104,6 +104,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + claimed at the seq-124 T067-acceptance seam; wt-m5t069 at the claim-seam commit; loop-2 relaunch next"
+    },
+    {
+      "at": "2026-09-22T18:45:16.072996+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "claimed",
+      "message": "Harvested from the loop-2 run persistent2-local-29 PAUSED_RECOVERY close (missing_checkpoint at cycle 5 - S14; unit delivered complete UNCOMMITTED per the broker-cwd [BLOCKED]-evidence class, T067 precedent): 12 stale asks denied BOTH stores; orchestrator harvest per the producer recipe - ruff clean, 77 passed, six-mutation matrix RED at the predicted :878/:907 first-fails with hash-verified restores, modularity 0; in-worktree c96e5387 cherry-picked 463f98f9 ALL-MATCH x4. Push + CI next; submit at the green head"
     }
   ]
 }
