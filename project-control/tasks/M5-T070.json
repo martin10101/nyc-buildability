@@ -74,7 +74,7 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "rework",
+  "status": "awaiting_gate",
   "progress_percent": 85,
   "risks": [
     "ArchitectEntry is consumed by three ACCEPTED property pages (graph-verified) - the panel must compose additively; absence/loading/failure = the current accepted experience, proven by the unchanged accepted specs.",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T06:54:27.601280+00:00",
-  "updated_at": "2026-09-23T05:35:59.271857+00:00",
+  "updated_at": "2026-09-23T05:49:58.660870+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -165,6 +165,20 @@
       "percent": 92,
       "status": "in_progress",
       "message": "Rework applied; walking to resubmit (re-freeze at the corrected head)"
+    },
+    {
+      "at": "2026-09-23T05:49:50.678941+00:00",
+      "agent": "frontend-engineer",
+      "percent": 93,
+      "status": "rework",
+      "message": "SEC F1 remediation applied at the wave's own seam (guard + two-token spec); re-freezing for delta attestations (G3/G4/SEC; HJ identity-carry when its stream heals)"
+    },
+    {
+      "at": "2026-09-23T05:49:54.720268+00:00",
+      "agent": "frontend-engineer",
+      "percent": 94,
+      "status": "in_progress",
+      "message": "Walking to resubmit at the guard-corrected head"
     }
   ]
 }
