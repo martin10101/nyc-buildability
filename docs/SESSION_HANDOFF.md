@@ -27,7 +27,7 @@ HEAD `a9148091` (pushed; == origin) · origin github.com/martin10101/nyc-buildab
 ## LANES (launchers = C:\SupervisorController{,2,3}\autostart-launch.ps1)
 | Lane | Packet | State |
 |---|---|---|
-| loop-1 | M5-T071 drawing hardening (DB-047 d/e + DB-048; wt-m5t071) | run-68 closed missing-checkpoint AFTER 4 validated checkpoints — unit COMPLETE (rework-2 report), harvested at 2396a000; **submit + wave ride CI run 35815095821** |
+| loop-1 | M5-T071 drawing hardening (DB-047 d/e + DB-048; wt-m5t071) | run-68 closed missing-checkpoint AFTER 4 validated checkpoints — unit COMPLETE (rework-2 report), harvested at 2396a000; **submit + wave ride the CI at the pushed head** (run 35815095821 at a9148091 was CANCELED by the handoff docs-push - own-push rule; the LIVE run is 35815366325 at b31895a6, an identical-material superset head) |
 | loop-2 | idle | re-feed after the T071 accept (candidates: DB-045(a) real-parcel bridge-mount validation; T069-G3-A2 revoke-text pin) |
 | loop-3 | M5-T070 limits panel increment 2 (wt-m5t070 at a9148091) | **LIVE run persistent3-local-17** (launched ~03:45Z): scope = ONLY the producer's named gap — AS-5 e2e stub journey + AS-6 entry additive assertion |
 
@@ -40,7 +40,7 @@ the answer-first journey + D-083 vocabulary, SEC, DCV w/ D-083 R001–R004 rows 
 blob-SHA restamp predicates up front; END-OF-REPORT markers + short-part splitting).
 
 ## EXACT NEXT ACTION (successor)
-1. **Check CI run 35815095821 at a9148091** (`gh run view 35815095821`). On SUCCESS → T071:
+1. **Check CI run 35815366325 at b31895a6** (`gh run view 35815366325`; it superseded the canceled 35815095821 - the material is identical, only the handoff doc differs). On SUCCESS → T071:
    evidence map (5 ids: D-082-R001, D-076-R002, D-066-R001, D-077-R002/R003) → progress 95 →
    pre-submit commit → submit at HEAD → submit-seam commit → G2 (self-check from the rework-2
    report + harvest facts) → wave G3(code-reviewer) + G4(qa-engineer; producer=frontend-engineer,
@@ -80,7 +80,7 @@ C:\Users\MLFLL\Downloads\nyc-zoning\ctl24 (`git rev-parse --show-toplevel`), bra
 candidate/D-024-mrl-option-b, HEAD == origin (a9148091 at generation), Bootstrap Gate 0 (/mcp
 empty) — then read docs/SESSION_HANDOFF.md and CONTINUE from EXACT NEXT ACTION. Do NOT re-run
 the recorded battery (252 accepted; validator/CI evidence recorded at every seq-125 seam).
-First: check CI run 35815095821 (T071 submits at green); re-arm the loop-3 watcher
+First: check CI run 35815366325 at b31895a6 (T071 submits at green); re-arm the loop-3 watcher
 (`python -u scratchpad/loop3_down_watch.py` background) — loop-3 is LIVE detached on the T070
 increment-2 run (persistent3-local-17); harvest on close per the drill; deny stale asks BOTH
 stores before any relaunch (never retype ids — pipe the JSON to a file); T070 is NOT submittable
