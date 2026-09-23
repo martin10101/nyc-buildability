@@ -383,3 +383,200 @@ def test_500_registry_unavailable_is_a_bounded_generic_error(mounted_app, monkey
     assert "RuntimeError" not in resp.text  # no exception type / traceback leaked
     assert resp.headers.get("X-Correlation-ID")
     assert body["correlation_id"] == resp.headers["X-Correlation-ID"]
+
+
+# ---------------------------------------------------------------------------
+# M5-T076 / DB-050(a): server-side lot-geometry derivation makes the fitted-candidate path
+# reachable for a geometry-free request carrying a BBL. Fully OFFLINE - the canonical EPSG:2263
+# exterior ring comes from the REAL connector analyzer over an inline esri rectangle, and a
+# fixture-backed provider is injected via mod.get_lot_geometry_provider (no network).
+# ---------------------------------------------------------------------------
+
+# The same rectangular lot as _LOT, expressed as an esri-clockwise exterior ring: bounding box
+# 80 x 100 = 8000 sq ft anchored at _LOT_ANCHOR, so the engine fits + contains a candidate.
+_RECT_ESRI = {
+    "rings": [
+        [
+            [985000, 195000],
+            [985000, 195100],
+            [985080, 195100],
+            [985080, 195000],
+            [985000, 195000],
+        ]
+    ]
+}
+
+
+def _rect_result(*, outcome: str | None = None, esri: object | None = _RECT_ESRI,
+                 review_required: bool = False, bbl: str = "1008350041"):
+    """A LotGeometryResult for one BBL from an inline esri geometry (offline)."""
+    from app.connectors.mappluto_geometry_arcgis import (
+        CRS_STAMP,
+        OUTCOME_SINGLE,
+        LotGeometryResult,
+        analyze_lot_geometry,
+    )
+
+    assessment = analyze_lot_geometry(esri, crs=dict(CRS_STAMP)) if esri is not None else None
+    return LotGeometryResult(
+        status="ok",
+        outcome=outcome or OUTCOME_SINGLE,
+        review_required=review_required,
+        requested_bbl=bbl,
+        borough=1, block=835, lot=41,
+        condo={"classification": "standard_lot", "condo_no": None, "note": None},
+        identifier_conflicts=[],
+        attributes={"BBL": int(bbl), "Version": "26v1"},
+        features=[],
+        geometry=assessment,
+        area_sq_ft=(assessment.area_sq_ft if assessment is not None else None),
+        shape_area_attribute_sq_ft=None,
+        exceeded_transfer_limit=False,
+        correlation_id="c-fixture",
+        request_url="https://example/query",
+        metadata_request_url="https://example/meta",
+        retrieved_at="2026-07-20T00:00:00Z",
+        crs=dict(CRS_STAMP),
+        source_data_last_edited_ms=None,
+        source_data_last_edited="2026-06-01T00:00:00Z",
+        raw_digest="sha256:raw",
+        metadata_raw_digest="sha256:meta",
+        normalized_digest="sha256:features",
+        digest_canonicalization="spec",
+        shapely_version="2.0.7",
+        geos_version="3.11.4",
+    )
+
+
+def _inject_provider(monkeypatch, provider) -> None:
+    monkeypatch.setattr(mod, "get_lot_geometry_provider", lambda: provider)
+
+
+def _recording_provider(calls: list[str]):
+    """A provider that records each BBL it is asked for (to prove non-invocation)."""
+
+    def _p(canonical_bbl: str):
+        calls.append(canonical_bbl)
+        return _rect_result()
+
+    return _p
+
+
+def test_derived_path_yields_fitted_candidate(client, monkeypatch):
+    """AS-2: a geometry-free request with a resolvable BBL now yields a FITTED contained candidate
+    from the REAL engine on the rectangular-lot fixture - the exact state the T070 web fixtures
+    model - proven through the route. The derived provenance quintuple rides the response."""
+    _inject_provider(monkeypatch, lambda canonical_bbl: _rect_result())
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "1008350041"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "fitted"
+    assert placement["contained"] is True
+    assert placement["footprint"]["anchor_x"] == _LOT_ANCHOR[0]
+    assert placement["footprint"]["anchor_y"] == _LOT_ANCHOR[1]
+    assert doc["candidate"] is not None
+    assert doc["candidate"]["provenance"]["kind"] == "proposed"
+    assert doc["candidate_consistency"]["saturating_checks"] == {
+        "lot_coverage_ratio": "pass", "building_height": "pass",
+    }
+
+    derived = doc["derived_lot_geometry"]
+    assert derived["outcome"] == "derived"
+    assert derived["provenance"]["source_id"] == "nyc-dcp-mappluto-arcgis"
+    assert derived["provenance"]["bbl"] == "1008350041"
+    assert derived["provenance"]["dataset_version"] == "26v1"
+    assert derived["provenance"]["geometry_digest"].startswith("sha256:")
+
+
+def test_with_segments_is_byte_identical_and_never_derives(client, monkeypatch):
+    """AS-3 (byte-identity): a request that carries client segments is served byte-identically to
+    today - the derivation provider is NEVER resolved or called, and no derived_lot_geometry block
+    appears. A mutant that derived unconditionally would trip the spy and add the key."""
+    calls: list[str] = []
+    _inject_provider(monkeypatch, _recording_provider(calls))
+
+    # _body() carries the full _LOT rectangle segments AND a bbl - segments-present must win.
+    resp = client.post(_URL, json=_body(lot={**_LOT, "bbl": "1008350041"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert calls == []  # no derivation call
+    assert "derived_lot_geometry" not in doc
+    # today's behavior: the supplied rectangle fits a candidate.
+    assert doc["candidate_placement"]["status"] == "fitted"
+
+
+# The connector's outcome constants are plain string values ("no_feature" / "multiple_features"),
+# so the fixtures use the literals directly rather than importing them mid-file (ruff E402).
+@pytest.mark.parametrize(
+    "result_kwargs, expected_outcome",
+    [
+        ({"outcome": "no_feature", "esri": None}, "no_feature"),
+        ({"outcome": "multiple_features", "esri": None}, "multiple_features"),
+        ({"esri": {"rings": []}}, "invalid_geometry"),
+    ],
+)
+def test_derivation_failure_keeps_honest_gap_with_reason(
+    client, monkeypatch, result_kwargs, expected_outcome
+):
+    """AS-3 (fail-closed): each derivation failure class leaves the engine with empty segments, so
+    it returns the honest lot_geometry_unsupported gap, and the derivation reason is carried into
+    the placement detail - NEVER a fabricated candidate. A mutant that injected a fabricated
+    rectangle on failure would flip the candidate to non-None and redden this test."""
+    _inject_provider(monkeypatch, lambda _bbl: _rect_result(**result_kwargs))
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "1008350041"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert doc["candidate"] is None
+    placement = doc["candidate_placement"]
+    assert placement["status"] == "lot_geometry_unsupported"
+    assert "server-side lot-geometry derivation" in placement["detail"]
+    assert expected_outcome in placement["detail"]
+    assert doc["derived_lot_geometry"]["outcome"] == expected_outcome
+    assert doc["derived_lot_geometry"]["provenance"] is None
+
+
+def test_connector_fault_keeps_honest_gap(client, monkeypatch):
+    """AS-3 (fail-closed): a connector fault (an upstream/transport error) keeps the honest gap and
+    surfaces the connector_fault reason - never a fabricated rectangle."""
+    from app.connectors.mappluto_geometry_arcgis import MalformedResponseError
+
+    def _faulting(canonical_bbl: str):
+        raise MalformedResponseError("boom", correlation_id="c")
+
+    _inject_provider(monkeypatch, _faulting)
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "1008350041"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert doc["candidate"] is None
+    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+    assert doc["derived_lot_geometry"]["outcome"] == "connector_fault"
+
+
+def test_unresolvable_bbl_keeps_honest_gap_without_calling_provider(client, monkeypatch):
+    """AS-3 (fail-closed): a syntactically-present but unresolvable BBL never reaches the provider
+    and keeps the honest gap with the bbl_unresolvable reason."""
+    def _p(canonical_bbl: str):  # pragma: no cover - asserted never invoked
+        raise AssertionError("provider must not be called for an unresolvable BBL")
+
+    _inject_provider(monkeypatch, _p)
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": [], "bbl": "not-a-bbl"}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert doc["candidate"] is None
+    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
+    assert doc["derived_lot_geometry"]["outcome"] == "bbl_unresolvable"
+
+
+def test_no_bbl_and_no_segments_does_not_derive(client, monkeypatch):
+    """AS-3: a geometry-free request WITHOUT a BBL behaves exactly like today - no derivation is
+    attempted and no derived_lot_geometry block appears (byte-identical to the pre-T076 gap)."""
+    calls: list[str] = []
+    _inject_provider(monkeypatch, _recording_provider(calls))
+    resp = client.post(_URL, json=_body(lot={**_LOT, "lot_line_segments": []}))
+    assert resp.status_code == 200
+    doc = resp.json()
+    assert calls == []
+    assert "derived_lot_geometry" not in doc
+    assert doc["candidate_placement"]["status"] == "lot_geometry_unsupported"
