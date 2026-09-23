@@ -5,9 +5,9 @@
   "role": "independent_review",
   "result": "PASS",
   "report_file": "project-control/reports/M5-T070-G4-delta.md",
-  "reviewed_at": "2026-09-23T05:35:56.702112+00:00",
-  "content_manifest_sha256": "0f2995f7bdc762e79f314729c9881a760ed3491bca3534b8744f85ded23fdcec",
-  "reviewed_sha": "e860f3df5d8bd531d9c89911d5f14359b7b82017",
+  "reviewed_at": "2026-09-23T05:54:21.505272+00:00",
+  "content_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+  "reviewed_sha": "da401d1d6d2fbd225a8389e79f38792f1f6b3922",
   "history": [
     {
       "reviewer": "qa-engineer",
@@ -15,7 +15,14 @@
       "result": "FAIL",
       "report_file": "project-control/reports/M5-T070-G4.md",
       "reviewed_at": "2026-09-23T05:27:48.048355+00:00"
+    },
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T070-G4-delta.md",
+      "reviewed_at": "2026-09-23T05:35:56.702112+00:00"
     }
   ],
-  "updated_at": "2026-09-23T05:35:59.260102+00:00"
+  "updated_at": "2026-09-23T05:54:23.475410+00:00"
 }
