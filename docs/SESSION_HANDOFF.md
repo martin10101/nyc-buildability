@@ -71,8 +71,11 @@ stale asks from piped JSON (never retype ids), in-wt commit, cherry-pick ALL-MAT
 3. On each verdict: assemble v2 rows + **accept back-to-back** — #253 (T071) then #254
    (T070). At the accept seams sweep DB-047(d)/(e) + DB-048 RESOLVED (T071) and the DB-050
    dispositions (T070); add the D-084 audit note evidencing R001/R002/R003 lane runs.
-4. Then the **T072, T075 AND T076 waves** (T076 amended in post-handoff: submitted+G2-pending - record its G2 from the [ORCH-HARVEST] transcript first; G3 code-reviewer + G4 qa-engineer) (G3 code-reviewer + G4 backend-engineer each; T072's
-   harvest transcript is already in its producer report; T075's web proof is CI at its heads).
+4. Then the **T072, T075 AND T076 waves**: T072/T075 take G3 code-reviewer + G4
+   backend-engineer (producer=qa-engineer both; T072's harvest transcript is in its producer
+   report; T075's web proof is CI at its heads). T076 (amended post-handoff: submitted, G2
+   NOT yet recorded — record it first from the [ORCH-HARVEST] transcript) takes G3
+   code-reviewer + G4 qa-engineer (producer=backend-engineer).
 5. Harvest loops on close; re-feed lanes (candidates: the DB-049 drawing-surface cluster
    AFTER #253 frees the files; the DB-050(b)-(m) max-surface hardening touch AFTER #254;
    T069-family riders wait for the B-001 auth seam).
