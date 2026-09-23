@@ -68,8 +68,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 85,
+  "status": "in_progress",
+  "progress_percent": 92,
   "risks": [
     "ProposalEditor (LIVE T070 lane) composes ProposalOutlineDraw - any behavior change for finite inputs cross-lane reds T070's specs; the finiteness gate must only ADD a disable condition for non-finite rows.",
     "jsdom cannot exercise real WebGL fallbacks - fallback states are driven via the existing typed context/mocks; real browser proof stays with the accepted e2e (untouched here).",
@@ -77,7 +77,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-22T22:06:15.268062+00:00",
-  "updated_at": "2026-09-23T04:31:16.051012+00:00",
+  "updated_at": "2026-09-23T04:45:05.058016+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -132,6 +132,20 @@
       "percent": 95,
       "status": "claimed",
       "message": "Run-68 unit complete (rework-2 report; harvested 2396a000); CI GREEN at c0b71938 (run 35817816845 + secret-scan 35817816896) with T071 files byte-identical from the harvest through that head; the one out-of-packet consumer (M5-T065 adoption test) closed by orchestrator peer commit c0b71938 cluster C; evidence map written (5 ids); submitting"
+    },
+    {
+      "at": "2026-09-23T04:44:41.610115+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "rework",
+      "message": "HJ FAIL B1/B2 + binding-clause corrections applied as [ORCH-CORRECTED] 0014ad8f (five files, all in allowed_paths); G3 PASS + G4 PASS stand; resubmit at the corrected head after CI proves it; delta attestations from the SAME three reviewers next"
+    },
+    {
+      "at": "2026-09-23T04:45:05.058016+00:00",
+      "agent": "frontend-engineer",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Rework applied; walking to resubmit (re-freeze at the corrected head)"
     }
   ]
 }
