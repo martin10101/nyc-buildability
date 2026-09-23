@@ -44,12 +44,12 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 94,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [],
   "blockers": [],
   "created_at": "2026-09-23T05:12:03.967574+00:00",
-  "updated_at": "2026-09-23T05:40:54.115960+00:00",
+  "updated_at": "2026-09-23T05:41:00.104543+00:00",
   "directive_refs": [
     {
       "directive_id": "D-084",
