@@ -625,7 +625,7 @@
   {
    "directive_id": "D-046",
    "slug": "parallel-family-production",
-   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and §G unchanged; backoff under resource pressure, never quality.",
+   "title": "Owner 2026-09-13: PARALLEL FAMILY PRODUCTION AUTHORIZED for the D-045 campaign - up to 3 concurrent writing producers on disjoint family/connector tasks in isolated worktrees; all gates, review independence, sequential integration, and \u00a7G unchanged; backoff under resource pressure, never quality.",
    "status": "active",
    "issued_at": "2026-09-13",
    "issued_by": "owner",
@@ -1076,7 +1076,7 @@
   {
    "directive_id": "D-083",
    "slug": "architect-lens-product-assessment",
-   "title": "Owner 2026-09-21 (relayed architect-lens assessment: 'Yes—the overall direction is right ... I would be careful about the claim maximum allowed building'): direction validated; binding presentation/flow requirements for future increments - claim-class vocabulary (regulatory limit / generated building option / demonstrated maximum; interim 'Preliminary development limits' wording), answer-first property flow, no unrestricted green pass under unevaluated rules, design-tool ergonomics direction, input-precision (sketch vs survey) provenance, actionable check feedback, site-boundary provenance labels, independent-example evidence standard for maximum claims; import route = pending owner decision (phase C/D still NOT released); owner return item on converter/calculator gating; three-property uncoached demo protocol",
+   "title": "Owner 2026-09-21 (relayed architect-lens assessment: 'Yes\u2014the overall direction is right ... I would be careful about the claim maximum allowed building'): direction validated; binding presentation/flow requirements for future increments - claim-class vocabulary (regulatory limit / generated building option / demonstrated maximum; interim 'Preliminary development limits' wording), answer-first property flow, no unrestricted green pass under unevaluated rules, design-tool ergonomics direction, input-precision (sketch vs survey) provenance, actionable check feedback, site-boundary provenance labels, independent-example evidence standard for maximum claims; import route = pending owner decision (phase C/D still NOT released); owner return item on converter/calculator gating; three-property uncoached demo protocol",
    "status": "active",
    "issued_at": "2026-09-21",
    "issued_by": "owner",
@@ -1096,7 +1096,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-084-run-three-codex-loops/manifest.json"
+  },
+  {
+   "directive_id": "D-085",
+   "slug": "opus-55-orchestrator-trial",
+   "title": "Owner 2026-09-23 (Opus 5.5 orchestrator trial, 'Yes finish first'): AFTER the in-flight five review waves and accepts (M5-T072..T076) complete - update the Claude Code CLI, verify the exact Opus 5.5 model id from tool-side evidence (never a model self-report; stop and report if absent), flip the three supervisor loop worker pins to Opus 5.5 x-high under this owner authorization (retry once past a classifier block citing D-085, else hand the owner the one-line edits), and write the finished-seam handoff so the owner restarts the main orchestrator on Opus 5.5 x-high as a trial amending the D-064 main pin (fable-5 remains the recorded fallback); reviewer/subagent pins unchanged; no hold lifted, no gate changed",
+   "status": "active",
+   "issued_at": "2026-09-23",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-085-opus-55-orchestrator-trial/manifest.json"
   }
  ],
- "updated_at": "2026-09-23T04:10:00+00:00"
+ "updated_at": "2026-09-23T16:45:00+00:00"
 }

@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-085",
+ "version": 1,
+ "slug": "opus-55-orchestrator-trial",
+ "title": "Owner 2026-09-23 (Opus 5.5 orchestrator trial, 'Yes finish first'): AFTER the in-flight five review waves and accepts (M5-T072..T076) complete - update the Claude Code CLI, verify the exact Opus 5.5 model id from tool-side evidence (never a model self-report; stop and report if absent), flip the three supervisor loop worker pins to Opus 5.5 x-high under this owner authorization (retry once past a classifier block citing D-085, else hand the owner the one-line edits), and write the finished-seam handoff so the owner restarts the main orchestrator on Opus 5.5 x-high as a trial amending the D-064 main pin (fable-5 remains the recorded fallback); reviewer/subagent pins unchanged; no hold lifted, no gate changed",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-23",
+ "captured_at": "2026-09-23T16:45:00+00:00",
+ "created_at": "2026-09-23T16:45:00+00:00",
+ "updated_at": "2026-09-23T16:45:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "9bc68dc733c17d60dfdb2add1672e0faceb47d73",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner asked for the switch in-channel (voice-transcribed), the orchestrator answered with the plan and the finish-first recommendation, and the owner confirmed 'Yes finish first'. Tier A/B operational change: it touches owner tooling (CLI) and the controller worker pins (owner-only flip - this capture IS the owner authorization), lifts no hold, changes no gate, and moves no ledger state. The main-session model change is executed by the owner at restart; nothing here self-activates."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-085-R001",
+  "D-085-R002",
+  "D-085-R003",
+  "D-085-R004",
+  "D-085-R005"
+ ],
+ "requirements_content_digest_sha256": "1c60e4fcd610a1af58a8e3809d0b7185342e24ff2b5c906bef6f147dc7b2f5d5",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-23T16:45:00+00:00",
+   "content_digest_sha256": "032be9103380bc9465bdc1cbb178eca5d7d5ba944af73ad1cb2ca0feafd515d1"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "operational_model_trial",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "after the T072-T076 waves/accepts: updating the owner's Claude Code CLI; verifying the Opus 5.5 model id from tool-side evidence; flipping the three supervisor loop worker pins to the verified Opus 5.5 id at x-high effort; writing the finished-seam handoff naming Opus 5.5 x-high for the owner's restart of the main orchestrator",
+  "forbidden": "executing any switch step before the waves/accepts finish (R001); pinning any model id not verified tool-side (R003); substituting a different model without a new owner decision; changing reviewer/subagent pins (D-064 stands); lifting any owner hold; changing any gate; bypassing or hammering a classifier block (retry once citing D-085, then blocker)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-23T16:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim mid-wave (seq-127; batch 2 of the five review waves in flight; T072 G3/G4 + T075 G3 already PASS-recorded at 9bc68dc7). frozen_baseline_sha = 9bc68dc7 (this capture's parent). The capture commit is a disjoint peer commit under project-control/directives/** relative to every in-flight review surface (the D-083 mid-wave-capture precedent). Execution begins only after the R001 sequencing gate clears."
+  }
+ ]
+}

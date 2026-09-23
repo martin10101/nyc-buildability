@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-085",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All five requirements bind the non-ledger sentinel D-085-BOOTSTRAP at capture: this is an operational (owner-tooling + controller-config + session-model) directive, not a ledger build task; if any step later becomes ledger work, bind that task id via applicability at its contract seam. No completion claim exists at capture time; R001 (finish the T072-T076 waves/accepts first) gates every other row.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}
