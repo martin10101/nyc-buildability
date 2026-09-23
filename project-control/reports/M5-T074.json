@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T074",
+  "producer_agent": "qa-engineer",
+  "report_file": "project-control/reports/M5-T074-producer-report.md",
+  "submitted_at": "2026-09-23T06:09:00.842801+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T074-evidence-map.json",
+  "content_manifest_sha256": "b98125f1639bfce2ad1b19426a923cfd23f3e9c4cca3f92e2550004758473b5f",
+  "reviewed_sha": "f4a8cbef2a8e9a402d8d41645f8e437680ad6a7a",
+  "applicable_requirements": [
+    "D-084-R003"
+  ],
+  "updated_at": "2026-09-23T06:09:01.881249+00:00"
+}

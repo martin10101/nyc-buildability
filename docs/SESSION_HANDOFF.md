@@ -52,7 +52,7 @@ Origin github.com/martin10101/nyc-buildability.git.
 |---|---|---|---|
 | loop-1 | IDLE - T076 DELIVERED + HARVESTED post-handoff (see amendment) | run-71 closed unsafe_condition | AMENDED: the unit came back complete before session end - harvested b8dc1044 ALL-MATCH x5, ruff clean + 40 passed OBSERVED, SUBMITTED awaiting_gate. Lane-1 idle; re-feed candidates: DB-044/DB-042 api residuals now, the DB-049 cluster after #253, DB-050(b)-(m) after #254 |
 | loop-2 | M5-T073 ring-precondition validation (wt-m5t073) | persistent2-local-31-m5t073 | LIVE (relaunched after the orchestrator executed HARVEST_SPEC.md — 4 net-new pairs P05-P08 captured via live egress, manifest 8 pairs / 5 boroughs, committed in-wt 87d11d59+; the worker finishes its own harness imports/ruff/verdict-table) |
-| loop-3 | M5-T074 bridge server-500 proof (wt-m5t074 @ 419c967a) | persistent3-local-18-m5t074 | LIVE (test-only; ruff-safe secretscan-pragma discipline in the packet) |
+| loop-3 | IDLE - T074 DELIVERED + HARVESTED post-handoff | run-18 cycle_closed | AMENDED: unit complete - harvested MATCH x2, ruff clean + 42 passed OBSERVED (four live-500 proofs w/ the exact-body oracle), SUBMITTED awaiting_gate (G2 NOT yet recorded - record from the [ORCH-HARVEST] transcript). Lane-3 idle; 11 stale asks denied. Re-feed candidates as lane-1's |
 
 Watchers (scratchpad/loop{1,2,3}_down_watch.py) DIED with this session — **re-arm all three
 in background FIRST**. Harvest drill on any close: inspect journal triple + worktree, deny
@@ -71,7 +71,7 @@ stale asks from piped JSON (never retype ids), in-wt commit, cherry-pick ALL-MAT
 3. On each verdict: assemble v2 rows + **accept back-to-back** — #253 (T071) then #254
    (T070). At the accept seams sweep DB-047(d)/(e) + DB-048 RESOLVED (T071) and the DB-050
    dispositions (T070); add the D-084 audit note evidencing R001/R002/R003 lane runs.
-4. Then the **T072, T075 AND T076 waves**: T072/T075 take G3 code-reviewer + G4
+4. Then the **T072, T075, T076 AND T074 waves** (T074 amended post-handoff like T076 - G2-record-first): T072/T075 take G3 code-reviewer + G4
    backend-engineer (producer=qa-engineer both; T072's harvest transcript is in its producer
    report; T075's web proof is CI at its heads). T076 (amended post-handoff: submitted, G2
    NOT yet recorded — record it first from the [ORCH-HARVEST] transcript) takes G3
