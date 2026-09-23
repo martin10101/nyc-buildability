@@ -1,0 +1,66 @@
+{
+  "task_id": "M5-T072",
+  "title": "T069-G3-A2 revoke-text pin: assert revoke's raised not-found text IS _UNIFIED_NOT_FOUND_TEXT (cross-op identity mutation guard; test-only)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the T069 G3 Advisory A2 gap: no assertion pins revoke's raised ConfirmationNotFoundError text to the unified constant (T067's test asserts only intra-revoke equality; supersede is pinned at test_site_definition_records.py:884). Add the one-line cross-op pin so a future revoke-only literal fork reddens the suite.",
+  "business_reason": "The unified not-found text is an oracle-hardening invariant (DB-040(s), T069 252nd accept); without the revoke pin the invariant is structurally enforced but not test-enforced, and a silent fork would ship.",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form the accepted T067 report used is the standard - route what you cannot run to harvest, never fake it.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands run from the worktree root, so the scoped pytest may be [BLOCKED] for you - route it to harvest exactly as T067/T069 did.",
+    "SPEC SOURCE (binding): project-control/reports/M5-T069-G3.md Advisory A2 (verbatim): no assertion pins REVOKE's raised text to _UNIFIED_NOT_FOUND_TEXT - the T067-era test test_revoke_not_found_message_is_identical_for_missing_and_foreign_ids (services/api/tests/site_definition/test_site_definition_records.py ~:811) asserts only intra-revoke equality; supersede is pinned at :884 and the constant lives at :853. Cross-op identity currently rests on the shared constant alone (app/site_definition/store.py _NOT_FOUND_FOR_ADDRESSED_PROPERTY); a revoke-only literal fork would not redden any test.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam): the change is test-only in one file; store.py and every route are FORBIDDEN. Consumer-sweep duty is nil by construction - assert-only addition, no behavior contract changes.",
+    "BEHAVIOR PRESERVATION (binding): ZERO production edits; every existing assertion byte-unchanged; the diff is the pin addition (an assert line extending the existing equality chain, plus at most a one-line comment). Anything more is out of scope - STOP and report."
+  ],
+  "outputs": [
+    "The revoke cross-op pin: revoke's raised not-found text (both branches) asserted equal to _UNIFIED_NOT_FOUND_TEXT in services/api/tests/site_definition/test_site_definition_records.py",
+    "project-control/reports/M5-T072-producer-report.md (one concise evidence pass; digest-bound)"
+  ],
+  "dependencies": [
+    "M5-T069"
+  ],
+  "allowed_paths": [
+    "services/api/tests/site_definition/test_site_definition_records.py",
+    "project-control/reports/M5-T072-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (the pin): revoke's raised ConfirmationNotFoundError text - both the missing-id and foreign-id branches - is asserted equal to _UNIFIED_NOT_FOUND_TEXT (not merely to each other), in the existing revoke-equality test.",
+    "AS-2 (mutation sensitivity): temporarily forking revoke's raise site to a divergent literal reddens the pin (run the mutation, record the FAIL line in the report, revert - never commit the mutant). The pre-pin suite would have stayed green under the same mutant; say so with the observed evidence.",
+    "AS-3 (no scope creep): git diff is confined to the pin (+ at most one comment line) in the one allowed test file; the full scoped suite (tests/site_definition + tests/api/test_site_definition_api.py) passes green; ruff clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "qa-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "backend-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-23T04:22:01.693678+00:00",
+  "updated_at": "2026-09-23T04:22:01.987322+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R001"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-23T04:22:01.693678+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/site_definition tests/api/test_site_definition_api.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

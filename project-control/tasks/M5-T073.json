@@ -1,0 +1,71 @@
+{
+  "task_id": "M5-T073",
+  "title": "DB-045(a) bridge-mount precondition validation: real MapPLUTO parcel pairs (display 4326 vs authoritative 2263 rings) measured for vertex-count equality + 2.0-ft RMS correspondence on recorded fixtures BEFORE any mount",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Validate the T065 outline-bridge preconditions against REAL parcel geometry: capture >=8 real parcel pairs through BOTH accepted connectors (mappluto_lot_outline display 4326; mappluto_geometry_arcgis authoritative 2263) as provenance-stamped offline fixtures, measure per-pair vertex counts and affine-correspondence RMS residual vs the 2.0-ft bound, and record an honest mount verdict (preconditions hold, or densification mismatch quantified with the implied ring-normalization requirement). Validation only - no mount, no production change.",
+  "business_reason": "DB-045(a) (T065 wave G3-F1): differently-densified real-lot rings would make the mounted bridge refuse fail-safe everywhere; the mount seam is blocked until real-pair efficacy is measured.",
+  "inputs": [
+    "CHECKPOINT ENVELOPE (binding): in every checkpoint, OMIT the four envelope fields entirely - the controller fills them. If you supply one it must be EXACT full-length (40-hex SHA, FULL worktree path).",
+    "REPORT DISCIPLINE (binding): reference files and line anchors, never embed long verbatim sections; the [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form the accepted T067 report used is the standard - route what you cannot run to harvest, never fake it.",
+    "COMMAND CWD (binding): api work runs from services/api - `python -m ruff check .` FIRST, then the documented pytest; `python tools/modularity_check.py --check` from repo root. KNOWN BROKER LIMIT: documented commands run from the worktree root, so the scoped pytest may be [BLOCKED] for you - route it to harvest exactly as T067/T069 did.",
+    "SPEC SOURCE (binding): docs/DISCOVERY_BACKLOG.md DB-045(a) (the M5-T065 G3-F1 advisory, verbatim in the DB-045 row): the outline bridge demands equal vertex counts + 2.0-ft RMS between the display ring (mappluto_lot_outline, EPSG:4326, display only) and the authoritative ring (mappluto_geometry_arcgis, EPSG:2263, measurement); differently-densified real-lot rings would refuse fail-safe. Correspondence method + bound: the accepted T065 bridge (services/api/app/api/v1/outline_bridge.py; affine_least_squares_2d, residual_bound_ft 2.0). Measure reality BEFORE the mount seam.",
+    "CODE-GRAPH NAVIGATION BLOCK (D-066-R001; graph regenerated at this contract seam): outline_bridge.py:264 imports mappluto_geometry_arcgis; mappluto_lot_outline.py:57 imports it too (shared ArcGIS plumbing). BOTH connectors are read-only inputs here - production edits FORBIDDEN. NEVER measure with the 4326 display ring: reproject/correspond exactly the way the bridge does; 2263 is US survey feet.",
+    "FIXTURE CAPTURE (binding): capture >=8 real parcel pairs spanning >=3 boroughs and geometry classes (regular small lot; many-vertex irregular; waterfront/curved-edge; large assemblage/through-lot) through BOTH connectors' documented endpoints; store each response verbatim under services/api/tests/connectors/fixtures/bridge_ring_pairs/ with a provenance record per pair (endpoint URL, BBL, retrieved_at UTC, response sha256, dataset version if disclosed). Tests run OFFLINE on the fixtures only - no network in any test. If the environment blocks egress, record [BLOCKED] honestly with the exact command and route capture to harvest - never fabricate a fixture.",
+    "HONEST VERDICT (binding, D-051 discipline): a pair violating the preconditions is a FINDING with its refusal class, never a silently-dropped sample and never a test failure by itself; the report's verdict is bounded ('on this sample'), quantified, and states the implied mount-seam requirement if any (ring normalization/densification) - the mount itself is OUT OF SCOPE."
+  ],
+  "outputs": [
+    "Recorded real-pair fixture pack with per-pair provenance under services/api/tests/connectors/fixtures/bridge_ring_pairs/",
+    "Deterministic offline measurement harness + tests: services/api/tests/connectors/test_bridge_ring_preconditions.py (per-pair vertex counts, affine-correspondence RMS vs the 2.0-ft bound, verdict table; unit-tested on synthetic passing AND violating pairs)",
+    "project-control/reports/M5-T073-producer-report.md: the verdict table + the bounded mount verdict (preconditions hold on the sample, or the quantified densification mismatch + implied mount-seam requirement)"
+  ],
+  "dependencies": [
+    "M5-T065"
+  ],
+  "allowed_paths": [
+    "services/api/tests/connectors/test_bridge_ring_preconditions.py",
+    "services/api/tests/connectors/fixtures/bridge_ring_pairs/**",
+    "project-control/reports/M5-T073-producer-report.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    "AS-1 (fixtures + provenance): >=8 real parcel pairs, >=3 boroughs, the named geometry classes, captured through BOTH accepted connectors and stored verbatim with per-pair provenance (endpoint, BBL, retrieved_at, sha256); every test runs offline on the fixtures; the provenance record round-trips in the harness output.",
+    "AS-2 (measurement correctness): the harness reproduces the bridge's correspondence semantics (affine_least_squares_2d, 2.0-ft residual bound, 2263 survey feet) and is proven on synthetic pairs with KNOWN outcomes - one passing (residual ~0) and one violating (mismatched densification) - asserting both the numeric residual and the classification.",
+    "AS-3 (honest verdict): per-pair verdict table (vertex counts both rings, RMS residual, class, pass/refuse + refusal class) lands in the producer report; violating pairs are findings, not suppressed; the bounded conclusion names the sample size and either clears the mount precondition on the sample or quantifies the mismatch and the implied ring-normalization requirement.",
+    "AS-4 (no production change): zero edits outside allowed_paths; no new dependency; connectors imported read-only; ruff clean; modularity check clean."
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-09-23T04:22:02.693300+00:00",
+  "updated_at": "2026-09-23T04:22:02.977979+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-084",
+      "requirement_ids": [
+        "D-084-R002"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-23T04:22:02.693300+00:00",
+  "documented_test_commands": [
+    "python -m ruff check .",
+    "python -m pytest tests/connectors/test_bridge_ring_preconditions.py -q",
+    "python tools/modularity_check.py --check"
+  ]
+}

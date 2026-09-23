@@ -10,7 +10,7 @@
  "issued_at": "2026-09-23",
  "captured_at": "2026-09-23T04:10:00+00:00",
  "created_at": "2026-09-23T04:10:00+00:00",
- "updated_at": "2026-09-23T04:10:00+00:00",
+ "updated_at": "2026-09-23T04:40:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "f58edd1990c97a99fe947e3296529520c07a0546",
  "capture_head_sha": null,
@@ -26,7 +26,7 @@
   "D-084-R002",
   "D-084-R003"
  ],
- "requirements_content_digest_sha256": "2a12032363eb4899c159f75f22fbb2eb54579708ab4c45e3be019467097b93c3",
+ "requirements_content_digest_sha256": "eb2dc692dcdd8b18ea3794b9976602ac638ce077935c2a92d7fd2cd0db41e916",
  "sources": [
   {
    "file": "source-001.md",
@@ -57,6 +57,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured verbatim before acting (D-001 discipline). At capture: 252 accepted; loop-3 LIVE (persistent3-local-17, M5-T070 increment 2); loops 1/2 idle; CI at branch head f58edd19 red (secret-scan pragma miss on the T068 leak-absence sentinel + two web-e2e failures: the T070 copy-wall comment self-trip and the T071 DB-047(e) consumer-sweep miss in proposal-editor.test.tsx), fixes staged in the same push as this capture. frozen_baseline_sha = f58edd19 (this capture's parent, the seq-125 handoff head). Immediate planning effect: contract lane-1 and lane-2 packets now; bind their ids onto R001/R002 at those seams."
+  },
+  {
+   "at": "2026-09-23T04:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T072 (lane-1 feed: T069-G3-A2 revoke-text pin) onto R001 and M5-T073 (lane-2 feed: DB-045(a) real-parcel bridge-ring precondition validation) onto R002 at their shared contract seam; graph regenerated at this seam before authoring; digest resync same commit."
   }
  ]
 }
