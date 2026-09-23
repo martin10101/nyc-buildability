@@ -176,3 +176,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   then join verbatim at that point with the transmission history noted in the record header.
 - Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
   (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
+- Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
+  unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
+  Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
+  [claude].allowed_models + [approved_models].models - opus-5-5 absent) are OWNER edits
+  (classifier-blocked; B-025 carries the four exact lines).
