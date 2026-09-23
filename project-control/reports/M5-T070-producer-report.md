@@ -460,3 +460,20 @@ beyond a diff cutoff.
    T060/T065/T066 specs (AS-6 display-surface safety).
 2. Orchestrator harvest of both increments + independent G3/G4 review; the producer does not
    self-accept (control policy).
+
+---
+
+## [ORCH-CORRECTED per G3-F2 / G4-F1] AS-4 NAMED LIMITATION (adoption reachability)
+
+One-action adoption is proven at the CONTRACT level only. The production request this
+client builds deliberately sends `lot_line_segments: []` and `street_lines: []` (display
+4326 geometry is never measured), and for that request the server always returns
+`candidate_placement.status = lot_geometry_unsupported` with NO candidate
+(max_envelope.py:632-637 → :795-800). Therefore the "Adopt as a proposed starting draft"
+affordance CANNOT appear against the real route as currently wired: every fitted-candidate
+fixture in this packet models the future server behavior once a later seam threads
+authoritative EPSG:2263 lot geometry to this surface — it is NOT a state the shipped
+request can elicit today. The rework adds a committed spec pinning the production-reachable
+state (`lot_geometry_unsupported`, `candidate: null`, the honest card leading with the
+server's own prose), so the mount seam cannot silently ship a dead adoption affordance.
+The geometry-threading requirement is recorded as a discovery rider at this seam.

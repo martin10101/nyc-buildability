@@ -270,7 +270,8 @@ describe("max-envelope panel composes additively on the proposal surface (M5-T07
           coverage_status: "uncovered",
           out_competed_rule_ids: [],
           rule_citations: [],
-          gap_reason: "no wide-street width was resolved for this lot",
+          // [ORCH-CORRECTED per G3-F3/G4-F3] a REAL EnvelopeGapReason token, never prose.
+          gap_reason: "allowance_unresolved",
           conflict_advisory: null,
           detail: "The height ceiling depends on a street width this lot has not resolved.",
         },

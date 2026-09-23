@@ -48,6 +48,23 @@ function dimensionValueLabel(d: EnvelopeDimensionView): string {
   return d.unit && d.unit !== "" ? `${d.bindingValue} ${d.unit}` : `${d.bindingValue}`;
 }
 
+// [ORCH-CORRECTED per T070 G3-F3/G4-F3] The server emits gap_reason as one of four
+// machine tokens (EnvelopeGapReason, max_envelope.py:132-146); the analyst-facing
+// headline maps each to plain copy. An unrecognized token renders verbatim
+// (fail-honest — never invented copy); the server's human-prose `detail` stays
+// rendered below unchanged.
+const GAP_REASON_COPY: Record<string, string> = {
+  no_applicable_rule: "no applicable rule was found for this dimension",
+  allowance_unresolved: "the governing allowance could not be resolved",
+  family_unsupported: "this rule family is not supported by the engine yet",
+  non_commensurable_with_massing: "the rule does not translate to this massing dimension",
+};
+
+function gapReasonCopy(token: string | null): string {
+  if (token === null || token === "") return "the reason was not stated";
+  return GAP_REASON_COPY[token] ?? token;
+}
+
 function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
   const isGap = dimension.gapReason !== null;
   // The ACTUAL server-provided binding-rule citations (section references), not
@@ -65,7 +82,7 @@ function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {
         <span className="envelope-dimension-label">{dimension.label}</span>
         {isGap ? (
           <span className="envelope-dimension-gap-reason" data-testid={`envelope-gap-${dimension.dimensionId}`}>
-            Could not check — {dimension.gapReason}
+            Could not check — {gapReasonCopy(dimension.gapReason)}
           </span>
         ) : (
           <span className="envelope-dimension-value" data-testid={`envelope-value-${dimension.dimensionId}`}>

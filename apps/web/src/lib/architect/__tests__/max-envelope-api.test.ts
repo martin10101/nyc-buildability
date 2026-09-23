@@ -85,7 +85,8 @@ function gapDimension(overrides: Record<string, unknown> = {}): Record<string, u
     coverage_status: "uncovered",
     out_competed_rule_ids: [],
     rule_citations: [],
-    gap_reason: "no wide-street width was resolved for this lot",
+    // [ORCH-CORRECTED per G3-F3/G4-F3] a REAL EnvelopeGapReason token, never prose.
+    gap_reason: "allowance_unresolved",
     conflict_advisory: null,
     detail: "The height ceiling depends on a street width this lot has not resolved.",
     ...overrides,
@@ -191,7 +192,7 @@ describe("fetchMaxEnvelope — the documented (status, state) matrix", () => {
     const envelope = envelopeOf(await run(envelopeResponse(envelopeBody(), 200)));
     const gap = envelope.dimensions[1];
     expect(gap.bindingValue).toBeNull();
-    expect(gap.gapReason).toBe("no wide-street width was resolved for this lot");
+    expect(gap.gapReason).toBe("allowance_unresolved");
   });
 
   it("surfaces a conflict advisory with BOTH competing rule ids (surfaced-never-resolved, AS-1)", async () => {
@@ -294,7 +295,8 @@ describe("candidate bounding + adoptability gate (AS-4)", () => {
 
   it("is NOT adoptable when the placement is not a contained fit", async () => {
     const body = envelopeBody({
-      candidate_placement: { status: "no_fit", detail: "the lot rectangle is too small", contained: false },
+      // [ORCH-CORRECTED per G3-F1/G4-F2] a REAL CandidatePlacementStatus value.
+      candidate_placement: { status: "footprint_exceeds_lot", detail: "the lot rectangle is too small", contained: false },
     });
     const envelope = envelopeOf(await run(envelopeResponse(body, 200)));
     expect(candidateIsAdoptable(envelope)).toBe(false);

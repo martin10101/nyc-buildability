@@ -52,7 +52,8 @@ function gapDimension(overrides: Record<string, unknown> = {}): Record<string, u
     coverage_status: "uncovered",
     out_competed_rule_ids: [],
     rule_citations: [],
-    gap_reason: "no wide-street width was resolved for this lot",
+    // [ORCH-CORRECTED per G3-F3/G4-F3] a REAL EnvelopeGapReason token, never prose.
+    gap_reason: "allowance_unresolved",
     conflict_advisory: null,
     detail: "The height ceiling depends on a street width this lot has not resolved.",
     ...overrides,
@@ -131,7 +132,9 @@ describe("MaxEnvelopePanel — answer-first limits (AS-1) + claim-class vocabula
     render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(envelopeBody()))} />);
     const gap = await screen.findByTestId("envelope-gap-max_height_ft");
     expect(gap).toHaveTextContent("Could not check");
-    expect(gap).toHaveTextContent("no wide-street width was resolved");
+    // The headline maps the server token to plain copy; the raw token never leads.
+    expect(gap).toHaveTextContent("the governing allowance could not be resolved");
+    expect(gap).not.toHaveTextContent("allowance_unresolved");
     expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
   });
 
@@ -189,11 +192,32 @@ describe("MaxEnvelopePanel — one-action adoption (AS-4)", () => {
   });
 
   it("offers NO adopt action when the candidate was not a contained fit (adoption impossible)", async () => {
+    // [ORCH-CORRECTED per G3-F1/G4-F2] a REAL CandidatePlacementStatus value.
     const body = envelopeBody({
-      candidate_placement: { status: "no_fit", detail: "the lot rectangle is too small", contained: false },
+      candidate_placement: { status: "footprint_exceeds_lot", detail: "the lot rectangle is too small", contained: false },
     });
     render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
     expect(await screen.findByTestId("candidate-unavailable")).toHaveTextContent("No building option can be adopted");
+    expect(screen.queryByTestId("adopt-candidate")).toBeNull();
+  });
+
+  it("renders the PRODUCTION-REACHABLE placement state honestly: lot_geometry_unsupported with no candidate (G4-F1)", async () => {
+    // [ORCH-CORRECTED per G3-F2/G4-F1] With the geometry-free request this client
+    // actually sends, the server returns lot_geometry_unsupported and NO candidate
+    // (max_envelope.py:632-637 / :795-800). This spec pins that real state: the
+    // honest card leads with the server's own prose and no adopt affordance exists,
+    // so the mount seam cannot silently ship a permanently dead adoption button.
+    const SERVER_DETAIL =
+      "no lot-line geometry was supplied, so the footprint cannot be fitted to the lot; " +
+      "no candidate is emitted (never a fixed-anchor schematic)";
+    const body = envelopeBody({
+      candidate: null,
+      candidate_placement: { status: "lot_geometry_unsupported", detail: SERVER_DETAIL, contained: false },
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    const card = await screen.findByTestId("candidate-unavailable");
+    expect(card).toHaveTextContent("No building option can be adopted");
+    expect(card).toHaveTextContent("no lot-line geometry was supplied");
     expect(screen.queryByTestId("adopt-candidate")).toBeNull();
   });
 });
@@ -226,6 +250,10 @@ describe("MaxEnvelopePanel — claim-class copy wall (AS-2, source grep across t
       "../MaxEnvelopePanel.tsx",
       "../../../lib/architect/max-envelope-api.ts",
       "../../../lib/architect/proposal-draft.ts",
+      // [ORCH-CORRECTED per G3-F4/G4-A1] every changed production file with
+      // analyst-facing copy is inside the wall, per AS-2's own wording.
+      "../ArchitectEntry.tsx",
+      "../ProposalEditor.tsx",
     ];
     for (const rel of files) {
       const source = readFileSync(new URL(rel, import.meta.url), "utf8").toLowerCase();
