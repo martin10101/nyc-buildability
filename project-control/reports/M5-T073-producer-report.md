@@ -159,14 +159,14 @@ guessed**.
 
 | pair | BBL | borough (code) | geometry class | display vtx | auth vtx | counts eq | RMS (ft) | max (ft) | runner-up RMS | separation (ft) | verdict | refusal class |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| P01 | 1008350041 | Manhattan (1) | regular single-exterior block lot | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P02 | 1000010010 | Manhattan (1) | many-vertex irregular holed waterfront | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P03 | 1000157501 | Manhattan (1) | large assemblage condo-billing merged | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P04 | 4142600001 | Queens (4) | true multipolygon shoreline-clipped | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P05 | 2022610022 | Bronx (2) | regular small residential lot | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P06 | 3000350007 | Brooklyn (3) | regular small residential lot | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P07 | 5000050039 | Staten Island (5) | irregular corner lot | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
-| P08 | 5000040010 | Staten Island (5) | curved-edge densification stress | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ | ⧗ |
+| P01 | 1008350041 | Manhattan (1) | regular single-exterior block lot | 6 | 6 | true | 0.0024 | 0.0029 | 49.8473 | 49.8449 | **pass** | — |
+| P02 | 1000010010 | Manhattan (1) | many-vertex irregular holed waterfront | 320 | 320 | true | — | — | — | — | refuse | too_many_control_points |
+| P03 | 1000157501 | Manhattan (1) | large assemblage condo-billing merged | 4 | 4 | true | 0.0018 | 0.0018 | 0.8782 | 0.8765 | refuse | ambiguous_correspondence |
+| P04 | 4142600001 | Queens (4) | true multipolygon shoreline-clipped | 3093 | 3093 | true | — | — | — | — | refuse | too_many_control_points |
+| P05 | 2022610022 | Bronx (2) | regular small residential lot | 4 | 4 | true | 0.0013 | 0.0013 | 0.0013 | 0.0000194 | refuse | ambiguous_correspondence |
+| P06 | 3000350007 | Brooklyn (3) | regular small residential lot | 4 | 4 | true | 0.0022 | 0.0024 | 0.1987 | 0.1965 | refuse | ambiguous_correspondence |
+| P07 | 5000050039 | Staten Island (5) | irregular corner lot | 6 | 6 | true | 0.0028 | 0.0052 | 7.3130 | 7.3102 | **pass** | — |
+| P08 | 5000040010 | Staten Island (5) | curved-edge densification stress | 30 | 30 | true | 0.0039 | 0.0064 | 35.5090 | 35.5050 | **pass** | — |
 
 Transcription rule for the harvest fill: where a pair refuses before the fit runs
 (`counts_equal=false` → `vertex_count_mismatch`), the RMS/max/runner-up/separation cells are the
@@ -254,3 +254,39 @@ Working-tree changes (report + harness) are uncommitted; the fixtures pack is co
 unit claims no completion: status is BLOCKED pending the routed supervisor/CI capture (`services/api`-
 scoped ruff + pytest, §6). Do not accept, merge, or mount before that capture's actual output is
 [OBSERVED] and the §5/§7 verdict is recorded.
+
+---
+
+## [ORCH-HARVEST] Routed capture executed (2026-09-23, cwd services/api; run in wt-m5t073 pre-cherry-pick and re-run at the primary head)
+
+- `python -m ruff check .` → **All checks passed!** (exit 0) — clears the scoped-lint [PREDICTED].
+- `python -m pytest tests/connectors/test_bridge_ring_preconditions.py -q` → **14 passed** (exit 0)
+  — collection clean, digest-equality and all three AS-2 synthetic assertions CONFIRMED, every
+  [PREDICTED] row elevated to OBSERVED. The `-q -s` run surfaced the printed per-pair verdict
+  JSON; the §5 measured columns above are transcribed from that output verbatim (4-decimal
+  display; refused-before-fit cells `—` per the §5 rule; P05's separation shown at full
+  leading precision 0.0000194 ft).
+
+### §7 disposition — resolves at branch (b), with the observed refusal classes
+
+**counts_equal = true on ALL 8 pairs** — the exact DB-045(a) densification-mismatch risk did
+NOT occur anywhere in this sample; where the fit ran, RMS residuals are 0.0013–0.0039 ft
+(three orders under the 2.0-ft bound). NO pair refused as `vertex_count_mismatch` and none as
+`residual_too_high`, so NO ring normalization is implied by this sample.
+
+The observed refusals are two OTHER classes:
+- `too_many_control_points` (P02 @320 vtx, P04 @3093 vtx): the bridge's control-point cap
+  refuses many-vertex/multipolygon lots before fitting — a capacity precondition, not a
+  correspondence failure.
+- `ambiguous_correspondence` (P03, P05, P06 — all 4-vertex near-rectangles; P05's separation
+  1.9e-05 ft): near-symmetric rectangles have runner-up alignments inside the 2.0-ft ambiguity
+  separation — the bridge's own safety guard refuses them even though the true fit is
+  essentially exact. This is the COMMON small-residential-lot class.
+
+Bounded verdict (this sample only, never generalized): 3/8 pass (P01, P07, P08). The
+mount-seam requirement implied by the OBSERVED classes is a correspondence-quality/
+registration requirement at the seam — specifically (i) a capacity disposition for
+above-cap rings and (ii) an ambiguity disposition for near-symmetric lots (e.g., a
+symmetry-aware separation criterion or an explicit user-facing refusal copy for these two
+classes) — decided AT the mount packet, never by weakening the bridge's bounds here. The
+mount itself stays out of scope (AS-4).
