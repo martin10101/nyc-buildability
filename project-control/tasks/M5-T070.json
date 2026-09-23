@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T06:54:27.601280+00:00",
-  "updated_at": "2026-09-23T05:02:02.255185+00:00",
+  "updated_at": "2026-09-23T05:25:46.905601+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -151,6 +151,20 @@
       "percent": 95,
       "status": "claimed",
       "message": "Increment 2 landed (075e9149, ALL-MATCH x3) closing the producer's own named gap; CI GREEN at 86971988 (run 35820079349, web-e2e incl. the AS-5 journey + AS-6 entry suites); evidence map written (11 ids incl. D-083 R001-R004); submitting"
+    },
+    {
+      "at": "2026-09-23T05:25:38.363666+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "rework",
+      "message": "G3 FAIL F1-F4 + G4 FAIL F1-F4 (convergent: fixture vocabulary + adoption-reachability honesty + wall coverage + evidence-map relabel); corrections applied as [ORCH-CORRECTED] 0625c19b; resubmit at the corrected head after CI proves it; delta attestations from the SAME two reviewers next"
+    },
+    {
+      "at": "2026-09-23T05:25:39.634583+00:00",
+      "agent": "frontend-engineer",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Rework applied; walking to resubmit (re-freeze at the corrected head)"
     }
   ]
 }
