@@ -135,6 +135,9 @@ describe("MaxEnvelopePanel — answer-first limits (AS-1) + claim-class vocabula
     // The headline maps the server token to plain copy; the raw token never leads.
     expect(gap).toHaveTextContent("the governing allowance could not be resolved");
     expect(gap).not.toHaveTextContent("allowance_unresolved");
+    // [ORCH-CORRECTED per G4 micro-delta] AS-1's "instead of a value" clause asserts
+    // in ITS OWN test (restored after the SEC-F1 insertion displaced it).
+    expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
   });
 
   it("a prototype-chain token like __proto__ renders as its literal text, never a crash (SEC F1)", async () => {
