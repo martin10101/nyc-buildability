@@ -50,7 +50,7 @@ Origin github.com/martin10101/nyc-buildability.git.
 
 | Lane | Packet | Run | State at handoff |
 |---|---|---|---|
-| loop-1 | M5-T076 geometry-threading pre-mount (wt-m5t076 @ 1dd7647a) | persistent-local-71-m5t076 | LIVE (launched ~05:5xZ; the DB-050(a) packet: derivation module + route wiring; max_envelope.py FORBIDDEN at 998 SLOC) |
+| loop-1 | IDLE - T076 DELIVERED + HARVESTED post-handoff (see amendment) | run-71 closed unsafe_condition | AMENDED: the unit came back complete before session end - harvested b8dc1044 ALL-MATCH x5, ruff clean + 40 passed OBSERVED, SUBMITTED awaiting_gate. Lane-1 idle; re-feed candidates: DB-044/DB-042 api residuals now, the DB-049 cluster after #253, DB-050(b)-(m) after #254 |
 | loop-2 | M5-T073 ring-precondition validation (wt-m5t073) | persistent2-local-31-m5t073 | LIVE (relaunched after the orchestrator executed HARVEST_SPEC.md — 4 net-new pairs P05-P08 captured via live egress, manifest 8 pairs / 5 boroughs, committed in-wt 87d11d59+; the worker finishes its own harness imports/ruff/verdict-table) |
 | loop-3 | M5-T074 bridge server-500 proof (wt-m5t074 @ 419c967a) | persistent3-local-18-m5t074 | LIVE (test-only; ruff-safe secretscan-pragma discipline in the packet) |
 
@@ -71,7 +71,7 @@ stale asks from piped JSON (never retype ids), in-wt commit, cherry-pick ALL-MAT
 3. On each verdict: assemble v2 rows + **accept back-to-back** — #253 (T071) then #254
    (T070). At the accept seams sweep DB-047(d)/(e) + DB-048 RESOLVED (T071) and the DB-050
    dispositions (T070); add the D-084 audit note evidencing R001/R002/R003 lane runs.
-4. Then the **T072 and T075 waves** (G3 code-reviewer + G4 backend-engineer each; T072's
+4. Then the **T072, T075 AND T076 waves** (T076 amended in post-handoff: submitted+G2-pending - record its G2 from the [ORCH-HARVEST] transcript first; G3 code-reviewer + G4 qa-engineer) (G3 code-reviewer + G4 backend-engineer each; T072's
    harvest transcript is already in its producer report; T075's web proof is CI at its heads).
 5. Harvest loops on close; re-feed lanes (candidates: the DB-049 drawing-surface cluster
    AFTER #253 frees the files; the DB-050(b)-(m) max-surface hardening touch AFTER #254;
