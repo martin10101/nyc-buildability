@@ -2,7 +2,30 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-084",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-084-BOOTSTRAP at capture; R001/R002 bind the concrete lane packets via applicability.task_ids at their contract seams, R003 already binds M5-T070 (the live loop-3 packet). This directive authorizes lane occupancy only: it lifts no hold, changes no gate, and every packet still passes the normal contract/claim/gate process. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-23T18:55:00+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-084",
+   "task_id": "M5-T072",
+   "applicable_requirement_ids": [
+    "D-084-R001"
+   ],
+   "reviewed_sha": "bc851ae3a21796a296aa5edc747371c4583174f2",
+   "reviewed_manifest_sha256": "b8cd8c7af8b70e155ed7fda9e145128e17e8cdd4a44026f789c74de6d0678d33",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T18:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-084-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV PASS 1/1 (M5-T072-DCV.md, its restamp predicate re-verified ALL-MATCH at bc851ae3): lane-1 contracted/claimed/in-regime/pushed clause-by-clause (Part 2); the run journal + launch record located OUTSIDE the repo and corroborated row-by-row (Part 3, closing G3-F6); the AS-2 revoke-only mutant independently reproduced in-process (1 failed at the :842 pin / 76 passed); frozen identity b8cd8c7a intact across G2/G3/G4 and the live stamp; prohibited-action sweep clean."
+     ]
+    }
+   ]
+  }
+ ]
 }
