@@ -692,3 +692,114 @@ def test_default_authoritative_ring_missing_canonical_geometry_is_ring_unavailab
     )
     with pytest.raises(RingUnavailable):
         _default_authoritative_ring(_BBL, "cid")
+
+
+# ---------------------------------------------------------------------------
+# DB-045(c) (M5-T065 wave G4-gap2): the documented (500, internal_error) server
+# branches driven LIVE. Previously this matrix row was covered only by frozenset
+# membership (test_documented_status_state_matrix omits it) with no live 500
+# anywhere in the suite. Each server-side branch that returns _internal_error_500
+# (:709-713 fetch-stage internal defect; :715-717 ring_crs_mismatch, BOTH sides;
+# :820-824 serialization tail guard) is driven through the MOUNTED route with the
+# ``client`` fixture (TestClient(raise_server_exceptions=False)) and proves: the
+# FIXED generic body, ZERO exception/type/traceback/internal-detail leak, and the
+# X-Correlation-ID header identity - mirroring the accepted T068 DB-046(d)/(e)
+# tests (services/api/tests/api/test_max_envelope_api.py).
+# ---------------------------------------------------------------------------
+_GENERIC_500_MESSAGE = "unexpected internal error; see server logs by correlation id"
+# The COMPLETE permitted generic-500 body is EXACTLY these three keys (the documented
+# _internal_error_500 helper, outline_bridge.py :605-614). Extra detail/type/traceback leaks.
+_GENERIC_500_KEYS = frozenset({"state", "message", "correlation_id"})
+
+
+def _assert_bounded_internal_error(resp) -> dict:
+    """AS-1 + AS-3: a documented (500, internal_error) carrying the FIXED generic body and an
+    X-Correlation-ID header equal to the body's correlation_id, emitting NO coordinates. Returns
+    the parsed body so each caller can add its own AS-2 leak-absence asserts."""
+    assert resp.status_code == 500
+    assert (500, "internal_error") in OUTLINE_BRIDGE_STATUS_STATE_MATRIX
+    body = resp.json()
+    assert body["state"] == "internal_error"
+    assert body["message"] == _GENERIC_500_MESSAGE
+    # The body is EXACTLY the fixed shape: any unexpected detail/type/traceback field is a leak
+    # and fails here, hence in all four callers.
+    assert set(body) == _GENERIC_500_KEYS
+    assert "vertices" not in body  # a 500 never emits bridged coordinates
+    assert resp.headers.get("X-Correlation-ID")
+    assert body["correlation_id"] == resp.headers["X-Correlation-ID"]
+    return body
+
+
+def test_500_fetch_stage_internal_defect_is_bounded_generic(client):
+    # :709-713 - a ring seam raising a NON-RingUnavailable exception is an unexpected internal
+    # defect: caught generically, logged by correlation id, mapped to (500, internal_error).
+    secret = "fetch-stage-leak-sentinel"  # secretscan:allow leak-absence probe
+    resp = client(display=RuntimeError(secret)).post(
+        _URL, json={"bbl": _BBL, "drawn_vertices": _DRAWN}
+    )
+    _assert_bounded_internal_error(resp)
+    assert secret not in resp.text  # AS-2: the exception message never leaks
+    assert "RuntimeError" not in resp.text  # AS-2: no exception type leaks
+    assert "Traceback" not in resp.text  # AS-2: no traceback marker leaks
+
+
+def test_500_ring_crs_mismatch_display_side_is_bounded_generic(client):
+    # :715-717 - the display seam returned a ring in the WRONG crs (an internal contract breach,
+    # not a caller error): logged then mapped to the generic 500, emitting no ring detail. No
+    # exception is raised on this branch, so the leak-absence probe rides the ring's provenance
+    # detail (which the 200 path echoes as source_display_ring) - it must not appear on a 500.
+    secret = "display-crs-leak-sentinel"  # secretscan:allow leak-absence probe
+    bad_display = ParcelRing(
+        points=_DISPLAY_PTS,
+        crs="EPSG:2263",  # not the required display CRS EPSG:4326
+        source_id="internal-only-src",
+        source_detail={"leak_sentinel": secret},
+    )
+    resp = client(display=bad_display).post(_URL, json={"bbl": _BBL, "drawn_vertices": _DRAWN})
+    _assert_bounded_internal_error(resp)
+    assert secret not in resp.text  # AS-2: internal ring detail never leaks on a 500
+    assert "internal-only-src" not in resp.text  # AS-2: the internal source id never leaks
+    assert "Traceback" not in resp.text
+
+
+def test_500_ring_crs_mismatch_authoritative_side_is_bounded_generic(client):
+    # :715-717 - the OTHER half of the same guard: a valid 4326 display ring but an authoritative
+    # ring NOT in EPSG:2263 trips the identical internal-error branch.
+    secret = "auth-crs-leak-sentinel"  # secretscan:allow leak-absence probe
+    bad_auth = ParcelRing(
+        points=_AUTH_PTS,
+        crs="EPSG:4326",  # not the required authoritative CRS EPSG:2263
+        source_id="internal-only-src",
+        source_detail={"leak_sentinel": secret},
+    )
+    resp = client(auth=bad_auth).post(_URL, json={"bbl": _BBL, "drawn_vertices": _DRAWN})
+    _assert_bounded_internal_error(resp)
+    assert secret not in resp.text
+    assert "internal-only-src" not in resp.text
+    assert "Traceback" not in resp.text
+
+
+def test_500_serialization_unsafe_tail_guard_is_bounded_generic(client):
+    # :820-824 - the render-parity tail guard. The correspondence fit SUCCEEDS (same geometry as
+    # the happy path) but a non-finite value in the source ring's provenance detail makes the
+    # assembled document fail strict-JSON (json.dumps allow_nan=False). It fails closed to the
+    # typed generic 500, NOT an untyped ASGI 500, and leaks neither the value nor the json type.
+    secret = "tail-guard-leak-sentinel"  # secretscan:allow leak-absence probe
+    unsafe_display = ParcelRing(
+        points=_DISPLAY_PTS,
+        crs="EPSG:4326",  # correct CRS -> passes the crs guard and reaches document assembly
+        source_id="nyc-dcp-mappluto-lot-outline",
+        source_detail={
+            "representation": "lot_outline_display",
+            "leak_sentinel": secret,
+            "nonfinite": float("nan"),  # spread into source_display_ring -> strict-JSON failure
+        },
+    )
+    resp = client(display=unsafe_display).post(
+        _URL, json={"bbl": _BBL, "drawn_vertices": _DRAWN}
+    )
+    _assert_bounded_internal_error(resp)
+    assert secret not in resp.text  # AS-2: provenance detail a 200 would echo never leaks
+    assert "nan" not in resp.text.lower()  # the non-finite value never reaches the client
+    assert "ValueError" not in resp.text  # AS-2: no json exception type leaks
+    assert "Traceback" not in resp.text
