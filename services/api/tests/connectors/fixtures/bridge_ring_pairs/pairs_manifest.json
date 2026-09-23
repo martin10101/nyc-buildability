@@ -1,0 +1,101 @@
+{
+  "manifest_version": 1,
+  "task": "M5-T073",
+  "directive": "D-084-R002",
+  "advisory": "DB-045(a) (M5-T065 wave G3-F1)",
+  "purpose": "Bind REAL parcel ring pairs for the offline bridge-mount precondition harness (services/api/tests/connectors/test_bridge_ring_preconditions.py). Each pair references a display 4326 ring and an authoritative 2263 ring for the SAME BBL, both VERBATIM live-captured official bytes already stored in the accepted connector fixture packs.",
+  "byte_source_note": "The verbatim response bodies are stored once, in the accepted M5-T020 (display 4326) and M2-T009 (authoritative 2263) fixture packs, and are referenced here by path + recorded sha256 (single source of truth, no duplication, no CRLF drift). The harness reads them offline and re-hashes the authoritative response_body_raw against response_body_sha256 (same byte basis, no embedded newlines).",
+  "display_source_pack": "services/api/tests/fixtures/mappluto_lot_outline (M5-T020, D-040-R001; f=geojson&outSR=4326)",
+  "authoritative_source_pack": "services/api/tests/fixtures/mappluto_geometry (M2-T009; f=json, EPSG:2263 wkid 102718/latestWkid 2263)",
+  "sample_bound": "4 real single-lot pairs across 2 boroughs (Manhattan, Queens) and 4 geometry classes. The packet's >=8 pairs / >=3 boroughs / regular-small-lot coverage requires more live captures and is ROUTED TO HARVEST in HARVEST_SPEC.md.",
+  "pairs": [
+    {
+      "pair_id": "P01_regular_block_1008350041",
+      "bbl": "1008350041",
+      "borough": "Manhattan",
+      "borough_code": 1,
+      "geometry_class": "regular_single_exterior_block_lot",
+      "notes": "Empire State Building block lot: one clockwise exterior ring both sides; the simplest correspondence case.",
+      "display": {
+        "source_fixture": "mappluto_lot_outline/LOT01_single_1008350041.geojson",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-12T13:45:07Z",
+        "source_file_sha256": "sha256:9e5e1261dbfc90f3b62ad035ca508ad4d708ed2a4a04de32c9e8f7d0fe96d0dd"
+      },
+      "authoritative": {
+        "source_fixture": "mappluto_geometry/MPG02_lot_single_1008350041.json",
+        "kind": "provenance_envelope.response_body_raw",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1008350041&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-07-20T05:30:57Z",
+        "response_body_sha256": "sha256:0d12247fe0d12d972800419880ae1b4f6cc09adef999f4e1718f25b8a67289b4"
+      }
+    },
+    {
+      "pair_id": "P02_many_vertex_waterfront_1000010010",
+      "bbl": "1000010010",
+      "borough": "Manhattan",
+      "borough_code": 1,
+      "geometry_class": "many_vertex_irregular_holed_waterfront",
+      "notes": "Governors Island: holed polygon, one exterior ring + interior holes; many-vertex irregular waterfront exterior.",
+      "display": {
+        "source_fixture": "mappluto_lot_outline/LOT05_holes_1000010010.geojson",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000010010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-12T13:45:13Z",
+        "source_file_sha256": "sha256:859bacb76e35b9f39663e48b5137eb77f490b2890cf98fda48d56c5ffd102c28"
+      },
+      "authoritative": {
+        "source_fixture": "mappluto_geometry/MPG06_lot_holes_1000010010.json",
+        "kind": "provenance_envelope.response_body_raw",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000010010&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-07-20T05:30:58Z",
+        "response_body_sha256": "sha256:90a7f6dd364a64c9c114c4676a6d0b381acc7ba684afba082c6f32ddd5b2e095"
+      }
+    },
+    {
+      "pair_id": "P03_large_assemblage_condo_billing_1000157501",
+      "bbl": "1000157501",
+      "borough": "Manhattan",
+      "borough_code": 1,
+      "geometry_class": "large_assemblage_condo_billing_merged_complex",
+      "notes": "Condo BILLING lot (lot 7501, CondoNo 1025): merged condominium-complex polygon - a large assemblage footprint.",
+      "display": {
+        "source_fixture": "mappluto_lot_outline/LOT03_condo_billing_1000157501.geojson",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000157501&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-12T13:45:11Z",
+        "source_file_sha256": "sha256:2c74f51c3fc75646842121ab89b12b3b81621670e0a4aa32e3846cdf2b69cafc"
+      },
+      "authoritative": {
+        "source_fixture": "mappluto_geometry/MPG04_lot_condo_billing_1000157501.json",
+        "kind": "provenance_envelope.response_body_raw",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D1000157501&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-07-20T05:30:58Z",
+        "response_body_sha256": "sha256:2a25d5f8bc9067fb9aadb75ebb32b1d3aae0825e6637c7621b67a6fcb0f9011a"
+      }
+    },
+    {
+      "pair_id": "P04_multipolygon_waterfront_4142600001",
+      "bbl": "4142600001",
+      "borough": "Queens",
+      "borough_code": 4,
+      "geometry_class": "true_multipolygon_shoreline_clipped",
+      "notes": "TRUE MultiPolygon (two shoreline-clipped exterior parts). The display side takes the first server-order part; the authoritative side takes the first CANONICALLY-ORDERED part - a real member-ordering correspondence risk this pair exercises directly.",
+      "display": {
+        "source_fixture": "mappluto_lot_outline/LOT06_multipolygon_4142600001.geojson",
+        "kind": "raw_geojson_body",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4142600001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=geojson&outSR=4326",
+        "retrieved_at": "2026-09-12T13:45:14Z",
+        "source_file_sha256": "sha256:28a79e78694af09f6f3feee05fe877de5d421267cd2275354b860d9958e0320d"
+      },
+      "authoritative": {
+        "source_fixture": "mappluto_geometry/MPG07_lot_multipolygon_4142600001.json",
+        "kind": "provenance_envelope.response_body_raw",
+        "endpoint": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4142600001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+        "retrieved_at": "2026-07-20T05:30:59Z",
+        "response_body_sha256": "sha256:77055f215f8f9fe42e058c44feed16d36b0e7194fceeb73b0606799a5b159f3a"
+      }
+    }
+  ]
+}
