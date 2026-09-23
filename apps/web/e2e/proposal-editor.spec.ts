@@ -426,3 +426,199 @@ test("AS-1 pointer: click the lot map to place outline points, then bridge -> ad
   await page.getByTestId("run-check").click();
   await expect(page.getByTestId("proposal-check-summary")).toBeVisible();
 });
+
+/** The fixed server disclosure the panel renders VERBATIM — the EXACT
+ * ENVELOPE_DISCLOSURE text from the authoritative serialization
+ * (services/api/app/scenario/max_envelope.py :100-108), reproduced char-for-char
+ * so the stubbed response body is faithful to MaxEnvelope.as_dict() and the
+ * panel's verbatim render is asserted exactly below (a paraphrase or truncation
+ * fails). */
+const ENVELOPE_DISCLOSURE =
+  "This maximum-buildable envelope is a DETERMINISTIC, rules-derived ESTIMATE for the " +
+  "rectangle-prism massing class - NOT a city record, a permit, an approval, or a legal " +
+  "determination. Each dimension is the tightest applicable draft rule's allowance for this " +
+  "lot (the looser rules are automatically satisfied and recorded as out-competed); where " +
+  "more than one rule bounds a dimension, which rule governs is a legal determination " +
+  "requiring professional review, surfaced here as an advisory rather than resolved. " +
+  "Non-commensurable dimensions (residential FAR, rear yard) are disclosed as honest gaps. " +
+  "Qualified professional review is required before any reliance.";
+
+/** The Generated building option outline the stub returns — DELIBERATELY DISTINCT
+ * from the editor's rectangle seed (5 vertices, vertex 0 X 1000000) so adoption
+ * VISIBLY replaces the numeric authority (4 vertices, vertex 0 X 1000200). */
+const OPTION_2263: Array<[number, number]> = [
+  [1000200, 200500],
+  [1000260, 200500],
+  [1000260, 200540],
+  [1000200, 200540],
+];
+
+/** A full MaxEnvelope.as_dict() body: one binding + one gap dimension (gap > 0,
+ * so the aggregate stays visibly INCOMPLETE, D-083-R004) and a FITTED, contained
+ * candidate (so one-action adoption is offered, D-083-R002/AS-4). Field shape
+ * mirrors as_dict() exactly — never guessed (the max-envelope contract input). */
+const MAX_ENVELOPE_BODY = {
+  massing_class: "rectangle_prism",
+  label: "BBL 1000010100 preliminary development limits",
+  disclosure: ENVELOPE_DISCLOSURE,
+  dimensions: [
+    {
+      dimension_id: "max_far_floor_area",
+      family: "floor_area",
+      required_output: "max_floor_area_sq_ft",
+      direction: "max",
+      unit: "sq_ft",
+      label: "Maximum floor area",
+      saturating: false,
+      binding_value: 20000,
+      binding_rule_id: "zr-far-r6",
+      binding_rule_version: "2024.1",
+      coverage_status: "covered",
+      out_competed_rule_ids: ["zr-far-r6-alt"],
+      rule_citations: [{ section: "23-142" }, { section: "23-145" }],
+      gap_reason: null,
+      conflict_advisory: null,
+      detail: "The floor-area ratio ceiling for the underlying district.",
+    },
+    {
+      dimension_id: "max_height_ft",
+      family: "height",
+      required_output: "max_height_ft",
+      direction: "max",
+      unit: "ft",
+      label: "Maximum height",
+      saturating: false,
+      binding_value: null,
+      binding_rule_id: null,
+      binding_rule_version: null,
+      coverage_status: "uncovered",
+      out_competed_rule_ids: [],
+      rule_citations: [],
+      gap_reason: "no wide-street width was resolved for this lot",
+      conflict_advisory: null,
+      detail: "The height ceiling depends on a street width this lot has not resolved.",
+    },
+  ],
+  candidate: {
+    outline: { srid: 2263, vertices: OPTION_2263 },
+    levels: [{ level_index: 0, floor_count: 4, floor_to_floor_ft: 10 }],
+    exterior_walls: [
+      { id: "W-S", start_vertex_index: 0, end_vertex_index: 1 },
+      { id: "W-E", start_vertex_index: 1, end_vertex_index: 2 },
+    ],
+  },
+  candidate_notes: ["Fitted to the recorded lot area; edit every value after adoption."],
+  candidate_placement: {
+    // ALL five CandidatePlacement fields, in the authoritative as_dict() shape
+    // (services/api/app/scenario/max_envelope.py :340-347, :617-621, :891-895): a
+    // FITTED placement carries the lot's bounding rectangle and the emitted
+    // footprint, each an {anchor_x, anchor_y, width_ft, depth_ft, area_sq_ft}
+    // record, and contained=true. Values are self-consistent EPSG:2263 feet.
+    status: "fitted",
+    detail: "The generated option was fitted inside the lot rectangle and proved contained.",
+    lot_rectangle: { anchor_x: 1000200, anchor_y: 200500, width_ft: 300, depth_ft: 200, area_sq_ft: 60000 },
+    footprint: { anchor_x: 1000200, anchor_y: 200500, width_ft: 60, depth_ft: 40, area_sq_ft: 2400 },
+    contained: true,
+  },
+  candidate_consistency: { consistent: true },
+  summary: { binding: 1, gap: 1, saturating_binding: 0, total: 2 },
+  rule_input_bindings: {},
+  unmapped_lot_facts: [],
+  correlation_id: "e2e-envelope",
+};
+
+/** The parts of the serialized max-envelope request this journey asserts (mirrors
+ * MaxEnvelopeRequest; typed locally so the spec needs no app import and no `any`). */
+interface SerializedMaxEnvelope {
+  lot: {
+    area_sq_ft: number;
+    area_provenance: { source_id: string };
+    lot_line_segments: unknown[];
+    street_lines: unknown[];
+  };
+  lot_rule_facts: Record<string, unknown>;
+  label: string;
+}
+
+test("AS-5: the preliminary-development-limits panel leads from the lot context (no geometry sent) and adopts the option into the editor", async ({ page }) => {
+  // Task M5-T070 (D-082-R003 + D-083). The stub asserts the FULL request contract
+  // BEFORE returning the canned as_dict() envelope: a POST carrying the recorded
+  // lot AREA but NO geometry (the answer-first surface sends no lot lines /
+  // street lines and does no client CRS math), so a wrong or missing request can
+  // never be papered over by the response. The route stays UNMOUNTED in the app;
+  // this stub is the T065/T066 contract-proof precedent applied to it.
+  await page.route("**/api/v1/max-envelope", async (route) => {
+    const request = route.request();
+    const body = request.postDataJSON() as SerializedMaxEnvelope;
+    expect(request.method(), "the max-envelope must be POSTed").toBe("POST");
+    // The COMPLETE request body, asserted EXACTLY. BBL 1000010100 is served
+    // through the REAL profile builder over the committed official F01 fixture
+    // (services/api/tests/fixtures/pluto/F01_single_lot_normal.json: lotarea
+    // "23121" -> 23121; single zonedist1 "R3-2"), so the answer-first request
+    // carries that exact recorded lot AREA, the fixed provenance source id, the
+    // single-district lot_rule_facts, the BBL label, and NO geometry (display CRS
+    // is never measured; no client CRS math). toEqual is deep + strict, so it also
+    // proves the ABSENCE of any unexpected field, at the top level and inside lot.
+    expect(body).toEqual({
+      lot: {
+        area_sq_ft: 23121,
+        area_provenance: { source_id: "architect_surface_lot_context" },
+        lot_line_segments: [],
+        street_lines: [],
+      },
+      lot_rule_facts: { zoning_district: "R3-2" },
+      label: "BBL 1000010100 preliminary development limits",
+    });
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      headers: { "X-Correlation-ID": "e2e-envelope" },
+      body: JSON.stringify(MAX_ENVELOPE_BODY),
+    });
+  });
+
+  await openProposalEditor(page, "1000010100");
+  await expect(page.getByRole("heading", { name: "Proposal editor" })).toBeVisible();
+
+  // The panel LEADS the surface (answer-first): the D-083 heading class and the
+  // server disclosure render VERBATIM, before any designer input exists.
+  const panel = page.getByTestId("max-envelope-panel");
+  await expect(panel.getByRole("heading", { name: "Preliminary development limits" })).toBeVisible();
+  await expect(page.getByTestId("envelope-disclosure")).toHaveText(ENVELOPE_DISCLOSURE);
+
+  // Explicit answer-first ORDERING: the limits panel precedes the proposal editor
+  // in document order (not merely both present) — the computed limits lead the
+  // surface, the editor follows.
+  const panelLeadsEditor = await page.evaluate(() => {
+    const panelEl = document.querySelector('[data-testid="max-envelope-panel"]');
+    const editorEl = document.querySelector('[data-testid="proposal-editor"]');
+    return Boolean(
+      panelEl &&
+        editorEl &&
+        panelEl.compareDocumentPosition(editorEl) & Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+  expect(panelLeadsEditor, "the limits panel must render before the editor (answer-first)").toBe(true);
+
+  // A binding dimension shows its value + binding rule; the gap dimension shows a
+  // typed gap reason instead of a value; and with gap > 0 the aggregate stays
+  // visibly INCOMPLETE — no unrestricted green/complete state (D-083-R004).
+  await expect(page.getByTestId("envelope-value-max_far_floor_area")).toContainText("20000");
+  await expect(page.getByTestId("envelope-binding-max_far_floor_area")).toContainText("zr-far-r6");
+  await expect(page.getByTestId("envelope-gap-max_height_ft")).toContainText("Could not check");
+  await expect(page.getByTestId("envelope-aggregate")).toHaveAttribute("data-complete", "false");
+
+  // The editor below starts on the MANUAL rectangle seed (5 numeric vertices,
+  // vertex 0 X 1000000): the panel is ADDITIVE and never replaces manual entry.
+  await expect(page.getByLabel(/^Vertex \d+ X coordinate$/)).toHaveCount(5);
+  await expect(page.getByLabel("Vertex 0 X coordinate")).toHaveValue("1000000");
+
+  // ONE action adopts the Generated building option as the proposed starting
+  // draft, seeding the numeric AUTHORITY exactly as if typed (4 vertices, vertex
+  // 0 X 1000200); it is announced honestly as PROPOSED and manual entry stays.
+  await page.getByTestId("adopt-candidate").click();
+  await expect(page.getByLabel(/^Vertex \d+ X coordinate$/)).toHaveCount(4);
+  await expect(page.getByLabel("Vertex 0 X coordinate")).toHaveValue("1000200");
+  await expect(page.getByTestId("proposal-check-announcer")).toContainText("Adopted the Generated building option");
+  await expect(page.getByRole("button", { name: "Add vertex", exact: true })).toBeVisible();
+});

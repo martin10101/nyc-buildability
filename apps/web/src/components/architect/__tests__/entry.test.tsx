@@ -189,4 +189,186 @@ describe("connected architect entry", () => {
   });
 });
 
+/**
+ * Task M5-T070 (D-082-R003 + D-083 / AS-6): the Preliminary-development-limits
+ * panel composes ADDITIVELY above the accepted proposal editor on the architect
+ * surface. It fetches the UNMOUNTED max-envelope route from the lot context alone
+ * (baseProfile carries a recorded lot area), so these tests drive the panel via a
+ * scoped global-fetch stub. The essential AS-6 guarantee is display-surface
+ * safety: whether the panel loads limits or fails, the accepted editor below it
+ * renders and stays fully usable — never a dead surface, never a fabricated limit.
+ */
+describe("max-envelope panel composes additively on the proposal surface (M5-T070, AS-6)", () => {
+  // The EXACT ENVELOPE_DISCLOSURE text from the authoritative serialization
+  // (services/api/app/scenario/max_envelope.py :100-108), so the stubbed response
+  // body is faithful to MaxEnvelope.as_dict() and the panel's verbatim render is
+  // asserted char-for-char (a paraphrase or truncation fails).
+  const ENVELOPE_DISCLOSURE =
+    "This maximum-buildable envelope is a DETERMINISTIC, rules-derived ESTIMATE for the " +
+    "rectangle-prism massing class - NOT a city record, a permit, an approval, or a legal " +
+    "determination. Each dimension is the tightest applicable draft rule's allowance for this " +
+    "lot (the looser rules are automatically satisfied and recorded as out-competed); where " +
+    "more than one rule bounds a dimension, which rule governs is a legal determination " +
+    "requiring professional review, surfaced here as an advisory rather than resolved. " +
+    "Non-commensurable dimensions (residential FAR, rear yard) are disclosed as honest gaps. " +
+    "Qualified professional review is required before any reliance.";
+
+  /** The Generated building option outline the stub returns — DELIBERATELY DISTINCT
+   * from the editor's rectangle seed (5 vertices, vertex 0 X 1000000) so adoption
+   * VISIBLY reseeds the numeric authority (4 vertices, vertex 0 X 1000200). */
+  const OPTION_2263: Array<[number, number]> = [
+    [1000200, 200500],
+    [1000260, 200500],
+    [1000260, 200540],
+    [1000200, 200540],
+  ];
+
+  /**
+   * A faithful MaxEnvelope.as_dict() body: one binding + one gap dimension (gap > 0,
+   * so the aggregate stays visibly incomplete, D-083-R004) and a FITTED, contained
+   * candidate carrying the full CandidatePlacement shape — all five fields, including
+   * the lot_rectangle + footprint {anchor_x, anchor_y, width_ft, depth_ft, area_sq_ft}
+   * records (max_envelope.py :340-347/:617-621/:891-895) — so one-action adoption is
+   * offered. An explicit numeric Content-Length runs the client's
+   * size-bound-before-parse branch deterministically in jsdom.
+   */
+  function envelopeResponse(): Response {
+    const body = {
+      massing_class: "rectangle_prism",
+      label: "BBL preliminary development limits",
+      disclosure: ENVELOPE_DISCLOSURE,
+      dimensions: [
+        {
+          dimension_id: "max_far_floor_area",
+          family: "floor_area",
+          required_output: "max_floor_area_sq_ft",
+          direction: "max",
+          unit: "sq_ft",
+          label: "Maximum floor area",
+          saturating: false,
+          binding_value: 20000,
+          binding_rule_id: "zr-far-r6",
+          binding_rule_version: "2024.1",
+          coverage_status: "covered",
+          out_competed_rule_ids: ["zr-far-r6-alt"],
+          rule_citations: [{ section: "23-142" }],
+          gap_reason: null,
+          conflict_advisory: null,
+          detail: "The floor-area ratio ceiling for the underlying district.",
+        },
+        {
+          dimension_id: "max_height_ft",
+          family: "height",
+          required_output: "max_height_ft",
+          direction: "max",
+          unit: "ft",
+          label: "Maximum height",
+          saturating: false,
+          binding_value: null,
+          binding_rule_id: null,
+          binding_rule_version: null,
+          coverage_status: "uncovered",
+          out_competed_rule_ids: [],
+          rule_citations: [],
+          gap_reason: "no wide-street width was resolved for this lot",
+          conflict_advisory: null,
+          detail: "The height ceiling depends on a street width this lot has not resolved.",
+        },
+      ],
+      candidate: {
+        outline: { srid: 2263, vertices: OPTION_2263 },
+        levels: [{ level_index: 0, floor_count: 4, floor_to_floor_ft: 10 }],
+        exterior_walls: [
+          { id: "W-S", start_vertex_index: 0, end_vertex_index: 1 },
+          { id: "W-E", start_vertex_index: 1, end_vertex_index: 2 },
+        ],
+      },
+      candidate_notes: ["Fitted to the recorded lot area; edit every value after adoption."],
+      candidate_placement: {
+        status: "fitted",
+        detail: "The generated option was fitted inside the lot rectangle and proved contained.",
+        lot_rectangle: { anchor_x: 1000200, anchor_y: 200500, width_ft: 300, depth_ft: 200, area_sq_ft: 60000 },
+        footprint: { anchor_x: 1000200, anchor_y: 200500, width_ft: 60, depth_ft: 40, area_sq_ft: 2400 },
+        contained: true,
+      },
+      candidate_consistency: { consistent: true },
+      summary: { binding: 1, gap: 1, saturating_binding: 0, total: 2 },
+      rule_input_bindings: {},
+      unmapped_lot_facts: [],
+      correlation_id: "cid",
+    };
+    const text = JSON.stringify(body);
+    return new Response(text, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": String(new TextEncoder().encode(text).length),
+        "X-Correlation-ID": "cid",
+      },
+    });
+  }
+
+  const vertexXInputs = () => screen.getAllByLabelText(/^Vertex \d+ X coordinate$/) as HTMLInputElement[];
+  const vertexX0 = () => screen.getByLabelText("Vertex 0 X coordinate") as HTMLInputElement;
+
+  it("renders the limits panel BEFORE the accepted editor in document order (answer-first, additive)", async () => {
+    state.params.set("view", "proposal");
+    vi.stubGlobal("fetch", vi.fn(async () => envelopeResponse()));
+    render(<ArchitectEntry />);
+    // The panel leads with the server disclosure rendered VERBATIM...
+    expect(await screen.findByTestId("envelope-disclosure")).toHaveTextContent(ENVELOPE_DISCLOSURE);
+    expect(screen.getByRole("heading", { name: "Preliminary development limits" })).toBeInTheDocument();
+    // ...and the accepted editor still renders, fully available.
+    const panel = screen.getByTestId("max-envelope-panel");
+    const editor = screen.getByTestId("proposal-editor");
+    expect(screen.getByTestId("editor-honesty")).toHaveTextContent("not a city record");
+    expect(screen.getByRole("button", { name: "Add vertex" })).toBeInTheDocument();
+    // Explicit ORDERING (not merely both present): the panel PRECEDES the editor in
+    // the DOM — the computed limits lead the surface, the editor follows.
+    expect(panel.compareDocumentPosition(editor) & Node.DOCUMENT_POSITION_FOLLOWING).not.toBe(0);
+  });
+
+  it("adopts the Generated building option through the panel; manual editing AFTER adoption still mutates the draft", async () => {
+    state.params.set("view", "proposal");
+    vi.stubGlobal("fetch", vi.fn(async () => envelopeResponse()));
+    render(<ArchitectEntry />);
+    await screen.findByTestId("envelope-disclosure");
+    // The editor starts on the MANUAL rectangle seed (5 vertices, vertex 0 X 1000000).
+    expect(vertexXInputs()).toHaveLength(5);
+    expect(vertexX0().value).toBe("1000000");
+
+    // ONE action adopts the option: the numeric AUTHORITY is reseeded from the
+    // candidate (4 vertices, vertex 0 X 1000200) and announced as PROPOSED.
+    fireEvent.click(screen.getByTestId("adopt-candidate"));
+    expect(vertexXInputs()).toHaveLength(4);
+    expect(vertexX0().value).toBe("1000200");
+    expect(screen.getByTestId("proposal-check-announcer")).toHaveTextContent("Adopted the Generated building option");
+
+    // Manual editing AFTER adoption still changes draft state (never a dead or
+    // read-only surface): retype a coordinate, then add a vertex.
+    fireEvent.change(vertexX0(), { target: { value: "1000999" } });
+    expect(vertexX0().value).toBe("1000999");
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
+    expect(vertexXInputs()).toHaveLength(5);
+  });
+
+  it("degrades the panel to a typed failure card; manual editing AFTER the fetch failure still mutates the draft", async () => {
+    state.params.set("view", "proposal");
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("network down"); }));
+    render(<ArchitectEntry />);
+    // A typed failure card (never a dead surface, never a fabricated limit)...
+    const failure = await screen.findByTestId("envelope-failure");
+    expect(failure).toHaveTextContent("could not be reached");
+    expect(screen.queryByTestId("envelope-disclosure")).not.toBeInTheDocument();
+    // ...and the accepted editor below stays fully usable: manual editing changes state.
+    expect(screen.getByTestId("proposal-editor")).toBeInTheDocument();
+    expect(vertexXInputs()).toHaveLength(5);
+    fireEvent.change(vertexX0(), { target: { value: "1000123" } });
+    expect(vertexX0().value).toBe("1000123");
+    fireEvent.click(screen.getByRole("button", { name: "Add vertex" }));
+    expect(vertexXInputs()).toHaveLength(6);
+  });
+});
+
+afterEach(() => vi.unstubAllGlobals());
 afterEach(cleanup);
