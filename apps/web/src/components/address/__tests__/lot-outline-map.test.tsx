@@ -563,12 +563,32 @@ describe("LotOutlineMap — additive map-CLICK interaction (M5-T066)", () => {
     );
     await screen.findByTestId("lot-outline-map");
     // The drawn-vertex hit test is guarded on the overlay layer's existence, so
-    // wait until the overlay source + its 2 layers are installed (addLayer x4 =
-    // the 2 lot-outline layers + the 2 overlay layers) before firing the click.
-    await waitFor(() => expect(mocks.addLayer).toHaveBeenCalledTimes(4));
+    // wait until the overlay's drawn-points layer is installed before firing the
+    // click. [ORCH-CORRECTED per G3 F1 / HJ A8 / G4 finding 3] Presence, never
+    // an exact call tally across effects (the DB-048 flake class).
+    await waitFor(() =>
+      expect(
+        mocks.addLayer.mock.calls.some(
+          ([layer]) => (layer as { id?: string }).id === "proposal-drawn-outline-points",
+        ),
+      ).toBe(true),
+    );
     act(() => mocks.fireMapClick({ point: { x: 5, y: 5 }, lngLat: { lng: -73.98, lat: 40.75 } }));
     expect(onDrawnVertexClick).toHaveBeenCalledWith(2);
     expect(onOutlineMapClick).not.toHaveBeenCalled();
+  });
+
+  it("pins the wrapper-observed signals: the interactive container's aria-label and the loading node's testid (DB-047(d) drift guard)", async () => {
+    // [ORCH-CORRECTED per G4 advisory 4 + HJ B2] ProposalOutlineMap classifies
+    // this leaf's surface by querying these two rendered signals verbatim
+    // (the interactive aria-label, and lot-outline-loading during the load
+    // window). A rename here would silently degrade the wrapper's copy —
+    // fail-safe but unannounced, with every unit suite still green — so pin
+    // both against the REAL leaf.
+    render(<LotOutlineMap bbl="1008350041" fetchImpl={singleLot()} drawnOverlay={emptyOverlay} />);
+    expect(screen.getByTestId("lot-outline-loading")).toBeInTheDocument();
+    await screen.findByTestId("lot-outline-map");
+    expect(screen.getByLabelText("Interactive approximate lot outline map")).toBeInTheDocument();
   });
 
   it("AS-2 early-click guard: a click BEFORE the overlay layer is installed places a point and never queries the missing drawn-vertex layer", async () => {

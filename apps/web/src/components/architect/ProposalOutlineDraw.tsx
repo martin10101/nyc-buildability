@@ -178,18 +178,22 @@ export function ProposalOutlineDraw({
       <OutcomeAnnouncer testId="outline-draw-announcer" message={announcement} />
       <header className="proposal-outline-draw-head">
         <h3>Draw the outline</h3>
+        {/* [ORCH-CORRECTED per HJ B1] State-neutral lead: the gesture invitation lives ONLY in
+            the wrapper's map-state-gated instructions (DB-047(d)); this section header must never
+            invite a map click it cannot promise. */}
         <p className="proposal-honesty" data-testid="outline-draw-honesty">
-          Proposed — your sketch, not a city record. Click the lot map to place points (or add and type
-          them by keyboard below), then convert them to numeric coordinates. The conversion is approximate
-          proposed input with its fit accuracy disclosed — not a survey. The numbers table stays editable;
-          typing coordinates is always an option.
+          Proposed — your sketch, not a city record. Add points and type them by keyboard in the
+          table below, then convert them to numeric coordinates. The conversion is approximate
+          proposed input with its fit accuracy disclosed — not a survey. The numbers table stays
+          editable; typing coordinates is always an option.
         </p>
       </header>
 
       <div className="proposal-outline-draw-map" data-testid="outline-draw-map-context">
+        {/* [ORCH-CORRECTED per HJ B1] No presence claim: on condo/fallback lots there is no map. */}
         <p className="section-note">
-          The map shows the recorded lot for reference. Nothing is measured from it; your drawing is
-          converted to official-grid feet on the server.
+          Any reference map shown displays the recorded lot for context only. Nothing is measured
+          from it; your drawing is converted to official-grid feet on the server.
         </p>
         <ProposalOutlineMap
           bbl={bbl}
@@ -256,7 +260,7 @@ export function ProposalOutlineDraw({
           {points.length === 0 ? (
             <tr>
               <td colSpan={4} className="section-note" data-testid="outline-draw-empty">
-                No points drawn yet. Add at least {MIN_DRAWN_VERTICES} points over the lot, then convert.
+                No points drawn yet. Add at least {MIN_DRAWN_VERTICES} points, then convert.
               </td>
             </tr>
           ) : null}

@@ -231,6 +231,33 @@ describe("ProposalOutlineMap — instruction copy gates on a real interactive ma
     },
   );
 
+  it("while the leaf is LOADING the copy claims nothing about the lot — no definite negative, no map gesture (HJ B2)", async () => {
+    // [ORCH-CORRECTED per HJ B2] The leaf renders lot-outline-loading during its
+    // whole load window (geometry fetch → maplibre import → construction). The
+    // old boolean gate asserted "has no interactive drawing surface" — a false
+    // definite negative — for that entire window on every drawable lot.
+    // Reverting the tri-state to the boolean reddens the negative-claim check.
+    lotMock.variant = "lot-outline-loading";
+    const { rerender } = render(<ProposalOutlineMap {...gateProps} selectedIndex={null} />);
+    const copy = await screen.findByTestId("proposal-outline-map-instructions");
+    await Promise.resolve();
+    expect(copy).toHaveTextContent("Preparing the reference map");
+    expect(copy).not.toHaveTextContent("no interactive drawing surface");
+    expect(copy).not.toHaveTextContent("Click the lot map to place");
+
+    // Load resolves into the drawable surface (same bbl → only the observer can
+    // re-sync): the click-to-place lead appears.
+    lotMock.variant = "interactive";
+    rerender(<ProposalOutlineMap {...gateProps} selectedIndex={null} />);
+    await waitFor(() => expect(copy).toHaveTextContent("Click the lot map to place"));
+
+    // A load resolving into a typed fallback lands on the definite keyboard-only
+    // copy instead (loading → absent), where the negative claim IS the honest one.
+    lotMock.variant = "lot-outline-empty";
+    rerender(<ProposalOutlineMap {...gateProps} selectedIndex={null} />);
+    await waitFor(() => expect(copy).toHaveTextContent("no interactive drawing surface"));
+  });
+
   it("in a typed-fallback state a selected point STILL never invites a map gesture (mutation guard)", async () => {
     lotMock.variant = "lot-outline-review";
     render(<ProposalOutlineMap {...gateProps} selectedIndex={1} />);

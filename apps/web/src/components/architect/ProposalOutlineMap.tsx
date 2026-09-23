@@ -108,18 +108,25 @@ export function ProposalOutlineMap({
   // announce, never the raw row count (DB-047(e)).
   const drawnCount = useMemo(() => finitePointCount(points), [points]);
 
-  // DB-047(d): true only while the leaf's interactive map surface is actually
-  // present in our subtree. We cannot edit the accepted LotOutlineMap or read a
-  // readiness callback from it, so we observe its rendered output (the semantic
-  // aria-label of its map container) and let the copy follow what really exists.
+  // DB-047(d): the copy follows what actually exists in the leaf's subtree. We
+  // cannot edit the accepted LotOutlineMap or read a readiness callback from it,
+  // so we observe its rendered output. [ORCH-CORRECTED per HJ B2] Tri-state, not
+  // boolean: while the leaf is still LOADING we must claim nothing about the lot
+  // (the old boolean asserted "no interactive drawing surface" — a false definite
+  // negative — for the whole load window on every drawable lot). "present" keys
+  // on the interactive container's semantic aria-label; "unknown" on the leaf's
+  // loading node (lot-outline-loading); anything else is a typed fallback state,
+  // where the definite keyboard-only copy is the honest one.
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [mapRendered, setMapRendered] = useState(false);
+  const [mapSurface, setMapSurface] = useState<"unknown" | "present" | "absent">("unknown");
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
     const sync = () => {
       const present = root.querySelector(`[aria-label="${INTERACTIVE_MAP_LABEL}"]`) !== null;
-      setMapRendered((prev) => (prev === present ? prev : present));
+      const loading = root.querySelector('[data-testid="lot-outline-loading"]') !== null;
+      const next = present ? "present" : loading ? "unknown" : "absent";
+      setMapSurface((prev) => (prev === next ? prev : next));
     };
     sync();
     // The leaf transitions asynchronously (loading -> drawable, or -> a typed
@@ -142,11 +149,13 @@ export function ProposalOutlineMap({
   return (
     <div className="proposal-outline-map" data-testid="proposal-outline-map" ref={rootRef}>
       <p className="section-note" data-testid="proposal-outline-map-instructions">
-        {mapRendered
+        {mapSurface === "present"
           ? hasSelection
             ? `Point ${selectedIndex} is selected — click the map to move it, or edit it in the table below. Click the point again to deselect.`
             : "Click the lot map to place a proposed outline point, or add points by keyboard in the table below. Click a placed point to select it."
-          : "Add proposed outline points by keyboard in the table below — enter each point's longitude and latitude. The reference map on this lot has no interactive drawing surface."}
+          : mapSurface === "unknown"
+            ? "Preparing the reference map — you can start adding points by keyboard in the table below; enter each point's longitude and latitude."
+            : "Add proposed outline points by keyboard in the table below — enter each point's longitude and latitude. The reference map on this lot has no interactive drawing surface."}
       </p>
       <LotOutlineMap
         bbl={bbl}

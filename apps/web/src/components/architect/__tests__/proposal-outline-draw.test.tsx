@@ -150,6 +150,24 @@ describe("ProposalOutlineDraw", () => {
     expect(pointFeatureCount()).toBe(3);
   });
 
+  it("the composed section never invites a map gesture when no interactive map exists (HJ B1)", () => {
+    // [ORCH-CORRECTED per HJ B1] This suite's leaf mock renders NO interactive
+    // aria-label and no loading node, so the wrapper classifies the surface
+    // absent — the composed section a human reads top to bottom (header honesty
+    // paragraph, map-context note, wrapper instructions) must not contain a
+    // click invitation ANYWHERE, and neither leading paragraph may claim a map
+    // is present. Restoring the old ungated lead copy reddens this spec.
+    render(<ProposalOutlineDraw bbl={BBL} onAdopt={vi.fn()} fetchImpl={stub(bridged200())} />);
+    const section = screen.getByTestId("proposal-outline-draw");
+    expect(section.textContent).not.toContain("Click the lot map");
+    expect(screen.getByTestId("outline-draw-honesty")).toHaveTextContent(
+      "Add points and type them by keyboard",
+    );
+    expect(screen.getByTestId("outline-draw-map-context")).toHaveTextContent(
+      "Any reference map shown displays the recorded lot for context only",
+    );
+  });
+
   it("places and edits drawn points by keyboard-operable inputs, then adopts bridged 2263 vertices", async () => {
     const onAdopt = vi.fn();
     render(<ProposalOutlineDraw bbl={BBL} onAdopt={onAdopt} fetchImpl={stub(bridged200())} />);
