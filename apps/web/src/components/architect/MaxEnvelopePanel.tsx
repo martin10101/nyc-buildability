@@ -62,7 +62,13 @@ const GAP_REASON_COPY: Record<string, string> = {
 
 function gapReasonCopy(token: string | null): string {
   if (token === null || token === "") return "the reason was not stated";
-  return GAP_REASON_COPY[token] ?? token;
+  // [ORCH-CORRECTED per SEC F1] Own-property guard: a hostile/corrupt server token
+  // like "__proto__" or "constructor" must render as its literal text (fail-honest),
+  // never resolve through Object.prototype into a non-string React child that
+  // crashes the whole property page through the route error boundary.
+  return Object.prototype.hasOwnProperty.call(GAP_REASON_COPY, token)
+    ? GAP_REASON_COPY[token]
+    : token;
 }
 
 function DimensionRow({ dimension }: { dimension: EnvelopeDimensionView }) {

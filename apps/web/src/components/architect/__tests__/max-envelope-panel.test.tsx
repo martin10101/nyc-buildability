@@ -135,6 +135,30 @@ describe("MaxEnvelopePanel — answer-first limits (AS-1) + claim-class vocabula
     // The headline maps the server token to plain copy; the raw token never leads.
     expect(gap).toHaveTextContent("the governing allowance could not be resolved");
     expect(gap).not.toHaveTextContent("allowance_unresolved");
+  });
+
+  it("a prototype-chain token like __proto__ renders as its literal text, never a crash (SEC F1)", async () => {
+    // [ORCH-CORRECTED per SEC F1] Object.prototype keys must not resolve through the
+    // copy map: "__proto__" would return an object (React 19 throws, killing the whole
+    // property page through the route error boundary) and "constructor" a function
+    // (silently blank reason). The own-property guard renders the literal token instead.
+    const body = envelopeBody({
+      dimensions: [bindingDimension(), gapDimension({ gap_reason: "__proto__" })],
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body))} />);
+    const gap = await screen.findByTestId("envelope-gap-max_height_ft");
+    expect(gap).toHaveTextContent("Could not check — __proto__");
+    cleanup();
+
+    // "constructor" resolves to a function through the prototype chain — React
+    // renders a function child as nothing, silently blanking the reason. The
+    // guard renders the literal token instead.
+    const body2 = envelopeBody({
+      dimensions: [bindingDimension(), gapDimension({ gap_reason: "constructor" })],
+    });
+    render(<MaxEnvelopePanel request={REQUEST} fetchImpl={stub(response(body2))} />);
+    const gap2 = await screen.findByTestId("envelope-gap-max_height_ft");
+    expect(gap2).toHaveTextContent("Could not check — constructor");
     expect(screen.queryByTestId("envelope-value-max_height_ft")).toBeNull();
   });
 
