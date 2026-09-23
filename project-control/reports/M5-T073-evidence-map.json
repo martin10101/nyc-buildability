@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T073",
+ "material_commit": "28fd92b6 + 06e3e72d + 2c86b35f (the three wt-m5t073 commits cherry-picked in order, ALL-MATCH x3 LF-normalized) + the [ORCH-HARVEST] table-fill commit. CI backstop rides the next push.",
+ "produced_at": "2026-09-23T06:40:00+00:00",
+ "producer": "backend-engineer (loop-2, runs persistent2-local-30/31: run-30 delivered the harness + manifest + HARVEST_SPEC honestly [BLOCKED]->harvest; the orchestrator executed the spec via live egress (4 net-new pairs, single-feature verified, sha256 per body); run-31 finished the file; the orchestrator ran the routed capture - ruff clean, 14 passed - and filled the verdict table from the printed output)",
+ "requirements": {
+  "D-084-R002": [
+   "Lane-2 ran the DB-045(a) packet end-to-end under the D-070 standard across two runs plus the orchestrator egress assist. The delivered answer is load-bearing for the mount seam: on 8 real pairs / 5 boroughs / 7 geometry classes, counts_equal is TRUE everywhere (the named densification risk did NOT materialize) and fitted residuals are 0.0013-0.0039 ft; 3/8 pass the bridge's OWN preconditions, with the five refusals in two classes the packet had not pre-named - too_many_control_points (320/3093-vertex lots) and ambiguous_correspondence (near-symmetric 4-vertex rectangles, P05 separation 1.9e-05 ft, the common small-residential class). The bounded verdict routes a capacity + ambiguity disposition to the mount packet and implies NO ring normalization; bounds never weakened; everything offline on provenance-stamped verbatim official bytes."
+  ]
+ }
+}
