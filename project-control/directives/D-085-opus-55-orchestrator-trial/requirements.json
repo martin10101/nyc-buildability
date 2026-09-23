@@ -4,25 +4,38 @@
  "version": 1,
  "requirement_count": 5,
  "producer": "orchestrator",
- "updated_at": "2026-09-23T16:45:00+00:00",
+ "updated_at": "2026-09-23T18:05:00+00:00",
  "requirements": [
   {
    "id": "D-085-R001",
-   "text": "SEQUENCING ('Yes finish first'): the in-flight five review waves and their accepts (M5-T072, M5-T073, M5-T074, M5-T075, M5-T076) complete under the normal gated process BEFORE any D-085 switch step (CLI update, model verification, worker-pin flip, handoff) executes. The switch happens at a clean D-070 finished seam, never mid-wave.",
-   "source_ref": "source-001.md#owner-message-verbatim-message-2",
+   "text": "SEQUENCING (amended by source-002 'lets first update cli the looop so opus 5.5 can be usd'): R002 (CLI update), R003 (model verification), and R004 (loop worker pins) execute NOW, mid-wave, ahead of the T072-T076 wave completions - the CLI update does not affect the running session and the three loop lanes are idle. R005 (the main orchestrator's own restart onto Opus 5.5) still waits for the in-flight waves/accepts to reach a clean D-070 finished seam; the waves are never abandoned mid-review. Original message-2 sequencing ('Yes finish first' for ALL steps) is superseded by source-002 for R002-R004 only.",
+   "source_ref": "source-002-amendment.md#owner-message-verbatim",
    "classification": "sequencing",
    "binding": true,
-   "applicability": {"task_ids": ["D-085-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-23"},
+   "applicability": {
+    "task_ids": [
+     "D-085-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
    "dependencies": [],
-   "required_harness": "Ledger shows T072-T076 accepted (or explicitly dispositioned by the owner) before any R002-R005 action is taken.",
-   "required_evidence": "Ledger accept records / state.json totals at the seam where R002 begins.",
+   "required_harness": "R002-R004: executable now (source-002); their own evidence rows. R005: ledger shows T072-T076 accepted (or owner-dispositioned) before the restart handoff is written.",
+   "required_evidence": "Ledger accept records / state.json totals at the R005 seam; the source-002 amendment for the R002-R004 release.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
-   "status_reason": "Captured mid-wave; waves in flight.",
+   "status_reason": "Amended: R002-R004 released to execute mid-wave; R005 still seam-gated.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-085-R002",
@@ -30,8 +43,17 @@
    "source_ref": "source-001.md#owner-message-verbatim-message-1",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["D-085-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-23"},
-   "dependencies": ["D-085-R001"],
+   "applicability": {
+    "task_ids": [
+     "D-085-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [],
    "required_harness": "Version check before and after the update command.",
    "required_evidence": "Recorded before/after `claude --version` (or equivalent) output in the seam handoff/report.",
    "producer": "orchestrator",
@@ -40,7 +62,11 @@
    "status_reason": "Waits on R001.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-085-R003",
@@ -48,8 +74,19 @@
    "source_ref": "source-001.md#owner-message-verbatim-message-1",
    "classification": "external_fact",
    "binding": true,
-   "applicability": {"task_ids": ["D-085-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-23"},
-   "dependencies": ["D-085-R002"],
+   "applicability": {
+    "task_ids": [
+     "D-085-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [
+    "D-085-R002"
+   ],
    "required_harness": "Tool-side model listing at the updated version.",
    "required_evidence": "The observed exact model id string and where it was read from, recorded in the seam handoff/report.",
    "producer": "orchestrator",
@@ -58,7 +95,11 @@
    "status_reason": "Waits on R002.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-085-R004",
@@ -66,8 +107,19 @@
    "source_ref": "source-001.md#owner-message-verbatim-message-1",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["D-085-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-23"},
-   "dependencies": ["D-085-R003"],
+   "applicability": {
+    "task_ids": [
+     "D-085-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [
+    "D-085-R003"
+   ],
    "required_harness": "The three config diffs (or the owner-executed one-line edits) at the seam.",
    "required_evidence": "Per-lane config before/after content or the recorded blocker with the exact edits.",
    "producer": "orchestrator",
@@ -76,7 +128,11 @@
    "status_reason": "Waits on R003.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   },
   {
    "id": "D-085-R005",
@@ -84,8 +140,19 @@
    "source_ref": "source-001.md#owner-message-verbatim-message-1",
    "classification": "obligation",
    "binding": true,
-   "applicability": {"task_ids": ["D-085-BOOTSTRAP"], "task_types": [], "milestones": [], "lifecycle_events": [], "paths": [], "effective_date": "2026-09-23"},
-   "dependencies": ["D-085-R004"],
+   "applicability": {
+    "task_ids": [
+     "D-085-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-23"
+   },
+   "dependencies": [
+    "D-085-R004"
+   ],
    "required_harness": "Seam handoff (docs/SESSION_HANDOFF.md) carrying the switch instructions and evidence of R002-R004.",
    "required_evidence": "The handoff content + the owner-facing launch line.",
    "producer": "orchestrator",
@@ -94,7 +161,11 @@
    "status_reason": "Waits on R004.",
    "evidence_paths": [],
    "reviewed_sha": null,
-   "maps_to": {"files": [], "tests": [], "tasks": []}
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
   }
  ]
 }
