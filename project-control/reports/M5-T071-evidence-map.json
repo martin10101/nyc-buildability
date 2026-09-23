@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T071",
+ "material_commit": "2396a000 (cherry-pick harvest of the loop-1 run-68 unit; T071's five allowed material files; CI at the pushed head c0b71938 = run 35817816845 SUCCESS with secret-scan 35817816896 SUCCESS - T071's allowed_paths files are byte-identical from 2396a000 through that green head; the only later material-affecting commit, c0b71938, is an orchestrator peer commit outside this packet's allowed_paths)",
+ "produced_at": "2026-09-23T04:45:00+00:00",
+ "producer": "frontend-engineer (loop-1 worker, run persistent-local-68-m5t071; run-68 closed PAUSED_RECOVERY missing_checkpoint AFTER four validated checkpoints - the unit was COMPLETE per its own internal rework-2 report; the orchestrator harvest at 2396a000 corroborated the delivery and saved the report verbatim as M5-T071-producer-report.md)",
+ "requirements": {
+  "D-082-R001": [
+   "The map-drawing input slice this packet hardens is exactly the D-082-R001(b) released surface: DB-047(d) gates the click-to-place instruction copy on the map ACTUALLY rendering (per-fallback-state keyboard-only copy for no-polygon/condo-unit, multiple_features, invalid_geometry, and no-WebGL states, with an observer transition test), so the released drawing surface never narrates a gesture the current state cannot accept; drawing-surface only, the ProposalEditor and the max-envelope surfaces untouched."
+  ],
+  "D-076-R002": [
+   "Proposed-not-a-record honesty preserved and sharpened: the drawn outline remains PROPOSED input throughout - DB-047(e) adds a Number.isFinite gate on BOTH axes before Convert so no NaN-seeded row is ever posted to the bridge (a truthful finite-point status plus a disabled-reason hint replace a doomed round-trip), and finite flows stay byte-identical to the accepted payload; no proposal-derived value gains record status anywhere in the diff."
+  ],
+  "D-066-R001": [
+   "The packet carried the graph-derived navigation block at its contract seam and the producer swept its named surface (the five allowed files, all suites updated in-packet). One consumer OUTSIDE the packet's file list was missed by the producer sweep - the M5-T065 adoption test in proposal-editor.test.tsx clicks Convert on freshly-added NaN/NaN rows, which DB-047(e) turns into a gated no-op - surfaced by the first completed CI run and closed by the orchestrator per the CODING_RULES routing (out-of-scope test updates go to the orchestrator), as peer commit c0b71938 cluster C: the consumer test now types finite coordinates first, mirroring the keyboard path the producer's own direct suite uses. CI green at that head proves the completed sweep."
+  ],
+  "D-077-R002": [
+   "This packet is the lane-1 in-regime feed of the three-loop regime: contracted at a fresh seam with the full drill, built by the loop-1 worker on run persistent-local-68-m5t071 in wt-m5t071, and harvested at the seam commit 2396a000; the lane's occupancy discipline (finished-seam handoff, harvest-on-close) followed the recorded D-070 standard."
+  ],
+  "D-077-R003": [
+   "Scope stays inside the released, non-held queue: the diff hardens the ALREADY-RELEASED phase-B drawing surface (DB-047 d/e advisories from the accepted T066 wave plus the DB-048 flaky-spec hardening - final-state/argument assertions replacing exact cross-render tallies, teeth retained); no phase-C/D surface, no held expansion item, no master-plan change is touched."
+  ]
+ }
+}
