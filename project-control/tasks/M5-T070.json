@@ -75,7 +75,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 65,
   "risks": [
     "ArchitectEntry is consumed by three ACCEPTED property pages (graph-verified) - the panel must compose additively; absence/loading/failure = the current accepted experience, proven by the unchanged accepted specs.",
     "The route is UNMOUNTED: real end-to-end proves only at the later mount/release seam; the packet's proof is the stubbed contract + unit fixtures mirroring as_dict() exactly (never guess field names).",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T06:54:27.601280+00:00",
-  "updated_at": "2026-09-22T18:39:56.391869+00:00",
+  "updated_at": "2026-09-23T03:37:29.035818+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -137,6 +137,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted + claimed at the seq-125 T066-acceptance seam (D-070 finished-seam): packet, binds (11 ids incl. D-083 vocabulary wall), G0 recorded at 53b0e674; wt-m5t070 to be created at the claim-seam commit; loop-3 launch next"
+    },
+    {
+      "at": "2026-09-23T03:37:29.035818+00:00",
+      "agent": "frontend-engineer",
+      "percent": 65,
+      "status": "claimed",
+      "message": "Increment 1 harvested from the loop-3 run-15+16 missing-checkpoint closes (the provider-incident lineage): run-15 authored the five source files (orchestrator snapshot corroborates provenance), run-16 verified them against the contract and wrote four unit suites, honestly reporting NOT SUBMITTABLE with the remaining gap named (AS-5 e2e + AS-6 entry assertion). Material committed at 51ffc5cb (10 files, ALL-MATCH); web proofs ride the seam-push CI; loop-3 re-feeds increment 2 (fresh run-id) for the named gap"
     }
   ]
 }
