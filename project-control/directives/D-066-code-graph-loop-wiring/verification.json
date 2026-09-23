@@ -3,7 +3,7 @@
  "directive_id": "D-066",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T06:55:00+00:00",
+ "verified_at": "2026-09-23T07:10:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-066",
@@ -907,6 +907,28 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED with a recorded non-blocking sub-clause gap (Part 2): navigation block present and its conclusions re-derived true in actual source; regeneration corroborated-by-control-record (the artifact lives outside the repo by design); the disclosed consumer-sweep miss honestly stated and closed per the CODING_RULES routing (c0b71938 cluster C), the DCV's own full-surface re-sweep found no unswept consumer. GAP: the packet omits the query.py --no-regen consultation sentence (drift since M5-T066) - orchestrator-side authoring, fix in the next packet."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED with the repeated non-blocking packet-drift gap (Part 3): navigation block present and re-derived true in source; consumer sweep discharged by construction (additive-only shared-module changes) + CI; regeneration corroborated-by-control-record (out-of-repo artifact by design). The query.py consultation sentence is absent again (contracted before the restoration duty existed) - the recorded duty covers future packets."
      ]
     }
    ]

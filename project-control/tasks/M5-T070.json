@@ -74,8 +74,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "ArchitectEntry is consumed by three ACCEPTED property pages (graph-verified) - the panel must compose additively; absence/loading/failure = the current accepted experience, proven by the unchanged accepted specs.",
     "The route is UNMOUNTED: real end-to-end proves only at the later mount/release seam; the packet's proof is the stubbed contract + unit fixtures mirroring as_dict() exactly (never guess field names).",
@@ -85,7 +85,7 @@
   ],
   "blockers": [],
   "created_at": "2026-09-21T06:54:27.601280+00:00",
-  "updated_at": "2026-09-23T05:54:23.504972+00:00",
+  "updated_at": "2026-09-23T06:57:30.334860+00:00",
   "directive_refs": [
     {
       "directive_id": "D-082",
@@ -194,5 +194,7 @@
       "status": "in_progress",
       "message": "Walking to resubmit at the restored head"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-23T06:57:30.334860+00:00"
 }

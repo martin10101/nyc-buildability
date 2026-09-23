@@ -3,7 +3,7 @@
  "directive_id": "D-082",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T06:55:00+00:00",
+ "verified_at": "2026-09-23T07:10:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-082",
@@ -135,6 +135,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (report project-control/reports/M5-T071-DCV.md, Part 2): the (b) map-drawing release hardened in place - tri-state copy gate verified against the REAL leaf signals (LotOutlineMap.tsx:646/:632), five typed-fallback teeth + the fixed-bbl observer walk reproduced non-tautological; boundary clauses proven on the diffs (2396a000 + 0014ad8f = five web files + report only; no persistence/API/contracts/3D/plan); the HJ B1/B2 closures reproduced at 0014ad8f. Blob-SHA restamp predicate stated in Part 1."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (project-control/reports/M5-T070-DCV.md Part 2): the (a) capability surfaced; boundary clauses proven on all five identity commits; the AS-4 reachability limitation verified AT THE SERVER (empty segments -> lot_geometry_unsupported, no candidate) and the honesty regime judged SATISFIED (named in map+report, pinned by the committed production-reachable spec, routed as DB-050(a) = live M5-T076)."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): max leads by DOM ORDERING in unit + real-browser e2e; manual editing survives adoption; honesty labels verified in copy and provenance notes; typed degradation never dead, never fabricated."
      ]
     }
    ]

@@ -2,7 +2,54 @@
  "schema": "directive_verification/v2",
  "directive_id": "D-083",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
- "verified_by": null,
- "verified_at": null,
- "task_verifications": []
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-23T07:10:00+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002",
+    "D-083-R003",
+    "D-083-R004"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2; the directive's FIRST verification rows): interim vocabulary in place (h2/h3 verified by content at the final identity); the never-one-building clause stated on screen; the copy wall's teeth proven by the LIVE CI red at run 35815456797 (it caught its own file's comment) plus the DCV's own zero-occurrence grep across all five walled files."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): the three claim classes verified in artifacts - regulatory limits w/ full per-dimension provenance, the Generated building option gated on a server-FITTED contained candidate, the demonstrated-maximum class withheld and wall-enforced."
+     ]
+    },
+    {
+     "id": "D-083-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the recorded scope note): answer-first proven by the strict deep request assertion (profile-only, no geometry, no unexpected fields) + ordering in both surfaces; assumptions/gaps/advisories all render; the address-confirm landing is out of this packet's scope by contract (its accepted limits surface already exists)."
+     ]
+    },
+    {
+     "id": "D-083-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): envelopeAggregateIsComplete is exactly the requirement (one gap OR one advisory forces visible incomplete), mutation-tested in both directions, re-asserted against the real DOM in e2e, and carried through the announcement path ('not a maximum permitted building')."
+     ]
+    }
+   ]
+  }
+ ]
 }

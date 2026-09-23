@@ -3,7 +3,7 @@
  "directive_id": "D-077",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T06:55:00+00:00",
+ "verified_at": "2026-09-23T07:10:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-077",
@@ -519,6 +519,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (Part 3): selection from the released queue only (DB-047(d)/(e) + DB-048 riders of the accepted T066 wave); no new scope, no dependency/lockfile/plan change, holds intact; all four gates PASS with the reviews pinned to the independently computed blob identity; the DB-048 file-wide residual stated conservatively and carried as DB-049(h)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 4): the full lane drill reproduced as git/ledger objects (contract seam 53b0e674 w/ five-directive binds incl. fresh D-083; G0 byte-equal; FULL-path claim 178f7a66; worktree at/past the claim seam with the increment-2 ALL-MATCH x3 reproduced by blob); lanes cycled throughout with all five D-084 packets contracted."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 4): released D-082-R003 surfacing only; route verifiably UNMOUNTED; no phase-C/D, no held item, no plan/dependency change; all gates PASS with the final-identity re-records pinning the reviewed content (twelve blobs at da401d1d == HEAD)."
      ]
     }
    ]

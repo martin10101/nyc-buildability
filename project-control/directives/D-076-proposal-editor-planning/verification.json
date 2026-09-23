@@ -3,7 +3,7 @@
  "directive_id": "D-076",
  "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
  "verified_by": "directive-compliance-verifier",
- "verified_at": "2026-09-23T06:55:00+00:00",
+ "verified_at": "2026-09-23T07:10:00+00:00",
  "task_verifications": [
   {
    "directive_id": "D-076",
@@ -331,6 +331,36 @@
      "state": "PASS",
      "evidence": [
       "DCV SATISFIED (Part 2): proposed-not-record labeling survives verbatim; the finiteness work is an input gate, not a calculation (no client measurement added; conversion stays server-side through the untouched bridge client); announced count == overlay count via finitePointCount; the count-only-enablement revert tooth reproduced; the mixed finite/untyped silent-drop found independently, judged a routed disclosure gap (DB-049(a)), not an R002 violation."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the row-labeling note corrected in the map pre-accept): phase-B grounding verified - the increment builds on the existing scenario machinery as the phased plan requires, with the no-client-math doctrine confirmed by inspection (transport/bounding only, no client limit derivation)."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the split-district rider): proposed stays a third input class end-to-end (verbatim candidate seeding, PROPOSED provenance, no record claims, no approval from a passing subset). HJ finding 1 (split-district silent omission) judged non-blocking ONLY because the route is verifiably unmounted (every include_router line checked); it MUST close before the mount - recorded as the top pre-mount closer."
      ]
     }
    ]
